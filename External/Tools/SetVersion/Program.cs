@@ -11,6 +11,24 @@ namespace SetVersion
     {
         static void Main(string[] args)
         {
+            var git = ".git";
+            var head = File.ReadAllText(Path.Combine(git, "HEAD")).Trim();
+            var headRef = Regex.Match(head, "ref: refs/heads/(.*)");
+            if (!headRef.Success)
+            {
+                Console.WriteLine("SetVersion: can not find HEAD ref");
+                return;
+            }
+            var branch = headRef.Groups[1].Value;
+            var refPath = Path.Combine(Path.Combine(git, "refs\\heads"), branch);
+            if (!File.Exists(refPath))
+            {
+                Console.WriteLine("SetVersion: can not read ref commit hash");
+                return;
+            }
+            var commit = File.ReadAllText(refPath).Trim();
+            if (commit.Length == 40) commit = commit.Substring(0, 10);
+            
             var output = args[0];
             var revOut = output + ".rev";
             if (!File.Exists(revOut))
@@ -18,16 +36,6 @@ namespace SetVersion
                 Console.WriteLine("Template not found: " + revOut);
                 return;
             }
-            var info = "1501285 (HEAD, origin/master, origin/HEAD, master, feature/testbranch)"; // Console.ReadLine().Trim();
-            var m = Regex.Match(info, "([a-z0-9]+) \\(([^\\)]+)\\)");
-            if (!m.Success)
-            {
-                Console.WriteLine("Invalid data: " + info);
-                return;
-            }
-            var names = Regex.Split(m.Groups[2].Value, ", ");
-            var branch = names[names.Length - 1];
-            var commit = m.Groups[1].Value;
             Console.WriteLine("Set revision: " + branch + " " + commit);
             var raw = File.ReadAllText(revOut);
             raw = raw.Replace("$BRANCH$", branch).Replace("$COMMIT$", commit);
