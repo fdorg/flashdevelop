@@ -15,7 +15,7 @@ Platform
 * Microsoft Windows .NET 2.0 application (Windows XP, Windows Vista, Windows 7, Windows 8)
 * Includes native (Qt) Mac OSX/Linux helper to improve virtualization (VirtualBox, VMWare, Parallels)
 
-How to build
+Building
 --------
 
 * Open in Visual Studio 2010 or C# Express 2010 (free),
