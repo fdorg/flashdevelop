@@ -3,7 +3,7 @@ FlashDevelop
 
 FlashDevelop is a free and open source (MIT license) source code editor.
 
-![FlashDevelop UI](http://flashdevelop.org/screenshots/fdstart-mini.png "FlashDevelop")
+[![FlashDevelop UI](http://flashdevelop.org/screenshots/fdstart-mini.png "FlashDevelop")](http://www.flashdevelop.org/)
 
 FlashDevelop offers first class support for Flash ActionScript (2 and 3), Haxe and Loom development: great and fast code completion & code generation, projects compilation & Flash debugging, plenty of project templates, SWF/SWC exploration, etc.
 
