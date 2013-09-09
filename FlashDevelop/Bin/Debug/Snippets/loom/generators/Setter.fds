@@ -1,0 +1,3 @@
+$(BlankLine)$(Modifiers) function set $(Name)(value:$(Type)):$(Void) $(CSLB){
+	$(Member) = value$(EntryPoint);
+}

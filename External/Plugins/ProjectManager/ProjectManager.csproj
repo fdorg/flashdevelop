@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ProjectManager</RootNamespace>
+    <AssemblyName>ProjectManager</AssemblyName>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Reference Include="SwfOp, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\FlashDevelop\Bin\Debug\SwfOp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\BuildActions.cs" />
+    <Compile Include="Actions\FileActions.cs" />
+    <Compile Include="Actions\FlashDevelopActions.cs" />
+    <Compile Include="Actions\ProjectActions.cs" />
+    <Compile Include="Actions\Webserver.cs" />
+    <Compile Include="Controls\OpenResourceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\TabColors.cs" />
+    <Compile Include="Helpers\FlexCompilerShell.cs" />
+    <Compile Include="Controls\AS2\AS2PropertiesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\AS2\AS2PropertiesDialog.Designer.cs">
+      <DependentUpon>AS2PropertiesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AS3\AS3PropertiesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\AS3\AS3PropertiesDialog.Designer.cs">
+      <DependentUpon>AS3PropertiesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RecentProjectsMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TreeView\FileMapping.cs" />
+    <Compile Include="Helpers\TreeViews\DragDropTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Helpers\TreeViews\MultiSelectTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Helpers\TreeViews\StateSavingTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Helpers\TreeViews\ToolTippedTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Projects\AS2\AS2MovieOptions.cs" />
+    <Compile Include="Projects\AS2\AS2Project.cs" />
+    <Compile Include="Projects\AS2\AS2ProjectReader.cs" />
+    <Compile Include="Projects\AS2\AS2ProjectWriter.cs" />
+    <Compile Include="Projects\AS2\MtascOptions.cs" />
+    <Compile Include="Projects\AS3\AS3MovieOptions.cs" />
+    <Compile Include="Projects\AS3\AS3Project.cs" />
+    <Compile Include="Projects\AS3\AS3ProjectReader.cs" />
+    <Compile Include="Projects\AS3\AS3ProjectWriter.cs" />
+    <Compile Include="Controls\AS3\MxmlFileMapping.cs" />
+    <Compile Include="Projects\AS3\FlexProjectReader.cs" />
+    <Compile Include="Projects\AS3\MxmlcOptions.cs" />
+    <Compile Include="Projects\CompilerOptions.cs" />
+    <Compile Include="Projects\Generic\GenericMovieOptions.cs" />
+    <Compile Include="Projects\Generic\GenericOptions.cs" />
+    <Compile Include="Projects\Generic\GenericProject.cs" />
+    <Compile Include="Projects\Generic\GenericProjectReader.cs" />
+    <Compile Include="Projects\Generic\GenericProjectWriter.cs" />
+    <Compile Include="Projects\Haxe\HaxeMovieOptions.cs" />
+    <Compile Include="Projects\Haxe\HaxeProjectReader.cs" />
+    <Compile Include="Projects\Haxe\HaxeProjectWriter.cs" />
+    <Compile Include="Projects\Haxe\HaxeOptions.cs" />
+    <Compile Include="Projects\Haxe\HaxeProject.cs" />
+    <Compile Include="Projects\LibraryAsset.cs" />
+    <Compile Include="Projects\MovieOptions.cs" />
+    <Compile Include="Projects\BuildEventVars.cs" />
+    <Compile Include="Projects\FileInspector.cs" />
+    <Compile Include="Projects\HiddenPathCollection.cs" />
+    <Compile Include="Projects\MoreProjectPaths.cs" />
+    <Compile Include="Projects\PathCollection.cs" />
+    <Compile Include="Projects\Project.cs" />
+    <Compile Include="Projects\ProjectLoader.cs" />
+    <Compile Include="Projects\ProjectPaths.cs" />
+    <Compile Include="Projects\ProjectReader.cs" />
+    <Compile Include="Projects\ProjectWriter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Controls\BuildEventDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\ClasspathControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ClasspathDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\FDMenus.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\Icons.cs" />
+    <Compile Include="Controls\AS2\LibraryAssetDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\MergableMenu.cs" />
+    <Compile Include="Controls\NewProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\PropertiesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\TreeBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TreeView\DirectoryNode.cs" />
+    <Compile Include="Controls\TreeView\FileNode.cs" />
+    <Compile Include="Controls\TreeView\GenericNode.cs" />
+    <Compile Include="Controls\TreeView\OtherNodes.cs" />
+    <Compile Include="Controls\TreeView\ProjectContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TreeView\ProjectTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TreeView\SwfFileNode.cs" />
+    <Compile Include="Controls\TreeView\WatcherNode.cs" />
+    <Compile Include="Helpers\FDProcessRunner.cs" />
+    <Compile Include="Helpers\LineEntryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Helpers\ProjectCreator.cs" />
+    <Compile Include="Helpers\Scrolling.cs" />
+    <Compile Include="PluginMain.cs" />
+    <Compile Include="PluginUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Class.png" />
+    <EmbeddedResource Include="Icons\SwfMovie.png" />
+    <EmbeddedResource Include="Icons\SwfMovieHidden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ActionscriptCompile.png" />
+    <EmbeddedResource Include="Icons\ActionscriptFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\HtmlFile.png" />
+    <EmbeddedResource Include="Icons\XmlFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\HiddenItems.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\HiddenFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\BlankPage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SilkPage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MxmlFile.png" />
+    <EmbeddedResource Include="Icons\MxmlFileCompile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\HaxeFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SwcFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\FlashCS3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
+      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+      <Name>PluginCore</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Method.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Const.png" />
+    <EmbeddedResource Include="Icons\Variable.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,13 @@
+MTASC is very stable right now, so the releases since
+version 1.11 are focused on minor fixes and enhancements.
+Some people asked about the Future of MTASC, related to
+the next version of Flash 8.5 player and ActionScript 3.
+
+MTASC will not support AS3, as we are currently working on
+a new and powerful language name haXe that will support
+Flash Players 6-7-8 and 9 as well as Javascript and
+Server-Side scripting with PHP and Neko.
+
+You can check about it on http://haxe.org
+
+Nicolas

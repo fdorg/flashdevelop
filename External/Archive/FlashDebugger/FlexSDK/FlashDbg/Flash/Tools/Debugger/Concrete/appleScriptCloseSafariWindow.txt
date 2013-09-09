@@ -1,0 +1,38 @@
+--------------------------------------------------------------------------------
+--
+--  ADOBE SYSTEMS INCORPORATED
+--  Copyright 2006 Adobe Systems Incorporated
+--  All Rights Reserved.
+--
+--  NOTICE: Adobe permits you to use, modify, and distribute this file
+--  in accordance with the terms of the license agreement accompanying it.
+--
+--------------------------------------------------------------------------------
+
+-- tell Safari to close all windows that have the specified URL
+tell application "Safari"
+	-- 'closed' keeps track of whether we have closed any documents
+	set closed to false
+
+	set done to false
+	repeat until done
+		set done to true
+		repeat with doc in documents
+			if URL of doc is item 1 of argv then
+				close doc
+				set closed to true
+
+				-- since we have closed a document, we must restart the loop
+				set done to false
+				exit repeat
+			end if
+		end repeat
+	end repeat
+
+	-- if we closed at least one Safari window, and no more are
+	-- open, then tell Safari to exit
+	if closed and (count of documents) is 0 then quit
+
+	-- return true if we closed at least one window, false if not
+	closed
+end tell

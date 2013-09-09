@@ -1,0 +1,7 @@
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+interface $(FileNameWithPackage) $(CSLB){
+	$(EntryPoint)
+}

@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<keyword-classes>
+		<keyword-class name="sgml-and-dtd-keywords">
+			ELEMENT DOCTYPE ATTLIST ENTITY NOTATION
+		</keyword-class>
+		<keyword-class name="html-elements-and-attributes">
+			a abbr acronym address applet area b base basefont bdo big blockquote body br button caption center cite code 
+			col colgroup dd del dfn dir div dl dt em fieldset font form frame frameset h1 h2 h3 h4 h5 h6 head hr html i iframe 
+			img input ins isindex kbd label legend li link map menu meta noframes noscript object ol optgroup option p param 
+			pre q s samp script select small span strike strong style sub sup table tbody td textarea tfoot th thead title 
+			tr tt u ul var xml xmlns abbr accept-charset accept accesskey action align alink alt archive axis background bgcolor 
+			border cellpadding cellspacing char charoff charset checked cite class classid clear codebase codetype color cols 
+			colspan compact content coords data datafld dataformatas datapagesize datasrc datetime declare defer dir disabled 
+			enctype event face for frame frameborder headers height href hreflang hspace http-equiv id ismap label lang language 
+			leftmargin link longdesc marginwidth marginheight maxlength media method multiple name nohref noresize noshade nowrap 
+			object onblur onchange onclick ondblclick onfocus onkeydown onkeypress onkeyup onload onmousedown onmousemove onmouseover 
+			onmouseout onmouseup onreset onselect onsubmit onunload profile prompt readonly rel rev rows rowspan rules scheme 
+			scope selected shape size span src standby start style summary tabindex target text title topmargin type usemap 
+			valign value valuetype version vlink vspace width text password checkbox radio submit reset file hidden image
+			public !doctype xml:lang embed quality pluginspage article aside calendar canvas card command commandset datagrid 
+			datatree footer gauge header m menubar menulabel nav progress section switch tabbox active command contenteditable ping
+		</keyword-class>
+		<keyword-class name="php-keywords">
+			and array as bool boolean break case cfunction class const continue declare default die directory do double 
+			echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends false float 
+			for foreach function global if include include_once int integer isset list new null object old_function or 
+			parent print real require require_once resource return static stdclass string switch true unset use var while 
+			xor abstract catch clone exception final implements interface php_user_filter private protected public this
+			throw try __class__ __file__ __function__ __line__ __method__ __sleep __wakeup
+		</keyword-class>
+		<keyword-class name="javascript-keywords">
+			enum throw throws class extends try const finally long private package final
+			protected public byte int short char interface static double enum float package
+			boolean implements while function export if in assign ref do for import var
+			else switch with abstract native catch return default instanceOf new goto delete 
+			alert arguments break callee caller captureEvents clearInterval clearTimeout close 
+			closed comment confirm constructor continue debugger defaultStatus document 
+			escape eval export false find focus frames getClass history home Infinity innerHeight 
+			innerWidth isFinite isNaN isNan java label length Link location Location locationbar 
+			menubar moveBy moveTo name NaN navigate navigator netscape null onBlur onError 
+			onFocus onLoad onUnload open opener outerHeight outerWidth pageXoffset pageYoffset 
+			parent parseFloat parseInt personalbar print prompt prototype releaseEvents resizeBy 
+			resizeTo routeEvent scroll scrollbars scrollBy scrollTo Select self setInterval 
+			setTimeout status statusbar stop sun super synchronized taint this toolbar top toString 
+			transient true typeof undefined unescape untaint unwatch valueOf void watch window
+			ActiveXObject Anchor Area Array blur Boolean Button Date Checkbox Document Element 
+			FileUpload Form Frame Function Hidden History Image JavaArray JavaClass JavaObject JavaPackage 
+			Math MimeType Navigator Number Object Option Packages Password Plugin Radio RegExp 
+			Text Textarea Submit Window Reset String XMLHttpRequest
+		</keyword-class>
+	</keyword-classes>
+	<languages>
+		<language name="html">
+			<lexer name="html" style-bits="7" />
+			<character-class><![CDATA[qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789-_$]]></character-class>
+			<file-extensions>php,php3,php4,php5,html,htm,shtm,shtml,phtml,asp,aspx,jsp,cf,htc,mtt,tpl</file-extensions>
+			<comment-start><![CDATA[<!--]]></comment-start>
+			<comment-end><![CDATA[-->]]></comment-end>
+			<use-keywords>
+				<keyword key="0" class="html-elements-and-attributes" />
+				<keyword key="1" class="javascript-keywords" />
+				<keyword key="4" class="php-keywords" />
+				<keyword key="5" class="sgml-and-dtd-keywords" />
+			</use-keywords>
+			<!-- COLORING_START -->
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<use-styles>
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="tag" fore="0x000099" />
+				<style name="tagunknown" fore="0xff0000" />
+				<style name="attribute" fore="0x000099" />
+				<style name="attributeunknown" fore="0x000099" />
+				<style name="number" fore="0x000099" />
+				<style name="doublestring" fore="0x009900" />
+				<style name="singlestring" fore="0x009900" />
+				<style name="other" fore="0x000099" />
+				<style name="comment" fore="0x808080" />
+				<style name="entity" fore="0x000099" />
+				<style name="tagend" fore="0x000099" />
+				<style name="xmlstart" fore="0x000099" />
+				<style name="xmlend" fore="0x000099" />
+				<style name="script" fore="0x000080" bold="true" />
+				<style name="asp" fore="0xff9900" />
+				<style name="aspat" fore="0xcc6600" />
+				<style name="cdata" fore="0x800000" />
+				<style name="question" fore="0xff0000" bold="true" />
+				<style name="value" fore="0x800080" />
+				<style name="xccomment" fore="0x808080" />
+				<style name="sgml_default" fore="0x000080" />
+				<style name="sgml_command" fore="0x000080" bold="true" />
+				<style name="sgml_1st_param" fore="0x006600" />
+				<style name="sgml_doublestring" fore="0x800000" />
+				<style name="sgml_simplestring" fore="0x993300" />
+				<style name="sgml_error" fore="0xff0000" />
+				<style name="sgml_special" fore="0x3366ff" />
+				<style name="sgml_entity" fore="0x333333" />
+				<style name="sgml_comment" fore="0x808080" />
+				<style name="sgml_1st_param_comment" fore="0x808080" />
+				<style name="sgml_block_default" fore="0x000066" />
+				<style name="j_start" />
+				<style name="j_default" />
+				<style name="j_comment" fore="0x808080" />
+				<style name="j_commentline" fore="0x808080" />
+				<style name="j_commentdoc" fore="0x808080" />
+				<style name="j_number" fore="0x009900" />
+				<style name="j_word" />
+				<style name="j_keyword" fore="0x000099" bold="true" />
+				<style name="j_doublestring" fore="0x0000ff" />
+				<style name="j_singlestring" fore="0x0000ff" />
+				<style name="j_symbols" bold="true" />
+				<style name="j_stringeol" />
+				<style name="j_regex"  />
+				<style name="ja_start" />
+				<style name="ja_default" />
+				<style name="ja_comment" />
+				<style name="ja_commentline" />
+				<style name="ja_commentdoc" />
+				<style name="ja_number" />
+				<style name="ja_word" />
+				<style name="ja_keyword" />
+				<style name="ja_doublestring" />
+				<style name="ja_singlestring" />
+				<style name="ja_symbols" />
+				<style name="ja_stringeol" />
+				<style name="ja_regex" />
+				<style name="b_start" />
+				<style name="b_default" />
+				<style name="b_commentline" />
+				<style name="b_number" />
+				<style name="b_word" />
+				<style name="b_string" />
+				<style name="b_identifier" />
+				<style name="b_stringeol" />
+				<style name="ba_start" />
+				<style name="ba_default" />
+				<style name="ba_commentline" />
+				<style name="ba_number"  />
+				<style name="ba_word" />
+				<style name="ba_string" />
+				<style name="ba_identifier" />
+				<style name="ba_stringeol" />
+				<style name="p_start" />
+				<style name="p_default" />
+				<style name="p_commentline" />
+				<style name="p_number" />
+				<style name="p_string" />
+				<style name="p_character" />
+				<style name="p_word" />
+				<style name="p_triple" />
+				<style name="p_tripledouble" />
+				<style name="p_classname" />
+				<style name="p_defname" />
+				<style name="p_operator" />
+				<style name="p_identifier" />
+				<style name="php_complex_variable" />
+				<style name="pa_start" />
+				<style name="pa_default" />
+				<style name="pa_commentline" />
+				<style name="pa_number" />
+				<style name="pa_string" />
+				<style name="pa_character" />
+				<style name="pa_word" />
+				<style name="pa_triple" />
+				<style name="pa_tripledouble" />
+				<style name="pa_classname" />
+				<style name="pa_defname" />
+				<style name="pa_operator" />
+				<style name="pa_identifier" />
+				<style name="php_default" />
+				<style name="php_hstring" fore="0xff0000" />
+				<style name="php_simplestring" fore="0xff0000" />
+				<style name="php_word" fore="0x0000ff" />
+				<style name="php_number" fore="0xff0000" />
+				<style name="php_variable" />
+				<style name="php_comment" fore="0x808080" />
+				<style name="php_commentline" fore="0x808080" />
+				<style name="php_hstring_variable" />
+				<style name="php_operator" fore="0x000099" />
+				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0xc0c0c0" />
+				<style name="lastpredefined" fore="0x666666" />
+			</use-styles>
+			<!-- COLORING_END -->
+		</language>
+	</languages>
+</Scintilla>

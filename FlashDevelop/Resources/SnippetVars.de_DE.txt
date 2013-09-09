@@ -1,0 +1,50 @@
+﻿Wähle die Instruktion...
+- MAIN -------------------------------------------------------------------------
+$(EntryPoint) - Startposition des Zeigers
+$(ExitPoint) - Endposition des Zeigers
+$(Boundary) - Behalte den Text zwischen den Abgrenzungen
+$(CSLB) - Code-Stil Zeilenumbruch
+$(CBI) - Kommentarblock-Einzug
+$(STC) - Lücken- oder Tabulatorzeichen
+- TEXT -------------------------------------------------------------------------
+$(SelText) - Markierter Text
+$(CurWord) - Das Wort bei der Zeigerposition
+$(CurSyntax) - Momentan aktive Syntax
+$(Clipboard) - Inhalt der Zwischenablage
+- DATEI -------------------------------------------------------------------------
+$(CurFile) - Aktuelle Datei
+$(CurFilename) - Dateiname der aktuellen Datei
+$(CurFilenameNoExt) - Dateiname der aktuellen Datei (ohne Endung)
+$(CurDir) - Dateiordner der aktuellen Datei
+- VERZEICHNIS -------------------------------------------------------------------------
+$(DesktopDir) - Desktop des Benutzers
+$(SystemDir) - Windows System-Verzeichnis
+$(ProgramsDir) - Programm-Ordner
+$(PersonalDir) - "Eigene Dateien"-Ordner
+$(WorkingDir) - Aktuelles Arbeitsverzeichnis
+$(AppDir) - FlashDevelop Programm-Ordner
+$(BaseDir) - FlashDevelop Files-Ordner
+$(UserAppDir) - FlashDevelop Benutzer-Ordner
+- TYP -------------------------------------------------------------------------
+$(TypPkg) - Paket der aktuellen Datei
+$(TypName) - Name des aktuellen Typs
+$(TypPkgName) - Paket + Name des aktuellen Typs
+$(TypKind) - Art des aktuellen Typs (interface, class)
+$(TypClosestListName) - Name des nächsten Array oder Vectors
+$(TypClosestListItemType) - Element-Typ des nächsten Vectors
+- FELDER -------------------------------------------------------------------------
+$(MbrName) - Aktuelles Feld, z.B. aktuelle Methode
+$(MbrKind) - Feld-Art (const, var, function)
+$(MbrTypPkg) - Paket des Feld-Typs
+$(MbrTypName) - Name des Feld-Typs
+$(MbrTypePkgName) - Qualifizierter Name des Feld-Typs
+$(MbrTypKind) - Art des Feld-Typs (interface, class)
+- ITEM -------------------------------------------------------------------------
+$(ItmTypName) - Aktuelles Element an der Zeigerposition
+$(ItmFile) - Datei, in welcher das Element deklariert wurde
+$(ItmKind) - Art des Elements (const, var, function)
+$(ItmTypPkg) - Paket des Elements
+$(ItmTypName) - Name des Element-Typs
+$(ItmTypePkgName) - Qualifizierter Name des Element-Typs
+$(ItmTypKind) - Art des Element-Typs (interface, class)
+$(ItmUniqueVar) - Eindeutiger Variablenname (i, j... etc)

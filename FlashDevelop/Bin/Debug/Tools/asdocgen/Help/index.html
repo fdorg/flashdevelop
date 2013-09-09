@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>ASDocGen</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link href="styles.css" rel="stylesheet" type="text/css" title="styles" media="all" />
+</head>
+<body>
+
+<div id="wrapper">
+	
+	<div id="header">
+		<h3>ASDocGen - Documentation Generator UI</h3>
+	</div>
+	
+	<div id="content">
+		
+		<h4>Description</h4>
+		<p>ASDocGen is a generic ActionScript documentation generator user interface for AS2API and ASDoc. It makes it easy to
+		generate documentation from ActionScript code and you can save the documentation parameters as a project. Both tools use 
+		a JavaDoc type documentation syntax so it's easy to start producing high quality documentation with ASDocGen.</p>
+		
+		<h4>Usage</h4>
+		<p>ASDoc has only one type of project (*.docproj) and it parses the arguments based on the compiler. The only difference 
+		between the two is the usage of the "Packages" / "Exclude classes" and the "Classpaths" fields. AS2API looks for the classpaths 
+		for the specified packages to be documented. You can list packages indivially or use a wildcard "*". (ie. com.company.package or com.company.*).
+		The list should be space separated. ASDoc documents directly the specified classpaths and you can use the "Exclude classes" field to 
+		exclude classes from being documented. You can also import settings from AS2 Project or AS3 Project using "Import Project".</p>
+		<h5>Explanation of arguments:</h5>
+		<ul>
+			<li>Page title - <i>The global page title of the documentation.</i></li>
+			<li>Packages/Exclude classes - <i>List of packages (AS2API) or classes to exclude (ASDoc).</i></li>
+			<li>Output directory - <i>The target directory where the documentation will be generated.</i></li>
+			<li>Classpaths - <i>The paths to the classes for the compiler. Default classes are added automaticly.</i></li>
+			<li>Extra options - <i>Additional options for the selected compiler. See Advanced for details.</i></li>
+			<li>Compiler - <i>The selected compiler. You need to define ASDoc location to the settings.</i></li>
+		</ul>
+		
+		<h4>Settings</h4>
+		<p>In the settings you can define the location of the compilers. AS2API is already set but you can change it if you want to use a
+		custom version. ASDoc compiler needs to be defined so that you can use it. It is part of the free Flex SDK. You can use the "Copy 
+		compiler related template files" setting to use custom files (ie. css styles or other files) to be copied to the output directory. 
+		You need to place the files to ASDocGen/Files directory and each filename should start with a compiler name and a slash (ie. as2api-styles.css).
+		This tells to the ASDocGen which files are for which compiler. The files will be copied everytime you compile the documentation.</p>
+		<h5>Explanation of settings:</h5>
+		<ul>
+			<li>AS2API location - <i>The directory where the AS2API compiler resides. Defaults to ASDocGen/Tools.</i></li>
+			<li>ASDoc location - <i>The directory where the ASDoc compiler resides. This needs to be defined.</i></li>
+			<li>Copy compiler related template files - <i>After compile, copies the files to the output dir.</i></li>
+		</ul
+		
+		<h4>Advanced</h4>
+		<p>Detailed help, syntax and command line argument lists can be found from the these locations:</p>
+		<ul>
+			<li><a href="http://www.badgers-in-foil.co.uk/projects/as2api/">AS2API</a> by David Holroyd</li>
+			<li><a href="http://help.adobe.com/en_US/flex/using/WSd0ded3821e0d52fe1e63e3d11c2f44bc36-7ffa.html">ASDoc</a> by Adobe Systems Incorporated</li>
+		</ul>
+		
+	</div>
+	
+</div>
+
+</body>
+</html>

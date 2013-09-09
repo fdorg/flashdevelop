@@ -1,0 +1,1 @@
+﻿	local var accessibilityPropertyNames : Array;

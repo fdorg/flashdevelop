@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwfOp", "SwfOp.csproj", "{DFFCFF12-CB60-4748-8F23-0C36F140F44C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DFFCFF12-CB60-4748-8F23-0C36F140F44C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFFCFF12-CB60-4748-8F23-0C36F140F44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFFCFF12-CB60-4748-8F23-0C36F140F44C}.Debug|x86.ActiveCfg = Debug|x86
+		{DFFCFF12-CB60-4748-8F23-0C36F140F44C}.Debug|x86.Build.0 = Debug|x86
+		{DFFCFF12-CB60-4748-8F23-0C36F140F44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFFCFF12-CB60-4748-8F23-0C36F140F44C}.Release|x86.ActiveCfg = Release|x86
+		{DFFCFF12-CB60-4748-8F23-0C36F140F44C}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

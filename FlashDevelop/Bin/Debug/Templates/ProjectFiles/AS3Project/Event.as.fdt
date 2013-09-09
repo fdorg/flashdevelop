@@ -1,0 +1,25 @@
+package $(Package) $(CSLB){
+	import flash.events.Event;
+	
+	/**
+	$(CBI)* ...
+	$(CBI)* @author $(DefaultUser)
+	$(CBI)*/
+	public class $(FileName) extends Event $(CSLB){
+		
+		public function $(FileName)(type:String, bubbles:Boolean=false, cancelable:Boolean=false) $(CSLB){ 
+			super(type, bubbles, cancelable);
+			$(EntryPoint)
+		} 
+		
+		public override function clone():Event $(CSLB){ 
+			return new $(FileName)(type, bubbles, cancelable);
+		} 
+		
+		public override function toString():String $(CSLB){ 
+			return formatToString("$(FileName)", "type", "bubbles", "cancelable", "eventPhase"); 
+		}
+		
+	}
+	
+}

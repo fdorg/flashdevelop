@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mainmenu>
+	<menu label="Label.File" name="FileMenu">
+		<menu label="Label.New" name="NewMenu">
+			<button label="Label.BlankDocument" click="New" shortcut="Control|N" />
+			<separator />
+			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" shortcut="Control|D1" />
+			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" shortcut="Control|D2" />
+			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" shortcut="Control|D3" />
+			<button label="Label.HTMLDocument" click="NewFromTemplate" tag="html;$(TemplateDir)\HTML.fdt" shortcut="Control|D4" />
+			<button label="Label.JScriptDocument" click="NewFromTemplate" tag="js;$(TemplateDir)\JScript.js.fdt" shortcut="Control|D5" />
+			<button label="Label.CSSDocument" click="NewFromTemplate" tag="css;$(TemplateDir)\CSS.fdt" shortcut="Control|D6" />
+			<button label="Label.PHPDocument" click="NewFromTemplate" tag="php;$(TemplateDir)\PHP.fdt" shortcut="Control|D7" />
+			<button label="Label.XMLDocument" click="NewFromTemplate" tag="xml;$(TemplateDir)\XML.fdt" shortcut="Control|D8" />
+			<button label="Label.TextDocument" click="NewFromTemplate" tag="txt;$(TemplateDir)\TXT.fdt" shortcut="Control|D9" />
+		</menu>
+		<menu label="Label.Modify" name="ModifyMenu" flags="Enable:IsEditable">
+			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" />
+			<button label="Label.Duplicate" click="Duplicate" shortcut="Control|Shift|N" flags="Enable:IsEditable" />
+			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|T" flags="Enable:IsEditable|CanUndo" />
+		</menu>
+		<button label="Label.Open" click="Open" shortcut="Control|O" image="214" />
+		<separator />
+		<menu label="Label.RecentFiles" name="ReopenMenu" />
+		<separator />
+		<button label="Label.Save" click="Save" shortcut="Control|S" image="168" flags="Enable:IsEditable+Disable:!IsUntitled|!IsModified" />
+		<button label="Label.SaveAs" click="SaveAs" shortcut="Control|Shift|S" flags="Enable:IsEditable" />
+		<button label="Label.SaveAll" click="SaveAll" image="169" flags="Enable:HasModified" />
+		<separator />
+		<button label="Label.Close" click="Close" shortcut="Control|W" image="275|4|5|4" />
+		<button label="Label.UndoClose" click="ReopenClosed" shortcut="Control|Shift|T" image="73" flags="Enable:HasClosedDocs" />
+		<button label="Label.CloseOthers" click="CloseOthers" shortcut="Control|Shift|W" />
+		<button label="Label.CloseAll" click="CloseAll" shortcut="Control|Shift|V" />
+		<separator />
+		<menu label="Label.Encoding" name="EncodingMenu" flags="Enable:IsEditable">
+			<button label="Label.8Bits" click="ChangeEncoding" tag="0" flags="Check:IsEditable|IsActiveEncoding" />
+			<button label="Label.BigEndian" click="ChangeEncoding" tag="1201" flags="Check:IsEditable|IsActiveEncoding" />
+			<button label="Label.LittleEndian" click="ChangeEncoding" tag="1200" flags="Check:IsEditable|IsActiveEncoding" />
+			<button label="Label.UTF8" click="ChangeEncoding" tag="65001" flags="Check:IsEditable|IsActiveEncoding" />
+			<button label="Label.UTF7" click="ChangeEncoding" tag="65000" flags="Check:IsEditable|IsActiveEncoding" />
+			<separator />
+			<button label="Label.SaveBOM" click="ToggleSaveBOM" flags="Check:IsEditable|SaveBOM+Disable:IsDefaultEncoding" />
+			<separator />
+			<menu label="Label.ConvertTextTo" name="ConvertToMenu" flags="Enable:IsEditable">
+				<button label="Label.8Bits" click="ConvertEncoding" tag="0" />
+				<button label="Label.BigEndian" click="ConvertEncoding" tag="1201" />
+				<button label="Label.LittleEndian" click="ConvertEncoding" tag="1200" />
+				<button label="Label.UTF8" click="ConvertEncoding" tag="65001" />
+				<button label="Label.UTF7" click="ConvertEncoding" tag="65000" />
+			</menu>
+			<menu label="Label.OpenFilesIn" name="OpenInMenu" flags="Enable:IsEditable">
+				<button label="Label.8Bits" click="OpenIn" tag="0" />
+				<button label="Label.BigEndian" click="OpenIn" tag="1201" />
+				<button label="Label.LittleEndian" click="OpenIn" tag="1200" />
+				<button label="Label.UTF8" click="OpenIn" tag="65001" />
+				<button label="Label.UTF7" click="OpenIn" tag="65000" />
+			</menu>
+		</menu>
+		<menu label="Label.LineEnds" name="EOLMenu" flags="Enable:IsEditable">
+			<button label="Label.CRLF" click="ConvertEOL" tag="0" flags="Check:IsEditable|IsActiveEOL" />
+			<button label="Label.CR" click="ConvertEOL" tag="1" flags="Check:IsEditable|IsActiveEOL" />
+			<button label="Label.LF" click="ConvertEOL" tag="2" flags="Check:IsEditable|IsActiveEOL" />
+		</menu>
+		<separator />
+		<button label="Label.Print" click="Print" shortcut="Control|P" image="343" flags="Enable:IsEditable" />
+		<button label="Label.PrintPreview" click="PrintPreview" shortcut="Control|Shift|P" flags="Enable:IsEditable" />
+		<separator />
+		<button label="Label.Restart" click="Restart" flags="Enable:!MultiInstanceMode" />
+		<button label="Label.Exit" click="Exit" />
+	</menu>
+	<menu label="Label.Edit" name="EditMenu">
+		<button label="Label.Undo" click="ScintillaCommand" tag="Undo" shortcut="Control|Z" image="73" flags="Enable:IsEditable|CanUndo" />
+		<button label="Label.Redo" click="ScintillaCommand" tag="Redo" shortcut="Control|Y" image="65" flags="Enable:IsEditable|CanRedo"  />
+		<separator />
+		<button label="Label.Cut" click="ScintillaCommand" tag="CutAllowLine" shortcut="Control|X" image="158" flags="Enable:IsEditable" />
+		<button label="Label.Copy" click="ScintillaCommand" tag="CopyAllowLine" shortcut="Control|C" image="278" flags="Enable:IsEditable" />
+		<button label="Label.Paste" click="ScintillaCommand" tag="Paste" shortcut="Control|V" image="283" flags="Enable:IsEditable|CanPaste" />
+		<button label="Label.SmartPaste" click="SmartPaste" shortcut="Control|Alt|V" flags="Enable:IsEditable|CanPaste" />
+		<button label="Label.SelectAll" click="ScintillaCommand" tag="SelectAll" shortcut="Control|A" flags="Enable:IsEditable" />
+		<separator />
+		<button label="Label.CutLine" click="ScintillaCommand" tag="LineCut" shortcut="Control|Shift|X" flags="Enable:IsEditable" />
+		<button label="Label.CopyLine" click="ScintillaCommand" tag="LineCopy" shortcut="Control|Shift|C" flags="Enable:IsEditable" />
+		<button label="Label.DeleteLine" click="ScintillaCommand" tag="LineDelete" shortcut="Control|Shift|D" flags="Enable:IsEditable" />
+		<button label="Label.MoveLineUp" click="ScintillaCommand" tag="MoveLineUp" shortcut="Control|Alt|Up" flags="Enable:IsEditable" />
+		<button label="Label.MoveLineDown" click="ScintillaCommand" tag="MoveLineDown" shortcut="Control|Alt|Down" flags="Enable:IsEditable" />
+		<button label="Label.TransposeLines" click="ScintillaCommand" tag="LineTranspose" shortcut="Control|T" flags="Enable:IsEditable" />
+		<button label="Label.DuplicateSelection" click="ScintillaCommand" tag="SelectionDuplicate" shortcut="Control|D" flags="Enable:IsEditable" />
+		<button label="Label.SortLineGroups" click="SortLineGroups" flags="Enable:IsEditable|Enable:HasSelection" />
+		<button label="Label.SortLines" click="SortLines" flags="Enable:IsEditable|Enable:HasSelection" />
+		<separator />
+		<button label="Label.ToUppercase" click="ScintillaCommand" tag="UpperCase" shortcut="Control|U" image="458" flags="Enable:IsEditable|HasSelection" />
+		<button label="Label.ToLowercase" click="ScintillaCommand" tag="LowerCase" shortcut="Control|L" image="446" flags="Enable:IsEditable|HasSelection" />
+		<separator />
+		<button label="Label.LineComment" click="ToggleLineComment" shortcut="Control|Q" flags="Enable:IsEditable" />
+		<button label="Label.BlockComment" click="ToggleBlockComment" shortcut="Control|Shift|Q" flags="Enable:IsEditable" />
+		<separator />
+		<button label="Label.SaveAsTemplate" click="SaveAsTemplate" flags="Enable:IsEditable|Enable:HasSelection" />
+		<button label="Label.SaveAsSnippet" click="SaveAsSnippet" flags="Enable:IsEditable|Enable:HasSelection" />
+	</menu>
+	<menu label="Label.View" name="ViewMenu">
+		<button label="Label.IndentationGuides" click="ToggleBooleanSetting" tag="ViewIndentationGuides" flags="Enable:IsEditable+Check:IsEditable|TracksBoolean" />
+		<button label="Label.LineEndCharacters" click="ToggleBooleanSetting" tag="ViewEOL" flags="Enable:IsEditable+Check:IsEditable|TracksBoolean" />
+		<button label="Label.WhitespaceCharacters" click="ToggleBooleanSetting" tag="ViewWhitespace" flags="Enable:IsEditable+Check:IsEditable|TracksBoolean" />
+		<button label="Label.WrapEditorText" click="ToggleBooleanSetting" tag="WrapText" flags="Enable:IsEditable+Check:IsEditable|TracksBoolean" />
+		<separator />
+		<button label="Label.ToggleFold" click="ToggleFold" shortcut="Control|Shift|F" flags="Enable:IsEditable" />
+		<button label="Label.CollapseRegions" click="ScintillaCommand" tag="CollapseRegions" shortcut="Control|Shift|U" flags="Enable:IsEditable" />
+		<button label="Label.CollapseFunctions" click="ScintillaCommand" tag="CollapseFunctions" shortcut="Control|Shift|Y" flags="Enable:IsEditable" />
+		<button label="Label.CollapseAll" click="ScintillaCommand" tag="CollapseAllFolds" shortcut="Control|Shift|A" flags="Enable:IsEditable" />
+		<button label="Label.ExpandAll" click="ScintillaCommand" tag="ExpandAllFolds" shortcut="Control|Shift|E" flags="Enable:IsEditable" />
+		<separator />
+		<button label="Label.FullScreen" click="ToggleFullScreen" shortcut="Shift|Alt|Enter" flags="Check:IsFullScreen" />
+		<button label="Label.SplitView" click="ToggleSplitView" shortcut="Control|Shift|Enter" flags="Check:IsSplitted" />
+		<separator />
+	</menu>
+	<menu label="Label.Search" name="SearchMenu">
+		<button label="Label.QuickFind" click="QuickFind" shortcut="Control|F" image="299" />
+		<button label="Label.QuickFindNext" click="FindNext" shortcut="F3" image="484|9|3|-4" flags="Enable:IsEditable" />
+		<button label="Label.QuickFindPrevious" click="FindPrevious" shortcut="Shift|F3" image="484|1|3|-4" flags="Enable:IsEditable" />
+		<separator />
+		<button label="Label.FindAndReplace" click="FindAndReplace" shortcut="Control|H" image="484" flags="Enable:IsEditable" />
+		<button label="Label.FindAndReplaceInFiles" click="FindAndReplaceInFiles" shortcut="Control|I" image="209" />
+		<separator />
+		<button label="Label.GotoPositionOrLine" click="GoTo" shortcut="Control|G" image="67" flags="Enable:IsEditable" />
+		<button label="Label.GotoMatchingBrace" click="GoToMatchingBrace" shortcut="Control|M" image="67" flags="Enable:IsEditable" />
+		<separator />
+		<button label="Label.ToggleBookmark" click="ToggleBookmark" shortcut="Control|F2" image="402" flags="Enable:IsEditable" />
+		<button label="Label.NextBookmark" click="NextBookmark" shortcut="F2" image="402|9|3|3" flags="Enable:IsEditable" />
+		<button label="Label.PrevBookmark" click="PrevBookmark" shortcut="Shift|F2" image="402|1|-3|3" flags="Enable:IsEditable" />
+		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" flags="Enable:IsEditable" />
+	</menu>
+	<menu label="Label.Insert" name="InsertMenu">
+		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" />
+		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" />
+		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" flags="Enable:IsEditable" />
+		<separator />
+		<button label="Label.Snippet" click="InsertSnippet" shortcut="Control|B" tag="null" flags="Enable:IsEditable" />
+		<button label="Label.Color" click="InsertColor" shortcut="Control|Shift|K" flags="Enable:IsEditable" />
+		<button label="Label.GUID" click="InsertGUID" shortcut="Control|Shift|I" flags="Enable:IsEditable" />
+		<separator />
+		<button label="Label.Hash" click="InsertHash" shortcut="Control|Shift|H" flags="Enable:IsEditable" />
+	</menu>
+	<menu label="Label.Tools" name="ToolsMenu">
+		<button label="Label.KillRunningProcess" click="KillProcess" flags="Enable:ProcessIsRunning" />
+		<separator />
+		<menu label="Label.FlashTools" name="FlashToolsMenu">
+			<button label="Label.SOReader" click="RunProcess" tag="$(Quote)$(AppDir)\Tools\soreader\SOReaderUI.exe$(Quote)" />
+			<button label="Label.ASDocGen" click="RunProcess" tag="$(Quote)$(AppDir)\Tools\asdocgen\ASDocGen.exe$(Quote)" />
+			<separator />
+			<button label="Label.TestMovieInFlash" click="PluginCommand" tag="ASCompletion.CallFlashIDE;$(Quote)$(AppDir)\Tools\flashide\testmovie.jsfl$(Quote)" shortcut="F6" />
+			<button label="Label.PublishMovieInFlash" click="PluginCommand" tag="ASCompletion.CallFlashIDE;$(Quote)$(AppDir)\Tools\flashide\buildmovie.jsfl$(Quote)" shortcut="Control|F6" />
+		</menu>
+		<menu label="Label.GeneralTools" name="GeneralToolsMenu">
+			<button label="Label.CommandPrompt" click="PluginCommand" tag="FileExplorer.PromptHere;$(WorkingDir)" image="57" />
+			<button label="Label.WindowsExplorer" click="PluginCommand" tag="FileExplorer.Explore;$(WorkingDir)" image="56" />
+			<separator />
+			<button label="Label.CompareFiles" click="RunProcess" tag="$(Quote)$(AppDir)\Tools\diffui\diffui.exe$(Quote)" image="37|16|-1|-1" />
+		</menu>
+		<menu label="Label.WebTools" name="WebToolsMenu">
+			<button label="Label.HTMLValidator" click="Browse" tag="http://validator.w3.org/" />
+			<button label="Label.CSSValidator" click="Browse" tag="http://jigsaw.w3.org/css-validator/" />
+		</menu>
+		<separator />
+		<button label="Label.SyntaxColoring" click="EditSyntax" image="55|30|2|3" />
+		<button label="Label.SelectTheme" click="SelectTheme" image="40|30|2|3" />
+		<separator />
+		<button label="Label.CodeSnippets" click="EditSnippets" image="341|5|2|2" />
+		<button label="Label.KeyboardShortcuts" click="EditShortcuts" image="49|15|2|2" />
+		<button label="Label.CustomArguments" click="ShowArguments" image="242" />
+		<separator />
+		<button label="Label.ApplicationFiles" click="PluginCommand" tag="FileExplorer.Explore;$(BaseDir)" image="46|30|2|3" />
+		<button label="Label.BackupSettings" click="BackupSettings" image="54|9|3|3" flags="Enable:!StandaloneMode" />
+		<button label="Label.ProgramSettings" click="ShowSettings" image="54" />
+	</menu>
+	<menu label="Label.Syntax" name="SyntaxMenu">
+		<!-- GENERATED ON RUNTIME -->
+	</menu>
+	<menu label="Label.Help" name="HelpMenu">
+		<button label="Label.ReleaseNotes" click="Browse" tag="$(AppDir)\Docs\index.html" image="222" />
+		<button label="Label.FDDocs" click="Browse" tag="http://www.flashdevelop.org/wikidocs/" image="95" />
+		<button label="Label.FDHome" click="Browse" tag="http://www.flashdevelop.org/" image="224" />
+		<button label="Label.CheckUpdates" click="CheckUpdates" image="181|8|0|4" />
+		<separator />
+		<menu label="Label.TechnicalSpecifications" name="TechSpecsMenu">
+			<button label="&amp;CSS 2.1" click="Browse" tag="http://www.w3.org/TR/CSS2" />
+			<button label="H&amp;TML 5" click="Browse" tag="http://www.w3.org/TR/html5" />
+			<button label="&amp;HTML 4.01" click="Browse" tag="http://www.w3.org/TR/html401" />
+			<button label="&amp;XHTML 1.1" click="Browse" tag="http://www.w3.org/TR/xhtml11" />
+			<button label="X&amp;SLT 2.0" click="Browse" tag="http://www.w3.org/TR/xslt20" />
+			<button label="XM&amp;L 1.1" click="Browse" tag="http://www.w3.org/TR/xml11/" />
+			<button label="&amp;DOM Level 3" click="Browse" tag="http://www.w3.org/TR/DOM-Level-3-Core" />
+			<button label="&amp;WCAG 1.0" click="Browse" tag="http://www.w3.org/TR/WCAG10" />
+		</menu>
+		<menu label="Label.LanguageReferences" name="LangRefsMenu">
+			<button label="&amp;Flash" click="Browse" tag="http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/index.html" />
+			<button label="&amp;HaXe" click="Browse" tag="http://haxe.org/ref" />
+			<button label="&amp;MYSQL" click="Browse" tag="http://dev.mysql.com/doc/mysql/en/" />
+			<button label="&amp;PHP" click="Browse" tag="http://www.php.net/manual/en/" />
+		</menu>
+		<separator />
+		<button label="Label.About" click="About" image="229" />
+	</menu>
+</mainmenu>

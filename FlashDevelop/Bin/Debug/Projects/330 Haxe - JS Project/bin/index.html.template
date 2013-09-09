@@ -1,0 +1,12 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>$(ProjectName)</title>
+	<meta name="description" content="" />
+</head>
+<body>
+	
+	<script src="$(ProjectID).js"></script>
+</body>
+</html>

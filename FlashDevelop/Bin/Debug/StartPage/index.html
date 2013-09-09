@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Start Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="styles.css" rel="stylesheet" type="text/css" title="styles" media="all" />
+		<script type="text/javascript" language="JavaScript" src="javascript/localization.js"></script>
+		<script type="text/javascript" language="JavaScript" src="javascript/startpage.js"></script>
+	</head>
+	<body>
+		<div id="tooltip"></div>
+		<div id="wrapper">
+			<div id="title"></div>
+			<div id="links">
+				<a href="javascript:window.external.ShowHome();"><script type="text/javascript">document.write(getLocaleString("mainLinkHome"));</script></a>
+				<a href="javascript:window.external.ShowDocumentation();"><script type="text/javascript">document.write(getLocaleString("mainLinkDocs"));</script></a>
+				<a href="javascript:window.external.ShowReleaseNotes();"><script type="text/javascript">document.write(getLocaleString("mainLinkNotes"));</script></a>
+				<a href="javascript:window.external.ShowAbout();"><script type="text/javascript">document.write(getLocaleString("mainLinkAbout"));</script></a>
+			</div>
+			<!-- Social Div -->
+			<div class="social"> 
+				<a href="http://www.facebook.com/pages/FlashDevelop/234513319739" title="FlashDevelop@Facebook"><img src="images/iconFacebook.png"/></a> 
+				<a href="http://twitter.com/flashdevelop" title="FlashDevelop@Twitter"><img src="images/iconTwitter.png"/></a>
+			</div> 
+			<!-- /Social Div --> 
+			<table id="holder" cellpadding="0" cellspacing="0">
+				<tr valign="top">
+					<td class="holderSpacer"></td>
+					<td class="smallWindowHolder">
+						<!-- <Recent Projects Table> -->
+						<table class="window" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="windowTopLeft"></td>
+								<td class="windowTop">
+									<span id="projectsTitle">
+										<script type="text/javascript">document.write(getLocaleString("recentProjectsTitle"));</script>
+									</span>
+								</td>
+							    <td class="windowTopRight"></td>
+							</tr>
+							<tr>
+								<td class="windowLeft"></td>
+								<td class="windowContent">
+									<div id="projectsContent">
+										<span class="greyedOut">
+											<script type="text/javascript">document.write(getLocaleString("loadingRecentProjects"));</script>
+										</span>
+									</div>
+								</td>
+								<td class="windowRight"></td>
+							</tr>
+							<tr>
+								<td class="windowLeft"></td>
+								<td>
+									<div id="tasksContent">
+										<b>&raquo;</b>
+										<a href="javascript:window.external.OpenProjectDialog()">
+											<script type="text/javascript">document.write(getLocaleString("openProjectDialog"));</script>
+										</a>
+										<br />
+										<b>&raquo;</b>
+										<a href="javascript:window.external.NewProject()">
+											<script type="text/javascript">document.write(getLocaleString("createNewProject"));</script>
+										</a>
+									</div>
+								</td>
+								<td class="windowRight"></td>
+							</tr>
+							<tr>
+								<td class="windowBottomLeft"></td>
+								<td class="windowBottom"></td>
+								<td class="windowBottomRight"></td>
+							</tr>
+						</table>
+						<!-- </Recent Projects Table> -->
+						<br/>
+						<!-- <Latest Version Table> -->
+						<table class="window" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="windowTopLeft"></td>
+								<td class="windowTop">
+									<span id="versionTitle">
+										<script type="text/javascript">document.write(getLocaleString("versionInfoTitle"));</script>
+									</span>
+								</td>
+								<td class="windowTopRight"></td>
+							</tr>
+							<tr>
+								<td class="windowLeft"></td>
+								<td class="windowContent">
+									<div id="versionContent">
+										<span class="greyedOut">
+											<script type="text/javascript">document.write(getLocaleString("loadingVersionInfo"));</script>
+										</span>
+									</div>
+								</td>
+								<td class="windowRight"></td>
+							</tr>
+							<tr>
+								<td class="windowBottomLeft"></td>
+								<td class="windowBottom"></td>
+								<td class="windowBottomRight"></td>
+							</tr>
+						</table>
+						<!-- </Latest Version Table> -->	
+					</td>
+					<td class="holderSpacer"></td>
+					<td>
+						<!-- <RSS Table> -->
+						<table class="window" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="windowTopLeft"></td>
+								<td class="windowTop">
+									<span id="rssTitle"></span>
+								</td>
+								<td class="windowTopRight"></td>
+							</tr>
+							<tr>
+								<td class="windowLeft"></td>
+								<td class="windowContent">
+									<div id="rssContent">
+										<span class="greyedOut">
+											<script type="text/javascript">document.write(getLocaleString("loadingRssFeed"));</script>
+										</span>
+									</div>
+								</td>
+								<td class="windowRight"></td>
+							</tr>
+							<tr>
+								<td class="windowBottomLeft"></td>
+								<td class="windowBottom"></td>
+								<td class="windowBottomRight"></td>
+							</tr>
+						</table>
+						<!-- </RSS Table> -->
+					</td>
+					<td class="holderSpacer"></td>
+				</tr>
+			</table>
+		</div>
+		<script type="text/javascript">
+			window.external.PageReady();
+		</script>
+	</body>
+</html>
+

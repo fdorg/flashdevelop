@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>$(ProjectName)</title>
+	<script src="http://code.createjs.com/easeljs-0.5.0.min.js"></script>
+	<script src="http://code.createjs.com/tweenjs-0.3.0.min.js"></script>
+	<script src="http://code.createjs.com/soundjs-0.3.0.min.js"></script>
+	<script src="http://code.createjs.com/preloadjs-0.2.0.min.js"></script>
+	<script src="http://code.createjs.com/movieclip-0.5.0.min.js"></script>
+	<script src="$(ProjectID).js"></script>
+</head>
+<body>
+
+<canvas id="mainCanvas" width="800" height="500"></canvas>
+
+<script>
+Main.main();
+</script>
+	
+</body>
+</html>

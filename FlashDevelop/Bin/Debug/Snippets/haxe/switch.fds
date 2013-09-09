@@ -1,0 +1,8 @@
+switch ($(EntryPoint)) $(CSLB){
+	case :
+		
+	default:
+		
+}
+
+

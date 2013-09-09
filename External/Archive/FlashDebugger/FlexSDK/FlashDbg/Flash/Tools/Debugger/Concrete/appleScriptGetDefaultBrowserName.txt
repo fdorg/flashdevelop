@@ -1,0 +1,25 @@
+--------------------------------------------------------------------------------
+--
+--  ADOBE SYSTEMS INCORPORATED
+--  Copyright 2006 Adobe Systems Incorporated
+--  All Rights Reserved.
+--
+--  NOTICE: Adobe permits you to use, modify, and distribute this file
+--  in accordance with the terms of the license agreement accompanying it.
+--
+--------------------------------------------------------------------------------
+
+-- Note, this only works on OSX 10.4 and up
+-- Returns the name of the default browser, e.g. "Safari", "Firefox", "Camino"; or "" if not known
+set p to POSIX path of (path to preferences) & "com.apple.LaunchServices.plist"
+tell application "System Events" to tell property list item "LSHandlerRoleAll" of (property list item 1 of property list item "LSHandlers" of property list file p whose value contains "http") to if exists then
+	set v to value -- now v is, for example, "com.apple.safari"
+	-- "application file id v" returns a file; so we are setting, for example,
+	-- "n" to "Safari.app" and "e" to "app"
+	tell application "Finder" to set {name:n, name extension:e} to application file id v
+	-- strip off the ".app" extension
+	tell (count e) + 1 to return n's text 1 thru -(1 mod it + it)
+end if
+
+-- if we get here, we couldn't find an "http" handler, so we don't know the default browser
+""

@@ -1,0 +1,1 @@
+An empty project written in ActionScript 2 for Flash Player 6-8

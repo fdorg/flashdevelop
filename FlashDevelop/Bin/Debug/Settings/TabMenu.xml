@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tabmenu>
+	<button label="Label.Close" click="Close" />
+	<button label="Label.CloseOthers" click="CloseOthers" />
+	<button label="Label.CloseAll" click="CloseAll" />
+	<separator />
+	<button label="Label.Reload" click="Reload" flags="Enable:IsEditable|!IsUntitled" />
+	<button label="Label.Duplicate" click="Duplicate" flags="Enable:IsEditable" />
+	<button label="Label.Revert" click="Revert" flags="Enable:IsEditable|CanUndo" />
+	<separator />
+	<button label="Label.Save" click="Save" flags="Enable:IsEditable" />
+	<button label="Label.SaveAs" click="SaveAs" flags="Enable:IsEditable" />
+</tabmenu>

@@ -1,0 +1,58 @@
+package $(PackageName);
+
+import nme.display.Sprite;
+import nme.events.Event;
+import nme.Lib;
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+
+class Main extends Sprite $(CSLB){
+	var inited:Bool;
+
+	/* ENTRY POINT */
+	
+	function resize(e) $(CSLB){
+		if (!inited) init();
+		// else (resize or orientation change)
+	}
+	
+	function init() $(CSLB){
+		if (inited) return;
+		inited = true;
+
+		// (your code here)
+		
+		// Stage:
+		// stage.stageWidth x stage.stageHeight @ stage.dpiScale
+		
+		// Assets:
+		// nme.Assets.getBitmapData("img/assetname.jpg");
+	}
+
+	/* SETUP */
+
+	public function new() $(CSLB){
+		super();	
+		addEventListener(Event.ADDED_TO_STAGE, added);
+	}
+
+	function added(e) $(CSLB){
+		removeEventListener(Event.ADDED_TO_STAGE, added);
+		stage.addEventListener(Event.RESIZE, resize);
+		#if ios
+		haxe.Timer.delay(init, 100); // iOS 6
+		#else
+		init();
+		#end
+	}
+	
+	public static function main() $(CSLB){
+		// static entry point
+		Lib.current.stage.align = nme.display.StageAlign.TOP_LEFT;
+		Lib.current.stage.scaleMode = nme.display.StageScaleMode.NO_SCALE;
+		Lib.current.addChild(new Main());
+	}
+}

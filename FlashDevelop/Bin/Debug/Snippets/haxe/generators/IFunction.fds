@@ -1,0 +1,1 @@
+$(BlankLine)function $(Name)($(Arguments)):$(Type);$(EntryPoint)

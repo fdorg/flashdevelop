@@ -1,0 +1,12 @@
+#pragma strict
+import System.Collections.Generic;
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+public class $(FileName) extends MonoBehaviour $(CSLB){
+	
+	$(EntryPoint)
+	
+}

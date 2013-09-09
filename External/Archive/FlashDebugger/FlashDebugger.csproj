@@ -1,0 +1,453 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{194B58C9-9D2B-4D5E-9256-773FD3222582}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FlashDebugger</RootNamespace>
+    <AssemblyName>FlashDebugger</AssemblyName>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Reference Include="Aga, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\FlashDevelop\Bin\Debug\Aga.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\DataTreeModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\LiveDataTip.cs" />
+    <Compile Include="Controls\WatchUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Debugger\BreakPointManager.cs" />
+    <Compile Include="Controls\BreakPointUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DataNode.cs" />
+    <Compile Include="Controls\DataTipForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\DataTipForm.Designer.cs">
+      <DependentUpon>DataTipForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DataTreeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DataTreeControl.Designer.cs">
+      <DependentUpon>DataTreeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ViewerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\ViewerForm.Designer.cs">
+      <DependentUpon>ViewerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\DebuggerManager.cs" />
+    <Compile Include="Debugger\ExpressionContext.cs" />
+    <Compile Include="Debugger\FlashDebuggerCallbacks.cs" />
+    <Compile Include="Debugger\FlashInterface.cs" />
+    <Compile Include="Debugger\VariableFacade.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\ActionLocation.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\AIRLaunchInfo.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Bootstrap.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Browser.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\CommandLineException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\AbstractPlayer.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\ActiveXPlayer.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DBrowser.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DLocation.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DManager.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DMessage.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DMessageCache.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DMessageCounter.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DModule.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DProtocol.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DProtocolNotifierIF.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DStackContext.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DSuspendInfo.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DSwfInfo.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DValue.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DVariable.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\DWatch.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\GetVariableFlag.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\LineFunctionContainer.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\NetscapePluginPlayer.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\PlayerSession.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\PlayerSessionManager.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\ProcessListener.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\RingBuffer.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\ScriptText.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\StandalonePlayer.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\StreamListener.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\DebuggerLocalizer.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\DefaultDebuggerCallbacks.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\BreakEvent.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\ConsoleErrorFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\DebugEvent.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\DivideByZeroFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\ExceptionFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\FaultEvent.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\FileListModifiedEvent.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\FunctionMetaDataAvailableEvent.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\InvalidTargetFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\InvalidURLFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\InvalidWithFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\ProtoLimitFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\RecursionLimitFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\ScriptTimeoutFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\StackUnderFlowFault.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\SwfLoadedEvent.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\SwfUnloadedEvent.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Events\TraceEvent.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\AddExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\AndExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\ArithmeticExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\AssignmentExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\ASTBuilder.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\BitwiseExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\BooleanExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\ConstantBooleanExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\ConstantExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\Context.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\DivExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\DotExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\EqExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\ExpressionException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\GTEqExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\GTExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\IASTBuilder.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\IncompleteExpressionException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\IndirectionExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\InternalVariableExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\LogicAndExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\LogicNotExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\LogicOrExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\LShiftExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\LTEqExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\LTExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\ModExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\MultExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\NeqExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\NoChildException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\NonTerminalExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\NoSuchVariableException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\NotExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\Operator.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\OrExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\PlayerFaultException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\RelationalExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\RShiftExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\SingleArgumentExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\StringExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\SubExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\SubscriptExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\TerminalExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\UnknownOperationException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\util.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\ValueExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\VariableExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\XorExp.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Frame.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\IDebuggerCallbacks.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\InProgressException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\IProgress.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Location.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\NoResponseException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\NotConnectedException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\NotSuspendedException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Player.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\PlayerDebugException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Session.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\SessionManager.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\SourceFile.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\SourceLocator.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\SuspendedException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\SuspendReason.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\SwfInfo.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Value.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\ValueAttribute.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Variable.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\VariableAttribute.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\VariableType.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\VersionException.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Watch.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\WatchKind.cs" />
+    <Compile Include="FlexSDK\FlashDbg\Flash\Tools\SwfActionContainer.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\localization\ILocalizedText.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\localization\ILocalizer.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\localization\LocalizationManager.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\localization\ResourceBundleLocalizer.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\Action.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\ActionConstants.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\ActionDecoder.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\ActionFactory.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\ActionHandler.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\Branch.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\ConstantPool.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\DefineFunction.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\GetURL.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\GetURL2.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\GotoFrame.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\GotoFrame2.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\GotoLabel.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\Label.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\Push.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\SetTarget.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\StoreRegister.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\StrictMode.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\Try.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\Unknown.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\WaitForFrame.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\actions\With.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\DebugDecoder.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\DebugHandler.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\DebugTags.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\debug\DebugModule.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\debug\DebugTable.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\debug\LineRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\debug\RegisterRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\Dictionary.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\Header.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\MovieMetaData.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\SwfDecoder.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\SwfEncoder.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\SwfFormatException.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\Tag.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\TagDecoder.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\TagHandler.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\CSMTextSettings.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DebugID.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineBinaryData.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineBits.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineBitsJPEG3.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineBitsLossless.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineButton.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineButtonCxform.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineButtonSound.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineEditText.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineFont.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineFont1.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineFont2.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineFont3.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineFont4.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineFontAlignZones.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineFontInfo.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineFontName.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineMorphShape.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineScalingGrid.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineSceneAndFrameLabelData.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineShape.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineSound.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineSprite.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineTag.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineText.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DefineVideoStream.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DoABC.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DoAction.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\DoInitAction.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\EnableDebugger.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\ExportAssets.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\FileAttributes.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\FrameLabel.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\GenericTag.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\ImportAssets.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\Metadata.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\PlaceObject.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\ProductInfo.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\RemoveObject.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\ScriptLimits.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\SetBackgroundColor.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\SetTabIndex.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\ShowFrame.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\SoundStreamHead.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\StartSound.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\SymbolClass.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\VideoFrame.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tags\ZoneRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\TagValues.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\tools\Disassembler.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ActionList.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ArrayLists.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\BevelFilter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\BlurFilter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ButtonCondAction.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ButtonRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ClipActionRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ClipActions.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ColorMatrixFilter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ConvolutionFilter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\CurvedEdgeRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\CXForm.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\CXFormWithAlpha.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\DropShadowFilter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\EdgeRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\FillStyle.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\Filter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\FlashUUID.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\FocalGradient.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\GlowFilter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\GlyphEntry.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\Gradient.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\GradientBevelFilter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\GradientGlowFilter.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\GradRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ImportRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\KerningRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\LineStyle.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\Matrix.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\MD5.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\MorphFillStyle.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\MorphGradRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\MorphLineStyle.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\Rect.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\Shape.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ShapeRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\ShapeWithStyle.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\SoundInfo.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\StraightEdgeRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\StyleChangeRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\TagList.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\swf\types\TextRecord.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\util\ArrayUtil.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\util\FieldFormat.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\util\FileUtils.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\util\IntMap.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\util\Trace.cs" />
+    <Compile Include="FlexSDK\SwfUtils\flash\util\URLHelper.cs" />
+    <Compile Include="FlexSDK\SwfUtils\JavaCompatibleClasses\LineNumberReader.cs" />
+    <Compile Include="FlexSDK\SwfUtils\JavaCompatibleClasses\LinkedHashMap.cs" />
+    <Compile Include="FlexSDK\SwfUtils\JavaCompatibleClasses\SystemProperties.cs" />
+    <Compile Include="FlexSDK\SwfUtils\SupportClass.cs" />
+    <Compile Include="Helpers\MenusHelper.cs" />
+    <Compile Include="Helpers\PanelsHelper.cs" />
+    <Compile Include="Helpers\ScintillaHelper.cs" />
+    <Compile Include="PluginUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PluginMain.cs" />
+    <Compile Include="Properties\Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="Controls\StackframeUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Utilities.cs" />
+    <Compile Include="Win32.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FlexSDK\FlashDbg\FlashDbg.resX">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\appleScriptCloseCaminoWindow.txt" />
+    <Content Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\appleScriptCloseSafariWindow.txt" />
+    <Content Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\appleScriptGetDefaultBrowserName.txt" />
+    <None Include="Icons\Breakpoints\CurLine.bmp" />
+    <None Include="Icons\Breakpoints\Disabled.bmp" />
+    <None Include="Icons\Breakpoints\Enabled.bmp" />
+    <Content Include="Icons\Continue.png" />
+    <Content Include="Icons\Current.png" />
+    <Content Include="Icons\Finish.png" />
+    <Content Include="Icons\Next.png" />
+    <Content Include="Icons\Pause.png" />
+    <Content Include="Icons\Step.png" />
+    <Content Include="Icons\RunToCursor.png" />
+    <Content Include="Icons\Stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\djapi_en.properties" />
+    <None Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Concrete\djapi_ja.properties" />
+    <None Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\djapi_en.properties" />
+    <None Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\djapi_ja.properties" />
+    <None Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\expression_en.properties" />
+    <None Include="FlexSDK\FlashDbg\Flash\Tools\Debugger\Expression\expression_ja.properties" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
+      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+      <Name>PluginCore</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
+      <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
+      <Name>ASCompletion</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
+      <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
+      <Name>ProjectManager</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,3 @@
+$(BlankLine)$(Modifiers) function $(Name)($(Arguments))<<:$(Type)>> $(CSLB){
+	<<$(Body)>>$(EntryPoint)
+}

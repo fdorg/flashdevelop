@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<keyword-classes>
+		<keyword-class name="css1-keywords">
+			color background-color background-image background-repeat background-attachment background-position background font-family font-style 
+			font-variant font-weight font-size font word-spacing letter-spacing text-decoration vertical-align text-transform text-align text-indent 
+			line-height margin-top margin-right margin-bottom margin-left margin padding-top padding-right padding-bottom padding-left padding 
+			border-top-width border-right-width border-bottom-width border-left-width border-width border-top border-right border-bottom border-left 
+			border border-color border-style width height float clear display white-space list-style-type list-style-image list-style-position list-style
+		</keyword-class>
+		<keyword-class name="css2-keywords">
+			border-top-color border-right-color border-bottom-color border-left-color border-color border-top-style border-right-style border-bottom-style 
+			border-left-style border-style top right bottom left position z-index direction unicode-bidi min-width max-width min-height max-height overflow 
+			clip visibility content quotes counter-reset counter-increment marker-offset size marks page-break-before page-break-after page-break-inside 
+			page orphans widows font-stretch font-size-adjust unicode-range units-per-em src panose-1 stemv stemh slope cap-height x-height ascent descent 
+			widths bbox definition-src baseline centerline mathline topline text-shadow caption-side table-layout border-collapse border-spacing empty-cells 
+			speak-header cursor outline outline-width outline-style outline-color volume speak pause-before pause-after pause cue-before cue-after cue 
+			play-during azimuth elevation speech-rate voice-family pitch pitch-range stress richness speak-punctuation speak-numeral
+		</keyword-class>
+		<keyword-class name="css3-keywords">
+			animation animation-name animation-duration animation-timing-function animation-delay animation-iteration-count animation-direction 
+			animation-play-state background-clip background-origin background-size border-bottom-left-radius border-bottom-right-radius border-image 
+			border-image-outset border-image-repeat border-image-slice border-image-source border-image-width border-radius border-top-left-radius 
+			border-top-right-radius box-decoration-break box-shadow overflow-x overflow-y overflow-style rotation rotation-point color-profile opacity 
+			rendering-intent bookmark-label bookmark-level bookmark-target float-offset hyphenate-after hyphenate-before hyphenate-character hyphenate-lines 
+			hyphenate-resource hyphens image-resolution marks string-set box-align box-direction box-flex box-flex-group box-lines box-ordinal-group box-orient 
+			box-pack font-size-adjust font-stretch crop move-to page-policy grid-columns grid-rows target target-name target-new target-position 
+			alignment-adjust alignment-baseline baseline-shift dominant-baseline drop-initial-after-adjust drop-initial-after-align drop-initial-before-adjust 
+			drop-initial-before-align drop-initial-size drop-initial-value inline-box-align line-stacking line-stacking-ruby line-stacking-shift line-stacking-strategy 
+			text-height marquee-direction marquee-play-count marquee-speed marquee-style column-count column-fill column-gap column-rule column-rule-color 
+			column-rule-style column-rule-width column-span column-width columns fit fit-position image-orientation page size ruby-align ruby-overhang ruby-position 
+			ruby-span mark mark-after mark-before phonemes rest rest-after rest-before voice-balance voice-duration voice-pitch voice-pitch-range voice-rate 
+			voice-stress voice-volume hanging-punctuation punctuation-trim text-align-last text-justify text-outline text-overflow text-shadow text-wrap word-break 
+			word-wrap transform transform-origin transform-style perspective perspective-origin backface-visibility transition transition-property transition-duration 
+			transition-timing-function transition-delay appearance box-sizing icon nav-down nav-index nav-left nav-right nav-up outline-offset resize user-select
+		</keyword-class>
+		<keyword-class name="css-values">
+			auto none normal italic oblique small-caps bold bolder lighter xx-small x-small small medium large x-large xx-large larger smaller 
+			transparent repeat repeat-x repeat-y no-repeat scroll fixed top bottom left center right justify both underline overline line-through 
+			blink baseline sub super text-top middle text-bottom capitalize uppercase lowercase thin medium thick dotted dashed solid double groove 
+			ridge inset outset block inline list-item pre no-wrap inside outside disc circle square decimal lower-roman upper-roman lower-alpha 
+			upper-alpha aqua black blue fuchsia gray green lime maroon navy olive purple red silver teal white yellow
+			inherit run-in compact marker table inline-table table-row-group table-header-group table-footer-group table-row table-column-group table-column 
+			table-cell table-caption static relative absolute fixed ltr rtl embed bidi-override visible hidden scroll collapse open-quote close-quote 
+			no-open-quote no-close-quote decimal-leading-zero lower-greek lower-latin upper-latin hebrew armenian georgian cjk-ideographic hiragana katakana 
+			hiragana-iroha katakana-iroha landscape portrait crop cross always avoid wider narrower ultra-condensed extra-condensed condensed semi-condensed 
+			semi-expanded expanded extra-expanded ultra-expanded caption icon menu message-box small-caption status-bar separate show hide once crosshair 
+			default pointer move text wait help e-resize ne-resize nw-resize n-resize se-resize sw-resize s-resize w-resize silent x-soft soft medium loud x-loud 
+			spell-out mix left-side far-left center-left center-right far-right right-side behind leftwards rightwards below level above higher lower x-slow slow 
+			medium fast x-fast faster slower male female child x-low low high x-high code digits continous
+			ActiveBorder ActiveCaption AppWorkspace Background ButtonFace ButtonHighlight ButtonShadow InactiveCaptionText ButtonText CaptionText GrayText Highlight 
+			HighlightText InactiveBorder InactiveCaption InfoBackground InfoText Menu MenuText Scrollbar ThreeDDarkShadow ThreeDFace ThreeDHighlight ThreeDLightShadow 
+			ThreeDShadow Window WindowFrame WindowText
+		</keyword-class>
+		<keyword-class name="css-pseudoclasses">
+			active after before checked default disabled empty enabled first first-child first-letter first-line first-of-type focus hover indeterminate 
+			invalid lang last-child last-of-type left link not nth-child nth-last-child nth-last-of-type nth-of-type only-child only-of-type optional 
+			required right root selection target valid visited
+		</keyword-class>
+		<keyword-class name="css-vendor-prefixes">
+			^-moz- ^-webkit- ^-ms- ^-o-
+		</keyword-class>
+	</keyword-classes>
+	<languages>
+		<language name="css">
+			<lexer name="css" style-bits="7" />
+			<character-class><![CDATA[qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789#-]]></character-class>
+			<line-comment><![CDATA[//]]></line-comment>
+			<comment-start><![CDATA[/*]]></comment-start>
+			<comment-end><![CDATA[*/]]></comment-end>
+			<file-extensions>css,hss,sass,scss,less</file-extensions>
+			<use-keywords>
+				<keyword key="0" class="css1-keywords" />
+				<keyword key="1" class="css-pseudoclasses" />
+				<keyword key="2" class="css2-keywords" />
+				<keyword key="3" class="css3-keywords" />
+				<keyword key="5" class="css-vendor-prefixes" />
+			</use-keywords>
+			<!-- COLORING_START -->
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<use-styles>
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="tag" fore="0x800000" />
+				<style name="class" fore="0x800000" />
+				<style name="pseudoclass" fore="0x800000" />
+				<style name="unknown_pseudoclass" fore="0xff0000" />
+				<style name="operator" fore="0x800000" />
+				<style name="identifier" />
+				<style name="unknown_identifier" fore="0xff0000" />
+				<style name="value" fore="0x800080" />
+				<style name="comment" fore="0x808080" />
+				<style name="id" fore="0x800000" />
+				<style name="important" fore="0x800080" />
+				<style name="directive" fore="0x800000" />
+				<style name="doublestring" fore="0x0000ff" />
+				<style name="singlestring" fore="0x0000ff" />
+				<style name="identifier2" />
+				<style name="attribute" />
+				<style name="identifier3" />
+				<style name="pseudoelement" />
+				<style name="extended_identifier" />
+				<style name="extended_pseudoclass" />
+				<style name="extended_pseudoelement" />
+				<style name="media" fore="0x800000" />
+				<style name="variable" fore="0x00aa00" />
+				<style name="gdefault" fore="0x800000" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0xc0c0c0" />
+				<style name="lastpredefined" fore="0x666666" />
+			</use-styles>
+			<!-- COLORING_END -->
+		</language>
+	</languages>
+</Scintilla>

@@ -1,0 +1,1 @@
+A project written in TypeScript language for the web browser

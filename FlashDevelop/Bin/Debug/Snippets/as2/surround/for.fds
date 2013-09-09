@@ -1,0 +1,3 @@
+for (var i:Number = 0; i < $(EntryPoint); i++) $(CSLB){
+	{0}
+}

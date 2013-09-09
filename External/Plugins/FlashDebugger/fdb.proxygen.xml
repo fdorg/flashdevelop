@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright (C) 2009 by Pavel Savara
+This file is part of tools for jni4net - bridge between Java and .NET
+http://jni4net.sourceforge.net/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<jni4net-proxygen xmlns="http://jni4net.sf.net/0.8.4.0/toolConfig.xsd">
+
+  <TargetDirJvm>generated\jvm</TargetDirJvm>
+  <TargetDirClr>generated\clr</TargetDirClr>
+
+  <!-- List of Java classes which should have proxy generated -->
+  <JavaClass TypeName="java.io.Reader"/>
+  <JavaClass TypeName="java.io.StringReader"/>
+  <JavaClass TypeName="java.net.SocketException"/>
+  <JavaClass TypeName="java.net.SocketTimeoutException"/>
+
+  <JavaClass TypeName="flash.tools.debugger.Bootstrap"/>
+  <JavaClass TypeName="flash.tools.debugger.SessionManager"/>
+  <JavaClass TypeName="flash.tools.debugger.Session"/>
+  <JavaClass TypeName="flash.tools.debugger.IProgress"/>
+  <JavaClass TypeName="flash.tools.debugger.SwfInfo"/>
+  <JavaClass TypeName="flash.tools.debugger.Frame"/>
+  <JavaClass TypeName="flash.tools.debugger.Variable"/>
+  <JavaClass TypeName="flash.tools.debugger.Value"/>
+  <JavaClass TypeName="flash.tools.debugger.VariableType"/>
+  <JavaClass TypeName="flash.tools.debugger.SourceFile"/>
+  <JavaClass TypeName="flash.tools.debugger.Location"/>
+  <JavaClass TypeName="flash.tools.debugger.SuspendReason"/>
+  <JavaClass TypeName="flash.tools.debugger.PlayerDebugException"/>
+  <JavaClass TypeName="flash.tools.debugger.NotConnectedException"/>
+  <JavaClass TypeName="flash.tools.debugger.VariableAttribute"/>
+  <JavaClass TypeName="flash.tools.debugger.NotSuspendedException"/>
+  <JavaClass TypeName="flash.tools.debugger.SuspendedException"/>
+  <JavaClass TypeName="flash.tools.debugger.InProgressException"/>
+  <JavaClass TypeName="flash.tools.debugger.VersionException"/>
+  <JavaClass TypeName="flash.tools.debugger.NoResponseException"/>
+  <JavaClass TypeName="flash.tools.debugger.events.DebugEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.SwfLoadedEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.FileListModifiedEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.BreakEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.TraceEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.SwfLoadedEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.SwfUnloadedEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.FaultEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.FunctionMetaDataAvailableEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.ConsoleErrorFault"/>
+<!--
+  <JavaClass TypeName="flash.tools.debugger.threadsafe.ThreadSafeBootstrap"/>
+  <JavaClass TypeName="flash.tools.debugger.threadsafe.ThreadSafeSessionManager"/>
+-->
+  <JavaClass TypeName="flash.tools.debugger.expression.ValueExp"/>
+  <JavaClass TypeName="flash.tools.debugger.expression.ASTBuilder"/>
+  <JavaClass TypeName="flash.tools.debugger.expression.IASTBuilder"/>
+  <JavaClass TypeName="flash.tools.debugger.expression.Context"/>
+  <JavaClass TypeName="flash.tools.debugger.expression.NoSuchVariableException"/>
+  <JavaClass TypeName="flash.tools.debugger.expression.PlayerFaultException"/>
+  <JavaClass TypeName="flash.tools.debugger.expression.ECMA"/>
+
+  <JavaClass TypeName="flash.tools.debugger.concrete.DValue"/>
+  <JavaClass TypeName="flash.tools.debugger.concrete.DVariable"/>
+<!--
+  <JavaClass TypeName="flex.tools.debugger.cli.ExpressionContext"/>
+-->
+
+  <ClassPath Path="..\..\..\FlashDEvelop\bin\Debug\Tools\flexlibs\lib\fdb.jar" />
+</jni4net-proxygen>

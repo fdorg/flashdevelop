@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding ="utf-8"?>
+<componentPackage>
+    <component class="fx.builtin.Binding" id="Binding" />
+    <component class="fx.builtin.Component" id="Component" />
+    <component class="fx.builtin.Metadata" id="Metadata" />
+    <component class="fx.builtin.Model" id="Model" />
+    <component class="fx.builtin.Script" id="Script" />
+    <component class="fx.builtin.Style" id="Style" />
+	 
+    <component class="fx.builtin.Declarations" id="Declarations" />
+    <component class="fx.builtin.Definition" id="Definition" />
+    <component class="fx.builtin.DesignLayer" id="DesignLayer" />
+    <component class="fx.builtin.Library" id="Library" />
+    <component class="fx.builtin.Private" id="Private" />
+    <component class="fx.builtin.Reparent" id="Reparent" />
+
+    <component class="Array" id="Array" />
+    <component class="Boolean" id="Boolean" />
+    <component class="Class" id="Class" />
+    <component class="Date" id="Date" />
+    <component class="Function" id="Function" />
+    <component class="int" id="int" />
+    <component class="Number" id="Number" />
+    <component class="Object" id="Object" />
+    <component class="RegExp" id="RegExp" />
+    <component class="String" id="String" />
+    <component class="uint" id="uint" />
+    <component class="Vector" id="Vector" />
+    <component class="XML" id="XML" />
+    <component class="XMLList" id="XMLList" />
+</componentPackage>

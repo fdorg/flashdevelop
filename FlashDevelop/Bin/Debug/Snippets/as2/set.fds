@@ -1,0 +1,4 @@
+public function set $(EntryPoint)(value):Void $(CSLB){
+	
+}
+

@@ -1,0 +1,1 @@
+A project written in JavaScript language for the web browser with CreateJS code library

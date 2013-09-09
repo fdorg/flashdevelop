@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<keyword-classes>
+		<keyword-class name="js-primary-keywords">
+			enum throw throws class extends try const finally long private package final
+			protected public byte int short char interface static double enum float package
+			boolean implements while function export if in assign ref do for import var
+			else switch with abstract native catch return default instanceOf new goto delete 
+		</keyword-class>
+		<keyword-class name="js-secondary-keywords">
+			arguments break continue false NaN null super this true typeof undefined unescape 
+		</keyword-class>
+		<keyword-class name="js-additional-keywords">
+			Object void
+		</keyword-class>
+		<keyword-class name="js-documentation-keywords">
+			author exception deprecated link param return see serial serialData serialField since throws version usage copy default example exampleText inheritDoc internal private 
+		</keyword-class>
+	</keyword-classes>
+	<languages>
+		<language name="unityscript">
+			<lexer name="cpp" style-bits="7" />
+			<character-class><![CDATA[qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_$]]></character-class>
+			<line-comment><![CDATA[//]]></line-comment>
+			<comment-start><![CDATA[/*]]></comment-start>
+			<comment-end><![CDATA[*/]]></comment-end>
+			<file-extensions>js</file-extensions>
+			<use-keywords>
+				<keyword key="0" class="js-secondary-keywords" />
+				<keyword key="1" class="js-additional-keywords" />
+				<keyword key="2" class="js-documentation-keywords" />
+				<keyword key="3" class="js-primary-keywords" />
+				<keyword key="5" class="js-additional-keywords3" />
+				<keyword key="6" class="js-additional-keywords4" />
+				<keyword key="7" class="js-additional-keywords5" />
+			</use-keywords>
+			<!-- COLORING_START -->
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<use-styles>
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="comment" fore="0x008000" />
+				<style name="commentline" fore="0x008000" />
+				<style name="commentdoc" fore="0x008000" />
+				<style name="number" fore="0x000099" />
+				<style name="word" fore="0x000099" />
+				<style name="string" fore="0xa31515" />
+				<style name="character" fore="0xa31515" />
+				<style name="uuid" />
+				<style name="preprocessor" fore="0x000099" />
+				<style name="operator" />
+				<style name="identifier" />
+				<style name="stringeol" />
+				<style name="verbatim" />
+				<style name="regex" />
+				<style name="commentlinedoc" fore="0x008000" />
+				<style name="word2" fore="0x008080" />
+				<style name="word3" />
+				<style name="word4" />
+				<style name="word5" />
+				<style name="commentdockeyword" fore="0x800000" />
+				<style name="commentdockeyworderror" fore="0xff0000" />
+				<style name="globalclass" fore="0x1518ff" />
+				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0xc0c0c0" />
+				<style name="lastpredefined" fore="0x666666" />
+			</use-styles>
+			<!-- COLORING_END -->
+		</language>
+	</languages>
+</Scintilla>

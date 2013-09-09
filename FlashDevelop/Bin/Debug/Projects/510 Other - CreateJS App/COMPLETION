@@ -1,0 +1,33 @@
+AlphaMapFilter AlphaMaskFilter BASE_64 Bitmap BitmapAnimation BoxBlurFilter CSSPlugin CanvasRenderingContext2D ColorFilter ColorMatrix
+ColorMatrixFilter Command Container DEG_TO_RAD DELTA_INDEX DOMElement DisplayObject Ease Filter Graphics HTMLCanvasElement HTMLElement
+HTMLImageElement HTMLVideoElement IDENTITY_MATRIX IGNORE INDEPENDENT LENGTH LOOP Matrix2D MouseEvent MovieClip NONE NativeMouseEvent
+Object Point REVERSE Rectangle SINGLE_FRAME STROKE_CAPS_MAP STROKE_JOINTS_MAP SYNCHED Shadow Shape SpriteSheet SpriteSheetAnimation
+SpriteSheetBuilder SpriteSheetUtils Stage Text Ticker Timeline Touch Tween UID actionsEnabled actionsMode actually addChild addChildAt
+addFlippedFrames addFrame addLabel addListener addMovieClip addTween adjustBrightness adjustColor adjustContrast adjustHue adjustSaturation
+advance allowDefault alpha alphaImage alphaMap alphaMultiplier alphaOffset amount amplitude and angle animation animationEnded anticlockwise
+append appendMatrix appendProperties appendTransform applyFilter arc arcTo atx autoClear backIn backInOut backOut backgroundColor
+beginBitmapFill beginBitmapStroke beginFill beginLinearGradientFill beginLinearGradientStroke beginRadialGradientFill beginRadialGradientStroke
+beginStroke bezierCurveTo blue blueMultiplier blueOffset blur blurX blurY both bounceIn bounceInOut bounceOut brightness build buildAsync
+cache cacheCanvas cacheID call callback can canvas caps child child1 child2 childOrIndex children circIn circInOut circOut clear clone
+closePath color colors complete compositeOperation concat contains contrast copyMatrix cp1x cp1y cp2x cp2y cpx cpy createjs cssSuffixMap
+ctx cubicIn cubicInOut cubicOut currentAnimation currentAnimationFrame currentFrame curveTo data decodePath decompose defaultScale delta
+disable draw drawAsPath drawCircle drawEllipse drawPolyStar drawRect drawRoundRect drawRoundRectComplex duration ease elasticIn elasticInOut
+elasticOut enable enableMouseOver endAngle endFill endStroke event exec extractFrame filters flip flipData font frame frameIndex frameOrAnimation
+frames frequency get getAnimation getAnimations getBackIn getBackInOut getBackOut getBounds getCacheDataURL getChildAt getChildIndex
+getConcatenatedMatrix getElasticIn getElasticInOut getElasticOut getFPS getFrame getHSL getInterval getMatrix getMeasuredFPS getMeasuredHeight
+getMeasuredLineHeight getMeasuredWidth getNumChildren getNumFrames getObjectUnderPoint getObjectsUnderPoint getPaused getPowIn getPowInOut getPowOut
+getRGB getStage getTicks getTime globalToLocal gotoAndPlay gotoAndStop graphics green greenMultiplier greenOffset hasActiveTweens height hitArea
+hitTest horizontal htmlElement hue identity ignoreCache ignoreGlobalPause image imageOrUrl index index1 index2 init install installPlugin instance
+interval invert isIdentity isSupported isVisible joints label labels lightness lineHeight lineTo lineWidth linear localToGlobal localToLocal
+loop mask matrix maxHeight maxWidth mergeAlpha mimeType miter mode module mouseEnabled mouseInBounds mouseX mouseY moveTo mtx name nativeEvent
+next none offset offsetX offsetY onAnimationEnd onChange onClick onComplete onDoubleClick onMouseDown onMouseMove onMouseOut onMouseOver
+onMouseUp onPress onTick outline padding params parent path pause pauseable paused period play plugin pluginData pointSize pointerID position
+positionOrLabel pow prepend prependMatrix prependProperties prependTransform primary primaryPointer properties props quadIn quadInOut quadOut
+quadraticCurveTo quality quartIn quartInOut quartOut quintIn quintInOut quintOut radisBL radius radiusBR radiusTL radiusTR ratios rawX rawY rect
+recursive red redMultiplier redOffset reference regX regY removeAllChildren removeAllListeners removeChild removeChildAt removeListener removeTween
+removeTweens repetition reset resolve returns rgbImage rotate rotation same saturation scale scaleX scaleY scope set setChildIndex setFPS setInterval
+setPaused setPosition setStrokeStyle setTransform setupContext setupFunction setupParams setupScope shadow sides sineIn sineInOut sineOut singleTouch
+skew skewX skewY snapToPixel snapToPixelEnabled sortChildren sortFunction source sourceRect spriteSheet stage stageX stageY startAngle startPosition
+stop stopAsync str suppressCrossDomainErrors swapChildren swapChildrenAt target targetCtx targetX targetY text textAlign textBaseline thickness
+tick tickOnUpdate ticks timeElapsed timeSlice timeline toArray toDataURL toString translate tween tweenObject tweens type uncache update
+updateCache updateDuration useRAF value vertical visible wait width

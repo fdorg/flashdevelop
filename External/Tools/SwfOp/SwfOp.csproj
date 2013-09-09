@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DFFCFF12-CB60-4748-8F23-0C36F140F44C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SwfOp</RootNamespace>
+    <AssemblyName>SwfOp</AssemblyName>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="ByteCode\ActionCode.cs" />
+    <Compile Include="ByteCode\Actions\ActionAdd.cs" />
+    <Compile Include="ByteCode\Actions\ActionAdd2.cs" />
+    <Compile Include="ByteCode\Actions\ActionAnd.cs" />
+    <Compile Include="ByteCode\Actions\ActionAsciiiToChar.cs" />
+    <Compile Include="ByteCode\Actions\ActionBitAnd.cs" />
+    <Compile Include="ByteCode\Actions\ActionBitLShift.cs" />
+    <Compile Include="ByteCode\Actions\ActionBitOr.cs" />
+    <Compile Include="ByteCode\Actions\ActionBitRShift.cs" />
+    <Compile Include="ByteCode\Actions\ActionBitURShift.cs" />
+    <Compile Include="ByteCode\Actions\ActionBitXor.cs" />
+    <Compile Include="ByteCode\Actions\ActionCall.cs" />
+    <Compile Include="ByteCode\Actions\ActionCallFunction.cs" />
+    <Compile Include="ByteCode\Actions\ActionCallMethod.cs" />
+    <Compile Include="ByteCode\Actions\ActionCastOp.cs" />
+    <Compile Include="ByteCode\Actions\ActionCatch.cs" />
+    <Compile Include="ByteCode\Actions\ActionCharToAscii.cs" />
+    <Compile Include="ByteCode\Actions\ActionCloneSprite.cs" />
+    <Compile Include="ByteCode\Actions\ActionConstantpool.cs" />
+    <Compile Include="ByteCode\Actions\ActionContainer.cs" />
+    <Compile Include="ByteCode\Actions\ActionDecrement.cs" />
+    <Compile Include="ByteCode\Actions\ActionDefineLocal.cs" />
+    <Compile Include="ByteCode\Actions\ActionDefineLocal2.cs" />
+    <Compile Include="ByteCode\Actions\ActionDelete.cs" />
+    <Compile Include="ByteCode\Actions\ActionDelete2.cs" />
+    <Compile Include="ByteCode\Actions\ActionDivide.cs" />
+    <Compile Include="ByteCode\Actions\ActionEnd.cs" />
+    <Compile Include="ByteCode\Actions\ActionEndDrag.cs" />
+    <Compile Include="ByteCode\Actions\ActionEndTryBlock.cs" />
+    <Compile Include="ByteCode\Actions\ActionEndWait.cs" />
+    <Compile Include="ByteCode\Actions\ActionEndWith.cs" />
+    <Compile Include="ByteCode\Actions\ActionEnumerate.cs" />
+    <Compile Include="ByteCode\Actions\ActionEnumerate2.cs" />
+    <Compile Include="ByteCode\Actions\ActionEquals.cs" />
+    <Compile Include="ByteCode\Actions\ActionEquals2.cs" />
+    <Compile Include="ByteCode\Actions\ActionExtends.cs" />
+    <Compile Include="ByteCode\Actions\ActionFinally.cs" />
+    <Compile Include="ByteCode\Actions\ActionFunction.cs" />
+    <Compile Include="ByteCode\Actions\ActionFunction2.cs" />
+    <Compile Include="ByteCode\Actions\ActionGetMember.cs" />
+    <Compile Include="ByteCode\Actions\ActionGetProperty.cs" />
+    <Compile Include="ByteCode\Actions\ActionGetTime.cs" />
+    <Compile Include="ByteCode\Actions\ActionGetUrl.cs" />
+    <Compile Include="ByteCode\Actions\ActionGetUrl2.cs" />
+    <Compile Include="ByteCode\Actions\ActionGetVariable.cs" />
+    <Compile Include="ByteCode\Actions\ActionGotoFrame.cs" />
+    <Compile Include="ByteCode\Actions\ActionGotoFrame2.cs" />
+    <Compile Include="ByteCode\Actions\ActionGotoLabel.cs" />
+    <Compile Include="ByteCode\Actions\ActionGreater.cs" />
+    <Compile Include="ByteCode\Actions\ActionIf.cs" />
+    <Compile Include="ByteCode\Actions\ActionImplements.cs" />
+    <Compile Include="ByteCode\Actions\ActionIncrement.cs" />
+    <Compile Include="ByteCode\Actions\ActionInitArray.cs" />
+    <Compile Include="ByteCode\Actions\ActionInitObject.cs" />
+    <Compile Include="ByteCode\Actions\ActionInstanceOf.cs" />
+    <Compile Include="ByteCode\Actions\ActionJump.cs" />
+    <Compile Include="ByteCode\Actions\ActionLabel.cs" />
+    <Compile Include="ByteCode\Actions\ActionLess.cs" />
+    <Compile Include="ByteCode\Actions\ActionLess2.cs" />
+    <Compile Include="ByteCode\Actions\ActionMBAsciiToChar.cs" />
+    <Compile Include="ByteCode\Actions\ActionMBCharToAscii.cs" />
+    <Compile Include="ByteCode\Actions\ActionMBStringExtract.cs" />
+    <Compile Include="ByteCode\Actions\ActionMBStringLength.cs" />
+    <Compile Include="ByteCode\Actions\ActionModulo.cs" />
+    <Compile Include="ByteCode\Actions\ActionMultiply.cs" />
+    <Compile Include="ByteCode\Actions\ActionNewMethod.cs" />
+    <Compile Include="ByteCode\Actions\ActionNewObject.cs" />
+    <Compile Include="ByteCode\Actions\ActionNextFrame.cs" />
+    <Compile Include="ByteCode\Actions\ActionNot.cs" />
+    <Compile Include="ByteCode\Actions\ActionOr.cs" />
+    <Compile Include="ByteCode\Actions\ActionPlay.cs" />
+    <Compile Include="ByteCode\Actions\ActionPop.cs" />
+    <Compile Include="ByteCode\Actions\ActionPreviousFrame.cs" />
+    <Compile Include="ByteCode\Actions\ActionPush.cs" />
+    <Compile Include="ByteCode\Actions\ActionPushDuplicate.cs" />
+    <Compile Include="ByteCode\Actions\ActionPushList.cs" />
+    <Compile Include="ByteCode\Actions\ActionRandomNumber.cs" />
+    <Compile Include="ByteCode\Actions\ActionRemoveSprite.cs" />
+    <Compile Include="ByteCode\Actions\ActionReturn.cs" />
+    <Compile Include="ByteCode\Actions\ActionSetMember.cs" />
+    <Compile Include="ByteCode\Actions\ActionSetProperty.cs" />
+    <Compile Include="ByteCode\Actions\ActionSetTarget.cs" />
+    <Compile Include="ByteCode\Actions\ActionSetTarget2.cs" />
+    <Compile Include="ByteCode\Actions\ActionSetVariable.cs" />
+    <Compile Include="ByteCode\Actions\ActionStackSwap.cs" />
+    <Compile Include="ByteCode\Actions\ActionStartDrag.cs" />
+    <Compile Include="ByteCode\Actions\ActionStop.cs" />
+    <Compile Include="ByteCode\Actions\ActionStopSounds.cs" />
+    <Compile Include="ByteCode\Actions\ActionStoreRegister.cs" />
+    <Compile Include="ByteCode\Actions\ActionStrictEquals.cs" />
+    <Compile Include="ByteCode\Actions\ActionStringAdd.cs" />
+    <Compile Include="ByteCode\Actions\ActionStringEquals.cs" />
+    <Compile Include="ByteCode\Actions\ActionStringExtract.cs" />
+    <Compile Include="ByteCode\Actions\ActionStringGreater.cs" />
+    <Compile Include="ByteCode\Actions\ActionStringLength.cs" />
+    <Compile Include="ByteCode\Actions\ActionStringLess.cs" />
+    <Compile Include="ByteCode\Actions\ActionSubtract.cs" />
+    <Compile Include="ByteCode\Actions\ActionTargetPath.cs" />
+    <Compile Include="ByteCode\Actions\ActionThrow.cs" />
+    <Compile Include="ByteCode\Actions\ActionToggleQuality.cs" />
+    <Compile Include="ByteCode\Actions\ActionToInteger.cs" />
+    <Compile Include="ByteCode\Actions\ActionToNumber.cs" />
+    <Compile Include="ByteCode\Actions\ActionToString.cs" />
+    <Compile Include="ByteCode\Actions\ActionTrace.cs" />
+    <Compile Include="ByteCode\Actions\ActionTry.cs" />
+    <Compile Include="ByteCode\Actions\ActionTypeOf.cs" />
+    <Compile Include="ByteCode\Actions\ActionWaitForFrame.cs" />
+    <Compile Include="ByteCode\Actions\ActionWaitForFrame2.cs" />
+    <Compile Include="ByteCode\Actions\ActionWith.cs" />
+    <Compile Include="ByteCode\Actions\BaseAction.cs" />
+    <Compile Include="ByteCode\Actions\DummyAction.cs" />
+    <Compile Include="ByteCode\Actions\IJump.cs" />
+    <Compile Include="ByteCode\Actions\InvalidPushTypeException.cs" />
+    <Compile Include="ByteCode\Actions\MultiByteAction.cs" />
+    <Compile Include="ByteCode\Actions\UnknownAction.cs" />
+    <Compile Include="ByteCode\Compiler.cs" />
+    <Compile Include="ByteCode\Decompiler.cs" />
+    <Compile Include="CodeFlow\CodeTraverser.cs" />
+    <Compile Include="CodeFlow\CodeWalker.cs" />
+    <Compile Include="CodeFlow\IActionExaminer.cs" />
+    <Compile Include="CodeFlow\InvocationExaminer.cs" />
+    <Compile Include="Data\Abc.cs" />
+    <Compile Include="Data\AbcDump.cs" />
+    <Compile Include="Data\ClipActionRec.cs" />
+    <Compile Include="Data\RecordHeader.cs" />
+    <Compile Include="Data\Swf.cs" />
+    <Compile Include="Data\SwfHeader.cs" />
+    <Compile Include="Data\Tags\AbcTag.cs" />
+    <Compile Include="Data\Tags\BaseTag.cs" />
+    <Compile Include="Data\Tags\DefineBitsJepg2Tag.cs" />
+    <Compile Include="Data\Tags\DefineBitsJpeg3Tag.cs" />
+    <Compile Include="Data\Tags\DefineBitsTag.cs" />
+    <Compile Include="Data\Tags\DefineFontTag.cs" />
+    <Compile Include="Data\Tags\DefineSoundTag.cs" />
+    <Compile Include="Data\Tags\DefineSpriteTag.cs" />
+    <Compile Include="Data\Tags\DoActionTag.cs" />
+    <Compile Include="Data\Tags\ExportTag.cs" />
+    <Compile Include="Data\Tags\FrameTag.cs" />
+    <Compile Include="Data\Tags\InitActionTag.cs" />
+    <Compile Include="Data\Tags\JpegTable.cs" />
+    <Compile Include="Data\Tags\MetaDataTag.cs" />
+    <Compile Include="Data\Tags\PlaceObject2Tag.cs" />
+    <Compile Include="Data\Tags\ScriptLimitTag.cs" />
+    <Compile Include="Data\Tags\TagCodeEnum.cs" />
+    <Compile Include="IO\InvalidTagLengthException.cs" />
+    <Compile Include="IO\SwfExportTagReader.cs" />
+    <Compile Include="IO\SwfReader.cs" />
+    <Compile Include="IO\SwfWriter.cs" />
+    <Compile Include="License.cs" />
+    <Compile Include="ContentParser.cs" />
+    <Compile Include="PokeSwf.cs" />
+    <Compile Include="TagsRemover.cs" />
+    <Compile Include="Utils\BinaryStringRW.cs" />
+    <Compile Include="Utils\BitParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PluginCore, Version=2.0.0.40914, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\PluginCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+</Project>

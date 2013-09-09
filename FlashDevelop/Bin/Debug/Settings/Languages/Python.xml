@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<keyword-classes>
+		<keyword-class name="python-primary-keywords">
+			and assert break class continue def del elif
+			else except exec finally for from global if import in is lambda None
+			not or pass print raise return try while yield
+			__abs__ __add__ __and__ __bases__ __builtin__ __call__ __class__ __cmp__
+			__coerce__ __complex__ __concat__ __contains__ __del__ __delattr__ __delitem__
+			__delslice__ __dict__ __div__ __divmod__ __doc__ __eq__ __file__ __float__
+			__floordiv__ __future__ __ge__ __getattr__ __getitem__ __getslice__ __gt__
+			__hash__ __hex__ __iadd__ __iand__ __idiv__ __ilshift__ __imod__ __import__
+			__imul__ __init__ __int__ __inv__ __invert__ __ior__ __ipow__ __irshift__
+			__isub__ __iter__ __ixor__ __le__ __len__ __long__ __lshift__ __lt__ __main__
+			__members__ __methods__ __mod__ __module__ __mul__ __name__ __ne__ __neg__
+			__nonzero__ __not__ __oct__ __or__ __pos__ __pow__ __radd__ __rand__ __rcmp__
+			__rdiv__ __rdivmod__ __repeat__ __repr__ __rlshift__ __rmod__ __rmul__ __ror__
+			__rpow__ __rrshift__ __rshift__ __rsub__ __rxor__ __safe_for_unpickling__ __self__
+			__setattr__ __setitem__ __setslice__ __str__ __sub__ __truediv__ __version__ __xor__
+		</keyword-class>
+		<keyword-class name="python-additional-keywords">
+			apply buffer callable chr cmp coerce compile complex delattr dict dir divmod eval
+			execfile file filter float getattr globals hasattr hash help hex id input int intern
+			isinstance issubclass iter len list locals long map max min oct open ord pow range
+			raw_input reduce reload repr round setattr slice str tuple type unichr unicode vars
+			xrange zip AEObjects AL BaseHTTPServer Bastion CGIHTTPServer Carbon ColorPicker
+			ConfigParser Cookie DEVICE DLFCN EasyDialogs Echo Encoders ExtensionClass FL FrameWork
+			GL HTMLParser IOCTL Image ImageChops ImageCrackCode ImageDraw ImageEnhance ImageFile
+			ImageFileIO ImageFilter ImageFont ImagePath ImageSequence ImageStat ImageTk ImageWin
+			MACFS MacOS MimeWriter MiniAEFrame Nac Nav PIL PSDraw Para PixMapWrapper Queue Rat
+			SUNAUDIODEV SampleTests ScrolledText SimpleHTTPServer SimpleXMLRPCServer SocketServer
+			Sound StringIO TERMIOS Tix Tkconstants Tkdnd Tkinter UserDict UserList UserString
+			addpack address aepack aetypes aifc al amoeba anydbm applesingle array asyncore atexit
+			audiodev audioop base64 bdb binascii binhex bisect bsddb buildtools cPersistent cPickle
+			cStringIO calendar cd cfmfile cgi cgitb chunk cl cmath cmd cmp cmpcache code codecs
+			codehack codeop colorsys commands compileall compiler consts copy copy_reg crypt ctb
+			curses dbhash dbm difflib dircache dircmp dis distutils dl doctest dospath dumbdbm dump
+			echo email encodings errno exceptions fcntl filecmp fileinput find findertools fl flp
+			fm fmt fnmatch foo formatter fpectl fpformat ftplib gc gdbm getopt getpass gettext gl
+			glob gopherlib grep grp gzip hmac htmlentitydefs htmllib httplib ic icglue icopen ihooks
+			imageop imaplib imgfile imghdr imp inspect jpeg keyword knee linecache locale lockfile
+			mac macerrors macfs macfsn macostools macpath macresource macspeech mactty mailbox
+			mailcap marshal math md5 mhlib mimecntl mimelib mimetools mimetypes mimify misc mkcwproject
+			mmap mpz msvcrt multifile mutex netrc new newdir ni nis nntplib nsremote nt ntpath operator
+			os packmail parser pdb pickle pipes pkg poly popen2 poplib posix posixfile posixpath pprint
+			pre preferences profile pstats pty pwd py_compile py_resource pyclbr pydoc pyexpat pythonprefs
+			quietconsole quopri rand random re readline regex regsub repr resource rexec rfc822 rgbimg
+			rlcompleter robotparser rotor sched select sgmllib sha shelve shlex shutil signal site
+			sitecustomize smtpd smtplib sndhdr socket soundex spam sre stat statcache statvfs string
+			struct sunau sunaudio sunaudiodev surround sv symbol sys sysconfig syslog tabnanny tb
+			telnetlib tempfile termios test thread threading time timing tkColorChooser tkCommonDialog
+			tkFileDialog tkFont tkMessageBox tkSimpleDialog toaiff token tokenize traceback transformer
+			tty turtle types tzparse unicodedata unittest urllib urllib2 urlparse user util uu
+			videoreader warnings waste wave weakref webbrowser whatsound whichdb whrandom win32api
+			winsound xdrlib xmllib xmlrpclib xreadlines zipfile zlib zmod
+		</keyword-class>
+	</keyword-classes>
+	<languages>
+		<language name="python">
+			<lexer name="python" style-bits="7" />
+			<character-class><![CDATA[qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789]]></character-class>
+			<line-comment><![CDATA[#]]></line-comment>
+			<comment-start><![CDATA["""]]></comment-start>
+			<comment-end><![CDATA["""]]></comment-end>
+			<file-extensions>py</file-extensions>
+			<use-keywords>
+				<keyword key="0" class="python-primary-keywords" />
+				<keyword key="1" class="python-additional-keywords" />
+			</use-keywords>
+			<!-- COLORING_START -->
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<use-styles>
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="commentline" fore="0x008000" />
+				<style name="number" fore="0x000099" />
+				<style name="string" fore="0xa31515" />
+				<style name="character" fore="0xa31515" />
+				<style name="word" fore="0x000099" />
+				<style name="triple" />
+				<style name="tripledouble" />
+				<style name="classname" />
+				<style name="defname" />
+				<style name="operator" />
+				<style name="identifier" />
+				<style name="commentblock" fore="0x008000" />
+				<style name="stringeol" />
+				<style name="word2" fore="0x008080" />
+				<style name="decorator" />
+				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0xc0c0c0" />
+				<style name="lastpredefined" fore="0x666666" />
+			</use-styles>
+			<!-- COLORING_END -->
+		</language>
+	</languages>
+</Scintilla>

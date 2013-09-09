@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<keyword-classes>
+		<keyword-class name="haxe-primary-keywords">
+			break callback case catch class continue default do else enum extends for function if implements import in interface new package return switch throw try typedef using var while abstract
+		</keyword-class>
+		<keyword-class name="haxe-secondary-keywords">
+			null true false
+		</keyword-class>
+		<keyword-class name="haxe-additional-keywords">
+			Void Int Float Dynamic Bool UInt Iterator Array List Hash IntHash Date String Xml
+		</keyword-class>
+		<keyword-class name="haxe-documentation-keywords">
+			author copy default deprecated eventType example exampleText exception haxe inheritDoc internal link
+			param private return see serial serialData serialField since throws usage version
+		</keyword-class>
+		<keyword-class name="haxe-additional-keywords3">
+			dynamic extern inline override private public static
+		</keyword-class>
+		<keyword-class name="haxe-additional-keywords4">
+			untyped cast trace
+		</keyword-class>
+		<keyword-class name="haxe-additional-keywords5">
+			super this arguments
+		</keyword-class>
+	</keyword-classes>
+	<languages>
+		<language name="haxe">
+			<lexer name="cpp" style-bits="7" />
+			<character-class><![CDATA[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]]></character-class>
+			<line-comment><![CDATA[//]]></line-comment>
+			<comment-start><![CDATA[/*]]></comment-start>
+			<comment-end><![CDATA[*/]]></comment-end>
+			<file-extensions>hx</file-extensions>
+			<use-keywords>
+				<keyword key="0" class="haxe-secondary-keywords" />
+				<keyword key="1" class="haxe-additional-keywords" />
+				<keyword key="2" class="haxe-documentation-keywords" />
+				<keyword key="3" class="haxe-primary-keywords" />
+				<keyword key="5" class="haxe-additional-keywords3" />
+				<keyword key="6" class="haxe-additional-keywords4" />
+				<keyword key="7" class="haxe-additional-keywords5" />
+			</use-keywords>
+			<!-- COLORING_START -->
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<use-styles>
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="comment" fore="0x008000" />
+				<style name="commentline" fore="0x008000" />
+				<style name="commentdoc" fore="0x008000" />
+				<style name="number" fore="0x000099" />
+				<style name="word" fore="0x000099" />
+				<style name="string" fore="0xa31515" />
+				<style name="character" fore="0xa31515" />
+				<style name="uuid" />
+				<style name="preprocessor" fore="0x000099" />
+				<style name="operator" />
+				<style name="identifier" />
+				<style name="stringeol" />
+				<style name="verbatim" />
+				<style name="regex" />
+				<style name="commentlinedoc" fore="0x008000" />
+				<style name="word2" fore="0x0080aa" />
+				<style name="word3" fore="0x0060ff" />
+				<style name="word4" fore="0x333399" />
+				<style name="word5" fore="0x000099" />
+				<style name="commentdockeyword" fore="0x800000" />
+				<style name="commentdockeyworderror" fore="0xff0000" />
+				<style name="globalclass" fore="0x1518ff" />
+				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0xc0c0c0" />
+				<style name="lastpredefined" fore="0x666666" />
+			</use-styles>
+			<!-- COLORING_END -->
+		</language>
+	</languages>
+</Scintilla>

@@ -1,0 +1,2613 @@
+/*
+License:
+  Currently there's no license restriction.You could use,modify it as you like.:)
+
+*/
+/*
+@Author He.Ye (email:heyesh@cn.ibm.com)
+
+Known Issue that is incompatible with Ecma-262(ECMAScript3 Specification)
+1.[Lexer rule]RegularExpressionFirstChar must NOT be > , to avoid the consusable with XML Literal />
+
+Known Issue that is incompatible with Ecma-357(ECMAScript for XML (E4X) Specification)
+1. XMLName Lexer rule follows Ecma-262 Identifier rule (BUT can be a Reserved Word)
+
+November 2008: Ernest Pasour - patched to add 'void' type as a valid function return type.
+                             - interleaved helper code into grammar for purposes of supporting format/indent tool.
+                             - changed memberExpression, callExpression and several others to use code from another grammar that handles function calls correctly.
+                             - added ability to parse namespaces (double colon) in the code. ex. mOutputArea.mx_internal::GetTextField();
+                             - added support for binding declarations. ex. [Exclude(name="horizontalScrollBarStyleName", kind="style")]
+                                                                           [IconFile("Accordion.png")] 
+                                                                           [RequiresDataBinding(true)]
+                             - added support for include directives
+                             - added support for 'is' operator
+                             - added support for '.*' in imports
+                             - added support of 'as' operator
+                             - added 'use namespace' directive
+                             - added default xml namespace directive
+                             - fixed implements to take a typeList instead of just a single type
+                             - fixed formalParameterList to allow a single parameter that is an ellipsis
+                             - added fileContents rule to allow a package declaration plus any combination of classes/interfaces/statements/directives afterward (i.e. outside the package)
+                             	-I think this is the change that forced me to add -Xmx512m on the command line to prevent JDK OutOfMemoryError while processing the file.
+                             - fixed identifierLiteral to allow keywords that aren't reserved
+                             - fixed to allow xml attribute to allow any keyword to be used as an attribute name
+                             - added support for xml attribute expressions ( ex. x.y.(@name=="abc").length()); )
+                             - changed code that handles virtual semicolon to do lookahead for EOL/LineComment/MLComment instead of promoting token from non-hidden to hidden, which causes problems with the parser prediction phase
+                             - fixed to allow trailing commas in array specifier, since that seems to be legal
+January 2009				 - fixed to allow type specifier on ellipsis parameter.  Ex. override flash_proxy function callProperty(name:*, ... args:Array):*
+February 2009				 - removed MUL_ASSIGN because of ambiguity with '*' type: ex. var x:*=2;
+March 2009                   - added support for double negation ex. !!true or ~~true
+                             - added support for conditional compiler code (ex. Config::debug {})
+April 2009                   - added missing operators &&= and ||=
+                             - added support for nested Vector declarations.  (ex. var nssets:Vector.<Vector.<String>> = new Vector.<Vector.<String>>(n+1);)
+May 2009					 - fixed e4x to handle tagnames/attributes with hyphens/dots/colons (ex. <array-table></array-table>
+							 - fixed e4x to allow var layers:XMLList = xmlData..ns::g.(@inkscape::groupmode =="layer");                             
+June 2009                    - added ability to not indent at package level.  This is the way Adobe's example code is done, although the auto indent on carriage return in their editor doesn't agree
+                             - added support for methods named "get" and "set".  I didn't think it was legal, but it appears to be.  This makes the grammar a little ambiguous, but it seems to work.
+
+Currently building with Antlr 3.1                              
+                             
+*/
+grammar AS3_ex;
+options
+{
+    backtrack=true;
+    memoize=true;
+    output=AST;
+    language=CSharp;
+}
+
+tokens{
+    AS          =   'as';
+    BREAK       =   'break';
+    CASE        =   'case';
+    CATCH       =   'catch';
+    CLASS       =   'class';
+    CONST       =   'const';
+    CONTINUE    =   'continue';
+    DEFAULT     =   'default';
+    DELETE      =   'delete';
+    DO          =   'do';
+    ELSE        =   'else';
+    EXTENDS     =   'extends';
+    FALSE       =   'false';
+    FINALLY     =   'finally';
+    FOR         =   'for';
+    FUNCTION    =   'function';
+    IF          =   'if';
+    IMPLEMENTS  =   'implements';
+    IMPORT      =   'import';
+    IN          =   'in';
+    INSTANCEOF  =   'instanceof';
+    INTERFACE   =   'interface';
+    INTERNAL    =   'internal';
+    IS          =   'is';
+    NATIVE      =   'native';
+    NEW         =   'new';
+    NULL        =   'null';
+    PACKAGE     =   'package';  
+    PRIVATE     =   'private';
+    PROTECTED   =   'protected';
+    PUBLIC      =   'public';
+    RETURN      =   'return';
+    SUPER       =   'super';
+    SWITCH      =   'switch';
+    THIS        =   'this';
+    THROW       =   'throw';
+    TO          =   'to';
+    TRUE        =   'true';
+    TRY         =   'try';
+    TYPEOF      =   'typeof';
+    USE         =   'use';
+    VAR         =   'var';
+    VOID        =   'void';
+    WHILE       =   'while';
+    WITH        =   'with';
+    
+    // KEYWORDs but can be identifier
+    EACH        =   'each';
+    GET         =   'get';
+    SET         =   'set';
+    NAMESPACE   =   'namespace';
+    INCLUDE     =   'include';
+    DYNAMIC     =   'dynamic';
+    FINAL       =   'final';
+    OVERRIDE    =   'override';
+    STATIC      =   'static';
+    
+    // Future KEYWORDS
+    //ABSTRACT    =   'abstract';
+    //BOOLEAN     =   'boolean';
+    //BYTE        =   'byte';
+    //CAST        =   'cast';
+    //CHAR        =   'char';
+    //DEBUGGER    =   'debugger';
+    //DOUBLE      =   'double';
+    //ENUM        =   'enum';
+    //EXPORT      =   'export';
+    //FLOAT       =   'float';
+    //GOTO        =   'goto';
+    //INTRINSIC   =   'intrinsic';
+    //LONG        =   'long';
+    //PROTOTYPE   =   'prototype';
+    //SHORT       =   'short';
+    //SYNCHRONIZED=   'synchronized';
+    //THROWS      =   'throws';
+    //TO          =   'to';
+    //TRANSIENT   =   'transient';
+    //TYPE        =   'type';
+    //VIRTUAL     =   'virtual';
+    //VOLATILE    =   'volatile';
+    
+    SEMI        = ';' ;
+    LCURLY      = '{' ;
+    RCURLY      = '}' ;
+    LPAREN      = '(' ;
+    RPAREN      = ')' ;
+    LBRACK      = '[' ;
+    RBRACK      = ']' ;
+    DOT         = '.' ;
+    COMMA       = ',' ;
+    LT          = '<' ;
+    GT          = '>' ;
+    LTE         = '<=' ;
+    GTE; //         = '>=' ;
+    EQ          = '==' ;
+    NEQ         = '!=' ;
+    SAME        = '===' ;
+    NSAME       = '!==' ;
+    PLUS        = '+' ;
+    SUB         = '-' ;
+    STAR        = '*' ;
+    DIV         = '/' ; 
+    MOD         = '%' ;
+    INC         = '++' ;
+    DEC         = '--' ;
+    SHL         = '<<' ;
+    SHR;//         = '>>' ;
+    SHU;//         = '>>>' ;
+    AND         = '&' ;
+    OR          = '|' ;
+    XOR         = '^' ;
+    NOT         = '!' ;
+    INV         = '~' ;
+    LAND        = '&&' ;
+    LOR         = '||' ;
+    QUE         = '?' ;
+    COLON       = ':' ;
+    ASSIGN      = '=' ;
+    UNDERSCORE  = '_';
+    DOLLAR      = '$';
+//    MUL_ASSIGN  = '*=' ;
+    DIV_ASSIGN  = '/=' ;
+    MOD_ASSIGN  = '%=' ;
+    ADD_ASSIGN  = '+=' ;
+    SUB_ASSIGN  = '-=' ;
+    SHL_ASSIGN  = '<<=';
+    SHR_ASSIGN;//  = '>>=';
+    SHU_ASSIGN;//  = '>>>=';
+    LAND_ASSIGN = '&&=';
+    LOR_ASSIGN  = '||=';
+    AND_ASSIGN  = '&=' ;
+    XOR_ASSIGN  = '^=' ;
+    OR_ASSIGN   = '|=' ;
+    ELLIPSIS    = '...';
+    XML_ELLIPSIS='..';
+    XML_TEND    = '/>';
+    XML_E_TEND  = '</';
+    XML_NS_OP   = '::';
+    XML_AT      = '@';
+    XML_LS_STD  = '<>';
+    XML_LS_END  = '</>';
+}
+@header{
+  using System.Collections.Generic;
+  using System.Text.RegularExpressions;
+  
+  using CodeFormatter.Handlers;
+}
+@lexer::header{
+  using CodeFormatter.Handlers;
+  using PluginCore.Managers;
+}
+@lexer::members
+{
+	/**  */
+	private CommonToken lastDefaultCnlToken = null;
+
+	// override
+	override public IToken NextToken()
+	{
+		CommonToken result = (CommonToken) base.NextToken();
+		if (result!=null && result.Type != WHITESPACE)
+		{
+			lastDefaultCnlToken = result;
+		}
+
+		return result;      
+	}    
+
+	override public void Reset()
+	{
+		base.Reset(); // reset all recognizer state variables
+		if (input is ANTLRStringStream)
+		{
+			((ANTLRStringStream)input).Reset();
+		}
+	}
+
+
+	//TODO: fix this so that regular expression embedded within xml text will work
+	private bool IsRegularExpression(){
+		if(lastDefaultCnlToken!=null){
+			switch(lastDefaultCnlToken.Type){
+			case NULL :
+			case TRUE :
+			case FALSE:
+			case THIS :
+			case SUPER:
+			case IDENTIFIER:
+			case HEX_NUMBER_LITERAL:
+			case DEC_NUMBER_LITERAL:
+			case SINGLE_QUOTE_LITERAL:
+			case DOUBLE_QUOTE_LITERAL:
+			case RCURLY:
+			case RBRACK:
+			case RPAREN:
+				return false;
+			default:
+				break;
+			}
+		}
+
+		// System.out.println("start to predict if is a ReglurExpression");
+		// start to predict if the next is a regular expression
+		int next = -1;
+		int index=1;
+		bool success = false;
+		if((next=input.LA(index)) != '/'){
+			success = false;
+			return success;
+		}
+		index++;
+		// check the first regular character
+		next=input.LA(index);
+		if(next == '\r' || next == '\n' || next == '*' || next == '/' || next == '>'){
+			success = false;
+			return success;
+		}else if(next == '\\'){
+			next=input.LA(index+1);
+			if(next == '\r' || next == '\n'){
+				success=false;
+				return success;
+			}
+			// we omit the escape sequence \ u XXXX or \ x XX
+			index++;
+		}
+		index++;
+		// check the body of regular character
+		while((next=input.LA(index))!=-1){
+			//System.out.println("char["+index+"] = ("+(char)next+")");
+			switch(next){
+			case '\r':
+			case '\n':
+				success = false;
+				return success;
+			case '\\':
+				next=input.LA(index+1);
+				if(next == '\r' || next == '\n'){
+					success=false;
+					return success;
+				}
+				// we omit the escape sequence \ u XXXX or \ x XX
+				index++;
+				break;
+			case '/':
+				success = true;
+				return success;
+			}            
+			index++;
+		}
+		return success;
+	}
+
+	/**
+	 * <pre> judge if is a XMLName </pre>
+	 * @param ch character
+	 * @return if is a XMLName return true
+	 */
+	static bool IsXMLText(int ch){
+		//System.out.println("isXMLText start");
+		return (ch!='{'&&ch!='<'&&!(IsUnicodeIdentifierPart(ch)));
+	}
+
+	/*---------------------------UNICODE_INDENTIFER START------------------------------------------*/    
+	private static bool IsUnicodeIdentifierPart(int ch){
+		return ch=='$'||ch=='_'||IsUnicodeLetter(ch)||IsUnicodeDigit(ch)||IsUnicodeCombiningMark(ch)||IsUnicodeConnectorPunctuation(ch);
+	}
+
+	private void ConsumeIdentifierUnicodeStart() {
+		int ch = input.LA(1);
+		if (IsUnicodeLetter(ch) || ch=='$' || ch=='_')
+		{
+			MatchAny();
+			do
+			{
+				ch = input.LA(1);
+				if (IsUnicodeIdentifierPart(ch))
+				{
+					mIDENT_PART();
+				}
+				else
+				{
+					return;
+				}
+			}
+			while (true);
+		}
+	}
+	
+	private static bool IsUnicodeLetter(int ch) {
+		return (ch >= '\u0041' && ch <= '\u005A')
+				|| (ch >= '\u0061' && ch <= '\u007A') || (ch == '\u00AA')
+				|| (ch == '\u00B5') || (ch == '\u00BA')
+				|| (ch >= '\u00C0' && ch <= '\u00D6')
+				|| (ch >= '\u00D8' && ch <= '\u00F6')
+				|| (ch >= '\u00F8' && ch <= '\u02C1')
+				|| (ch >= '\u02C6' && ch <= '\u02D1')
+				|| (ch >= '\u02E0' && ch <= '\u02E4') || (ch == '\u02EC')
+				|| (ch == '\u02EE') || (ch >= '\u0370' && ch <= '\u0374')
+				|| (ch >= '\u0376' && ch <= '\u037D') || (ch == '\u0386')
+				|| (ch >= '\u0388' && ch <= '\u03F5')
+				|| (ch >= '\u03F7' && ch <= '\u0481')
+				|| (ch >= '\u048A' && ch <= '\u0559')
+				|| (ch >= '\u0561' && ch <= '\u0587')
+				|| (ch >= '\u05D0' && ch <= '\u05F2')
+				|| (ch >= '\u0621' && ch <= '\u064A')
+				|| (ch >= '\u066E' && ch <= '\u066F')
+				|| (ch >= '\u0671' && ch <= '\u06D3') || (ch == '\u06D5')
+				|| (ch >= '\u06E5' && ch <= '\u06E6')
+				|| (ch >= '\u06EE' && ch <= '\u06EF')
+				|| (ch >= '\u06FA' && ch <= '\u06FC') || (ch == '\u06FF')
+				|| (ch == '\u0710') || (ch >= '\u0712' && ch <= '\u072F')
+				|| (ch >= '\u074D' && ch <= '\u07A5') || (ch == '\u07B1')
+				|| (ch >= '\u07CA' && ch <= '\u07EA')
+				|| (ch >= '\u07F4' && ch <= '\u07F5') || (ch == '\u07FA')
+				|| (ch >= '\u0904' && ch <= '\u0939') || (ch == '\u093D')
+				|| (ch == '\u0950') || (ch >= '\u0958' && ch <= '\u0961')
+				|| (ch >= '\u0971' && ch <= '\u097F')
+				|| (ch >= '\u0985' && ch <= '\u09B9') || (ch == '\u09BD')
+				|| (ch == '\u09CE') || (ch >= '\u09DC' && ch <= '\u09E1')
+				|| (ch >= '\u09F0' && ch <= '\u09F1')
+				|| (ch >= '\u0A05' && ch <= '\u0A39')
+				|| (ch >= '\u0A59' && ch <= '\u0A5E')
+				|| (ch >= '\u0A72' && ch <= '\u0A74')
+				|| (ch >= '\u0A85' && ch <= '\u0AB9') || (ch == '\u0ABD')
+				|| (ch >= '\u0AD0' && ch <= '\u0AE1')
+				|| (ch >= '\u0B05' && ch <= '\u0B39') || (ch == '\u0B3D')
+				|| (ch >= '\u0B5C' && ch <= '\u0B61') || (ch == '\u0B71')
+				|| (ch >= '\u0B83' && ch <= '\u0BB9') || (ch == '\u0BD0')
+				|| (ch >= '\u0C05' && ch <= '\u0C3D')
+				|| (ch >= '\u0C58' && ch <= '\u0C61')
+				|| (ch >= '\u0C85' && ch <= '\u0CB9') || (ch == '\u0CBD')
+				|| (ch >= '\u0CDE' && ch <= '\u0CE1')
+				|| (ch >= '\u0D05' && ch <= '\u0D3D')
+				|| (ch >= '\u0D60' && ch <= '\u0D61')
+				|| (ch >= '\u0D7A' && ch <= '\u0D7F')
+				|| (ch >= '\u0D85' && ch <= '\u0DC6')
+				|| (ch >= '\u0E01' && ch <= '\u0E30')
+				|| (ch >= '\u0E32' && ch <= '\u0E33')
+				|| (ch >= '\u0E40' && ch <= '\u0E46')
+				|| (ch >= '\u0E81' && ch <= '\u0EB0')
+				|| (ch >= '\u0EB2' && ch <= '\u0EB3')
+				|| (ch >= '\u0EBD' && ch <= '\u0EC6')
+				|| (ch >= '\u0EDC' && ch <= '\u0F00')
+				|| (ch >= '\u0F40' && ch <= '\u0F6C')
+				|| (ch >= '\u0F88' && ch <= '\u0F8B')
+				|| (ch >= '\u1000' && ch <= '\u102A') || (ch == '\u103F')
+				|| (ch >= '\u1050' && ch <= '\u1055')
+				|| (ch >= '\u105A' && ch <= '\u105D') || (ch == '\u1061')
+				|| (ch >= '\u1065' && ch <= '\u1066')
+				|| (ch >= '\u106E' && ch <= '\u1070')
+				|| (ch >= '\u1075' && ch <= '\u1081') || (ch == '\u108E')
+				|| (ch >= '\u10A0' && ch <= '\u10FA')
+				|| (ch >= '\u10FC' && ch <= '\u135A')
+				|| (ch >= '\u1380' && ch <= '\u138F')
+				|| (ch >= '\u13A0' && ch <= '\u166C')
+				|| (ch >= '\u166F' && ch <= '\u1676')
+				|| (ch >= '\u1681' && ch <= '\u169A')
+				|| (ch >= '\u16A0' && ch <= '\u16EA')
+				|| (ch >= '\u16EE' && ch <= '\u1711')
+				|| (ch >= '\u1720' && ch <= '\u1731')
+				|| (ch >= '\u1740' && ch <= '\u1751')
+				|| (ch >= '\u1760' && ch <= '\u1770')
+				|| (ch >= '\u1780' && ch <= '\u17B3') || (ch == '\u17D7')
+				|| (ch == '\u17DC') || (ch >= '\u1820' && ch <= '\u18A8')
+				|| (ch >= '\u18AA' && ch <= '\u191C')
+				|| (ch >= '\u1950' && ch <= '\u19A9')
+				|| (ch >= '\u19C1' && ch <= '\u19C7')
+				|| (ch >= '\u1A00' && ch <= '\u1A16')
+				|| (ch >= '\u1B05' && ch <= '\u1B33')
+				|| (ch >= '\u1B45' && ch <= '\u1B4B')
+				|| (ch >= '\u1B83' && ch <= '\u1BA0')
+				|| (ch >= '\u1BAE' && ch <= '\u1BAF')
+				|| (ch >= '\u1C00' && ch <= '\u1C23')
+				|| (ch >= '\u1C4D' && ch <= '\u1C4F')
+				|| (ch >= '\u1C5A' && ch <= '\u1C7D')
+				|| (ch >= '\u1D00' && ch <= '\u1DBF')
+				|| (ch >= '\u1E00' && ch <= '\u1FBC') || (ch == '\u1FBE')
+				|| (ch >= '\u1FC2' && ch <= '\u1FCC')
+				|| (ch >= '\u1FD0' && ch <= '\u1FDB')
+				|| (ch >= '\u1FE0' && ch <= '\u1FEC')
+				|| (ch >= '\u1FF2' && ch <= '\u1FFC') || (ch == '\u2071')
+				|| (ch == '\u207F') || (ch >= '\u2090' && ch <= '\u2094')
+				|| (ch == '\u2102') || (ch == '\u2107')
+				|| (ch >= '\u210A' && ch <= '\u2113') || (ch == '\u2115')
+				|| (ch >= '\u2119' && ch <= '\u211D') || (ch == '\u2124')
+				|| (ch == '\u2126') || (ch == '\u2128')
+				|| (ch >= '\u212A' && ch <= '\u212D')
+				|| (ch >= '\u212F' && ch <= '\u2139')
+				|| (ch >= '\u213C' && ch <= '\u213F')
+				|| (ch >= '\u2145' && ch <= '\u2149') || (ch == '\u214E')
+				|| (ch >= '\u2160' && ch <= '\u2188')
+				|| (ch >= '\u2C00' && ch <= '\u2CE4')
+				|| (ch >= '\u2D00' && ch <= '\u2DDE') || (ch == '\u2E2F')
+				|| (ch >= '\u3005' && ch <= '\u3007')
+				|| (ch >= '\u3021' && ch <= '\u3029')
+				|| (ch >= '\u3031' && ch <= '\u3035')
+				|| (ch >= '\u3038' && ch <= '\u303C')
+				|| (ch >= '\u3041' && ch <= '\u3096')
+				|| (ch >= '\u309D' && ch <= '\u309F')
+				|| (ch >= '\u30A1' && ch <= '\u30FA')
+				|| (ch >= '\u30FC' && ch <= '\u318E')
+				|| (ch >= '\u31A0' && ch <= '\u31B7')
+				|| (ch >= '\u31F0' && ch <= '\u31FF')
+				|| (ch >= '\u3400' && ch <= '\u4DB5')
+				|| (ch >= '\u4E00' && ch <= '\uA48C')
+				|| (ch >= '\uA500' && ch <= '\uA60C')
+				|| (ch >= '\uA610' && ch <= '\uA61F')
+				|| (ch >= '\uA62A' && ch <= '\uA66E')
+				|| (ch >= '\uA67F' && ch <= '\uA697')
+				|| (ch >= '\uA717' && ch <= '\uA71F')
+				|| (ch >= '\uA722' && ch <= '\uA788')
+				|| (ch >= '\uA78B' && ch <= '\uA801')
+				|| (ch >= '\uA803' && ch <= '\uA805')
+				|| (ch >= '\uA807' && ch <= '\uA80A')
+				|| (ch >= '\uA80C' && ch <= '\uA822')
+				|| (ch >= '\uA840' && ch <= '\uA873')
+				|| (ch >= '\uA882' && ch <= '\uA8B3')
+				|| (ch >= '\uA90A' && ch <= '\uA925')
+				|| (ch >= '\uA930' && ch <= '\uA946')
+				|| (ch >= '\uAA00' && ch <= '\uAA28')
+				|| (ch >= '\uAA40' && ch <= '\uAA42')
+				|| (ch >= '\uAA44' && ch <= '\uAA4B')
+				|| (ch >= '\uAC00' && ch <= '\uD7A3')
+				|| (ch >= '\uF900' && ch <= '\uFB1D')
+				|| (ch >= '\uFB1F' && ch <= '\uFB28')
+				|| (ch >= '\uFB2A' && ch <= '\uFD3D')
+				|| (ch >= '\uFD50' && ch <= '\uFDFB')
+				|| (ch >= '\uFE70' && ch <= '\uFEFC')
+				|| (ch >= '\uFF21' && ch <= '\uFF3A')
+				|| (ch >= '\uFF41' && ch <= '\uFF5A')
+				|| (ch >= '\uFF66' && ch <= '\uFFDC');
+	}
+	
+	private static bool IsUnicodeCombiningMark(int ch) {
+    		return (ch >= '\u0300' && ch <= '\u036F')
+    				|| (ch >= '\u0483' && ch <= '\u0487')
+    				|| (ch >= '\u0591' && ch <= '\u05BD') || (ch == '\u05BF')
+    				|| (ch >= '\u05C1' && ch <= '\u05C2')
+    				|| (ch >= '\u05C4' && ch <= '\u05C5') || (ch == '\u05C7')
+    				|| (ch >= '\u0610' && ch <= '\u061A')
+    				|| (ch >= '\u064B' && ch <= '\u065E') || (ch == '\u0670')
+    				|| (ch >= '\u06D6' && ch <= '\u06DC')
+    				|| (ch >= '\u06DF' && ch <= '\u06E4')
+    				|| (ch >= '\u06E7' && ch <= '\u06E8')
+    				|| (ch >= '\u06EA' && ch <= '\u06ED') || (ch == '\u0711')
+    				|| (ch >= '\u0730' && ch <= '\u074A')
+    				|| (ch >= '\u07A6' && ch <= '\u07B0')
+    				|| (ch >= '\u07EB' && ch <= '\u07F3')
+    				|| (ch >= '\u0901' && ch <= '\u0903') || (ch == '\u093C')
+    				|| (ch >= '\u093E' && ch <= '\u094D')
+    				|| (ch >= '\u0951' && ch <= '\u0954')
+    				|| (ch >= '\u0962' && ch <= '\u0963')
+    				|| (ch >= '\u0981' && ch <= '\u0983') || (ch == '\u09BC')
+    				|| (ch >= '\u09BE' && ch <= '\u09CD') || (ch == '\u09D7')
+    				|| (ch >= '\u09E2' && ch <= '\u09E3')
+    				|| (ch >= '\u0A01' && ch <= '\u0A03')
+    				|| (ch >= '\u0A3C' && ch <= '\u0A51')
+    				|| (ch >= '\u0A70' && ch <= '\u0A71')
+    				|| (ch >= '\u0A75' && ch <= '\u0A83') || (ch == '\u0ABC')
+    				|| (ch >= '\u0ABE' && ch <= '\u0ACD')
+    				|| (ch >= '\u0AE2' && ch <= '\u0AE3')
+    				|| (ch >= '\u0B01' && ch <= '\u0B03') || (ch == '\u0B3C')
+    				|| (ch >= '\u0B3E' && ch <= '\u0B57')
+    				|| (ch >= '\u0B62' && ch <= '\u0B63') || (ch == '\u0B82')
+    				|| (ch >= '\u0BBE' && ch <= '\u0BCD') || (ch == '\u0BD7')
+    				|| (ch >= '\u0C01' && ch <= '\u0C03')
+    				|| (ch >= '\u0C3E' && ch <= '\u0C56')
+    				|| (ch >= '\u0C62' && ch <= '\u0C63')
+    				|| (ch >= '\u0C82' && ch <= '\u0C83') || (ch == '\u0CBC')
+    				|| (ch >= '\u0CBE' && ch <= '\u0CD6')
+    				|| (ch >= '\u0CE2' && ch <= '\u0CE3')
+    				|| (ch >= '\u0D02' && ch <= '\u0D03')
+    				|| (ch >= '\u0D3E' && ch <= '\u0D57')
+    				|| (ch >= '\u0D62' && ch <= '\u0D63')
+    				|| (ch >= '\u0D82' && ch <= '\u0D83')
+    				|| (ch >= '\u0DCA' && ch <= '\u0DF3') || (ch == '\u0E31')
+    				|| (ch >= '\u0E34' && ch <= '\u0E3A')
+    				|| (ch >= '\u0E47' && ch <= '\u0E4E') || (ch == '\u0EB1')
+    				|| (ch >= '\u0EB4' && ch <= '\u0EBC')
+    				|| (ch >= '\u0EC8' && ch <= '\u0ECD')
+    				|| (ch >= '\u0F18' && ch <= '\u0F19') || (ch == '\u0F35')
+    				|| (ch == '\u0F37') || (ch == '\u0F39')
+    				|| (ch >= '\u0F3E' && ch <= '\u0F3F')
+    				|| (ch >= '\u0F71' && ch <= '\u0F84')
+    				|| (ch >= '\u0F86' && ch <= '\u0F87')
+    				|| (ch >= '\u0F90' && ch <= '\u0FBC') || (ch == '\u0FC6')
+    				|| (ch >= '\u102B' && ch <= '\u103E')
+    				|| (ch >= '\u1056' && ch <= '\u1059')
+    				|| (ch >= '\u105E' && ch <= '\u1060')
+    				|| (ch >= '\u1062' && ch <= '\u1064')
+    				|| (ch >= '\u1067' && ch <= '\u106D')
+    				|| (ch >= '\u1071' && ch <= '\u1074')
+    				|| (ch >= '\u1082' && ch <= '\u108D') || (ch == '\u108F')
+    				|| (ch == '\u135F') || (ch >= '\u1712' && ch <= '\u1714')
+    				|| (ch >= '\u1732' && ch <= '\u1734')
+    				|| (ch >= '\u1752' && ch <= '\u1753')
+    				|| (ch >= '\u1772' && ch <= '\u1773')
+    				|| (ch >= '\u17B6' && ch <= '\u17D3') || (ch == '\u17DD')
+    				|| (ch >= '\u180B' && ch <= '\u180D') || (ch == '\u18A9')
+    				|| (ch >= '\u1920' && ch <= '\u193B')
+    				|| (ch >= '\u19B0' && ch <= '\u19C0')
+    				|| (ch >= '\u19C8' && ch <= '\u19C9')
+    				|| (ch >= '\u1A17' && ch <= '\u1A1B')
+    				|| (ch >= '\u1B00' && ch <= '\u1B04')
+    				|| (ch >= '\u1B34' && ch <= '\u1B44')
+    				|| (ch >= '\u1B6B' && ch <= '\u1B73')
+    				|| (ch >= '\u1B80' && ch <= '\u1B82')
+    				|| (ch >= '\u1BA1' && ch <= '\u1BAA')
+    				|| (ch >= '\u1C24' && ch <= '\u1C37')
+    				|| (ch >= '\u1DC0' && ch <= '\u1DFF')
+    				|| (ch >= '\u20D0' && ch <= '\u20DC') || (ch == '\u20E1')
+    				|| (ch >= '\u20E5' && ch <= '\u20F0')
+    				|| (ch >= '\u2DE0' && ch <= '\u2DFF')
+    				|| (ch >= '\u302A' && ch <= '\u302F')
+    				|| (ch >= '\u3099' && ch <= '\u309A') || (ch == '\uA66F')
+    				|| (ch >= '\uA67C' && ch <= '\uA67D') || (ch == '\uA802')
+    				|| (ch == '\uA806') || (ch == '\uA80B')
+    				|| (ch >= '\uA823' && ch <= '\uA827')
+    				|| (ch >= '\uA880' && ch <= '\uA881')
+    				|| (ch >= '\uA8B4' && ch <= '\uA8C4')
+    				|| (ch >= '\uA926' && ch <= '\uA92D')
+    				|| (ch >= '\uA947' && ch <= '\uA953')
+    				|| (ch >= '\uAA29' && ch <= '\uAA36') || (ch == '\uAA43')
+    				|| (ch >= '\uAA4C' && ch <= '\uAA4D') || (ch == '\uFB1E')
+    				|| (ch >= '\uFE00' && ch <= '\uFE0F')
+    				|| (ch >= '\uFE20' && ch <= '\uFE26');
+    	}
+
+    	private static bool IsUnicodeDigit(int ch) {
+    		return (ch >= '\u0030' && ch <= '\u0039')
+    				|| (ch >= '\u0660' && ch <= '\u0669')
+    				|| (ch >= '\u06F0' && ch <= '\u06F9')
+    				|| (ch >= '\u07C0' && ch <= '\u07C9')
+    				|| (ch >= '\u0966' && ch <= '\u096F')
+    				|| (ch >= '\u09E6' && ch <= '\u09EF')
+    				|| (ch >= '\u0A66' && ch <= '\u0A6F')
+    				|| (ch >= '\u0AE6' && ch <= '\u0AEF')
+    				|| (ch >= '\u0B66' && ch <= '\u0B6F')
+    				|| (ch >= '\u0BE6' && ch <= '\u0BEF')
+    				|| (ch >= '\u0C66' && ch <= '\u0C6F')
+    				|| (ch >= '\u0CE6' && ch <= '\u0CEF')
+    				|| (ch >= '\u0D66' && ch <= '\u0D6F')
+    				|| (ch >= '\u0E50' && ch <= '\u0E59')
+    				|| (ch >= '\u0ED0' && ch <= '\u0ED9')
+    				|| (ch >= '\u0F20' && ch <= '\u0F29')
+    				|| (ch >= '\u1040' && ch <= '\u1049')
+    				|| (ch >= '\u1090' && ch <= '\u1099')
+    				|| (ch >= '\u17E0' && ch <= '\u17E9')
+    				|| (ch >= '\u1810' && ch <= '\u1819')
+    				|| (ch >= '\u1946' && ch <= '\u194F')
+    				|| (ch >= '\u19D0' && ch <= '\u19D9')
+    				|| (ch >= '\u1B50' && ch <= '\u1B59')
+    				|| (ch >= '\u1BB0' && ch <= '\u1BB9')
+    				|| (ch >= '\u1C40' && ch <= '\u1C49')
+    				|| (ch >= '\u1C50' && ch <= '\u1C59')
+    				|| (ch >= '\uA620' && ch <= '\uA629')
+    				|| (ch >= '\uA8D0' && ch <= '\uA909')
+    				|| (ch >= '\uAA50' && ch <= '\uAA59')
+    				|| (ch >= '\uFF10' && ch <= '\uFF19');
+    	}
+
+    	private static bool IsUnicodeConnectorPunctuation(int ch) {
+    		return (ch == '\u005F') || (ch >= '\u203F' && ch <= '\u2040')
+    				|| (ch == '\u2054') || (ch >= '\uFE33' && ch <= '\uFE34')
+    				|| (ch >= '\uFE4D' && ch <= '\uFE4F') || (ch == '\uFF3F');
+    	}
+
+	/*---------------------------UNICODE_INDENTIFER END------------------------------------------*/
+    
+}
+
+@parser::members{
+
+	//options
+	private List<Exception> mParseErrors;
+
+	private ASPrettyPrinter mPrinter;
+	private CommonTokenStream mRawTokens;
+
+	private List<IfElseBlockTracker> mIfElseBlocks=new List<IfElseBlockTracker>();
+
+	public AS3_exParser(ASPrettyPrinter printer, CommonTokenStream tokenStream)
+	      : this(tokenStream, new RecognizerSharedState()) {
+		mRawTokens=tokenStream;
+		mPrinter=printer;
+	}
+
+	public class IfElseBlockTracker
+	{
+		public bool mBlockFlag=false;
+		public bool mBlockFlagSet=false;
+	}
+
+	public void AddIfElseBlockTracker()
+	{
+		mIfElseBlocks.Add(new IfElseBlockTracker());
+	}
+
+	public void PopIfElseBlockTracker()
+	{
+		if (mIfElseBlocks.Count>0)
+			mIfElseBlocks.RemoveAt(mIfElseBlocks.Count-1);
+	}
+
+	public IfElseBlockTracker GetCurrentIfElseTracker()
+	{
+		if (mIfElseBlocks.Count>0)
+			return mIfElseBlocks.ToArray()[mIfElseBlocks.Count-1];
+
+		return null;
+	}
+
+	public void SetBlockFlag(bool flag)
+	{
+		IfElseBlockTracker tracker=GetCurrentIfElseTracker();
+		if (tracker!=null)
+		{
+			//don't set if already set
+			if (tracker.mBlockFlagSet)
+				return;
+
+			tracker.mBlockFlag=flag;
+			tracker.mBlockFlagSet=true;
+		}
+	}
+
+	public void MarkBlockFlag()
+	{
+		IfElseBlockTracker tracker=GetCurrentIfElseTracker();
+		if (tracker!=null)
+			tracker.mBlockFlagSet=true;
+	}
+
+	public void ClearBlockFlag()
+	{
+		IfElseBlockTracker tracker=GetCurrentIfElseTracker();
+		if (tracker!=null)
+			tracker.mBlockFlagSet=false;
+	}
+
+	public bool IsBlockFlag()
+	{
+		IfElseBlockTracker tracker=GetCurrentIfElseTracker();
+		if (tracker!=null)
+			return tracker.mBlockFlag;
+
+		return false;
+	}
+
+	public bool FoundNextLT()
+	{
+		int i=1;
+		while (true)
+		{
+			CommonToken token= (CommonToken) input.LT(i);
+			if (token.Text!=null && token.Text.StartsWith("<"))
+				return (i>1);
+			if (token.Type==EOF)
+				return false;
+			i++;   
+		}
+	}
+
+	public void ChangeTokensUpToNextLT()
+	{
+		int i=1;
+		while (true)
+		{
+			CommonToken t= (CommonToken) input.LT(i);
+			if (t.Text!=null && t.Text.StartsWith("<"))
+				return;
+			if (t.Type==EOF)
+				return;
+			t.Type = XML_TEXT;          
+
+			i++;   
+		}
+	}
+
+	private void IndentEmit(CommonToken tokenOperator)
+	{
+		PushExpressionIndent();
+		WrapOptions options=mPrinter.GetExpressionWrapOptions();
+		if ((options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && options.BeforeSeparator)
+		{
+			InsertMaxColumnCR();
+		}
+		char firstChar=Convert.ToChar(0);
+		if (tokenOperator.Text.Length>0)
+			firstChar=tokenOperator.Text.ToCharArray()[0];
+		if (firstChar!=Convert.ToChar(0))
+		{
+			if (IsIdentifierPart(firstChar))
+				InsertWS(1); //add 1 space around text operators (ex. 'as', 'instanceof')
+			else
+				InsertWS(mPrinter.GetExpressionSpacesAroundSymbolicOperators()); //add configurable symbolic operator value
+		}	
+		Emit(tokenOperator);
+		if ((options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && !options.BeforeSeparator)
+		{
+			InsertMaxColumnCR();
+		}
+		if (firstChar!=0)
+		{
+			if (IsIdentifierPart(firstChar))
+				InsertWS(1); //add 1 space around text operators (ex. 'as', 'instanceof')
+			else
+				InsertWS(mPrinter.GetExpressionSpacesAroundSymbolicOperators()); //add configurable symbolic operator value
+		}	
+	}
+	
+	public static bool IsIdentifierPart(char ch)
+    {
+   		return Char.IsLetterOrDigit(ch) || ch == '_';
+	}
+
+	private bool PushFormatType(WrapOptions options, bool lazy)
+	{
+		if (mPrinter.IsDoFormat())
+		{
+			int formatMode=0;
+			if (options.WrapType==WrapOptions.WRAP_DONT_PROCESS)
+			{
+				formatMode=ASPrettyPrinter.FORMAT_INDENT;
+			}
+			else if (options.WrapType==WrapOptions.WRAP_FORMAT_NO_CRs)
+			{
+				formatMode=ASPrettyPrinter.FORMAT_NOCRs;
+			}
+			else if (options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS)
+			{
+				formatMode=ASPrettyPrinter.FORMAT_OnlyAddCRs;
+			}
+			else
+			{
+				//if we didn't have a restrictive format, we want to make sure we're using the full format
+				formatMode=ASPrettyPrinter.FORMAT_ALL;
+			}
+
+			if (formatMode>0)
+			{		
+				mPrinter.SetFirstTokenBeforeFormatIndent();
+				if (lazy)
+					mPrinter.PushLazyFormat(formatMode);
+				else
+					mPrinter.PushFormatMode(formatMode);
+				return true;
+			}
+
+		} 
+
+		return false;
+	}
+
+	private void EmitCRForTag(WrapOptions options)
+	{
+		if (options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS)
+		{
+			InsertMaxColumnCR();
+		}
+		else if (options.WrapType==WrapOptions.WRAP_BY_TAG)
+		{
+			InsertCR(false);
+		}
+
+	}
+
+	private bool EmitCommaWithSpacingAndCRs(WrapOptions options, CommonToken comma, bool pushedIndent)
+	{
+		if ((options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && options.BeforeSeparator)
+		{
+			InsertMaxColumnCR();
+		}
+
+		if (!pushedIndent)
+		{
+			pushedIndent=true;
+			PushExpressionIndent();
+		}
+
+		InsertWS(mPrinter.GetSpacesBeforeComma());
+		Emit(comma); 
+		if ((options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && !options.BeforeSeparator)
+		{
+			InsertMaxColumnCR();
+		}
+		InsertWS(mPrinter.GetSpacesAfterComma());
+		return pushedIndent;
+	}
+
+	public bool FindVirtualHiddenToken(ParserRuleReturnScope retval)
+	{
+		int index = ((CommonToken) retval.Start).TokenIndex;
+		if(index<0){
+			index = input.Count;
+		}
+		for (int ix = index - 1; ix >= 0; ix--){
+			CommonToken lt = (CommonToken) input.Get(ix);
+			int type = lt.Type;
+			if(lt.Channel == Token.DEFAULT_CHANNEL)
+				break;
+			if (type == EOL || type==COMMENT_SINGLELINE || (type == COMMENT_MULTILINE && Regex.Match(lt.Text,"/.*\r\n|\r|\n").Success))
+			{
+				retval.Start=lt;
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	/*public void ReportError(RecognitionException e)
+	{
+		if (mParseErrors==null)
+			mParseErrors=new List<Exception>();
+		mParseErrors.add(e);
+		base.ReportError(e);
+	}*/
+
+	private void InsertWS(int amt)
+	{
+		mPrinter.InsertWS(amt);
+	}
+
+	private void InsertLines(int amt)
+	{
+		InsertLines(amt, true);
+	}
+
+	private void InsertVariableDeclAssignmentWhitespace(CommonToken equalToken, bool before)
+	{
+		if (mPrinter.IsDoFormat() && !mPrinter.IsInParameterDecl() && mPrinter.IsKeepingExcessDeclWhitespace())
+		{
+			int spaceCount=0;
+			if (before)
+			{
+				CommonToken testToken= (CommonToken) mRawTokens.Get(equalToken.TokenIndex-1);
+				if (testToken.Channel==CHANNEL_WHITESPACE)
+				{
+					//if the token before the whitespace is a carriage return, we *don't* want to apply this "preserve whitespace" logic
+					CommonToken prevTok= (CommonToken) mRawTokens.Get(equalToken.TokenIndex-2);
+					if (!(prevTok.Channel==CHANNEL_SLCOMMENT || prevTok.Channel==CHANNEL_EOL))
+					{
+						if (testToken.Text.IndexOf('\t')>=0)
+						{
+							spaceCount=mPrinter.GetColumnForIndex(equalToken, 0)-mPrinter.GetColumnForIndex(testToken, 0);
+						}
+						else
+						{
+							spaceCount=testToken.Text.Length;
+						}
+					}
+				}
+			}
+			else
+			{
+				CommonToken testToken= (CommonToken) mRawTokens.Get(equalToken.TokenIndex+1);
+				if (testToken.Channel==CHANNEL_WHITESPACE)
+				{
+					//if the token after the whitespace is a carriage return, we *don't* want to apply this "preserve whitespace" logic
+					//I think we only care about actual EOL here, not sl comment or ml comment, since there is actual text before the CR,
+					//even if it's not 'code' text.
+					CommonToken nextTok= (CommonToken) mRawTokens.Get(equalToken.TokenIndex+2);
+					if (!(nextTok.Channel==CHANNEL_EOL))
+					{
+						if (testToken.Text.IndexOf('\t')>=0)
+						{
+							spaceCount=mPrinter.GetColumnForIndex(testToken, testToken.Text.Length)-mPrinter.GetColumnForIndex(equalToken, equalToken.Text.Length);
+						}
+						else
+						{
+							spaceCount=testToken.Text.Length;
+						}
+					}
+				}
+			}
+
+			if (spaceCount>mPrinter.GetSpacesAroundAssignment())
+			{
+				InsertWS(spaceCount);
+				return;
+			}
+		}
+
+		InsertWS(mPrinter.IsInParameterDecl() ? mPrinter.GetAdvancedSpacesAroundAssignmentInOptionalParameters() : mPrinter.GetSpacesAroundAssignment());
+	}
+
+	//this method is for inserting blank lines before elements, based on the format settings
+	private void InsertLines(int amt, bool inCodeBlock)
+	{
+		//don't add blank lines if not inside a block
+		if (!mPrinter.IsHardIndent())
+			return;
+		//don't add blank lines if the wrapper is a labeled statement indent
+		if (mPrinter.IsLabeledIndent())
+			return;
+
+		//don't add blank lines if we are at start of block
+		if (inCodeBlock)
+		{
+			if (!mPrinter.IsCanAddCRsAtBlockStart() && mPrinter.IsAtBlockStart())
+			{
+				return;
+			}
+		}
+
+		for (int i=0;i<amt;i++)
+		{
+			mPrinter.InsertCR(true);
+		}
+	}
+
+	private void InsertMaxColumnCR()
+	{
+		mPrinter.InsertCRBeyondMaxCol();
+	}
+
+	private void InsertStatementCR()
+	{
+		if (!mPrinter.IsLabeledIndent())
+			InsertCR(false);
+	}
+
+	private void InsertCR(bool doOverride)
+	{
+		mPrinter.InsertCR(doOverride);
+	}
+
+	private void PushLabeledIndent()
+	{
+		PushExpressionIndent(); //push an expression indent so that it won't further indent the nested statement 
+		mPrinter.MakeLabeledIndent();
+	}
+
+	private void PushIndent(bool hardIndent)
+	{
+		mPrinter.PushIndent(hardIndent ? ASPrettyPrinter.BRACE_INDENT : ASPrettyPrinter.STATEMENT_INDENT);
+	}
+
+	private void PushExpressionIndent()
+	{
+		mPrinter.PushIndent(ASPrettyPrinter.EXPRESSION_INDENT);
+	}
+
+	private bool PushLazyParmIndent(bool alreadyPushed, int indentStyle)
+	{
+		if (!alreadyPushed)
+		{
+			if (indentStyle==WrapOptions.WRAP_STYLE_INDENT_TO_WRAP_ELEMENT)
+				mPrinter.PushLazyIndent(ASPrettyPrinter.EXPRESSION_INDENT_NEXTITEM);
+			else
+				PushLazyIndent();
+		}
+		return true;
+	}
+
+	private void PushLazyIndent()
+	{
+		mPrinter.PushLazyIndent(ASPrettyPrinter.EXPRESSION_INDENT);
+	}
+
+	private void PopIndent()
+	{
+		mPrinter.PopIndent();
+	}
+
+	private void LeftCurlyNewlineHandler(bool checkBraceIndent)
+	{
+		if (mPrinter.IsCRBeforeOpenBrace() || (checkBraceIndent && mPrinter.GetIndentType(0)==ASPrettyPrinter.BRACE_INDENT))
+			InsertCR(false);
+		else
+			InsertWS(1);
+	}
+
+	private void Emit(CommonToken tok)
+	{
+		mPrinter.Emit(tok);
+	}
+
+
+	/*public List<Exception> getParseErrors()
+	{
+		return mParseErrors;
+	}*/
+	
+
+	public const int CHANNEL_SLCOMMENT=43;
+	public const int CHANNEL_MLCOMMENT=42;
+	public const int CHANNEL_WHITESPACE=41;
+	public const int CHANNEL_EOL=40;
+
+	private bool PromoteWhitespace()
+	{
+		//find the current lookahead token
+		CommonToken lt = (CommonToken) input.LT(1);
+		int index = lt.TokenIndex;
+		if(index<0){
+			index = input.Count;
+		}
+
+		//walk backward through tokens to see if the previous token is whitespace.
+		for (int ix = index - 1; ix >= 0; ix--){
+			lt = (CommonToken) input.Get(ix);
+			int channel=lt.Channel;
+			if (channel == CHANNEL_EOL || channel ==  CHANNEL_WHITESPACE){
+				return true;
+			} else if(channel == Token.DEFAULT_CHANNEL){
+				break;
+			}
+		}
+		return false;
+	}
+}
+// Lexer Helper Rule
+
+fragment UNDERSCORE  : '_';
+
+fragment DOLLAR      : '$';
+
+fragment ALPHABET            :    'a'..'z'|'A'..'Z';
+
+fragment NUMBER              :    '0' .. '9';   
+
+fragment HEX_DIGIT           :    ('0' .. '9'|'a'..'f'|'A'..'F') ;
+
+fragment CR                  :    '\r';
+
+fragment LF                  :    '\n';
+
+fragment UNICODE_ESCAPE      :    '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+
+fragment ESCAPE_SEQUENCE     :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+                                 |   UNICODE_ESCAPE
+                                 ;
+// Lexer Ignored Rule
+EOL  
+@after{
+    // Debug.WriteLine("EOL",$text);
+}                        
+    :    (CR LF | CR | LF)        
+    { $channel = AS3_exParser.CHANNEL_EOL; };
+
+WHITESPACE
+@after{
+    // Debug.WriteLine("WHITESPACE",$text);
+}
+    :   (('\u0020'|'\u0009'|'\u000B'|'\u000C')|('\u001C'..'\u001F'))+              { $channel = AS3_exParser.CHANNEL_WHITESPACE; }
+    ;
+    
+COMMENT_MULTILINE           
+@after{
+    // Debug.WriteLine("COMMENT_MULTILINE",$text);
+}
+    :   '/*' ( options {greedy=false;} : . )* '*/'         { $channel = AS3_exParser.CHANNEL_MLCOMMENT; };
+
+COMMENT_SINGLELINE
+@after{
+    // Debug.WriteLine("COMMENT_SINGLELINE",$text);
+}      
+    :   '//' ~( CR | LF )* (CR LF | CR | LF)                          { $channel = AS3_exParser.CHANNEL_SLCOMMENT; };
+
+// $<StringLiteral
+
+SINGLE_QUOTE_LITERAL
+@after{
+    // Debug.WriteLine("SINGLE_QUOTE_LITERAL",$text);
+}          
+    :   '\'' ( ESCAPE_SEQUENCE | ~('\\'|'\'') )* '\'';
+DOUBLE_QUOTE_LITERAL         
+@after{
+    // Debug.WriteLine("DOUBLE_QUOTE_LITERAL",$text);
+} 
+    :   '"'  ( ESCAPE_SEQUENCE | ~('\\'|'"') )* '"';
+
+// $>
+
+// $<RegularExpressionLiteral
+
+REGULAR_EXPR_LITERAL
+@after{
+    // Debug.WriteLine("REGULAR_EXPR_LITERAL",$text);
+}
+    :   {IsRegularExpression()}? => DIV REGULAR_EXPR_BODY DIV REGULAR_EXPR_FLAG*
+    ;
+
+fragment REGULAR_EXPR_BODY
+    :   REGULAR_EXPR_FIRST_CHAR REGULAR_EXPR_CHAR*
+    ;   
+
+// add > to the cannot be first char list
+fragment REGULAR_EXPR_FIRST_CHAR
+    :   ~(CR | LF |'*'|'\\'|'/'|'>')
+    |   BACKSLASH_SEQUENCE
+    ;
+
+fragment REGULAR_EXPR_CHAR
+    :   ~(CR | LF |'\\'|'/')
+    |   BACKSLASH_SEQUENCE
+    ;
+
+fragment BACKSLASH_SEQUENCE:    '\\' ~(CR | LF);    
+    
+fragment REGULAR_EXPR_FLAG :    IDENT_PART ;
+
+// $>
+
+// $<NumberLiteral
+
+HEX_NUMBER_LITERAL           
+@after{
+    // Debug.WriteLine("HEX_NUMBER_LITERAL",$text);
+} 
+    : '0' ('X'|'x') HEX_DIGIT+ ;
+
+fragment DEC_NUMBER          :  NUMBER+ '.' NUMBER* | '.' NUMBER+ | NUMBER+ ;
+
+DEC_NUMBER_LITERAL
+@after{
+    // Debug.WriteLine("DEC_NUMBER_LITERAL",$text);
+} 
+    :  DEC_NUMBER EXPONENT? ;
+
+fragment EXPONENT            : ('e'|'E') ('+'|'-')? NUMBER+ ;
+
+// $>
+
+IDENTIFIER
+@after{
+    // Debug.WriteLine("Identifier",$text);
+} 
+    :   IDENT_NAME_ASCII_START
+    |   UNICODE_ESCAPE+
+    |   {ConsumeIdentifierUnicodeStart();}
+    ;
+       
+fragment IDENT_NAME_ASCII_START   : IDENT_ASCII_START IDENT_PART*;
+
+fragment IDENT_ASCII_START        : ALPHABET | DOLLAR | UNDERSCORE;
+    
+fragment IDENT_PART 
+@after{
+    // Debug.WriteLine("IDENT_PART",$text);
+} 
+    :   (IDENT_ASCII_START) => IDENT_ASCII_START
+    |   NUMBER
+    |   {IsUnicodeIdentifierPart(input.LA(1))}? {MatchAny();}
+    ;
+    
+XML_COMMENT
+@after{
+    // Debug.WriteLine("XML_COMMENT",$text);
+}                  
+    :   '<!--' ( options {greedy=false;} : . )* '-->';
+    
+XML_CDATA options {k=8;}
+@after{
+    // Debug.WriteLine("XML_CDATA",$text);
+}    
+    :   '<![CDATA' ( options {greedy=false;} : . )* ']]>' ;
+     
+XML_PI
+@after{
+    // Debug.WriteLine("XML_PI",$text);
+}                      
+    :   '<?' ( options {greedy=false;} : . )* '?>'; 
+
+// SourceCharacters but no embedded left-curly { or less-than <    
+XML_TEXT 
+@after{
+    // Debug.WriteLine("XMLText",$text);
+}   
+    : '\u0020'..'\u003b'
+    | '\u003d'..'\u007a'
+    | '\u007c'..'\u007e'
+    | {IsXMLText(input.LA(1))}?{MatchAny();}
+    ;
+
+    
+// $<Literal
+
+booleanLiteral                     :   T=TRUE {Emit((CommonToken)$T);} | F=FALSE{Emit((CommonToken)$F);} ;
+
+numericLiteral                     :   D=DEC_NUMBER_LITERAL {Emit((CommonToken)$D);} | H=HEX_NUMBER_LITERAL {Emit((CommonToken)$H);};
+
+stringLiteral                      :   S=SINGLE_QUOTE_LITERAL{Emit((CommonToken)$S);} | D=DOUBLE_QUOTE_LITERAL {Emit((CommonToken)$D);};
+
+regularExpresionLiteral            :   R=REGULAR_EXPR_LITERAL {Emit((CommonToken)$R);};
+
+identifierLiteral                  :   /*{isNotReservedWord(input.LT(1).Text)}?*/ I=IDENTIFIER{Emit((CommonToken)$I);} | notQuiteReservedWord ; 
+
+xmlNameLiteral                     :   (I=IDENTIFIER{Emit((CommonToken)$I);} | allKeywords) ( {!PromoteWhitespace()}?=> (s=SUB {Emit((CommonToken)$s);} | d=DOT {Emit((CommonToken)$d);} | c=COLON {Emit((CommonToken)$c);}) {!PromoteWhitespace()}?=> (I2=IDENTIFIER {Emit((CommonToken)$I2);} | allKeywords))*
+									; 
+
+literal                            :   N=NULL {Emit((CommonToken)$N);} | booleanLiteral | numericLiteral | stringLiteral | regularExpresionLiteral;
+// $>
+
+xmlMarkup                          :   xmlComment | xmlCDATA | xmlPI;
+xmlComment                         :   x=XML_COMMENT {Emit((CommonToken)$x);} ;  
+xmlCDATA                           :   x=XML_CDATA {Emit((CommonToken)$x);}; 
+xmlPI                              :   x=XML_PI {Emit((CommonToken)$x);} ; 
+xmlExprEval                        :   L=LCURLY {Emit((CommonToken)$L);PushIndent(true);} expression R=RCURLY{PopIndent();Emit((CommonToken)$R);} ; 
+
+
+xmlTextElement
+    :
+		allKeywords {/*TODO: see if I can change token type*/} 
+    | lexToken=(   DEC_NUMBER_LITERAL 
+    | 	HEX_NUMBER_LITERAL
+    |   SINGLE_QUOTE_LITERAL 
+    | 	DOUBLE_QUOTE_LITERAL
+    |   IDENTIFIER 
+    |   XML_TEXT  //used to have a '+' on this item
+    |   DIV 
+    | 	SEMI 
+//    | 	LCURLY //not allowed in xml text
+    | 	RCURLY 
+    | 	LPAREN 
+    | 	RPAREN 
+    |	LBRACK 
+    |	RBRACK      
+    |	DOT         
+    |	COMMA       
+//    |	LT          //not allowed in xml text
+    |	GT          
+    |	LTE         
+//    |	GTE         
+    |	EQ          
+    |	NEQ         
+    |	SAME        
+    |	NSAME       
+    |	PLUS        
+    |	SUB         
+    |	STAR        
+    |	MOD         
+    |	INC         
+    |	DEC         
+    |	SHL         
+//    |	SHR         
+//    |	SHU         
+    |	AND         
+    |	OR          
+    |	XOR         
+    |	NOT         
+    |	INV         
+    |	LAND        
+    |	LOR         
+    |	QUE         
+    |	COLON       
+    |	ASSIGN      
+//    |	UNDERSCORE  
+//    |	DOLLAR      
+//    |	MUL_ASSIGN
+    |	DIV_ASSIGN
+    |	MOD_ASSIGN
+    |	ADD_ASSIGN
+    |	SUB_ASSIGN
+    |	SHL_ASSIGN
+//    |	SHR_ASSIGN
+//    |	SHU_ASSIGN
+    |	AND_ASSIGN
+    |	XOR_ASSIGN
+    |	OR_ASSIGN
+    |   LOR_ASSIGN
+    |   LAND_ASSIGN
+    |	ELLIPSIS    
+    |	XML_ELLIPSIS
+    |	XML_NS_OP
+    |	XML_AT
+//    |	XML_LS_STD
+ //   |	XML_LS_END
+    ) 
+    {
+        lexToken.Type = XML_TEXT; 
+        Emit((CommonToken)$lexToken);
+    }
+    ;
+
+xmlText
+@init{
+    
+}
+@after{
+    // System.out.println("xmlText.text=("+$text+")");
+    // System.out.println("xmlText after start currentIndex = "+input.index()+"size = "+input.size());
+}
+    : 
+//    {foundNextLT()}? => {changeTokensUpToNextLT();}
+	{mPrinter.SetE4XTextContent(true);} 
+    (x=XML_TEXT {Emit((CommonToken)$x);} | xmlTextElement)+ //xmlTextElement+
+    {mPrinter.SetE4XTextContent(false);}                                                                        
+    ;
+
+// it's a helper rule,should not be a tree.
+xmlPrimaryExpression 
+    :   xmlPropertyIdentifier
+    |   xmlInitialiser
+    |   xmlListInitialiser
+    ;                                                                      
+
+/* 
+    XMLPropertyIdentifier can be a primary expression, but also can be a propertySuffixReference
+    see example
+        :   var xml:XML = <soap:Envelope soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>;
+            var soapNS:Namespace = message.namespace("soap");
+            trace(xml.@soapNS::encodingStyle); //-> it's a propertySuffixReference Call
+            with(xml){
+                trace(@soapNS::encodingStyle); //-> it's a primaryExpression Call
+            }
+*/
+xmlPropertyIdentifier
+      :   xmlAttributeIdentifier
+      |   xmlQualifiedIdentifier
+      |   s=STAR {Emit((CommonToken)$s);}                                    
+      ;    
+
+xmlAttributeIdentifier
+    :   at=XML_AT {Emit((CommonToken)$at);} 
+        (
+           xmlQualifiedIdentifier
+           | xmlPropertySelector
+           | indexSuffix
+        )                                                        
+    ; 
+    
+xmlPropertySelector
+    :   xmlNameLiteral 
+    |   s=STAR {Emit((CommonToken)$s);}
+    ;
+
+xmlQualifiedIdentifier
+    :   xmlPropertySelector  x=XML_NS_OP {Emit((CommonToken)$x);}                 
+    (
+        xmlPropertySelector
+        | indexSuffix
+    )
+    ;
+
+xmlInitialiser
+    :   xmlMarkup
+    |   xmlElement
+    ;
+    
+xmlElement
+@init
+{
+	WrapOptions options=mPrinter.GetXMLWrapOptions();
+	bool pushedFormat=false;
+}
+    :
+    {pushedFormat=PushFormatType(options, false);}
+    {EmitCRForTag(options);}
+    L=LT {Emit((CommonToken)$L);}{PushIndent(true);} xmlTagName xmlAttributes? 
+    (
+        x=XML_TEND {Emit((CommonToken)$x);}
+        {EmitCRForTag(options);}
+        {PopIndent();}
+        | 
+        G=GT {Emit((CommonToken)$G);}{EmitCRForTag(options);}xmlElementContent? 
+        x=XML_E_TEND {PopIndent();}{Emit((CommonToken)$x);} 
+        xmlTagName G=GT{Emit((CommonToken)$G);}{EmitCRForTag(options);} 
+    )
+    {
+	    if (pushedFormat)
+	    	mPrinter.PopFormatMode();
+    }
+    ; 
+    
+xmlAttributes
+    :   xmlAttribute+
+    ;      
+    
+xmlTagName
+    :   xmlExprEval
+	| xmlNameLiteral
+    ; 
+
+xmlAttribute
+    :  {PromoteWhitespace()}? {InsertWS(1);} xmlNameLiteral A=ASSIGN {Emit((CommonToken)$A);} 
+    (
+        xmlExprEval
+        | stringLiteral
+    )
+    ;
+       
+xmlElementContent
+    :  xmlElementContentHelper+
+    ;
+
+xmlElementContentHelper
+    : xmlExprEval 
+    | xmlMarkup 
+    | xmlElement 
+    | {mPrinter.PushFormatMode(ASPrettyPrinter.FORMAT_INDENT);}xmlText{mPrinter.PopFormatMode();}
+	;
+
+xmlListInitialiser
+    :   {InsertCR(false);} x=XML_LS_STD 
+  		{Emit((CommonToken)$x);}{InsertCR(false);}{PushIndent(true);}
+  		xmlElementContent? 
+  		{InsertCR(false);} x=XML_LS_END {PopIndent();}{Emit((CommonToken)$x);}{InsertCR(false);}
+    ;
+
+// semic rule
+semic
+@init
+{
+    // Mark current position so we can unconsume a RBRACE.
+    int marker = input.Mark();
+    // Promote EOL if appropriate
+    bool onBrace=false;
+    if ( ((CommonToken) retval.Start).Text!=null && ((CommonToken) retval.Start).Text.Equals("}"))
+    {
+    	onBrace=true;
+		if (state.backtracking>0)
+		{
+			retval.Stop=retval.Start;
+		    return retval; //we don't want to consume the '}' during the prediction phase
+		}    	
+    }
+    	
+    if (FindVirtualHiddenToken(retval))
+    {
+       retval.Stop=retval.Start;
+       return retval;
+    }
+       
+ //   promoteEOL(retval);
+}
+    :   S=SEMI{Emit((CommonToken)$S);} 
+    |   E=EOF{Emit((CommonToken)$E);} 
+    |   R=RCURLY { input.Rewind(marker); 
+                    if (onBrace)
+                         retval.Start=input.LT(-1);
+                 }
+//    |   C=COMMENT_MULTILINE {Emit((CommonToken)$C);} // (with EOL in it)
+//    |   {isNextTokenHiddenVirtualSemi(retval)}?  E=EOL {Emit((CommonToken)$E);} 
+    ;
+
+
+fileContents
+	: (packageDeclaration? packageElement*) | EOF
+	;
+
+// $<Package Declaration
+
+packageDeclaration
+	:   p=PACKAGE {{InsertCR(false);}Emit((CommonToken)$p);PushExpressionIndent();} (type)? {PopIndent();} 
+	    l=LCURLY 
+	    {
+	       LeftCurlyNewlineHandler(false);
+	       Emit((CommonToken)$l);
+	       if (mPrinter.IsIndentAtPackageLevel())
+	          PushIndent(true);
+	    } 
+	    packageElement* 
+	    {
+	    	if (mPrinter.IsIndentAtPackageLevel())
+	            PopIndent();
+	    } 
+	    r=RCURLY {InsertCR(false);Emit((CommonToken)$r);}
+	;
+			
+//this is for actionscript embedded within mxml.  I believe that the semantics are that the code in
+//the mx:Script blocks are embedded inside a virtual class declaration, so anything that is normally
+//allowed inside a class should be okay.  However, imports are okay too.
+mxmlEmbedded
+	:
+	    (propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration)* | EOF
+	;
+				
+packageElement
+    :   classOrInterfaceDecl | propertyDeclaration | functionDeclaration | interfaceFunctionDeclaration | statement | directive
+    ;
+
+importDeclaration
+	:   {InsertCR(false);} i=IMPORT {Emit((CommonToken)$i);} type (D=DOT {Emit((CommonToken)$D);} S=STAR{Emit((CommonToken)$S);} )? semic 
+	;
+
+classOrInterfaceDecl
+	:   (conditionalDirAndBindingDecls)? {PushLazyIndent();}{InsertCR(false);}{InsertLines(mPrinter.GetBlankLinesBeforeClass(), false);} memberModifiers? (interfaceDeclaration | classDeclaration)
+	;
+	
+directive
+	: {PushLazyIndent();}{InsertCR(false);}(bindingDecl | includeDirective | useNamespaceDirective | importDeclaration | /*namespaceDirective |*/ defaultXMLNamespaceDirective){PopIndent();}
+	;
+	
+conditionalDirAndBindingDecls
+	: {InsertCR(false);} 	
+	  {mPrinter.MarkBindablePos(true);}
+	  conditionalCompilerOption 
+      {mPrinter.SetBindableMode();}
+	  ({InsertCR(false);} bindingDecl)*
+	;
+	
+xmlKeyword
+	: {input.LT(1).Text.ToLower().Equals("xml")}? I=IDENTIFIER {Emit((CommonToken)$I);} 
+	;
+	
+conditionalCompilerOption
+	:
+	identifierLiteral x=XML_NS_OP {Emit((CommonToken)$x);} identifierLiteral
+	;
+	
+defaultXMLNamespaceDirective
+	: D=DEFAULT {Emit((CommonToken)$D);} xmlKeyword 
+	//namespace
+	N=NAMESPACE {Emit((CommonToken)$N);} 
+	A=ASSIGN {Emit((CommonToken)$A);} I=IDENTIFIER {Emit((CommonToken)$I);} semic 
+	;	
+	
+bindingDecl
+@init{bool bindable=false;}
+	: L=LBRACK  
+		  I=IDENTIFIER 
+		  	{
+		  		bindable=mPrinter.IsDirectiveForNextElement($I.Text);
+		  		if (bindable)
+		  			mPrinter.MarkBindablePos(false); //call this to mark position *before* we send any of the tokens to the printer
+		  		Emit((CommonToken)$L); }
+		  		{Emit((CommonToken)$I);
+		  	} 
+		  (L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} 
+		     (bindingDeclArg (C=COMMA {Emit((CommonToken)$C);} bindingDeclArg)*)? 
+		   R=RPAREN{InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);} 
+	       )? 
+	   R=RBRACK{Emit((CommonToken)$R);} (s=SEMI {Emit((CommonToken)$s);})?
+	   {
+	   	if (bindable)
+	   	{
+	   		mPrinter.SetBindableMode();
+	   	}
+	   } 
+	;
+	
+includeDirective
+	: I=INCLUDE{Emit((CommonToken)$I);} stringLiteral semic  
+	;
+	
+bindingDeclArg
+	:
+	//TODO: figure out what's actually legal here
+//	(I=IDENTIFIER {Emit((CommonToken)$I);} E=ASSIGN {Emit((CommonToken)$E);})? expression  
+//	| I=IDENTIFIER{Emit((CommonToken)$I);} 
+//	| T=TRUE {Emit((CommonToken)$T);} 
+//	| F=FALSE{Emit((CommonToken)$F);}
+   
+    (I=IDENTIFIER {Emit((CommonToken)$I);} E=ASSIGN {Emit((CommonToken)$E);} )? 
+	(
+		stringLiteral | numericLiteral | eitherIdentifier  
+	);
+
+// $>
+
+// $<Class / Interface Body
+
+interfaceDeclaration
+	:   i=INTERFACE {Emit((CommonToken)$i);} type (e=EXTENDS {Emit((CommonToken)$e);} typeList)? {PopIndent();}
+        interfaceBody
+	;	
+
+interfaceBody
+	:   l=LCURLY 
+	    {
+	    	LeftCurlyNewlineHandler(false);
+	    	Emit((CommonToken)$l);PushIndent(true);
+	    } 
+	    interfaceElement* 
+	    {PopIndent();} 
+	    r=RCURLY {InsertCR(false);Emit((CommonToken)$r);}
+	;	
+
+classDeclaration
+	:   c=CLASS {Emit((CommonToken)$c);} type ( E=EXTENDS {Emit((CommonToken)$E);} type)? ( I=IMPLEMENTS {Emit((CommonToken)$I);} typeList)? {PopIndent();}
+        classBody 
+    ;  
+    
+  
+
+classBody
+	:   L=LCURLY 
+		{
+			LeftCurlyNewlineHandler(false);
+			Emit((CommonToken)$L);PushIndent(true);
+		} 
+		classBodyElement* 
+		{PopIndent();} 
+		R=RCURLY{InsertCR(false);Emit((CommonToken)$R);} 
+	;
+
+// $>
+	 
+// $<Class/Interface Element
+
+classBodyElement
+    :   propertyDeclaration | functionDeclaration | statement | directive //| emptyStatement
+	;
+
+interfaceElement
+    :   propertyDeclaration | interfaceFunctionDeclaration | statement| directive //| emptyStatement
+    ;
+
+// $>
+	 
+
+
+// $<InterfaceFunction Declaration
+
+interfaceFunctionDeclaration
+    :    (conditionalDirAndBindingDecls)? {InsertCR(false);} memberModifiers? F=FUNCTION {Emit((CommonToken)$F);}
+       // getOrSet? 
+    (S=SET{Emit((CommonToken)$S);} | G=GET{Emit((CommonToken)$G);} )? 
+    (I=IDENTIFIER {Emit((CommonToken)$I);} | notQuiteReservedWord) formalParameterList (C=COLON {InsertWS(mPrinter.GetAdvancedSpacesBeforeColons()); Emit((CommonToken)$C);InsertWS(mPrinter.GetAdvancedSpacesAfterColons());} type)? semic
+    ;
+
+// $>
+
+// $<Property Declaration
+
+propertyDeclaration
+	:    {InsertLines(mPrinter.GetBlankLinesBeforeProperties());} (conditionalDirAndBindingDecls)? {InsertCR(false);}{PushLazyIndent();} memberModifiers? (variableStatement | constantVarStatement | namespaceDirective) {PopIndent();}
+	;
+
+// $>
+
+// $<Function Definition (13)
+
+functionDeclaration
+    :    (conditionalDirAndBindingDecls)? {PushLazyIndent();}{InsertCR(false);InsertLines(mPrinter.GetBlankLinesBeforeFunction());} memberModifiers? F=FUNCTION {Emit((CommonToken)$F);} 
+    (funcType=(SET|GET) {Emit((CommonToken)$funcType);})?
+    (I=IDENTIFIER {Emit((CommonToken)$I);} | notQuiteReservedWord) formalParameterList (C=COLON {InsertWS(mPrinter.GetAdvancedSpacesBeforeColons());Emit((CommonToken)$C);InsertWS(mPrinter.GetAdvancedSpacesAfterColons());} type)? {PopIndent();} functionBody 
+    ;
+
+functionExpression
+		//pop the indent to remove the lazy indent that is added by the surrounding expression.  Then add an indent
+		//back at the end so that when the surrounding expression pops it will leave the correct number of indents.  Yuck.
+    :   F=FUNCTION {Emit((CommonToken)$F);} (I=IDENTIFIER{Emit((CommonToken)$I);})? formalParameterList (C=COLON {InsertWS(mPrinter.GetAdvancedSpacesBeforeColons());Emit((CommonToken)$C);InsertWS(mPrinter.GetAdvancedSpacesAfterColons());} type)? {PopIndent();} functionBody
+    	{PushExpressionIndent();}
+    ;
+
+formalParameterList
+@init
+{
+	WrapOptions options=mPrinter.GetMethodDeclWrapOptions();
+	bool pushedFormat=false;
+	bool pushedIndent=false;
+}
+    :   
+		{
+			pushedFormat=PushFormatType(options, false);
+			mPrinter.SetInParameterDecl(true);
+		}
+    	L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} 
+        ( ( {pushedIndent=PushLazyParmIndent(pushedIndent, options.IndentStyle);} variableDeclaration 
+            ( 
+               C=COMMA 
+               {pushedIndent=EmitCommaWithSpacingAndCRs(options, (CommonToken) $C, pushedIndent);}
+               variableDeclaration 
+            )* 
+            ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA  {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} formalEllipsisParameter)?
+           )
+           | {pushedIndent=PushLazyParmIndent(pushedIndent, options.IndentStyle);} formalEllipsisParameter
+        )? 
+        R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}
+        
+        {
+        	 mPrinter.SetInParameterDecl(false);
+	        if (pushedIndent)
+    	    	PopIndent();
+    	    if (pushedFormat)
+    	    	mPrinter.PopFormatMode();
+        } 
+    ;
+    
+formalEllipsisParameter
+    :   E=ELLIPSIS  {Emit((CommonToken)$E);InsertWS(1);} variableIdentifierDecl
+    ;   
+
+functionBody
+    :   L=LCURLY 
+    	{
+    		LeftCurlyNewlineHandler(false);
+    		Emit((CommonToken)$L);PushIndent(true);
+    	} 
+    		(statement|functionDeclaration)* {PopIndent();} 
+    	R=RCURLY   {InsertCR(false);Emit((CommonToken)$R);} 
+    ;
+
+// $>
+
+// $<Member Modifiers
+
+memberModifiers
+    :   memberModifier+
+    ;
+
+//each
+//	: {input.LT(1).Text.Equals("each")}? I=IDENTIFIER{Emit((CommonToken)$I);} 
+//	;
+	
+memberModifier
+    :   x=(
+        DYNAMIC
+    |   FINAL
+    |   INTERNAL
+    |   NATIVE
+    |   OVERRIDE
+    |   PRIVATE
+    |   PROTECTED
+    |   PUBLIC
+    |   STATIC
+    |   IDENTIFIER //this is to handle the case of namespaces, which apparently don't have to be before other modifiers
+    ) {Emit((CommonToken)$x);}
+    ;
+
+// $>
+
+
+// statement
+
+// $<Statement
+
+statement
+    :
+    	{SetBlockFlag(true);} blockStatement
+    |   {InsertStatementCR();}directive
+    |   {InsertStatementCR();}namespaceDirective
+    |   {InsertStatementCR();}{PushLazyIndent();} expression semic {PopIndent();}
+    |   {InsertStatementCR();} {PushLazyIndent();}constantVarStatement {PopIndent();}
+    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}tryStatement
+    |   {InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}labelledStatement 
+    |   {MarkBlockFlag();} switchStatement
+    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}withStatement
+    |   {InsertStatementCR();} {PushLazyIndent();} returnStatement {PopIndent();}
+    |   {InsertStatementCR();} {PushLazyIndent();} breakStatement {PopIndent();}
+    |   {InsertStatementCR();} {PushLazyIndent();} continueStatement {PopIndent();}
+    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}forStatement
+    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}forInStatement
+    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}forEachInStatement
+    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}doWhileStatement
+    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}whileStatement
+    |   {InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}ifStatement
+    |   {if (mPrinter.IsEmptyStatementsOnNewLine())InsertStatementCR();}emptyStatement
+    |   {InsertStatementCR();} {PushLazyIndent();} variableStatement {PopIndent();}
+    |   {InsertStatementCR();} {PushLazyIndent();} throwStatement {PopIndent();}
+    ;
+
+// $>
+
+
+// $<Block Statement
+
+blockStatement
+    :   ({InsertCR(false);} conditionalToken=conditionalCompilerOption)? L=LCURLY 
+    	{
+    		LeftCurlyNewlineHandler(conditionalToken==null); //if we have a conditional setting, then we want to have the option of keeping the brace on the same line
+    		Emit((CommonToken)$L);}{PushIndent(true);
+    	} 
+    	statement* {PopIndent();} 
+    	R=RCURLY {InsertCR(false);Emit((CommonToken)$R);}
+    ;
+
+// $>
+
+throwStatement
+	:  T=THROW {Emit((CommonToken)$T);} expression semic
+	;
+
+// $<Constant Var Statement
+
+constantVarStatement
+    :   C=CONST  {Emit((CommonToken)$C);} variableDeclarationList (S=SEMI{Emit((CommonToken)$S);})?                                                                              
+    ; 
+// $>
+
+
+useNamespaceDirective
+	: 
+	U=USE  {Emit((CommonToken)$U);} 
+	N=NAMESPACE  {Emit((CommonToken)$N);} 
+	qualifiedIdentifier (C=COMMA {Emit((CommonToken)$C);} qualifiedIdentifier)* semic
+	;    
+// $<UseNamespace Statement
+
+// $<Namespace Directive
+
+namespaceDirective
+    :   //(memberModifiers)? //namespace
+    N=NAMESPACE  {Emit((CommonToken)$N);}{PushExpressionIndent();} 
+    qualifiedIdentifier ( A=ASSIGN  {InsertWS(mPrinter.GetSpacesAroundAssignment());Emit((CommonToken)$A);InsertWS(mPrinter.GetSpacesAroundAssignment());} stringLiteral )? semic {PopIndent();}
+    ;
+
+// $>
+
+
+// $<Try Statement(12.14)
+
+tryStatement
+    : {InsertStatementCR();} T=TRY {Emit((CommonToken)$T);} {PushIndent(false);} blockStatement {PopIndent();}
+        ( catchClause+ finallyClause
+        | catchClause+
+        | finallyClause
+        )
+    ;
+
+catchClause
+    : {if (mPrinter.IsCRBeforeCatch()) InsertCR(false);}{InsertWS(1);} C=CATCH {Emit((CommonToken)$C);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());}{PushIndent(false);} L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} variableIdentifierDecl R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);} blockStatement {PopIndent();}
+    ;
+
+finallyClause
+    : {if (mPrinter.IsCRBeforeCatch()) InsertCR(false);}{InsertWS(1);} F=FINALLY {Emit((CommonToken)$F);}{PushIndent(false);} blockStatement {PopIndent();}
+    ;
+
+// $>
+
+// $<Labelled Statement(12.12)
+
+labelledStatement
+    :  I=IDENTIFIER {Emit((CommonToken)$I);}{PushLabeledIndent();} 
+    	C=COLON 
+    	{
+    		Emit((CommonToken)$C);
+    		InsertWS(mPrinter.GetSpacesAfterLabel());
+    	} 
+    	statement 
+    	{PopIndent();}
+    ;
+
+// $>
+
+// $<switch Statement(12.11)
+
+switchStatement
+    :  {InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();} S=SWITCH {Emit((CommonToken)$S);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());}{PushExpressionIndent();} parExpression {PopIndent();} 
+    	L=LCURLY 
+    	{
+    		LeftCurlyNewlineHandler(false);
+    		Emit((CommonToken)$L);PushIndent(true);
+    	} 
+    	switchBlockStatementGroup* {PopIndent();} 
+    	R=RCURLY{InsertCR(false);Emit((CommonToken)$R);} 
+    ;
+    
+///* The change here (switchLabel -> switchLabel+) technically makes this grammar
+//   ambiguous; but with appropriately greedy parsing it yields the most
+ //  appropriate AST, one in which each group, except possibly the last one, has
+ //  labels and statements. */
+switchBlockStatementGroup
+    :   {InsertCR(false);} switchLabel {PushIndent(false);} statement* {PopIndent();}{InsertCR(false);} breakStatement?
+    ;
+    
+switchLabel
+    :   C=CASE {Emit((CommonToken)$C);} expression C=COLON 
+    	{
+    	Emit((CommonToken)$C);
+    	InsertWS(mPrinter.GetSpacesAfterLabel());
+    	} 
+    |   D=DEFAULT {Emit((CommonToken)$D);} C=COLON
+    		{
+    			Emit((CommonToken)$C);
+    			InsertWS(mPrinter.GetSpacesAfterLabel());
+    		} 
+    ;
+
+// $>
+
+// $<With statement(12.10)
+
+withStatement
+    :   W=WITH  {Emit((CommonToken)$W);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());}{PushExpressionIndent();} L=LPAREN  {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} expression  R=RPAREN  {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}{PopIndent();} {PushIndent(false);} statement {PopIndent();}
+    ;
+
+// $>
+
+// $<Return statment (12.9)
+
+returnStatement
+    :   R=RETURN {Emit((CommonToken)$R);} ( {InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} expression)? semic 
+    ;
+
+// $>
+
+
+// $<Break statement (12.8)
+
+breakStatement
+    :   B=BREAK    {Emit((CommonToken)$B);} (I=IDENTIFIER{Emit((CommonToken)$I);})? semic
+    ;
+
+// $>
+
+
+// $<Continue statement (12.7)
+
+continueStatement
+    :   C=CONTINUE {Emit((CommonToken)$C);} (I=IDENTIFIER{Emit((CommonToken)$I);})? semic
+    ;
+
+// $>
+
+
+// $<For statement 12.6
+
+forStatement
+    :   F=FOR {Emit((CommonToken)$F);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} {PushExpressionIndent();} L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} forControl R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}{PopIndent();}{PushIndent(false);} statement {PopIndent();}
+    ;
+    
+forInStatement
+    :   F=FOR {Emit((CommonToken)$F);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} {PushExpressionIndent();} L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} forInControl R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);} {PopIndent();} {PushIndent(false);} statement {PopIndent();}
+    ;  
+    
+forEachInStatement
+    :   F=FOR {Emit((CommonToken)$F);} {PushExpressionIndent();}
+     //   each 
+    E=EACH {Emit((CommonToken)$E);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} 
+    L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} forInControl R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}{PopIndent();}{PushIndent(false);} statement {PopIndent();}     
+	;
+forControl
+options {k=3;} // be efficient for common case: for (ID ID : ID) ...
+    :   forInit? {InsertWS(mPrinter.GetSpacesBeforeComma());} semic  {InsertWS(mPrinter.GetSpacesAfterComma());} expression? {InsertWS(mPrinter.GetSpacesBeforeComma());}semic {InsertWS(mPrinter.GetSpacesAfterComma());} forUpdate?
+    ;
+
+forInControl
+options {k=3;} // be efficient for common case: for (ID ID : ID) ...
+    :   forInDecl I=IN {Emit((CommonToken)$I);} expression
+    ;
+
+forInDecl
+    :   leftHandSideExpression
+    |   V=VAR {Emit((CommonToken)$V);} variableDeclarationNoIn
+    ;
+
+forInit
+    :   variableDeclarationNoInList
+    |   expressionNoIn
+    ;
+
+forUpdate
+    :   expression
+    ;
+
+// $>
+
+
+// $<While statement (12.5)
+
+doWhileStatement
+    :   D=DO {Emit((CommonToken)$D);} {PushIndent(false);} statement {PopIndent();}{InsertWS(1);} {PushExpressionIndent();} W=WHILE {Emit((CommonToken)$W);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} parExpression semic (S=SEMI{Emit((CommonToken)$S);})? {PopIndent();}
+    ;
+
+// $>
+
+// $<While statement (12.5)
+
+whileStatement
+    :   W=WHILE {Emit((CommonToken)$W);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());}{PushExpressionIndent();} parExpression {PopIndent();} {PushIndent(false);} statement {PopIndent();}
+    ;
+    
+// $>
+
+
+
+// $<If statement (12.5)
+
+ifStatement
+@init 
+{
+   CommonToken tok=null;
+   bool ifOnSameLine=false;
+   bool wasBlock=false;
+}
+    :      
+        {
+           tok=mPrinter.GetLastToken(); 
+           //if the previous token was not an else, then insert a CR.  Also if it is an 'else' but the setting says to put the 'if' on a new line
+           if (!mPrinter.IsKeepElseIfOnSameLine() || (tok==null) || !tok.Text.Equals("else"))
+           {
+           		InsertStatementCR();
+           }
+
+           if (tok!=null && tok.Text.Equals("else"))
+           {
+           		mPrinter.SetElseIfState();
+           }
+        } 
+         I=IF 
+         {
+              Emit((CommonToken)$I);
+              ifOnSameLine=mPrinter.GetElseIfNeedToLoseIndent();
+              if (ifOnSameLine)
+                  PopIndent();
+              InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());
+         }
+         {PushExpressionIndent();} 
+         parExpression 
+         {PopIndent();}
+         {PushIndent(false);}
+         {AddIfElseBlockTracker();SetBlockFlag(false);ClearBlockFlag();}
+         statement 
+         {wasBlock=IsBlockFlag();PopIfElseBlockTracker();}
+         {PopIndent();}
+          
+         (options {k=1;}:E=ELSE 
+	         {
+	          CommonToken tempTok= (CommonToken) mPrinter.GetLastToken();
+	          if (mPrinter.IsCRBeforeElse() || !wasBlock)//tempTok==null || !tempTok.Text.Equals("}")) 
+	              InsertCR(false);
+	         }
+	         {InsertWS(1);}
+	         {Emit((CommonToken)$E);} {PushIndent(false);} statement {PopIndent();})?
+			{if (ifOnSameLine)
+            	PushIndent(false);}
+	          
+    ;
+    
+// $>   
+    
+
+// $<Empty statement (12.3)
+
+emptyStatement 
+    :     S=SEMI {Emit((CommonToken)$S);} 
+    ;
+
+// $>
+
+
+// $<Variable statement 12.2)
+
+variableStatement
+@init{
+	WrapOptions options=mPrinter.GetExpressionWrapOptions();
+	bool pushedFormat=false;
+}
+    :
+    	{pushedFormat=PushFormatType(options, false);}
+        (I=IDENTIFIER {Emit((CommonToken)$I);})? V=VAR {Emit((CommonToken)$V);} variableDeclaration ( {InsertWS(mPrinter.GetSpacesBeforeComma());}C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} variableDeclaration )* semic
+    	{
+	   	    if (pushedFormat)
+	   	    	mPrinter.PopFormatMode();
+    	}
+         
+    ;
+    
+variableDeclarationList
+    :     variableDeclaration ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} variableDeclaration)*
+    ;
+    
+variableDeclarationNoInList
+    :    (V=VAR{Emit((CommonToken)$V);} )? variableDeclarationNoIn ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} variableDeclarationNoIn)*
+    ;
+    
+variableDeclaration
+    :   variableIdentifierDecl ( A=ASSIGN 
+    	{
+    		InsertVariableDeclAssignmentWhitespace((CommonToken) $A, true);
+    		//InsertWS(mPrinter.isInParameterDecl() ? mPrinter.getAdvancedSpacesAroundAssignmentInOptionalParameters() : mPrinter.getSpacesAroundAssignment());
+    		Emit((CommonToken)$A);
+    		InsertVariableDeclAssignmentWhitespace((CommonToken) $A, false);
+    		//InsertWS(mPrinter.isInParameterDecl() ? mPrinter.getAdvancedSpacesAroundAssignmentInOptionalParameters() : mPrinter.getSpacesAroundAssignment());
+    	} 
+    	assignmentExpression )?
+    ;
+
+variableDeclarationNoIn
+    :    variableIdentifierDecl ( A=ASSIGN 
+         {
+          InsertVariableDeclAssignmentWhitespace((CommonToken) $A, true);
+          //InsertWS(mPrinter.getSpacesAroundAssignment());
+          Emit((CommonToken)$A);
+          InsertVariableDeclAssignmentWhitespace((CommonToken) $A, false);
+          //InsertWS(mPrinter.getSpacesAroundAssignment());
+         } 
+         assignmentExpressionNoIn )?
+    ;
+    
+variableIdentifierDecl
+    :    identifierLiteral ( C=COLON {InsertWS(mPrinter.GetAdvancedSpacesBeforeColons());Emit((CommonToken)$C);InsertWS(mPrinter.GetAdvancedSpacesAfterColons());} type )?
+    ;
+// $>
+    
+// $<Type / Type List
+
+type:   qualifiedName | S=STAR {Emit((CommonToken)$S);} | V=VOID {Emit((CommonToken)$V);} ;
+
+typeList
+    :   type ({InsertWS(mPrinter.GetSpacesBeforeComma());}C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} type)*
+    ; 
+// $>
+     
+standardQualifiedName
+	:
+	typeSpecifier (D=DOT {Emit((CommonToken)$D);} typeSpecifier )*
+//	(I=IDENTIFIER {Emit((CommonToken)$I);} ) (D=DOT {Emit((CommonToken)$D);} (I=IDENTIFIER{Emit((CommonToken)$I);} ) )*
+	;
+	
+qualifiedName 
+    :   
+    	standardQualifiedName (typePostfixSyntax)? 
+    ;
+    
+typePostfixSyntax:
+	D=DOT {Emit((CommonToken)$D);} L=LT {Emit((CommonToken)$L);} standardQualifiedName (typePostfixSyntax)? G=GT {Emit((CommonToken)$G);}
+	;
+    
+qualifiedIdentifier
+    :   I=IDENTIFIER {Emit((CommonToken)$I);} 
+    ;
+
+
+// Expression
+
+parExpression
+    : L=LPAREN  {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} {PushExpressionIndent();} expression  R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);} {PopIndent();} 
+    ;
+
+expression
+@init{
+	WrapOptions options=mPrinter.GetExpressionWrapOptions();
+	bool pushedFormat=false;
+}
+    :   
+    	{pushedFormat=PushFormatType(options, true);}
+    	assignmentExpression ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA  {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} assignmentExpression)*
+    	{
+	   	    if (pushedFormat)
+	   	    	mPrinter.PopFormatMode();
+    	}
+    ;
+
+expressionNoIn
+    :   assignmentExpressionNoIn ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA  {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} assignmentExpressionNoIn)*
+    ;
+
+//11.13 Assignment Operators
+assignmentExpression
+    :   
+      leftHandSideExpression  assignmentOperator  assignmentExpression
+    | conditionalExpression
+    ;
+
+
+assignmentExpressionNoIn
+    :   conditionalExpressionNoIn
+    |   leftHandSideExpression  assignmentOperator  assignmentExpressionNoIn
+    ;
+
+assignmentOperator
+	: op=assignmentOperator_int 
+	  {InsertWS(mPrinter.GetSpacesAroundAssignment());
+	   Emit((CommonToken)$op.start);
+	   InsertWS(mPrinter.GetSpacesAroundAssignment());
+	  }
+	;
+	     
+assignmentOperator_int
+    : ASSIGN 
+//    | MUL_ASSIGN
+	| s=STAR a=ASSIGN! {s.Text = "*=";}
+    | DIV_ASSIGN 
+    | MOD_ASSIGN 
+    | ADD_ASSIGN 
+    | SUB_ASSIGN
+    | SHL_ASSIGN
+//    | SHR_ASSIGN
+//    | SHU_ASSIGN 
+    |   (('>' '>' '=')=> t1='>' t2='>' t3='='
+        { $t1.Line == $t2.Line && 
+          $t1.CharPositionInLine + 1 == $t2.CharPositionInLine && 
+          $t2.Line == $t3.Line && 
+          $t2.CharPositionInLine + 1 == $t3.CharPositionInLine }?
+      -> SHR_ASSIGN) {t1.Text = ">>=";}
+
+    | (('>' '>' '>' '=')=> t1='>' t2='>' t3='>' t4='='
+        { $t1.Line == $t2.Line && 
+          $t1.CharPositionInLine + 1 == $t2.CharPositionInLine &&
+          $t2.Line == $t3.Line && 
+          $t2.CharPositionInLine + 1 == $t3.CharPositionInLine &&
+          $t3.Line == $t4.Line && 
+          $t3.CharPositionInLine + 1 == $t4.CharPositionInLine }?
+      -> SHU_ASSIGN) {t1.Text = ">>>=";}
+    | AND_ASSIGN 
+    | XOR_ASSIGN 
+    | OR_ASSIGN
+    | LOR_ASSIGN
+    | LAND_ASSIGN
+    ;
+
+//11.12 Conditional Operator ( ?: )
+conditionalExpression
+    :   logicalORExpression ( Q=QUE  {IndentEmit((CommonToken)$Q);} assignmentExpression  {PopIndent();} C=COLON  {IndentEmit((CommonToken)$C);} assignmentExpression {PopIndent();})?
+    ;
+    
+conditionalExpressionNoIn
+    :   logicalORExpressionNoIn ( Q=QUE {IndentEmit((CommonToken)$Q);} assignmentExpression  {PopIndent();} C=COLON  {IndentEmit((CommonToken)$C);} assignmentExpression {PopIndent();})?
+    ;    
+    
+//11.11 Binary Logical Operators
+logicalORExpression
+    :   logicalANDExpression ( L=LOR {IndentEmit((CommonToken)$L);} logicalANDExpression {PopIndent();})*
+    ; 
+    
+logicalORExpressionNoIn
+    :   logicalANDExpressionNoIn ( L=LOR {IndentEmit((CommonToken)$L);} logicalANDExpressionNoIn {PopIndent();})*
+    ;     
+    
+logicalANDExpression
+    :   bitwiseORExpression ( L=LAND {IndentEmit((CommonToken)$L);} bitwiseORExpression {PopIndent();})*
+    ;
+    
+logicalANDExpressionNoIn
+    :   bitwiseORExpressionNoIn ( L=LAND {IndentEmit((CommonToken)$L);} bitwiseORExpressionNoIn {PopIndent();})*
+    ;    
+    
+//11.10 Binary Bitwise Operators
+bitwiseORExpression
+    :   bitwiseXORExpression ( O=OR {IndentEmit((CommonToken)$O);} bitwiseXORExpression {PopIndent();})*
+    ;
+    
+bitwiseORExpressionNoIn
+    :   bitwiseXORExpressionNoIn ( O=OR {IndentEmit((CommonToken)$O);} bitwiseXORExpressionNoIn {PopIndent();})*
+    ;    
+    
+bitwiseXORExpression
+    :   bitwiseANDExpression ( x=XOR {IndentEmit((CommonToken)$x);} bitwiseANDExpression {PopIndent();})*
+    ;
+    
+bitwiseXORExpressionNoIn
+    :   bitwiseANDExpressionNoIn ( x=XOR {IndentEmit((CommonToken)$x);} bitwiseANDExpressionNoIn {PopIndent();})*
+    ;    
+
+bitwiseANDExpression
+    :   equalityExpression ( A=AND {IndentEmit((CommonToken)$A);} equalityExpression {PopIndent();})*
+    ;
+    
+bitwiseANDExpressionNoIn
+    :   equalityExpressionNoIn ( A=AND {IndentEmit((CommonToken)$A);} equalityExpressionNoIn {PopIndent();})*
+    ;    
+
+//11.9 Equality Operators
+equalityExpression
+    :   relationalExpression ( eq=(EQ|NEQ|SAME|NSAME){IndentEmit((CommonToken)$eq);}  relationalExpression {PopIndent();})*
+    ;
+    
+equalityExpressionNoIn
+    :   relationalExpressionNoIn ( eq=(EQ|NEQ|SAME|NSAME) {IndentEmit((CommonToken)$eq);}  relationalExpressionNoIn {PopIndent();})*
+    ;    
+
+//11.8 Relational Operators
+relationalExpression
+    :   shiftExpression 
+    	(
+	    	( g=GT (assign=ASSIGN)? 
+		        {if (assign!=null)
+		         {
+		         	g.Text = ">=";
+		         	g.Type = GTE;
+		         }
+		         IndentEmit((CommonToken)$g);
+		        } 
+	          | eq=(IN|LT|LTE|INSTANCEOF|IS|AS) {IndentEmit((CommonToken)$eq);}
+	        )  
+	        shiftExpression {PopIndent();}
+        )*
+    ;
+    
+relationalExpressionNoIn
+    :   shiftExpression 
+    	(
+	    	( g=GT (assign=ASSIGN)? 
+		        {if (assign!=null)
+		         {
+		         	g.Text = ">=";
+		         	g.Type = GTE;
+		         }
+		         IndentEmit((CommonToken)$g);
+		        } 
+	          | eq=(LT|LTE|INSTANCEOF|IS|AS) {IndentEmit((CommonToken)$eq);}
+	        )  
+	        shiftExpression {PopIndent();}
+        )*
+    ;
+
+//11.7 Bitwise Shift Operators
+shiftExpression
+    :   additiveExpression ( 
+    		(
+    			t1=SHL
+      		|	(('>' '>')=> t1='>' t2='>'
+        		{ $t1.Line == $t2.Line && 
+          			$t1.CharPositionInLine + 1 == $t2.CharPositionInLine }?
+      			-> SHR) {t1.Text = ">>";}
+		    | 	(('>' '>' '>')=> t1='>' t2='>' t3='>'
+        		{ $t1.Line == $t2.Line && 
+          			$t1.CharPositionInLine + 1 == $t2.CharPositionInLine &&
+          			$t2.Line == $t3.Line && 
+          			$t2.CharPositionInLine + 1 == $t3.CharPositionInLine }?
+      			-> SHU) {t1.Text = ">>>";}
+    		) 
+    		{IndentEmit((CommonToken)$t1);} additiveExpression {PopIndent();}
+    	)*
+    ;
+
+//11.6 Additive Operators
+additiveExpression
+    :   multiplicativeExpression ( op=(PLUS|SUB){IndentEmit((CommonToken)$op);}  multiplicativeExpression {PopIndent();})*
+    ;
+
+//11.5 Multiplicative Operators
+multiplicativeExpression
+    :   unaryExpression ( op=(STAR|DIV|MOD){IndentEmit((CommonToken)$op);} unaryExpression {PopIndent();})*
+    ;
+
+//11.4 Unary Operators
+unaryExpression
+    :   postfixExpression
+    |  op=(NOT | INV) {Emit((CommonToken)$op);} unaryExpression
+    |   unaryOp postfixExpression
+    
+    
+    ;
+
+unaryOp
+    :   op=(DELETE | VOID | TYPEOF | INC | DEC | PLUS | SUB | INV | NOT) {Emit((CommonToken)$op);}
+    ;
+
+
+//11.3 Postfix Expressions
+postfixExpression
+    :   leftHandSideExpression postfixOp?
+    ;
+    
+postfixOp
+    :   op=(INC | DEC){Emit((CommonToken)$op);}
+    ;
+
+//These rules came from a grammar by Patrick Hulsmeijer, posted to the ANTLR examples
+memberExpression
+	: primaryExpression
+	| functionExpression
+	| newExpression
+	;
+
+newExpression
+	: N=NEW  {Emit((CommonToken)$N);InsertWS(1);} primaryExpression
+	;
+
+//11.2
+leftHandSideExpression
+    :   memberExpression 
+    (
+      arguments
+      | L=LBRACK {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideArrayReferenceBrackets());} expression R=RBRACK{InsertWS(mPrinter.GetAdvancedSpacesInsideArrayReferenceBrackets());Emit((CommonToken)$R);} 
+//      | D=DOT {Emit((CommonToken)$D);} (I=IDENTIFIER {Emit((CommonToken)$I);} op=XML_NS_OP {Emit((CommonToken)$op);} )? I=IDENTIFIER {Emit((CommonToken)$I);} 
+      | D=DOT {Emit((CommonToken)$D);} (eitherIdentifier op=XML_NS_OP {Emit((CommonToken)$op);} )? eitherIdentifier
+      | E=XML_ELLIPSIS{Emit((CommonToken)$E);} (eitherIdentifier op=XML_NS_OP {Emit((CommonToken)$op);} )? eitherIdentifier
+      | D=DOT {Emit((CommonToken)$D);} parExpression
+      | typePostfixSyntax 
+    )*  // | x=XML_AT {Emit((CommonToken)$x);}
+    ;
+    
+eitherIdentifier
+	: I=IDENTIFIER  {Emit((CommonToken)$I);} 
+	 | xmlPropertyIdentifier
+	 | allKeywords
+	;
+	
+typeSpecifier:
+	I=IDENTIFIER {Emit((CommonToken)$I);} | notQuiteReservedWord | I=INTERNAL {Emit((CommonToken)$I);} | D=DEFAULT {Emit((CommonToken)$D);}
+	;
+	
+notQuiteReservedWord
+	: 
+	word=(TO | NATIVE | EACH | GET | SET | NAMESPACE | DYNAMIC | FINAL | OVERRIDE | STATIC ) {Emit((CommonToken)$word);}
+	;
+
+allKeywords
+	: (reservedWord | notQuiteReservedWord)
+	;
+reservedWord
+	:
+    word=(AS          
+    | BREAK           
+    | CASE  
+    | CATCH           
+    | CLASS 
+    | CONST
+    | CONTINUE
+    | DEFAULT
+    | DELETE
+    | DO
+    | ELSE
+    | EXTENDS
+    | FALSE
+    | FINALLY
+    | FOR
+    | FUNCTION
+    | IF
+	| IMPLEMENTS
+    | IMPORT          
+    | IN
+    | INSTANCEOF      
+    | INTERFACE
+    | INTERNAL        
+    | IS
+//    | NATIVE          
+    | NEW
+    | NULL            
+    | PACKAGE  
+    | PRIVATE         
+    | PROTECTED
+    | PUBLIC          
+    | RETURN
+    | SUPER           
+    | SWITCH
+    | THIS            
+    | THROW
+	| TRUE
+    | TRY             
+    | TYPEOF
+    | USE             
+    | VAR
+    | VOID            
+    | WHILE
+    | WITH 
+//    | EACH            
+// 	| GET
+//    | SET             
+//    | NAMESPACE
+    | INCLUDE         
+//    | DYNAMIC
+//    | FINAL           
+//    | OVERRIDE
+//    | STATIC)
+       ) 
+       {Emit((CommonToken)$word);}      
+	;
+	
+arguments
+@init
+{
+	WrapOptions options=mPrinter.GetMethodCallWrapOptions();
+	bool pushedFormat=false;
+	bool pushedIndent=false;
+}
+	: 
+	  {pushedFormat=PushFormatType(options, false);}
+	  L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} 
+	  ( {pushedIndent=PushLazyParmIndent(pushedIndent, options.IndentStyle);} assignmentExpression 
+	        (  
+		        C=COMMA 
+		        {pushedIndent=EmitCommaWithSpacingAndCRs(options, (CommonToken) $C, pushedIndent);}
+		        assignmentExpression 
+	        )* 
+	  )? 
+	  R=RPAREN{InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}
+	  
+      {
+        if (pushedIndent)
+   	    	PopIndent();
+   	    if (pushedFormat)
+   	    	mPrinter.PopFormatMode();
+      } 
+	   
+	;
+
+/*suffix helper rule*/ 
+suffix
+    :    indexSuffix | propertyReferenceSuffix
+    ;
+/*code like [i] or [1]*/     
+indexSuffix             
+    :    L=LBRACK  {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideArrayReferenceBrackets());} expression  R=RBRACK{InsertWS(mPrinter.GetAdvancedSpacesInsideArrayReferenceBrackets());Emit((CommonToken)$R);} 
+    ;
+    
+propertyReferenceSuffix
+    :    D=DOT  {Emit((CommonToken)$D);} I=IDENTIFIER{Emit((CommonToken)$I);} 
+    |    D=DOT  {Emit((CommonToken)$D);} xmlPropertyIdentifier
+    |    D=DOT       {Emit((CommonToken)$D);} /*it's a xml only reference match*/
+    ;
+
+//11.1 Primary Expression
+primaryExpression  
+    :    primaryExpressionHelper
+    ;
+    
+/* derived from ECMA-262 basicly. but add super alternative*/
+primaryExpressionHelper
+    :   T=THIS{Emit((CommonToken)$T);} 
+    |   S=SUPER{Emit((CommonToken)$S);} 
+    |   literal  
+    |   arrayLiteral // ARRAY_LITERAL
+    |   objectLiteral  // OBJECT_LITERAL
+    |   identifierLiteral 
+    |   xmlPrimaryExpression
+    |   parExpression // PAR_EXPRESSION
+    |   conditionalCompilerOption
+	|   l=LT {Emit((CommonToken)$l);} type g=GT {Emit((CommonToken)$g);} (arrayLiteral)? //Vector initializer with optional array data
+    ;
+
+//11.1.5 Object Initialiser
+objectLiteral
+    :   L=LCURLY {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideObjectBraces());PushIndent(true);} propertyNameAndValueList? R=RCURLY {PopIndent();InsertWS(mPrinter.GetAdvancedSpacesInsideObjectBraces());Emit((CommonToken)$R);} 
+    ;
+
+propertyNameAndValueList
+    :   propertyNameAndValue ({InsertWS(mPrinter.GetSpacesBeforeComma());}C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} propertyNameAndValue)*
+    ;
+
+propertyNameAndValue
+    :   propertyName C=COLON 
+    		{
+    		Emit((CommonToken)$C);
+    		InsertWS(mPrinter.GetSpacesAfterLabel());
+    		} 
+    		assignmentExpression
+    ;
+
+propertyName
+    :   identifierLiteral 
+    |   stringLiteral 
+    |   numericLiteral 
+    ;
+
+//11.1.4 Array Initialiser
+arrayLiteral
+    :   L=LBRACK {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideArrayDeclBrackets());} elementList? R=RBRACK{InsertWS(mPrinter.GetAdvancedSpacesInsideArrayDeclBrackets());Emit((CommonToken)$R);} 
+    ;
+
+elementList
+@init
+{
+	WrapOptions options=mPrinter.GetArrayInitWrapOptions();
+	bool pushedFormat=false;
+	bool pushedIndent=false;
+}
+    :
+    	{pushedFormat=PushFormatType(options, false);}
+    	{pushedIndent=PushLazyParmIndent(pushedIndent, options.IndentStyle);}
+        assignmentExpression 
+    	(
+    		C=COMMA 
+    		{pushedIndent=EmitCommaWithSpacingAndCRs(options,(CommonToken) $C, pushedIndent);}
+    		assignmentExpression
+    	)* (C=COMMA {Emit((CommonToken)$C);})? //allow extra comma on end, because it's apparently tolerated
+    	
+		{
+			if (pushedIndent)
+				PopIndent();
+    	    if (pushedFormat)
+    	    	mPrinter.PopFormatMode();
+		} 
+    ;

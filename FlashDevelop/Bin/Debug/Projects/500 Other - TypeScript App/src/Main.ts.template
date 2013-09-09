@@ -1,0 +1,11 @@
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+class Main $(CSLB){
+	
+	static main():void $(CSLB){
+		alert("Hello World!");
+	}
+	
+}

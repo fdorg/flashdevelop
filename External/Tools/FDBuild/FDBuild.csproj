@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FDBuild</RootNamespace>
+    <AssemblyName>fdbuild</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Tools\fdbuild\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Tools\fdbuild\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Tools\fdbuild\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Tools\fdbuild\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\ConfigHelper.cs">
+      <Link>Building\AS3\ConfigHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\JvmConfigHelper.cs">
+      <Link>Building\AS3\JvmConfigHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Helpers\FlexCompilerShell.cs">
+      <Link>FlexCompilerShell.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS2\AS2MovieOptions.cs">
+      <Link>Projects\AS2\AS2MovieOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS2\AS2Project.cs">
+      <Link>Projects\AS2\AS2Project.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS2\AS2ProjectReader.cs">
+      <Link>Projects\AS2\AS2ProjectReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS2\AS2ProjectWriter.cs">
+      <Link>Projects\AS2\AS2ProjectWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS2\MtascOptions.cs">
+      <Link>Projects\AS2\MtascOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\AS3MovieOptions.cs">
+      <Link>Projects\AS3\AS3MovieOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\AS3Project.cs">
+      <Link>Projects\AS3\AS3Project.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\AS3ProjectReader.cs">
+      <Link>Projects\AS3\AS3ProjectReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\AS3ProjectWriter.cs">
+      <Link>Projects\AS3\AS3ProjectWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\FlexProjectReader.cs">
+      <Link>Projects\AS3\FlexProjectReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\MxmlcOptions.cs">
+      <Link>Projects\AS3\MxmlcOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\BuildEventVars.cs">
+      <Link>Projects\BuildEventVars.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\CompilerOptions.cs">
+      <Link>Projects\CompilerOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\FileInspector.cs">
+      <Link>Projects\FileInspector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Generic\GenericMovieOptions.cs">
+      <Link>Projects\Generic\GenericMovieOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Generic\GenericOptions.cs">
+      <Link>Projects\Generic\GenericOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Generic\GenericProject.cs">
+      <Link>Projects\Generic\GenericProject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Generic\GenericProjectReader.cs">
+      <Link>Projects\Generic\GenericProjectReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Generic\GenericProjectWriter.cs">
+      <Link>Projects\Generic\GenericProjectWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Haxe\HaxeMovieOptions.cs">
+      <Link>Projects\Haxe\HaxeMovieOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Haxe\HaxeOptions.cs">
+      <Link>Projects\Haxe\HaxeOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Haxe\HaxeProject.cs">
+      <Link>Projects\Haxe\HaxeProject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Haxe\HaxeProjectReader.cs">
+      <Link>Projects\Haxe\HaxeProjectReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Haxe\HaxeProjectWriter.cs">
+      <Link>Projects\Haxe\HaxeProjectWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\HiddenPathCollection.cs">
+      <Link>Projects\HiddenPathCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\LibraryAsset.cs">
+      <Link>Projects\LibraryAsset.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\MovieOptions.cs">
+      <Link>Projects\MovieOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\PathCollection.cs">
+      <Link>Projects\PathCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\Project.cs">
+      <Link>Projects\Project.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\ProjectLoader.cs">
+      <Link>Projects\ProjectLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\ProjectPaths.cs">
+      <Link>Projects\ProjectPaths.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\ProjectReader.cs">
+      <Link>Projects\ProjectReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\ProjectWriter.cs">
+      <Link>Projects\ProjectWriter.cs</Link>
+    </Compile>
+    <Compile Include="Building\ArgumentBuilder.cs" />
+    <Compile Include="Building\AS2\AS2ProjectBuilder.cs" />
+    <Compile Include="Building\AS2\MtascArgumentBuilder.cs" />
+    <Compile Include="Building\AS3\FlexConfigWriter.cs" />
+    <Compile Include="Building\Generic\GenericProjectBuilder.cs" />
+    <Compile Include="Building\SwfmillLibraryBuilder.cs" />
+    <Compile Include="Building\SwfmillLibraryWriter.cs" />
+    <Compile Include="Building\AS3\AS3ProjectBuilder.cs" />
+    <Compile Include="Building\AS3\MxmlcArgumentBuilder.cs" />
+    <Compile Include="Building\BuildEventRunner.cs" />
+    <Compile Include="Building\BuildException.cs" />
+    <Compile Include="Building\FileComparer.cs" />
+    <Compile Include="Building\Haxe\HaxeProjectBuilder.cs" />
+    <Compile Include="Building\ProcessRunner.cs" />
+    <Compile Include="Building\ProjectBuilder.cs" />
+    <Compile Include="FakeClasses.cs" />
+    <Compile Include="FDBuildOptions.cs" />
+    <Compile Include="Mono\AboutAttribute.cs" />
+    <Compile Include="Mono\AuthorAttribute.cs" />
+    <Compile Include="Mono\GetOptions\ArgumentProcessorAttribute.cs" />
+    <Compile Include="Mono\GetOptions\OptionAttribute.cs" />
+    <Compile Include="Mono\GetOptions\OptionDetails.cs" />
+    <Compile Include="Mono\GetOptions\OptionList.cs" />
+    <Compile Include="Mono\GetOptions\OptionProcessingResult.cs" />
+    <Compile Include="Mono\GetOptions\Options.cs" />
+    <Compile Include="Mono\GetOptions\OptionsParsingMode.cs" />
+    <Compile Include="Mono\GetOptions\WhatToDoNext.cs" />
+    <Compile Include="Mono\UsageComplementAttribute.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

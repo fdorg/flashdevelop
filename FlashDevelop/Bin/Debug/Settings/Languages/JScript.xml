@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<keyword-classes>
+		<keyword-class name="js-primary-keywords">
+			abstract as assign boolean break byte case catch char class const continue debugger declare default delete do double else 
+			enum export extends finally float for goto if ignore implements import in instanceof int interface let long module new package 
+			ref return short switch synchronized throw throws transient try typeof var void volatile while with yield function constructor
+		</keyword-class>
+		<keyword-class name="js-secondary-keywords">
+			null Infinity NaN undefined true false arguments this super prototype
+		</keyword-class>
+		<keyword-class name="js-additional-keywords">
+			DOMImplementation DocumentFragment Node NodeList NamedNodeMap CharacterData Attr Element Text Comment CDATASection DocumentType Notation Entity 
+			EntityReference ProcessingInstruction void any string bool number DOMException HTMLElement Anchor Area Base Body Button Form Frame Frameset Image 
+			Link Meta Option Select Style Table TableCell TableRow Textarea Array Boolean Date Function Infinity Math Number NaN Object Packages RegExp String 
+			Error EvalError RangeError ReferenceError SyntaxError TypeError URIError XMLHttpRequest ActiveXObject
+		</keyword-class>
+		<keyword-class name="js-additional-keywords3">
+			private public static native protected final
+		</keyword-class>
+		<keyword-class name="js-additional-keywords4">
+			decodeURI decodeURIComponent encodeURI encodeURIComponent escape eval isFinite isNaN parseFloat parseInt unescape
+		</keyword-class>
+		<keyword-class name="js-additional-keywords5">
+			INDEX_SIZE_ERR DOMSTRING_SIZE_ERR HIERARCHY_REQUEST_ERR WRONG_DOCUMENT_ERR INVALID_CHARACTER_ERR NO_DATA_ALLOWED_ERR NO_MODIFICATION_ALLOWED_ERR NOT_FOUND_ERR 
+			NOT_SUPPORTED_ERR INUSE_ATTRIBUTE_ERR INVALID_STATE_ERR SYNTAX_ERR INVALID_MODIFICATION_ERR NAMESPACE_ERR INVALID_ACCESS_ERR ELEMENT_NODE ATTRIBUTE_NODE TEXT_NODE 
+			CDATA_SECTION_NODE ENTITY_REFERENCE_NODE ENTITY_NODE PROCESSING_INSTRUCTION_NODE COMMENT_NODE DOCUMENT_NODE DOCUMENT_TYPE_NODE DOCUMENT_FRAGMENT_NODE NOTATION_NODE
+			onblur onclick oncontextmenu ondblclick onfocus onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup onresize 
+			onload onsubmit onreadystatechange insertBefore replaceChild removeChild appendChild hasChildNodes cloneNode normalize isSupported hasAttributes 
+			getAttribute setAttribute removeAttribute getAttributeNode setAttributeNode removeAttributeNode getElementsByTagName hasAttribute getElementById adoptNode 
+			close compareDocumentPosition createAttribute createCDATASection createComment createDocumentFragment createElementNS createEvent createExpression createNSResolver 
+			createProcessingInstruction createRange createTreeWalker elementFromPoint evaluate getBoxObjectFor getElementsByClassName getSelection getUserData hasFocus importNode
+			nodeName nodeValue nodeType parentNode childNodes firstChild lastChild previousSibling nextSibling attributes ownerDocument namespaceURI prefix localName tagName
+			readyState responseText responseXML statusText abort getAllResponseHeaders getResponseHeader open send setRequestHeader attachEvent detachEvent cancelBubble returnValue
+			className clientHeight clientLeft clientTop clientWidth dir href id innerHTML lang length offsetHeight offsetLeft offsetParent offsetTop offsetWidth scrollHeight scrollLeft 
+			scrollTop scrollWidth style tabIndex target title scrollIntoView addEventListener dispatchEvent removeEventListener preventDefault stopPropagation color font fontFamily 
+			fontSize fontSizeAdjust fontStretch fontStyle fontVariant fontWeight letterSpacing lineBreak lineHeight quotes rubyAlign rubyOverhang rubyPosition createTextNode createElement 
+			textAlign textAlignLast textAutospace textDecoration textIndent textJustify textJustifyTrim textKashidaSpace textOverflowW6 textShadow textTransform textUnderlinePosition
+			unicodeBidi whiteSpace wordBreak wordSpacing wordWrap writingMode bottom height left position right top width zIndex border borderBottom borderLeft borderRight borderTop 
+			borderBottomColor borderLeftColor borderTopColor borderBottomStyle borderLeftStyle borderRightStyle borderTopStyle borderBottomWidth borderLeftWidth borderRightWidth 
+			borderTopWidth borderColor borderStyle borderWidth borderCollapse borderSpacing captionSide emptyCells tableLayout margin marginBottom marginLeft marginRight marginTop 
+			outline outlineColor outlineStyle outlineWidth padding paddingBottom paddingLeft paddingRight paddingTop listStyle listStyleImage listStylePosition listStyleType
+			background backgroundAttachment backgroundColor backgroundImage gackgroundPosition backgroundPositionX backgroundPositionY backgroundRepeat clear clip clipBottom 
+			clipLeft clipRight clipTop content counterIncrement counterReset cssFloat cursor direction display filter layoutGrid layoutGridChar layoutGridLine layoutGridMode 
+			layoutGridType marks maxHeight maxWidth minHeight minWidth opacity MozOpacity overflow overflowX overflowY verticalAlign visibility zoom cssText scrollbar3dLightColor 
+			scrollbarArrowColor scrollbarBaseColor scrollbarDarkShadowColor scrollbarFaceColor scrollbarHighlightColor scrollbarShadowColor scrollbarTrackColor
+			window navigator screen history location document event netscape alert blur confirm prompt status self top parent clearInterval clearTimeout close
+			focus moveBy moveTo open print resizeBy resizeTo scroll scrollBy scrollTo setInterval setTimeout opener name frames defaultStatus closed innerHeight
+			innerWidth outerHeight outerWidth pageXOffset pageYOffset screenLeft screenTop screenX screenY createPopup appCodeName appName appVersion cookieEnabled
+			onLine platform userAgent javaEnabled taintEnabled availHeight availWidth colorDepth pixelDepth back forward go hash host hostname href pathname port
+			protocol search assign reload replace
+		</keyword-class>
+		<keyword-class name="js-documentation-keywords">
+			addon argument author base beta class constructor copy default deprecated description example exampleText exception exec extends file
+			fileoverview final ignore inheritDoc internal license link member method module namespace optional param private protected requires return
+			returns see serial serialData serialField since throws title type usage version static property
+		</keyword-class>
+	</keyword-classes>
+	<languages>
+		<language name="jscript">
+			<lexer name="cpp" style-bits="7" />
+			<character-class><![CDATA[qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_$]]></character-class>
+			<line-comment><![CDATA[//]]></line-comment>
+			<comment-start><![CDATA[/*]]></comment-start>
+			<comment-end><![CDATA[*/]]></comment-end>
+			<file-extensions>js,jsfl,asc,ts</file-extensions>
+			<use-keywords>
+				<keyword key="0" class="js-secondary-keywords" />
+				<keyword key="1" class="js-additional-keywords" />
+				<keyword key="2" class="js-documentation-keywords" />
+				<keyword key="3" class="js-primary-keywords" />
+				<keyword key="5" class="js-additional-keywords3" />
+				<keyword key="6" class="js-additional-keywords4" />
+				<keyword key="7" class="js-additional-keywords5" />
+			</use-keywords>
+			<!-- COLORING_START -->
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<use-styles>
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="comment" fore="0x008000" />
+				<style name="commentline" fore="0x008000" />
+				<style name="commentdoc" fore="0x008000" />
+				<style name="number" fore="0x000099" />
+				<style name="word" fore="0x000099" />
+				<style name="string" fore="0xa31515" />
+				<style name="character" fore="0xa31515" />
+				<style name="uuid" />
+				<style name="preprocessor" fore="0x000099" />
+				<style name="operator" />
+				<style name="identifier" />
+				<style name="stringeol" />
+				<style name="verbatim" />
+				<style name="regex" />
+				<style name="commentlinedoc" fore="0x008000" />
+				<style name="word2" fore="0x0080aa" />
+				<style name="word3" fore="0x0060ff" />
+				<style name="word4" fore="0x0080aa" />
+				<style name="word5" />
+				<style name="commentdockeyword" fore="0x800000" />
+				<style name="commentdockeyworderror" fore="0xff0000" />
+				<style name="globalclass" fore="0x1518ff" />
+				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0xc0c0c0" />
+				<style name="lastpredefined" fore="0x666666" />
+			</use-styles>
+			<!-- COLORING_END -->
+		</language>
+	</languages>
+</Scintilla>

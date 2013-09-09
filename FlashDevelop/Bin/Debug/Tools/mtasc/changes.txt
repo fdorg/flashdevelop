@@ -1,0 +1,292 @@
+2008-08-31 : 1.14
+	added stopAllSounds() support
+	added lineStyle F8 additional parameters
+	fixed FSCommand2 stack
+	added Stage.fullScreenSourceRect
+	compiling with version 9+ now uses std8 folder
+
+2007-02-04 : 1.13
+	updated Video and NetStream headers.
+	fixed small bug if environment variable in new E()
+	fixed multivars declarations
+	fixed bug with filters inside buttons
+	fscommand2 ret value fix
+	fixed various bugs in SWF for Flash8
+	interfaces can't have a constructor
+	inverted % and *,/ priorities
+	fixed missing types for local functions when -strict
+	fix in getTimer()
+	always allow 'add' deprecated keyword
+	bugfix in exclude files (when line endings differs from OS default)
+	allow more than 255 locals
+	more flash lite 2 support for standard headers
+
+2006-01-31 : 1.12
+	prevented -keep with -header
+	allowed dynamic static classes
+	improved Flash8 shapes support
+	allowed access to private variables inside local defined functions
+	faster SWF parsing
+	(hotfixes)
+	added FSCommand2 support for FlashLite
+
+2005-11-29 : 1.11
+	added typed arrays
+	no casts when compiling for flash6
+	warning "imports not used" off by default (added -wimp)
+	catched errors in swf parsing
+	some fixes in flash8 headers and file format handling
+	fixed duplicate main calls when registerClass calls found
+	fixed bug when using "with"
+	added error cannot have same field in class (static + member)
+	(hotfixes)
+	fixed resolve path for typed Arrays.
+	allowed new and literal Array init for typed Arrays.
+
+2005-09-13 : 1.10
+	fixed small problem with class case and import wildcards
+	added -infer parameter
+	fixed bug with += with properties
+	added exclude wildcards and exclude without file
+	changed TRACE in "trace"
+	added AS keywords as real keywords (including deprecated ones)
+	fixed parsing of objects and array declarations and parameters lists
+	fixed escape sequences in strings and added unicode escape sequences.
+	fixed && and || precedence.
+	fixed duplicate public/static/private qualifiers.
+	fixed for...in variable forced as String
+	no more private and static fields in interfaces
+	implemented field cannot be private
+	better error when same file referenced several times.
+	delete now returns Boolean
+	fixed getVersion() in TopLevel
+	fixed problem in class replace when not -keep and -mx
+	changed -main : now in DoAction and not InitAction
+	fixed stack corruption in new var(expr).
+	fixed break with several stacked for..in
+	disabled variables in interfaces
+	added error message when several classes in same file
+	changed switch implementation
+	fixed typing of ?:
+	fixed stack problem with "for"
+	separate directory and "add" keyword hack for Flash8
+	(hotfixes 1.10b)
+	fixed bug in switchs (default cause stack corruption)
+
+2005-07-14 : 1.09
+	fixed problems in escape sequences such as \\t
+	fixed problem with "delete"
+	more strict checks of interface fields : same type and structure and not only unifiable.
+	allowed variance on interface fields implementation.
+	-keep with -separate replace compiled packages.
+	added check for file name case on Win32
+	changed -main and algorithm for updating SWF
+	fixed problem when autoregisterclass with classname = linkagename
+	added -version X (removed -flash6)
+	added Flash8 headers
+	(hotfixes)
+	removed -separate (now on by default), added -group (turn off separate)
+	fixed clips id generation (bug when compiling several times).
+
+2005-06-20 : 1.08
+	fixed getUrl2 stack.
+	renamed and hide variable defined by main.
+	fixed x instanceof y ? a : b parsing
+	fixed try with no catch clauses
+	removed mtasc trace message
+	added -out
+	a lot of small fixes in "std" header
+	fixed bug in check for implemented interfaces
+
+2005-05-28 : 1.07
+	fixed -keep + -main
+	added 'con' error message
+	SharedObject.getRemote argument to Object.
+	added "print".
+	added deprecated keywords usage error.
+	fixed "main" duplication
+	added / to classpath (for absolute file paths)
+	fixed for(;cond;incr) parsing error
+	fixed (unop) expr ? parsing error
+
+2005-05-20 : 1.06
+	fixed IO.No_more_input message
+	fixed 32K limit calculation
+	fixed bug with auto register class
+	main now takes "this" as parameter and is delayed (onEnterFrame)
+	added Object.valueOf intrinsic
+	fixed Malformed_expression when using >32 bits integers
+
+2005-04-30 : 1.05
+	fixed type required to String for for...in variable
+	fixed operator priority : a || b && c -> a || (b && c)
+	error when multiple extends, interface cannot extends class
+	warning when import not used (no longer add class)
+	fixed error message when class not found
+	register only one time the package
+	errors on 32K bytecode size limit reached
+	fixed operators priority for | ^ & against >> and % against * /
+	forbid contructor returns and return type (modified headers)
+	fixed class ordering problem with -keep
+	fixed calls to super getter/setter problem
+	(hotfixes)
+	remove "return" in contructors restriction (allowed by MMC)
+	import warnings disabled for mx classes when -mx
+	fixed missing "," between function call parameters
+
+2005-04-14 : 1.04
+	"for" optional first parameter and expression
+	fixed while( o )++ i;
+	added error when duplicate import statement (with same or different package)
+	added class-exist import check
+	=> import will now link classes
+	fixed typing error with single "var" in a block
+	fixed parser error with a?b:c and big left-expression
+	fixed bug when catching "imported" exception class
+	changed boolean operators typing
+	added -flash6 for F6 compilation
+	added -trace for custom trace function
+	added optional color component for -header
+	(hotfixes)
+	fixed compiler crash in "try"
+	fixed boolean operators typing : returns most common type
+
+2005-03-24 : 1.03
+	fixed "interface extends interface" bytecode generation
+	some missing headers
+	fixed problem with -mx (classes initialized before mx components)
+	added check function for values without side effects
+	relaxed array access typing
+	fixed 820 size limit for -header
+	changed bitshifts operator priority
+	trace now use flash opcode
+
+2005-03-10 : 1.02
+	test if class already exists (multiple swf statics init)
+	-frame now works with -header
+	fixed "class Number not found" when no std
+	relaxed restriction on input file names
+	added getURL with one argument only
+	fixed "prototype" static resolved.
+	fixed typeof syntax
+	added "with"
+	added _levelXX
+	added scientific floats : 1.23e-23
+	fixed instanceof & typeof parsing.
+
+2005-02-21 : 1.01
+	fixed doaction/showframe inversion
+	Number, String and Boolean now perform conversion
+	fixed error in inherited statics
+	fixed break in for...in
+	added fscommand.
+	added -exclude
+	fixed $ in identifiers
+	fixed return in for..in bug.
+	fixed inherited statics and super constructor typecheck.
+
+2005-01-26 : 1.0
+	fixed super field accesses
+	fixed -separate with -main issues
+	relaxed new so constructor can return any value.
+	Void now unify with Any
+	added -mx , good support for mx.controls parsing
+
+2005-01-13 : rc2
+	fixed throw parsing
+	fixed <fun> , Function unification
+	fixed small parsing problem with typeof
+	fixed multi-interface subtyping.
+	fixed constructor handling
+	fixed bug in enum
+	added superconstructor autocall
+	added -separate
+
+2005-01-05 : rc1
+	private methods can be called from childs
+	fixed super calls without superclass failure
+	added warning when package is missing.
+	fixed error when package not found
+	NetConnection is now dynamic
+	trace() takes any object, not just Strings
+	added "-main" argument
+	added try/catch/finally+throw support
+	added documentation tutorial
+	fixed utf8 encoding problems
+	fixed "new x" problem (when x is a variable)
+
+2004-12-08 : beta7
+	released restriction on super
+	fixed imports in lambdas
+	pop instead of trace for string mark.
+	fixed missing implementation of import wildcards for genSwf
+	fixed bug when accessing superclass in static.
+	no strict mode for native classes.
+	fixed multiple implements syntax
+	allowed private access to local class variables in lambdas
+
+2004-11-22 : beta6
+	fixed stack overflow in parsing metadata
+	added missing intrinsic headers
+	allowed to have a method named "get" or "set"
+	warning instead of error on #include
+	allowing call object "Function"
+	relaxed array access to Array only
+	improved typing of classnames as Function
+	allowed Array[Boolean]
+	fixed parsing of  x = y ? z : w;
+	fixed auto self import in swf generation
+	forbidden calls to super when no super available
+	typeof as operator (parenthesis are optional)
+
+2004-11-17 : beta5
+	fixed back the Export name to "MTASC" (causing problem with -keep)
+	fixed member variable declaration with init value
+	fixed multivariable ops
+	added delete call without parenthesis
+	fixed numbers starting with '.'
+	fixed Function object unify with any function.
+	fixed lexer for mac newlines.
+	fixed parser for a (op) b ? x : x'
+	added -strict mode
+
+2004-11-09 : beta4
+	support for "arguments"
+	fixed bug when a class reference itself : lookup was member constructor
+	support for targetPath
+	improved precision of some error messages
+	import wildcards
+	added -pack
+	enabled specifying AS2 classes for MC directly into Flash IDE.
+	fixed little inheritance problem in generated SWF
+	(hotfixes)
+	fixed multiple assignations
+	fixed swfLib linking for Linux
+
+2004-11-03 : beta3
+	checks that implements an interface and extends a class
+	added physical (in)equality operation
+	added eval
+	added casts
+	fixed issue when std is not installed
+	added getter/setter
+	optimized prototype registration
+	fixed problem with AS2 classes not removed from SWF
+	added -frame for choosing export frame
+	added -header for creating SWF
+	(hotfixes)
+	added static getter/setters
+	fixed interface A extends B
+	class import itself
+
+2004-10-27 : beta2
+	fixed typing of super constructor
+	removed naming conventions
+	added error on import x.* usage
+	fixed var x : Function = Class typing
+	new build model : update SWF by removing AS2 classes (and -keep)
+	fixed registerClass in statics : classes just before first ShowFrame
+	partly rewrote usage documentation
+
+2004-10-25 : beta1
+	compiler working, starting beta

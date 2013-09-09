@@ -1,0 +1,10 @@
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+
+(function() {
+	
+	$(EntryPoint)
+	
+})();

@@ -1,0 +1,50 @@
+﻿选择指令...
+- 主要 -------------------------------------------------------------------------
+$(EntryPoint) - 选择的开始位置
+$(ExitPoint) - 选择的结束位置
+$(Boundary) - 保持所有的文本之间的界限
+$(CSLB) - 换行的编码风格
+$(CBI) - 注释块缩进
+$(STC) - 空格或制表符
+- 文本 -------------------------------------------------------------------------
+$(SelText) - 选中的文本
+$(CurWord) - 当前光标选中的词
+$(CurSyntax) - 当前活动的语法
+$(Clipboard) - 剪贴板的内容
+- FILE -------------------------------------------------------------------------
+$(CurFile) - 当前文件
+$(CurFilename) - 当前文件名
+$(CurFilenameNoExt) - 当前不包含后缀的文件名
+$(CurDir) - 当前文件所在目录
+- 目录 -------------------------------------------------------------------------
+$(DesktopDir) - 用户桌面的目录
+$(SystemDir) - Windows 系统目录
+$(ProgramsDir) - Program Files目录
+$(PersonalDir) - 用户的文件目录
+$(WorkingDir) - 当前的工作目录
+$(AppDir) - FlashDevelop 程序目录
+$(BaseDir) - FlashDevelop 文件目录
+$(UserAppDir) - FlashDevelop 用户文件目录
+- 类型 -------------------------------------------------------------------------
+$(TypPkg) - 文件包
+$(TypName) - 当前类型名称
+$(TypPkgName) - 当前包 + 类型名称
+$(TypKind) - 类型种类 (interface, class)
+$(TypClosestListName) - 最近匹配的 Array 或 Vector 的变量名
+$(TypClosestListItemType) - 最近的 Vector 的元素类型
+- 成员 -------------------------------------------------------------------------
+$(MbrName) - 当前成员名称
+$(MbrKind) - 成员类型 (const, var, function)
+$(MbrTypPkg) - 成员的类型包
+$(MbrTypName) - 成员的类型名称
+$(MbrTypePkgName) - 成员的类型限定名
+$(MbrTypKind) - 成员的类型种类 (interface, class)
+- 光标位置的当前项 -------------------------------------------------------------
+$(ItmTypName) - 当前光标处的当前项名称
+$(ItmFile) - 查找当前项的定义
+$(ItmKind) - 当前项的类型 (const, var, function)
+$(ItmTypPkg) - 当前项的类型包
+$(ItmTypName) - 当前项的类型名称
+$(ItmTypPkgName) - 当前项的类型限定名
+$(ItmTypKind) - 当前项类型种类 (interface, class)
+$(ItmUniqueVar) - 独特的变量名 (i, j... 等)

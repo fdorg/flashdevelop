@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding ="utf-8"?>
+<componentPackage>
+	<component class="mx.builtin.Binding" id="Binding" />
+	<component class="mx.builtin.Component" id="Component" />
+	<component class="mx.builtin.Metadata" id="Metadata" />
+	<component class="mx.builtin.Model" id="Model" />
+	<component class="mx.builtin.Script" id="Script" />
+	<component class="mx.builtin.Style" id="Style" />
+
+	<component class="Array" id="Array" />
+	<component class="Boolean" id="Boolean" />
+	<component class="Class" id="Class" />
+	<component class="Date" id="Date" />
+	<component class="Function" id="Function" />
+	<component class="int" id="int" />
+	<component class="Number" id="Number" />
+	<component class="Object" id="Object" />
+	<component class="RegExp" id="RegExp" />
+	<component class="String" id="String" />
+	<component class="uint" id="uint" />
+	<component class="XML" id="XML" />
+	<component class="XMLList" id="XMLList" />
+</componentPackage>

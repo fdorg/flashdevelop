@@ -1,0 +1,228 @@
+/** XML parser by Oliver Zeigermann October 10, 2005; posted to Antlr examples */
+lexer grammar MXMLLexer;
+
+options
+{
+   language=CSharp;
+}
+
+tokens
+{
+   EMPTY_TAG_OPEN;
+}
+
+@lexer::header{
+   using System.Collections.Generic;
+}
+
+@lexer::members
+{
+   private List<CommonToken> mRawTokens=new List<CommonToken>();
+   int lastLine=1;
+   int lastCharPos=0;
+   public void AddToken( CommonToken t, int type, int channel)
+   {
+      ((CommonToken)t).Type = type;
+      ((CommonToken)t).Channel = channel;
+      t.Line = lastLine;
+      lastLine=input.Line;
+      t.CharPositionInLine = lastCharPos;
+      lastCharPos=input.CharPositionInLine;
+      mRawTokens.Add((CommonToken)t);
+   }
+   public List<CommonToken> GetTokens()
+   {
+      return mRawTokens;
+   }
+   
+   override public void Reset()
+   {
+      base.Reset(); // reset all recognizer state variables
+      if (input is ANTLRStringStream)
+      {
+	 ((ANTLRStringStream)input).Reset();
+      }
+   }
+
+   
+}
+
+
+
+
+DOCUMENT
+      :
+      ( XMLDECL | DOCTYPE | ELEMENT | COMMENT | WS)*
+//    :  XMLDECL? WS? DOCTYPE? WS? ELEMENT WS? 
+    ;
+
+fragment DOCTYPE
+    :
+        dt=DOCTYPE_tag {AddToken( (CommonToken)$dt, DOCTYPE_tag, 0);} WS rootElementName=GENERIC_ID 
+        { }   
+        WS
+        ( 
+            ( sys=SYSTEM_tag {AddToken( (CommonToken)$sys, SYSTEM_tag, 0);} WS sys1=VALUE
+            | pub=PUBLIC_tag {AddToken( (CommonToken)$pub, PUBLIC_tag, 0);} WS pub=VALUE WS sys2=VALUE
+            )
+            ( WS )?
+        )?
+        ( dtd=INTERNAL_DTD  
+        )?
+		close=TAG_CLOSE {AddToken( (CommonToken)$close, TAG_CLOSE, 0);}
+	;
+	
+	
+fragment SYSTEM_tag
+	: 'SYSTEM' ;
+	
+fragment PUBLIC_tag
+	: 'PUBLIC' ;
+	
+fragment DOCTYPE_tag
+	: '<!DOCTYPE';
+
+fragment INTERNAL_DTD : '[' (options {greedy=false;} : .)* ']' ;
+
+fragment PI :
+        ds=DECL_START target=GENERIC_ID WS? 
+        ( ATTRIBUTE WS? )*  de=DECL_STOP {AddToken( (CommonToken)$de, DECL_STOP, 0);}
+	;
+
+fragment XMLDECL :
+        ds=DECL_START {AddToken( (CommonToken)$ds, DECL_START, 0);} xml=XML {AddToken( (CommonToken)$xml, XML, 0);} WS? 
+        ( ATTRIBUTE WS? )*  de=DECL_STOP {AddToken( (CommonToken)$de, DECL_STOP, 0);}
+	;
+
+fragment XML
+	: ('x'|'X') ('m'|'M') ('l'|'L') ;
+fragment DECL_START
+		: '<?'
+		;
+
+fragment DECL_STOP
+		: '?>'
+		;
+		
+fragment ELEMENT
+    : ( START_TAG
+            (ELEMENT
+            | EOL
+            | t=PCDATA
+                { AddToken( (CommonToken)$t, PCDATA, 0);}
+            | t=CDATA
+                { AddToken( (CommonToken)$t, CDATA, 0);}
+            | t=COMMENT
+            | pi=PI
+            )*
+            END_TAG
+        | EMPTY_ELEMENT
+        )
+    ;
+
+fragment START_TAG 
+    : open=TAG_OPEN {AddToken( (CommonToken)$open, TAG_OPEN, 0);} WS? name=GENERIC_ID WS?
+        ( ATTRIBUTE WS? )* close=TAG_CLOSE {AddToken( (CommonToken)$close, TAG_CLOSE, 0);}
+    ;
+
+fragment EMPTY_ELEMENT 
+    : open=TAG_OPEN {AddToken( (CommonToken)$open, EMPTY_TAG_OPEN, 0);} WS? name=GENERIC_ID WS?
+        ( ATTRIBUTE WS? )* close=EMPTYTAG_CLOSE {AddToken( (CommonToken)$close, EMPTYTAG_CLOSE, 0);}
+    ;
+    
+fragment EMPTYTAG_CLOSE
+	: '/>'
+	;
+	    
+fragment TAG_OPEN
+	: '<' 
+	;
+
+fragment EQ
+	:
+	eq=EQ_int {AddToken( (CommonToken)$eq, EQ, 0);}
+	;
+	
+fragment EQ_int
+	:
+	'=' 
+	;
+	
+fragment ATTRIBUTE 
+    : name=GENERIC_ID WS? EQ WS? value=VALUE 
+    ;
+
+fragment END_TAG_OPEN:
+	'</';
+	
+fragment TAG_CLOSE
+	 : '>' ;
+	
+fragment END_TAG 
+    : open=END_TAG_OPEN {AddToken( (CommonToken)$open, END_TAG_OPEN, 0);} WS? name=GENERIC_ID WS? close=TAG_CLOSE {AddToken( (CommonToken)$close, TAG_CLOSE, 0);}
+    ;
+
+fragment COMMENT:
+	c=COMMENT_int {AddToken( (CommonToken)$c, COMMENT, 0);}
+	;
+fragment COMMENT_int
+	:	'<!--' (options {greedy=false;} : .)* '-->'
+	;
+
+fragment CDATA
+	:	'<![CDATA[' (options {greedy=false;} : .)* ']]>'
+	;
+
+fragment PCDATA 
+		: 
+			~('<' | '\n' | '\r')+
+		; 
+
+fragment VALUE :
+		v=VALUE_int {AddToken( (CommonToken)$v, VALUE, 0);}
+		;
+		
+fragment VALUE_int : 
+        ( '\"' (~'\"')* '\"'
+        | '\'' (~'\'')* '\''
+        )
+	;
+	
+fragment GENERIC_ID
+	:
+	id=GENERIC_ID_int {AddToken( (CommonToken)$id, GENERIC_ID, 0);}
+	;
+
+fragment GENERIC_ID_int 
+    : ( LETTER | '_' | ':') 
+        ( options {greedy=true;} : LETTER | '0'..'9' | '.' | '-' | '_' | ':' )*
+	;
+
+fragment LETTER
+	: 'a'..'z' 
+	| 'A'..'Z'
+	;
+
+fragment WS  :
+        (ws=OTHERWS {AddToken( (CommonToken)$ws, WS, 0);} 
+        | EOL 
+        )+ 
+//        (   ' '
+//        |   '\t'
+//        |  ( '\n'
+//            |	'\r\n'
+//            |	'\r'
+//            )
+//        )+
+    ;    
+    
+fragment OTHERWS:
+          (' ' | '\t')
+          ;
+
+fragment EOL :
+         ws=EOL_HELPER {AddToken( (CommonToken)$ws, EOL, 0);} 
+         ;
+
+fragment EOL_HELPER
+		: ('\n' | '\r\n' | '\r');

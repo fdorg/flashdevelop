@@ -1,0 +1,1 @@
+java -cp antlr-3.1.1.jar -Xms256m -Xmx512m org.antlr.Tool -Xconversiontimeout 3000 AS3_ex.g3

@@ -1,0 +1,16 @@
+package $(PackageName);
+
+import js.Lib;
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+
+class Main $(CSLB){
+	
+	static function main() $(CSLB){
+		
+	}
+	
+}

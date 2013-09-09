@@ -1,0 +1,15 @@
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+class $(PackageDot)Main $(CSLB){
+	
+	public static function main(swfRoot:MovieClip):Void $(CSLB){
+		// entry point
+	}
+	
+	public function Main() $(CSLB){
+		
+	}
+	
+}

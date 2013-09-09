@@ -1,0 +1,59 @@
+body 
+{
+	font-size: 8pt;
+	font-family: "Trebuchet MS", Georgia, Times, serif;
+	padding-top: 12px;
+}
+h4 
+{
+	font-size: 9pt;
+	border-bottom: 1px dotted #999999;
+}
+ul 
+{
+	margin: 0px;
+	padding: 0px;
+	margin-left: 3px; 
+}
+a 
+{
+	color: darkblue;
+	text-decoration: none;
+}
+a:hover 
+{
+	color: darkblue;
+	text-decoration: underline;
+}
+#wrapper {
+	width: 600px;
+	padding: 18px;
+	padding-left: 25px;
+	padding-top: 0px;
+}
+#header 
+{
+	width: 100%;
+}
+#header h3 
+{
+	font-size: 15pt;
+	color: orange;
+}
+#content 
+{
+	width: 100%;
+}
+#content ul 
+{
+	padding: 5px;
+	padding-bottom: 0px;
+	padding-left: 15px;
+}
+#footer 
+{
+	width: 100%;
+	border-top: 1px dotted grey;
+	padding-top: 11px;
+	margin-top: 11px;
+}

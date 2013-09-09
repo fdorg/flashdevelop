@@ -1,0 +1,1 @@
+$(BlankLine)function set $(Name)(value:$(Type)):$(Void);$(EntryPoint)

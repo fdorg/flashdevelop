@@ -1,0 +1,4 @@
+@echo off
+cd bin
+neko $(ProjectID).n
+pause

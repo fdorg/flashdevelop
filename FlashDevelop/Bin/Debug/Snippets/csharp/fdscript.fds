@@ -1,0 +1,21 @@
+using System;
+using System.IO;
+using System.Text;
+using System.Drawing;
+using System.Windows.Forms;
+using PluginCore.Utilities;
+using PluginCore.Managers;
+using PluginCore.Helpers;
+using PluginCore.Controls;
+using FlashDevelop;
+using ScintillaNet;
+using PluginCore;
+
+public class FDScript $(CSLB){
+    /**
+	$(CBI)* Entry point of the script.
+	$(CBI)*/
+	public static void Execute() $(CSLB){
+        $(EntryPoint)
+    }
+}

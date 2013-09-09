@@ -1,0 +1,50 @@
+Agindua aukeratu...
+- MAIN -------------------------------------------------------------------------
+$(EntryPoint) - Hautaketaren hasiera posizioa.
+$(ExitPoint) - Hautaketaren bukaera posizioa.
+$(Boundary) - Testu guztia mugen artean mantendu
+$(CSLB) - Kodetze estiloaren lerro saltoa
+$(CBI) - Iruzkin blokea
+$(STC) - Espazio edo tabulazio karakterea
+- TEXT -------------------------------------------------------------------------
+$(SelText) - Hautatutako testua
+$(CurWord) - Kursorearen posizioko hitza
+$(CurSyntax) - Unean aktibatutako sintaxia
+$(Clipboard) - Arbelaren edukia
+- FILE -------------------------------------------------------------------------
+$(CurFile) - Uneko fitxategia
+$(CurFilename) - Uneko fitxategiaren izena
+$(CurFilenameNoExt) - Uneko fitxategiaren izena luzapen gabe
+$(CurDir) - Uneko fitxategiaren direktorioa
+- DIRECTORY -------------------------------------------------------------------------
+$(DesktopDir) - Erabiltzaileran mahaigaineko direktorioa
+$(SystemDir) - Windows sistemaren direktorioa
+$(ProgramsDir) - Programa Fitxategien direktorioa
+$(PersonalDir) - Erabiltzailearen fitxategi pertsonalen direktorioa
+$(WorkingDir) - Uneko lan-direktorioa
+$(AppDir) - FlashDevelop-en programa direktorioa
+$(BaseDir) - FlashDevelop-en fitxategi direktorioa
+$(UserAppDir) - FlashDevelop-en erabiltzaile direktorioa
+- TYPE -------------------------------------------------------------------------
+$(TypPkg) - Fitxategi paketea
+$(TypName) - Uneko mota izena
+$(TypPkgName) - Uneko pakete + mota izena
+$(TypKind) - Klase mota (interface, class)
+$(TypClosestListName) - Hurbilen dagoen Array edo Vector aldagai izena
+$(TypClosestListItemType) - Hurbilen dagoen Vector elementu mota
+- MEMBER -------------------------------------------------------------------------
+$(MbrName) - Uneko Elementua, ie. uneko metodoa
+$(MbrKind) - Elementu mota (const, var, function)
+$(MbrTypPkg) - Elementuaren motaren paketea
+$(MbrTypName) - Elementuaren motaren izena
+$(MbrTypePkgName) - Elementuaren mota sailkatze izena
+$(MbrTypKind) - Elementuaren klase mota (interface, class)
+- ITEM -------------------------------------------------------------------------
+$(ItmTypName) - Kurtsorearen posizioko elementuaren izena
+$(ItmFile) - Elementua deklaratu den fitxategia
+$(ItmKind) - Elementu mota (const, var, function)
+$(ItmTypPkg) - Elementu motaren paketea
+$(ItmTypName) - Elementu motaren izena
+$(ItmTypPkgName) - Elementuaren mota sailkatze izena
+$(ItmTypKind) - Elementuaren klase mota (interface, class)
+$(ItmUniqueVar) - Aldagai izen bakarra (i, j... etc)
