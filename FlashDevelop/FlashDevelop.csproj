@@ -266,6 +266,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>"$(SolutionDir)\setversion.bat" "$(SolutionDir)"</PreBuildEvent>
+    <PreBuildEvent>"$(SolutionDir)\SetVersion.bat" "$(SolutionDir)"</PreBuildEvent>
   </PropertyGroup>
 </Project>
