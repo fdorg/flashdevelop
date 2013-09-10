@@ -242,7 +242,7 @@ namespace CodeRefactor.Provider
             Boolean currentFileOnly = false;
             // checks target is a member
             if (target == null || ((target.Member == null || String.IsNullOrEmpty(target.Member.Name))
-                && (target.Type == null || !CheckFlag(target.Type.Flags, FlagType.Class))))
+                && (target.Type == null || !CheckFlag(target.Type.Flags, FlagType.Class) && !target.Type.IsEnum())))
             {
                 return null;
             }

@@ -192,6 +192,10 @@ namespace FlashDebugger
                         {
                             TraceManager.AddAsync(TextHelper.GetString("Info.PlayerAlreadyRunning"));
                         }
+                        catch (NoResponseException)
+                        {
+                            TraceManager.AddAsync(TextHelper.GetString("Info.ProcessNotResponding"));
+                        }
                         m_RequestResume = false;
                         m_RequestPause = false;
                         m_StepResume = false;
