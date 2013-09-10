@@ -76,6 +76,13 @@ namespace CodeRefactor.Commands
         /// <param name="ignoreDeclarationSource">If true, will not rename the original declaration source.  Useful for Encapsulation refactoring.</param>
         public Rename(ASResult target, Boolean outputResults, String newName, Boolean ignoreDeclarationSource)
         {
+            if (target == null)
+            {
+                //TODO: the first call of rename for global function or global namespace
+                TraceManager.Add("refactor target is null");
+                return;
+            }
+
             this.outputResults = outputResults;
             this.ignoreDeclarationSource = ignoreDeclarationSource;
 
