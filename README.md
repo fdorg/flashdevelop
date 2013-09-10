@@ -13,6 +13,7 @@ Platform
 --------
 
 * Microsoft Windows .NET 2.0 application (Windows XP, Windows Vista, Windows 7, Windows 8)
+* Includes native (Qt) Mac OSX/Linux helper to improve virtualization (VirtualBox, VMWare, Parallels)
 
 Building
 --------
