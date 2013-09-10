@@ -26,5 +26,3 @@ Contribute
 --------
 
 Get forking and [join the community at FlashDevelop forums.](http://www.flashdevelop.org/community/index.php)
-
-Old repository: https://code.google.com/p/flashdevelop/
