@@ -195,8 +195,15 @@ namespace CodeRefactor.Provider
         static public bool DoesMatchPointToTarget(ScintillaNet.ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
             if (Sci == null || target == null) return false;
-            bool matchMember = target.InFile != null && target.Member != null;
-            bool matchType = target.Member == null && target.IsStatic && target.Type != null;
+            FileModel targetInFile = null;
+
+            if (target.InFile != null)
+                targetInFile = target.InFile;
+            else if (target.Member != null && target.InClass == null)
+                targetInFile = target.Member.InFile;
+
+            Boolean matchMember = targetInFile != null && target.Member != null;
+            Boolean matchType = target.Member == null && target.IsStatic && target.Type != null;
             if (!matchMember && !matchType) return false;
 
             ASResult result = null;
@@ -215,8 +222,13 @@ namespace CodeRefactor.Provider
             if (matchMember)
             {
                 if (result.Member == null) return false;
-                return result.InFile.BasePath == target.InFile.BasePath && result.InFile.FileName == target.InFile.FileName 
-                    && result.Member.LineFrom == target.Member.LineFrom && result.Member.Name == target.Member.Name;
+
+                var resultInFile = result.InClass != null ? result.InFile : result.Member.InFile;
+
+                return resultInFile.BasePath == targetInFile.BasePath
+                    && resultInFile.FileName == targetInFile.FileName
+                    && (target.InClass == null || (result.Member.LineFrom == target.Member.LineFrom))
+                    && result.Member.Name == target.Member.Name;
             }
             else // type
             {
