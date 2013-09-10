@@ -240,10 +240,9 @@ namespace CodeRefactor
                 {
                     Boolean isVoid = result.Type.IsVoid();
                     Boolean isClass = !isVoid && result.IsStatic && result.Member == null;
-                    Boolean isVariable = !isVoid && !isClass && RefactoringHelper.CheckFlag(result.Member.Flags, FlagType.Variable);
                     Boolean isConstructor = !isVoid && !isClass && RefactoringHelper.CheckFlag(result.Member.Flags, FlagType.Constructor);
-                    this.refactorContextMenu.RenameMenuItem.Enabled = !(isClass || isConstructor || isVoid);
-                    this.refactorMainMenu.RenameMenuItem.Enabled = !(isClass || isConstructor || isVoid);
+                    this.refactorContextMenu.RenameMenuItem.Enabled = !(isClass || isConstructor);
+                    this.refactorMainMenu.RenameMenuItem.Enabled = !(isClass || isConstructor);
                     this.editorReferencesItem.Enabled = this.viewReferencesItem.Enabled = true;
                     if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
                     {
