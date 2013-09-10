@@ -3506,7 +3506,7 @@ namespace ASCompletion.Completion
 
         private static string GetToolTipDoc(MemberModel model)
         {
-            return ASDocumentation.GetTipShortDetails(model, null).TrimStart(new char[] { ' ', '…' });
+            return ASDocumentation.GetTipShortDetails(model, null).TrimStart(new char[] { ' ', '\u2026' });
         }
 
 		static private string MemberTooltipText(MemberModel member, ClassModel inClass)

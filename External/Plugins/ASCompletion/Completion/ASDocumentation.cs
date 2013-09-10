@@ -408,7 +408,7 @@ namespace ASCompletion.Completion
 		{
             if (member == null || member.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
 			CommentBlock cb = ParseComment(member.Comments);
-            return " …" + GetTipShortDetails(cb, highlightParam);
+            return " \u2026" + GetTipShortDetails(cb, highlightParam);
         }
 
         /// <summary>
@@ -483,7 +483,7 @@ namespace ASCompletion.Completion
 				string[] lines = cb.Description.Split('\n');
                 int n = Math.Min(lines.Length, ASContext.CommonSettings.DescriptionLinesLimit);
 				for(int i=0; i<n; i++) details += lines[i]+"\n";
-                if (lines.Length > ASContext.CommonSettings.DescriptionLinesLimit) details = details.TrimEnd() + " …\n";
+                if (lines.Length > ASContext.CommonSettings.DescriptionLinesLimit) details = details.TrimEnd() + " \u2026\n";
 			}
 			
 			// @usage
