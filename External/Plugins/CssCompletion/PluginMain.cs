@@ -155,6 +155,11 @@ namespace CssCompletion
                     }
                     break;
                 }
+                case EventType.Completion:
+                {
+                    if (features != null) e.Handled = true;
+                    return;
+                }
                 case EventType.FileSave:
                 {
                     if (document != null && document.IsEditable && this.IsSupported(document))
@@ -209,7 +214,7 @@ namespace CssCompletion
             UITools.Manager.OnCharAdded += SciControlCharAdded;
             UITools.Manager.OnTextChanged += SciControlTextChanged;
             CompletionList.OnInsert += CompletionList_OnInsert;
-            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch;
+            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Completion;
             EventManager.AddEventHandler(this, eventTypes);
         }
 

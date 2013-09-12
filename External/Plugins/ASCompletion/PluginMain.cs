@@ -41,6 +41,7 @@ namespace ASCompletion
             EventType.FileSave |
             EventType.FileSwitch |
             EventType.SyntaxChange |
+            EventType.Completion |
             EventType.SyntaxDetect |
             EventType.UIRefresh |
             EventType.Keys |
@@ -239,6 +240,10 @@ namespace ASCompletion
                         ASContext.SetCurrentFile(doc, ignoreFile);
                         // UI
                         ContextChanged();
+                        return;
+
+                    case EventType.Completion:
+                        if (ASContext.Context.IsFileValid) e.Handled = true;
                         return;
 
                     // some commands work all the time

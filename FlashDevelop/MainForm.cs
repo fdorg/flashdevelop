@@ -1205,6 +1205,8 @@ namespace FlashDevelop
                 TabTextManager.UpdateTabTexts();
                 NotifyEvent ne = new NotifyEvent(EventType.FileSwitch);
                 EventManager.DispatchEvent(this, ne);
+                NotifyEvent ce = new NotifyEvent(EventType.Completion);
+                EventManager.DispatchEvent(this, ce);
             }
             catch (Exception ex)
             {
@@ -2196,6 +2198,8 @@ namespace FlashDevelop
                         this.CurrentDocument.Save(this.saveFileDialog.FileName);
                         NotifyEvent ne = new NotifyEvent(EventType.FileSwitch);
                         EventManager.DispatchEvent(this, ne);
+                        NotifyEvent ce = new NotifyEvent(EventType.Completion);
+                        EventManager.DispatchEvent(this, ce);
                     }
                 }
                 else if (this.CurrentDocument.IsModified)
@@ -2222,6 +2226,8 @@ namespace FlashDevelop
                 this.CurrentDocument.Save(this.saveFileDialog.FileName);
                 NotifyEvent ne = new NotifyEvent(EventType.FileSwitch);
                 EventManager.DispatchEvent(this, ne);
+                NotifyEvent ce = new NotifyEvent(EventType.Completion);
+                EventManager.DispatchEvent(this, ce);
             }
         }
 

@@ -117,6 +117,10 @@ namespace XMLCompletion
                     XMLComplete.CurrentFile = PluginBase.MainForm.CurrentDocument.FileName;
                     break;
 
+                case EventType.Completion:
+                    if (XMLComplete.Active) e.Handled = true;
+                    return;
+
                 case EventType.Keys:
                     e.Handled = XMLComplete.OnShortCut(((KeyEvent)e).Value);
                     break;
@@ -154,7 +158,7 @@ namespace XMLCompletion
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventType eventType = EventType.FileSwitch | EventType.SyntaxChange | EventType.Keys | EventType.Command;
+            EventType eventType = EventType.FileSwitch | EventType.SyntaxChange | EventType.Keys | EventType.Command | EventType.Completion;
             EventManager.AddEventHandler(this, eventType);
         }
 

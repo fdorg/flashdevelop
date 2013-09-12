@@ -40,7 +40,8 @@ namespace PluginCore
         Shortcut = 1073741824, // DataEvent (id, keys)
         Command = 2147483648, // DataEvent (command)
         Trace = 4294967296, // NotifyEvent
-        Keys = 8589934592 // KeyEvent (keys)
+        Keys = 8589934592, // KeyEvent (keys)
+        Completion = 17179869184 // NotifyEvent
     }
 
     public enum SessionType
