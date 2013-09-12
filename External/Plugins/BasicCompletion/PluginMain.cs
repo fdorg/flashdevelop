@@ -389,7 +389,7 @@ namespace BasicCompletion
         private void SciControlCharAdded(ScintillaControl sci, Int32 value)
         {
             ITabbedDocument doc = DocumentManager.FindDocument(sci);
-            if (doc == PluginBase.MainForm.CurrentDocument && this.isSupported)
+            if (this.isSupported)
             {
                 Language config = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
                 String characters = config.characterclass.Characters;
@@ -416,7 +416,7 @@ namespace BasicCompletion
         private void SciControlTextChanged(ScintillaControl sci, Int32 position, Int32 length, Int32 linesAdded)
         {
             ITabbedDocument doc = DocumentManager.FindDocument(sci);
-            if (doc == PluginBase.MainForm.CurrentDocument && this.isSupported)
+            if (this.isSupported)
             {
                 this.updateTimer.Stop();
                 this.updateTimer.Interval = Math.Max(500, sci.Length / 10);
