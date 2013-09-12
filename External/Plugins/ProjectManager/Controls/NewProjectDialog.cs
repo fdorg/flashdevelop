@@ -314,7 +314,19 @@ namespace ProjectManager.Controls
 
         void NewProjectDialog_Load(object sender, EventArgs e)
         {
-            if (projectListView.Items.Count > 0) projectListView.Items[0].Selected = true;
+            string tmpl = this.GetPropValue("LastTemplate");
+            if (!String.IsNullOrEmpty(tmpl))
+            {
+                foreach (ListViewItem item in projectListView.Items)
+                {
+                    if ((string)item.Tag == tmpl)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                }
+            }
+            else if (projectListView.Items.Count > 0) projectListView.Items[0].Selected = true;
             else
             {
                 string info = TextHelper.GetString("Info.NoTemplatesFound");
@@ -452,7 +464,8 @@ namespace ProjectManager.Controls
 		{
 			if (projectListView.SelectedIndices.Count > 0)
 			{
-				string projectImage = Path.Combine(TemplateDirectory,"Project.png");
+                this.SetPropValue("LastTemplate", TemplateDirectory);
+                string projectImage = Path.Combine(TemplateDirectory,"Project.png");
 				string projectDescription = Path.Combine(TemplateDirectory,"Project.txt");
 
 				if (previewBox.Image != null) previewBox.Image.Dispose();
