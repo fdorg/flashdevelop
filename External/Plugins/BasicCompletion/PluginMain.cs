@@ -394,7 +394,7 @@ namespace BasicCompletion
         private void SciControlCharAdded(ScintillaControl sci, Int32 value)
         {
             ITabbedDocument doc = DocumentManager.FindDocument(sci);
-            if (this.isSupported)
+            if (this.isSupported && sci.ConfigurationLanguage != "text")
             {
                 Language config = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
                 String characters = config.characterclass.Characters;
