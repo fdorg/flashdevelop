@@ -1940,7 +1940,7 @@ namespace ASCompletion.Model
                         {
                             foundModifier = FlagType.Intrinsic;
                         }
-                        else if (version == 3 && token == "override")
+                        else if (token == "override")
                         {
                             foundModifier = FlagType.Override;
                         }
