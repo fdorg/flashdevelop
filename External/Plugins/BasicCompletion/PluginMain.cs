@@ -28,6 +28,7 @@ namespace BasicCompletion
         private Hashtable baseTable = new Hashtable();
         private Hashtable fileTable = new Hashtable();
         private System.Timers.Timer updateTimer;
+        private Boolean isSupported = false;
         private String settingFilename;
         private Settings settingObject;
         private String[] projKeywords;
@@ -126,7 +127,7 @@ namespace BasicCompletion
                 case EventType.Keys:
                 {
                     Keys keys = (e as KeyEvent).Value;
-                    if (this.IsSupported(document) && keys == (Keys.Control | Keys.Space))
+                    if (this.isSupported && keys == (Keys.Control | Keys.Space))
                     {
                         String lang = document.SciControl.ConfigurationLanguage;
                         List<ICompletionListItem> items = this.GetCompletionListItems(lang, document.FileName);
@@ -140,18 +141,22 @@ namespace BasicCompletion
                             e.Handled = true;
                         }
                     }
-                    else if (this.IsSupported(document) && keys == (Keys.Control | Keys.Alt | Keys.Space))
+                    else if (this.isSupported && keys == (Keys.Control | Keys.Alt | Keys.Space))
                     {
                         PluginBase.MainForm.CallCommand("InsertSnippet", "null");
                         e.Handled = true;
                     }
                     break;
                 }
-                case EventType.FileSwitch:
+                case EventType.Completion:
+                {
+                    this.isSupported = !e.Handled;
+                    break;
+                }
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    if (this.IsSupported(document))
+                    if (this.isSupported)
                     {
                         String language = document.SciControl.ConfigurationLanguage;
                         if (!this.baseTable.ContainsKey(language)) this.AddBaseKeywords(language);
@@ -163,19 +168,20 @@ namespace BasicCompletion
                         }
                         this.updateTimer.Stop();
                     }
+                    else if (this.updateTable.ContainsKey(document.FileName)) // Not supported saved, remove
+                    {
+                        this.updateTable.Remove(document.FileName);
+                    }
                     break;
                 }
                 case EventType.FileSave:
                 {
                     TextEvent te = e as TextEvent;
-                    if (te.Value == document.FileName && this.IsSupported(document)) this.AddDocumentKeywords(document);
+                    if (te.Value == document.FileName && this.isSupported) this.AddDocumentKeywords(document);
                     else
                     {
                         ITabbedDocument saveDoc = DocumentManager.FindDocument(te.Value);
-                        if (saveDoc != null && saveDoc.IsEditable && this.IsSupported(saveDoc))
-                        {
-                            this.updateTable[te.Value] = true;
-                        }
+                        if (saveDoc != null) this.updateTable[te.Value] = true;
                     }
                     break;
                 }
@@ -213,7 +219,7 @@ namespace BasicCompletion
         private void UpdateTimerElapsed(Object sender, System.Timers.ElapsedEventArgs e)
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (doc != null && doc.IsEditable && this.IsSupported(doc))
+            if (doc != null && doc.IsEditable && this.isSupported)
             {
                 this.AddDocumentKeywords(doc);
             }
@@ -237,7 +243,8 @@ namespace BasicCompletion
         {
             UITools.Manager.OnCharAdded += new UITools.CharAddedHandler(this.SciControlCharAdded);
             UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(this.SciControlTextChanged);
-            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command;
+            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.Command;
+            EventManager.AddEventHandler(this, EventType.Completion, HandlingPriority.Low);
             EventManager.AddEventHandler(this, eventTypes);
         }
 
@@ -274,7 +281,7 @@ namespace BasicCompletion
             {
                 UseKeyword usekeyword = lang.usekeywords[i];
                 KeywordClass kc = ScintillaControl.Configuration.GetKeywordClass(usekeyword.cls);
-                if (kc != null)
+                if (kc != null && kc.val != null)
                 {
                     String entry = Regex.Replace(kc.val, @"\t|\n|\r", " ");
                     String[] words = entry.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
@@ -381,8 +388,8 @@ namespace BasicCompletion
         /// </summary>
         private void SciControlCharAdded(ScintillaControl sci, Int32 value)
         {
-            String language = sci.ConfigurationLanguage.ToLower();
-            if (this.IsSupported(language))
+            ITabbedDocument doc = DocumentManager.FindDocument(sci);
+            if (doc == PluginBase.MainForm.CurrentDocument && this.isSupported)
             {
                 Language config = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
                 String characters = config.characterclass.Characters;
@@ -393,7 +400,7 @@ namespace BasicCompletion
                 if (characters.IndexOf((char)value) < 0) return;
                 String curWord = sci.GetWordLeft(sci.CurrentPos - 1, false);
                 if (curWord == null || curWord.Length < 3) return;
-                List<ICompletionListItem> items = this.GetCompletionListItems(language, sci.FileName);
+                List<ICompletionListItem> items = this.GetCompletionListItems(sci.ConfigurationLanguage, sci.FileName);
                 if (items != null && items.Count > 0)
                 {
                     items.Sort();
@@ -406,31 +413,15 @@ namespace BasicCompletion
         /// <summary>
         /// Starts the timer for the document keywords updating
         /// </summary>
-        private void SciControlTextChanged(ScintillaControl sci, int position, int length, int linesAdded)
+        private void SciControlTextChanged(ScintillaControl sci, Int32 position, Int32 length, Int32 linesAdded)
         {
-            String language = sci.ConfigurationLanguage.ToLower();
-            if (this.IsSupported(language))
+            ITabbedDocument doc = DocumentManager.FindDocument(sci);
+            if (doc == PluginBase.MainForm.CurrentDocument && this.isSupported)
             {
                 this.updateTimer.Stop();
                 this.updateTimer.Interval = Math.Max(500, sci.Length / 10);
                 this.updateTimer.Start();
             }
-        }
-
-        /// <summary>
-        /// Checks if the language/document should use basic completion 
-        /// </summary>
-        public Boolean IsSupported(String language)
-        {
-            var count = this.settingObject.CustomLanguages.Count;
-            if (this.settingObject.DisableAutoCompletion) return false;
-            else if (count > 0) return this.settingObject.CustomLanguages.Contains(language);
-            else return BasicCompletion.Settings.DEFAULT_LANGUAGES.Contains(language);
-        }
-        public Boolean IsSupported(ITabbedDocument document)
-        {
-            String language = document.SciControl.ConfigurationLanguage.ToLower();
-            return this.IsSupported(language);
         }
 
 		#endregion
