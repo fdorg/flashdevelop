@@ -789,7 +789,9 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language.StartsWith("as"))
+            Boolean langIsValid = PluginBase.CurrentProject.Language.StartsWith("as") || PluginBase.CurrentProject.Language.StartsWith("haxe");
+
+            if (PluginBase.CurrentProject != null && langIsValid)
             {
                 if (!hasConstructor)
                 {
