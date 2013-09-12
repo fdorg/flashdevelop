@@ -238,13 +238,11 @@ namespace CodeRefactor
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
-                    Boolean isVoid = result.Type.IsVoid();
-                    Boolean isClass = !isVoid && result.IsStatic && result.Member == null;
-                    Boolean isVariable = !isVoid && !isClass && RefactoringHelper.CheckFlag(result.Member.Flags, FlagType.Variable);
-                    Boolean isConstructor = !isVoid && !isClass && RefactoringHelper.CheckFlag(result.Member.Flags, FlagType.Constructor);
-                    this.refactorContextMenu.RenameMenuItem.Enabled = !(isClass || isConstructor || isVoid);
-                    this.refactorMainMenu.RenameMenuItem.Enabled = !(isClass || isConstructor || isVoid);
-                    this.editorReferencesItem.Enabled = this.viewReferencesItem.Enabled = true;
+                    this.refactorContextMenu.RenameMenuItem.Enabled = true;
+                    this.refactorMainMenu.RenameMenuItem.Enabled = true;
+
+                    this.editorReferencesItem.Enabled = true;
+                    this.viewReferencesItem.Enabled = true;
                     if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
                     {
                         FlagType flags = result.Member.Flags;
