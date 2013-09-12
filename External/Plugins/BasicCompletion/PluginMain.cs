@@ -148,6 +148,11 @@ namespace BasicCompletion
                     }
                     break;
                 }
+                case EventType.FileSwitch:
+                {
+                    this.isSupported = false;
+                    break;
+                }
                 case EventType.Completion:
                 {
                     this.isSupported = !e.Handled;
@@ -243,7 +248,7 @@ namespace BasicCompletion
         {
             UITools.Manager.OnCharAdded += new UITools.CharAddedHandler(this.SciControlCharAdded);
             UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(this.SciControlTextChanged);
-            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.Command;
+            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command;
             EventManager.AddEventHandler(this, EventType.Completion, HandlingPriority.Low);
             EventManager.AddEventHandler(this, eventTypes);
         }
