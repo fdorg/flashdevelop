@@ -31,10 +31,10 @@ namespace HaXeContext
 
         static public string FLASH_OLD = "flash";
         static public string FLASH_NEW = "flash9";
-
+        static private string currentEnv;
+        static private string currentSDK;
+        
         private HaXeSettings hxsettings;
-        private string currentSDK;
-        private string currentEnv;
         private Dictionary<string, List<string>> haxelibsCache;
         private bool hasAIRSupport;
         private bool hasMobileSupport;
@@ -220,7 +220,7 @@ namespace HaXeContext
         /// <summary>
         /// Properly switch between different Haxe SDKs
         /// </summary>
-        private void SetHaxeEnvironment(string sdkPath)
+        static public void SetHaxeEnvironment(string sdkPath)
         {
             if (currentEnv == sdkPath) return;
             currentEnv = sdkPath;
