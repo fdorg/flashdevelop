@@ -13,6 +13,7 @@ namespace FlashDevelop.Managers
     class FilePollManager
     {
         private static Timer FilePollTimer;
+        private static Boolean YesToAll = false;
 
         /// <summary>
         /// Initialize the file change polling
@@ -46,13 +47,24 @@ namespace FlashDevelop.Managers
                 if (Globals.Settings.AutoReloadModifiedFiles) casted.Reload(false);
                 else
                 {
+                    if (YesToAll)
+                    {
+                        casted.Reload(false);
+                        return;
+                    }
                     String dlgTitle = TextHelper.GetString("Title.InfoDialog");
                     String dlgMessage = TextHelper.GetString("Info.FileIsModifiedOutside");
                     String formatted = String.Format(dlgMessage, "\n", casted.FileName);
-                    if (MessageBox.Show(Globals.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                    MessageBoxManager.Cancel = TextHelper.GetString("Label.YesToAll");
+                    MessageBoxManager.Register(); // Use custom labels...
+                    DialogResult result = MessageBox.Show(Globals.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    if (result == DialogResult.Yes) casted.Reload(false);
+                    else if (result == DialogResult.Cancel)
                     {
                         casted.Reload(false);
+                        YesToAll = true;
                     }
+                    MessageBoxManager.Unregister();
                 }
             }
         }
@@ -73,6 +85,7 @@ namespace FlashDevelop.Managers
                     if (document != current) CheckFileChange(document);
                 }
                 FilePollTimer.Enabled = true;
+                YesToAll = false;
             }
             catch { /* No errors shown here.. */ }
         }

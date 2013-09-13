@@ -5003,4 +5003,8 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Web zerbitzaria...</value>
     <comment>Added after 4.4.2</comment>
   </data>
+  <data name="FlashDevelop.Label.YesToAll" xml:space="preserve">
+    <value>Yes to &amp;all</value>
+    <comment>Added after 4.4.3</comment>
+  </data>
 </root>
