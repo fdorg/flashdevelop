@@ -202,7 +202,7 @@ namespace CodeRefactor.Commands
             if (oldName != null && !oldName.Equals(originName)) return;
 
             String fullPath = Path.GetFullPath(inFile.FileName);
-            fullPath = fullPath.Substring(0, fullPath.LastIndexOf("\\", StringComparison.Ordinal));
+            fullPath = Path.GetDirectoryName(fullPath);
 
             String newFileName = Path.Combine(fullPath, NewName + Path.GetExtension(oldFileName));
 
