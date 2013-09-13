@@ -2271,9 +2271,12 @@ namespace ASCompletion.Completion
 
 			// no head, exit
 			if (head.IsNull()) return notFound;
+
             // accessing instance member in static function, exit
             if (IsStatic(context.ContextFunction) && head.RelClass == inClass
-                && head.Member != null && !IsStatic(head.Member)) return notFound;
+                && head.Member != null && !IsStatic(head.Member)
+                && (head.Member.Flags & FlagType.Constructor) == 0)
+                return notFound;
 
             // resolve
             ASResult result = EvalTail(context, inFile, head, tokens, complete);
