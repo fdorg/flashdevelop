@@ -19,7 +19,8 @@ namespace ProjectManager.Controls
 {
 	public class NewProjectDialog : SmartForm
 	{
-		string defaultProjectImage;
+        static string lastTemplate;
+        string defaultProjectImage;
 
 		#region Windows Form Designer
 
@@ -314,12 +315,11 @@ namespace ProjectManager.Controls
 
         void NewProjectDialog_Load(object sender, EventArgs e)
         {
-            string tmpl = this.GetPropValue("LastTemplate");
-            if (!String.IsNullOrEmpty(tmpl))
+            if (!String.IsNullOrEmpty(lastTemplate))
             {
                 foreach (ListViewItem item in projectListView.Items)
                 {
-                    if ((string)item.Tag == tmpl)
+                    if ((string)item.Tag == lastTemplate)
                     {
                         item.Selected = true;
                         break;
@@ -464,7 +464,7 @@ namespace ProjectManager.Controls
 		{
 			if (projectListView.SelectedIndices.Count > 0)
 			{
-                this.SetPropValue("LastTemplate", TemplateDirectory);
+                lastTemplate = TemplateDirectory;
                 string projectImage = Path.Combine(TemplateDirectory,"Project.png");
 				string projectDescription = Path.Combine(TemplateDirectory,"Project.txt");
 
