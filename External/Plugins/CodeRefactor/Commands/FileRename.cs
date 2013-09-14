@@ -51,6 +51,7 @@ namespace CodeRefactor.Commands
             {
                 PluginBase.MainForm.OpenEditableDocument(_path, false);
                 ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+
                 if (!ASContext.Context.IsFileValid || sci == null)
                     return;
 

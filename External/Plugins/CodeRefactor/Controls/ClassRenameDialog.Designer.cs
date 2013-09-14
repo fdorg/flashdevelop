@@ -99,6 +99,7 @@
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.NewName);
             this.Controls.Add(this.UpdateReferences);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ClassRenameDialog";

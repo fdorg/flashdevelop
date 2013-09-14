@@ -340,7 +340,7 @@ namespace CodeRefactor.Provider
         private static List<String> GetAllProjectRelatedFiles(IProject project)
         {
             List<String> files = new List<String>();
-            String filter = project.Language.ToLower() == "haxe" ? "*.hx" : "*.as";
+            String filter = project.Language.ToLower() == "haxe" ? "*.hx" : "*.as";//TODO: loom, typescript
             foreach (String path in project.SourcePaths)
             {
                 String absolute = project.GetAbsolutePath(path);
@@ -431,16 +431,18 @@ namespace CodeRefactor.Provider
             if (!isVoid && target.IsStatic && target.Member == null)
                 return true;
 
-            if (!isVoid && RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor))
+            FlagType flags = target.Member.Flags;
+
+            if (!isVoid && CheckFlag(flags, FlagType.Constructor))
+                return true;
+
+            if (CheckFlag(flags, FlagType.TypeDef))
                 return true;
 
             if (target.InClass != null && !target.InClass.IsVoid())
                 return false;
 
-            if (RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Function))
-                return true;
-
-            return RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
+            return CheckFlag(flags, FlagType.Function) || CheckFlag(flags, FlagType.Namespace);
         }
 
     }

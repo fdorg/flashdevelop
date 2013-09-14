@@ -170,6 +170,7 @@ namespace CodeRefactor.Commands
 
             Boolean isGlobalFunction = false;
             Boolean isGlobalNamespace = false;
+            Boolean isTypeDef = false;
 
             if (!isEnum && !isClass && !isConstructor && (target.InClass == null || target.InClass.IsVoid()))
             {
@@ -177,7 +178,7 @@ namespace CodeRefactor.Commands
                 isGlobalNamespace = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
             }
 
-            if (!isEnum && !isClass && !isConstructor && !isGlobalFunction && !isGlobalNamespace)
+            if (!isEnum && !isClass && !isConstructor && !isGlobalFunction && !isGlobalNamespace && !isTypeDef)
                 return;
 
             FileModel inFile = null;
@@ -188,7 +189,7 @@ namespace CodeRefactor.Commands
                 inFile = target.Member.InFile;
                 originName = target.Member.Name;
             }
-            else if (target.Type.Constructor != null || isEnum)
+            else if (isClass || isEnum)
             {
                 inFile = target.Type.InFile;
                 originName = target.Type.Name;
