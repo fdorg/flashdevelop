@@ -739,8 +739,7 @@ namespace ASCompletion.Completion
                 if (!result.IsNull())
                 {
                     ClassModel oClass = result.InClass != null ? result.InClass : result.Type;
-
-                    if (result.IsPackage || oClass.IsVoid())
+                    if (result.IsPackage || (oClass.IsVoid() && (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0))
                         return;
 
                     // type details
