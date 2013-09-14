@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using CodeRefactor.Provider;
 
 namespace CodeRefactor.Commands
@@ -7,35 +6,35 @@ namespace CodeRefactor.Commands
     /// <summary>
     /// Basic underyling Refactoring command.  Refactoring commands can derive from this.
     /// </summary>
-    /// <typeparam name="RefactorResultType">The refactoring results return type</typeparam>
-    public abstract class RefactorCommand<RefactorResultType>
+    /// <typeparam name="TRefactorResultType">The refactoring results return type</typeparam>
+    public abstract class RefactorCommand<TRefactorResultType>
     {
         #region Events
 
         /// <summary>
         /// Fires when the refactoring command completes its operation.
         /// </summary>
-        public EventHandler<RefactorCompleteEventArgs<RefactorResultType>> OnRefactorComplete;
+        public EventHandler<RefactorCompleteEventArgs<TRefactorResultType>> OnRefactorComplete;
 
         #endregion
 
         #region Fields and Properties
 
-        private RefactorResultType results;
-        private DocumentHelper associatedDocumentHelper;
+        private TRefactorResultType _results;
+        private DocumentHelper _associatedDocumentHelper;
 
         /// <summary>
         /// 
         /// </summary>
-        public virtual RefactorResultType Results
+        public virtual TRefactorResultType Results
         {
             get
             {
-                return results;
+                return _results;
             }
             protected set
             {
-                results = value;
+                _results = value;
             }
         }
 
@@ -48,15 +47,14 @@ namespace CodeRefactor.Commands
         {
             get
             {
-                if (associatedDocumentHelper == null)
-                {
-                    this.RegisterNewDocumentHelper();
-                }
-                return associatedDocumentHelper;
+                if (_associatedDocumentHelper == null)
+                    RegisterNewDocumentHelper();
+                
+                return _associatedDocumentHelper;
             }
             private set
             {
-                associatedDocumentHelper = value;
+                _associatedDocumentHelper = value;
             }
         }
 
@@ -67,7 +65,7 @@ namespace CodeRefactor.Commands
         {
             get
             {
-                return associatedDocumentHelper != null;
+                return _associatedDocumentHelper != null;
             }
         }
 
@@ -77,7 +75,7 @@ namespace CodeRefactor.Commands
         /// <returns></returns>
         public DocumentHelper RegisterNewDocumentHelper()
         {
-            return this.RegisterDocumentHelper(null);
+            return RegisterDocumentHelper(null);
         }
 
         /// <summary>
@@ -87,14 +85,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public DocumentHelper RegisterDocumentHelper(DocumentHelper existingDocumentHelper)
         {
-            if (existingDocumentHelper != null)
-            {
-                AssociatedDocumentHelper = existingDocumentHelper;
-            }
-            else
-            {
-                AssociatedDocumentHelper = new DocumentHelper();
-            }
+            AssociatedDocumentHelper = existingDocumentHelper ?? new DocumentHelper();
             return AssociatedDocumentHelper;
         }
 
@@ -107,9 +98,9 @@ namespace CodeRefactor.Commands
         /// </summary>
         public void Execute()
         {
-            if (this.IsValid())
+            if (IsValid())
             {
-                this.ExecutionImplementation();
+                ExecutionImplementation();
             }
         }
 
@@ -123,9 +114,7 @@ namespace CodeRefactor.Commands
         protected void FireOnRefactorComplete()
         {
             if (OnRefactorComplete != null)
-            {
-                OnRefactorComplete(this, new RefactorCompleteEventArgs<RefactorResultType>(this.results));
-            }
+                OnRefactorComplete(this, new RefactorCompleteEventArgs<TRefactorResultType>(_results));
         }
 
         #endregion

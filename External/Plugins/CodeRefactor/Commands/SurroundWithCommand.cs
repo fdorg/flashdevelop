@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using ASCompletion.Context;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Utilities;
@@ -15,7 +14,7 @@ namespace CodeRefactor.Commands
 
         public SurroundWithCommand(string snippet)
         {
-            this.SnippetCode = snippet;
+            SnippetCode = snippet;
         }
 
         public void Execute()
@@ -32,23 +31,16 @@ namespace CodeRefactor.Commands
             sci.BeginUndoAction();
             try
             {
-                IASContext context = ASContext.Context;
-
                 string selection = sci.SelText;
-                if (selection == null || selection.Length == 0)
-                {
+                if (string.IsNullOrEmpty(selection))
                     return;
-                }
 
                 if (selection.TrimStart().Length == 0)
-                {
                     return;
-                }
 
                 sci.SetSel(sci.SelectionStart + selection.Length - selection.TrimStart().Length,
                     sci.SelectionEnd);
                 sci.CurrentPos = sci.SelectionEnd;
-                selection = sci.SelText;
 
                 int lineStart = sci.LineFromPosition(sci.SelectionStart);
                 int lineEnd = sci.LineFromPosition(sci.SelectionEnd);
@@ -56,30 +48,22 @@ namespace CodeRefactor.Commands
                 int entryPointIndent = 0;
 
                 string snippet = GetSnippet(SnippetCode, sci.ConfigurationLanguage, sci.Encoding);
-                int pos = snippet.IndexOf("{0}");
+                int pos = snippet.IndexOf("{0}", StringComparison.Ordinal);
                 if (pos > -1)
-                {
                     while (pos >= 0)
                     {
                         string c = snippet.Substring(--pos, 1);
-                        if (c.Equals("\t"))
-                        {
-                            entryPointIndent += sci.Indent;
-                        }
-                        else
-                        {
+                        if (!c.Equals("\t"))
                             break;
-                        }
+                        
+                        entryPointIndent += sci.Indent;
                     }
-                }
 
                 for (int i = lineStart; i <= lineEnd; i++)
                 {
                     int indent = sci.GetLineIndentation(i);
                     if (i > lineStart)
-                    {
                         sci.SetLineIndentation(i, indent - firstLineIndent + entryPointIndent);
-                    }
                 }
 
                 snippet = snippet.Replace("{0}", sci.SelText);
@@ -98,7 +82,7 @@ namespace CodeRefactor.Commands
 
         public static String GetSnippet(String word, String syntax, Encoding current)
         {
-            string surroundFolder = "surround";
+            const string surroundFolder = "surround";
 
             String globalDir = Path.Combine(PathHelper.SnippetDir, surroundFolder);
             String global = Path.Combine(globalDir, word + ".fds");
@@ -110,12 +94,14 @@ namespace CodeRefactor.Commands
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else if (File.Exists(global))
+
+            if (File.Exists(global))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(global);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else return null;
+
+            return null;
         }
 
     }

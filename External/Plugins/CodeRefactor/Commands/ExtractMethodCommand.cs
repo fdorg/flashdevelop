@@ -6,27 +6,25 @@ namespace CodeRefactor.Commands
 {
     class ExtractMethodCommand
     {
-        private string NewName;
+        private readonly string _newName;
 
         public ExtractMethodCommand(string newName)
         {
-            this.NewName = newName;
+            _newName = newName;
         }
 
         public void Execute()
         {
-            ScintillaControl Sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            Sci.BeginUndoAction();
+            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            sci.BeginUndoAction();
             try
             {
-                ASGenerator.GenerateExtractMethod(Sci, NewName);
+                ASGenerator.GenerateExtractMethod(sci, _newName);
             }
             finally
             {
-                Sci.EndUndoAction();
+                sci.EndUndoAction();
             }
         }
-
     }
-
 }

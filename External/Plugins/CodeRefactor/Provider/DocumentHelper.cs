@@ -14,10 +14,9 @@ namespace CodeRefactor.Provider
     /// </summary>
     public class DocumentHelper
     {
-        private Boolean preventClosing = false;
-        private IDictionary<String, Boolean> filesOpenedAndUsed = new Dictionary<String, Boolean>();
-        private IDictionary<String, ITabbedDocument> filesOpenedDocumentReferences = new Dictionary<String, ITabbedDocument>();
-        private IDictionary<String, ITabbedDocument> initiallyOpenedFiles;
+        private IDictionary<String, Boolean> _filesOpenedAndUsed = new Dictionary<String, Boolean>();
+        private IDictionary<String, ITabbedDocument> _filesOpenedDocumentReferences = new Dictionary<String, ITabbedDocument>();
+        private readonly IDictionary<String, ITabbedDocument> _initiallyOpenedFiles;
        
         /// <summary>
         /// Constructor. Creates a new helper.  Stores the current state of 
@@ -27,23 +26,13 @@ namespace CodeRefactor.Provider
         /// </summary>
         public DocumentHelper()
         {
-            this.initiallyOpenedFiles = this.GetOpenDocuments();
+            _initiallyOpenedFiles = GetOpenDocuments();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public Boolean PreventClosing
-        {
-            get
-            {
-                return this.preventClosing;
-            }
-            set
-            {
-                this.preventClosing = value;
-            }
-        }
+        public bool PreventClosing { get; set; }
 
         /// <summary>
         /// Tracks files that have been opened.
@@ -57,11 +46,11 @@ namespace CodeRefactor.Provider
         {
             get
             {
-                return this.filesOpenedAndUsed;
+                return _filesOpenedAndUsed;
             }
             protected set
             {
-                this.filesOpenedAndUsed = value;
+                _filesOpenedAndUsed = value;
             }
         }
 
@@ -73,11 +62,11 @@ namespace CodeRefactor.Provider
         {
             get
             {
-                return this.filesOpenedDocumentReferences;
+                return _filesOpenedDocumentReferences;
             }
             protected set
             {
-                this.filesOpenedDocumentReferences = value;
+                _filesOpenedDocumentReferences = value;
             }
         }
 
@@ -88,12 +77,9 @@ namespace CodeRefactor.Provider
         {
             IDictionary<String, ITabbedDocument> openedFiles = new Dictionary<String, ITabbedDocument>();
             foreach (ITabbedDocument openDocument in PluginBase.MainForm.Documents)
-            {
                 if (openDocument.IsEditable)
-                {
                     openedFiles[openDocument.FileName] = openDocument;
-                }
-            }
+
             return openedFiles;
         }
 
@@ -103,17 +89,13 @@ namespace CodeRefactor.Provider
         /// </summary>
         public void MarkDocumentToKeep(String fileName)
         {
-            if (this.filesOpenedAndUsed.ContainsKey(fileName))
-            {
-                this.filesOpenedAndUsed[fileName] = true;
-            }
+            if (_filesOpenedAndUsed.ContainsKey(fileName))
+                _filesOpenedAndUsed[fileName] = true;
             else
             {
-                this.LoadDocument(fileName);
-                if (this.filesOpenedAndUsed.ContainsKey(fileName))
-                {
-                    this.filesOpenedAndUsed[fileName] = true;
-                }
+                LoadDocument(fileName);
+                if (_filesOpenedAndUsed.ContainsKey(fileName))
+                    _filesOpenedAndUsed[fileName] = true;
             }
         }
 
@@ -125,7 +107,7 @@ namespace CodeRefactor.Provider
         public ScintillaControl LoadDocument(String fileName)
         {
             ITabbedDocument newDocument = (ITabbedDocument)PluginBase.MainForm.OpenEditableDocument(fileName);
-            this.RegisterLoadedDocument(newDocument);
+            RegisterLoadedDocument(newDocument);
             return ASContext.CurSciControl;
         }
 
@@ -135,13 +117,13 @@ namespace CodeRefactor.Provider
         public void RegisterLoadedDocument(ITabbedDocument document)
         {
             //if it's null, it means it was already opened, or the caller sent us garbage
-            if (document != null && !filesOpenedAndUsed.ContainsKey(document.FileName))
-            {
-                //newly opened document.  Let's store it so we can close it later if it's not part of our result set.
-                //false to indicate that it so far hasn't found any matching entries.
-                this.filesOpenedAndUsed.Add(document.FileName, false);
-                this.filesOpenedDocumentReferences.Add(document.FileName, document);
-            }
+            if (document == null || _filesOpenedAndUsed.ContainsKey(document.FileName))
+                return;
+            
+            //newly opened document.  Let's store it so we can close it later if it's not part of our result set.
+            //false to indicate that it so far hasn't found any matching entries.
+            _filesOpenedAndUsed.Add(document.FileName, false);
+            _filesOpenedDocumentReferences.Add(document.FileName, document);
         }
 
         /// <summary>
@@ -151,14 +133,13 @@ namespace CodeRefactor.Provider
         /// </summary>
         public Boolean CloseDocument(String fileName)
         {
-            if (this.filesOpenedDocumentReferences.ContainsKey(fileName) && !this.initiallyOpenedFiles.ContainsKey(fileName))
-            {
-                this.filesOpenedDocumentReferences[fileName].Close();
-                this.filesOpenedAndUsed.Remove(fileName);
-                this.filesOpenedDocumentReferences.Remove(fileName);
-                return true;
-            }
-            return false;
+            if (!_filesOpenedDocumentReferences.ContainsKey(fileName) || _initiallyOpenedFiles.ContainsKey(fileName))
+                return false;
+
+            _filesOpenedDocumentReferences[fileName].Close();
+            _filesOpenedAndUsed.Remove(fileName);
+            _filesOpenedDocumentReferences.Remove(fileName);
+            return true;
         }
 
         /// <summary>
@@ -166,26 +147,22 @@ namespace CodeRefactor.Provider
         /// </summary>
         public void CloseTemporarilyOpenedDocuments()
         {
-            if (!this.PreventClosing)
+            if (PreventClosing)
+                return;
+
+            // retrieve a list of documents to close
+            List<String> documentsToClose = new List<String>();
+            foreach (KeyValuePair<String, Boolean> openedAndUsedFile in _filesOpenedAndUsed)
             {
-                // retrieve a list of documents to close
-                List<String> documentsToClose = new List<String>();
-                foreach (KeyValuePair<String, Boolean> openedAndUsedFile in filesOpenedAndUsed)
-                {
-                    // if the value is true, it means the document was flagged as permanent/changed, so we shouldn't close it
-                    if (!openedAndUsedFile.Value)
-                    {
-                        documentsToClose.Add(openedAndUsedFile.Key);
-                    }
-                }
-                // close each document
-                foreach (String fileName in documentsToClose)
-                {
-                    this.CloseDocument(fileName);
-                }
+                // if the value is true, it means the document was flagged as permanent/changed, so we shouldn't close it
+                if (!openedAndUsedFile.Value)
+                    documentsToClose.Add(openedAndUsedFile.Key);
             }
+
+            // close each document
+            foreach (String fileName in documentsToClose)
+                CloseDocument(fileName);
         }
 
     }
-
 }
