@@ -15,6 +15,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using PluginCore;
+using ProjectManager.Controls.TreeView;
 
 namespace CodeRefactor
 {
@@ -32,6 +33,10 @@ namespace CodeRefactor
         private RefactorMenu _refactorMainMenu;
         private Settings _settingObject;
         private String _settingFilename;
+
+        private TreeView _projectTreeView;
+        private ToolStripMenuItem _projectContextMenuItem;
+        private ClassRenameDialog _fileRenameDialog;
 
         #region Required Properties
         
@@ -102,6 +107,7 @@ namespace CodeRefactor
 		public void Initialize()
 		{
             InitBasics();
+            InitFileRenameDialog();
             LoadSettings();
             CreateMenuItems();
         }
@@ -131,7 +137,18 @@ namespace CodeRefactor
                     EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.ContextMenu", _refactorContextMenu));
                     // Watch resolved context for menu item updating...
                     ASComplete.OnResolvedContextChanged += OnResolvedContextChanged;
+                    DirectoryNode.OnDirectoryNodeRefresh += OnDirectoryNodeRefresh;
                     UpdateMenuItems();
+                    break;
+
+                case EventType.Command:
+                    DataEvent de = (DataEvent)e;
+                    switch (de.Action)
+                    {
+                        case "ProjectManager.TreeSelectionChanged":
+                            CreateProjectContextMenuItem();
+                            break;
+                    }
                     break;
             }
 		}
@@ -145,13 +162,19 @@ namespace CodeRefactor
         /// </summary>
         public void InitBasics()
         {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.FileSwitch);
+            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.FileSwitch | EventType.Command);
             String dataPath = Path.Combine(PathHelper.DataDir, "CodeRefactor");
             if (!Directory.Exists(dataPath))
                 Directory.CreateDirectory(dataPath);
 
             _settingFilename = Path.Combine(dataPath, "Settings.fdb");
             _pluginDesc = TextHelper.GetString("Info.Description");
+        }
+
+        private void InitFileRenameDialog()
+        {
+            _fileRenameDialog = new ClassRenameDialog();
+            _fileRenameDialog.OKButton.Click += FileRenameClicked;
         }
 
         /// <summary>
@@ -195,6 +218,25 @@ namespace CodeRefactor
             editorMenu.Items.Insert(7, _editorReferencesItem);
         }
 
+        private void CreateProjectContextMenuItem()
+        {
+            if (_projectTreeView == null || _projectTreeView.SelectedNode == null)
+                return;
+
+            var node = _projectTreeView.SelectedNode;
+            if (node == null || !GetNodeIsValid(node))
+                return;
+
+            var menu = _projectTreeView.ContextMenuStrip;
+            var index = 0;
+            while (index++ < menu.Items.Count)
+                if (menu.Items[index] is ToolStripSeparator)
+                    break;
+
+            menu.Items.Insert(index, _projectContextMenuItem);
+            menu.Items.Insert(index, new ToolStripSeparator());
+        }
+
         /// <summary>
         /// Gets if the current documents language is haxe
         /// </summary>
@@ -222,6 +264,12 @@ namespace CodeRefactor
             return false;
         }
 
+        private static Boolean GetNodeIsValid(TreeNode node)
+        {
+            var ext = Path.GetExtension(node.FullPath);
+            return ext == ".as" || ext == ".hx";// TODO: loom, mxml
+        }
+
         /// <summary>
         /// Cursor position changed and word at this position was resolved
         /// </summary>
@@ -230,80 +278,93 @@ namespace CodeRefactor
             UpdateMenuItems();
         }
 
+        private void OnDirectoryNodeRefresh(DirectoryNode node)
+        {
+            _projectTreeView = node.TreeView;
+            _projectContextMenuItem = new ToolStripMenuItem { Text = TextHelper.GetString("Label.Refactor") };
+
+            var item = new ToolStripMenuItem { Text = TextHelper.GetString("Label.Rename") };
+            item.Click += ProjectContextMenuRenameClicked;
+
+            _projectContextMenuItem.DropDownItems.Add(item);
+        }
+
         /// <summary>
         /// Updates the state of the menu items
         /// </summary>
         private void UpdateMenuItems()
         {
-            try
+            Boolean languageIsValid = GetLanguageIsValid();
+            ResolvedContext resolved = ASComplete.CurrentResolvedContext;
+            Boolean isValid = languageIsValid && resolved != null && resolved.Position >= 0;
+
+            _refactorMainMenu.DelegateMenuItem.Enabled = false;
+            _refactorContextMenu.DelegateMenuItem.Enabled = false;
+
+            ASResult result = isValid ? resolved.Result : null;
+            if (result != null && !result.IsNull())
             {
-                ResolvedContext resolved = ASComplete.CurrentResolvedContext;
-                Boolean isValid = GetLanguageIsValid() && resolved != null && resolved.Position >= 0;
-                _refactorMainMenu.DelegateMenuItem.Enabled = false;
-                _refactorContextMenu.DelegateMenuItem.Enabled = false;
-                ASResult result = isValid ? resolved.Result : null;
-                if (result != null && !result.IsNull())
-                {
-                    _refactorContextMenu.RenameMenuItem.Enabled = true;
-                    _refactorMainMenu.RenameMenuItem.Enabled = true;
+                _refactorContextMenu.RenameMenuItem.Enabled = true;
+                _refactorMainMenu.RenameMenuItem.Enabled = true;
 
-                    _editorReferencesItem.Enabled = true;
-                    _viewReferencesItem.Enabled = true;
-                    if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
+                _editorReferencesItem.Enabled = true;
+                _viewReferencesItem.Enabled = true;
+
+                if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
+                {
+                    FlagType flags = result.Member.Flags;
+                    if ((flags & FlagType.Variable) > 0 && (flags & FlagType.LocalVar) == 0 && (flags & FlagType.ParameterVar) == 0)
                     {
-                        FlagType flags = result.Member.Flags;
-                        if ((flags & FlagType.Variable) > 0 && (flags & FlagType.LocalVar) == 0 && (flags & FlagType.ParameterVar) == 0)
-                        {
-                            _refactorContextMenu.DelegateMenuItem.Enabled = true;
-                            _refactorMainMenu.DelegateMenuItem.Enabled = true;
-                        }
+                        _refactorContextMenu.DelegateMenuItem.Enabled = true;
+                        _refactorMainMenu.DelegateMenuItem.Enabled = true;
                     }
                 }
-                else
-                {
-                    _refactorMainMenu.RenameMenuItem.Enabled = false;
-                    _refactorContextMenu.RenameMenuItem.Enabled = false;
-                    _editorReferencesItem.Enabled = false;
-                    _viewReferencesItem.Enabled = false;
-                }
-
-                IASContext context = ASContext.Context;
-                if (context != null && context.CurrentModel != null)
-                {
-                    Boolean truncate = (GetLanguageIsValid() && context.CurrentModel.Imports.Count > 0);
-                    Boolean organize = (GetLanguageIsValid() && context.CurrentModel.Imports.Count > 1);
-                    _refactorContextMenu.OrganizeMenuItem.Enabled = organize;
-                    _refactorContextMenu.TruncateMenuItem.Enabled = truncate && !LanguageIsHaxe();
-                    _refactorMainMenu.OrganizeMenuItem.Enabled = organize;
-                    _refactorMainMenu.TruncateMenuItem.Enabled = truncate && !LanguageIsHaxe();
-                }
-
-                _surroundContextMenu.Enabled = false;
-                _refactorMainMenu.SurroundMenu.Enabled = false;
-                _refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
-                _refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
-                _refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
-                _refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
-                
-                ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-                if (document != null && document.IsEditable && GetLanguageIsValid() && document.SciControl.SelTextSize > 1)
-                {
-                    Int32 selEnd = document.SciControl.SelectionEnd;
-                    Int32 selStart = document.SciControl.SelectionStart;
-                    if (!document.SciControl.PositionIsOnComment(selEnd) || !document.SciControl.PositionIsOnComment(selStart))
-                    {
-                        _surroundContextMenu.Enabled = true;
-                        _refactorMainMenu.SurroundMenu.Enabled = true;
-                        _refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
-                        _refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
-                        _refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
-                        _refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
-                    }
-                }
-                _refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
-                _refactorMainMenu.CodeGeneratorMenuItem.Enabled = isValid;
             }
-            catch {}
+            else
+            {
+                _refactorMainMenu.RenameMenuItem.Enabled = false;
+                _refactorContextMenu.RenameMenuItem.Enabled = false;
+                _editorReferencesItem.Enabled = false;
+                _viewReferencesItem.Enabled = false;
+            }
+
+            IASContext context = ASContext.Context;
+            if (context != null && context.CurrentModel != null)
+            {
+                int importsCount = context.CurrentModel.Imports.Count;
+                Boolean truncateEnabled = languageIsValid && importsCount > 0 && !LanguageIsHaxe();
+                Boolean organizeEnabled = languageIsValid && importsCount > 1;
+
+                _refactorContextMenu.OrganizeMenuItem.Enabled = organizeEnabled;
+                _refactorContextMenu.TruncateMenuItem.Enabled = truncateEnabled;
+                _refactorMainMenu.OrganizeMenuItem.Enabled = organizeEnabled;
+                _refactorMainMenu.TruncateMenuItem.Enabled = truncateEnabled;
+            }
+
+            _surroundContextMenu.Enabled = false;
+            _refactorMainMenu.SurroundMenu.Enabled = false;
+            _refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
+            _refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
+            _refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
+            _refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
+                
+            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
+            if (document != null && document.IsEditable && languageIsValid && document.SciControl.SelTextSize > 1)
+            {
+                Int32 selEnd = document.SciControl.SelectionEnd;
+                Int32 selStart = document.SciControl.SelectionStart;
+                if (!document.SciControl.PositionIsOnComment(selEnd) || !document.SciControl.PositionIsOnComment(selStart))
+                {
+                    _surroundContextMenu.Enabled = true;
+                    _refactorMainMenu.SurroundMenu.Enabled = true;
+                    _refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
+                    _refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
+                    _refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                    _refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                }
+            }
+            _refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
+            _refactorMainMenu.CodeGeneratorMenuItem.Enabled = isValid;
         }
 
         /// <summary>
@@ -348,6 +409,39 @@ namespace CodeRefactor
             {
                 ErrorManager.ShowError(ex);
             }
+        }
+
+        private void ProjectContextMenuRenameClicked(Object sender, EventArgs e)
+        {
+            String fileName = Path.GetFileNameWithoutExtension(_projectTreeView.SelectedNode.FullPath);
+
+            _fileRenameDialog.UpdateReferences.Checked = true;
+            _fileRenameDialog.NewName.Text = fileName;
+            _fileRenameDialog.NewName.Select();
+            _fileRenameDialog.ShowDialog();
+        }
+
+        private void FileRenameClicked(object sender, EventArgs e)
+        {
+            String newName = _fileRenameDialog.NewName.Text;
+            if (newName == null || newName.Trim() == String.Empty)
+                return;
+
+            FileNode fileNode = (FileNode)_projectTreeView.SelectedNode;
+            String path = fileNode.BackingPath;
+
+            try
+            {
+                Boolean updateReferences = _fileRenameDialog.UpdateReferences.Checked;
+                FileRename command = new FileRename(path, newName, updateReferences);
+                command.Execute();
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+
+            _fileRenameDialog.Close();
         }
 
         /// <summary>
@@ -446,6 +540,7 @@ namespace CodeRefactor
                             String name = m.Name;
                             if ((m.Flags & FlagType.Getter) > 0) name = "get " + name;
                             if ((m.Flags & FlagType.Setter) > 0) name = "set " + name;
+
                             if (!memberNames.Contains(name))
                             {
                                 memberNames.Add(name);
@@ -455,6 +550,7 @@ namespace CodeRefactor
                     }
                     cm = cm.Extends;
                 }
+
                 DelegateMethodsDialog dd = new DelegateMethodsDialog();
                 dd.FillData(members, result.Type);
                 DialogResult choice = dd.ShowDialog();

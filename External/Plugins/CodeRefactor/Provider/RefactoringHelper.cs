@@ -7,6 +7,7 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using ScintillaNet;
 using PluginCore;
+using PluginCore.Managers;
 
 namespace CodeRefactor.Provider
 {
@@ -296,7 +297,7 @@ namespace CodeRefactor.Provider
                 config = new FRConfiguration(GetAllProjectRelatedFiles(project), GetFRSearch(target.Type.Name));
             }
 
-            config.CacheDocuments = true;
+            config.CacheDocuments = CanRenameWithFile(target);
 
             FRRunner runner = new FRRunner();
             if (progressReportHandler != null)
@@ -307,7 +308,7 @@ namespace CodeRefactor.Provider
 
             if (!asynchronous)
                 return runner.SearchSync(config);
-            
+
             runner.SearchAsync(config);
             return null;
         }
@@ -418,6 +419,29 @@ namespace CodeRefactor.Provider
             sci.SetSel(start, end);
         }
 
-    }
+        public static Boolean CanRenameWithFile(ASResult target)
+        {
+            if (target == null)
+                return false;
 
+            if (target.Type.IsEnum())
+                return true;
+
+            Boolean isVoid = target.Type.IsVoid();
+            if (!isVoid && target.IsStatic && target.Member == null)
+                return true;
+
+            if (!isVoid && RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor))
+                return true;
+
+            if (target.InClass != null && !target.InClass.IsVoid())
+                return false;
+
+            if (RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Function))
+                return true;
+
+            return RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
+        }
+
+    }
 }
