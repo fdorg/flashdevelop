@@ -170,7 +170,6 @@ namespace CodeRefactor.Commands
 
             Boolean isGlobalFunction = false;
             Boolean isGlobalNamespace = false;
-            Boolean isTypeDef = false;
 
             if (!isEnum && !isClass && !isConstructor && (target.InClass == null || target.InClass.IsVoid()))
             {
@@ -178,7 +177,7 @@ namespace CodeRefactor.Commands
                 isGlobalNamespace = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
             }
 
-            if (!isEnum && !isClass && !isConstructor && !isGlobalFunction && !isGlobalNamespace && !isTypeDef)
+            if (!isEnum && !isClass && !isConstructor && !isGlobalFunction && !isGlobalNamespace)
                 return;
 
             FileModel inFile = null;
