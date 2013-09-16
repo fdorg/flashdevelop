@@ -25,4 +25,5 @@ Building
 Contribute
 --------
 
-Get forking and [join the community at FlashDevelop forums.](http://www.flashdevelop.org/community/index.php)
+* Get forking and [join the community at FlashDevelop forums.](http://www.flashdevelop.org/community/index.php)
+* Donate via PayPal: [details and list of donators.](http://www.flashdevelop.org/wikidocs/index.php?title=FlashDevelop:Site_support)
