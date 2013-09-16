@@ -5008,7 +5008,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="TaskListPanel.Description.ExploringMode" xml:space="preserve">
-    <value>The mode how the file exploring should be done.</value>
+    <value>The task exploring mode. Light: current files and manual refresh, Complete: current files, project files and manual refresh.</value>
     <comment>Added after 4.4.3</comment>
   </data>
 </root>
