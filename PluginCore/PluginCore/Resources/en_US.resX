@@ -5020,4 +5020,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Yes to &amp;all</value>
     <comment>Added after 4.4.3</comment>
   </data>
+  <data name="TaskListPanel.Description.ExploringMode" xml:space="preserve">
+    <value>The mode how the file exploring should be done.</value>
+    <comment>Added after 4.4.3</comment>
+  </data>
 </root>

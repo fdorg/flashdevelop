@@ -8,12 +8,32 @@ using PluginCore.Localization;
 namespace TaskListPanel
 {
     [Serializable]
+    public enum ExploringMode
+    {
+        Light,
+        Complete
+    }
+
+    [Serializable]
     public class Settings
     {
+        private ExploringMode exploringMode = ExploringMode.Light;
         private Int32[] images = new Int32[] { 229, 197, 197 };
-        private String[] extensions = new String[] { ".js", ".txt" };
+        private String[] extensions = new String[] { ".txt" };
         private String[] groups = new String[] { "TODO", "FIXME", "BUG" };
         private String[] excluded = new String[0] {};
+
+        /// <summary> 
+        /// Exploring mode, the way we should operate
+        /// </summary>
+        [DisplayName("Exploring Mode")]
+        [LocalizedDescription("TaskListPanel.Description.ExploringMode")]
+        [DefaultValue(ExploringMode.Light)]
+        public ExploringMode ExploringMode
+        {
+            get { return this.exploringMode; }
+            set { this.exploringMode = value; }
+        }
 
         /// <summary> 
         /// Excluded directories, ie. external libraries
@@ -32,7 +52,7 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("File Extensions")]
         [LocalizedDescription("TaskListPanel.Description.FileExtensions")]
-        [DefaultValue(new String[] { ".js", ".txt" })]
+        [DefaultValue(new String[] { ".txt" })]
         public String[] FileExtensions
         {
             get { return this.extensions; }
