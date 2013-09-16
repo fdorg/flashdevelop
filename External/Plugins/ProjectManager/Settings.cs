@@ -44,16 +44,7 @@ namespace ProjectManager
         string[] executableFileTypes = new string[] { ".exe", ".lnk", ".fla", ".doc", ".pps", ".psd", ".png", ".jpg", ".gif", ".xls", ".docproj", ".ttf", ".otf", ".wav", ".mp3", ".ppt", ".pptx", ".docx", ".xlsx", ".ai", ".pdf", ".zip", ".rar" };
         string[] filteredDirectoryNames = new string[] { "src", "source", "sources", "as", "as2", "as3", "actionscript", "flash", "classes", "trunk", "svn", "git", "hg", "..", "." };
 
-        Color tabHighlightColor = Color.FromArgb(255, 190, 60);
         HighlightType tabHighlightType = HighlightType.ExternalFiles;
-
-        [Browsable(false)]
-        [DefaultValue(typeof(Color), "0xFFBE3C")]
-        public Color TabHighlightColor
-        {
-            get { return tabHighlightColor; }
-            set { tabHighlightColor = value; }
-        }
 
         #region Properties
         [Browsable(false)]

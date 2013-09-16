@@ -20,6 +20,11 @@ namespace ProjectManager.Controls
     public class TabColors
     {
         /// <summary>
+        /// Default tab highlight color
+        /// </summary>
+        public static Color TabHighlightColor = Color.FromArgb(255, 190, 60);
+
+        /// <summary>
         /// Updates colors of a all document tabs
         /// </summary>
         public static void UpdateTabColors(ProjectManagerSettings settings)
@@ -67,11 +72,11 @@ namespace ProjectManager.Controls
             DockContent tab = doc as DockContent;
             if (!isMatch && settings.TabHighlightType == HighlightType.ExternalFiles)
             {
-                if (tab.TabColor != settings.TabHighlightColor) tab.TabColor = settings.TabHighlightColor;
+                if (tab.TabColor != TabHighlightColor) tab.TabColor = TabHighlightColor;
             }
             else if (isMatch && settings.TabHighlightType == HighlightType.ProjectFiles)
             {
-                if (tab.TabColor != settings.TabHighlightColor) tab.TabColor = settings.TabHighlightColor;
+                if (tab.TabColor != TabHighlightColor) tab.TabColor = TabHighlightColor;
             }
             else if (tab.TabColor != Color.Transparent) tab.TabColor = Color.Transparent;
         }
