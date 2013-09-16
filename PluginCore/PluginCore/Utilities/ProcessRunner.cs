@@ -71,6 +71,8 @@ namespace PluginCore.Utilities
 			try
 			{
 				process.Kill();
+                isRunning = false;
+                if (ProcessEnded != null) ProcessEnded(this, 0);
 			}
 			catch (Exception ex)
 			{
