@@ -47,6 +47,13 @@ namespace ProjectManager
         Color tabHighlightColor = Color.FromArgb(255, 190, 60);
         HighlightType tabHighlightType = HighlightType.ExternalFiles;
 
+        [Browsable(false)]
+        [DefaultValue(typeof(Color), "0xFFBE3C")]
+        public Color TabHighlightColor
+        {
+            get { return tabHighlightColor; }
+            set { tabHighlightColor = value; }
+        }
 
         #region Properties
         [Browsable(false)]
@@ -197,16 +204,6 @@ namespace ProjectManager
         {
             get { return enableMxmlMapping; }
             set { enableMxmlMapping = value; FireChanged("ShowGlobalClasspaths"); }
-        }
-
-        [DisplayName("Tab Highlight Color")]
-        [LocalizedDescription("ProjectManager.Description.TabHighlightColor")]
-        [LocalizedCategory("ProjectManager.Category.OtherOptions")]
-        [DefaultValue(typeof(Color), "0xFFBE3C")]
-        public Color TabHighlightColor
-        {
-            get { return tabHighlightColor; }
-            set { tabHighlightColor = value; }
         }
 
         [DisplayName("Tab Highlight Type")]
