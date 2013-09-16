@@ -91,7 +91,7 @@ namespace ASClassWizard.Wizards
             // constructorCheck
             // 
             this.constructorCheck.AutoSize = true;
-            this.constructorCheck.Enabled = false;
+            this.constructorCheck.Enabled = true;
             this.constructorCheck.Location = new System.Drawing.Point(3, 3);
             this.constructorCheck.Name = "constructorCheck";
             this.constructorCheck.Size = new System.Drawing.Size(127, 17);
@@ -102,7 +102,7 @@ namespace ASClassWizard.Wizards
             // superCheck
             // 
             this.superCheck.AutoSize = true;
-            this.superCheck.Enabled = false;
+            this.superCheck.Enabled = true;
             this.superCheck.Location = new System.Drawing.Point(3, 26);
             this.superCheck.Name = "superCheck";
             this.superCheck.Size = new System.Drawing.Size(120, 17);
