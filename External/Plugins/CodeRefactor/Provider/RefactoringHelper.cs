@@ -340,7 +340,17 @@ namespace CodeRefactor.Provider
         private static List<String> GetAllProjectRelatedFiles(IProject project)
         {
             List<String> files = new List<String>();
-            String filter = project.Language.ToLower() == "haxe" ? "*.hx" : "*.as";//TODO: loom, typescript
+            String lang = project.Language.ToLower();
+            String filter;
+
+            if(lang == "haxe")
+                filter = "*.hx";
+            else if(lang == "as")
+                filter = "*.as";
+            else if(lang == "loom")
+                filter = "*.ls";
+            else return files;
+
             foreach (String path in project.SourcePaths)
             {
                 String absolute = project.GetAbsolutePath(path);

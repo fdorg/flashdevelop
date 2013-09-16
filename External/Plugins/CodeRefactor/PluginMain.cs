@@ -267,7 +267,7 @@ namespace CodeRefactor
         private static Boolean GetNodeIsValid(TreeNode node)
         {
             var ext = Path.GetExtension(node.FullPath);
-            return ext == ".as" || ext == ".hx";// TODO: loom, mxml
+            return ext == ".as" || ext == ".hx" || ext == ".ls";
         }
 
         /// <summary>
