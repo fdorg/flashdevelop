@@ -1,36 +1,34 @@
 using System;
-using System.Collections.Generic;
 
 namespace CodeRefactor.Commands
 {
     /// <summary>
     /// Event arguments provided when a refactoring command completes.
     /// </summary>
-    /// <typeparam name="RefactorResultType">The type of the results</typeparam>
-    public class RefactorCompleteEventArgs<RefactorResultType> : EventArgs
+    /// <typeparam name="TRefactorResultType">The type of the results</typeparam>
+    public class RefactorCompleteEventArgs<TRefactorResultType> : EventArgs
     {
-        private RefactorResultType results;
+        private readonly TRefactorResultType _results;
         
         /// <summary>
         /// 
         /// </summary>
-        public virtual RefactorResultType Results
+        public virtual TRefactorResultType Results
         {
             get
             {
-                return results;
+                return _results;
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="results"></param>
-        public RefactorCompleteEventArgs(RefactorResultType resultType)
+        /// <param name="resultType"></param>
+        public RefactorCompleteEventArgs(TRefactorResultType resultType)
         {
-            results = resultType;
+            _results = resultType;
         }
 
     }
-
 }

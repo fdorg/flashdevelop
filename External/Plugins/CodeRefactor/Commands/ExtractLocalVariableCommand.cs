@@ -1,8 +1,4 @@
-using System;
-using ASCompletion.Context;
-using ASCompletion.Model;
 using PluginCore;
-using PluginCore.Helpers;
 using ScintillaNet;
 using ASCompletion.Completion;
 
@@ -10,24 +6,24 @@ namespace CodeRefactor.Commands
 {
     class ExtractLocalVariableCommand
     {
-        private string NewName;
+        private readonly string _newName;
 
         public ExtractLocalVariableCommand(string newName)
         {
-            this.NewName = newName;
+            _newName = newName;
         }
 
         public void Execute()
         {
-            ScintillaControl Sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            Sci.BeginUndoAction();
+            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            sci.BeginUndoAction();
             try
             {
-                ASGenerator.GenerateExtractVariable(Sci, NewName);
+                ASGenerator.GenerateExtractVariable(sci, _newName);
             }
             finally
             {
-                Sci.EndUndoAction();
+                sci.EndUndoAction();
             }
         }
     }

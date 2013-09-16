@@ -9,30 +9,34 @@ using ASCompletion.Model;
 using CodeRefactor.Commands;
 using CodeRefactor.Controls;
 using CodeRefactor.CustomControls;
-using CodeRefactor.Provider;
 using ProjectManager.Helpers;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using PluginCore;
+using ProjectManager.Controls.TreeView;
 
 namespace CodeRefactor
 {
 	public class PluginMain : IPlugin
 	{
-        private String pluginName = "CodeRefactor";
-        private String pluginGuid = "5c0d3740-a6f2-11de-8a39-0800200c9a66";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds refactoring capabilities to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private ToolStripMenuItem editorReferencesItem;
-        private ToolStripMenuItem viewReferencesItem;
-        private SurroundMenu surroundContextMenu;
-        private RefactorMenu refactorContextMenu;
-        private RefactorMenu refactorMainMenu;
-        private Settings settingObject;
-        private String settingFilename;
+	    private const String PluginName = "CodeRefactor";
+	    private const String PluginGuid = "5c0d3740-a6f2-11de-8a39-0800200c9a66";
+	    private const String PluginHelp = "www.flashdevelop.org/community/";
+	    private String _pluginDesc = "Adds refactoring capabilities to FlashDevelop.";
+	    private const String PluginAuth = "FlashDevelop Team";
+	    private ToolStripMenuItem _editorReferencesItem;
+        private ToolStripMenuItem _viewReferencesItem;
+        private SurroundMenu _surroundContextMenu;
+        private RefactorMenu _refactorContextMenu;
+        private RefactorMenu _refactorMainMenu;
+        private Settings _settingObject;
+        private String _settingFilename;
+
+        private TreeView _projectTreeView;
+        private ToolStripMenuItem _projectContextMenuItem;
+        private ClassRenameDialog _fileRenameDialog;
 
         #region Required Properties
         
@@ -49,7 +53,7 @@ namespace CodeRefactor
         /// </summary> 
         public String Name
 		{
-			get { return this.pluginName; }
+			get { return PluginName; }
 		}
 
         /// <summary>
@@ -57,7 +61,7 @@ namespace CodeRefactor
         /// </summary>
         public String Guid
 		{
-			get { return this.pluginGuid; }
+			get { return PluginGuid; }
 		}
 
         /// <summary>
@@ -65,7 +69,7 @@ namespace CodeRefactor
         /// </summary> 
         public String Author
 		{
-			get { return this.pluginAuth; }
+			get { return PluginAuth; }
 		}
 
         /// <summary>
@@ -73,7 +77,7 @@ namespace CodeRefactor
         /// </summary> 
         public String Description
 		{
-			get { return this.pluginDesc; }
+			get { return _pluginDesc; }
 		}
 
         /// <summary>
@@ -81,7 +85,7 @@ namespace CodeRefactor
         /// </summary> 
         public String Help
 		{
-			get { return this.pluginHelp; }
+			get { return PluginHelp; }
 		}
 
         /// <summary>
@@ -90,7 +94,7 @@ namespace CodeRefactor
         [Browsable(false)]
         public Object Settings
         {
-            get { return this.settingObject; }
+            get { return _settingObject; }
         }
 		
 		#endregion
@@ -102,9 +106,10 @@ namespace CodeRefactor
 		/// </summary>
 		public void Initialize()
 		{
-            this.InitBasics();
-            this.LoadSettings();
-            this.CreateMenuItems();
+            InitBasics();
+            InitFileRenameDialog();
+            LoadSettings();
+            CreateMenuItems();
         }
 
 		/// <summary>
@@ -112,7 +117,7 @@ namespace CodeRefactor
 		/// </summary>
 		public void Dispose()
 		{
-            this.SaveSettings();
+            SaveSettings();
 		}
 		
 		/// <summary>
@@ -123,16 +128,27 @@ namespace CodeRefactor
             switch (e.Type)
             {
                 case EventType.FileSwitch:
-                    this.GenerateSurroundMenuItems();
+                    GenerateSurroundMenuItems();
                     break;
 
                 case EventType.UIStarted:
                     // Expose plugin's refactor main menu & context menu...
-                    EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.Menu", this.refactorMainMenu));
-                    EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.ContextMenu", this.refactorContextMenu));
+                    EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.Menu", _refactorMainMenu));
+                    EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.ContextMenu", _refactorContextMenu));
                     // Watch resolved context for menu item updating...
-                    ASComplete.OnResolvedContextChanged += new ResolvedContextChangeHandler(this.OnResolvedContextChanged);
-                    this.UpdateMenuItems();
+                    ASComplete.OnResolvedContextChanged += OnResolvedContextChanged;
+                    DirectoryNode.OnDirectoryNodeRefresh += OnDirectoryNodeRefresh;
+                    UpdateMenuItems();
+                    break;
+
+                case EventType.Command:
+                    DataEvent de = (DataEvent)e;
+                    switch (de.Action)
+                    {
+                        case "ProjectManager.TreeSelectionChanged":
+                            CreateProjectContextMenuItem();
+                            break;
+                    }
                     break;
             }
 		}
@@ -146,11 +162,19 @@ namespace CodeRefactor
         /// </summary>
         public void InitBasics()
         {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.FileSwitch);
+            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.FileSwitch | EventType.Command);
             String dataPath = Path.Combine(PathHelper.DataDir, "CodeRefactor");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            if (!Directory.Exists(dataPath))
+                Directory.CreateDirectory(dataPath);
+
+            _settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            _pluginDesc = TextHelper.GetString("Info.Description");
+        }
+
+        private void InitFileRenameDialog()
+        {
+            _fileRenameDialog = new ClassRenameDialog();
+            _fileRenameDialog.OKButton.Click += FileRenameClicked;
         }
 
         /// <summary>
@@ -160,52 +184,75 @@ namespace CodeRefactor
         {
             MenuStrip mainMenu = PluginBase.MainForm.MenuStrip;
             ContextMenuStrip editorMenu = PluginBase.MainForm.EditorMenu;
-            this.refactorMainMenu = new RefactorMenu(true);
-            this.refactorMainMenu.RenameMenuItem.Click += new EventHandler(this.RenameClicked);
-            this.refactorMainMenu.OrganizeMenuItem.Click += new EventHandler(this.OrganizeImportsClicked);
-            this.refactorMainMenu.TruncateMenuItem.Click += new EventHandler(this.TruncateImportsClicked);
-            this.refactorMainMenu.ExtractMethodMenuItem.Click += new EventHandler(this.ExtractMethodClicked);
-            this.refactorMainMenu.DelegateMenuItem.Click += new EventHandler(this.DelegateMethodsClicked);
-            this.refactorMainMenu.ExtractLocalVariableMenuItem.Click += new EventHandler(this.ExtractLocalVariableClicked);
-            this.refactorMainMenu.CodeGeneratorMenuItem.Click += new EventHandler(this.CodeGeneratorMenuItemClicked);
-            this.refactorContextMenu = new RefactorMenu(false);
-            this.refactorContextMenu.RenameMenuItem.Click += new EventHandler(this.RenameClicked);
-            this.refactorContextMenu.OrganizeMenuItem.Click += new EventHandler(this.OrganizeImportsClicked);
-            this.refactorContextMenu.TruncateMenuItem.Click += new EventHandler(this.TruncateImportsClicked);
-            this.refactorContextMenu.DelegateMenuItem.Click += new EventHandler(this.DelegateMethodsClicked);
-            this.refactorContextMenu.ExtractMethodMenuItem.Click += new EventHandler(this.ExtractMethodClicked);
-            this.refactorContextMenu.ExtractLocalVariableMenuItem.Click += new EventHandler(this.ExtractLocalVariableClicked);
-            this.refactorContextMenu.CodeGeneratorMenuItem.Click += new EventHandler(this.CodeGeneratorMenuItemClicked);
-            this.surroundContextMenu = new SurroundMenu();
-            editorMenu.Items.Insert(3, this.refactorContextMenu);
-            editorMenu.Items.Insert(4, this.surroundContextMenu);
-            mainMenu.Items.Insert(5, this.refactorMainMenu);
+            
+            _refactorMainMenu = new RefactorMenu(true);
+            _refactorMainMenu.RenameMenuItem.Click += RenameClicked;
+            _refactorMainMenu.OrganizeMenuItem.Click += OrganizeImportsClicked;
+            _refactorMainMenu.TruncateMenuItem.Click += TruncateImportsClicked;
+            _refactorMainMenu.ExtractMethodMenuItem.Click += ExtractMethodClicked;
+            _refactorMainMenu.DelegateMenuItem.Click += DelegateMethodsClicked;
+            _refactorMainMenu.ExtractLocalVariableMenuItem.Click += ExtractLocalVariableClicked;
+            _refactorMainMenu.CodeGeneratorMenuItem.Click += CodeGeneratorMenuItemClicked;
+            
+            _refactorContextMenu = new RefactorMenu(false);
+            _refactorContextMenu.RenameMenuItem.Click += RenameClicked;
+            _refactorContextMenu.OrganizeMenuItem.Click += OrganizeImportsClicked;
+            _refactorContextMenu.TruncateMenuItem.Click += TruncateImportsClicked;
+            _refactorContextMenu.DelegateMenuItem.Click += DelegateMethodsClicked;
+            _refactorContextMenu.ExtractMethodMenuItem.Click += ExtractMethodClicked;
+            _refactorContextMenu.ExtractLocalVariableMenuItem.Click += ExtractLocalVariableClicked;
+            _refactorContextMenu.CodeGeneratorMenuItem.Click += CodeGeneratorMenuItemClicked;
+           
+            _surroundContextMenu = new SurroundMenu();
+            editorMenu.Items.Insert(3, _refactorContextMenu);
+            editorMenu.Items.Insert(4, _surroundContextMenu);
+            mainMenu.Items.Insert(5, _refactorMainMenu);
+           
             ToolStripMenuItem searchMenu = PluginBase.MainForm.FindMenuItem("SearchMenu") as ToolStripMenuItem;
-            this.viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, new EventHandler(this.FindAllReferencesClicked));
-            this.editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, new EventHandler(this.FindAllReferencesClicked));
-            PluginBase.MainForm.RegisterShortcutItem("SearchMenu.ViewReferences", this.viewReferencesItem);
+            _viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, FindAllReferencesClicked);
+            _editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, FindAllReferencesClicked);
+            PluginBase.MainForm.RegisterShortcutItem("SearchMenu.ViewReferences", _viewReferencesItem);
+           
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
-            searchMenu.DropDownItems.Add(this.viewReferencesItem);
-            editorMenu.Items.Insert(7, this.editorReferencesItem);
+            searchMenu.DropDownItems.Add(_viewReferencesItem);
+            editorMenu.Items.Insert(7, _editorReferencesItem);
+        }
+
+        private void CreateProjectContextMenuItem()
+        {
+            if (_projectTreeView == null || _projectTreeView.SelectedNode == null)
+                return;
+
+            var node = _projectTreeView.SelectedNode;
+            if (node == null || !GetNodeIsValid(node))
+                return;
+
+            var menu = _projectTreeView.ContextMenuStrip;
+            var index = 0;
+            while (index++ < menu.Items.Count)
+                if (menu.Items[index] is ToolStripSeparator)
+                    break;
+
+            menu.Items.Insert(index, _projectContextMenuItem);
+            menu.Items.Insert(index, new ToolStripSeparator());
         }
 
         /// <summary>
         /// Gets if the current documents language is haxe
         /// </summary>
-        private Boolean LanguageIsHaxe()
+        private static Boolean LanguageIsHaxe()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document != null && document.IsEditable)
-            {
                 return document.SciControl.ConfigurationLanguage == "haxe";
-            }
-            else return false;
+                
+            return false;
         }
 
         /// <summary>
         /// Gets if the language is valid for refactoring
         /// </summary>
-        private Boolean GetLanguageIsValid()
+        private static Boolean GetLanguageIsValid()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document != null && document.IsEditable)
@@ -213,7 +260,14 @@ namespace CodeRefactor
                 String lang = document.SciControl.ConfigurationLanguage;
                 return (lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"); // TODO look for /Snippets/Generators
             }
-            else return false;
+                
+            return false;
+        }
+
+        private static Boolean GetNodeIsValid(TreeNode node)
+        {
+            var ext = Path.GetExtension(node.FullPath);
+            return ext == ".as" || ext == ".hx" || ext == ".ls";
         }
 
         /// <summary>
@@ -221,7 +275,18 @@ namespace CodeRefactor
         /// </summary>
         private void OnResolvedContextChanged(ResolvedContext resolved)
         {
-            this.UpdateMenuItems();
+            UpdateMenuItems();
+        }
+
+        private void OnDirectoryNodeRefresh(DirectoryNode node)
+        {
+            _projectTreeView = node.TreeView;
+            _projectContextMenuItem = new ToolStripMenuItem { Text = TextHelper.GetString("Label.Refactor") };
+
+            var item = new ToolStripMenuItem { Text = TextHelper.GetString("Label.Rename") };
+            item.Click += ProjectContextMenuRenameClicked;
+
+            _projectContextMenuItem.DropDownItems.Add(item);
         }
 
         /// <summary>
@@ -229,72 +294,77 @@ namespace CodeRefactor
         /// </summary>
         private void UpdateMenuItems()
         {
-            try
-            {
-                ResolvedContext resolved = ASComplete.CurrentResolvedContext;
-                Boolean isValid = this.GetLanguageIsValid() && resolved != null && resolved.Position >= 0;
-                this.refactorMainMenu.DelegateMenuItem.Enabled = false;
-                this.refactorContextMenu.DelegateMenuItem.Enabled = false;
-                ASResult result = isValid ? resolved.Result : null;
-                if (result != null && !result.IsNull())
-                {
-                    this.refactorContextMenu.RenameMenuItem.Enabled = true;
-                    this.refactorMainMenu.RenameMenuItem.Enabled = true;
+            Boolean languageIsValid = GetLanguageIsValid();
+            ResolvedContext resolved = ASComplete.CurrentResolvedContext;
+            Boolean isValid = languageIsValid && resolved != null && resolved.Position >= 0;
 
-                    this.editorReferencesItem.Enabled = true;
-                    this.viewReferencesItem.Enabled = true;
-                    if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
+            _refactorMainMenu.DelegateMenuItem.Enabled = false;
+            _refactorContextMenu.DelegateMenuItem.Enabled = false;
+
+            ASResult result = isValid ? resolved.Result : null;
+            if (result != null && !result.IsNull())
+            {
+                _refactorContextMenu.RenameMenuItem.Enabled = true;
+                _refactorMainMenu.RenameMenuItem.Enabled = true;
+
+                _editorReferencesItem.Enabled = true;
+                _viewReferencesItem.Enabled = true;
+
+                if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
+                {
+                    FlagType flags = result.Member.Flags;
+                    if ((flags & FlagType.Variable) > 0 && (flags & FlagType.LocalVar) == 0 && (flags & FlagType.ParameterVar) == 0)
                     {
-                        FlagType flags = result.Member.Flags;
-                        if ((flags & FlagType.Variable) > 0 && (flags & FlagType.LocalVar) == 0 && (flags & FlagType.ParameterVar) == 0)
-                        {
-                            this.refactorContextMenu.DelegateMenuItem.Enabled = true;
-                            this.refactorMainMenu.DelegateMenuItem.Enabled = true;
-                        }
+                        _refactorContextMenu.DelegateMenuItem.Enabled = true;
+                        _refactorMainMenu.DelegateMenuItem.Enabled = true;
                     }
                 }
-                else
-                {
-                    this.refactorMainMenu.RenameMenuItem.Enabled = false;
-                    this.refactorContextMenu.RenameMenuItem.Enabled = false;
-                    this.editorReferencesItem.Enabled = false;
-                    this.viewReferencesItem.Enabled = false;
-                }
-                IASContext context = ASContext.Context;
-                if (context != null && context.CurrentModel != null)
-                {
-                    Boolean truncate = (this.GetLanguageIsValid() && context.CurrentModel.Imports.Count > 0);
-                    Boolean organize = (this.GetLanguageIsValid() && context.CurrentModel.Imports.Count > 1);
-                    this.refactorContextMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorContextMenu.TruncateMenuItem.Enabled = truncate && !this.LanguageIsHaxe();
-                    this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorMainMenu.TruncateMenuItem.Enabled = truncate && !this.LanguageIsHaxe();
-                }
-                this.surroundContextMenu.Enabled = false;
-                this.refactorMainMenu.SurroundMenu.Enabled = false;
-                this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
-                this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
-                this.refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
-                this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
-                ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-                if (document != null && document.IsEditable && this.GetLanguageIsValid() && document.SciControl.SelTextSize > 1)
-                {
-                    Int32 selEnd = document.SciControl.SelectionEnd;
-                    Int32 selStart = document.SciControl.SelectionStart;
-                    if (!document.SciControl.PositionIsOnComment(selEnd) || !document.SciControl.PositionIsOnComment(selStart))
-                    {
-                        this.surroundContextMenu.Enabled = true;
-                        this.refactorMainMenu.SurroundMenu.Enabled = true;
-                        this.refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
-                        this.refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
-                        this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
-                        this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
-                    }
-                }
-                this.refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
-                this.refactorMainMenu.CodeGeneratorMenuItem.Enabled = isValid;
             }
-            catch {}
+            else
+            {
+                _refactorMainMenu.RenameMenuItem.Enabled = false;
+                _refactorContextMenu.RenameMenuItem.Enabled = false;
+                _editorReferencesItem.Enabled = false;
+                _viewReferencesItem.Enabled = false;
+            }
+
+            IASContext context = ASContext.Context;
+            if (context != null && context.CurrentModel != null)
+            {
+                int importsCount = context.CurrentModel.Imports.Count;
+                Boolean truncateEnabled = languageIsValid && importsCount > 0 && !LanguageIsHaxe();
+                Boolean organizeEnabled = languageIsValid && importsCount > 1;
+
+                _refactorContextMenu.OrganizeMenuItem.Enabled = organizeEnabled;
+                _refactorContextMenu.TruncateMenuItem.Enabled = truncateEnabled;
+                _refactorMainMenu.OrganizeMenuItem.Enabled = organizeEnabled;
+                _refactorMainMenu.TruncateMenuItem.Enabled = truncateEnabled;
+            }
+
+            _surroundContextMenu.Enabled = false;
+            _refactorMainMenu.SurroundMenu.Enabled = false;
+            _refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
+            _refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
+            _refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
+            _refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
+                
+            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
+            if (document != null && document.IsEditable && languageIsValid && document.SciControl.SelTextSize > 1)
+            {
+                Int32 selEnd = document.SciControl.SelectionEnd;
+                Int32 selStart = document.SciControl.SelectionStart;
+                if (!document.SciControl.PositionIsOnComment(selEnd) || !document.SciControl.PositionIsOnComment(selStart))
+                {
+                    _surroundContextMenu.Enabled = true;
+                    _refactorMainMenu.SurroundMenu.Enabled = true;
+                    _refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
+                    _refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
+                    _refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                    _refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                }
+            }
+            _refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
+            _refactorMainMenu.CodeGeneratorMenuItem.Enabled = isValid;
         }
 
         /// <summary>
@@ -303,36 +373,32 @@ namespace CodeRefactor
         private void GenerateSurroundMenuItems()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable && this.GetLanguageIsValid())
+            if (document != null && document.IsEditable && GetLanguageIsValid())
             {
-                this.surroundContextMenu.GenerateSnippets(document.SciControl);
-                foreach (ToolStripMenuItem item in this.surroundContextMenu.DropDownItems)
-                {
-                    item.Click += this.SurroundWithClicked;
-                }
-                foreach (ToolStripMenuItem item in this.refactorMainMenu.SurroundMenu.DropDownItems)
-                {
-                    item.Click -= this.SurroundWithClicked;
-                }
-                this.refactorMainMenu.SurroundMenu.GenerateSnippets(document.SciControl);
-                foreach (ToolStripMenuItem item in this.refactorMainMenu.SurroundMenu.DropDownItems)
-                {
-                    item.Click += this.SurroundWithClicked;
-                }
+                _surroundContextMenu.GenerateSnippets(document.SciControl);
+                foreach (ToolStripMenuItem item in _surroundContextMenu.DropDownItems)
+                    item.Click += SurroundWithClicked;
+                
+                foreach (ToolStripMenuItem item in _refactorMainMenu.SurroundMenu.DropDownItems)
+                    item.Click -= SurroundWithClicked;
+                
+                _refactorMainMenu.SurroundMenu.GenerateSnippets(document.SciControl);
+                foreach (ToolStripMenuItem item in _refactorMainMenu.SurroundMenu.DropDownItems)
+                    item.Click += SurroundWithClicked;
             }
             else
             {
-                this.surroundContextMenu.DropDownItems.Clear();
-                this.refactorMainMenu.SurroundMenu.DropDownItems.Clear();
-                this.refactorMainMenu.SurroundMenu.DropDownItems.Add("");
-                this.surroundContextMenu.DropDownItems.Add("");
+                _surroundContextMenu.DropDownItems.Clear();
+                _refactorMainMenu.SurroundMenu.DropDownItems.Clear();
+                _refactorMainMenu.SurroundMenu.DropDownItems.Add("");
+                _surroundContextMenu.DropDownItems.Add("");
             }
         }
 
         /// <summary>
         /// Invoked when the user selects the "Rename" command
         /// </summary>
-        private void RenameClicked(Object sender, EventArgs e)
+        private static void RenameClicked(Object sender, EventArgs e)
         {
             try
             {
@@ -345,11 +411,47 @@ namespace CodeRefactor
             }
         }
 
+        private void ProjectContextMenuRenameClicked(Object sender, EventArgs e)
+        {
+            String fileName = Path.GetFileNameWithoutExtension(_projectTreeView.SelectedNode.FullPath);
+
+            _fileRenameDialog.UpdateReferences.Checked = true;
+            _fileRenameDialog.NewName.Text = fileName;
+            _fileRenameDialog.NewName.Select();
+            _fileRenameDialog.ShowDialog();
+        }
+
+        private void FileRenameClicked(object sender, EventArgs e)
+        {
+            String newName = _fileRenameDialog.NewName.Text;
+            if (newName == null || newName.Trim() == String.Empty)
+                return;
+
+            FileNode fileNode = (FileNode)_projectTreeView.SelectedNode;
+            String path = fileNode.BackingPath;
+
+            try
+            {
+                Boolean updateReferences = _fileRenameDialog.UpdateReferences.Checked;
+                FileRename command = new FileRename(path, newName, updateReferences);
+                command.Execute();
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+
+            _fileRenameDialog.Close();
+        }
+
         /// <summary>
         /// Invoked when the user selects the "Surround with Try/catch block" command
         /// </summary>
-        private void SurroundWithClicked(Object sender, EventArgs e)
+        private static void SurroundWithClicked(Object sender, EventArgs e)
         {
+            if (!(sender is ToolStripItem))
+                return;
+            
             try
             {
                 SurroundWithCommand command = new SurroundWithCommand((sender as ToolStripItem).Text);
@@ -364,7 +466,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Find All References" command
         /// </summary>
-        private void FindAllReferencesClicked(Object sender, EventArgs e)
+        public void FindAllReferencesClicked(Object sender, EventArgs e)
         {
             try
             {
@@ -384,8 +486,7 @@ namespace CodeRefactor
         {
             try
             {
-                OrganizeImports command = new OrganizeImports();
-                command.SeparatePackages = this.settingObject.SeparatePackages;
+                OrganizeImports command = new OrganizeImports {SeparatePackages = _settingObject.SeparatePackages};
                 command.Execute();
             }
             catch (Exception ex)
@@ -401,9 +502,11 @@ namespace CodeRefactor
         {
             try
             {
-                OrganizeImports command = new OrganizeImports();
-                command.SeparatePackages = this.settingObject.SeparatePackages;
-                command.TruncateImports = true;
+                OrganizeImports command = new OrganizeImports
+                {
+                    SeparatePackages = _settingObject.SeparatePackages,
+                    TruncateImports = true
+                };
                 command.Execute();
             }
             catch (Exception ex)
@@ -415,11 +518,10 @@ namespace CodeRefactor
 		/// <summary>
         /// Invoked when the user selects the "Delegate Method" command
         /// </summary>
-        private void DelegateMethodsClicked(Object sender, EventArgs e)
+        private static void DelegateMethodsClicked(Object sender, EventArgs e)
         {
             try
             {
-                String name;
                 ASResult result = ASComplete.CurrentResolvedContext.Result;
                 Dictionary<MemberModel, ClassModel> members = new Dictionary<MemberModel, ClassModel>();
                 List<String> memberNames = new List<String>();
@@ -435,9 +537,10 @@ namespace CodeRefactor
                             && (m.Flags & FlagType.Constructor) == 0
                             && (m.Flags & FlagType.Static) == 0)
                         {
-                            name = m.Name;
+                            String name = m.Name;
                             if ((m.Flags & FlagType.Getter) > 0) name = "get " + name;
                             if ((m.Flags & FlagType.Setter) > 0) name = "set " + name;
+
                             if (!memberNames.Contains(name))
                             {
                                 memberNames.Add(name);
@@ -447,6 +550,7 @@ namespace CodeRefactor
                     }
                     cm = cm.Extends;
                 }
+
                 DelegateMethodsDialog dd = new DelegateMethodsDialog();
                 dd.FillData(members, result.Type);
                 DialogResult choice = dd.ShowDialog();
@@ -465,7 +569,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Extract Method" command
         /// </summary>
-        private void ExtractMethodClicked(Object sender, EventArgs e)
+        private static void ExtractMethodClicked(Object sender, EventArgs e)
         {
             try
             {
@@ -475,9 +579,8 @@ namespace CodeRefactor
                 LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
                 DialogResult choice = askName.ShowDialog();
                 if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != suggestion)
-                {
                     suggestion = askName.Line.Trim();
-                }
+
                 if (choice == DialogResult.OK)
                 {
                     ExtractMethodCommand command = new ExtractMethodCommand(suggestion);
@@ -493,7 +596,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Extract Local Variable" command
         /// </summary>
-        private void ExtractLocalVariableClicked(Object sender, EventArgs e)
+        private static void ExtractLocalVariableClicked(Object sender, EventArgs e)
         {
             try
             {
@@ -503,9 +606,8 @@ namespace CodeRefactor
                 LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
                 DialogResult choice = askName.ShowDialog();
                 if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != suggestion)
-                {
                     suggestion = askName.Line.Trim();
-                }
+
                 if (choice == DialogResult.OK)
                 {
                     ExtractLocalVariableCommand command = new ExtractLocalVariableCommand(suggestion);
@@ -532,12 +634,13 @@ namespace CodeRefactor
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            _settingObject = new Settings();
+            if (!File.Exists(_settingFilename))
+                SaveSettings();
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
+                Object obj = ObjectSerializer.Deserialize(_settingFilename, _settingObject);
+                _settingObject = (Settings)obj;
             }
         }
 
@@ -546,7 +649,7 @@ namespace CodeRefactor
         /// </summary>
         public void SaveSettings()
         {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
+            ObjectSerializer.Serialize(_settingFilename, _settingObject);
         }
 
 		#endregion

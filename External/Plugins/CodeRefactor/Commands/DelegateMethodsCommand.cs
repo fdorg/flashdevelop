@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using ASCompletion.Completion;
-using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
 using ScintillaNet;
@@ -10,24 +8,20 @@ namespace CodeRefactor.Commands
 {
     class DelegateMethodsCommand
     {
-        private ScintillaControl Sci;
-        private ASResult result;
-        private Dictionary<MemberModel, ClassModel> selectedMembers;
+        private ScintillaControl _sci;
+        private readonly ASResult _result;
+        private readonly Dictionary<MemberModel, ClassModel> _selectedMembers;
 
         public DelegateMethodsCommand(ASResult result, Dictionary<MemberModel, ClassModel> selectedMembers)
         {
-            this.result = result;
-            this.selectedMembers = selectedMembers;
+            _result = result;
+            _selectedMembers = selectedMembers;
         }
 
         public void Execute()
         {
-            Sci = PluginBase.MainForm.CurrentDocument.SciControl;
-
-            IASContext context = ASContext.Context;
-            Int32 pos = Sci.CurrentPos;
-
-            ASGenerator.GenerateDelegateMethods(Sci, result.Member, selectedMembers, result.Type, result.InClass);
+            _sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            ASGenerator.GenerateDelegateMethods(_sci, _result.Member, _selectedMembers, _result.Type, _result.InClass);
         }
     }
 }
