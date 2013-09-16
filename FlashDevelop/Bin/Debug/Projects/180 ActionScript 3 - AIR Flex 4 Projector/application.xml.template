@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
-<application xmlns="http://ns.adobe.com/air/application/3.8"> 
+<application xmlns="http://ns.adobe.com/air/application/3.9"> 
 	
 	<id>$(PACKAGEDOT)$(PROJECTID)</id> 
 	<versionNumber>1.0</versionNumber> 
