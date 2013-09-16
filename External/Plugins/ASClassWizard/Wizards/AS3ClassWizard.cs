@@ -82,7 +82,8 @@ namespace ASClassWizard.Wizards
         public Project Project
         {
             get { return project; }
-            set { 
+            set 
+            { 
                 this.project = value;
                 if (project.Language == "as2")
                 {
@@ -109,11 +110,10 @@ namespace ASClassWizard.Wizards
         private void ValidateClass()
         {
             string errorMessage = "";
-
-            if (getClassName() == "" || Regex.Match(getClassName(), REG_IDENTIFIER, RegexOptions.Singleline).Success == false)
+            if (getClassName() == "" || !Regex.Match(getClassName(), REG_IDENTIFIER, RegexOptions.Singleline).Success)
+            {
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidClassName");
-
-
+            }
             if (errorMessage != "")
             {
                 okButton.Enabled = false;
@@ -124,7 +124,6 @@ namespace ASClassWizard.Wizards
                 okButton.Enabled = true;
                 errorIcon.Visible = false;
             }
-
             this.errorLabel.Text = errorMessage;
         }
 
@@ -221,9 +220,7 @@ namespace ASClassWizard.Wizards
             {
                 Debug.WriteLine(error.StackTrace);
             }
-            
             browser.ClassList = known;
-
             if (browser.ShowDialog(this) == DialogResult.OK)
             {
                 if (browser.SelectedClass != null)
@@ -252,13 +249,11 @@ namespace ASClassWizard.Wizards
             {
                 this.implementList.Items.Remove(this.implementList.SelectedItem);
             }
-
             if (this.implementList.Items.Count > 0)
             {
                 this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
             }
-
-            this.implementRemove.Enabled   = this.implementList.Items.Count > 0;
+            this.implementRemove.Enabled = this.implementList.Items.Count > 0;
             this.superCheck.Enabled = this.implementList.Items.Count > 0;
             ValidateClass();
         }
