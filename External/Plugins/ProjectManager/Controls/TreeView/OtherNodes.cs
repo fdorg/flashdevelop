@@ -59,7 +59,8 @@ namespace ProjectManager.Controls.TreeView
                 if (isActive == value) return;
                 isActive = value;
                 FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
-                NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, style); 
+                NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, style);
+                Text = Text; // Reset text to update the font
             }
         }
 	}
