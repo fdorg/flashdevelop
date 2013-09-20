@@ -143,8 +143,6 @@ namespace CodeRefactor.Commands
             {
                 totalMatches += entry.Value.Count;
             }
-            IDictionary<String, Boolean> filesOpenedAndUsed = new Dictionary<String, Boolean>();
-            IDictionary<String, WeifenLuo.WinFormsUI.Docking.DockContent> filesOpenedDocumentReferences = new Dictionary<String, WeifenLuo.WinFormsUI.Docking.DockContent>();
             Boolean foundDeclarationSource = false;
             foreach (KeyValuePair<String, List<SearchMatch>> entry in initialResultsList)
             {
