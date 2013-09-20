@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.FRService;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
 
@@ -227,7 +225,7 @@ namespace CodeRefactor.Provider
 
                 return resultInFile.BasePath == targetInFile.BasePath
                     && resultInFile.FileName == targetInFile.FileName
-                    && (target.InClass == null || (result.Member.LineFrom == target.Member.LineFrom))
+                    && result.Member.LineFrom == target.Member.LineFrom
                     && result.Member.Name == target.Member.Name;
             }
             else // type
@@ -297,7 +295,9 @@ namespace CodeRefactor.Provider
                 target.Member = null;
                 config = new FRConfiguration(GetAllProjectRelatedFiles(project), GetFRSearch(target.Type.Name));
             }
+
             config.CacheDocuments = true;
+
             FRRunner runner = new FRRunner();
             if (progressReportHandler != null)
             {
@@ -338,7 +338,11 @@ namespace CodeRefactor.Provider
         private static List<String> GetAllProjectRelatedFiles(IProject project)
         {
             List<String> files = new List<String>();
-            String filter = project.Language.ToLower() == "haxe" ? "*.hx" : "*.as";
+
+            String filter = GetSearchPatternFromLang(project.Language.ToLower());
+            if (String.IsNullOrEmpty(filter))
+                return files;
+
             foreach (String path in project.SourcePaths)
             {
                 String absolute = project.GetAbsolutePath(path);
@@ -407,6 +411,58 @@ namespace CodeRefactor.Provider
             sci.SetSel(start, end);
         }
 
-    }
+        public static Boolean GetRenameWithFile(ASResult target)
+        {
+            if (target == null)
+                return false;
 
+            if (target.Type.IsEnum())
+                return true;
+
+            Boolean isVoid = target.Type.IsVoid();
+            if (!isVoid && target.IsStatic && target.Member == null)
+                return true;
+
+            FlagType flags = target.Member.Flags;
+            if (!isVoid && CheckFlag(flags, FlagType.Constructor))
+                return true;
+
+            if (target.InClass != null && !target.InClass.IsVoid())
+                return false;
+
+            return CheckFlag(flags, FlagType.Function) || CheckFlag(flags, FlagType.Namespace);
+        }
+
+        public static String GetSearchPatternFromLang(String lang)
+        {
+            if (lang == "haxe")
+                return "*.hx";
+            if (lang == "as2" || lang == "as3")
+                return "*.as";
+            if (lang == "loom")
+                return "*.ls";
+            
+            return null;
+        }
+
+        public static void MoveFile(string sourceFileName, string destFileName)
+        {
+            if (String.IsNullOrEmpty(sourceFileName) || sourceFileName == destFileName)
+                return;
+
+            Boolean reopen = false;
+            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                if (doc.FileName.Equals(sourceFileName))
+                {
+                    doc.Save();
+                    doc.Close();
+                    reopen = true;
+                }
+
+            File.Move(sourceFileName, destFileName);
+            if (reopen)
+                PluginBase.MainForm.OpenEditableDocument(destFileName, false);
+        }
+
+    }
 }
