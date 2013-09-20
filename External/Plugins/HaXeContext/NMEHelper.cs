@@ -260,6 +260,11 @@ namespace HaXeContext
                 TraceManager.AddAsync(err, -3);
                 hxproj.RawHXML = null;
             }
+            else if (hxml.IndexOf("not installed") > 0)
+            {
+                TraceManager.AddAsync(hxml, -3);
+                hxproj.RawHXML = null;
+            }
             else hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
         }
 
