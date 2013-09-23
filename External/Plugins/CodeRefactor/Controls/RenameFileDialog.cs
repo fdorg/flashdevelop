@@ -40,7 +40,7 @@ namespace CodeRefactor.Controls
 
             NewName.TextChanged += OnNewNameChanged;
             NewName.Text = _oldName;
-            NewName.Select();
+            NewName.SelectAll();
         }
 
         private void OnNewNameChanged(object sender, EventArgs e)
