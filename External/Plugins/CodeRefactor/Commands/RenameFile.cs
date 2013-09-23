@@ -34,11 +34,8 @@ namespace CodeRefactor.Commands
             String oldName = Path.GetFileNameWithoutExtension(_path);
 
             RenameFileDialog dialog = UserInterfaceManager.RenameFileDialog;
-            dialog.setOldFullPath(_path);
-            dialog.NewName.Text = oldName;
-            dialog.NewName.Select();
-            dialog.ShowDialog();
-
+            dialog.ShowDialogFor(_path);
+            
             if (dialog.DialogResult == DialogResult.OK)
             {
                 String newName = dialog.NewName.Text;
