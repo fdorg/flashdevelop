@@ -109,7 +109,7 @@ namespace ProjectManager.Helpers
 
 			foreach (string file in Directory.GetFiles(sourceDir))
 			{
-				if (filter && ShouldSkip(file))
+				if (ShouldSkip(file, filter))
 					continue;
 
 				string fileName = Path.GetFileName(file);
@@ -207,13 +207,14 @@ namespace ProjectManager.Helpers
             else return String.Empty;
         }
 
-		private bool ShouldSkip(string path)
+		private bool ShouldSkip(string path, bool isProjectRoot)
 		{
 			string filename = Path.GetFileName(path).ToLower();
-			return projectTypes.ContainsKey(filename)
-				|| filename == "project.txt"
-				|| filename == "project.png"
-                || filename == "dummy";
+            if (isProjectRoot)
+                return projectTypes.ContainsKey(filename)
+                    || filename == "project.txt"
+                    || filename == "project.png";
+            return filename == "dummy";
 		}
 
         private static void SetInitialProjectHash()
