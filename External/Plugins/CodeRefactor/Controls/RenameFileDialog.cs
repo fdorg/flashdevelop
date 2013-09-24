@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PluginCore;
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -46,25 +47,41 @@ namespace CodeRefactor.Controls
         private void OnNewNameChanged(object sender, EventArgs e)
         {
             string newName = NewName.Text;
-            string newFullPath = Path.Combine(_oldDirectoryName, string.Concat(newName, _ext));
-            bool canRename = true;
+            string newFileName = string.Concat(newName, _ext);
+            string newFullPath = Path.Combine(_oldDirectoryName, newFileName);
+            bool canRename = false;
+            bool withImage = false;
 
-            if(string.IsNullOrEmpty(newName) || newName == _oldName){
+            WarningLabel.AutoSize = true;
+
+            if(string.IsNullOrEmpty(newName) || newName == _oldName)
                 WarningLabel.Text = "Enter a new name.";
-                canRename = false;
-            }
             else if(!re_validFirstChar.IsMatch(newName))
             {
                 WarningLabel.Text = "New name is not a valid indentifier.";
-                canRename = false;
+                withImage = true;
             }
             else if (File.Exists(newFullPath))
             {
-                WarningLabel.Text = String.Format("Name {0} is already taken", _oldName);
-                canRename = false;
+                WarningLabel.Text = String.Format("Name {0} is already taken", newFileName);
+                withImage = true;
             }
             else
+            {
                 WarningLabel.ResetText();
+                canRename = true;
+            }
+
+            if (withImage)
+            {
+                int width = WarningLabel.Width;
+                WarningLabel.Image = PluginBase.MainForm.FindImage("197");
+                WarningLabel.AutoSize = false;
+                WarningLabel.Width = width + WarningLabel.Image.Width;
+                WarningLabel.Height = WarningLabel.Image.Height;
+            }
+            else
+                WarningLabel.Image = null;
 
             OKButton.Enabled = canRename;
         }

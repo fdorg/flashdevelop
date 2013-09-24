@@ -90,15 +90,16 @@
             // 
             // WarningLabel
             // 
+            this.WarningLabel.AutoSize = true;
             this.WarningLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.WarningLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.WarningLabel.Location = new System.Drawing.Point(10, 76);
             this.WarningLabel.Margin = new System.Windows.Forms.Padding(0);
             this.WarningLabel.Name = "WarningLabel";
-            this.WarningLabel.Size = new System.Drawing.Size(250, 20);
+            this.WarningLabel.Size = new System.Drawing.Size(54, 13);
             this.WarningLabel.TabIndex = 12;
             this.WarningLabel.Text = "Warnign";
-            this.WarningLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.WarningLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // RenameFileDialog
             // 
