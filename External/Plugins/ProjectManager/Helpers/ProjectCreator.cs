@@ -212,7 +212,8 @@ namespace ProjectManager.Helpers
 			string filename = Path.GetFileName(path).ToLower();
 			return projectTypes.ContainsKey(filename)
 				|| filename == "project.txt"
-				|| filename == "project.png";
+				|| filename == "project.png"
+                || filename == "dummy";
 		}
 
         private static void SetInitialProjectHash()

@@ -2309,9 +2309,6 @@ namespace ASCompletion.Model
                             curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                             curClass.LineTo = curToken.Line;
                             AddClass(model, curClass);
-                            if (token == "Container")
-                            {
-                            }
                         }
                         break;
 
@@ -2471,10 +2468,14 @@ namespace ASCompletion.Model
         {
             // avoid empty duplicates due to Haxe directives
             foreach(ClassModel aClass in model.Classes) 
-                if (aClass.Name == curClass.Name && aClass.Members.Count == 0)
+                if (aClass.Name == curClass.Name)
                 {
-                    model.Classes.Remove(aClass);
-                    break;
+                    if (aClass.Members.Count == 0)
+                    {
+                        model.Classes.Remove(aClass);
+                        break;
+                    }
+                    else return;
                 }
             model.Classes.Add(curClass);
         }

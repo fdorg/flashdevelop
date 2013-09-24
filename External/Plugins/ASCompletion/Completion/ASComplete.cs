@@ -2462,7 +2462,7 @@ namespace ASCompletion.Completion
                     result.InFile = inFile;
 					result.InClass = inClass;
                     if (var.Type == null && (var.Flags & FlagType.LocalVar) > 0 
-                        && context.Features.hasInference && !context.Features.externalCompletion)
+                        && context.Features.hasInference /*&& !context.Features.externalCompletion*/)
                         InferVariableType(local, var);
                     result.Type = context.ResolveType(var.Type, inFile);
 					
