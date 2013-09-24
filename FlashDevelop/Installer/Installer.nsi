@@ -334,6 +334,9 @@ Section "FlashDevelop" Main
 
 	SetOutPath "$INSTDIR\Projects"
 	File /r /x .svn /x *.db "..\Bin\Debug\Projects\*.*"
+
+	; Remove PluginCore from plugins...
+	Delete "$INSTDIR\Plugins\PluginCore.dll"
 	
 SectionEnd
 
