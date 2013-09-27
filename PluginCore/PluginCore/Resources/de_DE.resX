@@ -1521,6 +1521,9 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="ProjectManager.Description.FlashStrict" xml:space="preserve">
     <value>Typsicherere Adobe Flash API.</value>
   </data>
+    <data name="ProjectManager.Description.NoInlineOnDebug" xml:space="preserve">
+    <value>Set --no-inline on Debug.</value>
+  </data>
   <data name="ProjectManager.Description.Frame" xml:space="preserve">
     <value>Trifft nur zu, wenn Code Injection verwendet wird. Komiliert Ihre Klassen in den von Ihnen angegebenen Frame der Eingabe-SWF-Datei.</value>
   </data>

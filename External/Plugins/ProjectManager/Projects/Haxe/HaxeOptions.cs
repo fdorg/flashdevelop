@@ -13,6 +13,7 @@ namespace ProjectManager.Projects.Haxe
         string mainClass = "";
         bool flashStrict = false;
         bool enableDebug = false;
+        bool noInlineOnDebug = false;
         string[] additional = new string[] { };
         string[] libraries = new string[] { };
 
@@ -33,6 +34,12 @@ namespace ProjectManager.Projects.Haxe
         [LocalizedDescription("ProjectManager.Description.FlashStrict")]
         [DefaultValue(false)]
         public bool FlashStrict { get { return flashStrict; } set { flashStrict = value; } }
+
+        [LocalizedCategory("ProjectManager.Category.CompilerOptions")]
+        [DisplayName("Set no-inline on Debug")]
+        [LocalizedDescription("ProjectManager.Description.NoInlineOnDebug")]
+        [DefaultValue(false)]
+        public bool NoInlineOnDebug { get { return noInlineOnDebug; } set { noInlineOnDebug = value; } }
 
         [LocalizedCategory("ProjectManager.Category.General")]
         [DisplayName("Directives")]

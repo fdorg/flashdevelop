@@ -1505,6 +1505,9 @@
   <data name="ProjectManager.Description.FlashStrict" xml:space="preserve">
     <value>より厳格なタイプの Flash API です。</value>
   </data>
+    <data name="ProjectManager.Description.NoInlineOnDebug" xml:space="preserve">
+    <value>Set --no-inline on Debug.</value>
+  </data>
   <data name="ProjectManager.Description.Frame" xml:space="preserve">
     <value>ターゲットのフレームにエクスポートします( SWF 内にコードが存在しいてる場合のみ)。</value>
   </data>
