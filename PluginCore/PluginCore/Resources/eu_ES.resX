@@ -1503,6 +1503,9 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="ProjectManager.Description.FlashStrict" xml:space="preserve">
     <value>Flash API mota hertsiagoa.</value>
   </data>
+    <data name="ProjectManager.Description.NoInlineOnDebug" xml:space="preserve">
+    <value>Set --no-inline on Debug.</value>
+  </data>
   <data name="ProjectManager.Description.Frame" xml:space="preserve">
     <value>Kode Injekzioa bakarrik erabiltzen ari bazara, sarrerako SWF-ko frame zehatz batera esportazen ditu zure klaseak.</value>
   </data>

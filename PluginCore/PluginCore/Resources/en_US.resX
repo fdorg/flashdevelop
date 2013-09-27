@@ -1504,6 +1504,9 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="ProjectManager.Description.FlashStrict" xml:space="preserve">
     <value>More type strict Flash API.</value>
   </data>
+  <data name="ProjectManager.Description.NoInlineOnDebug" xml:space="preserve">
+    <value>Set --no-inline on Debug.</value>
+  </data>
   <data name="ProjectManager.Description.Frame" xml:space="preserve">
     <value>If using Code Injection only, exports your classes into a specific frame of the input SWF.</value>
   </data>
