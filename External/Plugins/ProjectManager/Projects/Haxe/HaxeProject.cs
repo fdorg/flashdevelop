@@ -311,7 +311,7 @@ namespace ProjectManager.Projects.Haxe
                 }
             }
 
-            // debug   
+            // debug
             if (!release)
             {
                 pr.Add("-debug");
