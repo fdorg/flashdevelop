@@ -93,6 +93,7 @@ namespace ProjectManager.Projects.Haxe
 
             WriteOption("directives", string.Join("\n", options.Directives));
             WriteOption("flashStrict", options.FlashStrict);
+            WriteOption("noInlineOnDebug", options.NoInlineOnDebug);
             WriteOption("mainClass", options.MainClass);
             WriteOption("enabledebug", options.EnableDebug);
             WriteOption("additional", string.Join("\n", options.Additional));

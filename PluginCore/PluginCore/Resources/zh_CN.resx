@@ -1504,6 +1504,9 @@
   <data name="ProjectManager.Description.FlashStrict" xml:space="preserve">
     <value>更严格 Flash API 类型.</value>
   </data>
+   <data name="ProjectManager.Description.NoInlineOnDebug" xml:space="preserve">
+    <value>Set --no-inline on Debug.</value>
+  </data>
   <data name="ProjectManager.Description.Frame" xml:space="preserve">
     <value>如果只使用代码注入，导出类到特定输入的 SWF 框架.</value>
   </data>
