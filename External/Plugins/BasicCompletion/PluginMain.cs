@@ -155,28 +155,18 @@ namespace BasicCompletion
                 }
                 case EventType.Completion:
                 {
-                    this.isSupported = !e.Handled;
+                    if (!e.Handled)
+                    {
+                        this.isSupported = true;
+                        e.Handled = true;
+                    }
+                    HandleFile(document);
                     break;
                 }
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    if (this.isSupported)
-                    {
-                        String language = document.SciControl.ConfigurationLanguage;
-                        if (!this.baseTable.ContainsKey(language)) this.AddBaseKeywords(language);
-                        if (!this.fileTable.ContainsKey(document.FileName)) this.AddDocumentKeywords(document);
-                        if (this.updateTable.ContainsKey(document.FileName)) // Need to update after save?
-                        {
-                            this.updateTable.Remove(document.FileName);
-                            this.AddDocumentKeywords(document);
-                        }
-                        this.updateTimer.Stop();
-                    }
-                    else if (this.updateTable.ContainsKey(document.FileName)) // Not supported saved, remove
-                    {
-                        this.updateTable.Remove(document.FileName);
-                    }
+                    HandleFile(document);
                     break;
                 }
                 case EventType.FileSave:
@@ -203,7 +193,27 @@ namespace BasicCompletion
             }
 		}
 
-		#endregion
+	    private void HandleFile(ITabbedDocument document)
+	    {
+            if (this.isSupported)
+            {
+                String language = document.SciControl.ConfigurationLanguage;
+                if (!this.baseTable.ContainsKey(language)) this.AddBaseKeywords(language);
+                if (!this.fileTable.ContainsKey(document.FileName)) this.AddDocumentKeywords(document);
+                if (this.updateTable.ContainsKey(document.FileName)) // Need to update after save?
+                {
+                    this.updateTable.Remove(document.FileName);
+                    this.AddDocumentKeywords(document);
+                }
+                this.updateTimer.Stop();
+            }
+            else if (this.updateTable.ContainsKey(document.FileName)) // Not supported saved, remove
+            {
+                this.updateTable.Remove(document.FileName);
+            }
+	    }
+
+	    #endregion
 
         #region Custom Methods
 
