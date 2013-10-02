@@ -624,7 +624,6 @@ namespace ASCompletion.Completion
 
         private static void ShowNewVarList(FoundDeclaration found)
         {
-            ContextFeatures features = ASContext.Context.Features;
             List<ICompletionListItem> known = new List<ICompletionListItem>();
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
@@ -711,7 +710,6 @@ namespace ASCompletion.Completion
 
         private static void ShowNewMethodList(FoundDeclaration found)
         {
-            ContextFeatures features = ASContext.Context.Features;
             List<ICompletionListItem> known = new List<ICompletionListItem>();
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
@@ -755,8 +753,6 @@ namespace ASCompletion.Completion
         {
             List<ICompletionListItem> known = new List<ICompletionListItem>();
 
-            ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
-
             if (GetLangIsValid())
             {
                 string labelClass = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
@@ -768,10 +764,7 @@ namespace ASCompletion.Completion
 
         private static void ShowNewClassList(FoundDeclaration found)
         {
-            ContextFeatures features = ASContext.Context.Features;
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-
-            ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
             if (GetLangIsValid())
             {
@@ -784,10 +777,7 @@ namespace ASCompletion.Completion
 
         private static void ShowConstructorAndToStringList(FoundDeclaration found, bool hasConstructor, bool hasToString)
         {
-            ContextFeatures features = ASContext.Context.Features;
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-
-            ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
             if (GetLangIsValid())
             {
@@ -809,10 +799,7 @@ namespace ASCompletion.Completion
 
         private static void ShowEventMetatagList(FoundDeclaration found)
         {
-            ContextFeatures features = ASContext.Context.Features;
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-
-            ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
             string label = TextHelper.GetString("ASCompletion.Label.GenerateEventMetatag");
             known.Add(new GeneratorItem(label, GeneratorJobType.EventMetatag, found.member, found.inClass));
@@ -822,10 +809,7 @@ namespace ASCompletion.Completion
 
         private static void ShowFieldFromParameter(FoundDeclaration found)
         {
-            ContextFeatures features = ASContext.Context.Features;
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-
-            ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
             if (GetLangIsValid())
             {
@@ -845,10 +829,7 @@ namespace ASCompletion.Completion
 
         private static void ShowAddInterfaceDefList(FoundDeclaration found, List<string> interfaces)
         {
-            ContextFeatures features = ASContext.Context.Features;
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-
-            ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
             if (GetLangIsValid())
             {
