@@ -685,7 +685,7 @@ namespace ASCompletion.Completion
             }
             known.Add(new GeneratorItem(labelFunPublic, GeneratorJobType.FunctionPublic, found.member, found.inClass));
 
-            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language.StartsWith("as"))
+            if (GetLangIsValid())
             {
                 string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateClass");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.Class, found.member, found.inClass));
@@ -757,7 +757,7 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language.StartsWith("as"))
+            if (GetLangIsValid())
             {
                 string labelClass = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.AssignStatementToVar, found.member, found.inClass));
@@ -773,7 +773,7 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language.StartsWith("as"))
+            if (GetLangIsValid())
             {
                 string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateClass");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.Class, found.member, found.inClass));
@@ -789,9 +789,7 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            Boolean langIsValid = PluginBase.CurrentProject.Language.StartsWith("as") || PluginBase.CurrentProject.Language.StartsWith("haxe");
-
-            if (PluginBase.CurrentProject != null && langIsValid)
+            if (GetLangIsValid())
             {
                 if (!hasConstructor)
                 {
@@ -829,7 +827,7 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language.StartsWith("as"))
+            if (GetLangIsValid())
             {
                 Hashtable parameters = new Hashtable();
                 parameters["scope"] = GetDefaultVisibility();
@@ -852,7 +850,7 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language.StartsWith("as"))
+            if (GetLangIsValid())
             {
                 string labelClass = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
                 foreach (String interf in interfaces)
@@ -903,6 +901,13 @@ namespace ASCompletion.Completion
             }
             CompletionList.Show(known, false);
         }
+
+        private static bool GetLangIsValid()
+        {
+            IProject project = PluginBase.CurrentProject;
+            return project != null && (project.Language.StartsWith("as") || project.Language.StartsWith("haxe"));
+        }
+
         #endregion
 
         #region code generation
