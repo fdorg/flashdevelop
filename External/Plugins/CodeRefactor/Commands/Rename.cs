@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using CodeRefactor.Provider;
 using PluginCore.FRService;
@@ -21,7 +20,6 @@ namespace CodeRefactor.Commands
     {
         private String newName;
         private Boolean outputResults;
-        private Boolean ignoreDeclarationSource;
         private FindAllReferences findAllReferencesCommand;
 
         public String NewName
@@ -78,13 +76,11 @@ namespace CodeRefactor.Commands
         {
             if (target == null)
             {
-                //TODO: the first call of rename for global function or global namespace
                 TraceManager.Add("refactor target is null");
                 return;
             }
 
             this.outputResults = outputResults;
-            this.ignoreDeclarationSource = ignoreDeclarationSource;
 
             Boolean isEnum = target.Type.IsEnum();
             Boolean isVoid = target.Type.IsVoid();
