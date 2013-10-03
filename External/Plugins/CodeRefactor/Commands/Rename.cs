@@ -86,17 +86,18 @@ namespace CodeRefactor.Commands
             this.outputResults = outputResults;
             this.ignoreDeclarationSource = ignoreDeclarationSource;
 
+            Boolean isEnum = target.Type.IsEnum();
             Boolean isVoid = target.Type.IsVoid();
             Boolean isClass = !isVoid && target.IsStatic && target.Member == null;
 
-            if (newName != null && newName.Trim() != String.Empty)
+            if (!string.IsNullOrEmpty(newName))
                 this.newName = newName;
-            else if (isClass)
+            else if (isEnum || isClass)
                 this.newName = GetNewName(target.Type.Name);
             else
                 this.newName = GetNewName(target.Member.Name);
 
-            if (this.newName == null) return;
+            if (string.IsNullOrEmpty(this.newName)) return;
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
@@ -120,7 +121,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override Boolean IsValid()
         {
-            return this.newName != null && this.newName.Trim() != String.Empty;
+            return !string.IsNullOrEmpty(this.newName);
         }
 
         #endregion
@@ -158,13 +159,12 @@ namespace CodeRefactor.Commands
         {
             ASResult target = findAllReferencesCommand.CurrentTarget;
             Boolean isEnum = target.Type.IsEnum();
-            Boolean isVoid = false;
             Boolean isClass = false;
             Boolean isConstructor = false;
 
             if (!isEnum)
             {
-                isVoid = target.Type.IsVoid();
+                Boolean isVoid = target.Type.IsVoid();
                 isClass = !isVoid && target.IsStatic && target.Member == null;
                 isConstructor = !isVoid && !isClass && RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor);
             }
@@ -172,7 +172,7 @@ namespace CodeRefactor.Commands
             Boolean isGlobalFunction = false;
             Boolean isGlobalNamespace = false;
 
-            if (!isEnum && !isClass && !isConstructor && target.InClass == null)
+            if (!isEnum && !isClass && !isConstructor && (target.InClass == null || target.InClass.IsVoid()))
             {
                 isGlobalFunction = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Function);
                 isGlobalNamespace = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
@@ -183,15 +183,15 @@ namespace CodeRefactor.Commands
             FileModel inFile = null;
             String originName = null;
 
-            if (isConstructor || isGlobalFunction || isGlobalNamespace)
-            {
-                inFile = target.Member.InFile;
-                originName = target.Member.Name;
-            }
-            else if (target.Type.Constructor != null || isEnum)
+            if (isEnum || isClass)
             {
                 inFile = target.Type.InFile;
                 originName = target.Type.Name;
+            }
+            else
+            {
+                inFile = target.Member.InFile;
+                originName = target.Member.Name;
             }
 
             if (inFile == null) return;
@@ -199,14 +199,14 @@ namespace CodeRefactor.Commands
             String oldFileName = inFile.FileName;
             String oldName = Path.GetFileNameWithoutExtension(oldFileName);
 
-            if (oldName != null && !oldName.Equals(originName)) return;
+            if (!string.IsNullOrEmpty(oldName) && !oldName.Equals(originName)) return;
 
             String fullPath = Path.GetFullPath(inFile.FileName);
             fullPath = Path.GetDirectoryName(fullPath);
 
             String newFileName = Path.Combine(fullPath, NewName + Path.GetExtension(oldFileName));
 
-            if (oldFileName == null || newFileName == null || oldFileName.Equals(newFileName)) return;
+            if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return;
 
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
                 if (doc.FileName.Equals(oldFileName))
