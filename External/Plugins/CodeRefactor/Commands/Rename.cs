@@ -42,7 +42,7 @@ namespace CodeRefactor.Commands
         /// A new Rename refactoring command.
         /// Uses the current text location as the declaration target.
         /// </summary>
-        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         public Rename(Boolean outputResults) : this(RefactoringHelper.GetDefaultRefactorTarget(), outputResults)
         {
         }
