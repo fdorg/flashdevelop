@@ -85,10 +85,17 @@
     <Compile Include="Commands\ExtractLocalVariableCommand.cs" />
     <Compile Include="Commands\ExtractMethodCommand.cs" />
     <Compile Include="Commands\DelegateMethodsCommand.cs" />
+    <Compile Include="Commands\RenameFile.cs" />
     <Compile Include="Commands\OrganizeImports.cs" />
     <Compile Include="Commands\FindAllReferences.cs" />
     <Compile Include="Commands\Rename.cs" />
     <Compile Include="Commands\SurroundWithCommand.cs" />
+    <Compile Include="Controls\RenameFileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\RenameFileDialog.Designer.cs">
+      <DependentUpon>RenameFileDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DelegateMethodsDialog.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -9,13 +9,13 @@ using ASCompletion.Model;
 using CodeRefactor.Commands;
 using CodeRefactor.Controls;
 using CodeRefactor.CustomControls;
-using CodeRefactor.Provider;
 using ProjectManager.Helpers;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using PluginCore;
+using ProjectManager.Controls.TreeView;
 
 namespace CodeRefactor
 {
@@ -33,6 +33,8 @@ namespace CodeRefactor
         private RefactorMenu refactorMainMenu;
         private Settings settingObject;
         private String settingFilename;
+        private TreeView _projectTreeView;
+        private ToolStripMenuItem _projectContextMenuItem;
 
         #region Required Properties
         
@@ -132,7 +134,18 @@ namespace CodeRefactor
                     EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.ContextMenu", this.refactorContextMenu));
                     // Watch resolved context for menu item updating...
                     ASComplete.OnResolvedContextChanged += new ResolvedContextChangeHandler(this.OnResolvedContextChanged);
+                    DirectoryNode.OnDirectoryNodeRefresh += OnDirectoryNodeRefresh;
                     this.UpdateMenuItems();
+                    break;
+
+                case EventType.Command:
+                    DataEvent de = (DataEvent)e;
+                    switch (de.Action)
+                    {
+                        case "ProjectManager.TreeSelectionChanged":
+                            UpdateProjectContextMenuItems();
+                            break;
+                    }
                     break;
             }
 		}
@@ -146,7 +159,7 @@ namespace CodeRefactor
         /// </summary>
         public void InitBasics()
         {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.FileSwitch);
+            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.FileSwitch | EventType.Command);
             String dataPath = Path.Combine(PathHelper.DataDir, "CodeRefactor");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
@@ -208,12 +221,17 @@ namespace CodeRefactor
         private Boolean GetLanguageIsValid()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable)
-            {
-                String lang = document.SciControl.ConfigurationLanguage;
-                return (lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"); // TODO look for /Snippets/Generators
-            }
-            else return false;
+            if (document == null && !document.IsEditable)
+                return false;
+
+            String lang = document.SciControl.ConfigurationLanguage;
+            return lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"; // TODO look for /Snippets/Generators
+        }
+
+        private static Boolean GetNodeIsValid(TreeNode node)
+        {
+            String ext = Path.GetExtension(node.FullPath);
+            return ext == ".as" || ext == ".hx" || ext == ".ls";
         }
 
         /// <summary>
@@ -222,6 +240,17 @@ namespace CodeRefactor
         private void OnResolvedContextChanged(ResolvedContext resolved)
         {
             this.UpdateMenuItems();
+        }
+
+        private void OnDirectoryNodeRefresh(DirectoryNode node)
+        {
+            _projectTreeView = node.TreeView;
+            _projectContextMenuItem = new ToolStripMenuItem { Text = TextHelper.GetString("Label.Refactor") };
+
+            ToolStripMenuItem item = new ToolStripMenuItem { Text = TextHelper.GetString("Label.Rename") };
+            item.Click += ProjectContextMenuRenameClicked;
+
+            _projectContextMenuItem.DropDownItems.Add(item);
         }
 
         /// <summary>
@@ -329,6 +358,25 @@ namespace CodeRefactor
             }
         }
 
+        private void UpdateProjectContextMenuItems()
+        {
+            if (_projectTreeView == null || _projectTreeView.SelectedNode == null)
+                return;
+
+            TreeNode node = _projectTreeView.SelectedNode;
+            if (node == null || !GetNodeIsValid(node))
+                return;
+
+            ContextMenuStrip menu = _projectTreeView.ContextMenuStrip;
+            int index = 0;
+            while (index++ < menu.Items.Count)
+                if (menu.Items[index] is ToolStripSeparator)
+                    break;
+
+            menu.Items.Insert(index, _projectContextMenuItem);
+            menu.Items.Insert(index, new ToolStripSeparator());
+        }
+
         /// <summary>
         /// Invoked when the user selects the "Rename" command
         /// </summary>
@@ -337,6 +385,20 @@ namespace CodeRefactor
             try
             {
                 Rename command = new Rename(true);
+                command.Execute();
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+        }
+
+        private void ProjectContextMenuRenameClicked(Object sender, EventArgs e)
+        {
+            try
+            {
+                String path = (_projectTreeView.SelectedNode as FileNode).BackingPath;
+                RenameFile command = new RenameFile(path);
                 command.Execute();
             }
             catch (Exception ex)
