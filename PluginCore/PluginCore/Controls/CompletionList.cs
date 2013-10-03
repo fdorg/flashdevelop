@@ -900,7 +900,7 @@ namespace PluginCore.Controls
 					return true;
 					
 				case Keys.Enter:
-                    if (/*noAutoInsert ||*/ !ReplaceText(sci, '\n'))
+                    if (noAutoInsert || !ReplaceText(sci, '\n'))
                     {
                         CompletionList.Hide();
                         return false;

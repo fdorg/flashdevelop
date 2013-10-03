@@ -7,10 +7,29 @@ using PluginCore.Localization;
 
 namespace BasicCompletion
 {
+    public enum AutoInsert
+    {
+        CPP = 0,
+        Never = 1,
+        Always = 2,
+    }
+
     [Serializable]
     public class Settings
     {
         private Boolean disableAutoCompletion = false;
+        private AutoInsert autoInsertType = AutoInsert.CPP;
+
+        /// <summary> 
+        /// Get and sets the AutoInsertType
+        /// </summary>
+        [DisplayName("Auto Insert Type"), DefaultValue(AutoInsert.CPP)]
+        [LocalizedDescription("BasicCompletion.Description.AutoInsertType")]
+        public AutoInsert AutoInsertType
+        {
+            get { return this.autoInsertType; }
+            set { this.autoInsertType = value; }
+        }
 
         /// <summary> 
         /// Get and sets the DisableAutoCompletion

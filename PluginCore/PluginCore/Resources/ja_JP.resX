@@ -1505,7 +1505,7 @@
   <data name="ProjectManager.Description.FlashStrict" xml:space="preserve">
     <value>より厳格なタイプの Flash API です。</value>
   </data>
-    <data name="ProjectManager.Description.NoInlineOnDebug" xml:space="preserve">
+  <data name="ProjectManager.Description.NoInlineOnDebug" xml:space="preserve">
     <value>Set --no-inline on Debug.</value>
   </data>
   <data name="ProjectManager.Description.Frame" xml:space="preserve">
@@ -5077,6 +5077,10 @@ UseData:"</value>
   </data>
   <data name="TaskListPanel.Description.ExploringMode" xml:space="preserve">
     <value>The task exploring mode. Light: current files and manual refresh, Complete: current files, project files and manual refresh.</value>
+    <comment>Added after 4.4.3</comment>
+  </data>
+  <data name="BasicCompletion.Description.AutoInsertType" xml:space="preserve">
+    <value>Specifies when pressing Enter key inserts the completion list item.</value>
     <comment>Added after 4.4.3</comment>
   </data>
 </root>

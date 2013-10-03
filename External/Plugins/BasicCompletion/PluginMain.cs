@@ -160,13 +160,13 @@ namespace BasicCompletion
                         this.isSupported = true;
                         e.Handled = true;
                     }
-                    HandleFile(document);
+                    this.HandleFile(document);
                     break;
                 }
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    HandleFile(document);
+                    this.HandleFile(document);
                     break;
                 }
                 case EventType.FileSave:
@@ -193,6 +193,9 @@ namespace BasicCompletion
             }
 		}
 
+        /// <summary>
+        /// Handles the completion and config for a file
+        /// </summary>
 	    private void HandleFile(ITabbedDocument document)
 	    {
             if (this.isSupported)
@@ -404,9 +407,11 @@ namespace BasicCompletion
         private void SciControlCharAdded(ScintillaControl sci, Int32 value)
         {
             ITabbedDocument doc = DocumentManager.FindDocument(sci);
-            if (this.isSupported && sci.ConfigurationLanguage != "text")
+            if (this.isSupported)
             {
-                Language config = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
+                String lang = sci.ConfigurationLanguage;
+                AutoInsert insert = settingObject.AutoInsertType;
+                Language config = ScintillaControl.Configuration.GetLanguage(lang);
                 String characters = config.characterclass.Characters;
                 // Do not autocomplete in word
                 Char c = (char)sci.CharAt(sci.CurrentPos);
@@ -415,12 +420,15 @@ namespace BasicCompletion
                 if (characters.IndexOf((char)value) < 0) return;
                 String curWord = sci.GetWordLeft(sci.CurrentPos - 1, false);
                 if (curWord == null || curWord.Length < 3) return;
-                List<ICompletionListItem> items = this.GetCompletionListItems(sci.ConfigurationLanguage, sci.FileName);
+                List<ICompletionListItem> items = this.GetCompletionListItems(lang, sci.FileName);
                 if (items != null && items.Count > 0)
                 {
                     items.Sort();
                     CompletionList.Show(items, true, curWord);
-                    CompletionList.DisableAutoInsertion();
+                    if (insert == AutoInsert.Never || (insert == AutoInsert.CPP && sci.Lexer != 3/*CPP*/) || lang == "text")
+                    {
+                        CompletionList.DisableAutoInsertion();
+                    }
                 }
             }
         }
