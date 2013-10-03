@@ -227,7 +227,7 @@ namespace CodeRefactor.Provider
 
                 return resultInFile.BasePath == targetInFile.BasePath
                     && resultInFile.FileName == targetInFile.FileName
-                    && (target.InClass == null || (result.Member.LineFrom == target.Member.LineFrom))
+                    && result.Member.LineFrom == target.Member.LineFrom
                     && result.Member.Name == target.Member.Name;
             }
             else // type

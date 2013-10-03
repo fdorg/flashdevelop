@@ -143,8 +143,6 @@ namespace CodeRefactor.Commands
             {
                 totalMatches += entry.Value.Count;
             }
-            IDictionary<String, Boolean> filesOpenedAndUsed = new Dictionary<String, Boolean>();
-            IDictionary<String, WeifenLuo.WinFormsUI.Docking.DockContent> filesOpenedDocumentReferences = new Dictionary<String, WeifenLuo.WinFormsUI.Docking.DockContent>();
             Boolean foundDeclarationSource = false;
             foreach (KeyValuePair<String, List<SearchMatch>> entry in initialResultsList)
             {
@@ -192,8 +190,7 @@ namespace CodeRefactor.Commands
                 // Outputs the lines as they change
                 foreach (SearchMatch match in entry.Value)
                 {
-                    Int32 column = match.Column;
-                    TraceManager.Add(entry.Key + ":" + match.Line.ToString() + ": characters " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                    TraceManager.Add(entry.Key + ":" + match.Line + ": characters " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
                 }
             }
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
