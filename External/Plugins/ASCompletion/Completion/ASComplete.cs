@@ -740,7 +740,7 @@ namespace ASCompletion.Completion
                 {
                     ClassModel oClass = result.InClass != null ? result.InClass : result.Type;
 
-                    if (result.IsPackage || oClass.IsVoid())
+                    if (result.IsPackage || (oClass.IsVoid() && (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0))
                         return;
 
                     // type details
@@ -2534,6 +2534,7 @@ namespace ASCompletion.Completion
                     {
                         result.Member = item;
                         result.RelClass = ClassModel.VoidClass;
+                        result.InClass = ClassModel.VoidClass;
                         result.Type = (p < 0 && (item.Flags & FlagType.Function) > 0) 
                             ? context.ResolveType("Function", null) 
                             : context.ResolveType(item.Type, item.InFile);
