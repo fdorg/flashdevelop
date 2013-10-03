@@ -338,7 +338,11 @@ namespace CodeRefactor.Provider
         private static List<String> GetAllProjectRelatedFiles(IProject project)
         {
             List<String> files = new List<String>();
-            String filter = project.Language.ToLower() == "haxe" ? "*.hx" : "*.as";
+
+            string filter = GetSearchPatternFromLang(project.Language.ToLower());
+            if (string.IsNullOrEmpty(filter))
+                return files;
+
             foreach (String path in project.SourcePaths)
             {
                 String absolute = project.GetAbsolutePath(path);
@@ -354,6 +358,17 @@ namespace CodeRefactor.Provider
             return files;
         }
 
+        public static string GetSearchPatternFromLang(string lang)
+        {
+            if (lang == "haxe")
+                return "*.hx";
+            if (lang == "as2" || lang == "as3")
+                return "*.as";
+            if (lang == "loom")
+                return "*.ls";
+
+            return null;
+        }
 
         /// <summary>
         /// Generates an FRSearch to find all instances of the given member name.
