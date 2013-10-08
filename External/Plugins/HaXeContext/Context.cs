@@ -785,7 +785,7 @@ namespace HaXeContext
             {
                 if (import.Name == name)
                 {
-                    if (import.Type != fullName) throw new Exception(TextHelper.GetString("Info.AmbiguousType"));
+                    //if (import.Type != fullName) throw new Exception(TextHelper.GetString("Info.AmbiguousType"));
                     return true;
                 }
                 else if (import.Name == "*" && import.Type.Replace("*", name) == fullName)

@@ -2874,7 +2874,7 @@ namespace ASCompletion.Completion
         private static bool RemoveOneLocalDeclaration(ScintillaNet.ScintillaControl Sci, MemberModel contextMember)
         {
             string type = "";
-            if (contextMember.Type != null)
+            if (contextMember.Type != null && (contextMember.Flags & FlagType.Inferred) == 0)
             {
                 type = FormatType(contextMember.Type);
                 if (type.IndexOf('*') > 0)
@@ -2892,7 +2892,7 @@ namespace ASCompletion.Completion
                     int position = Sci.PositionFromLine(i) + index;
                     int len = Sci.MBSafeTextLength(m.Groups[1].Value);
                     Sci.SetSel(position, position + len);
-                    if (contextMember.Type == null) Sci.ReplaceSel(contextMember.Name + " ");
+                    if (contextMember.Type == null || (contextMember.Flags & FlagType.Inferred) != 0) Sci.ReplaceSel(contextMember.Name + " ");
                     else Sci.ReplaceSel(contextMember.Name);
                     UpdateLookupPosition(position, contextMember.Name.Length - len);
                     return true;

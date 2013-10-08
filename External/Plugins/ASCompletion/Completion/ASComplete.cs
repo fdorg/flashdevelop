@@ -2615,8 +2615,16 @@ namespace ASCompletion.Completion
                     ASResult result = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
                     if (!result.IsNull())
                     {
-                        if (result.Member != null) var.Type = result.Member.Type;
-                        else if (result.Type != null && !result.Type.IsVoid()) var.Type = result.Type.QualifiedName;
+                        if (result.Member != null)
+                        {
+                            var.Type = result.Member.Type;
+                            var.Flags |= FlagType.Inferred;
+                        }
+                        else if (result.Type != null && !result.Type.IsVoid())
+                        {
+                            var.Type = result.Type.QualifiedName;
+                            var.Flags |= FlagType.Inferred;
+                        }
                     }
                 }
             }

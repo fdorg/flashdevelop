@@ -50,11 +50,12 @@ namespace ASCompletion.Model
         LocalVar = 1 << 30,
         ParameterVar = 1L << 31,
         AutomaticVar = 1L << 32,
+        Inferred = 1L << 33,
 
-        Declaration = 1L << 33,
-        Template = 1L << 34,
-        DocTemplate = 1L << 35,
-        CodeTemplate = 1L << 36
+        Declaration = 1L << 34,
+        Template = 1L << 35,
+        DocTemplate = 1L << 36,
+        CodeTemplate = 1L << 37
     }
 
     public enum ASMetaKind
