@@ -60,6 +60,18 @@ namespace LoomContext
                     return loomFolder;
                 }
             }
+            var programFiles = Environment.ExpandEnvironmentVariables("%ProgramFiles%");
+            if (Path.IsPathRooted(programFiles) && Directory.Exists(programFiles))
+            {
+                loomFolder = programFiles;
+                return loomFolder;
+            }
+            programFiles = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%");
+            if (Path.IsPathRooted(programFiles) && Directory.Exists(programFiles))
+            {
+                loomFolder = programFiles;
+                return loomFolder;
+            }
             return "";
         }
 
