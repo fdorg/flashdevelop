@@ -13,21 +13,21 @@
 !define BUILD "RTM"
 
 ; Define AIR SDK vars
-!define AIR "3.8.0.1430"
-!define AIR_URL "http://airdownload.adobe.com/air/win/download/3.8/AdobeAIRSDK.zip"
+!define AIR "3.9.0.1030"
+!define AIR_URL "http://airdownload.adobe.com/air/win/download/3.9/AdobeAIRSDK.zip"
 
 ; Define AIR+ASC SDK vars
-!define ASC "3.8.0.1430"
-!define ASC_URL "http://airdownload.adobe.com/air/win/download/3.8/AIRSDK_Compiler.zip"
+!define ASC "3.9.0.1030"
+!define ASC_URL "http://airdownload.adobe.com/air/win/download/3.9/AIRSDK_Compiler.zip"
 
 ; Define Flex SDK vars
 !define FLEX "4.6.0.23201B"
 !define FLEX_URL "http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_${FLEX}.zip"
 
 ; Define Flash player vars
-!define FLASH "11.8.800.168"
+!define FLASH "11.9.900.117"
 !define FLASH_URL "http://download.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.exe"
-!define FLASH_DIR "11.8"
+!define FLASH_DIR "11.9"
 
 ; Define Closure compiler vars
 !define CLOSURE_URL http://closure-compiler.googlecode.com/files/compiler-latest.zip
