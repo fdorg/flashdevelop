@@ -1270,6 +1270,9 @@ namespace ASCompletion.Completion
                 else if (resolve.Type != null && resolve.Type.Name != null)
                 {
                     type = resolve.Type.QualifiedName;
+
+                    //TODO: quick fix, resolve.Type.QualifiedName => Vector<T> for as3
+                    type = type.Replace("<", ".<");
                 }
 
                 if (resolve.Member != null && resolve.Member.Name != null)
@@ -1279,6 +1282,14 @@ namespace ASCompletion.Completion
             }
 
             if (word != null && Char.IsDigit(word[0])) word = null;
+
+            if (!string.IsNullOrEmpty(word))
+            {
+                Match m = Regex.Match(type, "(<[^]]+>)");
+                if (m.Success)
+                    word = null;
+            }
+
             if (type.Equals("void", StringComparison.OrdinalIgnoreCase)) type = null;
 
             if (varname == null) varname = GuessVarName(word, type);
@@ -2962,11 +2973,22 @@ namespace ASCompletion.Completion
             }
 
             IASContext ctx = inClass.InFile.Context;
-            m = Regex.Match(line, "new\\s+([a-z0-9.<>,_$-]+)", RegexOptions.IgnoreCase);
+            m = Regex.Match(line, "new\\s+([\\w\\d.<>,_$-]+)+(<[^]]+>)|(<[^]]+>)", RegexOptions.IgnoreCase);
+
             if (m.Success)
             {
-                string cname = m.Groups[1].Value;
-                if (cname.StartsWith("<")) cname = "Vector." + cname; // literal vector
+                string m1 = m.Groups[1].Value;
+                string m2 = m.Groups[2].Value;
+
+                string cname;
+                if (string.IsNullOrEmpty(m1) && string.IsNullOrEmpty(m2))
+                    cname = m.Groups[0].Value;
+                else
+                    cname = String.Concat(m1, m2);
+
+                if (cname.StartsWith("<"))
+                    cname = "Vector." + cname; // literal vector
+
                 type = ctx.ResolveType(cname, inClass.InFile);
                 if (!type.IsVoid()) resolve = null;
             }
@@ -3040,8 +3062,16 @@ namespace ASCompletion.Completion
 
         private static string GuessVarName(string name, string type)
         {
-            if (name == null) name = type;
-            if (name == null) 
+            if (string.IsNullOrEmpty(name))
+            {
+                Match m = Regex.Match(type, "^([a-z0-9_$]+)", RegexOptions.IgnoreCase);
+                if (m.Success)
+                    name = m.Groups[1].Value;
+                else
+                    name = type;
+            }
+
+            if (string.IsNullOrEmpty(name)) 
                 return name;
 
             // if constant then convert to camelCase
