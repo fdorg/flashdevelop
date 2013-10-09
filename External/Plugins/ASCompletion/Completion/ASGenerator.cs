@@ -168,7 +168,6 @@ namespace ASCompletion.Completion
                             {
                                 int offset = Sci.PositionFromLine(Sci.LineFromPosition(position))
                                     + m.Groups[1].Index + m.Groups[1].Length;
-                                char c = (char)Sci.CharAt(offset);
                                 resolve = ASComplete.GetExpressionType(Sci, offset);
                                 if (resolve.Member != null)
                                     contextMember = ResolveDelegate(resolve.Member.Type, resolve.InFile);
@@ -247,7 +246,6 @@ namespace ASCompletion.Completion
                     found.inClass.Implements.Count > 0)
                 {
                     string funcName = found.member.Name;
-                    int classPosStart = Sci.PositionFromLine(found.inClass.LineFrom);
                     
                     List<string> interfaces = new List<string>();
                     foreach (string interf in found.inClass.Implements)
@@ -293,8 +291,7 @@ namespace ASCompletion.Completion
             // suggest generate constructor / toString
             if (found.member == null && found.inClass != ClassModel.VoidClass && contextToken == null)
             {
-                ClassModel cm = ASContext.Context.CurrentClass;
-                MemberList members = cm.Members;
+                MemberList members = ASContext.Context.CurrentClass.Members;
 
                 bool hasConstructor = false;
                 bool hasToString = false;
@@ -628,8 +625,6 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            string autoSelect = "";
-
             ASResult result = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
             if (!(result != null && result.RelClass != null))
             {
@@ -656,8 +651,6 @@ namespace ASCompletion.Completion
                 {
                     string labelConst = TextHelper.GetString("ASCompletion.Label.GenerateConstant");
                     known.Add(new GeneratorItem(labelConst, GeneratorJobType.Constant, found.member, found.inClass));
-
-                    autoSelect = labelConst;
                 }
 
                 if (result == null)
@@ -680,7 +673,6 @@ namespace ASCompletion.Completion
             if (isInterface)
             {
                 labelFunPublic = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
-                autoSelect = labelFunPublic;
             }
             known.Add(new GeneratorItem(labelFunPublic, GeneratorJobType.FunctionPublic, found.member, found.inClass));
 
@@ -751,10 +743,10 @@ namespace ASCompletion.Completion
 
         private static void ShowAssignStatementToVarList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             if (GetLangIsValid())
             {
+                List<ICompletionListItem> known = new List<ICompletionListItem>();
+
                 string labelClass = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.AssignStatementToVar, found.member, found.inClass));
 
@@ -764,10 +756,10 @@ namespace ASCompletion.Completion
 
         private static void ShowNewClassList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             if (GetLangIsValid())
             {
+                List<ICompletionListItem> known = new List<ICompletionListItem>();
+
                 string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateClass");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.Class, found.member, found.inClass));
 
@@ -777,10 +769,11 @@ namespace ASCompletion.Completion
 
         private static void ShowConstructorAndToStringList(FoundDeclaration found, bool hasConstructor, bool hasToString)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
+            
             if (GetLangIsValid())
             {
+                List<ICompletionListItem> known = new List<ICompletionListItem>();
+
                 if (!hasConstructor)
                 {
                     string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
@@ -829,10 +822,10 @@ namespace ASCompletion.Completion
 
         private static void ShowAddInterfaceDefList(FoundDeclaration found, List<string> interfaces)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             if (GetLangIsValid())
             {
+                List<ICompletionListItem> known = new List<ICompletionListItem>();
+
                 string labelClass = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
                 foreach (String interf in interfaces)
                 {
