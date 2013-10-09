@@ -659,7 +659,7 @@ namespace AS2Context
                         if (aFile.Package == package && aFile.Classes.Count > 0)
                         {
                             foreach (ClassModel aClass in aFile.Classes)
-                                if (aClass.Name == cname)
+                                if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
                                 {
                                     found = aClass;
                                     return false;
@@ -678,7 +678,7 @@ namespace AS2Context
                         else if (testSamePackage && aFile.Package == inPackage)
                         {
                             foreach (ClassModel aClass in aFile.Classes)
-                                if (aClass.Name == cname)
+                                if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
                                 {
                                     found = aClass;
                                     return false;

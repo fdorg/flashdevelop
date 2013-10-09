@@ -600,7 +600,8 @@ namespace HaXeContext
                             {
                                 if (aClass.Name == module) needModule = false;
                                 item = aClass.ToMemberModel();
-                                if (tpackage != package) item.Name = item.Type;
+                                //if (tpackage != package) 
+                                item.Name = item.Type;
                                 fullList.Add(item);
                             }
                         }
@@ -1218,12 +1219,13 @@ namespace HaXeContext
                 // other classes in same package
                 if (features.hasPackages && cFile.Package != "")
                 {
+                    int pLen = cFile.Package.Length;
                     FileModel packageElements = ResolvePackage(cFile.Package, false);
                     if (packageElements != null)
                     {
                         foreach (MemberModel member in packageElements.Imports)
                         {
-                            if (member.Flags != FlagType.Package)
+                            if (member.Flags != FlagType.Package && member.Type.LastIndexOf('.') == pLen)
                             {
                                 if (qualify) member.Name = member.Type;
                                 elements.Add(member);

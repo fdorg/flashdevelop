@@ -102,13 +102,13 @@ namespace ASCompletion.Completion
             
             if (contextToken != null)
             {
-                if (resolve.Member == null && resolve.Type == null) // import declaration
+                if (resolve.Member == null) // import declaration
                 {
-                    if (CheckAutoImport(found))
+                    if ((resolve.Type == null || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found))
                     {
                         return;
                     }
-                    else
+                    else if (resolve.Type == null)
                     {
                         int stylemask = (1 << Sci.StyleBits) - 1;
                         if (ASComplete.IsTextStyle(Sci.StyleAt(position - 1) & stylemask))
@@ -4244,8 +4244,13 @@ namespace ASCompletion.Completion
             int position = sci.CurrentPos;
             int curLine = sci.LineFromPosition(position);
 
-            string fullPath = member.Type; 
-            if ((member.Flags & FlagType.Class) > 0) fullPath = CleanType(member.Type);
+            string fullPath = member.Type;
+            if ((member.Flags & (FlagType.Class | FlagType.Enum | FlagType.TypeDef | FlagType.Struct)) > 0)
+            {
+                /*if (member.InFile != null && member.InFile.Package != "" && member.InFile.Module != "") 
+                    fullPath = member.InFile.Package + "." + member.InFile.Module; 
+                else*/ fullPath = CleanType(member.Type);
+            }
             string nl = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             string statement = "import " + fullPath + ";" + nl;
 
