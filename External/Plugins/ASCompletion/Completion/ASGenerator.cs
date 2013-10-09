@@ -879,7 +879,12 @@ namespace ASCompletion.Completion
         private static bool GetLangIsValid()
         {
             IProject project = PluginBase.CurrentProject;
-            return project != null && (project.Language.StartsWith("as") || project.Language.StartsWith("haxe"));
+            if (project == null)
+                return false;
+
+            return project.Language.StartsWith("as")
+                || project.Language.StartsWith("haxe")
+                || project.Language.StartsWith("loom");
         }
 
         #endregion
@@ -1251,14 +1256,9 @@ namespace ASCompletion.Completion
                 return;
             }
             
-            IASContext cntx = inClass.InFile.Context;
-            bool isAs3 = cntx.Settings.LanguageId == "AS3";
-            string voidWord = isAs3 ? "void" : "Void";
             string type = null;
             string varname = null;
-            string cleanType = null;
             ASResult resolve = returnType.resolve;
-            int pos = returnType.position;
             string word = returnType.word;
 
             if (resolve != null && !resolve.IsNull())
@@ -1269,7 +1269,7 @@ namespace ASCompletion.Completion
                 }
                 else if (resolve.Type != null && resolve.Type.Name != null)
                 {
-                    type = returnType.resolve.Type.QualifiedName;
+                    type = resolve.Type.QualifiedName;
                 }
 
                 if (resolve.Member != null && resolve.Member.Name != null)
@@ -1279,29 +1279,22 @@ namespace ASCompletion.Completion
             }
 
             if (word != null && Char.IsDigit(word[0])) word = null;
-            if (type == voidWord) type = null;
+            if (type.Equals("void", StringComparison.OrdinalIgnoreCase)) type = null;
 
             if (varname == null) varname = GuessVarName(word, type);
 
             if (varname != null && varname == word)
                 varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
 
+            string cleanType = null;
             if (type != null) cleanType = FormatType(GetShortType(type));
             
             string template = TemplateUtils.GetTemplate("AssignVariable");
-
-            if (varname != null)
-                template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
-            else
-                template = TemplateUtils.ReplaceTemplateVariable(template, "Name", null);
-
-            if (cleanType != null)
-                template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
-            else
-                template = TemplateUtils.ReplaceTemplateVariable(template, "Type", null);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
             int indent = Sci.GetLineIndentation(lineNum);
-            pos = Sci.PositionFromLine(lineNum) + indent / Sci.Indent;
+            int pos = Sci.PositionFromLine(lineNum) + indent / Sci.Indent;
 
             Sci.CurrentPos = pos;
             Sci.SetSel(pos, pos);
