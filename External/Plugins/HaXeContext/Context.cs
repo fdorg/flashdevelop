@@ -834,9 +834,10 @@ namespace HaXeContext
             else 
             {
                 // search in file
-                foreach (ClassModel aClass in inFile.Classes)
-                    if (aClass.Name == cname)
-                        return aClass;
+                if (inFile != null)
+                    foreach (ClassModel aClass in inFile.Classes)
+                        if (aClass.Name == cname)
+                            return aClass;
 
                 // search in imported classes
                 MemberList imports = ResolveImports(inFile);

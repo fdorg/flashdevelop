@@ -425,7 +425,7 @@ namespace ASCompletion
 
                             if (te.Value.IndexOf("$") >= 0 && reCostlyArgs.IsMatch(te.Value))
                             {
-                                ASResult result = ASComplete.CurrentResolvedContext.Result;
+                                ASResult result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
                                 details = new Hashtable();
                                 // Get closest list (Array or Vector)
                                 string closestListName = "", closestListItemType = "";
