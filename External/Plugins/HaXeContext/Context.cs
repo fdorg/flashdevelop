@@ -840,7 +840,12 @@ namespace HaXeContext
                     if (import.Name == cname)
                     {
                         if (import.Type.Length > import.Name.Length)
-                            package = import.Type.Substring(0, import.Type.Length - cname.Length - 1);
+                        {
+                            var type = import.Type;
+                            int temp = type.IndexOf('<');
+                            if (temp > 0) type = type.Substring(0, temp);
+                            package = type.Substring(0, type.LastIndexOf('.'));
+                        }
                         break;
                     }
                 }
@@ -869,7 +874,7 @@ namespace HaXeContext
         /// </summary>
         private ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
         {
-            ClassModel aClass = base.ResolveType(baseType, inFile);
+            ClassModel aClass = ResolveType(baseType, inFile);
             if (aClass.IsVoid()) return aClass;
 
             if (aClass.QualifiedName == "Dynamic")
