@@ -833,6 +833,11 @@ namespace HaXeContext
             }
             else 
             {
+                // search in file
+                foreach (ClassModel aClass in inFile.Classes)
+                    if (aClass.Name == cname)
+                        return aClass;
+
                 // search in imported classes
                 MemberList imports = ResolveImports(inFile);
                 foreach (MemberModel import in imports)
@@ -852,7 +857,6 @@ namespace HaXeContext
             }
 
             return GetModel(package, cname, inPackage);
-            //return base.ResolveType(cname, inFile);
         }
 
         ClassModel ResolveTypeByPackage(string package, string cname, FileModel inFile, string inPackage)
