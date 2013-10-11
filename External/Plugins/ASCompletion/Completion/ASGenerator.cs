@@ -1356,7 +1356,7 @@ namespace ASCompletion.Completion
             }
             else value = resolve.Member.Type;
 
-            if (value == "" || value == null)
+            if (string.IsNullOrEmpty(value))
                 return;
 
             Regex re1 = new Regex("'(?:[^'\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*'");
@@ -1758,11 +1758,7 @@ namespace ASCompletion.Completion
             }
 
             if (importsList.Count > 0)
-            {
-                int o = AddImportsByName(importsList, Sci.LineFromPosition(position));
-                position += o;
-                
-            }
+                position += AddImportsByName(importsList, Sci.LineFromPosition(position));
 
             Sci.SetSel(position, position);
             Sci.CurrentPos = position;
@@ -2597,8 +2593,9 @@ namespace ASCompletion.Completion
                     }
                     catch (Exception) { }
                 }
-                int o = AddImportsByName(l, Sci.LineFromPosition(position));
-                position += o;
+
+                position += AddImportsByName(l, Sci.LineFromPosition(position));
+
                 if (latest == null)
                     Sci.SetSel(position, Sci.WordEndPosition(position, true));
                 else
@@ -2786,13 +2783,9 @@ namespace ASCompletion.Completion
             ASFileParser parser = new ASFileParser();
             parser.ParseSrc(cFile, Sci.Text);
 
-            bool isAs3 = cFile.Context.Settings.LanguageId == "AS3";
-
             FoundDeclaration found = GetDeclarationAtLine(Sci, lineStart);
             if (found == null || found.member == null)
-            {
                 return;
-            }
 
             lookupPosition = Sci.CurrentPos;
             AddLookupPosition();
@@ -3190,7 +3183,8 @@ namespace ASCompletion.Completion
 
         private static string getQualifiedType(string type, ClassModel aType)
         {
-            if (type == null || type == "") return "*";
+            if (string.IsNullOrEmpty(type)) return "*";
+
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
                 Match mGeneric = Regex.Match(type, "<([^>]+)>");
@@ -3203,11 +3197,9 @@ namespace ASCompletion.Completion
             if (type.IndexOf('.') > 0) return type;
 
             ClassModel aClass = ASContext.Context.ResolveType(type, aType.InFile);
-            if (!aClass.IsVoid())
-            {
-                if (aClass.InFile.Package.Length != 0)
-                    return aClass.QualifiedName;
-            }
+            if (!aClass.IsVoid() && aClass.InFile.Package.Length != 0)
+                return aClass.QualifiedName;
+
             return "*";
         }
 
@@ -3281,10 +3273,7 @@ namespace ASCompletion.Completion
             {
                 string template = TemplateUtils.GetTemplate("Constant");
                 result = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                if (member.Value == null) 
-                    result = TemplateUtils.ReplaceTemplateVariable(result, "Value", null);
-                else
-                    result = TemplateUtils.ReplaceTemplateVariable(result, "Value", member.Value);
+                result = TemplateUtils.ReplaceTemplateVariable(result, "Value", member.Value);
             }
             else
             {
