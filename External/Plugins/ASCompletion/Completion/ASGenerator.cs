@@ -1285,10 +1285,10 @@ namespace ASCompletion.Completion
                     varname = GuessVarName(resolve.Member.Name, type);
             }
 
-            if (word != null && Char.IsDigit(word[0]))
+            if (!string.IsNullOrEmpty(word) && Char.IsDigit(word[0]))
                 word = null;
 
-            if (!string.IsNullOrEmpty(word) && Regex.IsMatch(type, "(<[^]]+>)"))
+            if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)")))
                 word = null;
 
             if (!string.IsNullOrEmpty(type) && type.Equals("void", StringComparison.OrdinalIgnoreCase))
