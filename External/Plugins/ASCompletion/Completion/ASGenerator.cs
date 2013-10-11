@@ -71,6 +71,9 @@ namespace ASCompletion.Completion
 
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
             contextResolved = resolve;
+
+            if (!GetCanShowHaxeContextualGenerator(resolve))
+                return;
             
             // ignore automatic vars (MovieClip members)
             if (resolve.Member != null &&
@@ -881,6 +884,20 @@ namespace ASCompletion.Completion
             return project.Language.StartsWith("as")
                 || project.Language.StartsWith("haxe")
                 || project.Language.StartsWith("loom");
+        }
+
+        private static bool GetCanShowHaxeContextualGenerator(ASResult resolve)
+        {
+            IProject project = PluginBase.CurrentProject;
+            if (project == null)
+                return false;
+
+            bool langIsHaxe = project.Language.StartsWith("haxe");
+            if (!langIsHaxe)
+                return true;
+
+            return resolve != null 
+                && resolve.InClass == null || (resolve.InClass != null && !resolve.InClass.IsEnum());
         }
 
         #endregion
