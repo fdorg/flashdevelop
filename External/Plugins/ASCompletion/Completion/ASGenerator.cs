@@ -1272,7 +1272,9 @@ namespace ASCompletion.Completion
                     type = resolve.Type.QualifiedName;
 
                     //TODO: quick fix, resolve.Type.QualifiedName => Vector<T> for as3
-                    type = type.Replace("<", ".<");
+                    IProject project = PluginBase.CurrentProject;
+                    if (project != null && project.Language.StartsWith("as"))
+                        type = type.Replace("<", ".<");
                 }
 
                 if (resolve.Member != null && resolve.Member.Name != null)
