@@ -896,8 +896,10 @@ namespace ASCompletion.Completion
             if (!langIsHaxe)
                 return true;
 
-            return resolve != null 
-                && resolve.InClass == null || (resolve.InClass != null && !resolve.InClass.IsEnum());
+            if (resolve.InClass != null && (resolve.InClass.IsEnum() || (resolve.InClass.Flags & FlagType.TypeDef) > 0))
+                return false;
+
+            return true;
         }
 
         #endregion
@@ -3062,6 +3064,9 @@ namespace ASCompletion.Completion
 
         private static string GuessVarName(string name, string type)
         {
+            if (string.IsNullOrEmpty(name) && string.IsNullOrEmpty(type))
+                return name;
+
             if (string.IsNullOrEmpty(name))
             {
                 Match m = Regex.Match(type, "^([a-z0-9_$]+)", RegexOptions.IgnoreCase);
