@@ -279,11 +279,10 @@ namespace ASCompletion.Completion
                 string ln = Sci.GetLine(curLine);
                 if (ln.Trim().Length > 0 && ln.TrimEnd().Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine))
                 {
-                    Regex re = new Regex("=");
-                    Match m = re.Match(ln);
-                    if (!m.Success)
+                    if (!string.IsNullOrEmpty(ln) && ln.IndexOf("=") == -1)
                     {
                         ShowAssignStatementToVarList(found);
+                        return;
                     }
                 }
             }
@@ -297,14 +296,11 @@ namespace ASCompletion.Completion
                 bool hasToString = false;
                 foreach (MemberModel m in members)
                 {
-                    if ((m.Flags & FlagType.Constructor) > 0)
-                    {
+                    if (!hasConstructor && (m.Flags & FlagType.Constructor) > 0)
                         hasConstructor = true;
-                    }
-                    if ((m.Flags & FlagType.Function) > 0 && m.Name.Equals("toString"))
-                    {
+
+                    if (!hasToString && (m.Flags & FlagType.Function) > 0 && m.Name.Equals("toString"))
                         hasToString = true;
-                    }
                 }
 
                 if (!hasConstructor || !hasToString)
@@ -1252,9 +1248,7 @@ namespace ASCompletion.Completion
             StatementReturnType returnType = GetStatementReturnType(Sci, inClass, line, Sci.PositionFromLine(lineNum));
 
             if (returnType == null)
-            {
                 return;
-            }
             
             string type = null;
             string varname = null;
@@ -1264,41 +1258,32 @@ namespace ASCompletion.Completion
             if (resolve != null && !resolve.IsNull())
             {
                 if (resolve.Member != null && resolve.Member.Type != null)
-                {
                     type = resolve.Member.Type;
-                }
                 else if (resolve.Type != null && resolve.Type.Name != null)
-                {
                     type = resolve.Type.QualifiedName;
 
-                    //TODO: quick fix, resolve.Type.QualifiedName => Vector<T> for as3
-                    type = type.Replace("<", ".<");
-                }
-
                 if (resolve.Member != null && resolve.Member.Name != null)
-                {
                     varname = GuessVarName(resolve.Member.Name, type);
-                }
             }
 
-            if (word != null && Char.IsDigit(word[0])) word = null;
+            if (word != null && Char.IsDigit(word[0]))
+                word = null;
 
-            if (!string.IsNullOrEmpty(word))
-            {
-                Match m = Regex.Match(type, "(<[^]]+>)");
-                if (m.Success)
-                    word = null;
-            }
+            if (!string.IsNullOrEmpty(word) && Regex.IsMatch(type, "(<[^]]+>)"))
+                word = null;
 
-            if (type.Equals("void", StringComparison.OrdinalIgnoreCase)) type = null;
+            if (!string.IsNullOrEmpty(type) && type.Equals("void", StringComparison.OrdinalIgnoreCase))
+                type = null;
 
-            if (varname == null) varname = GuessVarName(word, type);
+            if (string.IsNullOrEmpty(varname))
+                varname = GuessVarName(word, type);
 
-            if (varname != null && varname == word)
+            if (!string.IsNullOrEmpty(varname) && varname == word)
                 varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
 
             string cleanType = null;
-            if (type != null) cleanType = FormatType(GetShortType(type));
+            if (!string.IsNullOrEmpty(type))
+                cleanType = FormatType(GetShortType(type));
             
             string template = TemplateUtils.GetTemplate("AssignVariable");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
@@ -1311,7 +1296,7 @@ namespace ASCompletion.Completion
             Sci.SetSel(pos, pos);
             InsertCode(pos, template);
 
-            if (type != null)
+            if (!string.IsNullOrEmpty(type))
             {
                 ClassModel inClassForImport = null;
                 if (resolve.InClass != null)
@@ -3021,14 +3006,12 @@ namespace ASCompletion.Completion
                 }
                 if (type != null && type.IsVoid()) type = null;
             }
+
             if (resolve == null)
-            {
                 resolve = new ASResult();
-            }
+
             if (resolve.Type == null)
-            {
                 resolve.Type = type;
-            }
 
             return new StatementReturnType(resolve, pos, word);
         }
