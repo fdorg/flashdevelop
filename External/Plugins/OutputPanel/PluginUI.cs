@@ -26,7 +26,12 @@ namespace OutputPanel
         private ToolStripButton clearButton;
         private ToolStrip toolStrip;
         private Timer typingTimer;
+        private ToolStripButton toggleButton;
+        private ToolStripSeparator toolStripSeparator1;
         private Timer autoShow;
+        private bool scrolling;
+        private bool muted;
+        private ImageList imageList;
 
         public PluginUI(PluginMain pluginMain)
         {
@@ -36,6 +41,14 @@ namespace OutputPanel
             this.InitializeComponent();
             this.InitializeContextMenu();
             this.InitializeLayout();
+            this.imageList = new ImageList();
+            this.imageList.ColorDepth = ColorDepth.Depth32Bit;
+            this.imageList.TransparentColor = Color.Transparent;
+            this.imageList.Images.Add(PluginBase.MainForm.FindImage("146"));
+			this.imageList.Images.Add(PluginBase.MainForm.FindImage("147"));
+			this.imageList.Images.Add(PluginBase.MainForm.FindImage("147|17|5|4"));
+			this.scrolling = false;
+            this.toggleButton_Click(this, new EventArgs());
         }
 
         #region Windows Forms Designer Generated Code
@@ -47,12 +60,16 @@ namespace OutputPanel
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
             this.scrollTimer = new System.Timers.Timer();
             this.textLog = new System.Windows.Forms.RichTextBox();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
-            this.clearButton = new System.Windows.Forms.ToolStripButton();
+            this.toggleButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.findTextBox = new System.Windows.Forms.ToolStripSpringTextBox();
+            this.clearButton = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.scrollTimer)).BeginInit();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // scrollTimer
@@ -64,52 +81,70 @@ namespace OutputPanel
             // 
             // textLog
             // 
-            this.textLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.textLog.BackColor = System.Drawing.SystemColors.Window;
             this.textLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textLog.Location = new System.Drawing.Point(1, 22);
+            this.textLog.Location = new System.Drawing.Point(1, 26);
             this.textLog.Name = "textLog";
             this.textLog.ReadOnly = true;
-            this.textLog.Size = new System.Drawing.Size(278, 330);
+            this.textLog.Size = new System.Drawing.Size(278, 326);
             this.textLog.TabIndex = 1;
             this.textLog.Text = "";
             this.textLog.WordWrap = false;
-            this.textLog.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.LinkClicked);
             this.textLog.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginUIKeyDown);
+            this.textLog.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textLog_MouseUp);
+            this.textLog.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.LinkClicked);
+            this.textLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLog_MouseDown);
             // 
             // toolStrip
             // 
             this.toolStrip.CanOverflow = false;
-            this.toolStrip.Dock = System.Windows.Forms.DockStyle.Top;
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.findTextBox, this.clearButton });
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toggleButton,
+            this.toolStripSeparator1,
+            this.findTextBox,
+            this.clearButton});
+            this.toolStrip.Location = new System.Drawing.Point(1, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(1, 1, 2, 2);
-            this.toolStrip.Size = new System.Drawing.Size(298, 26);
+            this.toolStrip.Size = new System.Drawing.Size(278, 26);
             this.toolStrip.Stretch = true;
             this.toolStrip.TabIndex = 1;
             // 
+            // toggleButton
+            // 
+            this.toggleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toggleButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toggleButton.Name = "toggleButton";
+            this.toggleButton.Size = new System.Drawing.Size(23, 20);
+            this.toggleButton.Text = "toolStripButton1";
+            this.toggleButton.Click += new System.EventHandler(this.toggleButton_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 23);
+            // 
             // findTextBox
             //
-            this.findTextBox.Name = "FindTextBox";
-            this.findTextBox.Size = new System.Drawing.Size(200, 22);
-            this.findTextBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.findTextBox.TextChanged += new System.EventHandler(this.FindTextBoxTextChanged);
-            this.findTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginUIKeyDown);
-            this.findTextBox.Leave += new System.EventHandler(this.FindTextBoxLeave);
+			this.findTextBox.Name = "FindTextBox";
+			this.findTextBox.Size = new System.Drawing.Size(190, 23);
+			this.findTextBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
+			this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
+			this.findTextBox.TextChanged += new System.EventHandler(this.FindTextBoxTextChanged);
+			this.findTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginUIKeyDown);
+			this.findTextBox.Leave += new System.EventHandler(this.FindTextBoxLeave);
             this.findTextBox.Enter += new System.EventHandler(this.FindTextBoxEnter);
             // 
             // clearButton
             //
-            this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(23, 22);
+			this.clearButton.Name = "clearButton";
+			this.clearButton.Size = new System.Drawing.Size(23, 21);
             this.clearButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
-            this.clearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.clearButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.clearButton.Size = new System.Drawing.Size(23, 22);
-            this.clearButton.Click += new System.EventHandler(this.ClearButtonClick);
+			this.clearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.clearButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.clearButton.Click += new System.EventHandler(this.ClearButtonClick);
             // 
             // PluginUI
             // 
@@ -118,6 +153,8 @@ namespace OutputPanel
             this.Name = "PluginUI";
             this.Size = new System.Drawing.Size(280, 352);
             ((System.ComponentModel.ISupportInitialize)(this.scrollTimer)).EndInit();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -290,11 +327,19 @@ namespace OutputPanel
         /// </summary>
         public void AddTraces()
         {
+            if (this.muted) return;
+			if (!this.scrolling)
+			{
+				this.toggleButton.Image = this.imageList.Images[2];
+				return;
+			}
+//			SuspendResumeRedraw(true);
             IList<TraceItem> log = TraceManager.TraceLog;
             Int32 newCount = log.Count;
             if (newCount <= this.logCount)
             {
                 this.logCount = newCount;
+				//SuspendResumeRedraw(false);
                 return;
             }
             Int32 state;
@@ -303,6 +348,9 @@ namespace OutputPanel
             String newText = "";
             Color newColor = Color.Black;
             Color currentColor = Color.Black;
+            int oldSelectionStart = this.textLog.SelectionStart;
+            int oldSelectionLength = this.textLog.SelectionLength;
+			int visibPos = this.textLog.GetCharIndexFromPosition(Point.Empty);
             for (Int32 i = this.logCount; i < newCount; i++)
             {
                 entry = log[i];
@@ -368,9 +416,24 @@ namespace OutputPanel
                 this.textLog.SelectionColor = currentColor;
                 this.textLog.AppendText(newText);
             }
+			//this.textLog.Select(this.textLog.TextLength, 0);
+				if (oldSelectionLength != 0)
+				{
+					this.textLog.Select(oldSelectionStart, oldSelectionLength);
+				}
+				else if (scrolling)
+				{
+					this.textLog.Select(this.textLog.TextLength, 0);
+				}
+				else
+				{
+					this.textLog.Select(visibPos, 0);
+				}
+
             this.logCount = newCount;
             this.scrollTimer.Enabled = true;
             this.TypingTimerTick(null, null);
+			//SuspendResumeRedraw(false);
         }
 
         /// <summary>
@@ -534,13 +597,55 @@ namespace OutputPanel
         /// </summary>
         private void ClearCurrentSelection()
         {
-            Int32 curPos = this.textLog.SelectionStart + this.textLog.SelectionLength;
+			int oldSelectionStart = this.textLog.SelectionStart;
+			int oldSelectionLength = this.textLog.SelectionLength;
+			//Int32 curPos = this.textLog.SelectionStart + this.textLog.SelectionLength;
             this.textLog.Select(0, this.textLog.TextLength);
             this.textLog.SelectionBackColor = this.textLog.BackColor;
-            this.textLog.Select(curPos, 0);
+            //this.textLog.Select(curPos, 0);
+			this.textLog.Select(oldSelectionStart, oldSelectionLength);
         }
 
         #endregion
+
+        private void toggleButton_Click(object sender, EventArgs e)
+        {
+            this.scrolling = !this.scrolling;
+            this.toggleButton.Image = this.imageList.Images[(this.scrolling ? 0 : 1)];
+            this.toggleButton.ToolTipText = (this.scrolling ? TextHelper.GetString("ToolTip.StopScrolling") : TextHelper.GetString("ToolTip.StartScrolling"));
+			if (this.scrolling) this.AddTraces();
+        }
+
+        private void textLog_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.muted = true;
+        }
+
+        private void textLog_MouseUp(object sender, MouseEventArgs e)
+        {
+            this.muted = false;
+			this.AddTraces();
+        }
+
+		/*
+		private void SuspendResumeRedraw(bool suspend)
+		{
+			if (suspend)
+			{
+				SendMessage(this.Handle, WM_SETREDRAW, 0, 0);
+				SendMessage(this.textLog.Handle, WM_SETREDRAW, 0, 0);
+			}
+			else
+			{
+				SendMessage(this.textLog.Handle, WM_SETREDRAW, 1, 0);
+				SendMessage(this.Handle, WM_SETREDRAW, 1, 0);
+				this.Refresh();
+			}
+		}
+		[System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "SendMessageA", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Ansi, SetLastError = true)]
+		private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
+		private const int WM_SETREDRAW = 0xB;
+		*/
 
     }
 

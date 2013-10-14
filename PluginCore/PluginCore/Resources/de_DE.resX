@@ -4730,6 +4730,12 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDebugger.Title.Immediate" xml:space="preserve">
     <value>Immediate</value>
   </data>
+  <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
+    <value>Scroll starten</value>
+  </data>
+  <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
+    <value>Scroll stoppen</value>
+  </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">
     <value>Dokument&amp;klasse festlegen</value>
     <comment>Added after 3.3.4</comment>

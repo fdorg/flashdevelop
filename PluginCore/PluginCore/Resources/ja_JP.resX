@@ -4788,6 +4788,12 @@ UseData:"</value>
   <data name="FlashDebugger.Title.Immediate" xml:space="preserve">
     <value>イミディエイト</value>
   </data>
+  <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
+    <value>スクロール止まれ</value>
+  </data>
+  <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
+    <value>スクロール始め</value>
+  </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">
     <value>ドキュメントクラスに設定(&amp;C)</value>
     <comment>Added after 3.3.4</comment>
