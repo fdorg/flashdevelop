@@ -900,7 +900,7 @@ namespace AS3Context
             // clone the type
             ClassModel aClass = originalClass.Clone() as ClassModel;
 
-            aClass.Name = baseType + "<" + indexType + ">";
+            aClass.Name = baseType + ".<" + indexType + ">";
             aClass.IndexType = indexType;
 
             string typed = "<" + indexType + ">";
