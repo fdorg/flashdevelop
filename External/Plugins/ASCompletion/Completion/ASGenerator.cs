@@ -274,17 +274,13 @@ namespace ASCompletion.Completion
                 }
 
 
-                // "assign var to statement" siggestion
+                // "assign var to statement" suggestion
                 int curLine = Sci.LineFromPosition(Sci.CurrentPos);
                 string ln = Sci.GetLine(curLine);
-                if (ln.Trim().Length > 0 && ln.TrimEnd().Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine))
+                if (ln.Trim().Length > 0 && ln.TrimEnd().Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine) && ln.IndexOf("=") == -1)
                 {
-                    Regex re = new Regex("=");
-                    Match m = re.Match(ln);
-                    if (!m.Success)
-                    {
-                        ShowAssignStatementToVarList(found);
-                    }
+                    ShowAssignStatementToVarList(found);
+                    return;
                 }
             }
 
@@ -297,14 +293,11 @@ namespace ASCompletion.Completion
                 bool hasToString = false;
                 foreach (MemberModel m in members)
                 {
-                    if ((m.Flags & FlagType.Constructor) > 0)
-                    {
+                    if (!hasConstructor && (m.Flags & FlagType.Constructor) > 0)
                         hasConstructor = true;
-                    }
-                    if ((m.Flags & FlagType.Function) > 0 && m.Name.Equals("toString"))
-                    {
+
+                    if (!hasToString && (m.Flags & FlagType.Function) > 0 && m.Name.Equals("toString"))
                         hasToString = true;
-                    }
                 }
 
                 if (!hasConstructor || !hasToString)
