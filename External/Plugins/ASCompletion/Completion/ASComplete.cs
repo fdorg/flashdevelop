@@ -1353,6 +1353,10 @@ namespace ASCompletion.Completion
 
 		static public bool HandleFunctionCompletion(ScintillaControl Sci, bool autoHide, bool forceRedraw)
 		{
+            // only auto-complete where it makes sense
+            if (DeclarationSectionOnly()) 
+                return false;
+
             int position = Sci.CurrentPos - 1;
             int paramIndex = FindParameterIndex(Sci, ref position);
             if (position < 0) return false;
@@ -1707,6 +1711,10 @@ namespace ASCompletion.Completion
             //this method can exit at multiple points, so reset the current class now rather than later
             currentClassHash = null;
 
+            // only auto-complete where it makes sense
+            if (autoHide && DeclarationSectionOnly())
+                return false;
+
 			// get expression at cursor position
 			int position = Sci.CurrentPos;
 			ASExpr expr = GetExpression(Sci, position);
@@ -1911,6 +1919,14 @@ namespace ASCompletion.Completion
 			return true;
 		}
 
+        private static bool DeclarationSectionOnly()
+        {
+            ClassModel inClass = ASContext.Context.CurrentClass;
+            if (!inClass.IsVoid() && (inClass.Flags & (FlagType.Enum | FlagType.TypeDef | FlagType.Struct)) > 0)
+                return true;
+            return false;
+        }
+
         private static void AutoselectDotToken(ClassModel classScope, string tail)
         {
             // remember the latest class resolved for completion to store later the inserted member
@@ -2050,8 +2066,42 @@ namespace ASCompletion.Completion
 
 		static private bool HandleColonCompletion(ScintillaControl Sci, string tail, bool autoHide)
 		{
+            ComaExpression coma;
+            if (DeclarationSectionOnly()) coma = ComaExpression.FunctionDeclaration;
+            else coma = GetFunctionContext(Sci, autoHide);
+
+            if (coma != ComaExpression.FunctionDeclaration && coma != ComaExpression.VarDeclaration)
+                return false;
+
+            if (!ASContext.Context.Settings.LazyClasspathExploration
+                && ASContext.Context.Settings.CompletionListAllTypes)
+            {
+                // show all project classes
+                HandleAllClassesCompletion(Sci, tail, true, false);
+            }
+            else
+            {
+                bool outOfDate = ASContext.Context.UnsetOutOfDate();
+
+                // list visible classes
+                MemberList known = new MemberList();
+                ClassModel cClass = ASContext.Context.CurrentClass;
+                known.Merge(ASContext.Context.GetVisibleExternalElements(true));
+
+                // show
+                List<ICompletionListItem> list = new List<ICompletionListItem>();
+                foreach (MemberModel member in known)
+                    list.Add(new MemberItem(member));
+                CompletionList.Show(list, autoHide, tail);
+                if (outOfDate) ASContext.Context.SetOutOfDate();
+            }
+            return true;
+		}
+
+        private static ComaExpression GetFunctionContext(ScintillaControl Sci, bool autoHide)
+        {
             ComaExpression coma = ComaExpression.None;
-			int position = Sci.CurrentPos - 1;
+            int position = Sci.CurrentPos - 1;
             char c = ' ';
             //bool inGenericType = false;
             while (position > 0)
@@ -2106,38 +2156,12 @@ namespace ASCompletion.Completion
                 {
                     int pos = position - 1;
                     keyword = GetWordLeft(Sci, ref pos);
-                    if (keyword != "" && autoHide) return true;
+                    if (keyword != "" && autoHide) return ComaExpression.None;
                 }
                 coma = DisambiguateComa(Sci, position, 0);
             }
-
-            if (coma != ComaExpression.FunctionDeclaration && coma != ComaExpression.VarDeclaration)
-                return false;
-
-            if (!ASContext.Context.Settings.LazyClasspathExploration
-                && ASContext.Context.Settings.CompletionListAllTypes)
-            {
-                // show all project classes
-                HandleAllClassesCompletion(Sci, tail, true, false);
-            }
-            else
-            {
-                bool outOfDate = ASContext.Context.UnsetOutOfDate();
-
-                // list visible classes
-                MemberList known = new MemberList();
-                ClassModel cClass = ASContext.Context.CurrentClass;
-                known.Merge(ASContext.Context.GetVisibleExternalElements(true));
-
-                // show
-                List<ICompletionListItem> list = new List<ICompletionListItem>();
-                foreach (MemberModel member in known)
-                    list.Add(new MemberItem(member));
-                CompletionList.Show(list, autoHide, tail);
-                if (outOfDate) ASContext.Context.SetOutOfDate();
-            }
-            return true;
-		}
+            return coma;
+        }
 
         /// <summary>
         /// Display the full project classes list
