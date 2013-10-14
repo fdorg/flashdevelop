@@ -1051,6 +1051,7 @@ namespace FlashDevelop
             * Notify plugins that the application is ready
             */
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.UIStarted));
+            EventManager.DispatchEvent(this, new NotifyEvent(EventType.Completion));
             /**
             * Start polling for file changes outside of the editor
             */
