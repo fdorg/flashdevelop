@@ -1,3 +1,5 @@
+cd ..
+
 :: reset local files to original state
 @if "%1" neq "full" goto build
 del /S /Q FlashDevelop\Bin\Debug 
