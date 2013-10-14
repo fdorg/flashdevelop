@@ -1270,9 +1270,6 @@ namespace ASCompletion.Completion
                 else if (resolve.Type != null && resolve.Type.Name != null)
                 {
                     type = resolve.Type.QualifiedName;
-
-                    //TODO: quick fix, resolve.Type.QualifiedName => Vector<T> for as3
-                    type = type.Replace("<", ".<");
                 }
 
                 if (resolve.Member != null && resolve.Member.Name != null)
@@ -1283,14 +1280,11 @@ namespace ASCompletion.Completion
 
             if (word != null && Char.IsDigit(word[0])) word = null;
 
-            if (!string.IsNullOrEmpty(word))
-            {
-                Match m = Regex.Match(type, "(<[^]]+>)");
-                if (m.Success)
-                    word = null;
-            }
+            if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)")))
+                word = null;
 
-            if (type.Equals("void", StringComparison.OrdinalIgnoreCase)) type = null;
+            if (!string.IsNullOrEmpty(type) && type.Equals("void", StringComparison.OrdinalIgnoreCase))
+                type = null;
 
             if (varname == null) varname = GuessVarName(word, type);
 
