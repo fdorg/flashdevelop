@@ -51,6 +51,9 @@ namespace ASCompletion.Completion
             if (ASContext.Context is ASContext)
                 (ASContext.Context as ASContext).UpdateCurrentFile(false); // update model
 
+            if ((ASContext.Context.CurrentClass.Flags & (FlagType.Enum | FlagType.Interface | FlagType.TypeDef)) > 0)
+                return;
+
             lookupPosition = -1;
             int position = Sci.CurrentPos;
             if (Sci.BaseStyleAt(position) == 19) // on keyword
@@ -3049,7 +3052,7 @@ namespace ASCompletion.Completion
 
         private static string GuessVarName(string name, string type)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(type))
             {
                 Match m = Regex.Match(type, "^([a-z0-9_$]+)", RegexOptions.IgnoreCase);
                 if (m.Success)
