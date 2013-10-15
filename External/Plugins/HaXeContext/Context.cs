@@ -365,6 +365,10 @@ namespace HaXeContext
                         AddPath(specific);
                     }
                 }
+
+                // Haxe3/extralibs is a user global source location
+                string extraCP = Path.Combine(hxPath, "extralibs");
+                if (Directory.Exists(extraCP)) AddPath(extraCP);
             }
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
