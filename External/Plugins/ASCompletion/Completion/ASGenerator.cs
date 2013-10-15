@@ -71,7 +71,10 @@ namespace ASCompletion.Completion
 
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
             contextResolved = resolve;
-            
+
+            if (!GetCanShowContextualGenerator())
+                return;
+
             // ignore automatic vars (MovieClip members)
             if (resolve.Member != null &&
                 (((resolve.Member.Flags & FlagType.AutomaticVar) > 0)
@@ -878,6 +881,22 @@ namespace ASCompletion.Completion
             return project.Language.StartsWith("as")
                 || project.Language.StartsWith("haxe")
                 || project.Language.StartsWith("loom");
+        }
+
+        private static bool GetCanShowContextualGenerator()
+        {
+            IProject project = PluginBase.CurrentProject;
+            if (project == null)
+                return false;
+
+            if(!project.Language.StartsWith("haxe"))
+                return true;
+
+            ClassModel currentClass = ASContext.Context.CurrentClass;
+            if (currentClass.IsVoid() || (currentClass.Flags & (FlagType.TypeDef | FlagType.Enum)) > 0)
+                return false;
+
+            return true;
         }
 
         #endregion
