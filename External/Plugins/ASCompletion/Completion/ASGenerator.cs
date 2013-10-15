@@ -71,7 +71,10 @@ namespace ASCompletion.Completion
 
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
             contextResolved = resolve;
-            
+
+            if (!GetCanShowContextualGenerator())
+                return;
+
             // ignore automatic vars (MovieClip members)
             if (resolve.Member != null &&
                 (((resolve.Member.Flags & FlagType.AutomaticVar) > 0)
@@ -699,8 +702,6 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            string autoSelect = "";
-
             ASResult result = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
             if (!(result != null && result.RelClass != null))
             {
@@ -724,7 +725,6 @@ namespace ASCompletion.Completion
             if (isInterface)
             {
                 labelFunPublic = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
-                autoSelect = labelFunPublic;
             }
             known.Add(new GeneratorItem(labelFunPublic, GeneratorJobType.FunctionPublic, found.member, found.inClass));
 
@@ -878,6 +878,22 @@ namespace ASCompletion.Completion
             return project.Language.StartsWith("as")
                 || project.Language.StartsWith("haxe")
                 || project.Language.StartsWith("loom");
+        }
+
+        private static bool GetCanShowContextualGenerator()
+        {
+            IProject project = PluginBase.CurrentProject;
+            if (project == null)
+                return false;
+
+            if(!project.Language.StartsWith("haxe"))
+                return true;
+
+            ClassModel currentClass = ASContext.Context.CurrentClass;
+            if (currentClass.IsVoid() || (currentClass.Flags & (FlagType.TypeDef | FlagType.Enum)) > 0)
+                return false;
+
+            return true;
         }
 
         #endregion
@@ -3049,7 +3065,7 @@ namespace ASCompletion.Completion
 
         private static string GuessVarName(string name, string type)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(type))
             {
                 Match m = Regex.Match(type, "^([a-z0-9_$]+)", RegexOptions.IgnoreCase);
                 if (m.Success)
@@ -3172,7 +3188,7 @@ namespace ASCompletion.Completion
 
         private static string getQualifiedType(string type, ClassModel aType)
         {
-            if (type == null || type == "") return "*";
+            if (string.IsNullOrEmpty(type)) return "*";
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
                 Match mGeneric = Regex.Match(type, "<([^>]+)>");
@@ -3263,10 +3279,7 @@ namespace ASCompletion.Completion
             {
                 string template = TemplateUtils.GetTemplate("Constant");
                 result = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                if (member.Value == null) 
-                    result = TemplateUtils.ReplaceTemplateVariable(result, "Value", null);
-                else
-                    result = TemplateUtils.ReplaceTemplateVariable(result, "Value", member.Value);
+                result = TemplateUtils.ReplaceTemplateVariable(result, "Value", member.Value);
             }
             else
             {
