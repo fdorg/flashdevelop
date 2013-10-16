@@ -157,9 +157,6 @@ namespace CodeRefactor
         /// </summary>
         private void CreateMenuItems()
         {
-            MenuStrip mainMenu = PluginBase.MainForm.MenuStrip;
-            ContextMenuStrip editorMenu = PluginBase.MainForm.EditorMenu;
-            
             this.refactorMainMenu = new RefactorMenu(true);
             this.refactorMainMenu.RenameMenuItem.Click += this.RenameClicked;
             this.refactorMainMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
@@ -178,10 +175,12 @@ namespace CodeRefactor
             this.refactorContextMenu.ExtractLocalVariableMenuItem.Click += this.ExtractLocalVariableClicked;
             this.refactorContextMenu.CodeGeneratorMenuItem.Click += this.CodeGeneratorMenuItemClicked;
 
+            ContextMenuStrip editorMenu = PluginBase.MainForm.EditorMenu;
+
             this.surroundContextMenu = new SurroundMenu();
             editorMenu.Items.Insert(3, this.refactorContextMenu);
             editorMenu.Items.Insert(4, this.surroundContextMenu);
-            mainMenu.Items.Insert(5, this.refactorMainMenu);
+            PluginBase.MainForm.MenuStrip.Items.Insert(5, this.refactorMainMenu);
             ToolStripMenuItem searchMenu = PluginBase.MainForm.FindMenuItem("SearchMenu") as ToolStripMenuItem;
             this.viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
             this.editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
@@ -197,11 +196,10 @@ namespace CodeRefactor
         private Boolean LanguageIsHaxe()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable)
-            {
-                return document.SciControl.ConfigurationLanguage == "haxe";
-            }
-            else return false;
+            if (document == null || !document.IsEditable)
+                return false;
+
+            return document.SciControl.ConfigurationLanguage == "haxe";
         }
 
         /// <summary>
@@ -210,12 +208,15 @@ namespace CodeRefactor
         private Boolean GetLanguageIsValid()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable)
-            {
-                String lang = document.SciControl.ConfigurationLanguage;
-                return (lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"); // TODO look for /Snippets/Generators
-            }
-            else return false;
+            if (document == null || !document.IsEditable)
+                return false;
+
+            string lang = document.SciControl.ConfigurationLanguage;
+            return lang == "as2"
+                || lang == "as3"
+                || lang == "haxe"
+                || lang == "loom";
+            // TODO look for /Snippets/Generators
         }
 
         /// <summary>
@@ -233,18 +234,20 @@ namespace CodeRefactor
         {
             try
             {
-                ResolvedContext resolved = ASComplete.CurrentResolvedContext;
-                Boolean isValid = this.GetLanguageIsValid() && resolved != null && resolved.Position >= 0;
                 this.refactorMainMenu.DelegateMenuItem.Enabled = false;
                 this.refactorContextMenu.DelegateMenuItem.Enabled = false;
+
+                bool langIsValid = GetLanguageIsValid();
+                ResolvedContext resolved = ASComplete.CurrentResolvedContext;
+                bool isValid = langIsValid && resolved != null && resolved.Position >= 0;
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
                     this.refactorContextMenu.RenameMenuItem.Enabled = true;
                     this.refactorMainMenu.RenameMenuItem.Enabled = true;
-
                     this.editorReferencesItem.Enabled = true;
                     this.viewReferencesItem.Enabled = true;
+
                     if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
                     {
                         FlagType flags = result.Member.Flags;
@@ -262,24 +265,28 @@ namespace CodeRefactor
                     this.editorReferencesItem.Enabled = false;
                     this.viewReferencesItem.Enabled = false;
                 }
+
                 IASContext context = ASContext.Context;
                 if (context != null && context.CurrentModel != null)
                 {
-                    Boolean truncate = (this.GetLanguageIsValid() && context.CurrentModel.Imports.Count > 0);
-                    Boolean organize = (this.GetLanguageIsValid() && context.CurrentModel.Imports.Count > 1);
+                    bool truncate = (langIsValid && context.CurrentModel.Imports.Count > 0) && !this.LanguageIsHaxe();
+                    bool organize = (langIsValid && context.CurrentModel.Imports.Count > 1);
+
                     this.refactorContextMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorContextMenu.TruncateMenuItem.Enabled = truncate && !this.LanguageIsHaxe();
+                    this.refactorContextMenu.TruncateMenuItem.Enabled = truncate;
                     this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorMainMenu.TruncateMenuItem.Enabled = truncate && !this.LanguageIsHaxe();
+                    this.refactorMainMenu.TruncateMenuItem.Enabled = truncate;
                 }
+
                 this.surroundContextMenu.Enabled = false;
                 this.refactorMainMenu.SurroundMenu.Enabled = false;
                 this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
                 this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
+
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-                if (document != null && document.IsEditable && this.GetLanguageIsValid() && document.SciControl.SelTextSize > 1)
+                if (document != null && document.IsEditable && langIsValid && document.SciControl.SelTextSize > 1)
                 {
                     Int32 selEnd = document.SciControl.SelectionEnd;
                     Int32 selStart = document.SciControl.SelectionStart;
