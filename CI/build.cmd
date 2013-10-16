@@ -14,5 +14,3 @@ cd FlashDevelop\Bin\Debug
 del /S *.vshost.exe
 del /S *.vshost.exe.config
 del /S *.vshost.exe.manifest
-
-pause
