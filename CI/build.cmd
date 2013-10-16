@@ -6,11 +6,11 @@ del /S /Q FlashDevelop\Bin\Debug
 git reset HEAD --hard
 
 :build
-msbuild PluginCore\PluginCore.csproj /p:Configuration=Debug /p:Platform=x86
+msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86
 call SetVersion
-msbuild FlashDevelop.sln /p:Configuration=Debug /p:Platform=x86
+msbuild FlashDevelop\FlashDevelop.csproj /p:Configuration=Release /p:Platform=x86
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86
 
 :: remove debug files
 cd FlashDevelop\Bin\Debug
-del .multi
-del /S *.pdb
+del /S *.vshost.exe*
