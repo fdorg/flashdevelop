@@ -9,14 +9,25 @@ namespace SetVersion
 {
     class Program
     {
+        /// <summary>
+        /// 
+        /// </summary>
         static void Main(string[] args)
         {
             var git = ".git";
+            var output = args[0];
+            var revOut = output + ".rev";
+            if (!File.Exists(revOut))
+            {
+                Console.WriteLine("Template not found: " + revOut);
+                return;
+            }
             var head = File.ReadAllText(Path.Combine(git, "HEAD")).Trim();
             var headRef = Regex.Match(head, "ref: refs/heads/(.*)");
             if (!headRef.Success)
             {
-                Console.WriteLine("SetVersion: can not find HEAD ref");
+                Console.WriteLine("SetVersion: can not find HEAD ref, write null.");
+                WriteFile(output, revOut, "null", "null");
                 return;
             }
             var branch = headRef.Groups[1].Value;
@@ -28,18 +39,19 @@ namespace SetVersion
             }
             var commit = File.ReadAllText(refPath).Trim();
             if (commit.Length == 40) commit = commit.Substring(0, 10);
-            
-            var output = args[0];
-            var revOut = output + ".rev";
-            if (!File.Exists(revOut))
-            {
-                Console.WriteLine("Template not found: " + revOut);
-                return;
-            }
             Console.WriteLine("Set revision: " + branch + " " + commit);
+            WriteFile(output, revOut, commit, branch);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        static void WriteFile(String output, String revOut, String commit, String branch)
+        {
             var raw = File.ReadAllText(revOut);
             raw = raw.Replace("$BRANCH$", branch).Replace("$COMMIT$", commit);
             File.WriteAllText(output, raw);
         }
+
     }
 }
