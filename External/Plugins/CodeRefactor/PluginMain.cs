@@ -9,7 +9,6 @@ using ASCompletion.Model;
 using CodeRefactor.Commands;
 using CodeRefactor.Controls;
 using CodeRefactor.CustomControls;
-using CodeRefactor.Provider;
 using ProjectManager.Helpers;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -160,29 +159,32 @@ namespace CodeRefactor
         {
             MenuStrip mainMenu = PluginBase.MainForm.MenuStrip;
             ContextMenuStrip editorMenu = PluginBase.MainForm.EditorMenu;
+            
             this.refactorMainMenu = new RefactorMenu(true);
-            this.refactorMainMenu.RenameMenuItem.Click += new EventHandler(this.RenameClicked);
-            this.refactorMainMenu.OrganizeMenuItem.Click += new EventHandler(this.OrganizeImportsClicked);
-            this.refactorMainMenu.TruncateMenuItem.Click += new EventHandler(this.TruncateImportsClicked);
-            this.refactorMainMenu.ExtractMethodMenuItem.Click += new EventHandler(this.ExtractMethodClicked);
-            this.refactorMainMenu.DelegateMenuItem.Click += new EventHandler(this.DelegateMethodsClicked);
-            this.refactorMainMenu.ExtractLocalVariableMenuItem.Click += new EventHandler(this.ExtractLocalVariableClicked);
-            this.refactorMainMenu.CodeGeneratorMenuItem.Click += new EventHandler(this.CodeGeneratorMenuItemClicked);
+            this.refactorMainMenu.RenameMenuItem.Click += this.RenameClicked;
+            this.refactorMainMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
+            this.refactorMainMenu.TruncateMenuItem.Click += this.TruncateImportsClicked;
+            this.refactorMainMenu.ExtractMethodMenuItem.Click += this.ExtractMethodClicked;
+            this.refactorMainMenu.DelegateMenuItem.Click += this.DelegateMethodsClicked;
+            this.refactorMainMenu.ExtractLocalVariableMenuItem.Click += this.ExtractLocalVariableClicked;
+            this.refactorMainMenu.CodeGeneratorMenuItem.Click += this.CodeGeneratorMenuItemClicked;
+
             this.refactorContextMenu = new RefactorMenu(false);
-            this.refactorContextMenu.RenameMenuItem.Click += new EventHandler(this.RenameClicked);
-            this.refactorContextMenu.OrganizeMenuItem.Click += new EventHandler(this.OrganizeImportsClicked);
-            this.refactorContextMenu.TruncateMenuItem.Click += new EventHandler(this.TruncateImportsClicked);
-            this.refactorContextMenu.DelegateMenuItem.Click += new EventHandler(this.DelegateMethodsClicked);
-            this.refactorContextMenu.ExtractMethodMenuItem.Click += new EventHandler(this.ExtractMethodClicked);
-            this.refactorContextMenu.ExtractLocalVariableMenuItem.Click += new EventHandler(this.ExtractLocalVariableClicked);
-            this.refactorContextMenu.CodeGeneratorMenuItem.Click += new EventHandler(this.CodeGeneratorMenuItemClicked);
+            this.refactorContextMenu.RenameMenuItem.Click += this.RenameClicked;
+            this.refactorContextMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
+            this.refactorContextMenu.TruncateMenuItem.Click += this.TruncateImportsClicked;
+            this.refactorContextMenu.DelegateMenuItem.Click += this.DelegateMethodsClicked;
+            this.refactorContextMenu.ExtractMethodMenuItem.Click += this.ExtractMethodClicked;
+            this.refactorContextMenu.ExtractLocalVariableMenuItem.Click += this.ExtractLocalVariableClicked;
+            this.refactorContextMenu.CodeGeneratorMenuItem.Click += this.CodeGeneratorMenuItemClicked;
+
             this.surroundContextMenu = new SurroundMenu();
             editorMenu.Items.Insert(3, this.refactorContextMenu);
             editorMenu.Items.Insert(4, this.surroundContextMenu);
             mainMenu.Items.Insert(5, this.refactorMainMenu);
             ToolStripMenuItem searchMenu = PluginBase.MainForm.FindMenuItem("SearchMenu") as ToolStripMenuItem;
-            this.viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, new EventHandler(this.FindAllReferencesClicked));
-            this.editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, new EventHandler(this.FindAllReferencesClicked));
+            this.viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
+            this.editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
             PluginBase.MainForm.RegisterShortcutItem("SearchMenu.ViewReferences", this.viewReferencesItem);
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
