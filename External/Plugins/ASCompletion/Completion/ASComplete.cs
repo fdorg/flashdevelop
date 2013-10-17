@@ -1912,8 +1912,8 @@ namespace ASCompletion.Completion
 			CompletionList.Show(list, autoHide, tail);
 
             // smart focus token
-            if (!features.externalCompletion)
-                AutoselectDotToken(classScope, tail);
+            //if (!features.externalCompletion)
+            AutoselectDotToken(classScope, tail);
 
             if (outOfDate) ctx.SetOutOfDate();
 			return true;
@@ -1958,6 +1958,10 @@ namespace ASCompletion.Completion
                 return;
             string word = Sci.GetWordLeft(position-1, false);
 
+            // current list
+            string reSelect = null;
+            if (CompletionList.Active) reSelect = CompletionList.SelectedLabel;
+
             // show completion
             List<ICompletionListItem> customList = new List<ICompletionListItem>();
             bool testActive = !CompletionList.Active && expr.Position != position;
@@ -1968,6 +1972,8 @@ namespace ASCompletion.Completion
                 customList.Add(new MemberItem(member));
             }
             CompletionList.Show(customList, autoHide, word);
+
+            if (reSelect != null) CompletionList.SelectItem(reSelect);
         }
 
 		#endregion
