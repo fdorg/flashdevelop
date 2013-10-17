@@ -88,6 +88,7 @@
     <Compile Include="Commands\OrganizeImports.cs" />
     <Compile Include="Commands\FindAllReferences.cs" />
     <Compile Include="Commands\Rename.cs" />
+    <Compile Include="Commands\RenameFile.cs" />
     <Compile Include="Commands\SurroundWithCommand.cs" />
     <Compile Include="Controls\DelegateMethodsDialog.cs">
       <SubType>Form</SubType>
@@ -100,6 +101,12 @@
     </Compile>
     <Compile Include="Controls\RefactorMenu.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\RenameFileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\RenameFileDialog.Designer.cs">
+      <DependentUpon>RenameFileDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\SurroundMenu.cs">
       <SubType>Component</SubType>
