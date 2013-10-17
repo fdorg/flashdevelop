@@ -15,6 +15,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using PluginCore;
+using ProjectManager.Actions;
 
 namespace CodeRefactor
 {
@@ -133,6 +134,21 @@ namespace CodeRefactor
                     ASComplete.OnResolvedContextChanged += new ResolvedContextChangeHandler(this.OnResolvedContextChanged);
                     this.UpdateMenuItems();
                     break;
+
+                case EventType.Command:
+                    DataEvent de = (DataEvent)e;
+                    switch (de.Action)
+                    {
+                        case ProjectFileActionsEvents.FileBeforeRename:
+                            string backingPath = de.Data as string;
+                            if (string.IsNullOrEmpty(backingPath) || !GetBackingPathIsValid(backingPath))
+                                return;
+
+                            RenameFile(backingPath);
+                            de.Handled = true;
+                            break;
+                    }
+                    break;
             }
 		}
 
@@ -145,7 +161,7 @@ namespace CodeRefactor
         /// </summary>
         public void InitBasics()
         {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.FileSwitch);
+            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.FileSwitch | EventType.Command);
             String dataPath = Path.Combine(PathHelper.DataDir, "CodeRefactor");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
@@ -217,6 +233,19 @@ namespace CodeRefactor
                 || lang == "haxe"
                 || lang == "loom";
             // TODO look for /Snippets/Generators
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="backingPath"></param>
+        /// <returns></returns>
+        private static bool GetBackingPathIsValid(string backingPath)
+        {
+            string ext = Path.GetExtension(backingPath);
+            return ext == ".as"
+                || ext == ".hx"
+                || ext == ".ls";
         }
 
         /// <summary>
@@ -346,6 +375,22 @@ namespace CodeRefactor
             try
             {
                 Rename command = new Rename(true);
+                command.Execute();
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void RenameFile(string backingPath)
+        {
+            try
+            {
+                RenameFile command = new RenameFile(backingPath);
                 command.Execute();
             }
             catch (Exception ex)
