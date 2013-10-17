@@ -52,7 +52,7 @@ Caption "FlashDevelop ${VERSION} ${BUILD} Setup"
 UninstallCaption "FlashDevelop ${VERSION} ${BUILD} Uninstall"
 
 ; The file to write
-OutFile "Binary\FlashDevelop-${VERSION}-${BUILD}.exe"
+OutFile "Binary\FlashDevelop.exe"
 
 ; Default installation folder
 InstallDir "$PROGRAMFILES\FlashDevelop\"
