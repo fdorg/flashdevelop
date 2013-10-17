@@ -5,6 +5,7 @@
 !include "FileAssoc.nsh"
 !include "LogicLib.nsh"
 !include "WordFunc.nsh"
+!addplugindir "Plugins"
 
 ;--------------------------------
 
