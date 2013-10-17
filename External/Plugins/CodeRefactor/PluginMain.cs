@@ -144,10 +144,11 @@ namespace CodeRefactor
                             if (string.IsNullOrEmpty(backingPath) || !GetBackingPathIsValid(backingPath))
                                 return;
 
+                            string fullName = Path.GetFileNameWithoutExtension(backingPath);
                             MemberList projectClasses = ASContext.Context.GetAllProjectClasses();
                             foreach (MemberModel member in projectClasses)
                             {
-                                if (member.FullName.Equals(backingPath))
+                                if (member.FullName.Equals(fullName))
                                 {
                                     RenameFile(backingPath);
                                     de.Handled = true;
