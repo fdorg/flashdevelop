@@ -218,7 +218,8 @@ namespace FileExplorer
                 String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]);
                 int start = cmd.StartsWith("\"") ? cmd.IndexOf("\"", 2) : 0;
                 int p = cmd.IndexOf(" ", start);
-                if (!path.StartsWith("\"")) path = "\"" + path + "\"";
+                string quoted = !path.StartsWith("\"") ? path = "\"" + path + "\"" : path;
+                if (path.StartsWith("\"") && path.Length > 2) path = path.Substring(1, path.Length - 2);
                 // Start the process...
                 ProcessStartInfo psi = new ProcessStartInfo(p > 0 ? cmd.Substring(0, p) : cmd);
                 if (p > 0) psi.Arguments = String.Format(cmd.Substring(p + 1), path);
