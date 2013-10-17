@@ -105,9 +105,6 @@
     <Compile Include="Controls\RenameFileDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\RenameFileDialog.Designer.cs">
-      <DependentUpon>RenameFileDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\SurroundMenu.cs">
       <SubType>Component</SubType>
     </Compile>
