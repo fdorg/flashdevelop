@@ -133,10 +133,14 @@ namespace ProjectManager.Controls.TreeView
 			// disappears during a build
             foreach (GenericNode node in Nodes)
             {
-                if (node is ProjectOutputNode && !project.IsPathHidden((node as ProjectOutputNode).BackingPath))
-                    (node as ProjectOutputNode).Refresh(recursive);
-                else
-                    nodesToDie.Add(node);
+                if (node is ProjectOutputNode)
+                {
+                    var output = node as ProjectOutputNode;
+                    if (!project.IsPathHidden(output.BackingPath)) output.Refresh(recursive);
+                    else nodesToDie.Add(output);
+                }
+                else if (node is ReferencesNode) node.Refresh(recursive);
+                else nodesToDie.Add(node);
 
                 // add any mapped nodes
                 if (node is FileNode && !(node is SwfFileNode))

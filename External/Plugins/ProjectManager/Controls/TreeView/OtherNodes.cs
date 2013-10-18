@@ -6,6 +6,7 @@ using System.Diagnostics;
 using ProjectManager.Projects;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using ProjectManager.Projects.AS3;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -24,15 +25,11 @@ namespace ProjectManager.Controls.TreeView
 
 		public override void Refresh(bool recursive)
 		{
-            if (References != null && References.Parent == this) Nodes.Remove(References);
-
 			base.Refresh(recursive);
             Text = ProjectRef.Name + " (" + ProjectRef.Language.ToUpper() + ")";
 			ImageIndex = Icons.Project.Index;
 			SelectedImageIndex = ImageIndex;
             Expand();
-
-            if (References != null) Nodes.Insert(0, References);
             NotifyRefresh();
 		}
 
@@ -162,13 +159,121 @@ namespace ProjectManager.Controls.TreeView
 
     public class ReferencesNode : GenericNode
     {
-        public ReferencesNode(string projectPath, string text)
-            : base(Path.Combine(projectPath, "__References__"))
+        Project project;
+
+        public ReferencesNode(Project project, string text)
+            : base(Path.Combine(project.Directory, "__References__"))
         {
+            this.project = project;
             Text = text;
             ImageIndex = SelectedImageIndex = Icons.HiddenFolder.Index;
             isDraggable = false;
             isRenamable = false;
+        }
+
+        public override void Refresh(bool recursive)
+        {
+            ArrayList projectClasspaths = new ArrayList();
+            ArrayList globalClasspaths = new ArrayList();
+
+            GenericNodeList nodesToDie = new GenericNodeList();
+            foreach (GenericNode oldRef in Nodes) nodesToDie.Add(oldRef);
+            //if (Nodes.Count == 0) recursive = true;
+
+            // explore classpaths
+            if (PluginMain.Settings.ShowProjectClasspaths)
+            {
+                projectClasspaths.AddRange(project.Classpaths);
+                if (project.AdditionalPaths != null) projectClasspaths.AddRange(project.AdditionalPaths);
+            }
+
+            if (PluginMain.Settings.ShowGlobalClasspaths)
+                globalClasspaths.AddRange(PluginMain.Settings.GlobalClasspaths);
+
+            // create references nodes
+            ClasspathNode cpNode;
+            foreach (string projectClasspath in projectClasspaths)
+            {
+                string absolute = projectClasspath;
+                if (!Path.IsPathRooted(absolute))
+                    absolute = project.GetAbsolutePath(projectClasspath);
+                if ((absolute + "\\").StartsWith(project.Directory + "\\"))
+                    continue;
+                if (!project.ShowHiddenPaths && project.IsPathHidden(absolute))
+                    continue;
+
+                cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, absolute, projectClasspath);
+                Nodes.Add(cpNode);
+                cpNode.Refresh(recursive);
+            }
+
+            foreach (string globalClasspath in globalClasspaths)
+            {
+                string absolute = globalClasspath;
+                if (!Path.IsPathRooted(absolute))
+                    absolute = project.GetAbsolutePath(globalClasspath);
+                if (absolute.StartsWith(project.Directory + Path.DirectorySeparatorChar.ToString()))
+                    continue;
+
+                cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(project, absolute, globalClasspath);
+                Nodes.Add(cpNode);
+                cpNode.Refresh(recursive);
+            }
+
+            // add external libraries at the top level also
+            if (project is AS3Project)
+                foreach (LibraryAsset asset in (project as AS3Project).SwcLibraries)
+                {
+                    if (!asset.IsSwc) continue;
+                    // check if SWC is inside the project or inside a classpath
+                    string absolute = asset.Path;
+                    if (!Path.IsPathRooted(absolute))
+                        absolute = project.GetAbsolutePath(asset.Path);
+
+                    bool showNode = true;
+                    if (absolute.StartsWith(project.Directory))
+                        showNode = false;
+                    foreach (string path in project.AbsoluteClasspaths)
+                        if (absolute.StartsWith(path))
+                        {
+                            showNode = false;
+                            break;
+                        }
+                    foreach (string path in PluginMain.Settings.GlobalClasspaths)
+                        if (absolute.StartsWith(path))
+                        {
+                            showNode = false;
+                            break;
+                        }
+
+                    if (showNode && !project.ShowHiddenPaths && project.IsPathHidden(absolute))
+                        continue;
+
+                    if (showNode && File.Exists(absolute))
+                    {
+                        SwfFileNode swcNode = ReuseNode(absolute, nodesToDie) as SwfFileNode ?? new SwfFileNode(absolute);
+                        Nodes.Add(swcNode);
+                        swcNode.Refresh(recursive);
+                    }
+                }
+
+            foreach (GenericNode node in nodesToDie)
+            {
+                node.Dispose();
+                Nodes.Remove(node);
+            }
+        }
+
+        private GenericNode ReuseNode(string absolute, GenericNodeList nodesToDie)
+        {
+            foreach (GenericNode node in nodesToDie)
+                if (node.BackingPath == absolute)
+                {
+                    nodesToDie.Remove(node);
+                    Nodes.Remove(node);
+                    return node;
+                }
+            return null;
         }
     }
 }

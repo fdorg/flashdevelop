@@ -261,7 +261,7 @@ namespace ProjectManager.Controls.TreeView
                 return;
             }
             if (node is ProjectNode) AddProjectItems(menu);
-            else if (node is ClasspathNode) AddClasspathItems(menu);
+            else if (node is ClasspathNode) AddClasspathItems(menu, path);
             else if (node is DirectoryNode) AddFolderItems(menu, path);
             else if (node is ProjectOutputNode) AddProjectOutputItems(menu, node as ProjectOutputNode);
             else if (node is ExportNode) AddExportItems(menu, node as ExportNode);
@@ -304,7 +304,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Properties, 4);
         }
 
-        private void AddClasspathItems(MergableMenu menu)
+        private void AddClasspathItems(MergableMenu menu, string path)
         {
             menu.Add(AddMenu, 0);
             menu.Add(Browse, 0);
@@ -312,6 +312,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(ShellMenu, 0);
             menu.Add(Paste, 1);
             menu.Add(RemoveSourcePath, 2, true);
+            AddHideItems(menu, path, 3);
         }
 
         private void AddInvalidClassPathNodes(MergableMenu menu, string path)
@@ -437,15 +438,20 @@ namespace ProjectManager.Controls.TreeView
 
         private void AddFileItems(MergableMenu menu, string path, bool addPaste)
         {
-            bool hidden = project.IsPathHidden(path);
-            bool showHidden = project.ShowHiddenPaths;
             menu.Add(Cut, 1);
             menu.Add(Copy, 1);
             if (addPaste) menu.Add(Paste, 1);
             menu.Add(Delete, 1);
             menu.Add(Rename, 1);
-            menu.Add(ShowHidden, 3, showHidden);
-            menu.Add(HideItem, 3, hidden);
+            AddHideItems(menu, path, 3);
+        }
+
+        private void AddHideItems(MergableMenu menu, string path,int group)
+        {
+            bool hidden = project.IsPathHidden(path);
+            bool showHidden = project.ShowHiddenPaths;
+            menu.Add(ShowHidden, group, showHidden);
+            menu.Add(HideItem, group, hidden);
         }
 
         private void AddFileItems(MergableMenu menu, string path)

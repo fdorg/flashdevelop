@@ -1265,10 +1265,9 @@ namespace ProjectManager
 
         private void TreeHideItems()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedPath);
+            Project project = Tree.ProjectOf(Tree.SelectedPath) ?? Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.ToggleHidden(project, Tree.SelectedPaths);
-            // TODO we should be able to hide elements from a classpath reference
         }
 
         public void ToggleShowHidden()
