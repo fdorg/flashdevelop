@@ -217,7 +217,9 @@ namespace FlashLogViewer
                 if (!File.Exists(this.Settings.FlashLogFile))
                 {
                     if (!Directory.Exists(flashLogDir)) Directory.CreateDirectory(flashLogDir);
-                    this.Settings.FlashLogFile = Path.Combine(flashLogDir, "flashlog.txt");
+                    if (string.IsNullOrEmpty(this.Settings.FlashLogFile) || !File.Exists(this.Settings.FlashLogFile))
+                        this.Settings.FlashLogFile = Path.Combine(flashLogDir, "flashlog.txt");
+                    
                     File.WriteAllText(this.Settings.FlashLogFile, "", Encoding.UTF8);
                 }
             }
@@ -227,7 +229,8 @@ namespace FlashLogViewer
                 if (!File.Exists(this.Settings.PolicyLogFile))
                 {
                     if (!Directory.Exists(flashLogDir)) Directory.CreateDirectory(flashLogDir);
-                    this.Settings.PolicyLogFile = Path.Combine(flashLogDir, "policyfiles.txt");
+                    if (string.IsNullOrEmpty(this.Settings.PolicyLogFile) || !File.Exists(this.Settings.PolicyLogFile)) 
+                        this.Settings.PolicyLogFile = Path.Combine(flashLogDir, "policyfiles.txt");
                     File.WriteAllText(this.Settings.PolicyLogFile, "", Encoding.UTF8);
                 }
             }
