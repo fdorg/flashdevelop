@@ -162,15 +162,14 @@ namespace CodeRefactor
                                         break;
                                     }
                                 }
-
-                                foreach (MemberModel memberModel in fileModel.Members)
-                                {
-                                    if (memberModel.Equals(member))
-                                    {
-                                        inProject = true;
-                                        break;
-                                    }
-                                }
+                                
+                                if(!inProject)
+                                    foreach (MemberModel memberModel in fileModel.Members)
+                                        if (memberModel.Equals(member))
+                                        {
+                                            inProject = true;
+                                            break;
+                                        }
 
                                 if (inProject)
                                 {
