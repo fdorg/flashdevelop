@@ -6,7 +6,7 @@ $(CBI)* @author $(DefaultUser)
 $(CBI)*/
 class $(FileName)$(Extends)$(Implements)$(CSLB){
 
-	public function new($(ConstructorArguments)) $(CSLB){
+	$(Access)function new($(ConstructorArguments)) $(CSLB){
 		$(Super)$(EntryPoint)
 	}
 	

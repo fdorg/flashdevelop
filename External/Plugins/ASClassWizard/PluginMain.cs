@@ -395,7 +395,7 @@ namespace ASClassWizard
             }
             else if (lastFileOptions.Language == "haxe")
             {
-                access = lastFileOptions.isPublic ? "public " : "internal ";
+                access = lastFileOptions.isPublic ? "public " : "private ";
                 access += lastFileOptions.isDynamic ? "dynamic " : "";
             }
             else
