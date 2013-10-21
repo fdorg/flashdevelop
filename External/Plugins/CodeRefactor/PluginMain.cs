@@ -140,49 +140,67 @@ namespace CodeRefactor
                     switch (de.Action)
                     {
                         case ProjectFileActionsEvents.FileBeforeRename:
-                            string backingPath = de.Data as string;
-                            if (string.IsNullOrEmpty(backingPath) || !GetBackingPathIsValid(backingPath))
-                                return;
-
-                            bool inProject = false;
-                            string fullName = Path.GetDirectoryName(backingPath) + "\\" + Path.GetFileNameWithoutExtension(backingPath);
-                            FileModel fileModel = ASContext.Context.GetFileModel(backingPath);
-
-                            MemberList projectClasses = ASContext.Context.GetAllProjectClasses();
-                            foreach (MemberModel member in projectClasses)
+                            string backingPath = de.Data as String;
+                            if (FileIsProjectClass(backingPath))
                             {
-                                foreach (ClassModel classModel in fileModel.Classes)
-                                {
-                                    if(classModel.InFile == null)
-                                        continue;
-
-                                    if (classModel.InFile.GetBasePath() + "\\" + classModel.InFile.FullPackage.Replace('.', '\\') + "\\" + classModel.Name == fullName)
-                                    {
-                                        inProject = true;
-                                        break;
-                                    }
-                                }
-                                
-                                if(!inProject)
-                                    foreach (MemberModel memberModel in fileModel.Members)
-                                        if (memberModel.Equals(member))
-                                        {
-                                            inProject = true;
-                                            break;
-                                        }
-
-                                if (inProject)
-                                {
-                                    RenameFile(backingPath);
-                                    de.Handled = true;
-                                    break;
-                                }
+                                RenameFile(backingPath);
+                                de.Handled = true;
                             }
                             break;
                     }
                     break;
             }
 		}
+
+        private bool FileIsProjectClass(string backingPath)
+        {
+            if (string.IsNullOrEmpty(backingPath) || !GetBackingPathIsValid(backingPath))
+                return false;
+
+            string definitionName = Path.GetFileNameWithoutExtension(backingPath);
+            FileModel fileModel = ASContext.Context.GetFileModel(backingPath);
+
+            foreach(ClassModel aClass in fileModel.Classes)
+            {
+                if (aClass.Name == definitionName && aClass.InFile != null && aClass.InFile.FileName == backingPath)
+                {
+                    string type = aClass.QualifiedName;
+                    ClassModel control = ASContext.Context.ResolveType(type, null);
+                    return !control.IsVoid() && control.InFile.FileName == backingPath;
+                }
+            }
+
+            foreach(MemberModel member in fileModel.Members)
+            {
+                if (member.Name == definitionName && member.InFile != null && member.InFile.FileName == backingPath)
+                {
+                    string type = member.Name;
+                    if (!string.IsNullOrEmpty(member.InFile.Package)) type = member.InFile.Package + '.' + type;
+                    MemberList control = ASContext.Context.GetAllProjectClasses();
+                    foreach (MemberModel def in control)
+                    {
+                        if (def.Name == type && def.InFile != null && def.InFile.FileName == backingPath) 
+                            return true;
+                    }
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        private MemberModel FindDefinition(MemberModel[] memberList, string backingPath, string definitionName)
+        {
+            foreach (MemberModel member in memberList)
+            {
+                if (member.InFile == null)
+                    continue;
+
+                if (member.Name == definitionName && member.InFile.FileName == backingPath)
+                    return member;
+            }
+            return null;
+        }
 
         #endregion
    
