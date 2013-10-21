@@ -144,11 +144,34 @@ namespace CodeRefactor
                             if (string.IsNullOrEmpty(backingPath) || !GetBackingPathIsValid(backingPath))
                                 return;
 
-                            string fullName = Path.GetFileNameWithoutExtension(backingPath);
+                            bool inProject = false;
+                            string fullName = Path.GetDirectoryName(backingPath) + "\\" + Path.GetFileNameWithoutExtension(backingPath);
+                            FileModel fileModel = ASContext.Context.GetFileModel(backingPath);
+
                             MemberList projectClasses = ASContext.Context.GetAllProjectClasses();
                             foreach (MemberModel member in projectClasses)
                             {
-                                if (member.FullName.Equals(fullName))
+                                foreach (ClassModel classModel in fileModel.Classes)
+                                {
+                                    if(classModel.InFile == null)
+                                        continue;
+
+                                    if (classModel.InFile.GetBasePath() + "\\" + classModel.InFile.FullPackage.Replace('.', '\\') + "\\" + classModel.Name == fullName)
+                                    {
+                                        inProject = true;
+                                        break;
+                                    }
+                                }
+                                
+                                if(!inProject)
+                                    foreach (MemberModel memberModel in fileModel.Members)
+                                        if (memberModel.Equals(member))
+                                        {
+                                            inProject = true;
+                                            break;
+                                        }
+
+                                if (inProject)
                                 {
                                     RenameFile(backingPath);
                                     de.Handled = true;
