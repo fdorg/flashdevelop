@@ -11,6 +11,6 @@
 	<button label="Label.Save" click="Save" flags="Enable:IsEditable" />
 	<button label="Label.SaveAs" click="SaveAs" flags="Enable:IsEditable" />
 	<separator />
-  <button label="Label.CommandPrompt" click="PluginCommand" tag="FileExplorer.PromptHere;$(CurDir)" image="57" />
-  <button label="Label.WindowsExplorer" click="PluginCommand" tag="FileExplorer.Explore;$(CurDir)" image="56" />
+	<button label="Label.CommandPrompt" click="PluginCommand" tag="FileExplorer.PromptHere;$(CurDir)" image="57" />
+	<button label="Label.WindowsExplorer" click="PluginCommand" tag="FileExplorer.Explore;$(CurDir)" image="56" />
 </tabmenu>
