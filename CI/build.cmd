@@ -1,7 +1,10 @@
-:: Local tweaks
-::set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
-::set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
-::set PATH=%PATH%;C:\Program Files\7-Zip\
+:: Set paths
+set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
+set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
+set PATH=%PATH%;C:\Program Files (x86)\NSIS
+set PATH=%PATH%;C:\Program Files\7-Zip\
+
+:: Local build
 ::cd ..
 
 :: Reset bin files
@@ -26,7 +29,7 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86
 if %errorlevel% neq 0 goto :error
 
 :: Create the installer
-makensis.exe FlashDevelop\Installer\Installer.nsi
+makensis FlashDevelop\Installer\Installer.nsi
 
 :: Check for nsis errors
 if %errorlevel% neq 0 goto :error
