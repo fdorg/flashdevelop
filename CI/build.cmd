@@ -26,7 +26,7 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86
 if %errorlevel% neq 0 goto :error
 
 :: Create the installer
-CI\nsis\makensis.exe FlashDevelop\Installer\Installer.nsi
+makensis.exe FlashDevelop\Installer\Installer.nsi
 
 :: Check for nsis errors
 if %errorlevel% neq 0 goto :error
