@@ -126,13 +126,19 @@ namespace ProjectManager.Controls
             this.refreshButton.Click += new EventHandler(refreshButton_Click);
         }
 
-        void refreshButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        private void refreshButton_Click(object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        void OpenResourceForm_Activated(object sender, EventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        private void OpenResourceForm_Activated(object sender, EventArgs e)
         {
             if (openedFiles == null) this.CreateFileList();
             else
@@ -224,17 +230,23 @@ namespace ProjectManager.Controls
             openedFiles = new List<String>();
             foreach (string file in open)
             {
-                foreach(string folder in folders)
+                foreach (string folder in folders)
+                {
                     if (file.StartsWith(folder))
                     {
                         openedFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
                         break;
                     }
+                }
             }
             foreach (string file in prevOpen)
+            {
                 if (!openedFiles.Contains(file)) projectFiles.Add(file);
+            }
             foreach (string file in openedFiles)
+            {
                 if (projectFiles.Contains(file)) projectFiles.Remove(file);
+            }
         }
 
         /// <summary>
@@ -262,7 +274,14 @@ namespace ProjectManager.Controls
             List<String> open = new List<String>();
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
             {
-                if (doc.IsEditable && !doc.IsUntitled) open.Add(doc.FileName);
+                if (doc.IsEditable && !doc.IsUntitled) 
+                {
+                    String ext = Path.GetExtension(doc.FileName);
+                    if (Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, ext) == -1)
+                    {
+                        open.Add(doc.FileName);
+                    }
+                }
             }
             return open;
         }
@@ -288,10 +307,19 @@ namespace ProjectManager.Controls
         {
             if (Directory.Exists(folder) && !isFolderHidden(folder))
             {
-                files.AddRange(Directory.GetFiles(folder, "*.*"));
-
+                String[] temp = Directory.GetFiles(folder, "*.*");
+                foreach (string file in temp)
+                {
+                    String ext = Path.GetExtension(file);
+                    if (Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, ext) == -1)
+                    {
+                        files.Add(file);
+                    }
+                }
                 foreach (string sub in Directory.GetDirectories(folder))
+                {
                     AddFilesInFolder(files, sub);
+                }
             }
         }
 
@@ -335,7 +363,7 @@ namespace ProjectManager.Controls
             if (this.listBox.SelectedItem != null)
             {
                 String file = PluginBase.CurrentProject.GetAbsolutePath((string)this.listBox.SelectedItem);
-                PluginBase.MainForm.OpenEditableDocument(file);
+                plugin.OpenFile(file);
                 this.Close();
             }
         }
