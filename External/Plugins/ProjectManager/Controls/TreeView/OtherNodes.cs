@@ -10,28 +10,45 @@ using ProjectManager.Projects.AS3;
 
 namespace ProjectManager.Controls.TreeView
 {
-	public class ProjectNode : WatcherNode
-	{
+    public class ProjectNode : WatcherNode
+    {
         Project projectRef;
         ReferencesNode references;
         bool isActive;
 
-		public ProjectNode(Project project) : base(project.Directory)
-		{
+        public ProjectNode(Project project) : base(project.Directory)
+        {
             projectRef = project;
-			isDraggable = false;
-			isRenamable = false;
-		}
+            isDraggable = false;
+            isRenamable = false;
+        }
 
-		public override void Refresh(bool recursive)
-		{
-			base.Refresh(recursive);
+        public override void Refresh(bool recursive)
+        {
+            RemoveReferences();
+            base.Refresh(recursive);
+            RefreshReferences(recursive);
             Text = ProjectRef.Name + " (" + ProjectRef.Language.ToUpper() + ")";
-			ImageIndex = Icons.Project.Index;
-			SelectedImageIndex = ImageIndex;
+            ImageIndex = Icons.Project.Index;
+            SelectedImageIndex = ImageIndex;
             Expand();
             NotifyRefresh();
-		}
+        }
+
+        private void RefreshReferences(bool recursive)
+        {
+            if (References != null && References.Parent == null)
+            {
+                Nodes.Insert(0, References);
+                References.Refresh(recursive);
+            }
+        }
+
+        private void RemoveReferences()
+        {
+            if (References != null && References.Parent == this)
+                Nodes.Remove(References);
+        }
 
         public Project ProjectRef
         {
@@ -60,16 +77,16 @@ namespace ProjectManager.Controls.TreeView
                 Text = Text; // Reset text to update the font
             }
         }
-	}
+    }
 
-	public class ClasspathNode : WatcherNode
-	{
+    public class ClasspathNode : WatcherNode
+    {
         public string classpath;
 
-		public ClasspathNode(Project project, string classpath, string text) : base(classpath)
-		{
-			isDraggable = false;
-			isRenamable = false;
+        public ClasspathNode(Project project, string classpath, string text) : base(classpath)
+        {
+            isDraggable = false;
+            isRenamable = false;
 
             this.classpath = classpath;
 
@@ -100,12 +117,12 @@ namespace ProjectManager.Controls.TreeView
             label.Reverse();
             Text = String.Join("/", label.ToArray());
             ToolTipText = classpath;
-		}
+        }
 
-		public override void Refresh(bool recursive)
-		{
+        public override void Refresh(bool recursive)
+        {
 
-			base.Refresh(recursive);
+            base.Refresh(recursive);
 
             base.isInvalid = !Directory.Exists(BackingPath);
 
@@ -121,8 +138,8 @@ namespace ProjectManager.Controls.TreeView
             SelectedImageIndex = ImageIndex;
 
             NotifyRefresh();
-		}
-	}
+        }
+    }
 
     public class ProjectClasspathNode : ClasspathNode
     {
