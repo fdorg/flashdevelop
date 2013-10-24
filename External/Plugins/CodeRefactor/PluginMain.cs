@@ -14,8 +14,8 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore;
 using ProjectManager.Actions;
+using PluginCore;
 
 namespace CodeRefactor
 {
@@ -139,12 +139,14 @@ namespace CodeRefactor
                     DataEvent de = (DataEvent)e;
                     switch (de.Action)
                     {
-                        case ProjectFileActionsEvents.FileBeforeRename:
-                            string backingPath = de.Data as String;
-                            if (FileIsProjectClass(backingPath))
+                        case ProjectFileActionsEvents.FileRename:
+                            string[] args = de.Data as String[];
+                            string oldPath = args[0];
+                            string newPath = args[1];
+                            if (IsValidForRename(args[0], args[1]))
                             {
-                                RenameFile(backingPath);
-                                de.Handled = true;
+                                RenameFile(args[0], args[1]);
+                                e.Handled = true;
                             }
                             break;
                     }
@@ -152,54 +154,29 @@ namespace CodeRefactor
             }
 		}
 
-        private bool FileIsProjectClass(string backingPath)
+        /// <summary>
+        /// Checks if the file is valid for rename file command
+        /// </summary>
+        private bool IsValidForRename(string oldPath, string newPath)
         {
-            if (string.IsNullOrEmpty(backingPath) || !GetBackingPathIsValid(backingPath))
-                return false;
-
-            string definitionName = Path.GetFileNameWithoutExtension(backingPath);
-            FileModel fileModel = ASContext.Context.GetFileModel(backingPath);
-
-            foreach(ClassModel aClass in fileModel.Classes)
+            string oldExt = Path.GetExtension(oldPath);
+            string newExt = Path.GetExtension(newPath);
+            bool hasProject = PluginCore.PluginBase.CurrentProject != null;
+            if (File.Exists(oldPath) && hasProject && oldExt == newExt && IsValidFile(oldPath))
             {
-                if (aClass.Name == definitionName && aClass.InFile != null && aClass.InFile.FileName == backingPath)
-                {
-                    string type = aClass.QualifiedName;
-                    ClassModel control = ASContext.Context.ResolveType(type, null);
-                    return !control.IsVoid() && control.InFile.FileName == backingPath;
-                }
+                bool langMatch = PluginCore.PluginBase.CurrentProject.DefaultSearchFilter.Contains(oldExt);
+                if (langMatch) return true;
             }
-
-            foreach(MemberModel member in fileModel.Members)
-            {
-                if (member.Name == definitionName && member.InFile != null && member.InFile.FileName == backingPath)
-                {
-                    string type = member.Name;
-                    if (!string.IsNullOrEmpty(member.InFile.Package)) type = member.InFile.Package + '.' + type;
-                    MemberList control = ASContext.Context.GetAllProjectClasses();
-                    foreach (MemberModel def in control)
-                    {
-                        if (def.Name == type && def.InFile != null && def.InFile.FileName == backingPath) 
-                            return true;
-                    }
-                    return false;
-                }
-            }
-
             return false;
         }
 
-        private MemberModel FindDefinition(MemberModel[] memberList, string backingPath, string definitionName)
+        /// <summary>
+        /// Checks if the file is ok for refactoring
+        /// </summary>
+        private bool IsValidFile(string file)
         {
-            foreach (MemberModel member in memberList)
-            {
-                if (member.InFile == null)
-                    continue;
-
-                if (member.Name == definitionName && member.InFile.FileName == backingPath)
-                    return member;
-            }
-            return null;
+            string ext = Path.GetExtension(file);
+            return ext == ".as" || ext == ".hx" || ext == ".ls";
         }
 
         #endregion
@@ -231,7 +208,6 @@ namespace CodeRefactor
             this.refactorMainMenu.DelegateMenuItem.Click += this.DelegateMethodsClicked;
             this.refactorMainMenu.ExtractLocalVariableMenuItem.Click += this.ExtractLocalVariableClicked;
             this.refactorMainMenu.CodeGeneratorMenuItem.Click += this.CodeGeneratorMenuItemClicked;
-
             this.refactorContextMenu = new RefactorMenu(false);
             this.refactorContextMenu.RenameMenuItem.Click += this.RenameClicked;
             this.refactorContextMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
@@ -240,9 +216,7 @@ namespace CodeRefactor
             this.refactorContextMenu.ExtractMethodMenuItem.Click += this.ExtractMethodClicked;
             this.refactorContextMenu.ExtractLocalVariableMenuItem.Click += this.ExtractLocalVariableClicked;
             this.refactorContextMenu.CodeGeneratorMenuItem.Click += this.CodeGeneratorMenuItemClicked;
-
             ContextMenuStrip editorMenu = PluginBase.MainForm.EditorMenu;
-
             this.surroundContextMenu = new SurroundMenu();
             editorMenu.Items.Insert(3, this.refactorContextMenu);
             editorMenu.Items.Insert(4, this.surroundContextMenu);
@@ -262,9 +236,7 @@ namespace CodeRefactor
         private Boolean LanguageIsHaxe()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable)
-                return false;
-
+            if (document == null || !document.IsEditable) return false;
             return document.SciControl.ConfigurationLanguage == "haxe";
         }
 
@@ -274,28 +246,9 @@ namespace CodeRefactor
         private Boolean GetLanguageIsValid()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable)
-                return false;
-
+            if (document == null || !document.IsEditable) return false;
             string lang = document.SciControl.ConfigurationLanguage;
-            return lang == "as2"
-                || lang == "as3"
-                || lang == "haxe"
-                || lang == "loom";
-            // TODO look for /Snippets/Generators
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="backingPath"></param>
-        /// <returns></returns>
-        private static bool GetBackingPathIsValid(string backingPath)
-        {
-            string ext = Path.GetExtension(backingPath);
-            return ext == ".as"
-                || ext == ".hx"
-                || ext == ".ls";
+            return lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"; // TODO: look for /Snippets/Generators
         }
 
         /// <summary>
@@ -315,7 +268,6 @@ namespace CodeRefactor
             {
                 this.refactorMainMenu.DelegateMenuItem.Enabled = false;
                 this.refactorContextMenu.DelegateMenuItem.Enabled = false;
-
                 bool langIsValid = GetLanguageIsValid();
                 ResolvedContext resolved = ASComplete.CurrentResolvedContext;
                 bool isValid = langIsValid && resolved != null && resolved.Position >= 0;
@@ -344,7 +296,6 @@ namespace CodeRefactor
                     this.editorReferencesItem.Enabled = false;
                     this.viewReferencesItem.Enabled = false;
                 }
-
                 IASContext context = ASContext.Context;
                 if (context != null && context.CurrentModel != null)
                 {
@@ -356,14 +307,12 @@ namespace CodeRefactor
                     this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
                     this.refactorMainMenu.TruncateMenuItem.Enabled = truncate;
                 }
-
                 this.surroundContextMenu.Enabled = false;
                 this.refactorMainMenu.SurroundMenu.Enabled = false;
                 this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
                 this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
-
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
                 if (document != null && document.IsEditable && langIsValid && document.SciControl.SelTextSize > 1)
                 {
@@ -436,11 +385,11 @@ namespace CodeRefactor
         /// <summary>
         /// 
         /// </summary>
-        private void RenameFile(string backingPath)
+        private void RenameFile(string oldPath, string newPath)
         {
             try
             {
-                RenameFile command = new RenameFile(backingPath);
+                RenameFile command = new RenameFile(oldPath, newPath);
                 command.Execute();
             }
             catch (Exception ex)

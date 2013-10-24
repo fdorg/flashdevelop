@@ -1,30 +1,35 @@
-﻿﻿using ASCompletion.Context;
+﻿using System;﻿
+using System.IO;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Controls;
 using CodeRefactor.Provider;
-using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using ScintillaNet;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Localization;
 
 namespace CodeRefactor.Commands
 {
     class RenameFile : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private readonly string path;
+        private string oldPath;
+        private string newPath;
         private readonly bool outputResults;
 
-        public RenameFile(String path) : this(path, true)
+        public RenameFile(String oldPath, String newPath) : this(oldPath, newPath, true)
         {
+            this.oldPath = oldPath;
+            this.newPath = newPath;
         }
 
-        public RenameFile(String path, Boolean outputResults)
+        public RenameFile(String oldPath, String newPath, Boolean outputResults)
         {
-            this.path = path;
+            this.oldPath = oldPath;
+            this.newPath = newPath;
             this.outputResults = outputResults;
         }
 
@@ -32,69 +37,47 @@ namespace CodeRefactor.Commands
 
         protected override void ExecutionImplementation()
         {
-            string oldName = Path.GetFileNameWithoutExtension(path);
-
-            RenameFileDialog dialog = UserInterfaceManager.RenameFileDialog;
-            dialog.ShowDialogFor(path);
-
-            if (dialog.DialogResult == DialogResult.OK)
+            String oldName = Path.GetFileNameWithoutExtension(oldPath);
+            String newName = Path.GetFileNameWithoutExtension(newPath);
+            String msg = TextHelper.GetString("Info.RenamingFile");
+            String title = String.Format(TextHelper.GetString("Title.RenameDialog"), oldName);
+            if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                string newName = dialog.NewName.Text;
-
-                if (dialog.UpdateReferences.Checked)
+                Int32 line = 0;
+                PluginBase.MainForm.OpenEditableDocument(oldPath, false);
+                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                if (sci == null) return; // Should not happen...
+                List<ClassModel> classes = ASContext.Context.CurrentModel.Classes;
+                if (classes.Count > 0)
                 {
-                    PluginBase.MainForm.OpenEditableDocument(path, false);
-                    ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                    if (sci == null)
-                        return;
-
-                    string line = null;
-
-                    List<ClassModel> classes = ASContext.Context.CurrentModel.Classes;
-                    if (classes.Count > 0)
+                    foreach (ClassModel classModel in classes)
                     {
-                        foreach (ClassModel classModel in classes)
-                            if (classModel.Name.Equals(oldName))
-                                line = sci.GetLine(classModel.LineFrom);
+                        if (classModel.Name.Equals(oldName)) line = classModel.LineFrom;
                     }
-                    else
-                    {
-                        MemberList members = ASContext.Context.CurrentModel.Members;
-                        foreach (MemberModel member in members)
-                            if (member.Name.Equals(oldName))
-                                line = sci.GetLine(member.LineFrom);
-                    }
-
-                    if (string.IsNullOrEmpty(line))
-                        return;
-
-                    sci.SelectText(oldName, line.IndexOf(oldName));
-
-                    Rename command = new Rename(RefactoringHelper.GetDefaultRefactorTarget(), true, newName);
-                    command.Execute();
                 }
                 else
                 {
-                    string fullPath = Path.GetFullPath(path);
-                    fullPath = Path.GetDirectoryName(fullPath);
-                    
-                    string newFileName = Path.Combine(fullPath, newName + Path.GetExtension(path));
-                    bool reOpen = false;
-
-                    foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
-                        if (doc.FileName.Equals(path))
-                        {
-                            doc.Save();
-                            doc.Close();
-
-                            reOpen = true;
-                            break;
-                        }
-
-                    File.Move(path, newFileName);
-                    if(reOpen)
-                        PluginBase.MainForm.OpenEditableDocument(newFileName, false);
+                    MemberList members = ASContext.Context.CurrentModel.Members;
+                    foreach (MemberModel member in members)
+                    {
+                        if (member.Name.Equals(oldName)) line = member.LineFrom;
+                    }
                 }
+                sci.SelectText(oldName, sci.PositionFromLine(line));
+                Rename command = new Rename(RefactoringHelper.GetDefaultRefactorTarget(), true, newName);
+                command.Execute();
+            }
+            else
+            {
+                oldName = Path.GetFileName(oldPath);
+                if (oldName.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // name casing changed
+                    string tmpPath = newPath + "$renaming$";
+                    File.Move(oldPath, tmpPath);
+                    oldPath = tmpPath;
+                }
+                File.Move(oldPath, newPath);
             }
         }
 
@@ -106,4 +89,5 @@ namespace CodeRefactor.Commands
         #endregion
 
     }
+
 }

@@ -5031,16 +5031,8 @@
     <value>Specifies when pressing Enter key inserts the completion list item.</value>
     <comment>Added after 4.4.3</comment>
   </data>
-  <data name="CodeRefactor.Label.EnterName" xml:space="preserve">
-    <value>Enter a new name.</value>
-    <comment>Added after 4.4.3</comment>
-  </data>
-  <data name="CodeRefactor.Label.NameTaken" xml:space="preserve">
-    <value>Name {0} is already taken.</value>
-    <comment>Added after 4.4.3</comment>
-  </data>
-  <data name="CodeRefactor.Label.NotAValidId" xml:space="preserve">
-    <value>New name is not a valid indentifier.</value>
+  <data name="CodeRefactor.Info.RenamingFile" xml:space="preserve">
+    <value>You are renaming a file. Do you also want to update the references?</value>
     <comment>Added after 4.4.3</comment>
   </data>
 </root>
