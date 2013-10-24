@@ -63,22 +63,27 @@ namespace CodeRefactor.Commands
                         if (member.Name.Equals(oldFileName)) line = member.LineFrom;
                     }
                 }
-                sci.SelectText(oldFileName, sci.PositionFromLine(line));
-                Rename command = new Rename(RefactoringHelper.GetDefaultRefactorTarget(), true, newFileName);
-                command.Execute();
-            }
-            else
-            {
-                if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
+                if (line > 0)
                 {
-                    // name casing changed
-                    string tmpPath = oldPath + "$renaming$";
-                    File.Move(oldPath, tmpPath);
-                    oldPath = tmpPath;
+                    sci.SelectText(oldFileName, sci.PositionFromLine(line));
+                    Rename command = new Rename(RefactoringHelper.GetDefaultRefactorTarget(), true, newFileName);
+                    command.Execute();
+                    return;
                 }
-                if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-                File.Move(oldPath, newPath);
             }
+
+            // refactor failed or was refused
+            if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
+            {
+                // name casing changed
+                string tmpPath = oldPath + "$renaming$";
+                File.Move(oldPath, tmpPath);
+                oldPath = tmpPath;
+            }
+            if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+
+            File.Move(oldPath, newPath);
+            PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
         }
 
         public override Boolean IsValid()

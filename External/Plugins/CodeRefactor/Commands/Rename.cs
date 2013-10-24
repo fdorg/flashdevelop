@@ -212,9 +212,8 @@ namespace CodeRefactor.Commands
                 }
 
             File.Move(oldFileName, newFileName);
+            PluginCore.Managers.DocumentManager.MoveDocuments(oldFileName, newFileName);
             PluginBase.MainForm.OpenEditableDocument(newFileName, false);
-
-            //TODO: report
         }
 
         /// <summary>
