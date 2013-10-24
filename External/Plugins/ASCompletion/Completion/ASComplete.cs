@@ -3944,31 +3944,7 @@ namespace ASCompletion.Completion
         public MemberItem(MemberModel oMember)
         {
             member = oMember;
-            FlagType type = member.Flags;
-            Visibility acc = member.Access;
-            icon = PluginUI.ICON_TYPE;
-            if ((type & (FlagType.Getter | FlagType.Setter)) > 0)
-                icon = ((acc & Visibility.Private) > 0) ? PluginUI.ICON_PRIVATE_PROPERTY :
-                    ((acc & Visibility.Protected) > 0) ? PluginUI.ICON_PROTECTED_PROPERTY : PluginUI.ICON_PROPERTY;
-            else if ((type & FlagType.Constant) > 0)
-                icon = ((acc & Visibility.Private) > 0) ? PluginUI.ICON_PRIVATE_CONST :
-                    ((acc & Visibility.Protected) > 0) ? PluginUI.ICON_PROTECTED_CONST : PluginUI.ICON_CONST;
-            else if ((type & FlagType.Variable) > 0)
-                icon = ((acc & Visibility.Private) > 0) ? PluginUI.ICON_PRIVATE_VAR :
-                    ((acc & Visibility.Protected) > 0) ? PluginUI.ICON_PROTECTED_VAR : PluginUI.ICON_VAR;
-			else if ((type & FlagType.Function) > 0)
-				icon = ((acc & Visibility.Private) > 0) ? PluginUI.ICON_PRIVATE_FUNCTION :
-					((acc & Visibility.Protected) > 0) ? PluginUI.ICON_PROTECTED_FUNCTION : PluginUI.ICON_FUNCTION;
-            else if ((type & FlagType.Intrinsic) > 0)
-                icon = PluginUI.ICON_INTRINSIC_TYPE;
-            else if ((type & FlagType.Interface) > 0)
-                icon = PluginUI.ICON_INTERFACE;
-            else if (type == FlagType.Package)
-                icon = PluginUI.ICON_PACKAGE;
-            else if (type == FlagType.Declaration)
-                icon = PluginUI.ICON_DECLARATION;
-            else if (type == FlagType.Template)
-                icon = PluginUI.ICON_TEMPLATE;
+            icon = PluginUI.GetIcon(member.Flags, member.Access); 
         }
 
         public string Label

@@ -136,10 +136,6 @@
     <EmbeddedResource Include="Icons\Template.png" />
     <EmbeddedResource Include="Icons\Variable.png" />
     <EmbeddedResource Include="Icons\VariablePrivate.png" />
-    <EmbeddedResource Include="PluginUI.resx">
-      <DependentUpon>PluginUI.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -187,5 +183,24 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Const.png" />
+    <EmbeddedResource Include="Icons\ConstPrivate.png" />
+    <EmbeddedResource Include="Icons\ConstProtected.png" />
+    <EmbeddedResource Include="Icons\Declaration.png" />
+    <EmbeddedResource Include="Icons\Interface.png" />
+    <EmbeddedResource Include="Icons\MethodProtected.png" />
+    <EmbeddedResource Include="Icons\MethodStatic.png" />
+    <EmbeddedResource Include="Icons\MethodStaticPrivate.png" />
+    <EmbeddedResource Include="Icons\MethodStaticProtected.png" />
+    <EmbeddedResource Include="Icons\PropertyProtected.png" />
+    <EmbeddedResource Include="Icons\PropertyStatic.png" />
+    <EmbeddedResource Include="Icons\PropertyStaticPrivate.png" />
+    <EmbeddedResource Include="Icons\PropertyStaticProtected.png" />
+    <EmbeddedResource Include="Icons\VariableProtected.png" />
+    <EmbeddedResource Include="Icons\VariableStatic.png" />
+    <EmbeddedResource Include="Icons\VariableStaticPrivate.png" />
+    <EmbeddedResource Include="Icons\VariableStaticProtected.png" />
   </ItemGroup>
 </Project>

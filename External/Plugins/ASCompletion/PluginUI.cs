@@ -19,6 +19,8 @@ using ASCompletion.Context;
 using ASCompletion.Settings;
 using PluginCore.Localization;
 using System.Drawing;
+using ASCompletion.Properties;
+using System.Reflection;
 
 namespace ASCompletion
 {
@@ -39,17 +41,29 @@ namespace ASCompletion
         public const int ICON_VAR = 9;
         public const int ICON_PROTECTED_VAR = 10;
         public const int ICON_PRIVATE_VAR = 11;
-        public const int ICON_CONST = 12;
-        public const int ICON_PROTECTED_CONST = 13;
-        public const int ICON_PRIVATE_CONST = 14;
-        public const int ICON_FUNCTION = 15;
-        public const int ICON_PROTECTED_FUNCTION = 16;
-        public const int ICON_PRIVATE_FUNCTION = 17;
-        public const int ICON_PROPERTY = 18;
-        public const int ICON_PROTECTED_PROPERTY = 19;
-        public const int ICON_PRIVATE_PROPERTY = 20;
-        public const int ICON_TEMPLATE = 21;
-        public const int ICON_DECLARATION = 22;
+        public const int ICON_STATIC_VAR = 12;
+        public const int ICON_STATIC_PROTECTED_VAR = 13;
+        public const int ICON_STATIC_PRIVATE_VAR = 14;
+        public const int ICON_CONST = 15;
+        public const int ICON_PROTECTED_CONST = 16;
+        public const int ICON_PRIVATE_CONST = 17;
+        public const int ICON_STATIC_CONST = 18;
+        public const int ICON_STATIC_PROTECTED_CONST = 19;
+        public const int ICON_STATIC_PRIVATE_CONST = 20;
+        public const int ICON_FUNCTION = 21;
+        public const int ICON_PROTECTED_FUNCTION = 22;
+        public const int ICON_PRIVATE_FUNCTION = 23;
+        public const int ICON_STATIC_FUNCTION = 24;
+        public const int ICON_STATIC_PROTECTED_FUNCTION = 25;
+        public const int ICON_STATIC_PRIVATE_FUNCTION = 26;
+        public const int ICON_PROPERTY = 27;
+        public const int ICON_PROTECTED_PROPERTY = 28;
+        public const int ICON_PRIVATE_PROPERTY = 29;
+        public const int ICON_STATIC_PROPERTY = 30;
+        public const int ICON_STATIC_PROTECTED_PROPERTY = 31;
+        public const int ICON_STATIC_PRIVATE_PROPERTY = 32;
+        public const int ICON_TEMPLATE = 33;
+        public const int ICON_DECLARATION = 34;
 
         public int LookupCount
         {
@@ -106,6 +120,44 @@ namespace ASCompletion
         {
             InitializeComponent();
 
+            treeIcons.Images.AddRange( new Bitmap[] {
+                new Bitmap(GetStream("FilePlain.png")),
+                new Bitmap(GetStream("FolderClosed.png")),
+                new Bitmap(GetStream("FolderOpen.png")),
+                new Bitmap(GetStream("CheckAS.png")),
+                new Bitmap(GetStream("QuickBuild.png")),
+                new Bitmap(GetStream("Package.png")),
+                new Bitmap(GetStream("Interface.png")),
+                new Bitmap(GetStream("Intrinsic.png")),
+                new Bitmap(GetStream("Class.png")),
+                new Bitmap(GetStream("Variable.png")),
+                new Bitmap(GetStream("VariableProtected.png")),
+                new Bitmap(GetStream("VariablePrivate.png")),
+                new Bitmap(GetStream("VariableStatic.png")),
+                new Bitmap(GetStream("VariableStaticProtected.png")),
+                new Bitmap(GetStream("VariableStaticPrivate.png")),
+                new Bitmap(GetStream("Const.png")),
+                new Bitmap(GetStream("ConstProtected.png")),
+                new Bitmap(GetStream("ConstPrivate.png")),
+                new Bitmap(GetStream("Const.png")),
+                new Bitmap(GetStream("ConstProtected.png")),
+                new Bitmap(GetStream("ConstPrivate.png")),
+                new Bitmap(GetStream("Method.png")),
+                new Bitmap(GetStream("MethodProtected.png")),
+                new Bitmap(GetStream("MethodPrivate.png")),
+                new Bitmap(GetStream("MethodStatic.png")),
+                new Bitmap(GetStream("MethodStaticProtected.png")),
+                new Bitmap(GetStream("MethodStaticPrivate.png")),
+                new Bitmap(GetStream("Property.png")),
+                new Bitmap(GetStream("PropertyProtected.png")),
+                new Bitmap(GetStream("PropertyPrivate.png")),
+                new Bitmap(GetStream("PropertyStatic.png")),
+                new Bitmap(GetStream("PropertyStaticProtected.png")),
+                new Bitmap(GetStream("PropertyStaticPrivate.png")),
+                new Bitmap(GetStream("Template.png")),
+                new Bitmap(GetStream("Declaration.png"))
+            });
+
             toolStrip.Renderer = new DockPanelStripRenderer();
             toolStrip.Padding = new Padding(2, 1, 2, 2);
             sortDropDown.Font = PluginBase.Settings.DefaultFont;
@@ -129,6 +181,15 @@ namespace ASCompletion
             outlineTree.ShowNodeToolTips = true;
             Controls.Add(outlineTree);
             outlineTree.BringToFront();
+        }
+
+        public static System.IO.Stream GetStream(String name)
+        {
+            String prefix = "ASCompletion.Icons.";
+            List<string> resources = new List<string>(Assembly.GetExecutingAssembly().GetManifestResourceNames());
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream(prefix + name);
+            return stream;
         }
 
         private void InitializeTexts()
@@ -156,6 +217,53 @@ namespace ASCompletion
             if (treeIcons.Images.Count > 0)
                 return treeIcons.Images[Math.Min(index, treeIcons.Images.Count)];
             else return null;
+        }
+
+        static public int GetIcon(FlagType flag, Visibility access)
+        {
+            int rst = 0;
+            bool isStatic = (flag & FlagType.Static) > 0;
+
+            if ((flag & FlagType.Constant) > 0)
+            {
+                rst = ((access & Visibility.Private) > 0) ? ICON_PRIVATE_CONST :
+                    ((access & Visibility.Protected) > 0) ? ICON_PROTECTED_CONST : ICON_CONST;
+                if (isStatic) rst += 3;
+            }
+            else if ((flag & FlagType.Variable) > 0)
+            {
+                rst = ((access & Visibility.Private) > 0) ? ICON_PRIVATE_VAR :
+                    ((access & Visibility.Protected) > 0) ? ICON_PROTECTED_VAR : ICON_VAR;
+                if (isStatic) rst += 3;
+            }
+            else if ((flag & (FlagType.Getter | FlagType.Setter)) > 0)
+            {
+                rst = ((access & Visibility.Private) > 0) ? ICON_PRIVATE_PROPERTY :
+                    ((access & Visibility.Protected) > 0) ? ICON_PROTECTED_PROPERTY : ICON_PROPERTY;
+                if (isStatic) rst += 3;
+            }
+            else if ((flag & FlagType.Function) > 0)
+            {
+                rst = ((access & Visibility.Private) > 0) ? ICON_PRIVATE_FUNCTION :
+                    ((access & Visibility.Protected) > 0) ? ICON_PROTECTED_FUNCTION : ICON_FUNCTION;
+                if (isStatic) rst += 3;
+            }
+            else if ((flag & (FlagType.Interface | FlagType.TypeDef)) > 0)
+            {
+                rst = ICON_INTERFACE;
+            }
+            else if (flag == FlagType.Package)
+                rst = PluginUI.ICON_PACKAGE;
+            else if (flag == FlagType.Declaration)
+                rst = PluginUI.ICON_DECLARATION;
+            else if (flag == FlagType.Template)
+                rst = PluginUI.ICON_TEMPLATE;
+            else
+            {
+                rst = ((flag & FlagType.Intrinsic) > 0) ? ICON_INTRINSIC_TYPE :
+                    ((flag & FlagType.Interface) > 0) ? ICON_INTERFACE : ICON_TYPE;
+            }
+            return rst;
         }
 
         #endregion
@@ -186,31 +294,7 @@ namespace ASCompletion
             // 
             // treeIcons
             // 
-            this.treeIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("treeIcons.ImageStream")));
-            this.treeIcons.TransparentColor = System.Drawing.Color.Transparent;
-            this.treeIcons.Images.SetKeyName(0, "FilePlain.png");
-            this.treeIcons.Images.SetKeyName(1, "FolderClosed.png");
-            this.treeIcons.Images.SetKeyName(2, "FolderOpen.png");
-            this.treeIcons.Images.SetKeyName(3, "CheckAS.png");
-            this.treeIcons.Images.SetKeyName(4, "QuickBuild.png");
-            this.treeIcons.Images.SetKeyName(5, "Package.png");
-            this.treeIcons.Images.SetKeyName(6, "Interface.png");
-            this.treeIcons.Images.SetKeyName(7, "Intrinsic.png");
-            this.treeIcons.Images.SetKeyName(8, "Class.png");
-            this.treeIcons.Images.SetKeyName(9, "Variable.png");
-            this.treeIcons.Images.SetKeyName(10, "VariableProtected.png");
-            this.treeIcons.Images.SetKeyName(11, "VariablePrivate.png");
-            this.treeIcons.Images.SetKeyName(12, "Const.png");
-            this.treeIcons.Images.SetKeyName(13, "ConstProtected.png");
-            this.treeIcons.Images.SetKeyName(14, "ConstPrivate.png");
-            this.treeIcons.Images.SetKeyName(15, "Method.png");
-            this.treeIcons.Images.SetKeyName(16, "MethodProtected.png");
-            this.treeIcons.Images.SetKeyName(17, "MethodPrivate.png");
-            this.treeIcons.Images.SetKeyName(18, "Property.png");
-            this.treeIcons.Images.SetKeyName(19, "PropertyProtected.png");
-            this.treeIcons.Images.SetKeyName(20, "PropertyPrivate.png");
-            this.treeIcons.Images.SetKeyName(21, "Template.png");
-            this.treeIcons.Images.SetKeyName(22, "Declaration.png");
+            this.treeIcons.TransparentColor = System.Drawing.Color.Transparent;            
             // 
             // toolStrip
             // 
@@ -292,7 +376,6 @@ namespace ASCompletion
             //
             this.clearButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.clearButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.clearButton.Image = ((System.Drawing.Image)(resources.GetObject("clearButton.Image")));
             this.clearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(23, 22);
@@ -521,7 +604,8 @@ namespace ASCompletion
                             nodes.Add(new TreeNode(import.Type, ICON_PACKAGE, ICON_PACKAGE));
                         else
                         {
-                            img = ((import.Flags & FlagType.Intrinsic) > 0) ? ICON_INTRINSIC_TYPE : ICON_TYPE;
+                            img = GetIcon(import.Flags, import.Access); 
+                            //((import.Flags & FlagType.Intrinsic) > 0) ? ICON_INTRINSIC_TYPE : ICON_TYPE;
                             node = new TreeNode(import.Type, img, img);
                             node.Tag = "import";
                             nodes.Add(node);
@@ -554,8 +638,7 @@ namespace ASCompletion
 
                     foreach (ClassModel aClass in aFile.Classes)
                     {
-                        img = ((aClass.Flags & FlagType.Intrinsic) > 0) ? ICON_INTRINSIC_TYPE :
-                            ((aClass.Flags & FlagType.Interface) > 0) ? ICON_INTERFACE : ICON_TYPE;
+                        img = GetIcon(aClass.Flags, aClass.Access);
                         node = new TreeNode(aClass.FullName, img, img);
                         node.Tag = "class";
                         nodes.Add(node);
@@ -730,36 +813,9 @@ namespace ASCompletion
             int img;
             foreach (MemberModel member in members)
             {
-                if ((member.Flags & FlagType.Constant) > 0)
-                {
-                    img = ((member.Access & Visibility.Private) > 0) ? ICON_PRIVATE_CONST :
-                        ((member.Access & Visibility.Protected) > 0) ? ICON_PROTECTED_CONST : ICON_CONST;
-                    node = new MemberTreeNode(member, img);
-                    nodes.Add(node);
-                }
-                else if ((member.Flags & FlagType.Variable) > 0)
-                {
-                    img = ((member.Access & Visibility.Private) > 0) ? ICON_PRIVATE_VAR :
-                        ((member.Access & Visibility.Protected) > 0) ? ICON_PROTECTED_VAR : ICON_VAR;
-                    node = new MemberTreeNode(member, img);
-                    nodes.Add(node);
-                }
-                else if ((member.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
-                {
-                    if (prevMember != null && prevMember.Name == member.Name) // "collapse" properties
-                        continue;
-                    img = ((member.Access & Visibility.Private) > 0) ? ICON_PRIVATE_PROPERTY :
-                        ((member.Access & Visibility.Protected) > 0) ? ICON_PROTECTED_PROPERTY : ICON_PROPERTY;
-                    node = new MemberTreeNode(member, img);
-                    nodes.Add(node);
-                }
-                else if ((member.Flags & FlagType.Function) > 0)
-                {
-                    img = ((member.Access & Visibility.Private) > 0) ? ICON_PRIVATE_FUNCTION :
-                        ((member.Access & Visibility.Protected) > 0) ? ICON_PROTECTED_FUNCTION : ICON_FUNCTION;
-                    node = new MemberTreeNode(member, img);
-                    nodes.Add(node);
-                }
+                img = GetIcon(member.Flags, member.Access);
+                node = new MemberTreeNode(member, img);
+                nodes.Add(node);
                 prevMember = member;
             }
         }
@@ -817,7 +873,7 @@ namespace ASCompletion
                     {
                         if (prevMember != null && prevMember.Name == member.Name)
                             continue;
-                        img = GetMemberIcon(member.Flags, member.Access);
+                        img = GetIcon(member.Flags, member.Access);
                         node = new MemberTreeNode(member, img);
                         groupNode.Nodes.Add(node);
                     }
@@ -825,33 +881,6 @@ namespace ASCompletion
                     tree.Add(groupNode);
                 }
             }
-        }
-
-        static public int GetMemberIcon(FlagType flag, Visibility access)
-        {
-            int rst = 0;
-
-            if ((flag & FlagType.Constant) > 0)
-            {
-                rst = ((access & Visibility.Private) > 0) ? ICON_PRIVATE_CONST :
-                    ((access & Visibility.Protected) > 0) ? ICON_PROTECTED_CONST : ICON_CONST;
-            }
-            else if ((flag & FlagType.Variable) > 0)
-            {
-                rst = ((access & Visibility.Private) > 0) ? ICON_PRIVATE_VAR :
-                    ((access & Visibility.Protected) > 0) ? ICON_PROTECTED_VAR : ICON_VAR;
-            }
-            else if ((flag & (FlagType.Getter | FlagType.Setter)) > 0)
-            {
-                rst = ((access & Visibility.Private) > 0) ? ICON_PRIVATE_PROPERTY :
-                    ((access & Visibility.Protected) > 0) ? ICON_PROTECTED_PROPERTY : ICON_PROPERTY;
-            }
-            else if ((flag & FlagType.Function) > 0)
-            {
-                rst = ((access & Visibility.Private) > 0) ? ICON_PRIVATE_FUNCTION :
-                    ((access & Visibility.Protected) > 0) ? ICON_PROTECTED_FUNCTION : ICON_FUNCTION;
-            }
-            return rst;
         }
 
         private void sortDropDown_DropDownOpening(object sender, EventArgs e)
