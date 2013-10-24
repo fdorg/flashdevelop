@@ -37,10 +37,10 @@ namespace CodeRefactor.Commands
 
         protected override void ExecutionImplementation()
         {
-            String oldName = Path.GetFileNameWithoutExtension(oldPath);
-            String newName = Path.GetFileNameWithoutExtension(newPath);
+            String oldFileName = Path.GetFileNameWithoutExtension(oldPath);
+            String newFileName = Path.GetFileNameWithoutExtension(newPath);
             String msg = TextHelper.GetString("Info.RenamingFile");
-            String title = String.Format(TextHelper.GetString("Title.RenameDialog"), oldName);
+            String title = String.Format(TextHelper.GetString("Title.RenameDialog"), oldFileName);
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 Int32 line = 0;
@@ -52,7 +52,7 @@ namespace CodeRefactor.Commands
                 {
                     foreach (ClassModel classModel in classes)
                     {
-                        if (classModel.Name.Equals(oldName)) line = classModel.LineFrom;
+                        if (classModel.Name.Equals(oldFileName)) line = classModel.LineFrom;
                     }
                 }
                 else
@@ -60,23 +60,23 @@ namespace CodeRefactor.Commands
                     MemberList members = ASContext.Context.CurrentModel.Members;
                     foreach (MemberModel member in members)
                     {
-                        if (member.Name.Equals(oldName)) line = member.LineFrom;
+                        if (member.Name.Equals(oldFileName)) line = member.LineFrom;
                     }
                 }
-                sci.SelectText(oldName, sci.PositionFromLine(line));
-                Rename command = new Rename(RefactoringHelper.GetDefaultRefactorTarget(), true, newName);
+                sci.SelectText(oldFileName, sci.PositionFromLine(line));
+                Rename command = new Rename(RefactoringHelper.GetDefaultRefactorTarget(), true, newFileName);
                 command.Execute();
             }
             else
             {
-                oldName = Path.GetFileName(oldPath);
-                if (oldName.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+                if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
                 {
                     // name casing changed
-                    string tmpPath = newPath + "$renaming$";
+                    string tmpPath = oldPath + "$renaming$";
                     File.Move(oldPath, tmpPath);
                     oldPath = tmpPath;
                 }
+                if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
                 File.Move(oldPath, newPath);
             }
         }
