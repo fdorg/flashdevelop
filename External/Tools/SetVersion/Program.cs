@@ -14,6 +14,7 @@ namespace SetVersion
         /// </summary>
         static void Main(string[] args)
         {
+            var commit = "";
             var git = ".git";
             var output = args[0];
             var revOut = output + ".rev";
@@ -22,16 +23,14 @@ namespace SetVersion
                 Console.WriteLine("Template not found: " + revOut);
                 return;
             }
-            if (!Directory.Exists(git))
-            {
-                // CI server, try add src dir to git
-                git = Path.Combine(Environment.ExpandEnvironmentVariables("%SrcFolder%"), git);
-            }
             var head = File.ReadAllText(Path.Combine(git, "HEAD")).Trim();
             var headRef = Regex.Match(head, "ref: refs/heads/(.*)");
             if (!headRef.Success)
             {
-                Console.WriteLine("SetVersion: Can not find HEAD ref from: " + git);
+                Console.WriteLine("SetVersion: Can not find HEAD ref, write from env vars.");
+                commit = Environment.ExpandEnvironmentVariables("%CommitId%");
+                if (commit.Length == 40) commit = commit.Substring(0, 10);
+                WriteFile(output, revOut, commit, Environment.ExpandEnvironmentVariables("%BranchId%"));
                 return;
             }
             var branch = headRef.Groups[1].Value;
@@ -41,7 +40,7 @@ namespace SetVersion
                 Console.WriteLine("SetVersion: Can not read ref commit hash.");
                 return;
             }
-            var commit = File.ReadAllText(refPath).Trim();
+            commit = File.ReadAllText(refPath).Trim();
             if (commit.Length == 40) commit = commit.Substring(0, 10);
             Console.WriteLine("Set revision: " + branch + " " + commit);
             WriteFile(output, revOut, commit, branch);
