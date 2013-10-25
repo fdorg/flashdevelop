@@ -22,19 +22,23 @@ namespace SetVersion
                 Console.WriteLine("Template not found: " + revOut);
                 return;
             }
+            if (!Directory.Exists(git))
+            {
+                // CI server, try add src dir to git
+                git = Path.Combine(Environment.ExpandEnvironmentVariables("%SrcFolder%"), git);
+            }
             var head = File.ReadAllText(Path.Combine(git, "HEAD")).Trim();
             var headRef = Regex.Match(head, "ref: refs/heads/(.*)");
             if (!headRef.Success)
             {
-                Console.WriteLine("SetVersion: can not find HEAD ref, write null.");
-                WriteFile(output, revOut, Environment.ExpandEnvironmentVariables("%CommitId%"), Environment.ExpandEnvironmentVariables("%BranchId%"));
+                Console.WriteLine("SetVersion: Can not find HEAD ref.");
                 return;
             }
             var branch = headRef.Groups[1].Value;
             var refPath = Path.Combine(Path.Combine(git, "refs\\heads"), branch);
             if (!File.Exists(refPath))
             {
-                Console.WriteLine("SetVersion: can not read ref commit hash");
+                Console.WriteLine("SetVersion: Can not read ref commit hash.");
                 return;
             }
             var commit = File.ReadAllText(refPath).Trim();
