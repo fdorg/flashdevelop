@@ -353,21 +353,30 @@ namespace ProjectManager
                 case EventType.ProcessArgs:
                     project = activeProject; // replace arguments using active project data
 
-                    if (!ProjectCreator.IsRunning && project != null && te.Value.IndexOf('$') >= 0)
+                    if (!ProjectCreator.IsRunning)
                     {
-                        // steal macro names and values from the very useful BuildEvent macros
-                        BuildEventVars vars = new BuildEventVars(project);
+                        if (project != null && te.Value.IndexOf('$') >= 0)
+                        {
+                            // steal macro names and values from the very useful BuildEvent macros
+                            BuildEventVars vars = new BuildEventVars(project);
 
-                        vars.AddVar("CompilerConfiguration", menus.ConfigurationSelector.Text);
-                        vars.AddVar("BuildConfiguration", pluginUI.IsTraceDisabled ? "release" : "debug");
-                        vars.AddVar("BuildIPC", buildActions.IPCName);
+                            vars.AddVar("CompilerConfiguration", menus.ConfigurationSelector.Text);
+                            vars.AddVar("BuildIPC", buildActions.IPCName);
 
-                        foreach (BuildEventInfo info in vars.GetVars())
-                            te.Value = te.Value.Replace(info.FormattedName, info.Value);
+                            foreach (BuildEventInfo info in vars.GetVars())
+                                te.Value = te.Value.Replace(info.FormattedName, info.Value);
 
-                        // give the FileActions class an opportunity to process arguments
-                        // it may know about (if it was responsible for creating the file)
-                        te.Value = fileActions.ProcessArgs(project, te.Value);
+                            // give the FileActions class an opportunity to process arguments
+                            // it may know about (if it was responsible for creating the file)
+                            te.Value = fileActions.ProcessArgs(project, te.Value);
+                        }
+                        else
+                        {
+                            BuildEventVars vars = new BuildEventVars(null);
+                            vars.AddVar("ProjectDir", PluginBase.MainForm.WorkingDirectory);
+                            foreach (BuildEventInfo info in vars.GetVars())
+                                te.Value = te.Value.Replace(info.FormattedName, info.Value);
+                        }
                     }
                     break;
 
