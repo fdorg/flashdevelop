@@ -609,6 +609,7 @@ namespace ASCompletion.Context
         protected virtual void ManualExploration(PathModel path, IEnumerable<String> hideDirectories)
         {
             PathExplorer explorer = new PathExplorer(this, path);
+            path.InUse = true;
             if (hideDirectories != null) explorer.HideDirectories(hideDirectories);
             explorer.OnExplorationDone += new PathExplorer.ExplorationDoneHandler(RefreshContextCache);
             explorer.OnExplorationProgress += new PathExplorer.ExplorationProgressHandler(ExplorationProgress);
