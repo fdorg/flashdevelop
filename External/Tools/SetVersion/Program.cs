@@ -31,7 +31,7 @@ namespace SetVersion
             var headRef = Regex.Match(head, "ref: refs/heads/(.*)");
             if (!headRef.Success)
             {
-                Console.WriteLine("SetVersion: Can not find HEAD ref.");
+                Console.WriteLine("SetVersion: Can not find HEAD ref from: " + git);
                 return;
             }
             var branch = headRef.Groups[1].Value;
