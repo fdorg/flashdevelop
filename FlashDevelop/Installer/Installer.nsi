@@ -11,7 +11,6 @@
 
 ; Define version info
 !define VERSION "4.5.0"
-!define BUILD "RTM"
 
 ; Define AIR SDK vars
 !define AIR "3.9.0.1030"
@@ -48,8 +47,8 @@ VIProductVersion "${VERSION}.0"
 Name "FlashDevelop ${VERSION}"
 
 ; The captions of the installer
-Caption "FlashDevelop ${VERSION} ${BUILD} Setup"
-UninstallCaption "FlashDevelop ${VERSION} ${BUILD} Uninstall"
+Caption "FlashDevelop ${VERSION} Setup"
+UninstallCaption "FlashDevelop ${VERSION} Uninstall"
 
 ; The file to write
 OutFile "Binary\FlashDevelop.exe"
@@ -817,7 +816,7 @@ Section "Registry Modifications" RegistryMods
 	; Write uninstall section keys
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "InstallLocation" "$INSTDIR"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "Publisher" "FlashDevelop.org"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayVersion" "${VERSION}-${BUILD}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayVersion" "${VERSION}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayName" "FlashDevelop ${VERSION}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "Comments" "Thank you for using FlashDevelop."
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "HelpLink" "http://www.flashdevelop.org/community/"
@@ -825,7 +824,7 @@ Section "Registry Modifications" RegistryMods
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayIcon" "${EXECUTABLE}"
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "NoModify" 1
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "NoRepair" 1
-	WriteRegStr HKLM "Software\FlashDevelop" "CurrentVersion" ${VERSION}-${BUILD}
+	WriteRegStr HKLM "Software\FlashDevelop" "CurrentVersion" ${VERSION}
 	WriteRegStr HKLM "Software\FlashDevelop" "" $INSTDIR
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 	
@@ -1015,7 +1014,6 @@ Function .onInit
 	${VersionCompare} $0 "2.0.50727" $1
 	${If} $1 == 2
 	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 2.0 runtime before installing FlashDevelop. You have $0."
-	Abort
 	${EndIf}
 	
 	Call GetFDInstDir

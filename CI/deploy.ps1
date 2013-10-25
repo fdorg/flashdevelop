@@ -27,6 +27,6 @@ foreach($artifact in $artifacts.values)
 Write-Output "Create and upload LATEST_BUILD.txt"
 $date = Get-Date
 $file = [System.IO.Path]::GetTempFileName()
-$data = "Build Number: $projectBuildNumber`r`nTime: " + $date.ToUniversalTime()
+$data = "Build Number: $projectBuildNumber`r`nTime: " + $date.ToUniversalTime() + " GMT"
 $data | Set-Content $file
 ncftpput.exe -u "$login" -p "$pass" -C ftp.flashdevelop.org "$file" "downloads/builds/LATEST_BUILD.txt";
