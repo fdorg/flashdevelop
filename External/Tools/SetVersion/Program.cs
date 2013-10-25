@@ -27,7 +27,7 @@ namespace SetVersion
             if (!headRef.Success)
             {
                 Console.WriteLine("SetVersion: can not find HEAD ref, write null.");
-                WriteFile(output, revOut, Environment.ExpandEnvironmentVariables("%ProjectBuildNumber%"), "DEV");
+                WriteFile(output, revOut, Environment.ExpandEnvironmentVariables("%CommitId%"), "%BranchId%");
                 return;
             }
             var branch = headRef.Groups[1].Value;

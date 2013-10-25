@@ -1,10 +1,13 @@
-:: Builds the binary on the server for CI
+:: Builds the binary locally and launches the installer
 
 :: Set paths
 set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
 set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
 set PATH=%PATH%;C:\Program Files (x86)\NSIS
 set PATH=%PATH%;C:\Program Files\7-Zip\
+
+:: Need path up
+cd ..
 
 :: Reset bin files
 git clean -f -x -d FlashDevelop\Bin\Debug
@@ -40,6 +43,7 @@ if %errorlevel% neq 0 goto :error
 if %errorlevel% neq 0 goto :error
 
 :: Done
+start FlashDevelop\Installer\Binary\FlashDevelop.exe
 exit
 
 :error
