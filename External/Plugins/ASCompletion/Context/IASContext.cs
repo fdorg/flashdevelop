@@ -262,6 +262,11 @@ namespace ASCompletion.Context
         /// <param name="node"></param>
         void OnSelectOutlineNode(System.Windows.Forms.TreeNode node);
 
+        /// <summary>
+        /// User refreshes project tree
+        /// </summary>
+        void UserRefreshRequest();
+
         #endregion
 
         #region Custom code completion

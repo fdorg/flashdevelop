@@ -218,6 +218,14 @@ namespace HaXeContext
         }
 
         /// <summary>
+        /// User refreshes project tree
+        /// </summary>
+        public override void UserRefreshRequest()
+        {
+            haxelibsCache.Clear();
+        }
+
+        /// <summary>
         /// Properly switch between different Haxe SDKs
         /// </summary>
         static public void SetHaxeEnvironment(string sdkPath)

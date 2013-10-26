@@ -1291,6 +1291,9 @@ namespace ProjectManager
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.UserRefreshTree, Tree);
             EventManager.DispatchEvent(this, de);
 
+            Project project = activeProject; // TODO apply to all projects?
+            projectActions.UpdateASCompletion(MainForm, project);
+
             Tree.RefreshTree();
         }
 

@@ -740,6 +740,14 @@ namespace ASCompletion.Context
         {
             if (Settings != null) return new string[] { "*" + Settings.DefaultExtension }; else return null;
         }
+
+        /// <summary>
+        /// User refreshes project tree
+        /// </summary>
+        public virtual void UserRefreshRequest()
+        {
+        }
+
         #endregion
 
 		#region model caching

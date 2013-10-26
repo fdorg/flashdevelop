@@ -406,6 +406,10 @@ namespace ASCompletion
                                 if (found != null) e.Handled = true;
                             }
                         }
+                        else if (command == "ProjectManager.UserRefreshTree")
+                        {
+                            ASContext.Context.UserRefreshRequest();
+                        }
                         break;
                 }
 
