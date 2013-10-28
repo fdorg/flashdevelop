@@ -102,7 +102,21 @@ namespace FlashDebugger
 
 
         // Isolates 
-        private Dictionary<int, IsolateInfo> runningIsolates = new Dictionary<int, IsolateInfo>();
+        private Dictionary<int, IsolateInfo> runningIsolates;
+
+        private IsolateInfo addRunningIsolate(int i_id)
+        {
+            removeRunningIsolate(i_id);
+            runningIsolates[i_id] = new IsolateInfo();
+
+            return runningIsolates[i_id];
+        }
+
+        private void removeRunningIsolate(int i_id)
+        {
+            if (runningIsolates.ContainsKey(i_id))
+                runningIsolates.Remove(i_id);
+        }
 
         // Probably more info needed :)
         private class IsolateInfo
@@ -180,8 +194,6 @@ namespace FlashDebugger
                 bool stop = false;
                 while (!stop)
                 {
-                    processIsolateEvents();
-
 					if (m_Session != null && m_Session.getEventCount() > 0) m_SuspendWaiting = false;
 
                     processEvents();
@@ -359,7 +371,7 @@ namespace FlashDebugger
                                 {
                                     m_Session.suspend();
                                 }
-                                catch {} // No crash here please...
+                                catch { } // No crash here please...
                                 if (!haveConnection()) // no connection => dump state and end
                                 {
                                     stop = true;
@@ -394,6 +406,8 @@ namespace FlashDebugger
                         }
                     }
                     // sleep for a bit, then process our events.
+                    processIsolateEvents();
+
                     try
                     {
                         System.Threading.Thread.Sleep(m_UpdateDelay);
@@ -423,63 +437,84 @@ namespace FlashDebugger
 
         private void processIsolateEvents()
         {
+            if (m_RequestDetach || m_RequestPause || m_RequestStop || m_SuspendWaiting)
+                return;
+
+            if (m_Session == null)
+                return;
+
+            List<int> inactiveIsolates = new List<int>();
+
             foreach (KeyValuePair<int, IsolateInfo> ii_pair in runningIsolates)
             {
                 int i_id = ii_pair.Key;
                 IsolateInfo ii = ii_pair.Value;
 
-                if (ii.i_Session.isSuspended())
+                try
                 {
-                    /*
-                    * For now just write what's going on and resume.
-                    */
+                    if (ii.i_Session == null)
+                        continue;
 
-                    m_SuspendWait.Reset();
-                    int suspendReason = ii.i_Session.suspendReason();
-                    switch (m_SuspendWaiting ? -1 : suspendReason)
+                    if (ii.i_Session.isSuspended())
                     {
-                        case 1://SuspendReason_.Breakpoint:
-                            TraceManager.AddAsync("Worker " + i_id + ": Breakpoint reached:", 2);
-                            TraceManager.AddAsync("Worker " + i_id + ": " + getCurrentIsolateLocation(i_id).ToString(), 2);
-                            TraceManager.AddAsync("Worker " + i_id + ": Continuing...", 2);
-                            break;
+                        /*
+                        * For now just write what's going on and resume.
+                        */
 
-                        case 3://SuspendReason_.Fault:
-                            
-                            break;
+                        m_SuspendWait.Reset();
+                        int suspendReason = ii.i_Session.suspendReason();
+                        switch (m_SuspendWaiting ? -1 : suspendReason)
+                        {
+                            case 1://SuspendReason_.Breakpoint:
+                                TraceManager.AddAsync("Worker " + i_id + ": Breakpoint reached:", 2);
+                                TraceManager.AddAsync("Worker " + i_id + ": " + getCurrentIsolateLocation(i_id).ToString(), 2);
+                                TraceManager.AddAsync("Worker " + i_id + ": Continuing...", 2);
+                                break;
 
-                        case 7://SuspendReason_.ScriptLoaded:
-                            // Don't think it's needed. But not sure.
-                            break;
+                            case 3://SuspendReason_.Fault:
 
-                        case 5://SuspendReason_.Step:
-                            // For now empty.
-                            break;
+                                break;
 
-                        case 4://SuspendReason_.StopRequest:
-                            // For now empty.
-                            break;
+                            case 7://SuspendReason_.ScriptLoaded:
+                                // Don't think it's needed. But not sure.
+                                break;
 
-                        case 2://SuspendReason_.Watch:
-                           // For now empty.
-                            break;
+                            case 5://SuspendReason_.Step:
+                                // For now empty.
+                                break;
 
-                        case -1:
-                            // waiting for susped to end, do nothing
-                            break;
+                            case 4://SuspendReason_.StopRequest:
+                                // For now empty.
+                                break;
 
-                        default:
-                            // For now empty (resuming anyway).
-                            break;
+                            case 2://SuspendReason_.Watch:
+                                // For now empty.
+                                break;
+
+                            case -1:
+                                // waiting for susped to end, do nothing
+                                break;
+
+                            default:
+                                // For now empty (resuming anyway).
+                                break;
+                        }
+
+                        ii.i_Session.resume();
                     }
-
-                    ii.i_Session.resume();
+                    else
+                    {
+                        // Pause, Stop, etc. should be here.
+                    }
                 }
-                else
+                catch (NotConnectedException e)
                 {
-                    // Pause, Stop, etc. should be here.
+                    inactiveIsolates.Add(i_id);
                 }
             }
+
+            foreach (int i_id in inactiveIsolates)
+                runningIsolates.Remove(i_id);
         }
 
 		internal virtual void initSession()
@@ -502,6 +537,8 @@ namespace FlashDebugger
 			m_RequestPause = false;
 			m_RequestResume = false;
 			m_StepResume = false;
+
+            runningIsolates = new Dictionary<int, IsolateInfo>();
 		}
 
 		/// <summary> If we still have a socket try to send an exit message
@@ -519,10 +556,11 @@ namespace FlashDebugger
 				}
 				else
 				{
-					m_Session.terminate();
+					m_Session.terminate();                    
 				}
 				m_Session = null;
 			}
+            runningIsolates.Clear();
             SessionManager mgr = Bootstrap.sessionManager();
             if (mgr.isListening()) mgr.stopListening();
             m_CurrentState = DebuggerState.Stopped;
@@ -678,8 +716,7 @@ namespace FlashDebugger
                 else if (e is FaultEvent)
                 {
                     dumpFaultLine((FaultEvent)e);
-                    if (((FaultEvent)e).isolateId != 1)
-                        runningIsolates.Remove(((FaultEvent)e).isolateId);
+                    removeRunningIsolate(((FaultEvent)e).isolateId);
                 }
                 else
                 {
@@ -812,10 +849,9 @@ namespace FlashDebugger
             if (_breakPointsInfo != null && _breakPointFiles != null)
                 UpdateIsolateBreakpoints(_breakPointFiles, _breakPointsInfo, i_Session);
 
-            IsolateInfo ii = new IsolateInfo();
+            IsolateInfo ii = addRunningIsolate(e.isolate.getId());
 
             ii.i_Session = i_Session;
-            runningIsolates[e.isolate.getId()] = ii;
 
             i_Session.resume();
         }
@@ -824,7 +860,7 @@ namespace FlashDebugger
         /// </summary>
         internal virtual void dumpIsolateExitEvent(IsolateExitEvent e)
         {
-            runningIsolates.Remove(e.isolate.getId());
+            removeRunningIsolate(e.isolate.getId());
         }
 
 		internal virtual Location getCurrentLocation()
