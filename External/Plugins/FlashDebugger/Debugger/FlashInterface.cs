@@ -678,6 +678,8 @@ namespace FlashDebugger
                 else if (e is FaultEvent)
                 {
                     dumpFaultLine((FaultEvent)e);
+                    if (((FaultEvent)e).isolateId != 1)
+                        runningIsolates.Remove(((FaultEvent)e).isolateId);
                 }
                 else
                 {
