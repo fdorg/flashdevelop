@@ -32,6 +32,7 @@ namespace FlashDebugger
 		public event DebuggerEventHandler WatchpointEvent;
 		public event DebuggerEventHandler UnknownHaltEvent;
         public event DebuggerProgressEventHandler ProgressEvent;
+		public event DebuggerEventHandler ThreadsEvent;
 
 		#region Public Properties
 
@@ -85,6 +86,14 @@ namespace FlashDebugger
 			}
 		}
 
+		public Dictionary<int, IsolateInfo> IsolateSessions
+		{
+			get
+			{
+				return runningIsolates;
+			}
+		}
+
 		#endregion
 
 		#region Private Properties
@@ -119,7 +128,7 @@ namespace FlashDebugger
         }
 
         // Probably more info needed :)
-        private class IsolateInfo
+        public class IsolateInfo
         {
             public IsolateSession i_Session = null;
         }
@@ -205,6 +214,7 @@ namespace FlashDebugger
 						{
 							// resume before we disconnect, this is in case of ExceptionHalt
 							m_Session.resume(); // just throw for now
+							if (ThreadsEvent != null) ThreadsEvent(this);
 						}
                         continue;
                     }
@@ -221,6 +231,7 @@ namespace FlashDebugger
                             {
                                 m_Session.resume();
                             }
+							if (ThreadsEvent != null) ThreadsEvent(this);
                         }
                         catch (NotSuspendedException)
                         {
@@ -853,6 +864,11 @@ namespace FlashDebugger
 
             ii.i_Session = i_Session;
 
+			if (ThreadsEvent != null)
+			{
+				ThreadsEvent(this);
+			}
+
             i_Session.resume();
         }
 
@@ -861,7 +877,12 @@ namespace FlashDebugger
         internal virtual void dumpIsolateExitEvent(IsolateExitEvent e)
         {
             removeRunningIsolate(e.isolate.getId());
-        }
+			if (ThreadsEvent != null)
+			{
+				ThreadsEvent(this);
+			}
+
+		}
 
 		internal virtual Location getCurrentLocation()
 		{
