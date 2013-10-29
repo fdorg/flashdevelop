@@ -5035,4 +5035,8 @@
     <value>You are renaming a file. Do you also want to update the references?</value>
     <comment>Added after 4.4.3</comment>
   </data>
+  <data name="ProjectManager.Label.CodeFilesOnly" xml:space="preserve">
+    <value>Code files only</value>
+    <comment>Added after 4.4.3</comment>
+  </data>
 </root>

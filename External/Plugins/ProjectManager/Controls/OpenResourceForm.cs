@@ -21,6 +21,7 @@ namespace ProjectManager.Controls
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.TextBox textBox;
         private System.Windows.Forms.ListBox listBox;
+        private System.Windows.Forms.CheckBox checkBox;
         private System.Windows.Forms.Button refreshButton;
 
         public OpenResourceForm(PluginMain plugin)
@@ -43,13 +44,14 @@ namespace ProjectManager.Controls
             this.infoLabel = new System.Windows.Forms.Label();
             this.textBox = new System.Windows.Forms.TextBox();
             this.listBox = new System.Windows.Forms.ListBox();
+            this.checkBox = new System.Windows.Forms.CheckBox();
             this.refreshButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // infoLabel
             // 
             this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(11, 8);
+            this.infoLabel.Location = new System.Drawing.Point(11, 9);
             this.infoLabel.Name = "infoLabel";
             this.infoLabel.Size = new System.Drawing.Size(273, 13);
             this.infoLabel.TabIndex = 0;
@@ -58,7 +60,7 @@ namespace ProjectManager.Controls
             // textBox
             // 
             this.textBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox.Location = new System.Drawing.Point(12, 25);
+            this.textBox.Location = new System.Drawing.Point(12, 32);
             this.textBox.Name = "textBox";
             this.textBox.Size = new System.Drawing.Size(446, 22);
             this.textBox.TabIndex = 1;
@@ -68,10 +70,24 @@ namespace ProjectManager.Controls
             // refreshButton
             //
             this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.refreshButton.Location = new System.Drawing.Point(465, 23);
+            this.refreshButton.Location = new System.Drawing.Point(465, 30);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(26, 24);
-            this.refreshButton.TabIndex = 2;
+            this.refreshButton.TabIndex = 3;
+            // 
+            // checkBox
+            //
+            this.checkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox.Location = new System.Drawing.Point(464, 9);
+            this.checkBox.Size = new System.Drawing.Size(26, 24);
+            this.checkBox.CheckAlign = ContentAlignment.MiddleRight;
+            this.checkBox.TextAlign = ContentAlignment.MiddleLeft;
+            this.checkBox.Text = "Code files only";
+            this.checkBox.Name = "checkBox";
+            this.checkBox.AutoSize = true;
+            this.checkBox.TabIndex = 2;
+            this.checkBox.Checked = false;
+            this.checkBox.CheckedChanged += new EventHandler(this.CheckBoxCheckedChanged);
             // 
             // listBox
             // 
@@ -79,10 +95,10 @@ namespace ProjectManager.Controls
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.listBox.FormattingEnabled = true;
             this.listBox.ItemHeight = this.listBox.Font.Height + 2;
-            this.listBox.Location = new System.Drawing.Point(12, 53);
+            this.listBox.Location = new System.Drawing.Point(12, 62);
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(478, 276);
-            this.listBox.TabIndex = 3;
+            this.listBox.TabIndex = 4;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBoxDrawItem);
             this.listBox.Resize += new System.EventHandler(this.ListBoxResize);
             this.listBox.DoubleClick += new System.EventHandler(this.ListBoxDoubleClick);
@@ -91,14 +107,15 @@ namespace ProjectManager.Controls
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(502, 336);
+            this.ClientSize = new System.Drawing.Size(502, 340);
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.textBox);
             this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.infoLabel);
+            this.Controls.Add(this.checkBox);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(320, 200);
+            this.MinimumSize = new System.Drawing.Size(400, 300);
             this.Name = "OpenResourceForm";
             this.ShowIcon = false;
             this.KeyPreview = true;
@@ -106,7 +123,7 @@ namespace ProjectManager.Controls
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Open Resource";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OpenResourceKeyDown);
-            this.Activated += new EventHandler(OpenResourceForm_Activated);
+            this.Activated += new EventHandler(OpenResourceFormActivated);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -120,16 +137,16 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeLocalization()
         {
-            this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
-            this.Text = " " + TextHelper.GetString("Title.OpenResource");
             this.refreshButton.Image = PluginBase.MainForm.FindImage("-1|24|0|0");
-            this.refreshButton.Click += new EventHandler(refreshButton_Click);
+            this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
+            this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
+            this.Text = " " + TextHelper.GetString("Title.OpenResource");
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private void refreshButton_Click(object sender, EventArgs e)
+        private void RefreshButtonClick(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
@@ -138,7 +155,16 @@ namespace ProjectManager.Controls
         /// <summary>
         /// 
         /// </summary>
-        private void OpenResourceForm_Activated(object sender, EventArgs e)
+        private void CheckBoxCheckedChanged(Object sender, EventArgs e)
+        {
+            this.CreateFileList();
+            this.RefreshListBox();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void OpenResourceFormActivated(Object sender, EventArgs e)
         {
             if (openedFiles == null) this.CreateFileList();
             else
@@ -303,18 +329,18 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Gather files in depth avoiding hidden directories
         /// </summary>
-        private void AddFilesInFolder(List<string> files, string folder)
+        private void AddFilesInFolder(List<String> files, String folder)
         {
             if (Directory.Exists(folder) && !isFolderHidden(folder))
             {
                 String[] temp = Directory.GetFiles(folder, "*.*");
-                foreach (string file in temp)
+                foreach (String file in temp)
                 {
-                    String ext = Path.GetExtension(file);
-                    if (Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, ext) == -1)
-                    {
-                        files.Add(file);
-                    }
+                    String extension = Path.GetExtension(file);
+                    String[] filters = PluginBase.CurrentProject.DefaultSearchFilter.Split(';');
+                    Boolean ignored = Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, extension) > -1;
+                    if (ignored || (this.checkBox.Checked && Array.IndexOf(filters, "*" + extension) == -1)) continue;
+                    files.Add(file);
                 }
                 foreach (string sub in Directory.GetDirectories(folder))
                 {
