@@ -9,6 +9,12 @@ FlashDevelop offers first class support for Flash ActionScript (2 and 3), Haxe a
 
 FlashDevelop is more generally a great web developer IDE with integrated source-control support (svn, git, mercurial), tasks/todo, snippets, XML/HTML/CSS completion and built-in zen-coding for HTML.
 
+Download
+--------
+
+* [Latest release (4.4.3 RTM)](http://www.flashdevelop.org/community/viewtopic.php?f=11&t=10951)
+* [Latest development build ](http://www.flashdevelop.org/community/viewtopic.php?f=9&t=3529)
+
 Platform
 --------
 
