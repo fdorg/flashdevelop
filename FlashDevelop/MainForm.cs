@@ -1936,6 +1936,31 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Creates a new blank document tracking current project
+        /// </summary>
+        public void SmartNew(Object sender, EventArgs e)
+        {
+            String ext = "";
+            if (PluginBase.CurrentProject != null)
+            {
+                try
+                {
+                    String filter = PluginBase.CurrentProject.DefaultSearchFilter;
+                    String tempExt = filter.Split(';')[0].Replace("*.", "");
+                    if (Regex.Match(tempExt, "^[A-Za-z0-9]+$").Success) ext = tempExt;
+                }
+                catch { /* NO ERRORS */ }
+            }
+            String fileName = DocumentManager.GetNewDocumentName(ext);
+            TextEvent te = new TextEvent(EventType.FileNew, fileName);
+            EventManager.DispatchEvent(this, te);
+            if (!te.Handled)
+            {
+                this.CreateEditableDocument(fileName, "", (Int32)this.appSettings.DefaultCodePage);
+            }
+        }
+
+        /// <summary>
         /// Create a new document from a template
         /// </summary>
         public void NewFromTemplate(Object sender, EventArgs e)
