@@ -12,7 +12,7 @@ FlashDevelop is more generally a great web developer IDE with integrated source-
 Download
 --------
 
-* [Latest release (4.4.3 RTM)](http://www.flashdevelop.org/community/viewtopic.php?f=11&t=10951)
+* [Latest release](http://www.flashdevelop.org/community/viewforum.php?f=11)
 * [Latest development build ](http://www.flashdevelop.org/community/viewtopic.php?f=9&t=3529)
 
 Platform
