@@ -32,8 +32,8 @@ namespace SetVersion
                 Console.WriteLine("SetVersion: Can not find HEAD ref, write from env vars.");
                 commit = Environment.ExpandEnvironmentVariables("%CommitId%");
                 if (commit.Length == 40) commit = commit.Substring(0, 10);
-                branch = Environment.ExpandEnvironmentVariables("%BranchId%");
-                build = Environment.ExpandEnvironmentVariables("%ProjectBuildNumber%");
+                branch = Environment.ExpandEnvironmentVariables("%RepositoryBranch%");
+                build = Environment.ExpandEnvironmentVariables("%AppVeyor.ProjectBuildNumber%");
                 WriteFile(output, revOut, commit, branch, build);
                 return;
             }
