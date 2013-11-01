@@ -19,7 +19,6 @@ using ASCompletion.Context;
 using ASCompletion.Settings;
 using PluginCore.Localization;
 using System.Drawing;
-using ASCompletion.Properties;
 using System.Reflection;
 
 namespace ASCompletion

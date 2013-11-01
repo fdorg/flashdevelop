@@ -6472,6 +6472,30 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Cut the selection, if selection empty cut the line with the caret
+        /// </summary>
+        public void CutAllowLineEx()
+        {
+            if (this.SelTextSize == 0 && this.GetLine(this.LineFromPosition(this.CurrentPos)).Trim() != "")
+            {
+                this.LineCut();
+            }
+            else this.Cut();
+        }
+
+        /// <summary>
+        /// Cut the selection, if selection empty cut the line with the caret
+        /// </summary>
+        public void CopyAllowLineEx()
+        {
+            if (this.SelTextSize == 0 && this.GetLine(this.LineFromPosition(this.CurrentPos)).Trim() != "")
+            {
+                this.CopyAllowLine();
+            }
+            else this.Copy();
+        }
+
+        /// <summary>
         /// Gets the word to the left of the cursor
         /// </summary>
         public string GetWordLeft(int position, bool skipWS)

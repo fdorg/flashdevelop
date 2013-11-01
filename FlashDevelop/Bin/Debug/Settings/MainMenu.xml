@@ -73,8 +73,8 @@
 		<button label="Label.Undo" click="ScintillaCommand" tag="Undo" shortcut="Control|Z" image="73" flags="Enable:IsEditable|CanUndo" />
 		<button label="Label.Redo" click="ScintillaCommand" tag="Redo" shortcut="Control|Y" image="65" flags="Enable:IsEditable|CanRedo"  />
 		<separator />
-		<button label="Label.Cut" click="ScintillaCommand" tag="CutAllowLine" shortcut="Control|X" image="158" flags="Enable:IsEditable" />
-		<button label="Label.Copy" click="ScintillaCommand" tag="CopyAllowLine" shortcut="Control|C" image="278" flags="Enable:IsEditable" />
+		<button label="Label.Cut" click="ScintillaCommand" tag="CutAllowLineEx" shortcut="Control|X" image="158" flags="Enable:IsEditable" />
+		<button label="Label.Copy" click="ScintillaCommand" tag="CopyAllowLineEx" shortcut="Control|C" image="278" flags="Enable:IsEditable" />
 		<button label="Label.Paste" click="ScintillaCommand" tag="Paste" shortcut="Control|V" image="283" flags="Enable:IsEditable|CanPaste" />
 		<button label="Label.SmartPaste" click="SmartPaste" shortcut="Control|Alt|V" flags="Enable:IsEditable|CanPaste" />
 		<button label="Label.SelectAll" click="ScintillaCommand" tag="SelectAll" shortcut="Control|A" flags="Enable:IsEditable" />
