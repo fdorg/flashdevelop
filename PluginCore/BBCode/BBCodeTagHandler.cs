@@ -137,7 +137,7 @@ namespace PluginCore.BBCode
 
 		protected Boolean _hadleTag_Size(BBCodeTagMatch tm)
 		{
-			if (tm.tagParam == null)
+			if (string.IsNullOrEmpty(tm.tagParam))
 				return false;
 
 			tm.bbCodeStyle.isAbsFontSize = true;
