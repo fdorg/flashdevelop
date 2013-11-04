@@ -5020,27 +5020,27 @@
     <comment>Added after 4.4.2</comment>
   </data>
   <data name="FlashDevelop.Label.YesToAll" xml:space="preserve">
-    <value>Yes to &amp;all</value>
+    <value>全部选是（&amp;A）</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="TaskListPanel.Description.ExploringMode" xml:space="preserve">
-    <value>The task exploring mode. Light: current files and manual refresh, Complete: current files, project files and manual refresh.</value>
+    <value>任务探索模式. 轻量: 当前文件和手动刷新, 完整: 当前文件, 工程文件和手动刷新.</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="BasicCompletion.Description.AutoInsertType" xml:space="preserve">
-    <value>Specifies when pressing Enter key inserts the completion list item.</value>
+    <value>指定当嵌入回车键时自动完成的列表项.</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingFile" xml:space="preserve">
-    <value>You are renaming a file. Do you also want to update the references?</value>
+    <value>你正在重命名一个文件. 是否需要更新所有此文件的引用?</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="ProjectManager.Label.CodeFilesOnly" xml:space="preserve">
-    <value>Code files only</value>
+    <value>仅代码文件</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.HaxeDocument" xml:space="preserve">
-    <value>Haxe Document</value>
+    <value>Haxe 文档</value>
     <comment>Added after 4.4.3</comment>
   </data>
 </root>
