@@ -323,7 +323,7 @@ namespace HaXeContext
             //
             classPath = new List<PathModel>();
             // haXe std
-            string hxPath = PluginBase.CurrentProject != null
+            string hxPath = PluginBase.CurrentProject is HaxeProject
                     ? PluginBase.CurrentProject.CurrentSDK
                     : PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
             if (hxPath != null)
@@ -1063,11 +1063,11 @@ namespace HaXeContext
             // compiler path
             var hxPath = currentSDK ?? ""; 
             var process = Path.Combine(hxPath, "haxe.exe");
-            if (!File.Exists(process))
+            /*if (!File.Exists(process))
             {
                 ErrorManager.ShowInfo(String.Format(TextHelper.GetString("Info.HaXeExeError"), "\n"));
                 return null;
-            }
+            }*/
 
             // Run haxe compiler
             Process proc = new Process();
@@ -1091,7 +1091,7 @@ namespace HaXeContext
         /// <returns>Null (not handled) or member list</returns>
         public override MemberList ResolveDotContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop)
+            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
 
             if (autoHide && !hxsettings.DisableCompletionOnDemand)
@@ -1318,7 +1318,7 @@ namespace HaXeContext
         /// <returns>Null (not handled) or function signature</returns>
         public override MemberModel ResolveFunctionContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingFunction || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop)
+            if (resolvingFunction || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
 
             if (autoHide && !hxsettings.DisableCompletionOnDemand)
