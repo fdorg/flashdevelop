@@ -2900,7 +2900,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                     // Flash IDE-like typing
-                    else if (tmpClass.Name == "MovieClip" || tmpClass.Name == "Sprite")
+                    else if (tmpClass.Name == "MovieClip")
                     {
                         string autoType = null;
                         if (tmpClass.InFile.Version < 3)
@@ -2909,7 +2909,7 @@ namespace ASCompletion.Completion
                             else if (token.EndsWith("_txt") || token.StartsWith("txt")) autoType = "TextField";
                             else if (token.EndsWith("_btn") || token.StartsWith("bt")) autoType = "Button";
                         }
-                        else if (tmpClass.InFile.Version == 3)
+                        else if (tmpClass.InFile.Version == 3) 
                         {
                             if (token.EndsWith("_mc") || token.StartsWith("mc")) autoType = "flash.display.MovieClip";
                             else if (token.EndsWith("_txt") || token.StartsWith("txt")) autoType = "flash.text.TextField";
