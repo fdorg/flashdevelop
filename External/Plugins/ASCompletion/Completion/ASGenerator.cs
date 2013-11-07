@@ -3875,11 +3875,11 @@ namespace ASCompletion.Completion
             else
             {
                 string type = FormatType(member.Type);
-                if (type == null) type = features.objectKey;
+                //if (type == null) type = features.objectKey;
                 
                 decl = acc + features.functionKey + " ";
-                bool noRet = type.Equals("void", StringComparison.OrdinalIgnoreCase);
-                type = (noRet) ? ASContext.Context.Features.voidKey : type;
+                bool noRet = type == null || type.Equals("void", StringComparison.OrdinalIgnoreCase);
+                type = (noRet && type != null) ? ASContext.Context.Features.voidKey : type;
                 if (!noRet)
                 {
                     string qType = getQualifiedType(type, ofClass);
