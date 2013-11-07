@@ -5014,27 +5014,27 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <comment>Added after 4.4.2</comment>
   </data>
   <data name="FlashDevelop.Label.YesToAll" xml:space="preserve">
-    <value>Yes to &amp;all</value>
+    <value>Ja zu &amp;Allem</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="TaskListPanel.Description.ExploringMode" xml:space="preserve">
-    <value>The task exploring mode. Light: current files and manual refresh, Complete: current files, project files and manual refresh.</value>
+    <value>Aufgaben Erkennungs Modus. Light: aktuelle Dateien und manuelles Aktualisieren, Complete: aktuelle Dateien, aktuelle Projektdateien und manuelles Aktualisieren.</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="BasicCompletion.Description.AutoInsertType" xml:space="preserve">
-    <value>Specifies when pressing Enter key inserts the completion list item.</value>
+    <value>Gibt an, ob bei Drücken von Enter das Element aus der Vervollständigungsliste eingefügt wird.</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingFile" xml:space="preserve">
-    <value>You are renaming a file. Do you also want to update the references?</value>
+    <value>Datei wird umbenannt. Sollen die Referenzen aktualisiert werden?</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="ProjectManager.Label.CodeFilesOnly" xml:space="preserve">
-    <value>Code files only</value>
+    <value>Nur Code-Dateien</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.HaxeDocument" xml:space="preserve">
-    <value>Haxe Document</value>
+    <value>Haxe Dokument</value>
     <comment>Added after 4.4.3</comment>
   </data>
 </root>
