@@ -36,8 +36,9 @@ makensis FlashDevelop\Installer\Installer.nsi
 :: Check for nsis errors
 if %errorlevel% neq 0 goto :error
 
-:: Create the archive
-7z a -tzip FlashDevelop\Installer\Binary\FlashDevelop.zip .\FlashDevelop\Bin\Debug\*
+:: Delete old and create an new archive
+del FlashDevelop\Installer\Binary\FlashDevelop.zip
+7z a -tzip FlashDevelop\Installer\Binary\FlashDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
 
 :: Check for 7zip errors
 if %errorlevel% neq 0 goto :error

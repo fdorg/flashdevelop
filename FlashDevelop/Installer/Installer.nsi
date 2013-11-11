@@ -312,7 +312,7 @@ Section "FlashDevelop" Main
 	RMDir /r "$INSTDIR\Tools\flexpmd"
 	
 	; Copy all files
-	File /r /x .svn /x *.db /x Exceptions.log /x .local /x .multi /x *.pdb /x *.vshost.exe /x *.vshost.exe.config /x *.vshost.exe.manifest /x "..\Bin\Debug\Data\" /x "..\Bin\Debug\Settings\" /x "..\Bin\Debug\Snippets\" /x "..\Bin\Debug\Templates\" "..\Bin\Debug\*.*"
+	File /r /x .svn /x .empty /x *.db /x Exceptions.log /x .local /x .multi /x *.pdb /x *.vshost.exe /x *.vshost.exe.config /x *.vshost.exe.manifest /x "..\Bin\Debug\Data\" /x "..\Bin\Debug\Settings\" /x "..\Bin\Debug\Snippets\" /x "..\Bin\Debug\Templates\" "..\Bin\Debug\*.*"
 	
 	SetOverwrite off
 	
@@ -324,16 +324,16 @@ Section "FlashDevelop" Main
 	RMDir /r "$INSTDIR\Projects"
 	
 	SetOutPath "$INSTDIR\Settings"
-	File /r /x .svn /x *.db /x LayoutData.fdl /x SessionData.fdb /x SettingData.fdb "..\Bin\Debug\Settings\*.*"
+	File /r /x .svn /x .empty /x *.db /x LayoutData.fdl /x SessionData.fdb /x SettingData.fdb "..\Bin\Debug\Settings\*.*"
 	
 	SetOutPath "$INSTDIR\Snippets"
-	File /r /x .svn /x *.db "..\Bin\Debug\Snippets\*.*"
+	File /r /x .svn /x .empty /x *.db "..\Bin\Debug\Snippets\*.*"
 	
 	SetOutPath "$INSTDIR\Templates"
-	File /r /x .svn /x *.db "..\Bin\Debug\Templates\*.*"
+	File /r /x .svn /x .empty /x *.db "..\Bin\Debug\Templates\*.*"
 
 	SetOutPath "$INSTDIR\Projects"
-	File /r /x .svn /x *.db "..\Bin\Debug\Projects\*.*"
+	File /r /x .svn /x .empty /x *.db "..\Bin\Debug\Projects\*.*"
 
 	; Remove PluginCore from plugins...
 	Delete "$INSTDIR\Plugins\PluginCore.dll"
