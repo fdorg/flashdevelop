@@ -44,7 +44,7 @@
 	<button label="Label.Undo" click="ScintillaCommand" tag="Undo" image="73" flags="Enable:CanUndo" />
 	<button label="Label.Redo" click="ScintillaCommand" tag="Redo" image="65" flags="Enable:CanRedo" />
 	<separator />
-	<button label="Label.Cut" click="ScintillaCommand" tag="CutAllowLineEx" image="158" />
+	<button label="Label.Cut" click="ScintillaCommand" tag="CutAllowLine" image="158" />
 	<button label="Label.Copy" click="ScintillaCommand" tag="CopyAllowLineEx" image="278" />
 	<button label="Label.Paste" click="SmartPaste" image="283" flags="Enable:CanPaste" />
 	<separator />
