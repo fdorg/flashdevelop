@@ -13,6 +13,7 @@ using PluginCore;
 using net.sf.jni4net;
 using PluginCore.Helpers;
 using ProjectManager.Projects.Haxe;
+using System.Text;
 
 namespace FlashDebugger
 {
@@ -231,22 +232,31 @@ namespace FlashDebugger
 		public String GetLocalPath(SourceFile file)
 		{
             if (file == null) return null;
-            if (File.Exists(file.getFullPath()))
+            String fileFullPath = file.getFullPath();
+            if (m_PathMap.ContainsKey(fileFullPath))
 			{
-				return file.getFullPath();
+                return m_PathMap[fileFullPath];
 			}
-			if (m_PathMap.ContainsKey(file.getFullPath()))
-			{
-				return m_PathMap[file.getFullPath()];
-			}
+            if (File.Exists(fileFullPath))
+            {
+                m_PathMap[fileFullPath] = fileFullPath;
+                return fileFullPath;
+            }
 			Char pathSeparator = Path.DirectorySeparatorChar;
 			String pathFromPackage = file.getPackageName().ToString().Replace('/', pathSeparator);
+            String fileName = file.getName();
 			foreach (Folder folder in PluginMain.settingObject.SourcePaths)
 			{
-                String localPath = folder.Path + pathSeparator + pathFromPackage + pathSeparator + file.getName();
+                StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
+                localPathBuilder.Append(folder.Path);
+                localPathBuilder.Append(pathSeparator);
+                localPathBuilder.Append(pathFromPackage);
+                localPathBuilder.Append(pathSeparator);
+                localPathBuilder.Append(fileName);
+                String localPath = localPathBuilder.ToString();
 				if (File.Exists(localPath))
 				{
-					m_PathMap[file.getFullPath()] = localPath;
+                    m_PathMap[fileFullPath] = localPath;
 					return localPath;
 				}
 			}
@@ -255,14 +265,23 @@ namespace FlashDebugger
 			{
 				foreach (string cp in project.Classpaths)
 				{
-					String localPath = project.Directory + pathSeparator + cp + pathSeparator + pathFromPackage + pathSeparator + file.getName();
+                    StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
+                    localPathBuilder.Append(project.Directory);
+                    localPathBuilder.Append(pathSeparator);
+                    localPathBuilder.Append(cp);
+                    localPathBuilder.Append(pathSeparator);
+                    localPathBuilder.Append(pathFromPackage);
+                    localPathBuilder.Append(pathSeparator);
+                    localPathBuilder.Append(fileName);
+                    String localPath = localPathBuilder.ToString();
 					if (File.Exists(localPath))
 					{
-						m_PathMap[file.getFullPath()] = localPath;
+                        m_PathMap[fileFullPath] = localPath;
 						return localPath;
 					}
 				}
 			}
+            m_PathMap[fileFullPath] = null;
 			return null;
         }
 
