@@ -29,8 +29,7 @@ namespace AS3Context.Compiler
             }
             else return;
 
-            Dictionary<string, string> jvmConfig = 
-                JvmConfigHelper.ReadConfig(Path.Combine(flexSDKPath, "bin\\jvm.config"));
+            Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
 
             if (process == null || process.HasExited)
                 Initialize(flexSDKPath, jvmConfig, projectPath);

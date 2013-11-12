@@ -125,7 +125,7 @@ namespace FlashDebugger
 
                     if (flexSDKPath != null && Directory.Exists(flexSDKPath))
                     {
-                        Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(Path.Combine(flexSDKPath, "bin\\jvm.config"));
+                        Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
                         String javaHome = JvmConfigHelper.GetJavaHome(jvmConfig, flexSDKPath);
                         if (!String.IsNullOrEmpty(javaHome)) bridgeSetup.JavaHome = javaHome;
                     }

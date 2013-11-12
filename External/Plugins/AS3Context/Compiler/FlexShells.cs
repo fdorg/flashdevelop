@@ -161,7 +161,7 @@ namespace AS3Context.Compiler
                 return;
             }
 
-            jvmConfig = JvmConfigHelper.ReadConfig(Path.Combine(flexPath ?? "", "bin\\jvm.config"));
+            jvmConfig = JvmConfigHelper.ReadConfig(flexPath);
 			
 			try
 			{
@@ -224,7 +224,7 @@ namespace AS3Context.Compiler
                 return;
             }
 
-            jvmConfig = JvmConfigHelper.ReadConfig(Path.Combine(flexPath, "bin\\jvm.config"));
+            jvmConfig = JvmConfigHelper.ReadConfig(flexPath);
 			
 			try
 			{
