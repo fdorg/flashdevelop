@@ -1,0 +1,919 @@
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Data;
+using System.Text;
+using System.Drawing;
+using System.Threading;
+using System.Reflection;
+using System.Diagnostics;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Xml.Serialization;
+using System.ComponentModel;
+using AppMan.Utilities;
+
+namespace AppMan
+{
+    public partial class MainForm : Form
+    {
+        private String curFile;
+        private String tempFile;
+        private Boolean isLoading;
+        private DepEntry curEntry;
+        private String entriesFile;
+        private WebClient webClient;
+        private DepEntries depEntries;
+        private DepEntries instEntries;
+        private BackgroundWorker bgWorker;
+        private Dictionary<String, String> entryStates;
+        private Dictionary<String, ListViewGroup> appGroups;
+        private Queue<DepEntry> downloadQueue;
+        private Queue<String> setupQueue;
+        private Queue<String> fileQueue;
+        private String[] notifyPaths;
+        private Boolean shouldNotify;
+
+        public MainForm()
+        {
+            this.isLoading = false;
+            this.shouldNotify = false;
+            this.InitializeSettings();
+            this.InitializeGraphics();
+            this.InitializeComponent();
+            this.Load += new EventHandler(this.MainFormLoad);
+            this.FormClosed += new FormClosedEventHandler(this.MainFormClosed);
+            this.Font = SystemFonts.MenuFont;
+        }
+
+        #region Handlers & Methods
+
+        /// <summary>
+        /// Initializes the graphics of the app.
+        /// </summary>
+        private void InitializeGraphics()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            this.Icon = new Icon(assembly.GetManifestResourceStream("AppMan.Resources.AppMan.ico"));
+        }
+
+        /// <summary>
+        /// Initializes the web client used for item downloads.
+        /// </summary>
+        private void InitializeWebClient()
+        {
+            this.webClient = new WebClient();
+            this.webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.DownloadProgressChanged);
+            this.webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(this.DownloadFileCompleted);
+        }
+
+        /// <summary>
+        /// Initializes the settings of the app.
+        /// </summary>
+        private void InitializeSettings()
+        {
+            try
+            {
+                Settings settings = new Settings();
+                String file = Path.Combine(PathHelper.GetExeDirectory(), "Config.xml");
+                if (File.Exists(file))
+                {
+                    settings = ObjectSerializer.Deserialize(file, settings) as Settings;
+                    PathHelper.ARCHIVE_DIR = ArgProcessor.ProcessArguments(settings.Archive);
+                    PathHelper.CONFIG_ADR = ArgProcessor.ProcessArguments(settings.Config);
+                    this.notifyPaths = settings.Paths;
+                }
+                else /* Defaults for FlashDevelop */
+                {
+                    String local = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\.local");
+                    if (!File.Exists(local))
+                    {
+                        String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        String appManDataDir = Path.Combine(userAppDir, @"FlashDevelop\Data\AppMan\Archive");
+                        PathHelper.ARCHIVE_DIR = appManDataDir;
+                        PathHelper.LOG_DIR = appManDataDir;
+                    }
+                }
+                if (!Directory.Exists(PathHelper.ARCHIVE_DIR))
+                {
+                    Directory.CreateDirectory(PathHelper.ARCHIVE_DIR);
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// On MainForm show, initializes the UI and the props.
+        /// </summary>
+        private void MainFormLoad(Object sender, EventArgs e)
+        {
+            this.InitializeWebClient();
+            this.depEntries = new DepEntries();
+            this.setupQueue = new Queue<String>();
+            this.entryStates = new Dictionary<String, String>();
+            this.appGroups = new Dictionary<String, ListViewGroup>();
+            this.downloadQueue = new Queue<DepEntry>();
+            this.TryDeleteOldTempFiles();
+            this.listView.Items.Clear();
+            this.LoadInstalledEntries();
+            this.LoadEntriesFile();
+        }
+
+        /// <summary>
+        /// Save notification files to the notify paths
+        /// </summary>
+        private void MainFormClosed(Object sender, FormClosedEventArgs e)
+        {
+            try
+            {
+                if (!this.shouldNotify) return;
+                foreach (String nPath in this.notifyPaths)
+                {
+                    try
+                    {
+                        String path = Path.GetDirectoryName(ArgProcessor.ProcessArguments(nPath));
+                        if (Directory.Exists(path))
+                        {
+                            String amFile = Path.Combine(path, ".appman");
+                            File.WriteAllText(amFile, "");
+                        }
+                    }
+                    catch { /* NO ERRORS */ }
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Starts the download queue based on the user selections.
+        /// </summary>
+        private void InstallButtonClick(Object sender, EventArgs e)
+        {
+            this.isLoading = true;
+            this.installButton.Enabled = false;
+            this.deleteButton.Enabled = false;
+            this.AddEntriesToQueue();
+            this.DownloadNextFromQueue();
+        }
+
+        /// <summary>
+        /// Deletes the selected items from the archive.
+        /// </summary>
+        private void DeleteButtonClick(Object sender, EventArgs e)
+        {
+            try
+            {
+                String title = "Confirm";
+                String message = "Are you sure to delete all versions of the selected items?";
+                if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    foreach (ListViewItem item in this.listView.CheckedItems)
+                    {
+                        DepEntry entry = item.Tag as DepEntry;
+                        if (this.entryStates[entry.Id] == "Installed")
+                        {
+                            Directory.Delete(Path.Combine(PathHelper.ARCHIVE_DIR, entry.Id), true);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+            finally
+            {
+                Thread.Sleep(100);
+                this.NoneLinkLabelLinkClicked(null, null);
+                this.LoadInstalledEntries();
+                this.UpdateEntryStates();
+                this.UpdateButtonLabels();
+            }
+        }
+
+        /// <summary>
+        /// Browses the archive with windows explorer.
+        /// </summary>
+        private void ExploreButtonClick(Object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start("explorer.exe", PathHelper.ARCHIVE_DIR);
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// On All link click, selects the all items.
+        /// </summary>
+        private void AllLinkLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (this.isLoading) return;
+            this.listView.BeginUpdate();
+            foreach (ListViewItem item in this.listView.Items)
+            {
+                item.Checked = true;
+            }
+            this.listView.EndUpdate();
+        }
+
+        /// <summary>
+        /// On None link click, deselects all items.
+        /// </summary>
+        private void NoneLinkLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (this.isLoading) return;
+            this.listView.BeginUpdate();
+            foreach (ListViewItem item in this.listView.Items)
+            {
+                item.Checked = false;
+            }
+            this.listView.EndUpdate();
+        }
+
+        /// <summary>
+        /// On New link click, selects all new items.
+        /// </summary>
+        private void NewLinkLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                if (this.isLoading) return;
+                this.listView.BeginUpdate();
+                foreach (ListViewItem item in this.listView.Items)
+                {
+                    DepEntry entry = item.Tag as DepEntry;
+                    String state = this.entryStates[entry.Id];
+                    if (state == "New") item.Checked = true;
+                    else item.Checked = false;
+                }
+                this.listView.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// On New link click, selects all installed items.
+        /// </summary>
+        private void InstLinkLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                if (this.isLoading) return;
+                this.listView.BeginUpdate();
+                foreach (ListViewItem item in this.listView.Items)
+                {
+                    DepEntry entry = item.Tag as DepEntry;
+                    String state = this.entryStates[entry.Id];
+                    if (state == "Installed") item.Checked = true;
+                    else item.Checked = false;
+                }
+                this.listView.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Disables the item checking when downloading.
+        /// </summary>
+        private void ListViewItemCheck(Object sender, ItemCheckEventArgs e)
+        {
+            if (this.isLoading) e.NewValue = e.CurrentValue;
+        }
+
+        /// <summary>
+        /// Updates the button labels when item is checked.
+        /// </summary>
+        private void ListViewItemChecked(Object sender, ItemCheckedEventArgs e)
+        {
+            if (this.isLoading) return;
+            this.UpdateButtonLabels();
+        }
+
+        /// <summary>
+        /// Disables the visual selection of items.
+        /// </summary>
+        private void ListViewSelectionChanged(Object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected) e.Item.Selected = false;
+        }
+
+        /// <summary>
+        /// Updates the buttons labels.
+        /// </summary>
+        private void UpdateButtonLabels()
+        {
+            try
+            {
+                Int32 inst = 0;
+                Int32 dele = 0;
+                if (this.isLoading) return;
+                foreach (ListViewItem item in this.listView.CheckedItems)
+                {
+                    DepEntry entry = item.Tag as DepEntry;
+                    if (this.entryStates.ContainsKey(entry.Id))
+                    {
+                        String state = this.entryStates[entry.Id];
+                        if (state == "Installed") dele++;
+                        if (state == "New") inst++;
+                    }
+                }
+                this.installButton.Text = String.Format("Install {0} items.", inst);
+                this.deleteButton.Text = String.Format("Delete {0} items.", dele);
+                this.deleteButton.Enabled = dele > 0;
+                this.installButton.Enabled = inst > 0;
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Populates the list view with current entries.
+        /// </summary>
+        private void PopulateListView()
+        {
+            try
+            {
+                this.listView.BeginUpdate();
+                this.pathTextBox.Text = PathHelper.ARCHIVE_DIR;
+                foreach (DepEntry entry in this.depEntries)
+                {
+                    ListViewItem item = new ListViewItem(entry.Name);
+                    item.Tag = entry; /* Store for later */
+                    item.SubItems.Add(entry.Version);
+                    item.SubItems.Add(entry.Desc);
+                    item.SubItems.Add("New");
+                    item.SubItems.Add(this.IsExecutable(entry) ? "Executable" : "Archive");
+                    this.listView.Items.Add(item);
+                    this.AddToGroup(item);
+                }
+                if (this.appGroups.Count > 1) this.listView.ShowGroups = true;
+                else this.listView.ShowGroups = false;
+                this.UpdateEntryStates();
+                this.listView.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Adds the entry into a new or existing group.
+        /// </summary>
+        private void AddToGroup(ListViewItem item)
+        {
+            try
+            {
+                DepEntry entry = item.Tag as DepEntry;
+                if (this.appGroups.ContainsKey(entry.Group))
+                {
+                    ListViewGroup lvg = this.appGroups[entry.Group];
+                    item.Group = lvg;
+                }
+                else
+                {
+                    ListViewGroup lvg = new ListViewGroup(entry.Group);
+                    this.appGroups[entry.Group] = lvg;
+                    this.listView.Groups.Add(lvg);
+                    item.Group = lvg;
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Creates a temporary file with the given extension.
+        /// </summary>
+        private String GetTempFileName(String file)
+        {
+            try
+            {
+                Int32 counter = 0;
+                String tempDir = Path.GetTempPath();
+                String fileName = Path.GetFileName(file);
+                String tempFile = Path.Combine(tempDir, "appman_" + fileName);
+                while (File.Exists(tempFile))
+                {
+                    counter++;
+                    tempFile = Path.Combine(tempDir, "appman_" + counter + "_" + fileName);
+                }
+                return tempFile;
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Tries to delete old temp files.
+        /// </summary>
+        private void TryDeleteOldTempFiles()
+        {
+            String path = Path.GetTempPath();
+            String[] oldFiles = Directory.GetFiles(path, "appman_*.*");
+            foreach (String file in oldFiles)
+            {
+                try { File.Delete(file); }
+                catch { /* NO ERRORS */ }
+            }
+        }
+
+        /// <summary>
+        /// Runs an executable process.
+        /// </summary>
+        private void RunExecutableProcess(String file)
+        {
+            try { Process.Start(file); }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Checks if entry is an executable.
+        /// </summary>
+        private Boolean IsExecutable(DepEntry entry)
+        {
+            return entry.Type == "Executable";
+        }
+
+        #endregion
+
+        #region Entry Management
+
+        /// <summary>
+        /// Downloads the entry config file.
+        /// </summary>
+        private void LoadEntriesFile()
+        {
+            try
+            {
+                if (PathHelper.CONFIG_ADR.StartsWith("http"))
+                {
+                    WebClient client = new WebClient();
+                    this.entriesFile = Path.GetTempFileName();
+                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(this.EntriesDownloadCompleted);
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.DownloadProgressChanged);
+                    client.DownloadFileAsync(new Uri(PathHelper.CONFIG_ADR), this.entriesFile);
+                    this.statusLabel.Text = "Downloading entry config...";
+                }
+                else
+                {
+                    this.entriesFile = PathHelper.CONFIG_ADR;
+                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries);
+                    this.statusLabel.Text = "Entry config opened.";
+                    this.depEntries = data as DepEntries;
+                    this.PopulateListView();
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// When entry config is loaded, populates the list view.
+        /// </summary>
+        private void EntriesDownloadCompleted(Object sender, AsyncCompletedEventArgs e)
+        {
+            try
+            {
+                Boolean fileExists = File.Exists(this.entriesFile);
+                Boolean fileIsValid = File.ReadAllText(this.entriesFile).Length > 0;
+                if (e.Error == null && fileExists && fileIsValid)
+                {
+                    this.statusLabel.Text = "Entry config downloaded.";
+                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries);
+                    this.depEntries = data as DepEntries;
+                    this.PopulateListView();
+                }
+                else this.statusLabel.Text = "Entry config could not be downloaded.";
+                this.progressBar.Value = 0;
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+            finally /* Try to delete temp file */
+            {
+                try { File.Delete(this.entriesFile); }
+                catch { /* NO ERRORS*/ }
+            }
+        }
+
+        /// <summary>
+        /// Adds the currently selected entries to download queue.
+        /// </summary>
+        private void AddEntriesToQueue()
+        {
+            try
+            {
+                this.downloadQueue.Clear();
+                foreach (ListViewItem item in this.listView.CheckedItems)
+                {
+                    DepEntry entry = item.Tag as DepEntry;
+                    if (this.entryStates[entry.Id] == "New") this.downloadQueue.Enqueue(entry);
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Downloads next item from the queue.
+        /// </summary>
+        private void DownloadNextFromQueue()
+        {
+            try
+            {
+                this.fileQueue = new Queue<String>();
+                this.curEntry = this.downloadQueue.Dequeue();
+                foreach (String file in this.curEntry.Urls)
+                {
+                    this.fileQueue.Enqueue(file);
+                }
+                this.curFile = this.fileQueue.Dequeue();
+                this.tempFile = this.GetTempFileName(this.curFile);
+                this.webClient.DownloadFileAsync(new Uri(this.curFile), this.tempFile);
+                this.statusLabel.Text = "Downloading: " + this.curFile;
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Updates the progress bar for individual downloads.
+        /// </summary>
+        private void DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
+        {
+            this.progressBar.Value = e.ProgressPercentage;
+        }
+
+        /// <summary>
+        /// When file is downloaded, check for errors and extract the file.
+        /// </summary>
+        private void DownloadFileCompleted(Object sender, AsyncCompletedEventArgs e)
+        {
+            try
+            {
+                if (e.Error == null)
+                {
+                    String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
+                    String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
+                    this.ExtractFile(this.tempFile, vnPath);
+                }
+                else
+                {
+                    String message = "Error while downloading file: " + this.curFile + ".";
+                    if (this.downloadQueue.Count > 1) message += "Trying to continue with the next item.";
+                    DialogHelper.ShowError(message);
+                    this.DownloadNextFromQueue();
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Starts the extraction work in a background thread.
+        /// </summary>
+        private void ExtractFile(String file, String path)
+        {
+            try
+            {
+                this.bgWorker = new BackgroundWorker();
+                this.bgWorker.DoWork += new DoWorkEventHandler(this.WorkerDoWork);
+                this.bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.WorkerDoCompleted);
+                this.bgWorker.RunWorkerAsync(new BgArg(file, path));
+                this.statusLabel.Text = "Extracting: " + this.curFile;
+            }
+            catch
+            {
+                String message = "Error while extracting file: " + this.curFile + ".";
+                if (this.downloadQueue.Count > 1) message += "Trying to continue with the next item.";
+                DialogHelper.ShowError(message);
+                this.DownloadNextFromQueue();
+            }
+        }
+
+        /// <summary>
+        /// Completes the actual extraction or file manipulation.
+        /// </summary>
+        private void WorkerDoWork(Object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                BgArg args = e.Argument as BgArg;
+                String url = new Uri(this.curFile).LocalPath;
+                Boolean shouldExecute = this.IsExecutable(this.curEntry);
+                if (!Directory.Exists(args.Path) && !shouldExecute) Directory.CreateDirectory(args.Path);
+                if (Path.GetExtension(url) == ".zip") ZipHelper.ExtractZip(args.File, args.Path);
+                else if (!shouldExecute)
+                {
+                    String fileName = Path.GetFileName(url);
+                    File.Copy(this.tempFile, Path.Combine(args.Path, fileName), true);
+                }
+            }
+            catch
+            {
+                DialogHelper.ShowError("Error while extracting file: " + this.curFile + ".\nTrying to continue with the next item.");
+                this.DownloadNextFromQueue();
+            }
+            finally /* Try to delete temp file if not executable */
+            {
+                if (!this.IsExecutable(this.curEntry))
+                {
+                    try { File.Delete(this.tempFile); }
+                    catch { /* NO ERRORS*/ }
+                }
+            }
+        }
+
+        /// <summary>
+        /// When file hasd been handled, continues to next file or download next item.
+        /// </summary>
+        private void WorkerDoCompleted(Object sender, RunWorkerCompletedEventArgs e)
+        {
+            try
+            {
+                if (this.fileQueue.Count > 0)
+                {
+                    this.curFile = this.fileQueue.Dequeue();
+                    this.tempFile = this.GetTempFileName(this.curFile);
+                    this.webClient.DownloadFileAsync(new Uri(this.curFile), this.tempFile);
+                    this.statusLabel.Text = "Downloading: " + this.curFile;
+                }
+                else
+                {
+                    if (!this.IsExecutable(this.curEntry))
+                    {
+                        String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
+                        this.AddToSetupQueue(idPath, this.curEntry);
+                        this.SaveEntryInfo(idPath, this.curEntry);
+                        this.instEntries.Add(this.curEntry);
+                        this.shouldNotify = true;
+                        this.UpdateEntryStates();
+                        if (this.setupQueue.Count > 0)
+                        {
+                            this.SetupNextFromQueue();
+                        }
+                    }
+                    else this.RunExecutableProcess(this.tempFile);
+                    if (this.downloadQueue.Count > 0) this.DownloadNextFromQueue();
+                    else
+                    {
+                        this.isLoading = false;
+                        this.progressBar.Value = 0;
+                        this.statusLabel.Text = "All items finished.";
+                        this.NoneLinkLabelLinkClicked(null, null);
+                        this.UpdateButtonLabels();
+                    }
+                }
+                this.bgWorker.Dispose();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Saves the entry info into a xml file.
+        /// </summary>
+        private void SaveEntryInfo(String path, DepEntry entry)
+        {
+            try
+            {
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                ObjectSerializer.Serialize(Path.Combine(path, entry.Version + ".xml"), entry);
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Reads the xml entry files from the archive.
+        /// </summary>
+        private void LoadInstalledEntries()
+        {
+            try
+            {
+                this.instEntries = new DepEntries();
+                List<String> entryFiles = new List<string>();
+                String[] entryDirs = Directory.GetDirectories(PathHelper.ARCHIVE_DIR);
+                foreach (String dir in entryDirs)
+                {
+                    entryFiles.AddRange(Directory.GetFiles(dir, "*.xml"));
+                }
+                foreach (String file in entryFiles)
+                {
+                    Object data = ObjectSerializer.Deserialize(file, new DepEntry());
+                    this.instEntries.Add(data as DepEntry);
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Updates the entry states of the all items.
+        /// </summary>
+        private void UpdateEntryStates()
+        {
+            try
+            {
+                this.listView.BeginUpdate();
+                foreach (ListViewItem item in this.listView.Items)
+                {
+                    DepEntry dep = item.Tag as DepEntry;
+                    item.SubItems[3].ForeColor = SystemColors.ControlText;
+                    this.entryStates[dep.Id] = "New";
+                    item.SubItems[3].Text = "New";
+                    foreach (DepEntry inst in this.instEntries)
+                    {
+                        item.UseItemStyleForSubItems = false;
+                        if (dep.Id == inst.Id)
+                        {
+                            Color color = Color.Green;
+                            String text = "Installed";
+                            if (dep.Version != inst.Version)
+                            {
+                                color = Color.Orange;
+                                text = "Update";
+                            }
+                            this.entryStates[inst.Id] = text;
+                            item.SubItems[3].ForeColor = color;
+                            item.SubItems[3].Text = text;
+                            break;
+                        }
+                    }
+                }
+                this.listView.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Adds an item command to setup config file, and queues the execution.
+        /// </summary>
+        private void AddToSetupQueue(String path, DepEntry entry)
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(entry.Cmd))
+                {
+                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    String cmd = Path.Combine(path, entry.Version + ".cmd");
+                    File.WriteAllText(cmd, entry.Cmd);
+                    this.setupQueue.Enqueue(cmd);
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Executes the next setup command from queue.
+        /// </summary>
+        private void SetupNextFromQueue()
+        {
+            try
+            {
+                String file = this.setupQueue.Dequeue();
+                Process process = new Process();
+                process.StartInfo.FileName = file;
+                process.EnableRaisingEvents = true;
+                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(file);
+                process.Exited += delegate(Object sender, EventArgs e)
+                {
+                    try { File.Delete(file); }
+                    catch { /* NO ERRORS */ };
+                };  
+                process.Start();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        #endregion
+
+    }
+
+    #region Data Items
+
+    [Serializable]
+    [XmlRoot("Entries")]
+    public class DepEntries : List<DepEntry>
+    {
+        public DepEntries(){}
+    }
+
+    [Serializable]
+    [XmlType("Entry")]
+    public class DepEntry
+    {
+        public String Id = "";
+        public String Name = "";
+        public String Desc = "";
+        public String Group = "";
+        public String Version = "";
+        public String Type = "Archive";
+        public String Cmd = "";
+
+        [XmlArrayItem("Url")]
+        public String[] Urls = new String[0];
+
+        public DepEntry(){}
+        public DepEntry(String Id, String[] Urls, String Name, String Desc, String Version, String Group, String Cmd, String Type)
+        {
+            this.Id = Id;
+            this.Cmd = Cmd;
+            this.Urls = Urls;
+            this.Name = Name;
+            this.Desc = Desc;
+            this.Version = Version;
+            this.Group = Group;
+            if (!String.IsNullOrEmpty(Type))
+            {
+                this.Type = Type;
+            }
+        }
+    }
+
+    [Serializable]
+    public class Settings
+    {
+        public String Config = "";
+        public String Archive = "";
+
+        [XmlArrayItem("Path")]
+        public String[] Paths = new String[0];
+
+        public Settings() { }
+        public Settings(String Config, String Archive, String[] Paths)
+        {
+            this.Paths = Paths;
+            this.Config = Config;
+            this.Archive = Archive;
+        }
+
+    }
+
+    public class BgArg
+    {
+        public String File = "";
+        public String Path = "";
+
+        public BgArg(String File, String Path)
+        {
+            this.File = File;
+            this.Path = Path;
+        }
+    }
+
+    #endregion
+
+}

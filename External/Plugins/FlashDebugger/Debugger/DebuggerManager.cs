@@ -13,7 +13,6 @@ using PluginCore;
 using net.sf.jni4net;
 using PluginCore.Helpers;
 using ProjectManager.Projects.Haxe;
-using System.Text;
 
 namespace FlashDebugger
 {
@@ -125,7 +124,7 @@ namespace FlashDebugger
 
                     if (flexSDKPath != null && Directory.Exists(flexSDKPath))
                     {
-                        Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
+                        Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(Path.Combine(flexSDKPath, "bin\\jvm.config"));
                         String javaHome = JvmConfigHelper.GetJavaHome(jvmConfig, flexSDKPath);
                         if (!String.IsNullOrEmpty(javaHome)) bridgeSetup.JavaHome = javaHome;
                     }
@@ -232,31 +231,22 @@ namespace FlashDebugger
 		public String GetLocalPath(SourceFile file)
 		{
             if (file == null) return null;
-            String fileFullPath = file.getFullPath();
-            if (m_PathMap.ContainsKey(fileFullPath))
+            if (File.Exists(file.getFullPath()))
 			{
-                return m_PathMap[fileFullPath];
+				return file.getFullPath();
 			}
-            if (File.Exists(fileFullPath))
-            {
-                m_PathMap[fileFullPath] = fileFullPath;
-                return fileFullPath;
-            }
+			if (m_PathMap.ContainsKey(file.getFullPath()))
+			{
+				return m_PathMap[file.getFullPath()];
+			}
 			Char pathSeparator = Path.DirectorySeparatorChar;
 			String pathFromPackage = file.getPackageName().ToString().Replace('/', pathSeparator);
-            String fileName = file.getName();
 			foreach (Folder folder in PluginMain.settingObject.SourcePaths)
 			{
-                StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
-                localPathBuilder.Append(folder.Path);
-                localPathBuilder.Append(pathSeparator);
-                localPathBuilder.Append(pathFromPackage);
-                localPathBuilder.Append(pathSeparator);
-                localPathBuilder.Append(fileName);
-                String localPath = localPathBuilder.ToString();
+                String localPath = folder.Path + pathSeparator + pathFromPackage + pathSeparator + file.getName();
 				if (File.Exists(localPath))
 				{
-                    m_PathMap[fileFullPath] = localPath;
+					m_PathMap[file.getFullPath()] = localPath;
 					return localPath;
 				}
 			}
@@ -265,23 +255,14 @@ namespace FlashDebugger
 			{
 				foreach (string cp in project.Classpaths)
 				{
-                    StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
-                    localPathBuilder.Append(project.Directory);
-                    localPathBuilder.Append(pathSeparator);
-                    localPathBuilder.Append(cp);
-                    localPathBuilder.Append(pathSeparator);
-                    localPathBuilder.Append(pathFromPackage);
-                    localPathBuilder.Append(pathSeparator);
-                    localPathBuilder.Append(fileName);
-                    String localPath = localPathBuilder.ToString();
+					String localPath = project.Directory + pathSeparator + cp + pathSeparator + pathFromPackage + pathSeparator + file.getName();
 					if (File.Exists(localPath))
 					{
-                        m_PathMap[fileFullPath] = localPath;
+						m_PathMap[file.getFullPath()] = localPath;
 						return localPath;
 					}
 				}
 			}
-            m_PathMap[fileFullPath] = null;
 			return null;
         }
 

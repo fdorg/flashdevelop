@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{82D3DF9E-370C-47C3-B9F6-21756AAF0B0B}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AppMan</RootNamespace>
+    <AssemblyName>AppMan</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Tools\appman\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Tools\appman\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\AppMan.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ArgProcessor.cs" />
+    <Compile Include="Utilities\PathHelper.cs" />
+    <Compile Include="ZipLib\BZip2\BZip2.cs" />
+    <Compile Include="ZipLib\BZip2\BZip2Constants.cs" />
+    <Compile Include="ZipLib\BZip2\BZip2Exception.cs" />
+    <Compile Include="ZipLib\BZip2\BZip2InputStream.cs" />
+    <Compile Include="ZipLib\BZip2\BZip2OutputStream.cs" />
+    <Compile Include="ZipLib\Checksums\Adler32.cs" />
+    <Compile Include="ZipLib\Checksums\CRC32.cs" />
+    <Compile Include="ZipLib\Checksums\IChecksum.cs" />
+    <Compile Include="ZipLib\Checksums\StrangeCRC.cs" />
+    <Compile Include="ZipLib\Core\FileSystemScanner.cs" />
+    <Compile Include="ZipLib\Core\INameTransform.cs" />
+    <Compile Include="ZipLib\Core\IScanFilter.cs" />
+    <Compile Include="ZipLib\Core\NameFilter.cs" />
+    <Compile Include="ZipLib\Core\PathFilter.cs" />
+    <Compile Include="ZipLib\Core\StreamUtils.cs" />
+    <Compile Include="ZipLib\Core\WindowsPathUtils.cs" />
+    <Compile Include="ZipLib\Encryption\PkzipClassic.cs" />
+    <Compile Include="ZipLib\Encryption\ZipAESStream.cs" />
+    <Compile Include="ZipLib\Encryption\ZipAESTransform.cs" />
+    <Compile Include="ZipLib\GZip\GZIPConstants.cs" />
+    <Compile Include="ZipLib\GZip\GZipException.cs" />
+    <Compile Include="ZipLib\GZip\GzipInputStream.cs" />
+    <Compile Include="ZipLib\GZip\GzipOutputStream.cs" />
+    <Compile Include="ZipLib\Lzw\LzwConstants.cs" />
+    <Compile Include="ZipLib\Lzw\LzwException.cs" />
+    <Compile Include="ZipLib\Lzw\LzwInputStream.cs" />
+    <Compile Include="ZipLib\SharpZipBaseException.cs" />
+    <Compile Include="ZipLib\Tar\InvalidHeaderException.cs" />
+    <Compile Include="ZipLib\Tar\TarArchive.cs" />
+    <Compile Include="ZipLib\Tar\TarBuffer.cs" />
+    <Compile Include="ZipLib\Tar\TarEntry.cs" />
+    <Compile Include="ZipLib\Tar\TarException.cs" />
+    <Compile Include="ZipLib\Tar\TarHeader.cs" />
+    <Compile Include="ZipLib\Tar\TarInputStream.cs" />
+    <Compile Include="ZipLib\Tar\TarOutputStream.cs" />
+    <Compile Include="ZipLib\Zip\Compression\Deflater.cs" />
+    <Compile Include="ZipLib\Zip\Compression\DeflaterConstants.cs" />
+    <Compile Include="ZipLib\Zip\Compression\DeflaterEngine.cs" />
+    <Compile Include="ZipLib\Zip\Compression\DeflaterHuffman.cs" />
+    <Compile Include="ZipLib\Zip\Compression\DeflaterPending.cs" />
+    <Compile Include="ZipLib\Zip\Compression\Inflater.cs" />
+    <Compile Include="ZipLib\Zip\Compression\InflaterDynHeader.cs" />
+    <Compile Include="ZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="ZipLib\Zip\Compression\PendingBuffer.cs" />
+    <Compile Include="ZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
+    <Compile Include="ZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="ZipLib\Zip\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="ZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="ZipLib\Zip\FastZip.cs" />
+    <Compile Include="ZipLib\Zip\IEntryFactory.cs" />
+    <Compile Include="ZipLib\Zip\WindowsNameTransform.cs" />
+    <Compile Include="ZipLib\Zip\ZipConstants.cs" />
+    <Compile Include="ZipLib\Zip\ZipEntry.cs" />
+    <Compile Include="ZipLib\Zip\ZipEntryFactory.cs" />
+    <Compile Include="ZipLib\Zip\ZipException.cs" />
+    <Compile Include="ZipLib\Zip\ZipExtraData.cs" />
+    <Compile Include="ZipLib\Zip\ZipFile.cs" />
+    <Compile Include="ZipLib\Zip\ZipHelperStream.cs" />
+    <Compile Include="ZipLib\Zip\ZipInputStream.cs" />
+    <Compile Include="ZipLib\Zip\ZipNameTransform.cs" />
+    <Compile Include="ZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="Utilities\DialogHelper.cs" />
+    <Compile Include="Utilities\ObjectSerializer.cs" />
+    <Compile Include="Utilities\ZipHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AppMan.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

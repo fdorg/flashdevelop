@@ -66,7 +66,7 @@ namespace ProjectManager.Building.AS3
             mxmlcPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "mxmlc.jar");
             fcshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "fcsh.jar");
             asc2Path = Path.Combine(Path.Combine(flexsdkPath, "lib"), "mxmlc-cli.jar");
-            jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(flexsdkPath);
+            jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(Path.Combine(flexsdkPath, "bin\\jvm.config"));
 
             if (jvmConfig.ContainsKey("java.args") && jvmConfig["java.args"].Trim().Length > 0)
                 VMARGS = jvmConfig["java.args"];

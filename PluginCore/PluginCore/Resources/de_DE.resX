@@ -5037,4 +5037,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Haxe Dokument</value>
     <comment>Added after 4.4.3</comment>
   </data>
+  <data name="FlashDevelop.Label.InstallSoftware" xml:space="preserve">
+    <value>Install Software...</value>
+    <comment>Added after 4.5.0</comment>
+  </data>
 </root>
