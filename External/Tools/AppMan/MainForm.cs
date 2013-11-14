@@ -42,6 +42,8 @@ namespace AppMan
             this.InitializeGraphics();
             this.InitializeComponent();
             this.Load += new EventHandler(this.MainFormLoad);
+            this.HelpRequested += new HelpEventHandler(this.MainFormHelpRequested);
+            this.HelpButtonClicked += new CancelEventHandler(this.MainFormHelpButtonClicked);
             this.FormClosed += new FormClosedEventHandler(this.MainFormClosed);
             this.Font = SystemFonts.MenuFont;
         }
@@ -124,18 +126,33 @@ namespace AppMan
         }
 
         /// <summary>
-        /// Closes the application when pressing Esc.
+        /// Opens the help when pressing help button or F1.
+        /// </summary>
+        private void MainFormHelpRequested(Object sender, HelpEventArgs e)
+        {
+            try 
+            { 
+                Process.Start(PathHelper.HELP_ADR); 
+            }
+            catch (Exception ex) 
+            { 
+                DialogHelper.ShowError(ex.ToString()); 
+            }
+        }
+        private void MainFormHelpButtonClicked(Object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.MainFormHelpRequested(null, null);
+        }
+
+        /// <summary>
+        /// Closes the application when pressing Escape.
         /// </summary>
         protected override bool ProcessCmdKey(ref Message msg, Keys k)
         {
             if (k == Keys.Escape)
             {
                 this.Close();
-                return true;
-            }
-            else if (k == Keys.F1)
-            {
-                Process.Start(PathHelper.HELP_ADR);
                 return true;
             }
             return base.ProcessCmdKey(ref msg, k);
