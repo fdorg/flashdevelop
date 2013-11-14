@@ -4,6 +4,8 @@
 	<Archive>$(AppDir)\Archive</Archive>
 	<!-- Entry config file, can be an URL or a file path -->
 	<Config>http://www.flashdevelop.org/appman.xml</Config>
+	<!-- App help file, can be an URL or a file path -->
+	<Help>http://www.flashdevelop.org/wikidocs/</Help>
 	<!-- Paths where AppMan should push '.appman' notification files -->
-	<!-- <Paths><Path>$(AppDir)\</Path></Paths> -->
+	<Paths><Path>$(AppDir)\</Path></Paths>
 </Settings>

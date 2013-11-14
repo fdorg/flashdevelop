@@ -81,6 +81,7 @@ namespace AppMan
                     settings = ObjectSerializer.Deserialize(file, settings) as Settings;
                     PathHelper.ARCHIVE_DIR = ArgProcessor.ProcessArguments(settings.Archive);
                     PathHelper.CONFIG_ADR = ArgProcessor.ProcessArguments(settings.Config);
+                    PathHelper.HELP_ADR = ArgProcessor.ProcessArguments(settings.Help);
                     this.notifyPaths = settings.Paths;
                 }
                 else /* Defaults for FlashDevelop */
@@ -89,8 +90,8 @@ namespace AppMan
                     if (!File.Exists(local))
                     {
                         String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        String appManDataDir = Path.Combine(userAppDir, @"FlashDevelop\Data\AppMan\Archive");
-                        PathHelper.ARCHIVE_DIR = appManDataDir;
+                        String appManDataDir = Path.Combine(userAppDir, @"FlashDevelop\Data\AppMan");
+                        PathHelper.ARCHIVE_DIR = Path.Combine(appManDataDir, "Archive");
                         PathHelper.LOG_DIR = appManDataDir;
                     }
                 }
@@ -120,6 +121,24 @@ namespace AppMan
             this.listView.Items.Clear();
             this.LoadInstalledEntries();
             this.LoadEntriesFile();
+        }
+
+        /// <summary>
+        /// Closes the application when pressing Esc.
+        /// </summary>
+        protected override bool ProcessCmdKey(ref Message msg, Keys k)
+        {
+            if (k == Keys.Escape)
+            {
+                this.Close();
+                return true;
+            }
+            else if (k == Keys.F1)
+            {
+                Process.Start(PathHelper.HELP_ADR);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, k);
         }
 
         /// <summary>
@@ -886,6 +905,7 @@ namespace AppMan
     [Serializable]
     public class Settings
     {
+        public String Help = "";
         public String Config = "";
         public String Archive = "";
 
@@ -893,11 +913,12 @@ namespace AppMan
         public String[] Paths = new String[0];
 
         public Settings() { }
-        public Settings(String Config, String Archive, String[] Paths)
+        public Settings(String Config, String Archive, String[] Paths, String Help)
         {
             this.Paths = Paths;
             this.Config = Config;
             this.Archive = Archive;
+            this.Help = Help;
         }
 
     }

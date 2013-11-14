@@ -14,6 +14,11 @@ namespace AppMan.Utilities
         public static String LOG_DIR = GetExeDirectory();
 
         /// <summary>
+        /// Default path to the app help.
+        /// </summary>
+        public static String HELP_ADR = "http://www.flashdevelop.org/wikidocs/";
+
+        /// <summary>
         /// Default path to the config xml file.
         /// </summary>
         public static String CONFIG_ADR = "http://www.flashdevelop.org/appman.xml";
