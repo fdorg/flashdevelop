@@ -3,25 +3,25 @@
     partial class MainForm
     {
         private System.Windows.Forms.Label pathLabel;
+        private System.Windows.Forms.Label selectLabel;
         private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.TextBox pathTextBox;
+        private System.Windows.Forms.Button exploreButton;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button installButton;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.StatusStrip statusStrip;
-        private System.Windows.Forms.FolderBrowserDialog folderDialog;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ColumnHeader versionHeader;
         private System.Windows.Forms.ColumnHeader statusHeader;
         private System.Windows.Forms.ColumnHeader nameHeader;
         private System.Windows.Forms.ColumnHeader descHeader;
         private System.Windows.Forms.ColumnHeader typeHeader;
+        private System.Windows.Forms.LinkLabel updateLinkLabel;
         private System.Windows.Forms.LinkLabel allLinkLabel;
         private System.Windows.Forms.LinkLabel newLinkLabel;
         private System.Windows.Forms.LinkLabel instLinkLabel;
         private System.Windows.Forms.LinkLabel noneLinkLabel;
-        private System.Windows.Forms.Button exploreButton;
-        private System.Windows.Forms.Label selectLabel;
 
         #region Windows Form Designer Generated Code
 
@@ -39,7 +39,6 @@
             this.typeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.deleteButton = new System.Windows.Forms.Button();
             this.installButton = new System.Windows.Forms.Button();
             this.pathLabel = new System.Windows.Forms.Label();
@@ -51,6 +50,8 @@
             this.selectLabel = new System.Windows.Forms.Label();
             this.noneLinkLabel = new System.Windows.Forms.LinkLabel();
             this.exploreButton = new System.Windows.Forms.Button();
+            this.updateLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.taskButton = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,7 +73,7 @@
             this.listView.Location = new System.Drawing.Point(13, 48);
             this.listView.Name = "listView";
             this.listView.ShowItemToolTips = true;
-            this.listView.Size = new System.Drawing.Size(732, 445);
+            this.listView.Size = new System.Drawing.Size(709, 420);
             this.listView.TabIndex = 4;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -83,12 +84,12 @@
             // nameHeader
             // 
             this.nameHeader.Text = "Name";
-            this.nameHeader.Width = 150;
+            this.nameHeader.Width = 160;
             // 
             // versionHeader
             // 
             this.versionHeader.Text = "Version";
-            this.versionHeader.Width = 140;
+            this.versionHeader.Width = 100;
             // 
             // descHeader
             // 
@@ -103,23 +104,23 @@
             // typeHeader
             // 
             this.typeHeader.Text = "Type";
-            this.typeHeader.Width = 85;
+            this.typeHeader.Width = 75;
             // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 575);
+            this.statusStrip.Location = new System.Drawing.Point(0, 550);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            this.statusStrip.Size = new System.Drawing.Size(759, 22);
+            this.statusStrip.Size = new System.Drawing.Size(736, 22);
             this.statusStrip.TabIndex = 4;
             this.statusStrip.Text = "statusStrip";
             // 
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(742, 17);
+            this.statusLabel.Size = new System.Drawing.Size(719, 17);
             this.statusLabel.Spring = true;
             this.statusLabel.Text = "No items selected.";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -128,7 +129,7 @@
             // 
             this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.deleteButton.Enabled = false;
-            this.deleteButton.Location = new System.Drawing.Point(601, 536);
+            this.deleteButton.Location = new System.Drawing.Point(578, 511);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(145, 27);
             this.deleteButton.TabIndex = 11;
@@ -140,7 +141,7 @@
             // 
             this.installButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.installButton.Enabled = false;
-            this.installButton.Location = new System.Drawing.Point(601, 502);
+            this.installButton.Location = new System.Drawing.Point(578, 477);
             this.installButton.Name = "installButton";
             this.installButton.Size = new System.Drawing.Size(145, 27);
             this.installButton.TabIndex = 10;
@@ -165,16 +166,16 @@
             this.pathTextBox.Location = new System.Drawing.Point(86, 15);
             this.pathTextBox.Name = "pathTextBox";
             this.pathTextBox.ReadOnly = true;
-            this.pathTextBox.Size = new System.Drawing.Size(558, 23);
+            this.pathTextBox.Size = new System.Drawing.Size(535, 23);
             this.pathTextBox.TabIndex = 2;
             // 
             // progressBar
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(13, 538);
+            this.progressBar.Location = new System.Drawing.Point(13, 513);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(578, 23);
+            this.progressBar.Size = new System.Drawing.Size(558, 23);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 12;
             // 
@@ -182,7 +183,7 @@
             // 
             this.allLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.allLinkLabel.AutoSize = true;
-            this.allLinkLabel.Location = new System.Drawing.Point(56, 516);
+            this.allLinkLabel.Location = new System.Drawing.Point(56, 491);
             this.allLinkLabel.Name = "allLinkLabel";
             this.allLinkLabel.Size = new System.Drawing.Size(21, 15);
             this.allLinkLabel.TabIndex = 6;
@@ -194,7 +195,7 @@
             // 
             this.newLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.newLinkLabel.AutoSize = true;
-            this.newLinkLabel.Location = new System.Drawing.Point(122, 516);
+            this.newLinkLabel.Location = new System.Drawing.Point(122, 491);
             this.newLinkLabel.Name = "newLinkLabel";
             this.newLinkLabel.Size = new System.Drawing.Size(31, 15);
             this.newLinkLabel.TabIndex = 8;
@@ -206,7 +207,7 @@
             // 
             this.instLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.instLinkLabel.AutoSize = true;
-            this.instLinkLabel.Location = new System.Drawing.Point(159, 516);
+            this.instLinkLabel.Location = new System.Drawing.Point(159, 491);
             this.instLinkLabel.Name = "instLinkLabel";
             this.instLinkLabel.Size = new System.Drawing.Size(51, 15);
             this.instLinkLabel.TabIndex = 9;
@@ -218,7 +219,7 @@
             // 
             this.selectLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.selectLabel.AutoSize = true;
-            this.selectLabel.Location = new System.Drawing.Point(12, 516);
+            this.selectLabel.Location = new System.Drawing.Point(12, 491);
             this.selectLabel.Name = "selectLabel";
             this.selectLabel.Size = new System.Drawing.Size(41, 15);
             this.selectLabel.TabIndex = 5;
@@ -228,7 +229,7 @@
             // 
             this.noneLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.noneLinkLabel.AutoSize = true;
-            this.noneLinkLabel.Location = new System.Drawing.Point(80, 516);
+            this.noneLinkLabel.Location = new System.Drawing.Point(80, 491);
             this.noneLinkLabel.Name = "noneLinkLabel";
             this.noneLinkLabel.Size = new System.Drawing.Size(36, 15);
             this.noneLinkLabel.TabIndex = 7;
@@ -239,7 +240,7 @@
             // exploreButton
             // 
             this.exploreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.exploreButton.Location = new System.Drawing.Point(652, 13);
+            this.exploreButton.Location = new System.Drawing.Point(629, 13);
             this.exploreButton.Name = "exploreButton";
             this.exploreButton.Size = new System.Drawing.Size(94, 27);
             this.exploreButton.TabIndex = 3;
@@ -247,12 +248,37 @@
             this.exploreButton.UseVisualStyleBackColor = true;
             this.exploreButton.Click += new System.EventHandler(this.ExploreButtonClick);
             // 
+            // updateLinkLabel
+            // 
+            this.updateLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.updateLinkLabel.AutoSize = true;
+            this.updateLinkLabel.Location = new System.Drawing.Point(216, 491);
+            this.updateLinkLabel.Name = "updateLinkLabel";
+            this.updateLinkLabel.Size = new System.Drawing.Size(50, 15);
+            this.updateLinkLabel.TabIndex = 13;
+            this.updateLinkLabel.TabStop = true;
+            this.updateLinkLabel.Text = "Updates";
+            this.updateLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.UpdatesLinkLabelLinkClicked);
+            // 
+            // taskButton
+            // 
+            this.taskButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.taskButton.Enabled = false;
+            this.taskButton.Location = new System.Drawing.Point(537, 477);
+            this.taskButton.Name = "taskButton";
+            this.taskButton.Size = new System.Drawing.Size(34, 32);
+            this.taskButton.TabIndex = 15;
+            this.taskButton.UseVisualStyleBackColor = true;
+            this.taskButton.Click += new System.EventHandler(this.TaskButtonClick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(759, 597);
+            this.ClientSize = new System.Drawing.Size(736, 572);
+            this.Controls.Add(this.taskButton);
+            this.Controls.Add(this.updateLinkLabel);
             this.Controls.Add(this.exploreButton);
             this.Controls.Add(this.noneLinkLabel);
             this.Controls.Add(this.selectLabel);
@@ -280,6 +306,8 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Button taskButton;
 
     }
 

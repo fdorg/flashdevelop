@@ -39,8 +39,8 @@ namespace AppMan
             this.isLoading = false;
             this.shouldNotify = false;
             this.InitializeSettings();
-            this.InitializeGraphics();
             this.InitializeComponent();
+            this.InitializeGraphics();
             this.Load += new EventHandler(this.MainFormLoad);
             this.HelpRequested += new HelpEventHandler(this.MainFormHelpRequested);
             this.HelpButtonClicked += new CancelEventHandler(this.MainFormHelpButtonClicked);
@@ -56,6 +56,7 @@ namespace AppMan
         private void InitializeGraphics()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
+            this.taskButton.Image = Image.FromStream(assembly.GetManifestResourceStream("AppMan.Resources.Cancel.png"));
             this.Icon = new Icon(assembly.GetManifestResourceStream("AppMan.Resources.AppMan.ico"));
         }
 
@@ -180,7 +181,7 @@ namespace AppMan
         {
             try
             {
-                if (!this.shouldNotify && this.notifyPaths == null) return;
+                if (!this.shouldNotify || this.notifyPaths == null) return;
                 foreach (String nPath in this.notifyPaths)
                 {
                     try
@@ -202,11 +203,27 @@ namespace AppMan
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        private void TaskButtonClick(Object sender, EventArgs e)
+        {
+            try
+            {
+                this.webClient.CancelAsync();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
         /// Starts the download queue based on the user selections.
         /// </summary>
         private void InstallButtonClick(Object sender, EventArgs e)
         {
             this.isLoading = true;
+            this.taskButton.Enabled = true;
             this.installButton.Enabled = false;
             this.deleteButton.Enabled = false;
             this.AddEntriesToQueue();
@@ -227,7 +244,8 @@ namespace AppMan
                     foreach (ListViewItem item in this.listView.CheckedItems)
                     {
                         DepEntry entry = item.Tag as DepEntry;
-                        if (this.entryStates[entry.Id] == "Installed")
+                        String state = this.entryStates[entry.Id];
+                        if (state == "Installed" || state == "Update")
                         {
                             Directory.Delete(Path.Combine(PathHelper.ARCHIVE_DIR, entry.Id), true);
                         }
@@ -316,7 +334,7 @@ namespace AppMan
         }
 
         /// <summary>
-        /// On New link click, selects all installed items.
+        /// On Installed link click, selects all installed items.
         /// </summary>
         private void InstLinkLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -329,6 +347,30 @@ namespace AppMan
                     DepEntry entry = item.Tag as DepEntry;
                     String state = this.entryStates[entry.Id];
                     if (state == "Installed") item.Checked = true;
+                    else item.Checked = false;
+                }
+                this.listView.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// On Updates link click, selects all updatable items.
+        /// </summary>
+        private void UpdatesLinkLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                if (this.isLoading) return;
+                this.listView.BeginUpdate();
+                foreach (ListViewItem item in this.listView.Items)
+                {
+                    DepEntry entry = item.Tag as DepEntry;
+                    String state = this.entryStates[entry.Id];
+                    if (state == "Update") item.Checked = true;
                     else item.Checked = false;
                 }
                 this.listView.EndUpdate();
@@ -380,8 +422,8 @@ namespace AppMan
                     if (this.entryStates.ContainsKey(entry.Id))
                     {
                         String state = this.entryStates[entry.Id];
-                        if (state == "Installed") dele++;
-                        if (state == "New") inst++;
+                        if (state == "Installed" || state == "Update") dele++;
+                        if (state == "New" || state == "Update") inst++;
                     }
                 }
                 this.installButton.Text = String.Format("Install {0} items.", inst);
@@ -531,13 +573,13 @@ namespace AppMan
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(this.EntriesDownloadCompleted);
                     client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.DownloadProgressChanged);
                     client.DownloadFileAsync(new Uri(PathHelper.CONFIG_ADR), this.entriesFile);
-                    this.statusLabel.Text = "Downloading entry config...";
+                    this.statusLabel.Text = "Downloading item list...";
                 }
                 else
                 {
                     this.entriesFile = PathHelper.CONFIG_ADR;
                     Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries);
-                    this.statusLabel.Text = "Entry config opened.";
+                    this.statusLabel.Text = "Item list read from file.";
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
                 }
@@ -559,12 +601,12 @@ namespace AppMan
                 Boolean fileIsValid = File.ReadAllText(this.entriesFile).Length > 0;
                 if (e.Error == null && fileExists && fileIsValid)
                 {
-                    this.statusLabel.Text = "Entry config downloaded.";
+                    this.statusLabel.Text = "Item list downloaded.";
                     Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries);
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
                 }
-                else this.statusLabel.Text = "Entry config could not be downloaded.";
+                else this.statusLabel.Text = "Item list could not be downloaded.";
                 this.progressBar.Value = 0;
             }
             catch (Exception ex)
@@ -589,7 +631,11 @@ namespace AppMan
                 foreach (ListViewItem item in this.listView.CheckedItems)
                 {
                     DepEntry entry = item.Tag as DepEntry;
-                    if (this.entryStates[entry.Id] == "New") this.downloadQueue.Enqueue(entry);
+                    String state = this.entryStates[entry.Id];
+                    if (state == "New" || state == "Update")
+                    {
+                        this.downloadQueue.Enqueue(entry);
+                    }
                 }
             }
             catch (Exception ex)
@@ -645,7 +691,16 @@ namespace AppMan
         {
             try
             {
-                if (e.Error == null)
+                if (e.Cancelled)
+                {
+                    this.isLoading = false;
+                    this.taskButton.Enabled = false;
+                    this.statusLabel.Text = "Item downloading cancelled.";
+                    this.TryDeleteOldTempFiles();
+                    this.progressBar.Value = 0;
+                    this.UpdateButtonLabels();
+                }
+                else if (e.Error == null)
                 {
                     String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
                     String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
@@ -742,7 +797,7 @@ namespace AppMan
                         String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
                         this.AddToSetupQueue(idPath, this.curEntry);
                         this.SaveEntryInfo(idPath, this.curEntry);
-                        this.instEntries.Add(this.curEntry);
+                        this.LoadInstalledEntries();
                         this.shouldNotify = true;
                         this.UpdateEntryStates();
                         if (this.setupQueue.Count > 0)
@@ -756,7 +811,8 @@ namespace AppMan
                     {
                         this.isLoading = false;
                         this.progressBar.Value = 0;
-                        this.statusLabel.Text = "All items finished.";
+                        this.taskButton.Enabled = false;
+                        this.statusLabel.Text = "All selected items completed.";
                         this.NoneLinkLabelLinkClicked(null, null);
                         this.UpdateButtonLabels();
                     }
@@ -832,7 +888,7 @@ namespace AppMan
                         {
                             Color color = Color.Green;
                             String text = "Installed";
-                            if (dep.Version != inst.Version)
+                            if (dep.Version != inst.Version || (dep.Version == inst.Version && dep.Build != inst.Build))
                             {
                                 color = Color.Orange;
                                 text = "Update";
@@ -921,26 +977,26 @@ namespace AppMan
         public String Desc = "";
         public String Group = "";
         public String Version = "";
-        public String Type = "Archive";
+        public String Build = "";
+        public String Type = "";
         public String Cmd = "";
 
         [XmlArrayItem("Url")]
         public String[] Urls = new String[0];
 
         public DepEntry(){}
-        public DepEntry(String Id, String[] Urls, String Name, String Desc, String Version, String Group, String Cmd, String Type)
+        public DepEntry(String Id, String Name, String Desc, String Group, String Version, String Build, String Type, String Cmd, String[] Urls)
         {
             this.Id = Id;
-            this.Cmd = Cmd;
-            this.Urls = Urls;
             this.Name = Name;
             this.Desc = Desc;
-            this.Version = Version;
             this.Group = Group;
-            if (!String.IsNullOrEmpty(Type))
-            {
-                this.Type = Type;
-            }
+            this.Version = Version;
+            this.Build = Build;
+            if (!String.IsNullOrEmpty(Type)) this.Type = Type;
+            else this.Type = "Archive";
+            this.Cmd = Cmd;
+            this.Urls = Urls;
         }
     }
 
