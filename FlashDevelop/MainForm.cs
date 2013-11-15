@@ -690,15 +690,9 @@ namespace FlashDevelop
             try
             {
                 String appman = Path.Combine(PathHelper.BaseDir, ".appman");
-                String reconfig = Path.Combine(PathHelper.BaseDir, ".reconfig");
                 if (File.Exists(appman))
                 {
                     File.Delete(appman);
-                    this.refreshConfig = true;
-                }
-                if (File.Exists(reconfig))
-                {
-                    File.Delete(reconfig);
                     this.refreshConfig = true;
                 }
             }
