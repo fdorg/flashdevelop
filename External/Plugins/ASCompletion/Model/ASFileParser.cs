@@ -815,9 +815,9 @@ namespace ASCompletion.Model
 
                                     // next model
                                     string realFile = directive.Substring(11);
-                                    FileModel newModel = new FileModel(realFile, cacheLastWriteTime);
+                                    FileModel newModel = model.Context.GetFileModel(realFile);
+                                    newModel.LastWriteTime = cacheLastWriteTime;
                                     newModel.CachedModel = true;
-                                    newModel.Context = model.Context;
                                     if (features != null && features.hasModules) 
                                         newModel.Module = Path.GetFileNameWithoutExtension(realFile);
                                     haXe = newModel.haXe;
