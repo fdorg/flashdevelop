@@ -636,7 +636,14 @@ namespace ASDocGen
                     if (!Directory.Exists(asDocGenDataDir)) Directory.CreateDirectory(asDocGenDataDir);
                     return asDocGenDataDir;
                 }
-                else return this.AppDir;
+                else
+                {
+                    String fdPath = Path.Combine(this.AppDir, @"..\..\");
+                    fdPath = Path.GetFullPath(fdPath); /* Fix weird path */
+                    String asDocGenDataDir = Path.Combine(fdPath, @"Data\ASDocGen\");
+                    if (!Directory.Exists(asDocGenDataDir)) Directory.CreateDirectory(asDocGenDataDir);
+                    return asDocGenDataDir;
+                }
             }
         }
 

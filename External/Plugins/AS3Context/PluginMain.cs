@@ -451,6 +451,54 @@ namespace AS3Context
                     sdk.Path = includedSDK;
                     sdks.Add(sdk);
                 }
+                /* Resolve AppMan Flex SDKs */
+                string appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\flexsdk");
+                if (Directory.Exists(appManDir))
+                {
+                    string[] versionDirs = Directory.GetDirectories(appManDir);
+                    foreach (string versionDir in versionDirs)
+                    {
+                        if (Directory.Exists(versionDir))
+                        {
+                            sdk = new InstalledSDK(this);
+                            sdk.Path = versionDir;
+                            sdks.Add(sdk);
+                        }
+                    }
+                }
+                /* Resolve AppMan Flex+AIR SDKs */
+                appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\flexairsdk");
+                if (Directory.Exists(appManDir))
+                {
+                    string[] versionDirs = Directory.GetDirectories(appManDir);
+                    foreach (string versionDir in versionDirs)
+                    {
+                        if (Directory.Exists(versionDir))
+                        {
+                            sdk = new InstalledSDK(this);
+                            sdk.Path = versionDir;
+                            sdks.Add(sdk);
+                        }
+                    }
+                }
+                /* Resolve AppMan AIR SDKs */
+                appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\ascsdk");
+                if (Directory.Exists(appManDir))
+                {
+                    string[] versionDirs = Directory.GetDirectories(appManDir);
+                    foreach (string versionDir in versionDirs)
+                    {
+                        if (Directory.Exists(versionDir))
+                        {
+                            sdk = new InstalledSDK(this);
+                            sdk.Path = versionDir;
+                            sdks.Add(sdk);
+                        }
+                    }
+                }
+                //
+                // TODO: Resolve Apache Flex SDK
+                //
                 if (settingObject.InstalledSDKs != null)
                 {
                     char[] slashes = new char[] { '/', '\\' };

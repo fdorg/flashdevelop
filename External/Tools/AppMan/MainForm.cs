@@ -89,13 +89,28 @@ namespace AppMan
                 else /* Defaults for FlashDevelop */
                 {
                     String local = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\.local");
+                    local = Path.GetFullPath(local); /* Fix weird path */
                     if (!File.Exists(local))
                     {
                         String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        String appManDataDir = Path.Combine(userAppDir, @"FlashDevelop\Data\AppMan");
+                        String fdUserPath = Path.Combine(userAppDir, "FlashDevelop");
+                        String appManDataDir = Path.Combine(fdUserPath, @"Data\AppMan");
                         PathHelper.ARCHIVE_DIR = Path.Combine(appManDataDir, "Archive");
                         PathHelper.LOG_DIR = appManDataDir;
+                        this.notifyPaths = new String[1] { fdUserPath };
                     }
+                    else
+                    {
+                        String fdPath = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\");
+                        fdPath = Path.GetFullPath(fdPath); /* Fix weird path */
+                        PathHelper.ARCHIVE_DIR = Path.Combine(fdPath, @"Data\AppMan\Archive");
+                        PathHelper.LOG_DIR = Path.Combine(fdPath, @"Data\AppMan");
+                        this.notifyPaths = new String[1] { fdPath };
+                    }
+                }
+                if (!Directory.Exists(PathHelper.LOG_DIR))
+                {
+                    Directory.CreateDirectory(PathHelper.LOG_DIR);
                 }
                 if (!Directory.Exists(PathHelper.ARCHIVE_DIR))
                 {
@@ -165,7 +180,7 @@ namespace AppMan
         {
             try
             {
-                if (!this.shouldNotify) return;
+                if (!this.shouldNotify && this.notifyPaths == null) return;
                 foreach (String nPath in this.notifyPaths)
                 {
                     try
@@ -441,7 +456,7 @@ namespace AppMan
         /// <summary>
         /// Creates a temporary file with the given extension.
         /// </summary>
-        private String GetTempFileName(String file)
+        private String GetTempFileName(String file, Boolean unique)
         {
             try
             {
@@ -449,6 +464,7 @@ namespace AppMan
                 String tempDir = Path.GetTempPath();
                 String fileName = Path.GetFileName(file);
                 String tempFile = Path.Combine(tempDir, "appman_" + fileName);
+                if (!unique) return tempFile;
                 while (File.Exists(tempFile))
                 {
                     counter++;
@@ -596,7 +612,15 @@ namespace AppMan
                     this.fileQueue.Enqueue(file);
                 }
                 this.curFile = this.fileQueue.Dequeue();
-                this.tempFile = this.GetTempFileName(this.curFile);
+                this.tempFile = this.GetTempFileName(this.curFile, false);
+                if (File.Exists(this.tempFile)) // Use already downloaded temp...
+                {
+                    String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
+                    String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
+                    this.ExtractFile(this.tempFile, vnPath);
+                    return;
+                }
+                this.tempFile = this.GetTempFileName(this.curFile, true);
                 this.webClient.DownloadFileAsync(new Uri(this.curFile), this.tempFile);
                 this.statusLabel.Text = "Downloading: " + this.curFile;
             }
@@ -686,14 +710,6 @@ namespace AppMan
                 DialogHelper.ShowError("Error while extracting file: " + this.curFile + ".\nTrying to continue with the next item.");
                 this.DownloadNextFromQueue();
             }
-            finally /* Try to delete temp file if not executable */
-            {
-                if (!this.IsExecutable(this.curEntry))
-                {
-                    try { File.Delete(this.tempFile); }
-                    catch { /* NO ERRORS*/ }
-                }
-            }
         }
 
         /// <summary>
@@ -706,7 +722,16 @@ namespace AppMan
                 if (this.fileQueue.Count > 0)
                 {
                     this.curFile = this.fileQueue.Dequeue();
-                    this.tempFile = this.GetTempFileName(this.curFile);
+                    this.tempFile = this.GetTempFileName(this.curFile, false);
+                    if (File.Exists(this.tempFile)) // Use already downloaded temp...
+                    {
+                        String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
+                        String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
+                        this.ExtractFile(this.tempFile, vnPath);
+                        this.bgWorker.Dispose();
+                        return;
+                    }
+                    this.tempFile = this.GetTempFileName(this.curFile, true);
                     this.webClient.DownloadFileAsync(new Uri(this.curFile), this.tempFile);
                     this.statusLabel.Text = "Downloading: " + this.curFile;
                 }
