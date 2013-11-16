@@ -64,7 +64,7 @@ XPStyle on
 !define MUI_WELCOMEFINISHPAGE_BITMAP "Graphics\Wizard.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "Graphics\Wizard.bmp"
 !define MUI_PAGE_HEADER_SUBTEXT "Please view the licence before installing FlashDevelop ${VERSION}."
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of $(^NameDA).\r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your computer. Hover the installer options for more info.\r\n\r\nTo get everything out of FlashDevelop you should have 32-bit Java Runtime (1.6 or later) and debug Flash Player (ActiveX for IE) installed before using FlashDevelop.\r\n\r\n$_CLICK"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of $(^NameDA).\r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your computer. Hover the installer options for more info.\r\n\r\n$_CLICK"
 !define MUI_FINISHPAGE_SHOWREADME "http://www.flashdevelop.org/wikidocs/index.php?title=Getting_Started"
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "See online guide to get started"
 
