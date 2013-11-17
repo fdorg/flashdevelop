@@ -1173,7 +1173,7 @@ namespace ProjectManager
             // special behavior if this is a fake export node inside a SWF file
             ExportNode node = Tree.SelectedNode as ExportNode;
             string path = (node != null) ? node.ContainingSwfPath : Tree.SelectedPath;
-            Project project = Tree.ProjectOf(path);
+            Project project = Tree.ProjectOf(path) ?? Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.InsertFile(MainForm, project, path, node);
             // TODO better handling / report invalid action
@@ -1184,7 +1184,7 @@ namespace ProjectManager
             // we want to deselect all nodes when toggling library so you can see
             // them turn blue to get some feedback
             string[] selectedPaths = Tree.SelectedPaths;
-            Project project = Tree.ProjectOf(selectedPaths[0]);
+            Project project = Tree.ProjectOf(Tree.SelectedNode);
             Tree.SelectedNodes = null;
             if (project != null)
                 projectActions.ToggleLibraryAsset(project, selectedPaths);
@@ -1236,10 +1236,10 @@ namespace ProjectManager
 
         private void TreeLibraryOptions()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedAsset.Path);
+            Project project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
             {
-                LibraryAssetDialog dialog = new LibraryAssetDialog(Tree.SelectedAsset, project);
+                LibraryAssetDialog dialog = new LibraryAssetDialog(/*Tree.SelectedAsset*/ project.GetAsset(Tree.SelectedPath), project);
                 if (dialog.ShowDialog(pluginUI) == DialogResult.OK)
                 {
                     Tree.SelectedNode.Refresh(false);
@@ -1274,7 +1274,7 @@ namespace ProjectManager
 
         private void TreeHideItems()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedPath) ?? Tree.ProjectOf(Tree.SelectedNode);
+            Project project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.ToggleHidden(project, Tree.SelectedPaths);
         }
