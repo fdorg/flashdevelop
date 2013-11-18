@@ -73,7 +73,7 @@
             this.listView.Location = new System.Drawing.Point(13, 48);
             this.listView.Name = "listView";
             this.listView.ShowItemToolTips = true;
-            this.listView.Size = new System.Drawing.Size(709, 420);
+            this.listView.Size = new System.Drawing.Size(729, 420);
             this.listView.TabIndex = 4;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -94,7 +94,7 @@
             // descHeader
             // 
             this.descHeader.Text = "Description";
-            this.descHeader.Width = 283;
+            this.descHeader.Width = 303;
             // 
             // statusHeader
             // 
@@ -113,7 +113,7 @@
             this.statusStrip.Location = new System.Drawing.Point(0, 550);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            this.statusStrip.Size = new System.Drawing.Size(736, 22);
+            this.statusStrip.Size = new System.Drawing.Size(756, 22);
             this.statusStrip.TabIndex = 4;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -129,7 +129,7 @@
             // 
             this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.deleteButton.Enabled = false;
-            this.deleteButton.Location = new System.Drawing.Point(578, 511);
+            this.deleteButton.Location = new System.Drawing.Point(598, 511);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(145, 27);
             this.deleteButton.TabIndex = 11;
@@ -141,7 +141,7 @@
             // 
             this.installButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.installButton.Enabled = false;
-            this.installButton.Location = new System.Drawing.Point(578, 477);
+            this.installButton.Location = new System.Drawing.Point(598, 477);
             this.installButton.Name = "installButton";
             this.installButton.Size = new System.Drawing.Size(145, 27);
             this.installButton.TabIndex = 10;
@@ -166,7 +166,7 @@
             this.pathTextBox.Location = new System.Drawing.Point(86, 15);
             this.pathTextBox.Name = "pathTextBox";
             this.pathTextBox.ReadOnly = true;
-            this.pathTextBox.Size = new System.Drawing.Size(535, 23);
+            this.pathTextBox.Size = new System.Drawing.Size(555, 23);
             this.pathTextBox.TabIndex = 2;
             // 
             // progressBar
@@ -175,7 +175,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(13, 513);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(558, 23);
+            this.progressBar.Size = new System.Drawing.Size(578, 23);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 12;
             // 
@@ -240,7 +240,7 @@
             // exploreButton
             // 
             this.exploreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.exploreButton.Location = new System.Drawing.Point(629, 13);
+            this.exploreButton.Location = new System.Drawing.Point(649, 13);
             this.exploreButton.Name = "exploreButton";
             this.exploreButton.Size = new System.Drawing.Size(94, 27);
             this.exploreButton.TabIndex = 3;
@@ -264,7 +264,7 @@
             // 
             this.taskButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.taskButton.Enabled = false;
-            this.taskButton.Location = new System.Drawing.Point(537, 477);
+            this.taskButton.Location = new System.Drawing.Point(557, 477);
             this.taskButton.Name = "taskButton";
             this.taskButton.Size = new System.Drawing.Size(34, 32);
             this.taskButton.TabIndex = 15;
@@ -276,7 +276,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(736, 572);
+            this.ClientSize = new System.Drawing.Size(756, 572);
             this.Controls.Add(this.taskButton);
             this.Controls.Add(this.updateLinkLabel);
             this.Controls.Add(this.exploreButton);
