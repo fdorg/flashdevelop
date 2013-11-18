@@ -896,8 +896,6 @@ namespace ASCompletion.Context
         /// <returns>File model</returns>
         public virtual FileModel GetFileModel(string fileName)
         {
-            if (fileName == null || fileName.Length == 0 || !File.Exists(fileName))
-                return new FileModel(fileName);
             return ASFileParser.ParseFile(CreateFileModel(fileName));
         }
 
@@ -908,8 +906,8 @@ namespace ASCompletion.Context
         /// <returns>File model</returns>
         public virtual FileModel CreateFileModel(string fileName)
         {
-            if (fileName == null || fileName.Length == 0 || !File.Exists(fileName))
-                return new FileModel(fileName);
+            if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
+                return new FileModel(fileName ?? "");
             var fileModel = new FileModel(PathHelper.GetLongPathName(fileName));
             fileModel.Context = this;
             return fileModel;
