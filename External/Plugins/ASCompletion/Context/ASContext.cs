@@ -831,7 +831,7 @@ namespace ASCompletion.Context
             }
 
             // parse and add to cache
-            nFile = ASFileParser.ParseFile(fileName, this);
+            nFile = ASFileParser.ParseFile(CreateFileModel(fileName));
             string upName = fileName.ToUpper();
             foreach (PathModel aPath in classPath)
             {
@@ -898,10 +898,21 @@ namespace ASCompletion.Context
         {
             if (fileName == null || fileName.Length == 0 || !File.Exists(fileName))
                 return new FileModel(fileName);
-            
-            fileName = PathHelper.GetLongPathName(fileName);
-            FileModel nFile = ASFileParser.ParseFile(fileName, this);
-            return nFile;
+            return ASFileParser.ParseFile(CreateFileModel(fileName));
+        }
+
+        /// <summary>
+        /// Create a new file model without parsing file
+        /// </summary>
+        /// <param name="fileName">Full path</param>
+        /// <returns>File model</returns>
+        public virtual FileModel CreateFileModel(string fileName)
+        {
+            if (fileName == null || fileName.Length == 0 || !File.Exists(fileName))
+                return new FileModel(fileName);
+            var fileModel = new FileModel(PathHelper.GetLongPathName(fileName));
+            fileModel.Context = this;
+            return fileModel;
         }
 
         /// <summary>
@@ -1451,8 +1462,8 @@ namespace ASCompletion.Context
 				}
 			}
 			FileModel aFile;
-			if (src == null) aFile = cFile;
-			else aFile = ASFileParser.ParseFile(src, this);
+            if (src == null) aFile = cFile;
+            else aFile = ASFileParser.ParseFile(CreateFileModel(src));
 			if (aFile.Version == 0) return;
 			//
 			string code = aFile.GenerateIntrinsic(false);
