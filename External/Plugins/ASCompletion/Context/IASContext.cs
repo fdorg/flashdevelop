@@ -87,7 +87,14 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="filename">Full path</param>
         /// <returns>File model</returns>
-		FileModel GetFileModel(string fileName);
+        FileModel GetFileModel(string fileName);
+
+        /// <summary>
+        /// Create a new file model without parsing file
+        /// </summary>
+        /// <param name="fileName">Full path</param>
+        /// <returns>File model</returns>
+        FileModel CreateFileModel(string fileName);
 
         /// <summary>
         /// Parse a raw source code
