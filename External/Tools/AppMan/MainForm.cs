@@ -29,7 +29,6 @@ namespace AppMan
         private Dictionary<String, String> entryStates;
         private Dictionary<String, ListViewGroup> appGroups;
         private Queue<DepEntry> downloadQueue;
-        private Queue<String> setupQueue;
         private Queue<String> fileQueue;
         private String[] notifyPaths;
         private Boolean shouldNotify;
@@ -131,7 +130,6 @@ namespace AppMan
         {
             this.InitializeWebClient();
             this.depEntries = new DepEntries();
-            this.setupQueue = new Queue<String>();
             this.entryStates = new Dictionary<String, String>();
             this.appGroups = new Dictionary<String, ListViewGroup>();
             this.downloadQueue = new Queue<DepEntry>();
@@ -258,7 +256,7 @@ namespace AppMan
             }
             finally
             {
-                Thread.Sleep(100);
+                Thread.Sleep(100); // Wait for files...
                 this.NoneLinkLabelLinkClicked(null, null);
                 this.LoadInstalledEntries();
                 this.UpdateEntryStates();
@@ -659,6 +657,7 @@ namespace AppMan
                 }
                 this.curFile = this.fileQueue.Dequeue();
                 this.tempFile = this.GetTempFileName(this.curFile, false);
+                this.curEntry.Temps[this.curFile] = this.tempFile; // Save for cmd
                 if (File.Exists(this.tempFile)) // Use already downloaded temp...
                 {
                     String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
@@ -667,6 +666,7 @@ namespace AppMan
                     return;
                 }
                 this.tempFile = this.GetTempFileName(this.curFile, true);
+                this.curEntry.Temps[this.curFile] = this.tempFile; // Save for cmd
                 this.webClient.DownloadFileAsync(new Uri(this.curFile), this.tempFile);
                 this.statusLabel.Text = "Downloading: " + this.curFile;
             }
@@ -732,6 +732,7 @@ namespace AppMan
                 this.bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.WorkerDoCompleted);
                 this.bgWorker.RunWorkerAsync(new BgArg(file, path));
                 this.statusLabel.Text = "Extracting: " + this.curFile;
+                this.progressBar.Style = ProgressBarStyle.Marquee;
             }
             catch
             {
@@ -774,11 +775,13 @@ namespace AppMan
         {
             try
             {
+                this.progressBar.Style = ProgressBarStyle.Continuous;
                 if (this.fileQueue.Count > 0)
                 {
                     this.curFile = this.fileQueue.Dequeue();
                     this.tempFile = this.GetTempFileName(this.curFile, false);
-                    if (File.Exists(this.tempFile)) // Use already downloaded temp...
+                    this.curEntry.Temps[this.curFile] = this.tempFile; // Save for cmd
+                    if (File.Exists(this.tempFile)) // Use downloaded temp...
                     {
                         String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
                         String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
@@ -787,6 +790,7 @@ namespace AppMan
                         return;
                     }
                     this.tempFile = this.GetTempFileName(this.curFile, true);
+                    this.curEntry.Temps[this.curFile] = this.tempFile; // Save for cmd
                     this.webClient.DownloadFileAsync(new Uri(this.curFile), this.tempFile);
                     this.statusLabel.Text = "Downloading: " + this.curFile;
                 }
@@ -795,15 +799,12 @@ namespace AppMan
                     if (!this.IsExecutable(this.curEntry))
                     {
                         String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
-                        this.AddToSetupQueue(idPath, this.curEntry);
+                        this.RunEntrySetup(idPath, this.curEntry);
                         this.SaveEntryInfo(idPath, this.curEntry);
+                        Thread.Sleep(100); // Wait for files...
                         this.LoadInstalledEntries();
                         this.shouldNotify = true;
                         this.UpdateEntryStates();
-                        if (this.setupQueue.Count > 0)
-                        {
-                            this.SetupNextFromQueue();
-                        }
                     }
                     else this.RunExecutableProcess(this.tempFile);
                     if (this.downloadQueue.Count > 0) this.DownloadNextFromQueue();
@@ -909,45 +910,41 @@ namespace AppMan
         }
 
         /// <summary>
-        /// Adds an item command to setup config file, and queues the execution.
+        /// Executes the next setup command from queue.
         /// </summary>
-        private void AddToSetupQueue(String path, DepEntry entry)
+        private void RunEntrySetup(String path, DepEntry entry)
         {
             try
             {
                 if (!String.IsNullOrEmpty(entry.Cmd))
                 {
                     if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    String data = ArgProcessor.ProcessArguments(entry.Cmd);
+                    for (var i = 0; i < entry.Urls.Length; i++)
+                    {
+                        String url = entry.Urls[i];
+                        if (entry.Temps.ContainsKey(url))
+                        {
+                            String index = i.ToString();
+                            String temp = entry.Temps[url];
+                            data = data.Replace("$URL{" + index + "}", url);
+                            data = data.Replace("$TMP{" + index + "}", temp);
+                        }
+                    }
                     String cmd = Path.Combine(path, entry.Version + ".cmd");
-                    File.WriteAllText(cmd, entry.Cmd);
-                    this.setupQueue.Enqueue(cmd);
+                    File.WriteAllText(cmd, data);
+                    Process process = new Process();
+                    process.StartInfo.FileName = cmd;
+                    process.EnableRaisingEvents = true;
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(cmd);
+                    process.Exited += delegate(Object sender, EventArgs e)
+                    {
+                        try { File.Delete(cmd); }
+                        catch { /* NO ERRORS */ };
+                    };
+                    process.Start();
                 }
-            }
-            catch (Exception ex)
-            {
-                DialogHelper.ShowError(ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Executes the next setup command from queue.
-        /// </summary>
-        private void SetupNextFromQueue()
-        {
-            try
-            {
-                String file = this.setupQueue.Dequeue();
-                Process process = new Process();
-                process.StartInfo.FileName = file;
-                process.EnableRaisingEvents = true;
-                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(file);
-                process.Exited += delegate(Object sender, EventArgs e)
-                {
-                    try { File.Delete(file); }
-                    catch { /* NO ERRORS */ };
-                };  
-                process.Start();
             }
             catch (Exception ex)
             {
@@ -984,7 +981,14 @@ namespace AppMan
         [XmlArrayItem("Url")]
         public String[] Urls = new String[0];
 
-        public DepEntry(){}
+        [XmlIgnore]
+        public Dictionary<String, String> Temps;
+
+        public DepEntry()
+        {
+            this.Type = "Archive";
+            this.Temps = new Dictionary<String, String>();
+        }
         public DepEntry(String Id, String Name, String Desc, String Group, String Version, String Build, String Type, String Cmd, String[] Urls)
         {
             this.Id = Id;
@@ -993,6 +997,7 @@ namespace AppMan
             this.Group = Group;
             this.Version = Version;
             this.Build = Build;
+            this.Temps = new Dictionary<String, String>();
             if (!String.IsNullOrEmpty(Type)) this.Type = Type;
             else this.Type = "Archive";
             this.Cmd = Cmd;

@@ -19,8 +19,8 @@ namespace AppMan.Utilities
                 ZipInputStream zis = new ZipInputStream(new FileStream(file, FileMode.Open, FileAccess.Read));
                 while ((entry = zis.GetNextEntry()) != null)
                 {
-                    Int32 size = 2048;
-                    Byte[] data = new Byte[2048];
+                    Int32 size = 4096;
+                    Byte[] data = new Byte[4096];
                     String full = Path.Combine(path, entry.Name);
                     if (entry.IsFile)
                     {
