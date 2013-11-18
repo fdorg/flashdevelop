@@ -486,11 +486,11 @@ namespace AS3Context
         }
 
         /// <summary>
-        /// Create a new file model using the default file parser
+        /// Create a new file model without parsing file
         /// </summary>
-        /// <param name="filename">Full path</param>
+        /// <param name="fileName">Full path</param>
         /// <returns>File model</returns>
-        public override FileModel GetFileModel(string fileName)
+        public override FileModel CreateFileModel(string fileName)
         {
             if (fileName == null || fileName.Length == 0 || !File.Exists(fileName))
                 return new FileModel(fileName);
@@ -501,10 +501,9 @@ namespace AS3Context
                 FileModel nFile = new FileModel(fileName);
                 nFile.Context = this;
                 nFile.HasFiltering = true;
-                ASFileParser.ParseFile(nFile);
                 return nFile;
             }
-            else return base.GetFileModel(fileName);
+            else return base.CreateFileModel(fileName);
         }
 
         private void GuessPackage(string fileName, FileModel nFile)

@@ -426,16 +426,9 @@ namespace ASCompletion.Model
             lock (typeof(ASFileParser))
             {
                 cachedPath = inPath;
-                ParseFile(file, inContext);
+                ParseFile(inContext.CreateFileModel(file));
                 cachedPath = null;
             }
-        }
-
-        static public FileModel ParseFile(string file, IASContext inContext)
-        {
-            FileModel fileModel = new FileModel(file);
-            fileModel.Context = inContext;
-            return ParseFile(fileModel);
         }
 
         static public FileModel ParseFile(FileModel fileModel)
@@ -815,7 +808,7 @@ namespace ASCompletion.Model
 
                                     // next model
                                     string realFile = directive.Substring(11);
-                                    FileModel newModel = model.Context.GetFileModel(realFile);
+                                    FileModel newModel = model.Context.CreateFileModel(realFile);
                                     newModel.LastWriteTime = cacheLastWriteTime;
                                     newModel.CachedModel = true;
                                     if (features != null && features.hasModules) 
