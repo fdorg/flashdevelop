@@ -35,15 +35,17 @@ namespace ProjectManager.Controls.TreeView
 		public static FileNode Create(string filePath)
 		{
             Project project = Tree.ProjectOf(filePath);
-            if (project == null) return new FileNode(filePath);
+            if (project != null) 
+            {
+                if (project.IsOutput(filePath))
+                    return new ProjectOutputNode(filePath);
+                if (project.IsInput(filePath))
+                    return new InputSwfNode(filePath);
+            }
 
             string ext = Path.GetExtension(filePath).ToLower();
 
-            if (project.IsOutput(filePath))
-                return new ProjectOutputNode(filePath);
-            else if (project.IsInput(filePath))
-                return new InputSwfNode(filePath);
-            else if (FileInspector.IsSwf(filePath, ext) || FileInspector.IsSwc(filePath, ext))
+            if (FileInspector.IsSwf(filePath, ext) || FileInspector.IsSwc(filePath, ext))
                 return new SwfFileNode(filePath);
             else if (FileAssociations.ContainsKey(ext)) // custom nodes building
                 return FileAssociations[ext](filePath);
