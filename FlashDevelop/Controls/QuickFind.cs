@@ -496,7 +496,10 @@ namespace FlashDevelop.Controls
                 TabbedDocument document = castable as TabbedDocument;
                 if (document.IsEditable)
                 {
-                    if (this.Visible) document.Padding = new Padding(0, 0, 0, this.Height);
+                    if (this.Visible && document.DesktopBounds.Contains(this.PointToScreen(this.Bounds.Location)))
+                    {
+                        document.Padding = new Padding(0, 0, 0, this.Height);
+                    }
                     else document.Padding = new Padding(0);
                 }
             }

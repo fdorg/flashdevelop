@@ -318,12 +318,18 @@ namespace ASCompletion.Model
             {
                 SetTimer();
             }
-            else if (files.ContainsKey(e.FullPath.ToUpper()))
+            else
             {
-                files[e.FullPath.ToUpper()].OutOfDate = true;
-                SetTimer();
+                lock (lockObject)
+                {
+                    if (files.ContainsKey(e.FullPath.ToUpper()))
+                    {
+                        files[e.FullPath.ToUpper()].OutOfDate = true;
+                        SetTimer();
+                    }
+                    else ParseNewFile(e.FullPath);
+                }
             }
-            else ParseNewFile(e.FullPath);
         }
 
         private void watcher_Deleted(object sender, FileSystemEventArgs e)
@@ -362,8 +368,7 @@ namespace ASCompletion.Model
         {
             if (Owner != null && !Owner.Settings.LazyClasspathExploration && File.Exists(fileName))
             {
-                FileModel newModel = new FileModel(fileName);
-                newModel.Context = Owner;
+                FileModel newModel = Owner.CreateFileModel(fileName);
                 newModel.OutOfDate = true;
                 files[fileName.ToUpper()] = newModel;
                 SetTimer();

@@ -1678,7 +1678,7 @@ namespace ASCompletion.Completion
             ClassModel aType = ASContext.Context.ResolveType(interf, ASContext.Context.CurrentModel);
             if (aType.IsVoid()) return;
 
-            FileModel fileModel = ASFileParser.ParseFile(aType.InFile.FileName, ASContext.Context);
+            FileModel fileModel = ASFileParser.ParseFile(ASContext.Context.CreateFileModel(aType.InFile.FileName));
             foreach (ClassModel cm in fileModel.Classes)
             {
                 if (cm.QualifiedName.Equals(aType.QualifiedName))

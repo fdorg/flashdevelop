@@ -650,44 +650,12 @@ namespace AS2Context
             {
                 bool testSamePackage = package.Length == 0 && features.hasPackages;
                 bool testModule = package.Length > 0 && features.hasModules;
-                foreach (PathModel aPath in classPath) if (aPath.IsValid && !aPath.Updating)
-                {
-                    ClassModel found = null;
-                    aPath.ForeachFile((aFile) =>
+                foreach (PathModel aPath in classPath) 
+                    if (aPath.IsValid && !aPath.Updating)
                     {
-                        // qualified path
-                        if (aFile.Package == package && aFile.Classes.Count > 0)
-                        {
-                            foreach (ClassModel aClass in aFile.Classes)
-                                if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
-                                {
-                                    found = aClass;
-                                    return false;
-                                }
-                        }
-                        else if (testModule && aFile.FullPackage == package && aFile.Classes.Count > 0)
-                        {
-                            foreach (ClassModel aClass in aFile.Classes)
-                                if (aClass.Name == cname)
-                                {
-                                    found = aClass;
-                                    return false;
-                                }
-                        }
-                        // in the same package
-                        else if (testSamePackage && aFile.Package == inPackage)
-                        {
-                            foreach (ClassModel aClass in aFile.Classes)
-                                if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
-                                {
-                                    found = aClass;
-                                    return false;
-                                }
-                        }
-                        return true;
-                    });
-                    if (found != null) return found;
-                }
+                        ClassModel found = LookupClass(package, cname, inPackage, testSamePackage, testModule, aPath);
+                        if (found != null) return found;
+                    }
                 if (classPath.Count > 0 && classPath[0].IsTemporaryPath)
                 {
                     // guess file name
@@ -719,6 +687,45 @@ namespace AS2Context
             }
             return ClassModel.VoidClass;
 		}
+
+        private static ClassModel LookupClass(string package, string cname, string inPackage, bool testSamePackage, bool testModule, PathModel aPath)
+        {
+            ClassModel found = null;
+            aPath.ForeachFile((aFile) =>
+            {
+                // qualified path
+                if (aFile.Package == package && aFile.Classes.Count > 0)
+                {
+                    foreach (ClassModel aClass in aFile.Classes)
+                        if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
+                        {
+                            found = aClass;
+                            return false;
+                        }
+                }
+                else if (testModule && aFile.FullPackage == package && aFile.Classes.Count > 0)
+                {
+                    foreach (ClassModel aClass in aFile.Classes)
+                        if (aClass.Name == cname)
+                        {
+                            found = aClass;
+                            return false;
+                        }
+                }
+                // in the same package
+                else if (testSamePackage && aFile.Package == inPackage)
+                {
+                    foreach (ClassModel aClass in aFile.Classes)
+                        if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
+                        {
+                            found = aClass;
+                            return false;
+                        }
+                }
+                return true;
+            });
+            return found;
+        }
 
         private ClassModel LocateClassFile(PathModel aPath, string fileName)
         {
