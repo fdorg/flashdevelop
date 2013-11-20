@@ -26,7 +26,7 @@
     <hidden path="COMPLETION" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>build.cmd "$(ToolsDir)\google\compiler.jar" --define BUILD='$(BuildConfig)' --compilation_level SIMPLE_OPTIMIZATIONS --js_output_file "bin/$(ProjectID).js"</preBuildCommand>
+  <preBuildCommand>build.cmd --define BUILD='$(BuildConfig)' --compilation_level SIMPLE_OPTIMIZATIONS --js_output_file "bin/$(ProjectID).js"</preBuildCommand>
   <!-- Executed after build -->
   <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
