@@ -1,22 +1,37 @@
-: Init
+:: Init
 
 @echo off
 setlocal enabledelayedexpansion
 
-: Set vars
+:: Check params
+
+if /i [%1]==[] goto help
+if /i [%1]==[-help] goto help
+if /i [%2]==[] goto help
+
+:: Set vars
 
 if exist "..\..\.local" set dir=%cd%\Archive
 if not exist "..\..\.local" set dir=%LOCALAPPDATA%\FlashDevelop\Data\AppMan\Archive
-set paths=
+set file=
+set args=
 
-: Get paths
+:: Get file
 
-for /d %%i IN (*.*) do for /d %%j IN (%%i\*.*) do set paths=!paths!%dir%\%%j\;
+for /r %dir%\%1 %%i in (*%2) do set file=%%i
 
-: Add to PATH
+:: Remove id and jar
 
-set PATH=%PATH%;%paths%
+set args=%*
+call set args=%%args:%1=%%
+call set args=%%args:%2=%%
 
-: Execute
+:: Execute
 
-start "Start" /b %*
+start "Start" /b %file% %args%
+goto:eof
+
+:help
+
+echo Exec 1.0 - AppMan app execution helper.
+echo Usage: Exec.cmd app_id file_name [?options]
