@@ -683,7 +683,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Initializes the status properties
+        /// Initializes the AppMan integration
         /// </summary>
         private void InitializeAppMan()
         {
@@ -697,10 +697,7 @@ namespace FlashDevelop
                 }
                 String amPath = Path.Combine(PathHelper.ToolDir, "AppMan");
                 String oldPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
-                if (oldPath.IndexOf(amPath) == -1)
-                {
-                    Environment.SetEnvironmentVariable("PATH", oldPath + ";" + amPath, EnvironmentVariableTarget.Process);
-                }
+                Environment.SetEnvironmentVariable("PATH", oldPath + ";" + amPath, EnvironmentVariableTarget.Process);
             }
             catch {} // No errors...
         }
