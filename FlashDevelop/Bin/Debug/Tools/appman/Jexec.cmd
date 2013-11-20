@@ -1,21 +1,25 @@
 : Init
 
 @echo off
+setlocal enabledelayedexpansion
 
 : Set vars
 
 if exist "..\..\.local" set dir=%cd%\Archive
 if not exist "..\..\.local" set dir=%LOCALAPPDATA%\FlashDevelop\Data\AppMan\Archive
 set file=
+set args=
 
 : Get file
 
-for /r %dir% %%i in (*%1) do set file=%%i
+for /r %dir%\%1 %%i in (*%2) do set file=%%i
 
-: Shift params
+: Remove id and jar
 
-shift
+set args=%*
+call set args=%%args:%1=%%
+call set args=%%args:%2=%%
 
 : Execute jar
 
-java -jar %file% %1 %2 %3 %4 %5 %6 %7 %8 %9
+java -jar %file% %args%
