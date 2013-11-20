@@ -51,8 +51,8 @@ namespace FlashDevelop
             this.InitializeLocalization();
             if (this.InitializeFirstRun() != DialogResult.Abort)
             {
+                this.InitializeAppMan();
                 this.InitializeRendering();
-                this.InitializeProperties();
                 this.InitializeComponents();
                 this.InitializeProcessRunner();
                 this.InitializeSmartDialogs();
@@ -685,7 +685,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the status properties
         /// </summary>
-        private void InitializeProperties()
+        private void InitializeAppMan()
         {
             try
             {
@@ -694,6 +694,12 @@ namespace FlashDevelop
                 {
                     File.Delete(appman);
                     this.refreshConfig = true;
+                }
+                String amPath = Path.Combine(PathHelper.ToolDir, "AppMan");
+                String oldPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
+                if (oldPath.IndexOf(amPath) == -1)
+                {
+                    Environment.SetEnvironmentVariable("PATH", oldPath + ";" + amPath, EnvironmentVariableTarget.Process);
                 }
             }
             catch {} // No errors...
