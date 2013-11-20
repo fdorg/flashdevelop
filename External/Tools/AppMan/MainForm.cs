@@ -439,14 +439,6 @@ namespace AppMan
         }
 
         /// <summary>
-        /// Disables the visual selection of items.
-        /// </summary>
-        private void ListViewSelectionChanged(Object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            if (e.IsSelected) e.Item.Selected = false;
-        }
-
-        /// <summary>
         /// Updates the buttons labels.
         /// </summary>
         private void UpdateButtonLabels()

@@ -68,6 +68,7 @@
             this.descHeader,
             this.statusHeader,
             this.typeHeader});
+            this.listView.MultiSelect = false;
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
             this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -80,7 +81,6 @@
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ListViewItemCheck);
             this.listView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.ListViewItemChecked);
-            this.listView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.ListViewSelectionChanged);
             // 
             // nameHeader
             // 
@@ -273,7 +273,8 @@
             this.cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
             // 
             // MainForm
-            // 
+            //
+            this.DoubleBuffered = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
