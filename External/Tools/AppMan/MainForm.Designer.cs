@@ -6,6 +6,7 @@
         private System.Windows.Forms.Label selectLabel;
         private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.TextBox pathTextBox;
+        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button exploreButton;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button installButton;
@@ -51,7 +52,7 @@
             this.noneLinkLabel = new System.Windows.Forms.LinkLabel();
             this.exploreButton = new System.Windows.Forms.Button();
             this.updateLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.taskButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -262,14 +263,14 @@
             // 
             // taskButton
             // 
-            this.taskButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.taskButton.Enabled = false;
-            this.taskButton.Location = new System.Drawing.Point(557, 477);
-            this.taskButton.Name = "taskButton";
-            this.taskButton.Size = new System.Drawing.Size(34, 32);
-            this.taskButton.TabIndex = 15;
-            this.taskButton.UseVisualStyleBackColor = true;
-            this.taskButton.Click += new System.EventHandler(this.TaskButtonClick);
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Enabled = false;
+            this.cancelButton.Location = new System.Drawing.Point(557, 477);
+            this.cancelButton.Name = "taskButton";
+            this.cancelButton.Size = new System.Drawing.Size(34, 32);
+            this.cancelButton.TabIndex = 15;
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
             // 
             // MainForm
             // 
@@ -277,7 +278,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(756, 572);
-            this.Controls.Add(this.taskButton);
+            this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.updateLinkLabel);
             this.Controls.Add(this.exploreButton);
             this.Controls.Add(this.noneLinkLabel);
@@ -306,8 +307,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button taskButton;
 
     }
 

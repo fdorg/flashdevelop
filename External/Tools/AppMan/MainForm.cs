@@ -40,6 +40,7 @@ namespace AppMan
             this.InitializeSettings();
             this.InitializeComponent();
             this.InitializeGraphics();
+            this.InitializeContextMenu();
             this.Load += new EventHandler(this.MainFormLoad);
             this.HelpRequested += new HelpEventHandler(this.MainFormHelpRequested);
             this.HelpButtonClicked += new CancelEventHandler(this.MainFormHelpButtonClicked);
@@ -55,7 +56,7 @@ namespace AppMan
         private void InitializeGraphics()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            this.taskButton.Image = Image.FromStream(assembly.GetManifestResourceStream("AppMan.Resources.Cancel.png"));
+            this.cancelButton.Image = Image.FromStream(assembly.GetManifestResourceStream("AppMan.Resources.Cancel.png"));
             this.Icon = new Icon(assembly.GetManifestResourceStream("AppMan.Resources.AppMan.ico"));
         }
 
@@ -120,6 +121,47 @@ namespace AppMan
             catch (Exception ex)
             {
                 DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Initializes the list view context menu.
+        /// </summary>
+        private void InitializeContextMenu()
+        {
+            ContextMenuStrip cms = new ContextMenuStrip();
+            cms.Items.Add("View Info", null, new EventHandler(this.onViewInfoClick));
+            cms.Opening += new CancelEventHandler(this.ContextMenuOpening);
+            this.listView.ContextMenuStrip = cms;
+        }
+
+        /// <summary>
+        /// Cancel opening if an item is not selected.
+        /// </summary>
+        private void ContextMenuOpening(Object sender, CancelEventArgs e)
+        {
+            Point point = this.listView.PointToClient(Cursor.Position);
+            ListViewItem item = this.listView.GetItemAt(point.X, point.Y);
+            if (item == null || item.Tag == null || String.IsNullOrEmpty(((DepEntry)item.Tag).Info))
+            {
+                e.Cancel = true;
+            }
+        }
+
+        /// <summary>
+        /// Open info file or url when clicked.
+        /// </summary>
+        private void onViewInfoClick(Object sender, EventArgs e)
+        {
+            Point point = this.listView.PointToClient(Cursor.Position);
+            ListViewItem item = this.listView.GetItemAt(point.X, point.Y);
+            if (item != null)
+            {
+                DepEntry entry = item.Tag as DepEntry;
+                if (entry != null && !String.IsNullOrEmpty(entry.Info))
+                {
+                    Process.Start(entry.Info);
+                }
             }
         }
 
@@ -201,9 +243,9 @@ namespace AppMan
         }
 
         /// <summary>
-        /// 
+        /// Cancels the item download process.
         /// </summary>
-        private void TaskButtonClick(Object sender, EventArgs e)
+        private void CancelButtonClick(Object sender, EventArgs e)
         {
             try
             {
@@ -221,7 +263,7 @@ namespace AppMan
         private void InstallButtonClick(Object sender, EventArgs e)
         {
             this.isLoading = true;
-            this.taskButton.Enabled = true;
+            this.cancelButton.Enabled = true;
             this.installButton.Enabled = false;
             this.deleteButton.Enabled = false;
             this.AddEntriesToQueue();
@@ -694,7 +736,7 @@ namespace AppMan
                 if (e.Cancelled)
                 {
                     this.isLoading = false;
-                    this.taskButton.Enabled = false;
+                    this.cancelButton.Enabled = false;
                     this.statusLabel.Text = "Item downloading cancelled.";
                     this.TryDeleteOldTempFiles();
                     this.progressBar.Value = 0;
@@ -812,7 +854,7 @@ namespace AppMan
                     {
                         this.isLoading = false;
                         this.progressBar.Value = 0;
-                        this.taskButton.Enabled = false;
+                        this.cancelButton.Enabled = false;
                         this.statusLabel.Text = "All selected items completed.";
                         this.NoneLinkLabelLinkClicked(null, null);
                         this.UpdateButtonLabels();
@@ -976,6 +1018,7 @@ namespace AppMan
         public String Version = "";
         public String Build = "";
         public String Type = "";
+        public String Info = "";
         public String Cmd = "";
 
         [XmlArrayItem("Url")]
@@ -989,7 +1032,7 @@ namespace AppMan
             this.Type = "Archive";
             this.Temps = new Dictionary<String, String>();
         }
-        public DepEntry(String Id, String Name, String Desc, String Group, String Version, String Build, String Type, String Cmd, String[] Urls)
+        public DepEntry(String Id, String Name, String Desc, String Group, String Version, String Build, String Type, String Info, String Cmd, String[] Urls)
         {
             this.Id = Id;
             this.Name = Name;
@@ -1000,6 +1043,7 @@ namespace AppMan
             this.Temps = new Dictionary<String, String>();
             if (!String.IsNullOrEmpty(Type)) this.Type = Type;
             else this.Type = "Archive";
+            this.Info = Info;
             this.Cmd = Cmd;
             this.Urls = Urls;
         }
