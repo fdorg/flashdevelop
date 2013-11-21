@@ -32,10 +32,14 @@ namespace AppMan
         private Queue<String> fileQueue;
         private String[] notifyPaths;
         private Boolean shouldNotify;
+        private Boolean haveUpdates;
+        private Boolean checkOnly;
 
-        public MainForm()
+        public MainForm(String[] args)
         {
+            this.CheckArgs(args);
             this.isLoading = false;
+            this.haveUpdates = false;
             this.shouldNotify = false;
             this.InitializeSettings();
             this.InitializeComponent();
@@ -49,6 +53,19 @@ namespace AppMan
         }
 
         #region Handlers & Methods
+
+        /// <summary>
+        /// Processes command line args.
+        /// </summary>
+        private void CheckArgs(String[] args)
+        {
+            if (args.Length > 0 && args[0] == "-minimize")
+            {
+                this.WindowState = FormWindowState.Minimized;
+                this.checkOnly = true;
+            }
+            else this.checkOnly = false;
+        }
 
         /// <summary>
         /// Initializes the graphics of the app.
@@ -615,6 +632,15 @@ namespace AppMan
                     this.statusLabel.Text = "Item list read from file.";
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
+                    if (this.checkOnly)
+                    {
+                        if (this.haveUpdates)
+                        {
+                            this.WindowState = FormWindowState.Normal;
+                            this.Activate();
+                        }
+                        else Application.Exit();
+                    }
                 }
             }
             catch (Exception ex)
@@ -648,7 +674,19 @@ namespace AppMan
             }
             finally /* Try to delete temp file */
             {
-                try { File.Delete(this.entriesFile); }
+                try 
+                {
+                    if (File.Exists(this.entriesFile)) File.Delete(this.entriesFile);
+                    if (this.checkOnly)
+                    {
+                        if (this.haveUpdates)
+                        {
+                            this.WindowState = FormWindowState.Normal;
+                            this.Activate();
+                        }
+                        else Application.Exit();
+                    }
+                }
                 catch { /* NO ERRORS*/ }
             }
         }
@@ -926,6 +964,7 @@ namespace AppMan
                             String text = "Installed";
                             if (dep.Version != inst.Version || (dep.Version == inst.Version && dep.Build != inst.Build))
                             {
+                                this.haveUpdates = true;
                                 color = Color.Orange;
                                 text = "Update";
                             }
