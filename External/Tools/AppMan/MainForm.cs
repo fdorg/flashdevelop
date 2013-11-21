@@ -130,22 +130,9 @@ namespace AppMan
         private void InitializeContextMenu()
         {
             ContextMenuStrip cms = new ContextMenuStrip();
-            cms.Items.Add("View Info", null, new EventHandler(this.onViewInfoClick));
-            cms.Opening += new CancelEventHandler(this.ContextMenuOpening);
+            cms.Items.Add("Show Info...", null, new EventHandler(this.onViewInfoClick));
+            cms.Items.Add("Toggle Checked", null, new EventHandler(this.onCheckToggleClick));
             this.listView.ContextMenuStrip = cms;
-        }
-
-        /// <summary>
-        /// Cancel opening if an item is not selected.
-        /// </summary>
-        private void ContextMenuOpening(Object sender, CancelEventArgs e)
-        {
-            Point point = this.listView.PointToClient(Cursor.Position);
-            ListViewItem item = this.listView.GetItemAt(point.X, point.Y);
-            if (item == null || item.Tag == null || String.IsNullOrEmpty(((DepEntry)item.Tag).Info))
-            {
-                e.Cancel = true;
-            }
         }
 
         /// <summary>
@@ -153,15 +140,29 @@ namespace AppMan
         /// </summary>
         private void onViewInfoClick(Object sender, EventArgs e)
         {
-            Point point = this.listView.PointToClient(Cursor.Position);
-            ListViewItem item = this.listView.GetItemAt(point.X, point.Y);
-            if (item != null)
+            if (this.listView.SelectedItems.Count > 0)
             {
-                DepEntry entry = item.Tag as DepEntry;
-                if (entry != null && !String.IsNullOrEmpty(entry.Info))
+                ListViewItem item = this.listView.SelectedItems[0];
+                if (item != null)
                 {
-                    Process.Start(entry.Info);
+                    DepEntry entry = item.Tag as DepEntry;
+                    if (entry != null && !String.IsNullOrEmpty(entry.Info))
+                    {
+                        this.RunExecutableProcess(entry.Info);
+                    }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Toggles the check state of the item.
+        /// </summary>
+        private void onCheckToggleClick(Object sender, EventArgs e)
+        {
+            if (this.listView.SelectedItems.Count > 0)
+            {
+                ListViewItem item = this.listView.SelectedItems[0];
+                if (item != null) item.Checked = !item.Checked;
             }
         }
 
