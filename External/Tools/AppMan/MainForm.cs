@@ -19,6 +19,7 @@ namespace AppMan
     {
         private String curFile;
         private String tempFile;
+        private String localeId;
         private Boolean isLoading;
         private DepEntry curEntry;
         private String entriesFile;
@@ -30,6 +31,7 @@ namespace AppMan
         private Dictionary<String, ListViewGroup> appGroups;
         private Queue<DepEntry> downloadQueue;
         private Queue<String> fileQueue;
+        private LocaleData localeData;
         private String[] notifyPaths;
         private Boolean shouldNotify;
         private Boolean haveUpdates;
@@ -41,30 +43,38 @@ namespace AppMan
             this.isLoading = false;
             this.haveUpdates = false;
             this.shouldNotify = false;
+            this.InitializeLocale();
             this.InitializeSettings();
             this.InitializeComponent();
             this.InitializeGraphics();
             this.InitializeContextMenu();
-            this.Load += new EventHandler(this.MainFormLoad);
-            this.HelpRequested += new HelpEventHandler(this.MainFormHelpRequested);
-            this.HelpButtonClicked += new CancelEventHandler(this.MainFormHelpButtonClicked);
-            this.FormClosed += new FormClosedEventHandler(this.MainFormClosed);
+            this.ApplyLocalizationStrings();
             this.Font = SystemFonts.MenuFont;
         }
 
-        #region Handlers & Methods
+        #region Initialization
 
         /// <summary>
         /// Processes command line args.
         /// </summary>
         private void CheckArgs(String[] args)
         {
-            if (args.Length > 0 && args[0] == "-minimize")
+            this.checkOnly = false;
+            this.localeId = "en_US";
+            foreach (String arg in args)
             {
-                this.WindowState = FormWindowState.Minimized;
-                this.checkOnly = true;
+                // Handle minimized mode
+                if (arg.Trim() == "-minimized")
+                {
+                    this.WindowState = FormWindowState.Minimized;
+                    this.checkOnly = true;
+                }
+                // Handle locale id values
+                if (arg.Trim().Contains("-locale="))
+                {
+                    this.localeId = arg.Trim().Substring("-locale=".Length);
+                }
             }
-            else this.checkOnly = false;
         }
 
         /// <summary>
@@ -88,6 +98,44 @@ namespace AppMan
         }
 
         /// <summary>
+        /// Initializes the localization of the app.
+        /// </summary>
+        private void InitializeLocale()
+        {
+            this.localeData = new LocaleData();
+            String localeDir = Path.Combine(PathHelper.GetExeDirectory(), "Locales");
+            String localeFile = Path.Combine(PathHelper.GetExeDirectory(), this.localeId + ".xml");
+            if (File.Exists(localeFile))
+            {
+                this.localeData = ObjectSerializer.Deserialize(localeFile, this.localeData) as LocaleData;
+            }
+        }
+
+        /// <summary>
+        /// Applies the localization string to controls.
+        /// </summary>
+        private void ApplyLocalizationStrings()
+        {
+            this.Text = this.localeData.MainFormTitle;
+            this.exploreButton.Text = this.localeData.ExploreLabel;
+            this.nameHeader.Text = this.localeData.NameHeader;
+            this.descHeader.Text = this.localeData.DescHeader;
+            this.statusHeader.Text = this.localeData.StatusHeader;
+            this.versionHeader.Text = this.localeData.VersionHeader;
+            this.typeHeader.Text = this.localeData.TypeHeader;
+            this.allLinkLabel.Text = this.localeData.LinkAll;
+            this.newLinkLabel.Text = this.localeData.LinkNew;
+            this.noneLinkLabel.Text = this.localeData.LinkNone;
+            this.instLinkLabel.Text = this.localeData.LinkInstalled;
+            this.updateLinkLabel.Text = this.localeData.LinkUpdates;
+            this.statusLabel.Text = this.localeData.NoItemsSelected;
+            this.pathLabel.Text = this.localeData.InstallPathLabel;
+            this.selectLabel.Text = this.localeData.SelectLabel;
+            this.installButton.Text = String.Format(this.localeData.InstallSelectedLabel, "0");
+            this.deleteButton.Text = String.Format(this.localeData.DeleteSelectedLabel, "0");
+        }
+
+        /// <summary>
         /// Initializes the settings of the app.
         /// </summary>
         private void InitializeSettings()
@@ -104,8 +152,11 @@ namespace AppMan
                     PathHelper.HELP_ADR = ArgProcessor.ProcessArguments(settings.Help);
                     this.notifyPaths = settings.Paths;
                 }
+                #if FLASHDEVELOP
                 else /* Defaults for FlashDevelop */
                 {
+                    PathHelper.HELP_ADR = "http://www.flashdevelop.org/wikidocs/";
+                    PathHelper.CONFIG_ADR = "http://www.flashdevelop.org/appman.xml";    
                     String local = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\.local");
                     local = Path.GetFullPath(local); /* Fix weird path */
                     if (!File.Exists(local))
@@ -113,9 +164,9 @@ namespace AppMan
                         String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                         String fdUserPath = Path.Combine(userAppDir, "FlashDevelop");
                         String appManDataDir = Path.Combine(fdUserPath, @"Data\AppMan");
+                        this.notifyPaths = new String[1] { fdUserPath };    
                         PathHelper.ARCHIVE_DIR = Path.Combine(appManDataDir, "Archive");
                         PathHelper.LOG_DIR = appManDataDir;
-                        this.notifyPaths = new String[1] { fdUserPath };
                     }
                     else
                     {
@@ -126,6 +177,7 @@ namespace AppMan
                         this.notifyPaths = new String[1] { fdPath };
                     }
                 }
+                #endif
                 if (!Directory.Exists(PathHelper.LOG_DIR))
                 {
                     Directory.CreateDirectory(PathHelper.LOG_DIR);
@@ -147,41 +199,31 @@ namespace AppMan
         private void InitializeContextMenu()
         {
             ContextMenuStrip cms = new ContextMenuStrip();
-            cms.Items.Add("Show Info...", null, new EventHandler(this.onViewInfoClick));
-            cms.Items.Add("Toggle Checked", null, new EventHandler(this.onCheckToggleClick));
+            cms.Items.Add(this.localeData.ShowInfoLabel, null, new EventHandler(this.OnViewInfoClick));
+            cms.Items.Add(this.localeData.ToggleCheckedLabel, null, new EventHandler(this.OnCheckToggleClick));
             this.listView.ContextMenuStrip = cms;
         }
 
-        /// <summary>
-        /// Open info file or url when clicked.
-        /// </summary>
-        private void onViewInfoClick(Object sender, EventArgs e)
-        {
-            if (this.listView.SelectedItems.Count > 0)
-            {
-                ListViewItem item = this.listView.SelectedItems[0];
-                if (item != null)
-                {
-                    DepEntry entry = item.Tag as DepEntry;
-                    if (entry != null && !String.IsNullOrEmpty(entry.Info))
-                    {
-                        this.RunExecutableProcess(entry.Info);
-                    }
-                }
-            }
-        }
+        #endregion
+
+        #region Key Handling
 
         /// <summary>
-        /// Toggles the check state of the item.
+        /// Closes the application when pressing Escape.
         /// </summary>
-        private void onCheckToggleClick(Object sender, EventArgs e)
+        protected override Boolean ProcessCmdKey(ref Message msg, Keys k)
         {
-            if (this.listView.SelectedItems.Count > 0)
+            if (k == Keys.Escape)
             {
-                ListViewItem item = this.listView.SelectedItems[0];
-                if (item != null) item.Checked = !item.Checked;
+                this.Close();
+                return true;
             }
+            return base.ProcessCmdKey(ref msg, k);
         }
+
+        #endregion
+
+        #region Event Handlers
 
         /// <summary>
         /// On MainForm show, initializes the UI and the props.
@@ -220,19 +262,6 @@ namespace AppMan
         }
 
         /// <summary>
-        /// Closes the application when pressing Escape.
-        /// </summary>
-        protected override bool ProcessCmdKey(ref Message msg, Keys k)
-        {
-            if (k == Keys.Escape)
-            {
-                this.Close();
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, k);
-        }
-
-        /// <summary>
         /// Save notification files to the notify paths
         /// </summary>
         private void MainFormClosed(Object sender, FormClosedEventArgs e)
@@ -260,6 +289,36 @@ namespace AppMan
             }
         }
 
+        /// <summary>
+        /// Open info file or url when clicked.
+        /// </summary>
+        private void OnViewInfoClick(Object sender, EventArgs e)
+        {
+            if (this.listView.SelectedItems.Count > 0)
+            {
+                ListViewItem item = this.listView.SelectedItems[0];
+                if (item != null)
+                {
+                    DepEntry entry = item.Tag as DepEntry;
+                    if (entry != null && !String.IsNullOrEmpty(entry.Info))
+                    {
+                        this.RunExecutableProcess(entry.Info);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Toggles the check state of the item.
+        /// </summary>
+        private void OnCheckToggleClick(Object sender, EventArgs e)
+        {
+            if (this.listView.SelectedItems.Count > 0)
+            {
+                ListViewItem item = this.listView.SelectedItems[0];
+                if (item != null) item.Checked = !item.Checked;
+            }
+        }
         /// <summary>
         /// Cancels the item download process.
         /// </summary>
@@ -295,15 +354,15 @@ namespace AppMan
         {
             try
             {
-                String title = "Confirm";
-                String message = "Are you sure to delete all versions of the selected items?";
+                String title = this.localeData.ConfirmTitle;
+                String message = this.localeData.DeleteSelectedConfirm;
                 if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     foreach (ListViewItem item in this.listView.CheckedItems)
                     {
                         DepEntry entry = item.Tag as DepEntry;
                         String state = this.entryStates[entry.Id];
-                        if (state == "Installed" || state == "Update")
+                        if (state == this.localeData.StateInstalled || state == this.localeData.StateUpdate)
                         {
                             Directory.Delete(Path.Combine(PathHelper.ARCHIVE_DIR, entry.Id), true);
                         }
@@ -380,7 +439,7 @@ namespace AppMan
                 {
                     DepEntry entry = item.Tag as DepEntry;
                     String state = this.entryStates[entry.Id];
-                    if (state == "New") item.Checked = true;
+                    if (state == this.localeData.StateNew) item.Checked = true;
                     else item.Checked = false;
                 }
                 this.listView.EndUpdate();
@@ -404,7 +463,7 @@ namespace AppMan
                 {
                     DepEntry entry = item.Tag as DepEntry;
                     String state = this.entryStates[entry.Id];
-                    if (state == "Installed") item.Checked = true;
+                    if (state == this.localeData.StateInstalled) item.Checked = true;
                     else item.Checked = false;
                 }
                 this.listView.EndUpdate();
@@ -428,7 +487,7 @@ namespace AppMan
                 {
                     DepEntry entry = item.Tag as DepEntry;
                     String state = this.entryStates[entry.Id];
-                    if (state == "Update") item.Checked = true;
+                    if (state == this.localeData.StateUpdate) item.Checked = true;
                     else item.Checked = false;
                 }
                 this.listView.EndUpdate();
@@ -456,6 +515,26 @@ namespace AppMan
             this.UpdateButtonLabels();
         }
 
+        #endregion
+
+        #region Utility Methods
+
+        /// <summary>
+        /// Completes the minimized update process.
+        /// </summary>
+        private void CompleteMinimizedProcess()
+        {
+            if (this.checkOnly)
+            {
+                if (this.haveUpdates)
+                {
+                    this.WindowState = FormWindowState.Normal;
+                    this.Activate();
+                }
+                else Application.Exit();
+            }
+        }
+
         /// <summary>
         /// Updates the buttons labels.
         /// </summary>
@@ -472,12 +551,12 @@ namespace AppMan
                     if (this.entryStates.ContainsKey(entry.Id))
                     {
                         String state = this.entryStates[entry.Id];
-                        if (state == "Installed" || state == "Update") dele++;
-                        if (state == "New" || state == "Update") inst++;
+                        if (state == this.localeData.StateInstalled || state == this.localeData.StateUpdate) dele++;
+                        if (state == this.localeData.StateNew || state == this.localeData.StateUpdate) inst++;
                     }
                 }
-                this.installButton.Text = String.Format("Install {0} items.", inst);
-                this.deleteButton.Text = String.Format("Delete {0} items.", dele);
+                this.installButton.Text = String.Format(this.localeData.InstallSelectedLabel, inst);
+                this.deleteButton.Text = String.Format(this.localeData.DeleteSelectedLabel, dele);
                 this.deleteButton.Enabled = dele > 0;
                 this.installButton.Enabled = inst > 0;
             }
@@ -502,8 +581,8 @@ namespace AppMan
                     item.Tag = entry; /* Store for later */
                     item.SubItems.Add(entry.Version);
                     item.SubItems.Add(entry.Desc);
-                    item.SubItems.Add("New");
-                    item.SubItems.Add(this.IsExecutable(entry) ? "Executable" : "Archive");
+                    item.SubItems.Add(this.localeData.StateNew);
+                    item.SubItems.Add(this.IsExecutable(entry) ? this.localeData.ExecutableType : this.localeData.ArchiveType);
                     this.listView.Items.Add(item);
                     this.AddToGroup(item);
                 }
@@ -602,7 +681,7 @@ namespace AppMan
         /// </summary>
         private Boolean IsExecutable(DepEntry entry)
         {
-            return entry.Type == "Executable";
+            return entry.Type == this.localeData.ExecutableType;
         }
 
         #endregion
@@ -623,29 +702,24 @@ namespace AppMan
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(this.EntriesDownloadCompleted);
                     client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.DownloadProgressChanged);
                     client.DownloadFileAsync(new Uri(PathHelper.CONFIG_ADR), this.entriesFile);
-                    this.statusLabel.Text = "Downloading item list...";
+                    this.statusLabel.Text = this.localeData.DownloadingItemList;
                 }
                 else
                 {
                     this.entriesFile = PathHelper.CONFIG_ADR;
                     Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries);
-                    this.statusLabel.Text = "Item list read from file.";
+                    this.statusLabel.Text = this.localeData.ItemListOpened;
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
-                    if (this.checkOnly)
-                    {
-                        if (this.haveUpdates)
-                        {
-                            this.WindowState = FormWindowState.Normal;
-                            this.Activate();
-                        }
-                        else Application.Exit();
-                    }
                 }
             }
             catch (Exception ex)
             {
                 DialogHelper.ShowError(ex.ToString());
+            }
+            finally
+            {
+                this.CompleteMinimizedProcess();
             }
         }
 
@@ -660,33 +734,22 @@ namespace AppMan
                 Boolean fileIsValid = File.ReadAllText(this.entriesFile).Length > 0;
                 if (e.Error == null && fileExists && fileIsValid)
                 {
-                    this.statusLabel.Text = "Item list downloaded.";
+                    this.statusLabel.Text = this.localeData.DownloadedItemList;
                     Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries);
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
                 }
-                else this.statusLabel.Text = "Item list could not be downloaded.";
+                else this.statusLabel.Text = this.localeData.ItemListDownloadFailed;
                 this.progressBar.Value = 0;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) 
+            { 
                 DialogHelper.ShowError(ex.ToString());
             }
-            finally /* Try to delete temp file */
+            finally
             {
-                try 
-                {
-                    if (File.Exists(this.entriesFile)) File.Delete(this.entriesFile);
-                    if (this.checkOnly)
-                    {
-                        if (this.haveUpdates)
-                        {
-                            this.WindowState = FormWindowState.Normal;
-                            this.Activate();
-                        }
-                        else Application.Exit();
-                    }
-                }
+                this.CompleteMinimizedProcess();
+                try { File.Delete(this.entriesFile); }
                 catch { /* NO ERRORS*/ }
             }
         }
@@ -703,7 +766,7 @@ namespace AppMan
                 {
                     DepEntry entry = item.Tag as DepEntry;
                     String state = this.entryStates[entry.Id];
-                    if (state == "New" || state == "Update")
+                    if (state == this.localeData.StateNew || state == this.localeData.StateUpdate)
                     {
                         this.downloadQueue.Enqueue(entry);
                     }
@@ -741,7 +804,7 @@ namespace AppMan
                 this.tempFile = this.GetTempFileName(this.curFile, true);
                 this.curEntry.Temps[this.curFile] = this.tempFile; // Save for cmd
                 this.webClient.DownloadFileAsync(new Uri(this.curFile), this.tempFile);
-                this.statusLabel.Text = "Downloading: " + this.curFile;
+                this.statusLabel.Text = this.localeData.DownloadingFile + this.curFile;
             }
             catch (Exception ex)
             {
@@ -768,7 +831,7 @@ namespace AppMan
                 {
                     this.isLoading = false;
                     this.cancelButton.Enabled = false;
-                    this.statusLabel.Text = "Item downloading cancelled.";
+                    this.statusLabel.Text = this.localeData.ItemListDownloadCancelled;
                     this.TryDeleteOldTempFiles();
                     this.progressBar.Value = 0;
                     this.UpdateButtonLabels();
@@ -781,8 +844,8 @@ namespace AppMan
                 }
                 else
                 {
-                    String message = "Error while downloading file: " + this.curFile + ".";
-                    if (this.downloadQueue.Count > 1) message += "Trying to continue with the next item.";
+                    String message = this.localeData.DownloadingError + this.curFile + ".\n";
+                    if (this.downloadQueue.Count > 1) message += this.localeData.ContinueWithNextItem;
                     DialogHelper.ShowError(message);
                     this.DownloadNextFromQueue();
                 }
@@ -804,13 +867,13 @@ namespace AppMan
                 this.bgWorker.DoWork += new DoWorkEventHandler(this.WorkerDoWork);
                 this.bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.WorkerDoCompleted);
                 this.bgWorker.RunWorkerAsync(new BgArg(file, path));
-                this.statusLabel.Text = "Extracting: " + this.curFile;
+                this.statusLabel.Text = this.localeData.ExtractingFile + this.curFile;
                 this.progressBar.Style = ProgressBarStyle.Marquee;
             }
             catch
             {
-                String message = "Error while extracting file: " + this.curFile + ".";
-                if (this.downloadQueue.Count > 1) message += "Trying to continue with the next item.";
+                String message = this.localeData.ExtractingError + this.curFile + ".\n";
+                if (this.downloadQueue.Count > 1) message += this.localeData.ContinueWithNextItem;
                 DialogHelper.ShowError(message);
                 this.DownloadNextFromQueue();
             }
@@ -836,7 +899,7 @@ namespace AppMan
             }
             catch
             {
-                DialogHelper.ShowError("Error while extracting file: " + this.curFile + ".\nTrying to continue with the next item.");
+                DialogHelper.ShowError(this.localeData.ExtractingError + this.curFile + ".\n" + this.localeData.ContinueWithNextItem);
                 this.DownloadNextFromQueue();
             }
         }
@@ -865,7 +928,7 @@ namespace AppMan
                     this.tempFile = this.GetTempFileName(this.curFile, true);
                     this.curEntry.Temps[this.curFile] = this.tempFile; // Save for cmd
                     this.webClient.DownloadFileAsync(new Uri(this.curFile), this.tempFile);
-                    this.statusLabel.Text = "Downloading: " + this.curFile;
+                    this.statusLabel.Text = this.localeData.DownloadingFile + this.curFile;
                 }
                 else
                 {
@@ -886,7 +949,7 @@ namespace AppMan
                         this.isLoading = false;
                         this.progressBar.Value = 0;
                         this.cancelButton.Enabled = false;
-                        this.statusLabel.Text = "All selected items completed.";
+                        this.statusLabel.Text = this.localeData.AllItemsCompleted;
                         this.NoneLinkLabelLinkClicked(null, null);
                         this.UpdateButtonLabels();
                     }
@@ -953,20 +1016,20 @@ namespace AppMan
                 {
                     DepEntry dep = item.Tag as DepEntry;
                     item.SubItems[3].ForeColor = SystemColors.ControlText;
-                    this.entryStates[dep.Id] = "New";
-                    item.SubItems[3].Text = "New";
+                    this.entryStates[dep.Id] = this.localeData.StateNew;
+                    item.SubItems[3].Text = this.localeData.StateNew;
                     foreach (DepEntry inst in this.instEntries)
                     {
                         item.UseItemStyleForSubItems = false;
                         if (dep.Id == inst.Id)
                         {
                             Color color = Color.Green;
-                            String text = "Installed";
+                            String text = this.localeData.StateInstalled;
                             if (dep.Version != inst.Version || (dep.Version == inst.Version && dep.Build != inst.Build))
                             {
                                 this.haveUpdates = true;
+                                text = this.localeData.StateUpdate;
                                 color = Color.Orange;
-                                text = "Update";
                             }
                             this.entryStates[inst.Id] = text;
                             item.SubItems[3].ForeColor = color;
@@ -1032,11 +1095,16 @@ namespace AppMan
 
     #region Data Items
 
-    [Serializable]
-    [XmlRoot("Entries")]
-    public class DepEntries : List<DepEntry>
+    public class BgArg
     {
-        public DepEntries(){}
+        public String File = "";
+        public String Path = "";
+
+        public BgArg(String File, String Path)
+        {
+            this.File = File;
+            this.Path = Path;
+        }
     }
 
     [Serializable]
@@ -1082,6 +1150,13 @@ namespace AppMan
     }
 
     [Serializable]
+    [XmlRoot("Entries")]
+    public class DepEntries : List<DepEntry>
+    {
+        public DepEntries() { }
+    }
+
+    [Serializable]
     public class Settings
     {
         public String Help = "";
@@ -1102,16 +1177,48 @@ namespace AppMan
 
     }
 
-    public class BgArg
+    [Serializable]
+    [XmlRoot("Locale")]
+    public class LocaleData
     {
-        public String File = "";
-        public String Path = "";
-
-        public BgArg(String File, String Path)
-        {
-            this.File = File;
-            this.Path = Path;
-        }
+        public LocaleData() {}
+        public String NameHeader = "Name";
+        public String VersionHeader = "Version";
+        public String DescHeader = "Description";
+        public String StatusHeader = "Status";
+        public String TypeHeader = "Type";
+        public String StateNew = "New";
+        public String StateUpdate = "Update";
+        public String StateInstalled = "Installed";
+        public String ExtractingFile = "Extracting: ";
+        public String DownloadingFile = "Downloading: ";
+        public String DownloadingItemList = "Downloading item list...";
+        public String NoItemsSelected = "No items selected.";
+        public String ItemListOpened = "Item list read from file.";
+        public String DownloadedItemList = "Item list downloaded.";
+        public String AllItemsCompleted = "All selected items completed.";
+        public String ItemListDownloadCancelled = "Item list download cancelled.";
+        public String ItemListDownloadFailed = "Item list could not be downloaded.";
+        public String DeleteSelectedConfirm = "Are you sure to delete all versions of the selected items?";
+        public String ContinueWithNextItem = "Trying to continue with the next item.";
+        public String DownloadingError = "Error while downloading file: ";
+        public String ExtractingError = "Error while extracting file: ";
+        public String MainFormTitle = "AppMan";
+        public String ConfirmTitle = "Confirm";
+        public String LinkAll = "All";
+        public String LinkNone = "None";
+        public String LinkInstalled = "Installed";
+        public String LinkUpdates = "Updates";
+        public String LinkNew = "New";
+        public String SelectLabel = "Select:";
+        public String ExploreLabel = "Explore...";
+        public String InstallPathLabel = "Install path:";
+        public String DeleteSelectedLabel = "Delete {0} items.";
+        public String InstallSelectedLabel = "Install {0} items.";
+        public String ToggleCheckedLabel = "Toggle Checked";
+        public String ShowInfoLabel = "Show Info...";
+        public String ExecutableType = "Executable";
+        public String ArchiveType = "Archive";
     }
 
     #endregion

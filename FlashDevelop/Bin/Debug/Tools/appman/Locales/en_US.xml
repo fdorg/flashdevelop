@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Locale xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<!-- States -->
+	<StateNew>New</StateNew>
+	<StateUpdate>Update</StateUpdate>
+	<StateInstalled>Installed</StateInstalled>
+	<!-- Headers -->
+	<NameHeader>Name</NameHeader>
+	<VersionHeader>Version</VersionHeader>
+	<DescHeader>Description</DescHeader>
+	<StatusHeader>Status</StatusHeader>
+	<TypeHeader>Type</TypeHeader>
+	<!-- Progress -->
+	<ExtractingFile>Extracting: </ExtractingFile>
+	<DownloadingFile>Downloading: </DownloadingFile>
+	<DownloadingItemList>Downloading item list...</DownloadingItemList>
+	<!-- Messages -->
+	<NoItemsSelected>No items selected.</NoItemsSelected>
+	<ItemListOpened>Item list read from file.</ItemListOpened>
+	<DownloadedItemList>Item list downloaded.</DownloadedItemList>
+	<AllItemsCompleted>All selected items completed.</AllItemsCompleted>
+	<ItemListDownloadCancelled>Item list download cancelled.</ItemListDownloadCancelled>
+	<ItemListDownloadFailed>Item list could not be downloaded.</ItemListDownloadFailed>
+	<DeleteSelectedConfirm>Are you sure to delete all versions of the selected items?</DeleteSelectedConfirm>
+	<ContinueWithNextItem>Trying to continue with the next item.</ContinueWithNextItem>
+	<DownloadingError>Error while downloading file: </DownloadingError>
+	<ExtractingError>Error while extracting file: </ExtractingError>
+	<!-- Labels -->
+	<SelectLabel>Select:</SelectLabel>
+	<ExploreLabel>Explore...</ExploreLabel>
+	<InstallPathLabel>Install path:</InstallPathLabel>
+	<DeleteSelectedLabel>Delete {0} items.</DeleteSelectedLabel>
+	<InstallSelectedLabel>Install {0} items.</InstallSelectedLabel>
+	<ToggleCheckedLabel>Toggle Checked</ToggleCheckedLabel>
+	<ShowInfoLabel>Show Info...</ShowInfoLabel>
+	<!-- Types -->
+	<ExecutableType>Executable</ExecutableType>
+	<ArchiveType>Archive</ArchiveType>
+	<!-- Dialogs -->
+	<MainFormTitle>AppMan</MainFormTitle>
+	<ConfirmTitle>Confirm</ConfirmTitle>
+	<!-- Links -->
+	<LinkAll>All</LinkAll>
+	<LinkNone>None</LinkNone>
+	<LinkInstalled>Installed</LinkInstalled>
+	<LinkUpdates>Updates</LinkUpdates>
+	<LinkNew>New</LinkNew>
+</Locale>

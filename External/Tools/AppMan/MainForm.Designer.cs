@@ -1,4 +1,8 @@
-﻿namespace AppMan
+﻿using System;
+using System.Windows.Forms;
+using System.ComponentModel;
+
+namespace AppMan
 {
     partial class MainForm
     {
@@ -275,6 +279,9 @@
             // 
             // MainForm
             //
+            this.Text = "AppMan";
+            this.Name = "MainForm";
+            this.HelpButton = true;
             this.DoubleBuffered = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -295,11 +302,12 @@
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.listView);
             this.Controls.Add(this.statusStrip);
-            this.HelpButton = true;
             this.MinimumSize = new System.Drawing.Size(410, 340);
-            this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "AppMan";
+            this.Load += new EventHandler(this.MainFormLoad);
+            this.HelpRequested += new HelpEventHandler(this.MainFormHelpRequested);
+            this.HelpButtonClicked += new CancelEventHandler(this.MainFormHelpButtonClicked);
+            this.FormClosed += new FormClosedEventHandler(this.MainFormClosed);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);

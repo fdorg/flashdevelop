@@ -16,12 +16,12 @@ namespace AppMan.Utilities
         /// <summary>
         /// Default path to the app help.
         /// </summary>
-        public static String HELP_ADR = "http://www.flashdevelop.org/wikidocs/";
+        public static String HELP_ADR = "@AppDir/Help.html";
 
         /// <summary>
         /// Default path to the config xml file.
         /// </summary>
-        public static String CONFIG_ADR = "http://www.flashdevelop.org/appman.xml";
+        public static String CONFIG_ADR = "@AppDir/Config.xml";
 
         /// <summary>
         /// Default path to the item archive.
