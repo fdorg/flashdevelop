@@ -32,6 +32,7 @@ namespace AppMan
         private Queue<DepEntry> downloadQueue;
         private Queue<String> fileQueue;
         private LocaleData localeData;
+        private Boolean localeOverride;
         private String[] notifyPaths;
         private Boolean shouldNotify;
         private Boolean haveUpdates;
@@ -43,8 +44,8 @@ namespace AppMan
             this.isLoading = false;
             this.haveUpdates = false;
             this.shouldNotify = false;
-            this.InitializeLocale();
             this.InitializeSettings();
+            this.InitializeLocalization();
             this.InitializeComponent();
             this.InitializeGraphics();
             this.InitializeContextMenu();
@@ -61,6 +62,7 @@ namespace AppMan
         {
             this.checkOnly = false;
             this.localeId = "en_US";
+            this.localeOverride = false;
             foreach (String arg in args)
             {
                 // Handle minimized mode
@@ -73,6 +75,7 @@ namespace AppMan
                 if (arg.Trim().Contains("-locale="))
                 {
                     this.localeId = arg.Trim().Substring("-locale=".Length);
+                    this.localeOverride = true;
                 }
             }
         }
@@ -100,7 +103,7 @@ namespace AppMan
         /// <summary>
         /// Initializes the localization of the app.
         /// </summary>
-        private void InitializeLocale()
+        private void InitializeLocalization()
         {
             this.localeData = new LocaleData();
             String localeDir = Path.Combine(PathHelper.GetExeDirectory(), "Locales");
@@ -150,6 +153,7 @@ namespace AppMan
                     PathHelper.ARCHIVE_DIR = ArgProcessor.ProcessArguments(settings.Archive);
                     PathHelper.CONFIG_ADR = ArgProcessor.ProcessArguments(settings.Config);
                     PathHelper.HELP_ADR = ArgProcessor.ProcessArguments(settings.Help);
+                    if (!this.localeOverride) this.localeId = settings.Locale;
                     this.notifyPaths = settings.Paths;
                 }
                 #if FLASHDEVELOP
@@ -1100,10 +1104,10 @@ namespace AppMan
         public String File = "";
         public String Path = "";
 
-        public BgArg(String File, String Path)
+        public BgArg(String file, String path)
         {
-            this.File = File;
-            this.Path = Path;
+            this.File = file;
+            this.Path = path;
         }
     }
 
@@ -1132,20 +1136,20 @@ namespace AppMan
             this.Type = "Archive";
             this.Temps = new Dictionary<String, String>();
         }
-        public DepEntry(String Id, String Name, String Desc, String Group, String Version, String Build, String Type, String Info, String Cmd, String[] Urls)
+        public DepEntry(String id, String name, String desc, String group, String version, String build, String type, String info, String cmd, String[] urls)
         {
-            this.Id = Id;
-            this.Name = Name;
-            this.Desc = Desc;
-            this.Group = Group;
-            this.Version = Version;
-            this.Build = Build;
+            this.Id = id;
+            this.Name = name;
+            this.Desc = desc;
+            this.Group = group;
+            this.Build = build;
+            this.Version = version;
             this.Temps = new Dictionary<String, String>();
-            if (!String.IsNullOrEmpty(Type)) this.Type = Type;
+            if (!String.IsNullOrEmpty(type)) this.Type = type;
             else this.Type = "Archive";
-            this.Info = Info;
-            this.Cmd = Cmd;
-            this.Urls = Urls;
+            this.Info = info;
+            this.Urls = urls;
+            this.Cmd = cmd;
         }
     }
 
@@ -1153,7 +1157,7 @@ namespace AppMan
     [XmlRoot("Entries")]
     public class DepEntries : List<DepEntry>
     {
-        public DepEntries() { }
+        public DepEntries() {}
     }
 
     [Serializable]
@@ -1162,17 +1166,19 @@ namespace AppMan
         public String Help = "";
         public String Config = "";
         public String Archive = "";
+        public String Locale = "en_US";
 
         [XmlArrayItem("Path")]
         public String[] Paths = new String[0];
 
-        public Settings() { }
-        public Settings(String Config, String Archive, String[] Paths, String Help)
+        public Settings() {}
+        public Settings(String config, String archive, String[] paths, String locale, String help)
         {
-            this.Paths = Paths;
-            this.Config = Config;
-            this.Archive = Archive;
-            this.Help = Help;
+            this.Paths = paths;
+            this.Config = config;
+            this.Archive = archive;
+            this.Locale = locale;
+            this.Help = help;
         }
 
     }
