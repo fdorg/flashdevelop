@@ -196,8 +196,9 @@ namespace ASCompletion.Model
             {
                 if (Version > 3) // haXe
                 {
+                    var module = Module == "" ? Path.GetFileNameWithoutExtension(FileName) : Module;
                     foreach (ClassModel model in Classes)
-                        if ((model.Flags & (FlagType.Class | FlagType.Interface)) > 0) return model;
+                        if ((model.Flags & (FlagType.Class | FlagType.Interface)) > 0 && model.Name == module) return model;
                 }
                 else
                 {
