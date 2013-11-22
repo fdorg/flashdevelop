@@ -808,7 +808,7 @@ namespace ASCompletion.Model
 
                                     // next model
                                     string realFile = directive.Substring(11);
-                                    FileModel newModel = model.Context.CreateFileModel(realFile);
+                                    FileModel newModel = model.Context != null ? model.Context.CreateFileModel(realFile) : new FileModel(realFile);
                                     newModel.LastWriteTime = cacheLastWriteTime;
                                     newModel.CachedModel = true;
                                     if (features != null && features.hasModules) 
