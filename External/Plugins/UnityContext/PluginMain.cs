@@ -94,8 +94,7 @@ namespace UnityContext
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
-
-            // register Unity3D project
+            // Register Unity3D project type
             ProjectManager.Helpers.ProjectCreator.AppendProjectType("project.u3dproj", typeof(UnityProject));
         }
 
@@ -128,6 +127,18 @@ namespace UnityContext
                     }
                     break;
 
+                case EventType.Completion:
+                    ITabbedDocument doc2 = PluginBase.MainForm.CurrentDocument;
+                    if (doc2 == null || !doc2.IsEditable) return;
+                    if (doc2.FileName.ToLower().EndsWith(".js"))
+                    {
+                        if (IsUnityProject(doc2.FileName))
+                        {
+                            e.Handled = true;
+                        }
+                    }
+                    break;
+
                 case EventType.UIStarted:
                     contextInstance = new Context(settingObject);
                     ValidateSettings();
@@ -137,15 +148,18 @@ namespace UnityContext
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private bool IsUnityProject(string fileName)
         {
             if (contextInstance != null && contextInstance.Classpath != null)
+            {
                 foreach (ASCompletion.Model.PathModel path in contextInstance.Classpath)
                 {
-                    if (fileName.StartsWith(path.Path, StringComparison.OrdinalIgnoreCase))
-                        return true;
+                    if (fileName.StartsWith(path.Path, StringComparison.OrdinalIgnoreCase)) return true;
                 }
-
+            }
             string dir = Path.GetDirectoryName(fileName);
             while (Directory.GetFiles(dir, "*.u3dproj").Length == 0)
             {
@@ -175,7 +189,7 @@ namespace UnityContext
         /// </summary>
         public void AddEventHandlers()
         {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.SyntaxDetect);
+            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.SyntaxDetect | EventType.Completion);
         }
 
         /// <summary>
@@ -190,8 +204,12 @@ namespace UnityContext
                 Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
                 this.settingObject = (UnitySettings)obj;
                 if (settingObject.InstalledSDKs != null)
+                {
                     foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                    {
                         sdk.Owner = this;
+                    }
+                }
             }
             if (this.settingObject.UserClasspath == null)
             {
@@ -242,14 +260,10 @@ namespace UnityContext
         public bool ValidateSDK(InstalledSDK sdk)
         {
             sdk.Owner = this;
-            
             IProject project = PluginBase.CurrentProject;
             string path = sdk.Path;
-            if (project != null)
-                path = PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath));
-            else
-                path = PathHelper.ResolvePath(path);
-            
+            if (project != null) path = PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath));
+            else path = PathHelper.ResolvePath(path);
             try
             {
                 if (path == null || (!Directory.Exists(path) && !File.Exists(path)))
@@ -263,7 +277,6 @@ namespace UnityContext
                 ErrorManager.ShowInfo("Invalid path (" + ex.Message + "):\n" + sdk.Path);
                 return false;
             }
-
             if (!Directory.Exists(path)) path = Path.GetDirectoryName(path);
             string descriptor = Path.Combine(path, "Unity.exe");
             if (File.Exists(descriptor))
