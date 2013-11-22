@@ -734,7 +734,11 @@ namespace ProjectManager
                 DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenVirtualFile, path);
                 EventManager.DispatchEvent(this, de);
             }
-            else MainForm.OpenEditableDocument(path).Activate();
+            else
+            {
+                DockContent dc = MainForm.OpenEditableDocument(path);
+                if (dc != null) dc.Activate();
+            }
         }
 
         private void SetDocumentIcon(ITabbedDocument doc)
