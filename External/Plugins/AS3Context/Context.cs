@@ -492,7 +492,7 @@ namespace AS3Context
         /// <returns>File model</returns>
         public override FileModel CreateFileModel(string fileName)
         {
-            if (fileName == null || fileName.Length == 0 || !File.Exists(fileName))
+            if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
                 return new FileModel(fileName);
 
             fileName = PathHelper.GetLongPathName(fileName);

@@ -489,17 +489,17 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Fix the padding of documents when quick find is visible
         /// </summary>
-        private void ApplyFixedDocumentPadding()
+        public void ApplyFixedDocumentPadding()
         {
+            if (!this.Visible) return;
             foreach (ITabbedDocument castable in Globals.MainForm.Documents)
             {
                 TabbedDocument document = castable as TabbedDocument;
                 if (document.IsEditable)
                 {
-                    if (this.Visible && document.DesktopBounds.Contains(this.PointToScreen(this.Bounds.Location)))
-                    {
-                        document.Padding = new Padding(0, 0, 0, this.Height);
-                    }
+                    Rectangle find = this.RectangleToScreen(this.ClientRectangle);
+                    Rectangle doc = document.RectangleToScreen(document.ClientRectangle);
+                    if (doc.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, this.Height);
                     else document.Padding = new Padding(0);
                 }
             }
