@@ -1008,6 +1008,7 @@ namespace FlashDevelop
             /**
             * DockPanel events
             */
+            this.dockPanel.ActivePaneChanged += new EventHandler(this.OnActivePaneChanged);
             this.dockPanel.ActiveContentChanged += new EventHandler(this.OnActiveContentChanged);
             this.dockPanel.ActiveDocumentChanged += new EventHandler(this.OnActiveDocumentChanged);
             this.dockPanel.ContentRemoved += new EventHandler<DockContentEventArgs>(this.OnContentRemoved);
@@ -1117,7 +1118,15 @@ namespace FlashDevelop
             }
             else this.restartRequested = false;
         }
-        
+
+        /// <summary>
+        /// When dock changes, applies the padding to documents
+        /// </summary>
+        private void OnActivePaneChanged(Object sender, EventArgs e)
+        {
+            this.quickFind.ApplyFixedDocumentPadding();
+        }
+
         /// <summary>
         /// When document is removed update tab texts
         /// </summary>
