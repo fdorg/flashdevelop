@@ -491,7 +491,6 @@ namespace FlashDevelop.Controls
         /// </summary>
         public void ApplyFixedDocumentPadding()
         {
-            if (!this.Visible) return;
             foreach (ITabbedDocument castable in Globals.MainForm.Documents)
             {
                 TabbedDocument document = castable as TabbedDocument;
@@ -499,7 +498,7 @@ namespace FlashDevelop.Controls
                 {
                     Rectangle find = this.RectangleToScreen(this.ClientRectangle);
                     Rectangle doc = document.RectangleToScreen(document.ClientRectangle);
-                    if (doc.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, this.Height);
+                    if (this.Visible && doc.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, this.Height);
                     else document.Padding = new Padding(0);
                 }
             }
