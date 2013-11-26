@@ -389,7 +389,10 @@ namespace ProjectManager.Controls
             if (this.listBox.SelectedItem != null)
             {
                 String file = PluginBase.CurrentProject.GetAbsolutePath((string)this.listBox.SelectedItem);
-                plugin.OpenFile(file);
+                ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
+                {
+                    plugin.OpenFile(file);
+                });
                 this.Close();
             }
         }
