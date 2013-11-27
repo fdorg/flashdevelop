@@ -368,6 +368,19 @@ namespace AppMan
                         String state = this.entryStates[entry.Id];
                         if (state == this.localeData.StateInstalled || state == this.localeData.StateUpdate)
                         {
+                            #if FLASHDEVELOP
+                            if (entry.Urls[0].ToLower().EndsWith(".fdz"))
+                            {
+                                String fileName = Path.GetFileName(entry.Urls[0]);
+                                String delFile = Path.ChangeExtension(fileName, ".delete.fdz");
+                                String tempFile = this.GetTempFileName(delFile, true);
+                                String entryDir = Path.Combine(PathHelper.ARCHIVE_DIR, entry.Id);
+                                String versionDir = Path.Combine(entryDir, this.curEntry.Version.ToLower());
+                                String entryFile = Path.Combine(versionDir, fileName);
+                                File.Copy(entryFile, tempFile, true);
+                                this.RunExecutableProcess(tempFile);
+                            }
+                            #endif
                             Directory.Delete(Path.Combine(PathHelper.ARCHIVE_DIR, entry.Id), true);
                         }
                     }
@@ -941,6 +954,14 @@ namespace AppMan
                         String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
                         this.RunEntrySetup(idPath, this.curEntry);
                         this.SaveEntryInfo(idPath, this.curEntry);
+                        #if FLASHDEVELOP
+                        if (this.curEntry.Urls[0].ToLower().EndsWith(".fdz"))
+                        {
+                            String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
+                            String fileName = Path.GetFileName(this.curEntry.Urls[0]);
+                            this.RunExecutableProcess(Path.Combine(vnPath, fileName));
+                        }
+                        #endif
                         Thread.Sleep(100); // Wait for files...
                         this.LoadInstalledEntries();
                         this.shouldNotify = true;
