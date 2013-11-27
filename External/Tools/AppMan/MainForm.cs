@@ -168,7 +168,7 @@ namespace AppMan
                         String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                         String fdUserPath = Path.Combine(userAppDir, "FlashDevelop");
                         String appManDataDir = Path.Combine(fdUserPath, @"Data\AppMan");
-                        this.notifyPaths = new String[1] { fdUserPath };    
+                        this.notifyPaths = new String[1] { fdUserPath };
                         PathHelper.ARCHIVE_DIR = Path.Combine(appManDataDir, "Archive");
                         PathHelper.LOG_DIR = appManDataDir;
                     }
@@ -277,7 +277,7 @@ namespace AppMan
                 {
                     try
                     {
-                        String path = Path.GetDirectoryName(ArgProcessor.ProcessArguments(nPath));
+                        String path = Path.GetFullPath(ArgProcessor.ProcessArguments(nPath));
                         if (Directory.Exists(path))
                         {
                             String amFile = Path.Combine(path, ".appman");
