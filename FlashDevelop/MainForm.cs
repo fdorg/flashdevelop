@@ -587,6 +587,11 @@ namespace FlashDevelop
                 }
                 else return null;
             }
+            else if (file.EndsWith(".delete.fdz"))
+            {
+                this.CallCommand("RemoveZip", file);
+                return null;
+            }
             else if (file.EndsWith(".fdz"))
             {
                 this.CallCommand("ExtractZip", file);
@@ -2659,7 +2664,7 @@ namespace FlashDevelop
         /// </summary>
         public void ExtractZip(Object sender, System.EventArgs e)
         {
-            try
+            try 
             {
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
@@ -2667,7 +2672,7 @@ namespace FlashDevelop
                 Boolean requiresRestart = false;
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
-                if (chunks.Length > 1) 
+                if (chunks.Length > 1)
                 {
                     zipFile = chunks[0];
                     silentInstall = chunks[1] == "true";
@@ -2707,13 +2712,96 @@ namespace FlashDevelop
                             extracted.Close();
                             extracted.Dispose();
                         }
-                        else
+                        else if (!Directory.Exists(fdpath))
                         {
                             zipLog += "Create: " + fdpath + "\r\n";
                             Directory.CreateDirectory(fdpath);
                         }
                     }
                     String finish = TextHelper.GetString("Info.ZipExtractDone");
+                    if (requiresRestart)
+                    {
+                        zipLog += "Restart required.\r\n";
+                        finish += "\n" + TextHelper.GetString("Info.RequiresRestart");
+                    }
+                    String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
+                    File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
+                    ErrorManager.ShowInfo(finish);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+        }
+
+        /// <summary>
+        /// Removes a zip file by extending paths with fd args
+        /// </summary>
+        public void RemoveZip(Object sender, System.EventArgs e)
+        {
+            try
+            {
+                String zipLog = String.Empty;
+                String zipFile = String.Empty;
+                Boolean silentRemove = false;
+                Boolean requiresRestart = false;
+                List<String> removeDirs = new List<String>();
+                ToolStripItem button = (ToolStripItem)sender;
+                String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
+                if (chunks.Length > 1)
+                {
+                    zipFile = chunks[0];
+                    silentRemove = chunks[1] == "true";
+                }
+                else zipFile = chunks[0];
+                if (!File.Exists(zipFile)) return; // Skip missing file...
+                String caption = TextHelper.GetString("Title.ConfirmDialog");
+                String message = TextHelper.GetString("Info.ZipConfirmRemove") + "\n" + zipFile;
+                if (silentRemove || MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                {
+                    ZipEntry entry = null;
+                    zipLog += "FDZ: " + zipFile + "\r\n";
+                    ZipInputStream zis = new ZipInputStream(new FileStream(zipFile, FileMode.Open, FileAccess.Read));
+                    while ((entry = zis.GetNextEntry()) != null)
+                    {
+                        String fdpath = this.ProcessArgString(entry.Name, false).Replace("/", "\\");
+                        if (entry.IsFile)
+                        {
+                            String ext = Path.GetExtension(fdpath);
+                            if (File.Exists(fdpath))
+                            {
+                                zipLog += "Delete: " + fdpath + "\r\n";
+                                if (ext == ".dll" || ext == ".fdb" || ext == ".fdl")
+                                {
+                                    requiresRestart = true;
+                                    File.Copy(fdpath, fdpath + ".del", true);
+                                }
+                                else
+                                {
+                                    try { File.Delete(fdpath); }
+                                    catch
+                                    {
+                                        requiresRestart = true;
+                                        File.Copy(fdpath, fdpath + ".del", true);
+                                    }
+                                }
+                            }
+                        }
+                        else removeDirs.Add(fdpath);
+                    }
+                    // Remove empty dirs
+                    removeDirs.Reverse();
+                    foreach (String dir in removeDirs)
+                    {
+                        if (FolderHelper.IsDirectoryEmpty(dir))
+                        {
+                            zipLog += "Remove: " + dir + "\r\n";
+                            try { Directory.Delete(dir); }
+                            catch { /* NO ERRORS */ }
+                        }
+                    }
+                    String finish = TextHelper.GetString("Info.ZipRemoveDone");
                     if (requiresRestart)
                     {
                         zipLog += "Restart required.\r\n";

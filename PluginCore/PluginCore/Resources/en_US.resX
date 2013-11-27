@@ -5047,4 +5047,12 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Install Software...</value>
     <comment>Added after 4.5.0</comment>
   </data>
+  <data name="FlashDevelop.Info.ZipConfirmRemove" xml:space="preserve">
+    <value>Can the following zip file be removed:</value>
+    <comment>Added after 4.5.1</comment>
+  </data>
+  <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
+    <value>The zip file was removed succesfully.</value>
+    <comment>Added after 4.5.1</comment>
+  </data>
 </root>
