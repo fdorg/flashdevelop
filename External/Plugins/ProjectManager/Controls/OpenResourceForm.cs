@@ -30,6 +30,7 @@ namespace ProjectManager.Controls
             this.InitializeComponent();
             this.InitializeLocalization();
             this.Font = PluginBase.Settings.DefaultFont;
+            this.listBox.ItemHeight = this.listBox.Font.Height;
             this.FormGuid = "8e4e0a95-0aff-422c-b8f5-ad9bc8affabb";
         }
 
@@ -94,7 +95,6 @@ namespace ProjectManager.Controls
             this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.listBox.FormattingEnabled = true;
-            this.listBox.ItemHeight = this.listBox.Font.Height + 2;
             this.listBox.Location = new System.Drawing.Point(12, 62);
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(478, 276);
