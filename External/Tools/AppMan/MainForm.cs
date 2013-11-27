@@ -686,7 +686,18 @@ namespace AppMan
         /// </summary>
         private void RunExecutableProcess(String file)
         {
-            try { Process.Start(file); }
+            try 
+            {
+                #if FLASHDEVELOP
+                if (file.ToLower().EndsWith(".fdz"))
+                {
+                    String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\FlashDevelop.exe");
+                    Process.Start(Path.GetFullPath(fd), file);
+                    return;
+                }
+                #endif
+                Process.Start(file);
+            }
             catch (Exception ex)
             {
                 DialogHelper.ShowError(ex.ToString());
