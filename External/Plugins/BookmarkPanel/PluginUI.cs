@@ -229,7 +229,7 @@ namespace BookmarkPanel
         {
             this.imageList = new ImageList();
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("495|26|0|1"));
+            this.imageList.Images.Add(PluginBase.MainForm.FindImage("559|26|0|1"));
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("229"));
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("197"));
             this.imageList.Images.SetKeyName(0, "Bookmark");
@@ -570,7 +570,6 @@ namespace BookmarkPanel
         /// <summary>
         /// Create a new ListViewGroup and assign to the current listview
         /// </summary>
-        /// <param name="doc"></param>
         public void CreateDocument(String filename)
         {
             ListViewGroup group = new ListViewGroup();
