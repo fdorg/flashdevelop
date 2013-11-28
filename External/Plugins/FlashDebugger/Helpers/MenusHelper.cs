@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using FlashDebugger.Properties;
 using PluginCore.Localization;
 using PluginCore;
+using PluginCore.Managers;
 
 namespace FlashDebugger
 {
@@ -206,6 +207,7 @@ namespace FlashDebugger
                 });
                 return;
             }
+            Boolean hasChanged = CurrentState != state;
             CurrentState = state; // Set current now...
 			if (state == DebuggerState.Initializing || state == DebuggerState.Stopped)
 			{
@@ -242,7 +244,13 @@ namespace FlashDebugger
             DeleteAllBreakPointsMenu.Enabled = DisableAllBreakPointsMenu.Enabled = enabled;
             EnableAllBreakPointsMenu.Enabled = PanelsHelper.breakPointUI.Enabled = enabled;
 			StartRemoteDebuggingMenu.Enabled = (state == DebuggerState.Initializing || state == DebuggerState.Stopped);
-			PluginBase.MainForm.RefreshUI();
+            // Notify plugins of main states when state changes...
+            if (hasChanged && (state == DebuggerState.Running || state == DebuggerState.Stopped))
+            {
+                DataEvent de = new DataEvent(EventType.Command, "FlashDebugger." + state.ToString(), null);
+                EventManager.DispatchEvent(this, de);
+            }
+            PluginBase.MainForm.RefreshUI();
         }
 
         /// <summary>
