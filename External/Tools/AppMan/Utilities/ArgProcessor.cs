@@ -12,6 +12,7 @@ namespace AppMan.Utilities
         /// </summary>
         public static String ProcessArguments(String data)
         {
+            data = data.Replace("$(Quote)", "\"");
             data = data.Replace("$(AppDir)", PathHelper.GetExeDirectory());
             data = Environment.ExpandEnvironmentVariables(data);
             return data;
