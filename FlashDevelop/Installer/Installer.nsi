@@ -10,7 +10,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "4.5.2"
+!define VERSION "4.5.3"
 
 ; Define AIR SDK vars
 !define AIR "3.9.0.1030"
