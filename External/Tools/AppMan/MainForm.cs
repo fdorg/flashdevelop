@@ -375,7 +375,7 @@ namespace AppMan
                                 String delFile = Path.ChangeExtension(fileName, ".delete.fdz");
                                 String tempFile = this.GetTempFileName(delFile, true);
                                 String entryDir = Path.Combine(PathHelper.APPS_DIR, entry.Id);
-                                String versionDir = Path.Combine(entryDir, this.curEntry.Version.ToLower());
+                                String versionDir = Path.Combine(entryDir, entry.Version.ToLower());
                                 String entryFile = Path.Combine(versionDir, fileName);
                                 File.Copy(entryFile, tempFile, true);
                                 this.RunExecutableProcess(tempFile);
@@ -692,7 +692,7 @@ namespace AppMan
                 if (file.ToLower().EndsWith(".fdz"))
                 {
                     String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\FlashDevelop.exe");
-                    Process.Start(Path.GetFullPath(fd), file);
+                    Process.Start(Path.GetFullPath(fd), file + " -silent");
                     return;
                 }
                 #endif

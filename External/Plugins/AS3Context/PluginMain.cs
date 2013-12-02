@@ -452,7 +452,7 @@ namespace AS3Context
                     sdks.Add(sdk);
                 }
                 /* Resolve AppMan Flex SDKs */
-                string appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\flexsdk");
+                string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flexsdk");
                 if (Directory.Exists(appManDir))
                 {
                     string[] versionDirs = Directory.GetDirectories(appManDir);
@@ -467,7 +467,7 @@ namespace AS3Context
                     }
                 }
                 /* Resolve AppMan Flex+AIR SDKs */
-                appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\flexairsdk");
+                appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flexairsdk");
                 if (Directory.Exists(appManDir))
                 {
                     string[] versionDirs = Directory.GetDirectories(appManDir);
@@ -482,7 +482,7 @@ namespace AS3Context
                     }
                 }
                 /* Resolve AppMan AIR SDKs */
-                appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\ascsdk");
+                appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\ascsdk");
                 if (Directory.Exists(appManDir))
                 {
                     string[] versionDirs = Directory.GetDirectories(appManDir);

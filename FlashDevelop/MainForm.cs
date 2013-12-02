@@ -146,6 +146,14 @@ namespace FlashDevelop
         public static MainForm Instance;
         public static String[] Arguments;
 
+        /// <summary>
+        /// Should extensions be installed silently?
+        /// </summary>
+        private Boolean SilentInstall
+        {
+            get { return Array.IndexOf(this.StartArguments, "-silent") != -1; }
+        }
+
         #endregion
 
         #region Public Properties
@@ -284,10 +292,7 @@ namespace FlashDevelop
         /// </summary>
         public Boolean IsFirstInstance
         {
-            get
-            {
-                return MainForm.IsFirst;
-            }
+            get { return MainForm.IsFirst; }
         }
 
         /// <summary>
@@ -295,10 +300,7 @@ namespace FlashDevelop
         /// </summary>
         public Boolean MultiInstanceMode
         {
-            get
-            {
-                return Program.MultiInstanceMode;
-            }
+            get { return Program.MultiInstanceMode; }
         }
 
         /// <summary>
@@ -2668,8 +2670,8 @@ namespace FlashDevelop
             {
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
-                Boolean silentInstall = false;
                 Boolean requiresRestart = false;
+                Boolean silentInstall = this.SilentInstall;
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
                 if (chunks.Length > 1)
@@ -2726,7 +2728,8 @@ namespace FlashDevelop
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
-                    ErrorManager.ShowInfo(finish);
+                    if (silentInstall) TraceManager.Add(finish);
+                    else ErrorManager.ShowInfo(finish);
                 }
             }
             catch (Exception ex)
@@ -2744,8 +2747,8 @@ namespace FlashDevelop
             {
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
-                Boolean silentRemove = false;
                 Boolean requiresRestart = false;
+                Boolean silentRemove = this.SilentInstall;
                 List<String> removeDirs = new List<String>();
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
@@ -2809,7 +2812,8 @@ namespace FlashDevelop
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
-                    ErrorManager.ShowInfo(finish);
+                    if (silentRemove) TraceManager.Add(finish);
+                    else ErrorManager.ShowInfo(finish);
                 }
             }
             catch (Exception ex)

@@ -175,7 +175,7 @@ namespace FlashViewer
             // Try to find player path from AppMan archive
             if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
             {
-                string appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\flashsa");
+                string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
                 if (Directory.Exists(appManDir))
                 {
                     string[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
