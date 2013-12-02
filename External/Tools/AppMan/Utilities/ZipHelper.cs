@@ -42,7 +42,7 @@ namespace AppMan.Utilities
                         extracted.Close();
                         extracted.Dispose();
                     }
-                    else if (entry.IsDirectory)
+                    else if (!Directory.Exists(entry.Name))
                     {
                         Directory.CreateDirectory(entry.Name);
                     }
