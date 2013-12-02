@@ -9,24 +9,24 @@ namespace AppMan.Utilities
     public class PathHelper
     {
         /// <summary>
-        /// Default path to the data dir.
+        /// Default path to the log dir.
         /// </summary>
-        public static String LOG_DIR = GetExeDirectory();
+        public static String LOG_DIR = ArgProcessor.ProcessArguments("$(AppDir)");
+
+        /// <summary>
+        /// Default path to the apps directory.
+        /// </summary>
+        public static String APPS_DIR = ArgProcessor.ProcessArguments("$(AppDir)/Apps");
 
         /// <summary>
         /// Default path to the app help.
         /// </summary>
-        public static String HELP_ADR = "@AppDir/Help.html";
+        public static String HELP_ADR = ArgProcessor.ProcessArguments("$(AppDir)/Help.html");
 
         /// <summary>
         /// Default path to the config xml file.
         /// </summary>
-        public static String CONFIG_ADR = "@AppDir/Config.xml";
-
-        /// <summary>
-        /// Default path to the item archive.
-        /// </summary>
-        public static String ARCHIVE_DIR = Path.Combine(GetExeDirectory(), "Archive");
+        public static String CONFIG_ADR = ArgProcessor.ProcessArguments("$(AppDir)/Config.xml");
 
         /// <summary>
         /// Gets the directory of the app.

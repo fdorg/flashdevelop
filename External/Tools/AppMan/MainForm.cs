@@ -150,7 +150,7 @@ namespace AppMan
                 if (File.Exists(file))
                 {
                     settings = ObjectSerializer.Deserialize(file, settings) as Settings;
-                    PathHelper.ARCHIVE_DIR = ArgProcessor.ProcessArguments(settings.Archive);
+                    PathHelper.APPS_DIR = ArgProcessor.ProcessArguments(settings.Archive);
                     PathHelper.CONFIG_ADR = ArgProcessor.ProcessArguments(settings.Config);
                     PathHelper.HELP_ADR = ArgProcessor.ProcessArguments(settings.Help);
                     if (!this.localeOverride) this.localeId = settings.Locale;
@@ -169,14 +169,14 @@ namespace AppMan
                         String fdUserPath = Path.Combine(userAppDir, "FlashDevelop");
                         String appManDataDir = Path.Combine(fdUserPath, @"Data\AppMan");
                         this.notifyPaths = new String[1] { fdUserPath };
-                        PathHelper.ARCHIVE_DIR = Path.Combine(appManDataDir, "Archive");
+                        PathHelper.APPS_DIR = Path.Combine(fdUserPath, "Apps");
                         PathHelper.LOG_DIR = appManDataDir;
                     }
                     else
                     {
                         String fdPath = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\");
                         fdPath = Path.GetFullPath(fdPath); /* Fix weird path */
-                        PathHelper.ARCHIVE_DIR = Path.Combine(fdPath, @"Data\AppMan\Archive");
+                        PathHelper.APPS_DIR = Path.Combine(fdPath, "Apps");
                         PathHelper.LOG_DIR = Path.Combine(fdPath, @"Data\AppMan");
                         this.notifyPaths = new String[1] { fdPath };
                     }
@@ -186,9 +186,9 @@ namespace AppMan
                 {
                     Directory.CreateDirectory(PathHelper.LOG_DIR);
                 }
-                if (!Directory.Exists(PathHelper.ARCHIVE_DIR))
+                if (!Directory.Exists(PathHelper.APPS_DIR))
                 {
-                    Directory.CreateDirectory(PathHelper.ARCHIVE_DIR);
+                    Directory.CreateDirectory(PathHelper.APPS_DIR);
                 }
             }
             catch (Exception ex)
@@ -374,14 +374,14 @@ namespace AppMan
                                 String fileName = Path.GetFileName(entry.Urls[0]);
                                 String delFile = Path.ChangeExtension(fileName, ".delete.fdz");
                                 String tempFile = this.GetTempFileName(delFile, true);
-                                String entryDir = Path.Combine(PathHelper.ARCHIVE_DIR, entry.Id);
+                                String entryDir = Path.Combine(PathHelper.APPS_DIR, entry.Id);
                                 String versionDir = Path.Combine(entryDir, this.curEntry.Version.ToLower());
                                 String entryFile = Path.Combine(versionDir, fileName);
                                 File.Copy(entryFile, tempFile, true);
                                 this.RunExecutableProcess(tempFile);
                             }
                             #endif
-                            Directory.Delete(Path.Combine(PathHelper.ARCHIVE_DIR, entry.Id), true);
+                            Directory.Delete(Path.Combine(PathHelper.APPS_DIR, entry.Id), true);
                         }
                     }
                 }
@@ -407,7 +407,7 @@ namespace AppMan
         {
             try
             {
-                Process.Start("explorer.exe", PathHelper.ARCHIVE_DIR);
+                Process.Start("explorer.exe", PathHelper.APPS_DIR);
             }
             catch (Exception ex)
             {
@@ -591,7 +591,7 @@ namespace AppMan
             try
             {
                 this.listView.BeginUpdate();
-                this.pathTextBox.Text = PathHelper.ARCHIVE_DIR;
+                this.pathTextBox.Text = PathHelper.APPS_DIR;
                 foreach (DepEntry entry in this.depEntries)
                 {
                     ListViewItem item = new ListViewItem(entry.Name);
@@ -824,7 +824,7 @@ namespace AppMan
                 this.curEntry.Temps[this.curFile] = this.tempFile; // Save for cmd
                 if (File.Exists(this.tempFile)) // Use already downloaded temp...
                 {
-                    String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
+                    String idPath = Path.Combine(PathHelper.APPS_DIR, this.curEntry.Id);
                     String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
                     this.ExtractFile(this.tempFile, vnPath);
                     return;
@@ -866,7 +866,7 @@ namespace AppMan
                 }
                 else if (e.Error == null)
                 {
-                    String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
+                    String idPath = Path.Combine(PathHelper.APPS_DIR, this.curEntry.Id);
                     String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
                     this.ExtractFile(this.tempFile, vnPath);
                 }
@@ -947,7 +947,7 @@ namespace AppMan
                     this.curEntry.Temps[this.curFile] = this.tempFile; // Save for cmd
                     if (File.Exists(this.tempFile)) // Use downloaded temp...
                     {
-                        String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
+                        String idPath = Path.Combine(PathHelper.APPS_DIR, this.curEntry.Id);
                         String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
                         this.ExtractFile(this.tempFile, vnPath);
                         this.bgWorker.Dispose();
@@ -962,7 +962,7 @@ namespace AppMan
                 {
                     if (!this.IsExecutable(this.curEntry))
                     {
-                        String idPath = Path.Combine(PathHelper.ARCHIVE_DIR, this.curEntry.Id);
+                        String idPath = Path.Combine(PathHelper.APPS_DIR, this.curEntry.Id);
                         this.RunEntrySetup(idPath, this.curEntry);
                         this.SaveEntryInfo(idPath, this.curEntry);
                         #if FLASHDEVELOP
@@ -1023,7 +1023,7 @@ namespace AppMan
             {
                 this.instEntries = new DepEntries();
                 List<String> entryFiles = new List<string>();
-                String[] entryDirs = Directory.GetDirectories(PathHelper.ARCHIVE_DIR);
+                String[] entryDirs = Directory.GetDirectories(PathHelper.APPS_DIR);
                 foreach (String dir in entryDirs)
                 {
                     entryFiles.AddRange(Directory.GetFiles(dir, "*.xml"));

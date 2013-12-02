@@ -13,21 +13,26 @@ namespace AppMan.Utilities
         /// </summary>
         public static void ExtractZip(String file, String path)
         {
+            // Save current directory
+            String curDir = Environment.CurrentDirectory;
             try
             {
                 ZipEntry entry = null;
                 ZipInputStream zis = new ZipInputStream(new FileStream(file, FileMode.Open, FileAccess.Read));
+                Environment.CurrentDirectory = path; // Used to work around long path issue
                 while ((entry = zis.GetNextEntry()) != null)
                 {
                     Int32 size = 4096;
                     Byte[] data = new Byte[4096];
-                    String full = Path.Combine(path, entry.Name);
                     if (entry.IsFile)
                     {
-                        String ext = Path.GetExtension(full);
-                        String dirPath = Path.GetDirectoryName(full);
-                        if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
-                        FileStream extracted = new FileStream(full, FileMode.Create);
+                        String ext = Path.GetExtension(entry.Name);
+                        String dirPath = Path.GetDirectoryName(entry.Name);
+                        if (!String.IsNullOrEmpty(dirPath) && !Directory.Exists(dirPath))
+                        {
+                            Directory.CreateDirectory(dirPath);
+                        }
+                        FileStream extracted = new FileStream(entry.Name, FileMode.Create);
                         while (true)
                         {
                             size = zis.Read(data, 0, data.Length);
@@ -37,14 +42,18 @@ namespace AppMan.Utilities
                         extracted.Close();
                         extracted.Dispose();
                     }
-                    else Directory.CreateDirectory(full);
+                    else if (entry.IsDirectory)
+                    {
+                        Directory.CreateDirectory(entry.Name);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 DialogHelper.ShowError(ex.ToString());
             }
-
+            // Restore current directory
+            Environment.CurrentDirectory = curDir;
         }
 
     }
