@@ -2797,7 +2797,7 @@ namespace FlashDevelop
                     removeDirs.Reverse();
                     foreach (String dir in removeDirs)
                     {
-                        if (FolderHelper.IsDirectoryEmpty(dir))
+                        if (FolderHelper.IsDirectoryEmpty(dir) && !this.DirIsImportant(dir))
                         {
                             zipLog += "Remove: " + dir + "\r\n";
                             try { Directory.Delete(dir); }
@@ -2820,6 +2820,12 @@ namespace FlashDevelop
             {
                 ErrorManager.ShowError(ex);
             }
+        }
+        private Boolean DirIsImportant(String dir)
+        {
+            String full = Path.GetDirectoryName(dir);
+            String[] importants = new String[3] { PathHelper.UserPluginDir, PathHelper.UserLibraryDir, PathHelper.UserProjectsDir };
+            return Array.IndexOf(importants, full) > -1;
         }
 
         /// <summary>
