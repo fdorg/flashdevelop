@@ -191,7 +191,7 @@ namespace ScintillaNet.Configuration
                 {
                     return ResolveColor(printmargin);
                 }
-                return ResolveColor("0x000000");
+                return ResolveColor("0xCCCCCC");
             }
         }
 
