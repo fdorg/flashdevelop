@@ -43,7 +43,7 @@
             this.countColumn = new System.Windows.Forms.ColumnHeader();
             this.memColumn = new System.Windows.Forms.ColumnHeader();
             this.objectsPage = new System.Windows.Forms.TabPage();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.memLabel = new System.Windows.Forms.ToolStripLabel();
             this.autoButton = new System.Windows.Forms.ToolStripButton();
             this.runButton = new System.Windows.Forms.ToolStripButton();

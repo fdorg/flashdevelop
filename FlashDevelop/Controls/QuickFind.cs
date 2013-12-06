@@ -13,13 +13,14 @@ using FlashDevelop.Docking;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using PluginCore.Controls;
 using ScintillaNet.Configuration;
 using ScintillaNet;
 using PluginCore;
 
 namespace FlashDevelop.Controls
 {
-    public class QuickFind : ToolStrip, IEventHandler
+    public class QuickFind : ToolStripEx, IEventHandler
     {
         private Timer highlightTimer;
         private CheckBox wholeWordCheckBox;

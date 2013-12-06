@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using PluginCore;
+using PluginCore.Managers;
 
 namespace System.Windows.Forms
 {
@@ -201,9 +202,16 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
+                Boolean isOver = false;
                 Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
                 Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
-                if (e.Item.Selected || ((ToolStripButton)e.Item).Checked)
+                if (e.Item is ToolStripButton)
+                {
+                    ToolStripButton button = e.Item as ToolStripButton;
+                    Rectangle bBounds = button.Owner.RectangleToScreen(button.Bounds);
+                    isOver = bBounds.Contains(Control.MousePosition);
+                }
+                if (e.Item.Selected || ((ToolStripButton)e.Item).Checked || isOver)
                 {
                     Rectangle rect = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
                     Rectangle rect2 = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);

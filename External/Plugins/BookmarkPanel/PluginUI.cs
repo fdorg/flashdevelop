@@ -59,7 +59,7 @@ namespace BookmarkPanel
             this.columnText = new System.Windows.Forms.ColumnHeader();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
             this.removeBookmarksItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.searchButton = new System.Windows.Forms.ToolStripButton();
             this.searchBox = new System.Windows.Forms.ToolStripSpringComboBox();
             this.statusStrip = new System.Windows.Forms.StatusStrip();

@@ -11,6 +11,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace FlashLogViewer
@@ -61,7 +62,7 @@ namespace FlashLogViewer
 		/// </summary>
 		private void InitializeComponent() 
         {
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.toggleButton = new System.Windows.Forms.ToolStripButton();
             this.topMostButton = new System.Windows.Forms.ToolStripButton();
             this.clearFilterButton = new System.Windows.Forms.ToolStripButton();

@@ -20,6 +20,7 @@ using ASCompletion.Settings;
 using PluginCore.Localization;
 using System.Drawing;
 using System.Reflection;
+using PluginCore.Controls;
 
 namespace ASCompletion
 {
@@ -278,7 +279,7 @@ namespace ASCompletion
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
             this.treeIcons = new System.Windows.Forms.ImageList(this.components);
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.sortDropDown = new System.Windows.Forms.ToolStripDropDownButton();
             this.noneItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sortedItem = new System.Windows.Forms.ToolStripMenuItem();

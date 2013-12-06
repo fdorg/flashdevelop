@@ -10,6 +10,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace LayoutManager
@@ -50,7 +51,7 @@ namespace LayoutManager
 		private void InitializeComponent() 
         {
             this.layoutsListView = new System.Windows.Forms.ListView();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.loadStripButton = new System.Windows.Forms.ToolStripButton();
             this.deleteStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveStripButton = new System.Windows.Forms.ToolStripButton();
