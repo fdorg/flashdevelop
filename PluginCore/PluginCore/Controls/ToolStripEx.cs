@@ -3,6 +3,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using PluginCore.Managers;
+using System.Reflection;
 
 namespace PluginCore.Controls
 {
@@ -16,7 +17,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-        private Boolean clickThrough = false;
+        private Boolean clickThrough = true;
 
         /// <summary>
         /// Listen for all items added
@@ -24,18 +25,21 @@ namespace PluginCore.Controls
         public ToolStripEx()
         {
             this.ItemAdded += new ToolStripItemEventHandler(this.OnItemAdded);
-            this.LostFocus += new EventHandler(OnLostFocus);
+            ((Form)PluginBase.MainForm).Deactivate += new EventHandler(this.OnFormDeactivate);
         }
 
         /// <summary>
-        /// When ToolStrip loses focus, invalidate all buttons
+        /// When the main form loses input focus, clear all selections and repaint
         /// </summary>
-        private void OnLostFocus(Object sender, EventArgs e)
+        private void OnFormDeactivate(object sender, EventArgs e)
         {
-            foreach (ToolStripItem item in this.Items)
+            try
             {
-                if (item is ToolStripButton) item.Invalidate();
+                MethodInfo method = typeof(ToolStrip).GetMethod("ClearAllSelections", BindingFlags.NonPublic | BindingFlags.Instance);
+                method.Invoke(this, null);
+                this.Invalidate();
             }
+            catch { /* No errors... */ }
         }
 
         /// <summary>

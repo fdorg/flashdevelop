@@ -608,24 +608,33 @@ namespace FlashDevelop.Controls
             {
                 if (renderer is ToolStripProfessionalRenderer)
                 {
-                    if (e.Item.Selected || ((ToolStripButton)e.Item).Checked)
+                    Boolean isOver = false;
+                    Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
+                    Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
+                    if (e.Item is ToolStripButton)
+                    {
+                        ToolStripButton button = e.Item as ToolStripButton;
+                        Rectangle bBounds = button.Owner.RectangleToScreen(button.Bounds);
+                        isOver = bBounds.Contains(Control.MousePosition);
+                    }
+                    if (e.Item.Selected || ((ToolStripButton)e.Item).Checked || isOver)
                     {
                         Rectangle rect = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
                         Rectangle rect2 = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
-                        LinearGradientBrush b = new LinearGradientBrush(rect, DockDrawHelper.ColorSelectedBG_White, DockDrawHelper.ColorSelectedBG_Blue, LinearGradientMode.Vertical);
+                        LinearGradientBrush b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                         e.Graphics.FillRectangle(b, rect);
                         Rectangle rect3 = new Rectangle(rect2.Left - 1, rect2.Top - 1, rect2.Width + 1, rect2.Height + 1);
                         Rectangle rect4 = new Rectangle(rect3.Left + 1, rect3.Top + 1, rect3.Width - 2, rect3.Height - 2);
-                        e.Graphics.DrawRectangle(new Pen(DockDrawHelper.ColorSelectedBG_Border), rect3);
-                        e.Graphics.DrawRectangle(new Pen(DockDrawHelper.ColorSelectedBG_White), rect4);
+                        e.Graphics.DrawRectangle(new Pen(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border), rect3);
+                        e.Graphics.DrawRectangle(new Pen(back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back), rect4);
                     }
                     if (e.Item.Pressed)
                     {
                         Rectangle rect = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
-                        LinearGradientBrush b = new LinearGradientBrush(rect, DockDrawHelper.ColorSelectedBG_White, DockDrawHelper.ColorSelectedBG_Blue, LinearGradientMode.Vertical);
+                        LinearGradientBrush b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                         e.Graphics.FillRectangle(b, rect);
                         Rectangle rect2 = new Rectangle(rect.Left - 1, rect.Top - 1, rect.Width + 1, rect.Height + 1);
-                        e.Graphics.DrawRectangle(new Pen(DockDrawHelper.ColorSelectedBG_Border), rect2);
+                        e.Graphics.DrawRectangle(new Pen(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border), rect2);
                     }
                 }
                 else renderer.DrawButtonBackground(e);

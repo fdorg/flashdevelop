@@ -49,7 +49,6 @@ namespace FlashDevelop.Managers
         public static ToolStrip GetToolStrip(String file)
         {
             ToolStripEx toolStrip = new ToolStripEx();
-            toolStrip.ClickThrough = true;
             XmlNode rootNode = XmlHelper.LoadXmlDocument(file);
             foreach (XmlNode subNode in rootNode.ChildNodes)
             {

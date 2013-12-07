@@ -600,11 +600,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void VisibleChange(Object sender, System.EventArgs e)
         {
-            if (this.Visible)
-            {
-                this.CenterToParent();
-                this.SelectText();
-            }
+            if (this.Visible) this.SelectText();
             else this.lookupIsDirty = false;
         }
 
@@ -625,6 +621,7 @@ namespace FlashDevelop.Dialogs
         {
             String message = TextHelper.GetString("Info.NoMatches");
             this.ShowMessage(message, 0);
+            this.CenterToParent();
         }
 
         /// <summary>
