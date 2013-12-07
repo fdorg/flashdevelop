@@ -588,10 +588,17 @@ namespace FlashDevelop.Dialogs
         private void BrowseButtonClick(Object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
-            if (Directory.Exists(this.folderComboBox.Text))
+            String curDir = this.folderComboBox.Text;
+            if (curDir == "<Project>") 
             {
-                fbd.SelectedPath = this.folderComboBox.Text;
+                if (PluginBase.CurrentProject != null)
+                {
+                    String projectPath = PluginBase.CurrentProject.ProjectPath;
+                    curDir = Path.GetDirectoryName(projectPath);
+                }
+                else curDir = Globals.MainForm.WorkingDirectory;
             }
+            if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
             if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
             {
                 this.folderComboBox.Text = fbd.SelectedPath;
