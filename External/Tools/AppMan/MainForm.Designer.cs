@@ -80,7 +80,7 @@ namespace AppMan
             this.listView.Location = new System.Drawing.Point(13, 48);
             this.listView.Name = "listView";
             this.listView.ShowItemToolTips = true;
-            this.listView.Size = new System.Drawing.Size(729, 420);
+            this.listView.Size = new System.Drawing.Size(730, 420);
             this.listView.TabIndex = 4;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -137,7 +137,7 @@ namespace AppMan
             this.deleteButton.Enabled = false;
             this.deleteButton.Location = new System.Drawing.Point(598, 511);
             this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(145, 27);
+            this.deleteButton.Size = new System.Drawing.Size(146, 27);
             this.deleteButton.TabIndex = 11;
             this.deleteButton.Text = "Delete selected...";
             this.deleteButton.UseVisualStyleBackColor = true;
@@ -149,7 +149,7 @@ namespace AppMan
             this.installButton.Enabled = false;
             this.installButton.Location = new System.Drawing.Point(598, 477);
             this.installButton.Name = "installButton";
-            this.installButton.Size = new System.Drawing.Size(145, 27);
+            this.installButton.Size = new System.Drawing.Size(146, 27);
             this.installButton.TabIndex = 10;
             this.installButton.Text = "Install selected...";
             this.installButton.UseVisualStyleBackColor = true;
@@ -248,7 +248,7 @@ namespace AppMan
             this.exploreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.exploreButton.Location = new System.Drawing.Point(649, 13);
             this.exploreButton.Name = "exploreButton";
-            this.exploreButton.Size = new System.Drawing.Size(94, 27);
+            this.exploreButton.Size = new System.Drawing.Size(95, 27);
             this.exploreButton.TabIndex = 3;
             this.exploreButton.Text = "Explore...";
             this.exploreButton.UseVisualStyleBackColor = true;
@@ -286,7 +286,7 @@ namespace AppMan
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(756, 572);
+            this.ClientSize = new System.Drawing.Size(757, 572);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.updateLinkLabel);
             this.Controls.Add(this.exploreButton);

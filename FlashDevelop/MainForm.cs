@@ -2728,8 +2728,7 @@ namespace FlashDevelop
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
-                    if (silentInstall) TraceManager.Add(finish);
-                    else ErrorManager.ShowInfo(finish);
+                    ErrorManager.ShowInfo(finish);
                 }
             }
             catch (Exception ex)
@@ -2812,8 +2811,7 @@ namespace FlashDevelop
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
-                    if (silentRemove) TraceManager.Add(finish);
-                    else ErrorManager.ShowInfo(finish);
+                    ErrorManager.ShowInfo(finish);
                 }
             }
             catch (Exception ex)

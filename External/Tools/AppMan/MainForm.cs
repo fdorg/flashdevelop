@@ -9,13 +9,14 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using AppMan.Utilities;
 
 namespace AppMan
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IMessageFilter
     {
         private String curFile;
         private String tempFile;
@@ -51,7 +52,20 @@ namespace AppMan
             this.InitializeContextMenu();
             this.ApplyLocalizationStrings();
             this.Font = SystemFonts.MenuFont;
+            Application.AddMessageFilter(this);
         }
+
+        #region WIN32 Stuff
+
+        #if WIN32
+        [DllImport("user32.dll")]
+        public static extern IntPtr WindowFromPoint(Point pt);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SendMessage(IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp);
+        #endif
+
+        #endregion
 
         #region Initialization
 
@@ -532,6 +546,34 @@ namespace AppMan
             this.UpdateButtonLabels();
         }
 
+        /// <summary>
+        /// Handles the mouse wheel on hover
+        /// </summary>
+        public Boolean PreFilterMessage(ref Message m)
+        {
+            #if WIN32
+            if (m.Msg == 0x20a) // WM_MOUSEWHEEL
+            {
+                Point pos = new Point(m.LParam.ToInt32() & 0xffff, m.LParam.ToInt32() >> 16);
+                IntPtr hWnd = WindowFromPoint(pos);
+                if (hWnd != IntPtr.Zero)
+                {
+                    if (Control.FromHandle(hWnd) != null)
+                    {
+                        SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                        return true;
+                    }
+                    else if (this.listView != null && hWnd == this.listView.Handle)
+                    {
+                        SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                        return true;
+                    }
+                }
+            }
+            #endif
+            return false;
+        }
+
         #endregion
 
         #region Utility Methods
@@ -692,7 +734,7 @@ namespace AppMan
                 if (file.ToLower().EndsWith(".fdz"))
                 {
                     String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\FlashDevelop.exe");
-                    Process.Start(Path.GetFullPath(fd), file);
+                    Process.Start(Path.GetFullPath(fd), file + " -silent");
                     return;
                 }
                 #endif
