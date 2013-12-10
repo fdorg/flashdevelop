@@ -23,9 +23,6 @@ namespace FlashDevelop
         public static extern IntPtr SendMessage(IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp);
 
         [DllImport("user32.dll")]
-        public static extern Int32 SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-
-        [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(Point pt);
 
         /// <summary>

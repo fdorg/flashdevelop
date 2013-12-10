@@ -3635,25 +3635,6 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Runs a simple process as a child of MainForm
-        /// </summary>
-        public void RunChildProcess(Object sender, System.EventArgs e)
-        {
-            try
-            {
-                ToolStripItem button = (ToolStripItem)sender;
-                String args = this.ProcessArgString(((ItemData)button.Tag).Tag);
-                Int32 position = args.IndexOf(';'); // Position of the arguments
-                Process process = Process.Start(args.Substring(0, position), args.Substring(position + 1));
-                Win32.SetParent(process.MainWindowHandle, this.Handle);
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-            }
-        }
-
-        /// <summary>
         /// Runs a simple process
         /// </summary>
         public void RunProcess(Object sender, System.EventArgs e)
