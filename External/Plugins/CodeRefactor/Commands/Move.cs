@@ -52,8 +52,8 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            string msg = TextHelper.GetString("Info.MovingFile");
-            string title = string.Format(TextHelper.GetString("Title.MoveDialog"));
+            string msg = TextHelper.GetString("Info.MovingFile");//TODO: Localize me
+            string title = string.Format(TextHelper.GetString("Title.MoveDialog"));//TODO: Localize me
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 MoveTargets();
