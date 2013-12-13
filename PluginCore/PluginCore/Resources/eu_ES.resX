@@ -3020,9 +3020,6 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="CodeRefactor.Info.FindingReferences" xml:space="preserve">
     <value>Erreferentziak aurkitzen...</value>
   </data>
-  <data name="CodeRefactor.Info.RenamingReferences" xml:space="preserve">
-    <value>Erreferentzian berrizendatzen...</value>
-  </data>
   <data name="CodeRefactor.Info.ResolvingReferences" xml:space="preserve">
     <value>Erreferentziak ebazten...</value>
   </data>
@@ -5041,5 +5038,17 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
     <value>The zip file was removed succesfully.</value>
     <comment>Added after 4.5.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
+    <value>You are moving a file. Do you also want to update the references?</value>
+    <comment>Added after 4.5.2</comment>
+  </data>
+  <data name="CodeRefactor.Info.UpdatingReferences" xml:space="preserve">
+    <value>Updating References...</value>
+    <comment>Modified after 4.5.2</comment>
+  </data>
+  <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
+    <value>Moving File[s]</value>
+    <comment>Added after 4.5.2</comment>
   </data>
 </root>

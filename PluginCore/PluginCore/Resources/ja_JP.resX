@@ -3028,9 +3028,6 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="CodeRefactor.Info.FindingReferences" xml:space="preserve">
     <value>参照を検索...</value>
   </data>
-  <data name="CodeRefactor.Info.RenamingReferences" xml:space="preserve">
-    <value>参照の名前を変更...</value>
-  </data>
   <data name="CodeRefactor.Info.ResolvingReferences" xml:space="preserve">
     <value>参照を解決...</value>
   </data>
@@ -5106,5 +5103,17 @@ UseData:"</value>
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
     <value>The zip file was removed succesfully.</value>
     <comment>Added after 4.5.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
+    <value>You are moving a file. Do you also want to update the references?</value>
+    <comment>Added after 4.5.2</comment>
+  </data>
+  <data name="CodeRefactor.Info.UpdatingReferences" xml:space="preserve">
+    <value>Updating References...</value>
+    <comment>Modified after 4.5.2</comment>
+  </data>
+  <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
+    <value>Moving File[s]</value>
+    <comment>Added after 4.5.2</comment>
   </data>
 </root>

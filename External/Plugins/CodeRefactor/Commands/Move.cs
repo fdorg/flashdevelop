@@ -52,8 +52,8 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            string msg = TextHelper.GetString("Info.MovingFile");//TODO: Localize me
-            string title = string.Format(TextHelper.GetString("Title.MoveDialog"));//TODO: Localize me
+            string msg = TextHelper.GetString("Info.MovingFile");
+            string title = TextHelper.GetString("Title.MoveDialog");
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 MoveTargets();
@@ -251,7 +251,7 @@ namespace CodeRefactor.Commands
         private void FindFinished(FRResults results)
         {
             UserInterfaceManager.ProgressDialog.Show();
-            UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.RenamingReferences"));
+            UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
             MessageBar.Locked = true;
             bool isNotHaxe = !PluginBase.CurrentProject.Language.StartsWith("haxe");
             bool packageIsNotEmpty = !string.IsNullOrEmpty(currentTarget.OldFileModel.Package);
