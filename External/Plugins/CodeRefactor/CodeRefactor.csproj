@@ -85,6 +85,7 @@
     <Compile Include="Commands\ExtractLocalVariableCommand.cs" />
     <Compile Include="Commands\ExtractMethodCommand.cs" />
     <Compile Include="Commands\DelegateMethodsCommand.cs" />
+    <Compile Include="Commands\Move.cs" />
     <Compile Include="Commands\OrganizeImports.cs" />
     <Compile Include="Commands\FindAllReferences.cs" />
     <Compile Include="Commands\Rename.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Commands\RefactorCommand.cs" />
     <Compile Include="Commands\RefactorCompleteEventArgs.cs" />
     <Compile Include="Provider\DocumentHelper.cs" />
+    <Compile Include="Provider\MovingHelper.cs" />
     <Compile Include="Provider\RefactoringHelper.cs" />
     <Compile Include="Provider\UserInterfaceManager.cs" />
     <Compile Include="Settings.cs" />
