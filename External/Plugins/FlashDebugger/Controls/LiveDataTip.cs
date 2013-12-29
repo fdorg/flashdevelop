@@ -92,7 +92,7 @@ namespace FlashDebugger
 					{
                         IASTBuilder b = new ASTBuilder(false);
                         ValueExp exp = b.parse(new java.io.StringReader(leftword));
-                        var ctx = new ExpressionContext(flashInterface.Session, flashInterface.Session.getFrames()[debugManager.CurrentFrame]);
+                        var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[debugManager.CurrentFrame]);
                         var obj = exp.evaluate(ctx);
 						if ((Variable)obj != null)
 						{

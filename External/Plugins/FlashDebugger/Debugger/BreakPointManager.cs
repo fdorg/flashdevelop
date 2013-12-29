@@ -158,7 +158,7 @@ namespace FlashDebugger
 				{
                     try
                     {
-                        var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.Session.getFrames()[PluginMain.debugManager.CurrentFrame]);
+                        var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                         var val = bpInfo.ParsedExpression.evaluate(ctx);
                         if (val is java.lang.Boolean)
                         {

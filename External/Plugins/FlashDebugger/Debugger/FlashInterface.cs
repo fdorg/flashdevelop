@@ -50,7 +50,11 @@ namespace FlashDebugger
 		{
 			get
 			{
-				return m_Session.isSuspended();
+				if (ActiveSession == 1)
+				{
+					return m_Session.isSuspended();
+				}
+				return runningIsolates[ActiveSession].i_Session.isSuspended();
 			}
 		}
 
@@ -78,6 +82,23 @@ namespace FlashDebugger
 			}
 		}
 
+		public int ActiveSession
+		{
+			get
+			{
+				return m_activeSession;
+			}
+			set
+			{
+				// todo
+				m_activeSession = value;
+				if (ThreadsEvent != null)
+				{
+					ThreadsEvent(this);
+				}
+			}
+		}
+
 		#endregion
 
 		#region Private Properties
@@ -91,7 +112,7 @@ namespace FlashDebugger
 		private Boolean m_StepResume;
 		private EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
 		private Boolean m_SuspendWaiting;
-
+		private int m_activeSession; // 1 is m_session else lookup runningIsolates
 
         // Isolates 
         private Dictionary<int, IsolateInfo> runningIsolates;
@@ -106,8 +127,14 @@ namespace FlashDebugger
 
         private void removeRunningIsolate(int i_id)
         {
-            if (runningIsolates.ContainsKey(i_id))
-                runningIsolates.Remove(i_id);
+			if (runningIsolates.ContainsKey(i_id))
+			{
+				runningIsolates.Remove(i_id);
+			}
+			if (ActiveSession == i_id)
+			{
+				ActiveSession = 1;
+			}
         }
 
         // Probably more info needed :)
@@ -145,6 +172,7 @@ namespace FlashDebugger
 		public void Start()
 		{
 			m_CurrentState = DebuggerState.Starting;
+			m_activeSession = 1;
             SessionManager mgr = Bootstrap.sessionManager();
 			//mgr.setDebuggerCallbacks(new FlashDebuggerCallbacks()); // obsoleted
 			mgr.setPreference(SessionManager_.PREF_GETVAR_RESPONSE_TIMEOUT, 5000);
@@ -256,6 +284,7 @@ namespace FlashDebugger
                             catch (System.Threading.ThreadInterruptedException){}
                         }
                         m_SuspendWait.Reset();
+
                         switch (m_SuspendWaiting ? -1 : suspendReason)
                         {
                             case 1://SuspendReason_.Breakpoint:
@@ -263,7 +292,18 @@ namespace FlashDebugger
                                 if (BreakpointEvent != null)
                                 {
                                     m_RequestPause = true;
-                                    BreakpointEvent(this);
+									if (!isDebuggerSuspended)
+									{
+										ActiveSession = 1;
+										BreakpointEvent(this);
+									}
+									else
+									{
+										if (ThreadsEvent != null)
+										{
+											ThreadsEvent(this);
+										}
+									}
                                 }
                                 else
                                 {
@@ -409,7 +449,6 @@ namespace FlashDebugger
                         }
                     }
                     // sleep for a bit, then process our events.
-                    processIsolateEvents();
 
                     try
                     {
@@ -437,88 +476,6 @@ namespace FlashDebugger
                 exitSession();
             }
 		}
-
-        private void processIsolateEvents()
-        {
-            if (m_RequestDetach || m_RequestPause || m_RequestStop || m_SuspendWaiting)
-                return;
-
-            if (m_Session == null)
-                return;
-
-            List<int> inactiveIsolates = new List<int>();
-
-            foreach (KeyValuePair<int, IsolateInfo> ii_pair in runningIsolates)
-            {
-                int i_id = ii_pair.Key;
-                IsolateInfo ii = ii_pair.Value;
-
-                try
-                {
-                    if (ii.i_Session == null)
-                        continue;
-
-                    if (ii.i_Session.isSuspended())
-                    {
-                        /*
-                        * For now just write what's going on and resume.
-                        */
-
-                        m_SuspendWait.Reset();
-                        int suspendReason = ii.i_Session.suspendReason();
-                        switch (m_SuspendWaiting ? -1 : suspendReason)
-                        {
-                            case 1://SuspendReason_.Breakpoint:
-                                TraceManager.AddAsync("Worker " + i_id + ": Breakpoint reached:", 2);
-                                TraceManager.AddAsync("Worker " + i_id + ": " + getCurrentIsolateLocation(i_id).ToString(), 2);
-                                TraceManager.AddAsync("Worker " + i_id + ": Continuing...", 2);
-                                break;
-
-                            case 3://SuspendReason_.Fault:
-
-                                break;
-
-                            case 7://SuspendReason_.ScriptLoaded:
-                                // Don't think it's needed. But not sure.
-                                break;
-
-                            case 5://SuspendReason_.Step:
-                                // For now empty.
-                                break;
-
-                            case 4://SuspendReason_.StopRequest:
-                                // For now empty.
-                                break;
-
-                            case 2://SuspendReason_.Watch:
-                                // For now empty.
-                                break;
-
-                            case -1:
-                                // waiting for susped to end, do nothing
-                                break;
-
-                            default:
-                                // For now empty (resuming anyway).
-                                break;
-                        }
-
-                        ii.i_Session.resume();
-                    }
-                    else
-                    {
-                        // Pause, Stop, etc. should be here.
-                    }
-                }
-                catch (NotConnectedException e)
-                {
-                    inactiveIsolates.Add(i_id);
-                }
-            }
-
-            foreach (int i_id in inactiveIsolates)
-                runningIsolates.Remove(i_id);
-        }
 
 		internal virtual void initSession()
 		{
@@ -708,6 +665,28 @@ namespace FlashDebugger
                 else if (e is BreakEvent)
                 {
                     // we ignore these for now
+					BreakEvent be = (BreakEvent)e;
+					if (be.isolateId > 1)
+					{
+						// switch only if we are not in break mode already!
+						if (!isDebuggerSuspended)
+						{
+							// todo, check for valid id?
+							ActiveSession = be.isolateId;
+							if (BreakpointEvent != null)
+							{
+								//m_RequestPause = true;
+								BreakpointEvent(this);
+							}
+						}
+						else
+						{
+							if (ThreadsEvent != null)
+							{
+								ThreadsEvent(this);
+							}
+						}
+					}
                 }
                 else if (e is FileListModifiedEvent)
                 {
@@ -856,12 +835,12 @@ namespace FlashDebugger
 
 			UpdateIsolateBreakpoints(m_BreakPointManager.BreakPoints, ii);
 
+			i_Session.resume();
+
 			if (ThreadsEvent != null)
 			{
 				ThreadsEvent(this);
 			}
-
-            i_Session.resume();
         }
 
         /// <summary> Perform the tasks need for when an isolate has exited
@@ -877,6 +856,15 @@ namespace FlashDebugger
 		}
 
 		internal virtual Location getCurrentLocation()
+		{
+			if (ActiveSession == 1)
+			{
+				return getCurrentMainLocation();
+			}
+			return getCurrentIsolateLocation(ActiveSession);
+		}
+
+		internal virtual Location getCurrentMainLocation()
 		{
 			Location where = null;
 			try
@@ -936,6 +924,14 @@ namespace FlashDebugger
 
 		public void Next()
 		{
+			if (ActiveSession > 1)
+			{
+				if (runningIsolates[ActiveSession].i_Session.isSuspended())
+				{
+					runningIsolates[ActiveSession].i_Session.stepOver();
+				}
+				return;
+			}
 			if (m_Session.isSuspended())
 			{
 				m_Session.stepOver();
@@ -945,6 +941,14 @@ namespace FlashDebugger
 
 		public void Step()
 		{
+			if (ActiveSession > 1)
+			{
+				if (runningIsolates[ActiveSession].i_Session.isSuspended())
+				{
+					runningIsolates[ActiveSession].i_Session.stepInto();
+				}
+				return;
+			}
 			if (m_Session.isSuspended())
 			{
 				m_Session.stepInto();
@@ -954,6 +958,15 @@ namespace FlashDebugger
 
 		public void StepResume()
 		{
+			// fix me, needs to move to thread
+			if (ActiveSession > 1)
+			{
+				if (runningIsolates[ActiveSession].i_Session.isSuspended())
+				{
+					runningIsolates[ActiveSession].i_Session.resume();
+				}
+				return;
+			}
 			if (m_Session.isSuspended())
 			{
 				m_StepResume = true;
@@ -964,6 +977,15 @@ namespace FlashDebugger
 
 		public void Continue()
 		{
+			// fix me, needs to move to thread
+			if (ActiveSession > 1)
+			{
+				if (runningIsolates[ActiveSession].i_Session.isSuspended())
+				{
+					runningIsolates[ActiveSession].i_Session.resume();
+				}
+				return;
+			}
 			if (m_Session.isSuspended())
 			{
 				m_RequestResume = true;
@@ -973,6 +995,15 @@ namespace FlashDebugger
 
 		public void Pause()
 		{
+			// fix me, needs to move to thread
+			if (ActiveSession > 1)
+			{
+				if (!runningIsolates[ActiveSession].i_Session.isSuspended())
+				{
+					runningIsolates[ActiveSession].i_Session.suspend();
+				}
+				return;
+			}
 			if (!m_Session.isSuspended())
 			{
 				m_RequestPause = true;
@@ -981,6 +1012,14 @@ namespace FlashDebugger
 
 		public void Finish()
 		{
+			if (ActiveSession > 1)
+			{
+				if (runningIsolates[ActiveSession].i_Session.isSuspended())
+				{
+					runningIsolates[ActiveSession].i_Session.stepOut();
+				}
+				return;
+			}
 			if (m_Session.isSuspended())
 			{
 				m_Session.stepOut();
@@ -990,29 +1029,32 @@ namespace FlashDebugger
 
 		public Frame[] GetFrames()
 		{
-			// check for current thread.
-			return m_Session.getFrames();
+			if (ActiveSession == 1)
+			{
+				return m_Session.getFrames();
+			}
+			return runningIsolates[ActiveSession].i_Session.getFrames();
 		}
 
 		public Variable[] GetArgs(int frameNumber)
 		{
-			return m_Session.getFrames()[frameNumber].getArguments(m_Session);
+			return GetFrames()[frameNumber].getArguments(m_Session);
 		}
 
 		public Variable GetThis(int frameNumber)
 		{
-			return m_Session.getFrames()[frameNumber].getThis(m_Session);
+			return GetFrames()[frameNumber].getThis(m_Session);
 		}
 
 		public Variable[] GetLocals(int frameNumber)
 		{
-			return m_Session.getFrames()[frameNumber].getLocals(m_Session);
+			return GetFrames()[frameNumber].getLocals(m_Session);
 		}
 
-		public Value GetValue(int idValue)
-		{
-			return m_Session.getValue(idValue);
-		}
+		//public Value GetValue(int idValue)
+		//{
+		//	return m_Session.getValue(idValue);
+		//}
 
 		public void UpdateBreakpoints(List<BreakPointInfo> breakpoints)
 		{

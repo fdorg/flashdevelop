@@ -58,17 +58,17 @@ namespace FlashDebugger
 
         public void ActiveItem()
         {
-			/*
             foreach (ListViewItem item in lv.Items)
             {
-                if (item.ImageIndex == runningImageIndex)
-                {
-                    item.ImageIndex = -1;
-                    break;
-                }
+				if ((int)item.Tag == PluginMain.debugManager.FlashInterface.ActiveSession)
+				{
+					item.Font = new System.Drawing.Font(item.Font, System.Drawing.FontStyle.Bold);
+				}
+				else
+				{
+					item.Font = new System.Drawing.Font(item.Font, System.Drawing.FontStyle.Regular);
+				}
             }
-			lv.SelectedItems[0].ImageIndex = runningImageIndex;
-			 */
 		}
 
         public void SetThreads(Dictionary<int, FlashDebugger.FlashInterface.IsolateInfo> isolates)
@@ -88,40 +88,28 @@ namespace FlashDebugger
 				lv.Items.Add(new ListViewItem(new string[] { "", title }, image));
 				lv.Items[lv.Items.Count - 1].Tag = i_id;
 			}
+			ActiveItem();
         }
 
         void lv_KeyDown(object sender, KeyEventArgs e)
         {
-			/*
             if (e.KeyCode == Keys.Return)
             {
 				if (lv.SelectedIndices.Count > 0)
 				{
-					PluginMain.debugManager.CurrentFrame = lv.SelectedIndices[0];
+					PluginMain.debugManager.FlashInterface.ActiveSession = (int)lv.SelectedItems[0].Tag;
 					ActiveItem();
 				}
 			}
-			*/
         }
 
         void lv_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-			/*
 			if (lv.SelectedIndices.Count > 0)
 			{
-				if (PluginMain.debugManager.CurrentFrame == lv.SelectedIndices[0])
-				{
-					Location tmp = PluginMain.debugManager.CurrentLocation;
-					PluginMain.debugManager.CurrentLocation = null;
-					PluginMain.debugManager.CurrentLocation = tmp;
-				}
-				else
-				{
-					PluginMain.debugManager.CurrentFrame = lv.SelectedIndices[0];
-					ActiveItem();
-				}
+				PluginMain.debugManager.FlashInterface.ActiveSession = (int)lv.SelectedItems[0].Tag;
+				ActiveItem();
 			}
-			 */
         }
 
     }

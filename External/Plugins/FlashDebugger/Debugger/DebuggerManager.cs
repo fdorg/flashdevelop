@@ -355,7 +355,8 @@ namespace FlashDebugger
         private void flashInterface_BreakpointEvent(object sender)
 		{
 			Location loc = FlashInterface.getCurrentLocation();
-			if (PluginMain.breakPointManager.ShouldBreak(loc.getFile(), loc.getLine()))
+			// todo checking for loc here, but should handle swfloaded case and wait with breakpoint event
+			if (loc != null && PluginMain.breakPointManager.ShouldBreak(loc.getFile(), loc.getLine()))
 			{
 				UpdateUI(DebuggerState.BreakHalt);
 			}
@@ -422,7 +423,17 @@ namespace FlashDebugger
 		/// </summary>
 		void m_FlashInterface_ThreadsEvent(object sender)
 		{
-			UpdateThreadsUI();
+			if (FlashInterface.isDebuggerSuspended)
+			{
+				// TODO there will be redunandt calls
+				UpdateUI(DebuggerState.BreakHalt);
+			}
+			else
+			{
+				// TODO should get a signal that thread has changed, keep local number...
+				UpdateThreadsUI();
+				UpdateMenuState(DebuggerState.Running);
+			}
 		}
 
         /// <summary>

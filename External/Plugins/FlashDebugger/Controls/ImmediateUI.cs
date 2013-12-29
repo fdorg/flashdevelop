@@ -104,7 +104,7 @@ namespace FlashDebugger.Controls
         {
             IASTBuilder builder = new ASTBuilder(true);
             ValueExp exp = builder.parse(new java.io.StringReader(expr));
-            var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.Session.getFrames()[PluginMain.debugManager.CurrentFrame]);
+            var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
             var obj = exp.evaluate(ctx);
             if (obj is Variable) return ctx.FormatValue(((Variable)obj).getValue());
             if (obj is Value) return ctx.FormatValue((Value)obj);
@@ -115,7 +115,7 @@ namespace FlashDebugger.Controls
         {
             var val = PluginMain.debugManager.FlashInterface.Session.getGlobal(expr);
             //var val = PluginMain.debugManager.FlashInterface.Session.getValue(Convert.ToInt64(expr));
-            var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.Session.getFrames()[PluginMain.debugManager.CurrentFrame]);
+            var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
             return ctx.FormatValue(val);
         }
 
