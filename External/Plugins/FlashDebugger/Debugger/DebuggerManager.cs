@@ -146,7 +146,6 @@ namespace FlashDebugger
                 }
             }
 
-			m_FlashInterface.currentProject = currentProject;
             PluginBase.MainForm.ProgressBar.Visible = true;
             PluginBase.MainForm.ProgressLabel.Visible = true;
             PluginBase.MainForm.ProgressLabel.Text = TextHelper.GetString("Info.WaitingForPlayer");
@@ -387,9 +386,10 @@ namespace FlashDebugger
         /// </summary>
         private void flashInterface_ScriptLoadedEvent(object sender)
 		{
+			// this was moved directly into flashInterface
             // force all breakpoints update after new as code loaded into debug movie 
-            PluginMain.breakPointManager.ForceBreakPointUpdates();
-			m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.GetBreakPointUpdates());
+            //PluginMain.breakPointManager.ForceBreakPointUpdates();
+			//m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.GetBreakPointUpdates());
 			m_FlashInterface.Continue();
 		}
 
@@ -688,7 +688,8 @@ namespace FlashDebugger
             try
             {
 				CurrentLocation = null;
-				m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.GetBreakPointUpdates());
+				// this should not be needed, as we update breakpoints right away
+				//m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.BreakPoints);
 				m_FlashInterface.Continue();
 				UpdateMenuState(DebuggerState.Running);
 				UpdateThreadsUI();

@@ -38,22 +38,6 @@ namespace FlashDebugger
 
 		public BreakPointManager m_BreakPointManager = null;
 
-        public Dictionary<string, int> _breakPointFiles = null; 
-        public List<BreakPointInfo> _breakPointsInfo = null;
-
-		public ProjectManager.Projects.Project currentProject
-		{
-			get
-			{
-				return m_CurrentProject;
-			}
-			set
-			{
-				m_CurrentProject = value;
-				if (m_CurrentProject == null) return;
-			}
-		}
-
 		public bool isDebuggerStarted
 		{
 			get
@@ -105,7 +89,6 @@ namespace FlashDebugger
 		private Boolean m_RequestStop;
 		private Boolean m_RequestDetach;
 		private Boolean m_StepResume;
-		private ProjectManager.Projects.Project m_CurrentProject;
 		private EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
 		private Boolean m_SuspendWaiting;
 
@@ -131,7 +114,11 @@ namespace FlashDebugger
         public class IsolateInfo
         {
             public IsolateSession i_Session = null;
+			public Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
         }
+
+		// breakpoint mappings
+		private Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
 
 		// Global Properties
 		private int m_HaltTimeout;
@@ -303,6 +290,11 @@ namespace FlashDebugger
                                 } 
                                 catch (InProgressException) {}
                                 m_CurrentState = DebuggerState.PauseHalt;
+
+								// refresh breakpoints
+								clearBreakpoints();
+								UpdateBreakpoints(m_BreakPointManager.BreakPoints);
+
                                 if (ScriptLoadedEvent != null)
                                 {
                                     ScriptLoadedEvent(this);
@@ -575,6 +567,7 @@ namespace FlashDebugger
             SessionManager mgr = Bootstrap.sessionManager();
             if (mgr.isListening()) mgr.stopListening();
             m_CurrentState = DebuggerState.Stopped;
+			clearBreakpoints();
         }
 
 		internal virtual void Detach()
@@ -857,12 +850,11 @@ namespace FlashDebugger
             IsolateSession i_Session = m_Session.getWorkerSession(e.isolate.getId());
 
             i_Session.breakOnCaughtExceptions(true);
-            if (_breakPointsInfo != null && _breakPointFiles != null)
-                UpdateIsolateBreakpoints(_breakPointFiles, _breakPointsInfo, i_Session);
 
             IsolateInfo ii = addRunningIsolate(e.isolate.getId());
+			ii.i_Session = i_Session;
 
-            ii.i_Session = i_Session;
+			UpdateIsolateBreakpoints(m_BreakPointManager.BreakPoints, ii);
 
 			if (ThreadsEvent != null)
 			{
@@ -998,6 +990,7 @@ namespace FlashDebugger
 
 		public Frame[] GetFrames()
 		{
+			// check for current thread.
 			return m_Session.getFrames();
 		}
 
@@ -1023,10 +1016,24 @@ namespace FlashDebugger
 
 		public void UpdateBreakpoints(List<BreakPointInfo> breakpoints)
 		{
+			commonUpdateBreakpoints(breakpoints, breakpointLocations, null);
+			foreach (IsolateInfo ii in IsolateSessions.Values)
+			{
+				UpdateIsolateBreakpoints(breakpoints, ii);
+			}
+		}
+
+		private void UpdateIsolateBreakpoints(List<BreakPointInfo> breakpoints, IsolateInfo ii)
+		{
+			commonUpdateBreakpoints(breakpoints, ii.breakpointLocations, ii.i_Session);
+		}
+
+		private void commonUpdateBreakpoints(List<BreakPointInfo> breakpoints, Dictionary<BreakPointInfo, Location> breakpointLocations, IsolateSession i_Session)
+		{
 			Dictionary<string, int> files = new Dictionary<string, int>();
 			foreach (BreakPointInfo bp in breakpoints)
 			{
-				if (bp.Location == null)
+				if (!breakpointLocations.ContainsKey(bp))
 				{
 					if (!bp.IsDeleted && bp.IsEnabled)
 					{
@@ -1041,7 +1048,7 @@ namespace FlashDebugger
 			if (nFiles > 0)
 			{
                 // reverse loop to take latest loded swf first, and ignore old swf.
-                SwfInfo[] swfInfo = m_Session.getSwfs();
+                SwfInfo[] swfInfo = (i_Session != null) ? i_Session.getSwfs() : m_Session.getSwfs();
                 for (int swfC = swfInfo.Length - 1; swfC >= 0; swfC--) 
 				{
                     SwfInfo swf = swfInfo[swfC];
@@ -1069,17 +1076,17 @@ namespace FlashDebugger
 					}
 				}
 			}
-            _breakPointFiles = files;
-            _breakPointsInfo = breakpoints;
+
 			foreach (BreakPointInfo bp in breakpoints)
 			{
-				if (bp.Location == null)
+				if (!breakpointLocations.ContainsKey(bp))
 				{
 					if (bp.IsEnabled && !bp.IsDeleted)
 					{
 						if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != 0)
 						{
-							bp.Location = m_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
+							Location l = (i_Session != null) ? i_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1) : m_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
+							breakpointLocations.Add(bp, l);
 						}
 					}
 				}
@@ -1087,29 +1094,29 @@ namespace FlashDebugger
 				{
 					if (bp.IsDeleted || !bp.IsEnabled)
 					{
-						m_Session.clearBreakpoint(bp.Location);
-						bp.Location = null;
+						// todo, i_Session does not have a clearBreakpoint method, m_Session clears them all. optimize out extra loops
+						m_Session.clearBreakpoint(breakpointLocations[bp]);
+						breakpointLocations.Remove(bp);
 					}
 				}
 			}
 		}
 
-        private void UpdateIsolateBreakpoints(Dictionary<string, int> files, List<BreakPointInfo> breakpoints, IsolateSession i_Session)
-        {
-            foreach (BreakPointInfo bp in breakpoints)
-            {
-                //if (bp.Location == null)
-                //{
-                    if (bp.IsEnabled && !bp.IsDeleted)
-                    {
-                        if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != 0)
-                        {
-                            i_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
-                        }
-                    }
-                //}
-            }
-        }
+		private void clearBreakpoints()
+		{
+			if (isDebuggerStarted)
+			{
+				foreach (Location l in m_Session.getBreakpointList())
+				{
+					m_Session.clearBreakpoint(l);
+				}
+			}
+			breakpointLocations.Clear();
+			foreach (IsolateInfo ii in IsolateSessions.Values)
+			{
+				ii.breakpointLocations.Clear();
+			}
+		}
 
 		private static String replaceInlineReferences(String text, System.Collections.IDictionary parameters)
 		{
