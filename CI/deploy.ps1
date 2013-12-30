@@ -23,3 +23,11 @@ foreach($artifact in $artifacts.values)
     $name = [System.IO.Path]::GetFileNameWithoutExtension($artifact.name)
     ncftpput.exe -u "$login" -p "$pass" -C ftp.flashdevelop.org "$($artifact.path)" "downloads/builds/$name$ext";
 }
+
+Write-Output "Create and upload LATEST_BUILD.txt"
+$date = Get-Date
+$file = [System.IO.Path]::GetTempFileName()
+$name = [System.IO.Path]::GetFileNameWithoutExtension($artifact.name)
+$data = "Build Number: $projectBuildNumber`r`nTime: " + $date.ToUniversalTime() + " GMT"
+$data | Set-Content $file
+ncftpput.exe -u "$login" -p "$pass" -C ftp.flashdevelop.org "$file" "downloads/builds/$name.txt";
