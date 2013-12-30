@@ -13,7 +13,7 @@ Download
 --------
 
 * [Latest release](http://www.flashdevelop.org/community/viewforum.php?f=11)
-* [Latest master branch build](http://www.flashdevelop.org/community/viewtopic.php?f=9&t=3529)
+* [Latest builds](http://www.flashdevelop.org/community/viewtopic.php?f=9&t=3529)
 
 Platform
 --------
