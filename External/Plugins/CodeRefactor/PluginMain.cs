@@ -15,8 +15,8 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ProjectManager.Actions;
-using PluginCore;
 using CodeRefactor.Provider;
+using PluginCore;
 
 namespace CodeRefactor
 {
@@ -34,7 +34,6 @@ namespace CodeRefactor
         private RefactorMenu refactorMainMenu;
         private Settings settingObject;
         private String settingFilename;
-        private List<string> cuttedFiles;
 
         #region Required Properties
         
@@ -155,32 +154,6 @@ namespace CodeRefactor
                             }
                             break;
 
-                        case ProjectFileActionsEvents.FileCut:
-                            cuttedFiles = new List<string>(de.Data as string[]);
-                            break;
-
-                        case ProjectFileActionsEvents.FilePaste:
-                            if (cuttedFiles == null || cuttedFiles.Count == 0) return;
-
-                            newPath = de.Data as string;
-                            DataObject o = Clipboard.GetDataObject() as DataObject;
-                            if (o.GetDataPresent(DataFormats.FileDrop))
-                            {
-                                Dictionary<string, string> oldPath2newPath = new Dictionary<string, string>();
-                                foreach (string path in (Array)o.GetData(DataFormats.FileDrop))
-                                    if (cuttedFiles.Contains(path) && IsValidForMove(path, newPath))
-                                        oldPath2newPath.Add(path, newPath);
-
-                                if (oldPath2newPath.Count > 0)
-                                {
-                                    MovingHelper.AddToQueue(oldPath2newPath);
-                                    e.Handled = true;
-                                }
-                            }
-
-                            cuttedFiles = null;
-                            break;
-
                         case ProjectFileActionsEvents.FileMove:
                             args = de.Data as string[];
                             oldPath = args[0];
@@ -203,11 +176,25 @@ namespace CodeRefactor
         {
             string oldExt = Path.GetExtension(oldPath);
             string newExt = Path.GetExtension(newPath);
-            bool hasProject = PluginCore.PluginBase.CurrentProject != null;
-            if (File.Exists(oldPath) && hasProject && oldExt == newExt && IsValidFile(oldPath))
+            IProject project = PluginBase.CurrentProject;
+            if (project != null && File.Exists(oldPath) && oldExt == newExt && IsValidFile(oldPath))
             {
-                bool langMatch = PluginCore.PluginBase.CurrentProject.DefaultSearchFilter.Contains(oldExt);
-                if (langMatch) return true;
+                string projectPath = Path.GetDirectoryName(project.GetAbsolutePath(project.ProjectPath));
+                return oldPath.StartsWith(projectPath) && newPath.StartsWith(projectPath);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if the file or directory is valid for move command
+        /// </summary>
+        private bool IsValidForMove(string oldPath, string newPath)
+        {
+            IProject project = PluginBase.CurrentProject;
+            if (project != null && (File.Exists(oldPath) && IsValidFile(oldPath)) || Directory.Exists(oldPath))
+            {
+                string projectPath = Path.GetDirectoryName(project.GetAbsolutePath(project.ProjectPath));
+                return oldPath.StartsWith(projectPath) && newPath.StartsWith(projectPath);
             }
             return false;
         }
@@ -217,20 +204,10 @@ namespace CodeRefactor
         /// </summary>
         private bool IsValidFile(string file)
         {
-            string ext = Path.GetExtension(file);
-            return ext == ".as" || ext == ".hx" || ext == ".ls";
-        }
-
-        /// <summary>
-        /// Checks if the file or directory is valid for move command
-        /// </summary>
-        private bool IsValidForMove(string oldPath, string newPath)
-        {
             IProject project = PluginBase.CurrentProject;
             if (project == null) return false;
-
-            string projectPath = Path.GetDirectoryName(project.GetAbsolutePath(project.ProjectPath));
-            return oldPath.StartsWith(projectPath) && newPath.StartsWith(projectPath);
+            string ext = Path.GetExtension(file);
+            return (ext == ".as" || ext == ".hx" || ext == ".ls") && PluginBase.CurrentProject.DefaultSearchFilter.Contains(ext);
         }
 
         #endregion
@@ -332,7 +309,6 @@ namespace CodeRefactor
                     this.refactorMainMenu.RenameMenuItem.Enabled = true;
                     this.editorReferencesItem.Enabled = true;
                     this.viewReferencesItem.Enabled = true;
-
                     if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
                     {
                         FlagType flags = result.Member.Flags;

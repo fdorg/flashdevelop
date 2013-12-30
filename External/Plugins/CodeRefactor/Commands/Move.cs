@@ -1,27 +1,27 @@
-﻿using ASCompletion.Completion;
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Provider;
-using PluginCore;
 using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using ScintillaNet;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Windows.Forms;
+using PluginCore;
 
 namespace CodeRefactor.Commands
 {
     class Move : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private Dictionary<string, string> oldPathToNewPath;
         private bool outputResults;
-        List<MoveTargetHelper> targets;
-        MoveTargetHelper currentTarget;
+        private Dictionary<string, string> oldPathToNewPath;
+        private List<MoveTargetHelper> targets;
+        private MoveTargetHelper currentTarget;
 
         #region Constructors
 
@@ -92,8 +92,9 @@ namespace CodeRefactor.Commands
                 {
                     newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
                     foreach (string oldFilePath in Directory.GetFiles(oldPath, "*.*", SearchOption.AllDirectories))
-                        if(IsValidFile(oldFilePath)) 
-                            targets.Add(GetMoveTarget(oldFilePath, Path.Combine(newPath, Path.GetFileName(oldFilePath))));
+                    {
+                        if (IsValidFile(oldFilePath)) targets.Add(GetMoveTarget(oldFilePath, Path.Combine(newPath, Path.GetFileName(oldFilePath))));
+                    }
                 }
             }
         }
@@ -120,13 +121,15 @@ namespace CodeRefactor.Commands
             string newPackage = PluginBase.CurrentProject.GetRelativePath(Path.GetDirectoryName(newPath));
             string[] sourcePaths = PluginBase.CurrentProject.SourcePaths;
             foreach (string path in sourcePaths)
-                if(newPackage == path)
+            {
+                if (newPackage == path)
                 {
                     newPackage = "";
                     break;
                 }
-
-            if(!string.IsNullOrEmpty(newPackage))
+            }
+            if (!string.IsNullOrEmpty(newPackage))
+            {
                 foreach (string path in sourcePaths)
                 {
                     string normalizePath = path + "\\";
@@ -136,7 +139,7 @@ namespace CodeRefactor.Commands
                         break;
                     }
                 }
-
+            }
             result.NewPackage = newPackage;
             return result;
         }
@@ -148,8 +151,9 @@ namespace CodeRefactor.Commands
         {
             Dictionary<string, ITabbedDocument> fileNameToOpenedDoc = new Dictionary<string,ITabbedDocument>();
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+            {
                 fileNameToOpenedDoc.Add(doc.FileName, doc);
-
+            }
             MessageBar.Locked = true;
             foreach (KeyValuePair<string, string> item in oldPathToNewPath)
             {
@@ -157,12 +161,11 @@ namespace CodeRefactor.Commands
                 string newPath = item.Value;
                 if (Path.HasExtension(oldPath))
                 {
-                    if(fileNameToOpenedDoc.ContainsKey(oldPath))
+                    if (fileNameToOpenedDoc.ContainsKey(oldPath))
                     {
                         fileNameToOpenedDoc[oldPath].Save();
                         fileNameToOpenedDoc[oldPath].Close();
                     }
-
                     newPath = Path.Combine(item.Value, Path.GetFileName(oldPath));
                     // refactor failed or was refused
                     if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
@@ -173,19 +176,19 @@ namespace CodeRefactor.Commands
                         oldPath = tmpPath;
                     }
                     if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-
                     File.Move(oldPath, newPath);
                     DocumentManager.MoveDocuments(oldPath, newPath);
                 }
                 else
                 {
                     foreach (string file in Directory.GetFiles(oldPath, "*.*", SearchOption.AllDirectories))
-                        if(fileNameToOpenedDoc.ContainsKey(file))
+                    {
+                        if (fileNameToOpenedDoc.ContainsKey(file))
                         {
                             fileNameToOpenedDoc[file].Save();
                             fileNameToOpenedDoc[file].Close();
                         }
-                    
+                    }
                     Directory.Move(oldPath, Path.Combine(newPath, Path.GetFileName(oldPath)));
                     DocumentManager.MoveDocuments(Path.GetFileName(oldPath), newPath);
                 }
@@ -264,16 +267,20 @@ namespace CodeRefactor.Commands
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
                 ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(entry.Key);
                 if (isNotHaxe && entry.Key != currentTarget.NewFilePath && ASContext.Context.CurrentModel.Imports.Search(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0) == null)
+                {
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
-                if(packageIsNotEmpty) RefactoringHelper.ReplaceMatches(entry.Value, sci, newType, null);
+                }
+                if (packageIsNotEmpty) RefactoringHelper.ReplaceMatches(entry.Value, sci, newType, null);
                 else
                 {
-                    foreach(SearchMatch sm in entry.Value)
+                    foreach (SearchMatch sm in entry.Value)
+                    {
                         if (sm.LineText.TrimStart().StartsWith("import"))
                         {
                             RefactoringHelper.SelectMatch(sci, sm);
                             sci.ReplaceSel(newType);
                         }
+                    }
                 }
                 PluginBase.MainForm.CurrentDocument.Save();
                 if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);

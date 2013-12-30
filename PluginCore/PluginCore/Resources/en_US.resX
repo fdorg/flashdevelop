@@ -5057,7 +5057,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
-    <value>You are moving a file. Do you also want to update the references?</value>
+    <value>You are moving file[s]. Do you also want to update the references?</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
