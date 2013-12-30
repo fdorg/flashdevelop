@@ -91,7 +91,6 @@ namespace FlashDebugger
 			List<BreakPointInfo> deleteList = new List<BreakPointInfo>();
 			foreach (BreakPointInfo info in m_BreakPointList)
 			{
-				info.Location = null;
 				if (info.IsDeleted)
 				{
 					deleteList.Add(info);
@@ -159,7 +158,7 @@ namespace FlashDebugger
 				{
                     try
                     {
-                        var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.Session.getFrames()[PluginMain.debugManager.CurrentFrame]);
+                        var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                         var val = bpInfo.ParsedExpression.evaluate(ctx);
                         if (val is java.lang.Boolean)
                         {
@@ -234,44 +233,13 @@ namespace FlashDebugger
             m_bAccessable = true;
         }
 
-        public void ForceBreakPointUpdates()
-        {
-            foreach (BreakPointInfo bp in m_BreakPointList)
-            {
-                bp.Location = null;
-            }
-        }
-
-		public List<BreakPointInfo> GetBreakPointUpdates()
-		{
-			List<BreakPointInfo> bpList = new List<BreakPointInfo>();
-			foreach (BreakPointInfo bp in m_BreakPointList)
-			{
-				if (bp.Location == null)
-				{
-					if (!bp.IsDeleted && bp.IsEnabled)
-					{
-						bpList.Add(bp);
-					}
-				}
-				else if (bp.IsDeleted || !bp.IsEnabled)
-				{
-					bpList.Add(bp);
-				}
-			}
-			return bpList;
-		}
-
 		public void ClearTemporaryBreakPoint()
 		{
 			if (m_TemporaryBreakPointInfo != null)
 			{
-				if (m_TemporaryBreakPointInfo.Location != null)
-				{
-					m_TemporaryBreakPointInfo.IsDeleted = true;
-					List<BreakPointInfo> bpList = new List<BreakPointInfo>(new BreakPointInfo[] { m_TemporaryBreakPointInfo });
-					PluginMain.debugManager.FlashInterface.UpdateBreakpoints(bpList);
-				}
+				m_TemporaryBreakPointInfo.IsDeleted = true;
+				List<BreakPointInfo> bpList = new List<BreakPointInfo>(new BreakPointInfo[] { m_TemporaryBreakPointInfo });
+				PluginMain.debugManager.FlashInterface.UpdateBreakpoints(bpList);
 				m_TemporaryBreakPointInfo = null;
 			}
 		}
@@ -299,13 +267,13 @@ namespace FlashDebugger
 				cbinfo.IsEnabled = bEnabled;
 				exp = cbinfo.Exp;
                 // TMP
-                if (chn && PluginMain.debugManager.FlashInterface.isDebuggerStarted) PluginMain.debugManager.FlashInterface.UpdateBreakpoints(this.GetBreakPointUpdates());
+                if (chn && PluginMain.debugManager.FlashInterface.isDebuggerStarted) PluginMain.debugManager.FlashInterface.UpdateBreakpoints(this.BreakPoints);
             }
 			else if (!bDeleted)
             {
 				m_BreakPointList.Add(new BreakPointInfo(filefullpath, line, exp, bDeleted, bEnabled));
                 // TMP
-                if (PluginMain.debugManager.FlashInterface.isDebuggerStarted) PluginMain.debugManager.FlashInterface.UpdateBreakpoints(this.GetBreakPointUpdates());
+                if (PluginMain.debugManager.FlashInterface.isDebuggerStarted) PluginMain.debugManager.FlashInterface.UpdateBreakpoints(this.BreakPoints);
             }
             if (ChangeBreakPointEvent != null)
             {
@@ -416,7 +384,6 @@ namespace FlashDebugger
         private int m_Line;
         private Boolean m_bDeleted;
         private Boolean m_bEnabled;
-		private Location m_Location;
         private string m_FileFullPath;
 		private string m_ConditionalExpression;
 		private ValueExp m_ParsedExpression;
@@ -444,13 +411,6 @@ namespace FlashDebugger
 			get { return m_bEnabled; }
 			set { m_bEnabled = value; }
         }
-
-		[XmlIgnore]
-		public Location Location
-		{
-			get { return m_Location; }
-			set { m_Location = value; }
-		}
 
 		public string Exp
         {
@@ -492,7 +452,6 @@ namespace FlashDebugger
 			m_ConditionalExpression = "";
 			m_bDeleted = false;
 			m_bEnabled = false;
-			m_Location = null;
 			m_ParsedExpression = null;
 		}
 
@@ -502,7 +461,6 @@ namespace FlashDebugger
 			m_Line = line;
 			m_bDeleted = bDeleted;
 			m_bEnabled = bEnabled;
-			m_Location = null;
 			m_ParsedExpression = null;
 			Exp = exp;
 		}

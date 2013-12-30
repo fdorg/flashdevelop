@@ -97,6 +97,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ThreadsUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\DataTreeModel.cs">
       <SubType>Code</SubType>
     </Compile>

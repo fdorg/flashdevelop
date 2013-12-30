@@ -30,6 +30,10 @@ namespace FlashDebugger
         static public DockContent immediatePanel;
         static public ImmediateUI immediateUI;
 
+		static public String threadsGuid = "49eb0b7e-f601-4860-a190-ae48e122a662";
+		static public DockContent threadsPanel;
+		static public ThreadsUI threadsUI;
+
         public PanelsHelper(PluginMain pluginMain, Image pluginImage)
         {
             pluginUI = new PluginUI(pluginMain);
@@ -56,7 +60,12 @@ namespace FlashDebugger
             immediateUI.Text = TextHelper.GetString("Title.Immediate");
             immediatePanel = PluginBase.MainForm.CreateDockablePanel(immediateUI, immediateGuid, pluginImage, DockState.DockLeft);
             immediatePanel.Hide();
-        }
+
+			threadsUI = new ThreadsUI(pluginMain, MenusHelper.imageList);
+			threadsUI.Text = TextHelper.GetString("Title.Threads");
+			threadsPanel = PluginBase.MainForm.CreateDockablePanel(threadsUI, threadsGuid, pluginImage, DockState.DockLeft);
+			threadsPanel.Hide();
+		}
 
 	}
 

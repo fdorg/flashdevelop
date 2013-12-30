@@ -5051,4 +5051,10 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Moving File[s]</value>
     <comment>Added after 4.5.2</comment>
   </data>
+  <data name="FlashDebugger.Title.Threads" xml:space="preserve">
+    <value>Threads</value>
+  </data>
+  <data name="FlashDebugger.Label.ViewThreadsPanel" xml:space="preserve">
+    <value>Threads Panel</value>
+  </data>
 </root>
