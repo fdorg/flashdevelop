@@ -9,6 +9,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using WeifenLuo.WinFormsUI;
 using PluginCore.Managers;
 using PluginCore.Localization;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace OutputPanel
@@ -48,7 +49,7 @@ namespace OutputPanel
         {
             this.scrollTimer = new System.Timers.Timer();
             this.textLog = new System.Windows.Forms.RichTextBox();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.clearButton = new System.Windows.Forms.ToolStripButton();
             this.findTextBox = new System.Windows.Forms.ToolStripSpringTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.scrollTimer)).BeginInit();

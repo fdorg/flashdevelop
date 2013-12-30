@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
 
@@ -47,7 +48,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ToolStrip GetToolStrip(String file)
         {
-            ToolStrip toolStrip = new ToolStrip();
+            ToolStripEx toolStrip = new ToolStripEx();
             XmlNode rootNode = XmlHelper.LoadXmlDocument(file);
             foreach (XmlNode subNode in rootNode.ChildNodes)
             {

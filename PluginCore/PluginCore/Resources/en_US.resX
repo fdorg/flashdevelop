@@ -3027,8 +3027,9 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="CodeRefactor.Info.FindingReferences" xml:space="preserve">
     <value>Finding References...</value>
   </data>
-  <data name="CodeRefactor.Info.RenamingReferences" xml:space="preserve">
-    <value>Renaming References...</value>
+  <data name="CodeRefactor.Info.UpdatingReferences" xml:space="preserve">
+    <value>Updating References...</value>
+    <comment>Modified after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Info.ResolvingReferences" xml:space="preserve">
     <value>Resolving References...</value>
@@ -4729,9 +4730,6 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Add &amp;Source Path</value>
     <comment>Added after 3.3.3</comment>
   </data>
-  <data name="FlashDebugger.Label.ViewImmediatePanel" xml:space="preserve">
-    <value>Immediate Panel</value>
-  </data>
   <data name="FlashDebugger.Title.Immediate" xml:space="preserve">
     <value>Immediate</value>
   </data>
@@ -5042,5 +5040,31 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   <data name="FlashDevelop.Label.HaxeDocument" xml:space="preserve">
     <value>Haxe Document</value>
     <comment>Added after 4.4.3</comment>
+  </data>
+  <data name="FlashDevelop.Label.InstallSoftware" xml:space="preserve">
+    <value>Install Software...</value>
+    <comment>Added after 4.5.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ZipConfirmRemove" xml:space="preserve">
+    <value>Can the following zip file be removed:</value>
+    <comment>Added after 4.5.1</comment>
+  </data>
+  <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
+    <value>The zip file was removed succesfully.</value>
+    <comment>Added after 4.5.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
+    <value>You are moving a file. Do you also want to update the references?</value>
+    <comment>Added after 4.5.2</comment>
+  </data>
+  <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
+    <value>Moving File[s]</value>
+    <comment>Added after 4.5.2</comment>
+  </data>
+  <data name="FlashDebugger.Title.Threads" xml:space="preserve">
+    <value>Threads</value>
+  </data>
+  <data name="FlashDebugger.Label.ViewThreadsPanel" xml:space="preserve">
+    <value>Threads Panel</value>
   </data>
 </root>

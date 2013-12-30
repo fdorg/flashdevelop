@@ -13,7 +13,6 @@ using PluginCore;
 using net.sf.jni4net;
 using PluginCore.Helpers;
 using ProjectManager.Projects.Haxe;
-using System.Text;
 
 namespace FlashDebugger
 {
@@ -57,6 +56,7 @@ namespace FlashDebugger
 			m_FlashInterface.WatchpointEvent += new DebuggerEventHandler(flashInterface_WatchpointEvent);
 			m_FlashInterface.UnknownHaltEvent += new DebuggerEventHandler(flashInterface_UnknownHaltEvent);
             m_FlashInterface.ProgressEvent += new DebuggerProgressEventHandler(flashInterface_ProgressEvent);
+			m_FlashInterface.ThreadsEvent += new DebuggerEventHandler(m_FlashInterface_ThreadsEvent);
         }
 
         #region Startup
@@ -125,7 +125,7 @@ namespace FlashDebugger
 
                     if (flexSDKPath != null && Directory.Exists(flexSDKPath))
                     {
-                        Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
+                        Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(Path.Combine(flexSDKPath, "bin\\jvm.config"));
                         String javaHome = JvmConfigHelper.GetJavaHome(jvmConfig, flexSDKPath);
                         if (!String.IsNullOrEmpty(javaHome)) bridgeSetup.JavaHome = javaHome;
                     }
@@ -146,7 +146,6 @@ namespace FlashDebugger
                 }
             }
 
-			m_FlashInterface.currentProject = currentProject;
             PluginBase.MainForm.ProgressBar.Visible = true;
             PluginBase.MainForm.ProgressLabel.Visible = true;
             PluginBase.MainForm.ProgressLabel.Text = TextHelper.GetString("Info.WaitingForPlayer");
@@ -232,31 +231,22 @@ namespace FlashDebugger
 		public String GetLocalPath(SourceFile file)
 		{
             if (file == null) return null;
-            String fileFullPath = file.getFullPath();
-            if (m_PathMap.ContainsKey(fileFullPath))
+            if (File.Exists(file.getFullPath()))
 			{
-                return m_PathMap[fileFullPath];
+				return file.getFullPath();
 			}
-            if (File.Exists(fileFullPath))
-            {
-                m_PathMap[fileFullPath] = fileFullPath;
-                return fileFullPath;
-            }
+			if (m_PathMap.ContainsKey(file.getFullPath()))
+			{
+				return m_PathMap[file.getFullPath()];
+			}
 			Char pathSeparator = Path.DirectorySeparatorChar;
 			String pathFromPackage = file.getPackageName().ToString().Replace('/', pathSeparator);
-            String fileName = file.getName();
 			foreach (Folder folder in PluginMain.settingObject.SourcePaths)
 			{
-                StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
-                localPathBuilder.Append(folder.Path);
-                localPathBuilder.Append(pathSeparator);
-                localPathBuilder.Append(pathFromPackage);
-                localPathBuilder.Append(pathSeparator);
-                localPathBuilder.Append(fileName);
-                String localPath = localPathBuilder.ToString();
+                String localPath = folder.Path + pathSeparator + pathFromPackage + pathSeparator + file.getName();
 				if (File.Exists(localPath))
 				{
-                    m_PathMap[fileFullPath] = localPath;
+					m_PathMap[file.getFullPath()] = localPath;
 					return localPath;
 				}
 			}
@@ -265,23 +255,14 @@ namespace FlashDebugger
 			{
 				foreach (string cp in project.Classpaths)
 				{
-                    StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
-                    localPathBuilder.Append(project.Directory);
-                    localPathBuilder.Append(pathSeparator);
-                    localPathBuilder.Append(cp);
-                    localPathBuilder.Append(pathSeparator);
-                    localPathBuilder.Append(pathFromPackage);
-                    localPathBuilder.Append(pathSeparator);
-                    localPathBuilder.Append(fileName);
-                    String localPath = localPathBuilder.ToString();
+					String localPath = project.Directory + pathSeparator + cp + pathSeparator + pathFromPackage + pathSeparator + file.getName();
 					if (File.Exists(localPath))
 					{
-                        m_PathMap[fileFullPath] = localPath;
+						m_PathMap[file.getFullPath()] = localPath;
 						return localPath;
 					}
 				}
 			}
-            m_PathMap[fileFullPath] = null;
 			return null;
         }
 
@@ -362,6 +343,7 @@ namespace FlashDebugger
 			PanelsHelper.pluginUI.TreeControl.Nodes.Clear();
 			PanelsHelper.stackframeUI.ClearItem();
 			PanelsHelper.watchUI.Clear();
+			PanelsHelper.threadsUI.ClearItem();
 			PluginMain.breakPointManager.ResetAll();
             PluginBase.MainForm.ProgressBar.Visible = false;
             PluginBase.MainForm.ProgressLabel.Visible = false;
@@ -373,7 +355,8 @@ namespace FlashDebugger
         private void flashInterface_BreakpointEvent(object sender)
 		{
 			Location loc = FlashInterface.getCurrentLocation();
-			if (PluginMain.breakPointManager.ShouldBreak(loc.getFile(), loc.getLine()))
+			// todo checking for loc here, but should handle swfloaded case and wait with breakpoint event
+			if (loc != null && PluginMain.breakPointManager.ShouldBreak(loc.getFile(), loc.getLine()))
 			{
 				UpdateUI(DebuggerState.BreakHalt);
 			}
@@ -404,9 +387,10 @@ namespace FlashDebugger
         /// </summary>
         private void flashInterface_ScriptLoadedEvent(object sender)
 		{
+			// this was moved directly into flashInterface
             // force all breakpoints update after new as code loaded into debug movie 
-            PluginMain.breakPointManager.ForceBreakPointUpdates();
-			m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.GetBreakPointUpdates());
+            //PluginMain.breakPointManager.ForceBreakPointUpdates();
+			//m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.GetBreakPointUpdates());
 			m_FlashInterface.Continue();
 		}
 
@@ -434,6 +418,24 @@ namespace FlashDebugger
 			UpdateUI(DebuggerState.PauseHalt);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		void m_FlashInterface_ThreadsEvent(object sender)
+		{
+			if (FlashInterface.isDebuggerSuspended)
+			{
+				// TODO there will be redunandt calls
+				UpdateUI(DebuggerState.BreakHalt);
+			}
+			else
+			{
+				// TODO should get a signal that thread has changed, keep local number...
+				UpdateThreadsUI();
+				UpdateMenuState(DebuggerState.Running);
+			}
+		}
+
         /// <summary>
         /// 
         /// </summary>
@@ -453,6 +455,7 @@ namespace FlashDebugger
                 UpdateStackUI();
                 UpdateLocalsUI();
                 UpdateMenuState(state);
+				UpdateThreadsUI();
                 (PluginBase.MainForm as Form).Activate();
             }
             catch (PlayerDebugException ex)
@@ -507,6 +510,19 @@ namespace FlashDebugger
 				PanelsHelper.watchUI.UpdateElements();
 			}
 			else CurrentLocation = null;
+		}
+
+		private void UpdateThreadsUI()
+		{
+			if ((PluginBase.MainForm as Form).InvokeRequired)
+			{
+				(PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate()
+				{
+					UpdateThreadsUI();
+				});
+				return;
+			}
+			PanelsHelper.threadsUI.SetThreads(m_FlashInterface.IsolateSessions);
 		}
 
         /// <summary>
@@ -683,9 +699,11 @@ namespace FlashDebugger
             try
             {
 				CurrentLocation = null;
-				m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.GetBreakPointUpdates());
+				// this should not be needed, as we update breakpoints right away
+				//m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.BreakPoints);
 				m_FlashInterface.Continue();
 				UpdateMenuState(DebuggerState.Running);
+				UpdateThreadsUI();
             }
             catch (Exception ex)
             {

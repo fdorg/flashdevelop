@@ -35,7 +35,7 @@ namespace ASCompletion
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.convertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateTimer = new System.Windows.Forms.Timer(this.components);
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.filterLabel = new System.Windows.Forms.ToolStripLabel();
             this.filterTextBox = new System.Windows.Forms.ToolStripSpringTextBox();
             this.refreshButton = new System.Windows.Forms.ToolStripButton();

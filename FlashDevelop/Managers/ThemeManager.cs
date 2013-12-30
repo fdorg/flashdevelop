@@ -131,12 +131,14 @@ namespace FlashDevelop.Managers
             try
             {
                 Type type = obj.GetType();
+                String full = type.Name;
+                String name = full.EndsWith("Ex") ? full.Remove(full.Length - 2) : full;
+                PropertyInfo ground = type.GetProperty("BackgroundColor");
                 PropertyInfo back = type.GetProperty("BackColor");
                 PropertyInfo fore = type.GetProperty("ForeColor");
-                PropertyInfo ground = type.GetProperty("BackgroundColor");
                 if (back != null)
                 {
-                    String key = type.Name + ".BackColor";
+                    String key = name + ".BackColor";
                     Color color = GetThemeColor(key);
                     if (color != Color.Empty)
                     {
@@ -145,7 +147,7 @@ namespace FlashDevelop.Managers
                 }
                 if (fore != null)
                 {
-                    String key = type.Name + ".ForeColor";
+                    String key = name + ".ForeColor";
                     Color color = GetThemeColor(key);
                     if (color != Color.Empty)
                     {
@@ -154,7 +156,7 @@ namespace FlashDevelop.Managers
                 }
                 if (ground != null)
                 {
-                    String key = type.Name + ".BackgroundColor";
+                    String key = name + ".BackgroundColor";
                     Color color = GetThemeColor(key);
                     if (color != Color.Empty)
                     {

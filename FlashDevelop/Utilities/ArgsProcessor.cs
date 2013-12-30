@@ -309,6 +309,14 @@ namespace FlashDevelop.Utilities
             return text.Substring(startPos, endPos-startPos);
         }
 
+        /// <summary>
+        /// Gets the current locale
+        /// </summary>
+        private static String GetLocale()
+        {
+            return Globals.Settings.LocaleVersion.ToString();
+        }
+
 		/// <summary>
 		/// Processes the argument String variables
 		/// </summary>
@@ -378,6 +386,7 @@ namespace FlashDevelop.Utilities
                     case "PersonalDir" : return GetPersonalDir();
                     case "WorkingDir" : return GetWorkingDir();
                     case "Clipboard": return GetClipboard();
+                    case "Locale": return GetLocale();
                     case "Dollar": return "$";
                 }
                 foreach (Argument arg in ArgumentDialog.CustomArguments)

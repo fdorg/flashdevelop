@@ -76,5 +76,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <JavaClass TypeName="flex.tools.debugger.cli.ExpressionContext"/>
 -->
 
+  <JavaClass TypeName="flash.tools.debugger.Isolate"/>
+  <JavaClass TypeName="flash.tools.debugger.IsolateSession"/>
+  <JavaClass TypeName="flash.tools.debugger.IsolateController"/>
+  <JavaClass TypeName="flash.tools.debugger.events.IsolateCreateEvent"/>
+  <JavaClass TypeName="flash.tools.debugger.events.IsolateExitEvent"/>
+
   <ClassPath Path="..\..\..\FlashDEvelop\bin\Debug\Tools\flexlibs\lib\fdb.jar" />
 </jni4net-proxygen>

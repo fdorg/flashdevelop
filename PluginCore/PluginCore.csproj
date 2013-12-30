@@ -306,6 +306,9 @@
     <Compile Include="PluginCore\Controls\SmartForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PluginCore\Controls\ToolStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PluginCore\Controls\WinFormUtils.cs" />
     <Compile Include="PluginCore\Helpers\ConfigHelper.cs" />
     <Compile Include="PluginCore\Helpers\JvmConfigHelper.cs" />

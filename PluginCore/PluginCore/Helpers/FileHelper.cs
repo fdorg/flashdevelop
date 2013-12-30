@@ -90,6 +90,7 @@ namespace PluginCore.Helpers
             try
             {
                 String newFile = file + ".new";
+                String delFile = file + ".del";
                 if (File.Exists(newFile))
                 {
                     String oldFile = newFile.Substring(0, newFile.Length - 4);
@@ -99,6 +100,11 @@ namespace PluginCore.Helpers
                         File.Delete(newFile);
                     }
                     else File.Move(newFile, oldFile);
+                }
+                if (File.Exists(delFile))
+                {
+                    File.Delete(file);
+                    File.Delete(delFile);
                 }
             }
             catch (Exception ex)

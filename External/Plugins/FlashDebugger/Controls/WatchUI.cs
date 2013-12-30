@@ -71,7 +71,7 @@ namespace FlashDebugger.Controls
 				{
                     IASTBuilder builder = new ASTBuilder(false);
                     ValueExp exp = builder.parse(new java.io.StringReader(item));
-                    var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.Session.getFrames()[PluginMain.debugManager.CurrentFrame]);
+                    var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                     var obj = exp.evaluate(ctx);
                     node = new DataNode((Variable)obj);
 				}

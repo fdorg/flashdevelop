@@ -8,6 +8,7 @@ using PluginCore.Utilities;
 using PluginCore.Helpers;
 using PluginCore;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace AS2Context
 {
@@ -172,16 +173,31 @@ namespace AS2Context
         {
             if (settingObject.InstalledSDKs == null || settingObject.InstalledSDKs.Length == 0)
             {
+                List<InstalledSDK> allSdks = new List<InstalledSDK>();
                 string includedSDK = "Tools\\mtasc";
                 if (Directory.Exists(PathHelper.ResolvePath(includedSDK)))
                 {
                     InstalledSDK sdk = new InstalledSDK(this);
                     sdk.Path = includedSDK;
-                    settingObject.InstalledSDKs = new InstalledSDK[] { sdk };
+                    allSdks.Add(sdk);
                 }
+                string appManDir = Path.Combine(PathHelper.BaseDir, @"Data\AppMan\Archive\mtasc");
+                if (Directory.Exists(appManDir))
+                {
+                    string[] versionDirs = Directory.GetDirectories(appManDir);
+                    foreach (string versionDir in versionDirs)
+                    {
+                        if (Directory.Exists(versionDir))
+                        {
+                            InstalledSDK sdk = new InstalledSDK(this);
+                            sdk.Path = versionDir;
+                            allSdks.Add(sdk);
+                        }
+                    }
+                }
+                settingObject.InstalledSDKs = allSdks.ToArray();
             }
             else foreach (InstalledSDK sdk in settingObject.InstalledSDKs) ValidateSDK(sdk);
-            
             settingObject.OnClasspathChanged += SettingObjectOnClasspathChanged;
         }
 
@@ -239,12 +255,12 @@ namespace AS2Context
                 if (mVer.Success)
                 {
                     sdk.Version = mVer.Groups[1].Value;
-                    sdk.Name = "Mtasc " + sdk.Version;
+                    sdk.Name = "MTASC " + sdk.Version;
                     return true;
                 }
                 else ErrorManager.ShowInfo("Invalid changes.txt file:\n" + descriptor);
             }
-            else ErrorManager.ShowInfo("No change.txt found:\n" + descriptor);
+            else ErrorManager.ShowInfo("No changes.txt found:\n" + descriptor);
             return false;
         }
 

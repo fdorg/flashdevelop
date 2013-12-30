@@ -227,7 +227,7 @@ namespace AS2Context
         private bool useMtascIntrinsic = DEFAULT_USEMTASC;
         private string mtascCheckParameters = DEFAULT_MTASCCHECKPARAMS;
 
-        [DisplayName("Use Mtasc Intrinsics")]
+        [DisplayName("Use MTASC Intrinsics")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS2Context.Description.UseMtascIntrinsic"), DefaultValue(DEFAULT_USEMTASC)]
         public bool UseMtascIntrinsic
         {

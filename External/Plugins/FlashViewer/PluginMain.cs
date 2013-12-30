@@ -172,6 +172,19 @@ namespace FlashViewer
             {
                 this.settingObject.PlayerPath = null;
             }
+            // Try to find player path from AppMan archive
+            if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
+            {
+                string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
+                if (Directory.Exists(appManDir))
+                {
+                    string[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
+                    foreach (string exeFile in exeFiles)
+                    {
+                        this.settingObject.PlayerPath = exeFile;
+                    }
+                }
+            }
             // Try to find player path from: Tools/flexlibs/
             if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
             {

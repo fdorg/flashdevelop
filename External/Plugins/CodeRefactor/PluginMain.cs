@@ -16,6 +16,7 @@ using PluginCore.Managers;
 using PluginCore.Utilities;
 using ProjectManager.Actions;
 using PluginCore;
+using CodeRefactor.Provider;
 
 namespace CodeRefactor
 {
@@ -33,6 +34,7 @@ namespace CodeRefactor
         private RefactorMenu refactorMainMenu;
         private Settings settingObject;
         private String settingFilename;
+        private List<string> cuttedFiles;
 
         #region Required Properties
         
@@ -137,15 +139,55 @@ namespace CodeRefactor
 
                 case EventType.Command:
                     DataEvent de = (DataEvent)e;
+                    string[] args;
+                    string oldPath;
+                    string newPath;
                     switch (de.Action)
                     {
                         case ProjectFileActionsEvents.FileRename:
-                            string[] args = de.Data as String[];
-                            string oldPath = args[0];
-                            string newPath = args[1];
-                            if (IsValidForRename(args[0], args[1]))
+                            args = de.Data as string[];
+                            oldPath = args[0];
+                            newPath = args[1];
+                            if (IsValidForRename(oldPath, newPath))
                             {
-                                RenameFile(args[0], args[1]);
+                                RenameFile(oldPath, newPath);
+                                e.Handled = true;
+                            }
+                            break;
+
+                        case ProjectFileActionsEvents.FileCut:
+                            cuttedFiles = new List<string>(de.Data as string[]);
+                            break;
+
+                        case ProjectFileActionsEvents.FilePaste:
+                            if (cuttedFiles == null || cuttedFiles.Count == 0) return;
+
+                            newPath = de.Data as string;
+                            DataObject o = Clipboard.GetDataObject() as DataObject;
+                            if (o.GetDataPresent(DataFormats.FileDrop))
+                            {
+                                Dictionary<string, string> oldPath2newPath = new Dictionary<string, string>();
+                                foreach (string path in (Array)o.GetData(DataFormats.FileDrop))
+                                    if (cuttedFiles.Contains(path) && IsValidForMove(path, newPath))
+                                        oldPath2newPath.Add(path, newPath);
+
+                                if (oldPath2newPath.Count > 0)
+                                {
+                                    MovingHelper.AddToQueue(oldPath2newPath);
+                                    e.Handled = true;
+                                }
+                            }
+
+                            cuttedFiles = null;
+                            break;
+
+                        case ProjectFileActionsEvents.FileMove:
+                            args = de.Data as string[];
+                            oldPath = args[0];
+                            newPath = args[1];
+                            if (IsValidForMove(oldPath, newPath))
+                            {
+                                MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } });
                                 e.Handled = true;
                             }
                             break;
@@ -177,6 +219,18 @@ namespace CodeRefactor
         {
             string ext = Path.GetExtension(file);
             return ext == ".as" || ext == ".hx" || ext == ".ls";
+        }
+
+        /// <summary>
+        /// Checks if the file or directory is valid for move command
+        /// </summary>
+        private bool IsValidForMove(string oldPath, string newPath)
+        {
+            IProject project = PluginBase.CurrentProject;
+            if (project == null) return false;
+
+            string projectPath = Path.GetDirectoryName(project.GetAbsolutePath(project.ProjectPath));
+            return oldPath.StartsWith(projectPath) && newPath.StartsWith(projectPath);
         }
 
         #endregion

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.Localization;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace FlashDevelop.Controls
@@ -37,7 +38,7 @@ namespace FlashDevelop.Controls
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Browser));
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.backButton = new System.Windows.Forms.ToolStripButton();
             this.forwardButton = new System.Windows.Forms.ToolStripButton();
             this.refreshButton = new System.Windows.Forms.ToolStripButton();

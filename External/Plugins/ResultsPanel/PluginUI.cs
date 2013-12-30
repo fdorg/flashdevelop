@@ -11,6 +11,7 @@ using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using PluginCore.Controls;
 using ScintillaNet;
 using PluginCore;
 
@@ -74,7 +75,7 @@ namespace ResultsPanel
 			this.entryDesc = new System.Windows.Forms.ColumnHeader();
 			this.entryFile = new System.Windows.Forms.ColumnHeader();
 			this.entryPath = new System.Windows.Forms.ColumnHeader();
-			this.toolStripFilters = new System.Windows.Forms.ToolStrip();
+			this.toolStripFilters = new PluginCore.Controls.ToolStripEx();
             this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonError = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonWarning = new System.Windows.Forms.ToolStripButton();

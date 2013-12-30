@@ -5,34 +5,11 @@
 !include "FileAssoc.nsh"
 !include "LogicLib.nsh"
 !include "WordFunc.nsh"
-!addplugindir "Plugins"
 
 ;--------------------------------
 
 ; Define version info
-!define VERSION "4.5.3"
-
-; Define AIR SDK vars
-!define AIR "3.9.0.1030"
-!define AIR_URL "http://airdownload.adobe.com/air/win/download/3.9/AdobeAIRSDK.zip"
-
-; Define AIR+ASC SDK vars
-!define ASC "3.9.0.1030"
-!define ASC_URL "http://airdownload.adobe.com/air/win/download/3.9/AIRSDK_Compiler.zip"
-
-; Define Flex SDK vars
-!define FLEX "4.6.0.23201B"
-!define FLEX_URL "http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_${FLEX}.zip"
-
-; Define Flash player vars
-!define FLASH "11.9.900.117"
-!define FLASH_URL "http://download.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.exe"
-!define FLASH_DIR "11.9"
-
-; Define Closure compiler vars
-!define CLOSURE_URL http://closure-compiler.googlecode.com/files/compiler-latest.zip
-
-;--------------------------------
+!define VERSION "4.6.0"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "FlashDevelop.org"
@@ -44,7 +21,7 @@ VIAddVersionKey "FileVersion" "${VERSION}.0"
 VIProductVersion "${VERSION}.0"
 
 ; The name of the installer
-Name "FlashDevelop ${VERSION}"
+Name "FlashDevelop"
 
 ; The captions of the installer
 Caption "FlashDevelop ${VERSION} Setup"
@@ -63,15 +40,6 @@ InstallDir "$PROGRAMFILES\FlashDevelop\"
 
 ; Get installation folder from registry if available
 InstallDirRegKey HKLM "Software\FlashDevelop" ""
-
-; Define the AIR+ASC SDK extract path
-!define ASCPATH "$INSTDIR\Tools\ascsdk"
-
-; Define the Flex SDK extract path
-!define SDKPATH "$INSTDIR\Tools\flexsdk"
-
-; Define the JS Compiler extract path
-!define GPATH "$INSTDIR\Tools\google"
 
 ; Vista redirects $SMPROGRAMS to all users without this
 RequestExecutionLevel admin
@@ -92,12 +60,9 @@ XPStyle on
 
 !define MUI_HEADERIMAGE
 !define MUI_ABORTWARNING
-!define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_HEADERIMAGE_BITMAP "Graphics\Banner.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "Graphics\Wizard.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "Graphics\Wizard.bmp"
-!define MUI_PAGE_HEADER_SUBTEXT "Please view the licence before installing FlashDevelop ${VERSION}."
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of $(^NameDA).\r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your computer. Hover the installer options for more info.\r\n\r\nTo get everything out of FlashDevelop you should have 32-bit Java Runtime (1.6 or later) and debug Flash Player (ActiveX for IE) installed before using FlashDevelop.\r\n\r\n$_CLICK"
 !define MUI_FINISHPAGE_SHOWREADME "http://www.flashdevelop.org/wikidocs/index.php?title=Getting_Started"
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "See online guide to get started"
 
@@ -129,21 +94,6 @@ InstType "un.Full"
 ;--------------------------------
 
 ; Functions
-
-Function RefreshConfig
-	
-	SetOverwrite on
-	IfFileExists "$INSTDIR\.local" Local 0
-	IfFileExists "$LOCALAPPDATA\FlashDevelop\*.*" User Done
-	Local:
-	SetOutPath "$INSTDIR"
-	File "/oname=.reconfig" "..\Bin\Debug\.local"
-	User:
-	SetOutPath "$LOCALAPPDATA\FlashDevelop"
-	File "/oname=.reconfig" "..\Bin\Debug\.local"
-	Done:
-	
-FunctionEnd
 
 Function GetDotNETVersion
 	
@@ -195,54 +145,6 @@ Function GetFDVersion
 	
 FunctionEnd
 
-Function GetAirSDKVersion
-	
-	Push $0
-	ClearErrors
-	IfFileExists "$INSTDIR\.local" +3 0
-	ReadRegStr $0 HKLM Software\FlashDevelop "AirSDKVersion"
-	IfErrors 0 +2
-	StrCpy $0 "not_found"
-	Exch $0
-	
-FunctionEnd
-
-Function GetAscSDKVersion
-	
-	Push $0
-	ClearErrors
-	IfFileExists "$INSTDIR\.local" +3 0
-	ReadRegStr $0 HKLM Software\FlashDevelop "AscSDKVersion"
-	IfErrors 0 +2
-	StrCpy $0 "not_found"
-	Exch $0
-	
-FunctionEnd
-
-Function GetFlexSDKVersion
-	
-	Push $0
-	ClearErrors
-	IfFileExists "$INSTDIR\.local" +3 0
-	ReadRegStr $0 HKLM Software\FlashDevelop "FlexSDKVersion"
-	IfErrors 0 +2
-	StrCpy $0 "not_found"
-	Exch $0
-	
-FunctionEnd
-
-Function GetFlashDebugVersion
-	
-	Push $0
-	ClearErrors
-	IfFileExists "$INSTDIR\.local" +3 0
-	ReadRegStr $0 HKLM Software\FlashDevelop "FlashDebugVersion"
-	IfErrors 0 +2
-	StrCpy $0 "not_found"
-	Exch $0
-	
-FunctionEnd
-
 Function GetFDInstDir
 	
 	Push $0
@@ -274,22 +176,6 @@ Function GetNeedsReset
 	StrCpy $2 "is_ok"
 	${EndIf}
 	Exch $2
-	
-FunctionEnd
-
-Function ConnectInternet
-
-	Push $R0
-	ClearErrors
-	Dialer::AttemptConnect
-	IfErrors NoIE3
-	Pop $R0
-	StrCmp $R0 "online" Connected
-	MessageBox MB_OK|MB_ICONSTOP "Cannot connect to the internet."
-	NoIE3:
-	MessageBox MB_OK|MB_ICONINFORMATION "Please connect to the internet now."
-	Connected:
-	Pop $R0
 	
 FunctionEnd
 
@@ -340,274 +226,22 @@ Section "FlashDevelop" Main
 	
 SectionEnd
 
-Section "Install Flex SDK" InstallFlexSDK
-
-	SectionIn 1
+Section "Desktop Shortcut" DesktopShortcut
+	
 	SetOverwrite on
 	SetShellVarContext all
 	
-	Call GetFlexSDKVersion
-	Pop $0
+	CreateShortCut "$DESKTOP\FlashDevelop.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
 	
-	${If} $0 != ${FLEX}
-	
-	; Connect to internet
-	Call ConnectInternet
-
-	; If the Flex SDK exists in the installer directory then copy that to $TEMP for bulk silent deployments.
-	IfFileExists "$EXEDIR\flex_sdk_${FLEX}.zip" 0 +2
-	CopyFiles "$EXEDIR\flex_sdk_${FLEX}.zip" $TEMP
-	
-	; Download Flex SDK zip file. If the extract failed previously, use the old file.
-	IfFileExists "$TEMP\flex_sdk_${FLEX}.zip" +7 0
-	NSISdl::download /TIMEOUT=30000 ${FLEX_URL} "$TEMP\flex_sdk_${FLEX}.zip"
-	Pop $R0
-	StrCmp $R0 "success" +4
-	DetailPrint "Flex SDK download cancel details: $R0"
-	MessageBox MB_OK "Download cancelled. The installer will now continue normally."
-	Goto Finish
-	
-	; Delete SDK dir on update
-	RMDir /r "${SDKPATH}"
-	
-	; Force AIR SDK update
-	DeleteRegValue HKLM "Software\FlashDevelop" "AirSDKVersion"
-	
-	; Create SDK dir if not found
-	IfFileExists "${SDKPATH}\*.*" +2 0
-	CreateDirectory "${SDKPATH}"
-	
-	; Extract the Flex SDK zip
-	DetailPrint "Extracting Flex SDK..."
-	nsisunz::Unzip "$TEMP\flex_sdk_${FLEX}.zip" "${SDKPATH}"
-	Pop $R0
-	StrCmp $R0 "success" +3
-	MessageBox MB_OK "Archive extraction failed. The installer will now continue normally."
-	Goto Finish
-	
-	SetOverwrite off
-	
-	; Add the missing SWC files
-	SetOutPath "${SDKPATH}\frameworks\libs\player"
-	File /r /x .svn /x *.db "..\Bin\Debug\Tools\flexlibs\frameworks\libs\player\*.*"
-	
-	; Write the notice file
-	ClearErrors
-	FileOpen $1 ${SDKPATH}\frameworks\libs\player\FlashDevelopNotice.txt w
-	IfErrors Done
-	FileWrite $1 "FlashDevelop added the missing 'playerglobal.swc' files here."
-	FileClose $1
-	Done:
-	
-	; Delete temporary Flex SDK zip file
-	Delete "$TEMP\flex_sdk_${FLEX}.zip"
-
-	; Notify FD about the update
-	Call RefreshConfig
-	
-	Finish:
-	
-	${EndIf}
-
 SectionEnd
 
-Section "Install AIR SDK" InstallAirSDK
-
-	SectionIn 1
+Section "Quick Launch Item" QuickShortcut
+	
 	SetOverwrite on
 	SetShellVarContext all
 	
-	Call GetAirSDKVersion
-	Pop $0
+	CreateShortCut "$QUICKLAUNCH\FlashDevelop.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
 	
-	${If} $0 != ${AIR}
-
-	; Connect to internet
-	Call ConnectInternet
-
-	; If the AIR SDK exists in the installer directory then copy that to $TEMP for bulk silent deployments.
-	IfFileExists "$EXEDIR\air_sdk_${AIR}.zip" 0 +2
-	CopyFiles "$EXEDIR\air_sdk_${AIR}.zip" $TEMP
-	
-	; Download AIR SDK zip file. If the extract failed previously, use the old file.
-	IfFileExists "$TEMP\air_sdk_${AIR}.zip" +7 0
-	NSISdl::download /TIMEOUT=30000 ${AIR_URL} "$TEMP\air_sdk_${AIR}.zip"
-	Pop $R0
-	StrCmp $R0 "success" +4
-	DetailPrint "AIR SDK download cancel details: $R0"
-	MessageBox MB_OK "Download cancelled. The installer will now continue normally."
-	Goto Finish
-	
-	; Extract the AIR SDK zip
-	IfFileExists "${SDKPATH}\*.*" +2 0
-	CreateDirectory "${SDKPATH}"
-	DetailPrint "Extracting AIR SDK..."
-	nsisunz::Unzip "$TEMP\air_sdk_${AIR}.zip" "${SDKPATH}"
-	Pop $R0
-	StrCmp $R0 "success" +3
-	MessageBox MB_OK "Archive extraction failed. The installer will now continue normally."
-	Goto Finish
-	
-	; Delete temporary AIR SDK zip file
-	Delete "$TEMP\air_sdk_${AIR}.zip"
-
-	; Notify FD about the update
-	Call RefreshConfig
-	
-	Finish:
-	
-	${EndIf}
-
-SectionEnd
-
-Section "Install AIR SDK (ASC2)" InstallAscSDK
-
-	SectionIn 1
-	SetOverwrite on
-	SetShellVarContext all
-	
-	Call GetAscSDKVersion
-	Pop $0
-	
-	${If} $0 != ${ASC}
-
-	; Connect to internet
-	Call ConnectInternet
-
-	; If the AIR+ASC SDK exists in the installer directory then copy that to $TEMP for bulk silent deployments.
-	IfFileExists "$EXEDIR\asc_sdk_${ASC}.zip" 0 +2
-	CopyFiles "$EXEDIR\asc_sdk_${ASC}.zip" $TEMP
-	
-	; Download AIR+ASC SDK zip file. If the extract failed previously, use the old file.
-	IfFileExists "$TEMP\asc_sdk_${ASC}.zip" +7 0
-	NSISdl::download /TIMEOUT=30000 ${ASC_URL} "$TEMP\asc_sdk_${ASC}.zip"
-	Pop $R0
-	StrCmp $R0 "success" +4
-	DetailPrint "AIR SDK (ASC2) download cancel details: $R0"
-	MessageBox MB_OK "Download cancelled. The installer will now continue normally."
-	Goto Finish
-	
-	; Delete AIR+ASC dir on update
-	RMDir /r "${ASCPATH}"
-	
-	; Create SDK dir if not found
-	IfFileExists "${ASCPATH}\*.*" +2 0
-	CreateDirectory "${ASCPATH}"
-	
-	; Extract the AIR+ASC SDK zip
-	IfFileExists "${ASCPATH}\*.*" +2 0
-	CreateDirectory "${ASCPATH}"
-	DetailPrint "Extracting AIR SDK (ASC2)..."
-	nsisunz::Unzip "$TEMP\asc_sdk_${ASC}.zip" "${ASCPATH}"
-	Pop $R0
-	StrCmp $R0 "success" +3
-	MessageBox MB_OK "Archive extraction failed. The installer will now continue normally."
-	Goto Finish
-	
-	SetOverwrite off
-	
-	; Add the missing SWC files
-	SetOutPath "${ASCPATH}\frameworks\libs\player"
-	File /r /x .svn /x *.db "..\Bin\Debug\Tools\flexlibs\frameworks\libs\player\*.*"
-	
-	; Write the notice file
-	ClearErrors
-	FileOpen $1 ${ASCPATH}\frameworks\libs\player\FlashDevelopNotice.txt w
-	IfErrors Done
-	FileWrite $1 "FlashDevelop added the missing 'playerglobal.swc' files here."
-	FileClose $1
-	Done:
-	
-	; Delete temporary AIR+ASC SDK zip file
-	Delete "$TEMP\asc_sdk_${ASC}.zip"
-
-	; Notify FD about the update
-	Call RefreshConfig
-	
-	Finish:
-	
-	${EndIf}
-
-SectionEnd
-
-Section "Install Flash Player" InstallFlashPlayer
-
-	SectionIn 1
-	SetOverwrite on
-	SetShellVarContext all
-	
-	Call GetFlashDebugVersion
-	Pop $0
-	
-	${If} $0 != ${FLASH}
-	
-	; Connect to internet
-	Call ConnectInternet
-	
-	; Create player dir if not found
-	IfFileExists "$INSTDIR\Tools\flexlibs\runtimes\player\${FLASH_DIR}\win\*.*" +2 0
-	CreateDirectory "$INSTDIR\Tools\flexlibs\runtimes\player\${FLASH_DIR}\win\"
-	
-	; If the debug player exists in the installer directory then use that for bulk silent deployments.
-	IfFileExists "$EXEDIR\flashplayer_11_sa_debug.exe" 0 +3
-	CopyFiles "$EXEDIR\flashplayer_11_sa_debug.exe" "$INSTDIR\Tools\flexlibs\runtimes\player\${FLASH_DIR}\win\FlashPlayerDebugger.exe"
-	Goto Skip
-
-	; Download Flash debug player
-	NSISdl::download /TIMEOUT=30000 ${FLASH_URL} "$INSTDIR\Tools\flexlibs\runtimes\player\${FLASH_DIR}\win\FlashPlayerDebugger.exe"
-	Pop $R0
-	StrCmp $R0 "success" +4
-	DetailPrint "Flash debug player download cancel details: $R0"
-	MessageBox MB_OK "Download cancelled. The installer will now continue normally."
-	Goto Finish
-	
-	Skip:
-	
-	; Notify FD about the update
-	Call RefreshConfig
-	
-	Finish:
-	
-	${EndIf}
-
-SectionEnd
-
-Section "Install JS Compiler" InstallClosureCompiler
-
-	SetOverwrite on
-	SetShellVarContext all
-
-	; Connect to internet
-	Call ConnectInternet
-
-	; If the Closure Compiler exists in the installer directory then copy that to $TEMP for bulk silent deployments.
-	IfFileExists "$EXEDIR\closure_compiler.zip" 0 +2
-	CopyFiles "$EXEDIR\closure_compiler.zip" $TEMP
-	
-	; Download Closure Compiler zip file. If the extract failed previously, use the old file.
-	IfFileExists "$TEMP\closure_compiler.zip" +7 0
-	NSISdl::download /TIMEOUT=30000 ${CLOSURE_URL} "$TEMP\closure_compiler.zip"
-	Pop $R0
-	StrCmp $R0 "success" +4
-	DetailPrint "Closure Compiler download cancel details: $R0"
-	MessageBox MB_OK "Download cancelled. The installer will now continue normally."
-	Goto Finish
-	
-	; Extract the Closure Compiler zip
-	IfFileExists "${GPATH}\*.*" +2 0
-	CreateDirectory "${GPATH}"
-	DetailPrint "Extracting Closure Compiler..."
-	nsisunz::Unzip "$TEMP\closure_compiler.zip" "${GPATH}"
-	Pop $R0
-	StrCmp $R0 "success" +3
-	MessageBox MB_OK "Archive extraction failed. The installer will now continue normally."
-	Goto Finish
-	
-	; Delete temporary Closure Compiler zip file
-	Delete "$TEMP\closure_compiler.zip"
-	
-	Finish:
-
 SectionEnd
 
 SectionGroup "Language" LanguageGroup
@@ -725,28 +359,6 @@ SectionEnd
 
 SectionGroupEnd
 
-SectionGroup "Shortcuts"
-
-Section "Desktop Shortcut" DesktopShortcut
-	
-	SetOverwrite on
-	SetShellVarContext all
-	
-	CreateShortCut "$DESKTOP\FlashDevelop.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
-	
-SectionEnd
-
-Section "Quick Launch Item" QuickShortcut
-	
-	SetOverwrite on
-	SetShellVarContext all
-	
-	CreateShortCut "$QUICKLAUNCH\FlashDevelop.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
-	
-SectionEnd
-
-SectionGroupEnd
-
 SectionGroup "Advanced"
 
 Section "Start Menu Group" StartMenuGroup
@@ -810,14 +422,11 @@ Section "Registry Modifications" RegistryMods
 	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Layout" "ShellNew"
 	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Zip" "ShellNew"
 	
-	; Try to repair users registry
-	DeleteRegKey /ifempty HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Product"
-	
 	; Write uninstall section keys
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "InstallLocation" "$INSTDIR"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "Publisher" "FlashDevelop.org"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayVersion" "${VERSION}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayName" "FlashDevelop ${VERSION}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayName" "FlashDevelop"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "Comments" "Thank you for using FlashDevelop."
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "HelpLink" "http://www.flashdevelop.org/community/"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "UninstallString" "$INSTDIR\Uninstall.exe"
@@ -827,20 +436,6 @@ Section "Registry Modifications" RegistryMods
 	WriteRegStr HKLM "Software\FlashDevelop" "CurrentVersion" ${VERSION}
 	WriteRegStr HKLM "Software\FlashDevelop" "" $INSTDIR
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
-	
-	; Write component version numbers
-	${If} ${SectionIsSelected} ${InstallFlexSDK}
-	WriteRegStr HKLM "Software\FlashDevelop" "FlexSDKVersion" "${FLEX}"
-	${EndIf}
-	${If} ${SectionIsSelected} ${InstallAirSDK}
-	WriteRegStr HKLM "Software\FlashDevelop" "AirSDKVersion" "${AIR}"
-	${EndIf}
-	${If} ${SectionIsSelected} ${InstallAscSDK}
-	WriteRegStr HKLM "Software\FlashDevelop" "AscSDKVersion" "${ASC}"	
-	${EndIf}
-	${If} ${SectionIsSelected} ${InstallFlashPlayer}
-	WriteRegStr HKLM "Software\FlashDevelop" "FlashDebugVersion" "${FLASH}"
-	${EndIf}
 	
 	!insertmacro UPDATEFILEASSOC
 	
@@ -876,11 +471,6 @@ SectionGroupEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${RegistryMods} "Associates integral file types and adds the required uninstall configuration."
 !insertmacro MUI_DESCRIPTION_TEXT ${StandaloneMode} "Runs as standalone using only local setting files. NOTE: Not for standard users and manual upgrade only."
 !insertmacro MUI_DESCRIPTION_TEXT ${MultiInstanceMode} "Allows multiple instances of FlashDevelop to be executed. NOTE: There are some open issues with this."
-!insertmacro MUI_DESCRIPTION_TEXT ${InstallAirSDK} "Downloads and installs, if needed, the Adobe AIR SDK with FlashDevelop."
-!insertmacro MUI_DESCRIPTION_TEXT ${InstallAscSDK} "Downloads and installs, if needed, the Adobe AIR SDK (ASC2) with FlashDevelop."
-!insertmacro MUI_DESCRIPTION_TEXT ${InstallFlexSDK} "Downloads and installs, if needed, the Adobe Flex SDK with FlashDevelop."
-!insertmacro MUI_DESCRIPTION_TEXT ${InstallFlashPlayer} "Downloads and installs, if needed, the standalone Flash debug player with FlashDevelop."
-!insertmacro MUI_DESCRIPTION_TEXT ${InstallClosureCompiler} "Downloads and installs the Google Closure Compiler with FlashDevelop."
 !insertmacro MUI_DESCRIPTION_TEXT ${NoChangesLocale} "Keeps the current language on update and defaults to English on clean install."
 !insertmacro MUI_DESCRIPTION_TEXT ${EnglishLocale} "Changes FlashDevelop's display language to English on next restart."
 !insertmacro MUI_DESCRIPTION_TEXT ${ChineseLocale} "Changes FlashDevelop's display language to Chinese on next restart."

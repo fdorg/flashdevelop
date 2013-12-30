@@ -841,6 +841,7 @@ namespace FlashDevelop.Dialogs
             this.cancelButton.Enabled = false;
             String message = TextHelper.GetString("Info.NoMatches");
             this.infoLabel.Text = message;
+            this.CenterToParent();
         }
 
         /// <summary>
@@ -852,7 +853,6 @@ namespace FlashDevelop.Dialogs
             {
                 this.findComboBox.Select();
                 this.findComboBox.SelectAll();
-                this.CenterToParent();
             }
         }
 

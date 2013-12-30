@@ -76,7 +76,7 @@ namespace FileExplorer
             this.fileHeader = new System.Windows.Forms.ColumnHeader();
             this.sizeHeader = new System.Windows.Forms.ColumnHeader();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.selectedPath = new System.Windows.Forms.ToolStripSpringComboBox();
             this.syncronizeButton = new System.Windows.Forms.ToolStripButton();
             this.browseButton = new System.Windows.Forms.ToolStripButton();

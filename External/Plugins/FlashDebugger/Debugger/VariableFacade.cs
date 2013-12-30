@@ -138,6 +138,10 @@ namespace FlashDebugger
 			m_var.invokeGetter(session);
 		}
 
-	}
+        public int getIsolateId()
+        {
+            return this.getIsolateId();
+        }
+    }
 
 }

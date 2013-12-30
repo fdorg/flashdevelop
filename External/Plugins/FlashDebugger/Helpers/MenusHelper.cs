@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using FlashDebugger.Properties;
 using PluginCore.Localization;
 using PluginCore;
+using PluginCore.Managers;
 
 namespace FlashDebugger
 {
@@ -54,6 +55,9 @@ namespace FlashDebugger
             tempItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewImmediatePanel"), pluginImage, new EventHandler(this.OpenImmediatePanel));
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowImmediate", tempItem);
             viewMenu.DropDownItems.Add(tempItem);
+			tempItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewThreadsPanel"), pluginImage, new EventHandler(this.OpenThreadsPanel));
+			PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowThreads", tempItem);
+			viewMenu.DropDownItems.Add(tempItem);
 
             // Menu           
             ToolStripMenuItem debugMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("DebugMenu");
@@ -158,10 +162,15 @@ namespace FlashDebugger
             PanelsHelper.watchPanel.Show();
         }
 
-        public void OpenImmediatePanel(Object sender, System.EventArgs e)
-        {
-            PanelsHelper.immediatePanel.Show();
-        }
+		public void OpenImmediatePanel(Object sender, System.EventArgs e)
+		{
+			PanelsHelper.immediatePanel.Show();
+		}
+
+		public void OpenThreadsPanel(Object sender, System.EventArgs e)
+		{
+			PanelsHelper.threadsPanel.Show();
+		}
 
         /// <summary>
         /// 
@@ -206,6 +215,7 @@ namespace FlashDebugger
                 });
                 return;
             }
+            Boolean hasChanged = CurrentState != state;
             CurrentState = state; // Set current now...
 			if (state == DebuggerState.Initializing || state == DebuggerState.Stopped)
 			{
@@ -242,7 +252,13 @@ namespace FlashDebugger
             DeleteAllBreakPointsMenu.Enabled = DisableAllBreakPointsMenu.Enabled = enabled;
             EnableAllBreakPointsMenu.Enabled = PanelsHelper.breakPointUI.Enabled = enabled;
 			StartRemoteDebuggingMenu.Enabled = (state == DebuggerState.Initializing || state == DebuggerState.Stopped);
-			PluginBase.MainForm.RefreshUI();
+            // Notify plugins of main states when state changes...
+            if (hasChanged && (state == DebuggerState.Running || state == DebuggerState.Stopped))
+            {
+                DataEvent de = new DataEvent(EventType.Command, "FlashDebugger." + state.ToString(), null);
+                EventManager.DispatchEvent(this, de);
+            }
+            PluginBase.MainForm.RefreshUI();
         }
 
         /// <summary>
