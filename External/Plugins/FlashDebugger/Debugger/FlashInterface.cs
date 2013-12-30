@@ -37,6 +37,9 @@ namespace FlashDebugger
 
 		public BreakPointManager m_BreakPointManager = null;
 
+        public Dictionary<string, int> _breakPointFiles = null; 
+        public List<BreakPointInfo> _breakPointsInfo = null;
+
 		public ProjectManager.Projects.Project currentProject
 		{
 			get
@@ -96,6 +99,16 @@ namespace FlashDebugger
 		private ProjectManager.Projects.Project m_CurrentProject;
 		private EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
 		private Boolean m_SuspendWaiting;
+
+
+        // Isolates 
+        private Dictionary<int, IsolateInfo> runningIsolates = new Dictionary<int, IsolateInfo>();
+
+        // Probably more info needed :)
+        private class IsolateInfo
+        {
+            public IsolateSession i_Session = null;
+        }
 
 		// Global Properties
 		private int m_HaltTimeout;
@@ -167,7 +180,10 @@ namespace FlashDebugger
                 bool stop = false;
                 while (!stop)
                 {
+                    processIsolateEvents();
+
 					if (m_Session != null && m_Session.getEventCount() > 0) m_SuspendWaiting = false;
+
                     processEvents();
                     // not there, not connected
                     if (m_RequestStop || m_RequestDetach || !haveConnection())
@@ -185,8 +201,14 @@ namespace FlashDebugger
                         // resume execution (request fulfilled)
                         try
                         {
-                            if (m_StepResume) m_Session.stepContinue();
-                            else m_Session.resume();
+                            if (m_StepResume)
+                            {
+                                m_Session.stepContinue();
+                            }
+                            else
+                            {
+                                m_Session.resume();
+                            }
                         }
                         catch (NotSuspendedException)
                         {
@@ -202,6 +224,7 @@ namespace FlashDebugger
                         m_CurrentState = DebuggerState.Running;
                         continue;
                     }
+
                     if (m_Session.isSuspended())
                     {
                         /*
@@ -211,6 +234,7 @@ namespace FlashDebugger
                         * This is definately the case with loading of multiple SWFs.  After the load
                         * we get info on the swf.
                         */
+
                         int tries = 3;
                         while (tries-- > 0 && m_Session.suspendReason() == SuspendReason_.Unknown)
                         {
@@ -228,6 +252,7 @@ namespace FlashDebugger
                                 m_CurrentState = DebuggerState.BreakHalt;
                                 if (BreakpointEvent != null)
                                 {
+                                    m_RequestPause = true;
                                     BreakpointEvent(this);
                                 }
                                 else
@@ -395,6 +420,67 @@ namespace FlashDebugger
                 exitSession();
             }
 		}
+
+        private void processIsolateEvents()
+        {
+            foreach (KeyValuePair<int, IsolateInfo> ii_pair in runningIsolates)
+            {
+                int i_id = ii_pair.Key;
+                IsolateInfo ii = ii_pair.Value;
+
+                if (ii.i_Session.isSuspended())
+                {
+                    /*
+                    * For now just write what's going on and resume.
+                    */
+
+                    m_SuspendWait.Reset();
+                    int suspendReason = ii.i_Session.suspendReason();
+                    switch (m_SuspendWaiting ? -1 : suspendReason)
+                    {
+                        case 1://SuspendReason_.Breakpoint:
+                            TraceManager.AddAsync("Worker " + i_id + ": Breakpoint reached:", 2);
+                            TraceManager.AddAsync("Worker " + i_id + ": " + getCurrentIsolateLocation(i_id).ToString(), 2);
+                            TraceManager.AddAsync("Worker " + i_id + ": Continuing...", 2);
+                            break;
+
+                        case 3://SuspendReason_.Fault:
+                            
+                            break;
+
+                        case 7://SuspendReason_.ScriptLoaded:
+                            // Don't think it's needed. But not sure.
+                            break;
+
+                        case 5://SuspendReason_.Step:
+                            // For now empty.
+                            break;
+
+                        case 4://SuspendReason_.StopRequest:
+                            // For now empty.
+                            break;
+
+                        case 2://SuspendReason_.Watch:
+                           // For now empty.
+                            break;
+
+                        case -1:
+                            // waiting for susped to end, do nothing
+                            break;
+
+                        default:
+                            // For now empty (resuming anyway).
+                            break;
+                    }
+
+                    ii.i_Session.resume();
+                }
+                else
+                {
+                    // Pause, Stop, etc. should be here.
+                }
+            }
+        }
 
 		internal virtual void initSession()
 		{
@@ -567,24 +653,34 @@ namespace FlashDebugger
                     if (PluginMain.settingObject.VerboseOutput)
 					    dumpSwfUnloadedEvent((SwfUnloadedEvent)e);
 				}
-				else if (e is BreakEvent)
-				{
-					// we ignore these for now
-				}
-				else if (e is FileListModifiedEvent)
-				{
-					// we ignore this
-				}
-				else if (e is FunctionMetaDataAvailableEvent)
-				{
-					// we ignore this
-				}
-				else if (e is FaultEvent)
-				{
-					dumpFaultLine((FaultEvent)e);
-				}
-				else
-				{
+                else if (e is IsolateCreateEvent)
+                {
+                    TraceManager.AddAsync("Created Worker " + ((IsolateCreateEvent)e).isolate.getId());
+                    dumpIsolateCreateEvent((IsolateCreateEvent)e);
+                }
+                else if (e is IsolateExitEvent)
+                {
+                    TraceManager.AddAsync("Worker " + ((IsolateExitEvent)e).isolate.getId() + " Exited");
+                    dumpIsolateExitEvent((IsolateExitEvent)e);
+                }
+                else if (e is BreakEvent)
+                {
+                    // we ignore these for now
+                }
+                else if (e is FileListModifiedEvent)
+                {
+                    // we ignore this
+                }
+                else if (e is FunctionMetaDataAvailableEvent)
+                {
+                    // we ignore this
+                }
+                else if (e is FaultEvent)
+                {
+                    dumpFaultLine((FaultEvent)e);
+                }
+                else
+                {
                     if (PluginMain.settingObject.VerboseOutput)
                     {
                         System.Collections.IDictionary args = new System.Collections.Hashtable();
@@ -592,7 +688,7 @@ namespace FlashDebugger
                         args["info"] = e.information; //$NON-NLS-1$
                         TraceManager.AddAsync(replaceInlineReferences(TextHelper.GetString("Info.UnknownEvent"), args));
                     }
-				}
+                }
 			}
 		}
 
@@ -663,7 +759,11 @@ namespace FlashDebugger
 					sb.Append(e.information);
 				}
 			}
-			TraceManager.AddAsync(sb.ToString(), 3);
+
+            if (e.isolateId == 1)
+                TraceManager.AddAsync(sb.ToString(), 3);
+            else
+                TraceManager.AddAsync("Worker " + e.isolateId + ": " + sb.ToString(), 3);
 		}
 
 		/// <summary> Called when a swf has been loaded by the player</summary>
@@ -700,6 +800,31 @@ namespace FlashDebugger
 			TraceManager.AddAsync(sb.ToString());
 		}
 
+        /// <summary> Perform the tasks need for when an isolate is created
+		/// </summary>
+        internal virtual void dumpIsolateCreateEvent(IsolateCreateEvent e)
+        {
+            IsolateSession i_Session = m_Session.getWorkerSession(e.isolate.getId());
+
+            i_Session.breakOnCaughtExceptions(true);
+            if (_breakPointsInfo != null && _breakPointFiles != null)
+                UpdateIsolateBreakpoints(_breakPointFiles, _breakPointsInfo, i_Session);
+
+            IsolateInfo ii = new IsolateInfo();
+
+            ii.i_Session = i_Session;
+            runningIsolates[e.isolate.getId()] = ii;
+
+            i_Session.resume();
+        }
+
+        /// <summary> Perform the tasks need for when an isolate has exited
+        /// </summary>
+        internal virtual void dumpIsolateExitEvent(IsolateExitEvent e)
+        {
+            runningIsolates.Remove(e.isolate.getId());
+        }
+
 		internal virtual Location getCurrentLocation()
 		{
 			Location where = null;
@@ -715,6 +840,24 @@ namespace FlashDebugger
 			}
 			return where;
 		}
+
+        internal virtual Location getCurrentIsolateLocation(int i_id)
+        {
+            IsolateInfo ii = runningIsolates[i_id];
+
+            Location where = null;
+            try
+            {
+                Frame[] frames = ii.i_Session.getFrames();
+
+                where = frames.Length > 0 ? frames[0].getLocation() : null;
+            }
+            catch (PlayerDebugException)
+            {
+                // where == null
+            }
+            return where;
+        }
 
 		public void Stop()
 		{
@@ -867,6 +1010,8 @@ namespace FlashDebugger
 					}
 				}
 			}
+            _breakPointFiles = files;
+            _breakPointsInfo = breakpoints;
 			foreach (BreakPointInfo bp in breakpoints)
 			{
 				if (bp.Location == null)
@@ -889,6 +1034,23 @@ namespace FlashDebugger
 				}
 			}
 		}
+
+        private void UpdateIsolateBreakpoints(Dictionary<string, int> files, List<BreakPointInfo> breakpoints, IsolateSession i_Session)
+        {
+            foreach (BreakPointInfo bp in breakpoints)
+            {
+                //if (bp.Location == null)
+                //{
+                    if (bp.IsEnabled && !bp.IsDeleted)
+                    {
+                        if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != 0)
+                        {
+                            i_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
+                        }
+                    }
+                //}
+            }
+        }
 
 		private static String replaceInlineReferences(String text, System.Collections.IDictionary parameters)
 		{

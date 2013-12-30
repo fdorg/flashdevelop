@@ -170,13 +170,19 @@ namespace FlashDebugger
         {
             if (par0 is Value) return (Value)par0;
             if (par0 is Variable) return ((Variable)par0).getValue();
-            var val = DValue.forPrimitive(par0);
+            var val = DValue.forPrimitive(par0, this.getIsolateId());
             return val;
         }
 
         public Value toValue()
         {
             return contextVal;
+        }
+
+
+        public int getIsolateId()
+        {
+            return contextVal.getIsolateId();
         }
     }
 }
