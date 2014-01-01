@@ -177,11 +177,7 @@ namespace CodeRefactor
             string oldExt = Path.GetExtension(oldPath);
             string newExt = Path.GetExtension(newPath);
             IProject project = PluginBase.CurrentProject;
-            if (project != null && File.Exists(oldPath) && oldExt == newExt && IsValidFile(oldPath))
-            {
-                string projectPath = Path.GetDirectoryName(project.GetAbsolutePath(project.ProjectPath));
-                return oldPath.StartsWith(projectPath) && newPath.StartsWith(projectPath);
-            }
+            if (project != null && File.Exists(oldPath) && oldExt == newExt && IsValidFile(oldPath)) return true;
             return false;
         }
 
@@ -191,11 +187,7 @@ namespace CodeRefactor
         private bool IsValidForMove(string oldPath, string newPath)
         {
             IProject project = PluginBase.CurrentProject;
-            if (project != null && (File.Exists(oldPath) && IsValidFile(oldPath)) || Directory.Exists(oldPath))
-            {
-                string projectPath = Path.GetDirectoryName(project.GetAbsolutePath(project.ProjectPath));
-                return oldPath.StartsWith(projectPath) && newPath.StartsWith(projectPath);
-            }
+            if (project != null && (File.Exists(oldPath) && IsValidFile(oldPath)) || Directory.Exists(oldPath)) return true;
             return false;
         }
 
