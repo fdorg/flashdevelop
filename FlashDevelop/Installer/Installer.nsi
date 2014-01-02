@@ -156,6 +156,21 @@ Function GetFDInstDir
 	
 FunctionEnd
 
+Function NotifyInstall
+	
+	SetOverwrite on
+	IfFileExists "$INSTDIR\.local" Local 0
+	IfFileExists "$LOCALAPPDATA\FlashDevelop\*.*" User Done
+	Local:
+	SetOutPath "$INSTDIR"
+	File "/oname=.update" "..\Bin\Debug\.local"
+	User:
+	SetOutPath "$LOCALAPPDATA\FlashDevelop"
+	File "/oname=.update" "..\Bin\Debug\.local"
+	Done:
+	
+FunctionEnd
+
 Function GetNeedsReset
 	
 	Call GetFDVersion
@@ -223,6 +238,9 @@ Section "FlashDevelop" Main
 
 	; Remove PluginCore from plugins...
 	Delete "$INSTDIR\Plugins\PluginCore.dll"
+	
+	; Write update flag file...
+	Call NotifyInstall
 	
 SectionEnd
 

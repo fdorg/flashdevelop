@@ -372,6 +372,7 @@ namespace AppMan
         {
             try
             {
+                this.shouldNotify = true;
                 String title = this.localeData.ConfirmTitle;
                 String message = this.localeData.DeleteSelectedConfirm;
                 if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)

@@ -41,7 +41,8 @@ namespace PluginCore
         Command = 2147483648, // DataEvent (command)
         Trace = 4294967296, // NotifyEvent
         Keys = 8589934592, // KeyEvent (keys)
-        Completion = 17179869184 // NotifyEvent
+        Completion = 17179869184, // NotifyEvent
+        AppChanges = 34359738368 // NotifyEvent
     }
 
     public enum SessionType

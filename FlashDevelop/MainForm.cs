@@ -51,7 +51,7 @@ namespace FlashDevelop
             this.InitializeLocalization();
             if (this.InitializeFirstRun() != DialogResult.Abort)
             {
-                this.InitializeAppMan();
+                this.InitializeConfig();
                 this.InitializeRendering();
                 this.InitializeComponents();
                 this.InitializeProcessRunner();
@@ -91,6 +91,9 @@ namespace FlashDevelop
         #endregion
 
         #region Private Properties
+
+        /* AppMan */
+        FileSystemWatcher amWatcher;
 
         /* Components */
         private QuickFind quickFind;
@@ -690,21 +693,51 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Initializes the AppMan integration
+        /// Initializes the config detection
         /// </summary>
-        private void InitializeAppMan()
+        private void InitializeConfig()
         {
             try
             {
+                // Check for FD update
+                String update = Path.Combine(PathHelper.BaseDir, ".update");
+                if (File.Exists(update))
+                {
+                    File.Delete(update);
+                    this.refreshConfig = true;
+                }
+                // Check for appman update
                 String appman = Path.Combine(PathHelper.BaseDir, ".appman");
                 if (File.Exists(appman))
                 {
                     File.Delete(appman);
                     this.refreshConfig = true;
                 }
+                // Apply appman path to PATH
                 String amPath = Path.Combine(PathHelper.ToolDir, "AppMan");
                 String oldPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("PATH", oldPath + ";" + amPath, EnvironmentVariableTarget.Process);
+                // Watch for appman update notifications
+                this.amWatcher = new FileSystemWatcher(PathHelper.BaseDir, ".appman");
+                this.amWatcher.Created += new FileSystemEventHandler(this.AppManUpdate);
+                this.amWatcher.IncludeSubdirectories = false;
+                this.amWatcher.EnableRaisingEvents = true;
+            }
+            catch {} // No errors...
+        }
+
+        /// <summary>
+        /// When AppMan is closed, it notifies of changes. Forward notifications.
+        /// </summary>
+        private void AppManUpdate(Object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                String appman = Path.Combine(PathHelper.BaseDir, ".appman");
+                NotifyEvent ne = new NotifyEvent(EventType.AppChanges);
+                EventManager.DispatchEvent(this, ne);
+                Thread.Sleep(200); // Wait a bit...
+                File.Delete(appman);
             }
             catch {} // No errors...
         }
