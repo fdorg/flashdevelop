@@ -310,11 +310,11 @@ namespace FlashDebugger
 			if (!PluginMain.settingObject.DisablePanelsAutoshow)
 			{
                 PanelsHelper.watchPanel.Show();
-                PanelsHelper.immediatePanel.Show();
-                PanelsHelper.stackframePanel.Show();
                 PanelsHelper.pluginPanel.Show();
-				PanelsHelper.breakPointPanel.Show();
                 PanelsHelper.threadsPanel.Show();
+                PanelsHelper.immediatePanel.Show();
+				PanelsHelper.breakPointPanel.Show();
+                PanelsHelper.stackframePanel.Show();
 			}
 		}
 
@@ -335,12 +335,12 @@ namespace FlashDebugger
 			UpdateMenuState(DebuggerState.Stopped);
             if (!PluginMain.settingObject.DisablePanelsAutoshow)
             {
+                PanelsHelper.watchPanel.Hide();
                 PanelsHelper.pluginPanel.Hide();
+                PanelsHelper.threadsPanel.Hide();
+                PanelsHelper.immediatePanel.Hide();
                 PanelsHelper.breakPointPanel.Hide();
                 PanelsHelper.stackframePanel.Hide();
-                PanelsHelper.watchPanel.Hide();
-                PanelsHelper.immediatePanel.Hide();
-                PanelsHelper.threadsPanel.Hide();
             }
 			PanelsHelper.pluginUI.TreeControl.Nodes.Clear();
 			PanelsHelper.stackframeUI.ClearItem();
