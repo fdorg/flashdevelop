@@ -101,13 +101,54 @@ namespace HaXeContext
             features.arrayKey = "Array<T>";
             features.importKey = "import";
             features.importKeyAlt = "using";
-            features.typesPreKeys = new string[] { "import", "new", "extends", "implements", "using" };
-            features.codeKeywords = new string[] { 
-                "enum", "typedef", "class", "interface", "var", "function", "new", "cast", "return", "break", 
-                "continue", "callback", "if", "else", "for", "while", "do", "switch", "case", "default", "type",
-                "null", "untyped", "true", "false", "try", "catch", "throw", "inline", "dynamic",
-                "extends", "using", "import", "implements", "abstract"
-            };
+            features.typesPreKeys = new string[] {  "import", 
+                                                    "new", 
+                                                    "extends", 
+                                                    "implements", 
+                                                    "using" };
+
+            features.codeKeywords = new string[] {  "function",
+                                                    "class",
+                                                    "static",
+                                                    "var",
+                                                    "if",
+                                                    "else",
+                                                    "while",
+                                                    "do",
+                                                    "for",
+                                                    "break",
+                                                    "return",
+                                                    "continue",
+                                                    "extends",
+                                                    "implements",
+                                                    "import",
+                                                    "switch",
+                                                    "case",
+                                                    "default",
+                                                    "private",
+                                                    "public",
+                                                    "try",
+                                                    "catch",
+                                                    "new",
+                                                    "this",
+                                                    "throw",
+                                                    "extern",
+                                                    "enum",
+                                                    "in",
+                                                    "interface",
+                                                    "untyped",
+                                                    "cast",
+                                                    "override",
+                                                    "typedef",
+                                                    "dynamic",
+                                                    "package",
+                                                    "inline",
+                                                    "using",
+                                                    "null",
+                                                    "true",
+                                                    "false",
+                                                    "abstract",
+                                                    "macro"  };
             features.varKey = "var";
             features.overrideKey = "override";
             features.functionKey = "function";
