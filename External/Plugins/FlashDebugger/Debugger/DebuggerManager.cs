@@ -314,7 +314,7 @@ namespace FlashDebugger
                 PanelsHelper.stackframePanel.Show();
                 PanelsHelper.pluginPanel.Show();
 				PanelsHelper.breakPointPanel.Show();
-                PanelsHelper.threadsUI.Show();
+                PanelsHelper.threadsPanel.Show();
 			}
 		}
 
@@ -340,7 +340,7 @@ namespace FlashDebugger
                 PanelsHelper.stackframePanel.Hide();
                 PanelsHelper.watchPanel.Hide();
                 PanelsHelper.immediatePanel.Hide();
-                PanelsHelper.threadsUI.Hide();
+                PanelsHelper.threadsPanel.Hide();
             }
 			PanelsHelper.pluginUI.TreeControl.Nodes.Clear();
 			PanelsHelper.stackframeUI.ClearItem();
