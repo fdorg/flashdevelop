@@ -735,7 +735,7 @@ namespace AppMan
                 if (file.ToLower().EndsWith(".fdz"))
                 {
                     String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\FlashDevelop.exe");
-                    Process.Start(Path.GetFullPath(fd), file + " -silent");
+                    Process.Start(Path.GetFullPath(fd), file + " -silent -reuse");
                     return;
                 }
                 #endif

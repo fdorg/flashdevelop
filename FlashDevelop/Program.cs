@@ -17,7 +17,8 @@ namespace FlashDevelop
         {
             if (SingleInstanceApp.AlreadyExists)
             {
-                if (!MultiInstanceMode) SingleInstanceApp.NotifyExistingInstance(arguments);
+                Boolean reUse = Array.IndexOf(arguments, "-reuse") > -1;
+                if (!MultiInstanceMode || reUse) SingleInstanceApp.NotifyExistingInstance(arguments);
                 else RunFlashDevelopWithErrorHandling(arguments, false);
             }
             else RunFlashDevelopWithErrorHandling(arguments, true);
