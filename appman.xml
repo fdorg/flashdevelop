@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Entry>
+		<Id>flexsdk</Id>
+		<Name>Flex SDK</Name>
+		<Version>4.6.0</Version>
+		<Build>23201B</Build>
+		<Desc>Adobe Flex SDK</Desc>
+		<Group>AS3</Group>
+		<Info>http://www.adobe.com/devnet/flex.html</Info>
+		<Urls>
+			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk.zip</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>flexairsdk</Id>
+		<Name>Flex + AIR SDK</Name>
+		<Version>4.6.0+3.9.0</Version>
+		<Build>23201B+1030</Build>
+		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
+		<Info>http://www.adobe.com/devnet/air.html</Info>
+		<Group>AS3</Group>
+		<Urls>
+			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/3.9/AdobeAIRSDK.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk.zip</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>ascsdk</Id>		
+		<Name>AIR SDK + ASC 2.0</Name>
+		<Version>3.9.0</Version>
+		<Build>1030</Build>
+		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
+		<Info>http://www.adobe.com/devnet/air.html</Info>
+		<Group>AS3</Group>
+		<Urls>
+			<Url>http://airdownload.adobe.com/air/win/download/3.9/AIRSDK_Compiler.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk.zip</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>flashsa</Id>
+		<Name>Flash Player (SA)</Name>
+		<Version>11.9</Version>
+		<Build>900.152</Build>
+		<Desc>Standalone debug Flash Player</Desc>
+		<Group>AS3</Group>
+		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
+		<Urls>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>flashns</Id>
+		<Name>Flash Player (NS)</Name>
+		<Version>11.9</Version>
+		<Build>900.152</Build>
+		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
+		<Group>AS3</Group>
+		<Type>Executable</Type>
+		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
+		<Urls>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_plugin_debug.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>flashie</Id>
+		<Name>Flash Player (AX)</Name>
+		<Version>11.9</Version>
+		<Build>900.152</Build>
+		<Desc>Debug Flash Player plugin for Interner Explorer</Desc>
+		<Group>AS3</Group>
+		<Type>Executable</Type>
+		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
+		<Urls>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_ax_debug.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>aflexsdk</Id>
+		<Name>Apache Flex SDK</Name>
+		<Version>2.7.0</Version>
+		<Build>1</Build>
+		<Desc>Apache Flex SDK and dependencies installer</Desc>
+		<Group>AS3</Group>
+		<Type>Executable</Type>
+		<Info>http://flex.apache.org/index.html</Info>
+		<Urls>
+			<Url>http://mirror.netinch.com/pub/apache/flex/installer/2.7/binaries/apache-flex-sdk-installer-2.7.0-bin.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>airrt</Id>
+		<Name>Adobe AIR</Name>
+		<Version>3.9.0</Version>
+		<Build>1030</Build>
+		<Desc>Adobe AIR for AIR applications installer</Desc>
+		<Group>AS3</Group>
+		<Type>Executable</Type>
+		<Info>http://www.adobe.com/products/air.html</Info>
+		<Urls>
+			<Url>http://airdownload.adobe.com/air/win/download/3.9/AdobeAIRInstaller.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>haxe2setup</Id>
+		<Name>Haxe 2</Name>
+		<Version>2.10</Version>
+		<Build>1</Build>
+		<Desc>Haxe 2 and Neko virtual machine installer</Desc>
+		<Group>Other</Group>
+		<Type>Executable</Type>
+		<Info>http://www.haxe.org</Info>
+		<Urls>
+			<Url>http://haxe.org/file/Haxe-2.10-Windows.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>haxe3setup</Id>
+		<Name>Haxe 3</Name>
+		<Version>3.0.1</Version>
+		<Build>1</Build>
+		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
+		<Group>Other</Group>
+		<Type>Executable</Type>
+		<Info>http://www.haxe.org</Info>
+		<Urls>
+			<Url>http://haxe.org/file/haxe-3.0.1-win.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>closure</Id>
+		<Name>Closure Compiler</Name>
+		<Version>1.0.0</Version>
+		<Build>v20131016</Build>
+		<Desc>Google Closure Compiler for JavaScript</Desc>
+		<Group>Other</Group>
+		<Info>https://developers.google.com/closure/compiler/</Info>
+		<Urls>
+			<Url>http://dl.google.com/closure-compiler/compiler-20131014.zip</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>jre</Id>
+		<Name>Java Runtime</Name>
+		<Version>7.0</Version>
+		<Build>45</Build>
+		<Desc>Java Runtime Environment 32-bit installer</Desc>
+		<Group>Other</Group>
+		<Type>Executable</Type>
+		<Info>http://www.oracle.com/technetwork/java/javase/overview/index.html</Info>
+		<Urls>
+			<Url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=81819</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>sliksvn</Id>
+		<Name>SlikSVN</Name>
+		<Version>1.8.4</Version>
+		<Build>1</Build>
+		<Desc>Subversion command line client 32-bit installer</Desc>
+		<Group>Other</Group>
+		<Type>Executable</Type>
+		<Info>http://www.sliksvn.com/en/download/</Info>
+		<Urls>
+			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.4-win32.msi</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>nodejs</Id>
+		<Name>Node.js</Name>
+		<Version>0.10</Version>
+		<Build>22</Build>
+		<Desc>Node.js platform 32-bit installer</Desc>
+		<Group>Other</Group>
+		<Type>Executable</Type>
+		<Info>http://www.nodejs.org</Info>
+		<Urls>
+			<Url>http://nodejs.org/dist/v0.10.22/x64/node-v0.10.22-x86.msi</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>as2tmpl</Id>
+		<Name>AS2 Templates</Name>
+		<Version>1.01</Version>
+		<Build>1</Build>
+		<Desc>AS2 templates for FlashDevelop</Desc>
+		<Group>Extensions</Group>
+		<Info>http://www.flashdevelop.org/wikidocs/</Info>
+		<Urls>
+			<Url>http://flashdevelop.googlecode.com/svn/trunk/FD4/External/Extensions/AS2Templates/AS2Templates-1.01.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>colorbox</Id>
+		<Name>ColorBox</Name>
+		<Version>0.1.4</Version>
+		<Build>1</Build>
+		<Desc>Displays hovered color-values in a tooltip and lets you edit them.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=10339</Info>
+		<Urls>
+			<Url>https://bitbucket.org/Gr33z00/colorbox/downloads/fd4_colorbox_v0.1.4.fdz</Url>
+		</Urls>
+	</Entry>
+</Entries>
