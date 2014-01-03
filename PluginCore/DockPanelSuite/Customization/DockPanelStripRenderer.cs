@@ -211,7 +211,7 @@ namespace System.Windows.Forms
                     Rectangle bBounds = button.Owner.RectangleToScreen(button.Bounds);
                     isOver = bBounds.Contains(Control.MousePosition);
                 }
-                if (e.Item.Selected || ((ToolStripButton)e.Item).Checked || isOver)
+                if (e.Item.Selected || ((ToolStripButton)e.Item).Checked || (isOver && e.Item.Enabled))
                 {
                     Rectangle rect = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
                     Rectangle rect2 = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
