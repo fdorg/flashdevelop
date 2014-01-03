@@ -719,6 +719,7 @@ namespace FlashDevelop
                 Environment.SetEnvironmentVariable("PATH", oldPath + ";" + amPath, EnvironmentVariableTarget.Process);
                 // Watch for appman update notifications
                 this.amWatcher = new FileSystemWatcher(PathHelper.BaseDir, ".appman");
+                this.amWatcher.Changed += new FileSystemEventHandler(this.AppManUpdate);
                 this.amWatcher.Created += new FileSystemEventHandler(this.AppManUpdate);
                 this.amWatcher.IncludeSubdirectories = false;
                 this.amWatcher.EnableRaisingEvents = true;
@@ -736,8 +737,6 @@ namespace FlashDevelop
                 String appman = Path.Combine(PathHelper.BaseDir, ".appman");
                 NotifyEvent ne = new NotifyEvent(EventType.AppChanges);
                 EventManager.DispatchEvent(this, ne);
-                Thread.Sleep(200); // Wait a bit...
-                File.Delete(appman);
             }
             catch {} // No errors...
         }
