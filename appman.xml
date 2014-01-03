@@ -17,7 +17,7 @@
 		<Id>flexairsdk</Id>
 		<Name>Flex + AIR SDK</Name>
 		<Version>4.6.0+3.9.0</Version>
-		<Build>23201B+1030</Build>
+		<Build>23201B+1380</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
@@ -31,7 +31,7 @@
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
 		<Version>3.9.0</Version>
-		<Build>1030</Build>
+		<Build>1380</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
@@ -44,7 +44,7 @@
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
 		<Version>11.9</Version>
-		<Build>900.152</Build>
+		<Build>900.170</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>AS3</Group>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
@@ -56,7 +56,7 @@
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
 		<Version>11.9</Version>
-		<Build>900.152</Build>
+		<Build>900.170</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -69,7 +69,7 @@
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
 		<Version>11.9</Version>
-		<Build>900.152</Build>
+		<Build>900.170</Build>
 		<Desc>Debug Flash Player plugin for Interner Explorer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -95,7 +95,7 @@
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
 		<Version>3.9.0</Version>
-		<Build>1030</Build>
+		<Build>1380</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -158,27 +158,27 @@
 	<Entry>
 		<Id>sliksvn</Id>
 		<Name>SlikSVN</Name>
-		<Version>1.8.4</Version>
+		<Version>1.8.5</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.4-win32.msi</Url>
+			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.5-win32.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>nodejs</Id>
 		<Name>Node.js</Name>
 		<Version>0.10</Version>
-		<Build>22</Build>
+		<Build>24</Build>
 		<Desc>Node.js platform 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://www.nodejs.org</Info>
 		<Urls>
-			<Url>http://nodejs.org/dist/v0.10.22/x64/node-v0.10.22-x86.msi</Url>
+			<Url>http://nodejs.org/dist/v0.10.24/node-v0.10.24-x86.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
