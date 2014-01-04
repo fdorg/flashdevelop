@@ -34,9 +34,14 @@ namespace CodeRefactor.Commands
             Int32 pos = sci.CurrentPos;
             List<MemberModel> imports = new List<MemberModel>(context.CurrentModel.Imports.Count);
             imports.AddRange(context.CurrentModel.Imports.Items);
+            int cppPpStyle = (int)ScintillaNet.Lexers.CPP.PREPROCESSOR;
             for (Int32 i = imports.Count - 1; i >= 0; i--)
             {
-                if ((imports[i].Flags & (FlagType.Using | FlagType.Constant)) != 0) imports.RemoveAt(i);
+                bool isPP = sci.LineIsInPreprocessor(sci, cppPpStyle, imports[i].LineTo);
+                if ((imports[i].Flags & (FlagType.Using | FlagType.Constant)) != 0 || isPP)
+                {
+                    imports.RemoveAt(i);
+                }
             }
             ImportsComparerLine comparerLine = new ImportsComparerLine();
             imports.Sort(comparerLine);

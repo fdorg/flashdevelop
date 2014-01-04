@@ -5530,6 +5530,42 @@ namespace ScintillaNet
             }
 		}
 
+        /// <summary>
+        /// Checks if a line is in preprocessor block
+        /// </summary>
+        public bool LineIsInPreprocessor(ScintillaControl sci, int lexerPpStyle, int line)
+        {
+            bool ppEnd = false;
+            bool ppStart = false;
+            int foldHeader = (int)ScintillaNet.Enums.FoldLevel.HeaderFlag;
+            for (var i = line; i > 0; i--)
+            {
+                int pos = sci.PositionFromLine(i);
+                int ind = sci.GetLineIndentation(i);
+                int style = sci.BaseStyleAt(pos + ind);
+                if (style == lexerPpStyle)
+                {
+                    int fold = sci.GetFoldLevel(i) & foldHeader;
+                    if (fold == foldHeader) ppStart = true;
+                    break;
+                }
+            }
+            for (var i = line; i < sci.LineCount; i++)
+            {
+                int pos = sci.PositionFromLine(i);
+                int ind = sci.GetLineIndentation(i);
+                int style = sci.BaseStyleAt(pos + ind);
+                if (style == lexerPpStyle)
+                {
+                    int fold = sci.GetFoldLevel(i) & foldHeader;
+                    if (fold != foldHeader) ppEnd = true;
+                    break;
+                }
+            }
+            if (ppStart && ppEnd) return true;
+            else return false;
+        }
+
 		/// <summary>
 		/// Checks that if the specified position is on comment.
         /// NOTE: You may need to manually update coloring: "sci.Colourise(0, -1);"
