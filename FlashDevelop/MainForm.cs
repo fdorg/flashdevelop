@@ -142,20 +142,14 @@ namespace FlashDevelop
         private Boolean closeAllCanceled = false;
         private Boolean restartRequested = false;
         private Boolean refreshConfig = false;
+        private Boolean silentInstall = false;
         private Boolean closingAll = false;
         
         /* Singleton */
+        public static Boolean Silent;
         public static Boolean IsFirst;
         public static MainForm Instance;
         public static String[] Arguments;
-
-        /// <summary>
-        /// Should extensions be installed silently?
-        /// </summary>
-        private Boolean SilentInstall
-        {
-            get { return Array.IndexOf(this.StartArguments, "-silent") != -1; }
-        }
 
         #endregion
 
@@ -1785,6 +1779,7 @@ namespace FlashDevelop
             this.Activate(); this.Focus();
             if (args != null && args.Length != 0)
             {
+                Silent = Array.IndexOf(args, "-silent") != -1;
                 for (Int32 i = 0; i < args.Length; i++)
                 {
                     OpenDocumentFromParameters(args[i]);
@@ -2703,7 +2698,7 @@ namespace FlashDevelop
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
                 Boolean requiresRestart = false;
-                Boolean silentInstall = this.SilentInstall;
+                Boolean silentInstall = MainForm.Silent;
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
                 if (chunks.Length > 1)
@@ -2779,7 +2774,7 @@ namespace FlashDevelop
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
                 Boolean requiresRestart = false;
-                Boolean silentRemove = this.SilentInstall;
+                Boolean silentRemove = MainForm.Silent;
                 List<String> removeDirs = new List<String>();
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
