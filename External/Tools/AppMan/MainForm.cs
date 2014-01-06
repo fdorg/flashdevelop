@@ -813,7 +813,7 @@ namespace AppMan
                 else this.statusLabel.Text = this.localeData.ItemListDownloadFailed;
                 this.progressBar.Value = 0;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             { 
                 DialogHelper.ShowError(ex.ToString());
             }
@@ -917,8 +917,16 @@ namespace AppMan
                 {
                     String message = this.localeData.DownloadingError + this.curFile + ".\n";
                     if (this.downloadQueue.Count > 1) message += this.localeData.ContinueWithNextItem;
-                    DialogHelper.ShowError(message);
-                    this.DownloadNextFromQueue();
+                    DialogHelper.ShowError(message); // Show message first...
+                    if (this.downloadQueue.Count > 1) this.DownloadNextFromQueue();
+                    else
+                    {
+                        this.isLoading = false;
+                        this.cancelButton.Enabled = false;
+                        this.TryDeleteOldTempFiles();
+                        this.progressBar.Value = 0;
+                        this.UpdateButtonLabels();
+                    }
                 }
             }
             catch (Exception ex)

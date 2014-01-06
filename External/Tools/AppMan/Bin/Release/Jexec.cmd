@@ -11,8 +11,8 @@ if /i [%2]==[] goto help
 
 :: Set vars
 
-if exist "..\..\.local" set dir=%cd%\Archive
-if not exist "..\..\.local" set dir=%LOCALAPPDATA%\FlashDevelop\Data\AppMan\Archive
+if exist "..\..\.local" set dir=%cd%\Apps
+if not exist "..\..\.local" set dir=%LOCALAPPDATA%\FlashDevelop\Apps
 set file=
 set args=
 

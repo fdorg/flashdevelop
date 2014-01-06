@@ -105,19 +105,6 @@
 		</Urls>
 	</Entry>
 	<Entry>
-		<Id>haxe2setup</Id>
-		<Name>Haxe 2</Name>
-		<Version>2.10</Version>
-		<Build>1</Build>
-		<Desc>Haxe 2 and Neko virtual machine installer</Desc>
-		<Group>Other</Group>
-		<Type>Executable</Type>
-		<Info>http://www.haxe.org</Info>
-		<Urls>
-			<Url>http://haxe.org/file/Haxe-2.10-Windows.exe</Url>
-		</Urls>
-	</Entry>
-	<Entry>
 		<Id>haxe3setup</Id>
 		<Name>Haxe 3</Name>
 		<Version>3.0.1</Version>
@@ -156,29 +143,55 @@
 		</Urls>
 	</Entry>
 	<Entry>
+		<Id>torgit</Id>
+		<Name>TortoiseGit</Name>
+		<Version>1.8</Version>
+		<Build>6.0</Build>
+		<Desc>Git client 32-bit installer</Desc>
+		<Group>Other</Group>
+		<Type>Executable</Type>
+		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Urls>
+			<Url>http://download.tortoisegit.org/tgit/1.8.6.0/TortoiseGit-1.8.6.0-32bit.msi</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>git4win</Id>
+		<Name>Git For Windows</Name>
+		<Version>1.8</Version>
+		<Build>5.2</Build>
+		<Desc>Git command line client 32-bit installer</Desc>
+		<Group>Other</Group>
+		<Type>Executable</Type>
+		<Info>http://msysgit.github.io/</Info>
+		<Urls>
+			<Url>https://msysgit.googlecode.com/files/Git-1.8.5.2-preview20131230.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>torsvn</Id>
+		<Name>TortoiseSVN</Name>
+		<Version>1.8</Version>
+		<Build>6.0</Build>
+		<Desc>Subversion client 32-bit installer</Desc>
+		<Group>Other</Group>
+		<Type>Executable</Type>
+		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Urls>
+			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.4/Application/TortoiseSVN-1.8.4.24972-win32-svn-1.8.5.msi</Url>
+		</Urls>
+	</Entry>
+	<Entry>
 		<Id>sliksvn</Id>
 		<Name>SlikSVN</Name>
-		<Version>1.8.5</Version>
-		<Build>1</Build>
+		<Version>1.8</Version>
+		<Build>5.1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
 			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.5-win32.msi</Url>
-		</Urls>
-	</Entry>
-	<Entry>
-		<Id>nodejs</Id>
-		<Name>Node.js</Name>
-		<Version>0.10</Version>
-		<Build>24</Build>
-		<Desc>Node.js platform 32-bit installer</Desc>
-		<Group>Other</Group>
-		<Type>Executable</Type>
-		<Info>http://www.nodejs.org</Info>
-		<Urls>
-			<Url>http://nodejs.org/dist/v0.10.24/node-v0.10.24-x86.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -191,18 +204,6 @@
 		<Info>http://www.flashdevelop.org/wikidocs/</Info>
 		<Urls>
 			<Url>http://flashdevelop.googlecode.com/svn/trunk/FD4/External/Extensions/AS2Templates/AS2Templates-1.01.fdz</Url>
-		</Urls>
-	</Entry>
-	<Entry>
-		<Id>colorbox</Id>
-		<Name>ColorBox</Name>
-		<Version>0.1.4</Version>
-		<Build>1</Build>
-		<Desc>Displays hovered color-values in a tooltip and lets you edit them.</Desc>
-		<Group>Plugins</Group>
-		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=10339</Info>
-		<Urls>
-			<Url>https://bitbucket.org/Gr33z00/colorbox/downloads/fd4_colorbox_v0.1.4.fdz</Url>
 		</Urls>
 	</Entry>
 </Entries>
