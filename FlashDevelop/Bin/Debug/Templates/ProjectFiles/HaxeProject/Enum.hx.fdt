@@ -1,0 +1,9 @@
+package $(Package);
+
+/**
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+
+enum $(FileName) $(CSLB){
+	$$(Values)$(EntryPoint)
+}
