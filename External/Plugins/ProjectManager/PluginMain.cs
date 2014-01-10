@@ -305,6 +305,7 @@ namespace ProjectManager
                     menus.TargetBuildSelector.Items.Insert(0, target);
                 FlexCompilerShell.Cleanup();
                 project.TargetBuild = menus.TargetBuildSelector.Text;
+                project.UpdateVars(false);
                 projectActions.UpdateASCompletion(MainForm, project);
             }
         }
