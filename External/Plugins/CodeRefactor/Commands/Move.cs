@@ -59,7 +59,11 @@ namespace CodeRefactor.Commands
                 MoveTargets();
                 UpdateReferencesNextTarget();
             }
-            else MoveTargets();
+            else
+            {
+                MoveTargets();
+                FireOnRefactorComplete();
+            }
         }
 
         /// <summary>
