@@ -67,6 +67,7 @@ namespace ProjectManager.Controls
 		public static FDImage OpenFile;
         public static FDImage EditFile;
         public static FDImage Browse;
+        public static FDImage FindAndReplace;
         public static FDImage FindInFiles;
 		public static FDImage Cut;
 		public static FDImage Copy;
@@ -133,6 +134,8 @@ namespace ProjectManager.Controls
 			OpenFile = Get(214);
             EditFile = Get(282);
             Browse = Get(46);
+
+            FindAndReplace = Get(484);
             FindInFiles = Get(209);
 			Cut = Get(158);
 			Copy = Get(292);

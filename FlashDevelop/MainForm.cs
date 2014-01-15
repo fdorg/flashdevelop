@@ -2575,6 +2575,22 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Opens a find and replace dialog with a location
+        /// </summary>
+        public void FindAndReplaceFrom(Object sender, System.EventArgs e)
+        {
+            ToolStripItem button = (ToolStripItem)sender;
+            String file = ((ItemData)button.Tag).Tag;
+
+            ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
+            {
+                OpenEditableDocument(file);
+            });
+
+            this.frInDocDialog.Show();
+        }
+
+        /// <summary>
         /// Opens a find and replace in files dialog
         /// </summary>
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)

@@ -10,6 +10,7 @@ using ProjectManager.Projects;
 using ProjectManager.Projects.AS2;
 using PluginCore.Localization;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -54,6 +55,7 @@ namespace ProjectManager.Controls.TreeView
         public ToolStripMenuItem BuildAllProjects = new ToolStripMenuItem(TextHelper.GetString("Label.BuildAllProjects"));
         public ToolStripMenuItem BuildProjectFile = new ToolStripMenuItem(TextHelper.GetString("Label.BuildProjectFile"), Icons.Gear.Img);
         public ToolStripMenuItem BuildProjectFiles = new ToolStripMenuItem(TextHelper.GetString("Label.BuildProjectFiles"), Icons.Gear.Img);
+        public ToolStripMenuItem FindAndReplace = new ToolStripMenuItem(TextHelper.GetString("Label.FindHere"), Icons.FindAndReplace.Img);
         public ToolStripMenuItem FindInFiles = new ToolStripMenuItem(TextHelper.GetString("Label.FindHere"), Icons.FindInFiles.Img);
         public ToolStripMenuItem CopyClassName = new ToolStripMenuItem(TextHelper.GetString("Label.CopyClassName"));
         public ToolStripMenuItem AddSourcePath = new ToolStripMenuItem(TextHelper.GetString("Label.AddSourcePath"), Icons.Classpath.Img);
@@ -343,6 +345,7 @@ namespace ProjectManager.Controls.TreeView
         {
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
+            menu.Add(FindAndReplace, 0);
             menu.Add(ShellMenu, 0);
             AddCompileTargetItems(menu, path, false);
             AddFileItems(menu, path);
@@ -430,7 +433,8 @@ namespace ProjectManager.Controls.TreeView
             {
                 menu.Add(Open, 0);
                 menu.Add(Execute, 0);
-                menu.Add(ShellMenu, 0);
+                menu.Add(FindAndReplace, 0);
+                menu.Add(ShellMenu, 0); 
                 AddFileItems(menu, node.BackingPath);
             }
             else menu.Add(NoProjectOutput, 0);
@@ -463,6 +467,7 @@ namespace ProjectManager.Controls.TreeView
         {
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
+            menu.Add(FindAndReplace, 0);
             menu.Add(ShellMenu, 0);
             menu.Add(Insert, 0);
             if (IsBuildable(path))
