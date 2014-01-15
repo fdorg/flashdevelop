@@ -195,7 +195,7 @@
 		</menu>
 		<menu label="Label.LanguageReferences" name="LangRefsMenu">
 			<button label="&amp;Flash" click="Browse" tag="http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/index.html" />
-			<button label="&amp;HaXe" click="Browse" tag="http://haxe.org/ref" />
+			<button label="&amp;Haxe" click="Browse" tag="http://haxe.org/ref" />
 			<button label="&amp;MYSQL" click="Browse" tag="http://dev.mysql.com/doc/mysql/en/" />
 			<button label="&amp;PHP" click="Browse" tag="http://www.php.net/manual/en/" />
 		</menu>
