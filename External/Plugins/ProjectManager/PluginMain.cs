@@ -438,7 +438,7 @@ namespace ProjectManager
                     {
                         if (de.Data != null && File.Exists((string)de.Data))
                         {
-                            projectActions.OpenProjectSilent((string)de.Data);
+                            OpenProjectSilent((string)de.Data);
                         }
                         else OpenProject();
                         e.Handled = true;
