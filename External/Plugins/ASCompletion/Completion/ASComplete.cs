@@ -2483,27 +2483,37 @@ namespace ASCompletion.Completion
             }
 
             // local vars
-			if (local.LocalVars != null)
-			foreach(MemberModel var in local.LocalVars)
-			{
-				if (var.Name == token)
-				{
-					result.Member = var;
-                    result.InFile = inFile;
-					result.InClass = inClass;
-                    if (var.Type == null && (var.Flags & FlagType.LocalVar) > 0 
-                        && context.Features.hasInference /*&& !context.Features.externalCompletion*/)
-                        InferVariableType(local, var);
-                    result.Type = context.ResolveType(var.Type, inFile);
-					
-					if ((var.Flags & FlagType.Function) > 0)
-						result.Type = ASContext.Context.ResolveType("Function", null);
-					else
-						result.Type = context.ResolveType(var.Type, inFile);
+            if (local.LocalVars != null)
+            {
+                // Haxe 3 get/set keyword in properties declaration
+                if ((token == "set" || token == "get") && local.ContextFunction == null 
+                    && local.ContextMember != null && local.ContextMember.Parameters != null && local.ContextMember.Parameters.Count == 2)
+                {
+                    if (token == "get" && local.ContextMember.Parameters[0].Name == "get") return EvalVariable("get_" + local.ContextMember.Name, local, inFile, inClass);
+                    if (token == "set" && local.ContextMember.Parameters[1].Name == "set") return EvalVariable("set_" + local.ContextMember.Name, local, inFile, inClass);
+                }
 
-					return result;
-				}
-			}
+                foreach (MemberModel var in local.LocalVars)
+                {
+                    if (var.Name == token)
+                    {
+                        result.Member = var;
+                        result.InFile = inFile;
+                        result.InClass = inClass;
+                        if (var.Type == null && (var.Flags & FlagType.LocalVar) > 0
+                            && context.Features.hasInference /*&& !context.Features.externalCompletion*/)
+                            InferVariableType(local, var);
+                        result.Type = context.ResolveType(var.Type, inFile);
+
+                        if ((var.Flags & FlagType.Function) > 0)
+                            result.Type = ASContext.Context.ResolveType("Function", null);
+                        else
+                            result.Type = context.ResolveType(var.Type, inFile);
+
+                        return result;
+                    }
+                }
+            }
 
 			// method parameters
             if (local.ContextFunction != null && local.ContextFunction.Parameters != null)
