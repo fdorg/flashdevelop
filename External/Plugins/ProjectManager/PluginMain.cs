@@ -274,6 +274,7 @@ namespace ProjectManager
             pluginUI.Menu.BuildProjectFiles.Click += delegate { BackgroundBuild(); };
             pluginUI.Menu.BuildAllProjects.Click += delegate { FullBuild(); };
             pluginUI.Menu.TestAllProjects.Click += delegate { TestBuild(); };
+            pluginUI.Menu.FindAndReplace.Click += delegate { FindAndReplace(); };
             pluginUI.Menu.FindInFiles.Click += delegate { FindInFiles(); };
             pluginUI.Menu.CopyClassName.Click += delegate { CopyClassName(); };
             pluginUI.Menu.AddSourcePath.Click += delegate { AddSourcePath(); };
@@ -1422,6 +1423,15 @@ namespace ProjectManager
             if (copyCP.Handled) // UI needs refresh on clipboard change...
             {
                 PluginBase.MainForm.RefreshUI();
+            }
+        }
+
+        private void FindAndReplace()
+        {
+            String path = Tree.SelectedPath;
+            if (path != null && File.Exists(path))
+            {
+                PluginBase.MainForm.CallCommand("FindAndReplaceFrom", path);
             }
         }
 
