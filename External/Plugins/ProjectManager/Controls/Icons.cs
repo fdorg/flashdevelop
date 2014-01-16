@@ -91,6 +91,7 @@ namespace ProjectManager.Controls
         public static FDImage SyncToFile;
         public static FDImage ClasspathFolder;
         public static FDImage DocumentClass;
+        public static FDImage CommandPrompt;
 
 		public static ImageList ImageList { get { return imageList; } }
 
@@ -133,7 +134,7 @@ namespace ProjectManager.Controls
             AddFile = GetResource("Icons.AddFile.png"); //Get("304|0|5|4");
 			OpenFile = Get(214);
             EditFile = Get(282);
-            Browse = Get(46);
+            Browse = Get(56);
 
             FindAndReplace = Get(484);
             FindInFiles = Get(209);
@@ -159,6 +160,7 @@ namespace ProjectManager.Controls
             SyncToFile = Get("315|9|-3|-4");
             ClasspathFolder = Get(544);
             DocumentClass = Get(147);
+            CommandPrompt = Get(57);
 		}
 
         public static FDImage GetGray(string data)

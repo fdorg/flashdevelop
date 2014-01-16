@@ -270,6 +270,7 @@ namespace ProjectManager
             pluginUI.Menu.CloseProject.Click += delegate { CloseProject(false); };
             pluginUI.Menu.Properties.Click += delegate { OpenProjectProperties(); };
             pluginUI.Menu.ShellMenu.Click += delegate { TreeShowShellMenu(); };
+            pluginUI.Menu.CommandPrompt.Click += delegate { TreeShowCommandPrompt(); };
             pluginUI.Menu.BuildProjectFile.Click += delegate { BackgroundBuild(); };
             pluginUI.Menu.BuildProjectFiles.Click += delegate { BackgroundBuild(); };
             pluginUI.Menu.BuildAllProjects.Click += delegate { FullBuild(); };
@@ -1297,6 +1298,14 @@ namespace ProjectManager
             projectActions.UpdateASCompletion(MainForm, project);
 
             Tree.RefreshTree();
+        }
+
+        /// <summary>
+        /// Shows the command prompt
+        /// </summary>
+        private void TreeShowCommandPrompt()
+        {
+            System.Diagnostics.Process.Start("CMD.exe", "cd '" + Tree.SelectedPath + "'");
         }
 
         /// <summary>

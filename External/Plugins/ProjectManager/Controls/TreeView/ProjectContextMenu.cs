@@ -60,6 +60,7 @@ namespace ProjectManager.Controls.TreeView
         public ToolStripMenuItem CopyClassName = new ToolStripMenuItem(TextHelper.GetString("Label.CopyClassName"));
         public ToolStripMenuItem AddSourcePath = new ToolStripMenuItem(TextHelper.GetString("Label.AddSourcePath"), Icons.Classpath.Img);
         public ToolStripMenuItem RemoveSourcePath = new ToolStripMenuItem(TextHelper.GetString("Label.SourcePath"));
+        public ToolStripMenuItem CommandPrompt = new ToolStripMenuItem(TextHelper.GetString("FlashDevelop.Label.CommandPrompt"), Icons.CommandPrompt.Img);
         public event FileAddHandler AddFileFromTemplate;
 
         public ProjectContextMenu()
@@ -325,6 +326,7 @@ namespace ProjectManager.Controls.TreeView
         private void AddFolderItems(MergableMenu menu, string path)
         {
             menu.Add(AddMenu, 0);
+            menu.Add(CommandPrompt, 0);
             menu.Add(Browse, 0);
             menu.Add(FindInFiles, 0);
             menu.Add(ShellMenu, 0);
