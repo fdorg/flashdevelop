@@ -1305,7 +1305,10 @@ namespace ProjectManager
         /// </summary>
         private void TreeShowCommandPrompt()
         {
-            System.Diagnostics.Process.Start("CMD.exe", "cd '" + Tree.SelectedPath + "'");
+            ProcessStartInfo cmdPrompt = new ProcessStartInfo();
+            cmdPrompt.FileName = "cmd.exe";
+            cmdPrompt.WorkingDirectory = Tree.SelectedPath;
+            Process.Start(cmdPrompt);
         }
 
         /// <summary>
