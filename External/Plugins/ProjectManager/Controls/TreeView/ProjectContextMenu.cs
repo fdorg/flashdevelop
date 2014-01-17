@@ -299,6 +299,7 @@ namespace ProjectManager.Controls.TreeView
             if (HasSubProjects()) menu.Add(BuildAllProjects, 0);
             menu.Add(CloseProject, 0);
             menu.Add(AddMenu, 1);
+            menu.Add(CommandPrompt, 0);
             menu.Add(Browse, 1);
             menu.Add(FindInFiles, 1);
             menu.Add(ShellMenu, 1);
@@ -310,6 +311,7 @@ namespace ProjectManager.Controls.TreeView
         private void AddClasspathItems(MergableMenu menu, string path)
         {
             menu.Add(AddMenu, 0);
+            menu.Add(CommandPrompt, 0);
             menu.Add(Browse, 0);
             menu.Add(FindInFiles, 0);
             menu.Add(ShellMenu, 0);
