@@ -299,9 +299,9 @@ namespace ProjectManager.Controls.TreeView
             if (HasSubProjects()) menu.Add(BuildAllProjects, 0);
             menu.Add(CloseProject, 0);
             menu.Add(AddMenu, 1);
-            menu.Add(CommandPrompt, 1);
             menu.Add(Browse, 1);
             menu.Add(FindInFiles, 1);
+            menu.Add(CommandPrompt, 1);
             menu.Add(ShellMenu, 1);
             menu.Add(Paste, 2);
             menu.Add(ShowHidden, 3, showHidden);
@@ -311,9 +311,9 @@ namespace ProjectManager.Controls.TreeView
         private void AddClasspathItems(MergableMenu menu, string path)
         {
             menu.Add(AddMenu, 0);
-            menu.Add(CommandPrompt, 0);
             menu.Add(Browse, 0);
             menu.Add(FindInFiles, 0);
+            menu.Add(CommandPrompt, 0);
             menu.Add(ShellMenu, 0);
             menu.Add(Paste, 1);
             menu.Add(RemoveSourcePath, 2, true);
@@ -328,9 +328,9 @@ namespace ProjectManager.Controls.TreeView
         private void AddFolderItems(MergableMenu menu, string path)
         {
             menu.Add(AddMenu, 0);
-            menu.Add(CommandPrompt, 0);
             menu.Add(Browse, 0);
             menu.Add(FindInFiles, 0);
+            menu.Add(CommandPrompt, 0);
             menu.Add(ShellMenu, 0);
             AddCompileTargetItems(menu, path, true);
             if (projectTree.SelectedPaths.Length == 1 && project.IsCompilable)
