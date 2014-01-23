@@ -123,6 +123,7 @@ namespace ProjectManager.Helpers
 			foreach (string dir in Directory.GetDirectories(sourceDir))
 			{
 				string dirName = Path.GetFileName(dir);
+                dirName = ReplaceKeywords(dirName);
                 if (dirName.ToUpper() == "$(PACKAGENAME)" || dirName.ToUpper() == "$(PACKAGEPATH)") 
                     dirName = packagePath;
 				string destSubDir = Path.Combine(destDir, dirName);
@@ -174,9 +175,12 @@ namespace ProjectManager.Helpers
                     case "QUOTE": return "\"";
                     case "CLIPBOARD": return GetClipboard();
                     case "TIMESTAMP": return DateTime.Now.ToString("g");
-                    case "PROJECTNAME": return projectName; 
-                    case "PROJECTID": return projectId; 
+                    case "PROJECTNAME": return projectName;
+                    case "PROJECTNAMELOWER": return projectName.ToLower();
+                    case "PROJECTID": return projectId;
+                    case "PROJECTIDLOWER": return projectId.ToLower();
                     case "PACKAGENAME": return packageName;
+                    case "PACKAGENAMELOWER": return packageName.ToLower();
                     case "PACKAGEPATH": return packagePath;
                     case "PACKAGEPATHALT": return packagePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar); 
                     case "PACKAGEDOT": return packageDot;
