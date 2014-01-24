@@ -123,9 +123,7 @@ namespace ProjectManager.Helpers
 			foreach (string dir in Directory.GetDirectories(sourceDir))
 			{
 				string dirName = Path.GetFileName(dir);
-                dirName = ReplaceKeywords(dirName);
-                if (dirName.ToUpper() == "$(PACKAGENAME)" || dirName.ToUpper() == "$(PACKAGEPATH)") 
-                    dirName = packagePath;
+		                dirName = ReplaceKeywords(dirName);
 				string destSubDir = Path.Combine(destDir, dirName);
 
 				// don't copy like .svn and stuff
