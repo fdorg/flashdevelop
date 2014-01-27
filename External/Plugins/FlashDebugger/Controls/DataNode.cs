@@ -61,7 +61,7 @@ namespace FlashDebugger.Controls
                 string temp = null;
 				if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
 				{
-                    return m_Value.getValue().getTypeName().replaceAll("::", ".").replaceAll("@", " (@") + ")";
+                    return m_Value.getValue().getTypeName();
 				}
 				else if (type == VariableType_.NUMBER)
 				{
