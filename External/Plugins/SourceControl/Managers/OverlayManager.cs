@@ -48,6 +48,8 @@ namespace SourceControl.Managers
         {
             if (currentTree != null)
             {
+                if (currentTree.SelectedNode != null && currentTree.SelectedNode.IsEditing)
+                    return; // do not mess with the tree while a node is being edited
                 currentTree.RefreshTree();
                 SelectionChanged();
             }
