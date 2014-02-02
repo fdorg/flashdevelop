@@ -258,10 +258,11 @@ namespace ProjectManager.Controls.TreeView
 					if (nodeMap.ContainsKey(path))
 					{
                         GenericNode node = nodeMap[path];
-						if (!(node is SwfFileNode))
+						if (!(node is SwfFileNode) && !(node is ProjectNode))
 						{
 							node.Expand();
-                            node.Refresh(false);
+                            if (!(node is ReferencesNode))
+                                node.Refresh(false);
 						}
 					}
 			}
