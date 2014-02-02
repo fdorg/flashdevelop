@@ -477,7 +477,11 @@ namespace ProjectManager
                     }
                     else if (de.Action == ProjectManagerCommands.PlayOutput)
                     {
-                        OpenSwf((string)de.Data);
+                        if (activeProject != null || de.Data != null)
+                        {
+                            OpenSwf((string)de.Data);
+                            de.Handled = true;
+                        }
                     }
                     else if (de.Action == ProjectManagerCommands.RestartFlexShell)
                     {
