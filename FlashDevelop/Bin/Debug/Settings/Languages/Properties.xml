@@ -3,7 +3,7 @@
 	<languages>
 		<language name="properties">
 			<lexer name="properties" style-bits="7" />
-			<file-extensions>properties,ini</file-extensions>
+			<file-extensions>properties,ini,yaml</file-extensions>
 			<!-- COLORING_START -->
 			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x000000" />
 			<use-styles>
