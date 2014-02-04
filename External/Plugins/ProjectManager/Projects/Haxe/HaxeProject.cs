@@ -315,7 +315,8 @@ namespace ProjectManager.Projects.Haxe
             if (!release)
             {
                 pr.Insert(0, "-debug");
-                pr.Insert(1, "--each");
+                if (CurrentSDK == null || CurrentSDK.IndexOf("Motion-Twin") < 0)
+                    pr.Insert(1, "--each");
                 if (IsFlashOutput && MovieOptions.DebuggerSupported && CompilerOptions.EnableDebug)
                 {
                     pr.Insert(1, "-D fdb");
