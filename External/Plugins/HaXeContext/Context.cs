@@ -230,8 +230,8 @@ namespace HaXeContext
         /// </summary>
         static public void SetHaxeEnvironment(string sdkPath)
         {
+            sdkPath = sdkPath.TrimEnd(new char[] { '/', '\\' });
             if (currentEnv == sdkPath) return;
-            currentEnv = sdkPath;
             Environment.SetEnvironmentVariable("HAXEPATH", sdkPath);
 
             var neko = Path.GetFullPath(Path.Combine(sdkPath, "..\\neko"));
@@ -239,12 +239,15 @@ namespace HaXeContext
                 Environment.SetEnvironmentVariable("NEKO_INSTPATH", neko);
             else neko = null;
 
-            var path = Environment.GetEnvironmentVariable("PATH");
-            path = Regex.Replace(path.Replace(currentSDK + ";", ""), "^[^;]+neko;", "", RegexOptions.IgnoreCase);
-            path = Regex.Replace(path.Replace(currentSDK + ";", ""), "^[^;]+haxe;", "", RegexOptions.IgnoreCase);
-            path = currentSDK.TrimEnd(new char[] { '/', '\\' }) + ";" + path;
+            var path = ";" + Environment.GetEnvironmentVariable("PATH");
+            if (currentEnv != null) path = path.Replace(currentEnv + ";", ";");
+            path = Regex.Replace(path, ";[^;]+neko[/\\\\]*;", ";", RegexOptions.IgnoreCase);
+            path = Regex.Replace(path, ";[^;]+haxe[/\\\\]*;", ";", RegexOptions.IgnoreCase);
+            path = path.TrimStart(new char[] { ';' });
+            path = sdkPath + ";" + path;
             if (neko != null) path = neko.TrimEnd(new char[] { '/', '\\' }) + ";" + path;
             Environment.SetEnvironmentVariable("PATH", path);
+            currentEnv = sdkPath;
         }
 
         /// <summary>
