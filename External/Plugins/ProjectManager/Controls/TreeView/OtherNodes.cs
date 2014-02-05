@@ -61,7 +61,8 @@ namespace ProjectManager.Controls.TreeView
             set
             {
                 references = value;
-                if (references != null) Nodes.Insert(0, references);
+                if (references != null)
+                    RefreshReferences(true);
             }
         }
 

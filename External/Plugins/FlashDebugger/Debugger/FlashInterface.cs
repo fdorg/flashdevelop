@@ -520,9 +520,9 @@ namespace FlashDebugger
 				}
 				m_Session = null;
 			}
-            runningIsolates.Clear();
+            if (runningIsolates != null) runningIsolates.Clear();
             SessionManager mgr = Bootstrap.sessionManager();
-            if (mgr.isListening()) mgr.stopListening();
+            if (mgr != null && mgr.isListening()) mgr.stopListening();
             m_CurrentState = DebuggerState.Stopped;
 			clearBreakpoints();
         }
@@ -1153,11 +1153,12 @@ namespace FlashDebugger
 					m_Session.clearBreakpoint(l);
 				}
 			}
-			breakpointLocations.Clear();
-			foreach (IsolateInfo ii in IsolateSessions.Values)
-			{
-				ii.breakpointLocations.Clear();
-			}
+            if (breakpointLocations != null) breakpointLocations.Clear();
+			if (IsolateSessions != null)
+                foreach (IsolateInfo ii in IsolateSessions.Values)
+			    {
+				    ii.breakpointLocations.Clear();
+			    }
 		}
 
 		private static String replaceInlineReferences(String text, System.Collections.IDictionary parameters)
