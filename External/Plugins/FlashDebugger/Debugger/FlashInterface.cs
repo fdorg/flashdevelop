@@ -666,7 +666,9 @@ namespace FlashDebugger
                 {
                     // we ignore these for now
 					BreakEvent be = (BreakEvent)e;
-					if (be.isolateId > 1)
+					if (PluginMain.settingObject.VerboseOutput)
+						TraceManager.AddAsync("Worker " + be.isolateId + " BreakEvent");
+					if (be.isolateId > 1 && runningIsolates.ContainsKey(be.isolateId))
 					{
 						// switch only if we are not in break mode already!
 						if (!isDebuggerSuspended)
@@ -699,7 +701,6 @@ namespace FlashDebugger
                 else if (e is FaultEvent)
                 {
                     dumpFaultLine((FaultEvent)e);
-                    removeRunningIsolate(((FaultEvent)e).isolateId);
                 }
                 else
                 {
