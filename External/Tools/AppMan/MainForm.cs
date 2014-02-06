@@ -1112,7 +1112,7 @@ namespace AppMan
                         {
                             Color color = Color.Green;
                             String text = this.localeData.StateInstalled;
-                            if (dep.Version != inst.Version || (dep.Version == inst.Version && dep.Build != inst.Build))
+                            if (String.CompareOrdinal(dep.Version, inst.Version) > 0 || (dep.Version == inst.Version && dep.Build != inst.Build))
                             {
                                 this.haveUpdates = true;
                                 text = this.localeData.StateUpdate;
@@ -1121,7 +1121,6 @@ namespace AppMan
                             this.entryStates[inst.Id] = text;
                             item.SubItems[3].ForeColor = color;
                             item.SubItems[3].Text = text;
-                            break;
                         }
                     }
                 }
