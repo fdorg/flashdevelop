@@ -295,7 +295,8 @@ namespace ProjectManager.Projects.AS3
             else if (v < 3.7) { majorVersion = 11; minorVersion = 6; }
             else if (v < 3.8) { majorVersion = 11; minorVersion = 7; }
             else if (v < 3.9) { majorVersion = 11; minorVersion = 8; }
-            else { majorVersion = 11; minorVersion = 9; }
+            else if (v < 4.0) { majorVersion = 11; minorVersion = 9; }
+            else { majorVersion = 12; minorVersion = 0; }
         }
     }
 }
