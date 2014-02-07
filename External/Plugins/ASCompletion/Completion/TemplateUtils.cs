@@ -243,7 +243,7 @@ namespace ASCompletion.Completion
                 content = sr.ReadToEnd();
                 sr.Close();
             }
-            return "$(Boundary)" + content + "$(Boundary)";
+            return "$(Boundary)" + content.Replace("\r\n", "\n") + "$(Boundary)";
         }
 
         public static string GetBoundary(string name)
