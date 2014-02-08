@@ -407,6 +407,7 @@ namespace MacroManager
         /// <summary>
         /// Gets and sets the showInToolbar
         /// </summary>
+        [DisplayName("Show In Toolbar")]
         [LocalizedDescription("MacroManager.Description.ShowInToolbar")]
         public Boolean ShowInToolbar
         {
