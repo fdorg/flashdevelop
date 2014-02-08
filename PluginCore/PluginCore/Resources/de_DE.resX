@@ -5064,4 +5064,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDebugger.Label.ViewThreadsPanel" xml:space="preserve">
     <value>Threads Panel</value>
   </data>
+  <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
+    <value>Shows the macro in the main toolbar.</value>
+    <comment>Added after 4.5.2</comment>
+  </data>
 </root>
