@@ -7,6 +7,7 @@ using System.ComponentModel.Design;
 using System.Windows.Forms.Design;
 using System.Runtime.CompilerServices;
 using PluginCore.Localization;
+using LayoutManager;
 
 namespace FlashDebugger
 {
@@ -49,6 +50,7 @@ namespace FlashDebugger
         private Boolean m_DisablePanelsAutoshow = false;
         private Boolean m_VerboseOutput = false;
         private Boolean m_StartDebuggerOnTestMovie = true;
+		private String m_SwitchToLayout = null;
 
         [DisplayName("Save Breakpoints")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
@@ -70,7 +72,18 @@ namespace FlashDebugger
             set { m_DisablePanelsAutoshow = value; }
         }
 
-        [DisplayName("Verbose Output")]
+		[DisplayName("Switch to layout on debugger start")]
+		[LocalizedCategory("FlashDebugger.Category.Misc")]
+		[LocalizedDescription("FlashDebugger.Description.SwitchToLayout")]
+		[DefaultValue(null)]
+		[Editor(typeof(LayoutSelectorEditor), typeof(UITypeEditor))]
+		public String SwitchToLayout
+		{
+			get { return m_SwitchToLayout; }
+			set { m_SwitchToLayout = value; }
+		}
+
+		[DisplayName("Verbose Output")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
         [LocalizedDescription("FlashDebugger.Description.VerboseOutput")]
         [DefaultValue(false)]

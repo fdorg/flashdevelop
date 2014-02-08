@@ -5074,4 +5074,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Shows the macro in the main toolbar.</value>
     <comment>Added after 4.5.2</comment>
   </data>
+  <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
+    <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
+    <comment>Aded after 4.5.2</comment>
+  </data>
 </root>
