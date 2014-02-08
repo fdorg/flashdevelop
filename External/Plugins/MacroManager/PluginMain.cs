@@ -230,6 +230,7 @@ namespace MacroManager
                 }
             }
             Int32 index = toolStrip.Items.IndexOf(this.toolbarSeparator);
+            this.toolbarSeparator.Visible = this.toolbarItems.Count > 0;
             foreach (ToolStripItem item in this.toolbarItems)
             {
                 toolStrip.Items.Insert(index + 1, item);
