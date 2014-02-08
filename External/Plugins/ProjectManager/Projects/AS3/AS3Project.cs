@@ -267,36 +267,7 @@ namespace ProjectManager.Projects.AS3
 
         #endregion
 
-        static public string GuessFlashPlayerForAIR(string version)
-        {
-            string[] p = (version ?? "").Split('.');
-            int majorVersion = 10;
-            int minorVersion = 0;
-            if (p.Length > 0) int.TryParse(p[0], out majorVersion);
-            if (p.Length > 1) int.TryParse(p[1], out minorVersion);
-            GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
-            return majorVersion + "." + minorVersion;
-        }
-
-        static public void GuessFlashPlayerForAIR(ref int majorVersion, ref int minorVersion)
-        {
-            double v = majorVersion + (double)minorVersion / 10;
-            if (v < 2) { majorVersion = 9; minorVersion = 0; }
-            else if (v < 2.5) { majorVersion = 10; minorVersion = 0; }
-            else if (v < 2.6) { majorVersion = 10; minorVersion = 1; }
-            else if (v < 2.7) { majorVersion = 10; minorVersion = 2; }
-            else if (v < 3.0) { majorVersion = 10; minorVersion = 3; }
-            else if (v < 3.1) { majorVersion = 11; minorVersion = 0; }
-            else if (v < 3.2) { majorVersion = 11; minorVersion = 1; }
-            else if (v < 3.3) { majorVersion = 11; minorVersion = 2; }
-            else if (v < 3.4) { majorVersion = 11; minorVersion = 3; }
-            else if (v < 3.5) { majorVersion = 11; minorVersion = 4; }
-            else if (v < 3.6) { majorVersion = 11; minorVersion = 5; }
-            else if (v < 3.7) { majorVersion = 11; minorVersion = 6; }
-            else if (v < 3.8) { majorVersion = 11; minorVersion = 7; }
-            else if (v < 3.9) { majorVersion = 11; minorVersion = 8; }
-            else if (v < 4.0) { majorVersion = 11; minorVersion = 9; }
-            else { majorVersion = 12; minorVersion = 0; }
-        }
     }
+
 }
+

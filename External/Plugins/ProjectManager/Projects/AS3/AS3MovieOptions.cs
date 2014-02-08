@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PluginCore;
 
 namespace ProjectManager.Projects.AS3
 {
@@ -32,9 +33,9 @@ namespace ProjectManager.Projects.AS3
             switch (platform)
             {
                 case CUSTOM_PLATFORM: return new string[] { "0.0" };
-                case AIR_MOBILE_PLATFORM: return new string[] { "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4.0" };
-                case AIR_PLATFORM: return new string[] { "1.5", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4.0" };
-                default: return new string[] { "9.0", "10.0", "10.1", "10.2", "10.3", "11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.9", "12.0" };
+                case AIR_MOBILE_PLATFORM: return PlatformData.AIR_MOBILE_VERSIONS;
+                case AIR_PLATFORM: return PlatformData.AIR_VERSIONS;
+                default: return PlatformData.FLASH_VERSIONS;
             }
         }
 
@@ -43,9 +44,9 @@ namespace ProjectManager.Projects.AS3
             switch (platform)
             {
                 case CUSTOM_PLATFORM: return "0.0";
-                case AIR_PLATFORM: return "4.0";
-                case AIR_MOBILE_PLATFORM: return "4.0";
-                default: return "12.0";
+                case AIR_PLATFORM: return PlatformData.DEFAULT_AIR_VERSION;
+                case AIR_MOBILE_PLATFORM: return PlatformData.DEFAULT_AIR_MOBILE_VERSION;
+                default: return PlatformData.DEFAULT_FLASH_VERSION;
             }
         }
 
@@ -73,12 +74,15 @@ namespace ProjectManager.Projects.AS3
             if (Platform != FLASHPLAYER_PLATFORM) return null;
             return GetSWFVersion(Version);
         }
+
         public string GetSWFVersion(string version)
         {
             int index = Array.IndexOf(TargetVersions(FLASHPLAYER_PLATFORM), version);
             if (index < 0) return null;
-            string[] versions = new string[] { "9", "10", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" };
-            return versions[index];
+            return PlatformData.SWF_VERSIONS[index];
         }
+
     }
+
 }
+

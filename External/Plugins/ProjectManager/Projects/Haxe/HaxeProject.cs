@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using ProjectManager.Projects.AS3;
+using PluginCore;
 
 namespace ProjectManager.Projects.Haxe
 {
@@ -15,8 +16,7 @@ namespace ProjectManager.Projects.Haxe
 
         protected string[] rawHXML;
 
-        public HaxeProject(string path)
-            : base(path, new HaxeOptions())
+        public HaxeProject(string path) : base(path, new HaxeOptions())
         {
             movieOptions = new HaxeMovieOptions();
         }
@@ -261,7 +261,7 @@ namespace ProjectManager.Projects.Haxe
 
                     if (MovieOptions.Platform == HaxeMovieOptions.AIR_PLATFORM
                         || MovieOptions.Platform == HaxeMovieOptions.AIR_MOBILE_PLATFORM)
-                        AS3Project.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
+                        PlatformData.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
                     if (movieOptions.Platform == HaxeMovieOptions.NME_PLATFORM)
                         HaxeProject.GuessFlashPlayerForNME(ref majorVersion, ref minorVersion);
 
@@ -483,7 +483,7 @@ namespace ProjectManager.Projects.Haxe
 
             if (MovieOptions.Platform == HaxeMovieOptions.NME_PLATFORM)
             {
-                MovieOptions.TargetBuildTypes = HaxeMovieOptions.NME_TARGETS;
+                MovieOptions.TargetBuildTypes = PlatformData.NME_TARGETS;
                 if (TestMovieBehavior == TestMovieBehavior.Unknown)
                     TestMovieBehavior = TestMovieBehavior.Custom;
             }

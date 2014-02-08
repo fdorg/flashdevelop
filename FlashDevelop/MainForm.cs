@@ -142,7 +142,6 @@ namespace FlashDevelop
         private Boolean closeAllCanceled = false;
         private Boolean restartRequested = false;
         private Boolean refreshConfig = false;
-        private Boolean silentInstall = false;
         private Boolean closingAll = false;
         
         /* Singleton */

@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
+using System.Collections.Generic;
+using PluginCore;
 
 namespace ProjectManager.Projects.Haxe
 {
@@ -22,7 +23,7 @@ namespace ProjectManager.Projects.Haxe
         protected override void PostProcess()
         {
             if (project.MovieOptions.Platform == HaxeMovieOptions.NME_PLATFORM)
-                project.MovieOptions.TargetBuildTypes = HaxeMovieOptions.NME_TARGETS;
+                project.MovieOptions.TargetBuildTypes = PlatformData.NME_TARGETS;
 
             if (version > 1)
             {

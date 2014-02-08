@@ -209,7 +209,7 @@ namespace ProjectManager.Actions
                 minorVersion = project.MovieOptions.MinorVersion;
                 if (project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM 
                     || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM)
-                    AS3Project.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
+                    PlatformData.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
 
                 // add project classpaths
                 foreach (string cp in project.AbsoluteClasspaths)
