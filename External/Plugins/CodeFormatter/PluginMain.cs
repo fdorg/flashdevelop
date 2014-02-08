@@ -265,7 +265,11 @@ namespace CodeFormatter
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
                                 PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
                             }
-                            else doc.SciControl.Text = asResultData;
+                            else
+                            {
+                                doc.SciControl.Text = asResultData;
+                                doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
+                            }
                             break;
 
                         case TYPE_MXML:
@@ -278,7 +282,11 @@ namespace CodeFormatter
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
                                 PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
                             }
-                            else doc.SciControl.Text = mxmlResultData;
+                            else
+                            {
+                                doc.SciControl.Text = mxmlResultData;
+                                doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
+                            }
                             break;
                     }
                 } 

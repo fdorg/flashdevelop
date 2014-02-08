@@ -18,6 +18,7 @@ using Hashtable 	= System.Collections.Hashtable;
 
 using Antlr.Runtime.Tree;
 
+#pragma warning disable
 public class AS3_exParser : Parser 
 {
     public static readonly string[] tokenNames = new string[] 
