@@ -200,6 +200,10 @@
       <Name>ASCompletion</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
+      <Project>{BD6AFBEA-DB64-432A-80F7-4672A7FF283E}</Project>
+      <Name>LayoutManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
       <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
       <Name>ProjectManager</Name>

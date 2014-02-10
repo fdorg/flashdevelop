@@ -134,6 +134,7 @@ namespace FlashDebugger
                 case EventType.UIStarted:
                     menusHelper.AddToolStripItems();
                     menusHelper.UpdateMenuState(this, DebuggerState.Initializing);
+					debugManager.RestoreOldLayout();
                     break;
                 
                 case EventType.UIClosing:

@@ -223,9 +223,26 @@ namespace FlashDebugger
 
         #endregion
 
-        #region PathHelpers
+		#region LayoutHelpers
 
-        /// <summary>
+		/// <summary>
+		/// Check if old layout is sotred and restores it. It also deletes this temporary layout file.
+		/// </summary>
+		public void RestoreOldLayout()
+		{
+			String oldLayoutFile = Path.Combine(Path.Combine(PathHelper.DataDir, "FlashDebugger"), "oldlayout.fdl");
+			if (File.Exists(oldLayoutFile))
+			{
+				PluginBase.MainForm.CallCommand("RestoreLayout", oldLayoutFile);
+				File.Delete(oldLayoutFile);
+			}
+		}
+
+		#endregion
+
+		#region PathHelpers
+
+		/// <summary>
         /// 
         /// </summary>
 		public String GetLocalPath(SourceFile file)
@@ -289,9 +306,9 @@ namespace FlashDebugger
 
         #endregion
 
-        #region FlashInterface Events
-        
-        /// <summary>
+		#region FlashInterface Events
+
+		/// <summary>
         /// 
         /// </summary>
         private void flashInterface_StartedEvent(object sender)
@@ -307,7 +324,14 @@ namespace FlashDebugger
 			UpdateMenuState(DebuggerState.Running);
             PluginBase.MainForm.ProgressBar.Visible = false;
             PluginBase.MainForm.ProgressLabel.Visible = false;
-			if (!PluginMain.settingObject.DisablePanelsAutoshow)
+			if (PluginMain.settingObject.SwitchToLayout != null)
+			{
+				// save current state
+				String oldLayoutFile = Path.Combine(Path.Combine(PathHelper.DataDir, "FlashDebugger"), "oldlayout.fdl");
+				PluginBase.MainForm.DockPanel.SaveAsXml(oldLayoutFile);
+				PluginBase.MainForm.CallCommand("RestoreLayout", PluginMain.settingObject.SwitchToLayout);
+			}
+			else if (!PluginMain.settingObject.DisablePanelsAutoshow)
 			{
                 PanelsHelper.watchPanel.Show();
                 PanelsHelper.pluginPanel.Show();
@@ -333,7 +357,11 @@ namespace FlashDebugger
 			}
 			CurrentLocation = null;
 			UpdateMenuState(DebuggerState.Stopped);
-            if (!PluginMain.settingObject.DisablePanelsAutoshow)
+			if (PluginMain.settingObject.SwitchToLayout != null)
+			{
+				RestoreOldLayout();
+			}
+            else if (!PluginMain.settingObject.DisablePanelsAutoshow)
             {
                 PanelsHelper.watchPanel.Hide();
                 PanelsHelper.pluginPanel.Hide();
