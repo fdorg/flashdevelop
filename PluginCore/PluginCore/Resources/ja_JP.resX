@@ -4790,9 +4790,11 @@ UseData:"</value>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
     <value>スクロール止まれ</value>
+    <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
     <value>スクロール始め</value>
+    <comment>Added after 4.5.2</comment>
   </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">
     <value>ドキュメントクラスに設定(&amp;C)</value>
@@ -5130,6 +5132,10 @@ UseData:"</value>
   </data>
   <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
     <value>Shows the macro in the main toolbar.</value>
+    <comment>Added after 4.5.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
+    <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
     <comment>Added after 4.5.2</comment>
   </data>
 </root>

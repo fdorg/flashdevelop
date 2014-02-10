@@ -1,20 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel.Design;
 using System.IO;
+using System.Text;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Collections.Generic;
 using PluginCore.Helpers;
 
-namespace LayoutManager
+namespace LayoutManager.Controls
 {
 	public class LayoutSelectorEditor : ObjectSelectorEditor
 	{
-		protected override void FillTreeWithData(ObjectSelectorEditor.Selector selector, System.ComponentModel.ITypeDescriptorContext context, IServiceProvider provider)
+		/// <summary>
+		/// 
+		/// </summary>
+        protected override void FillTreeWithData(ObjectSelectorEditor.Selector selector, ITypeDescriptorContext context, IServiceProvider provider)
 		{
 			base.FillTreeWithData(selector, context, provider);
-
 			selector.Nodes.Add(new SelectorNode("<None>", null));
-
 			String[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
 			for (Int32 i = 0; i < layouts.Length; i++)
 			{
@@ -50,4 +52,6 @@ namespace LayoutManager
 
 
 	}
+
 }
+

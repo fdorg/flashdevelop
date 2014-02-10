@@ -7,7 +7,7 @@ using System.ComponentModel.Design;
 using System.Windows.Forms.Design;
 using System.Runtime.CompilerServices;
 using PluginCore.Localization;
-using LayoutManager;
+using LayoutManager.Controls;
 
 namespace FlashDebugger
 {
@@ -72,7 +72,7 @@ namespace FlashDebugger
             set { m_DisablePanelsAutoshow = value; }
         }
 
-		[DisplayName("Switch to layout on debugger start")]
+		[DisplayName("Switch To Layout On Debugger Start")]
 		[LocalizedCategory("FlashDebugger.Category.Misc")]
 		[LocalizedDescription("FlashDebugger.Description.SwitchToLayout")]
 		[DefaultValue(null)]
