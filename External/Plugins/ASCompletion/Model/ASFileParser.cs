@@ -827,6 +827,17 @@ namespace ASCompletion.Model
                             commentLength = 0;
                             matching = 0;
                         }
+                        else if (c1 == '#') // peek for #end
+                        {
+                            if (i + 3 < len && ba[i] == 'e' && ba[i + 1] == 'n' && ba[i + 2] == 'd' && ba[i + 3] <= 32)
+                            {
+                                matching = 0;
+                                inCode = true;
+                                commentLength = 0;
+                                i += 3;
+                                continue;
+                            }
+                        }
 
                         break;
 
