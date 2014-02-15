@@ -107,7 +107,7 @@ namespace ASCompletion.Completion
             {
                 if (resolve.Member == null) // import declaration
                 {
-                    if ((resolve.Type == null || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found))
+                    if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found))
                     {
                         return;
                     }
