@@ -648,6 +648,9 @@ namespace HaXeContext
                 }
             }
 
+            foreach(ClassModel aClass in cFile.Classes)
+                fullList.Add(aClass.ToMemberModel());
+
             // in cache
             fullList.Sort();
             completionCache.AllTypes = fullList;
