@@ -20,13 +20,13 @@ namespace FDBuild.Building.AS3
             base.Formatting = Formatting.Indented;
         }
 
-        public void WriteConfig(AS3Project project, double sdkVersion, string[] extraClasspaths, bool debugMode)
+        public void WriteConfig(AS3Project project, double sdkVersion, string[] extraClasspaths, bool debugMode, bool asc2Mode)
         {
             this.project = project;
             project.UpdateVars(true);
 
             flex4 = sdkVersion >= 4;
-            asc2 = sdkVersion < 3;
+            asc2 = asc2Mode;
 
             try { InternalWriteConfig(extraClasspaths, debugMode); }
             finally { Close(); }
@@ -132,8 +132,8 @@ namespace FDBuild.Building.AS3
             int majorVersion = project.MovieOptions.MajorVersion;
             int minorVersion = project.MovieOptions.MinorVersion;
             if (project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM 
-                || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM) 
-                AS3Project.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
+                || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM)
+                PluginCore.PlatformData.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
 
             string version;
             if (options.MinorVersion.Length > 0)

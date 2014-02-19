@@ -23,6 +23,7 @@ namespace ProjectManager.Building.AS3
         string mxmlcPath;
         string asc2Path;
         string fcshPath;
+        string ascshPath;
         bool asc2Mode;
         Dictionary<string, string> jvmConfig;
 
@@ -35,10 +36,12 @@ namespace ProjectManager.Building.AS3
 
             bool mxmlcExists = File.Exists(mxmlcPath);
             bool fcshExists = File.Exists(fcshPath);
+            bool ascshExists = File.Exists(ascshPath);
             bool asc2Exixts = File.Exists(asc2Path);
-            asc2Mode = asc2Exixts && !fcshExists;
+            if (!ascshExists) ascshPath = null;
+            asc2Mode = ascshExists || (asc2Exixts && !fcshExists);
  
-            bool hostedInFD = !asc2Mode && ipcName != null && ipcName != "";
+            bool hostedInFD = (fcshExists || ascshExists) && ipcName != null && ipcName != "";
 
             if (hostedInFD)
             {
@@ -48,7 +51,7 @@ namespace ProjectManager.Building.AS3
 
             if (project.OutputType == OutputType.Application || project.OutputType == OutputType.Library)
             {
-                if (fcsh != null && !fcshExists) throw new Exception("Could not locate lib\\fcsh.jar in Flex SDK.");
+                if (fcsh != null && !fcshExists && !ascshExists) throw new Exception("Could not locate lib\\fcsh.jar or lib\\ascsh.jar in Flex SDK.");
                 if (fcsh == null && !mxmlcExists && !asc2Mode) 
                     throw new Exception("Could not locate lib\\mxmlc.jar or lib\\mxmlc-cli.jar in Flex SDK.");
             }
@@ -65,6 +68,7 @@ namespace ProjectManager.Building.AS3
             sdkPath = flexsdkPath;
             mxmlcPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "mxmlc.jar");
             fcshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "fcsh.jar");
+            ascshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "ascsh.jar");
             asc2Path = Path.Combine(Path.Combine(flexsdkPath, "lib"), "mxmlc-cli.jar");
             jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(Path.Combine(flexsdkPath, "bin\\jvm.config"));
 
@@ -134,7 +138,6 @@ namespace ProjectManager.Building.AS3
 
                 //create new config file
                 double sdkVersion = ParseVersion(FDBuild.Program.BuildOptions.CompilerVersion ?? "4.0");
-                if (asc2Mode) sdkVersion -= 1.6;
 
                 // create compiler configuration file
                 string projectName = project.Name.Replace(" ", "");
@@ -148,7 +151,7 @@ namespace ProjectManager.Building.AS3
 
                 //write "new" config to tmp 
                 FlexConfigWriter config = new FlexConfigWriter(project.GetAbsolutePath(configFileTmp));
-                config.WriteConfig(project, sdkVersion, extraClasspaths, noTrace == false);
+                config.WriteConfig(project, sdkVersion, extraClasspaths, noTrace == false, asc2Mode);
 
                 //compare tmp to current
                 bool configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) || !FileComparer.IsEqual(configFileTmp, configFile);
@@ -161,7 +164,7 @@ namespace ProjectManager.Building.AS3
                 //remove temp
                 File.Delete(configFileTmp);
 
-                MxmlcArgumentBuilder mxmlc = new MxmlcArgumentBuilder(project, sdkVersion);
+                MxmlcArgumentBuilder mxmlc = new MxmlcArgumentBuilder(project, sdkVersion, asc2Mode);
 
                 mxmlc.AddConfig(configFile);
                 mxmlc.AddOptions(noTrace, fcsh != null);
@@ -217,7 +220,10 @@ namespace ProjectManager.Building.AS3
                 string output;
                 string[] errors;
                 string[] warnings;
-                string jvmarg = VMARGS + " -Dapplication.home=\"" + sdkPath + "\" -jar \"" + fcshPath + "\"";
+                string jar = ascshPath != null ? ascshPath : fcshPath;
+                string jvmarg = VMARGS + " -Dapplication.home=\"" + sdkPath 
+                    + "\" -Dflexlib=\"" + Path.Combine(sdkPath, "frameworks")
+                    + "\" -jar \"" + jar + "\"";
                 fcsh.Compile(workingdir, configChanged, arguments, out output, out errors, out warnings, jvmarg, JvmConfigHelper.GetJavaEXE(jvmConfig, sdkPath));
 
                 string[] lines = output.Split('\n');

@@ -13,11 +13,11 @@ namespace ProjectManager.Building.AS3
         bool flex45;
         bool asc2;
 
-        public MxmlcArgumentBuilder(AS3Project project, double sdkVersion)
+        public MxmlcArgumentBuilder(AS3Project project, double sdkVersion, bool asc2Mode)
         {
             this.project = project;
             flex45 = sdkVersion >= 4.5;
-            asc2 = sdkVersion < 3;
+            asc2 = asc2Mode;
         }
 
         public void AddConfig(string path)
@@ -76,7 +76,7 @@ namespace ProjectManager.Building.AS3
             if ((asc2 || flex45) && !hasVersion)
             {
                 string version = project.MovieOptions.Version;
-                if (isAIR) version = AS3Project.GuessFlashPlayerForAIR(version);
+                if (isAIR) version = PluginCore.PlatformData.GuessFlashPlayerForAIR(version);
                 string swfVersion = (project.MovieOptions as AS3MovieOptions).GetSWFVersion(version);
                 if (swfVersion != null) AddEq("-swf-version", swfVersion);
             }

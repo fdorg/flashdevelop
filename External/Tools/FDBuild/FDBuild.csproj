@@ -67,6 +67,9 @@
     <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\JvmConfigHelper.cs">
       <Link>Building\AS3\JvmConfigHelper.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\PluginCore\PluginCore\PlatformData.cs">
+      <Link>PlatformData.cs</Link>
+    </Compile>
     <Compile Include="..\..\Plugins\ProjectManager\Helpers\FlexCompilerShell.cs">
       <Link>FlexCompilerShell.cs</Link>
     </Compile>
