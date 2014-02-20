@@ -57,6 +57,7 @@ namespace ASCompletion.Helpers
                 fsWatcher.Changed += new FileSystemEventHandler(fsWatcher_Changed);
 
                 updater = new System.Timers.Timer();
+                updater.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
                 updater.Interval = 200;
                 updater.Elapsed += updater_Tick;
             }

@@ -779,7 +779,7 @@ namespace ProjectManager
             if (path == null)
             {
                 if (project == null) return;
-                path = project.OutputPath;
+                path = project.OutputPathAbsolute;
             }
             if (project == null) // use default player
             {
@@ -790,7 +790,6 @@ namespace ProjectManager
 
             int w = project.MovieOptions.Width;
             int h = project.MovieOptions.Height;
-            bool isOutput = path.ToLower() == project.OutputPathAbsolute.ToLower();
             if (path.StartsWith(project.Directory)) 
                 path = project.FixDebugReleasePath(path);
 
