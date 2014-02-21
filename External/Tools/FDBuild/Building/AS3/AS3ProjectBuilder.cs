@@ -38,7 +38,6 @@ namespace ProjectManager.Building.AS3
             bool fcshExists = File.Exists(fcshPath);
             bool ascshExists = File.Exists(ascshPath);
             bool asc2Exixts = File.Exists(asc2Path);
-            if (!ascshExists) ascshPath = null;
             asc2Mode = ascshExists || (asc2Exixts && !fcshExists);
  
             bool hostedInFD = (fcshExists || ascshExists) && ipcName != null && ipcName != "";
@@ -68,10 +67,29 @@ namespace ProjectManager.Building.AS3
             sdkPath = flexsdkPath;
             mxmlcPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "mxmlc.jar");
             fcshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "fcsh.jar");
-            ascshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "ascsh.jar");
             asc2Path = Path.Combine(Path.Combine(flexsdkPath, "lib"), "mxmlc-cli.jar");
-            jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(Path.Combine(flexsdkPath, "bin\\jvm.config"));
+            if (!File.Exists(asc2Path)) ascshPath = null;
+            else
+            {
+                ascshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "ascsh.jar");
+                if (!File.Exists(ascshPath))
+                {
+                    // try copying the missing JAR in the SDK
+                    string toolsDir = Path.GetDirectoryName(FDBuildDirectory);
+                    string lib = Path.Combine(toolsDir, "flexlibs/lib/ascsh.jar");
+                    try
+                    {
+                        File.Copy(lib, ascshPath);
+                        Console.WriteLine("Copied 'ascsch.jar' in the AIR SDK for incremental ASC2 compilation.");
+                    }
+                    catch 
+                    {
+                        ascshPath = null;
+                    }
+                }
+            }
 
+            jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(Path.Combine(flexsdkPath, "bin\\jvm.config"));
             if (jvmConfig.ContainsKey("java.args") && jvmConfig["java.args"].Trim().Length > 0)
                 VMARGS = jvmConfig["java.args"];
         }
