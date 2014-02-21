@@ -1492,13 +1492,10 @@ namespace ASCompletion.Completion
         {
             int wordPos = Sci.WordEndPosition(Sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(Sci, wordPos);
-
             ASResult funcResult = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
-            if (funcResult == null || funcResult.Type == null)
-            {
-                return;
-            }
-            if (funcResult != null && funcResult.Type != null && !funcResult.Type.Equals(inClass))
+
+            if (funcResult == null || funcResult.Type == null) return;
+            if (funcResult.Type != null && !funcResult.Type.Equals(inClass))
             {
                 AddLookupPosition();
                 lookupPosition = -1;
@@ -1506,7 +1503,7 @@ namespace ASCompletion.Completion
                 DockContent dc = ASContext.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
                 Sci = ASContext.CurSciControl;
 
-                FileModel fileModel = new FileModel();
+                FileModel fileModel = new FileModel(funcResult.Type.InFile.FileName);
                 fileModel.Context = ASContext.Context;
                 ASFileParser parser = new ASFileParser();
                 parser.ParseSrc(fileModel, Sci.Text);
@@ -1519,22 +1516,22 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                inClass = funcResult.Type;
 
+                inClass = funcResult.Type;
                 ASContext.Context.UpdateContext(inClass.LineFrom);
             }
 
-            MemberList members = inClass.Members;
-            foreach (MemberModel m in members)
+            foreach (MemberModel m in inClass.Members)
             {
                 if ((m.Flags & FlagType.Constructor) > 0)
                 {
                     funcResult.Member = m;
+                    break;
                 }
             }
 
-            if (funcResult.Member == null)
-                return;
+            if (funcResult.Member == null) return;
+            if (inClass.InFile.haXe) funcResult.Member.Name = "new";
 
             ChangeDecl(Sci, funcResult.Member, functionParameters);
         }
