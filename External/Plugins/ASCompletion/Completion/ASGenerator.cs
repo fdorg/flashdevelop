@@ -1503,7 +1503,7 @@ namespace ASCompletion.Completion
                 DockContent dc = ASContext.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
                 Sci = ASContext.CurSciControl;
 
-                FileModel fileModel = new FileModel();
+                FileModel fileModel = new FileModel(funcResult.Type.InFile.FileName);
                 fileModel.Context = ASContext.Context;
                 ASFileParser parser = new ASFileParser();
                 parser.ParseSrc(fileModel, Sci.Text);
@@ -1531,6 +1531,7 @@ namespace ASCompletion.Completion
             }
 
             if (funcResult.Member == null) return;
+            if (inClass.InFile.haXe) funcResult.Member.Name = "new";
 
             ChangeDecl(Sci, funcResult.Member, functionParameters);
         }
