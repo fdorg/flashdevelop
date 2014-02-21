@@ -2627,7 +2627,9 @@ namespace ASCompletion.Completion
             string paramsString = TemplateUtils.ParametersString(paramMember, true);
             Hashtable info = new Hashtable();
             info["className"] = className;
-            info["templatePath"] = Path.Combine(projTemplateDir, "Class.as.fdt");
+            if (project.Language.StartsWith("as")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.as.fdt");
+            else if (project.Language.StartsWith("haxe")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.hx.fdt");
+            else if (project.Language.StartsWith("loom")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.ls.fdt");
             info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);
             info["constructorArgs"] = paramsString.Length > 0 ? paramsString : null;
             info["constructorArgTypes"] = constructorArgTypes;
