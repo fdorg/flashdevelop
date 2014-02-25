@@ -2264,7 +2264,14 @@ namespace ASCompletion.Completion
                 Match mSub = re_sub.Match(token);
                 if (mSub.Success)
                 {
+                    bool haxeCast = false;
+                    if (ASContext.Context.CurrentModel.haXe && context.SubExpressions.Contains("cast"))
+                    {
+                        haxeCast = true;
+                        context.SubExpressions.Remove("cast");
+                    }
                     string subExpr = context.SubExpressions[Convert.ToInt16(mSub.Groups["index"].Value)];
+                    if (haxeCast) subExpr = subExpr.Replace(" ", "").Replace(",", " as ");
                     // parse sub expression
                     subExpr = subExpr.Substring(1, subExpr.Length - 2).Trim();
                     ASExpr subContext = new ASExpr(context);
@@ -2991,6 +2998,7 @@ namespace ASCompletion.Completion
 		/// <returns></returns>
         static private ASExpr GetExpression(ScintillaControl Sci, int position, bool ignoreWhiteSpace)
 		{
+            bool haXe = ASContext.Context.CurrentModel.haXe;
 			ASExpr expression = new ASExpr();
 			expression.Position = position;
 			expression.Separator = ' ';
@@ -3010,8 +3018,7 @@ namespace ASCompletion.Completion
                 //if (tokPos >= 0) minPos += tokPos + expression.ContextMember.Name.Length;
 
                 var hasBody = FlagType.Function | FlagType.Constructor;
-                if (!ASContext.Context.CurrentModel.haXe) 
-                    hasBody |= FlagType.Getter | FlagType.Setter;
+                if (!haXe) hasBody |= FlagType.Getter | FlagType.Setter;
 
                 if ((expression.ContextMember.Flags & hasBody) > 0)
                 {
@@ -3118,15 +3125,18 @@ namespace ASCompletion.Completion
                         braceCount--;
                         if (braceCount == 0)
                         {
+                            int testPos = position - 1;
+                            string testWord = GetWordLeft(Sci, ref testPos);
+
                             sbSub.Insert(0, c);
+                            if (haXe && testWord == "cast") expression.SubExpressions.Add("cast");
                             expression.SubExpressions.Add(sbSub.ToString());
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
 
-                            int testPos = position - 1;
-                            string testWord = GetWordLeft(Sci, ref testPos);
-                            if (testWord == "return" || testWord == "case" || testWord == "defaut")
+                            if (testWord == "return" || testWord == "case" || testWord == "defaut" || (haXe && testWord == "cast"))
                             {
-                                // ex: return (a as B).<complete>
+                                // AS3, AS2, Loom ex: return (a as B).<complete>
+                                // Haxe ex: return cast(a, B).<complete>
                                 expression.Separator = ';';
                                 expression.WordBefore = testWord;
                                 break;
