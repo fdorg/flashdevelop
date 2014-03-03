@@ -256,8 +256,7 @@ namespace FlashViewer
                 {
                     String action = evnt.Action;
                     String[] args = evnt.Data != null ? evnt.Data.ToString().Split(',') : null;
-                    if (String.IsNullOrEmpty(args[0])) return;
-
+                    if (args == null || String.IsNullOrEmpty(args[0])) return;
                     if (action == "FlashViewer.Default")
                     {
                         switch (this.settingObject.DisplayStyle)
