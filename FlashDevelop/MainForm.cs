@@ -3355,28 +3355,12 @@ namespace FlashDevelop
             {
                 while (line <= endLine)
                 {
-                    if (sci.LineLength(line) == 0) text = "";
-                    else text = sci.GetLine(line).TrimStart();
-                    if (!text.StartsWith(lineComment))
+                    position = (afterIndent) ? sci.LineIndentPosition(line) : sci.PositionFromLine(line);
+                    sci.InsertText(position, lineComment);
+                    if (line == curLine)
                     {
-                        position = (afterIndent) ? sci.LineIndentPosition(line) : sci.PositionFromLine(line);
-                        sci.InsertText(position, lineComment);
-                        if (line == curLine)
-                        {
-                            finalPos = sci.PositionFromLine(line) + startPosInLine;
-                            if (finalPos >= position) finalPos += lineComment.Length;
-                        }
-                    }
-                    else if (line == startLine && startLine == endLine)
-                    {
-                        position = sci.LineIndentPosition(line);
-                        sci.SetSel(position, position + lineComment.Length);
-                        sci.ReplaceSel("");
-                        if (line == curLine)
-                        {
-                            finalPos = sci.PositionFromLine(line) + Math.Min(startPosInLine, sci.LineLength(line));
-                            if (finalPos >= position + lineComment.Length) finalPos -= lineComment.Length;
-                        }
+                        finalPos = sci.PositionFromLine(line) + startPosInLine;
+                        if (finalPos >= position) finalPos += lineComment.Length;
                     }
                     line++;
                 }
@@ -3545,10 +3529,34 @@ namespace FlashDevelop
         public void ToggleLineComment(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 startLine = sci.LineFromPosition(sci.SelectionStart);
             String lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
-            if (sci.GetLine(startLine).Trim().StartsWith(lineComment)) this.UncommentLine(null, null);
-            else this.CommentLine(null, null);
+            Int32 position = sci.CurrentPos;
+            Int32 curLine = sci.LineFromPosition(position);
+            Int32 startPosInLine = position - sci.PositionFromLine(curLine);
+            Int32 startLine = sci.LineFromPosition(sci.SelectionStart);
+            Int32 line = startLine;
+            Int32 endLine = sci.LineFromPosition(sci.SelectionEnd);
+            if (endLine > line && curLine == endLine && startPosInLine == 0)
+            {
+                curLine--;
+                endLine--;
+            }
+            String text;
+            Boolean containsCodeLine = false;
+            while (line <= endLine)
+            {
+                if (sci.LineLength(line) == 0) text = "";
+                else text = sci.GetLine(line).TrimStart();
+                if (!text.StartsWith(lineComment))
+                {
+                    containsCodeLine = true;
+                    break;
+                }
+                line++;
+            }
+
+            if (containsCodeLine) this.CommentLine(null, null);
+            else this.UncommentLine(null, null);
         }
 
         /// <summary>
