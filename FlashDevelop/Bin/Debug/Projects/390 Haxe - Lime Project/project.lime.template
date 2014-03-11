@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="$(ProjectName)" package="$(PackageDot)$(ProjectID)" version="1.0.0" company="$(DefaultUser)" />
+	<app main="$(PackageDot)Main" file="$(ProjectID)" path="bin" />
+	
+	<source path="src" />
+	
+	<haxelib name="lime" />
+	
+	<assets path="assets" exclude="*.svg" />
+	<icon path="assets/lime.svg" />
+	
+</project>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+	<!ENTITY ns_extend "http://ns.adobe.com/Extensibility/1.0/">
+	<!ENTITY ns_ai "http://ns.adobe.com/AdobeIllustrator/10.0/">
+	<!ENTITY ns_graphs "http://ns.adobe.com/Graphs/1.0/">
+	<!ENTITY ns_vars "http://ns.adobe.com/Variables/1.0/">
+	<!ENTITY ns_imrep "http://ns.adobe.com/ImageReplacement/1.0/">
+	<!ENTITY ns_sfw "http://ns.adobe.com/SaveForWeb/1.0/">
+	<!ENTITY ns_custom "http://ns.adobe.com/GenericCustomNamespace/1.0/">
+	<!ENTITY ns_adobe_xpath "http://ns.adobe.com/XPath/1.0/">
+]>
+<svg version="1.1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1371.6px"
+	 height="1371.6px" viewBox="0 0 1371.6 1371.6" enable-background="new 0 0 1371.6 1371.6" xml:space="preserve">
+<metadata>
+	<sfw  xmlns="&ns_sfw;">
+		<slices></slices>
+		<sliceSourceBounds  width="1079.91" height="1367.408" bottomLeftOrigin="true" x="-234.016" y="-286.092"></sliceSourceBounds>
+	</sfw>
+</metadata>
+<g id="Shape_19_1_" enable-background="new    ">
+	<g id="Shape_19">
+		<g>
+			<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#8C9C42" points="1195.316,936.171 1190.961,422.366 711.929,152.4 
+				711.929,56.606 176.284,409.303 184.994,962.297 646.607,1227.909 646.607,1310.64 			"/>
+		</g>
+		<g>
+			<polygon fill="none" stroke="#71AD1B" stroke-width="60.4839" stroke-miterlimit="100" points="1195.316,936.171 
+				1190.961,422.366 711.929,152.4 711.929,56.606 176.284,409.303 184.994,962.297 646.607,1227.909 646.607,1310.64 			"/>
+		</g>
+	</g>
+</g>
+<g id="Shape_18_copy_1_" opacity="0.502" enable-background="new    ">
+	<g id="Shape_18_copy">
+		<g>
+			<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" points="703.219,683.623 698.155,695.438 698.865,182.88 
+				664.026,148.046 663.338,680.291 212.916,938 230.336,968.167 685.8,705.394 684.814,703.093 694.922,702.98 690.155,714.103 
+				1143.058,949.234 1164.832,923.109 			"/>
+		</g>
+	</g>
+</g>
+<g id="Shape_20_copy_1_" enable-background="new    ">
+	<g id="Shape_20_copy">
+		<g>
+			<path fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M1172.718,936.171h0.824l2.218-498.411l-7.035-4.166
+				l0.189-0.341l-470.05-273.635V91.44L250.903,386.114l-57.2,31.898l4.355,531.223l1.297-0.324l-1.348,2.316l466.018,271.956
+				v61.332l501.303-341.361l8.505-5.133L1172.718,936.171z M665.741,194.562l447.104,247.473L684.288,675.308L244.653,428.044
+				L665.741,194.562z M698.865,707.025l439.818-239.87l0.02,451.38l-439.838,265.454V707.025z M232.897,931.221V461.399
+				l431.129,242.479v478.15L232.897,931.221z"/>
+		</g>
+	</g>
+</g>
+</svg>

@@ -340,7 +340,14 @@ namespace ProjectManager.Projects.Haxe
         {
             if (string.IsNullOrEmpty(projectFile) || !File.Exists(projectFile))
                 return null;
-            return Path.GetExtension(projectFile).ToLower() == ".nmml" ? "nme" : "openfl";
+            switch(Path.GetExtension(projectFile).ToLower()){
+                case ".nmml":
+                    return "nme";
+                case ".lime":
+                    return "lime";
+                default:
+                    return "openfl";
+            }
         }
 
         private string GetClassName(string absTarget, string cp)
