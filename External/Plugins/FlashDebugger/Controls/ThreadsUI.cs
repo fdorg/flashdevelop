@@ -74,6 +74,10 @@ namespace FlashDebugger
         public void SetThreads(Dictionary<int, FlashDebugger.FlashInterface.IsolateInfo> isolates)
         {
             lv.Items.Clear();
+			if (PluginMain.debugManager.FlashInterface.Session == null)
+			{
+				return;
+			}
 			// add primary -- flash specific
 			String title = "Main thread";
 			int image = PluginMain.debugManager.FlashInterface.Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
