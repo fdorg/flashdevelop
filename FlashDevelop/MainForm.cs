@@ -3348,7 +3348,6 @@ namespace FlashDevelop
                 endLine--;
                 finalPos = sci.PositionFromLine(curLine);
             }
-            String text;
             Boolean afterIndent = this.appSettings.LineCommentsAfterIndent;
             sci.BeginUndoAction();
             try
