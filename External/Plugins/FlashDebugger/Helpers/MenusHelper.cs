@@ -181,12 +181,7 @@ namespace FlashDebugger
             {
                 PluginMain.debugManager.Continue_Click(sender, e);
             }
-            else 
-            {
-                var de = new DataEvent(EventType.Command, "ProjectManager.PlayOutput", null);
-                EventManager.DispatchEvent(this, de);
-                if (!de.Handled) PluginMain.debugManager.Start(/*false*/);
-            }
+            else PluginMain.debugManager.Start(/*false*/);
 		}
 
         /// <summary>
@@ -234,8 +229,8 @@ namespace FlashDebugger
             //
 			if (state == DebuggerState.Initializing || state == DebuggerState.Stopped)
 			{
-                /*if (PluginMain.settingObject.StartDebuggerOnTestMovie) StartContinueButton.Enabled = StartContinueMenu.Enabled = false;
-                else*/ StartContinueButton.Enabled = StartContinueMenu.Enabled = true;
+                if (PluginMain.settingObject.StartDebuggerOnTestMovie) StartContinueButton.Enabled = StartContinueMenu.Enabled = false;
+                else StartContinueButton.Enabled = StartContinueMenu.Enabled = true;
 			}
             else if (state == DebuggerState.BreakHalt || state == DebuggerState.ExceptionHalt || state == DebuggerState.PauseHalt)
             {
