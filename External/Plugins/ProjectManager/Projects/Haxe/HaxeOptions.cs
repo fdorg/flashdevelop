@@ -36,7 +36,7 @@ namespace ProjectManager.Projects.Haxe
         public bool FlashStrict { get { return flashStrict; } set { flashStrict = value; } }
 
         [LocalizedCategory("ProjectManager.Category.CompilerOptions")]
-        [DisplayName("Set no-inline on Debug")]
+        [DisplayName("Set No-Inline On Debug")]
         [LocalizedDescription("ProjectManager.Description.NoInlineOnDebug")]
         [DefaultValue(false)]
         public bool NoInlineOnDebug { get { return noInlineOnDebug; } set { noInlineOnDebug = value; } }

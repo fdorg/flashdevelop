@@ -28,6 +28,8 @@ namespace ProjectManager.Controls.TreeView
             RemoveReferences();
             base.Refresh(recursive);
             RefreshReferences(recursive);
+            FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
+            NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, FontStyle.Bold);
             Text = ProjectRef.Name + " (" + ProjectRef.Language.ToUpper() + ")";
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
