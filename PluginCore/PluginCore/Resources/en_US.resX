@@ -4737,11 +4737,11 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Immediate</value>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Start scrolling</value>
+    <value>Start Scrolling</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Stop scrolling</value>
+    <value>Stop Scrolling</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">

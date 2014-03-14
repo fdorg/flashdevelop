@@ -5066,11 +5066,11 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Start scrolling</value>
+    <value>Start Scrolling</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Stop scrolling</value>
+    <value>Stop Scrolling</value>
     <comment>Added after 4.5.2</comment>
   </data>
 </root>
