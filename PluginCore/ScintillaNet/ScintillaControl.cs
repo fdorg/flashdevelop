@@ -5507,15 +5507,16 @@ namespace ScintillaNet
                         i--;
                         ch = (char)this.CharAt(i);
                     }
-                    if (i == lineStart - 1)
-                    {
-                        ch = (char)this.CharAt(i + 1);
-                        while (i < lineEnd && ch == '\t')
-                        {
-                            i++;
-                            ch = (char)this.CharAt(i + 1);
-                        }
-                    }
+                    // TODO: Option to leave indent tabs?
+                    //if (i == lineStart - 1)
+                    //{
+                    //    ch = (char)this.CharAt(i + 1);
+                    //    while (i < lineEnd && ch == '\t')
+                    //    {
+                    //        i++;
+                    //        ch = (char)this.CharAt(i + 1);
+                    //    }
+                    //}
                     if (i < (lineEnd - 1))
                     {
                         this.TargetStart = i + 1;
