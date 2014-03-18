@@ -1,5 +1,4 @@
-$(BlankLine)
-@:setter($(Name))
-<<$(Modifiers) >>function set_$(Name)(value:$(Type)):$(Void) $(CSLB){
-	$(Member) = value$(EntryPoint);
+//@:setter($(Name))
+<<$(Modifiers) >>function set_$(Name)(value:$(Type)):$(Type) $(CSLB){
+	return set_$(Name)(value);$(EntryPoint)
 }

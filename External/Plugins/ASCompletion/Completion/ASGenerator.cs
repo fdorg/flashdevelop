@@ -37,6 +37,7 @@ namespace ASCompletion.Completion
         static private ASResult contextResolved;
         static private MemberModel contextMember;
         static private bool firstVar;
+        static private bool isHaxe;
 
         static public bool HandleGeneratorCompletion(ScintillaNet.ScintillaControl Sci, bool autoHide, string word)
         {
@@ -61,6 +62,7 @@ namespace ASCompletion.Completion
             int line = Sci.LineFromPosition(position);
             contextToken = Sci.GetWordFromPosition(position);
             contextMatch = null;
+            isHaxe = ASContext.Context.Settings.LanguageId == "HAXE";
 
             FoundDeclaration found = GetDeclarationAtLine(Sci, line);
             string text = Sci.GetLine(line);
@@ -910,67 +912,7 @@ namespace ASCompletion.Completion
                 case GeneratorJobType.Getter:
                 case GeneratorJobType.Setter:
                 case GeneratorJobType.GetterSetter:
-                    string name = GetPropertyNameFor(member);
-                    PropertiesGenerationLocations location = ASContext.CommonSettings.PropertiesGenerationLocation;
-
-                    latest = TemplateUtils.GetTemplateBlockMember(Sci,
-                        TemplateUtils.GetBoundary("AccessorsMethods"));
-                    if (latest != null)
-                    {
-                        location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
-                    }
-                    else
-                    {
-                        if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
-                        {
-                            latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
-                        }
-                        else latest = member;
-                    }
-                    if (latest == null) return;
-
-                    Sci.BeginUndoAction();
-                    try
-                    {
-                        if ((member.Access & Visibility.Public) > 0) // hide member
-                        {
-                            MakePrivate(Sci, member);
-                        }
-                        if (name == null) // rename var with starting underscore
-                        {
-                            name = member.Name;
-                            string newName = GetNewPropertyNameFor(member);
-                            if (RenameMember(Sci, member, newName)) member.Name = newName;
-                        }
-
-                        int atLine = latest.LineTo + 1;
-                        if (location == PropertiesGenerationLocations.BeforeVariableDeclaration)
-                            atLine = latest.LineTo;
-                        position = Sci.PositionFromLine(atLine) - ((Sci.EOLMode == 0) ? 2 : 1);
-
-                        if (job == GeneratorJobType.GetterSetter)
-                        {
-                            Sci.SetSel(position, position);
-                            GenerateGetterSetter(name, member, position);
-                        }
-                        else
-                        {
-                            if (job != GeneratorJobType.Getter)
-                            {
-                                Sci.SetSel(position, position);
-                                GenerateSetter(name, member, position);
-                            }
-                            if (job != GeneratorJobType.Setter)
-                            {
-                                Sci.SetSel(position, position);
-                                GenerateGetter(name, member, position);
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        Sci.EndUndoAction();
-                    }
+                    GenerateProperty(job, member, inClass, Sci);
                     break;
 
                 case GeneratorJobType.BasicEvent:
@@ -1238,6 +1180,83 @@ namespace ASCompletion.Completion
                         Sci.EndUndoAction();
                     }
                     break;
+            }
+        }
+
+        private static void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaNet.ScintillaControl Sci)
+        {
+            MemberModel latest;
+            string name = GetPropertyNameFor(member);
+            PropertiesGenerationLocations location = ASContext.CommonSettings.PropertiesGenerationLocation;
+
+            latest = TemplateUtils.GetTemplateBlockMember(Sci, TemplateUtils.GetBoundary("AccessorsMethods"));
+            if (latest != null)
+            {
+                location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
+            }
+            else
+            {
+                if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
+                {
+                    latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
+                }
+                else latest = member;
+            }
+            if (latest == null) return;
+
+            Sci.BeginUndoAction();
+            try
+            {
+                if (isHaxe)
+                {
+                    if (name == null) name = member.Name;
+                    string args = "(default, default)";
+                    if (job == GeneratorJobType.GetterSetter) args = "(get, set)";
+                    else if (job == GeneratorJobType.Getter) args = "(get, null)";
+                    else if (job == GeneratorJobType.Setter) args = "(default, set)";
+                    MakeHaxeProperty(Sci, member, args);
+                }
+                else
+                {
+                    if ((member.Access & Visibility.Public) > 0) // hide member
+                    {
+                        MakePrivate(Sci, member);
+                    }
+                    if (name == null) // rename var with starting underscore
+                    {
+                        name = member.Name;
+                        string newName = GetNewPropertyNameFor(member);
+                        if (RenameMember(Sci, member, newName)) member.Name = newName;
+                    }
+                }
+
+                int atLine = latest.LineTo + 1;
+                if (location == PropertiesGenerationLocations.BeforeVariableDeclaration)
+                    atLine = latest.LineTo;
+                int position = Sci.PositionFromLine(atLine) - ((Sci.EOLMode == 0) ? 2 : 1);
+
+                if (job == GeneratorJobType.GetterSetter)
+                {
+                    Sci.SetSel(position, position);
+                    GenerateGetterSetter(name, member, position);
+                }
+                else
+                {
+                    if (job != GeneratorJobType.Getter)
+                    {
+                        Sci.SetSel(position, position);
+                        GenerateSetter(name, member, position);
+                    }
+                    if (job != GeneratorJobType.Setter)
+                    {
+                        Sci.SetSel(position, position);
+                        GenerateGetter(name, member, position);
+                    }
+                }
+            }
+            finally
+            {
+                Sci.EndUndoAction();
             }
         }
 
@@ -1531,7 +1550,7 @@ namespace ASCompletion.Completion
             }
 
             if (funcResult.Member == null) return;
-            if (inClass.InFile.haXe) funcResult.Member.Name = "new";
+            if (isHaxe) funcResult.Member.Name = "new";
 
             ChangeDecl(Sci, funcResult.Member, functionParameters);
         }
@@ -3328,6 +3347,40 @@ namespace ASCompletion.Completion
             return false;
         }
 
+        public static bool MakeHaxeProperty(ScintillaNet.ScintillaControl Sci, MemberModel member, string args)
+        {
+            ContextFeatures features = ASContext.Context.Features;
+            string kind = features.varKey;
+
+            if ((member.Flags & FlagType.Getter) > 0)
+                kind = features.getKey;
+            else if ((member.Flags & FlagType.Setter) > 0)
+                kind = features.setKey;
+            else if (member.Flags == FlagType.Function)
+                kind = features.functionKey;
+
+            Regex reMember = new Regex(String.Format(@"{0}\s+({1})[\s:]", kind, member.Name));
+
+            string line;
+            Match m;
+            int index, position;
+            for (int i = member.LineFrom; i <= member.LineTo; i++)
+            {
+                line = Sci.GetLine(i);
+                m = reMember.Match(line);
+                if (m.Success)
+                {
+                    index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
+                    position = Sci.PositionFromLine(i) + index;
+                    Sci.SetSel(position, position + member.Name.Length);
+                    Sci.ReplaceSel(member.Name + args);
+                    UpdateLookupPosition(position, 1);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool RenameMember(ScintillaNet.ScintillaControl Sci, MemberModel member, string newName)
         {
             ContextFeatures features = ASContext.Context.Features;
@@ -3816,13 +3869,16 @@ namespace ASCompletion.Completion
             else if ((member.Access & Visibility.Public) > 0) acc = features.publicKey;
             else if ((member.Access & Visibility.Internal) > 0) acc = features.internalKey;
             else if ((member.Access & Visibility.Protected) > 0) acc = features.protectedKey;
-            else if ((member.Access & Visibility.Private) > 0) acc = features.privateKey;
+            else if ((member.Access & Visibility.Private) > 0 && features.methodModifierDefault != Visibility.Private) 
+                acc = features.privateKey;
 
             bool isStatic = (flags & FlagType.Static) > 0;
             if (isStatic) acc = features.staticKey + " " + acc;
 
             if (!isAS2Event && !isObjectMethod)
                 acc = features.overrideKey + " " + acc;
+
+            acc = Regex.Replace(acc, "[ ]+", " ").Trim();
 
             if ((flags & (FlagType.Getter | FlagType.Setter)) > 0)
             {
@@ -3831,19 +3887,15 @@ namespace ASCompletion.Completion
                 if (member.Parameters != null && member.Parameters.Count == 1)
                     type = member.Parameters[0].Type;
                 type = FormatType(type);
-                if (type == null) type = features.objectKey;
-                /*{
-                    string message = String.Format(TextHelper.GetString("Info.TypeDeclMissing"), member.Name);
-                    ErrorManager.ShowInfo(message);
-                    return;
-                }*/
+                if (type == null && !features.hasInference) type = features.objectKey;
 
                 bool genGetter = ofClass.Members.Search(name, FlagType.Getter, 0) != null;
                 bool genSetter = ofClass.Members.Search(name, FlagType.Setter, 0) != null;
-                
-                if (ASContext.Context.Settings.LanguageId == "HAXE")
+
+                if (isHaxe)
                 {
-                    acc = features.privateKey;
+                    // property is public but not the methods
+                    acc = features.overrideKey;
                 }
 
                 if (genGetter)
@@ -4291,7 +4343,7 @@ namespace ASCompletion.Completion
                     break;
                 }
 
-                if (packageLine >= 0 && !cFile.haXe && txt.IndexOf('{') >= 0)
+                if (packageLine >= 0 && !isHaxe && txt.IndexOf('{') >= 0)
                 {
                     packageLine = -1;
                     indent = sci.GetLineIndentation(line - 1) + PluginBase.MainForm.Settings.IndentSize;

@@ -1,5 +1,4 @@
-$(BlankLine)
-@:getter($(Name))
+//@:getter($(Name))
 <<$(Modifiers) >>function get_$(Name)():$(Type) $(CSLB){
-	return $(Member)$(EntryPoint);
+	return super.get_$(Name)();$(EntryPoint)
 }

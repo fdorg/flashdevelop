@@ -5,5 +5,3 @@ $(BlankLine)function get_$(Name)():$(Type) $(CSLB){
 function set_$(Name)(value:$(Type)):$(Type) $(CSLB){
 	return $(Member) = value;
 }
-
-$(Modifiers) var $(Name)(get_$(Name), set_$(Name)):$(Type);
