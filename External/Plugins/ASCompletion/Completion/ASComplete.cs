@@ -2504,7 +2504,6 @@ namespace ASCompletion.Completion
                         if (var.Type == null && (var.Flags & FlagType.LocalVar) > 0
                             && context.Features.hasInference /*&& !context.Features.externalCompletion*/)
                             InferVariableType(local, var);
-                        result.Type = ResolveType(var.Type, inFile);
 
                         if ((var.Flags & FlagType.Function) > 0)
                             result.Type = ResolveType("Function", null);
@@ -2680,20 +2679,18 @@ namespace ASCompletion.Completion
         {
             IASContext context = ASContext.Context;
 
-            TraceManager.Add("resolve " + qname);
-
             if (inFile == null || inFile == context.CurrentModel)
                 foreach (MemberModel aDecl in context.GetVisibleExternalElements())
                 {
                     if (aDecl.Name == qname || aDecl.Type == qname)
                     {
-                        ClassModel friendClass;
                         if (aDecl.InFile != null)
-                            friendClass = context.GetModel(aDecl.InFile.Package, qname, inFile != null ? inFile.Package : null);
-                        else
-                            friendClass = context.ResolveType(aDecl.Type, inFile);
-
-                        return friendClass;
+                        {
+                            foreach (ClassModel aClass in aDecl.InFile.Classes)
+                                if (aClass.Name == aDecl.Name) return aClass;
+                            return context.GetModel(aDecl.InFile.Package, qname, inFile != null ? inFile.Package : null);
+                        }
+                        else return context.ResolveType(aDecl.Type, inFile);
                     }
                 }
 
