@@ -678,7 +678,7 @@ namespace ASCompletion.Context
                 completionCache.IsDirty = false;
                 UpdateCurrentFile(true);
                 completionCache.IsDirty = true;
-                GetVisibleExternalElements(true);
+                GetVisibleExternalElements();
             }
         }
 
@@ -1216,10 +1216,20 @@ namespace ASCompletion.Context
         }
 
         /// <summary>
-        /// Return the elements (package, types, etc) visible from the current file
+        /// Return the top-level elements (this, super) for the current file
         /// </summary>
         /// <returns></returns>
-        public virtual MemberList GetVisibleExternalElements(bool typesOnly)
+        public virtual MemberList GetTopLevelElements()
+        {
+            // to be implemented
+            return new MemberList();
+        }
+
+        /// <summary>
+        /// Return the visible elements (types, package-level declarations) visible from the current file
+        /// </summary>
+        /// <returns></returns>
+        public virtual MemberList GetVisibleExternalElements()
         {
             // to be implemented
             completionCache = new CompletionCache(this, null);

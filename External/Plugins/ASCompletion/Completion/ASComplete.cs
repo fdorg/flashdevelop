@@ -1897,7 +1897,8 @@ namespace ASCompletion.Completion
             if (argumentType == null && (result.IsNull() || (dotIndex < 0)))
             {
                 mix.Merge(cFile.GetSortedMembersList());
-                mix.Merge(ctx.GetVisibleExternalElements(false));
+                mix.Merge(ctx.GetTopLevelElements());
+                mix.Merge(ctx.GetVisibleExternalElements());
                 MemberList decl = new MemberList();
                 foreach (string key in features.codeKeywords)
                     decl.Add(new MemberModel(key, key, FlagType.Template, 0));
@@ -2035,7 +2036,7 @@ namespace ASCompletion.Completion
 
 			// Consolidate known classes
 			MemberList known = new MemberList();
-            known.Merge(ASContext.Context.GetVisibleExternalElements(true));
+            known.Merge(ASContext.Context.GetVisibleExternalElements());
             // show
             List<ICompletionListItem> list = new List<ICompletionListItem>();
 			foreach(MemberModel member in known)
@@ -2059,7 +2060,7 @@ namespace ASCompletion.Completion
             {
                 // list visible classes
                 MemberList known = new MemberList();
-                known.Merge(ASContext.Context.GetVisibleExternalElements(true));
+                known.Merge(ASContext.Context.GetVisibleExternalElements());
 
                 // show
                 List<ICompletionListItem> list = new List<ICompletionListItem>();
@@ -2092,7 +2093,7 @@ namespace ASCompletion.Completion
                 // list visible classes
                 MemberList known = new MemberList();
                 ClassModel cClass = ASContext.Context.CurrentClass;
-                known.Merge(ASContext.Context.GetVisibleExternalElements(true));
+                known.Merge(ASContext.Context.GetVisibleExternalElements());
 
                 // show
                 List<ICompletionListItem> list = new List<ICompletionListItem>();
@@ -2478,7 +2479,7 @@ namespace ASCompletion.Completion
             if (!result.IsNull())
             {
                 if (result.Member != null && (result.Member.Flags & FlagType.Function) > 0 && p < 0)
-                    result.Type = context.ResolveType("Function", null);
+                    result.Type = ResolveType("Function", null);
                 return result;
             }
 
@@ -2503,12 +2504,12 @@ namespace ASCompletion.Completion
                         if (var.Type == null && (var.Flags & FlagType.LocalVar) > 0
                             && context.Features.hasInference /*&& !context.Features.externalCompletion*/)
                             InferVariableType(local, var);
-                        result.Type = context.ResolveType(var.Type, inFile);
+                        result.Type = ResolveType(var.Type, inFile);
 
                         if ((var.Flags & FlagType.Function) > 0)
-                            result.Type = ASContext.Context.ResolveType("Function", null);
+                            result.Type = ResolveType("Function", null);
                         else
-                            result.Type = context.ResolveType(var.Type, inFile);
+                            result.Type = ResolveType(var.Type, inFile);
 
                         return result;
                     }
@@ -2522,7 +2523,7 @@ namespace ASCompletion.Completion
                 if (para.Name == token || (para.Name[0] == '?' && para.Name.Substring(1) == token))
                 {
                     result.Member = para;
-                    result.Type = context.ResolveType(para.Type, inFile);
+                    result.Type = ResolveType(para.Type, inFile);
                     return result;
                 }
 			}
@@ -2554,8 +2555,54 @@ namespace ASCompletion.Completion
                     }
                 }
 
+            // visible types & declarations
+            var visible = context.GetVisibleExternalElements();
+            foreach (MemberModel aDecl in visible)
+            {
+                if (aDecl.Name == token)
+                {
+                    if ((aDecl.Flags & FlagType.Package) > 0)
+                    {
+                        FileModel package = context.ResolvePackage(token, false);
+                        if (package != null)
+                        {
+                            result.InFile = package;
+                            result.IsPackage = true;
+                            result.IsStatic = true;
+                            return result;
+                        }
+                    }
+                    else if ((aDecl.Flags & FlagType.Class) > 0)
+                    {
+                        ClassModel friendClass;
+                        if (aDecl.InFile != null)
+                            friendClass = context.GetModel(aDecl.InFile.Package, token, inFile.Package);
+                        else
+                            friendClass = context.ResolveType(aDecl.Type, inFile);
+
+                        if (!friendClass.IsVoid())
+                        {
+                            result.Type = friendClass;
+                            result.IsStatic = (p < 0);
+                            return result;
+                        }
+                    }
+                    else if ((aDecl.Flags & FlagType.Function) > 0)
+                    {
+                        result.Member = aDecl;
+                        result.RelClass = ClassModel.VoidClass;
+                        result.InClass = ClassModel.VoidClass;
+                        result.Type = (p < 0)
+                            ? context.ResolveType("Function", null)
+                            : context.ResolveType(aDecl.Type, aDecl.InFile);
+                        result.InFile = aDecl.InFile;
+                        return result;
+                    }
+                }
+            }
+
 			// types & imports
-            MemberList imports = context.ResolveImports(inFile);
+            /*MemberList imports = context.ResolveImports(inFile);
             foreach (MemberModel item in imports)
                 if (item.Name == token)
                 {
@@ -2581,11 +2628,9 @@ namespace ASCompletion.Completion
                         result.InFile = item.InFile;
                         return result;
                     }
-                }
-            imports = null;
+                }*/
 
-            // package-level types & declarations
-            if (context.Features.hasPackages)
+            /*if (context.Features.hasPackages)
             {
                 if (inFile.Package.Length > 0)
                 {
@@ -2595,10 +2640,10 @@ namespace ASCompletion.Completion
 
                 FindInPackage(token, inFile, null, result);
                 if (!result.IsNull()) return result;
-            }
+            }*/
 
             // toplevel types
-            ClassModel topClass = context.ResolveType(token, null);
+            /*ClassModel topClass = context.ResolveType(token, null);
             if (!topClass.IsVoid())
             {
                 result.Type = topClass;
@@ -2617,18 +2662,43 @@ namespace ASCompletion.Completion
                     return result;
                 }
                 else result.IsStatic = true;
-            }
+            }*/
 
             // packages folders
-            FileModel package = context.ResolvePackage(token, false);
+            /*FileModel package = context.ResolvePackage(token, false);
 			if (package != null)
 			{
                 result.InFile = package;
                 result.IsPackage = true;
                 result.IsStatic = true;
-			}
+			}*/
+
 			return result;
 		}
+
+        private static ClassModel ResolveType(string qname, FileModel inFile)
+        {
+            IASContext context = ASContext.Context;
+
+            TraceManager.Add("resolve " + qname);
+
+            if (inFile == null || inFile == context.CurrentModel)
+                foreach (MemberModel aDecl in context.GetVisibleExternalElements())
+                {
+                    if (aDecl.Name == qname || aDecl.Type == qname)
+                    {
+                        ClassModel friendClass;
+                        if (aDecl.InFile != null)
+                            friendClass = context.GetModel(aDecl.InFile.Package, qname, inFile != null ? inFile.Package : null);
+                        else
+                            friendClass = context.ResolveType(aDecl.Type, inFile);
+
+                        return friendClass;
+                    }
+                }
+
+            return context.ResolveType(qname, inFile);
+        }
 
         /// <summary>
         /// Infer very simple cases: var foo = {expression}
@@ -2742,7 +2812,7 @@ namespace ASCompletion.Completion
                         else
                         {
                             result.IsPackage = false;
-                            result.Type = ASContext.Context.ResolveType(fullName, ASContext.Context.CurrentModel);
+                            result.Type = ResolveType(fullName, ASContext.Context.CurrentModel);
                             result.InFile = result.Type.InFile;
                         }
                         return;
@@ -2753,7 +2823,7 @@ namespace ASCompletion.Completion
                         if (mPack.Name.Substring(0, p) == token)
                         {
                             result.IsPackage = false;
-                            result.Type = ASContext.Context.ResolveType(fullName + mPack.Name.Substring(p), ASContext.Context.CurrentModel);
+                            result.Type = ResolveType(fullName + mPack.Name.Substring(p), ASContext.Context.CurrentModel);
                             result.InFile = result.Type.InFile;
                             return;
                         }
@@ -2766,7 +2836,7 @@ namespace ASCompletion.Completion
                         result.InClass = ClassModel.VoidClass;
                         result.InFile = member.InFile ?? inFile;
                         result.Member = member;
-                        result.Type = ASContext.Context.ResolveType(member.Type, inFile);
+                        result.Type = ResolveType(member.Type, inFile);
                         result.IsStatic = false;
                         result.IsPackage = false;
                         return;
@@ -2798,7 +2868,7 @@ namespace ASCompletion.Completion
                 result.InClass = ClassModel.VoidClass;
                 result.InFile = inFile;
                 result.Member = found;
-                result.Type = ASContext.Context.ResolveType(found.Type, inFile);
+                result.Type = ResolveType(found.Type, inFile);
                 result.IsStatic = false;
                 return;
             }
@@ -2817,8 +2887,10 @@ namespace ASCompletion.Completion
             if (token.Length == 0)
                 return;
 
+            IASContext context = ASContext.Context;
 			MemberModel found = null;
 			ClassModel tmpClass = inClass;
+
             if (inClass == null)
             {
                 if (result.InFile != null) FindMember(token, result.InFile, result, mask, acc);
@@ -2833,11 +2905,11 @@ namespace ASCompletion.Completion
                 {
                     result.Member = null;
                     result.InFile = null;
-                    result.Type = ASContext.Context.ResolveType(ASContext.Context.Features.objectKey, null);
+                    result.Type = ResolveType(context.Features.objectKey, null);
                 }
                 else
                 {
-                    result.Type = ASContext.Context.ResolveType(result.Type.IndexType, result.InFile);
+                    result.Type = ResolveType(result.Type.IndexType, result.InFile);
                 }
                 return;
             }
@@ -2849,8 +2921,7 @@ namespace ASCompletion.Completion
                 {
                     if ((result.Member.Flags & FlagType.Constructor) > 0)
                         result.Type = inClass;
-                    else
-                        result.Type = ASContext.Context.ResolveType(result.Member.Type, result.InFile);
+                    else result.Type = ResolveType(result.Member.Type, result.InFile);
                 }
                 return;
             }
@@ -2879,7 +2950,7 @@ namespace ASCompletion.Completion
                         // variable / getter
                         if ((found.Flags & FlagType.Function) == 0)
                         {
-                            result.Type = ASContext.Context.ResolveType(found.Type, tmpClass.InFile);
+                            result.Type = ResolveType(found.Type, tmpClass.InFile);
                             result.IsStatic = false;
                         }
                         // constructor
@@ -2899,12 +2970,12 @@ namespace ASCompletion.Completion
                         // in enum
                         else if ((found.Flags & FlagType.Enum) > 0)
                         {
-                            result.Type = ASContext.Context.ResolveType(found.Type, tmpClass.InFile);
+                            result.Type = ResolveType(found.Type, tmpClass.InFile);
                         }
                         // method
                         else
                         {
-                            result.Type = ASContext.Context.ResolveType("Function", null);
+                            result.Type = ResolveType("Function", null);
                             result.IsStatic = false;
                         }
                         break;

@@ -40,6 +40,7 @@ namespace HaXeContext
         private bool hasMobileSupport;
         private bool resolvingDot;
         private bool resolvingFunction;
+        HaxeCompletionCache hxCompletionCache;
 
         public Context(HaXeSettings initSettings)
         {
@@ -1215,22 +1216,38 @@ namespace HaXeContext
             }
         }
 
-
-        public override MemberList GetVisibleExternalElements(bool typesOnly)
+        /// <summary>
+        /// Return the top-level elements (this, super) for the current file
+        /// </summary>
+        /// <returns></returns>
+        public override MemberList GetTopLevelElements()
         {
-            MemberList visibleElements = new MemberList();
-            if (!IsFileValid) return visibleElements;
+            GetVisibleExternalElements(); // update cache if needed
 
-            // top-level elements
-            if (!typesOnly && topLevel != null)
+            if (topLevel != null)
             {
+                MemberList items = new MemberList();
                 if (topLevel.OutOfDate) InitTopLevelElements();
-                visibleElements.Add(topLevel.Members);
+                items.Merge(topLevel.Members);
+                items.Merge(hxCompletionCache.OtherElements);
+                return items;
             }
+            else return hxCompletionCache.OtherElements;
+        }
 
-            if (completionCache.IsDirty || !typesOnly)
+        /// <summary>
+        /// Return the visible elements (types, package-level declarations) visible from the current file
+        /// </summary>
+        /// <returns></returns>
+        public override MemberList GetVisibleExternalElements()
+        {
+            if (!IsFileValid) return new MemberList();
+
+            if (completionCache.IsDirty)
             {
                 MemberList elements = new MemberList();
+                MemberList other = new MemberList();
+
                 // root types & packages
                 FileModel baseElements = ResolvePackage(null, false);
                 if (baseElements != null)
@@ -1244,28 +1261,38 @@ namespace HaXeContext
 
                 bool qualify = Settings.CompletionShowQualifiedTypes && settings.GenerateImports;
 
-                // other classes in same package
+                // other classes in same package (or parent packages!)
                 if (features.hasPackages && cFile.Package != "")
                 {
-                    int pLen = cFile.Package.Length;
-                    FileModel packageElements = ResolvePackage(cFile.Package, false);
-                    if (packageElements != null)
+                    string package = cFile.Package;
+                    do
                     {
-                        foreach (MemberModel member in packageElements.Imports)
+                        int pLen = package.Length;
+                        FileModel packageElements = ResolvePackage(package, false);
+                        if (packageElements != null)
                         {
-                            if (member.Flags != FlagType.Package && member.Type.LastIndexOf('.') == pLen)
+                            foreach (MemberModel member in packageElements.Imports)
                             {
-                                if (qualify) member.Name = member.Type;
+                                if (member.Flags != FlagType.Package && member.Type.LastIndexOf('.') == pLen)
+                                {
+                                    //if (qualify) member.Name = member.Type;
+                                    elements.Add(member);
+                                }
+                            }
+                            foreach (MemberModel member in packageElements.Members)
+                            {
+                                string pkg = member.InFile.Package;
+                                //if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
+                                member.Type = pkg != "" ? pkg + "." + member.Name : member.Name;
                                 elements.Add(member);
                             }
                         }
-                        foreach (MemberModel member in packageElements.Members)
-                        {
-                            string pkg = member.InFile.Package;
-                            if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
-                            elements.Add(member);
-                        }
+
+                        int p = package.LastIndexOf("."); // parent package
+                        if (p < 0) break;
+                        package = package.Substring(0, p);
                     }
+                    while (true);
                 }
                 // other types in same file
                 if (cFile.Classes.Count > 1)
@@ -1275,45 +1302,42 @@ namespace HaXeContext
                     {
                         if (mainClass == aClass) continue;
                         elements.Add(aClass.ToMemberModel());
-                        if (!typesOnly && aClass.IsEnum())
-                            elements.Add(aClass.Members);
+                        if (aClass.IsEnum())
+                            other.Add(aClass.Members);
                     }
                 }
 
                 // imports
                 MemberList imports = ResolveImports(CurrentModel);
                 elements.Add(imports);
-                if (!typesOnly)
-                    foreach (MemberModel import in imports)
-                    {
-                        if (import is ClassModel)
-                        {
-                            ClassModel aClass = import as ClassModel;
-                            if (aClass.IsEnum()) elements.Add(aClass.Members);
-                        }
-                    }
-                elements.Sort();
 
-                // in cache
-                if (typesOnly)
+                foreach (MemberModel import in imports)
                 {
-                    completionCache = new CompletionCache(this, elements);
-                    // known classes colorization
-                    if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl != null)
+                    if (import is ClassModel)
                     {
-                        try
-                        {
-                            CurSciControl.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
-                            CurSciControl.Colourise(0, -1); // re-colorize the editor
-                        }
-                        catch (AccessViolationException) { } // catch memory errors
+                        ClassModel aClass = import as ClassModel;
+                        if (aClass.IsEnum()) other.Add(aClass.Members);
                     }
                 }
-                visibleElements.Merge(elements);
+
+                // in cache
+                elements.Sort();
+                other.Sort();
+                completionCache = hxCompletionCache = new HaxeCompletionCache(this, elements, other);
+
+                // known classes colorization
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl != null)
+                {
+                    try
+                    {
+                        CurSciControl.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
+                        CurSciControl.Colourise(0, -1); // re-colorize the editor
+                    }
+                    catch (AccessViolationException) { } // catch memory errors
+                }
             }
-            else
-                visibleElements.Merge(completionCache.Elements);
-            return visibleElements;
+
+            return completionCache.Elements;
         }
 
         /// <summary>
@@ -1619,5 +1643,16 @@ namespace HaXeContext
         }
         #endregion
 
+    }
+
+    class HaxeCompletionCache: CompletionCache
+    {
+        public MemberList OtherElements;
+
+        public HaxeCompletionCache(ASContext context, MemberList elements, MemberList otherElements)
+            : base(context, elements)
+        {
+            OtherElements = otherElements;
+        }
     }
 }

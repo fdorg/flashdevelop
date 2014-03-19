@@ -1098,21 +1098,26 @@ namespace AS2Context
         }
 
         /// <summary>
-        /// Return the elements (package, types, etc) visible from the current file
+        /// Return the top-level elements (this, super) for the current file
         /// </summary>
-        /// <param name="typesOnly">Return only packages & types</param>
         /// <returns></returns>
-        public override MemberList GetVisibleExternalElements(bool typesOnly)
-		{
-            MemberList visibleElements = new MemberList();
-            if (!IsFileValid) return visibleElements;
-
-            // top-level elements
-            if (!typesOnly && topLevel != null)
+        public override MemberList GetTopLevelElements()
+        {
+            if (topLevel != null)
             {
                 if (topLevel.OutOfDate) InitTopLevelElements();
-                visibleElements.Add(topLevel.Members);
+                return topLevel.Members;
             }
+            else return new MemberList();
+        }
+
+        /// <summary>
+        /// Return the visible elements (types, package-level declarations) visible from the current file
+        /// </summary>
+        /// <returns></returns>
+        public override MemberList GetVisibleExternalElements()
+		{
+            if (!IsFileValid) return new MemberList();
 
             if (completionCache.IsDirty)
             {
@@ -1126,7 +1131,7 @@ namespace AS2Context
                 }
                 elements.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
 
-                bool qualify = Settings.CompletionShowQualifiedTypes && settings.GenerateImports;
+                //bool qualify = Settings.CompletionShowQualifiedTypes && settings.GenerateImports;
                 
                 // other classes in same package
                 if (features.hasPackages && cFile.Package != "")
@@ -1138,14 +1143,15 @@ namespace AS2Context
                         {
                             if (member.Flags != FlagType.Package)
                             {
-                                if (qualify) member.Name = member.Type;
+                                //if (qualify) member.Name = member.Type;
                                 elements.Add(member);
                             }
                         }
                         foreach (MemberModel member in packageElements.Members)
                         {
                             string pkg = member.InFile.Package;
-                            if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
+                            //if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
+                            member.Type = pkg != "" ? pkg + "." + member.Name : member.Name;
                             elements.Add(member);
                         }
                     }
@@ -1193,8 +1199,7 @@ namespace AS2Context
                     catch (AccessViolationException){} // catch memory errors
                 }
             }
-            visibleElements.Merge(completionCache.Elements);
-            return visibleElements;
+            return completionCache.Elements;
         }
 
         /// <summary>
