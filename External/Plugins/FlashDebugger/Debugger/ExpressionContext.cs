@@ -87,6 +87,13 @@ namespace FlashDebugger
                 {
                     if (v.getName().Equals(par0)) return (java.lang.Object)v;
                 }
+                foreach (Variable scope in frame.getScopeChain(session))
+                {
+                    foreach (Variable v in scope.getValue().getMembers(session))
+                    {
+                        if (v.getName().Equals(par0)) return (java.lang.Object)v;
+                    }
+                }
                 var fullClassName = findClassName((java.lang.String)par0);
                 if (null != fullClassName)
                 {
