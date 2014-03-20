@@ -586,7 +586,7 @@ namespace ProjectManager
 
             // configure
             var prefs = PluginMain.Settings.GetPrefs(project);
-            project.TraceEnabled = !prefs.DebugMode;
+            project.TraceEnabled = prefs.DebugMode;
             project.TargetBuild = prefs.TargetBuild;
             project.UpdateVars(true);
 
