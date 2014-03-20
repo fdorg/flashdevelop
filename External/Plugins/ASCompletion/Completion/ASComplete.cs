@@ -2580,11 +2580,17 @@ namespace ASCompletion.Completion
                     }
                     else if ((aDecl.Flags & FlagType.Class) > 0)
                     {
-                        ClassModel friendClass;
+                        ClassModel friendClass = null;
                         if (aDecl.InFile != null)
-                            friendClass = context.GetModel(aDecl.InFile.Package, token, inFile.Package);
-                        else
-                            friendClass = context.ResolveType(aDecl.Type, inFile);
+                        {
+                            foreach(ClassModel aClass in aDecl.InFile.Classes)
+                                if (aClass.Name == token)
+                                {
+                                    friendClass = aClass;
+                                    break;
+                                }
+                        }
+                        if (friendClass == null) friendClass = context.ResolveType(aDecl.Type, inFile);
 
                         if (!friendClass.IsVoid())
                         {
