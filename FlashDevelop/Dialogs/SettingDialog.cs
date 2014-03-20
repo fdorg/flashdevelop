@@ -13,6 +13,7 @@ using FlashDevelop.Helpers;
 using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace FlashDevelop.Dialogs
 {
@@ -264,6 +265,7 @@ namespace FlashDevelop.Dialogs
             this.clearFilterButton.Image = Globals.MainForm.FindImage("153");
             this.infoPictureBox.Image = Globals.MainForm.FindImage("229");
             this.itemListView.SmallImageList = imageList;
+            this.itemListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
         }
 
         /// <summary>

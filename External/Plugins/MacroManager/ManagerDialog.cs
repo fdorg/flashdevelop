@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace MacroManager
 {
@@ -182,6 +183,7 @@ namespace MacroManager
             imageList.Images.Add(PluginBase.MainForm.FindImage("338|13|0|0"));
             this.pictureBox.Image = PluginBase.MainForm.FindImage("229");
             this.listView.SmallImageList = imageList;
+            this.listView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.columnHeader.Width = -2;
         }
 

@@ -67,6 +67,7 @@ namespace ProjectManager.Controls.TreeView
         {
             this.Renderer = new DockPanelStripRenderer();
             this.Font = PluginCore.PluginBase.Settings.DefaultFont;
+            this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             NothingToDo.Enabled = false;
             NoProjectOutput.Enabled = false;
         }

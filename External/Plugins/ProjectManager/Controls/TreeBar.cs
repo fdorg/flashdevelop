@@ -6,6 +6,7 @@ using PluginCore.Localization;
 using ProjectManager.Controls.TreeView;
 using System.Drawing.Drawing2D;
 using System.Drawing;
+using PluginCore.Helpers;
 
 namespace ProjectManager.Controls
 {
@@ -27,6 +28,7 @@ namespace ProjectManager.Controls
         public TreeBar(FDMenus menus, ProjectContextMenu treeMenu)
         {
             this.treeMenu = treeMenu;
+            this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.Size = new Size(200, 26);
             this.Renderer = new DockPanelStripRenderer();
             this.GripStyle = ToolStripGripStyle.Hidden;

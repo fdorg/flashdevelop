@@ -6,6 +6,7 @@ using ScintillaNet;
 using PluginCore;
 using ScintillaNet.Configuration;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 
 namespace FlashDebugger
 {
@@ -45,9 +46,9 @@ namespace FlashDebugger
 			mask |= GetMarkerMask(markerBPNotAvailable);
 			mask |= GetMarkerMask(markerCurrentLine);
 			sci.SetMarginMaskN(0, mask);
-			sci.MarkerDefinePixmap(markerBPEnabled, ScintillaNet.XPM.ConvertToXPM(Properties.Resource.Enabled, "#00FF00"));
-			sci.MarkerDefinePixmap(markerBPDisabled, ScintillaNet.XPM.ConvertToXPM(Properties.Resource.Disabled, "#00FF00"));
-            sci.MarkerDefinePixmap(markerCurrentLine, ScintillaNet.XPM.ConvertToXPM(Properties.Resource.CurLine, "#00FF00"));
+            sci.MarkerDefinePixmap(markerBPEnabled, ScintillaNet.XPM.ConvertToXPM(ScaleHelper.Stretch(Properties.Resource.Enabled), "#00FF00"));
+            sci.MarkerDefinePixmap(markerBPDisabled, ScintillaNet.XPM.ConvertToXPM(ScaleHelper.Stretch(Properties.Resource.Disabled), "#00FF00"));
+            sci.MarkerDefinePixmap(markerCurrentLine, ScintillaNet.XPM.ConvertToXPM(ScaleHelper.Stretch(Properties.Resource.CurLine), "#00FF00"));
             Language lang = PluginBase.MainForm.SciConfig.GetLanguage("as3"); // default
 			sci.MarkerSetBack(markerBPEnabled, lang.editorstyle.ErrorLineBack); // enable
             sci.MarkerSetBack(markerBPDisabled, lang.editorstyle.DisabledLineBack); // disable

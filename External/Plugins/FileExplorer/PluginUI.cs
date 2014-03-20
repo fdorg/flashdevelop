@@ -246,6 +246,7 @@ namespace FileExplorer
         private void InitializeContextMenu()
         {
             this.menu = new ContextMenuStrip();
+            this.menu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.RefreshView"), null, new EventHandler(this.RefreshFileView)));
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.SynchronizeView"), null, new EventHandler(this.SynchronizeView)));
             this.menu.Items.Add(new ToolStripSeparator());
@@ -277,7 +278,7 @@ namespace FileExplorer
         private void InitializeGraphics()
         {
             this.imageList = new ImageList();
-            this.imageList.ImageSize = GetSmallIconSize();
+            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.syncronizeButton.Image = PluginBase.MainForm.FindImage("203|9|-3|-3");
             this.browseButton.Image = PluginBase.MainForm.FindImage("203");
@@ -305,6 +306,7 @@ namespace FileExplorer
         private void InitializeLayout()
         {
             this.toolStrip.Renderer = new DockPanelStripRenderer();
+            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.selectedPath.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
         }
 
@@ -1093,7 +1095,7 @@ namespace FileExplorer
         private int ExtractIconIfNecessary(String path)
         {
             Icon icon;
-            Size size = GetSmallIconSize();
+            Size size = ScaleHelper.Scale(new Size(16, 16));
             if (File.Exists(path)) icon = IconExtractor.GetFileIcon(path, false, true);
             else icon = IconExtractor.GetFolderIcon(path, false, true);
             Image image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
@@ -1109,20 +1111,9 @@ namespace FileExplorer
             this.imageList.Images.Clear();
             this.imageList.Dispose();
             this.imageList = new ImageList();
-            this.imageList.ImageSize = GetSmallIconSize();
+            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.fileView.SmallImageList = this.imageList;
-        }
-        
-        /// <summary>
-        /// Gets the small icon size. High dpi has slightly bigger icons
-        /// </summary>
-        /// <returns></returns>
-        private Size GetSmallIconSize()
-        {
-            Size size = SystemInformation.SmallIconSize;
-            if (size.Width > 16) return new Size(18, 18);
-            else return size;
         }
 
         #endregion

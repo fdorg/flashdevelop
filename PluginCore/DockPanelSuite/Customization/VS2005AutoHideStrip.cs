@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
+using PluginCore.Helpers;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -90,57 +91,57 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		private static int ImageHeight
 		{
-			get	{	return _ImageHeight;	}
+			get	{	return ScaleHelper.Scale(_ImageHeight);	}
 		}
 
 		private static int ImageWidth
 		{
-			get	{	return _ImageWidth;	}
+            get { return ScaleHelper.Scale(_ImageWidth); }
 		}
 
 		private static int ImageGapTop
 		{
-			get	{	return _ImageGapTop;	}
+			get	{	return ScaleHelper.Scale(_ImageGapTop);	}
 		}
 
 		private static int ImageGapLeft
 		{
-			get	{	return _ImageGapLeft;	}
+			get	{	return ScaleHelper.Scale(_ImageGapLeft);	}
 		}
 
 		private static int ImageGapRight
 		{
-			get	{	return _ImageGapRight;	}
+			get	{	return ScaleHelper.Scale(_ImageGapRight);	}
 		}
 
 		private static int ImageGapBottom
 		{
-			get	{	return _ImageGapBottom;	}
+			get	{	return ScaleHelper.Scale(_ImageGapBottom);	}
 		}
 
 		private static int TextGapLeft
 		{
-			get	{	return _TextGapLeft;	}
+			get	{	return ScaleHelper.Scale(_TextGapLeft);	}
 		}
 
 		private static int TextGapRight
 		{
-			get	{	return _TextGapRight;	}
+			get	{	return ScaleHelper.Scale(_TextGapRight);	}
 		}
 
 		private static int TabGapTop
 		{
-			get	{	return _TabGapTop;	}
+			get	{	return ScaleHelper.Scale(_TabGapTop);	}
 		}
 
 		private static int TabGapLeft
 		{
-			get	{	return _TabGapLeft;	}
+			get	{	return ScaleHelper.Scale(_TabGapLeft);	}
 		}
 
 		private static int TabGapBetween
 		{
-			get	{	return _TabGapBetween;	}
+			get	{	return ScaleHelper.Scale(_TabGapBetween);	}
 		}
 
 		private static Brush BrushTabBackground

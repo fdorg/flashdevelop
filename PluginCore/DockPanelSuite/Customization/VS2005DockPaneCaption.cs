@@ -66,7 +66,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonClose == null)
-                    _imageButtonClose = Resources.DockPane_Close;
+                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_Close);
 
                 return _imageButtonClose;
             }
@@ -95,7 +95,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonAutoHide == null)
-                    _imageButtonAutoHide = Resources.DockPane_AutoHide;
+                    _imageButtonAutoHide = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_AutoHide);
 
                 return _imageButtonAutoHide;
             }
@@ -107,7 +107,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonDock == null)
-                    _imageButtonDock = Resources.DockPane_Dock;
+                    _imageButtonDock = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_Dock);
 
                 return _imageButtonDock;
             }

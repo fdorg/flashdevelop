@@ -65,6 +65,7 @@ namespace ASClassWizard.Wizards
             InitializeLocalization();
             this.Font = PluginBase.Settings.DefaultFont;
             this.itemList.ImageList = ASCompletion.Context.ASContext.Panel.TreeIcons;
+            this.itemList.ItemHeight = this.itemList.ImageList.ImageSize.Height;
             CenterToParent();
         }
 

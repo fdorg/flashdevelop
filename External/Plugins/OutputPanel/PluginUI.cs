@@ -11,6 +11,7 @@ using PluginCore.Managers;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace OutputPanel
 {
@@ -100,6 +101,7 @@ namespace OutputPanel
             // 
             this.toolStrip.CanOverflow = false;
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toggleButton,
             this.toolStripSeparator1,

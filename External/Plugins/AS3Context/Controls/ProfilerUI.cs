@@ -82,6 +82,7 @@ namespace AS3Context.Controls
 
             InitializeLocalization();
 
+            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             toolStrip.Renderer = new DockPanelStripRenderer();
             runButton.Image = PluginBase.MainForm.FindImage("127");
             gcButton.Image = PluginBase.MainForm.FindImage("90");

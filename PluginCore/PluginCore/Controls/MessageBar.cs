@@ -102,6 +102,8 @@ namespace PluginCore.Controls
 			// 
 			// MessageBar
 			//
+            this.AutoScaleDimensions = new SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Info;
             this.ForeColor = System.Drawing.SystemColors.InfoText;
 			this.Controls.Add(this.buttonClose);

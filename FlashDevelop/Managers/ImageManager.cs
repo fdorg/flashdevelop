@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using FlashDevelop.Helpers;
+using PluginCore.Helpers;
 
 namespace FlashDevelop.Managers
 {
@@ -49,6 +50,7 @@ namespace FlashDevelop.Managers
                 ry = (Bullet / 16) * 16;
                 destination.DrawImage(Source, new Rectangle(X, Y, 16, 16), new Rectangle(rx, ry, 16, 16), GraphicsUnit.Pixel);
             }
+            composed = ScaleHelper.Scale(composed);
             Cache[data] = composed;
             return composed;
         }
