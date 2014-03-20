@@ -56,6 +56,7 @@ namespace HaXeContext
 
             // language constructs
             features.hasPackages = true;
+            features.hasFriendlyParentPackages = true;
             features.hasModules = true;
             features.hasImports = true;
             features.hasImportsWildcard = false;
@@ -719,67 +720,84 @@ namespace HaXeContext
             if (inFile == null) return imports;
             foreach (MemberModel item in inFile.Imports)
             {
-                if (settings.LazyClasspathExploration)
-                {
-                    imports.Add(item);
-                    continue;
-                }
-                // HX files are "modules": when imported all the classes contained are available
-                string fileName = item.Type.Replace(".", dirSeparator) + ".hx";
-
-                if (fileName.StartsWith("flash" + dirSeparator))
-                {
-                    if (!IsFlashTarget || majorVersion > 8) // flash9 remap
-                        fileName = FLASH_NEW + fileName.Substring(5);
-                    else
-                        fileName = FLASH_OLD + fileName.Substring(5);
-                }
-
-                bool matched = false;
-                foreach (PathModel aPath in classPath)
-                    if (aPath.IsValid && !aPath.Updating)
-                    {
-                        string path;
-                        try
-                        {
-                            path = Path.Combine(aPath.Path, fileName);
-                        }
-                        catch { continue; }
-
-                        FileModel file = null;
-                        // cached file
-                        if (aPath.HasFile(path))
-                        {
-                            file = aPath.GetFile(path);
-                            if (file.Context != this)
-                            {
-                                // not associated with this context -> refresh
-                                file.OutOfDate = true;
-                                file.Context = this;
-                            }
-                        }
-                        else if (File.Exists(path))
-                        {
-                            file = GetFileModel(path);
-                            if (file != null)
-                                aPath.AddFile(file);
-                        }
-                        if (file != null)
-                        {
-                            // add all classes (Haxe module)
-                            foreach (ClassModel c in file.Classes)
-                                if (c.IndexType == null) imports.Add(c);
-                            matched = true;
-                        }
-                    }
-
-                if (!matched) // add anyway
-                    imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
+                ResolveImport(item, imports);
             }
+
+            if (inFile == cFile)
+            {
+                if (cClass != null && cClass != ClassModel.VoidClass)
+                    ResolveImport(cClass, imports);
+            }
+            else
+            {
+                foreach (ClassModel aClass in inFile.Classes)
+                    if (aClass.Access != Visibility.Private) ResolveImport(aClass, imports);
+            }
+
             // haxe3: type resolution from bottom to top
             imports.Items.Reverse();
             if (inFile == cFile) completionCache.Imports = imports;
             return imports;
+        }
+
+        private void ResolveImport(MemberModel item, MemberList imports)
+        {
+            if (settings.LazyClasspathExploration)
+            {
+                imports.Add(item);
+                return;
+            }
+            // HX files are "modules": when imported all the classes contained are available
+            string fileName = item.Type.Replace(".", dirSeparator) + ".hx";
+
+            if (fileName.StartsWith("flash" + dirSeparator))
+            {
+                if (!IsFlashTarget || majorVersion > 8) // flash9 remap
+                    fileName = FLASH_NEW + fileName.Substring(5);
+                else
+                    fileName = FLASH_OLD + fileName.Substring(5);
+            }
+
+            bool matched = false;
+            foreach (PathModel aPath in classPath)
+                if (aPath.IsValid && !aPath.Updating)
+                {
+                    string path;
+                    try
+                    {
+                        path = Path.Combine(aPath.Path, fileName);
+                    }
+                    catch { continue; }
+
+                    FileModel file = null;
+                    // cached file
+                    if (aPath.HasFile(path))
+                    {
+                        file = aPath.GetFile(path);
+                        if (file.Context != this)
+                        {
+                            // not associated with this context -> refresh
+                            file.OutOfDate = true;
+                            file.Context = this;
+                        }
+                    }
+                    /*else if (File.Exists(path))
+                    {
+                        file = GetFileModel(path);
+                        if (file != null)
+                            aPath.AddFile(file);
+                    }*/
+                    if (file != null)
+                    {
+                        // add all classes (Haxe module)
+                        foreach (ClassModel c in file.Classes)
+                            if (c.IndexType == null) imports.Add(c);
+                        matched = true;
+                    }
+                }
+
+            if (!matched) // add anyway
+                imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
         }
 
         /// <summary>

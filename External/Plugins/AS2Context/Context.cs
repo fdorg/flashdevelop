@@ -688,13 +688,18 @@ namespace AS2Context
             return ClassModel.VoidClass;
 		}
 
-        private static ClassModel LookupClass(string package, string cname, string inPackage, bool testSamePackage, bool testModule, PathModel aPath)
+        private ClassModel LookupClass(string package, string cname, string inPackage, bool testSamePackage, bool testModule, PathModel aPath)
         {
+            bool matchParentPackage = testSamePackage && features.hasFriendlyParentPackages;
+
             ClassModel found = null;
+            int pLen = inPackage.Length;
+
             aPath.ForeachFile((aFile) =>
             {
+                string pkg = aFile.Package;
                 // qualified path
-                if (aFile.Package == package && aFile.Classes.Count > 0)
+                if (pkg == package && aFile.Classes.Count > 0)
                 {
                     foreach (ClassModel aClass in aFile.Classes)
                         if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
@@ -712,15 +717,16 @@ namespace AS2Context
                             return false;
                         }
                 }
-                // in the same package
-                else if (testSamePackage && aFile.Package == inPackage)
+                // in the same (or parent) package
+                else if (testSamePackage)
                 {
-                    foreach (ClassModel aClass in aFile.Classes)
-                        if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
-                        {
-                            found = aClass;
-                            return false;
-                        }
+                    if (inPackage == pkg || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWith(pkg + ".")))
+                        foreach (ClassModel aClass in aFile.Classes)
+                            if (aClass.Name == cname /*&& (aFile.Module == "" || aFile.Module == aClass.Name)*/)
+                            {
+                                found = aClass;
+                                return false;
+                            }
                 }
                 return true;
             });
