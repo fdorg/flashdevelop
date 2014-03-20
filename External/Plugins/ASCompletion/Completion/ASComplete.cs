@@ -3470,15 +3470,38 @@ namespace ASCompletion.Completion
 			FileModel model;
             if (expression.FunctionBody != null && expression.FunctionBody.Length > 0)
             {
-				MemberModel cm = expression.ContextMember;
-                model = ASContext.Context.GetCodeModel(expression.FunctionBody);
-                foreach (MemberModel member in model.Members)
+                MemberModel cm = expression.ContextMember;
+                string functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
+                model = ASContext.Context.GetCodeModel(functionBody);
+                int memberCount = model.Members.Count;
+                for (int memberIndex = 0; memberIndex < memberCount; memberIndex++)
                 {
-					if (cm.Equals(member)) continue;
+                    MemberModel member = model.Members[memberIndex];
+
+                    if (cm.Equals(member)) continue;
 
                     member.Flags |= FlagType.LocalVar;
                     member.LineFrom += expression.FunctionOffset;
                     member.LineTo += expression.FunctionOffset;
+
+                    if ((member.Flags & FlagType.Function) == FlagType.Function)
+                    {
+                        if (member.Name == "__anonfunc__")
+                        {
+                            model.Members.Remove(member);
+                            memberCount--;
+                            memberIndex--;
+                        }
+
+                        if (member.Parameters == null) continue;
+
+                        foreach (MemberModel parameter in member.Parameters)
+                        {
+                            parameter.LineFrom += expression.FunctionOffset;
+                            parameter.LineTo += expression.FunctionOffset;
+                            model.Members.Add(parameter);
+                        }
+                    }
                 }
             }
             else model = new FileModel();

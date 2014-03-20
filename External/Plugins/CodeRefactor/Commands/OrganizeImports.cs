@@ -47,8 +47,11 @@ namespace CodeRefactor.Commands
             imports.Sort(comparerLine);
             if (sci.ConfigurationLanguage == "haxe")
             {
-                Int32 start = sci.PositionFromLine(context.CurrentModel.Classes[0].LineFrom);
-                sci.SetSel(start, sci.Length);
+                if (context.CurrentModel.Classes.Count > 0)
+                {
+                    Int32 start = sci.PositionFromLine(context.CurrentModel.Classes[0].LineFrom);
+                    sci.SetSel(start, sci.Length);
+                }
             }
             else
             {

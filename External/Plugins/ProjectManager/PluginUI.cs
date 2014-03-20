@@ -144,7 +144,7 @@ namespace ProjectManager
             if (project != null)
             {
                 TreeBar.ShowHidden.Checked = project.ShowHiddenPaths;
-                IsTraceDisabled = project.TraceEnabled;
+                IsTraceDisabled = !project.TraceEnabled;
             }
         }
 
