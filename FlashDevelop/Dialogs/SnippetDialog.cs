@@ -301,6 +301,7 @@ namespace FlashDevelop.Dialogs
             this.exportButton.Image = PluginBase.MainForm.FindImage("342|9|3|3");
             imageList.Images.Add(PluginBase.MainForm.FindImage("341"));
             this.snippetListView.SmallImageList = imageList;
+            this.snippetListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
         }
 
         /// <summary>

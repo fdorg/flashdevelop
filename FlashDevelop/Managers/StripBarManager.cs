@@ -9,6 +9,7 @@ using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
+using System.Drawing;
 
 namespace FlashDevelop.Managers
 {
@@ -48,7 +49,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ToolStrip GetToolStrip(String file)
         {
-            ToolStripEx toolStrip = new ToolStripEx();
+            ToolStripEx toolStrip = new ToolStripEx();            
+			toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             XmlNode rootNode = XmlHelper.LoadXmlDocument(file);
             foreach (XmlNode subNode in rootNode.ChildNodes)
             {
@@ -63,6 +65,7 @@ namespace FlashDevelop.Managers
         public static ContextMenuStrip GetContextMenu(String file)
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
+            contextMenu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             XmlNode rootNode = XmlHelper.LoadXmlDocument(file);
             foreach (XmlNode subNode in rootNode.ChildNodes)
             {
@@ -77,6 +80,7 @@ namespace FlashDevelop.Managers
         public static MenuStrip GetMenuStrip(String file)
         {
             MenuStrip menuStrip = new MenuStrip();
+            menuStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             XmlNode rootNode = XmlHelper.LoadXmlDocument(file);
             foreach (XmlNode subNode in rootNode.ChildNodes)
             {

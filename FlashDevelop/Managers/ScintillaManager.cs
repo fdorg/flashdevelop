@@ -223,21 +223,21 @@ namespace FlashDevelop.Managers
                 * Set correct line number margin width
                 */
                 Boolean viewLineNumbers = Globals.Settings.ViewLineNumbers;
-                if (viewLineNumbers) sci.SetMarginWidthN(1, 31);
+                if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleHelper.Scale(31));
                 else sci.SetMarginWidthN(1, 0);
                 /**
                 * Set correct bookmark margin width
                 */
                 Boolean viewBookmarks = Globals.Settings.ViewBookmarks;
-                if (viewBookmarks) sci.SetMarginWidthN(0, 14);
+                if (viewBookmarks) sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
                 else sci.SetMarginWidthN(0, 0);
                 /**
                 * Set correct folding margin width
                 */
                 Boolean useFolding = Globals.Settings.UseFolding;
                 if (!useFolding && !viewBookmarks && !viewLineNumbers) sci.SetMarginWidthN(2, 0);
-                else if (useFolding) sci.SetMarginWidthN(2, 15);
-                else sci.SetMarginWidthN(2, 2);
+                else if (useFolding) sci.SetMarginWidthN(2, ScaleHelper.Scale(15));
+                else sci.SetMarginWidthN(2, ScaleHelper.Scale(2));
                 /**
                 * Adjust the print margin
                 */
@@ -326,7 +326,7 @@ namespace FlashDevelop.Managers
             sci.ZoomLevel = 0;
             sci.UsePopUp(false);
             sci.SetMarginTypeN(0, 0);
-            sci.SetMarginWidthN(0, 14);
+            sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
             sci.SetMarginTypeN(1, 1);
             sci.SetMarginMaskN(1, 0);
             sci.SetMarginTypeN(2, 0);

@@ -21,6 +21,7 @@ using PluginCore.Localization;
 using System.Drawing;
 using System.Reflection;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 
 namespace ASCompletion
 {
@@ -119,7 +120,7 @@ namespace ASCompletion
         private void InitializeControls()
         {
             InitializeComponent();
-
+            treeIcons.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             treeIcons.Images.AddRange( new Bitmap[] {
                 new Bitmap(GetStream("FilePlain.png")),
                 new Bitmap(GetStream("FolderClosed.png")),
@@ -159,6 +160,7 @@ namespace ASCompletion
             });
 
             toolStrip.Renderer = new DockPanelStripRenderer();
+            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             toolStrip.Padding = new Padding(2, 1, 2, 2);
             sortDropDown.Font = PluginBase.Settings.DefaultFont;
             sortDropDown.Image = PluginBase.MainForm.FindImage("444");

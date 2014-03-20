@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using PluginCore.DockPanelSuite;
+using PluginCore.Helpers;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -132,7 +133,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonClose == null)
-                    _imageButtonClose = Resources.DockPane_Close;
+                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_Close);
 
                 return _imageButtonClose;
             }
@@ -161,7 +162,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonWindowList == null)
-                    _imageButtonWindowList = Resources.DockPane_Option;
+                    _imageButtonWindowList = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_Option);
 
                 return _imageButtonWindowList;
             }
@@ -173,7 +174,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonWindowListOverflow == null)
-                    _imageButtonWindowListOverflow = Resources.DockPane_OptionOverflow;
+                    _imageButtonWindowListOverflow = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_OptionOverflow);
 
                 return _imageButtonWindowListOverflow;
             }
@@ -211,67 +212,67 @@ namespace WeifenLuo.WinFormsUI.Docking
 		#region Customizable Properties
         private static int ToolWindowStripGapTop
         {
-            get { return _ToolWindowStripGapTop; }
+            get { return ScaleHelper.Scale(_ToolWindowStripGapTop); }
         }
-
+        
         private static int ToolWindowStripGapBottom
         {
-            get { return _ToolWindowStripGapBottom; }
+            get { return ScaleHelper.Scale(_ToolWindowStripGapBottom); }
         }
 
 		private static int ToolWindowStripGapLeft
 		{
-			get	{	return _ToolWindowStripGapLeft;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowStripGapLeft);	}
 		}
 
 		private static int ToolWindowStripGapRight
 		{
-			get	{	return _ToolWindowStripGapRight;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowStripGapRight);	}
 		}
 
 		private static int ToolWindowImageHeight
 		{
-			get	{	return _ToolWindowImageHeight;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowImageHeight);	}
 		}
 
 		private static int ToolWindowImageWidth
 		{
-			get	{	return _ToolWindowImageWidth;	}
+            get { return ScaleHelper.Scale(_ToolWindowImageWidth); }
 		}
 
 		private static int ToolWindowImageGapTop
 		{
-			get	{	return _ToolWindowImageGapTop;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowImageGapTop);	}
 		}
 
 		private static int ToolWindowImageGapBottom
 		{
-			get	{	return _ToolWindowImageGapBottom;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowImageGapBottom);	}
 		}
 
 		private static int ToolWindowImageGapLeft
 		{
-			get	{	return _ToolWindowImageGapLeft;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowImageGapLeft);	}
 		}
 
 		private static int ToolWindowImageGapRight
 		{
-			get	{	return _ToolWindowImageGapRight;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowImageGapRight);	}
 		}
 
 		private static int ToolWindowTextGapRight
 		{
-			get	{	return _ToolWindowTextGapRight;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowTextGapRight);	}
 		}
 
 		private static int ToolWindowTabSeperatorGapTop
 		{
-			get	{	return _ToolWindowTabSeperatorGapTop;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowTabSeperatorGapTop);	}
 		}
 
 		private static int ToolWindowTabSeperatorGapBottom
 		{
-			get	{	return _ToolWindowTabSeperatorGapBottom;	}
+			get	{	return ScaleHelper.Scale(_ToolWindowTabSeperatorGapBottom);	}
 		}
 
 		private static string _toolTipClose;
@@ -341,72 +342,72 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		private static int DocumentTabMaxWidth
 		{
-			get	{	return _DocumentTabMaxWidth;	}
+			get	{	return ScaleHelper.Scale(_DocumentTabMaxWidth);	}
 		}
 
 		private static int DocumentButtonGapTop
 		{
-			get	{	return _DocumentButtonGapTop;	}
+			get	{	return ScaleHelper.Scale(_DocumentButtonGapTop);	}
 		}
 
 		private static int DocumentButtonGapBottom
 		{
-			get	{	return _DocumentButtonGapBottom;	}
+			get	{	return ScaleHelper.Scale(_DocumentButtonGapBottom);	}
 		}
 
 		private static int DocumentButtonGapBetween
 		{
-			get	{	return _DocumentButtonGapBetween;	}
+			get	{	return ScaleHelper.Scale(_DocumentButtonGapBetween);	}
 		}
 
 		private static int DocumentButtonGapRight
 		{
-			get	{	return _DocumentButtonGapRight;	}
+			get	{	return ScaleHelper.Scale(_DocumentButtonGapRight);	}
 		}
 
 		private static int DocumentTabGapTop
 		{
-			get	{	return _DocumentTabGapTop;	}
+			get	{	return ScaleHelper.Scale(_DocumentTabGapTop);	}
 		}
 
 		private static int DocumentTabGapLeft
 		{
-			get	{	return _DocumentTabGapLeft;	}
+			get	{	return ScaleHelper.Scale(_DocumentTabGapLeft);	}
 		}
 
 		private static int DocumentTabGapRight
 		{
-			get	{	return _DocumentTabGapRight;	}
+			get	{	return ScaleHelper.Scale(_DocumentTabGapRight);	}
 		}
 
         private static int DocumentIconGapBottom
         {
-            get { return _DocumentIconGapBottom; }
+            get { return ScaleHelper.Scale(_DocumentIconGapBottom); }
         }
 
 		private static int DocumentIconGapLeft
 		{
-            get { return _DocumentIconGapLeft; }
+            get { return ScaleHelper.Scale(_DocumentIconGapLeft); }
 		}
 
         private static int DocumentIconGapRight
         {
-            get { return _DocumentIconGapRight; }
+            get { return ScaleHelper.Scale(_DocumentIconGapRight); }
         }
 
 		private static int DocumentIconWidth
 		{
-			get	{	return _DocumentIconWidth;	}
+			get	{	return ScaleHelper.Scale(_DocumentIconWidth);	}
 		}
 
 		private static int DocumentIconHeight
 		{
-			get	{	return _DocumentIconHeight;	}
+			get	{	return ScaleHelper.Scale(_DocumentIconHeight);	}
 		}
 
         private static int DocumentTextGapRight
         {
-            get { return _DocumentTextGapRight; }
+            get { return ScaleHelper.Scale(_DocumentTextGapRight); }
         }
 
 		private static Pen PenToolWindowTabBorder
@@ -515,6 +516,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 			m_toolTip = new ToolTip(Components);
             m_selectMenu = new ContextMenuStrip(Components);
             m_selectMenu.Font = PluginCore.PluginBase.Settings.DefaultFont;
+            m_selectMenu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             m_selectMenu.Renderer = new DockPanelStripRenderer(false);
 
 			ResumeLayout();
@@ -1172,10 +1174,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             Rectangle rectText = rectIcon;
 
             // CHANGED - NICK
-            rectText.Y += 2;
+            rectText.Y += ScaleHelper.Scale(2);
 
             // CHANGED - MIKA
-            if (Font.SizeInPoints <= 8F) rectText.Y -= 1;
+            if (Font.SizeInPoints <= 8F) rectText.Y -= ScaleHelper.Scale(1);
 
             if (DockPane.DockPanel.ShowDocumentIcon)
             {

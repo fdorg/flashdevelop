@@ -262,7 +262,7 @@ namespace PluginCore.Controls
                 needResize = false;
                 Graphics g = cl.CreateGraphics();
                 SizeF size = g.MeasureString(widestLabel, cl.Font);
-                cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), 400) + 10;
+                cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), 400) + ScaleHelper.Scale(10);
             }
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
             if (newHeight != cl.Height) cl.Height = newHeight;
@@ -359,7 +359,7 @@ namespace PluginCore.Controls
             bool selected = (e.State & DrawItemState.Selected) > 0;
 			Brush textBrush = (selected) ? SystemBrushes.HighlightText : fore == Color.Empty ? SystemBrushes.WindowText : new SolidBrush(fore);
             Brush packageBrush = Brushes.Gray;
-			Rectangle tbounds = new Rectangle(18, e.Bounds.Top + 1, e.Bounds.Width, e.Bounds.Height);
+			Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top + 1, e.Bounds.Width, e.Bounds.Height);
 			if (item != null)
 			{
                 Graphics g = e.Graphics;

@@ -17,6 +17,7 @@ using PluginCore.Controls;
 using ScintillaNet.Configuration;
 using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace FlashDevelop.Controls
 {
@@ -69,6 +70,7 @@ namespace FlashDevelop.Controls
 
         public void InitializeComponent()
         {
+            this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.highlightTimer = new Timer();
             this.wholeWordCheckBox = new CheckBox();
             this.matchCaseCheckBox = new CheckBox();

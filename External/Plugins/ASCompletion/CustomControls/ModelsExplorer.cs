@@ -14,6 +14,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Managers;
 using ASCompletion.Completion;
 using System.Collections;
+using PluginCore.Helpers;
 
 namespace ASCompletion
 {
@@ -122,7 +123,7 @@ namespace ASCompletion
             searchButton.Image = PluginBase.MainForm.FindImage("251");
             refreshButton.Image = PluginBase.MainForm.FindImage("24");
             rebuildButton.Image = PluginBase.MainForm.FindImage("153");
-            toolStrip.Renderer = new DockPanelStripRenderer();
+            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
         }
 
         private void outlineContextMenuStrip_Opening(object sender, CancelEventArgs e)

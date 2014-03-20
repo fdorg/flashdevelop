@@ -996,6 +996,7 @@ namespace FlashDevelop.Dialogs
             ImageList imageList = new ImageList();
             imageList.Images.Add(PluginBase.MainForm.FindImage("129"));
             this.itemListView.SmallImageList = imageList;
+            this.itemListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using PluginCore.Managers;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace System.Windows.Forms
 {
@@ -277,13 +278,13 @@ namespace System.Windows.Forms
             {
                 Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
                 Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
-                Rectangle borderRect = new Rectangle(4, 2, 18, 18);
-                Rectangle backRect = new Rectangle(5, 3, 16, 16);
+                Rectangle borderRect = new Rectangle(4, 2, ScaleHelper.Scale(18), ScaleHelper.Scale(18));
+                Rectangle backRect = new Rectangle(5, 3, borderRect.Width - 2, borderRect.Height - 2);
                 SolidBrush borderBrush = new SolidBrush(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border);
                 LinearGradientBrush backBrush = new LinearGradientBrush(backRect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                 e.Graphics.FillRectangle(borderBrush, borderRect);
                 e.Graphics.FillRectangle(backBrush, backRect);
-                e.Graphics.DrawImage(e.Image, new Point(5, 3));
+                e.Graphics.DrawImage(e.Image, 5 + ((backRect.Width - e.ImageRectangle.Width) / 2), 3 + ((backRect.Height - e.ImageRectangle.Height) / 2), e.ImageRectangle.Width, e.ImageRectangle.Height);
             }
             else renderer.DrawItemCheck(e);
         }

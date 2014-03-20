@@ -140,6 +140,7 @@ namespace ResultsPanel
 			// 
 			// toolStripFilters
 			// 
+            this.toolStripFilters.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.toolStripFilters.CanOverflow = false;
             this.toolStripFilters.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStripFilters.Padding = new System.Windows.Forms.Padding(1, 1, 2, 2);

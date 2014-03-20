@@ -311,6 +311,7 @@
     </Compile>
     <Compile Include="PluginCore\Controls\WinFormUtils.cs" />
     <Compile Include="PluginCore\Helpers\ConfigHelper.cs" />
+    <Compile Include="PluginCore\Helpers\ScaleHelper.cs" />
     <Compile Include="PluginCore\Helpers\JvmConfigHelper.cs" />
     <Compile Include="PluginCore\Helpers\ProcessHelper.cs" />
     <Compile Include="PluginCore\Helpers\ResourceHelper.cs" />

@@ -11,6 +11,7 @@ using FlashDevelop.Settings;
 using FlashDevelop.Helpers;
 using PluginCore.Utilities;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace FlashDevelop.Dialogs
 {
@@ -251,6 +252,7 @@ namespace FlashDevelop.Dialogs
             imageList.Images.Add(Globals.MainForm.FindImage("242"));
             this.infoPictureBox.Image = Globals.MainForm.FindImage("229");
             this.argsListView.SmallImageList = imageList;
+            this.argsListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
         }
 
         /// <summary>
