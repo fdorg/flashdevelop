@@ -8,8 +8,8 @@ $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
 
-class Main $(CSLB) extends Sprite{
-	public function new(){
+class Main extends Sprite $(CSLB){
+	public function new() $(CSLB){
 		super();
 		
 		//Entry point
