@@ -106,12 +106,21 @@ namespace FlashDebugger
 
 		private String GetWordAtPosition(ScintillaControl sci, Int32 position)
 		{
+			int insideBrackets = 0;
 			Char c;
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			for (Int32 startPosition = position - 1; startPosition >= 0; startPosition--)
 			{
 				c = (Char)sci.CharAt(startPosition);
-				if (!(Char.IsLetterOrDigit(c) || c == '_' || c == '$' || c == '.'))
+				if (c == ')')
+				{
+					insideBrackets++;
+				}
+				else if (c == '(' && insideBrackets > 0)
+				{
+					insideBrackets--;
+				}
+				else if (!(Char.IsLetterOrDigit(c) || c == '_' || c == '$' || c == '.') && insideBrackets == 0)
 				{
 					break;
 				}
