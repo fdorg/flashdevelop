@@ -129,7 +129,6 @@ namespace ProjectManager.Controls
             // imageList
             // 
             this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imageList.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // locationTextBox
@@ -148,7 +147,7 @@ namespace ProjectManager.Controls
             this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.label1.Location = new System.Drawing.Point(13, 330);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 19);
+            this.label1.Size = new System.Drawing.Size(68, 16);
             this.label1.TabIndex = 4;
             this.label1.Text = "&Location:";
             // 
@@ -180,7 +179,7 @@ namespace ProjectManager.Controls
             this.label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.label2.Location = new System.Drawing.Point(13, 299);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(68, 19);
+            this.label2.Size = new System.Drawing.Size(68, 16);
             this.label2.TabIndex = 2;
             this.label2.Text = "&Name:";
             // 
@@ -200,7 +199,7 @@ namespace ProjectManager.Controls
             this.createDirectoryBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.createDirectoryBox.Location = new System.Drawing.Point(78, 389);
             this.createDirectoryBox.Name = "createDirectoryBox";
-            this.createDirectoryBox.Size = new System.Drawing.Size(249, 19);
+            this.createDirectoryBox.Size = new System.Drawing.Size(249, 16);
             this.createDirectoryBox.TabIndex = 9;
             this.createDirectoryBox.Text = " Create &directory for project";
             this.createDirectoryBox.CheckedChanged += new System.EventHandler(this.createDirectoryBox_CheckedChanged);
@@ -218,7 +217,7 @@ namespace ProjectManager.Controls
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.Location = new System.Drawing.Point(10, 361);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(71, 19);
+            this.label3.Size = new System.Drawing.Size(71, 15);
             this.label3.TabIndex = 7;
             this.label3.Text = "&Package:";
             // 
@@ -243,13 +242,13 @@ namespace ProjectManager.Controls
             this.Controls.Add(this.label3);
             this.Controls.Add(this.previewBox);
             this.Controls.Add(this.statusBar);
-            this.Controls.Add(this.createDirectoryBox);
             this.Controls.Add(this.nameTextBox);
             this.Controls.Add(this.locationTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.browseButton);
             this.Controls.Add(this.descriptionLabel);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.createDirectoryBox);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.MaximizeBox = false;
@@ -274,8 +273,11 @@ namespace ProjectManager.Controls
             this.InitializeLocalization();
 
 			imageList.Images.Add(Icons.Project.Img);
+            imageList.ImageSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(16, 16));
 			defaultProjectImage = Path.Combine(ProjectPaths.ProjectTemplatesDirectory, "Default.png");
+
 			projectListView.Items.Clear();
+            projectListView.TileSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(170, 22));
 
 			if (!Directory.Exists(ProjectPaths.ProjectTemplatesDirectory))
 			{

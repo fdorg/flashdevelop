@@ -142,7 +142,7 @@ namespace ProjectManager.Controls
             this.Controls.Add(this.btnNewClasspath);
             this.Controls.Add(this.listBox);
             this.Name = "ClasspathControl";
-            this.Size = new System.Drawing.Size(302, 169);
+            this.Size = new System.Drawing.Size(302, 170);
             this.ResumeLayout(false);
 
 		}

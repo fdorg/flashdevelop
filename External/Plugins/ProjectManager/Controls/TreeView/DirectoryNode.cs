@@ -25,7 +25,7 @@ namespace ProjectManager.Controls.TreeView
     public class DirectoryNode : GenericNode
 	{
         static public event DirectoryNodeRefresh OnDirectoryNodeRefresh;
-        static public event DirectoryNodeMapping OnDirectoryNodeMapping;
+        //static public event DirectoryNodeMapping OnDirectoryNodeMapping;
 
 		bool dirty;
         DirectoryNode insideClasspath;
