@@ -32,9 +32,8 @@ namespace ProjectManager.Controls.TreeView
 		/// <summary>
 		/// Creates the correct type of FileNode based on the file name.
 		/// </summary>
-		public static FileNode Create(string filePath)
+		public static FileNode Create(string filePath, Project project)
 		{
-            Project project = Tree.ProjectOf(filePath);
             if (project != null) 
             {
                 if (project.IsOutput(filePath))
@@ -57,8 +56,7 @@ namespace ProjectManager.Controls.TreeView
 		{
 			base.Refresh(recursive);
 
-            Project project = MyProject;
-			string path = BackingPath;
+            string path = BackingPath;
             string ext = Path.GetExtension(path).ToLower();
 
             if (project.IsPathHidden(path))
@@ -73,7 +71,6 @@ namespace ProjectManager.Controls.TreeView
                 ImageIndex = Icons.Classpath.Index;
             else
                 ImageIndex = Icons.GetImageForFile(path).Index;
-
 			SelectedImageIndex = ImageIndex;
 
 			Text = Path.GetFileName(path);

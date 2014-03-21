@@ -676,7 +676,10 @@ namespace ASCompletion
         private void AddExtend(TreeNodeCollection tree, ClassModel aClass)
         {
             TreeNode folder = new TreeNode(TextHelper.GetString("Info.ExtendsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
-            //aClass.ResolveExtends();
+
+            if ((aClass.Flags & FlagType.TypeDef) > 0)
+                folder.Text = "Defines";
+
             while (aClass.ExtendsType != null && aClass.ExtendsType.Length > 0 
                 && aClass.ExtendsType != "Object" 
                 && (!aClass.InFile.haXe || aClass.ExtendsType != "Dynamic"))

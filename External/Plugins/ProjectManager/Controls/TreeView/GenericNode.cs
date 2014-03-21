@@ -12,7 +12,8 @@ namespace ProjectManager.Controls.TreeView
 	public abstract class GenericNode : MultiSelectTreeNode, IDisposable
 	{
 		string backingPath;
-		
+
+        protected Project project;
 		protected bool isInvalid;
 		protected bool isRefreshable;
 		protected bool isDropTarget;
@@ -45,11 +46,14 @@ namespace ProjectManager.Controls.TreeView
 
 		public virtual void Dispose()
 		{
+            project = null;
 			Tree.NodeMap.Remove(backingPath);
 		}
 
 		public virtual void Refresh(bool recursive)
 		{
+            if (Parent != null) project = ((GenericNode)Parent).project;
+
 			if (Tree.SelectedNodes.Contains(this))
 				Tree.NotifySelectionChanged();
 		}
@@ -70,11 +74,6 @@ namespace ProjectManager.Controls.TreeView
 		protected static ProjectTreeView Tree
 		{
 			get { return ProjectTreeView.Instance; }
-		}
-
-		protected Project MyProject
-		{
-			get { return Tree.ProjectOf(this); }
 		}
 
 		public override bool Equals(object obj)

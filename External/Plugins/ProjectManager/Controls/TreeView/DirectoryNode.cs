@@ -55,23 +55,26 @@ namespace ProjectManager.Controls.TreeView
 			if (IsInvalid) return;
 
 			base.Refresh(recursive);
-            Project project = MyProject;
 
             // item icon
             if (Parent is DirectoryNode) 
                 insideClasspath = (Parent as DirectoryNode).insideClasspath;
 
-            if (project.IsPathHidden(BackingPath))
-                ImageIndex = Icons.HiddenFolder.Index;
-            else if (insideClasspath == null && project.IsClassPath(BackingPath))
+            if (project != null)
             {
-                insideClasspath = this;
-                ImageIndex = Icons.ClasspathFolder.Index;
+                if (project.IsPathHidden(BackingPath))
+                    ImageIndex = Icons.HiddenFolder.Index;
+                else if (insideClasspath == null && project.IsClassPath(BackingPath))
+                {
+                    insideClasspath = this;
+                    ImageIndex = Icons.ClasspathFolder.Index;
+                }
+                else if (insideClasspath != null && project.IsCompileTarget(BackingPath))
+                    ImageIndex = Icons.FolderCompile.Index;
+                else
+                    ImageIndex = Icons.Folder.Index;
             }
-            else if (insideClasspath != null && project.IsCompileTarget(BackingPath))
-                ImageIndex = Icons.FolderCompile.Index;
-            else
-                ImageIndex = Icons.Folder.Index;
+            else ImageIndex = Icons.Folder.Index;
 
             SelectedImageIndex = ImageIndex;
 
@@ -90,7 +93,7 @@ namespace ProjectManager.Controls.TreeView
 
 				// we're already expanded, so refresh our children
 				if (IsExpanded || Path.GetDirectoryName(Tree.PathToSelect) == BackingPath)
-					PopulateChildNodes(recursive, project);
+					PopulateChildNodes(recursive);
 				else
 					dirty = true; // refresh on demand
 			}
@@ -98,7 +101,7 @@ namespace ProjectManager.Controls.TreeView
 			{
 				// we just became empty!
 				if (Nodes.Count > 0)
-					PopulateChildNodes(recursive, project);
+					PopulateChildNodes(recursive);
 			}
 
             NotifyRefresh();
@@ -115,12 +118,12 @@ namespace ProjectManager.Controls.TreeView
 		/// </summary>
 		public override void BeforeExpand()
 		{
-			if (dirty) PopulateChildNodes(false, MyProject);
+			if (dirty) PopulateChildNodes(false);
 		}
 
-		private void PopulateChildNodes(bool recursive, Project project)
+		private void PopulateChildNodes(bool recursive)
 		{
-			dirty = false;
+            dirty = false;
 
 			// nuke the placeholder
 			if (Nodes.Count == 1 && Nodes[0] is PlaceholderNode)
@@ -136,7 +139,7 @@ namespace ProjectManager.Controls.TreeView
                 if (node is ProjectOutputNode)
                 {
                     var output = node as ProjectOutputNode;
-                    if (!project.IsPathHidden(output.BackingPath)) output.Refresh(recursive);
+                    if (project != null && !project.IsPathHidden(output.BackingPath)) output.Refresh(recursive);
                     else nodesToDie.Add(output);
                 }
                 else if (node is ReferencesNode) node.Refresh(recursive);
@@ -149,8 +152,8 @@ namespace ProjectManager.Controls.TreeView
 
             if (Directory.Exists(BackingPath))
             {
-                PopulateDirectories(nodesToDie, recursive, project);
-                PopulateFiles(nodesToDie, recursive, project);
+                PopulateDirectories(nodesToDie, recursive);
+                PopulateFiles(nodesToDie, recursive);
             }
 
 			foreach (GenericNode node in nodesToDie)
@@ -160,11 +163,11 @@ namespace ProjectManager.Controls.TreeView
 			}
 		}
 
-        private void PopulateDirectories(GenericNodeList nodesToDie, bool recursive, Project project)
+        private void PopulateDirectories(GenericNodeList nodesToDie, bool recursive)
 		{
 			foreach (string directory in Directory.GetDirectories(BackingPath))
 			{
-				if (IsDirectoryExcluded(directory, project))
+				if (IsDirectoryExcluded(directory))
 					continue;
 
                 DirectoryNode node;
@@ -191,13 +194,13 @@ namespace ProjectManager.Controls.TreeView
 			}
 		}
 
-        private void PopulateFiles(GenericNodeList nodesToDie, bool recursive, Project project)
+        private void PopulateFiles(GenericNodeList nodesToDie, bool recursive)
 		{
             string[] files = Directory.GetFiles(BackingPath);
 
 			foreach (string file in files)
 			{
-				if (IsFileExcluded(file, project))
+				if (IsFileExcluded(file))
 					continue;
 
 				if (Tree.NodeMap.ContainsKey(file))
@@ -208,7 +211,7 @@ namespace ProjectManager.Controls.TreeView
 				}
 				else
 				{
-					FileNode node = FileNode.Create(file);
+					FileNode node = FileNode.Create(file, project);
 					InsertNode(Nodes, node);
 					node.Refresh(recursive);
 					nodesToDie.Remove(node);
@@ -216,10 +219,11 @@ namespace ProjectManager.Controls.TreeView
 			}
 
             FileMapping mapping = GetFileMapping(files);
+            if (mapping == null) return;
 
             foreach (string file in files)
             {
-                if (IsFileExcluded(file, project))
+                if (IsFileExcluded(file))
                     continue;
 
                 GenericNode node = Tree.NodeMap[file];
@@ -247,7 +251,7 @@ namespace ProjectManager.Controls.TreeView
             FileMappingRequest request = new FileMappingRequest(files);
 
             // Give plugins a chance to respond first
-            if (OnDirectoryNodeMapping != null) OnDirectoryNodeMapping(this, request);
+            //if (OnDirectoryNodeMapping != null) OnDirectoryNodeMapping(this, request);
 
             // No one cares?  ok, well we do know one thing: Mxml
             if (request.Mapping.Count == 0 && Tree.Project is AS3Project 
@@ -266,7 +270,7 @@ namespace ProjectManager.Controls.TreeView
 		{
 			bool inserted = false;
 
-			for (int i=0; i<nodes.Count; i++)
+			/*for (int i=0; i<nodes.Count; i++)
 			{
                 GenericNode existingNode = nodes[i] as GenericNode;
 
@@ -280,7 +284,7 @@ namespace ProjectManager.Controls.TreeView
 					inserted = true;
 					break;
 				}
-			}
+			}*/
 
 			if (!inserted)
 				nodes.Add(node); // append to the end of the list
@@ -293,8 +297,10 @@ namespace ProjectManager.Controls.TreeView
 			}
 		}
 
-		bool IsDirectoryExcluded(string path, Project project)
+		bool IsDirectoryExcluded(string path)
 		{
+            if (project == null) return false;
+
 			string dirName = Path.GetFileName(path);
 			foreach (string excludedDir in PluginMain.Settings.ExcludedDirectories)
 				if (dirName.Equals(excludedDir, StringComparison.OrdinalIgnoreCase))
@@ -303,9 +309,11 @@ namespace ProjectManager.Controls.TreeView
             return !project.ShowHiddenPaths && project.IsPathHidden(path);
 		}
 
-		bool IsFileExcluded(string path, Project project)
+		bool IsFileExcluded(string path)
 		{
-			if (path == project.ProjectPath) return true;
+            if (project == null) return false;
+
+            if (path == project.ProjectPath) return true;
 
             return !project.ShowHiddenPaths && (project.IsPathHidden(path) || path.IndexOf("\\.") >= 0 || ProjectTreeView.IsFileTypeHidden(path));
 		}

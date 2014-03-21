@@ -99,12 +99,12 @@ namespace SourceControl.Managers
                     if (path.StartsWith(watcher.Path, StringComparison.OrdinalIgnoreCase))
                         return;
 
-                ExploreDirectory(path, true);
+                ExploreDirectory(path, true, 0);
             }
             catch { }
         }
 
-        private void ExploreDirectory(string path, bool rootDir)
+        private void ExploreDirectory(string path, bool rootDir, int depth)
         {
             foreach (IVCManager manager in ProjectWatcher.VCManagers)
                 if (manager.IsPathUnderVC(path))
@@ -119,12 +119,13 @@ namespace SourceControl.Managers
             }
 
             string[] dirs = Directory.GetDirectories(path);
-            foreach (string dir in dirs)
-            {
-                FileInfo info = new FileInfo(dir);
-                if ((info.Attributes & FileAttributes.Hidden) == 0)
-                    ExploreDirectory(dir, false);
-            }
+            if (depth < 3)
+                foreach (string dir in dirs)
+                {
+                    FileInfo info = new FileInfo(dir);
+                    if ((info.Attributes & FileAttributes.Hidden) == 0)
+                        ExploreDirectory(dir, false, depth++);
+                }
         }
 
         private void CreateWatcher(string path, IVCManager manager)
@@ -145,8 +146,8 @@ namespace SourceControl.Managers
             try
             {
                 DirectoryInfo info = new DirectoryInfo(path);
-                do
-                {
+                //do
+                //{
                     info = info.Parent;
 
                     foreach (FileSystemWatcher watcher in watchers.Keys)
@@ -159,8 +160,8 @@ namespace SourceControl.Managers
                             CreateWatcher(path, manager);
                             return true;
                         }
-                }
-                while (info.Parent != null);
+                //}
+                //while (info.Parent != null);
             }
             catch { }
             return false;
