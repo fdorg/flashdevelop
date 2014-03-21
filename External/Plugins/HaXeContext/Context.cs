@@ -40,6 +40,7 @@ namespace HaXeContext
         private bool hasMobileSupport;
         private bool resolvingDot;
         private bool resolvingFunction;
+        HaxeCompletionCache hxCompletionCache;
 
         public Context(HaXeSettings initSettings)
         {
@@ -55,6 +56,7 @@ namespace HaXeContext
 
             // language constructs
             features.hasPackages = true;
+            features.hasFriendlyParentPackages = true;
             features.hasModules = true;
             features.hasImports = true;
             features.hasImportsWildcard = false;
@@ -718,67 +720,84 @@ namespace HaXeContext
             if (inFile == null) return imports;
             foreach (MemberModel item in inFile.Imports)
             {
-                if (settings.LazyClasspathExploration)
-                {
-                    imports.Add(item);
-                    continue;
-                }
-                // HX files are "modules": when imported all the classes contained are available
-                string fileName = item.Type.Replace(".", dirSeparator) + ".hx";
-
-                if (fileName.StartsWith("flash" + dirSeparator))
-                {
-                    if (!IsFlashTarget || majorVersion > 8) // flash9 remap
-                        fileName = FLASH_NEW + fileName.Substring(5);
-                    else
-                        fileName = FLASH_OLD + fileName.Substring(5);
-                }
-
-                bool matched = false;
-                foreach (PathModel aPath in classPath)
-                    if (aPath.IsValid && !aPath.Updating)
-                    {
-                        string path;
-                        try
-                        {
-                            path = Path.Combine(aPath.Path, fileName);
-                        }
-                        catch { continue; }
-
-                        FileModel file = null;
-                        // cached file
-                        if (aPath.HasFile(path))
-                        {
-                            file = aPath.GetFile(path);
-                            if (file.Context != this)
-                            {
-                                // not associated with this context -> refresh
-                                file.OutOfDate = true;
-                                file.Context = this;
-                            }
-                        }
-                        else if (File.Exists(path))
-                        {
-                            file = GetFileModel(path);
-                            if (file != null)
-                                aPath.AddFile(file);
-                        }
-                        if (file != null)
-                        {
-                            // add all classes (Haxe module)
-                            foreach (ClassModel c in file.Classes)
-                                if (c.IndexType == null) imports.Add(c);
-                            matched = true;
-                        }
-                    }
-
-                if (!matched) // add anyway
-                    imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
+                ResolveImport(item, imports);
             }
+
+            if (inFile == cFile)
+            {
+                if (cClass != null && cClass != ClassModel.VoidClass)
+                    ResolveImport(cClass, imports);
+            }
+            else
+            {
+                foreach (ClassModel aClass in inFile.Classes)
+                    if (aClass.Access != Visibility.Private) ResolveImport(aClass, imports);
+            }
+
             // haxe3: type resolution from bottom to top
             imports.Items.Reverse();
             if (inFile == cFile) completionCache.Imports = imports;
             return imports;
+        }
+
+        private void ResolveImport(MemberModel item, MemberList imports)
+        {
+            if (settings.LazyClasspathExploration)
+            {
+                imports.Add(item);
+                return;
+            }
+            // HX files are "modules": when imported all the classes contained are available
+            string fileName = item.Type.Replace(".", dirSeparator) + ".hx";
+
+            if (fileName.StartsWith("flash" + dirSeparator))
+            {
+                if (!IsFlashTarget || majorVersion > 8) // flash9 remap
+                    fileName = FLASH_NEW + fileName.Substring(5);
+                else
+                    fileName = FLASH_OLD + fileName.Substring(5);
+            }
+
+            bool matched = false;
+            foreach (PathModel aPath in classPath)
+                if (aPath.IsValid && !aPath.Updating)
+                {
+                    string path;
+                    try
+                    {
+                        path = Path.Combine(aPath.Path, fileName);
+                    }
+                    catch { continue; }
+
+                    FileModel file = null;
+                    // cached file
+                    if (aPath.HasFile(path))
+                    {
+                        file = aPath.GetFile(path);
+                        if (file.Context != this)
+                        {
+                            // not associated with this context -> refresh
+                            file.OutOfDate = true;
+                            file.Context = this;
+                        }
+                    }
+                    /*else if (File.Exists(path))
+                    {
+                        file = GetFileModel(path);
+                        if (file != null)
+                            aPath.AddFile(file);
+                    }*/
+                    if (file != null)
+                    {
+                        // add all classes (Haxe module)
+                        foreach (ClassModel c in file.Classes)
+                            if (c.IndexType == null) imports.Add(c);
+                        matched = true;
+                    }
+                }
+
+            if (!matched) // add anyway
+                imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
         }
 
         /// <summary>
@@ -1215,22 +1234,38 @@ namespace HaXeContext
             }
         }
 
-
-        public override MemberList GetVisibleExternalElements(bool typesOnly)
+        /// <summary>
+        /// Return the top-level elements (this, super) for the current file
+        /// </summary>
+        /// <returns></returns>
+        public override MemberList GetTopLevelElements()
         {
-            MemberList visibleElements = new MemberList();
-            if (!IsFileValid) return visibleElements;
+            GetVisibleExternalElements(); // update cache if needed
 
-            // top-level elements
-            if (!typesOnly && topLevel != null)
+            if (topLevel != null)
             {
+                MemberList items = new MemberList();
                 if (topLevel.OutOfDate) InitTopLevelElements();
-                visibleElements.Add(topLevel.Members);
+                items.Merge(topLevel.Members);
+                items.Merge(hxCompletionCache.OtherElements);
+                return items;
             }
+            else return hxCompletionCache.OtherElements;
+        }
 
-            if (completionCache.IsDirty || !typesOnly)
+        /// <summary>
+        /// Return the visible elements (types, package-level declarations) visible from the current file
+        /// </summary>
+        /// <returns></returns>
+        public override MemberList GetVisibleExternalElements()
+        {
+            if (!IsFileValid) return new MemberList();
+
+            if (completionCache.IsDirty)
             {
                 MemberList elements = new MemberList();
+                MemberList other = new MemberList();
+
                 // root types & packages
                 FileModel baseElements = ResolvePackage(null, false);
                 if (baseElements != null)
@@ -1244,28 +1279,38 @@ namespace HaXeContext
 
                 bool qualify = Settings.CompletionShowQualifiedTypes && settings.GenerateImports;
 
-                // other classes in same package
+                // other classes in same package (or parent packages!)
                 if (features.hasPackages && cFile.Package != "")
                 {
-                    int pLen = cFile.Package.Length;
-                    FileModel packageElements = ResolvePackage(cFile.Package, false);
-                    if (packageElements != null)
+                    string package = cFile.Package;
+                    do
                     {
-                        foreach (MemberModel member in packageElements.Imports)
+                        int pLen = package.Length;
+                        FileModel packageElements = ResolvePackage(package, false);
+                        if (packageElements != null)
                         {
-                            if (member.Flags != FlagType.Package && member.Type.LastIndexOf('.') == pLen)
+                            foreach (MemberModel member in packageElements.Imports)
                             {
-                                if (qualify) member.Name = member.Type;
+                                if (member.Flags != FlagType.Package && member.Type.LastIndexOf('.') == pLen)
+                                {
+                                    //if (qualify) member.Name = member.Type;
+                                    elements.Add(member);
+                                }
+                            }
+                            foreach (MemberModel member in packageElements.Members)
+                            {
+                                string pkg = member.InFile.Package;
+                                //if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
+                                member.Type = pkg != "" ? pkg + "." + member.Name : member.Name;
                                 elements.Add(member);
                             }
                         }
-                        foreach (MemberModel member in packageElements.Members)
-                        {
-                            string pkg = member.InFile.Package;
-                            if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
-                            elements.Add(member);
-                        }
+
+                        int p = package.LastIndexOf("."); // parent package
+                        if (p < 0) break;
+                        package = package.Substring(0, p);
                     }
+                    while (true);
                 }
                 // other types in same file
                 if (cFile.Classes.Count > 1)
@@ -1275,45 +1320,42 @@ namespace HaXeContext
                     {
                         if (mainClass == aClass) continue;
                         elements.Add(aClass.ToMemberModel());
-                        if (!typesOnly && aClass.IsEnum())
-                            elements.Add(aClass.Members);
+                        if (aClass.IsEnum())
+                            other.Add(aClass.Members);
                     }
                 }
 
                 // imports
                 MemberList imports = ResolveImports(CurrentModel);
                 elements.Add(imports);
-                if (!typesOnly)
-                    foreach (MemberModel import in imports)
-                    {
-                        if (import is ClassModel)
-                        {
-                            ClassModel aClass = import as ClassModel;
-                            if (aClass.IsEnum()) elements.Add(aClass.Members);
-                        }
-                    }
-                elements.Sort();
 
-                // in cache
-                if (typesOnly)
+                foreach (MemberModel import in imports)
                 {
-                    completionCache = new CompletionCache(this, elements);
-                    // known classes colorization
-                    if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl != null)
+                    if (import is ClassModel)
                     {
-                        try
-                        {
-                            CurSciControl.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
-                            CurSciControl.Colourise(0, -1); // re-colorize the editor
-                        }
-                        catch (AccessViolationException) { } // catch memory errors
+                        ClassModel aClass = import as ClassModel;
+                        if (aClass.IsEnum()) other.Add(aClass.Members);
                     }
                 }
-                visibleElements.Merge(elements);
+
+                // in cache
+                elements.Sort();
+                other.Sort();
+                completionCache = hxCompletionCache = new HaxeCompletionCache(this, elements, other);
+
+                // known classes colorization
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl != null)
+                {
+                    try
+                    {
+                        CurSciControl.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
+                        CurSciControl.Colourise(0, -1); // re-colorize the editor
+                    }
+                    catch (AccessViolationException) { } // catch memory errors
+                }
             }
-            else
-                visibleElements.Merge(completionCache.Elements);
-            return visibleElements;
+
+            return completionCache.Elements;
         }
 
         /// <summary>
@@ -1619,5 +1661,16 @@ namespace HaXeContext
         }
         #endregion
 
+    }
+
+    class HaxeCompletionCache: CompletionCache
+    {
+        public MemberList OtherElements;
+
+        public HaxeCompletionCache(ASContext context, MemberList elements, MemberList otherElements)
+            : base(context, elements)
+        {
+            OtherElements = otherElements;
+        }
     }
 }

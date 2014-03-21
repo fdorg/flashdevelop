@@ -108,7 +108,7 @@ namespace FlashDebugger
         {
             string endOfClassName = "." + className;
             
-            MemberList imports = ASContext.Context.GetVisibleExternalElements(true);
+            MemberList imports = ASContext.Context.GetVisibleExternalElements();
             foreach (MemberModel member in imports)
             {
                 if (member.Name == className || member.Name.EndsWith(endOfClassName))

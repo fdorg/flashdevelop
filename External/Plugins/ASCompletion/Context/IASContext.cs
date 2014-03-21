@@ -135,12 +135,17 @@ namespace ASCompletion.Context
         /// <returns></returns>
         void FilterSource(FileModel model);
 
-		/// <summary>
-        /// Return the elements (package, types, etc) visible from the current file
+        /// <summary>
+        /// Return the top-level elements (this, super) for the current file
         /// </summary>
-        /// <param name="typesOnly">Return only packages and types</param>
         /// <returns></returns>
-        MemberList GetVisibleExternalElements(bool typesOnly);
+        MemberList GetTopLevelElements();
+
+		/// <summary>
+        /// Return the visible elements (types, package-level declarations) visible from the current file
+        /// </summary>
+        /// <returns></returns>
+        MemberList GetVisibleExternalElements();
 
         /// <summary>
         /// Return the full project classes list
