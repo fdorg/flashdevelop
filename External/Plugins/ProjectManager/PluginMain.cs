@@ -718,7 +718,7 @@ namespace ProjectManager
                 dialog.ShowDialog(pluginUI);
 
                 if (dialog.ClasspathsChanged || dialog.AssetsChanged)
-                    Tree.RebuildTree(true);
+                    Tree.RebuildTree();
 
                 if (dialog.PropertiesChanged)
                 {
@@ -942,7 +942,7 @@ namespace ProjectManager
             projectActions.UpdateASCompletion(MainForm, project);
             pluginUI.NotifyIssues();
             FlexCompilerShell.Cleanup(); // clear compile cache for this project
-            Tree.RebuildTree(true);
+            Tree.RebuildTree();
             listenToPathChange = true;
         }
 
@@ -1070,7 +1070,7 @@ namespace ProjectManager
         {
             if (setting == "ExcludedFileTypes" || setting == "ExcludedDirectories" || setting == "ShowProjectClasspaths" || setting == "ShowGlobalClasspaths" || setting == "GlobalClasspath")
             {
-                Tree.RebuildTree(true);
+                Tree.RebuildTree();
             }
             else if (setting == "ExecutableFileTypes")
             {
