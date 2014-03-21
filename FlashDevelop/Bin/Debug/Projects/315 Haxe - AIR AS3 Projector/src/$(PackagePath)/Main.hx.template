@@ -12,7 +12,10 @@ class Main extends Sprite $(CSLB){
 	public function new() $(CSLB){
 		super();
 		
-		//Entry point
+		/**
+		 * Entry point.
+		 * New to AIR? Please read the readme.txt files *carefully*!
+		 */
 	}
 	static function main() $(CSLB){
 		Lib.current.addChild(new Main());
