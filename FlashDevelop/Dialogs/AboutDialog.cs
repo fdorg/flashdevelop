@@ -57,9 +57,9 @@ namespace FlashDevelop.Dialogs
             this.copyLabel.ForeColor = System.Drawing.Color.DarkGray;
             this.copyLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
             this.copyLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.copyLabel.Location = new System.Drawing.Point(25, 191);
+            this.copyLabel.Location = new System.Drawing.Point(25, 192);
             this.copyLabel.Name = "copyLabel";
-            this.copyLabel.Size = new System.Drawing.Size(400, 31);
+            this.copyLabel.Size = new System.Drawing.Size(383, 30);
             this.copyLabel.TabIndex = 0;
             this.copyLabel.Text = "FlashDevelop logo, domain and the name are copyright of Mika Palmu.\r\nDevelopment: Mika Palmu, Philippe Elsass and all helpful contributors.";
             this.copyLabel.Click += new System.EventHandler(this.DialogCloseClick);
@@ -70,16 +70,16 @@ namespace FlashDevelop.Dialogs
             this.versionLabel.ForeColor = System.Drawing.Color.DarkGray;
             this.versionLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
             this.versionLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.versionLabel.Location = new System.Drawing.Point(25, 173);
+            this.versionLabel.Location = new System.Drawing.Point(25, 172);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(400, 14);
+            this.versionLabel.Size = new System.Drawing.Size(289, 15);
             this.versionLabel.TabIndex = 0;
-            this.versionLabel.Text = "FlashDevelop 4.0.0 RTM for Microsoft.NET 2.0 (R1234)";
+            this.versionLabel.Text = "FlashDevelop 4.6.0.0 for .NET 2.0 (master#1234567890)";
             this.versionLabel.Click += new System.EventHandler(this.DialogCloseClick);
             // 
             // AboutDialog
             //
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(450, 244);
             this.Controls.Add(this.copyLabel);
@@ -95,6 +95,7 @@ namespace FlashDevelop.Dialogs
             this.Text = " About FlashDevelop";
             ((System.ComponentModel.ISupportInitialize)(this.imageBox)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 
