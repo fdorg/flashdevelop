@@ -165,9 +165,9 @@ namespace ProjectManager.Controls.TreeView
             {
                 projects = value != null ? new List<Project>(value) : new List<Project>();
 
-                BeginUpdate();
                 try
                 {
+                    BeginUpdate();
                     BuildTree();
                 }
                 finally
@@ -301,6 +301,10 @@ namespace ProjectManager.Controls.TreeView
                 BeginUpdate();
                 BuildTree();
 
+                // BUG: avoid nodes expansion to generate redraws
+                EndUpdate();
+                BeginUpdate();
+                
                 // restore tree state
                 ExpandedPaths = previouslyExpanded;
                 if (NodeMap.ContainsKey(currentPath))
@@ -330,11 +334,6 @@ namespace ProjectManager.Controls.TreeView
 
             if (projects.Count == 0)
                 return;
-
-            // cleanup
-            /*EndUpdate();
-            Refresh();
-            BeginUpdate();*/
 
             foreach (Project project in projects)
                 RebuildProjectNode(project);
