@@ -33,7 +33,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 foreach (IgnoreEntry ignore in ignores)
                 {
-                    if (path.StartsWith(ignore.path) && ignore.regex.IsMatch(path))
+                    if ((ignore.path == "" || path.StartsWith(ignore.path)) && ignore.regex.IsMatch(path))
                     {
                         found = root.MapPath(path.Substring(ignore.path.Length), VCItemStatus.Ignored);
                         return found;
@@ -50,15 +50,9 @@ namespace SourceControl.Sources.Mercurial
 
             temp = new StatusNode(".", VCItemStatus.Undefined);
             updatingPath = RootPath;
+            if (dirty != null) dirty = null;
+            ignores.Update();
 
-            if (dirty != null)
-            {
-                /*if (File.Exists(dirty)) dirty = Path.GetDirectoryName(dirty);
-                StatusNode dirtyNode = root.FindPath(dirty);
-                if (dirtyNode != null)
-                    updatingPath = dirty;*/
-                dirty = null;
-            }
             Run("status -A", updatingPath);
         }
 
@@ -92,21 +86,6 @@ namespace SourceControl.Sources.Mercurial
             }
 
             if (updatingPath == RootPath) root = temp;
-            /*else
-            {
-                StatusNode updateNode = root.FindPath(Path.GetDirectoryName(updatingPath));
-                if (updateNode != null)
-                {
-                    if (updateNode.Parent == null) root = temp;
-                    else
-                    {
-                        string name = Path.GetFileName(updatingPath);
-                        if (updateNode.Children.ContainsKey(name))
-                            updateNode.Children.Remove(name);
-                        updateNode.Children.Add(name, temp);
-                    }
-                }
-            }*/
             if (OnResult != null) OnResult(this);
         }
 

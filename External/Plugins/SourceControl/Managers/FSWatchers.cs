@@ -22,7 +22,7 @@ namespace SourceControl.Managers
         {
             updateTimer = new System.Timers.Timer();
             updateTimer.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
-            updateTimer.Interval = 1000;
+            updateTimer.Interval = 4000;
             updateTimer.Elapsed += updateTimer_Tick;
             updateTimer.Start();
         }
@@ -84,7 +84,7 @@ namespace SourceControl.Managers
                 foreach (string path in ProjectManager.PluginMain.Settings.GlobalClasspaths)
                     CreateWatchers(path);
 
-            updateTimer.Interval = 1000;
+            updateTimer.Interval = 4000;
             updateTimer.Start();
         }
 
@@ -196,7 +196,7 @@ namespace SourceControl.Managers
         void updateTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
             updateTimer.Stop();
-            updateTimer.Interval = 2000;
+            updateTimer.Interval = 4000;
             lastDirtyPath = null;
             if (disposing)
                 return;
@@ -226,7 +226,7 @@ namespace SourceControl.Managers
             }
 
             updateTimer.Stop();
-            updateTimer.Interval = 1000;
+            updateTimer.Interval = 4000;
             updateTimer.Start();
         }
     }

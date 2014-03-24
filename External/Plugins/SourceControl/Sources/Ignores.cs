@@ -38,8 +38,9 @@ namespace SourceControl.Sources
                 foreach (string line in lines)
                 {
                     string entry = line.Trim();
-                    if (entry.StartsWith("#")) continue;
+                    if (entry.StartsWith("#") || entry.Length == 0) continue;
                     entry = Regex.Escape(entry);
+                    if (entry.StartsWith("/")) entry = "^" + entry.Substring(1);
                     entry = entry.Replace("\\*", ".*");
                     entry = entry.Replace("/", "\\");
                     Add(new IgnoreEntry("", new Regex(entry)));

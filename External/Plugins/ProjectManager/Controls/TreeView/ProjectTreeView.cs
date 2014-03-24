@@ -311,11 +311,11 @@ namespace ProjectManager.Controls.TreeView
                     SelectedNode = NodeMap[currentPath];
                 else
                     SelectedNode = Nodes[0] as GenericNode;// projectNode;
-                Win32.Scrolling.SetScrollPos(this, scrollPos);
             }
             finally
             {
                 EndUpdate();
+                Win32.Scrolling.SetScrollPos(this, scrollPos);
             }
         }
 
@@ -366,10 +366,11 @@ namespace ProjectManager.Controls.TreeView
 		/// paths is null.
 		/// </summary>
 		public void RefreshTree(string[] paths)
-		{
-			BeginUpdate();
+        {
+            Point scrollPos = Win32.Scrolling.GetScrollPos(this);
             try
             {
+                BeginUpdate();
                 if (paths == null)
                 {
                     // full recursive refresh
@@ -385,9 +386,10 @@ namespace ProjectManager.Controls.TreeView
                 }
             }
             catch { }
-            finally 
-            { 
-                EndUpdate(); 
+            finally
+            {
+                EndUpdate();
+                Win32.Scrolling.SetScrollPos(this, scrollPos);
             }
 		}
 

@@ -13,6 +13,7 @@ namespace SourceControl.Sources.Git
         public event StatusResult OnResult;
 
         public string RootPath;
+        public string Branch;
 
         StatusNode root = new StatusNode(".", VCItemStatus.Undefined);
         StatusNode temp;
@@ -33,7 +34,7 @@ namespace SourceControl.Sources.Git
             {
                 foreach (IgnoreEntry ignore in ignores)
                 {
-                    if (path.StartsWith(ignore.path) && ignore.regex.IsMatch(path))
+                    if ((ignore.path == "" || path.StartsWith(ignore.path)) && ignore.regex.IsMatch(path))
                     {
                         found = root.MapPath(path.Substring(ignore.path.Length), VCItemStatus.Ignored);
                         return found;
@@ -50,17 +51,10 @@ namespace SourceControl.Sources.Git
 
             temp = new StatusNode(".", VCItemStatus.Undefined);
             updatingPath = RootPath;
-
-            if (dirty != null)
-            {
-                /*if (File.Exists(dirty)) dirty = Path.GetDirectoryName(dirty);
-                StatusNode dirtyNode = root.FindPath(dirty);
-                if (dirtyNode != null)
-                    updatingPath = dirty;*/
-                dirty = null;
-            }
+            if (dirty != null) dirty = null;
             ignores.Update();
-            Run("status -s", updatingPath);
+
+            Run("status -s -b --porcelain", updatingPath);
         }
 
         public bool SetPathDirty(string path)
@@ -93,21 +87,6 @@ namespace SourceControl.Sources.Git
             }
 
             if (updatingPath == RootPath) root = temp;
-            /*else
-            {
-                StatusNode updateNode = root.FindPath(Path.GetDirectoryName(updatingPath));
-                if (updateNode != null)
-                {
-                    if (updateNode.Parent == null) root = temp;
-                    else
-                    {
-                        string name = Path.GetFileName(updatingPath);
-                        if (updateNode.Children.ContainsKey(name))
-                            updateNode.Children.Remove(name);
-                        updateNode.Children.Add(name, temp);
-                    }
-                }
-            }*/
             if (OnResult != null) OnResult(this);
         }
 
@@ -115,6 +94,7 @@ namespace SourceControl.Sources.Git
         {
             int fileIndex = 3;
             if (line.Length < fileIndex || line.Length < 3) return;
+
             char c0 = line[0];
             char c1 = line[1];
             if (c1 == ':') return;
@@ -128,7 +108,12 @@ namespace SourceControl.Sources.Git
             else if (c0 == 'R') s = VCItemStatus.Added; // renamed
             else if (c0 == 'M' || c1 == 'M') s = VCItemStatus.Modified;
             else if (c0 == 'D' || c1 == 'D') s = VCItemStatus.Deleted;
-            
+            else if (c0 == '#')
+            {
+                Branch = line.Substring(fileIndex);
+                return;
+            }
+
             int p = line.IndexOf(" -> ");
             if (p > 0) line = line.Substring(p + 4);
             else line = line.Substring(fileIndex);

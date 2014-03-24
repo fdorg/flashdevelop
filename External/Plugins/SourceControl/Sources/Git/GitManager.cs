@@ -42,7 +42,7 @@ namespace SourceControl.Sources.Git
         {
             StatusNode snode = FindNode(path, rootPath);
             if (snode != null) return snode.Status;
-            else return VCItemStatus.Unknown;
+            else return VCItemStatus.Ignored;
         }
 
         private StatusNode FindNode(string path, string rootPath)
