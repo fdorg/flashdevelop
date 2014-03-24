@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using flash.tools.debugger;
+using PluginCore.Helpers;
 
 namespace FlashDebugger
 {
@@ -31,6 +32,9 @@ namespace FlashDebugger
             lv.FullRowSelect = true;
             lv.BorderStyle = BorderStyle.None;
             lv.Dock = System.Windows.Forms.DockStyle.Fill;
+
+            foreach (ColumnHeader column in lv.Columns)
+                column.Width = ScaleHelper.Scale(column.Width);
 
             lv.SmallImageList = imageList;
             currentImageIndex = imageList.Images.IndexOfKey("StartContinue");

@@ -294,6 +294,7 @@ namespace FlashDevelop.Dialogs
             this.pluginsGroup = new ListViewGroup(pluginsHeader, HorizontalAlignment.Left);
             this.itemListView.Groups.Add(this.mainGroup);
             this.itemListView.Groups.Add(this.pluginsGroup);
+            this.columnHeader.Width = ScaleHelper.Scale(this.columnHeader.Width);
         }
 
         /// <summary>

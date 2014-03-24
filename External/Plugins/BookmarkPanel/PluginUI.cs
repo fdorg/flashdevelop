@@ -14,6 +14,7 @@ using PluginCore.Controls;
 using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace BookmarkPanel
 {
@@ -228,6 +229,7 @@ namespace BookmarkPanel
         private void InitializeGraphics()
         {
             this.imageList = new ImageList();
+            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("559|26|0|1"));
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("229"));
@@ -257,11 +259,17 @@ namespace BookmarkPanel
         {
             this.toolStrip.Font = PluginBase.Settings.DefaultFont;
             this.toolStrip.Renderer = new DockPanelStripRenderer();
+            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.statusStrip.Font = PluginBase.Settings.DefaultFont;
             this.statusStrip.Renderer = new DockPanelStripRenderer();
+            this.statusStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
+            this.contextMenuStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+
+            foreach (ColumnHeader column in listView.Columns)
+                column.Width = ScaleHelper.Scale(column.Width);
         }
 
         /// <summary>

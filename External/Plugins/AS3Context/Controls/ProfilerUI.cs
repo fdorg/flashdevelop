@@ -95,6 +95,10 @@ namespace AS3Context.Controls
             detectDisconnect.Tick += new EventHandler(detectDisconnect_Tick);
 
             memView = new ProfilerMemView(memLabel, memStatsLabel, memScaleCombo, memoryPage);
+
+            foreach (ColumnHeader column in listView.Columns)
+                column.Width = ScaleHelper.Scale(column.Width);
+
             liveObjectsView = new ProfilerLiveObjectsView(listView);
             liveObjectsView.OnViewObject += new ViewObjectEvent(liveObjectsView_OnViewObject);
             objectRefsView = new ProfilerObjectsView(objectRefsGrid);

@@ -58,6 +58,7 @@ namespace TaskListPanel
             this.InitializeComponent();
             this.InitializeContextMenu();
             this.InitializeLocalization();
+            this.InitializeLayout();
             this.pluginMain = pluginMain;
             this.groups = new List<String>();
             this.columnSorter = new ListViewSorter();
@@ -189,6 +190,15 @@ namespace TaskListPanel
             this.ResumeLayout(false);
             this.PerformLayout();
 
+        }
+
+        /// <summary>
+        /// Initializes the custom rendering
+        /// </summary>
+        private void InitializeLayout()
+        {
+            foreach (ColumnHeader column in listView.Columns)
+                column.Width = ScaleHelper.Scale(column.Width);
         }
 
         #endregion

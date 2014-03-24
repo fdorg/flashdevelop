@@ -300,6 +300,7 @@ namespace FlashLogViewer
             this.logTextBox.Font = PluginBase.Settings.ConsoleFont;
             this.filterLabel.Font = PluginBase.Settings.DefaultFont;
             this.logComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            this.logComboBox.Width = ScaleHelper.Scale(this.logComboBox.Width);
             this.filterComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.toolStrip.Renderer = new DockPanelStripRenderer();
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));

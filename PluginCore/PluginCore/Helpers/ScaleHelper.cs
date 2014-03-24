@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Text;
 
 namespace PluginCore.Helpers
@@ -103,11 +104,22 @@ namespace PluginCore.Helpers
             int width = Scale(image.Width);
             int height = Scale(image.Height);
 
-            Bitmap bitmap = new Bitmap(width, height, image.PixelFormat);
+            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             Graphics graphicsImage = Graphics.FromImage(bitmap);
             graphicsImage.SmoothingMode = SmoothingMode.HighQuality;
             graphicsImage.InterpolationMode = InterpolationMode.NearestNeighbor;
-            graphicsImage.DrawImage(image, 0, 0, bitmap.Width, bitmap.Height);
+
+            // use an image attribute in order to remove the black/gray border around image after resize
+            // (most obvious on white images), see this post for more information:
+            // http://www.codeproject.com/KB/GDI-plus/imgresizoutperfgdiplus.aspx
+            using (var attribute = new ImageAttributes())
+            {
+                attribute.SetWrapMode(WrapMode.TileFlipXY);
+
+                // draws the resized image to the bitmap
+                graphicsImage.DrawImage(image, new Rectangle(new Point(0, 0), bitmap.Size), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attribute);
+            }
+
             graphicsImage.Dispose();
             return bitmap;
         }
