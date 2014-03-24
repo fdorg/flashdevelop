@@ -170,6 +170,7 @@ namespace LayoutManager
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("168"));
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("54"));
             this.layoutsListView.SmallImageList = this.imageList;
+            this.layoutsListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.deleteStripButton.Image = this.imageList.Images[3];
             this.saveStripButton.Image = this.imageList.Images[4];
             this.loadStripButton.Image = this.imageList.Images[2];
@@ -178,6 +179,7 @@ namespace LayoutManager
             this.menuDeleteButton.Image = this.imageList.Images[3];
             this.menuSaveButton.Image = this.imageList.Images[4];
             this.menuLoadButton.Image = this.imageList.Images[2];
+            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
         }
 
         /// <summary>

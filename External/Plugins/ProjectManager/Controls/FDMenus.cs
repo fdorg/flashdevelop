@@ -8,6 +8,7 @@ using PluginCore;
 using PluginCore.Utilities;
 using System.Collections.Generic;
 using ProjectManager.Projects;
+using PluginCore.Helpers;
 
 namespace ProjectManager.Controls
 {
@@ -71,7 +72,7 @@ namespace ProjectManager.Controls
             ConfigurationSelector.DropDownStyle = ComboBoxStyle.DropDownList;
             ConfigurationSelector.AutoSize = false;
             ConfigurationSelector.Enabled = false;
-            ConfigurationSelector.Width = 85;
+            ConfigurationSelector.Width = ScaleHelper.Scale(85);
             ConfigurationSelector.Margin = new Padding(1, 0, 0, 0);
             ConfigurationSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             ConfigurationSelector.Font = PluginBase.Settings.DefaultFont;
@@ -83,7 +84,7 @@ namespace ProjectManager.Controls
             TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDown;
             TargetBuildSelector.AutoSize = false;
             TargetBuildSelector.Enabled = false;
-            TargetBuildSelector.Width = 85;
+            TargetBuildSelector.Width = ScaleHelper.Scale(85);
             TargetBuildSelector.Visible = false;
             TargetBuildSelector.Margin = new Padding(1, 0, 0, 0);
             TargetBuildSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;

@@ -57,6 +57,7 @@ namespace ResultsPanel
             this.InitializeContextMenu();
             this.InitializeGraphics();
             this.InitializeTexts();
+            this.InitializeLayout();
             this.ApplySettings();
 		}
 		
@@ -297,6 +298,15 @@ namespace ResultsPanel
             this.toolStripButtonInfo.Text = "0 " + TextHelper.GetString("Filters.Informations");
             this.toolStripLabelFilter.Text = TextHelper.GetString("Filters.Filter");
             this.entryPath.Width = -2; // Extend last column
+        }
+
+        /// <summary>
+        /// Initializes the custom rendering
+        /// </summary>
+        public void InitializeLayout()
+        {
+            foreach (ColumnHeader column in entriesView.Columns)
+                column.Width = ScaleHelper.Scale(column.Width);
         }
 
         /// <summary>

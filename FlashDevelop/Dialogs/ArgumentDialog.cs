@@ -253,6 +253,7 @@ namespace FlashDevelop.Dialogs
             this.infoPictureBox.Image = Globals.MainForm.FindImage("229");
             this.argsListView.SmallImageList = imageList;
             this.argsListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            this.columnHeader.Width = ScaleHelper.Scale(this.columnHeader.Width);
         }
 
         /// <summary>

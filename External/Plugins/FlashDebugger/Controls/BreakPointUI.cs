@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace FlashDebugger
 {
@@ -101,6 +102,9 @@ namespace FlashDebugger
                 this.ColumnBreakPointFileName,
                 this.ColumnBreakPointLine,
                 this.ColumnBreakPointExp});
+
+            foreach (DataGridViewColumn column in dgv.Columns)
+                column.Width = ScaleHelper.Scale(column.Width);
 
             defaultColor = dgv.Rows[dgv.Rows.Add()].DefaultCellStyle.BackColor;
             dgv.Rows.Clear();

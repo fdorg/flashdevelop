@@ -4,6 +4,7 @@ using System.Text;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace AS3Context.Controls
 {
@@ -25,6 +26,9 @@ namespace AS3Context.Controls
             Columns.Add(new TreeColumn(PluginCore.Localization.TextHelper.GetString("Columns.Method"), 350));
             Columns.Add(new TreeColumn(PluginCore.Localization.TextHelper.GetString("Columns.File"), 200));
             Columns.Add(new TreeColumn(PluginCore.Localization.TextHelper.GetString("Columns.Line"), 50));
+
+            foreach (TreeColumn column in this.Columns)
+                column.Width = ScaleHelper.Scale(column.Width);
 
             methodTB = new NodeTextBox();
             methodTB.DataPropertyName = "Method";
