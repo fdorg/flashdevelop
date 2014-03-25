@@ -121,7 +121,7 @@ namespace ProjectManager.Controls.TreeView
             foreach (string file in Directory.GetFiles(PathHelper.TemplateDir, "*.fdt"))
             {
                 string name = Path.GetFileNameWithoutExtension(file).ToLower();
-                if (name != "as2" && name != "as3") items.Add(GetGenericAddFile(file));
+                if (name != "as2" && name != "as3" && name != "haxe") items.Add(GetGenericAddFile(file));
             }
             return items.ToArray();
         }
