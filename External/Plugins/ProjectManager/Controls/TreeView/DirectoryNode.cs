@@ -25,7 +25,7 @@ namespace ProjectManager.Controls.TreeView
     public class DirectoryNode : GenericNode
 	{
         static public event DirectoryNodeRefresh OnDirectoryNodeRefresh;
-        //static public event DirectoryNodeMapping OnDirectoryNodeMapping;
+        static public event DirectoryNodeMapping OnDirectoryNodeMapping;
 
 		bool dirty;
         DirectoryNode insideClasspath;
@@ -251,7 +251,7 @@ namespace ProjectManager.Controls.TreeView
             FileMappingRequest request = new FileMappingRequest(files);
 
             // Give plugins a chance to respond first
-            //if (OnDirectoryNodeMapping != null) OnDirectoryNodeMapping(this, request);
+            if (OnDirectoryNodeMapping != null) OnDirectoryNodeMapping(this, request);
 
             // No one cares?  ok, well we do know one thing: Mxml
             if (request.Mapping.Count == 0 && Tree.Project is AS3Project 
@@ -270,7 +270,7 @@ namespace ProjectManager.Controls.TreeView
 		{
 			bool inserted = false;
 
-			/*for (int i=0; i<nodes.Count; i++)
+			for (int i=0; i<nodes.Count; i++)
 			{
                 GenericNode existingNode = nodes[i] as GenericNode;
 
@@ -284,7 +284,7 @@ namespace ProjectManager.Controls.TreeView
 					inserted = true;
 					break;
 				}
-			}*/
+			}
 
 			if (!inserted)
 				nodes.Add(node); // append to the end of the list
