@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Locale xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<!-- States -->
+	<StateNew>Berria</StateNew>
+	<StateUpdate>Eguneratu</StateUpdate>
+	<StateInstalled>Instalatua</StateInstalled>
+	<!-- Headers -->
+	<NameHeader>Izena</NameHeader>
+	<VersionHeader>Bertsioa</VersionHeader>
+	<DescHeader>Deskribapena</DescHeader>
+	<StatusHeader>Egoera</StatusHeader>
+	<TypeHeader>Mota</TypeHeader>
+	<!-- Progress -->
+	<ExtractingFile>Erauzten: </ExtractingFile>
+	<DownloadingFile>Deskargatzen: </DownloadingFile>
+	<DownloadingItemList>Elementu zerrenda deskargatzen...</DownloadingItemList>
+	<!-- Messages -->
+	<NoItemsSelected>Ez da elementurik aukeratu</NoItemsSelected>
+	<ItemListOpened>Elementu zerrenda fitxategitik irakurria.</ItemListOpened>
+	<DownloadedItemList>Elementu zerrenda deskargatua.</DownloadedItemList>
+	<AllItemsCompleted>Aukeratutako elementu guztiak osatuak.</AllItemsCompleted>
+	<ItemListDownloadCancelled>Elementu zerrenda deskarga ezeztatua.</ItemListDownloadCancelled>
+	<ItemListDownloadFailed>Elementu zerrenda ezin izan da deskargatu.</ItemListDownloadFailed>
+	<DeleteSelectedConfirm>Aukeratutako elementuen bertsio guztiak ezabatu nahi dituzula ziur zaude?</DeleteSelectedConfirm>
+	<ContinueWithNextItem>Hurrengo elementuarekin jarraitzen saiatzen.</ContinueWithNextItem>
+	<DownloadingError>Fitxategia deskargatzean errorea: </DownloadingError>
+	<ExtractingError>Fitxategia erauztean errorea: </ExtractingError>
+	<!-- Labels -->
+	<SelectLabel>Aukeratu:</SelectLabel>
+	<ExploreLabel>Arakatu...</ExploreLabel>
+	<InstallPathLabel>Instalazio bidea:</InstallPathLabel>
+	<DeleteSelectedLabel>{0} elementu ezabatu.</DeleteSelectedLabel>
+	<InstallSelectedLabel>{0} elementu instalatu.</InstallSelectedLabel>
+	<ToggleCheckedLabel>Toggle Aktibatua</ToggleCheckedLabel>
+	<ShowInfoLabel>Informazioa erakutsi...</ShowInfoLabel>
+	<!-- Types -->
+	<ExecutableType>Exekutagarria</ExecutableType>
+	<ArchiveType>Fitxategia</ArchiveType>
+	<!-- Dialogs -->
+	<MainFormTitle>AppMan</MainFormTitle>
+	<ConfirmTitle>Baieztatu</ConfirmTitle>
+	<!-- Links -->
+	<LinkAll>Guztiak</LinkAll>
+	<LinkNone>Bat ere ez</LinkNone>
+	<LinkInstalled>Instalatuak</LinkInstalled>
+	<LinkUpdates>Eguneraketak</LinkUpdates>
+	<LinkNew>Berria</LinkNew>
+</Locale>
