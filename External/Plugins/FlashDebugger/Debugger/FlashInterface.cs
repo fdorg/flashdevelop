@@ -1129,7 +1129,10 @@ namespace FlashDebugger
 						if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != 0)
 						{
 							Location l = (i_Session != null) ? i_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1) : m_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
-							breakpointLocations.Add(bp, l);
+                            if (l != null)
+                            {
+                                breakpointLocations.Add(bp, l);
+                            }
 						}
 					}
 				}
