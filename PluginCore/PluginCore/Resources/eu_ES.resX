@@ -5028,49 +5028,49 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.InstallSoftware" xml:space="preserve">
-    <value>Install Software...</value>
+    <value>Softwarea instalatu...</value>
     <comment>Added after 4.5.0</comment>
   </data>
   <data name="FlashDevelop.Info.ZipConfirmRemove" xml:space="preserve">
-    <value>Can the following zip file be removed:</value>
+    <value>Ondorengo zip fitxategia ezabatu daiteke:</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
-    <value>The zip file was removed succesfully.</value>
+    <value>Zip fitxategia ezabatzea ongi burutu da.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
-    <value>You are moving file[s]. Do you also want to update the references?</value>
+    <value>Fitxategia[k] mugitzen ari zara. Erreferentziak eguneratu nahi dituzu?</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Info.UpdatingReferences" xml:space="preserve">
-    <value>Updating References...</value>
+    <value>Erreferentziak eguneratzen...</value>
     <comment>Modified after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
-    <value>Moving File[s]</value>
+    <value>Fitxategia[k] mugitzen</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Title.Threads" xml:space="preserve">
-    <value>Threads</value>
+    <value>Hariak</value>
   </data>
   <data name="FlashDebugger.Label.ViewThreadsPanel" xml:space="preserve">
-    <value>Threads Panel</value>
+    <value>Harien Panela</value>
   </data>
   <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
-    <value>Shows the macro in the main toolbar.</value>
+    <value>Tresna-barra nagusian macro-a erakutsiko da.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
-    <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
+    <value>Araztailea hastean aukeratutako egiturara aldatuko da. Araztailea gelditzean, aurreko egiturara itzuliko da. Egitura bat aukeratu bada, arazte panelak ez dira automatikoki bistaratuko.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Start Scrolling</value>
+    <value>Hasi Desplazatzen</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Stop Scrolling</value>
+    <value>Gelditu Desplazatzea</value>
     <comment>Added after 4.5.2</comment>
   </data>
 </root>
