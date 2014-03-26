@@ -7,7 +7,7 @@ namespace PluginCore.Helpers
 {
     public class JvmConfigHelper
     {
-        static public Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string,Dictionary<string,string>>();
+        static public Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
 
         /// <summary>
         /// Read a jvm.config file and returns its variables as a Dictionnary.
@@ -15,10 +15,18 @@ namespace PluginCore.Helpers
         public static Dictionary<string, string> ReadConfig(string configPath)
         {
             if (configPath == null) configPath = "";
-            if (Cache.ContainsKey(configPath)) return Cache[configPath];
+            string hash = configPath;
+            if (Cache.ContainsKey(hash)) return Cache[hash];
+            if (Directory.Exists(configPath))
+            {
+                if (File.Exists(Path.Combine(configPath, "bin\\jvm.config")))
+                    configPath = Path.Combine(configPath, "bin\\jvm.config");
+                else if (File.Exists(Path.Combine(configPath, "build.properties")))
+                    configPath = Path.Combine(configPath, "build.properties");
+            }
 
             Dictionary<string, string> config = ConfigHelper.Parse(configPath, false).Flatten();
-            Cache[configPath] = config;
+            Cache[hash] = config;
 
             // default values
             if (!config.ContainsKey("java.home")) config["java.home"] = "";
@@ -26,12 +34,31 @@ namespace PluginCore.Helpers
 
             string args = "-Xmx384m -Dsun.io.useCanonCaches=false";
             if (config.ContainsKey("java.args")) args = config["java.args"];
+            else if (config.ContainsKey("jvm.args")) args = config["jvm.args"];
+
+            args = ExpandArguments(args, config, 0);
+
             if (args.IndexOf("-Duser.language") < 0)
             {
                 args += " -Duser.language=en -Duser.region=US";
             }
             config["java.args"] = args;
             return config;
+        }
+
+        private static string ExpandArguments(string value, Dictionary<string, string> config, int depth)
+        {
+            while (value.IndexOf("${") >= 0)
+            {
+                int start = value.IndexOf("${");
+                int end = value.IndexOf("}", start);
+                if (end < start) return value;
+                string key = value.Substring(start + 2, end - start - 2).Trim();
+                string eval = config.ContainsKey(key) ? config[key] : "";
+                if (!string.IsNullOrEmpty(eval) && depth < 10) eval = ExpandArguments(eval, config, depth + 1);
+                value = value.Substring(0, start) + eval + value.Substring(end + 1);
+            }
+            return value;
         }
 
         public static string GetJavaEXE()
@@ -68,8 +95,8 @@ namespace PluginCore.Helpers
             return home;
         }
 
-		// Duplicated from 'PluginCore.PathHelper.ResolvePath()'
-		// because JvmConfigHelper is used in external tool 'FDBuild'
+        // Duplicated from 'PluginCore.PathHelper.ResolvePath()'
+        // because JvmConfigHelper is used in external tool 'FDBuild'
         private static string ResolvePath(String path, String relativeTo, Boolean checkResolvedPathExisting)
         {
             if (path == null || path.Length == 0) return null;

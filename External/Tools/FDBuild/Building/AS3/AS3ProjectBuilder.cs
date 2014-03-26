@@ -89,7 +89,7 @@ namespace ProjectManager.Building.AS3
                 }
             }
 
-            jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(Path.Combine(flexsdkPath, "bin\\jvm.config"));
+            jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(flexsdkPath);
             if (jvmConfig.ContainsKey("java.args") && jvmConfig["java.args"].Trim().Length > 0)
                 VMARGS = jvmConfig["java.args"];
         }
