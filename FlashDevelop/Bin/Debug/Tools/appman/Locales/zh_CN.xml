@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Locale xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<!-- States -->
+	<StateNew>新版</StateNew>
+	<StateUpdate>可更新</StateUpdate>
+	<StateInstalled>已安装</StateInstalled>
+	<!-- Headers -->
+	<NameHeader>名称</NameHeader>
+	<VersionHeader>版本</VersionHeader>
+	<DescHeader>描述</DescHeader>
+	<StatusHeader>状态</StatusHeader>
+	<TypeHeader>类型</TypeHeader>
+	<!-- Progress -->
+	<ExtractingFile>抽取中: </ExtractingFile>
+	<DownloadingFile>下载中: </DownloadingFile>
+	<DownloadingItemList>下载安装项列表...</DownloadingItemList>
+	<!-- Messages -->
+	<NoItemsSelected>没有选中项.</NoItemsSelected>
+	<ItemListOpened>从文件读取项目列表.</ItemListOpened>
+	<DownloadedItemList>项目列表下载完成.</DownloadedItemList>
+	<AllItemsCompleted>所有选中项完毕.</AllItemsCompleted>
+	<ItemListDownloadCancelled>下载项列表取消.</ItemListDownloadCancelled>
+	<ItemListDownloadFailed>项目列表未能下载.</ItemListDownloadFailed>
+	<DeleteSelectedConfirm>您确定要删除所有选中项?</DeleteSelectedConfirm>
+	<ContinueWithNextItem>尝试继续开始下一项.</ContinueWithNextItem>
+	<DownloadingError>下载内容出错: </DownloadingError>
+	<ExtractingError>抽取文件内容出错: </ExtractingError>
+	<!-- Labels -->
+	<SelectLabel>选择:</SelectLabel>
+	<ExploreLabel>浏览...</ExploreLabel>
+	<InstallPathLabel>安装路径:</InstallPathLabel>
+	<DeleteSelectedLabel>删除 {0} 项.</DeleteSelectedLabel>
+	<InstallSelectedLabel>安装 {0} 项.</InstallSelectedLabel>
+	<ToggleCheckedLabel>选中开关</ToggleCheckedLabel>
+	<ShowInfoLabel>显示信息...</ShowInfoLabel>
+	<!-- Types -->
+	<ExecutableType>可执行文件</ExecutableType>
+	<ArchiveType>存档文件</ArchiveType>
+	<!-- Dialogs -->
+	<MainFormTitle>AppMan</MainFormTitle>
+	<ConfirmTitle>确认</ConfirmTitle>
+	<!-- Links -->
+	<LinkAll>全选</LinkAll>
+	<LinkNone>取消全选</LinkNone>
+	<LinkInstalled>已安装</LinkInstalled>
+	<LinkUpdates>可更新</LinkUpdates>
+	<LinkNew>新版</LinkNew>
+</Locale>
