@@ -5041,49 +5041,49 @@
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.InstallSoftware" xml:space="preserve">
-    <value>Install Software...</value>
+    <value>安装软件...</value>
     <comment>Added after 4.5.0</comment>
   </data>
   <data name="FlashDevelop.Info.ZipConfirmRemove" xml:space="preserve">
-    <value>Can the following zip file be removed:</value>
+    <value>以下zip文件将被移除:</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
-    <value>The zip file was removed succesfully.</value>
+    <value>zip文件移除成功.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
-    <value>You are moving file[s]. Do you also want to update the references?</value>
+    <value>你正在移动文件. 是否更新文件引用?</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Info.UpdatingReferences" xml:space="preserve">
-    <value>Updating References...</value>
+    <value>正在更新引用...</value>
     <comment>Modified after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
-    <value>Moving File[s]</value>
+    <value>正在移动文件</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Title.Threads" xml:space="preserve">
-    <value>Threads</value>
+    <value>线程</value>
   </data>
   <data name="FlashDebugger.Label.ViewThreadsPanel" xml:space="preserve">
-    <value>Threads Panel</value>
+    <value>线程面板</value>
   </data>
   <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
-    <value>Shows the macro in the main toolbar.</value>
+    <value>在主工具条显示宏.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
-    <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
+    <value>在启动调试时,切换到选中的布局. 停止调试时, 恢复上一个布局. 如果选中了一个布局, 调试面板将不会自动显示.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Start Scrolling</value>
+    <value>开始滚动</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Stop Scrolling</value>
+    <value>停止滚动</value>
     <comment>Added after 4.5.2</comment>
   </data>
 </root>
