@@ -1442,8 +1442,9 @@ namespace FlashDevelop
         {
             if (m.Msg == 0x20a) // WM_MOUSEWHEEL
             {
-                Point pos = new Point(m.LParam.ToInt32() & 0xffff, m.LParam.ToInt32() >> 16);
-                IntPtr hWnd = Win32.WindowFromPoint(pos);
+                Int32 x = unchecked((short)(long)m.LParam);
+                Int32 y = unchecked((short)((long)m.LParam >> 16));
+                IntPtr hWnd = Win32.WindowFromPoint(new Point(x, y));
                 if (hWnd != IntPtr.Zero)
                 {
                     ITabbedDocument doc = Globals.CurrentDocument;
