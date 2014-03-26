@@ -20,7 +20,7 @@ namespace SourceControl.Sources.Mercurial
         ToolStripItem push;
         ToolStripItem showLog;
         ToolStripItem midSeparator;
-        ToolStripItem diff;
+        //ToolStripItem diff;
         ToolStripItem diffChange;
         ToolStripItem add;
         ToolStripItem ignore;
@@ -36,7 +36,7 @@ namespace SourceControl.Sources.Mercurial
         public ToolStripItem Push { get { return push; } }
         public ToolStripItem ShowLog { get { return showLog; } }
         public ToolStripItem MidSeparator { get { return midSeparator; } }
-        public ToolStripItem Diff { get { return diff; } }
+        public ToolStripItem Diff { get { return /*diff*/null; } }
         public ToolStripItem DiffChange { get { return diffChange; } }
         public ToolStripItem Add { get { return add; } }
         public ToolStripItem Ignore { get { return ignore; } }
