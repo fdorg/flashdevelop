@@ -6,7 +6,7 @@
 			<separator />
 			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" shortcut="Control|D0" />
 			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" shortcut="Control|D1" />
-			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.fdt" shortcut="Control|D2" />
+			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.hx.fdt" shortcut="Control|D2" />
 			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" shortcut="Control|D3" />
 			<button label="Label.HTMLDocument" click="NewFromTemplate" tag="html;$(TemplateDir)\HTML.fdt" shortcut="Control|D4" />
 			<button label="Label.JScriptDocument" click="NewFromTemplate" tag="js;$(TemplateDir)\JScript.js.fdt" shortcut="Control|D5" />
