@@ -2585,7 +2585,7 @@ namespace ASCompletion.Completion
                             return result;
                         }
                     }
-                    else if ((aDecl.Flags & FlagType.Class) > 0)
+                    else if ((aDecl.Flags & (FlagType.Class | FlagType.Enum)) > 0)
                     {
                         ClassModel friendClass = null;
                         if (aDecl.InFile != null)
