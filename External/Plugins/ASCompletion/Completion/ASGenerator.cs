@@ -917,22 +917,22 @@ namespace ASCompletion.Completion
 
                 case GeneratorJobType.BasicEvent:
                 case GeneratorJobType.ComplexEvent:
-
-                    latest = TemplateUtils.GetTemplateBlockMember(Sci,
-                        TemplateUtils.GetBoundary("EventHandlers"));
+                    latest = TemplateUtils.GetTemplateBlockMember(Sci, TemplateUtils.GetBoundary("EventHandlers"));
                     if (latest == null)
                     {
                         if (ASContext.CommonSettings.MethodsGenerationLocations == MethodsGenerationLocations.AfterSimilarAccessorMethod)
                             latest = GetLatestMemberForFunction(inClass, GetDefaultVisibility(), member);
-                        if (latest == null)
-                            latest = member;
+                        if (latest == null) latest = member;
                     }
 
                     position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
                     Sci.SetSel(position, position);
                     string type = contextParam;
                     if (job == GeneratorJobType.BasicEvent)
-                        if (itemLabel.IndexOf("DataEvent") >= 0) type = "DataEvent"; else type = "Event";
+                    {
+                        if (itemLabel.IndexOf("DataEvent") >= 0) type = "DataEvent";
+                        else type = "Event";
+                    }
                     GenerateEventHandler(contextToken, type, member, position);
                     break;
 
@@ -974,9 +974,7 @@ namespace ASCompletion.Completion
                     if (aType.IsVoid()) return;
 
                     latest = GetLatestMemberForFunction(inClass, Visibility.Public, null);
-                    if (latest == null)
-                        latest = FindLatest(0, 0, inClass, false, false);
-
+                    if (latest == null) latest = FindLatest(0, 0, inClass, false, false);
                     if (latest == null) return;
 
                     position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
@@ -1027,8 +1025,7 @@ namespace ASCompletion.Completion
                         Sci.SetSel(position, position);
 
                         contextMember.Flags -= FlagType.LocalVar;
-                        if ((member.Flags & FlagType.Static) > 0)
-                            contextMember.Flags |= FlagType.Static;
+                        if ((member.Flags & FlagType.Static) > 0) contextMember.Flags |= FlagType.Static;
                         contextMember.Access = GetDefaultVisibility();
                         GenerateVariable(contextMember, position, detach);
 
@@ -1063,8 +1060,7 @@ namespace ASCompletion.Completion
                     Sci.BeginUndoAction();
                     try
                     {
-                        int offset = InsertImport(member, true);
-                        position += offset;
+                        position += InsertImport(member, true);
                         Sci.SetSel(position, position);
                     }
                     finally
@@ -1074,15 +1070,12 @@ namespace ASCompletion.Completion
                     break;
 
                 case GeneratorJobType.Class:
-                    String clasName = Sci.GetWordFromPosition(Sci.CurrentPos);
-                    GenerateClass(Sci, clasName, inClass);
+                    GenerateClass(Sci, Sci.GetWordFromPosition(Sci.CurrentPos), inClass);
                     break;
 
                 case GeneratorJobType.Constructor:
                     member = new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Constructor | FlagType.Function, Visibility.Public);
-                    GenerateFunction(
-                        member,
-                        Sci.CurrentPos, false, inClass);
+                    GenerateFunction(member, Sci.CurrentPos, false, inClass);
                     break;
 
                 case GeneratorJobType.ToString:
