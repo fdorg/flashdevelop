@@ -312,10 +312,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (resolve.Member != null
-                && resolve.Type != null
-                && resolve.Type.QualifiedName == "String"
-                && found.inClass != null)
+            if (resolve.Member != null && resolve.Type != null && resolve.Type.QualifiedName == "String" && found.inClass != null)
             {
                 int lineStartPos = Sci.PositionFromLine(Sci.LineFromPosition(Sci.CurrentPos));
                 string lineStart = text.Substring(0, Sci.CurrentPos - lineStartPos);
@@ -333,6 +330,7 @@ namespace ASCompletion.Completion
                             if (aType.QualifiedName == "flash.events.Event")
                             {
                                 contextParam = eventResolve.Type.QualifiedName;
+                                if (GetHasEventMetatag(found.inClass, Sci, found.member)) return;
                                 ShowEventMetatagList(found);
                                 return;
                             }
@@ -620,9 +618,7 @@ namespace ASCompletion.Completion
         private static void ShowNewVarList(FoundDeclaration found)
         {
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
-
             ASResult result = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
             if (!(result != null && result.RelClass != null))
             {
@@ -633,51 +629,45 @@ namespace ASCompletion.Completion
                 result = null;
             }
 
-            bool isConst = false;
             string textAtCursor = Sci.GetWordFromPosition(Sci.CurrentPos);
-            if (textAtCursor != null && textAtCursor.ToUpper().Equals(textAtCursor))
-            {
-                isConst = true;
-            }
+            bool isConst = !string.IsNullOrEmpty(textAtCursor) && textAtCursor.ToUpper().Equals(textAtCursor);
 
             ClassModel inClass = result != null ? result.RelClass : found.inClass;
             bool isInterface = ClassIsInterface(inClass);
+            string label;
 
             if (!isInterface)
             {
                 if (isConst)
                 {
-                    string labelConst = TextHelper.GetString("ASCompletion.Label.GenerateConstant");
-                    known.Add(new GeneratorItem(labelConst, GeneratorJobType.Constant, found.member, found.inClass));
+                    label = TextHelper.GetString("ASCompletion.Label.GenerateConstant");
+                    known.Add(new GeneratorItem(label, GeneratorJobType.Constant, found.member, found.inClass));
                 }
 
                 if (result == null)
                 {
-                    string labelVar = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
-                    known.Add(new GeneratorItem(labelVar, GeneratorJobType.Variable, found.member, found.inClass));
+                    label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
+                    known.Add(new GeneratorItem(label, GeneratorJobType.Variable, found.member, found.inClass));
                 }
 
-                string labelVarPublic = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
-                known.Add(new GeneratorItem(labelVarPublic, GeneratorJobType.VariablePublic, found.member, found.inClass));
+                label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
+                known.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
 
                 if (result == null)
                 {
-                    string labelFun = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
-                    known.Add(new GeneratorItem(labelFun, GeneratorJobType.Function, found.member, found.inClass));
+                    label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
+                    known.Add(new GeneratorItem(label, GeneratorJobType.Function, found.member, found.inClass));
                 }
             }
 
-            string labelFunPublic = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
-            if (isInterface)
-            {
-                labelFunPublic = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
-            }
-            known.Add(new GeneratorItem(labelFunPublic, GeneratorJobType.FunctionPublic, found.member, found.inClass));
+            label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
+            if (isInterface) label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
+            known.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
 
             if (GetLangIsValid())
             {
-                string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateClass");
-                known.Add(new GeneratorItem(labelClass, GeneratorJobType.Class, found.member, found.inClass));
+                label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
+                known.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass));
             }
             CompletionList.Show(known, false);
         }
@@ -704,8 +694,6 @@ namespace ASCompletion.Completion
 
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
 
-            string autoSelect = "";
-
             ASResult result = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
             if (!(result != null && result.RelClass != null))
             {
@@ -718,23 +706,20 @@ namespace ASCompletion.Completion
 
             ClassModel inClass = result != null ? result.RelClass : found.inClass;
             bool isInterface = ClassIsInterface(inClass);
+            string label;
 
             if (!isInterface && result == null)
             {
-                string label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
+                label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
                 known.Add(new GeneratorItem(label, GeneratorJobType.Function, found.member, found.inClass));
             }
 
-            string labelFunPublic = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
-            if (isInterface)
-            {
-                labelFunPublic = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
-                autoSelect = labelFunPublic;
-            }
-            known.Add(new GeneratorItem(labelFunPublic, GeneratorJobType.FunctionPublic, found.member, found.inClass));
+            label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
+            if (isInterface) label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
+            known.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
 
-            string labelCallback = TextHelper.GetString("ASCompletion.Label.GeneratePublicCallback");
-            known.Add(new GeneratorItem(labelCallback, GeneratorJobType.VariablePublic, found.member, found.inClass));
+            label = TextHelper.GetString("ASCompletion.Label.GeneratePublicCallback");
+            known.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
 
             CompletionList.Show(known, false);
         }
@@ -744,10 +729,8 @@ namespace ASCompletion.Completion
             if (GetLangIsValid())
             {
                 List<ICompletionListItem> known = new List<ICompletionListItem>();
-
-                string labelClass = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
-                known.Add(new GeneratorItem(labelClass, GeneratorJobType.AssignStatementToVar, found.member, found.inClass));
-
+                string label = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
+                known.Add(new GeneratorItem(label, GeneratorJobType.AssignStatementToVar, found.member, found.inClass));
                 CompletionList.Show(known, false);
             }
         }
@@ -757,10 +740,8 @@ namespace ASCompletion.Completion
             if (GetLangIsValid())
             {
                 List<ICompletionListItem> known = new List<ICompletionListItem>();
-
-                string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateClass");
-                known.Add(new GeneratorItem(labelClass, GeneratorJobType.Class, found.member, found.inClass));
-
+                string label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
+                known.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass));
                 CompletionList.Show(known, false);
             }
         }
@@ -774,14 +755,14 @@ namespace ASCompletion.Completion
 
                 if (!hasConstructor)
                 {
-                    string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
-                    known.Add(new GeneratorItem(labelClass, GeneratorJobType.Constructor, found.member, found.inClass));
+                    string label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
+                    known.Add(new GeneratorItem(label, GeneratorJobType.Constructor, found.member, found.inClass));
                 }
 
                 if (!hasToString)
                 {
-                    string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateToString");
-                    known.Add(new GeneratorItem(labelClass, GeneratorJobType.ToString, found.member, found.inClass));
+                    string label = TextHelper.GetString("ASCompletion.Label.GenerateToString");
+                    known.Add(new GeneratorItem(label, GeneratorJobType.ToString, found.member, found.inClass));
                 }
 
                 CompletionList.Show(known, false);
@@ -791,28 +772,26 @@ namespace ASCompletion.Completion
         private static void ShowEventMetatagList(FoundDeclaration found)
         {
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             string label = TextHelper.GetString("ASCompletion.Label.GenerateEventMetatag");
             known.Add(new GeneratorItem(label, GeneratorJobType.EventMetatag, found.member, found.inClass));
-
             CompletionList.Show(known, false);
         }
 
         private static void ShowFieldFromParameter(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             if (GetLangIsValid())
             {
+                List<ICompletionListItem> known = new List<ICompletionListItem>();
+
                 Hashtable parameters = new Hashtable();
                 parameters["scope"] = GetDefaultVisibility();
-                string labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromPatameter");
-                known.Add(new GeneratorItem(labelClass, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
+                string label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromPatameter");
+                known.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
 
                 parameters = new Hashtable();
                 parameters["scope"] = Visibility.Public;
-                labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromPatameter");
-                known.Add(new GeneratorItem(labelClass, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
+                label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromPatameter");
+                known.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
 
                 CompletionList.Show(known, false);
             }
@@ -824,10 +803,10 @@ namespace ASCompletion.Completion
             {
                 List<ICompletionListItem> known = new List<ICompletionListItem>();
 
-                string labelClass = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
+                string label = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
                 foreach (String interf in interfaces)
                 {
-                    known.Add(new GeneratorItem(String.Format(labelClass, interf), GeneratorJobType.AddInterfaceDef, found.member, found.inClass, interf));
+                    known.Add(new GeneratorItem(String.Format(label, interf), GeneratorJobType.AddInterfaceDef, found.member, found.inClass, interf));
                 }
                 CompletionList.Show(known, false);
             }
@@ -917,22 +896,22 @@ namespace ASCompletion.Completion
 
                 case GeneratorJobType.BasicEvent:
                 case GeneratorJobType.ComplexEvent:
-
-                    latest = TemplateUtils.GetTemplateBlockMember(Sci,
-                        TemplateUtils.GetBoundary("EventHandlers"));
+                    latest = TemplateUtils.GetTemplateBlockMember(Sci, TemplateUtils.GetBoundary("EventHandlers"));
                     if (latest == null)
                     {
                         if (ASContext.CommonSettings.MethodsGenerationLocations == MethodsGenerationLocations.AfterSimilarAccessorMethod)
                             latest = GetLatestMemberForFunction(inClass, GetDefaultVisibility(), member);
-                        if (latest == null)
-                            latest = member;
+                        if (latest == null) latest = member;
                     }
 
                     position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
                     Sci.SetSel(position, position);
                     string type = contextParam;
                     if (job == GeneratorJobType.BasicEvent)
-                        if (itemLabel.IndexOf("DataEvent") >= 0) type = "DataEvent"; else type = "Event";
+                    {
+                        if (itemLabel.IndexOf("DataEvent") >= 0) type = "DataEvent";
+                        else type = "Event";
+                    }
                     GenerateEventHandler(contextToken, type, member, position);
                     break;
 
@@ -974,9 +953,7 @@ namespace ASCompletion.Completion
                     if (aType.IsVoid()) return;
 
                     latest = GetLatestMemberForFunction(inClass, Visibility.Public, null);
-                    if (latest == null)
-                        latest = FindLatest(0, 0, inClass, false, false);
-
+                    if (latest == null) latest = FindLatest(0, 0, inClass, false, false);
                     if (latest == null) return;
 
                     position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
@@ -1027,8 +1004,7 @@ namespace ASCompletion.Completion
                         Sci.SetSel(position, position);
 
                         contextMember.Flags -= FlagType.LocalVar;
-                        if ((member.Flags & FlagType.Static) > 0)
-                            contextMember.Flags |= FlagType.Static;
+                        if ((member.Flags & FlagType.Static) > 0) contextMember.Flags |= FlagType.Static;
                         contextMember.Access = GetDefaultVisibility();
                         GenerateVariable(contextMember, position, detach);
 
@@ -1063,8 +1039,7 @@ namespace ASCompletion.Completion
                     Sci.BeginUndoAction();
                     try
                     {
-                        int offset = InsertImport(member, true);
-                        position += offset;
+                        position += InsertImport(member, true);
                         Sci.SetSel(position, position);
                     }
                     finally
@@ -1074,15 +1049,12 @@ namespace ASCompletion.Completion
                     break;
 
                 case GeneratorJobType.Class:
-                    String clasName = Sci.GetWordFromPosition(Sci.CurrentPos);
-                    GenerateClass(Sci, clasName, inClass);
+                    GenerateClass(Sci, Sci.GetWordFromPosition(Sci.CurrentPos), inClass);
                     break;
 
                 case GeneratorJobType.Constructor:
                     member = new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Constructor | FlagType.Function, Visibility.Public);
-                    GenerateFunction(
-                        member,
-                        Sci.CurrentPos, false, inClass);
+                    GenerateFunction(member, Sci.CurrentPos, false, inClass);
                     break;
 
                 case GeneratorJobType.ToString:
@@ -1341,6 +1313,36 @@ namespace ASCompletion.Completion
             }
         }
 
+        private static bool GetHasEventMetatag(ClassModel inClass, ScintillaNet.ScintillaControl Sci, MemberModel member)
+        {
+            ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
+            string line = Sci.GetLine(inClass.LineFrom);
+            int position = Sci.PositionFromLine(inClass.LineFrom) + (line.Length - line.TrimStart().Length);
+            string value = resolve.Member.Value;
+            if (!string.IsNullOrEmpty(value))
+            {
+                if (value.StartsWith("\"")) value = value.Trim('"');
+                else if (value.StartsWith("'")) value = value.Trim('\'');
+            }
+            else value = resolve.Member.Type;
+            if (string.IsNullOrEmpty(value)) return false;
+            string template = TemplateUtils.GetTemplate("EventMetatag");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", value);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", contextParam);
+            template = template.Replace("$(Boundary)", "");
+            template = Regex.Replace(template, "\\s", "");
+            for (int i = inClass.LineFrom; i >= 0; i--)
+            {
+                FoundDeclaration found = GetDeclarationAtLine(Sci, i);
+                if (found.inClass != ClassModel.VoidClass && found.inClass != inClass) return false;
+                string text = Sci.GetLine(i);
+                text = Regex.Replace(text, "//.*$", "");
+                text = Regex.Replace(text, "/\\*.*\\*/", "");
+                if (Regex.Replace(text, "\\s", "") == template) return true;
+            }
+            return false;
+        }
+
         private static void EventMetatag(ClassModel inClass, ScintillaNet.ScintillaControl Sci, MemberModel member)
         {
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
@@ -1350,20 +1352,12 @@ namespace ASCompletion.Completion
             string value = resolve.Member.Value;
             if (value != null)
             {
-                if (value.StartsWith("\""))
-                {
-                    value = value.Trim(new char[] { '"' });
-                }
-                else if (value.StartsWith("'"))
-                {
-                    value = value.Trim(new char[] { '\'' });
-                }
+                if (value.StartsWith("\"")) value = value.Trim('"');
+                else if (value.StartsWith("'")) value = value.Trim('\'');
             }
             else value = resolve.Member.Type;
-
-            if (value == "" || value == null)
-                return;
-
+            if (string.IsNullOrEmpty(value)) return;
+            
             Regex re1 = new Regex("'(?:[^'\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*'");
             Regex re2 = new Regex("\"(?:[^\"\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*\"");
             Match m1 = re1.Match(value);
