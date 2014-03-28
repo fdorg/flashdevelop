@@ -312,10 +312,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (resolve.Member != null
-                && resolve.Type != null
-                && resolve.Type.QualifiedName == "String"
-                && found.inClass != null)
+            if (resolve.Member != null && resolve.Type != null && resolve.Type.QualifiedName == "String" && found.inClass != null)
             {
                 int lineStartPos = Sci.PositionFromLine(Sci.LineFromPosition(Sci.CurrentPos));
                 string lineStart = text.Substring(0, Sci.CurrentPos - lineStartPos);
@@ -333,6 +330,7 @@ namespace ASCompletion.Completion
                             if (aType.QualifiedName == "flash.events.Event")
                             {
                                 contextParam = eventResolve.Type.QualifiedName;
+                                if (GetHasEventMetatag(found.inClass, Sci, found.member)) return;
                                 ShowEventMetatagList(found);
                                 return;
                             }
@@ -1315,6 +1313,36 @@ namespace ASCompletion.Completion
             }
         }
 
+        private static bool GetHasEventMetatag(ClassModel inClass, ScintillaNet.ScintillaControl Sci, MemberModel member)
+        {
+            ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
+            string line = Sci.GetLine(inClass.LineFrom);
+            int position = Sci.PositionFromLine(inClass.LineFrom) + (line.Length - line.TrimStart().Length);
+            string value = resolve.Member.Value;
+            if (!string.IsNullOrEmpty(value))
+            {
+                if (value.StartsWith("\"")) value = value.Trim('"');
+                else if (value.StartsWith("'")) value = value.Trim('\'');
+            }
+            else value = resolve.Member.Type;
+            if (string.IsNullOrEmpty(value)) return false;
+            string template = TemplateUtils.GetTemplate("EventMetatag");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", value);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", contextParam);
+            template = template.Replace("$(Boundary)", "");
+            template = Regex.Replace(template, "\\s", "");
+            for (int i = inClass.LineFrom; i >= 0; i--)
+            {
+                FoundDeclaration found = GetDeclarationAtLine(Sci, i);
+                if (found.inClass != ClassModel.VoidClass && found.inClass != inClass) return false;
+                string text = Sci.GetLine(i);
+                text = Regex.Replace(text, "//.*$", "");
+                text = Regex.Replace(text, "/\\*.*\\*/", "");
+                if (Regex.Replace(text, "\\s", "") == template) return true;
+            }
+            return false;
+        }
+
         private static void EventMetatag(ClassModel inClass, ScintillaNet.ScintillaControl Sci, MemberModel member)
         {
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
@@ -1324,20 +1352,12 @@ namespace ASCompletion.Completion
             string value = resolve.Member.Value;
             if (value != null)
             {
-                if (value.StartsWith("\""))
-                {
-                    value = value.Trim(new char[] { '"' });
-                }
-                else if (value.StartsWith("'"))
-                {
-                    value = value.Trim(new char[] { '\'' });
-                }
+                if (value.StartsWith("\"")) value = value.Trim('"');
+                else if (value.StartsWith("'")) value = value.Trim('\'');
             }
             else value = resolve.Member.Type;
-
-            if (value == "" || value == null)
-                return;
-
+            if (string.IsNullOrEmpty(value)) return;
+            
             Regex re1 = new Regex("'(?:[^'\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*'");
             Regex re2 = new Regex("\"(?:[^\"\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*\"");
             Match m1 = re1.Match(value);
