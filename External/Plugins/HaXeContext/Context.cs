@@ -243,7 +243,7 @@ namespace HaXeContext
 
             var path = ";" + Environment.GetEnvironmentVariable("PATH");
             if (currentEnv != null) path = path.Replace(currentEnv + ";", ";");
-            path = Regex.Replace(path, ";[^;]+neko[/\\\\]*;", ";", RegexOptions.IgnoreCase);
+            if (neko != null) path = Regex.Replace(path, ";[^;]+neko[/\\\\]*;", ";", RegexOptions.IgnoreCase);
             path = Regex.Replace(path, ";[^;]+haxe[/\\\\]*;", ";", RegexOptions.IgnoreCase);
             path = path.TrimStart(new char[] { ';' });
             path = sdkPath + ";" + path;
