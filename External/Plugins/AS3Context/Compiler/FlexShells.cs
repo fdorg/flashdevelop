@@ -406,7 +406,7 @@ namespace AS3Context.Compiler
             currentSDK = flexPath;
             if (ascRunner != null && ascRunner.IsRunning) ascRunner.KillProcess();
 
-            string cmd = "-Duser.language=en -Duser.region=US"
+            string cmd = jvmConfig["java.args"]
                 + " -classpath \"" + ascPath + ";" + flexShellsPath + "\" AscShell";
             TraceManager.Add(TextHelper.GetString("Info.StartAscRunner") + "\n" 
                 + JvmConfigHelper.GetJavaEXE(jvmConfig) + " " + cmd, -1);
