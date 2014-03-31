@@ -109,7 +109,7 @@ namespace ProjectManager.Helpers
             // start up fcsh if necessary
             if (process == null || process.HasExited)
             {
-                o.AppendLine("Starting java as: " + javaExe);
+                o.AppendLine("Starting java as: " + javaExe + " " + jvmarg);
                 o.AppendLine("INITIALIZING: " + Initialize(jvmarg, projectPath, javaExe));
             }
             else

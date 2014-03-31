@@ -392,10 +392,24 @@ namespace AS3Context.Compiler
 		/// </summary>
 		public void Stop()
 		{
-			if (ascRunner != null && ascRunner.IsRunning) ascRunner.KillProcess();
-			ascRunner = null;
-			if (mxmlcRunner != null && mxmlcRunner.IsRunning) mxmlcRunner.KillProcess();
-			mxmlcRunner = null;
+            try
+            {
+                if (ascRunner != null && ascRunner.IsRunning) ascRunner.KillProcess();
+            }
+            catch { }
+            finally
+            {
+                ascRunner = null;
+            }
+            try
+            {
+                if (mxmlcRunner != null && mxmlcRunner.IsRunning) mxmlcRunner.KillProcess();
+            }
+            catch { }
+            finally
+            {
+                mxmlcRunner = null;
+            }
 		}
 		
 		/// <summary>
@@ -406,10 +420,10 @@ namespace AS3Context.Compiler
             currentSDK = flexPath;
             if (ascRunner != null && ascRunner.IsRunning) ascRunner.KillProcess();
 
-            string cmd = "-Duser.language=en -Duser.region=US"
+            string cmd = jvmConfig["java.args"]
                 + " -classpath \"" + ascPath + ";" + flexShellsPath + "\" AscShell";
             TraceManager.Add(TextHelper.GetString("Info.StartAscRunner") + "\n" 
-                + JvmConfigHelper.GetJavaEXE(jvmConfig) + " " + cmd, -1);
+                + JvmConfigHelper.GetJavaEXE(jvmConfig) + " " + cmd, 0);
 			// run asc shell
 			ascRunner = new ProcessRunner();
             ascRunner.WorkingDirectory = Path.GetDirectoryName(ascPath);

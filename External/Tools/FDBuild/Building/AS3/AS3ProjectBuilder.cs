@@ -72,7 +72,7 @@ namespace ProjectManager.Building.AS3
             else
             {
                 ascshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "ascsh.jar");
-                if (!File.Exists(ascshPath))
+                if (!File.Exists(ascshPath) && !File.Exists(ascshPath + ".disabled"))
                 {
                     // try copying the missing JAR in the SDK
                     string toolsDir = Path.GetDirectoryName(FDBuildDirectory);
