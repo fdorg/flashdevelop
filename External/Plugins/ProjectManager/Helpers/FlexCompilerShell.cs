@@ -185,7 +185,7 @@ namespace ProjectManager.Helpers
             bool skipWarning = false;
             while (process != null && !process.StandardError.EndOfStream)
             {
-                string line = process.StandardError.ReadLine().Trim();
+                string line = process.StandardError.ReadLine().TrimEnd();
                 lock (errorList)
 				lock (warningList)
                 {
