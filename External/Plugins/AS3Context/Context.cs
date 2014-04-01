@@ -316,10 +316,16 @@ namespace AS3Context
             AddPath(PathHelper.ResolvePath(fp9cp));
             if (majorVersion > 9)
             {
-                string fp10cp = as3settings.AS3ClassPath + S + "FP" + majorVersion;
-                AddPath(PathHelper.ResolvePath(fp10cp));
-                string fp101cp = as3settings.AS3ClassPath + S + "FP" + majorVersion + "." + minorVersion;
-                AddPath(PathHelper.ResolvePath(fp101cp));
+                for (int i = 10; i <= majorVersion; i++)
+                {
+                    string fp10cp = as3settings.AS3ClassPath + S + "FP" + i;
+                    AddPath(PathHelper.ResolvePath(fp10cp));
+                    for (int j = 1; j <= minorVersion; j++)
+                    {
+                        string fp101cp = as3settings.AS3ClassPath + S + "FP" + majorVersion + "." + minorVersion;
+                        AddPath(PathHelper.ResolvePath(fp101cp));
+                    }
+                }
             }
 
             // add external pathes
