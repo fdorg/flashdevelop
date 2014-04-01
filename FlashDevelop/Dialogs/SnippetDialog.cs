@@ -351,8 +351,10 @@ namespace FlashDevelop.Dialogs
                     break;
                 }
             }
-            if (!foundSyntax && this.languageDropDown.Items.Count > 0) 
+            if (!foundSyntax && this.languageDropDown.Items.Count > 0)
+            {
                 this.languageDropDown.SelectedIndex = 0;
+            }
             this.columnHeader.Width = -2;
         }
 
@@ -478,6 +480,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void UpdateSnippetList()
         {
+            this.UpdateSnippetList(null);
+        }
+        private void UpdateSnippetList(String toSelect)
+        {
             try
             {
                 Int32 selectedIndex = 0;
@@ -492,10 +498,15 @@ namespace FlashDevelop.Dialogs
                 foreach (String file in this.snippets[this.currentSyntax])
                 {
                     String snippet = Path.GetFileNameWithoutExtension(file);
-                    this.snippetListView.Items.Add(new ListViewItem(snippet, 0));
+                    ListViewItem lvi = new ListViewItem(snippet, 0);
+                    this.snippetListView.Items.Add(lvi);
+                    if (!String.IsNullOrEmpty(toSelect) && snippet == toSelect)
+                    {
+                        lvi.Selected = true;
+                    }
                 }
                 this.snippetListView.EndUpdate();
-                if (this.snippetListView.Items.Count > 0)
+                if (this.snippetListView.Items.Count > 0 && String.IsNullOrEmpty(toSelect))
                 {
                     try { this.snippetListView.Items[selectedIndex].Selected = true; }
                     catch 
@@ -630,7 +641,7 @@ namespace FlashDevelop.Dialogs
             file = File.CreateText(path);
             file.Write(content);
             file.Close();
-            this.UpdateSnippetList();
+            this.UpdateSnippetList(name);
         }
 
         /// <summary>
