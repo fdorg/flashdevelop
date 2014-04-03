@@ -32,7 +32,7 @@ namespace PluginCore.Helpers
             if (!config.ContainsKey("java.home")) config["java.home"] = "";
             else config["java.home"] = config["java.home"].Trim(new char[] { '"', '\'', ' ', '\t' });
 
-            string args = "-Xmx384m -Dsun.io.useCanonCaches=false";
+            string args = "-Dsun.io.useCanonCaches=false -Xms32m -Xmx512m";
             if (config.ContainsKey("java.args")) args = config["java.args"];
             else if (config.ContainsKey("jvm.args")) args = config["jvm.args"];
 

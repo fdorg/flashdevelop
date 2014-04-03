@@ -37,7 +37,7 @@ namespace PluginCore.Controls
 		static private MessageBar CreateBar(ITabbedDocument target, String message)
 		{
 			MessageBar bar;
-			foreach(Control ctrl in target.Controls)
+			foreach (Control ctrl in target.Controls)
 			{
 				if (ctrl is MessageBar)
 				{
@@ -80,7 +80,7 @@ namespace PluginCore.Controls
 			// buttonClose
 			// 
 			this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonClose.Location = new System.Drawing.Point(476, 5);
+			this.buttonClose.Location = new System.Drawing.Point(477, 5);
 			this.buttonClose.Name = "buttonClose";
 			this.buttonClose.Size = new System.Drawing.Size(16, 14);
 			this.buttonClose.TabIndex = 2;
@@ -102,8 +102,8 @@ namespace PluginCore.Controls
 			// 
 			// MessageBar
 			//
-            this.AutoScaleDimensions = new SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.BackColor = System.Drawing.SystemColors.Info;
             this.ForeColor = System.Drawing.SystemColors.InfoText;
 			this.Controls.Add(this.buttonClose);
@@ -112,6 +112,7 @@ namespace PluginCore.Controls
 			this.Size = new System.Drawing.Size(496, 24);
 			this.Click += new System.EventHandler(this.MessageBarClick);
 			this.ResumeLayout(false);
+            this.PerformLayout();
 		}
 		
 		#endregion
@@ -169,7 +170,7 @@ namespace PluginCore.Controls
 		{
 			base.OnPaint(e);
 			Graphics g = CreateGraphics();
-			g.DrawLine(new Pen(SystemColors.ControlDark, 1), 0, 23, Width, 23);
+			g.DrawLine(new Pen(SystemColors.ControlDark, 1), 0, Height - 1, Width, Height - 1);
 		}
 		
 		#endregion

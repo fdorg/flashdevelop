@@ -144,7 +144,11 @@ namespace AS3Context
                     case EventType.Command:
                         DataEvent de = e as DataEvent;
                         string action = de.Action;
-                        if (action == "ProjectManager.OpenVirtualFile")
+                        if (action == "ProjectManager.Project")
+                        {
+                            FlexShells.Instance.Stop(); // clear
+                        }
+                        else if (action == "ProjectManager.OpenVirtualFile")
                         {
                             if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3")
                                 e.Handled = OpenVirtualFileModel(de.Data as String);

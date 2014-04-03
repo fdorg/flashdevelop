@@ -109,7 +109,7 @@ namespace ProjectManager.Helpers
             // start up fcsh if necessary
             if (process == null || process.HasExited)
             {
-                o.AppendLine("Starting java as: " + javaExe);
+                o.AppendLine("Starting java as: " + javaExe + " " + jvmarg);
                 o.AppendLine("INITIALIZING: " + Initialize(jvmarg, projectPath, javaExe));
             }
             else
@@ -185,7 +185,7 @@ namespace ProjectManager.Helpers
             bool skipWarning = false;
             while (process != null && !process.StandardError.EndOfStream)
             {
-                string line = process.StandardError.ReadLine().Trim();
+                string line = process.StandardError.ReadLine().TrimEnd();
                 lock (errorList)
 				lock (warningList)
                 {
