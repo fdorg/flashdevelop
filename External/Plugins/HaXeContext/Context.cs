@@ -41,6 +41,7 @@ namespace HaXeContext
         private bool resolvingDot;
         private bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
+        ClassModel stubFunctionClass;
 
         public Context(HaXeSettings initSettings)
         {
@@ -51,6 +52,14 @@ namespace HaXeContext
 
             hasLevels = false;
             docType = "Void"; // "flash.display.MovieClip";
+
+            stubFunctionClass = new ClassModel();
+            stubFunctionClass.Name = stubFunctionClass.Type = "Function";
+            stubFunctionClass.Flags = FlagType.Class;
+            stubFunctionClass.Access = Visibility.Public;
+            var funFile = new FileModel();
+            funFile.Classes.Add(stubFunctionClass);
+            stubFunctionClass.InFile = funFile;
 
             /* DESCRIBE LANGUAGE FEATURES */
 
@@ -720,7 +729,35 @@ namespace HaXeContext
             if (inFile == null) return imports;
             foreach (MemberModel item in inFile.Imports)
             {
-                ResolveImport(item, imports);
+                if (item.Name != "*") ResolveImport(item, imports);
+                else
+                {
+                    string cname = item.Type.Substring(0, item.Type.Length - 2);
+                    // classes matching wildcard
+                    FileModel matches = ResolvePackage(cname, false);
+                    if (matches != null)
+                    {
+                        foreach (MemberModel import in matches.Imports)
+                            imports.Add(import);
+                        foreach (MemberModel member in matches.Members)
+                            imports.Add(member);
+                    }
+                    else
+                    {
+                        var model = ResolveType(cname, null);
+                        if (!model.IsVoid())
+                        {
+                            foreach (MemberModel member in model.Members)
+                            {
+                                if ((member.Flags & FlagType.Static) > 0)
+                                {
+                                    member.InFile = model.InFile;
+                                    imports.Add(member);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             if (inFile == cFile)
@@ -845,6 +882,8 @@ namespace HaXeContext
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
                 return ClassModel.VoidClass;
+
+            if (cname == "Function") return stubFunctionClass;
 
             // handle generic types
             if (cname.IndexOf('<') > 0)

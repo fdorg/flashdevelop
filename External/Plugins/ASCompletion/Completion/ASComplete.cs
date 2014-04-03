@@ -2610,99 +2610,47 @@ namespace ASCompletion.Completion
                     {
                         result.Member = aDecl;
                         result.RelClass = ClassModel.VoidClass;
-                        result.InClass = ClassModel.VoidClass;
+                        result.InClass = FindClassOf(aDecl);
                         result.Type = (p < 0)
                             ? context.ResolveType("Function", null)
                             : context.ResolveType(aDecl.Type, aDecl.InFile);
                         result.InFile = aDecl.InFile;
                         return result;
                     }
+                    else if ((aDecl.Flags & FlagType.Variable) > 0)
+                    {
+                        result.Member = aDecl;
+                        result.RelClass = ClassModel.VoidClass;
+                        result.InClass = FindClassOf(aDecl);
+                        result.Type = context.ResolveType(aDecl.Type, aDecl.InFile);
+                        result.InFile = aDecl.InFile;
+                        return result;
+                    }
                 }
             }
-
-			// types & imports
-            /*MemberList imports = context.ResolveImports(inFile);
-            foreach (MemberModel item in imports)
-                if (item.Name == token)
-                {
-                    if (item is ClassModel)
-                    {
-                        result.Type = item as ClassModel;
-                        result.IsStatic = (p < 0);
-                    }
-                    else if ((item.Flags & FlagType.Class) > 0)
-                    {
-                        result.Type = context.ResolveType(item.Type, null);
-                        result.IsStatic = (p < 0);
-                        return result;
-                    }
-                    else
-                    {
-                        result.Member = item;
-                        result.RelClass = ClassModel.VoidClass;
-                        result.InClass = ClassModel.VoidClass;
-                        result.Type = (p < 0 && (item.Flags & FlagType.Function) > 0) 
-                            ? context.ResolveType("Function", null) 
-                            : context.ResolveType(item.Type, item.InFile);
-                        result.InFile = item.InFile;
-                        return result;
-                    }
-                }*/
-
-            /*if (context.Features.hasPackages)
-            {
-                if (inFile.Package.Length > 0)
-                {
-                    FindInPackage(token, inFile, inFile.Package, result);
-                    if (!result.IsNull()) return result;
-                }
-
-                FindInPackage(token, inFile, null, result);
-                if (!result.IsNull()) return result;
-            }*/
-
-            // toplevel types
-            /*ClassModel topClass = context.ResolveType(token, null);
-            if (!topClass.IsVoid())
-            {
-                result.Type = topClass;
-                if (p > 0)
-                {
-                    if (topClass.Constructor != null)
-                    {
-                        FindMember(topClass.Constructor, topClass, result, 0, 0);
-                        if (!result.IsNull()) return result;
-                        else
-                        {
-                            result.Member = null;
-                            result.Type = topClass;
-                        }
-                    }
-                    return result;
-                }
-                else result.IsStatic = true;
-            }*/
-
-            // packages folders
-            /*FileModel package = context.ResolvePackage(token, false);
-			if (package != null)
-			{
-                result.InFile = package;
-                result.IsPackage = true;
-                result.IsStatic = true;
-			}*/
-
 			return result;
 		}
+
+        private static ClassModel FindClassOf(MemberModel aDecl)
+        {
+            if (aDecl.InFile != null) 
+                foreach (ClassModel aClass in aDecl.InFile.Classes)
+                {
+                    foreach (MemberModel member in aClass.Members)
+                        if (member == aDecl) return aClass;
+                }
+            return ClassModel.VoidClass;
+        }
 
         private static ClassModel ResolveType(string qname, FileModel inFile)
         {
             IASContext context = ASContext.Context;
+            bool isQualified = qname.IndexOf('.') > 0;
 
             if (inFile == null || inFile == context.CurrentModel)
                 foreach (MemberModel aDecl in context.GetVisibleExternalElements())
                 {
-                    if (aDecl.Name == qname || aDecl.Type == qname)
+                    if (aDecl.Name == qname || (isQualified && aDecl.Type == qname))
                     {
                         if (aDecl.InFile != null)
                         {
