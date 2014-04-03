@@ -107,14 +107,14 @@
 	<Entry>
 		<Id>haxe3setup</Id>
 		<Name>Haxe 3</Name>
-		<Version>3.1.1</Version>
+		<Version>3.1.2</Version>
 		<Build>1</Build>
 		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/file/haxe-3.1.1-win.exe</Url>
+			<Url>http://haxe.org/file/haxe-3.1.2-win.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
