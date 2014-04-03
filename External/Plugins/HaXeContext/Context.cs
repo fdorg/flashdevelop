@@ -937,6 +937,12 @@ namespace HaXeContext
             aClass.Name = baseType.Substring(baseType.LastIndexOf('.') + 1) + "<" + indexType + ">";
             aClass.IndexType = indexType;
 
+            // special Haxe Proxy support
+            if (aClass.Type == "haxe.remoting.Proxy<T>" || aClass.Type == "haxe.remoting.Proxy.Proxy<T>")
+            {
+                aClass.ExtendsType = indexType;
+            }
+
             string typed = "<" + indexType + ">";
             foreach (MemberModel member in aClass.Members)
             {
