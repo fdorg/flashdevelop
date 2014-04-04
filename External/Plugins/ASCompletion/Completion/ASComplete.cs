@@ -2645,6 +2645,7 @@ namespace ASCompletion.Completion
         private static ClassModel ResolveType(string qname, FileModel inFile)
         {
             IASContext context = ASContext.Context;
+            if (qname == null) return ClassModel.VoidClass;
             bool isQualified = qname.IndexOf('.') > 0;
 
             if (inFile == null || inFile == context.CurrentModel)
