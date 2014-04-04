@@ -43,7 +43,9 @@ namespace ASCompletion.Completion
 		static private readonly Regex re_sub = new Regex("^#(?<index>[0-9]+)~$", ASFileParserRegexOptions.SinglelineComment);
 		#endregion
 
-        #region completion_history
+        #region fields
+        static public Keys HelpKeys = Keys.F1;
+
         // stores last char entered
         static private LastCharData LastChar;
         //stores the currently used class namespace and name
@@ -358,7 +360,7 @@ namespace ASCompletion.Completion
 				return true;
 			}
 			// help
-            else if (keys == Keys.F1 && ASContext.HasContext && ASContext.Context.IsFileValid)
+            else if (keys == HelpKeys && ASContext.HasContext && ASContext.Context.IsFileValid)
 			{
                 ResolveElement(Sci, "ShowDocumentation");
 				return true;

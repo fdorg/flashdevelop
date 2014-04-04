@@ -45,6 +45,7 @@ namespace ASCompletion
             EventType.SyntaxDetect |
             EventType.UIRefresh |
             EventType.Keys |
+            EventType.Shortcut |
             EventType.Command |
             EventType.ProcessEnd |
             EventType.ApplySettings |
@@ -177,6 +178,7 @@ namespace ASCompletion
                 //  Events always handled
                 //
                 bool isValid;
+                DataEvent de;
                 switch (e.Type)
                 {
                     // caret position in editor
@@ -196,6 +198,16 @@ namespace ASCompletion
                         }
                         if (!doc.IsEditable) return;
                         e.Handled = ASComplete.OnShortcut(key, sci);
+                        return;
+
+                    // user-customized shortcuts
+                    case EventType.Shortcut:
+                        de = e as DataEvent;
+                        if (de.Action == "Completion.ShowHelp")
+                        {
+                            ASComplete.HelpKeys = (Keys)de.Data;
+                            de.Handled = true;
+                        }
                         return;
 
                     //
@@ -248,7 +260,7 @@ namespace ASCompletion
 
                     // some commands work all the time
                     case EventType.Command:
-                        DataEvent de = e as DataEvent;
+                        de = e as DataEvent;
                         string command = de.Action ?? "";
 
                         if (command.StartsWith("ASCompletion."))
@@ -705,8 +717,8 @@ namespace ASCompletion
 
             // shortcuts
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.F1);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
+            PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", Keys.F1);
 
             // application events
             EventManager.AddEventHandler(this, eventMask);
