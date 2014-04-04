@@ -4288,9 +4288,10 @@ namespace ASCompletion.Completion
             string fullPath = member.Type;
             if ((member.Flags & (FlagType.Class | FlagType.Enum | FlagType.TypeDef | FlagType.Struct)) > 0)
             {
-                /*if (member.InFile != null && member.InFile.Package != "" && member.InFile.Module != "") 
-                    fullPath = member.InFile.Package + "." + member.InFile.Module; 
-                else*/ fullPath = CleanType(member.Type);
+                FileModel inFile = member.InFile;
+                if (inFile != null && inFile.Module == member.Name && inFile.Package != "")
+                    fullPath = inFile.Package + "." + inFile.Module;
+                fullPath = CleanType(fullPath);
             }
             string nl = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             string statement = "import " + fullPath + ";" + nl;
