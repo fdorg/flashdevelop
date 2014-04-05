@@ -1287,10 +1287,18 @@ namespace ASCompletion.Completion
 			string paramName = "";
 			if (calltipMember.Comments != null && start >= 0 && end > 0)
 			{
-                paramName = calltipDef.Substring(start + 1, end - start - 1).Trim();
+                paramName = calltipDef.Substring(start + 1, end - start - 1);
+
 				int p = paramName.IndexOf(':');
-                if (p > 0)
-					paramName = paramName.Substring(0, p).TrimEnd();
+                if (p > 0) paramName = paramName.Substring(0, p);
+                else
+                {
+                    p = paramName.IndexOf('=');
+                    if (p > 0) paramName = paramName.Substring(0, p);
+                }
+                char[] toClean = new char[] { ' ', '\t', '\n', '\r', '*', '?' };
+                paramName = paramName.Trim(toClean);
+
 				if (paramName.Length > 0)
 				{
 					Match mParam = Regex.Match(calltipMember.Comments, "@param\\s+" + Regex.Escape(paramName) + "[ \t:]+(?<desc>[^\r\n]*)");

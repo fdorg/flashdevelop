@@ -141,11 +141,12 @@ namespace ASCompletion.Completion
             string[] sparam = parameters.Split(',');
             string[] parType;
             MemberModel param;
+            char[] toClean = new char[] { ' ', '\t', '\n', '\r', '*', '?' };
             foreach (string pt in sparam)
             {
                 parType = pt.Split(':');
                 param = new MemberModel();
-                param.Name = parType[0].Trim();
+                param.Name = parType[0].Trim(toClean);
                 if (param.Name.Length == 0)
                     continue;
                 if (parType.Length == 2) param.Type = parType[1].Trim();
