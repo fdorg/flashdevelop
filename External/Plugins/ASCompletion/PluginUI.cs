@@ -677,8 +677,8 @@ namespace ASCompletion
         {
             TreeNode folder = new TreeNode(TextHelper.GetString("Info.ExtendsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
 
-            if ((aClass.Flags & FlagType.TypeDef) > 0)
-                folder.Text = "Defines";
+            //if ((aClass.Flags & FlagType.TypeDef) > 0 && aClass.Members.Count == 0)
+            //    folder.Text = "Defines"; // TODO need a better word I guess
 
             while (aClass.ExtendsType != null && aClass.ExtendsType.Length > 0 
                 && aClass.ExtendsType != "Object" 
