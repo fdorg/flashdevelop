@@ -221,7 +221,7 @@ namespace ASCompletion.Completion
                         i++;
                         continue;
                     }
-                    else if (i > 0 && c == '-' && (c2 == 'e' || c2 == 'E'))
+                    else if (i > 0 && (c == '-' || c == '+') && (c2 == 'e' || c2 == 'E')) // 1e+23 / 1e-23
                     {
                         needSpace = false;
                         sb.Append(c);
