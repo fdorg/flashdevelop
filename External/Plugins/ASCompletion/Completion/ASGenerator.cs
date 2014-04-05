@@ -4317,23 +4317,31 @@ namespace ASCompletion.Completion
             int packageLine = -1;
             string txt;
             int indent = 0;
+            int skipIfDef = 0;
             Match mImport;
             while (line < curLine)
             {
                 txt = sci.GetLine(line++).TrimStart();
-                // insert imports after a package declaration
                 if (txt.StartsWith("package"))
                 {
                     packageLine = line;
                     firstLine = line;
                 }
+                // skip Haxe #if blocks
+                else if (txt.StartsWith("#if ") && txt.IndexOf("#end") < 0) skipIfDef++;
+                else if (skipIfDef > 0)
+                {
+                    if (txt.StartsWith("#end")) skipIfDef--;
+                    else continue;
+                }
+                // insert imports after a package declaration
                 else if (txt.StartsWith("import"))
                 {
                     packageLine = -1;
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
-					mImport = ASFileParserRegexes.Import.Match(txt);
+                    mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success &&
                         String.Compare(mImport.Groups["package"].Value, fullPath) > 0)
                     {
