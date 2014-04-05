@@ -2432,7 +2432,15 @@ namespace ASCompletion.Model
                     case FlagType.Function:
                         member = new MemberModel();
                         member.Comments = curComment;
+
+                        int t = token.IndexOf('<');
+                        if (t > 0)
+                        {
+                            member.Template = token.Substring(t);
+                            token = token.Substring(0, t); 
+                        }
                         member.Name = token;
+
                         if ((curModifiers & FlagType.Static) == 0) curModifiers |= FlagType.Dynamic;
                         if ((curModifiers & (FlagType.Getter | FlagType.Setter)) == 0)
                             curModifiers |= FlagType.Function;

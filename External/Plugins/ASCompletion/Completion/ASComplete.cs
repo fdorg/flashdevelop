@@ -4040,7 +4040,7 @@ namespace ASCompletion.Completion
 
         public string Label
         {
-            get { return member.Name; }
+            get { return member.FullName; }
         }
 
         public string Description
