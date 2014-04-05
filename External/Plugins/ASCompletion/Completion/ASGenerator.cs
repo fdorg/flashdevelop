@@ -37,7 +37,11 @@ namespace ASCompletion.Completion
         static private ASResult contextResolved;
         static private MemberModel contextMember;
         static private bool firstVar;
-        static private bool isHaxe;
+
+        static private bool isHaxe
+        {
+            get { return ASContext.Context.CurrentModel.haXe; }
+        }
 
         static public bool HandleGeneratorCompletion(ScintillaNet.ScintillaControl Sci, bool autoHide, string word)
         {
@@ -62,7 +66,6 @@ namespace ASCompletion.Completion
             int line = Sci.LineFromPosition(position);
             contextToken = Sci.GetWordFromPosition(position);
             contextMatch = null;
-            isHaxe = ASContext.Context.Settings.LanguageId == "HAXE";
 
             FoundDeclaration found = GetDeclarationAtLine(Sci, line);
             string text = Sci.GetLine(line);
