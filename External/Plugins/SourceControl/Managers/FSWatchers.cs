@@ -146,8 +146,8 @@ namespace SourceControl.Managers
             try
             {
                 DirectoryInfo info = new DirectoryInfo(path);
-                //do
-                //{
+                do
+                {
                     info = info.Parent;
 
                     foreach (FileSystemWatcher watcher in watchers.Keys)
@@ -160,8 +160,8 @@ namespace SourceControl.Managers
                             CreateWatcher(path, manager);
                             return true;
                         }
-                //}
-                //while (info.Parent != null);
+                }
+                while (info.Parent != null);
             }
             catch { }
             return false;
