@@ -65,18 +65,19 @@ namespace ProjectManager.Building.AS3
 				flexsdkPath = Path.GetDirectoryName(flexsdkPath);
 
             sdkPath = flexsdkPath;
-            mxmlcPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "mxmlc.jar");
-            fcshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "fcsh.jar");
-            asc2Path = Path.Combine(Path.Combine(flexsdkPath, "lib"), "mxmlc-cli.jar");
+            string libPath = Path.Combine(flexsdkPath, "lib");
+            mxmlcPath = Path.Combine(libPath, "mxmlc.jar");
+            fcshPath = Path.Combine(libPath, "fcsh.jar");
+            asc2Path = Path.Combine(libPath, "mxmlc-cli.jar");
             if (!File.Exists(asc2Path)) ascshPath = null;
             else
             {
-                ascshPath = Path.Combine(Path.Combine(flexsdkPath, "lib"), "ascsh.jar");
-                if (!File.Exists(ascshPath) && !File.Exists(ascshPath + ".disabled"))
+                ascshPath = Path.Combine(libPath, "ascsh.jar");
+                string toolsDir = Path.GetDirectoryName(FDBuildDirectory);
+                string lib = Path.Combine(toolsDir, "flexlibs/lib/ascsh.jar");
+                if (ShouldCopyASCSH(lib, ascshPath))
                 {
                     // try copying the missing JAR in the SDK
-                    string toolsDir = Path.GetDirectoryName(FDBuildDirectory);
-                    string lib = Path.Combine(toolsDir, "flexlibs/lib/ascsh.jar");
                     try
                     {
                         File.Copy(lib, ascshPath);
@@ -92,6 +93,26 @@ namespace ProjectManager.Building.AS3
             jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(flexsdkPath);
             if (jvmConfig.ContainsKey("java.args") && jvmConfig["java.args"].Trim().Length > 0)
                 VMARGS = jvmConfig["java.args"];
+        }
+
+        private bool ShouldCopyASCSH(string lib, string ascsh)
+        {
+            if (File.Exists(ascsh + ".disabled")) return false;
+            if (!File.Exists(ascsh)) return true;
+            // should the JAR be upgraded?
+            FileInfo infoFrom = new FileInfo(lib);
+            FileInfo infoTo = new FileInfo(ascsh);
+            if (infoFrom.LastWriteTime > infoTo.LastWriteTime)
+            {
+                try
+                {
+                    Console.WriteLine("Found 'ascsh.jar' but it looks obsolete.");
+                    File.Delete(ascsh);
+                    return true;
+                }
+                catch { }
+            }
+            return false;
         }
 
         private string ResolveFlexSdk(string flexsdkPath)
