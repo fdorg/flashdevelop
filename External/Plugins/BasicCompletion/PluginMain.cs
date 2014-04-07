@@ -28,7 +28,8 @@ namespace BasicCompletion
         private Hashtable baseTable = new Hashtable();
         private Hashtable fileTable = new Hashtable();
         private System.Timers.Timer updateTimer;
-        private Boolean isSupported = false;
+        private Boolean isActive;
+        private Boolean isSupported;
         private String settingFilename;
         private Settings settingObject;
         private String[] projKeywords;
@@ -149,6 +150,16 @@ namespace BasicCompletion
                     break;
                 }
                 case EventType.UIStarted:
+                {
+                    this.isSupported = false;
+                    this.isActive = true;
+                    break;
+                }
+                case EventType.UIClosing:
+                {
+                    isActive = false;
+                    break;
+                }
                 case EventType.FileSwitch:
                 {
                     this.isSupported = false;
@@ -156,7 +167,7 @@ namespace BasicCompletion
                 }
                 case EventType.Completion:
                 {
-                    if (!e.Handled)
+                    if (!e.Handled && isActive)
                     {
                         this.isSupported = true;
                         e.Handled = true;
@@ -262,7 +273,7 @@ namespace BasicCompletion
         {
             UITools.Manager.OnCharAdded += new UITools.CharAddedHandler(this.SciControlCharAdded);
             UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(this.SciControlTextChanged);
-            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command | EventType.UIStarted;
+            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command | EventType.UIStarted | EventType.UIClosing;
             EventManager.AddEventHandler(this, EventType.Completion, HandlingPriority.Low);
             EventManager.AddEventHandler(this, eventTypes);
         }
