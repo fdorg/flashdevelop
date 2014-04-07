@@ -80,6 +80,7 @@ namespace FlashDevelop.Settings
         public static SettingObject GetDefaultSettings()
         {
             SettingObject settings = new SettingObject();
+            settings.IndentView = ScintillaNet.Enums.IndentView.Real;
             settings.DefaultFont = SystemFonts.MenuFont;
             return settings;
         }
