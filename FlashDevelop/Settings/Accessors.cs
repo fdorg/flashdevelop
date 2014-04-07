@@ -415,7 +415,15 @@ namespace FlashDevelop.Settings
         public ScintillaNet.Enums.IndentView IndentView
         {
             get { return this.indentView; }
-            set { this.indentView = value; }
+            set
+            {
+                // Prevent value None...
+                if (value == ScintillaNet.Enums.IndentView.None)
+                {
+                    this.indentView = ScintillaNet.Enums.IndentView.Real;
+                }
+                else this.indentView = value;
+            }
         }
 
         [DisplayName("Smart Indent Type")]
