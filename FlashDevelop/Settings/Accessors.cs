@@ -417,11 +417,7 @@ namespace FlashDevelop.Settings
             get { return this.indentView; }
             set
             {
-                // Prevent value None...
-                if (value == ScintillaNet.Enums.IndentView.None)
-                {
-                    this.indentView = ScintillaNet.Enums.IndentView.Real;
-                }
+                if ((Int32)value == 0) this.indentView = ScintillaNet.Enums.IndentView.Real;
                 else this.indentView = value;
             }
         }
