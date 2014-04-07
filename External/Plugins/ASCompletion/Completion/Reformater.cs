@@ -221,30 +221,40 @@ namespace ASCompletion.Completion
                         i++;
                         continue;
                     }
-                    else if (i > 0 && c == '-' && (c2 == 'e' || c2 == 'E'))
+                    else if (i > 0 && (c == '-' || c == '+') && (c2 == 'e' || c2 == 'E')) // 1e+23 / 1e-23
                     {
                         needSpace = false;
                         sb.Append(c);
                         c2 = ' ';
                         continue;
                     }
-                    else needSpace = (c != '!' || (c2 != '(' && c2 != '['));
-
-                    if (i < n && c == '-' && txt[i] == '>') // php dot operator, haxe function
+                    else if (c2 == '{' && c == '>') // Haxe typedef extension
                     {
-                        sb.Append(c).Append(txt[i]);
-                        c2 = ' ';
-                        needSpace = false;
-                        i++;
+                        sb.Append(c);
+                        c2 = c;
+                        needSpace = true;
                         continue;
                     }
-                    else if (i < n && c2 == '.' && c == '=') // php concat operator
+                    else needSpace = (c != '!' || (c2 != '(' && c2 != '['));
+
+                    if (i < n)
                     {
-                        needSpace = false;
-                    }
-                    else if (i < n && c2 == '=' && c == '>') // php array(key => value)
-                    {
-                        needSpace = false;
+                        if (c == '-' && txt[i] == '>') // php dot operator, haxe function
+                        {
+                            sb.Append(c).Append(txt[i]);
+                            c2 = ' ';
+                            needSpace = false;
+                            i++;
+                            continue;
+                        }
+                        else if (c2 == '.' && c == '=') // php concat operator
+                        {
+                            needSpace = false;
+                        }
+                        else if (c2 == '=' && c == '>') // php array(key => value)
+                        {
+                            needSpace = false;
+                        }
                     }
 
                     if (options.BraceAfterLine && c == '{')

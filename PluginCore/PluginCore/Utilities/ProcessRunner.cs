@@ -24,6 +24,7 @@ namespace PluginCore.Utilities
         public Process HostedProcess { get { return process; } }
         public Boolean IsRunning { get { return isRunning; } }
         public Boolean RedirectInput;
+        NextTask nextTask = null;
 
         public void Run(String fileName, String arguments)
         {
@@ -32,8 +33,18 @@ namespace PluginCore.Utilities
 
         public void Run(String fileName, String arguments, Boolean shellCommand)
 		{
-			if (isRunning) throw new Exception("This ProcessRunner is already running a process.");
-            if (!shellCommand && !File.Exists(fileName)) throw new FileNotFoundException("The program '" + fileName + "' was not found.", fileName);
+            if (isRunning)
+            {
+                // kill process and queue Run command
+                nextTask = () => {
+                    Run(fileName, arguments, shellCommand);
+                };
+                this.KillProcess();
+                return;
+            }
+
+            if (!shellCommand && !File.Exists(fileName))
+                throw new FileNotFoundException("The program '" + fileName + "' was not found.", fileName);
 
 			isRunning = true;
 			process = new Process();
@@ -68,11 +79,18 @@ namespace PluginCore.Utilities
 		
 		public void KillProcess()
 		{
+            if (process == null) return;
 			try
 			{
-				process.Kill();
+                if (isRunning) TraceManager.AddAsync("Kill active process...", -3);
                 isRunning = false;
-                if (ProcessEnded != null) ProcessEnded(this, 0);
+                // recursive kill (parent and children)
+                Process KillerP = new Process();
+                KillerP.StartInfo.FileName = "taskkill.exe";
+                KillerP.StartInfo.Arguments = "/PID " + process.Id + " /T /F";
+                KillerP.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                KillerP.Start();
+                KillerP.WaitForExit();
 			}
 			catch (Exception ex)
 			{
@@ -107,14 +125,23 @@ namespace PluginCore.Utilities
 				if (++tasksFinished >= 3) 
                 {
 					isRunning = false;
-					if (ProcessEnded != null) ProcessEnded(this, process.ExitCode);
-				}
+
+                    if (nextTask != null)
+                    {
+                        nextTask();
+                        nextTask = null;
+                        // do not call ProcessEnd if another process was queued after the kill
+                    }
+                    else if (process != null && ProcessEnded != null) 
+                        ProcessEnded(this, process.ExitCode);
+                }
 			}
 		}
+
 	}
 	
 	public delegate void LineOutputHandler(Object sender, String line);
     public delegate void ProcessEndedHandler(Object sender, Int32 exitCode);
     public delegate void ProcessOutputHandler(Object sender, String line);
-	
+    delegate void NextTask();
 }

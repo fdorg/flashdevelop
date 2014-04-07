@@ -294,7 +294,7 @@ namespace ProjectManager.Controls.TreeView
             // store old tree state
             List<string> previouslyExpanded = ExpandedPaths;
             Point scrollPos = Win32.Scrolling.GetScrollPos(this);
-            string currentPath = SelectedNode.BackingPath;
+            string currentPath = SelectedNode != null ? SelectedNode.BackingPath : null;
 
             try
             {
@@ -307,7 +307,7 @@ namespace ProjectManager.Controls.TreeView
                 
                 // restore tree state
                 ExpandedPaths = previouslyExpanded;
-                if (NodeMap.ContainsKey(currentPath))
+                if (currentPath != null && NodeMap.ContainsKey(currentPath))
                     SelectedNode = NodeMap[currentPath];
                 else
                     SelectedNode = Nodes[0] as GenericNode;// projectNode;

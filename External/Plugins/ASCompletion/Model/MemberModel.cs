@@ -56,8 +56,7 @@ namespace ASCompletion.Model
             get
             {
                 if (Template == null) return Name;
-                else if (InFile != null && InFile.haXe) return Name + Template;
-                else return Name + "." + Template;
+                else return Name + Template;
             }
         }
 
@@ -90,7 +89,7 @@ namespace ASCompletion.Model
 		
 		public override string ToString()
 		{
-			string res = Name;
+			string res = FullName;
 			string type = (Type != null && Type.Length > 0) ? FormatType(Type) : null;
 			string comment = "";
 			if ((Flags & FlagType.Function) > 0)
@@ -133,7 +132,7 @@ namespace ASCompletion.Model
         public string ToDeclarationString(bool wrapWithSpaces, bool concatValue)
         {
 			string colon = wrapWithSpaces ? " : " : ":";
-            string res = Name;
+            string res = FullName;
 			string type = null;
 			string comment = "";
             if ((Flags & (FlagType.Function | FlagType.Setter | FlagType.Getter)) > 0)

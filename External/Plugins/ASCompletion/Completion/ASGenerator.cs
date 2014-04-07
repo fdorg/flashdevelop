@@ -37,7 +37,11 @@ namespace ASCompletion.Completion
         static private ASResult contextResolved;
         static private MemberModel contextMember;
         static private bool firstVar;
-        static private bool isHaxe;
+
+        static private bool isHaxe
+        {
+            get { return ASContext.Context.CurrentModel.haXe; }
+        }
 
         static public bool HandleGeneratorCompletion(ScintillaNet.ScintillaControl Sci, bool autoHide, string word)
         {
@@ -62,7 +66,6 @@ namespace ASCompletion.Completion
             int line = Sci.LineFromPosition(position);
             contextToken = Sci.GetWordFromPosition(position);
             contextMatch = null;
-            isHaxe = ASContext.Context.Settings.LanguageId == "HAXE";
 
             FoundDeclaration found = GetDeclarationAtLine(Sci, line);
             string text = Sci.GetLine(line);
@@ -4288,9 +4291,10 @@ namespace ASCompletion.Completion
             string fullPath = member.Type;
             if ((member.Flags & (FlagType.Class | FlagType.Enum | FlagType.TypeDef | FlagType.Struct)) > 0)
             {
-                /*if (member.InFile != null && member.InFile.Package != "" && member.InFile.Module != "") 
-                    fullPath = member.InFile.Package + "." + member.InFile.Module; 
-                else*/ fullPath = CleanType(member.Type);
+                FileModel inFile = member.InFile;
+                if (inFile != null && inFile.Module == member.Name && inFile.Package != "")
+                    fullPath = inFile.Package + "." + inFile.Module;
+                fullPath = CleanType(fullPath);
             }
             string nl = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             string statement = "import " + fullPath + ";" + nl;
@@ -4313,23 +4317,31 @@ namespace ASCompletion.Completion
             int packageLine = -1;
             string txt;
             int indent = 0;
+            int skipIfDef = 0;
             Match mImport;
             while (line < curLine)
             {
                 txt = sci.GetLine(line++).TrimStart();
-                // insert imports after a package declaration
                 if (txt.StartsWith("package"))
                 {
                     packageLine = line;
                     firstLine = line;
                 }
+                // skip Haxe #if blocks
+                else if (txt.StartsWith("#if ") && txt.IndexOf("#end") < 0) skipIfDef++;
+                else if (skipIfDef > 0)
+                {
+                    if (txt.StartsWith("#end")) skipIfDef--;
+                    else continue;
+                }
+                // insert imports after a package declaration
                 else if (txt.StartsWith("import"))
                 {
                     packageLine = -1;
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
-					mImport = ASFileParserRegexes.Import.Match(txt);
+                    mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success &&
                         String.Compare(mImport.Groups["package"].Value, fullPath) > 0)
                     {

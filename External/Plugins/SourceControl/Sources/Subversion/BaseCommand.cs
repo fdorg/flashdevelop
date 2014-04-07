@@ -22,9 +22,16 @@ namespace SourceControl.Sources.Subversion
             {
                 if (!args.StartsWith("status")) TraceManager.AddAsync("svn " + args);
 
+                var cmd = GetSvnCmd();
+                if (cmd == "Tools\\sliksvn\\bin\\svn.exe")
+                {
+                    TraceManager.AddAsync("SlickSVN is not included anymore in FlashDevelop tools.\nPlease install a SVN client and set Program Settings > SourceControl > SVN Path = 'svn'", -3);
+                    return;
+                }
+
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
-                runner.Run(GetSvnCmd(), args);
+                runner.Run(cmd, args);
                 runner.Output += new LineOutputHandler(runner_Output);
                 runner.Error += new LineOutputHandler(runner_Error);
                 runner.ProcessEnded += new ProcessEndedHandler(runner_ProcessEnded);

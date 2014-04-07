@@ -1202,6 +1202,16 @@ namespace ASCompletion.Model
                 }
                 else
                 {
+                    // function types
+                    if (c1 == '-' && context != 0 && length > 0 && features.hasGenerics && i < len && ba[i] == '>')
+                    {
+                        buffer[length++] = '-';
+                        buffer[length++] = '>';
+                        i++;
+                        hadDot = true;
+                        continue;
+                    }
+
                     // should we evaluate the token?
                     if (hadWS && !hadDot && !inGeneric && length > 0)
                     {
@@ -1238,7 +1248,7 @@ namespace ASCompletion.Model
                                 addChar = true;
                             }
                             // AS3/haXe generics
-                            else if (features.hasGenerics && c1 == '<')
+                            else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i < len - 3
                                     && Char.IsLetterOrDigit(ba[i - 3]) && (Char.IsLetter(ba[i]) || (haXe && ba[i] == '{'))
@@ -1299,7 +1309,7 @@ namespace ASCompletion.Model
                             }
                         }
                         // star is valid in import statements
-                        else if (c1 == '*' && version == 3)
+                        else if (c1 == '*' && version >= 3)
                         {
                             addChar = true;
                         }
@@ -2422,7 +2432,15 @@ namespace ASCompletion.Model
                     case FlagType.Function:
                         member = new MemberModel();
                         member.Comments = curComment;
+
+                        int t = token.IndexOf('<');
+                        if (t > 0)
+                        {
+                            member.Template = token.Substring(t);
+                            token = token.Substring(0, t); 
+                        }
                         member.Name = token;
+
                         if ((curModifiers & FlagType.Static) == 0) curModifiers |= FlagType.Dynamic;
                         if ((curModifiers & (FlagType.Getter | FlagType.Setter)) == 0)
                             curModifiers |= FlagType.Function;

@@ -203,6 +203,7 @@ namespace FlashDevelop.Managers
                 sci.IsBackSpaceUnIndents = Globals.Settings.BackSpaceUnIndents;
                 sci.IsCaretLineVisible = Globals.Settings.CaretLineVisible;
                 sci.IsIndentationGuides = Globals.Settings.ViewIndentationGuides;
+                sci.IndentView = Globals.Settings.IndentView;
                 sci.IsTabIndents = Globals.Settings.TabIndents;
                 sci.IsUseTabs = Globals.Settings.UseTabs;
                 sci.IsViewEOL = Globals.Settings.ViewEOL;

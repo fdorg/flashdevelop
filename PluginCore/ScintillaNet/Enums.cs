@@ -163,7 +163,7 @@ namespace ScintillaNet.Enums
 
     public enum IndentView
     {
-        None = 0,
+        //None = 0,
         Real = 1,
         LookForward = 2,
         LookBoth = 3
