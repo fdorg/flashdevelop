@@ -4731,11 +4731,11 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Immediate</value>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Scroll starten</value>
+    <value>Start Scrolling</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Scroll stoppen</value>
+    <value>Stop Scrolling</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">
@@ -5080,12 +5080,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
     <comment>Added after 4.5.2</comment>
   </data>
-  <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Start Scrolling</value>
-    <comment>Added after 4.5.2</comment>
-  </data>
-  <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Stop Scrolling</value>
-    <comment>Added after 4.5.2</comment>
+  <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
+    <value>Type of the intendation guide behaviour.</value>
+    <comment>Added after 4.6.0</comment>
   </data>
 </root>

@@ -5086,4 +5086,8 @@
     <value>停止滚动</value>
     <comment>Added after 4.5.2</comment>
   </data>
+  <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
+    <value>Type of the intendation guide behaviour.</value>
+    <comment>Added after 4.6.0</comment>
+  </data>
 </root>

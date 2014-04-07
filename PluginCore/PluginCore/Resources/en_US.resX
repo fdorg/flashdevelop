@@ -5086,4 +5086,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>The task exploring mode. Light: current files and manual refresh, Complete: current files, project files and manual refresh.</value>
     <comment>Added after 4.4.3</comment>
   </data>
+  <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
+    <value>Type of the intendation guide behaviour.</value>
+    <comment>Added after 4.6.0</comment>
+  </data>
 </root>

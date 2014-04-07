@@ -4789,11 +4789,11 @@ UseData:"</value>
     <value>イミディエイト</value>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>スクロール止まれ</value>
+    <value>Start Scrolling</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>スクロール始め</value>
+    <value>Stop Scrolling</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">
@@ -5138,12 +5138,8 @@ UseData:"</value>
     <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
     <comment>Added after 4.5.2</comment>
   </data>
-  <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Start Scrolling</value>
-    <comment>Added after 4.5.2</comment>
-  </data>
-  <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Stop Scrolling</value>
-    <comment>Added after 4.5.2</comment>
+  <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
+    <value>Type of the intendation guide behaviour.</value>
+    <comment>Added after 4.6.0</comment>
   </data>
 </root>

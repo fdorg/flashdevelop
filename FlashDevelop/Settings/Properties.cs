@@ -18,6 +18,7 @@ namespace FlashDevelop.Settings
     {
         private CodePage defaultCodePage = CodePage.UTF8;
         private ScintillaNet.Enums.EndOfLine eolMode = ScintillaNet.Enums.EndOfLine.CRLF;
+        private ScintillaNet.Enums.IndentView indentView = ScintillaNet.Enums.IndentView.Real;
         private ScintillaNet.Enums.FoldFlag foldFlags = ScintillaNet.Enums.FoldFlag.LineAfterContracted;
         private ScintillaNet.Enums.SmartIndent smartIndentType = ScintillaNet.Enums.SmartIndent.CPP;
         private ScintillaNet.Enums.VirtualSpaceMode virtualSpaceMode = ScintillaNet.Enums.VirtualSpaceMode.RectangularSelection;

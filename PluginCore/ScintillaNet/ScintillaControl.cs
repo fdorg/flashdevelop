@@ -27,6 +27,7 @@ namespace ScintillaNet
         private bool isHiliteSelected = true;
         private bool useHighlightGuides = true;
 		private static Scintilla sciConfiguration = null;
+        private Enums.IndentView indentView = Enums.IndentView.Real;
 		private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
 		private Hashtable ignoredKeys = new Hashtable();
         private string configLanguage = String.Empty;
@@ -136,6 +137,21 @@ namespace ScintillaNet
                 sciConfiguration = value; 
             }
 		}
+
+        /// <summary>
+        /// Indent view type
+        /// </summary>
+        public Enums.IndentView IndentView
+        {
+            get
+            {
+                return this.indentView;
+            }
+            set
+            {
+                this.indentView = value;
+            }
+        }
 
         /// <summary>
         /// Current configuration language
@@ -1255,7 +1271,7 @@ namespace ScintillaNet
 			}
 			set
 			{
-				SPerform(2132, (uint)(value ? 3 : 0), 0);
+				SPerform(2132, (uint)(value ? (int)this.indentView : 0), 0);
 			}
 		}	
 
@@ -5507,16 +5523,6 @@ namespace ScintillaNet
                         i--;
                         ch = (char)this.CharAt(i);
                     }
-                    // TODO: Option to leave indent tabs?
-                    //if (i == lineStart - 1)
-                    //{
-                    //    ch = (char)this.CharAt(i + 1);
-                    //    while (i < lineEnd && ch == '\t')
-                    //    {
-                    //        i++;
-                    //        ch = (char)this.CharAt(i + 1);
-                    //    }
-                    //}
                     if (i < (lineEnd - 1))
                     {
                         this.TargetStart = i + 1;
