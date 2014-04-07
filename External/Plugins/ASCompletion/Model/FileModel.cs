@@ -211,6 +211,14 @@ namespace ASCompletion.Model
 
         public ClassModel GetClassByName(string name)
         {
+            int p = name.IndexOf('<'); 
+            if (p > 0)
+            {
+                // remove parameters, ie. Array<T>
+                if (p > 2 && name[p - 1] == '.') p--;
+                name = name.Substring(0, p);
+            }
+
             foreach (ClassModel aClass in Classes)
                 if (aClass.Name == name) return aClass;
             return ClassModel.VoidClass;
