@@ -130,19 +130,6 @@
 		</Urls>
 	</Entry>
 	<Entry>
-		<Id>jre</Id>
-		<Name>Java Runtime</Name>
-		<Version>7.0</Version>
-		<Build>51</Build>
-		<Desc>Java Runtime Environment 32-bit installer</Desc>
-		<Group>Other</Group>
-		<Type>Executable</Type>
-		<Info>http://www.oracle.com/technetwork/java/javase/overview/index.html</Info>
-		<Urls>
-			<Url>http://www.flashdevelop.org/appman/jre-7u51-windows-i586.exe</Url>
-		</Urls>
-	</Entry>
-	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit</Name>
 		<Version>1.8.7</Version>
