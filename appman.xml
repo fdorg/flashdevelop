@@ -139,7 +139,7 @@
 		<Type>Executable</Type>
 		<Info>http://www.oracle.com/technetwork/java/javase/overview/index.html</Info>
 		<Urls>
-			<Url>http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-windows-i586.exe</Url>
+			<Url>http://www.flashdevelop.org/appman/jre-7u51-windows-i586.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
