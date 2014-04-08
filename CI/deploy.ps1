@@ -36,7 +36,6 @@ foreach($artifact in $artifacts.values)
 Write-Output "Create and upload build info."
 $date = Get-Date
 $file = [System.IO.Path]::GetTempFileName()
-$name = [System.IO.Path]::GetFileNameWithoutExtension($artifact.name)
 $data = "Build: $projectVersion`r`nTime: " + $date.ToUniversalTime() + " GMT"
 $data | Set-Content $file
-ncftpput.exe -u "$login" -p "$pass" -C ftp.flashdevelop.org "$file" "downloads/builds/$name.txt";
+ncftpput.exe -u "$login" -p "$pass" -C ftp.flashdevelop.org "$file" "downloads/builds/FlashDevelop-$env:APPVEYOR_REPO_NAME.txt";
