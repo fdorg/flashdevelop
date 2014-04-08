@@ -414,11 +414,14 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.IndentView")]
         public ScintillaNet.Enums.IndentView IndentView
         {
-            get { return this.indentView; }
+            get 
+            {
+                if ((Int32)this.indentView == 0) this.indentView = ScintillaNet.Enums.IndentView.Real;
+                return this.indentView; 
+            }
             set
             {
-                if ((Int32)value == 0) this.indentView = ScintillaNet.Enums.IndentView.Real;
-                else this.indentView = value;
+                this.indentView = value;
             }
         }
 
