@@ -178,9 +178,10 @@ namespace ProjectManager.Actions
 			string fdBuildPath = Path.Combine(fdBuildDir, "fdbuild.exe");
 
 			string arguments = " -ipc " + ipcName;
-            if (sdk != null && sdk.Version != null)
+            if (sdk != null)
             {
-                arguments += " -version \"" + sdk.Version.Replace(',', ';') + "\"";
+                if (!string.IsNullOrEmpty(sdk.Version))
+                    arguments += " -version \"" + sdk.Version.Replace(',', ';') + "\"";
                 if (!string.IsNullOrEmpty(project.CurrentSDK))
                     arguments += " -compiler \"" + project.CurrentSDK + "\"";
             }
@@ -331,10 +332,12 @@ namespace ProjectManager.Actions
             }
 
             // new SDK from path
+            string sdkPath = parts[parts.Length - 1];
             if (sdks.Length > 0) InstalledSDKContext.Current = sdks[0].Owner;
+            else TraceManager.AddAsync("Warning: compilation may fail if you do not have any (non-custom) SDK configured for the language", -3);
             InstalledSDK newSdk = new InstalledSDK();
             InstalledSDKContext.Current = null;
-            newSdk.Path = parts[parts.Length - 1];
+            newSdk.Path = sdkPath;
             LatestSDKMatchQuality = -1;
             return newSdk;
         }
