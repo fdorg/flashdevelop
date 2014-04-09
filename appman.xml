@@ -17,7 +17,7 @@
 		<Id>flexairsdk</Id>
 		<Name>Flex + AIR SDK</Name>
 		<Version>4.6.0+13.0.0</Version>
-		<Build>23201B+182</Build>
+		<Build>23201B+83</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
@@ -31,7 +31,7 @@
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
 		<Version>13.0.0</Version>
-		<Build>182</Build>
+		<Build>83</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
@@ -95,7 +95,7 @@
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
 		<Version>13.0.0</Version>
-		<Build>182</Build>
+		<Build>83</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
