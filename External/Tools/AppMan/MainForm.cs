@@ -396,7 +396,18 @@ namespace AppMan
                                 this.RunExecutableProcess(tempFile);
                             }
                             #endif
-                            Directory.Delete(Path.Combine(PathHelper.APPS_DIR, entry.Id), true);
+                            String folder = Path.Combine(PathHelper.APPS_DIR, entry.Id);
+                            // Sometimes we might get "dir not empty" error, try 10 times...
+                            for (Int32 attempts = 0; attempts < 10; attempts++)
+                            {
+                                try
+                                {
+                                    if (Directory.Exists(folder)) Directory.Delete(folder, true);
+                                    return;
+                                }
+                                catch (IOException) { Thread.Sleep(50); }
+                            }
+                            throw new Exception("Could not delete the directory:\n" +  folder);
                         }
                     }
                 }

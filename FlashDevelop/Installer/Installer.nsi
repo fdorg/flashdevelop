@@ -9,12 +9,12 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "4.6.1"
+!define VERSION "4.6.2"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "FlashDevelop.org"
 VIAddVersionKey "ProductName" "FlashDevelop Installer"
-VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2013"
+VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2014"
 VIAddVersionKey "FileDescription" "FlashDevelop Installer"
 VIAddVersionKey "ProductVersion" "${VERSION}.0"
 VIAddVersionKey "FileVersion" "${VERSION}.0"

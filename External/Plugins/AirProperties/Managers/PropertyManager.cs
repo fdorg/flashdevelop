@@ -20,7 +20,7 @@ namespace AirProperties
         private static AirVersion _version;
         private static Boolean _unsupportedVersion;
         private const String _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        private const String _MaxSupportedVersion = "4.0";
+        private const String _MaxSupportedVersion = "13.0";
 
         public enum AirVersion
         {
@@ -42,7 +42,8 @@ namespace AirProperties
             V37 = 16,    // Version 3.7
             V38 = 17,    // Version 3.8
             V39 = 18,    // Version 3.9
-            V40 = 19    // Version 4.0
+            V40 = 19,    // Version 4.0
+            V130 = 20    // Version 13.0
         }
 
         public static Exception LastException
@@ -115,11 +116,12 @@ namespace AirProperties
                     else if (nsuri.StartsWith(_BaseAirNamespace + "3.8")) _version = AirVersion.V38;
                     else if (nsuri.StartsWith(_BaseAirNamespace + "3.9")) _version = AirVersion.V39;
                     else if (nsuri.StartsWith(_BaseAirNamespace + "4.0")) _version = AirVersion.V40;
+                    else if (nsuri.StartsWith(_BaseAirNamespace + "13.0")) _version = AirVersion.V130;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V40;
+                        _version = AirVersion.V130;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
