@@ -183,7 +183,7 @@ namespace AS3Context
                         }
                         else genericTypes[genType] = model;
                     }
-                    else if (type.Name.StartsWith("_"))
+                    else if (type.Name.StartsWith("_") && string.IsNullOrEmpty(model.Package))
                     {
                         type.Access = Visibility.Private;
                         type.Namespace = "private";
