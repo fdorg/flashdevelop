@@ -47,7 +47,7 @@ namespace AS3Context
         {
             if (parser.Catalog != null)
             {
-                MxmlFilter.AddCatalog(parser.Filename, parser.Catalog);
+                MxmlFilter.AddCatalogs(parser.Filename, parser.Catalog);
             }
 
             if (parser.Docs.Count > 0)

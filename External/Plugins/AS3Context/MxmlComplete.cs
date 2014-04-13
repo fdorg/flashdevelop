@@ -275,11 +275,16 @@ namespace AS3Context
             {
                 string className = tmpClass.Name;
                 // look for containers
-                if (!isContainer && tmpClass.Implements != null 
-                    && (tmpClass.Implements.Contains("IContainer") 
-                    || tmpClass.Implements.Contains("IVisualElementContainer")
-                    || tmpClass.Implements.Contains("IFocusManagerContainer")))
-                    isContainer = true;
+                if (!isContainer)
+                {
+                    if (tmpClass.Implements != null
+                        && (tmpClass.Implements.Contains("IContainer") // Flex
+                        || tmpClass.Implements.Contains("IVisualElementContainer")
+                        || tmpClass.Implements.Contains("IFocusManagerContainer")
+                        || tmpClass.Implements.Contains("IPopUpHost") // FlexJS
+                        || tmpClass.Implements.Contains("IParent")))
+                        isContainer = true;
+                }
 
                 foreach (MemberModel member in tmpClass.Members)
                     if ((member.Flags & FlagType.Dynamic) > 0 && (member.Flags & mask) > 0
