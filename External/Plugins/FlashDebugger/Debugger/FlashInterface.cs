@@ -205,6 +205,7 @@ namespace FlashDebugger
                 }
                 catch (System.Exception){}
                 m_CurrentState = DebuggerState.Running;
+                m_Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
                 // now poke to see if the player is good enough
                 try
                 {
@@ -477,6 +478,15 @@ namespace FlashDebugger
             }
 		}
 
+        void settingObject_BreakOnThrowChanged(object sender, EventArgs e)
+        {
+            if (m_CurrentState != DebuggerState.Starting &&
+                m_CurrentState != DebuggerState.Stopped)
+            {
+                m_Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
+            }
+        }
+
 		internal virtual void initSession()
 		{
 			bool correctVersion = true;
@@ -499,6 +509,7 @@ namespace FlashDebugger
 			m_StepResume = false;
 
             runningIsolates = new Dictionary<int, IsolateInfo>();
+            PluginMain.settingObject.BreakOnThrowChanged += settingObject_BreakOnThrowChanged;
 		}
 
 		/// <summary> If we still have a socket try to send an exit message
@@ -506,6 +517,7 @@ namespace FlashDebugger
 		/// </summary>
 		internal virtual void exitSession()
 		{
+            PluginMain.settingObject.BreakOnThrowChanged -= settingObject_BreakOnThrowChanged;
             // clear out our watchpoint list and displays
 			// keep breakpoints around so that we can try to reapply them if we reconnect
 			if (m_Session != null)
