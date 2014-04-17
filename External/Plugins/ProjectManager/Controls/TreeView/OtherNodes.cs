@@ -30,7 +30,6 @@ namespace ProjectManager.Controls.TreeView
             Text = ProjectRef.Name + " (" + ProjectRef.Language.ToUpper() + ")";
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
-            Expand();
 
             if (References != null)
             {
@@ -41,7 +40,9 @@ namespace ProjectManager.Controls.TreeView
                     Nodes.Insert(0, References);
                 }
             }
+
             NotifyProjectRefresh();
+            Expand();
         }
 
         private void NotifyProjectRefresh()
