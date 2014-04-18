@@ -395,10 +395,10 @@ namespace HaXeContext
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
             // swf-libs
-            if (IsFlashTarget && (majorVersion < 6 || majorVersion >= 9) && proj != null )
+            if (IsFlashTarget && (platform == HaxeMovieOptions.AIR_PLATFORM || majorVersion >= 9) && proj != null)
             {
                 foreach(LibraryAsset asset in proj.LibraryAssets)
-                    if (asset.IsSwf)
+                    if (asset.IsSwf || asset.IsSwc)
                     {
                         string path = proj.GetAbsolutePath(asset.Path);
                         if (File.Exists(path)) AddPath(path);
