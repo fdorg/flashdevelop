@@ -627,7 +627,7 @@ namespace HaXeContext
                                 if (aClass.Name == module) needModule = false;
                                 item = aClass.ToMemberModel();
                                 //if (tpackage != package) 
-                                item.Name = item.Type;
+                                if (item.Type != null) item.Name = item.Type;
                                 fullList.Add(item);
                             }
                         }
@@ -636,8 +636,11 @@ namespace HaXeContext
                     if (needModule)
                     {
                         string qmodule = aFile.FullPackage;
-                        item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
-                        fullList.Add(item);
+                        if (qmodule != null)
+                        {
+                            item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
+                            fullList.Add(item);
+                        }
                     }
                     return true;
                 });
