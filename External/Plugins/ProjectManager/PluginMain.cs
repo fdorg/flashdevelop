@@ -39,6 +39,7 @@ namespace ProjectManager
         public const string InstalledSDKsChanged = "ProjectManager.InstalledSDKsChanged";
         public const string LineEntryDialog = "ProjectManager.LineEntryDialog";
         public const string HotBuild = "ProjectManager.HotBuild";
+        public const string RefreshTree = "ProjectManager.RefreshTree";
     }
 
     public static class ProjectManagerEvents
@@ -499,6 +500,10 @@ namespace ProjectManager
                             TestMovie();
                             e.Handled = true;
                         }
+                    }
+                    else if (de.Action == ProjectManagerCommands.RefreshTree)
+                    {
+                        TreeRefreshSelectedNode();
                     }
                     else if (de.Action == ProjectManagerCommands.LineEntryDialog)
                     {
