@@ -1286,7 +1286,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
-                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':'))
+                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')'))
                             {
                                 hadWS = false;
                                 hadDot = false;
