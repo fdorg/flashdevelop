@@ -3853,7 +3853,7 @@ namespace ASCompletion.Completion
             int startPos = expr.PositionExpression;
             int endPos = sci.CurrentPos;
 
-            if (shouldShortenType(sci, position, import, cFile, ref offset))
+            if (ASContext.Context.Settings.GenerateImports && shouldShortenType(sci, position, import, cFile, ref offset))
             {
                 // insert short name
                 startPos += offset;
