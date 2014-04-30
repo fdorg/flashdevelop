@@ -93,6 +93,10 @@ namespace ProjectManager.Projects.Haxe
         {
             get { return movieOptions.Platform == HaxeMovieOptions.JAVA_PLATFORM; }
         }
+        public bool IsPythonOutput
+        {
+            get { return movieOptions.Platform == HaxeMovieOptions.PYTHON_PLATFORM; }
+        }
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
         {
@@ -232,7 +236,7 @@ namespace ProjectManager.Projects.Haxe
                 else if (IsCppOutput) mode = "cpp";
                 else if (IsCSharpOutput) mode = "cs";
                 else if (IsJavaOutput) mode = "java";
-                //else throw new SystemException("Unknown mode");
+                else if (IsPythonOutput) mode = "python";
 
                 if (mode != null)
                 {

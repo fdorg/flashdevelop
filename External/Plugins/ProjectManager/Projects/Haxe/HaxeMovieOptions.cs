@@ -18,6 +18,7 @@ namespace ProjectManager.Projects.Haxe
         public const string NME_PLATFORM = "NME";
         public const string CSHARP_PLATFORM = "C#";
         public const string JAVA_PLATFORM = "Java";
+        public const string PYTHON_PLATFORM = "Python";
         
         public HaxeMovieOptions()
         {
@@ -42,7 +43,7 @@ namespace ProjectManager.Projects.Haxe
                 return new string[] { 
                         FLASHPLAYER_PLATFORM, AIR_PLATFORM, AIR_MOBILE_PLATFORM, NME_PLATFORM, 
                         JAVASCRIPT_PLATFORM, NEKO_PLATFORM, PHP_PLATFORM, CPP_PLATFORM, 
-                        CSHARP_PLATFORM, JAVA_PLATFORM
+                        CSHARP_PLATFORM, JAVA_PLATFORM, PYTHON_PLATFORM
                     }; 
             }
         }

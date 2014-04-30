@@ -171,6 +171,10 @@ namespace HaXeContext
         {
             get { return platform == HaxeMovieOptions.JAVA_PLATFORM; }
         }
+        public bool IsPythonTarget
+        {
+            get { return platform == HaxeMovieOptions.PYTHON_PLATFORM; }
+        }
         public bool IsNmeTarget
         {
             get { return platform == HaxeMovieOptions.NME_PLATFORM; }
@@ -322,6 +326,10 @@ namespace HaXeContext
             else if (IsJavaTarget)
             {
                 lang = "java";
+            }
+            else if (IsPythonTarget)
+            {
+                lang = "python";
             }
             else if (IsFlashTarget)
             {
