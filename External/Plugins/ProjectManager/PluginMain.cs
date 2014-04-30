@@ -1204,7 +1204,7 @@ namespace ProjectManager
 
         private void TreeAlwaysCompileItems()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedPaths[0]);
+            Project project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.ToggleAlwaysCompile(project, Tree.SelectedPaths);
             // TODO report invalid action
@@ -1212,7 +1212,7 @@ namespace ProjectManager
 
         private void TreeDocumentClass()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedPaths[0]);
+            Project project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.ToggleDocumentClass(project, Tree.SelectedPaths);
             // TODO report invalid action
