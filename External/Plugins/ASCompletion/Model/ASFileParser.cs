@@ -696,7 +696,7 @@ namespace ASCompletion.Model
                                 inString = 2;
                             }
                             // preprocessor statements
-                            else if (c1 == '#' && handleDirectives)
+                            else if (c1 == '#' && handleDirectives && i < len)
                             {
                                 int ls = i - 2;
                                 inlineDirective = false;
