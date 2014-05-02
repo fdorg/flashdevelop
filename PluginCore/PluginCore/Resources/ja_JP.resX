@@ -5142,4 +5142,8 @@ UseData:"</value>
     <value>Type of the intendation guide behaviour.</value>
     <comment>Added after 4.6.0</comment>
   </data>
+  <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
+    <value>Break when an exception is thrown, even if it is handled.</value>
+    <comment>Added after 4.6.1</comment>
+  </data>
 </root>
