@@ -2016,6 +2016,9 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>&amp;Test Project</value>
     <comment>Modified after 3.3.4</comment>
   </data>
+  <data name="ProjectManager.Label.RunProject" xml:space="preserve">
+    <value>&amp;Run Project</value>
+  </data>
   <data name="ProjectManager.Title.CommandLineBuilder" xml:space="preserve">
     <value>Command-Line Builder</value>
   </data>
