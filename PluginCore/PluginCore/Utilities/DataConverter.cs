@@ -98,20 +98,14 @@ namespace PluginCore.Utilities
             if (aColor != null)
             {
                 Color c = Color.FromName(aColor);
-                if (c.ToArgb() == 0)
+                if (c.ToArgb() == 0 && aColor.Length >= 6)
                 {
-                    if (aColor.IndexOf("0x") == 0)
-                    {
-                        return TO_COLORREF(Int32.Parse(aColor.Substring(2), System.Globalization.NumberStyles.HexNumber));
-                    }
+                    Int32 col = 0;
+                    if (aColor.StartsWith("0x"))
+                        Int32.TryParse(aColor.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out col);
                     else
-                    {
-                        try
-                        {
-                            return TO_COLORREF(Int32.Parse(aColor));
-                        }
-                        catch {}
-                    }
+                        Int32.TryParse(aColor, out col);
+                    return TO_COLORREF(col);
                 }
                 return TO_COLORREF(c.ToArgb() & 0x00ffffff);
             }
