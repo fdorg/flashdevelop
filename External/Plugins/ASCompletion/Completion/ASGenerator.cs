@@ -243,6 +243,7 @@ namespace ASCompletion.Completion
                     && found.inClass.Implements.Count > 0)
                 {
                     string funcName = found.member.Name;
+                    FlagType flags = found.member.Flags & ~FlagType.Access;
                     
                     List<string> interfaces = new List<string>();
                     foreach (string interf in found.inClass.Implements)
@@ -251,7 +252,7 @@ namespace ASCompletion.Completion
                         ClassModel cm = ASContext.Context.ResolveType(interf, ASContext.Context.CurrentModel);
                         foreach (MemberModel m in cm.Members)
                         {
-                            if (m.Name.Equals(funcName))
+                            if (m.Name.Equals(funcName) && m.Flags.Equals(flags))
                             {
                                 skip = true;
                                 break;
