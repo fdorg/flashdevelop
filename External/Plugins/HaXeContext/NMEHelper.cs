@@ -265,7 +265,11 @@ namespace HaXeContext
                 TraceManager.AddAsync(hxml, -3);
                 hxproj.RawHXML = null;
             }
-            else hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
+            else
+            {
+                hxml = hxml.Replace("--macro keep", "#--macro keep"); // TODO remove this hack
+                hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
+            }
         }
 
         private static string GetHaxelib(IProject project)
