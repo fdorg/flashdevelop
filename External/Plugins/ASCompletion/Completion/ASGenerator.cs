@@ -1439,11 +1439,8 @@ namespace ASCompletion.Completion
             List<FunctionParameter> functionParameters = ParseFunctionParameters(Sci, wordPos);
 
             ASResult funcResult = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
-            if (funcResult.Member == null)
-            {
-                return;
-            }
-            if (funcResult != null && funcResult.InClass != null && !funcResult.InClass.Equals(inClass))
+            if (funcResult == null || funcResult.Member == null) return;
+            if (funcResult.InClass != null && !funcResult.InClass.Equals(inClass))
             {
                 AddLookupPosition();
                 lookupPosition = -1;
@@ -1472,9 +1469,10 @@ namespace ASCompletion.Completion
             MemberList members = inClass.Members;
             foreach (MemberModel m in members)
             {
-                if (m.Name == funcResult.Member.Name)
+                if (m.Equals(funcResult.Member))
                 {
                     funcResult.Member = m;
+                    break;
                 }
             }
 
