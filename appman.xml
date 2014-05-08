@@ -44,7 +44,7 @@
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
 		<Version>13.0.0</Version>
-		<Build>182</Build>
+		<Build>206</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>AS3</Group>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
@@ -56,7 +56,7 @@
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
 		<Version>13.0.0</Version>
-		<Build>182</Build>
+		<Build>206</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -69,7 +69,7 @@
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
 		<Version>13.0.0</Version>
-		<Build>182</Build>
+		<Build>206</Build>
 		<Desc>Debug Flash Player plugin for Interner Explorer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -81,14 +81,14 @@
 	<Entry>
 		<Id>aflexsdk</Id>
 		<Name>Apache Flex SDK</Name>
-		<Version>2.7.0</Version>
-		<Build>2</Build>
+		<Version>3.0.0</Version>
+		<Build>1</Build>
 		<Desc>Apache Flex SDK and dependencies installer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
 		<Info>http://flex.apache.org/index.html</Info>
 		<Urls>
-			<Url>http://mirror.netinch.com/pub/apache/flex/installer/2.7/binaries/apache-flex-sdk-installer-2.7.0-bin.exe</Url>
+			<Url>http://www.apache.org/dyn/closer.cgi?path=/flex/installer/3.0/binaries/apache-flex-sdk-installer-3.0.0-bin.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -132,53 +132,53 @@
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit</Name>
-		<Version>1.8.7</Version>
+		<Version>1.8.8</Version>
 		<Build>0</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.7.0/TortoiseGit-1.8.7.0-32bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.8.0/TortoiseGit-1.8.8.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows</Name>
-		<Version>1.9.0</Version>
+		<Version>1.9.2</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://msysgit.googlecode.com/files/Git-1.9.0-preview20140217.exe</Url>
+			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.2-preview20140411/Git-1.9.2-preview20140411.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN</Name>
-		<Version>1.8.5</Version>
+		<Version>1.8.6</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.5/Application/TortoiseSVN-1.8.5.25224-win32-svn-1.8.8.msi</Url>
+			<Url>http://downloads.sourceforge.net/project/tortoisesvn/1.8.6/Application/TortoiseSVN-1.8.6.25419-win32-svn-1.8.8.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>sliksvn</Id>
 		<Name>SlikSVN</Name>
-		<Version>1.8.5</Version>
-		<Build>2</Build>
+		<Version>1.8.8</Version>
+		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.5-1-win32.msi</Url>
+			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.8-win32.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
