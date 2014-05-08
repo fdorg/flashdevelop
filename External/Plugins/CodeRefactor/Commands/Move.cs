@@ -152,7 +152,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void MoveTargets()
         {
-            Dictionary<string, ITabbedDocument> fileNameToOpenedDoc = new Dictionary<string,ITabbedDocument>();
+            Dictionary<string, ITabbedDocument> fileNameToOpenedDoc = new Dictionary<string, ITabbedDocument>();
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
             {
                 fileNameToOpenedDoc.Add(doc.FileName, doc);
