@@ -210,6 +210,7 @@ namespace ProjectManager
             menus.ProjectMenu.CloseProject.Click += delegate { CloseProject(false); };
             menus.ProjectMenu.OpenResource.Click += delegate { OpenResource(); };
             menus.ProjectMenu.TestMovie.Click += delegate { TestMovie(); };
+            menus.ProjectMenu.RunProject.Click += delegate { RunProject(); };
             menus.ProjectMenu.BuildProject.Click += delegate { BuildProject(); };
             menus.ProjectMenu.CleanProject.Click += delegate { CleanProject(); };
             menus.ProjectMenu.Properties.Click += delegate { OpenProjectProperties(); };
@@ -986,6 +987,12 @@ namespace ProjectManager
             {
                 BroadcastBuildFailed(project);
             }
+        }
+
+        private void RunProject()
+        {
+            var de = new DataEvent(EventType.Command, ProjectManagerCommands.PlayOutput, null);
+            EventManager.DispatchEvent(this, de);
         }
 
         private void BuildProject() 
