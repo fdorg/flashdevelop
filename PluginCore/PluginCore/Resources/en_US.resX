@@ -2018,6 +2018,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
     <value>&amp;Run Project</value>
+    <comment>Added after 4.6.1</comment>
   </data>
   <data name="ProjectManager.Title.CommandLineBuilder" xml:space="preserve">
     <value>Command-Line Builder</value>

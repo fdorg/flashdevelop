@@ -5146,4 +5146,8 @@ UseData:"</value>
     <value>Break when an exception is thrown, even if it is handled.</value>
     <comment>Added after 4.6.1</comment>
   </data>
+  <data name="ProjectManager.Label.RunProject" xml:space="preserve">
+    <value>&amp;Run Project</value>
+    <comment>Added after 4.6.1</comment>
+  </data>
 </root>
