@@ -101,10 +101,8 @@ namespace PluginCore.Utilities
                 if (c.ToArgb() == 0 && aColor.Length >= 6)
                 {
                     Int32 col = 0;
-                    if (aColor.StartsWith("0x"))
-                        Int32.TryParse(aColor.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out col);
-                    else
-                        Int32.TryParse(aColor, out col);
+                    if (aColor.StartsWith("0x")) Int32.TryParse(aColor.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out col);
+                    else Int32.TryParse(aColor, out col);
                     return TO_COLORREF(col);
                 }
                 return TO_COLORREF(c.ToArgb() & 0x00ffffff);
