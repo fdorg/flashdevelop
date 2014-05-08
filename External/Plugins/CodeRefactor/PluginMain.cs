@@ -125,6 +125,7 @@ namespace CodeRefactor
             {
                 case EventType.FileSwitch:
                     this.GenerateSurroundMenuItems();
+                    UpdateMenuItems();
                     break;
 
                 case EventType.UIStarted:
