@@ -27,7 +27,10 @@ namespace HaXeContext
             new Regex("@haxe[\\s]+(?<params>.*)", RegexOptions.Compiled | RegexOptions.Multiline);
 
         static readonly protected Regex re_genericType =
-                    new Regex("(?<gen>[^<]+)<(?<type>.+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            new Regex("(?<gen>[^<]+)<(?<type>.+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        static readonly protected Regex re_Template =
+            new Regex("<(?<name>[a-z]+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         static public string FLASH_OLD = "flash";
         static public string FLASH_NEW = "flash9";
@@ -973,11 +976,24 @@ namespace HaXeContext
             foreach (ClassModel otherClass in aFile.Classes)
                 if (otherClass.IndexType == indexType) return otherClass;
 
+            // resolve T
+            string Tdef = "<T>";
+            string Tname = "T";
+            Match m = re_Template.Match(aClass.Type);
+            if (m.Success)
+            {
+                Tname = m.Groups[1].Value;
+                Tdef = "<" + Tname + ">";
+            }
+            Regex reReplaceType = new Regex("\\b" + Tname + "\\b");
+
             // clone the type
             aClass = aClass.Clone() as ClassModel;
-
             aClass.Name = baseType.Substring(baseType.LastIndexOf('.') + 1) + "<" + indexType + ">";
             aClass.IndexType = indexType;
+
+            if (aClass.ExtendsType != null && aClass.ExtendsType.IndexOf(Tname) >= 0)
+                aClass.ExtendsType = reReplaceType.Replace(aClass.ExtendsType, indexType);
 
             // special Haxe Proxy support
             if (aClass.Type == "haxe.remoting.Proxy<T>" || aClass.Type == "haxe.remoting.Proxy.Proxy<T>")
@@ -988,28 +1004,17 @@ namespace HaXeContext
             string typed = "<" + indexType + ">";
             foreach (MemberModel member in aClass.Members)
             {
-                if (member.Name == baseType) member.Name = baseType.Replace("<T>", typed);
-                if (member.Type != null && member.Type.IndexOf('T') >= 0)
+                if (member.Type != null && member.Type.IndexOf(Tname) >= 0)
                 {
-                    if (member.Type == "T") member.Type = indexType;
-                    else member.Type = member.Type.Replace("<T>", typed);
+                    member.Type = reReplaceType.Replace(member.Type, indexType);
                 }
                 if (member.Parameters != null)
                 {
                     foreach (MemberModel param in member.Parameters)
                     {
-                        if (param.Type != null && param.Type.IndexOf('T') >= 0)
+                        if (param.Type != null && param.Type.IndexOf(Tname) >= 0)
                         {
-                            if (param.Type == "T") param.Type = indexType;
-                            else
-                            {
-                                param.Type = param.Type.Replace("<T>", typed);
-                                if (param.Type.IndexOf('-') > 0)
-                                {
-                                    param.Type = Regex.Replace(param.Type, "T\\s?->", indexType + " ->");
-                                    param.Type = Regex.Replace(param.Type, "->\\s?T", "-> " + indexType);
-                                }
-                            }
+                            param.Type = reReplaceType.Replace(param.Type, indexType);
                         }
                     }
                 }
