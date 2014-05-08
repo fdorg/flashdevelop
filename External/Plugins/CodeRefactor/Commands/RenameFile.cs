@@ -50,15 +50,22 @@ namespace CodeRefactor.Commands
                 {
                     foreach (ClassModel classModel in classes)
                     {
-                        if (classModel.Name.Equals(oldFileName)) line = classModel.LineFrom;
+                        if (classModel.Name.Equals(oldFileName))
+                        {
+                            line = classModel.LineFrom;
+                            break;
+                        }
                     }
                 }
                 else
                 {
-                    MemberList members = ASContext.Context.CurrentModel.Members;
-                    foreach (MemberModel member in members)
+                    foreach (MemberModel member in ASContext.Context.CurrentModel.Members)
                     {
-                        if (member.Name.Equals(oldFileName)) line = member.LineFrom;
+                        if (member.Name.Equals(oldFileName))
+                        {
+                            line = member.LineFrom;
+                            break;
+                        }
                     }
                 }
                 if (line > 0)
