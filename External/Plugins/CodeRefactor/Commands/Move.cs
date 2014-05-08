@@ -227,19 +227,16 @@ namespace CodeRefactor.Commands
                 newType = newType.Trim('.');
                 MessageBar.Locked = true;
                 ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(currentTarget.NewFilePath);
-                for (int i = 0; i < sci.LineCount; i++)
-                {
-                    string line = sci.GetLine(i);
-                    if (line.TrimStart().StartsWith("package"))
-                    {
-                        int pos = line.IndexOf(oldPackage);
-                        sci.SetSel(pos, pos + oldPackage.Length);
-                        sci.ReplaceSel(newPackage);
-                        break;
-                    }
-                }
+                FRSearch search = new FRSearch(oldPackage);
+                search.WholeWord = true;
+                search.SingleLine = true;
+                search.NoCase = false;
+                search.IsRegex = false;
+                search.Filter = SearchFilter.None;
+                List<SearchMatch> matches = search.Matches(sci.Text);
+                RefactoringHelper.ReplaceMatches(matches, sci, newPackage, null);
                 PluginBase.MainForm.CurrentDocument.Save();
-                AssociatedDocumentHelper.MarkDocumentToKeep(currentTarget.OldFilePath);
+                if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(currentTarget.OldFilePath);
                 MessageBar.Locked = false;
                 UserInterfaceManager.ProgressDialog.Show();
                 UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
