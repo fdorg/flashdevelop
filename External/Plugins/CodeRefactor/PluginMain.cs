@@ -323,7 +323,6 @@ namespace CodeRefactor
                 {
                     bool truncate = (langIsValid && context.CurrentModel.Imports.Count > 0) && !this.LanguageIsHaxe();
                     bool organize = (langIsValid && context.CurrentModel.Imports.Count > 1);
-
                     this.refactorContextMenu.OrganizeMenuItem.Enabled = organize;
                     this.refactorContextMenu.TruncateMenuItem.Enabled = truncate;
                     this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
@@ -627,5 +626,4 @@ namespace CodeRefactor
 		#endregion
 
     }
-	
 }

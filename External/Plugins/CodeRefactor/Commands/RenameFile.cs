@@ -4,10 +4,8 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore.FRService;
-using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
 using PluginCore.Localization;
@@ -52,15 +50,22 @@ namespace CodeRefactor.Commands
                 {
                     foreach (ClassModel classModel in classes)
                     {
-                        if (classModel.Name.Equals(oldFileName)) line = classModel.LineFrom;
+                        if (classModel.Name.Equals(oldFileName))
+                        {
+                            line = classModel.LineFrom;
+                            break;
+                        }
                     }
                 }
                 else
                 {
-                    MemberList members = ASContext.Context.CurrentModel.Members;
-                    foreach (MemberModel member in members)
+                    foreach (MemberModel member in ASContext.Context.CurrentModel.Members)
                     {
-                        if (member.Name.Equals(oldFileName)) line = member.LineFrom;
+                        if (member.Name.Equals(oldFileName))
+                        {
+                            line = member.LineFrom;
+                            break;
+                        }
                     }
                 }
                 if (line > 0)
@@ -94,5 +99,4 @@ namespace CodeRefactor.Commands
         #endregion
 
     }
-
 }
