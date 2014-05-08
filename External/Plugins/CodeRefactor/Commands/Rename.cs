@@ -98,7 +98,7 @@ namespace CodeRefactor.Commands
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
             this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource);
             // register a completion listener to the FindAllReferences so we can rename the entries
-            this.findAllReferencesCommand.OnRefactorComplete += new EventHandler<RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>>>(this.OnFindAllReferencesCompleted);
+            this.findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
         }
 
         #region RefactorCommand Implementation
