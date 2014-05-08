@@ -141,16 +141,15 @@ namespace CodeRefactor.Commands
                 RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName, sci.Text);
                 if (sci.IsModify) this.AssociatedDocumentHelper.MarkDocumentToKeep(sci.FileName);
             }
+            RenameFile(eventArgs.Results);
             this.Results = eventArgs.Results;
             if (this.outputResults) this.ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             PluginCore.Controls.MessageBar.Locked = false;
             this.FireOnRefactorComplete();
-
-            RenameFile();
         }
 
-        private void RenameFile()
+        private void RenameFile(IDictionary<string, List<SearchMatch>> results)
         {
             ASResult target = findAllReferencesCommand.CurrentTarget;
             Boolean isEnum = target.Type.IsEnum();
@@ -208,11 +207,17 @@ namespace CodeRefactor.Commands
                 {
                     doc.Save();
                     doc.Close();
+                    break;
                 }
 
             File.Move(oldFileName, newFileName);
             PluginCore.Managers.DocumentManager.MoveDocuments(oldFileName, newFileName);
-            PluginBase.MainForm.OpenEditableDocument(newFileName, false);
+            AssociatedDocumentHelper.LoadDocument(newFileName);
+            if (results.ContainsKey(oldFileName))
+            {
+                results[newFileName] = results[oldFileName];
+                results.Remove(oldFileName);
+            }
         }
 
         /// <summary>
