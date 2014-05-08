@@ -38,7 +38,7 @@ namespace ProjectManager.Building.AS3
             bool fcshExists = File.Exists(fcshPath);
             bool ascshExists = File.Exists(ascshPath);
             bool asc2Exixts = File.Exists(asc2Path);
-            asc2Mode = ascshExists || (asc2Exixts && !fcshExists);
+            asc2Mode = !fcshExists && (ascshExists || asc2Exixts);
  
             bool hostedInFD = (fcshExists || ascshExists) && ipcName != null && ipcName != "";
 
@@ -69,7 +69,11 @@ namespace ProjectManager.Building.AS3
             mxmlcPath = Path.Combine(libPath, "mxmlc.jar");
             fcshPath = Path.Combine(libPath, "fcsh.jar");
             asc2Path = Path.Combine(libPath, "mxmlc-cli.jar");
-            if (!File.Exists(asc2Path)) ascshPath = null;
+            if (File.Exists(mxmlcPath) || File.Exists(fcshPath) || !File.Exists(asc2Path))
+            {
+                // priority to FCSH
+                ascshPath = null;
+            }
             else
             {
                 ascshPath = Path.Combine(libPath, "ascsh.jar");
@@ -83,7 +87,7 @@ namespace ProjectManager.Building.AS3
                         File.Copy(lib, ascshPath);
                         Console.WriteLine("Copied 'ascsch.jar' in the AIR SDK for incremental ASC2 compilation.");
                     }
-                    catch 
+                    catch
                     {
                         ascshPath = null;
                     }
