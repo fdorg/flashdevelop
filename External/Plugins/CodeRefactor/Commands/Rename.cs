@@ -52,7 +52,6 @@ namespace CodeRefactor.Commands
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         public Rename(ASResult target, Boolean outputResults) : this(target, outputResults, null)
         {
-
         }
 
         /// <summary>
@@ -271,7 +270,6 @@ namespace CodeRefactor.Commands
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
         }
 
-
         /// <summary>
         /// This retrieves the new name from the user
         /// </summary>
@@ -292,5 +290,4 @@ namespace CodeRefactor.Commands
         #endregion
 
     }
-
 }
