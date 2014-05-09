@@ -14,12 +14,7 @@ function Main(){}
 Main.main = function()
 {
 	var main = new Main();
-	if (!window.HTMLCanvasElement)
-	{
-		alert("Your browser does not support HTML5 Canvas.");
-		return;
-	}
-	else main.initialize();
+	main.initialize();
 	// entry point
 }
 
@@ -40,18 +35,9 @@ Main.prototype.initialize = function()
 	/*
 	* createjs
 	*/
-	createjs.Ticker.addListener(this);
-	createjs.Ticker.useRAF = true;
+	createjs.Ticker.addEventListener("tick", this.mainStage);
+	createjs.Ticker.timingMode = createjs.Ticker.RAF;
 	createjs.Ticker.setFPS(60);
-}
-
-/**
-* Updates the stage on Ticker tick.
-* @param event The recieved tick event.
-*/
-Main.prototype.tick = function(event)
-{
-	this.mainStage.update();
 }
 
 /**
