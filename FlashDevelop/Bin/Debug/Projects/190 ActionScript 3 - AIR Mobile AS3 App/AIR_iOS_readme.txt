@@ -4,23 +4,17 @@ AIR for iOS instructions
 
 	- edit 'bat\SetupSDK.bat' for path to Flex SDK (defaults should be ok)
 
-
 3. Build from FlashDevelop as usual (F8)
 
-
 4. Run/debug the application on the desktop as usual (F5 or Ctrl+Enter)
-
 
 5. Configure for iOS packaging in 'bat\SetupApplication.bat':
 	
 	Take a deep breath, pay the Apple tax and read extra carefully this tutorial:
-	-  http://www.codeandvisual.com/2011/exporting-for-iphone-using-air-27-and-flashdevelop-part-three-generating-developer-certificates-provisioning-profiles-and-p12-files/
+	- http://www.codeandvisual.com/2011/exporting-for-iphone-using-air-27-and-flashdevelop-part-three-generating-developer-certificates-provisioning-profiles-and-p12-files/
 	
-	Now this is how to create the p12 key entirely on Windows:
-	- http://blog.nngafook.com/2012/06/ios-certificate-process/
-	
-	And later to sign the application for the App Store publication:
-	- http://blog.nngafook.com/2013/03/packaging-and-submitting-your-app-to-apple-on-windows-kind-of/
+	Now this is how to create the p12 key entirely on Windows (steps 1. to 8.):
+	- http://connorullmann.com/2011/04/air-2-6-and-ios/
 	
 	Then for each project you'll have to go to on Apple's iOS Provisioning Portal:
 	- create a new App ID with: name of the project and ID indicated in 'application.xml',
@@ -66,7 +60,7 @@ AIR for iOS instructions
 
 7. Packaging for release:
 
-	- edit in 'bat\SetupApplication.bat' to add your "distribution" certificate (IOS_DIST_CERT_FILE)
+	- edit 'bat\SetupApplication.bat' to add the path to your "distribution" certificate (IOS_DIST_CERT_FILE)
 	  Note: you can package ad-hoc IPAs using your developer certificate.
 	
 	- Release-build from FlashDevelop (F8)
@@ -79,4 +73,3 @@ Tips:
 - TestFlightApp: ad-hoc distribution service http://testflightapp.com
 - HockeyKit: self hosted ad-hoc distribution https://github.com/TheRealKerni/HockeyKit
 - Manual ad-hoc distribution: http://samvermette.com/71
-
