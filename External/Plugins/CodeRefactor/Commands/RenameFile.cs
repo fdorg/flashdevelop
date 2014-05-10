@@ -76,7 +76,6 @@ namespace CodeRefactor.Commands
                     return;
                 }
             }
-
             // refactor failed or was refused
             if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
             {
@@ -86,7 +85,6 @@ namespace CodeRefactor.Commands
                 oldPath = tmpPath;
             }
             if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-
             File.Move(oldPath, newPath);
             PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
         }
