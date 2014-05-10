@@ -218,6 +218,12 @@ namespace CodeRefactor.Commands
                 results[newFileName] = results[oldFileName];
                 results.Remove(oldFileName);
             }
+            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+            if (project.IsDocumentClass(oldFileName))
+            {
+                project.SetDocumentClass(newFileName, true);
+                project.Save();
+            }
         }
 
         /// <summary>
