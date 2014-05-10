@@ -42,8 +42,7 @@ namespace CodeRefactor.Commands
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 Int32 line = 0;
-                PluginBase.MainForm.OpenEditableDocument(oldPath, false);
-                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(oldPath);
                 if (sci == null) return; // Should not happen...
                 List<ClassModel> classes = ASContext.Context.CurrentModel.Classes;
                 if (classes.Count > 0)
