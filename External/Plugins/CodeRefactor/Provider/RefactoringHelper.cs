@@ -374,8 +374,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         private static FRSearch GetFRSearch(string memberName)
         {
-            String pattern = memberName;
-            FRSearch search = new FRSearch(pattern);
+            FRSearch search = new FRSearch(memberName);
             search.IsRegex = false;
             search.IsEscaped = false;
             search.WholeWord = true;
