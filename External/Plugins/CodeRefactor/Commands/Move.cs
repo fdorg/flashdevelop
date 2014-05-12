@@ -121,24 +121,19 @@ namespace CodeRefactor.Commands
             result.OldFilePath = oldFilePath;
             result.OldFileModel = ASContext.Context.GetFileModel(oldFilePath);
             result.NewFilePath = newPath;
-            string newPackage = PluginBase.CurrentProject.GetRelativePath(Path.GetDirectoryName(newPath));
-            string[] sourcePaths = PluginBase.CurrentProject.SourcePaths;
-            foreach (string path in sourcePaths)
-            {
-                if (newPackage == path)
-                {
-                    newPackage = "";
-                    break;
-                }
-            }
+            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+            string newPackage = project.GetAbsolutePath(Path.GetDirectoryName(newPath));
+            ProjectManager.Projects.PathCollection paths = project.AbsoluteClasspaths;
+            if (paths.Contains(newPackage)) newPackage = "";
             if (!string.IsNullOrEmpty(newPackage))
             {
-                foreach (string path in sourcePaths)
+                paths = new ProjectManager.Projects.PathCollection(paths);
+                paths.AddRange(ProjectManager.PluginMain.Settings.GlobalClasspaths);
+                foreach (string path in paths)
                 {
-                    string normalizePath = path + "\\";
-                    if (newPackage.StartsWith(normalizePath))
+                    if (newPackage.StartsWith(path))
                     {
-                        newPackage = newPackage.Substring(normalizePath.Length).Replace("\\", ".");
+                        newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
                         break;
                     }
                 }
