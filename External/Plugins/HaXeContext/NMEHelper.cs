@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ProjectManager.Projects.Haxe;
 using PluginCore;
 using System.Diagnostics;
