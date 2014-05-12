@@ -420,6 +420,25 @@ namespace CodeRefactor.Provider
             sci.SetSel(start, end);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldPath"></param>
+        /// <param name="newPath"></param>
+        public static void Move(string oldPath, string newPath)
+        {
+            if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
+            if (File.Exists(oldPath))
+            {
+                File.Move(oldPath, newPath);
+                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+                if (project.IsDocumentClass(oldPath))
+                {
+                    project.SetDocumentClass(newPath, true);
+                    project.Save();
+                }
+            }
+        }
     }
-
 }
