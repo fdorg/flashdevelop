@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using PluginCore.Managers;
@@ -13,7 +12,6 @@ using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
 using System.Collections;
-using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
