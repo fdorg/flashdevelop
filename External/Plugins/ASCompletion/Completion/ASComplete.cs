@@ -1898,9 +1898,7 @@ namespace ASCompletion.Completion
                         if ((!features.hasStaticInheritance || dotIndex > 0) && (tmpClass.Flags & FlagType.TypeDef) == 0)
                             break;
                     }
-
-                    //if ((mask & FlagType.Static) > 0 // only show direct static inheritance
-                    //    && (!features.hasStaticInheritance || dotIndex > 0)) break; 
+                    else if (!features.hasStaticInheritance) mask |= FlagType.Dynamic;
 
                     tmpClass = tmpClass.Extends;
                     // hide Object class members

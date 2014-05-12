@@ -35,7 +35,7 @@ namespace ASCompletion.Model
         Intrinsic = 1 << 17,
         Extern = 1 << 18,
         Final = 1 << 19,
-        Dynamic = 1 << 20,
+        Dynamic = 1 << 20, // flag misused for both 'dynamic' keyword (ok) and for non-static members (bad)
         Static = 1 << 21,
         Override = 1 << 22,
 
