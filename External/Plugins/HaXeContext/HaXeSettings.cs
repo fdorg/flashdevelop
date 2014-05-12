@@ -148,7 +148,7 @@ namespace HaXeContext
         /// <summary>
         /// In completion, show qualified type names (package + type)
         /// </summary>
-        [DisplayName("Show QualifiedTypes In Completion")]
+        [DisplayName("Show Qualified Types In Completion")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionShowQualifiedTypes"), DefaultValue(DEFAULT_QUALIFY)]
         public bool CompletionShowQualifiedTypes
         {
