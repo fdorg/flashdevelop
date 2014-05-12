@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Text;
 using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
-using System.Windows.Forms;
 
 namespace CodeRefactor
 {

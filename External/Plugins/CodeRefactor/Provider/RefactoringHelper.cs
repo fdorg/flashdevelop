@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.FRService;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
 
