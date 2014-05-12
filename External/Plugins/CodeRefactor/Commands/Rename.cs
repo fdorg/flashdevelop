@@ -210,19 +210,12 @@ namespace CodeRefactor.Commands
                     break;
                 }
 
-            File.Move(oldFileName, newFileName);
-            PluginCore.Managers.DocumentManager.MoveDocuments(oldFileName, newFileName);
+            RefactoringHelper.Move(oldFileName, newFileName);
             AssociatedDocumentHelper.LoadDocument(newFileName);
             if (results.ContainsKey(oldFileName))
             {
                 results[newFileName] = results[oldFileName];
                 results.Remove(oldFileName);
-            }
-            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
-            if (project.IsDocumentClass(oldFileName))
-            {
-                project.SetDocumentClass(newFileName, true);
-                project.Save();
             }
         }
 
