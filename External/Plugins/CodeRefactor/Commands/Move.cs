@@ -9,7 +9,6 @@ using CodeRefactor.Provider;
 using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
 
@@ -186,8 +185,7 @@ namespace CodeRefactor.Commands
                             fileNameToOpenedDoc[file].Close();
                         }
                     }
-                    Directory.Move(oldPath, Path.Combine(newPath, Path.GetFileName(oldPath)));
-                    DocumentManager.MoveDocuments(Path.GetFileName(oldPath), newPath);
+                    RefactoringHelper.Move(oldPath, newPath);
                 }
             }
             MessageBar.Locked = false;
