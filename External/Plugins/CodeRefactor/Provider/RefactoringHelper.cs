@@ -428,16 +428,34 @@ namespace CodeRefactor.Provider
         public static void Move(string oldPath, string newPath)
         {
             if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
+            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+            string newDocumentClass = null;
             if (File.Exists(oldPath))
             {
                 File.Move(oldPath, newPath);
                 PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
-                ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
-                if (project.IsDocumentClass(oldPath))
+                if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
+            }
+            else if (Directory.Exists(oldPath))
+            {
+                string oldDirName = Path.GetFileName(oldPath);
+                string newDirName = Path.Combine(newPath, oldDirName);
+                string searchPattern = GetSearchPatternFromLang(project.Language.ToLower());
+                foreach (string file in Directory.GetFiles(oldPath, searchPattern, SearchOption.AllDirectories))
                 {
-                    project.SetDocumentClass(newPath, true);
-                    project.Save();
+                    if (project.IsDocumentClass(file))
+                    {
+                        newDocumentClass = Path.Combine(newDirName, Path.GetFileName(file));
+                        break;
+                    }
                 }
+                Directory.Move(oldPath, newDirName);
+                PluginCore.Managers.DocumentManager.MoveDocuments(oldDirName, newPath);
+            }
+            if (!string.IsNullOrEmpty(newDocumentClass))
+            {
+                project.SetDocumentClass(newDocumentClass, true);
+                project.Save();
             }
         }
     }
