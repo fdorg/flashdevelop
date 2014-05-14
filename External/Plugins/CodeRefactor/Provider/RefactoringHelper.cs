@@ -420,7 +420,7 @@ namespace CodeRefactor.Provider
         }
 
         /// <summary>
-        /// Moves found file based on the specified paths.
+        /// Moves found file or directory based on the specified paths.
         /// If affected file was designated as a Document Class, updates project accordingly.
         /// </summary>
         /// <param name="oldPath"></param>
