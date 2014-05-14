@@ -174,8 +174,7 @@ namespace CodeRefactor.Commands
                         oldPath = tmpPath;
                     }
                     if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-                    File.Move(oldPath, newPath);
-                    DocumentManager.MoveDocuments(oldPath, newPath);
+                    RefactoringHelper.Move(oldPath, newPath);
                 }
                 else
                 {

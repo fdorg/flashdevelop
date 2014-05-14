@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.FRService;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
 
@@ -376,8 +374,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         private static FRSearch GetFRSearch(string memberName)
         {
-            String pattern = memberName;
-            FRSearch search = new FRSearch(pattern);
+            FRSearch search = new FRSearch(memberName);
             search.IsRegex = false;
             search.IsEscaped = false;
             search.WholeWord = true;
@@ -422,6 +419,26 @@ namespace CodeRefactor.Provider
             sci.SetSel(start, end);
         }
 
+        /// <summary>
+        /// Moves found file based on the specified paths.
+        /// If affected file was designated as a Document Class, updates project accordingly.
+        /// </summary>
+        /// <param name="oldPath"></param>
+        /// <param name="newPath"></param>
+        public static void Move(string oldPath, string newPath)
+        {
+            if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
+            if (File.Exists(oldPath))
+            {
+                File.Move(oldPath, newPath);
+                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+                if (project.IsDocumentClass(oldPath))
+                {
+                    project.SetDocumentClass(newPath, true);
+                    project.Save();
+                }
+            }
+        }
     }
-
 }
