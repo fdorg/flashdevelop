@@ -133,7 +133,7 @@ namespace CodeRefactor
                     EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.Menu", this.refactorMainMenu));
                     EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.ContextMenu", this.refactorContextMenu));
                     // Watch resolved context for menu item updating...
-                    ASComplete.OnResolvedContextChanged += new ResolvedContextChangeHandler(this.OnResolvedContextChanged);
+                    ASComplete.OnResolvedContextChanged += OnResolvedContextChanged;
                     this.UpdateMenuItems();
                     break;
 
@@ -200,7 +200,7 @@ namespace CodeRefactor
             IProject project = PluginBase.CurrentProject;
             if (project == null) return false;
             string ext = Path.GetExtension(file);
-            return (ext == ".as" || ext == ".hx" || ext == ".ls") && PluginBase.CurrentProject.DefaultSearchFilter.Contains(ext);
+            return (ext == ".as" || ext == ".hx" || ext == ".ls") && project.DefaultSearchFilter.Contains(ext);
         }
 
         #endregion
@@ -494,7 +494,6 @@ namespace CodeRefactor
         {
             try
             {
-                String name;
                 ASResult result = ASComplete.CurrentResolvedContext.Result;
                 Dictionary<MemberModel, ClassModel> members = new Dictionary<MemberModel, ClassModel>();
                 List<String> memberNames = new List<String>();
@@ -510,7 +509,7 @@ namespace CodeRefactor
                             && (m.Flags & FlagType.Constructor) == 0
                             && (m.Flags & FlagType.Static) == 0)
                         {
-                            name = m.Name;
+                            string name = m.Name;
                             if ((m.Flags & FlagType.Getter) > 0) name = "get " + name;
                             if ((m.Flags & FlagType.Setter) > 0) name = "set " + name;
                             if (!memberNames.Contains(name))
