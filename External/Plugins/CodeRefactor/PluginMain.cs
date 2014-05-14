@@ -8,7 +8,6 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
 using CodeRefactor.Controls;
-using CodeRefactor.CustomControls;
 using ProjectManager.Helpers;
 using PluginCore.Helpers;
 using PluginCore.Localization;
