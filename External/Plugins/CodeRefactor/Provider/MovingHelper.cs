@@ -7,7 +7,7 @@ namespace CodeRefactor.Provider
 {
     class MovingHelper
     {
-        private static List<Dictionary<string, string>> queue = new List<Dictionary<string, string>>();
+        private static List<QueueItem> queue = new List<QueueItem>();
         private static Move currentCommand;
 
         /// <summary>
@@ -15,7 +15,15 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath)
         {
-            queue.Add(oldPathToNewPath);
+            AddToQueue(oldPathToNewPath, true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool withMove)
+        {
+            queue.Add(new QueueItem(oldPathToNewPath, withMove));
             if (currentCommand == null) MoveFirst();
         }
 
@@ -26,9 +34,10 @@ namespace CodeRefactor.Provider
         {
             try
             {
-                Dictionary<string, string> oldPathToNewPath = queue[0];
-                queue.Remove(oldPathToNewPath);
-                currentCommand = new Move(oldPathToNewPath);
+                QueueItem item = queue[0];
+                Dictionary<string, string> oldPathToNewPath = item.oldPathToNewPath;
+                queue.Remove(item);
+                currentCommand = new Move(oldPathToNewPath, true, item.withMove);
                 currentCommand.OnRefactorComplete += OnRefactorComplete;
                 currentCommand.Execute();
             }
@@ -48,6 +57,21 @@ namespace CodeRefactor.Provider
             if (queue.Count > 0) MoveFirst();
             else currentCommand = null;
         }
-
     }
+
+    #region Helpers
+
+    internal class QueueItem
+    {
+        public Dictionary<string, string> oldPathToNewPath;
+        public bool withMove;
+
+        public QueueItem(Dictionary<string, string> oldPathToNewPath, bool withMove)
+        {
+            this.oldPathToNewPath = oldPathToNewPath;
+            this.withMove = withMove;
+        }
+    }
+
+    #endregion
 }

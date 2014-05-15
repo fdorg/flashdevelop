@@ -16,8 +16,9 @@ namespace CodeRefactor.Commands
 {
     class Move : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private bool outputResults;
         private Dictionary<string, string> oldPathToNewPath;
+        private bool outputResults;
+        private bool withMove;
         private List<MoveTargetHelper> targets;
         private MoveTargetHelper currentTarget;
 
@@ -33,11 +34,18 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="oldPathToNewPath"></param>
-        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults)
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, true)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool withMove)
         {
             this.oldPathToNewPath = oldPathToNewPath;
             this.outputResults = outputResults;
+            this.withMove = withMove;
             CreateListOfMoveTargets();
         }
 
@@ -86,16 +94,20 @@ namespace CodeRefactor.Commands
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
-                if (Path.HasExtension(oldPath))
+                if (File.Exists(oldPath))
                 {
                     if (IsValidFile(oldPath)) targets.Add(GetMoveTarget(oldPath, Path.Combine(item.Value, Path.GetFileName(oldPath))));
                 }
-                else
+                else if(Directory.Exists(oldPath))
                 {
-                    newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
+                    newPath = withMove ? Path.Combine(newPath, Path.GetFileName(oldPath)) : Path.Combine(Path.GetDirectoryName(oldPath), newPath);
                     foreach (string oldFilePath in Directory.GetFiles(oldPath, "*.*", SearchOption.AllDirectories))
                     {
-                        if (IsValidFile(oldFilePath)) targets.Add(GetMoveTarget(oldFilePath, Path.Combine(newPath, Path.GetFileName(oldFilePath))));
+                        if (IsValidFile(oldFilePath))
+                        {
+                            string path = withMove ? Path.Combine(newPath, Path.GetFileName(oldFilePath)) : oldFilePath.Replace(oldPath, newPath);
+                            targets.Add(GetMoveTarget(oldFilePath, path));
+                        }
                     }
                 }
             }
@@ -185,7 +197,7 @@ namespace CodeRefactor.Commands
                             fileNameToOpenedDoc[file].Close();
                         }
                     }
-                    RefactoringHelper.Move(oldPath, newPath);
+                    RefactoringHelper.Move(oldPath, newPath, withMove);
                 }
             }
             MessageBar.Locked = false;

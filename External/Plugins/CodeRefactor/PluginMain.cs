@@ -147,7 +147,12 @@ namespace CodeRefactor
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
-                            if (IsValidForRename(oldPath, newPath))
+                            if (Directory.Exists(oldPath) && IsValidForMove(oldPath, newPath))
+                            {
+                                MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, false);
+                                e.Handled = true;
+                            }
+                            else if (IsValidForRename(oldPath, newPath))
                             {
                                 RenameFile(oldPath, newPath);
                                 e.Handled = true;
