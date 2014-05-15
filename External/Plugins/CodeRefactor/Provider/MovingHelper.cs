@@ -38,7 +38,6 @@ namespace CodeRefactor.Provider
                 currentCommand = null;
                 ErrorManager.ShowError(ex);
             }
-
         }
 
         /// <summary>
