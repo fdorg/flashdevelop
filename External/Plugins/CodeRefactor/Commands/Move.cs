@@ -103,11 +103,7 @@ namespace CodeRefactor.Commands
                     newPath = withMove ? Path.Combine(newPath, Path.GetFileName(oldPath)) : Path.Combine(Path.GetDirectoryName(oldPath), newPath);
                     foreach (string oldFilePath in Directory.GetFiles(oldPath, "*.*", SearchOption.AllDirectories))
                     {
-                        if (IsValidFile(oldFilePath))
-                        {
-                            string path = withMove ? Path.Combine(newPath, Path.GetFileName(oldFilePath)) : oldFilePath.Replace(oldPath, newPath);
-                            targets.Add(GetMoveTarget(oldFilePath, path));
-                        }
+                        if (IsValidFile(oldFilePath)) targets.Add(GetMoveTarget(oldFilePath, oldFilePath.Replace(oldPath, newPath)));
                     }
                 }
             }
