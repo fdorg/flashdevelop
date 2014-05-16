@@ -58,8 +58,22 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            string msg = TextHelper.GetString("Info.MovingFile");
-            string title = TextHelper.GetString("Title.MoveDialog");
+            string msg;
+            string title = "";
+            if (renaming)
+            {
+                msg = TextHelper.GetString("Info.RenamingDirectory");//TODO: LOCALIZE ME
+                foreach (KeyValuePair<string, string> item in oldPathToNewPath)
+                {
+                    title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(item.Key));
+                    break;
+                }
+            }
+            else
+            {
+                msg = TextHelper.GetString("Info.MovingFile");
+                title = TextHelper.GetString("Title.MoveDialog");
+            }
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 MoveTargets();
