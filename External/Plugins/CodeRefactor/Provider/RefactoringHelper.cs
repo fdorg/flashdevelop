@@ -316,7 +316,11 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static Boolean IsProjectRelatedFile(IProject project, String file)
         {
-            foreach (String path in project.SourcePaths)
+            List<string> paths = new List<string>(project.SourcePaths);
+            ProjectManager.Projects.Project proj = (ProjectManager.Projects.Project)project;
+            if (proj.AdditionalPaths != null) paths.AddRange(proj.AdditionalPaths);
+            if (ProjectManager.PluginMain.Settings.GlobalClasspaths != null) paths.AddRange(ProjectManager.PluginMain.Settings.GlobalClasspaths);
+            foreach (string path in paths)
             {
                 String absolute = project.GetAbsolutePath(path);
                 if (file.StartsWith(absolute)) return true;
@@ -336,12 +340,13 @@ namespace CodeRefactor.Provider
         private static List<String> GetAllProjectRelatedFiles(IProject project)
         {
             List<String> files = new List<String>();
-
             string filter = GetSearchPatternFromLang(project.Language.ToLower());
-            if (string.IsNullOrEmpty(filter))
-                return files;
-
-            foreach (String path in project.SourcePaths)
+            if (string.IsNullOrEmpty(filter)) return files;
+            List<string> paths = new List<string>(project.SourcePaths);
+            ProjectManager.Projects.Project proj = (ProjectManager.Projects.Project)project;
+            if (proj.AdditionalPaths != null) paths.AddRange(proj.AdditionalPaths);
+            if (ProjectManager.PluginMain.Settings.GlobalClasspaths != null) paths.AddRange(ProjectManager.PluginMain.Settings.GlobalClasspaths);
+            foreach (string path in paths)
             {
                 String absolute = project.GetAbsolutePath(path);
                 if (Directory.Exists(path))
