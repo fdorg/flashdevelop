@@ -18,7 +18,7 @@ namespace CodeRefactor.Commands
     {
         private Dictionary<string, string> oldPathToNewPath;
         private bool outputResults;
-        private bool withMove;
+        private bool renaming;
         private List<MoveTargetHelper> targets;
         private MoveTargetHelper currentTarget;
 
@@ -34,18 +34,18 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// 
         /// </summary>
-        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, true)
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, false)
         {
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool withMove)
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
             this.oldPathToNewPath = oldPathToNewPath;
             this.outputResults = outputResults;
-            this.withMove = withMove;
+            this.renaming = renaming;
             CreateListOfMoveTargets();
         }
 
@@ -100,7 +100,7 @@ namespace CodeRefactor.Commands
                 }
                 else if(Directory.Exists(oldPath))
                 {
-                    newPath = withMove ? Path.Combine(newPath, Path.GetFileName(oldPath)) : Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+                    newPath = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
                     foreach (string oldFilePath in Directory.GetFiles(oldPath, "*.*", SearchOption.AllDirectories))
                     {
                         if (IsValidFile(oldFilePath)) targets.Add(GetMoveTarget(oldFilePath, oldFilePath.Replace(oldPath, newPath)));
@@ -193,7 +193,7 @@ namespace CodeRefactor.Commands
                             fileNameToOpenedDoc[file].Close();
                         }
                     }
-                    RefactoringHelper.Move(oldPath, newPath, withMove);
+                    RefactoringHelper.Move(oldPath, newPath, renaming);
                 }
             }
             MessageBar.Locked = false;
