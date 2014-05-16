@@ -147,7 +147,12 @@ namespace CodeRefactor
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
-                            if (IsValidForRename(oldPath, newPath))
+                            if (Directory.Exists(oldPath) && IsValidForMove(oldPath, newPath))
+                            {
+                                MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, false);
+                                e.Handled = true;
+                            }
+                            else if (IsValidForRename(oldPath, newPath))
                             {
                                 RenameFile(oldPath, newPath);
                                 e.Handled = true;
@@ -176,9 +181,7 @@ namespace CodeRefactor
         {
             string oldExt = Path.GetExtension(oldPath);
             string newExt = Path.GetExtension(newPath);
-            IProject project = PluginBase.CurrentProject;
-            if (project != null && File.Exists(oldPath) && oldExt == newExt && IsValidFile(oldPath)) return true;
-            return false;
+            return (PluginBase.CurrentProject != null && File.Exists(oldPath) && oldExt == newExt && IsValidFile(oldPath));
         }
 
         /// <summary>
@@ -186,9 +189,7 @@ namespace CodeRefactor
         /// </summary>
         private bool IsValidForMove(string oldPath, string newPath)
         {
-            IProject project = PluginBase.CurrentProject;
-            if (project != null && (File.Exists(oldPath) && IsValidFile(oldPath)) || Directory.Exists(oldPath)) return true;
-            return false;
+            return (PluginBase.CurrentProject != null && (File.Exists(oldPath) && IsValidFile(oldPath)) || Directory.Exists(oldPath));
         }
 
         /// <summary>
