@@ -105,7 +105,6 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void FindFinished(FRResults results)
         {
-
             UserInterfaceManager.ProgressDialog.Reset();
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferences"));
             // First filter out any results that don't actually point to our source declaration
@@ -117,7 +116,6 @@ namespace CodeRefactor.Commands
             {
                 foreach (var fileEntries in this.Results)
                 {
-
                     if (fileEntries.Value.Count > 0 && System.IO.File.Exists(fileEntries.Key))
                     {
                         SearchMatch entry = fileEntries.Value[0];
@@ -199,5 +197,4 @@ namespace CodeRefactor.Commands
         #endregion
 
     }
-
 }
