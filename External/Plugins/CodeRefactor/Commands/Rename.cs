@@ -21,6 +21,7 @@ namespace CodeRefactor.Commands
         private String newName;
         private Boolean outputResults;
         private FindAllReferences findAllReferencesCommand;
+        private Move packageRename;
 
         public String NewName
         {
@@ -78,9 +79,26 @@ namespace CodeRefactor.Commands
                 TraceManager.Add("refactor target is null");
                 return;
             }
-
             this.outputResults = outputResults;
-
+            if (target.IsPackage)
+            {
+                string package = target.Path.Replace('.', Path.DirectorySeparatorChar);
+                foreach (PathModel aPath in ASContext.Context.Classpath)
+                {
+                    if (aPath.IsValid && !aPath.Updating)
+                    {
+                        string path = Path.Combine(aPath.Path, package);
+                        if (aPath.IsValid && Directory.Exists(path))
+                        {
+                            this.newName = string.IsNullOrEmpty(newName) ? GetNewName(Path.GetFileName(path)) : newName;
+                            if (string.IsNullOrEmpty(this.newName)) return;
+                            packageRename = new Move(new Dictionary<string, string> { { path, this.newName } }, true, true);
+                            return;
+                        }
+                    }
+                }
+                return;
+            }
             Boolean isEnum = target.Type.IsEnum();
             Boolean isVoid = target.Type.IsVoid();
             Boolean isClass = !isVoid && target.IsStatic && target.Member == null;
@@ -108,7 +126,8 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            this.findAllReferencesCommand.Execute();
+            if (packageRename != null) packageRename.Execute();
+            else this.findAllReferencesCommand.Execute();
         }
 
         /// <summary>
@@ -116,7 +135,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override Boolean IsValid()
         {
-            return !string.IsNullOrEmpty(this.newName);
+            return packageRename != null ? packageRename.IsValid() : !string.IsNullOrEmpty(this.newName);
         }
 
         #endregion

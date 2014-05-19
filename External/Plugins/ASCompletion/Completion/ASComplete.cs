@@ -738,11 +738,17 @@ namespace ASCompletion.Completion
                 }
 
                 // if element can be resolved
-                if (!result.IsNull())
+                if (result.IsPackage)
+                {
+                    args.Add("ItmFile", result.InFile.FileName);
+                    args.Add("ItmTypPkg", result.Path);
+                    args.Add("ItmTypPkgName", result.Path);
+                }
+                else if (result.Type != null || result.Member != null)
                 {
                     ClassModel oClass = result.InClass != null ? result.InClass : result.Type;
 
-                    if (result.IsPackage || (oClass.IsVoid() && (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0))
+                    if (oClass.IsVoid() && (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0)
                         return;
 
                     // type details
