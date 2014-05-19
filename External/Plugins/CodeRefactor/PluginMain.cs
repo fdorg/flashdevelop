@@ -149,7 +149,7 @@ namespace CodeRefactor
                             newPath = args[1];
                             if (Directory.Exists(oldPath) && IsValidForMove(oldPath, newPath))
                             {
-                                MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, false);
+                                MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, true);
                                 e.Handled = true;
                             }
                             else if (IsValidForRename(oldPath, newPath))

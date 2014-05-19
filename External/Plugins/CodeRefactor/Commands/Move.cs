@@ -18,7 +18,7 @@ namespace CodeRefactor.Commands
     {
         private Dictionary<string, string> oldPathToNewPath;
         private bool outputResults;
-        private bool withMove;
+        private bool renaming;
         private List<MoveTargetHelper> targets;
         private MoveTargetHelper currentTarget;
 
@@ -34,18 +34,18 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// 
         /// </summary>
-        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, true)
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, false)
         {
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool withMove)
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
             this.oldPathToNewPath = oldPathToNewPath;
             this.outputResults = outputResults;
-            this.withMove = withMove;
+            this.renaming = renaming;
             CreateListOfMoveTargets();
         }
 
@@ -58,8 +58,22 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            string msg = TextHelper.GetString("Info.MovingFile");
-            string title = TextHelper.GetString("Title.MoveDialog");
+            string msg;
+            string title = "";
+            if (renaming)
+            {
+                msg = TextHelper.GetString("Info.RenamingDirectory");//TODO: LOCALIZE ME
+                foreach (KeyValuePair<string, string> item in oldPathToNewPath)
+                {
+                    title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(item.Key));
+                    break;
+                }
+            }
+            else
+            {
+                msg = TextHelper.GetString("Info.MovingFile");
+                title = TextHelper.GetString("Title.MoveDialog");
+            }
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 MoveTargets();
@@ -100,7 +114,7 @@ namespace CodeRefactor.Commands
                 }
                 else if(Directory.Exists(oldPath))
                 {
-                    newPath = withMove ? Path.Combine(newPath, Path.GetFileName(oldPath)) : Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+                    newPath = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
                     foreach (string oldFilePath in Directory.GetFiles(oldPath, "*.*", SearchOption.AllDirectories))
                     {
                         if (IsValidFile(oldFilePath)) targets.Add(GetMoveTarget(oldFilePath, oldFilePath.Replace(oldPath, newPath)));
@@ -193,7 +207,7 @@ namespace CodeRefactor.Commands
                             fileNameToOpenedDoc[file].Close();
                         }
                     }
-                    RefactoringHelper.Move(oldPath, newPath, withMove);
+                    RefactoringHelper.Move(oldPath, newPath, renaming);
                 }
             }
             MessageBar.Locked = false;
