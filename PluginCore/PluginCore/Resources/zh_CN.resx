@@ -5098,4 +5098,8 @@
     <value>&amp;Run Project</value>
     <comment>Added after 4.6.1</comment>
   </data>
+  <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
+    <value>You are renaming a directory. Do you also want to update the references?</value>
+    <comment>Added after 4.6.1</comment>
+  </data>
 </root>
