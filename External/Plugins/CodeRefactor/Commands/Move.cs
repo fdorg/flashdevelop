@@ -62,7 +62,7 @@ namespace CodeRefactor.Commands
             string title = "";
             if (renaming)
             {
-                msg = TextHelper.GetString("Info.RenamingDirectory");//TODO: LOCALIZE ME
+                msg = TextHelper.GetString("Info.RenamingDirectory");
                 foreach (KeyValuePair<string, string> item in oldPathToNewPath)
                 {
                     title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(item.Key));
