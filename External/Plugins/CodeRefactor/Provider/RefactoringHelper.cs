@@ -73,11 +73,7 @@ namespace CodeRefactor.Provider
             if (!ASContext.Context.IsFileValid || (Sci == null)) return null;
             // get type at cursor position
             ASResult result = ASComplete.GetExpressionType(Sci, position);
-            // browse to package folder
-            if (result.IsPackage && result.InFile != null)
-            {
-                return null;
-            }
+            if (result.IsPackage) return result;
             // open source and show declaration
             if (!result.IsNull())
             {

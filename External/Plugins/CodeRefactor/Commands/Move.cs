@@ -144,14 +144,16 @@ namespace CodeRefactor.Commands
             result.NewFilePath = newPath;
             ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
             string newPackage = project.GetAbsolutePath(Path.GetDirectoryName(newPath));
-            ProjectManager.Projects.PathCollection paths = project.AbsoluteClasspaths;
-            if (paths.Contains(newPackage)) newPackage = "";
             if (!string.IsNullOrEmpty(newPackage))
             {
-                paths = new ProjectManager.Projects.PathCollection(paths);
-                paths.AddRange(ProjectManager.PluginMain.Settings.GlobalClasspaths);
-                foreach (string path in paths)
+                foreach (PathModel pathModel in ASContext.Context.Classpath)
                 {
+                    string path = project.GetAbsolutePath(pathModel.Path);
+                    if (path == newPackage)
+                    {
+                        newPackage = "";
+                        break;
+                    }
                     if (newPackage.StartsWith(path))
                     {
                         newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
@@ -223,32 +225,25 @@ namespace CodeRefactor.Commands
                 currentTarget = targets[0];
                 targets.Remove(currentTarget);
                 FileModel oldFileModel = currentTarget.OldFileModel;
-                string oldPackage;
-                string newPackage;
+                FRSearch search;
                 string newType;
                 if (string.IsNullOrEmpty(oldFileModel.Package))
                 {
-                    oldPackage = "package";
-                    newPackage = "package " + currentTarget.NewPackage;
+                    search = new FRSearch("(package)+\\s*");
                     newType = Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 else
                 {
-                    oldPackage = oldFileModel.Package;
-                    newPackage = currentTarget.NewPackage;
+                    search = new FRSearch("(package)+\\s+(" + oldFileModel.Package + ")\\s*");
                     newType = oldFileModel.Package + "." + Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 newType = newType.Trim('.');
                 MessageBar.Locked = true;
                 ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(currentTarget.NewFilePath);
-                FRSearch search = new FRSearch(oldPackage);
-                search.WholeWord = true;
-                search.SingleLine = true;
-                search.NoCase = false;
-                search.IsRegex = false;
+                search.IsRegex = true;
                 search.Filter = SearchFilter.None;
                 List<SearchMatch> matches = search.Matches(sci.Text);
-                RefactoringHelper.ReplaceMatches(matches, sci, newPackage, null);
+                RefactoringHelper.ReplaceMatches(matches, sci, "package " + currentTarget.NewPackage + " ", null);
                 PluginBase.MainForm.CurrentDocument.Save();
                 if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(currentTarget.OldFilePath);
                 MessageBar.Locked = false;
