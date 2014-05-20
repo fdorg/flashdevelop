@@ -21,7 +21,7 @@ namespace CodeRefactor.Commands
         private String newName;
         private Boolean outputResults;
         private FindAllReferences findAllReferencesCommand;
-        private Move packageRename;
+        private Move renamePackage;
 
         public String NewName
         {
@@ -92,7 +92,7 @@ namespace CodeRefactor.Commands
                         {
                             this.newName = string.IsNullOrEmpty(newName) ? GetNewName(Path.GetFileName(path)) : newName;
                             if (string.IsNullOrEmpty(this.newName)) return;
-                            packageRename = new Move(new Dictionary<string, string> { { path, this.newName } }, true, true);
+                            renamePackage = new Move(new Dictionary<string, string> { { path, this.newName } }, true, true);
                             return;
                         }
                     }
@@ -126,7 +126,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            if (packageRename != null) packageRename.Execute();
+            if (renamePackage != null) renamePackage.Execute();
             else this.findAllReferencesCommand.Execute();
         }
 
@@ -135,7 +135,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override Boolean IsValid()
         {
-            return packageRename != null ? packageRename.IsValid() : !string.IsNullOrEmpty(this.newName);
+            return renamePackage != null ? renamePackage.IsValid() : !string.IsNullOrEmpty(this.newName);
         }
 
         #endregion
