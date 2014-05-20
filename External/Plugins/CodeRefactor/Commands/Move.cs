@@ -46,6 +46,7 @@ namespace CodeRefactor.Commands
             this.oldPathToNewPath = oldPathToNewPath;
             this.outputResults = outputResults;
             this.renaming = renaming;
+            Results = new Dictionary<string, List<SearchMatch>>();
             CreateListOfMoveTargets();
         }
 
@@ -154,7 +155,7 @@ namespace CodeRefactor.Commands
                         newPackage = "";
                         break;
                     }
-                    if (newPackage.StartsWith(path))
+                    else if (newPackage.StartsWith(path))
                     {
                         newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
                         break;
@@ -237,13 +238,23 @@ namespace CodeRefactor.Commands
                     search = new FRSearch("(package)+\\s+(" + oldFileModel.Package + ")\\s*");
                     newType = oldFileModel.Package + "." + Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
-                newType = newType.Trim('.');
-                MessageBar.Locked = true;
-                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(currentTarget.NewFilePath);
                 search.IsRegex = true;
                 search.Filter = SearchFilter.None;
+                newType = newType.Trim('.');
+                MessageBar.Locked = true;
+                string newFilePath = currentTarget.NewFilePath;
+                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(newFilePath);
                 List<SearchMatch> matches = search.Matches(sci.Text);
                 RefactoringHelper.ReplaceMatches(matches, sci, "package " + currentTarget.NewPackage + " ", null);
+                int offset = "package ".Length;
+                foreach (SearchMatch match in matches)
+                {
+                    match.Column += offset;
+                    match.LineText = sci.GetLine(match.Line - 1);
+                    match.Value = currentTarget.NewPackage;
+                }
+                if (!Results.ContainsKey(newFilePath)) Results[newFilePath] = new List<SearchMatch>();
+                Results[newFilePath].AddRange(matches.ToArray());
                 PluginBase.MainForm.CurrentDocument.Save();
                 if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(currentTarget.OldFilePath);
                 MessageBar.Locked = false;
@@ -253,7 +264,43 @@ namespace CodeRefactor.Commands
                 ASResult target = new ASResult() { Member = new MemberModel(newType, newType, FlagType.Import, 0) };
                 RefactoringHelper.FindTargetInFiles(target, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true);
             }
-            else FireOnRefactorComplete();
+            else
+            {
+                if (outputResults) ReportResults();
+                FireOnRefactorComplete();
+            }
+        }
+
+        private void ReportResults()
+        {
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            foreach (KeyValuePair<string, List<SearchMatch>> entry in Results)
+            {
+                Dictionary<int, int> lineOffsets = new Dictionary<int, int>();
+                Dictionary<int, string> lineChanges = new Dictionary<int, string>();
+                Dictionary<int, List<string>> reportableLines = new Dictionary<int, List<string>>();
+                foreach (SearchMatch match in entry.Value)
+                {
+                    int column = match.Column;
+                    int lineNumber = match.Line;
+                    string changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
+                    int offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
+                    column = column + offset;
+                    lineChanges[lineNumber] = changedLine;
+                    lineOffsets[lineNumber] = offset + (match.Value.Length - match.Length);
+                    if (!reportableLines.ContainsKey(lineNumber)) reportableLines[lineNumber] = new List<string>();
+                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": characters " + column + "-" + (column + match.Value.Length) + " : {0}");
+                }
+                foreach (KeyValuePair<int, List<string>> lineSetsToReport in reportableLines)
+                {
+                    string renamedLine = lineChanges[lineSetsToReport.Key].Trim();
+                    foreach (string lineToReport in lineSetsToReport.Value)
+                    {
+                        PluginCore.Managers.TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info);
+                    }
+                }
+            }
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
         }
 
         #endregion
@@ -272,17 +319,19 @@ namespace CodeRefactor.Commands
             string newType = (currentTarget.NewPackage + "." + targetName).Trim('.');
             foreach (KeyValuePair<string, List<SearchMatch>> entry in results)
             {
-                if (entry.Value.Count == 0) continue;
-                UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
-                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(entry.Key);
-                if (isNotHaxe && entry.Key != currentTarget.NewFilePath && ASContext.Context.CurrentModel.Imports.Search(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0) == null)
+                List<SearchMatch> matches = entry.Value;
+                if (matches.Count == 0) continue;
+                string path = entry.Key;
+                UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + path + "\"");
+                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(path);
+                if (isNotHaxe && path != currentTarget.NewFilePath && ASContext.Context.CurrentModel.Imports.Search(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0) == null)
                 {
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
                 }
-                if (packageIsNotEmpty) RefactoringHelper.ReplaceMatches(entry.Value, sci, newType, null);
+                if (packageIsNotEmpty) RefactoringHelper.ReplaceMatches(matches, sci, newType, null);
                 else
                 {
-                    foreach (SearchMatch sm in entry.Value)
+                    foreach (SearchMatch sm in matches)
                     {
                         if (sm.LineText.TrimStart().StartsWith("import"))
                         {
@@ -291,8 +340,15 @@ namespace CodeRefactor.Commands
                         }
                     }
                 }
+                foreach (SearchMatch match in matches)
+                {
+                    match.LineText = sci.GetLine(match.Line - 1);
+                    match.Value = newType;
+                }
+                if (!Results.ContainsKey(path)) Results[path] = new List<SearchMatch>();
+                Results[path].AddRange(matches.ToArray());
                 PluginBase.MainForm.CurrentDocument.Save();
-                if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
+                if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(path);
             }
             UserInterfaceManager.ProgressDialog.Hide();
             MessageBar.Locked = false;

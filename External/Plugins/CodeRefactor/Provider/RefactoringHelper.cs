@@ -442,13 +442,13 @@ namespace CodeRefactor.Provider
             else if (Directory.Exists(oldPath))
             {
                 string oldDirName = Path.GetFileName(oldPath);
-                string newDirName = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, oldDirName);
+                string newDirName = renaming ? oldPath.Replace(oldDirName, newPath) : Path.Combine(newPath, oldDirName);
                 string searchPattern = GetSearchPatternFromLang(project.Language.ToLower());
                 foreach (string file in Directory.GetFiles(oldPath, searchPattern, SearchOption.AllDirectories))
                 {
                     if (project.IsDocumentClass(file))
                     {
-                        newDocumentClass = Path.Combine(newDirName, Path.GetFileName(file));
+                        newDocumentClass = file.Replace(oldDirName, newPath);
                         break;
                     }
                 }
