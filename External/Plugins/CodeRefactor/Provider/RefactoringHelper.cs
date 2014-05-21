@@ -441,19 +441,18 @@ namespace CodeRefactor.Provider
             }
             else if (Directory.Exists(oldPath))
             {
-                string oldDirName = Path.GetFileName(oldPath);
-                string newDirName = renaming ? oldPath.Replace(oldDirName, newPath) : Path.Combine(newPath, oldDirName);
+                newPath = renaming ? oldPath.Replace(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
                 string searchPattern = GetSearchPatternFromLang(project.Language.ToLower());
                 foreach (string file in Directory.GetFiles(oldPath, searchPattern, SearchOption.AllDirectories))
                 {
                     if (project.IsDocumentClass(file))
                     {
-                        newDocumentClass = file.Replace(oldDirName, newPath);
+                        newDocumentClass = file.Replace(oldPath, newPath);
                         break;
                     }
                 }
-                Directory.Move(oldPath, newDirName);
-                PluginCore.Managers.DocumentManager.MoveDocuments(oldDirName, newPath);
+                Directory.Move(oldPath, newPath);
+                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
             }
             if (!string.IsNullOrEmpty(newDocumentClass))
             {
