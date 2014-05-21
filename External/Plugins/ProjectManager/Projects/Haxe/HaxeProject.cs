@@ -195,11 +195,11 @@ namespace ProjectManager.Projects.Haxe
             }
             else
             {
-                // SWF/SWC libraries
-                if (IsFlashOutput && (MovieOptions.Platform == HaxeMovieOptions.AIR_PLATFORM || MovieOptions.MajorVersion >= 9))
+                // SWC libraries
+                if (IsFlashOutput)
                     foreach (LibraryAsset asset in LibraryAssets)
                     {
-                        if (asset.IsSwf || asset.IsSwc)
+                        if (asset.IsSwc)
                             pr.Add("-swf-lib " + asset.Path);
                     }
 

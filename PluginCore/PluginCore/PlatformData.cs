@@ -14,6 +14,7 @@ namespace PluginCore
         public static String DEFAULT_FLASH_VERSION = "13.0";
         public static String[] AIR_VERSIONS = new String[] { "1.5", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4.0", "13.0" };
         public static String[] AIR_MOBILE_VERSIONS = new String[] { "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4.0", "13.0" };
+        public static String[] FLASH_LEGACY_VERSIONS = new String[] { "6.0", "7.0", "8.0", "9.0", "10.0", "10.1", "10.2", "10.3", "11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.9", "12.0", "13.0" };
         public static String[] FLASH_VERSIONS = new String[] { "9.0", "10.0", "10.1", "10.2", "10.3", "11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.9", "12.0", "13.0" };
         public static String[] SWF_VERSIONS = new String[] { "9", "10", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" };
         public static String[] NME_TARGETS = new String[] { "flash", "html5", "windows", "neko", "android", "webos", "blackberry" };
