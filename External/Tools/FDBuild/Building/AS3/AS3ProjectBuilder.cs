@@ -265,7 +265,7 @@ namespace ProjectManager.Building.AS3
                 string[] warnings;
                 string jar = ascshPath != null ? ascshPath : fcshPath;
                 string jvmarg = VMARGS + " -Dapplication.home=\"" + sdkPath 
-                    + "\" -Dflexlib=\"" + Path.Combine(sdkPath, "frameworks")
+                    //+ "\" -Dflexlib=\"" + Path.Combine(sdkPath, "frameworks")
                     + "\" -jar \"" + jar + "\"";
                 fcsh.Compile(workingdir, configChanged, arguments, out output, out errors, out warnings, jvmarg, JvmConfigHelper.GetJavaEXE(jvmConfig, sdkPath));
 
