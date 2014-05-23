@@ -21,9 +21,17 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// 
         /// </summary>
-        public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool renaming)
+        public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults)
         {
-            queue.Add(new QueueItem(oldPathToNewPath, renaming));
+            AddToQueue(oldPathToNewPath, outputResults, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
+        {
+            queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming));
             if (currentCommand == null) MoveFirst();
         }
 
@@ -37,7 +45,7 @@ namespace CodeRefactor.Provider
                 QueueItem item = queue[0];
                 Dictionary<string, string> oldPathToNewPath = item.oldPathToNewPath;
                 queue.Remove(item);
-                currentCommand = new Move(oldPathToNewPath, true, item.renaming);
+                currentCommand = new Move(oldPathToNewPath, item.outputResults, item.renaming);
                 currentCommand.OnRefactorComplete += OnRefactorComplete;
                 currentCommand.Execute();
             }
@@ -64,11 +72,13 @@ namespace CodeRefactor.Provider
     internal class QueueItem
     {
         public Dictionary<string, string> oldPathToNewPath;
+        public bool outputResults;
         public bool renaming;
 
-        public QueueItem(Dictionary<string, string> oldPathToNewPath, bool renaming)
+        public QueueItem(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
             this.oldPathToNewPath = oldPathToNewPath;
+            this.outputResults = outputResults;
             this.renaming = renaming;
         }
     }
