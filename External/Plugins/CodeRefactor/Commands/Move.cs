@@ -143,7 +143,7 @@ namespace CodeRefactor.Commands
             result.OldFilePath = oldFilePath;
             result.OldFileModel = ASContext.Context.GetFileModel(oldFilePath);
             result.NewFilePath = newPath;
-            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+            IProject project = PluginBase.CurrentProject;
             string newPackage = project.GetAbsolutePath(Path.GetDirectoryName(newPath));
             if (!string.IsNullOrEmpty(newPackage))
             {
