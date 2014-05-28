@@ -441,7 +441,7 @@ namespace CodeRefactor.Provider
             }
             else if (Directory.Exists(oldPath))
             {
-                newPath = renaming ? oldPath.Replace(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
+                newPath = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
                 string searchPattern = GetSearchPatternFromLang(project.Language.ToLower());
                 foreach (string file in Directory.GetFiles(oldPath, searchPattern, SearchOption.AllDirectories))
                 {
