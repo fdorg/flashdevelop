@@ -189,16 +189,18 @@ namespace CodeRefactor
         /// </summary>
         private bool IsValidForMove(string oldPath, string newPath)
         {
-            return (PluginBase.CurrentProject != null && (File.Exists(oldPath) && IsValidFile(oldPath)) || Directory.Exists(oldPath));
+            return (PluginBase.CurrentProject != null && (File.Exists(oldPath) || Directory.Exists(oldPath)) && IsValidFile(oldPath));
         }
 
         /// <summary>
-        /// Checks if the file is ok for refactoring
+        /// Checks if the file or directory is ok for refactoring
         /// </summary>
         private bool IsValidFile(string file)
         {
             IProject project = PluginBase.CurrentProject;
             if (project == null) return false;
+            if (!RefactoringHelper.IsProjectRelatedFile(project, file)) return false;
+            if (Directory.Exists(file)) return true;
             string ext = Path.GetExtension(file);
             return (ext == ".as" || ext == ".hx" || ext == ".ls") && project.DefaultSearchFilter.Contains(ext);
         }
