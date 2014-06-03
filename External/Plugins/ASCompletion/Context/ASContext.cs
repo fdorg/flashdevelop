@@ -1299,7 +1299,7 @@ namespace ASCompletion.Context
                 int line;
                 if (info.Length == 2 && int.TryParse(info[1], out line))
                 {
-                    ASComplete.LocateMember("(function|var|const|get|set|property|#region|,)", info[0], line);
+                    ASComplete.LocateMember("(function|var|const|get|set|property|#region|namespace|,)", info[0], line);
                 }
             }
         }
