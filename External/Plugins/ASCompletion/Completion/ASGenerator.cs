@@ -1429,7 +1429,7 @@ namespace ASCompletion.Completion
             }
 
             MemberModel m = NewMember(suggestion, member, FlagType.Variable | FlagType.Constant | FlagType.Static);
-            m.Type = "Number";
+            m.Type = ASContext.Context.Features.numberKey;
             m.Value = word;
             GenerateVariable(m, position, detach);
         }
