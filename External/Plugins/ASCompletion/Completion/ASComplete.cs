@@ -593,7 +593,7 @@ namespace ASCompletion.Completion
                 if (isClass)
                     LocateMember("(class|interface)", name, line);
                 else
-                    LocateMember("(function|var|const|get|set|property|[,(])", name, line);
+                    LocateMember("(function|var|const|get|set|property|namespace|[,(])", name, line);
             }
             return true;
         }
