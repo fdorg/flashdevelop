@@ -591,7 +591,7 @@ namespace ASCompletion.Completion
             if (line > 0)
             {
                 if (isClass)
-                    LocateMember("(class|interface)", name, line);
+                    LocateMember("(class|interface|abstract)", name, line);
                 else
                     LocateMember("(function|var|const|get|set|property|namespace|[,(])", name, line);
             }
