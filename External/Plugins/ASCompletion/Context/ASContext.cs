@@ -1290,7 +1290,7 @@ namespace ASCompletion.Context
                 if (!aClass.IsVoid())
                 {
                     string name = (aClass.InFile.Version < 3) ? aClass.QualifiedName : aClass.Name;
-                    ASComplete.LocateMember("(class|interface)", name, aClass.LineFrom);
+                    ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
                 }
             }
             else if (node.Tag != null && node.Tag is string)
