@@ -100,11 +100,12 @@ namespace ProjectManager.Projects.Haxe
             if (export != null) return export;
             if (IsLibraryAsset(path) && !isInjectionTarget)
                 return GetAsset(path).ID;
-            
+
+            String dirName = inFile;
             if (FileInspector.IsHaxeFile(inFile, Path.GetExtension(inFile).ToLower()))
-                return ProjectPaths.GetRelativePath(Path.GetDirectoryName(ProjectPath), path).Replace('\\', '/');
-            else
-                return ProjectPaths.GetRelativePath(Path.GetDirectoryName(inFile), path).Replace('\\', '/');
+                dirName = ProjectPath;
+
+            return '"' + ProjectPaths.GetRelativePath(Path.GetDirectoryName(dirName), path).Replace('\\', '/') + '"'; 
         }
 
         public override CompileTargetType AllowCompileTarget(string path, bool isDirectory)
