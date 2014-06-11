@@ -10,72 +10,72 @@
 		<Info>http://www.adobe.com/devnet/flex.html</Info>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-13.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-14.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flexairsdk</Id>
 		<Name>Flex + AIR SDK</Name>
-		<Version>4.6.0+13.0.0</Version>
-		<Build>23201B+83</Build>
+		<Version>4.6.0+14.0.0</Version>
+		<Build>23201B+110</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
 			<Url>http://airdownload.adobe.com/air/win/download/13.0/AdobeAIRSDK.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-13.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-14.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
-		<Version>13.0.0</Version>
-		<Build>83</Build>
+		<Version>14.0.0</Version>
+		<Build>110</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/13.0/AIRSDK_Compiler.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-13.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/14.0/AIRSDK_Compiler.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-14.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
-		<Version>13.0.0</Version>
-		<Build>206</Build>
+		<Version>14.0.0</Version>
+		<Build>125</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>AS3</Group>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/13/flashplayer_13_sa_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/14/flashplayer_14_sa_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
-		<Version>13.0.0</Version>
-		<Build>206</Build>
+		<Version>14.0.0</Version>
+		<Build>125</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/13/flashplayer_13_plugin_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/14/flashplayer_14_plugin_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
-		<Version>13.0.0</Version>
-		<Build>206</Build>
+		<Version>14.0.0</Version>
+		<Build>125</Build>
 		<Desc>Debug Flash Player plugin for Interner Explorer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/13/flashplayer_13_ax_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/14/flashplayer_14_ax_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -94,14 +94,14 @@
 	<Entry>
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
-		<Version>13.0.0</Version>
-		<Build>83</Build>
+		<Version>14.0.0</Version>
+		<Build>110</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/products/air.html</Info>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/13.0/AdobeAIRInstaller.exe</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/14.0/AdobeAIRInstaller.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -132,14 +132,14 @@
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit</Name>
-		<Version>1.8.8</Version>
-		<Build>0</Build>
+		<Version>1.8.9</Version>
+		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.8.0/TortoiseGit-1.8.8.0-32bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.9.0/TortoiseGit-1.8.9.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -158,27 +158,27 @@
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN</Name>
-		<Version>1.8.6</Version>
+		<Version>1.8.7</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://downloads.sourceforge.net/project/tortoisesvn/1.8.6/Application/TortoiseSVN-1.8.6.25419-win32-svn-1.8.8.msi</Url>
+			<Url>http://downloads.sourceforge.net/project/tortoisesvn/1.8.7/Application/TortoiseSVN-1.8.7.25475-win32-svn-1.8.9.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>sliksvn</Id>
 		<Name>SlikSVN</Name>
-		<Version>1.8.8</Version>
+		<Version>1.8.9</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.8-win32.msi</Url>
+			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.9-win32.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
