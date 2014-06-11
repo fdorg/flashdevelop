@@ -193,9 +193,14 @@ namespace ProjectManager.Helpers
 					{
                         if (skipWarning)
                         {
-                            if (line == "^") skipWarning = false;
+                            if (line.Contains("Warning") || line.Contains("Error")) skipWarning = false;
+                            else
+                            {
+                                if (line.Contains("^")) skipWarning = false;
+                                continue;
+                            }
                         }
-						else if (line.Contains("Warning:"))
+						if (line.Contains("Warning:"))
 						{
 							warningList.Add(line);
                             if (reWarning.IsMatch(line)) skipWarning = true;
