@@ -1123,7 +1123,7 @@ namespace AppMan
                         {
                             Color color = Color.Green;
                             String text = this.localeData.StateInstalled;
-                            if (String.CompareOrdinal(dep.Version, inst.Version) > 0 || (dep.Version == inst.Version && dep.Build != inst.Build))
+                            if (this.CustomCompare(dep, inst) > 0 || (dep.Version == inst.Version && dep.Build != inst.Build))
                             {
                                 this.haveUpdates = true;
                                 text = this.localeData.StateUpdate;
@@ -1140,6 +1140,36 @@ namespace AppMan
             catch (Exception ex)
             {
                 DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Compare version numbers
+        /// </summary>
+        private Int32 CustomCompare(DepEntry dep, DepEntry inst)
+        {
+            try
+            {
+                String[] v1 = dep.Version.Replace("+", ".").Split('.');
+                String[] v2 = inst.Version.Replace("+", ".").Split('.');
+                for (Int32 i = 0; i < v1.Length; i++)
+                {
+                    try
+                    {
+                        Int32 t1 = Convert.ToInt32(v1[i]);
+                        Int32 t2 = Convert.ToInt32(v2[i]);
+                        Int32 comp = t1.CompareTo(t2);
+                        if (comp > 0) return 1;
+                        else if (comp < 0) return -1;
+                    }
+                    catch {};
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+                return 0;
             }
         }
 
