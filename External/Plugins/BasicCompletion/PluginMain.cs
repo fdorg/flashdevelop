@@ -210,7 +210,7 @@ namespace BasicCompletion
         /// </summary>
 	    private void HandleFile(ITabbedDocument document)
 	    {
-            if (this.isSupported)
+            if (this.isSupported && !settingObject.DisableAutoCompletion)
             {
                 String language = document.SciControl.ConfigurationLanguage;
                 if (!this.baseTable.ContainsKey(language)) this.AddBaseKeywords(language);
