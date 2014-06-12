@@ -419,7 +419,7 @@ namespace BasicCompletion
         private void SciControlCharAdded(ScintillaControl sci, Int32 value)
         {
             ITabbedDocument doc = DocumentManager.FindDocument(sci);
-            if (this.isSupported)
+            if (this.isSupported && !settingObject.DisableAutoCompletion)
             {
                 String lang = sci.ConfigurationLanguage;
                 AutoInsert insert = settingObject.AutoInsertType;
