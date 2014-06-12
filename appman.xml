@@ -23,7 +23,7 @@
 		<Group>AS3</Group>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://airdownload.adobe.com/air/win/download/13.0/AdobeAIRSDK.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/14.0/AdobeAIRSDK.zip</Url>
 			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-14.zip</Url>
 		</Urls>
 	</Entry>
