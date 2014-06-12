@@ -47,7 +47,7 @@ namespace AS3Context
         {
             if (parser.Catalog != null)
             {
-                MxmlFilter.AddCatalog(parser.Filename, parser.Catalog);
+                MxmlFilter.AddCatalogs(parser.Filename, parser.Catalog);
             }
 
             if (parser.Docs.Count > 0)
@@ -183,7 +183,7 @@ namespace AS3Context
                         }
                         else genericTypes[genType] = model;
                     }
-                    else if (type.Name.StartsWith("_"))
+                    else if (type.Name.StartsWith("_") && string.IsNullOrEmpty(model.Package))
                     {
                         type.Access = Visibility.Private;
                         type.Namespace = "private";

@@ -8,7 +8,6 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
 using CodeRefactor.Controls;
-using CodeRefactor.CustomControls;
 using ProjectManager.Helpers;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -125,6 +124,7 @@ namespace CodeRefactor
             {
                 case EventType.FileSwitch:
                     this.GenerateSurroundMenuItems();
+                    UpdateMenuItems();
                     break;
 
                 case EventType.UIStarted:
@@ -132,7 +132,7 @@ namespace CodeRefactor
                     EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.Menu", this.refactorMainMenu));
                     EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.ContextMenu", this.refactorContextMenu));
                     // Watch resolved context for menu item updating...
-                    ASComplete.OnResolvedContextChanged += new ResolvedContextChangeHandler(this.OnResolvedContextChanged);
+                    ASComplete.OnResolvedContextChanged += OnResolvedContextChanged;
                     this.UpdateMenuItems();
                     break;
 
@@ -147,7 +147,12 @@ namespace CodeRefactor
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
-                            if (IsValidForRename(oldPath, newPath))
+                            if (Directory.Exists(oldPath) && IsValidForMove(oldPath, newPath))
+                            {
+                                MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, true, true);
+                                e.Handled = true;
+                            }
+                            else if (IsValidForRename(oldPath, newPath))
                             {
                                 RenameFile(oldPath, newPath);
                                 e.Handled = true;
@@ -176,9 +181,7 @@ namespace CodeRefactor
         {
             string oldExt = Path.GetExtension(oldPath);
             string newExt = Path.GetExtension(newPath);
-            IProject project = PluginBase.CurrentProject;
-            if (project != null && File.Exists(oldPath) && oldExt == newExt && IsValidFile(oldPath)) return true;
-            return false;
+            return (PluginBase.CurrentProject != null && File.Exists(oldPath) && oldExt == newExt && IsValidFile(oldPath));
         }
 
         /// <summary>
@@ -186,20 +189,20 @@ namespace CodeRefactor
         /// </summary>
         private bool IsValidForMove(string oldPath, string newPath)
         {
-            IProject project = PluginBase.CurrentProject;
-            if (project != null && (File.Exists(oldPath) && IsValidFile(oldPath)) || Directory.Exists(oldPath)) return true;
-            return false;
+            return (PluginBase.CurrentProject != null && (File.Exists(oldPath) || Directory.Exists(oldPath)) && IsValidFile(oldPath));
         }
 
         /// <summary>
-        /// Checks if the file is ok for refactoring
+        /// Checks if the file or directory is ok for refactoring
         /// </summary>
         private bool IsValidFile(string file)
         {
             IProject project = PluginBase.CurrentProject;
             if (project == null) return false;
+            if (!RefactoringHelper.IsProjectRelatedFile(project, file)) return false;
+            if (Directory.Exists(file)) return true;
             string ext = Path.GetExtension(file);
-            return (ext == ".as" || ext == ".hx" || ext == ".ls") && PluginBase.CurrentProject.DefaultSearchFilter.Contains(ext);
+            return (ext == ".as" || ext == ".hx" || ext == ".ls") && project.DefaultSearchFilter.Contains(ext);
         }
 
         #endregion
@@ -297,10 +300,11 @@ namespace CodeRefactor
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
+                    bool isNotPackage = !result.IsPackage;
                     this.refactorContextMenu.RenameMenuItem.Enabled = true;
                     this.refactorMainMenu.RenameMenuItem.Enabled = true;
-                    this.editorReferencesItem.Enabled = true;
-                    this.viewReferencesItem.Enabled = true;
+                    this.editorReferencesItem.Enabled = isNotPackage;
+                    this.viewReferencesItem.Enabled = isNotPackage;
                     if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
                     {
                         FlagType flags = result.Member.Flags;
@@ -323,7 +327,6 @@ namespace CodeRefactor
                 {
                     bool truncate = (langIsValid && context.CurrentModel.Imports.Count > 0) && !this.LanguageIsHaxe();
                     bool organize = (langIsValid && context.CurrentModel.Imports.Count > 1);
-
                     this.refactorContextMenu.OrganizeMenuItem.Enabled = organize;
                     this.refactorContextMenu.TruncateMenuItem.Enabled = truncate;
                     this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
@@ -494,7 +497,6 @@ namespace CodeRefactor
         {
             try
             {
-                String name;
                 ASResult result = ASComplete.CurrentResolvedContext.Result;
                 Dictionary<MemberModel, ClassModel> members = new Dictionary<MemberModel, ClassModel>();
                 List<String> memberNames = new List<String>();
@@ -510,7 +512,7 @@ namespace CodeRefactor
                             && (m.Flags & FlagType.Constructor) == 0
                             && (m.Flags & FlagType.Static) == 0)
                         {
-                            name = m.Name;
+                            string name = m.Name;
                             if ((m.Flags & FlagType.Getter) > 0) name = "get " + name;
                             if ((m.Flags & FlagType.Setter) > 0) name = "set " + name;
                             if (!memberNames.Contains(name))
@@ -627,5 +629,4 @@ namespace CodeRefactor
 		#endregion
 
     }
-	
 }

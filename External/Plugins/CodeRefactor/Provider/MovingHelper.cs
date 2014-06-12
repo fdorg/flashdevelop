@@ -7,7 +7,7 @@ namespace CodeRefactor.Provider
 {
     class MovingHelper
     {
-        private static List<Dictionary<string, string>> queue = new List<Dictionary<string, string>>();
+        private static List<QueueItem> queue = new List<QueueItem>();
         private static Move currentCommand;
 
         /// <summary>
@@ -15,7 +15,23 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath)
         {
-            queue.Add(oldPathToNewPath);
+            AddToQueue(oldPathToNewPath, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults)
+        {
+            AddToQueue(oldPathToNewPath, outputResults, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
+        {
+            queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming));
             if (currentCommand == null) MoveFirst();
         }
 
@@ -26,9 +42,10 @@ namespace CodeRefactor.Provider
         {
             try
             {
-                Dictionary<string, string> oldPathToNewPath = queue[0];
-                queue.Remove(oldPathToNewPath);
-                currentCommand = new Move(oldPathToNewPath);
+                QueueItem item = queue[0];
+                Dictionary<string, string> oldPathToNewPath = item.oldPathToNewPath;
+                queue.Remove(item);
+                currentCommand = new Move(oldPathToNewPath, item.outputResults, item.renaming);
                 currentCommand.OnRefactorComplete += OnRefactorComplete;
                 currentCommand.Execute();
             }
@@ -38,7 +55,6 @@ namespace CodeRefactor.Provider
                 currentCommand = null;
                 ErrorManager.ShowError(ex);
             }
-
         }
 
         /// <summary>
@@ -49,6 +65,23 @@ namespace CodeRefactor.Provider
             if (queue.Count > 0) MoveFirst();
             else currentCommand = null;
         }
-
     }
+
+    #region Helpers
+
+    internal class QueueItem
+    {
+        public Dictionary<string, string> oldPathToNewPath;
+        public bool outputResults;
+        public bool renaming;
+
+        public QueueItem(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
+        {
+            this.oldPathToNewPath = oldPathToNewPath;
+            this.outputResults = outputResults;
+            this.renaming = renaming;
+        }
+    }
+
+    #endregion
 }

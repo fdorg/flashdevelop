@@ -1343,8 +1343,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             int x = 0;
             int y = ButtonWindowList.Location.Y + ButtonWindowList.Height;
 
+            List<Tab> tabs = new List<Tab>(Tabs);
+            tabs.Sort((a, b) => string.CompareOrdinal(a.Content.DockHandler.TabText, b.Content.DockHandler.TabText));
+            
             SelectMenu.Items.Clear();
-            foreach (TabVS2005 tab in Tabs)
+            foreach (TabVS2005 tab in tabs)
             {
                 IDockContent content = tab.Content;
                 ToolStripItem item = SelectMenu.Items.Add(content.DockHandler.TabText, content.DockHandler.Icon.ToBitmap());

@@ -250,16 +250,21 @@ namespace AS3Context
                 // Flex framework
                 if (cpCheck.IndexOf("Library/AS3/frameworks/Flex", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    addLibs.Add("framework.swc");
-                    addLibs.Add("mx/mx.swc");
-                    addLibs.Add("rpc.swc");
-                    addLibs.Add("datavisualization.swc");
-                    addLibs.Add("flash-integration.swc");
-                    addLocales.Add("framework_rb.swc");
-                    addLocales.Add("mx_rb.swc");
-                    addLocales.Add("rpc_rb.swc");
-                    addLocales.Add("datavisualization_rb.swc");
-                    addLocales.Add("flash-integration_rb.swc");
+                    bool isFlexJS = cpCheck.IndexOf("Library/AS3/frameworks/FlexJS", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    if (!isFlexJS)
+                    {
+                        addLibs.Add("framework.swc");
+                        addLibs.Add("mx/mx.swc");
+                        addLibs.Add("rpc.swc");
+                        addLibs.Add("datavisualization.swc");
+                        addLibs.Add("flash-integration.swc");
+                        addLocales.Add("framework_rb.swc");
+                        addLocales.Add("mx_rb.swc");
+                        addLocales.Add("rpc_rb.swc");
+                        addLocales.Add("datavisualization_rb.swc");
+                        addLocales.Add("flash-integration_rb.swc");
+                    }
 
                     if (hasAIRSupport)
                     {
@@ -267,7 +272,14 @@ namespace AS3Context
                         addLocales.Add("airframework_rb.swc");
                     }
 
-                    if (cpCheck.IndexOf("Library/AS3/frameworks/Flex4", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (isFlexJS)
+                    {
+                        string flexJsLibs = frameworks + S + "as" + S + "libs";
+                        addLibs.Add(flexJsLibs + S + "FlexJSUI.swc");
+                        //addLibs.Add(flexJsLibs + S + "FlexJSJX.swc");
+                        MxmlFilter.AddManifest("http://ns.adobe.com/mxml/2009", as3Fmk + S + "FlexJS" + S + "manifest.xml");
+                    }
+                    else if (cpCheck.IndexOf("Library/AS3/frameworks/Flex4", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         addLibs.Add("spark.swc");
                         addLibs.Add("spark_dmv.swc");

@@ -30,18 +30,14 @@ namespace AS3Context
         static public string BETA_MX = "library://ns.adobe.com/flex/halo";
         static public string NEW_MX = "library://ns.adobe.com/flex/mx";
 
-        static private Dictionary<string, MxmlCatalog> catalogs = new Dictionary<string, MxmlCatalog>();
-        static private Dictionary<string, MxmlCatalog> archive = new Dictionary<string, MxmlCatalog>();
+        static private List<MxmlCatalog> catalogs = new List<MxmlCatalog>();
+        static private Dictionary<string, MxmlCatalogs> archive = new Dictionary<string, MxmlCatalogs>();
 
         /// <summary>
         /// Reset catalogs for new classpath definition
         /// </summary>
         static public void ClearCatalogs()
         {
-            // keep catalogs in memory
-            foreach (string key in catalogs.Keys)
-                if (!archive.ContainsKey(key)) archive[key] = catalogs[key];
-
             catalogs.Clear();
         }
 
@@ -87,29 +83,29 @@ namespace AS3Context
         /// <summary>
         /// Read a SWC catalog file
         /// </summary>
-        static public void AddCatalog(string file, byte[] rawData)
+        static public void AddCatalogs(string file, byte[] rawData)
         {
             try
             {
                 FileInfo info = new FileInfo(file);
-                MxmlCatalog cat;
+                MxmlCatalogs cat;
                 if (HasCatalog(file))
                 {
                     cat = archive[file];
                     if (cat.TimeStamp == info.LastWriteTime)
                     {
                         if (cat.Count > 0)
-                            catalogs[file] = cat;
+                            catalogs.AddRange(cat.Values);
                         return;
                     }
                 }
-                
-                cat = new MxmlCatalog();
+
+                cat = new MxmlCatalogs();
                 cat.Read(file, rawData);
                 cat.TimeStamp = info.LastWriteTime;
-
+                archive[file] = cat;
                 if (cat.Count > 0)
-                    catalogs[file] = cat;
+                    catalogs.AddRange(cat.Values);
             }
             catch (XmlException ex) { Console.WriteLine(ex.Message); }
             catch (Exception) { }
@@ -120,9 +116,9 @@ namespace AS3Context
         /// </summary>
         static public void AddCatalog(string file)
         {
-            MxmlCatalog cat = archive[file];
+            MxmlCatalogs cat = archive[file];
             if (cat.Count > 0)
-                catalogs[file] = cat;
+                catalogs.AddRange(cat.Values);
         }
 
         /// <summary>
@@ -135,25 +131,24 @@ namespace AS3Context
             try
             {
                 FileInfo info = new FileInfo(file);
-                MxmlCatalog cat;
+                MxmlCatalogs cat;
                 if (archive.ContainsKey(file))
                 {
                     cat = archive[file];
                     if (cat.TimeStamp == info.LastWriteTime)
                     {
                         if (cat.Count > 0)
-                            catalogs[file] = cat;
+                            catalogs.AddRange(cat.Values);
                         return;
                     }
                 }
 
-                cat = new MxmlCatalog();
-                cat.URI = uri;
+                cat = new MxmlCatalogs();
                 cat.TimeStamp = info.LastWriteTime;
-                cat.Read(file, null);
-
+                cat.Read(file, null, uri);
+                archive[file] = cat;
                 if (cat.Count > 0)
-                    catalogs[file] = cat;
+                    catalogs.AddRange(cat.Values);
             }
             catch (XmlException ex) { Console.WriteLine(ex.Message); }
             catch (Exception) { }
@@ -314,9 +309,9 @@ namespace AS3Context
             foreach (string ns in ctx.namespaces.Keys)
             {
                 string uri = ctx.namespaces[ns];
-                string temp = (uri == OLD_MX || uri == BETA_MX) ? NEW_MX : uri;
-                foreach (MxmlCatalog cat in catalogs.Values)
-                    if (cat.URI == temp)
+                if (uri == OLD_MX || uri == BETA_MX) uri = NEW_MX;
+                foreach (MxmlCatalog cat in catalogs)
+                    if (cat.URI == uri)
                     {
                         cat.NS = ns;
                         ctx.catalogs.Add(cat);
@@ -448,36 +443,54 @@ namespace AS3Context
     #endregion
 
     #region Catalogs
-    class MxmlCatalog : Dictionary<string, string>
+    class MxmlCatalogs : Dictionary<String, MxmlCatalog>
     {
-        public string URI;
-        public string NS;
+        public String FileName;
         public DateTime TimeStamp;
 
         public void Read(string fileName, byte[] rawData)
         {
+            Read(fileName, rawData, null);
+        }
+
+        public void Read(string fileName, byte[] rawData, string defaultURI)
+        {
+            FileName = fileName;
             XmlReader reader;
             if (rawData == null) reader = new XmlTextReader(fileName);
             else reader = new XmlTextReader(new MemoryStream(rawData));
 
+            MxmlCatalog cat = null;
             reader.MoveToContent();
             while (reader.Read())
             {
-                if (reader.NodeType == XmlNodeType.Element 
+                if (reader.NodeType == XmlNodeType.Element
                     && reader.Name == "component")
                 {
                     string className = reader.GetAttribute("className") ?? reader.GetAttribute("class");
                     string name = reader.GetAttribute("name") ?? reader.GetAttribute("id");
-                    string uri = reader.GetAttribute("uri");
+                    string uri = reader.GetAttribute("uri") ?? defaultURI;
+                    if (uri == MxmlFilter.BETA_MX || uri == MxmlFilter.OLD_MX) uri = MxmlFilter.NEW_MX;
 
-                    this[name] = className.Replace(':', '.');
-                    if (URI == null) URI = uri;
+                    if (cat == null || cat.URI != uri)
+                    {
+                        if (ContainsKey(uri)) cat = this[uri];
+                        else {
+                            cat = new MxmlCatalog();
+                            cat.URI = uri;
+                            Add(uri, cat);
+                        }
+                    }
+                    cat[name] = className.Replace(':', '.');
                 }
             }
-
-            if (URI == MxmlFilter.BETA_MX || URI == MxmlFilter.OLD_MX) 
-                URI = MxmlFilter.NEW_MX;
         }
+    }
+
+    class MxmlCatalog : Dictionary<string, string>
+    {
+        public string URI;
+        public string NS;
     }
     #endregion
 }

@@ -3958,7 +3958,7 @@ namespace ScintillaNet
 		/// </summary>
 		public void LowerCase()
 		{
-            this.ReplaceSel(this.SelText.ToLower());
+            SPerform(2340, 0, 0);
 		}	
 						
 		/// <summary>
@@ -3966,7 +3966,7 @@ namespace ScintillaNet
 		/// </summary>
 		public void UpperCase()
 		{
-            this.ReplaceSel(this.SelText.ToUpper());
+            SPerform(2341, 0, 0);
 		}	
 						
 		/// <summary>

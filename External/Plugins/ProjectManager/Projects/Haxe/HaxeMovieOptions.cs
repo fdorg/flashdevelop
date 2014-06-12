@@ -53,7 +53,7 @@ namespace ProjectManager.Projects.Haxe
             {
                 case AIR_PLATFORM: return PlatformData.AIR_VERSIONS;
                 case AIR_MOBILE_PLATFORM: return PlatformData.AIR_MOBILE_VERSIONS;
-                case FLASHPLAYER_PLATFORM: return PlatformData.FLASH_VERSIONS;
+                case FLASHPLAYER_PLATFORM: return PlatformData.FLASH_LEGACY_VERSIONS;
                 case NME_PLATFORM: return PlatformData.NME_VERSIONS;
                 default: return new string[] { "1.0" };
             }

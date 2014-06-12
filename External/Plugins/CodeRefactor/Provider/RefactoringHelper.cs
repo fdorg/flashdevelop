@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.FRService;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
 
@@ -75,11 +73,7 @@ namespace CodeRefactor.Provider
             if (!ASContext.Context.IsFileValid || (Sci == null)) return null;
             // get type at cursor position
             ASResult result = ASComplete.GetExpressionType(Sci, position);
-            // browse to package folder
-            if (result.IsPackage && result.InFile != null)
-            {
-                return null;
-            }
+            if (result.IsPackage) return result;
             // open source and show declaration
             if (!result.IsNull())
             {
@@ -318,9 +312,11 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static Boolean IsProjectRelatedFile(IProject project, String file)
         {
-            foreach (String path in project.SourcePaths)
+            IASContext context = ASContext.GetLanguageContext(project.Language);
+            if (context == null) return false;
+            foreach (PathModel pathModel in context.Classpath)
             {
-                String absolute = project.GetAbsolutePath(path);
+                string absolute = project.GetAbsolutePath(pathModel.Path);
                 if (file.StartsWith(absolute)) return true;
             }
             // If no source paths are defined, is it under the project?
@@ -338,13 +334,13 @@ namespace CodeRefactor.Provider
         private static List<String> GetAllProjectRelatedFiles(IProject project)
         {
             List<String> files = new List<String>();
-
             string filter = GetSearchPatternFromLang(project.Language.ToLower());
-            if (string.IsNullOrEmpty(filter))
-                return files;
-
-            foreach (String path in project.SourcePaths)
+            if (string.IsNullOrEmpty(filter)) return files;
+            IASContext context = ASContext.GetLanguageContext(project.Language);
+            if (context == null) return files;
+            foreach (PathModel pathModel in context.Classpath)
             {
+                string path = pathModel.Path;
                 String absolute = project.GetAbsolutePath(path);
                 if (Directory.Exists(path))
                     files.AddRange(Directory.GetFiles(absolute, filter, SearchOption.AllDirectories));
@@ -376,8 +372,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         private static FRSearch GetFRSearch(string memberName)
         {
-            String pattern = memberName;
-            FRSearch search = new FRSearch(pattern);
+            FRSearch search = new FRSearch(memberName);
             search.IsRegex = false;
             search.IsEscaped = false;
             search.WholeWord = true;
@@ -422,6 +417,48 @@ namespace CodeRefactor.Provider
             sci.SetSel(start, end);
         }
 
-    }
+        /// <summary>
+        /// Moves found file or directory based on the specified paths.
+        /// If affected file was designated as a Document Class, updates project accordingly.
+        /// </summary>
+        /// <param name="oldPath"></param>
+        /// <param name="newPath"></param>
+        public static void Move(string oldPath, string newPath)
+        {
+            Move(oldPath, newPath, true);
+        }
 
+        public static void Move(string oldPath, string newPath, bool renaming)
+        {
+            if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
+            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+            string newDocumentClass = null;
+            if (File.Exists(oldPath))
+            {
+                File.Move(oldPath, newPath);
+                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
+            }
+            else if (Directory.Exists(oldPath))
+            {
+                newPath = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
+                string searchPattern = GetSearchPatternFromLang(project.Language.ToLower());
+                foreach (string file in Directory.GetFiles(oldPath, searchPattern, SearchOption.AllDirectories))
+                {
+                    if (project.IsDocumentClass(file))
+                    {
+                        newDocumentClass = file.Replace(oldPath, newPath);
+                        break;
+                    }
+                }
+                Directory.Move(oldPath, newPath);
+                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+            }
+            if (!string.IsNullOrEmpty(newDocumentClass))
+            {
+                project.SetDocumentClass(newDocumentClass, true);
+                project.Save();
+            }
+        }
+    }
 }

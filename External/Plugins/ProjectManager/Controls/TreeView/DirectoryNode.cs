@@ -107,7 +107,7 @@ namespace ProjectManager.Controls.TreeView
             NotifyRefresh();
 		}
 
-        protected void NotifyRefresh()
+        virtual protected void NotifyRefresh()
         {
             // hook for plugins
             if (OnDirectoryNodeRefresh != null) OnDirectoryNodeRefresh(this);

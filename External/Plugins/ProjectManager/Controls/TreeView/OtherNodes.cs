@@ -30,8 +30,29 @@ namespace ProjectManager.Controls.TreeView
             Text = ProjectRef.Name + " (" + ProjectRef.Language.ToUpper() + ")";
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
+
+            if (References != null)
+            {
+                int p = Nodes.IndexOf(References);
+                if (p > 0)
+                {
+                    Nodes.RemoveAt(p);
+                    Nodes.Insert(0, References);
+                }
+            }
+
+            NotifyProjectRefresh();
             Expand();
-            NotifyRefresh();
+        }
+
+        private void NotifyProjectRefresh()
+        {
+            base.NotifyRefresh();
+        }
+
+        protected override void NotifyRefresh()
+        {
+            // do nothing yet, we are not finished
         }
 
         private void RefreshReferences(bool recursive)

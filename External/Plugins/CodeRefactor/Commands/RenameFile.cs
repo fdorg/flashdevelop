@@ -4,10 +4,8 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore.FRService;
-using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
 using PluginCore.Localization;
@@ -44,23 +42,29 @@ namespace CodeRefactor.Commands
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 Int32 line = 0;
-                PluginBase.MainForm.OpenEditableDocument(oldPath, false);
-                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(oldPath);
                 if (sci == null) return; // Should not happen...
                 List<ClassModel> classes = ASContext.Context.CurrentModel.Classes;
                 if (classes.Count > 0)
                 {
                     foreach (ClassModel classModel in classes)
                     {
-                        if (classModel.Name.Equals(oldFileName)) line = classModel.LineFrom;
+                        if (classModel.Name.Equals(oldFileName))
+                        {
+                            line = classModel.LineFrom;
+                            break;
+                        }
                     }
                 }
                 else
                 {
-                    MemberList members = ASContext.Context.CurrentModel.Members;
-                    foreach (MemberModel member in members)
+                    foreach (MemberModel member in ASContext.Context.CurrentModel.Members)
                     {
-                        if (member.Name.Equals(oldFileName)) line = member.LineFrom;
+                        if (member.Name.Equals(oldFileName))
+                        {
+                            line = member.LineFrom;
+                            break;
+                        }
                     }
                 }
                 if (line > 0)
@@ -71,7 +75,6 @@ namespace CodeRefactor.Commands
                     return;
                 }
             }
-
             // refactor failed or was refused
             if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
             {
@@ -81,7 +84,6 @@ namespace CodeRefactor.Commands
                 oldPath = tmpPath;
             }
             if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-
             File.Move(oldPath, newPath);
             PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
         }
@@ -94,5 +96,4 @@ namespace CodeRefactor.Commands
         #endregion
 
     }
-
 }

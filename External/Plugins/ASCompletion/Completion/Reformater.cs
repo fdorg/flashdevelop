@@ -323,12 +323,12 @@ namespace ASCompletion.Completion
             int i = index;
             int n = txt.Length;
             char c = '<', prev = ' ';
-            int sub = 0, psub = 0;
+            int sub = 0, psub = 0, bsub = 0;
             while (i < n)
             {
-                prev = c;
+                if (c != ' ') prev = c;
                 c = txt[i++];
-                if (Char.IsLetterOrDigit(c) || c == '.' || c == ' ') continue;
+                if (Char.IsLetterOrDigit(c) || c == '.' || c == ' ' || c == ',' || c == ':') continue;
                 if (c == '<') sub++;
                 else if (c == '>' && (!options.IsHaXe || prev != '-'))
                 {
@@ -345,8 +345,15 @@ namespace ASCompletion.Completion
                 {
                     if (c == '}') psub--;
                     continue;
-                } else
-                    break;
+                }
+                else if (c == '(' && prev == ':')
+                    bsub++;
+                else if (bsub > 0)
+                {
+                    if (c == ')') bsub--;
+                    continue;
+                }
+                else break;
             }
             return false;
         }

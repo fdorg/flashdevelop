@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using ASCompletion.Completion;
@@ -10,7 +9,6 @@ using CodeRefactor.Provider;
 using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
 
@@ -18,8 +16,9 @@ namespace CodeRefactor.Commands
 {
     class Move : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private bool outputResults;
         private Dictionary<string, string> oldPathToNewPath;
+        private bool outputResults;
+        private bool renaming;
         private List<MoveTargetHelper> targets;
         private MoveTargetHelper currentTarget;
 
@@ -35,11 +34,19 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="oldPathToNewPath"></param>
-        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults)
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, false)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
             this.oldPathToNewPath = oldPathToNewPath;
             this.outputResults = outputResults;
+            this.renaming = renaming;
+            Results = new Dictionary<string, List<SearchMatch>>();
             CreateListOfMoveTargets();
         }
 
@@ -52,8 +59,22 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            string msg = TextHelper.GetString("Info.MovingFile");
-            string title = TextHelper.GetString("Title.MoveDialog");
+            string msg;
+            string title = "";
+            if (renaming)
+            {
+                msg = TextHelper.GetString("Info.RenamingDirectory");
+                foreach (KeyValuePair<string, string> item in oldPathToNewPath)
+                {
+                    title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(item.Key));
+                    break;
+                }
+            }
+            else
+            {
+                msg = TextHelper.GetString("Info.MovingFile");
+                title = TextHelper.GetString("Title.MoveDialog");
+            }
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 MoveTargets();
@@ -88,16 +109,16 @@ namespace CodeRefactor.Commands
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
-                if (Path.HasExtension(oldPath))
+                if (File.Exists(oldPath))
                 {
                     if (IsValidFile(oldPath)) targets.Add(GetMoveTarget(oldPath, Path.Combine(item.Value, Path.GetFileName(oldPath))));
                 }
-                else
+                else if(Directory.Exists(oldPath))
                 {
-                    newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
+                    newPath = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
                     foreach (string oldFilePath in Directory.GetFiles(oldPath, "*.*", SearchOption.AllDirectories))
                     {
-                        if (IsValidFile(oldFilePath)) targets.Add(GetMoveTarget(oldFilePath, Path.Combine(newPath, Path.GetFileName(oldFilePath))));
+                        if (IsValidFile(oldFilePath)) targets.Add(GetMoveTarget(oldFilePath, oldFilePath.Replace(oldPath, newPath)));
                     }
                 }
             }
@@ -122,24 +143,21 @@ namespace CodeRefactor.Commands
             result.OldFilePath = oldFilePath;
             result.OldFileModel = ASContext.Context.GetFileModel(oldFilePath);
             result.NewFilePath = newPath;
-            string newPackage = PluginBase.CurrentProject.GetRelativePath(Path.GetDirectoryName(newPath));
-            string[] sourcePaths = PluginBase.CurrentProject.SourcePaths;
-            foreach (string path in sourcePaths)
-            {
-                if (newPackage == path)
-                {
-                    newPackage = "";
-                    break;
-                }
-            }
+            IProject project = PluginBase.CurrentProject;
+            string newPackage = project.GetAbsolutePath(Path.GetDirectoryName(newPath));
             if (!string.IsNullOrEmpty(newPackage))
             {
-                foreach (string path in sourcePaths)
+                foreach (PathModel pathModel in ASContext.Context.Classpath)
                 {
-                    string normalizePath = path + "\\";
-                    if (newPackage.StartsWith(normalizePath))
+                    string path = project.GetAbsolutePath(pathModel.Path);
+                    if (path == newPackage)
                     {
-                        newPackage = newPackage.Substring(normalizePath.Length).Replace("\\", ".");
+                        newPackage = "";
+                        break;
+                    }
+                    else if (newPackage.StartsWith(path))
+                    {
+                        newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
                         break;
                     }
                 }
@@ -153,7 +171,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void MoveTargets()
         {
-            Dictionary<string, ITabbedDocument> fileNameToOpenedDoc = new Dictionary<string,ITabbedDocument>();
+            Dictionary<string, ITabbedDocument> fileNameToOpenedDoc = new Dictionary<string, ITabbedDocument>();
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
             {
                 fileNameToOpenedDoc.Add(doc.FileName, doc);
@@ -180,8 +198,7 @@ namespace CodeRefactor.Commands
                         oldPath = tmpPath;
                     }
                     if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-                    File.Move(oldPath, newPath);
-                    DocumentManager.MoveDocuments(oldPath, newPath);
+                    RefactoringHelper.Move(oldPath, newPath);
                 }
                 else
                 {
@@ -193,8 +210,7 @@ namespace CodeRefactor.Commands
                             fileNameToOpenedDoc[file].Close();
                         }
                     }
-                    Directory.Move(oldPath, Path.Combine(newPath, Path.GetFileName(oldPath)));
-                    DocumentManager.MoveDocuments(Path.GetFileName(oldPath), newPath);
+                    RefactoringHelper.Move(oldPath, newPath, renaming);
                 }
             }
             MessageBar.Locked = false;
@@ -210,37 +226,37 @@ namespace CodeRefactor.Commands
                 currentTarget = targets[0];
                 targets.Remove(currentTarget);
                 FileModel oldFileModel = currentTarget.OldFileModel;
-                string oldPackage;
-                string newPackage;
+                FRSearch search;
                 string newType;
                 if (string.IsNullOrEmpty(oldFileModel.Package))
                 {
-                    oldPackage = "package";
-                    newPackage = "package " + currentTarget.NewPackage;
+                    search = new FRSearch("(package)+\\s*");
                     newType = Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 else
                 {
-                    oldPackage = oldFileModel.Package;
-                    newPackage = currentTarget.NewPackage;
+                    search = new FRSearch("(package)+\\s+(" + oldFileModel.Package + ")\\s*");
                     newType = oldFileModel.Package + "." + Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
+                search.IsRegex = true;
+                search.Filter = SearchFilter.None;
                 newType = newType.Trim('.');
                 MessageBar.Locked = true;
-                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(currentTarget.NewFilePath);
-                for (int i = 0; i < sci.LineCount; i++)
+                string newFilePath = currentTarget.NewFilePath;
+                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(newFilePath);
+                List<SearchMatch> matches = search.Matches(sci.Text);
+                RefactoringHelper.ReplaceMatches(matches, sci, "package " + currentTarget.NewPackage + " ", null);
+                int offset = "package ".Length;
+                foreach (SearchMatch match in matches)
                 {
-                    string line = sci.GetLine(i);
-                    if (line.TrimStart().StartsWith("package"))
-                    {
-                        int pos = line.IndexOf(oldPackage);
-                        sci.SetSel(pos, pos + oldPackage.Length);
-                        sci.ReplaceSel(newPackage);
-                        break;
-                    }
+                    match.Column += offset;
+                    match.LineText = sci.GetLine(match.Line - 1);
+                    match.Value = currentTarget.NewPackage;
                 }
+                if (!Results.ContainsKey(newFilePath)) Results[newFilePath] = new List<SearchMatch>();
+                Results[newFilePath].AddRange(matches.ToArray());
                 PluginBase.MainForm.CurrentDocument.Save();
-                AssociatedDocumentHelper.MarkDocumentToKeep(currentTarget.OldFilePath);
+                if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(currentTarget.OldFilePath);
                 MessageBar.Locked = false;
                 UserInterfaceManager.ProgressDialog.Show();
                 UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
@@ -248,7 +264,43 @@ namespace CodeRefactor.Commands
                 ASResult target = new ASResult() { Member = new MemberModel(newType, newType, FlagType.Import, 0) };
                 RefactoringHelper.FindTargetInFiles(target, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true);
             }
-            else FireOnRefactorComplete();
+            else
+            {
+                if (outputResults) ReportResults();
+                FireOnRefactorComplete();
+            }
+        }
+
+        private void ReportResults()
+        {
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            foreach (KeyValuePair<string, List<SearchMatch>> entry in Results)
+            {
+                Dictionary<int, int> lineOffsets = new Dictionary<int, int>();
+                Dictionary<int, string> lineChanges = new Dictionary<int, string>();
+                Dictionary<int, List<string>> reportableLines = new Dictionary<int, List<string>>();
+                foreach (SearchMatch match in entry.Value)
+                {
+                    int column = match.Column;
+                    int lineNumber = match.Line;
+                    string changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
+                    int offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
+                    column = column + offset;
+                    lineChanges[lineNumber] = changedLine;
+                    lineOffsets[lineNumber] = offset + (match.Value.Length - match.Length);
+                    if (!reportableLines.ContainsKey(lineNumber)) reportableLines[lineNumber] = new List<string>();
+                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": characters " + column + "-" + (column + match.Value.Length) + " : {0}");
+                }
+                foreach (KeyValuePair<int, List<string>> lineSetsToReport in reportableLines)
+                {
+                    string renamedLine = lineChanges[lineSetsToReport.Key].Trim();
+                    foreach (string lineToReport in lineSetsToReport.Value)
+                    {
+                        PluginCore.Managers.TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info);
+                    }
+                }
+            }
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
         }
 
         #endregion
@@ -267,17 +319,19 @@ namespace CodeRefactor.Commands
             string newType = (currentTarget.NewPackage + "." + targetName).Trim('.');
             foreach (KeyValuePair<string, List<SearchMatch>> entry in results)
             {
-                if (entry.Value.Count == 0) continue;
-                UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
-                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(entry.Key);
-                if (isNotHaxe && entry.Key != currentTarget.NewFilePath && ASContext.Context.CurrentModel.Imports.Search(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0) == null)
+                List<SearchMatch> matches = entry.Value;
+                if (matches.Count == 0) continue;
+                string path = entry.Key;
+                UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + path + "\"");
+                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(path);
+                if (isNotHaxe && path != currentTarget.NewFilePath && ASContext.Context.CurrentModel.Imports.Search(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0) == null)
                 {
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
                 }
-                if (packageIsNotEmpty) RefactoringHelper.ReplaceMatches(entry.Value, sci, newType, null);
+                if (packageIsNotEmpty) RefactoringHelper.ReplaceMatches(matches, sci, newType, null);
                 else
                 {
-                    foreach (SearchMatch sm in entry.Value)
+                    foreach (SearchMatch sm in matches)
                     {
                         if (sm.LineText.TrimStart().StartsWith("import"))
                         {
@@ -286,8 +340,15 @@ namespace CodeRefactor.Commands
                         }
                     }
                 }
+                foreach (SearchMatch match in matches)
+                {
+                    match.LineText = sci.GetLine(match.Line - 1);
+                    match.Value = newType;
+                }
+                if (!Results.ContainsKey(path)) Results[path] = new List<SearchMatch>();
+                Results[path].AddRange(matches.ToArray());
                 PluginBase.MainForm.CurrentDocument.Save();
-                if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
+                if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(path);
             }
             UserInterfaceManager.ProgressDialog.Hide();
             MessageBar.Locked = false;

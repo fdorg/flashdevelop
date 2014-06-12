@@ -152,6 +152,7 @@ namespace ProjectManager.Controls
         public ToolStripMenuItem CloseProject;
         public ToolStripMenuItem OpenResource;
         public ToolStripMenuItem TestMovie;
+        public ToolStripMenuItem RunProject;
         public ToolStripMenuItem BuildProject;
         public ToolStripMenuItem CleanProject;
         public ToolStripMenuItem Properties;
@@ -191,6 +192,10 @@ namespace ProjectManager.Controls
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TestMovie", TestMovie);
             AllItems.Add(TestMovie);
 
+            RunProject = new ToolStripMenuItem(TextHelper.GetString("Label.RunProject"));
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.RunProject", RunProject);
+            AllItems.Add(RunProject);
+
             BuildProject = new ToolStripMenuItem(TextHelper.GetString("Label.BuildProject"));
 			BuildProject.Image = Icons.Gear.Img;
             BuildProject.ShortcutKeys = Keys.F8;
@@ -216,6 +221,7 @@ namespace ProjectManager.Controls
             base.DropDownItems.Add(OpenResource);
             base.DropDownItems.Add(new ToolStripSeparator());
             base.DropDownItems.Add(TestMovie);
+            base.DropDownItems.Add(RunProject);
             base.DropDownItems.Add(BuildProject);
             base.DropDownItems.Add(CleanProject);
             base.DropDownItems.Add(new ToolStripSeparator());

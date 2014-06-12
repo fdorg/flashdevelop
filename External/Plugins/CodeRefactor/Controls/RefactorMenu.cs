@@ -2,7 +2,6 @@
 using System.Text;
 using System.Windows.Forms;
 using PluginCore.Localization;
-using CodeRefactor.CustomControls;
 using PluginCore;
 
 namespace CodeRefactor.Controls
