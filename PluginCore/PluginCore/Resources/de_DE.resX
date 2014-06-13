@@ -1867,7 +1867,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
     <value>&amp;Durchsuchen...</value>
   </data>
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
-    <value>&amp;Projekt erstellen</value>
+    <value>Projekt &amp;erstellen</value>
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Abbrechen</value>
@@ -4731,11 +4731,11 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Immediate</value>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Start Scrolling</value>
+    <value>Automatisches Scrollen starten</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Stop Scrolling</value>
+    <value>Automatisches Scrollen stoppen</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">
@@ -4891,7 +4891,7 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.CompletionVariableDesc" xml:space="preserve">
-    <value>Benutezrdefinierte Variable</value>
+    <value>Benutzerdefinierte Variable</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.Description" xml:space="preserve">
@@ -5043,27 +5043,27 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.InstallSoftware" xml:space="preserve">
-    <value>Install Software...</value>
+    <value>Software installieren...</value>
     <comment>Added after 4.5.0</comment>
   </data>
   <data name="FlashDevelop.Info.ZipConfirmRemove" xml:space="preserve">
-    <value>Can the following zip file be removed:</value>
+    <value>Kann die folgende zip-Datei entfernt werden:</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
-    <value>The zip file was removed succesfully.</value>
+    <value>Die zip-Datei wurde erfolgreich entfernt.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
-    <value>You are moving file[s]. Do you also want to update the references?</value>
+    <value>Du verschiebst Datei(en). Möchtest du auch die Referenzen aktualisieren?</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Info.UpdatingReferences" xml:space="preserve">
-    <value>Updating References...</value>
+    <value>Aktualisiere Referenzen...</value>
     <comment>Modified after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
-    <value>Moving File[s]</value>
+    <value>Verschiebe Datei(en)</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Title.Threads" xml:space="preserve">
@@ -5073,11 +5073,11 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Threads Panel</value>
   </data>
   <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
-    <value>Shows the macro in the main toolbar.</value>
+    <value>Zeigt das Makro in der Haupt Werkzeugleiste.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
-    <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
+    <value>Wechsel zum gewählten Layout beim Start des Debuggers. Beim Stop des Debuggers wird wieder das vorherige Layout gewählt. Wenn ein Layout angewählt ist, werden die Debug Fenster nicht automatisch angezeigt.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
@@ -5085,15 +5085,15 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <comment>Added after 4.6.0</comment>
   </data>
   <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
-    <value>Break when an exception is thrown, even if it is handled.</value>
+    <value>Unterbruch bei einer Exception, auch, wenn sie behandelt wurde.</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
-    <value>&amp;Run Project</value>
+    <value>Projekt &amp;ausführen</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
-    <value>You are renaming a directory. Do you also want to update the references?</value>
+    <value>Du benennst ein Verzeichnis um. Möchtest du auch die Referenzen aktualisieren?</value>
     <comment>Added after 4.6.1</comment>
   </data>
 </root>
