@@ -5073,19 +5073,19 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Threads Panel</value>
   </data>
   <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
-    <value>Zeigt das Makro in der Haupt Werkzeugleiste.</value>
+    <value>Zeigt das Makro in der Hauptwerkzeugleiste.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
-    <value>Wechsel zum gewählten Layout beim Start des Debuggers. Beim Stop des Debuggers wird wieder das vorherige Layout gewählt. Wenn ein Layout angewählt ist, werden die Debug Fenster nicht automatisch angezeigt.</value>
+    <value>Wechsel zum gewählten Layout beim Start des Debuggers. Beim Stoppen des Debuggers wird wieder das vorherige Layout gewählt. Wenn ein Layout angewählt ist, werden die Debug Fenster nicht automatisch angezeigt.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
-    <value>Type of the intendation guide behaviour.</value>
+    <value>Art des Verhaltens der Einrückungslinien.</value>
     <comment>Added after 4.6.0</comment>
   </data>
   <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
-    <value>Unterbruch bei einer Exception, auch, wenn sie behandelt wurde.</value>
+    <value>Unterbrechung bei einer Exception, auch wenn sie behandelt wurde.</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
