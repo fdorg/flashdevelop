@@ -654,6 +654,16 @@ namespace FlashDevelop.Settings
         #region Formatting
 
         [DefaultValue(false)]
+        [DisplayName("Keep Indent Tabs")]
+        [LocalizedCategory("FlashDevelop.Category.Formatting")]
+        [LocalizedDescription("FlashDevelop.Description.KeepIndentTabs")]
+        public Boolean KeepIndentTabs
+        {
+            get { return this.keepIndentTabs; }
+            set { this.keepIndentTabs = value; }
+        }
+
+        [DefaultValue(false)]
         [DisplayName("Strip Trailing Spaces")]
         [LocalizedCategory("FlashDevelop.Category.Formatting")]
         [LocalizedDescription("FlashDevelop.Description.StripTrailingSpaces")]

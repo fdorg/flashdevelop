@@ -46,6 +46,7 @@ namespace FlashDevelop.Settings
         private String latestDialogPath = Application.StartupPath;
         private String defaultFileExtension = "as";
         private Boolean confirmOnExit = false;
+        private Boolean keepIndentTabs = false;
         private Boolean useSystemColors = false;
         private Boolean disableFindOptionSync = false;
         private Boolean disableSimpleQuickFind = false;
