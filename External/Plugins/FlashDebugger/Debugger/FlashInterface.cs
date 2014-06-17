@@ -1099,7 +1099,7 @@ namespace FlashDebugger
 					{
 						if (!files.ContainsKey(bp.FileFullPath))
 						{
-							files.Add(bp.FileFullPath, 0);
+							files.Add(bp.FileFullPath, int.MaxValue);
 						}
 					}
 				}
@@ -1118,22 +1118,13 @@ namespace FlashDebugger
 						foreach (SourceFile src in swf.getSourceList(m_Session))
 						{
 							String localPath = PluginMain.debugManager.GetLocalPath(src);
-							if (localPath != null && files.ContainsKey(localPath) && files[localPath] == 0)
+							if (localPath != null && files.ContainsKey(localPath) && files[localPath] > src.getId())
 							{
 								files[localPath] = src.getId();
-								nFiles--;
-								if (nFiles == 0)
-								{
-									break;
-								}
 							}
 						}
 					}
 					catch (InProgressException) { }
-					if (nFiles == 0)
-					{
-						break;
-					}
 				}
 			}
 
@@ -1143,7 +1134,7 @@ namespace FlashDebugger
 				{
 					if (bp.IsEnabled && !bp.IsDeleted)
 					{
-						if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != 0)
+						if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != int.MaxValue)
 						{
 							Location l = (i_Session != null) ? i_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1) : m_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
                             if (l != null)
