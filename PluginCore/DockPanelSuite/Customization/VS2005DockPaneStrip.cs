@@ -1352,18 +1352,20 @@ namespace WeifenLuo.WinFormsUI.Docking
                 IDockContent content = tab.Content;
                 ToolStripItem item = SelectMenu.Items.Add(content.DockHandler.TabText, content.DockHandler.Icon.ToBitmap());
                 item.Tag = tab.Content;
-                item.Click += new EventHandler(ContextMenuItem_Click);
+                item.MouseUp += new MouseEventHandler(ContextMenuItem_Up);
             }
             SelectMenu.Show(ButtonWindowList, x, y);
         }
 
-        private void ContextMenuItem_Click(object sender, EventArgs e)
+        private void ContextMenuItem_Up(object sender, MouseEventArgs e)
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             if (item != null)
             {
                 IDockContent content = (IDockContent)item.Tag;
-                DockPane.ActiveContent = content;
+                if (e.Button == System.Windows.Forms.MouseButtons.Middle) content.DockHandler.Close();
+                else DockPane.ActiveContent = content;
+                SelectMenu.Hide();
             }
 		}
 	
