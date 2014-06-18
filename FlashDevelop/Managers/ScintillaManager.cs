@@ -92,7 +92,7 @@ namespace FlashDevelop.Managers
                 }
                 if (Globals.Settings.StripTrailingSpaces)
                 {
-                    sci.StripTrailingSpaces();
+                    sci.StripTrailingSpaces(Globals.Settings.KeepIndentTabs);
                 }
             }
             catch (Exception ex)

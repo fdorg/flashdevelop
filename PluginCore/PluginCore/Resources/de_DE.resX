@@ -5096,4 +5096,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Du benennst ein Verzeichnis um. Möchtest du auch die Referenzen aktualisieren?</value>
     <comment>Added after 4.6.1</comment>
   </data>
+  <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
+    <value>Keep indent tabs when strip trailing spaces.</value>
+    <comment>Added after 4.6.2</comment>
+  </data>
 </root>
