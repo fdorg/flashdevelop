@@ -47,7 +47,7 @@ namespace ProjectManager.Actions
             pathServed = path;
 
             TraceManager.Add("Web Server starting with root: " + path);
-            var server = Path.Combine(PathHelper.ToolDir, "mongoose/server");
+            var server = Path.Combine(PathHelper.ToolDir, "webserver/server");
             var infos = new ProcessStartInfo(server, portServed.ToString());
             infos.WorkingDirectory = pathServed;
             infos.WindowStyle = ProcessWindowStyle.Hidden;
@@ -57,7 +57,7 @@ namespace ProjectManager.Actions
             }
             catch (Exception ex)
             {
-                TraceManager.Add("Unable to start Mongoose server: " + ex.Message, 3);
+                TraceManager.Add("Unable to start the webserver: " + ex.Message, 3);
                 return;
             }
 
