@@ -494,7 +494,8 @@ namespace ScintillaNet.Enums
         SORCUS = 94,
         POWERPRO = 95,
         NIMROD = 96,
-        SML = 97
+        SML = 97,
+        MARKDOWN = 98
     }
 
 }

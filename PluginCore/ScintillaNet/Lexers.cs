@@ -2384,4 +2384,36 @@ namespace ScintillaNet.Lexers
         LASTPREDEFINED = 39
     }
 
+    public enum MARKDOWN
+    {
+        DEFAULT = 0,
+        LINE_BEGIN = 1,
+        STRONG1 = 2,
+        STRONG2 = 3,
+        EM1 = 4,
+        EM2 = 5,
+        HEADER1 = 6,
+        HEADER2 = 7,
+        HEADER3 = 8,
+        HEADER4 = 9,
+        HEADER5 = 10,
+        HEADER6 = 11,
+        PRECHAR = 12,
+        ULIST_ITEM = 13,
+        OLIST_ITEM = 14,
+        BLOCKQUOTE = 15,
+        STRIKEOUT = 16,
+        HRULE = 17,
+        LINK = 18,
+        CODE = 19,
+        CODE2 = 20,
+        CODEBK = 21,
+        GDEFAULT = 32,
+        LINENUMBER = 33,
+        BRACELIGHT = 34,
+        BRACEBAD = 35,
+        CONTROLCHAR = 36,
+        INDENTGUIDE = 37,
+        LASTPREDEFINED = 39
+    }
 }

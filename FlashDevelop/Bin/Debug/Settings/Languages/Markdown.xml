@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<languages>
+		<language name="markdown">
+			<lexer name="markdown" style-bits="7" />
+			<file-extensions>md,markdown,mdown,readme</file-extensions>
+			<!-- COLORING_START -->
+			<editor-style caret-fore="0x958F6A" caretline-back="0x2A2A2A" selection-fore="0xffffff" selection-back="0xA63A62" margin-back="0x2A2A2A" margin-fore="0x3C3C3C" print-margin="0x000000" marker-fore="0x2A2A2A" highlight-back="0xffffff" marker-back="0x555555" />
+			<use-styles>
+				<style name="default" fore="0xF8F8F2" back="0x2A2A2A" size="11" font="Consolas" />
+				<style name="line_begin" /><!-- newline -->
+				<style name="strong1" bold="true" />
+				<style name="strong2" bold="true" />
+				<style name="em1" italics="true" />
+				<style name="em2" italics="true" />
+				<style name="header1" fore="0xF81D6F" />
+				<style name="header2" fore="0xF81D6F" />
+				<style name="header3" fore="0xF81D6F" />
+				<style name="header4" fore="0xF81D6F" />
+				<style name="header5" fore="0xF81D6F" />
+				<style name="header6" fore="0xF81D6F" />
+				<style name="prechar" /><!-- ol/li indent -->
+				<style name="ulist_item" fore="0x8A8A8A" />
+				<style name="olist_item" fore="0x8A8A8A" />
+				<style name="blockquote" fore="0x8A8A8A" />
+				<style name="strikeout" fore="0x8A8A8A" />
+				<style name="hrule" />
+				<style name="link" fore="0x66D9EF" />
+				<style name="code" fore="0xFFEE99" />
+				<style name="code2" fore="0xFFEE99" />
+				<style name="codebk" fore="0xFFEE99" />
+				<style name="gdefault" fore="0x666666" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="bracelight" fore="0xFFFFFF" back="0x555555" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0x525252" />
+				<style name="lastpredefined" fore="0x666666" />
+			</use-styles>
+			<!-- COLORING_END -->
+		</language>
+	</languages>
+</Scintilla>

@@ -475,6 +475,9 @@ namespace ScintillaNet
                         case Enums.Lexer.SML:
                             theType = typeof(Lexers.SML);
                             break;
+                        case Enums.Lexer.MARKDOWN:
+                            theType = typeof(Lexers.MARKDOWN);
+                            break;
                     }
                     try
                     {
