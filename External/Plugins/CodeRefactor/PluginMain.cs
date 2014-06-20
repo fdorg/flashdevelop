@@ -200,7 +200,13 @@ namespace CodeRefactor
             IProject project = PluginBase.CurrentProject;
             if (project == null) return false;
             if (!RefactoringHelper.IsProjectRelatedFile(project, file)) return false;
-            if (Directory.Exists(file)) return true;
+            if (Directory.Exists(file))
+            {
+                var hasClasses = Directory.GetFiles(file, "*.as").Length > 0 
+                    || Directory.GetFiles(file, "*.hx").Length > 0 
+                    || Directory.GetFiles(file, "*.ls").Length > 0;
+                return hasClasses;
+            }
             string ext = Path.GetExtension(file);
             return (ext == ".as" || ext == ".hx" || ext == ".ls") && project.DefaultSearchFilter.Contains(ext);
         }
