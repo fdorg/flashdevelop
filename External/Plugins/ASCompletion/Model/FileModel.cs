@@ -135,7 +135,7 @@ namespace ASCompletion.Model
         {
             Package = "";
             Module = "";
-            FileName = fileName;
+            FileName = fileName ?? "";
             haXe = (fileName.Length > 3) ? fileName.EndsWith(".hx") : false;
             //
             Namespaces = new Dictionary<string, Visibility>();
@@ -151,10 +151,10 @@ namespace ASCompletion.Model
             if (FileName.Length == 0) return null;
             
             string path = Path.GetDirectoryName(FileName);
-            if (Package.Length == 0 && FileName.Length > 0) return path;
+            if (String.IsNullOrEmpty(Package)) return path;
 
             // get up the packages path
-            string packPath = Path.DirectorySeparatorChar+Package.Replace('.', Path.DirectorySeparatorChar);
+            string packPath = Path.DirectorySeparatorChar + Package.Replace('.', Path.DirectorySeparatorChar);
             if (path.ToUpper().EndsWith(packPath.ToUpper()))
             {
                 return path.Substring(0, path.Length - packPath.Length);
@@ -172,7 +172,7 @@ namespace ASCompletion.Model
             if (OutOfDate)
             {
                 OutOfDate = false;
-                if (File.Exists(FileName) && (CachedModel || LastWriteTime < System.IO.File.GetLastWriteTime(FileName)))
+                if (FileName != "" && File.Exists(FileName) && (CachedModel || LastWriteTime < System.IO.File.GetLastWriteTime(FileName)))
                     try
                     {
                         ASFileParser.ParseFile(this);
