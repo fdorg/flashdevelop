@@ -18,5 +18,5 @@ if %PAUSE_ERRORS%==1 pause
 exit
 
 :succeed
-set PATH=%PATH%;%FLEX_SDK%\bin
+set PATH=%FLEX_SDK%\bin;%PATH%
 
