@@ -328,7 +328,7 @@ namespace AS3Context
                     case ASMetaKind.Event: add = ":e"; break;
                     case ASMetaKind.Style: 
                         add = ":s"; 
-                        if (meta.Params != null) type = meta.Params["type"]; 
+                        if (meta.Params == null || !meta.Params.TryGetValue("type", out type)) type = "Object"; 
                         break;
                     case ASMetaKind.Effect: 
                         add = ":x";

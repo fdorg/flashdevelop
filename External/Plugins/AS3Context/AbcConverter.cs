@@ -941,7 +941,8 @@ namespace AS3Context
             {
                 if (Name == "apiVersion")
                     ReadPrologMetadataApiVersion(doc);
-
+                else if (Name == "styles")
+                    ReadPrologMetadataStyles(doc);
                 Read();
             }
         }
@@ -990,6 +991,21 @@ namespace AS3Context
                     doc.ExtraAsDocs.Add(new KeyValuePair<string, string>(asdocKey, asdocVal));
                 }
 
+                Read();
+            }
+        }
+
+        private void ReadPrologMetadataStyles(ASDocItem doc)
+        {
+            if (IsEmptyElement)
+                return;
+
+            string eon = Name;
+            ReadStartElement();
+            while (Name != eon)
+            {
+                if (Name == "style")
+                    ReadStyleMeta(doc);
                 Read();
             }
         }

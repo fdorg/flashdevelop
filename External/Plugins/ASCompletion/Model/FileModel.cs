@@ -28,7 +28,7 @@ namespace ASCompletion.Model
     public class ASMetaData: IComparable
     {
         static private Regex reNameTypeParams = 
-            new Regex("[\"']([^\"']+)[\"']\\s*,\\s*(type|event|kind)\\s*=\\s*[\"']([^\"']+)", RegexOptions.Compiled);
+            new Regex("([^\"'\\s]+)\\s*=\\s*[\"']([^\"']+)[\"'],{0,1}\\s*", RegexOptions.Compiled);
 
         public int LineFrom;
         public int LineTo;
@@ -50,13 +50,13 @@ namespace ASCompletion.Model
             if (Enum.IsDefined(typeof(ASMetaKind), Name))
             {
                 Kind = (ASMetaKind)Enum.Parse(typeof(ASMetaKind), Name);
-                Match mParams = reNameTypeParams.Match(raw);
-                if (mParams.Success)
+                var mParams = reNameTypeParams.Matches(raw);
+                if (mParams.Count > 0)
                 {
-                    Params.Add("name", mParams.Groups[1].Value);
-                    Params.Add(mParams.Groups[2].Value, mParams.Groups[3].Value);
+                    for (int i = 0, c = mParams.Count; i < c; i++)
+                        Params.Add(mParams[i].Groups[1].Value, mParams[i].Groups[2].Value);
                 }
-                else if (Kind == ASMetaKind.Event) // invalid Event
+                else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
                     Kind = ASMetaKind.Unknown;
             }
         }
