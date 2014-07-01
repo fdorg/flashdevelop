@@ -259,6 +259,63 @@ namespace AS3Context
             return true;
         }
 
+        static public bool HandleAttributeValue(object data)
+        {
+            if (!GetContext(data)) return false;
+
+            string type = ResolveType(mxmlContext, tagContext.Name);
+            ClassModel tagClass = context.ResolveType(type, mxmlContext.model);
+            if (tagClass.IsVoid()) return true;
+            tagClass.ResolveExtends();
+
+            string currentAttribute;
+            StringBuilder caBuilder = new StringBuilder();
+            bool possibleStartFound = false, startFound = false;
+            for (int i = tagContext.Tag.Length - 1; i >= 0; i--)
+            {
+                char currChar = tagContext.Tag[i];
+                if (currChar == '=')
+                {
+                    possibleStartFound = true;
+                }
+                else if (startFound)
+                {
+                    if (Char.IsWhiteSpace(currChar))
+                        break;
+
+                    caBuilder.Insert(0, currChar);
+                }
+                else if (possibleStartFound && !Char.IsWhiteSpace(currChar))
+                {
+                    startFound = true;
+                    caBuilder.Insert(0, currChar);
+                }
+            }
+
+            currentAttribute = caBuilder.ToString();
+
+            List<ICompletionListItem> mix = GetTagAttributeValues(tagClass, null, currentAttribute);
+
+            if (mix == null || mix.Count == 0) return true;
+
+            // cleanup and show list
+            mix.Sort(new MXMLListItemComparer());
+            List<ICompletionListItem> items = new List<ICompletionListItem>();
+            string previous = null;
+            foreach (ICompletionListItem item in mix)
+            {
+                if (previous == item.Label) continue;
+                previous = item.Label;
+                items.Add(item);
+            }
+
+            if (items.Count == 0) return true;
+            if (!string.IsNullOrEmpty(tokenContext)) CompletionList.Show(items, false, tokenContext);
+            else CompletionList.Show(items, true);
+            CompletionList.MinWordLength = 0;
+            return true;
+        }
+
         private static bool GetTagAttributes(ClassModel tagClass, List<ICompletionListItem> mix, List<string> excludes, string ns)
         {
             ClassModel curClass = mxmlContext.model.GetPublicClass();
@@ -301,7 +358,7 @@ namespace AS3Context
                         mix.Add(new HtmlAttributeItem(member.Name, mtype, className, ns));
                     }
 
-                ExploreMetadatas(tmpClass.InFile, mix, excludes, ns);
+                ExploreMetadatas(tmpClass.InFile, mix, excludes, ns, tagClass == tmpClass);
 
                 tmpClass = tmpClass.Extends;
                 if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
@@ -313,7 +370,126 @@ namespace AS3Context
             return isContainer;
         }
 
-        private static void ExploreMetadatas(FileModel fileModel, List<ICompletionListItem> mix, List<string> excludes, string ns)
+        private static List<ICompletionListItem> GetTagAttributeValues(ClassModel tagClass, string ns, string attribute)
+        {
+            ClassModel curClass = mxmlContext.model.GetPublicClass();
+            ClassModel tmpClass = tagClass;
+            FlagType mask = FlagType.Variable | FlagType.Setter;
+            Visibility acc = context.TypesAffinity(curClass, tmpClass);
+
+            if (tmpClass.InFile.Package != "mx.builtin" && tmpClass.InFile.Package != "fx.builtin" && attribute == "id")
+                return null;
+
+            while (tmpClass != null && !tmpClass.IsVoid())
+            {
+                string className = tmpClass.Name;
+
+                foreach (MemberModel member in tmpClass.Members)
+                    if ((member.Flags & FlagType.Dynamic) > 0 && (member.Flags & mask) > 0
+                        && (member.Access & acc) > 0)
+                    {
+                        if (member.Name == attribute)
+                        {
+                            string mtype = member.Type;
+
+                            if ((member.Flags & FlagType.Setter) > 0)
+                            {
+                                if (member.Parameters != null && member.Parameters.Count > 0)
+                                    mtype = member.Parameters[0].Type;
+                                else mtype = null;
+                            }
+
+                            return GetAutoCompletionValuesFromType(mtype);
+                        }
+
+                    }
+
+                List<ICompletionListItem> retVal;
+                if (GetAutoCompletionValuesFromMetaData(tmpClass.InFile, attribute, tagClass, tmpClass, out retVal))
+                    return retVal;
+
+                tmpClass = tmpClass.Extends;
+                if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
+                    break;
+                // members visibility
+                acc = context.TypesAffinity(curClass, tmpClass);
+            }
+
+            return null;
+        }
+
+        private static bool GetAutoCompletionValuesFromMetaData(FileModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
+        {
+            if (model != null && model.MetaDatas != null)
+            {
+                foreach (ASMetaData meta in model.MetaDatas)
+                {
+                    string name = null;
+                    if (!meta.Params.TryGetValue("name", out name) || name != attribute) continue;
+
+                    string type = null;
+                    switch (meta.Kind)
+                    {
+                        case ASMetaKind.Event:
+                            break;
+                        case ASMetaKind.Style:
+                            string inherit;
+                            if (meta.Params != null && meta.Params.TryGetValue("inherit", out inherit) && inherit == "no" && tagClass != tmpClass)
+                                continue;
+                            if (meta.Params != null) meta.Params.TryGetValue("type", out type);
+                            break;
+                        case ASMetaKind.Effect:
+                            if (meta.Params != null) type = meta.Params["event"];
+                            break;
+                        case ASMetaKind.Exclude:
+                            break;
+                        case ASMetaKind.Include:    // Can this happen? if it happens I guess name == true will never be true? I don't know any test case
+                            System.Diagnostics.Debug.Assert(false, "Please, check this case");
+                            FileModel incModel = ParseInclude(model, meta);
+                            return GetAutoCompletionValuesFromMetaData(incModel, attribute, tagClass, tmpClass, out result);
+                    }
+                    if (meta.Params != null && meta.Params.ContainsKey("enumeration"))
+                    {
+                        var retVal = new List<ICompletionListItem>();
+                        foreach (string value in meta.Params["enumeration"].Split(','))
+                        {
+                            var tValue = value.Trim();
+                            if (tValue != string.Empty) retVal.Add(new HtmlAttributeItem(tValue));
+                        }
+                        result = retVal;
+
+                        return true;
+                    }
+
+                    result = GetAutoCompletionValuesFromType(type);
+
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        private static List<ICompletionListItem> GetAutoCompletionValuesFromType(string type)
+        {
+            if (type == "Boolean")
+            {
+                return new List<ICompletionListItem>() 
+                {
+                    new HtmlAttributeItem("true"),
+                    new HtmlAttributeItem("false")
+                };
+            }
+            else if (type == "Class")
+            {
+                ASComplete.HandleAllClassesCompletion(PluginBase.MainForm.CurrentDocument.SciControl, tokenContext,
+                                                      true, false);
+            }
+            return null;
+        }
+
+        private static void ExploreMetadatas(FileModel fileModel, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
         {
             if (fileModel == null || fileModel.MetaDatas == null) 
                 return;
@@ -326,9 +502,13 @@ namespace AS3Context
                 switch (meta.Kind)
                 {
                     case ASMetaKind.Event: add = ":e"; break;
-                    case ASMetaKind.Style: 
-                        add = ":s"; 
-                        if (meta.Params == null || !meta.Params.TryGetValue("type", out type)) type = "Object"; 
+                    case ASMetaKind.Style:
+                        string inherit;
+                        if (meta.Params == null || !meta.Params.TryGetValue("inherit", out inherit) || inherit != "no" || isCurrentModel)
+                        {
+                            add = ":s";
+                            if (meta.Params == null || !meta.Params.TryGetValue("type", out type)) type = "Object";
+                        }
                         break;
                     case ASMetaKind.Effect: 
                         add = ":x";
@@ -339,7 +519,7 @@ namespace AS3Context
                         break;
                     case ASMetaKind.Include:
                         FileModel incModel = ParseInclude(fileModel, meta);
-                        ExploreMetadatas(incModel, mix, excludes, ns);
+                        ExploreMetadatas(incModel, mix, excludes, ns, isCurrentModel);
                         break;
                 }
                 if (add != null && meta.Params.ContainsKey("name"))

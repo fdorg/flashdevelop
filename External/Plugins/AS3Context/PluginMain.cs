@@ -278,6 +278,10 @@ namespace AS3Context
                         {
                             de.Handled = MxmlComplete.HandleAttribute(de.Data);
                         }
+                        else if (de.Action == "XMLCompletion.AttributeValue")
+                        {
+                            de.Handled = MxmlComplete.HandleAttributeValue(de.Data);
+                        }
                     }
                 }
             }

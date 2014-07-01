@@ -495,7 +495,7 @@ namespace XMLCompletion
 							sci.SetSel(position+1, position+1);
                             justInsertedQuotesAt = position+1;
                             // Allow another plugin to handle this
-                            de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", new XMLContextTag());
+                            de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", new Object[] { ctag, string.Empty });
                             EventManager.DispatchEvent(PluginBase.MainForm, de);
 						}
 					}
@@ -516,7 +516,7 @@ namespace XMLCompletion
                                 sci.ReplaceSel("\"");
                             }
                             // Allow another plugin to handle this
-                            de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", new XMLContextTag());
+                            de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", new Object[] {ctag, string.Empty});
                             EventManager.DispatchEvent(PluginBase.MainForm, de);
                         }
                         else
@@ -578,21 +578,21 @@ namespace XMLCompletion
                 // Starting tag
 				if (ctag.Tag == null && (sci.CurrentPos > 0))
 				{
-					if ((Char)sci.CharAt(sci.CurrentPos-1) == '<') 
+                    if ((Char)sci.CharAt(sci.CurrentPos - 1) == '<') 
                     {
-						ctag.Tag = "<";
+                        ctag.Tag = "<";
 						ctag.Name = "";
 					}
 					else return false;
 				}
 				else if (ctag.Tag.EndsWith(">"))
 				{
-					return false;
+                    return false;
 				}
                 // Closing tag
 				else if (ctag.Tag.StartsWith("</") && (ctag.Tag.IndexOf(' ') < 0))
 				{
-					ctag.Name = ctag.Tag.Substring(2);
+                    ctag.Name = ctag.Tag.Substring(2);
 					ctag.Tag = "<"+ctag.Name;
                     ctag.Closing = true;
 				}
@@ -620,16 +620,33 @@ namespace XMLCompletion
                 // Attribute completion
 				else
 				{
-					if (InQuotes(ctag.Tag) || ctag.Tag.LastIndexOf('"') < ctag.Tag.LastIndexOf('=')) return true;
-					Int32 position = sci.CurrentPos - 1;
-					String word = GetWordLeft(sci, ref position);
+                    Int32 position;
+                    String word;
+                    Object[] obj;
+                    DataEvent de;
+
+                    if (InQuotes(ctag.Tag))
+					{
+                        position = sci.CurrentPos - 1;
+                        word = GetWordLeft(sci, ref position);
+
+                        obj = new Object[] { ctag, word };
+                        de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", obj);
+                        EventManager.DispatchEvent(PluginBase.MainForm, de);
+
+                        return true;
+					} 
+                    if (ctag.Tag.LastIndexOf('"') < ctag.Tag.LastIndexOf('=')) 
+                        return true;
+					position = sci.CurrentPos - 1;
+					word = GetWordLeft(sci, ref position);
 
 					// Allow another plugin to handle this
-					Object[] obj = new Object[]{ctag,word};
-                    DataEvent de = new DataEvent(EventType.Command, "XMLCompletion.Attribute", obj);
+					obj = new Object[]{ctag,word};
+                    de = new DataEvent(EventType.Command, "XMLCompletion.Attribute", obj);
                     EventManager.DispatchEvent(PluginBase.MainForm, de);
                     if (de.Handled) return true;
-                    
+
                     if (cType == XMLType.Known)
 					{
 						foreach (HTMLTag tag in knownTags)

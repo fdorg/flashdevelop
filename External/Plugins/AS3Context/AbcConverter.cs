@@ -1206,7 +1206,7 @@ namespace AS3Context
 
             string sName = GetAttribute("name");
             string sType = GetAttribute("type");
-            //string sInherit = GetAttribute("inherit");
+            string sInherit = GetAttribute("inherit");
             //string sFormat = GetAttribute("format");
             string sEnum = GetAttribute("enumeration");
             string sDefault = null;
@@ -1230,6 +1230,11 @@ namespace AS3Context
             meta.Params["name"] = sName;
             meta.Params["type"] = sType;
             meta.RawParams = String.Format("name=\"{0}\", type=\"{1}\"", sName, sType);
+            if (sInherit != null)
+            {
+                meta.Params["inherit"] = sInherit;
+                meta.RawParams += ", inherit=\"" + sInherit + "\"";
+            }
             if (sEnum != null)
             {
                 meta.Params["enumeration"] = sEnum;
