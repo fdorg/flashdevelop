@@ -53,7 +53,7 @@ namespace AS3Context
                 else return true;
             }
 
-            if (!ctag.Name.EndsWith(word))
+            if (word != null && !ctag.Name.EndsWith(word))
             {
                 ASResult found = ResolveAttribute(model, word);
                 ASComplete.OpenDocumentToDeclaration(sci, found);
