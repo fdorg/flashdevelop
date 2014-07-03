@@ -2,7 +2,7 @@
 <Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<keyword-classes>
 		<keyword-class name="haxe-primary-keywords">
-			break case catch class continue default do else enum extends for function if implements import in interface new package return switch throw try typedef using var while abstract $type 
+			abstract break case catch class continue default do else enum extends for function if implements import in interface macro new package return switch throw try typedef using var while $type 
 		</keyword-class>
 		<keyword-class name="haxe-secondary-keywords">
 			null true false
