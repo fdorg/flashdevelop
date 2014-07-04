@@ -515,10 +515,11 @@ namespace ProjectManager.Projects.Haxe
         {
             path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
             // handle if NME/OpenFL config file is not at the root of the project directory
-            var relDir = Path.GetDirectoryName(OutputPathAbsolute);
             if (Path.IsPathRooted(path)) return path;
-            path = Path.GetFullPath(Path.Combine(relDir, path));
-            return GetRelativePath(path);
+            
+            var relDir = Path.GetDirectoryName(ProjectPath);
+            var absPath = Path.GetFullPath(Path.Combine(relDir, path));
+            return GetRelativePath(absPath);
         }
         #endregion
     }
