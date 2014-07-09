@@ -16,11 +16,13 @@ using PluginCore.Utilities;
 using ProjectManager.Actions;
 using CodeRefactor.Provider;
 using PluginCore;
+using System.Text.RegularExpressions;
 
 namespace CodeRefactor
 {
 	public class PluginMain : IPlugin
 	{
+        public const string REG_IDENTIFIER = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
         private String pluginName = "CodeRefactor";
         private String pluginGuid = "5c0d3740-a6f2-11de-8a39-0800200c9a66";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -181,7 +183,11 @@ namespace CodeRefactor
         {
             string oldExt = Path.GetExtension(oldPath);
             string newExt = Path.GetExtension(newPath);
-            return (PluginBase.CurrentProject != null && File.Exists(oldPath) && oldExt == newExt && IsValidFile(oldPath));
+            return PluginBase.CurrentProject != null
+                && File.Exists(oldPath)
+                && oldExt == newExt
+                && IsValidFile(oldPath)
+                && Regex.Match(Path.GetFileNameWithoutExtension(newPath), REG_IDENTIFIER, RegexOptions.Singleline).Success;
         }
 
         /// <summary>
@@ -189,7 +195,10 @@ namespace CodeRefactor
         /// </summary>
         private bool IsValidForMove(string oldPath, string newPath)
         {
-            return (PluginBase.CurrentProject != null && (File.Exists(oldPath) || Directory.Exists(oldPath)) && IsValidFile(oldPath));
+            return PluginBase.CurrentProject != null
+                && (File.Exists(oldPath) || Directory.Exists(oldPath))
+                && IsValidFile(oldPath)
+                && Regex.Match(Path.GetFileNameWithoutExtension(newPath), REG_IDENTIFIER, RegexOptions.Singleline).Success;
         }
 
         /// <summary>
@@ -198,8 +207,10 @@ namespace CodeRefactor
         private bool IsValidFile(string file)
         {
             IProject project = PluginBase.CurrentProject;
-            if (project == null) return false;
-            if (!RefactoringHelper.IsProjectRelatedFile(project, file)) return false;
+            if (project == null
+                || !RefactoringHelper.IsProjectRelatedFile(project, file)
+                || !Regex.Match(Path.GetFileNameWithoutExtension(file), REG_IDENTIFIER, RegexOptions.Singleline).Success)
+                return false;
             if (Directory.Exists(file)) return true;
             string ext = Path.GetExtension(file);
             return (ext == ".as" || ext == ".hx" || ext == ".ls") && project.DefaultSearchFilter.Contains(ext);
