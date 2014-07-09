@@ -25,7 +25,7 @@ echo (hint: edit 'Run.bat' to test on device or change screen size)
 echo.
 adl -screensize %SCREEN_SIZE% "%APP_XML%" "%APP_DIR%"
 if errorlevel 1 goto end
-goto end
+goto endNoPause
 
 
 :ios-debug
@@ -104,3 +104,5 @@ echo Installing the app on the device failed
 
 :end
 pause
+
+:endNoPause
