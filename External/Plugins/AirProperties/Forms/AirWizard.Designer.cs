@@ -394,7 +394,6 @@
             this.IPhoneStatusBarStyleCombo = new System.Windows.Forms.ComboBox();
             this.IPhoneBackgroundBehaviorGroup = new System.Windows.Forms.GroupBox();
             this.IPhoneExitsOnSuspendCheck = new System.Windows.Forms.CheckBox();
-            this.IPhoneBGModesCombo = new AirProperties.Controls.CheckedComboBox();
             this.IPhoneExitsOnSuspendLabel = new System.Windows.Forms.Label();
             this.IPhoneBGModesLabel = new System.Windows.Forms.Label();
             this.IPhoneDeviceBehaviorGroup = new System.Windows.Forms.GroupBox();
@@ -404,7 +403,6 @@
             this.IPhoneResolutionCombo = new System.Windows.Forms.ComboBox();
             this.IPhoneResolutionLabel = new System.Windows.Forms.Label();
             this.IPhoneForceCPULabel = new System.Windows.Forms.Label();
-            this.IPhoneDeviceCombo = new AirProperties.Controls.CheckedComboBox();
             this.IPhoneDeviceLabel = new System.Windows.Forms.Label();
             this.IPhoneAdvancedSettingsPanel = new System.Windows.Forms.Panel();
             this.IPhoneInfoAdditionsLabel = new System.Windows.Forms.Label();
@@ -422,6 +420,8 @@
             this.OpenPropertiesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ListViewStateImageList = new System.Windows.Forms.ImageList(this.components);
             this.ExtensionBrowseButton = new System.Windows.Forms.Button();
+            this.IPhoneBGModesCombo = new AirProperties.Controls.CheckedComboBox();
+            this.IPhoneDeviceCombo = new AirProperties.Controls.CheckedComboBox();
             this.TitlePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TitlePictureBox)).BeginInit();
             this.AppPropertiesTabControl.SuspendLayout();
@@ -2215,7 +2215,7 @@
             // ExtensionRemoveButton
             // 
             this.ExtensionRemoveButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.ExtensionRemoveButton.Location = new System.Drawing.Point(456, 102);
+            this.ExtensionRemoveButton.Location = new System.Drawing.Point(456, 93);
             this.ExtensionRemoveButton.Name = "ExtensionRemoveButton";
             this.ExtensionRemoveButton.Size = new System.Drawing.Size(75, 23);
             this.ExtensionRemoveButton.TabIndex = 3;
@@ -2225,7 +2225,7 @@
             // ExtensionAddButton
             // 
             this.ExtensionAddButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.ExtensionAddButton.Location = new System.Drawing.Point(456, 73);
+            this.ExtensionAddButton.Location = new System.Drawing.Point(456, 64);
             this.ExtensionAddButton.Name = "ExtensionAddButton";
             this.ExtensionAddButton.Size = new System.Drawing.Size(75, 23);
             this.ExtensionAddButton.TabIndex = 2;
@@ -2348,7 +2348,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AndroidUserPermissionsList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.AndroidUserPermissionsList.CheckOnClick = true;
             this.AndroidUserPermissionsList.FormattingEnabled = true;
             this.AndroidUserPermissionsList.IntegralHeight = false;
             this.AndroidUserPermissionsList.Location = new System.Drawing.Point(12, 28);
@@ -2579,19 +2578,6 @@
             this.IPhoneExitsOnSuspendCheck.ThreeState = true;
             this.IPhoneExitsOnSuspendCheck.UseVisualStyleBackColor = true;
             // 
-            // IPhoneBGModesCombo
-            // 
-            this.IPhoneBGModesCombo.CheckOnClick = true;
-            this.IPhoneBGModesCombo.DropDownHeight = 1;
-            this.IPhoneBGModesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.IPhoneBGModesCombo.FormattingEnabled = true;
-            this.IPhoneBGModesCombo.IntegralHeight = false;
-            this.IPhoneBGModesCombo.Location = new System.Drawing.Point(112, 15);
-            this.IPhoneBGModesCombo.Name = "IPhoneBGModesCombo";
-            this.IPhoneBGModesCombo.Size = new System.Drawing.Size(122, 21);
-            this.IPhoneBGModesCombo.TabIndex = 16;
-            this.IPhoneBGModesCombo.ValueSeparator = ", ";
-            // 
             // IPhoneExitsOnSuspendLabel
             // 
             this.IPhoneExitsOnSuspendLabel.AutoSize = true;
@@ -2679,19 +2665,6 @@
             this.IPhoneForceCPULabel.Size = new System.Drawing.Size(81, 13);
             this.IPhoneForceCPULabel.TabIndex = 3;
             this.IPhoneForceCPULabel.Text = "CPU Rendering";
-            // 
-            // IPhoneDeviceCombo
-            // 
-            this.IPhoneDeviceCombo.CheckOnClick = true;
-            this.IPhoneDeviceCombo.DropDownHeight = 1;
-            this.IPhoneDeviceCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.IPhoneDeviceCombo.FormattingEnabled = true;
-            this.IPhoneDeviceCombo.IntegralHeight = false;
-            this.IPhoneDeviceCombo.Location = new System.Drawing.Point(113, 4);
-            this.IPhoneDeviceCombo.Name = "IPhoneDeviceCombo";
-            this.IPhoneDeviceCombo.Size = new System.Drawing.Size(121, 21);
-            this.IPhoneDeviceCombo.TabIndex = 10;
-            this.IPhoneDeviceCombo.ValueSeparator = ", ";
             // 
             // IPhoneDeviceLabel
             // 
@@ -2856,13 +2829,39 @@
             // ExtensionBrowseButton
             // 
             this.ExtensionBrowseButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.ExtensionBrowseButton.Location = new System.Drawing.Point(456, 44);
+            this.ExtensionBrowseButton.Location = new System.Drawing.Point(456, 35);
             this.ExtensionBrowseButton.Name = "ExtensionBrowseButton";
             this.ExtensionBrowseButton.Size = new System.Drawing.Size(75, 23);
             this.ExtensionBrowseButton.TabIndex = 1;
             this.ExtensionBrowseButton.Text = "Browse";
             this.ExtensionBrowseButton.UseVisualStyleBackColor = true;
             this.ExtensionBrowseButton.Click += new System.EventHandler(this.ExtensionBrowseButton_Click);
+            // 
+            // IPhoneBGModesCombo
+            // 
+            this.IPhoneBGModesCombo.CheckOnClick = true;
+            this.IPhoneBGModesCombo.DropDownHeight = 1;
+            this.IPhoneBGModesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IPhoneBGModesCombo.FormattingEnabled = true;
+            this.IPhoneBGModesCombo.IntegralHeight = false;
+            this.IPhoneBGModesCombo.Location = new System.Drawing.Point(112, 15);
+            this.IPhoneBGModesCombo.Name = "IPhoneBGModesCombo";
+            this.IPhoneBGModesCombo.Size = new System.Drawing.Size(122, 21);
+            this.IPhoneBGModesCombo.TabIndex = 16;
+            this.IPhoneBGModesCombo.ValueSeparator = ", ";
+            // 
+            // IPhoneDeviceCombo
+            // 
+            this.IPhoneDeviceCombo.CheckOnClick = true;
+            this.IPhoneDeviceCombo.DropDownHeight = 1;
+            this.IPhoneDeviceCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IPhoneDeviceCombo.FormattingEnabled = true;
+            this.IPhoneDeviceCombo.IntegralHeight = false;
+            this.IPhoneDeviceCombo.Location = new System.Drawing.Point(113, 4);
+            this.IPhoneDeviceCombo.Name = "IPhoneDeviceCombo";
+            this.IPhoneDeviceCombo.Size = new System.Drawing.Size(121, 21);
+            this.IPhoneDeviceCombo.TabIndex = 10;
+            this.IPhoneDeviceCombo.ValueSeparator = ", ";
             // 
             // AirWizard
             // 
