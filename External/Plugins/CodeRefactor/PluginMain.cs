@@ -1,22 +1,22 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
 using CodeRefactor.Controls;
-using ProjectManager.Helpers;
+using CodeRefactor.Provider;
+using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ProjectManager.Actions;
-using CodeRefactor.Provider;
-using PluginCore;
+using ProjectManager.Helpers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace CodeRefactor
 {
