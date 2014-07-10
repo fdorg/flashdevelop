@@ -579,7 +579,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Folds the code at preprocessor directives.</value>
   </data>
   <data name="FlashDevelop.Description.HighlightGuide" xml:space="preserve">
-    <value>Disables the highligh guide on current code block.</value>
+    <value>Disables the highlight guide on current code block.</value>
   </data>
   <data name="FlashDevelop.Description.HoverDelay" xml:space="preserve">
     <value>Mouse hover tip delay.</value>
