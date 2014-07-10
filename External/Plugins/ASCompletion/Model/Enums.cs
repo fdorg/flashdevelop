@@ -60,6 +60,6 @@ namespace ASCompletion.Model
 
     public enum ASMetaKind
     {
-        Unknown, Event, Style, Effect, Exclude, Include, DefaultProperty, MaxChildren
+        Unknown, Event, Style, Effect, Exclude, Include, DefaultProperty, MaxChildren, Inspectable
     }
 }

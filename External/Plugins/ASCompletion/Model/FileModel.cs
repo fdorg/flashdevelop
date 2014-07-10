@@ -299,6 +299,7 @@ namespace ASCompletion.Model
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));
                     sb.Append(tab).Append(decl).Append(semi).Append(nl);
                 }
+                // TODO: Generate Metadata
             }
 
             foreach (ClassModel aClass in Classes)
