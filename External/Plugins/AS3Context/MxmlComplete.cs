@@ -545,7 +545,7 @@ namespace AS3Context
             while (tmpClass != null && !tmpClass.IsVoid())
             {
                 foreach (MemberModel member in tmpClass.Members)
-                    if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0 && member.Parameters.Count > 0)
+                    if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0 && member.Parameters != null && member.Parameters.Count > 0)
                     {
                         bool validFunction = true;
                         var argType = member.Parameters[0].Type;
