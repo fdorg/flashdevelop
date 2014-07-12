@@ -71,16 +71,21 @@ namespace ASCompletion.Model
             return Name.CompareTo(meta.Name);
         }
 
-        internal void GenerateIntrinsic(StringBuilder sb, string nl, string tab)
+        internal static void GenerateIntrinsic(List<ASMetaData> src, StringBuilder sb, string nl, string tab)
         {
-            if (Kind == ASMetaKind.Include)
+            if (src == null) return;
+
+            foreach (var meta in src)
             {
-                sb.Append(RawParams).Append(nl);
-            }
-            else if (Kind != ASMetaKind.Unknown)
-            {
-                sb.Append(ClassModel.CommentDeclaration(Comments, tab));
-                sb.Append(tab).Append('[').Append(Name).Append('(').Append(RawParams).Append(")] ").Append(nl).Append(nl);
+                if (meta.Kind == ASMetaKind.Include)
+                {
+                    sb.Append(meta.RawParams).Append(nl);
+                }
+                else if (meta.Kind != ASMetaKind.Unknown)
+                {
+                    sb.Append(ClassModel.CommentDeclaration(meta.Comments, tab));
+                    sb.Append(tab).Append('[').Append(meta.Name).Append('(').Append(meta.RawParams).Append(")] ").Append(nl).Append(nl);
+                }
             }
 
         }
@@ -284,21 +289,13 @@ namespace ASCompletion.Model
             }
 
             // event/style metadatas
-            if (MetaDatas != null)
-            {
-                foreach (ASMetaData meta in MetaDatas)
-                    meta.GenerateIntrinsic(sb, nl, tab);
-            }
+            ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab);
 
             // members			
             string decl;
             foreach (MemberModel member in Members)
             {
-                if (member.MetaDatas != null)
-                {
-                    foreach (ASMetaData meta in MetaDatas)
-                        meta.GenerateIntrinsic(sb, nl, tab);
-                }
+                ASMetaData.GenerateIntrinsic(member.MetaDatas, sb, nl, tab);
                 if ((member.Flags & FlagType.Variable) > 0)
                 {
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));
