@@ -1,8 +1,7 @@
 :user_configuration
 
 :: About AIR application packaging
-:: http://livedocs.adobe.com/flex/3/html/help.html?content=CommandLineTools_5.html#1035959
-:: http://livedocs.adobe.com/flex/3/html/distributing_apps_4.html#1037515
+:: http://help.adobe.com/en_US/air/build/WS5b3ccc516d4fbf351e63e3d118666ade46-7fd9.html
 
 :: NOTICE: all paths are relative to project root
 
