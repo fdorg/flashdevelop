@@ -70,6 +70,20 @@ namespace ASCompletion.Model
                 return Params["type"].CompareTo(meta.Params["type"]);
             return Name.CompareTo(meta.Name);
         }
+
+        internal void GenerateIntrinsic(StringBuilder sb, string nl, string tab)
+        {
+            if (Kind == ASMetaKind.Include)
+            {
+                sb.Append(RawParams).Append(nl);
+            }
+            else if (Kind != ASMetaKind.Unknown)
+            {
+                sb.Append(ClassModel.CommentDeclaration(Comments, tab));
+                sb.Append(tab).Append('[').Append(Name).Append('(').Append(RawParams).Append(")] ").Append(nl).Append(nl);
+            }
+
+        }
     }
 
     public class FileModel
@@ -273,21 +287,18 @@ namespace ASCompletion.Model
             if (MetaDatas != null)
             {
                 foreach (ASMetaData meta in MetaDatas)
-                    if (meta.Kind == ASMetaKind.Include)
-                    {
-                        sb.Append(meta.RawParams).Append(nl);
-                    }
-                    else if (meta.Kind != ASMetaKind.Unknown)
-                    {
-                        sb.Append(ClassModel.CommentDeclaration(meta.Comments, tab));
-                        sb.Append(tab).Append('[').Append(meta.Name).Append('(').Append(meta.RawParams).Append(")] ").Append(nl).Append(nl);
-                    }
+                    meta.GenerateIntrinsic(sb, nl, tab);
             }
 
             // members			
             string decl;
             foreach (MemberModel member in Members)
             {
+                if (member.MetaDatas != null)
+                {
+                    foreach (ASMetaData meta in MetaDatas)
+                        meta.GenerateIntrinsic(sb, nl, tab);
+                }
                 if ((member.Flags & FlagType.Variable) > 0)
                 {
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));
@@ -299,7 +310,6 @@ namespace ASCompletion.Model
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));
                     sb.Append(tab).Append(decl).Append(semi).Append(nl);
                 }
-                // TODO: Generate Metadata
             }
 
             foreach (ClassModel aClass in Classes)

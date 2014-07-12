@@ -304,9 +304,14 @@ namespace ASCompletion.Model
 
             // MEMBERS
             int count = 0;
-            foreach (MemberModel var in Members)
+            foreach (MemberModel var in Members) 
                 if ((var.Flags & FlagType.Variable) > 0)
                 {
+                    if (var.MetaDatas != null)
+                    {
+                        foreach (ASMetaData meta in MetaDatas)
+                            meta.GenerateIntrinsic(sb, nl, tab);
+                    }
                     String comment = CommentDeclaration(var.Comments, tab);
                     if (count == 0 || comment != "") sb.Append(nl);
                     sb.Append(comment);
@@ -323,6 +328,11 @@ namespace ASCompletion.Model
                 {
                     if (prevProperty != property.Name) sb.Append(nl);
                     prevProperty = property.Name;
+                    if (property.MetaDatas != null)
+                    {
+                        foreach (ASMetaData meta in MetaDatas)
+                            meta.GenerateIntrinsic(sb, nl, tab);
+                    }
                     sb.Append(CommentDeclaration(property.Comments, tab));
                     FlagType flags = (property.Flags & ~(FlagType.Setter | FlagType.Getter)) | FlagType.Function;
 
@@ -365,6 +375,11 @@ namespace ASCompletion.Model
                     decl = MemberDeclaration(method, preventVis);
                     if (InFile.haXe && (method.Flags & FlagType.Constructor) > 0)
                         decl = decl.Replace("function " + method.Name, "function new");
+                    if (method.MetaDatas != null)
+                    {
+                        foreach (ASMetaData meta in MetaDatas)
+                            meta.GenerateIntrinsic(sb, nl, tab);
+                    }
                     sb.Append(nl).Append(CommentDeclaration(method.Comments, tab));
                     sb.Append(tab).Append(decl).Append(semi).Append(nl);
                 }
