@@ -256,7 +256,17 @@ namespace FlashViewer
                 {
                     String action = evnt.Action;
                     String[] args = evnt.Data != null ? evnt.Data.ToString().Split(',') : null;
-                    if (args == null || String.IsNullOrEmpty(args[0])) return;
+                    
+                    if (args == null || String.IsNullOrEmpty(args[0]))
+                    {
+                        if (action == "FlashViewer.GetFlashPlayer")
+                        {
+                            evnt.Data = PathHelper.ResolvePath(this.settingObject.PlayerPath);
+                            evnt.Handled = true;
+                        }
+                        return;
+                    }
+
                     if (action == "FlashViewer.Default")
                     {
                         switch (this.settingObject.DisplayStyle)
@@ -302,10 +312,6 @@ namespace FlashViewer
                         case "FlashViewer.SetDisplayStyle":
                             ViewStyle vs = (ViewStyle)Enum.Parse(typeof(ViewStyle), evnt.Data.ToString());
                             this.settingObject.DisplayStyle = vs;
-                            break;
-
-                        case "FlashViewer.GetFlashPlayer":
-                            evnt.Data = PathHelper.ResolvePath(this.settingObject.PlayerPath);
                             break;
                     }
                     evnt.Handled = true;
