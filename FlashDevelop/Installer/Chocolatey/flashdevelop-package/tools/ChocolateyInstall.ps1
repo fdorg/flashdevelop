@@ -1,0 +1,1 @@
+Install-ChocolateyPackage 'flashdevelop' 'exe' '' 'http://www.flashdevelop.org/downloads/releases/FlashDevelop-4.6.2.exe'
