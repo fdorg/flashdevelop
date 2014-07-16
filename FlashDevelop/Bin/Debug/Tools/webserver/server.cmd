@@ -1,2 +1,4 @@
+@echo off
+
 :: start server
-@%~dp0\mongoose_server %1 
+"%~dp0\mongoose_server.exe" %1 
