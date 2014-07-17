@@ -765,36 +765,45 @@ namespace ASDocGen
             // Try to find asdoc path from: AppMan's Archive or FD/Tools/flexsdk/
             if (String.IsNullOrEmpty(this.appSettings.asdocLocation))
             {
-                String curSDK = String.Empty; 
-                String asdocPath = String.Empty;
-                String asdocPath2 = String.Empty;
-                String parentDir = Directory.GetParent(this.AppDir).FullName;
-                String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                String appManDir = Path.Combine(userAppDir, @"FlashDevelop\Data\AppMan\Archive\flexsdk");
-                if (Directory.Exists(appManDir))
+                try
                 {
-                    String[] versionDirs = Directory.GetDirectories(appManDir);
-                    foreach (string versionDir in versionDirs)
-                    {
-                        if (Directory.Exists(versionDir))
-                        {
-                            asdocPath = Path.Combine(versionDir, @"bin\asdoc.exe");
-                            asdocPath2 = Path.Combine(versionDir, @"bin\asdoc.bat");
-                            if (File.Exists(asdocPath)) curSDK = asdocPath;
-                            if (File.Exists(asdocPath2)) curSDK = asdocPath2;
-                        }
-                    }
+                    this.appSettings.asdocLocation = DetectSDKLocation();
                 }
-                asdocPath = Path.Combine(parentDir, @"flexsdk\bin\asdoc.exe");
-                asdocPath2 = Path.Combine(parentDir, @"flexsdk\bin\asdoc.bat");
-                if (File.Exists(asdocPath)) curSDK = Path.GetDirectoryName(asdocPath);
-                if (File.Exists(asdocPath2)) curSDK = Path.GetDirectoryName(asdocPath2);
-                this.appSettings.asdocLocation = Path.GetDirectoryName(curSDK);
+                catch { }
             }
             if (!File.Exists(settingFile))
             {
                 ObjectSerializer.Serialize(settingFile, this.appSettings);
             }
+        }
+
+        private string DetectSDKLocation()
+        {
+            String asdocPath = String.Empty;
+            String asdocPath2 = String.Empty;
+            String parentDir = Directory.GetParent(this.AppDir).FullName;
+            String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            String appManDir = Path.Combine(userAppDir, @"FlashDevelop\Data\AppMan\Archive\flexsdk");
+            if (Directory.Exists(appManDir))
+            {
+                String[] versionDirs = Directory.GetDirectories(appManDir);
+                foreach (string versionDir in versionDirs)
+                {
+                    if (Directory.Exists(versionDir))
+                    {
+                        asdocPath = Path.Combine(versionDir, @"bin\asdoc.exe");
+                        asdocPath2 = Path.Combine(versionDir, @"bin\asdoc.bat");
+                        if (File.Exists(asdocPath)) return asdocPath;
+                        if (File.Exists(asdocPath2)) return asdocPath2;
+                    }
+                }
+            }
+
+            asdocPath = Path.Combine(parentDir, @"flexsdk\bin\asdoc.exe");
+            asdocPath2 = Path.Combine(parentDir, @"flexsdk\bin\asdoc.bat");
+            if (File.Exists(asdocPath)) return Path.GetDirectoryName(Path.GetDirectoryName(asdocPath));
+            if (File.Exists(asdocPath2)) return Path.GetDirectoryName(Path.GetDirectoryName(asdocPath2));
+            return "";
         }
 
         /// <summary>
