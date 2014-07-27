@@ -131,15 +131,17 @@ namespace FDBuild.Building.AS3
         {
             int majorVersion = project.MovieOptions.MajorVersion;
             int minorVersion = project.MovieOptions.MinorVersion;
-            if (project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM 
-                || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM)
-                PluginCore.PlatformData.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
-
             string version;
             if (options.MinorVersion.Length > 0)
                 version = majorVersion + "." + options.MinorVersion;
             else
                 version = majorVersion + "." + minorVersion;
+
+            if (project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM
+                || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM)
+            {
+                version = PluginCore.PlatformData.ResolveFlashPlayerVersion(project.MovieOptions.Platform, version);
+            }
 
             WriteElementString("target-player", version);
         }
