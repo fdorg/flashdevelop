@@ -267,6 +267,13 @@ namespace HaXeContext
             {
                 hxml = hxml.Replace("--macro keep", "#--macro keep"); // TODO remove this hack
                 hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
+
+                hxproj.OutputType = OutputType.CustomBuild;
+                config = "$(TargetBuild) -$(BuildConfig) -dFdb";
+                hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" run " + builder + " build \"" + hxproj.GetRelativePath(nmmlPath) + "\" " + config;
+                hxproj.TestMovieBehavior = TestMovieBehavior.Custom;
+                hxproj.TestMovieCommand = "";
+                hxproj.Save();
             }
         }
 

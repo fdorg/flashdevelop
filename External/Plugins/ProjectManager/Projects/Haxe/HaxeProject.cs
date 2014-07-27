@@ -264,23 +264,10 @@ namespace ProjectManager.Projects.Haxe
                         pr.Add("--flash-strict");
 
                     // convert Flash version to haxe supported parameter
-                    string param = null;
-                    int majorVersion = MovieOptions.MajorVersion;
-                    int minorVersion = MovieOptions.MinorVersion;
-
-                    if (MovieOptions.Platform == HaxeMovieOptions.AIR_PLATFORM
-                        || MovieOptions.Platform == HaxeMovieOptions.AIR_MOBILE_PLATFORM)
-                        PlatformData.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
-                    if (movieOptions.Platform == HaxeMovieOptions.NME_PLATFORM)
-                        HaxeProject.GuessFlashPlayerForNME(ref majorVersion, ref minorVersion);
-
-                    if (majorVersion >= 10)
-                    {
-                        if (minorVersion > 0) param = majorVersion + "." + minorVersion;
-                        else param = "" + majorVersion;
-                    }
-                    else param = "" + majorVersion;
-                    if (param != null) pr.Add("-swf-version " + param);
+                    string version = MovieOptions.Version;
+                    string platform = MovieOptions.Platform;
+                    string swfVersion = PluginCore.PlatformData.ResolveSwfVersion(platform, version);
+                    if (swfVersion != null) pr.Add("-swf-version " + swfVersion);
                 }
 
                 // defines

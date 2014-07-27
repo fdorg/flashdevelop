@@ -37,15 +37,16 @@ namespace ProjectManager.Building.Haxe
             string connect = (!serverPort.StartsWith("%") && serverPort != "0")
                 ? "--connect " + serverPort : "";
 
-            if (project.IsNmeOutput && !string.IsNullOrEmpty(project.TargetBuild))
+            if (project.IsNmeOutput /*&& !string.IsNullOrEmpty(project.TargetBuild)*/)
             {
-                haxePath = haxePath.Replace("haxe.exe", "haxelib.exe");
+                /*haxePath = haxePath.Replace("haxe.exe", "haxelib.exe");
                 string config = project.TargetBuild;
                 string haxeNmeArgs = String.Join(" ", BuildNmeCommand(extraClasspaths, output, config, noTrace, null));// +" " + connect;
                 Console.WriteLine("haxelib " + haxeNmeArgs);
                 if (!ProcessRunner.Run(haxePath, haxeNmeArgs, false, false))
                     throw new BuildException("Build halted with errors (haxelib.exe).");
-                return;
+                return;*/
+                throw new BuildException("NME build from FDBuild is deprecated.");
             }
 
             // always use relative path for CPP (because it prepends ./)
