@@ -28,16 +28,19 @@ namespace PluginCore
 
         public static string ResolveFlashPlayerVersion(string otherPlatform, string version)
         {
-            var otherTarget = PluginCore.PlatformData.PlatformTargets[otherPlatform];
             var flashTarget = PluginCore.PlatformData.PlatformTargets["Flash Player"];
-            foreach (var otherVersion in otherTarget.Versions)
-                if (otherVersion.Value == version)
-                {
-                    foreach (var flashVersion in flashTarget.Versions)
-                        if (flashVersion.SwfVersion == otherVersion.SwfVersion) return flashVersion.Value;
-                }
-            // default to last
-            return flashTarget.Versions[flashTarget.Versions.Count - 1].Value;
+            if (PlatformTargets.ContainsKey(otherPlatform))
+            {
+                var otherTarget = PluginCore.PlatformData.PlatformTargets[otherPlatform];
+                foreach (var otherVersion in otherTarget.Versions)
+                    if (otherVersion.Value == version)
+                    {
+                        foreach (var flashVersion in flashTarget.Versions)
+                            if (flashVersion.SwfVersion == otherVersion.SwfVersion) return flashVersion.Value;
+                    }
+            }
+            // default to last FP
+            return flashTarget.LastVersion.Value;
         }
 
         public static string ResolveSwfVersion(string platformName, string version)
@@ -46,7 +49,8 @@ namespace PluginCore
             foreach (var platformVersion in platform.Versions)
                 if (platformVersion.Value == version)
                     return platformVersion.SwfVersion;
-            return platform.Versions[platform.Versions.Count - 1].SwfVersion;
+            // default to last FP
+            return platform.LastVersion.SwfVersion;
         }
 
         #region platform config loading
@@ -81,13 +85,11 @@ namespace PluginCore
             PlatformLanguages = new Dictionary<String, PlatformLanguage>();
             if (PlatformTargets == null || PlatformTargets.Count == 0)
             {
+                var defaultVersion = new PlatformVersion { Value = "0.0" };
                 var custom = new PlatformTarget {
                     Name = "Custom",
-                    Versions = new List<PlatformVersion> {
-                        new PlatformVersion {
-                            Value = "0.0"
-                        }
-                    }
+                    Versions = new List<PlatformVersion> { defaultVersion },
+                    LastVersion = defaultVersion
                 };
                 PlatformTargets.Add(custom.Name, custom);
                 return;
@@ -192,10 +194,12 @@ namespace PluginCore
             PlatformTargets = new Dictionary<String, PlatformTarget>();
             foreach (XmlNode node in platforms.ChildNodes)
             {
+                var versions = ParseVersions(node);
                 var target = new PlatformTarget
                 {
                     Name = node.Attributes["name"].Value,
-                    Versions = ParseVersions(node),
+                    Versions = versions,
+                    LastVersion = versions[versions.Count - 1],
                     RawData = node
                 };
                 PlatformTargets.Add(target.Name, target);
@@ -216,6 +220,7 @@ namespace PluginCore
     {
         public string Name;
         public List<PlatformVersion> Versions;
+        public PlatformVersion LastVersion;
         public XmlNode RawData;
     }
 
