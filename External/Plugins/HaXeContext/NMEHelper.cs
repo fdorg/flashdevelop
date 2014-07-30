@@ -63,6 +63,8 @@ namespace HaXeContext
                 }
             }
 
+            TraceManager.Add("haxelib " + args);
+
             if (config.StartsWith("flash") || config.StartsWith("html5")) // no capture
             {
                 if (config.StartsWith("flash") && project.TraceEnabled) // debugger
@@ -114,10 +116,15 @@ namespace HaXeContext
         /// </summary>
         static private string GetSwfPlayer()
         {
-            DataEvent de = new DataEvent(EventType.Command, "FlashViewer.GetFlashPlayer", null);
-            EventManager.DispatchEvent(null, de);
-            if (de.Handled && !String.IsNullOrEmpty((string)de.Data)) return " -DSWF_PLAYER=\"" + de.Data + "\"";
-            else return "";
+            try
+            {
+                DataEvent de = new DataEvent(EventType.Command, "FlashViewer.GetFlashPlayer", null);
+                EventManager.DispatchEvent(null, de);
+                if (de.Handled && !String.IsNullOrEmpty((string)de.Data) && File.Exists((string)de.Data))
+                    return " -DSWF_PLAYER=\"" + de.Data + "\"";
+            }
+            catch { }
+            return "";
         }
 
         static public void Clean(IProject project)
