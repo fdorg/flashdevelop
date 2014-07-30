@@ -3894,7 +3894,7 @@ namespace ASCompletion.Completion
                     }
                     decl += tpl;
                 }
-                decl = "$(Boundary)" + TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
+                decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
             }
             else
             {
