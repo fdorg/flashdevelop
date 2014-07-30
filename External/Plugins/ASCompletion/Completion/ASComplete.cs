@@ -2019,7 +2019,7 @@ namespace ASCompletion.Completion
                         {
                             string typeName = localVar.Type;
                             ClassModel aClass = ctx.ResolveType(typeName, ctx.CurrentModel);
-                            if (!aClass.IsVoid()) typeName = aClass.Constructor ?? aClass.Name;
+                            if (!aClass.IsVoid()) typeName = aClass.Type;
                             CompletionList.SelectItem(typeName);
                         }
                         return;
@@ -2036,7 +2036,7 @@ namespace ASCompletion.Completion
                     {
                         string typeName = result.Member.Type;
                         ClassModel aClass = ctx.ResolveType(typeName, ctx.CurrentModel);
-                        if (!aClass.IsVoid()) typeName = aClass.Constructor ?? aClass.Name;
+                        if (!aClass.IsVoid()) typeName = aClass.Type;
                         CompletionList.SelectItem(typeName);
                     }
                 }
