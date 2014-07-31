@@ -43,8 +43,8 @@ namespace HaXeContext
             {
                 config += " -debug -Dfdb";
             }
-            if (config.StartsWith("flash") && config.IndexOf("-DSWF_PLAYER") < 0)
-                config += GetSwfPlayer();
+            //if (config.StartsWith("flash") && config.IndexOf("-DSWF_PLAYER") < 0)
+            //    config += GetSwfPlayer();
 
             string args = "run " + builder + " run \"" + project.OutputPathAbsolute + "\" " + config;
             string haxelib = GetHaxelib(project);
