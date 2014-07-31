@@ -612,10 +612,32 @@ namespace ASCompletion.Completion
             ASResult result = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
             if (result == null || result.InClass == null || found.inClass.QualifiedName.Equals(result.RelClass.QualifiedName))
                 result = null;
-
+            result = ASComplete.GetExpressionType(Sci, Sci.WordStartPosition(Sci.CurrentPos, true) - 1);
+            if (result != null && result.Type != null)
+            {
+                ClassModel curClass = ASContext.Context.CurrentClass;
+                if (!isHaxe)
+                {
+                    if (result.Type.Equals(curClass)) result = null;
+                }
+                else
+                {
+                    ClassModel aClass = curClass;
+                    while (!aClass.IsVoid())
+                    {
+                        if (aClass.Equals(result.Type))
+                        {
+                            result = null;
+                            break;
+                        }
+                        aClass.ResolveExtends();
+                        aClass = aClass.Extends;
+                    }
+                }
+            }
             string label;
-            bool isInterface = ClassIsInterface(result != null ? result.RelClass : found.inClass);
-            if (isInterface)
+            if ((result != null && result.RelClass != null && (result.RelClass.Flags & FlagType.Interface) > 0)
+                || (found.inClass != null && (found.inClass.Flags & FlagType.Interface) > 0))
             {
                 label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
                 known.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
