@@ -130,7 +130,6 @@ namespace ASCompletion.Completion
                         if (type.IsVoid() && CheckAutoImport(found))
                             return;
                     }
-                    // create property
                     ShowGetSetList(found);
                     return;
                 }
@@ -837,14 +836,29 @@ namespace ASCompletion.Completion
 
         private static void ShowGetSetList(FoundDeclaration found)
         {
+            string name = GetPropertyNameFor(found.member);
+            ASResult result = new ASResult();
+            ClassModel curClass = ASContext.Context.CurrentClass;
+            ASComplete.FindMember(name, curClass, result, FlagType.Getter, 0);
+            bool hasGetter = !result.IsNull();
+            ASComplete.FindMember(name, curClass, result, FlagType.Setter, 0);
+            bool hasSetter = !result.IsNull();
+            if (hasGetter && hasSetter) return;
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-            string labelGetSet = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
-            string labelGet = TextHelper.GetString("ASCompletion.Label.GenerateGet");
-            string labelSet = TextHelper.GetString("ASCompletion.Label.GenerateSet");
-            string[] choices = new string[] { labelGetSet, labelGet, labelSet };
-            for (int i = 0; i < choices.Length; i++)
+            if (!hasGetter && !hasSetter)
             {
-                known.Add(new GeneratorItem(choices[i], (GeneratorJobType)i, found.member, found.inClass));
+                string label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
+                known.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, found.member, found.inClass));
+            }
+            if (!hasGetter)
+            {
+                string label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
+                known.Add(new GeneratorItem(label, GeneratorJobType.Getter, found.member, found.inClass));
+            }
+            if (!hasSetter)
+            {
+                string label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
+                known.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
             }
             CompletionList.Show(known, false);
         }
