@@ -75,6 +75,7 @@ namespace ProjectManager.Controls
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(26, 24);
             this.refreshButton.TabIndex = 3;
+            this.refreshButton.Click += new EventHandler(RefreshButtonClick);
             // 
             // checkBox
             //
