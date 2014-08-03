@@ -63,12 +63,12 @@ namespace ProjectManager.Projects.AS3
             if (GetAttribute("useApolloConfig") == "true")
             {
                 if (additional.Length > 0) additional += "\n";
-                project.MovieOptions.Platform = AS3MovieOptions.AIR_PLATFORM;
+                project.MovieOptions.Platform = "AIR";
                 project.TestMovieBehavior = TestMovieBehavior.Custom;
             }
             else
             {
-                project.MovieOptions.Platform = AS3MovieOptions.FLASHPLAYER_PLATFORM;
+                project.MovieOptions.Platform = PluginCore.PlatformData.FLASHPLAYER_PLATFORM;
                 project.TestMovieBehavior = TestMovieBehavior.Default;
             }
             project.MovieOptions.Version = fpVersion ?? project.MovieOptions.DefaultVersion(project.MovieOptions.Platform);
@@ -84,7 +84,7 @@ namespace ProjectManager.Projects.AS3
                         {
                             target = 3;
                             additional = "-compatibility-version=3\n" + additional;
-                            if (project.MovieOptions.Platform == AS3MovieOptions.FLASHPLAYER_PLATFORM)
+                            if (project.MovieOptions.Platform == PluginCore.PlatformData.FLASHPLAYER_PLATFORM)
                                 project.MovieOptions.Version = "9.0";
                         }
                 }
@@ -216,9 +216,8 @@ namespace ProjectManager.Projects.AS3
             {
                 if (GetAttribute("androidSettingsVersion") != null || GetAttribute("iosSettingsVersion") != null)
                 {
-                    project.MovieOptions.Platform = AS3MovieOptions.AIR_MOBILE_PLATFORM;
+                    project.MovieOptions.Platform = "AIR Mobile";
                     project.TestMovieBehavior = TestMovieBehavior.Custom;
-
                     break;
                 }
                 Read();

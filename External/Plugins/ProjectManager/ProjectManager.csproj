@@ -94,6 +94,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\TabColors.cs" />
+    <Compile Include="Helpers\ExternalBuilders.cs" />
     <Compile Include="Helpers\FlexCompilerShell.cs" />
     <Compile Include="Controls\AS2\AS2PropertiesDialog.cs">
       <SubType>Form</SubType>

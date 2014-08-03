@@ -1039,7 +1039,7 @@ namespace ProjectManager.Controls
             string platform = GetPlatform();
 
             List<TestMovieBehavior> options = new List<TestMovieBehavior>();
-            if (/*output == OutputType.Application &&*/ platform == "Flash Player")
+            if (/*output == OutputType.Application &&*/ platform == PlatformData.FLASHPLAYER_PLATFORM)
             {
                 options.Add(TestMovieBehavior.Default);
                 options.Add(TestMovieBehavior.NewTab);

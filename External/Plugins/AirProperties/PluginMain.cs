@@ -211,8 +211,7 @@ namespace AirProperties
             if (PluginBase.CurrentProject != null)
             {
                 ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
-                pluginActive = project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM
-                    || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM;
+                pluginActive = project.MovieOptions.Platform.StartsWith("AIR");
             }
             this.pluginMenuItem.Enabled = this.pmMenuButton.Enabled = pluginActive;
         }
