@@ -74,7 +74,7 @@ namespace ProjectManager.Building.AS3
             {
                 string version = project.MovieOptions.Version;
                 string platform = project.MovieOptions.Platform;
-                string swfVersion = PluginCore.PlatformData.ResolveSwfVersion(platform, version);
+                string swfVersion = PluginCore.PlatformData.ResolveSwfVersion(project.Language, platform, version);
                 if (swfVersion != null) AddEq("-swf-version", swfVersion);
             }
 

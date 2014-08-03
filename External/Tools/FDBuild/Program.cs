@@ -50,7 +50,7 @@ namespace FDBuild
                 SwfmillLibraryBuilder.ExecutablePath = "swfmill.exe"; // hope you have it in your environment path!
 
             // figure user settings PlatformData
-            string platformsFile = Path.Combine("Settings", "Platforms.xml");
+            string platformsFile = Path.Combine("Settings", "Platforms");
             if (File.Exists(Path.Combine(firstRunDir, ".local")))
             {
                 PluginCore.PlatformData.Load(Path.Combine(firstRunDir, platformsFile));

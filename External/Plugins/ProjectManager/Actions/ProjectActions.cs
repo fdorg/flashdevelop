@@ -205,9 +205,9 @@ namespace ProjectManager.Actions
                 // platform/version
                 platform = project.MovieOptions.Platform;
                 version = project.MovieOptions.Version;
-                if (platform == AS3MovieOptions.AIR_PLATFORM
-                    || platform == AS3MovieOptions.AIR_MOBILE_PLATFORM)
-                    version = PlatformData.ResolveFlashPlayerVersion(platform, version);
+                if (platform != PlatformData.FLASHPLAYER_PLATFORM
+                    && project.MovieOptions.HasPlatformSupport && project.MovieOptions.PlatformSupport.IsFlashPlatform)
+                    version = PlatformData.ResolveFlashPlayerVersion(project.Language, platform, version);
 
                 // add project classpaths
                 foreach (string cp in project.AbsoluteClasspaths)
@@ -272,7 +272,8 @@ namespace ProjectManager.Actions
             }
             else
             {
-                var flashPlatform = PluginCore.PlatformData.PlatformTargets["Flash Player"];
+                var targets = PluginCore.PlatformData.SupportedLanguages["as3"].Platforms;
+                var flashPlatform = targets[PlatformData.FLASHPLAYER_PLATFORM];
                 version = flashPlatform.LastVersion.Value;
             }
 

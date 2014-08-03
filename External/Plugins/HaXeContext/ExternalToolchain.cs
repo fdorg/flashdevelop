@@ -11,53 +11,52 @@ using System.Text.RegularExpressions;
 
 namespace HaXeContext
 {
-    public class NMEHelper
+    public class ExternalToolchain
     {
-        static string nmmlPath;
+        static string projectPath;
         static WatcherEx watcher;
         static HaxeProject hxproj;
         static System.Timers.Timer updater;
 
+        static internal bool HandleProject(IProject project)
+        {
+            HaxeProject hxproj = project as HaxeProject;
+            if (hxproj == null) return false;
+            if (!hxproj.MovieOptions.HasPlatformSupport) return false;
+            return hxproj.MovieOptions.PlatformSupport.ExternalToolchain == "haxelib";
+        }
+
         /// <summary>
-        /// Run NME project (after build)
+        /// Run project (after build)
         /// </summary>
         /// <param name="command">Project's custom run command</param>
         /// <returns>Execution handled</returns>
-        static public bool Run(string command)
+        static internal bool Run(string command)
         {
             if (!string.IsNullOrEmpty(command)) // project has custom run command
                 return false;
 
-            HaxeProject project = PluginBase.CurrentProject as HaxeProject;
-            if (project == null || project.OutputType != OutputType.Application)
-                return false;
+            HaxeProject hxproj = PluginBase.CurrentProject as HaxeProject;
+            if (!HandleProject(hxproj)) return false;
 
-            string builder = HaxeProject.GetBuilder(project);
-            if (builder == null) return true;
+            string args = GetCommand(hxproj, "run");
+            if (args == null) return false;
 
-            string config = project.TargetBuild;
+            string config = hxproj.TargetBuild;
             if (String.IsNullOrEmpty(config)) config = "flash";
             else if (config.IndexOf("android") >= 0) CheckADB();
+            
+            string haxelib = GetHaxelib(hxproj);
 
-            if (project.TraceEnabled)
+            if (config.StartsWith("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
             {
-                config += " -debug -Dfdb";
-            }
-            //if (config.StartsWith("flash") && config.IndexOf("-DSWF_PLAYER") < 0)
-            //    config += GetSwfPlayer();
-
-            string args = "run " + builder + " run \"" + project.OutputPathAbsolute + "\" " + config;
-            string haxelib = GetHaxelib(project);
-
-            if (config.StartsWith("html5") && ProjectManager.Actions.Webserver.Enabled && project.RawHXML != null) // webserver
-            {
-                foreach (string line in project.RawHXML)
+                foreach (string line in hxproj.RawHXML)
                 {
                     if (line.StartsWith("-js "))
                     {
                         string path = line.Substring(4);
                         path = path.Substring(0, path.LastIndexOf("/"));
-                        ProjectManager.Actions.Webserver.StartServer(project.GetAbsolutePath(path));
+                        ProjectManager.Actions.Webserver.StartServer(hxproj.GetAbsolutePath(path));
                         return true;
                     }
                 }
@@ -65,25 +64,29 @@ namespace HaXeContext
 
             TraceManager.Add("haxelib " + args);
 
+            if (hxproj.TraceEnabled && hxproj.EnableInteractiveDebugger) // debugger
+            {
+                DataEvent de;
+                if (config.StartsWith("flash"))
+                {
+                    de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
+                    EventManager.DispatchEvent(hxproj, de);
+                }
+                de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", null);
+                EventManager.DispatchEvent(hxproj, de);
+            }
+
             if (config.StartsWith("flash") || config.StartsWith("html5")) // no capture
             {
-                if (config.StartsWith("flash") && project.TraceEnabled) // debugger
-                {
-                    DataEvent de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
-                    EventManager.DispatchEvent(project, de);
-                    de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", null);
-                    EventManager.DispatchEvent(project, de);
-                }
-
                 var infos = new ProcessStartInfo(haxelib, args);
-                infos.WorkingDirectory = project.Directory;
+                infos.WorkingDirectory = hxproj.Directory;
                 infos.WindowStyle = ProcessWindowStyle.Hidden;
                 Process.Start(infos);
             }
             else
             {
                 string oldWD = PluginBase.MainForm.WorkingDirectory;
-                PluginBase.MainForm.WorkingDirectory = project.Directory;
+                PluginBase.MainForm.WorkingDirectory = hxproj.Directory;
                 PluginBase.MainForm.CallCommand("RunProcessCaptured", haxelib + ";" + args);
                 PluginBase.MainForm.WorkingDirectory = oldWD;
             }
@@ -127,24 +130,19 @@ namespace HaXeContext
             return "";
         }
 
-        static public void Clean(IProject project)
+        static internal bool Clean(IProject project)
         {
-            if (!(project is HaxeProject))
-                return;
+            if (!HandleProject(project)) return false;
             HaxeProject hxproj = project as HaxeProject;
-            if (hxproj.MovieOptions.Platform != HaxeMovieOptions.NME_PLATFORM)
-                return;
-            
-            string builder = HaxeProject.GetBuilder(hxproj);
-            if (builder == null) return;
+
+            string args = GetCommand(hxproj, "clean");
+            if (args == null) return false;
             
             string haxelib = GetHaxelib(hxproj);
-            string config = hxproj.TargetBuild;
-            if (String.IsNullOrEmpty(config)) config = "flash";
 
             ProcessStartInfo pi = new ProcessStartInfo();
             pi.FileName = haxelib;
-            pi.Arguments = " run " + builder + " clean \"" + hxproj.OutputPathAbsolute + "\" " + config;
+            pi.Arguments = args;
             pi.UseShellExecute = false;
             pi.CreateNoWindow = true;
             pi.WorkingDirectory = Path.GetDirectoryName(hxproj.ProjectPath);
@@ -152,6 +150,7 @@ namespace HaXeContext
             Process p = Process.Start(pi);
             p.WaitForExit(5000);
             p.Close();
+            return true;
         }
 
         /// <summary>
@@ -186,30 +185,32 @@ namespace HaXeContext
             {
                 watcher.Dispose();
                 watcher = null;
-                nmmlPath = null;
+                projectPath = null;
             }
         }
 
         static void hxproj_ProjectUpdating(Project project)
         {
-            if (hxproj.MovieOptions.Platform == HaxeMovieOptions.NME_PLATFORM)
+            if (!HandleProject(project))
             {
-                string nmmlProj = hxproj.OutputPathAbsolute;
-                if (nmmlPath != nmmlProj)
-                {
-                    nmmlPath = nmmlProj;
-                    StopWatcher();
-                    if (File.Exists(nmmlPath))
-                    {
-                        watcher = new WatcherEx(Path.GetDirectoryName(nmmlPath), Path.GetFileName(nmmlPath));
-                        watcher.Changed += watcher_Changed;
-                        watcher.EnableRaisingEvents = true;
-                        UpdateProject();
-                    }
-                }
-                else UpdateProject();
+                StopWatcher();
+                return;
             }
-            else StopWatcher();
+
+            string projectFile = hxproj.OutputPathAbsolute;
+            if (projectPath != projectFile)
+            {
+                projectPath = projectFile;
+                StopWatcher();
+                if (File.Exists(projectPath))
+                {
+                    watcher = new WatcherEx(Path.GetDirectoryName(projectPath), Path.GetFileName(projectPath));
+                    watcher.Changed += watcher_Changed;
+                    watcher.EnableRaisingEvents = true;
+                    UpdateProject();
+                }
+            }
+            else UpdateProject();
         }
 
         static void updater_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -226,17 +227,27 @@ namespace HaXeContext
 
         private static void UpdateProject()
         {
-            string haxelib = GetHaxelib(hxproj);
-            if (haxelib == "haxelib")
+            var form = PluginBase.MainForm as System.Windows.Forms.Form;
+            if (form.InvokeRequired)
             {
-                TraceManager.AddAsync("Haxelib not found", -3);
+                form.BeginInvoke((System.Windows.Forms.MethodInvoker)delegate {
+                    UpdateProject();
+                });
                 return;
             }
 
-            string builder = HaxeProject.GetBuilder(hxproj);
-            if (builder == null)
+            string haxelib = GetHaxelib(hxproj);
+            if (haxelib == "haxelib")
             {
-                TraceManager.AddAsync("Project config not found:\n" + hxproj.OutputPathAbsolute, -3);
+                TraceManager.Add("Haxelib not found", -3);
+                return;
+            }
+
+            string args = GetCommand(hxproj, "display");
+            if (args == null)
+            {
+                var msg = String.Format("No external 'display' command found for platform '{0}'", hxproj.MovieOptions.Platform);
+                TraceManager.Add(msg, -3);
                 return;
             }
 
@@ -245,7 +256,7 @@ namespace HaXeContext
 
             ProcessStartInfo pi = new ProcessStartInfo();
             pi.FileName = haxelib;
-            pi.Arguments = "run " + builder + " display \"" + hxproj.GetRelativePath(nmmlPath) + "\" " + config;
+            pi.Arguments = args;
             pi.RedirectStandardError = true;
             pi.RedirectStandardOutput = true;
             pi.UseShellExecute = false;
@@ -262,22 +273,29 @@ namespace HaXeContext
             if (string.IsNullOrEmpty(hxml) || (!string.IsNullOrEmpty(err) && err.Trim().Length > 0))
             {
                 if (string.IsNullOrEmpty(err)) err = "Haxelib error: no response";
-                TraceManager.AddAsync(err, -3);
+                TraceManager.Add(err, -3);
                 hxproj.RawHXML = null;
             }
             else if (hxml.IndexOf("not installed") > 0)
             {
-                TraceManager.AddAsync(hxml, -3);
+                TraceManager.Add(hxml, -3);
                 hxproj.RawHXML = null;
             }
             else
             {
                 hxml = hxml.Replace("--macro keep", "#--macro keep"); // TODO remove this hack
+
                 hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
 
+                args = GetCommand(hxproj, "build", false);
+                if (args == null)
+                {
+                    var msg = String.Format("No external 'build' command found for platform '{0}'", hxproj.MovieOptions.Platform);
+                    TraceManager.Add(msg, -3);
+                }
+                else hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" " + args;
+
                 hxproj.OutputType = OutputType.CustomBuild;
-                config = "$(TargetBuild) -$(BuildConfig) -dFdb";
-                hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" run " + builder + " build \"" + hxproj.GetRelativePath(nmmlPath) + "\" " + config;
                 hxproj.TestMovieBehavior = TestMovieBehavior.Custom;
                 hxproj.TestMovieCommand = "";
                 hxproj.Save();
@@ -296,6 +314,32 @@ namespace HaXeContext
             Context.SetHaxeEnvironment(currentSDK);
             
             return haxelib;
+        }
+
+        /// <summary>
+        /// Get build/run/clean commands
+        /// </summary>
+        static string GetCommand(HaxeProject project, string name)
+        {
+            return GetCommand(project, name, true);
+        }
+
+        static string GetCommand(HaxeProject project, string name, bool processArguments)
+        {
+            var platform = project.MovieOptions.PlatformSupport;
+            var version = platform.GetVersion(project.MovieOptions.Version);
+            if (version.Commands == null)
+            {
+                throw new Exception(String.Format("No external commands found for target {0} and version {1}",
+                    project.MovieOptions.Platform, project.MovieOptions.Version));
+            }
+            if (version.Commands.ContainsKey(name))
+            {
+                var cmd = "run " + version.Commands[name].Value;
+                if (!processArguments) return cmd;
+                else return PluginBase.MainForm.ProcessArgString(cmd);
+            }
+            else return null;
         }
     }
 }

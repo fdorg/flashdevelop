@@ -77,8 +77,7 @@ namespace FlashDebugger
                 if (project is HaxeProject)
                 {
                     HaxeProject hproj = project as HaxeProject;
-                    if (hproj.MovieOptions.Platform == HaxeMovieOptions.NME_PLATFORM
-                        && (hproj.TargetBuild != null && !hproj.TargetBuild.StartsWith("flash")))
+                    if (!hproj.MovieOptions.HasPlatformSupport || !hproj.MovieOptions.PlatformSupport.IsFlashPlatform)
                         return false;
                 }
                 // Give a console warning for non external player...

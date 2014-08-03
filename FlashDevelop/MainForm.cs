@@ -722,11 +722,11 @@ namespace FlashDevelop
             // Load platforms data
             try
             {
-                PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms.xml"));
+                PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
             }
             catch (Exception ex)
             {
-                ErrorManager.ShowError("Invalid 'Platform.xml' in Settings", ex);
+                ErrorManager.ShowError("Invalid 'Platforms' in Settings", ex);
             }
         }
 
