@@ -38,6 +38,7 @@ namespace ProjectManager.Projects.Haxe
                 if (options.Platform == "NME")
                 {
                     options.Platform = GetBuilder(project.OutputPath);
+                    options.Version = "1.0";
                     needSave = true;
                 }
                 if (options.Platform == null)
@@ -96,15 +97,13 @@ namespace ProjectManager.Projects.Haxe
         static string GetBuilder(string projectFile)
         {
             if (string.IsNullOrEmpty(projectFile))
-                return "OpenFl";
+                return "Lime";
             switch (Path.GetExtension(projectFile).ToLower())
             {
                 case ".nmml":
                     return "Nme";
-                case ".lime":
-                    return "Lime";
                 default:
-                    return "OpenFl";
+                    return "Lime";
             }
         }
 

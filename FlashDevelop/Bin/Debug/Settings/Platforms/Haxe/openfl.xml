@@ -1,8 +1,0 @@
-<platform name="OpenFl" targets="html5,flash,windows,neko,android,tizen,blackberry,webos" debugger="flash" external="haxelib">
-	<version value="1.0">
-		<command name="display" value="openfl display &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig)"/>
-		<command name="build" value="openfl build &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig) -Dfdb"/>
-		<command name="run" value="openfl run &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig)"/>
-		<command name="clean" value="openfl clean &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig)"/>
-	</version>
-</platform>
