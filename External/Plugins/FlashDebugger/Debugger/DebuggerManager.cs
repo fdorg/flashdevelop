@@ -73,13 +73,6 @@ namespace FlashDebugger
                 if (project == null || !project.EnableInteractiveDebugger) return false;
                 currentProject = project as Project;
 
-                // ignore non-flash haxe targets
-                if (project is HaxeProject)
-                {
-                    HaxeProject hproj = project as HaxeProject;
-                    if (!hproj.MovieOptions.HasPlatformSupport || !hproj.MovieOptions.PlatformSupport.IsFlashPlatform)
-                        return false;
-                }
                 // Give a console warning for non external player...
                 if (currentProject.TestMovieBehavior == TestMovieBehavior.NewTab || currentProject.TestMovieBehavior == TestMovieBehavior.NewWindow)
                 {
