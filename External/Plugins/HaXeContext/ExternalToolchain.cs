@@ -39,15 +39,18 @@ namespace HaXeContext
             HaxeProject hxproj = PluginBase.CurrentProject as HaxeProject;
             if (!HandleProject(hxproj)) return false;
 
+            var toolchain = hxproj.MovieOptions.PlatformSupport.ExternalToolchain;
+            var exe = GetExecutable(toolchain);
+            if (exe == null) return false;
+
             string args = GetCommand(hxproj, "run");
             if (args == null) return false;
+            else if (toolchain == "cmd") args = "/c " + args;
 
             string config = hxproj.TargetBuild;
             if (String.IsNullOrEmpty(config)) config = "flash";
             else if (config.IndexOf("android") >= 0) CheckADB();
             
-            string haxelib = GetHaxelib(hxproj);
-
             if (config.StartsWith("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
             {
                 foreach (string line in hxproj.RawHXML)
@@ -62,7 +65,7 @@ namespace HaXeContext
                 }
             }
 
-            TraceManager.Add("haxelib " + args);
+            TraceManager.Add(exe + " " + args);
 
             if (hxproj.TraceEnabled && hxproj.EnableInteractiveDebugger) // debugger
             {
@@ -78,7 +81,7 @@ namespace HaXeContext
 
             if (config.StartsWith("flash") || config.StartsWith("html5")) // no capture
             {
-                var infos = new ProcessStartInfo(haxelib, args);
+                var infos = new ProcessStartInfo(exe, args);
                 infos.WorkingDirectory = hxproj.Directory;
                 infos.WindowStyle = ProcessWindowStyle.Hidden;
                 Process.Start(infos);
@@ -87,7 +90,7 @@ namespace HaXeContext
             {
                 string oldWD = PluginBase.MainForm.WorkingDirectory;
                 PluginBase.MainForm.WorkingDirectory = hxproj.Directory;
-                PluginBase.MainForm.CallCommand("RunProcessCaptured", haxelib + ";" + args);
+                PluginBase.MainForm.CallCommand("RunProcessCaptured", exe + ";" + args);
                 PluginBase.MainForm.WorkingDirectory = oldWD;
             }
             return true;
@@ -135,13 +138,16 @@ namespace HaXeContext
             if (!HandleProject(project)) return false;
             HaxeProject hxproj = project as HaxeProject;
 
+            var toolchain = hxproj.MovieOptions.PlatformSupport.ExternalToolchain;
+            var exe = GetExecutable(toolchain);
+            if (exe == null) return false;
+
             string args = GetCommand(hxproj, "clean");
             if (args == null) return false;
-            
-            string haxelib = GetHaxelib(hxproj);
+            else if (toolchain == "cmd") args = "/c " + args;
 
             ProcessStartInfo pi = new ProcessStartInfo();
-            pi.FileName = haxelib;
+            pi.FileName = Environment.ExpandEnvironmentVariables(exe);
             pi.Arguments = args;
             pi.UseShellExecute = false;
             pi.CreateNoWindow = true;
@@ -236,12 +242,9 @@ namespace HaXeContext
                 return;
             }
 
-            string haxelib = GetHaxelib(hxproj);
-            if (haxelib == "haxelib")
-            {
-                TraceManager.Add("Haxelib not found", -3);
-                return;
-            }
+            var toolchain = hxproj.MovieOptions.PlatformSupport.ExternalToolchain;
+            var exe = GetExecutable(toolchain);
+            if (exe == null) return;
 
             string args = GetCommand(hxproj, "display");
             if (args == null)
@@ -250,12 +253,13 @@ namespace HaXeContext
                 TraceManager.Add(msg, -3);
                 return;
             }
+            else if (toolchain == "cmd") args = "/c " + args;
 
             string config = hxproj.TargetBuild;
             if (String.IsNullOrEmpty(config)) config = "flash";
 
             ProcessStartInfo pi = new ProcessStartInfo();
-            pi.FileName = haxelib;
+            pi.FileName = Environment.ExpandEnvironmentVariables(exe);
             pi.Arguments = args;
             pi.RedirectStandardError = true;
             pi.RedirectStandardOutput = true;
@@ -272,7 +276,7 @@ namespace HaXeContext
 
             if (string.IsNullOrEmpty(hxml) || (!string.IsNullOrEmpty(err) && err.Trim().Length > 0))
             {
-                if (string.IsNullOrEmpty(err)) err = "Haxelib error: no response";
+                if (string.IsNullOrEmpty(err)) err = "External tool error: no response";
                 TraceManager.Add(err, -3);
                 hxproj.RawHXML = null;
             }
@@ -293,13 +297,41 @@ namespace HaXeContext
                     var msg = String.Format("No external 'build' command found for platform '{0}'", hxproj.MovieOptions.Platform);
                     TraceManager.Add(msg, -3);
                 }
-                else hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" " + args;
+                else
+                {
+                    if (toolchain == "haxelib") hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" " + args;
+                    else if (toolchain == "cmd") hxproj.PreBuildEvent = "cmd /c " + args;
+                    else hxproj.PreBuildEvent = "\"" + exe + "\" " + args;
+                }
 
                 hxproj.OutputType = OutputType.CustomBuild;
                 hxproj.TestMovieBehavior = TestMovieBehavior.Custom;
                 hxproj.TestMovieCommand = "";
                 hxproj.Save();
             }
+        }
+
+        private static string GetExecutable(string toolchain)
+        {
+            if (toolchain == "haxelib")
+            {
+                var haxelib = GetHaxelib(hxproj);
+                if (haxelib == "haxelib")
+                {
+                    TraceManager.Add("Haxelib not found", -3);
+                    return null;
+                }
+                return haxelib;
+            }
+            else if (toolchain == "cmd")
+            {
+                return "%SystemRoot%\\system32\\cmd.exe";
+            }
+            else if (File.Exists(toolchain))
+            {
+                return toolchain;
+            }
+            else return null;
         }
 
         private static string GetHaxelib(IProject project)

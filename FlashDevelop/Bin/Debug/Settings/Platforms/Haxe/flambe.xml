@@ -1,0 +1,8 @@
+<platform name="Flambe" targets="html5,flash,android" debugger="flash" external="cmd">
+	<version value="4.0">
+		<command name="display" value="flambe haxe-flags $(TargetBuild)"/>
+		<command name="build" value="flambe build --$(BuildConfig) $(TargetBuild)"/>
+		<command name="run" value="flambe run --$(BuildConfig) --no-build --no-fdb $(TargetBuild) || pause"/>
+		<!--<command name="clean" value="flambe clean $(TargetBuild) -$(BuildConfig)"/>-->
+	</version>
+</platform>
