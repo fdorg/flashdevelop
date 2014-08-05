@@ -1222,8 +1222,45 @@ namespace ProjectManager.Controls
             UpdateGeneralPanel();
             UpdateEditCommandButton();
 
+            DetectExternalToolchain();
+
             platformChanged = true;
             Modified();
+        }
+
+        private void DetectExternalToolchain()
+        {
+            if (!PlatformData.SupportedLanguages.ContainsKey(project.Language)) return;
+            var lang = PlatformData.SupportedLanguages[project.Language];
+
+            var platformName = (platformCombo.SelectedItem ?? "").ToString();
+            if (!lang.Platforms.ContainsKey(platformName)) return;
+
+            var platform = lang.Platforms[platformName];
+            if (platform.ExternalToolchain == null) return;
+
+            SelectItem(outputCombo, OutputType.Application);
+            SelectItem(testMovieCombo, TestMovieBehavior.Custom);
+            project.TestMovieCommand = "";
+
+            if (platform.DefaultProjectFile == null) return;
+
+            foreach(string fileName in platform.DefaultProjectFile)
+                if (File.Exists(project.GetAbsolutePath(fileName)))
+                {
+                    outputSwfBox.Text = fileName;
+                    break;
+                }
+        }
+
+        private void SelectItem(ComboBox combo, object value)
+        {
+            foreach (var item in combo.Items)
+                if (item.ToString() == value.ToString())
+                {
+                    combo.SelectedItem = item;
+                    break;
+                }
         }
 
 		private void versionCombo_SelectedIndexChanged(object sender, EventArgs e)
