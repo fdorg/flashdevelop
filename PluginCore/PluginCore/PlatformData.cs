@@ -102,27 +102,22 @@ namespace PluginCore
             var platform = new LanguagePlatform
             {
                 Name = node.Attributes["name"].Value,
-                Targets = ParseTargets(node),
+                Targets = GetList(node, "targets"),
                 Versions = versions,
                 LastVersion = versions[versions.Count - 1],
                 IsFlashPlatform = GetBool(node, "flash"),
                 IsGraphical = GetBool(node, "graphical"),
                 ExternalToolchain = GetAttribute(node, "external"),
+                ExternalToolchainCapture = GetList(node, "external-capture"),
+                DefaultProjectFile = GetList(node, "default-project"),
                 HaxeTarget = GetAttribute(node, "haxe-target"),
-                DebuggerSupported = GetDebuggerSupport(node),
+                DebuggerSupported = GetList(node, "debugger"),
                 RawData = node
             };
             platform.VersionNames = new string[platform.Versions.Count];
             for (int i = 0; i < platform.Versions.Count; i++)
                 platform.VersionNames[i] = platform.Versions[i].Value;
             return platform;
-        }
-
-        private static string[] GetDebuggerSupport(XmlNode node)
-        {
-            var debugger = GetAttribute(node, "debugger");
-            if (debugger == null) return null;
-            else return debugger.Split(',');
         }
 
         private static bool GetBool(XmlNode node, string attribute)
@@ -137,10 +132,10 @@ namespace PluginCore
             return null;
         }
 
-        private static string[] ParseTargets(XmlNode node)
+        private static string[] GetList(XmlNode node, string attribute)
         {
             // build targets, ie. html5, flash, android for openfl
-            var attr = node.Attributes["targets"];
+            var attr = node.Attributes[attribute];
             if (attr == null) return null;
             else return attr.Value.Split(',');
         }
@@ -216,6 +211,8 @@ namespace PluginCore
         public bool IsFlashPlatform;
         public bool IsGraphical;
         public string ExternalToolchain;
+        public string[] ExternalToolchainCapture;
+        public string[] DefaultProjectFile;
         public string HaxeTarget;
         public string[] DebuggerSupported;
         public XmlNode RawData;

@@ -1,4 +1,5 @@
-<platform name="Nme" targets="flash,windows,android" debugger="flash" external="haxelib">
+<platform name="Nme" targets="flash,windows,android" debugger="flash" 
+	external="haxelib" external-capture="windows,android" default-project="project.nmml,application.nmml">
 	<version value="1.0">
 		<command name="display" value="nme display &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig)"/>
 		<command name="build" value="nme build &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig) -Dfdb"/>

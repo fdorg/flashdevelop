@@ -23,7 +23,7 @@ namespace HaXeContext
             HaxeProject hxproj = project as HaxeProject;
             if (hxproj == null) return false;
             if (!hxproj.MovieOptions.HasPlatformSupport) return false;
-            return hxproj.MovieOptions.PlatformSupport.ExternalToolchain == "haxelib";
+            return hxproj.MovieOptions.PlatformSupport.ExternalToolchain != null;
         }
 
         /// <summary>
@@ -39,13 +39,13 @@ namespace HaXeContext
             HaxeProject hxproj = PluginBase.CurrentProject as HaxeProject;
             if (!HandleProject(hxproj)) return false;
 
-            var toolchain = hxproj.MovieOptions.PlatformSupport.ExternalToolchain;
+            var platform = hxproj.MovieOptions.PlatformSupport;
+            var toolchain = platform.ExternalToolchain;
             var exe = GetExecutable(toolchain);
             if (exe == null) return false;
 
             string args = GetCommand(hxproj, "run");
             if (args == null) return false;
-            else if (toolchain == "cmd") args = "/c " + args;
 
             string config = hxproj.TargetBuild;
             if (String.IsNullOrEmpty(config)) config = "flash";
@@ -65,7 +65,7 @@ namespace HaXeContext
                 }
             }
 
-            TraceManager.Add(exe + " " + args);
+            TraceManager.Add(toolchain + " " + args);
 
             if (hxproj.TraceEnabled && hxproj.EnableInteractiveDebugger) // debugger
             {
@@ -79,21 +79,30 @@ namespace HaXeContext
                 EventManager.DispatchEvent(hxproj, de);
             }
 
-            if (config.StartsWith("flash") || config.StartsWith("html5")) // no capture
-            {
-                var infos = new ProcessStartInfo(exe, args);
-                infos.WorkingDirectory = hxproj.Directory;
-                infos.WindowStyle = ProcessWindowStyle.Hidden;
-                Process.Start(infos);
-            }
-            else
+            exe = Environment.ExpandEnvironmentVariables(exe);
+            if (ShouldCapture(platform.ExternalToolchainCapture, config))
             {
                 string oldWD = PluginBase.MainForm.WorkingDirectory;
                 PluginBase.MainForm.WorkingDirectory = hxproj.Directory;
                 PluginBase.MainForm.CallCommand("RunProcessCaptured", exe + ";" + args);
                 PluginBase.MainForm.WorkingDirectory = oldWD;
             }
+            else
+            {
+                var infos = new ProcessStartInfo(exe, args);
+                infos.WorkingDirectory = hxproj.Directory;
+                infos.WindowStyle = ProcessWindowStyle.Hidden;
+                Process.Start(infos);
+            }
             return true;
+        }
+
+        private static bool ShouldCapture(string[] targets, string config)
+        {
+            if (targets == null) return false;
+            foreach (string target in targets)
+                if (config.StartsWith(target)) return true;
+            return false;
         }
 
         /// <summary>
@@ -144,7 +153,8 @@ namespace HaXeContext
 
             string args = GetCommand(hxproj, "clean");
             if (args == null) return false;
-            else if (toolchain == "cmd") args = "/c " + args;
+
+            TraceManager.Add(toolchain + " " + args);
 
             ProcessStartInfo pi = new ProcessStartInfo();
             pi.FileName = Environment.ExpandEnvironmentVariables(exe);
@@ -253,7 +263,6 @@ namespace HaXeContext
                 TraceManager.Add(msg, -3);
                 return;
             }
-            else if (toolchain == "cmd") args = "/c " + args;
 
             string config = hxproj.TargetBuild;
             if (String.IsNullOrEmpty(config)) config = "flash";
@@ -288,7 +297,7 @@ namespace HaXeContext
             else
             {
                 hxml = hxml.Replace("--macro keep", "#--macro keep"); // TODO remove this hack
-
+                hxml = Regex.Replace(hxml, "(-[a-z0-9-]+)\\s*[\r\n]+([^-])", "$1 $2", RegexOptions.IgnoreCase);
                 hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
 
                 args = GetCommand(hxproj, "build", false);
@@ -300,13 +309,16 @@ namespace HaXeContext
                 else
                 {
                     if (toolchain == "haxelib") hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" " + args;
-                    else if (toolchain == "cmd") hxproj.PreBuildEvent = "cmd /c " + args;
+                    else if (toolchain == "cmd") hxproj.PreBuildEvent = "cmd " + args;
                     else hxproj.PreBuildEvent = "\"" + exe + "\" " + args;
                 }
 
                 hxproj.OutputType = OutputType.CustomBuild;
-                hxproj.TestMovieBehavior = TestMovieBehavior.Custom;
-                hxproj.TestMovieCommand = "";
+                if (hxproj.TestMovieBehavior == TestMovieBehavior.Default)
+                {
+                    hxproj.TestMovieBehavior = TestMovieBehavior.Custom;
+                    hxproj.TestMovieCommand = "";
+                }
                 hxproj.Save();
             }
         }
@@ -367,7 +379,10 @@ namespace HaXeContext
             }
             if (version.Commands.ContainsKey(name))
             {
-                var cmd = "run " + version.Commands[name].Value;
+                var cmd = version.Commands[name].Value;
+                if (platform.ExternalToolchain == "haxelib") cmd = "run " + cmd;
+                else if (platform.ExternalToolchain == "cmd") cmd = "/c " + cmd;
+                
                 if (!processArguments) return cmd;
                 else return PluginBase.MainForm.ProcessArgString(cmd);
             }
