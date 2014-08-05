@@ -16,6 +16,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using PluginCore.Localization;
 using ProjectManager.Projects;
 using System.Collections;
+using ProjectManager.Projects.AS3;
 
 namespace AirProperties
 {
@@ -47,6 +48,7 @@ namespace AirProperties
         private List<PropertyManager.AirFileType> _fileTypes = new List<PropertyManager.AirFileType>();
         private readonly List<PropertyManager.AirApplicationIconField> _iconFields;
         private List<PropertyManager.AirExtension> _extensions = new List<PropertyManager.AirExtension>();
+        private List<string> _removedExtensions = new List<string>();
 
         // Android extra
         private List<PropertyManager.AndroidPermission> _androidPermissions;
@@ -202,6 +204,9 @@ namespace AirProperties
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.CPU"), "cpu"));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.GPU"), "gpu"));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.Direct"), "direct"));
+            SoftKeyboardField.Items.Add(new ListItem(String.Empty, String.Empty));
+            SoftKeyboardField.Items.Add(new ListItem("None", "none"));
+            SoftKeyboardField.Items.Add(new ListItem("Pan", "pan"));
             OpenIconFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
             OpenPropertiesFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
             AndroidManifestAdditionsField.SelectionTabs = new int[] { 25, 50, 75, 100, 125, 150, 175, 200 };
@@ -445,12 +450,16 @@ namespace AirProperties
             else
             {
                 IPhoneBasicSettingsPanel.Controls.Remove(IPhoneBackgroundBehaviorGroup);
+                IPhoneBasicSettingsPanel.Controls.Remove(MinimumiOsVersionLabel);
+                IPhoneBasicSettingsPanel.Controls.Remove(MinimumiOsVersionField);
             }
             if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V32)
             {
                 SupportedLanguagesLabel.Visible = false;
                 SupportedLanguagesField.Visible = false;
                 SupportedLanguagesButton.Visible = false;
+                NonWindowedPlatformsTabPage.Controls.Remove(DepthStencilLabel);
+                NonWindowedPlatformsTabPage.Controls.Remove(DepthStencilField);
             }
             if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
@@ -719,7 +728,7 @@ namespace AirProperties
                         IPhoneInfoAdditionsField.Text = PropertyManager.GetProperty("iPhone/InfoAdditions");
 
                         // On older AIR versions adding your own entitlements was not allowed and you had to do it separatedly, which one? the one that added push support?
-                        IPhoneEntitlementsField.Text = PropertyManager.GetProperty("iPhone/Entitlements"); ;
+                        IPhoneEntitlementsField.Text = PropertyManager.GetProperty("iPhone/Entitlements");
                     }
                     if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
                     {
@@ -730,10 +739,12 @@ namespace AirProperties
                     if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V25)
                     {
                         PropertyManager.GetProperty("iPhone/requestedDisplayResolution", IPhoneResolutionCombo, 0);
+                        PropertyManager.GetProperty("initialWindow/softKeyboardBehavior", SoftKeyboardField, 0);
                     }
                     if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V32)
                     {
                         PropertyManager.GetProperty("supportedLanguages", SupportedLanguagesField);
+                        PropertyManager.GetProperty("initialWindow/depthAndStencil", DepthStencilField);
                     }
                     if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V35)
                     {
@@ -913,6 +924,16 @@ namespace AirProperties
                         }
                     }
 
+                    foreach (var extension in _removedExtensions)
+                    {
+                        var asset = project.GetAsset(extension);
+                        if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
+                        {
+                            project.SetLibraryAsset(extension, false);
+                            refreshProject = true;
+                        }
+                    }
+
                     if (refreshProject) project.Save();
                 }
                 // Mobile Additions tab
@@ -929,10 +950,12 @@ namespace AirProperties
                 if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V25)
                 {
                     PropertyManager.SetProperty("iPhone/requestedDisplayResolution", IPhoneResolutionCombo);
+                    PropertyManager.SetProperty("initialWindow/softKeyboardBehavior", SoftKeyboardField);
                 }
                 if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V32)
                 {
                     PropertyManager.SetProperty("supportedLanguages", SupportedLanguagesField);
+                    PropertyManager.SetProperty("initialWindow/depthAndStencil", DepthStencilField);
                 }
                 if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V35)
                 {
@@ -1245,7 +1268,7 @@ namespace AirProperties
             {
                
                 ExtensionRemoveButton.Enabled = true;
-                ExtensionIdField.Enabled = true;
+                ExtensionIdField.Enabled = string.IsNullOrEmpty(selectedExtension.Path);
                 ExtensionIdField.Text = selectedExtension.ExtensionId;
             }
             else
@@ -1269,6 +1292,11 @@ namespace AirProperties
                                          IPhonePrerrenderedIconCheck);
             WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIStatusBarStyle") as string,
                                          IPhoneStatusBarStyleCombo, 0);
+
+            object minimumVersion;
+            if (iPhoneAdditions.TryGetValue("MinimumOSVersion", out minimumVersion))
+                MinimumiOsVersionField.Text = minimumVersion.ToString();
+
         }
 
         private void FilliPhoneEntitlementsFields()
@@ -1281,12 +1309,25 @@ namespace AirProperties
 
         private void FillAndroidManifestFields()
         {
+            MinimumAndroidOsField.Text = androidManifest.UsesSdk == null || androidManifest.UsesSdk.TargetSdkVersion <= 0
+                                             ? string.Empty : androidManifest.UsesSdk.TargetSdkVersion.ToString();
+
             for (int i = 0, count = AndroidUserPermissionsList.Items.Count; i < count; i++)
             {
                 AndroidUserPermissionsList.SetItemChecked(i,
                                                           androidManifest.UsesPermissions.ContainsName(
                                                               (string) AndroidUserPermissionsList.Items[i]));
             }
+        }
+
+        private static byte[] UnzipFile(ZipFile zfile, ZipEntry entry)
+        {
+            Stream stream = zfile.GetInputStream(entry);
+            byte[] data = new byte[entry.Size];
+            int length = stream.Read(data, 0, (int)entry.Size);
+            if (length != entry.Size)
+                throw new Exception("Corrupted archive");
+            return data;
         }
 
         #region Event Handlers
@@ -1482,6 +1523,9 @@ namespace AirProperties
             {
                 _extensions.Remove(selectedExtension);
                 ExtensionsListView.Items.RemoveAt(ExtensionsListView.SelectedIndices[0]);
+
+                if (!string.IsNullOrEmpty(selectedExtension.Path) && !_removedExtensions.Contains(selectedExtension.Path))
+                    _removedExtensions.Add(selectedExtension.Path);
             }
         }
 
@@ -1511,6 +1555,9 @@ namespace AirProperties
             }
             else
             {
+                if (ValidationErrorProvider.GetError(MinimumAndroidOsField) != string.Empty)
+                    return;
+
                 AndroidManifestAdditionsField_Validating(AndroidManifestAdditionsField, null);
 
                 AndroidAdvancedSettingsPanel.Visible = true;
@@ -1609,6 +1656,164 @@ namespace AirProperties
                         IPhoneExternalSWFsField.Text = externalsFile.Replace('\\', '/');
                     }
                 }
+            }
+        }
+
+        private void ExtensionBrowseButton_Click(object sender, EventArgs e)
+        {
+            using (var extensionBrowser = new OpenFileDialog())
+            {
+                extensionBrowser.CheckFileExists = true;
+                extensionBrowser.Filter = "ANE files (*.ane)|*.ane";
+                extensionBrowser.InitialDirectory = _propertiesFilePath;
+
+                if (extensionBrowser.ShowDialog(this) == DialogResult.OK)
+                {
+                    ZipFile zFile;
+                    try
+                    {
+                        zFile = new ZipFile(extensionBrowser.FileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Could not load ANE file: " + ex.Message, "Error", MessageBoxButtons.OK,
+                                        MessageBoxIcon.Exclamation);
+                        return;
+                    }
+                    var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
+
+                    if (entry == null)
+                    {
+                        MessageBox.Show("ANE descriptor file not found.", "Invalid ANE", MessageBoxButtons.OK,
+                                        MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    byte[] buffer = UnzipFile(zFile, entry);
+
+                    string extensionId = null;
+                    using (var stream = new MemoryStream(buffer))
+                    {
+                        using (var reader = XmlReader.Create(stream))
+                        {
+                            reader.MoveToContent();
+
+                            while (reader.Read())
+                            {
+                                if (reader.NodeType != XmlNodeType.Element) continue;
+
+                                if (reader.Name == "id")
+                                {
+                                    extensionId = reader.ReadInnerXml();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (extensionId == null)
+                    {
+                        MessageBox.Show("Extension ID could not be retrieved.", "Attention", MessageBoxButtons.OK,
+                                        MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    PropertyManager.AirExtension extension = null;
+
+                    // We look for the extension in case it is already added, and modify its path, maybe FD is missing the external library entry and the user
+                    //wants to add it.
+                    foreach (var existingExtension in _extensions)
+                    {
+                        if (existingExtension.ExtensionId == extensionId) extension = existingExtension;
+                        break;
+                    }
+                    if (extension == null)
+                    {
+                        extension = new PropertyManager.AirExtension() { ExtensionId = extensionId, IsValid = true };
+                        _extensions.Add(extension);
+                        //I don't validation and selection is needed in this case
+                        var extensionListItem = new ListViewItem(extension.ExtensionId);
+                        ExtensionsListView.Items.Add(extensionListItem);
+                    }
+                    extension.Path = extensionBrowser.FileName;
+                }
+            }
+        }
+
+        private void RenderModeField_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (DepthStencilField.Parent == null) return;
+
+            DepthStencilField.Enabled = ((ListItem)RenderModeField.SelectedItem).Value == "direct";
+        }
+
+        private void AppPropertiesTabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (AppPropertiesTabControl.SelectedTab == ExtensionsTabPage && _isPropertiesLoaded)
+            {
+                bool reloadSelected = false;
+                foreach (PropertyManager.AirExtension extension in _extensions)
+                {
+                    if (extension.IsValid && string.IsNullOrEmpty(extension.Path))
+                    {
+                        var project = PluginCore.PluginBase.CurrentProject as ProjectManager.Projects.Project;
+                        foreach (var externalPath in (project.CompilerOptions as MxmlcOptions).ExternalLibraryPaths)
+                        {
+                            if (Path.GetExtension(externalPath).ToUpperInvariant() == ".ANE")
+                            {
+
+                                string absolutePath = project.GetAbsolutePath(externalPath);
+                                ZipFile zFile;
+                                try
+                                {
+                                    zFile = new ZipFile(absolutePath);
+                                }
+                                catch (Exception ex)
+                                {
+                                    continue;
+                                }
+                                var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
+
+                                if (entry == null)
+                                {
+                                    continue;
+                                }
+
+                                byte[] buffer = UnzipFile(zFile, entry);
+
+                                string extensionId = null;
+                                using (var stream = new MemoryStream(buffer))
+                                {
+                                    using (var reader = XmlReader.Create(stream))
+                                    {
+                                        reader.MoveToContent();
+
+                                        while (reader.Read())
+                                        {
+                                            if (reader.NodeType != XmlNodeType.Element) continue;
+
+                                            if (reader.Name == "id")
+                                            {
+                                                extensionId = reader.ReadInnerXml();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (extensionId == extension.ExtensionId)
+                                {
+                                    reloadSelected = true;
+                                    extension.Path = absolutePath;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (reloadSelected) // In this case, does selecting the first item by default really improve UX in any significant way?
+                    LoadSelectedExtension();
+
             }
         }
 
@@ -2156,6 +2361,7 @@ namespace AirProperties
                 iPhoneAdditions["UIApplicationExitsOnSuspend"] = IPhoneExitsOnSuspendCheck.CheckState == CheckState.Indeterminate ? null : (bool?)IPhoneExitsOnSuspendCheck.Checked;
                 iPhoneAdditions["UIPrerenderedIcon"] = IPhonePrerrenderedIconCheck.CheckState == CheckState.Indeterminate ? null : (bool?)IPhonePrerrenderedIconCheck.Checked;
                 iPhoneAdditions["UIStatusBarStyle"] = IPhoneStatusBarStyleCombo.SelectedIndex == 0 ? null : ((ListItem)IPhoneStatusBarStyleCombo.SelectedItem).Value;
+                iPhoneAdditions["MinimumOSVersion"] = MinimumiOsVersionField.Text == string.Empty ? null : MinimumiOsVersionField.Text;
 
                 IPhoneInfoAdditionsField.Text = iPhoneAdditions.GetPlistXml();
             }
@@ -2188,7 +2394,7 @@ namespace AirProperties
                     if (AndroidUserPermissionsList.CheckedItems.Contains(item))
                     {
                         if (!androidManifest.UsesPermissions.ContainsName(item))
-                            androidManifest.UsesPermissions.Add(new AndroidManifestManager.UsesPermission() { Name = item });
+                            androidManifest.UsesPermissions.Add(new AndroidManifestManager.UsesPermissionElement() { Name = item });
                     }
                     else if (androidManifest.UsesPermissions.ContainsName(item))
                     {
@@ -2196,101 +2402,74 @@ namespace AirProperties
                     }
                 }
 
+                if (MinimumAndroidOsField.Text == string.Empty)
+                    androidManifest.UsesSdk = null;
+                else
+                {
+                    var usesSdk = androidManifest.UsesSdk ?? new AndroidManifestManager.UsesSdkElement();
+                    usesSdk.TargetSdkVersion = int.Parse(MinimumAndroidOsField.Text);
+                    androidManifest.UsesSdk = usesSdk;
+                }
+
                 AndroidManifestAdditionsField.Text = androidManifest.GetManifestXml();
             }
         }
 
-        #endregion
-
-        private void ExtensionBrowseButton_Click(object sender, EventArgs e)
+        private void MinimumiOsVersionField_Validating(object sender, CancelEventArgs e)
         {
-            using (var extensionBrowser = new OpenFileDialog())
+            if (MinimumiOsVersionField.Text != string.Empty)
             {
-                extensionBrowser.CheckFileExists = true;
-                extensionBrowser.Filter = "ANE files (*.ane)|*.ane";
-                extensionBrowser.InitialDirectory = _propertiesFilePath;
-
-                if (extensionBrowser.ShowDialog(this) == DialogResult.OK)
+                try
                 {
-                    ZipFile zFile;
-                    try
+                    var version = new Version(MinimumiOsVersionField.Text);
+                    if (version.Major > 4 || version.Minor > 2)
+                        this.ValidationErrorProvider.SetError(MinimumiOsVersionField, string.Empty);
+                    else
                     {
-                        zFile = new ZipFile(extensionBrowser.FileName);
+                        e.Cancel = true;
+                        // I think it's actually 4.2, but people should nowadays target 4.3 as a minimum
+                        this.ValidationErrorProvider.SetError(MinimumiOsVersionField, "Minimum AIR supported version is 4.3");
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Could not load ANE file: " + ex.Message, "Error", MessageBoxButtons.OK,
-                                        MessageBoxIcon.Exclamation);
-                        return;
-                    }
-                    var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
-
-                    if (entry == null)
-                    {
-                        MessageBox.Show("ANE descriptor file not found.", "Invalid ANE", MessageBoxButtons.OK,
-                                        MessageBoxIcon.Exclamation);
-                        return;
-                    }
-
-                    byte[] buffer = UnzipFile(zFile, entry);
-
-                    string extensionId = null;
-                    using (var stream = new MemoryStream(buffer))
-                    {
-                        using (var reader = XmlReader.Create(stream))
-                        {
-                            reader.MoveToContent();
-
-                            while (reader.Read())
-                            {
-                                if (reader.NodeType != XmlNodeType.Element) continue;
-
-                                if (reader.Name == "id")
-                                {
-                                    extensionId = reader.ReadInnerXml();
-                                }
-                            }
-                        }
-                    }
-
-                    if (extensionId == null)
-                    {
-                        MessageBox.Show("Extension ID could not be retrieved.", "Attention", MessageBoxButtons.OK,
-                                        MessageBoxIcon.Exclamation);
-                        return;
-                    }
-
-                    PropertyManager.AirExtension extension = null;
-                    
-                    // We look for the extension in case it is already added, and modify its path, maybe FD is missing the external library entry and the user
-                    //wants to add it.
-                    foreach (var existingExtension in _extensions)
-                    {
-                        if (existingExtension.ExtensionId == extensionId) extension = existingExtension;
-                        break;
-                    }
-                    if (extension == null)
-                    {
-                        extension = new PropertyManager.AirExtension() {ExtensionId = extensionId, IsValid = true};
-                        _extensions.Add(extension);
-                        //I don't validation and selection is needed in this case
-                        var extensionListItem = new ListViewItem(extension.ExtensionId);
-                        ExtensionsListView.Items.Add(extensionListItem);
-                    }
-                    extension.Path = extensionBrowser.FileName;
                 }
+                catch
+                {
+                    e.Cancel = true;
+                    this.ValidationErrorProvider.SetError(MinimumiOsVersionField, "Invalid version value");
+                }
+
+            }
+            else
+            {
+                this.ValidationErrorProvider.SetError(MinimumiOsVersionField, string.Empty);
             }
         }
 
-        private static byte[] UnzipFile(ZipFile zfile, ZipEntry entry)
+        private void MinimumAndroidOsField_Validating(object sender, CancelEventArgs e)
         {
-            Stream stream = zfile.GetInputStream(entry);
-            byte[] data = new byte[entry.Size];
-            int length = stream.Read(data, 0, (int)entry.Size);
-            if (length != entry.Size)
-                throw new Exception("Corrupted archive");
-            return data;
+            int osVersion;
+            if (MinimumAndroidOsField.Text == string.Empty)
+            {
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
+
+                return;
+            }
+            if (!int.TryParse(MinimumAndroidOsField.Text, out osVersion))
+            {
+                e.Cancel = true;
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, "Invalid version value");
+            }
+            else if (osVersion < 8) // IMHO, it should be 9, as 8 nowadays may give some problems
+            {
+                e.Cancel = true;
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, "Minimum AIR supported version is 8");
+            }
+            else
+            {
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
+            }
         }
+
+        #endregion
 
     }
 
