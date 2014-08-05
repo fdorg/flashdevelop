@@ -359,6 +359,7 @@
             this.FileTypeIconField512 = new System.Windows.Forms.TextBox();
             this.FileTypeIconButton512 = new System.Windows.Forms.Button();
             this.ExtensionsTabPage = new System.Windows.Forms.TabPage();
+            this.ExtensionBrowseButton = new System.Windows.Forms.Button();
             this.ExtensionIdField = new System.Windows.Forms.TextBox();
             this.ExtensionIdLabel = new System.Windows.Forms.Label();
             this.ExtensionRemoveButton = new System.Windows.Forms.Button();
@@ -419,7 +420,14 @@
             this.OpenIconFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.OpenPropertiesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ListViewStateImageList = new System.Windows.Forms.ImageList(this.components);
-            this.ExtensionBrowseButton = new System.Windows.Forms.Button();
+            this.DepthStencilLabel = new System.Windows.Forms.Label();
+            this.DepthStencilField = new System.Windows.Forms.CheckBox();
+            this.SoftKeyboardLabel = new System.Windows.Forms.Label();
+            this.SoftKeyboardField = new System.Windows.Forms.ComboBox();
+            this.MinimumAndroidOsLabel = new System.Windows.Forms.Label();
+            this.MinimumAndroidOsField = new System.Windows.Forms.ComboBox();
+            this.MinimumiOsVersionLabel = new System.Windows.Forms.Label();
+            this.MinimumiOsVersionField = new System.Windows.Forms.ComboBox();
             this.IPhoneBGModesCombo = new AirProperties.Controls.CheckedComboBox();
             this.IPhoneDeviceCombo = new AirProperties.Controls.CheckedComboBox();
             this.TitlePanel.SuspendLayout();
@@ -547,6 +555,7 @@
             this.AppPropertiesTabControl.SelectedIndex = 0;
             this.AppPropertiesTabControl.Size = new System.Drawing.Size(557, 339);
             this.AppPropertiesTabControl.TabIndex = 1;
+            this.AppPropertiesTabControl.SelectedIndexChanged += new System.EventHandler(this.AppPropertiesTabControl_SelectedIndexChanged);
             // 
             // DetailsTabPage
             // 
@@ -1566,6 +1575,8 @@
             // 
             // NonWindowedPlatformsTabPage
             // 
+            this.NonWindowedPlatformsTabPage.Controls.Add(this.DepthStencilLabel);
+            this.NonWindowedPlatformsTabPage.Controls.Add(this.DepthStencilField);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.RenderModeLabel);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.RenderModeField);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.ApectRatioLabel);
@@ -1574,6 +1585,8 @@
             this.NonWindowedPlatformsTabPage.Controls.Add(this.AutoOrientsLabel);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.FullScreenField);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.AutoOrientsField);
+            this.NonWindowedPlatformsTabPage.Controls.Add(this.SoftKeyboardLabel);
+            this.NonWindowedPlatformsTabPage.Controls.Add(this.SoftKeyboardField);
             this.NonWindowedPlatformsTabPage.Location = new System.Drawing.Point(4, 22);
             this.NonWindowedPlatformsTabPage.Name = "NonWindowedPlatformsTabPage";
             this.NonWindowedPlatformsTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -1596,11 +1609,12 @@
             // 
             this.RenderModeField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RenderModeField.FormattingEnabled = true;
-            this.RenderModeField.Location = new System.Drawing.Point(82, 35);
+            this.RenderModeField.Location = new System.Drawing.Point(84, 35);
             this.RenderModeField.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.RenderModeField.Name = "RenderModeField";
             this.RenderModeField.Size = new System.Drawing.Size(98, 21);
             this.RenderModeField.TabIndex = 3;
+            this.RenderModeField.SelectedIndexChanged += new System.EventHandler(this.RenderModeField_SelectedIndexChanged);
             // 
             // ApectRatioLabel
             // 
@@ -1616,17 +1630,17 @@
             // 
             this.FullscreenLabel.AutoSize = true;
             this.FullscreenLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.FullscreenLabel.Location = new System.Drawing.Point(4, 86);
+            this.FullscreenLabel.Location = new System.Drawing.Point(4, 110);
             this.FullscreenLabel.Name = "FullscreenLabel";
             this.FullscreenLabel.Size = new System.Drawing.Size(55, 13);
-            this.FullscreenLabel.TabIndex = 6;
+            this.FullscreenLabel.TabIndex = 8;
             this.FullscreenLabel.Text = "Fullscreen";
             // 
             // AspectRatioField
             // 
             this.AspectRatioField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AspectRatioField.FormattingEnabled = true;
-            this.AspectRatioField.Location = new System.Drawing.Point(82, 10);
+            this.AspectRatioField.Location = new System.Drawing.Point(84, 10);
             this.AspectRatioField.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.AspectRatioField.Name = "AspectRatioField";
             this.AspectRatioField.Size = new System.Drawing.Size(98, 21);
@@ -1636,20 +1650,20 @@
             // 
             this.AutoOrientsLabel.AutoSize = true;
             this.AutoOrientsLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.AutoOrientsLabel.Location = new System.Drawing.Point(4, 64);
+            this.AutoOrientsLabel.Location = new System.Drawing.Point(4, 88);
             this.AutoOrientsLabel.Name = "AutoOrientsLabel";
             this.AutoOrientsLabel.Size = new System.Drawing.Size(65, 13);
-            this.AutoOrientsLabel.TabIndex = 4;
+            this.AutoOrientsLabel.TabIndex = 6;
             this.AutoOrientsLabel.Text = "Auto Orients";
             // 
             // FullScreenField
             // 
             this.FullScreenField.AutoSize = true;
             this.FullScreenField.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.FullScreenField.Location = new System.Drawing.Point(82, 86);
+            this.FullScreenField.Location = new System.Drawing.Point(84, 110);
             this.FullScreenField.Name = "FullScreenField";
             this.FullScreenField.Size = new System.Drawing.Size(15, 14);
-            this.FullScreenField.TabIndex = 7;
+            this.FullScreenField.TabIndex = 9;
             this.FullScreenField.ThreeState = true;
             this.FullScreenField.UseVisualStyleBackColor = true;
             // 
@@ -1657,10 +1671,10 @@
             // 
             this.AutoOrientsField.AutoSize = true;
             this.AutoOrientsField.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.AutoOrientsField.Location = new System.Drawing.Point(82, 64);
+            this.AutoOrientsField.Location = new System.Drawing.Point(84, 88);
             this.AutoOrientsField.Name = "AutoOrientsField";
             this.AutoOrientsField.Size = new System.Drawing.Size(15, 14);
-            this.AutoOrientsField.TabIndex = 5;
+            this.AutoOrientsField.TabIndex = 7;
             this.AutoOrientsField.ThreeState = true;
             this.AutoOrientsField.UseVisualStyleBackColor = true;
             // 
@@ -2192,6 +2206,17 @@
             this.ExtensionsTabPage.Text = "Extensions";
             this.ExtensionsTabPage.UseVisualStyleBackColor = true;
             // 
+            // ExtensionBrowseButton
+            // 
+            this.ExtensionBrowseButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.ExtensionBrowseButton.Location = new System.Drawing.Point(456, 35);
+            this.ExtensionBrowseButton.Name = "ExtensionBrowseButton";
+            this.ExtensionBrowseButton.Size = new System.Drawing.Size(75, 23);
+            this.ExtensionBrowseButton.TabIndex = 1;
+            this.ExtensionBrowseButton.Text = "Browse";
+            this.ExtensionBrowseButton.UseVisualStyleBackColor = true;
+            this.ExtensionBrowseButton.Click += new System.EventHandler(this.ExtensionBrowseButton_Click);
+            // 
             // ExtensionIdField
             // 
             this.ValidationErrorProvider.SetIconPadding(this.ExtensionIdField, 2);
@@ -2297,13 +2322,15 @@
             this.AndroidManifestAdditionsButton.Location = new System.Drawing.Point(391, 225);
             this.AndroidManifestAdditionsButton.Name = "AndroidManifestAdditionsButton";
             this.AndroidManifestAdditionsButton.Size = new System.Drawing.Size(99, 23);
-            this.AndroidManifestAdditionsButton.TabIndex = 10;
+            this.AndroidManifestAdditionsButton.TabIndex = 1;
             this.AndroidManifestAdditionsButton.Text = "Advanced >>";
             this.AndroidManifestAdditionsButton.UseVisualStyleBackColor = true;
             this.AndroidManifestAdditionsButton.Click += new System.EventHandler(this.AndroidManifestAdditionsButton_Click);
             // 
             // AndroidBasicSettingsPanel
             // 
+            this.AndroidBasicSettingsPanel.Controls.Add(this.MinimumAndroidOsLabel);
+            this.AndroidBasicSettingsPanel.Controls.Add(this.MinimumAndroidOsField);
             this.AndroidBasicSettingsPanel.Controls.Add(this.AndroidColorDepthLabel);
             this.AndroidBasicSettingsPanel.Controls.Add(this.AndroidColorDepthCombo);
             this.AndroidBasicSettingsPanel.Controls.Add(this.AndroidPermissionsLabel);
@@ -2312,7 +2339,7 @@
             this.AndroidBasicSettingsPanel.Location = new System.Drawing.Point(3, 3);
             this.AndroidBasicSettingsPanel.Name = "AndroidBasicSettingsPanel";
             this.AndroidBasicSettingsPanel.Size = new System.Drawing.Size(499, 245);
-            this.AndroidBasicSettingsPanel.TabIndex = 11;
+            this.AndroidBasicSettingsPanel.TabIndex = 0;
             // 
             // AndroidColorDepthLabel
             // 
@@ -2320,7 +2347,7 @@
             this.AndroidColorDepthLabel.Location = new System.Drawing.Point(9, 7);
             this.AndroidColorDepthLabel.Name = "AndroidColorDepthLabel";
             this.AndroidColorDepthLabel.Size = new System.Drawing.Size(63, 13);
-            this.AndroidColorDepthLabel.TabIndex = 6;
+            this.AndroidColorDepthLabel.TabIndex = 0;
             this.AndroidColorDepthLabel.Text = "Color Depth";
             // 
             // AndroidColorDepthCombo
@@ -2330,7 +2357,7 @@
             this.AndroidColorDepthCombo.Location = new System.Drawing.Point(113, 4);
             this.AndroidColorDepthCombo.Name = "AndroidColorDepthCombo";
             this.AndroidColorDepthCombo.Size = new System.Drawing.Size(121, 21);
-            this.AndroidColorDepthCombo.TabIndex = 7;
+            this.AndroidColorDepthCombo.TabIndex = 1;
             // 
             // AndroidPermissionsLabel
             // 
@@ -2339,7 +2366,7 @@
             this.AndroidPermissionsLabel.Location = new System.Drawing.Point(9, 219);
             this.AndroidPermissionsLabel.Name = "AndroidPermissionsLabel";
             this.AndroidPermissionsLabel.Size = new System.Drawing.Size(373, 30);
-            this.AndroidPermissionsLabel.TabIndex = 9;
+            this.AndroidPermissionsLabel.TabIndex = 5;
             this.AndroidPermissionsLabel.Text = "Select a permission to see its description";
             // 
             // AndroidUserPermissionsList
@@ -2353,7 +2380,7 @@
             this.AndroidUserPermissionsList.Location = new System.Drawing.Point(12, 28);
             this.AndroidUserPermissionsList.Name = "AndroidUserPermissionsList";
             this.AndroidUserPermissionsList.Size = new System.Drawing.Size(475, 189);
-            this.AndroidUserPermissionsList.TabIndex = 8;
+            this.AndroidUserPermissionsList.TabIndex = 4;
             this.AndroidUserPermissionsList.SelectedIndexChanged += new System.EventHandler(this.AndroidUserPermissionsList_SelectedIndexChanged);
             // 
             // AndroidAdvancedSettingsPanel
@@ -2434,6 +2461,8 @@
             // 
             // IPhoneBasicSettingsPanel
             // 
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.MinimumiOsVersionLabel);
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.MinimumiOsVersionField);
             this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneOtherBehaviorGroup);
             this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneLookGroup);
             this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneBackgroundBehaviorGroup);
@@ -2826,16 +2855,99 @@
             this.ListViewStateImageList.TransparentColor = System.Drawing.Color.Transparent;
             this.ListViewStateImageList.Images.SetKeyName(0, "agt_action_success.png");
             // 
-            // ExtensionBrowseButton
+            // DepthStencilLabel
             // 
-            this.ExtensionBrowseButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.ExtensionBrowseButton.Location = new System.Drawing.Point(456, 35);
-            this.ExtensionBrowseButton.Name = "ExtensionBrowseButton";
-            this.ExtensionBrowseButton.Size = new System.Drawing.Size(75, 23);
-            this.ExtensionBrowseButton.TabIndex = 1;
-            this.ExtensionBrowseButton.Text = "Browse";
-            this.ExtensionBrowseButton.UseVisualStyleBackColor = true;
-            this.ExtensionBrowseButton.Click += new System.EventHandler(this.ExtensionBrowseButton_Click);
+            this.DepthStencilLabel.AutoSize = true;
+            this.DepthStencilLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DepthStencilLabel.Location = new System.Drawing.Point(4, 132);
+            this.DepthStencilLabel.Name = "DepthStencilLabel";
+            this.DepthStencilLabel.Size = new System.Drawing.Size(80, 13);
+            this.DepthStencilLabel.TabIndex = 10;
+            this.DepthStencilLabel.Text = "Depth && Stencil";
+            // 
+            // DepthStencilField
+            // 
+            this.DepthStencilField.AutoSize = true;
+            this.DepthStencilField.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DepthStencilField.Location = new System.Drawing.Point(84, 132);
+            this.DepthStencilField.Name = "DepthStencilField";
+            this.DepthStencilField.Size = new System.Drawing.Size(15, 14);
+            this.DepthStencilField.TabIndex = 11;
+            this.DepthStencilField.ThreeState = true;
+            this.DepthStencilField.UseVisualStyleBackColor = true;
+            // 
+            // SoftKeyboardLabel
+            // 
+            this.SoftKeyboardLabel.AutoSize = true;
+            this.SoftKeyboardLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.SoftKeyboardLabel.Location = new System.Drawing.Point(4, 62);
+            this.SoftKeyboardLabel.Name = "SoftKeyboardLabel";
+            this.SoftKeyboardLabel.Size = new System.Drawing.Size(74, 13);
+            this.SoftKeyboardLabel.TabIndex = 4;
+            this.SoftKeyboardLabel.Text = "Soft Keyboard";
+            // 
+            // SoftKeyboardField
+            // 
+            this.SoftKeyboardField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SoftKeyboardField.FormattingEnabled = true;
+            this.SoftKeyboardField.Location = new System.Drawing.Point(84, 59);
+            this.SoftKeyboardField.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.SoftKeyboardField.Name = "SoftKeyboardField";
+            this.SoftKeyboardField.Size = new System.Drawing.Size(98, 21);
+            this.SoftKeyboardField.TabIndex = 5;
+            // 
+            // MinimumAndroidOsLabel
+            // 
+            this.MinimumAndroidOsLabel.AutoSize = true;
+            this.MinimumAndroidOsLabel.Location = new System.Drawing.Point(262, 7);
+            this.MinimumAndroidOsLabel.Name = "MinimumAndroidOsLabel";
+            this.MinimumAndroidOsLabel.Size = new System.Drawing.Size(66, 13);
+            this.MinimumAndroidOsLabel.TabIndex = 2;
+            this.MinimumAndroidOsLabel.Text = "Minimum OS";
+            // 
+            // MinimumAndroidOsField
+            // 
+            this.MinimumAndroidOsField.FormattingEnabled = true;
+            this.MinimumAndroidOsField.Items.AddRange(new object[] {
+            "",
+            "8",
+            "9",
+            "14",
+            "16",
+            "17",
+            "18",
+            "19"});
+            this.MinimumAndroidOsField.Location = new System.Drawing.Point(366, 4);
+            this.MinimumAndroidOsField.Name = "MinimumAndroidOsField";
+            this.MinimumAndroidOsField.Size = new System.Drawing.Size(121, 21);
+            this.MinimumAndroidOsField.TabIndex = 3;
+            this.MinimumAndroidOsField.Validating += new System.ComponentModel.CancelEventHandler(this.MinimumAndroidOsField_Validating);
+            // 
+            // MinimumiOsVersionLabel
+            // 
+            this.MinimumiOsVersionLabel.AutoSize = true;
+            this.MinimumiOsVersionLabel.Location = new System.Drawing.Point(262, 7);
+            this.MinimumiOsVersionLabel.Name = "MinimumiOsVersionLabel";
+            this.MinimumiOsVersionLabel.Size = new System.Drawing.Size(66, 13);
+            this.MinimumiOsVersionLabel.TabIndex = 29;
+            this.MinimumiOsVersionLabel.Text = "Minimum OS";
+            // 
+            // MinimumiOsVersionField
+            // 
+            this.MinimumiOsVersionField.FormattingEnabled = true;
+            this.MinimumiOsVersionField.Items.AddRange(new object[] {
+            "",
+            "4.3",
+            "5.0",
+            "6.0",
+            "7.0",
+            "7.1",
+            "8.0"});
+            this.MinimumiOsVersionField.Location = new System.Drawing.Point(366, 4);
+            this.MinimumiOsVersionField.Name = "MinimumiOsVersionField";
+            this.MinimumiOsVersionField.Size = new System.Drawing.Size(121, 21);
+            this.MinimumiOsVersionField.TabIndex = 30;
+            this.MinimumiOsVersionField.Validating += new System.ComponentModel.CancelEventHandler(this.MinimumiOsVersionField_Validating);
             // 
             // IPhoneBGModesCombo
             // 
@@ -2995,6 +3107,14 @@
         private System.Windows.Forms.Button IPhoneForceCPUButton;
         private System.Windows.Forms.TextBox IPhoneForceCPUField;
         private System.Windows.Forms.Button ExtensionBrowseButton;
+        private System.Windows.Forms.Label DepthStencilLabel;
+        private System.Windows.Forms.CheckBox DepthStencilField;
+        private System.Windows.Forms.Label SoftKeyboardLabel;
+        private System.Windows.Forms.ComboBox SoftKeyboardField;
+        private System.Windows.Forms.Label MinimumAndroidOsLabel;
+        private System.Windows.Forms.ComboBox MinimumAndroidOsField;
+        private System.Windows.Forms.Label MinimumiOsVersionLabel;
+        private System.Windows.Forms.ComboBox MinimumiOsVersionField;
 
     }
 
