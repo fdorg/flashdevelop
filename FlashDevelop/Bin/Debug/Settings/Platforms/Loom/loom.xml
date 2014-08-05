@@ -1,3 +1,5 @@
 <platform name="Loom">
-	<version value="1.0" />
+  <versions>
+    <version value="1.0" />
+  </versions>
 </platform>

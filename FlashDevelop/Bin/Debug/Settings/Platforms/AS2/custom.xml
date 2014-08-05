@@ -1,3 +1,5 @@
 <platform name="Custom">
-	<version value="0.0" />
+  <versions>
+    <version value="0.0" />
+  </versions>
 </platform>

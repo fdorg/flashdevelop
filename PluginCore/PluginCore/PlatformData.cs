@@ -98,7 +98,17 @@ namespace PluginCore
         private static LanguagePlatform ParsePlatform(XmlNode node)
         {
             // parse platform file, ie. flashplayer.xml
-            var versions = ParseVersions(node);
+            List<PlatformVersion> versions = null;
+            Dictionary<string, PlatformCommand> defaultCommands = null;
+            foreach (XmlNode sub in node.ChildNodes)
+            {
+                switch (sub.Name)
+                {
+                    case "defaults": defaultCommands = ParseCommands(sub, null); break;
+                    case "versions": versions = ParseVersions(sub, defaultCommands); break;
+                }
+            }
+
             var platform = new LanguagePlatform
             {
                 Name = node.Attributes["name"].Value,
@@ -140,11 +150,11 @@ namespace PluginCore
             else return attr.Value.Split(',');
         }
 
-        private static List<PlatformVersion> ParseVersions(XmlNode language)
+        private static List<PlatformVersion> ParseVersions(XmlNode language, Dictionary<string, PlatformCommand> defaultCommands)
         {
             if (!language.HasChildNodes) return new List<PlatformVersion>
             {
-                new PlatformVersion { Value = "1.0" }
+                new PlatformVersion { Value = "1.0", Commands = defaultCommands }
             };
 
             var versions = new List<PlatformVersion>();
@@ -156,7 +166,7 @@ namespace PluginCore
                     {
                         Value = node.Attributes["value"].Value,
                         SwfVersion = ParseSwfVersion(node),
-                        Commands = ParseCommands(node),
+                        Commands = ParseCommands(node, defaultCommands),
                         RawData = node
                     });
                 }
@@ -164,10 +174,13 @@ namespace PluginCore
             return versions;
         }
 
-        private static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version)
+        private static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version, Dictionary<string, PlatformCommand> defaultCommands)
         {
             // custom display/build/run/clean commands, ie. for openfl
-            var commands = new Dictionary<string, PlatformCommand>();
+            var commands = defaultCommands == null 
+                ? new Dictionary<string, PlatformCommand>()
+                : new Dictionary<string, PlatformCommand>(defaultCommands);
+
             foreach (XmlNode node in version.ChildNodes)
             {
                 if (node.Name == "command")
