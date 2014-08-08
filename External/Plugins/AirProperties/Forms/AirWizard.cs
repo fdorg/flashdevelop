@@ -1268,7 +1268,8 @@ namespace AirProperties
             {
                
                 ExtensionRemoveButton.Enabled = true;
-                ExtensionIdField.Enabled = string.IsNullOrEmpty(selectedExtension.Path);
+                ExtensionIdField.Enabled = true;
+                ExtensionIdField.ReadOnly = !string.IsNullOrEmpty(selectedExtension.Path);
                 ExtensionIdField.Text = selectedExtension.ExtensionId;
             }
             else
@@ -1309,8 +1310,8 @@ namespace AirProperties
 
         private void FillAndroidManifestFields()
         {
-            MinimumAndroidOsField.Text = androidManifest.UsesSdk == null || androidManifest.UsesSdk.TargetSdkVersion <= 0
-                                             ? string.Empty : androidManifest.UsesSdk.TargetSdkVersion.ToString();
+            MinimumAndroidOsField.Text = androidManifest.UsesSdk == null || androidManifest.UsesSdk.MinSdkVersion <= 0
+                                             ? string.Empty : androidManifest.UsesSdk.MinSdkVersion.ToString();
 
             for (int i = 0, count = AndroidUserPermissionsList.Items.Count; i < count; i++)
             {
@@ -2407,7 +2408,7 @@ namespace AirProperties
                 else
                 {
                     var usesSdk = androidManifest.UsesSdk ?? new AndroidManifestManager.UsesSdkElement();
-                    usesSdk.TargetSdkVersion = int.Parse(MinimumAndroidOsField.Text);
+                    usesSdk.MinSdkVersion = int.Parse(MinimumAndroidOsField.Text);
                     androidManifest.UsesSdk = usesSdk;
                 }
 
