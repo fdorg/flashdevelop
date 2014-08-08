@@ -106,7 +106,7 @@ namespace AirProperties
             {
                 if (UsesSdk == null)
                 {
-                    backDoc.RemoveChild(usesSdkNode);
+                    backDoc.FirstChild.RemoveChild(usesSdkNode);
                     usesSdkNode = null;
 
                     return;
