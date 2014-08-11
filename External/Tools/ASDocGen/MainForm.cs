@@ -762,14 +762,14 @@ namespace ASDocGen
                 Object settings = ObjectSerializer.Deserialize(settingFile, this.appSettings);
                 this.appSettings = (Settings)settings;
             }
-            // Try to find asdoc path from: AppMan's Archive or FD/Tools/flexsdk/
+            // Try to find asdoc path from: AppMan's Apps or FD/Tools/flexsdk/
             if (String.IsNullOrEmpty(this.appSettings.asdocLocation))
             {
                 try
                 {
                     this.appSettings.asdocLocation = DetectSDKLocation();
                 }
-                catch { }
+                catch {}
             }
             if (!File.Exists(settingFile))
             {
@@ -777,13 +777,16 @@ namespace ASDocGen
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private string DetectSDKLocation()
         {
             String asdocPath = String.Empty;
             String asdocPath2 = String.Empty;
             String parentDir = Directory.GetParent(this.AppDir).FullName;
             String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            String appManDir = Path.Combine(userAppDir, @"FlashDevelop\Data\AppMan\Archive\flexsdk");
+            String appManDir = Path.Combine(userAppDir, @"FlashDevelop\Apps\flexsdk");
             if (Directory.Exists(appManDir))
             {
                 String[] versionDirs = Directory.GetDirectories(appManDir);
@@ -793,16 +796,15 @@ namespace ASDocGen
                     {
                         asdocPath = Path.Combine(versionDir, @"bin\asdoc.exe");
                         asdocPath2 = Path.Combine(versionDir, @"bin\asdoc.bat");
-                        if (File.Exists(asdocPath)) return asdocPath;
-                        if (File.Exists(asdocPath2)) return asdocPath2;
+                        if (File.Exists(asdocPath)) return Path.GetDirectoryName(asdocPath);
+                        if (File.Exists(asdocPath2)) return Path.GetDirectoryName(asdocPath2);
                     }
                 }
             }
-
             asdocPath = Path.Combine(parentDir, @"flexsdk\bin\asdoc.exe");
             asdocPath2 = Path.Combine(parentDir, @"flexsdk\bin\asdoc.bat");
-            if (File.Exists(asdocPath)) return Path.GetDirectoryName(Path.GetDirectoryName(asdocPath));
-            if (File.Exists(asdocPath2)) return Path.GetDirectoryName(Path.GetDirectoryName(asdocPath2));
+            if (File.Exists(asdocPath)) return Path.GetDirectoryName(asdocPath);
+            if (File.Exists(asdocPath2)) return Path.GetDirectoryName(asdocPath2);
             return "";
         }
 
