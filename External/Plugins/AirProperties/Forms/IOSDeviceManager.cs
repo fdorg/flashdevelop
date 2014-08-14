@@ -21,6 +21,7 @@ namespace AirProperties.Forms
 
             this.OKButton.Text = TextHelper.GetString("Label.Ok");
             this.CancelButton1.Text = TextHelper.GetString("Label.Cancel");
+            this.Text = TextHelper.GetString("Title.SelectIOSDevices");
 
             var iPadDevices = new DeviceClassification("iPad", "iPad", new[]
                 {

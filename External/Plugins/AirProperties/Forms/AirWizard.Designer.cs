@@ -176,6 +176,57 @@
         private System.Windows.Forms.RichTextBox IPhoneInfoAdditionsField;
         private System.Windows.Forms.Label IPhoneInfoAdditionsCDataLabel2;
         private System.Windows.Forms.Label IPhoneInfoAdditionsCDataLabel;
+        private System.Windows.Forms.CheckedListBox AndroidUserPermissionsList;
+        private System.Windows.Forms.ComboBox AndroidColorDepthCombo;
+        private System.Windows.Forms.Label AndroidColorDepthLabel;
+        private System.Windows.Forms.Button AndroidManifestAdditionsButton;
+        private System.Windows.Forms.Label AndroidPermissionsLabel;
+        private System.Windows.Forms.Button IPhoneInfoAdditionsButton;
+        private System.Windows.Forms.Label IPhoneEntitlementsCDataLabel2;
+        private System.Windows.Forms.Label IPhoneEntitlementsCDataLabel;
+        private System.Windows.Forms.Label IPhoneEntitlementsLabel;
+        private System.Windows.Forms.Label IPhoneInfoAdditionsLabel;
+        private System.Windows.Forms.RichTextBox IPhoneEntitlementsField;
+        private System.Windows.Forms.Button IPhoneExternalSWFsButton;
+        private System.Windows.Forms.TextBox IPhoneExternalSWFsField;
+        private System.Windows.Forms.Label IPhoneExternalSWFsLabel;
+        private System.Windows.Forms.ComboBox IPhonePushNotifcationsCombo;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox IPhoneStatusBarStyleCombo;
+        private System.Windows.Forms.Label IPhoneStatusBarStyleLabel;
+        private System.Windows.Forms.Label IPhonePrerrenderedIconLabel;
+        private System.Windows.Forms.Label IPhoneExitsOnSuspendLabel;
+        private AirProperties.Controls.CheckedComboBox IPhoneBGModesCombo;
+        private System.Windows.Forms.Label IPhoneBGModesLabel;
+        private System.Windows.Forms.Label IPhoneForceCPULabel;
+        private System.Windows.Forms.ComboBox IPhoneResolutionCombo;
+        private System.Windows.Forms.Label IPhoneResolutionLabel;
+        private AirProperties.Controls.CheckedComboBox IPhoneDeviceCombo;
+        private System.Windows.Forms.Label IPhoneDeviceLabel;
+        private System.Windows.Forms.Panel AndroidAdvancedSettingsPanel;
+        private System.Windows.Forms.Panel AndroidBasicSettingsPanel;
+        private System.Windows.Forms.Panel IPhoneBasicSettingsPanel;
+        private System.Windows.Forms.Panel IPhoneAdvancedSettingsPanel;
+        private System.Windows.Forms.GroupBox IPhoneOtherBehaviorGroup;
+        private System.Windows.Forms.GroupBox IPhoneLookGroup;
+        private System.Windows.Forms.GroupBox IPhoneBackgroundBehaviorGroup;
+        private System.Windows.Forms.GroupBox IPhoneDeviceBehaviorGroup;
+        private System.Windows.Forms.ComboBox DesktopResolutionCombo;
+        private System.Windows.Forms.Label DesktopResolutionLabel;
+        private System.Windows.Forms.CheckBox IPhonePrerrenderedIconCheck;
+        private System.Windows.Forms.CheckBox IPhoneExitsOnSuspendCheck;
+        private System.Windows.Forms.Button IPhoneResolutionExcludeButton;
+        private System.Windows.Forms.Button IPhoneForceCPUButton;
+        private System.Windows.Forms.TextBox IPhoneForceCPUField;
+        private System.Windows.Forms.Button ExtensionBrowseButton;
+        private System.Windows.Forms.Label DepthStencilLabel;
+        private System.Windows.Forms.CheckBox DepthStencilField;
+        private System.Windows.Forms.Label SoftKeyboardLabel;
+        private System.Windows.Forms.ComboBox SoftKeyboardField;
+        private System.Windows.Forms.Label MinimumAndroidOsLabel;
+        private System.Windows.Forms.ComboBox MinimumAndroidOsField;
+        private System.Windows.Forms.Label MinimumiOsVersionLabel;
+        private System.Windows.Forms.ComboBox MinimumiOsVersionField;
 
         #region Windows Form Designer Generated Code
 
@@ -3063,58 +3114,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.CheckedListBox AndroidUserPermissionsList;
-        private System.Windows.Forms.ComboBox AndroidColorDepthCombo;
-        private System.Windows.Forms.Label AndroidColorDepthLabel;
-        private System.Windows.Forms.Button AndroidManifestAdditionsButton;
-        private System.Windows.Forms.Label AndroidPermissionsLabel;
-        private System.Windows.Forms.Button IPhoneInfoAdditionsButton;
-        private System.Windows.Forms.Label IPhoneEntitlementsCDataLabel2;
-        private System.Windows.Forms.Label IPhoneEntitlementsCDataLabel;
-        private System.Windows.Forms.Label IPhoneEntitlementsLabel;
-        private System.Windows.Forms.Label IPhoneInfoAdditionsLabel;
-        private System.Windows.Forms.RichTextBox IPhoneEntitlementsField;
-        private System.Windows.Forms.Button IPhoneExternalSWFsButton;
-        private System.Windows.Forms.TextBox IPhoneExternalSWFsField;
-        private System.Windows.Forms.Label IPhoneExternalSWFsLabel;
-        private System.Windows.Forms.ComboBox IPhonePushNotifcationsCombo;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ComboBox IPhoneStatusBarStyleCombo;
-        private System.Windows.Forms.Label IPhoneStatusBarStyleLabel;
-        private System.Windows.Forms.Label IPhonePrerrenderedIconLabel;
-        private System.Windows.Forms.Label IPhoneExitsOnSuspendLabel;
-        private AirProperties.Controls.CheckedComboBox IPhoneBGModesCombo;
-        private System.Windows.Forms.Label IPhoneBGModesLabel;
-        private System.Windows.Forms.Label IPhoneForceCPULabel;
-        private System.Windows.Forms.ComboBox IPhoneResolutionCombo;
-        private System.Windows.Forms.Label IPhoneResolutionLabel;
-        private AirProperties.Controls.CheckedComboBox IPhoneDeviceCombo;
-        private System.Windows.Forms.Label IPhoneDeviceLabel;
-        private System.Windows.Forms.Panel AndroidAdvancedSettingsPanel;
-        private System.Windows.Forms.Panel AndroidBasicSettingsPanel;
-        private System.Windows.Forms.Panel IPhoneBasicSettingsPanel;
-        private System.Windows.Forms.Panel IPhoneAdvancedSettingsPanel;
-        private System.Windows.Forms.GroupBox IPhoneOtherBehaviorGroup;
-        private System.Windows.Forms.GroupBox IPhoneLookGroup;
-        private System.Windows.Forms.GroupBox IPhoneBackgroundBehaviorGroup;
-        private System.Windows.Forms.GroupBox IPhoneDeviceBehaviorGroup;
-        private System.Windows.Forms.ComboBox DesktopResolutionCombo;
-        private System.Windows.Forms.Label DesktopResolutionLabel;
-        private System.Windows.Forms.CheckBox IPhonePrerrenderedIconCheck;
-        private System.Windows.Forms.CheckBox IPhoneExitsOnSuspendCheck;
-        private System.Windows.Forms.Button IPhoneResolutionExcludeButton;
-        private System.Windows.Forms.Button IPhoneForceCPUButton;
-        private System.Windows.Forms.TextBox IPhoneForceCPUField;
-        private System.Windows.Forms.Button ExtensionBrowseButton;
-        private System.Windows.Forms.Label DepthStencilLabel;
-        private System.Windows.Forms.CheckBox DepthStencilField;
-        private System.Windows.Forms.Label SoftKeyboardLabel;
-        private System.Windows.Forms.ComboBox SoftKeyboardField;
-        private System.Windows.Forms.Label MinimumAndroidOsLabel;
-        private System.Windows.Forms.ComboBox MinimumAndroidOsField;
-        private System.Windows.Forms.Label MinimumiOsVersionLabel;
-        private System.Windows.Forms.ComboBox MinimumiOsVersionField;
 
     }
 

@@ -17,6 +17,7 @@ using PluginCore.Localization;
 using ProjectManager.Projects;
 using System.Collections;
 using ProjectManager.Projects.AS3;
+using PluginCore.Managers;
 
 namespace AirProperties
 {
@@ -182,6 +183,29 @@ namespace AirProperties
             // Mobile additions
             this.AndroidManifestAdditionsTabPage.Text = TextHelper.GetString("Label.AndroidAdditions");
             this.IPhoneInfoAdditionsTabPage.Text = TextHelper.GetString("Label.IPhoneAdditions");
+            // New
+            this.DesktopResolutionLabel.Text = TextHelper.GetString("Label.Resolution");
+            this.AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            this.AndroidColorDepthLabel.Text = TextHelper.GetString("Label.ColorDepth");
+            this.AndroidPermissionsLabel.Text = TextHelper.GetString("Label.SelectPermForInfo");
+            this.AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            this.IPhoneInfoAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            this.IPhoneOtherBehaviorGroup.Text = TextHelper.GetString("Label.OtherBehavior");
+            this.label8.Text = TextHelper.GetString("Label.PushNotifications");
+            this.IPhoneExternalSWFsLabel.Text = TextHelper.GetString("Label.ExternalSWFs");
+            this.IPhoneLookGroup.Text = TextHelper.GetString("Label.LookAndFeel");
+            this.IPhonePrerrenderedIconLabel.Text = TextHelper.GetString("Label.PrerenderedIcon");
+            this.IPhoneStatusBarStyleLabel.Text = TextHelper.GetString("Label.StatusBarStyle");
+            this.IPhoneBackgroundBehaviorGroup.Text = TextHelper.GetString("Label.BackgroundBehavior");
+            this.IPhoneExitsOnSuspendLabel.Text = TextHelper.GetString("Label.ExitOnSuspend");
+            this.IPhoneDeviceBehaviorGroup.Text = TextHelper.GetString("Label.Display");
+            this.IPhoneResolutionExcludeButton.Text = TextHelper.GetString("Label.Exclude");
+            this.IPhoneResolutionLabel.Text = TextHelper.GetString("Label.Resolution");
+            this.IPhoneForceCPULabel.Text = TextHelper.GetString("Label.CPURendering");
+            this.IPhoneDeviceLabel.Text = TextHelper.GetString("Label.SupportedDevices");
+            this.IPhoneInfoAdditionsLabel.Text = TextHelper.GetString("Label.InfoAdditions");
+            this.IPhoneEntitlementsLabel.Text = TextHelper.GetString("Label.Entitlements");
+            this.ExtensionBrowseButton.Text = TextHelper.GetString("Label.Browse");
         }
 
         private void InitializeGraphics()
@@ -205,8 +229,8 @@ namespace AirProperties
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.GPU"), "gpu"));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.Direct"), "direct"));
             SoftKeyboardField.Items.Add(new ListItem(String.Empty, String.Empty));
-            SoftKeyboardField.Items.Add(new ListItem("None", "none"));
-            SoftKeyboardField.Items.Add(new ListItem("Pan", "pan"));
+            SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.None"), "none"));
+            SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.Pan"), "pan"));
             OpenIconFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
             OpenPropertiesFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
             AndroidManifestAdditionsField.SelectionTabs = new int[] { 25, 50, 75, 100, 125, 150, 175, 200 };
@@ -255,7 +279,6 @@ namespace AirProperties
                     new PropertyManager.AndroidPermission("android.permission.RECORD_AUDIO", "Allows an application to record audio"),
                     new PropertyManager.AndroidPermission("android.permission.ACCESS_NETWORK_STATE", "Allows applications to access information about networks. ACCESS_WIFI_STATE should be toggled together in order to use AIR's NetworkInfo APIs"),
                     new PropertyManager.AndroidPermission("android.permission.ACCESS_WIFI_STATE", "Allows applications to access information about Wi-Fi networks. Toggle ACCESS_NETWORK_STATE together in order to use AIR's NetworkInfo APIs"),
-
                     new PropertyManager.AndroidPermission("android.permission.ACCESS_CHECKIN_PROPERTIES", "Allows read/write access to the \"properties\" table in the checkin database, to change values that get uploaded."),
                     new PropertyManager.AndroidPermission("android.permission.ACCESS_LOCATION_EXTRA_COMMANDS", "Allows an application to access extra location provider commands"),
                     new PropertyManager.AndroidPermission("android.permission.ACCESS_MOCK_LOCATION", "Allows an application to create mock location providers for testing"),
@@ -426,8 +449,8 @@ namespace AirProperties
                 DesktopResolutionCombo.Items.AddRange(new object[]
                     {
                         new ListItem(string.Empty, string.Empty),
-                        new ListItem("Standard", "standard"),
-                        new ListItem("High", "high")
+                        new ListItem(TextHelper.GetString("DesktopResolution.Standard"), "standard"),
+                        new ListItem(TextHelper.GetString("DesktopResolution.High"), "high")
                     });
             }
             if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V33)
@@ -435,8 +458,8 @@ namespace AirProperties
                 IPhonePushNotifcationsCombo.Items.AddRange(new object[]
                     {
                         new ListItem(string.Empty, string.Empty),
-                        new ListItem("Development", "development"),
-                        new ListItem("Distribution", "distribution")
+                        new ListItem(TextHelper.GetString("IPhonePushNotifications.Development"), "development"),
+                        new ListItem(TextHelper.GetString("IPhonePushNotifications.Distribution"), "production")
                     });
             }
             else
@@ -445,7 +468,7 @@ namespace AirProperties
             }
             if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V32)
             {
-                AspectRatioField.Items.Add(new ListItem("Any", "any"));
+                AspectRatioField.Items.Add(new ListItem(TextHelper.GetString("AspectRatio.Any"), "any"));
             }
             else
             {
@@ -505,8 +528,8 @@ namespace AirProperties
                 IPhoneResolutionCombo.Items.AddRange(new object[]
                     {
                         new ListItem(string.Empty, string.Empty),
-                        new ListItem("Standard", "standard"),
-                        new ListItem("High", "high")
+                        new ListItem(TextHelper.GetString("IPhoneResolution.Standard"), "standard"),
+                        new ListItem(TextHelper.GetString("IPhoneResolution.High"), "high")
                     });
                 IPhoneDeviceCombo.Items.AddRange(new object[]
                     {
@@ -515,8 +538,8 @@ namespace AirProperties
                     });
                 IPhoneBGModesCombo.Items.AddRange(new object[]
                     {
-                        new ListItem("Location", "location"),
-                        new ListItem("Audio", "audio")
+                        new ListItem(TextHelper.GetString("IPhoneBGMode.Location"), "location"),
+                        new ListItem(TextHelper.GetString("IPhoneBGMode.Audio"), "audio")
                     });
                 IPhoneStatusBarStyleCombo.Items.AddRange(new object[]
                     {
@@ -1552,7 +1575,8 @@ namespace AirProperties
                 FillAndroidManifestFields();
                 AndroidBasicSettingsPanel.Visible = true;
                 AndroidAdvancedSettingsPanel.Visible = false;
-                AndroidManifestAdditionsButton.Text = "Advanced >>";
+                AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+
             }
             else
             {
@@ -1563,7 +1587,7 @@ namespace AirProperties
 
                 AndroidAdvancedSettingsPanel.Visible = true;
                 AndroidBasicSettingsPanel.Visible = false;
-                AndroidManifestAdditionsButton.Text = "<< Basic";
+                AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Basic");
             }
         }
 
@@ -1575,7 +1599,7 @@ namespace AirProperties
             }
             else
             {
-                AndroidPermissionsLabel.Text = "Select a permission to see its description";
+                AndroidPermissionsLabel.Text = TextHelper.GetString("Label.SelectPermForInfo");
             }
         }
 
@@ -1590,7 +1614,7 @@ namespace AirProperties
                 FilliPhoneEntitlementsFields();
                 IPhoneBasicSettingsPanel.Visible = true;
                 IPhoneAdvancedSettingsPanel.Visible = false;
-                IPhoneInfoAdditionsButton.Text = "Advanced >>";
+                IPhoneInfoAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
             }
             else
             {
@@ -1599,7 +1623,7 @@ namespace AirProperties
                 
                 IPhoneAdvancedSettingsPanel.Visible = true;
                 IPhoneBasicSettingsPanel.Visible = false;
-                IPhoneInfoAdditionsButton.Text = "<< Basic";
+                IPhoneInfoAdditionsButton.Text = TextHelper.GetString("Label.Basic");
             }
         }
 
@@ -1607,7 +1631,8 @@ namespace AirProperties
         {
             if (IPhoneDeviceCombo.CheckedItems.Count == 0)
             {
-                MessageBox.Show("At least one item must be chosen", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                String msg = TextHelper.GetString("Info.SelectAtleastOneItem");
+                ErrorManager.ShowWarning(msg, null);
                 IPhoneDeviceCombo.SetItemChecked(0, true);
             }
         }
@@ -1648,9 +1673,8 @@ namespace AirProperties
                     var externalsFile = ProjectPaths.GetRelativePath(_propertiesFilePath, externalsFileDialog.FileName);
                     if (externalsFile.StartsWith("..") || Path.IsPathRooted(externalsFile))
                     {
-                        MessageBox.Show(
-                            "The file must not be located at an upper or external directory from the descriptor file",
-                            "Attention", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        String msg = TextHelper.GetString("Info.CheckFileLocation");
+                        ErrorManager.ShowWarning(msg, null);
                     }
                     else
                     {
@@ -1665,7 +1689,7 @@ namespace AirProperties
             using (var extensionBrowser = new OpenFileDialog())
             {
                 extensionBrowser.CheckFileExists = true;
-                extensionBrowser.Filter = "ANE files (*.ane)|*.ane";
+                extensionBrowser.Filter = TextHelper.GetString("Info.AneFilter");
                 extensionBrowser.InitialDirectory = _propertiesFilePath;
 
                 if (extensionBrowser.ShowDialog(this) == DialogResult.OK)
@@ -1677,16 +1701,16 @@ namespace AirProperties
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Could not load ANE file: " + ex.Message, "Error", MessageBoxButtons.OK,
-                                        MessageBoxIcon.Exclamation);
+                        String msg = TextHelper.GetString("Info.CouldNotLoadANE") + "\n" + ex.Message;
+                        ErrorManager.ShowWarning(msg, null);
                         return;
                     }
                     var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
 
                     if (entry == null)
                     {
-                        MessageBox.Show("ANE descriptor file not found.", "Invalid ANE", MessageBoxButtons.OK,
-                                        MessageBoxIcon.Exclamation);
+                        String msg = TextHelper.GetString("Info.ANEDescFileNotFound");
+                        ErrorManager.ShowWarning(msg, null);
                         return;
                     }
 
@@ -1714,8 +1738,8 @@ namespace AirProperties
 
                     if (extensionId == null)
                     {
-                        MessageBox.Show("Extension ID could not be retrieved.", "Attention", MessageBoxButtons.OK,
-                                        MessageBoxIcon.Exclamation);
+                        String msg = TextHelper.GetString("Info.ExtensionIDNotFound");
+                        ErrorManager.ShowWarning(msg, null);
                         return;
                     }
 
@@ -1769,7 +1793,7 @@ namespace AirProperties
                                 {
                                     zFile = new ZipFile(absolutePath);
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
                                     continue;
                                 }
@@ -2280,13 +2304,13 @@ namespace AirProperties
             if (externalsFile == string.Empty) this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
             else if (externalsFile.StartsWith("..") || Path.IsPathRooted(externalsFile))
             {
-                this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, "The file must not be located at an upper or external directory from the descriptor file");
+                this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Info.CheckFileLocation"));
 
                 e.Cancel = true;
             }
             else if (!File.Exists(ProjectPaths.GetAbsolutePath(Path.GetDirectoryName(_propertiesFile), externalsFile)))
             {
-                this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, "The external SWFs file container does not exist. Please, check your path");
+                this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Validation.MissingSWFContainer"));
 
                 e.Cancel = true;
             }
@@ -2310,7 +2334,7 @@ namespace AirProperties
                 }
                 catch (Exception ex)
                 {
-                    ValidationErrorProvider.SetError(IPhoneEntitlementsField, "Wrong iPhone entitlements XML: " + ex.Message);
+                    ValidationErrorProvider.SetError(IPhoneEntitlementsField, TextHelper.GetString("Validation.WrongEntitlementsXML") + " " + ex.Message);
                     e.Cancel = true;
                 }
             }
@@ -2338,8 +2362,7 @@ namespace AirProperties
                 }
                 catch (Exception ex)
                 {
-                    ValidationErrorProvider.SetError(IPhoneInfoAdditionsField,
-                                                     "Wrong iPhone info additions XML: " + ex.Message);
+                    ValidationErrorProvider.SetError(IPhoneInfoAdditionsField, TextHelper.GetString("Validation.WrongAdditionsXML") + " " + ex.Message);
                     e.Cancel = true;
                 }
             }
@@ -2384,7 +2407,7 @@ namespace AirProperties
                 }
                 catch (Exception ex)
                 {
-                    ValidationErrorProvider.SetError(AndroidManifestAdditionsField, "Wrong Android manifest XML: " + ex.Message);
+                    ValidationErrorProvider.SetError(AndroidManifestAdditionsField, TextHelper.GetString("Validation.WrongManifestXML") + " " + ex.Message);
                     e.Cancel = true;
                 }
             }
@@ -2429,13 +2452,13 @@ namespace AirProperties
                     {
                         e.Cancel = true;
                         // I think it's actually 4.2, but people should nowadays target 4.3 as a minimum
-                        this.ValidationErrorProvider.SetError(MinimumiOsVersionField, "Minimum AIR supported version is 4.3");
+                        this.ValidationErrorProvider.SetError(MinimumiOsVersionField, TextHelper.GetString("Validation.InvalidMinAIRVersion"));
                     }
                 }
                 catch
                 {
                     e.Cancel = true;
-                    this.ValidationErrorProvider.SetError(MinimumiOsVersionField, "Invalid version value");
+                    this.ValidationErrorProvider.SetError(MinimumiOsVersionField, TextHelper.GetString("Validation.InvalidVersionValue"));
                 }
 
             }
@@ -2457,12 +2480,12 @@ namespace AirProperties
             if (!int.TryParse(MinimumAndroidOsField.Text, out osVersion))
             {
                 e.Cancel = true;
-                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, "Invalid version value");
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidVersionValue"));
             }
             else if (osVersion < 8) // IMHO, it should be 9, as 8 nowadays may give some problems
             {
                 e.Cancel = true;
-                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, "Minimum AIR supported version is 8");
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidAndroidMinVersion"));
             }
             else
             {
