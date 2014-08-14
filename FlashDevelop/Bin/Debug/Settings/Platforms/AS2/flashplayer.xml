@@ -1,0 +1,8 @@
+<platform name="Flash Player" flash="true" graphical="true">
+  <versions>
+    <version value="6.0" swf-version="6" />
+    <version value="7.0" swf-version="7" />
+    <version value="8.0" swf-version="8" />
+    <version value="9.0" swf-version="9" />
+  </versions>
+</platform>

@@ -194,10 +194,9 @@ namespace ProjectManager.Actions
 		{
             List<string> classPaths = new List<string>();
             List<string> hiddenPaths = new List<string>();
-            int majorVersion = 0;
-            int minorVersion = 0;
+            string version;
             string platform = "";
-			
+
             if (project != null)
             {
                 BuildActions.GetCompilerPath(project); // refresh project's SDK
@@ -205,11 +204,10 @@ namespace ProjectManager.Actions
 
                 // platform/version
                 platform = project.MovieOptions.Platform;
-                majorVersion = project.MovieOptions.MajorVersion;
-                minorVersion = project.MovieOptions.MinorVersion;
-                if (project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM 
-                    || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM)
-                    PlatformData.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
+                version = project.MovieOptions.Version;
+                if (platform != PlatformData.FLASHPLAYER_PLATFORM
+                    && project.MovieOptions.HasPlatformSupport && project.MovieOptions.PlatformSupport.IsFlashPlatform)
+                    version = PlatformData.ResolveFlashPlayerVersion(project.Language, platform, version);
 
                 // add project classpaths
                 foreach (string cp in project.AbsoluteClasspaths)
@@ -272,6 +270,12 @@ namespace ProjectManager.Actions
                         }
                 }
             }
+            else
+            {
+                var targets = PluginCore.PlatformData.SupportedLanguages["as3"].Platforms;
+                var flashPlatform = targets[PlatformData.FLASHPLAYER_PLATFORM];
+                version = flashPlatform.LastVersion.Value;
+            }
 
             DataEvent de;
             Hashtable info = new Hashtable();
@@ -295,7 +299,7 @@ namespace ProjectManager.Actions
                 currentLang = project.Language;
 
                 info["platform"] = platform;
-                info["version"] = majorVersion + "." + minorVersion;
+                info["version"] = version;
                 info["targetBuild"] = project.TargetBuild;
                 info["lang"] = currentLang;
                 info["classpath"] = classPaths.ToArray();

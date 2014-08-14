@@ -1,0 +1,5 @@
+<platform name="C++" haxe-target="cpp">
+  <versions>
+    <version value="1.0" />
+  </versions>
+</platform>

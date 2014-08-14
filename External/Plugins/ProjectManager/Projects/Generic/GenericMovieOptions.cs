@@ -38,9 +38,9 @@ namespace ProjectManager.Projects.Generic
             return false;
         }
 
-        public override bool DebuggerSupported
+        public override bool DebuggerSupported(string targetBuild)
         {
-            get { return false; }
+            return false;
         }
     }
 }
