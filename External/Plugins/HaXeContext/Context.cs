@@ -145,39 +145,6 @@ namespace HaXeContext
 
         #region classpath management
 
-        /*public bool IsFlashTarget
-        {
-            get { return platform == HaxeMovieOptions.FLASHPLAYER_PLATFORM || platform == HaxeMovieOptions.AIR_PLATFORM; }
-        }
-        public bool IsJavaScriptTarget
-        {
-            get { return platform == HaxeMovieOptions.JAVASCRIPT_PLATFORM; }
-        }
-        public bool IsNekoTarget
-        {
-            get { return platform == HaxeMovieOptions.NEKO_PLATFORM; }
-        }
-        public bool IsPhpTarget
-        {
-            get { return platform == HaxeMovieOptions.PHP_PLATFORM; }
-        }
-        public bool IsCppTarget
-        {
-            get { return platform == HaxeMovieOptions.CPP_PLATFORM; }
-        }
-        public bool IsCsharpTarget
-        {
-            get { return platform == HaxeMovieOptions.CSHARP_PLATFORM; }
-        }
-        public bool IsJavaTarget
-        {
-            get { return platform == HaxeMovieOptions.JAVA_PLATFORM; }
-        }
-        public bool IsNmeTarget
-        {
-            get { return platform == HaxeMovieOptions.NME_PLATFORM; }
-        }*/
-
         private List<string> LookupLibrary(string lib)
         {
             if (haxelibsCache.ContainsKey(lib))
@@ -373,7 +340,7 @@ namespace HaXeContext
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
             // swf-libs
-            if (lang == "flash" && majorVersion >= 9 && proj != null)
+            if (HaxeTarget == "flash" && majorVersion >= 9 && proj != null)
             {
                 foreach(LibraryAsset asset in proj.LibraryAssets)
                     if (asset.IsSwc)
@@ -444,6 +411,7 @@ namespace HaXeContext
 
         private string GetHaxeTarget(string platformName)
         {
+            if (!PlatformData.SupportedLanguages.ContainsKey("haxe")) return null;
             var haxeLang = PlatformData.SupportedLanguages["haxe"];
             if (haxeLang == null) return null;
             foreach (var platform in haxeLang.Platforms.Values)

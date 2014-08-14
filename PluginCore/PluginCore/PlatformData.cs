@@ -20,6 +20,7 @@ namespace PluginCore
 
         public static string ResolveFlashPlayerVersion(string lang, string platformName, string version)
         {
+            if (!SupportedLanguages.ContainsKey(lang)) return "14.0";
             var platforms = SupportedLanguages[lang.ToLower()].Platforms;
             if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM)) return "14.0";
             var flashPlatform = platforms[FLASHPLAYER_PLATFORM];
@@ -39,6 +40,7 @@ namespace PluginCore
 
         public static string ResolveSwfVersion(string lang, string platformName, string version)
         {
+            if (!SupportedLanguages.ContainsKey(lang)) return "25";
             var platforms = SupportedLanguages[lang.ToLower()].Platforms;
             if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM) || !platforms.ContainsKey(platformName)) return "25";
             var platform = platforms[platformName];
@@ -53,10 +55,10 @@ namespace PluginCore
 
         public static void Load(string path)
         {
+            SupportedLanguages = new Dictionary<String, SupportedLanguage>();
             if (!Directory.Exists(path)) return;
 
             // walk AS2, AS3, Haxe...
-            SupportedLanguages = new Dictionary<String, SupportedLanguage>();
             foreach (string langDir in Directory.GetDirectories(path))
             {
                 try
