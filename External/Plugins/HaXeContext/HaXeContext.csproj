@@ -118,7 +118,7 @@
     <Compile Include="Completion\CompilerCompletionHandler.cs" />
     <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
     <Compile Include="HaXeSettings.cs" />
-    <Compile Include="NMEHelper.cs" />
+    <Compile Include="ExternalToolchain.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

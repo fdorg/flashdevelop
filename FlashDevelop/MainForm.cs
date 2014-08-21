@@ -718,6 +718,16 @@ namespace FlashDevelop
                 this.amWatcher.EnableRaisingEvents = true;
             }
             catch {} // No errors...
+
+            // Load platforms data
+            try
+            {
+                PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError("Invalid 'Platforms' in Settings", ex);
+            }
         }
 
         /// <summary>

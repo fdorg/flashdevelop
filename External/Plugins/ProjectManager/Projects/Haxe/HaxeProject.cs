@@ -27,18 +27,6 @@ namespace ProjectManager.Projects.Haxe
         public override bool HasLibraries { get { return OutputType == OutputType.Application && IsFlashOutput; } }
         public override bool RequireLibrary { get { return IsFlashOutput; } }
         public override string DefaultSearchFilter { get { return "*.hx"; } }
-        
-        public override bool EnableInteractiveDebugger 
-        { 
-            get 
-            {
-                return movieOptions.DebuggerSupported && CompilerOptions.EnableDebug
-                    && ((movieOptions.Platform == HaxeMovieOptions.NME_PLATFORM && TargetBuild == "flash")
-                        || movieOptions.Platform == HaxeMovieOptions.FLASHPLAYER_PLATFORM
-                        || movieOptions.Platform == HaxeMovieOptions.AIR_PLATFORM
-                        || movieOptions.Platform == HaxeMovieOptions.AIR_MOBILE_PLATFORM);
-            } 
-        }
 
         public override String LibrarySWFPath
         {
@@ -57,42 +45,16 @@ namespace ProjectManager.Projects.Haxe
 
         public new HaxeOptions CompilerOptions { get { return (HaxeOptions)base.CompilerOptions; } }
 
-        public bool IsFlashOutput
+        public string HaxeTarget
         {
-            get { return movieOptions.Platform == HaxeMovieOptions.FLASHPLAYER_PLATFORM 
-                || movieOptions.Platform == HaxeMovieOptions.AIR_PLATFORM
-                || movieOptions.Platform == HaxeMovieOptions.AIR_MOBILE_PLATFORM
-                || movieOptions.Platform == HaxeMovieOptions.NME_PLATFORM;
+            get
+            {
+                if (!MovieOptions.HasPlatformSupport) return null;
+                return MovieOptions.PlatformSupport.HaxeTarget;
             }
         }
-        public bool IsJavacriptOutput
-        {
-            get { return movieOptions.Platform == HaxeMovieOptions.JAVASCRIPT_PLATFORM; }
-        }
-        public bool IsNekoOutput
-        {
-            get { return movieOptions.Platform == HaxeMovieOptions.NEKO_PLATFORM; }
-        }
-        public bool IsPhpOutput
-        {
-            get { return movieOptions.Platform == HaxeMovieOptions.PHP_PLATFORM; }
-        }
-        public bool IsCppOutput
-        {
-            get { return movieOptions.Platform == HaxeMovieOptions.CPP_PLATFORM; }
-        }
-        public bool IsNmeOutput
-        {
-            get { return movieOptions.Platform == HaxeMovieOptions.NME_PLATFORM; }
-        }
-        public bool IsCSharpOutput
-        {
-            get { return movieOptions.Platform == HaxeMovieOptions.CSHARP_PLATFORM; }
-        }
-        public bool IsJavaOutput
-        {
-            get { return movieOptions.Platform == HaxeMovieOptions.JAVA_PLATFORM; }
-        }
+
+        public bool IsFlashOutput { get { return HaxeTarget == "swf"; } }
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
         {
@@ -169,8 +131,10 @@ namespace ProjectManager.Projects.Haxe
             try
             {
                 if (OutputPath != null && OutputPath.Length > 0 && File.Exists(GetAbsolutePath(OutputPath)))
-                    if (movieOptions.Platform != HaxeMovieOptions.NME_PLATFORM)
+                {
+                    if (MovieOptions.HasPlatformSupport && MovieOptions.PlatformSupport.ExternalToolchain == null)
                         File.Delete(GetAbsolutePath(OutputPath));
+                }
                 return true;
             }
             catch
@@ -189,6 +153,7 @@ namespace ProjectManager.Projects.Haxe
         public string[] BuildHXML(string[] paths, string outfile, bool release )
         {
             List<String> pr = new List<String>();
+            var isFlash = IsFlashOutput;
 
             if (rawHXML != null)
             {
@@ -197,7 +162,7 @@ namespace ProjectManager.Projects.Haxe
             else
             {
                 // SWC libraries
-                if (IsFlashOutput)
+                if (isFlash)
                     foreach (LibraryAsset asset in LibraryAssets)
                     {
                         if (asset.IsSwc)
@@ -225,15 +190,8 @@ namespace ProjectManager.Projects.Haxe
                 }
 
                 // compilation mode
-                string mode = null;
-                if (IsFlashOutput) mode = "swf";
-                else if (IsJavacriptOutput) mode = "js";
-                else if (IsNekoOutput) mode = "neko";
-                else if (IsPhpOutput) mode = "php";
-                else if (IsCppOutput) mode = "cpp";
-                else if (IsCSharpOutput) mode = "cs";
-                else if (IsJavaOutput) mode = "java";
-                //else throw new SystemException("Unknown mode");
+                string mode = HaxeTarget;
+                //throw new SystemException("Unknown mode");
 
                 if (mode != null)
                 {
@@ -241,14 +199,8 @@ namespace ProjectManager.Projects.Haxe
                     pr.Add("-" + mode + " " + Quote(outfile));
                 }
 
-                // nme options
-                /*if (IsNmeOutput)
-                {
-                    pr.Add("--remap flash:nme");
-                }*/
-
                 // flash options
-                if (IsFlashOutput)
+                if (isFlash)
                 {
                     string htmlColor = this.MovieOptions.Background.Substring(1);
 
@@ -264,23 +216,10 @@ namespace ProjectManager.Projects.Haxe
                         pr.Add("--flash-strict");
 
                     // convert Flash version to haxe supported parameter
-                    string param = null;
-                    int majorVersion = MovieOptions.MajorVersion;
-                    int minorVersion = MovieOptions.MinorVersion;
-
-                    if (MovieOptions.Platform == HaxeMovieOptions.AIR_PLATFORM
-                        || MovieOptions.Platform == HaxeMovieOptions.AIR_MOBILE_PLATFORM)
-                        PlatformData.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
-                    if (movieOptions.Platform == HaxeMovieOptions.NME_PLATFORM)
-                        HaxeProject.GuessFlashPlayerForNME(ref majorVersion, ref minorVersion);
-
-                    if (majorVersion >= 10)
-                    {
-                        if (minorVersion > 0) param = majorVersion + "." + minorVersion;
-                        else param = "" + majorVersion;
-                    }
-                    else param = "" + majorVersion;
-                    if (param != null) pr.Add("-swf-version " + param);
+                    string version = MovieOptions.Version;
+                    string platform = MovieOptions.Platform;
+                    string swfVersion = PluginCore.PlatformData.ResolveSwfVersion(Language, platform, version);
+                    if (swfVersion != null) pr.Add("-swf-version " + swfVersion);
                 }
 
                 // defines
@@ -324,9 +263,9 @@ namespace ProjectManager.Projects.Haxe
             if (!release)
             {
                 pr.Insert(0, "-debug");
-                if (CurrentSDK == null || CurrentSDK.IndexOf("Motion-Twin") < 0)
+                if (CurrentSDK == null || CurrentSDK.IndexOf("Motion-Twin") < 0) // Haxe 3+
                     pr.Insert(1, "--each");
-                if (IsFlashOutput && MovieOptions.DebuggerSupported && CompilerOptions.EnableDebug)
+                if (isFlash && EnableInteractiveDebugger && CompilerOptions.EnableDebug)
                 {
                     pr.Insert(1, "-D fdb");
                     if (CompilerOptions.NoInlineOnDebug)
@@ -334,29 +273,6 @@ namespace ProjectManager.Projects.Haxe
                 }
             }
             return pr.ToArray();
-        }
-
-        /// <summary>
-        /// Determines if we're using NME or OpenFL
-        /// </summary>
-        /// <param name="project"></param>
-        /// <returns></returns>
-        static public string GetBuilder(HaxeProject project)
-        {
-            return GetBuilder(project.OutputPathAbsolute);
-        }
-        static public string GetBuilder(string projectFile)
-        {
-            if (string.IsNullOrEmpty(projectFile) || !File.Exists(projectFile))
-                return null;
-            switch(Path.GetExtension(projectFile).ToLower()){
-                case ".nmml":
-                    return "nme";
-                case ".lime":
-                    return "lime";
-                default:
-                    return "openfl";
-            }
         }
 
         private string GetClassName(string absTarget, string cp)
@@ -368,11 +284,6 @@ namespace ProjectManager.Projects.Haxe
             return className;
         }
 
-        private static void GuessFlashPlayerForNME(ref int majorVersion, ref int minorVersion)
-        {
-            majorVersion = 11;
-        }
-
         #region Load/Save
 
         public static HaxeProject Load(string path)
@@ -382,14 +293,6 @@ namespace ProjectManager.Projects.Haxe
             {
                 HaxeProject hxproj = new HaxeProject(path);
                 hxproj.RawHXML = File.ReadAllLines(path);
-                return hxproj;
-            }
-            else if (ext == ".nmml")
-            {
-                HaxeProject hxproj = new HaxeProject(path);
-                hxproj.MovieOptions.Platform = HaxeMovieOptions.NME_PLATFORM;
-                hxproj.OutputType = OutputType.Application;
-                hxproj.OutputPath = hxproj.GetRelativePath(path);
                 return hxproj;
             }
 
@@ -453,7 +356,7 @@ namespace ProjectManager.Projects.Haxe
             List<string> defs = new List<string>();
             List<string> cps = new List<string>();
             List<string> add = new List<string>();
-            string target = HaxeMovieOptions.FLASHPLAYER_PLATFORM;
+            string target = PlatformData.JAVASCRIPT_PLATFORM;
             string output = "";
             if (raw != null)
             foreach(string line in raw)
@@ -471,7 +374,7 @@ namespace ProjectManager.Projects.Haxe
                         case "lib": libs.Add(value); break;
                         case "main": CompilerOptions.MainClass = value; break;
                         case "swf":
-                        case "swf9": target = HaxeMovieOptions.FLASHPLAYER_PLATFORM; output = value; break;
+                        case "swf9": target = PlatformData.FLASHPLAYER_PLATFORM; output = value; break;
                         case "swf-header":
                             var header = value.Split(':');
                             int.TryParse(header[0], out MovieOptions.Width);
@@ -479,14 +382,16 @@ namespace ProjectManager.Projects.Haxe
                             int.TryParse(header[2], out MovieOptions.Fps);
                             MovieOptions.Background = header[3];
                             break;
-                        case "cpp": target = HaxeMovieOptions.CPP_PLATFORM; output = value; break;
-                        case "js": target = HaxeMovieOptions.JAVASCRIPT_PLATFORM; output = value; break;
-                        case "php": target = HaxeMovieOptions.PHP_PLATFORM; output = value; break;
-                        case "neko": target = HaxeMovieOptions.NEKO_PLATFORM; output = value; break;
-                        case "cs": target = HaxeMovieOptions.CSHARP_PLATFORM; output = value; break;
-                        case "java": target = HaxeMovieOptions.JAVA_PLATFORM; output = value; break;
                         case "--connect": break; // ignore
-                        default: add.Add(line); break;
+                        default:
+                            // detect platform (-cpp output, -js output, ...)
+                            var targetPlatform = FindPlatform(op);
+                            if (targetPlatform != null)
+                            {
+                                target = targetPlatform.Name;
+                                output = value;
+                            }
+                            else add.Add(line); break;
                     }
                 }
             }
@@ -497,18 +402,34 @@ namespace ProjectManager.Projects.Haxe
             Classpaths.Clear();
             Classpaths.AddRange(cps);
 
-            if (MovieOptions.Platform == HaxeMovieOptions.NME_PLATFORM)
+            if (MovieOptions.HasPlatformSupport)
             {
-                MovieOptions.TargetBuildTypes = PlatformData.NME_TARGETS;
-                if (TestMovieBehavior == TestMovieBehavior.Unknown)
+                var platform = MovieOptions.PlatformSupport;
+                MovieOptions.TargetBuildTypes = platform.Targets;
+                if (platform.LastVersion.Commands != null)
+                {
+                    OutputType = Projects.OutputType.CustomBuild;
                     TestMovieBehavior = TestMovieBehavior.Custom;
+                }
             }
-            else if (MovieOptions.TargetBuildTypes == null)
+            else MovieOptions.TargetBuildTypes = null;
+
+            if (MovieOptions.TargetBuildTypes == null)
             {
                 OutputPath = output;
-                OutputType = OutputType.Application;
+                OutputType = Projects.OutputType.Application;
                 MovieOptions.Platform = target;
             }
+        }
+
+        private LanguagePlatform FindPlatform(string op)
+        {
+            var lang = PlatformData.SupportedLanguages["haxe"];
+            foreach (var platform in lang.Platforms.Values)
+            {
+                if (platform.HaxeTarget == op) return platform;
+            }
+            return null;
         }
 
         private string CleanPath(string path)

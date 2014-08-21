@@ -1,0 +1,23 @@
+<platform name="AIR Mobile" flash="true" graphical="true" debugger="*">
+  <versions>
+    <version value="1.5" swf-version="10" />
+    <version value="2.0" swf-version="10" />
+    <version value="2.5" swf-version="10" />
+    <version value="2.6" swf-version="11" />
+    <version value="2.7" swf-version="12" />
+    <version value="3.0" swf-version="13" />
+    <version value="3.1" swf-version="14" />
+    <version value="3.2" swf-version="15" />
+    <version value="3.3" swf-version="16" />
+    <version value="3.4" swf-version="17" />
+    <version value="3.5" swf-version="18" />
+    <version value="3.6" swf-version="19" />
+    <version value="3.7" swf-version="20" />
+    <version value="3.8" swf-version="21" />
+    <version value="3.9" swf-version="22" />
+    <version value="4.0" swf-version="23" />
+    <version value="13.0" swf-version="24" />
+    <version value="14.0" swf-version="25" />
+    <version value="15.0" swf-version="26" />
+  </versions>
+</platform>

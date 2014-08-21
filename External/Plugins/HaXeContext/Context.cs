@@ -37,6 +37,7 @@ namespace HaXeContext
         
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
+        private string HaxeTarget;
         private bool hasAIRSupport;
         private bool hasMobileSupport;
         private bool resolvingDot;
@@ -143,39 +144,6 @@ namespace HaXeContext
         #endregion
 
         #region classpath management
-
-        public bool IsFlashTarget
-        {
-            get { return platform == HaxeMovieOptions.FLASHPLAYER_PLATFORM || platform == HaxeMovieOptions.AIR_PLATFORM; }
-        }
-        public bool IsJavaScriptTarget
-        {
-            get { return platform == HaxeMovieOptions.JAVASCRIPT_PLATFORM; }
-        }
-        public bool IsNekoTarget
-        {
-            get { return platform == HaxeMovieOptions.NEKO_PLATFORM; }
-        }
-        public bool IsPhpTarget
-        {
-            get { return platform == HaxeMovieOptions.PHP_PLATFORM; }
-        }
-        public bool IsCppTarget
-        {
-            get { return platform == HaxeMovieOptions.CPP_PLATFORM; }
-        }
-        public bool IsCsharpTarget
-        {
-            get { return platform == HaxeMovieOptions.CSHARP_PLATFORM; }
-        }
-        public bool IsJavaTarget
-        {
-            get { return platform == HaxeMovieOptions.JAVA_PLATFORM; }
-        }
-        public bool IsNmeTarget
-        {
-            get { return platform == HaxeMovieOptions.NME_PLATFORM; }
-        }
 
         private List<string> LookupLibrary(string lib)
         {
@@ -286,26 +254,11 @@ namespace HaXeContext
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
 
             // NOTE: version > 10 for non-Flash platforms
-            string lang;
+            string lang = GetHaxeTarget(platform);
             hasAIRSupport = hasMobileSupport = false;
             features.Directives = new List<string>();
-            if (IsJavaScriptTarget)
-            {
-                lang = "js";
-            }
-            else if (IsPhpTarget)
-            {
-                lang = "php";
-            }
-            else if (IsNekoTarget)
-            {
-                lang = "neko";
-            }
-            else if (IsCppTarget)
-            {
-                lang = "cpp";
-            }
-            else if (IsNmeTarget)
+
+            if (lang == null)
             {
                 lang = "cpp";
 
@@ -316,22 +269,13 @@ namespace HaXeContext
                 else if (contextSetup.TargetBuild.IndexOf("neko") >= 0)
                     lang = "neko";
             }
-            else if (IsCsharpTarget)
+            else if (lang == "flash")
             {
-                lang = "cs";
-            }
-            else if (IsJavaTarget)
-            {
-                lang = "java";
-            }
-            else if (IsFlashTarget)
-            {
-                lang = "flash";
-                hasAIRSupport = platform == "AIR" || platform == "AIR Mobile";
+                hasAIRSupport = platform.StartsWith("AIR");
                 hasMobileSupport = platform == "AIR Mobile";
             }
-            else lang = platform;
             features.Directives.Add(lang);
+            HaxeTarget = lang;
 
             //
             // Class pathes
@@ -363,7 +307,7 @@ namespace HaXeContext
                         FLASH_NEW = "flash";
                         FLASH_OLD = "flash8";
                     }
-                    if (lang == "flash")
+                    if (HaxeTarget == "flash")
                         lang = (majorVersion >= 6 && majorVersion < 9) ? FLASH_OLD : FLASH_NEW;
 
                     PathModel std = PathModel.GetModel(haxeCP, this);
@@ -396,7 +340,7 @@ namespace HaXeContext
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
             // swf-libs
-            if (IsFlashTarget && majorVersion >= 9 && proj != null)
+            if (HaxeTarget == "flash" && majorVersion >= 9 && proj != null)
             {
                 foreach(LibraryAsset asset in proj.LibraryAssets)
                     if (asset.IsSwc)
@@ -463,6 +407,16 @@ namespace HaXeContext
             resolvingFunction = false;
             if (completionModeHandler == null) 
                 OnCompletionModeChange();
+        }
+
+        private string GetHaxeTarget(string platformName)
+        {
+            if (!PlatformData.SupportedLanguages.ContainsKey("haxe")) return null;
+            var haxeLang = PlatformData.SupportedLanguages["haxe"];
+            if (haxeLang == null) return null;
+            foreach (var platform in haxeLang.Platforms.Values)
+                if (platform.Name == platformName) return platform.HaxeTarget;
+            return null;
         }
 
         private void AppendPath(ContextSetupInfos contextSetup, string path)
@@ -793,7 +747,7 @@ namespace HaXeContext
 
             if (fileName.StartsWith("flash" + dirSeparator))
             {
-                if (!IsFlashTarget || majorVersion > 8) // flash9 remap
+                if (HaxeTarget != "flash" || majorVersion > 8) // flash9 remap
                     fileName = FLASH_NEW + fileName.Substring(5);
                 else
                     fileName = FLASH_OLD + fileName.Substring(5);
@@ -1573,7 +1527,7 @@ namespace HaXeContext
                 if (cname.IndexOf('<') > 0) cname = cname.Substring(0, cname.IndexOf('<'));
                 command += cname;
 
-                if (IsFlashTarget && (append == null || append.IndexOf("-swf-version") < 0)) 
+                if (HaxeTarget == "flash" && (append == null || append.IndexOf("-swf-version") < 0)) 
                     command += " -swf-version " + majorVersion;
                 // classpathes
                 string hxPath = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);

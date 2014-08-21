@@ -1,65 +1,260 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Xml;
+using System.IO;
 
 namespace PluginCore
 {
     // When updating, update also AirProperties plugin!
 
+    // This class must not have any dependencies
+
     public class PlatformData
     {
-        public static String DEFAULT_NME_VERSION = "3.0";
-        public static String DEFAULT_AIR_VERSION = "14.0";
-        public static String DEFAULT_AIR_MOBILE_VERSION = "14.0";
-        public static String DEFAULT_FLASH_VERSION = "14.0";
-        public static String[] AIR_VERSIONS = new String[] { "1.5", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4.0", "13.0", "14.0" };
-        public static String[] AIR_MOBILE_VERSIONS = new String[] { "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4.0", "13.0", "14.0" };
-        public static String[] FLASH_LEGACY_VERSIONS = new String[] { "6.0", "7.0", "8.0", "9.0", "10.0", "10.1", "10.2", "10.3", "11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.9", "12.0", "13.0", "14.0" };
-        public static String[] FLASH_VERSIONS = new String[] { "9.0", "10.0", "10.1", "10.2", "10.3", "11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.9", "12.0", "13.0", "14.0" };
-        public static String[] SWF_VERSIONS = new String[] { "9", "10", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25" };
-        public static String[] NME_TARGETS = new String[] { "flash", "html5", "windows", "neko", "android", "webos", "blackberry" };
-        public static String[] NME_VERSIONS = new String[] { "3.0" };
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public static String GuessFlashPlayerForAIR(String version)
+        public static string CUSTOM_PLATFORM = "Custom";
+        public static string FLASHPLAYER_PLATFORM = "Flash Player";
+        public static string JAVASCRIPT_PLATFORM = "JavaScript";
+
+        public static Dictionary<String, SupportedLanguage> SupportedLanguages;
+
+        public static string ResolveFlashPlayerVersion(string lang, string platformName, string version)
         {
-            Int32 majorVersion = 10;
-            Int32 minorVersion = 0;
-            String[] p = (version ?? "").Split('.');
-            if (p.Length > 0) Int32.TryParse(p[0], out majorVersion);
-            if (p.Length > 1) Int32.TryParse(p[1], out minorVersion);
-            GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
-            return majorVersion + "." + minorVersion;
+            if (!SupportedLanguages.ContainsKey(lang)) return "14.0";
+            var platforms = SupportedLanguages[lang.ToLower()].Platforms;
+            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM)) return "14.0";
+            var flashPlatform = platforms[FLASHPLAYER_PLATFORM];
+            if (platforms.ContainsKey(platformName))
+            {
+                var otherTarget = platforms[platformName];
+                foreach (var otherVersion in otherTarget.Versions)
+                    if (otherVersion.Value == version)
+                    {
+                        foreach (var flashVersion in flashPlatform.Versions)
+                            if (flashVersion.SwfVersion == otherVersion.SwfVersion) return flashVersion.Value;
+                    }
+            }
+            // default to last FP
+            return flashPlatform.LastVersion.Value;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void GuessFlashPlayerForAIR(ref Int32 majorVersion, ref Int32 minorVersion)
+        public static string ResolveSwfVersion(string lang, string platformName, string version)
         {
-            Double v = majorVersion + (Double)minorVersion / 10;
-            if (v < 2) { majorVersion = 9; minorVersion = 0; }
-            else if (v < 2.5) { majorVersion = 10; minorVersion = 0; }
-            else if (v < 2.6) { majorVersion = 10; minorVersion = 1; }
-            else if (v < 2.7) { majorVersion = 10; minorVersion = 2; }
-            else if (v < 3.0) { majorVersion = 10; minorVersion = 3; }
-            else if (v < 3.1) { majorVersion = 11; minorVersion = 0; }
-            else if (v < 3.2) { majorVersion = 11; minorVersion = 1; }
-            else if (v < 3.3) { majorVersion = 11; minorVersion = 2; }
-            else if (v < 3.4) { majorVersion = 11; minorVersion = 3; }
-            else if (v < 3.5) { majorVersion = 11; minorVersion = 4; }
-            else if (v < 3.6) { majorVersion = 11; minorVersion = 5; }
-            else if (v < 3.7) { majorVersion = 11; minorVersion = 6; }
-            else if (v < 3.8) { majorVersion = 11; minorVersion = 7; }
-            else if (v < 3.9) { majorVersion = 11; minorVersion = 8; }
-            else if (v < 4.0) { majorVersion = 11; minorVersion = 9; }
-            else if (v < 13.0) { majorVersion = 12; minorVersion = 0; }
-            else if (v < 14.0) { majorVersion = 13; minorVersion = 0; }
-            else { majorVersion = 14; minorVersion = 0; }
+            if (!SupportedLanguages.ContainsKey(lang)) return "25";
+            var platforms = SupportedLanguages[lang.ToLower()].Platforms;
+            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM) || !platforms.ContainsKey(platformName)) return "25";
+            var platform = platforms[platformName];
+            foreach (var platformVersion in platform.Versions)
+                if (platformVersion.Value == version)
+                    return platformVersion.SwfVersion;
+            // default to last FP
+            return platform.LastVersion.SwfVersion;
         }
 
+        #region platform config loading
+
+        public static void Load(string path)
+        {
+            SupportedLanguages = new Dictionary<String, SupportedLanguage>();
+            if (!Directory.Exists(path)) return;
+
+            // walk AS2, AS3, Haxe...
+            foreach (string langDir in Directory.GetDirectories(path))
+            {
+                try
+                {
+                    SupportedLanguage lang = new SupportedLanguage
+                    {
+                        Name = Path.GetFileNameWithoutExtension(langDir),
+                        Platforms = LoadPlatforms(langDir)
+                    };
+                    lang.PlatformNames = new string[lang.Platforms.Count];
+                    lang.Platforms.Keys.CopyTo(lang.PlatformNames, 0);
+                    SupportedLanguages.Add(lang.Name.ToLower(), lang);
+                }
+                catch { }
+            }
+        }
+
+        private static Dictionary<string, LanguagePlatform> LoadPlatforms(string langDir)
+        {
+            // walk flashplayer.xml, openfl.xml,... for one language (ie. Haxe)
+            var platforms = new Dictionary<string, LanguagePlatform>();
+            foreach (string platformFile in Directory.GetFiles(langDir, "*.xml"))
+            {
+                try
+                {
+                    var doc = new XmlDocument();
+                    doc.Load(platformFile);
+                    if (doc.FirstChild.Name == "platform")
+                    {
+                        var platform = ParsePlatform(doc.FirstChild);
+                        platforms.Add(platform.Name, platform);
+                    }
+                }
+                catch { }
+            }
+            return platforms;
+        }
+
+        private static LanguagePlatform ParsePlatform(XmlNode node)
+        {
+            // parse platform file, ie. flashplayer.xml
+            List<PlatformVersion> versions = null;
+            Dictionary<string, PlatformCommand> defaultCommands = null;
+            foreach (XmlNode sub in node.ChildNodes)
+            {
+                switch (sub.Name)
+                {
+                    case "defaults": defaultCommands = ParseCommands(sub, null); break;
+                    case "versions": versions = ParseVersions(sub, defaultCommands); break;
+                }
+            }
+
+            var platform = new LanguagePlatform
+            {
+                Name = node.Attributes["name"].Value,
+                Targets = GetList(node, "targets"),
+                Versions = versions,
+                LastVersion = versions[versions.Count - 1],
+                IsFlashPlatform = GetBool(node, "flash"),
+                IsGraphical = GetBool(node, "graphical"),
+                ExternalToolchain = GetAttribute(node, "external"),
+                ExternalToolchainCapture = GetList(node, "external-capture"),
+                DefaultProjectFile = GetList(node, "default-project"),
+                HaxeTarget = GetAttribute(node, "haxe-target"),
+                DebuggerSupported = GetList(node, "debugger"),
+                RawData = node
+            };
+            platform.VersionNames = new string[platform.Versions.Count];
+            for (int i = 0; i < platform.Versions.Count; i++)
+                platform.VersionNames[i] = platform.Versions[i].Value;
+            return platform;
+        }
+
+        private static bool GetBool(XmlNode node, string attribute)
+        {
+            return (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
+        }
+
+        private static string GetAttribute(XmlNode node, string name)
+        {
+            var attr = node.Attributes[name];
+            if (attr != null) return attr.Value;
+            return null;
+        }
+
+        private static string[] GetList(XmlNode node, string attribute)
+        {
+            // build targets, ie. html5, flash, android for openfl
+            var attr = node.Attributes[attribute];
+            if (attr == null) return null;
+            else return attr.Value.Split(',');
+        }
+
+        private static List<PlatformVersion> ParseVersions(XmlNode language, Dictionary<string, PlatformCommand> defaultCommands)
+        {
+            if (!language.HasChildNodes) return new List<PlatformVersion>
+            {
+                new PlatformVersion { Value = "1.0", Commands = defaultCommands }
+            };
+
+            var versions = new List<PlatformVersion>();
+            foreach (XmlNode node in language.ChildNodes)
+            {
+                if (node.Name == "version")
+                {
+                    versions.Add(new PlatformVersion
+                    {
+                        Value = node.Attributes["value"].Value,
+                        SwfVersion = ParseSwfVersion(node),
+                        Commands = ParseCommands(node, defaultCommands),
+                        RawData = node
+                    });
+                }
+            }
+            return versions;
+        }
+
+        private static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version, Dictionary<string, PlatformCommand> defaultCommands)
+        {
+            // custom display/build/run/clean commands, ie. for openfl
+            var commands = defaultCommands == null 
+                ? new Dictionary<string, PlatformCommand>()
+                : new Dictionary<string, PlatformCommand>(defaultCommands);
+
+            foreach (XmlNode node in version.ChildNodes)
+            {
+                if (node.Name == "command")
+                {
+                    var command = new PlatformCommand
+                    {
+                        Name = node.Attributes["name"].Value,
+                        Value = node.Attributes["value"].Value,
+                        RawData = node
+                    };
+                    commands.Add(command.Name.ToLower(), command);
+                }
+            }
+            if (commands.Count > 0) return commands;
+            return null;
+        }
+
+        private static string ParseSwfVersion(XmlNode node)
+        {
+            var attr = node.Attributes["swf-version"];
+            return attr != null ? attr.Value : null;
+        }
+
+        #endregion
+    }
+
+    public class SupportedLanguage
+    {
+        public string Name;
+        public string[] PlatformNames;
+        public Dictionary<string, LanguagePlatform> Platforms;
+    }
+
+    public class LanguagePlatform
+    {
+        public string Name;
+        public string[] Targets;
+        public string[] VersionNames;
+        public List<PlatformVersion> Versions;
+        public PlatformVersion LastVersion;
+        public bool IsFlashPlatform;
+        public bool IsGraphical;
+        public string ExternalToolchain;
+        public string[] ExternalToolchainCapture;
+        public string[] DefaultProjectFile;
+        public string HaxeTarget;
+        public string[] DebuggerSupported;
+        public XmlNode RawData;
+
+        public PlatformVersion GetVersion(string value)
+        {
+            foreach (var version in Versions)
+            {
+                if (version.Value == value) return version;
+            }
+            return LastVersion;
+        }
+    }
+
+    public class PlatformVersion
+    {
+        public string Value;
+        public string SwfVersion;
+        public Dictionary<string, PlatformCommand> Commands;
+        public XmlNode RawData;
+    }
+
+    public class PlatformCommand
+    {
+        public string Name;
+        public string Value;
+        public XmlNode RawData;
     }
 
 }

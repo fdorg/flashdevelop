@@ -17,7 +17,7 @@
 		<Id>flexairsdk</Id>
 		<Name>Flex + AIR SDK</Name>
 		<Version>4.6.0+14.0.0</Version>
-		<Build>23201B+110</Build>
+		<Build>23201B+137</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
@@ -31,7 +31,7 @@
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
 		<Version>14.0.0</Version>
-		<Build>110</Build>
+		<Build>137</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
@@ -44,7 +44,7 @@
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
 		<Version>14.0.0</Version>
-		<Build>125</Build>
+		<Build>145</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>AS3</Group>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
@@ -56,7 +56,7 @@
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
 		<Version>14.0.0</Version>
-		<Build>125</Build>
+		<Build>145</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -69,7 +69,7 @@
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
 		<Version>14.0.0</Version>
-		<Build>125</Build>
+		<Build>145</Build>
 		<Desc>Debug Flash Player plugin for Interner Explorer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -81,14 +81,14 @@
 	<Entry>
 		<Id>aflexsdk</Id>
 		<Name>Apache Flex SDK</Name>
-		<Version>3.0.0</Version>
+		<Version>3.1.0</Version>
 		<Build>1</Build>
 		<Desc>Apache Flex SDK and dependencies installer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
 		<Info>http://flex.apache.org/index.html</Info>
 		<Urls>
-			<Url>http://www.apache.org/dyn/closer.cgi?path=/flex/installer/3.0/binaries/apache-flex-sdk-installer-3.0.0-bin.exe</Url>
+			<Url>http://www.apache.org/dyn/closer.cgi?path=/flex/installer/3.1/binaries/apache-flex-sdk-installer-3.1.0-bin.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -145,27 +145,27 @@
 	<Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows</Name>
-		<Version>1.9.2</Version>
+		<Version>1.9.4</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.2-preview20140411/Git-1.9.2-preview20140411.exe</Url>
+			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140611/Git-1.9.4-preview20140611.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN</Name>
-		<Version>1.8.7</Version>
+		<Version>1.8.8</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://downloads.sourceforge.net/project/tortoisesvn/1.8.7/Application/TortoiseSVN-1.8.7.25475-win32-svn-1.8.9.msi</Url>
+			<Url>http://downloads.sourceforge.net/project/tortoisesvn/1.8.8/Application/TortoiseSVN-1.8.8.25755-win32-svn-1.8.10.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>

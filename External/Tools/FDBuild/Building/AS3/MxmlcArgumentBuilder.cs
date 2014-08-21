@@ -61,23 +61,20 @@ namespace ProjectManager.Building.AS3
                 if (all.IndexOf("swf-version") > 0) hasVersion = true;
             }
 
-            bool isAIR = false;
             if (!hasConfig)
             {
                 if (project.MovieOptions.Platform == "AIR") {
-                    isAIR = true;
                     AddEq("+configname", "air");
                 }
                 else if (project.MovieOptions.Platform == "AIR Mobile") {
-                    isAIR = true;
                     AddEq("+configname", "airmobile");
                 }
             }
             if ((asc2 || flex45) && !hasVersion)
             {
                 string version = project.MovieOptions.Version;
-                if (isAIR) version = PluginCore.PlatformData.GuessFlashPlayerForAIR(version);
-                string swfVersion = (project.MovieOptions as AS3MovieOptions).GetSWFVersion(version);
+                string platform = project.MovieOptions.Platform;
+                string swfVersion = PluginCore.PlatformData.ResolveSwfVersion(project.Language, platform, version);
                 if (swfVersion != null) AddEq("-swf-version", swfVersion);
             }
 

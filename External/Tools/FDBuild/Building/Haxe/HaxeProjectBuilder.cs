@@ -37,20 +37,15 @@ namespace ProjectManager.Building.Haxe
             string connect = (!serverPort.StartsWith("%") && serverPort != "0")
                 ? "--connect " + serverPort : "";
 
-            if (project.IsNmeOutput && !string.IsNullOrEmpty(project.TargetBuild))
+            if (project.MovieOptions.HasPlatformSupport && project.MovieOptions.PlatformSupport.ExternalToolchain != null)
             {
-                haxePath = haxePath.Replace("haxe.exe", "haxelib.exe");
-                string config = project.TargetBuild;
-                string haxeNmeArgs = String.Join(" ", BuildNmeCommand(extraClasspaths, output, config, noTrace, null));// +" " + connect;
-                Console.WriteLine("haxelib " + haxeNmeArgs);
-                if (!ProcessRunner.Run(haxePath, haxeNmeArgs, false, false))
-                    throw new BuildException("Build halted with errors (haxelib.exe).");
+                Console.WriteLine("Automatic NME/OpenFL build by FDBuild is deprecated.");
                 return;
             }
 
             // always use relative path for CPP (because it prepends ./)
-            if (project.IsCppOutput)
-                output = project.FixDebugReleasePath(project.OutputPath);
+            //if (project.IsCppOutput)
+            //    output = project.FixDebugReleasePath(project.OutputPath);
 
             if (project.IsFlashOutput)
             {
@@ -72,7 +67,7 @@ namespace ProjectManager.Building.Haxe
                 throw new BuildException("Build halted with errors (haxe.exe).");
         }
 
-        private string[] BuildNmeCommand(string[] extraClasspaths, string output, string target, bool noTrace, string extraArgs)
+        /*private string[] BuildNmeCommand(string[] extraClasspaths, string output, string target, bool noTrace, string extraArgs)
         {
             List<String> pr = new List<String>();
 
@@ -90,7 +85,7 @@ namespace ProjectManager.Building.Haxe
             if (extraArgs != null) pr.Add(extraArgs);
 
             return pr.ToArray();
-        }
+        }*/
 
         string Quote(string s)
         {

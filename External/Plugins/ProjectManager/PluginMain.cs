@@ -862,15 +862,16 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.Custom)
             {
-                if (project.TraceEnabled && project.EnableInteractiveDebugger)
-                {
-                    de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
-                    EventManager.DispatchEvent(this, de);
-                    de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", null);
-                    EventManager.DispatchEvent(this, de);
-                }
                 if (project.TestMovieCommand != null && project.TestMovieCommand.Length > 0)
                 {
+                    if (project.TraceEnabled && project.EnableInteractiveDebugger)
+                    {
+                        de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
+                        EventManager.DispatchEvent(this, de);
+                        de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", null);
+                        EventManager.DispatchEvent(this, de);
+                    }
+
                     string cmd = MainForm.ProcessArgString(project.TestMovieCommand).Trim();
                     cmd = project.FixDebugReleasePath(cmd);
 

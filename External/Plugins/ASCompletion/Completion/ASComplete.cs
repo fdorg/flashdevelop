@@ -2768,6 +2768,9 @@ namespace ASCompletion.Completion
         /// <param name="acc">Visibility mask</param>
         static public void FindMember(string token, FileModel inFile, ASResult result, FlagType mask, Visibility acc)
         {
+            if (string.IsNullOrEmpty(token))
+                return;
+
             // package
             if (result.IsPackage)
             {
@@ -2864,7 +2867,7 @@ namespace ASCompletion.Completion
         /// <param name="acc">Visibility mask</param>
         static public void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility acc)
 		{
-            if (token.Length == 0)
+            if (string.IsNullOrEmpty(token))
                 return;
 
             IASContext context = ASContext.Context;
