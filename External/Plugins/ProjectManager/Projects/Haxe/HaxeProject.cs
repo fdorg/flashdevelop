@@ -215,11 +215,9 @@ namespace ProjectManager.Projects.Haxe
                     if (CompilerOptions.FlashStrict)
                         pr.Add("--flash-strict");
 
-                    // convert Flash version to haxe supported parameter
+                    // haxe compiler uses Flash version directly
                     string version = MovieOptions.Version;
-                    string platform = MovieOptions.Platform;
-                    string swfVersion = PluginCore.PlatformData.ResolveSwfVersion(Language, platform, version);
-                    if (swfVersion != null) pr.Add("-swf-version " + swfVersion);
+                    if (version != null) pr.Add("-swf-version " + version);
                 }
 
                 // defines
