@@ -49,15 +49,7 @@ namespace ProjectManager.Helpers
 		{
             isRunning = true;
             if (!projectTypesSet) SetInitialProjectHash();
-			this.projectName = projectName;
-            this.packageName = packageName;
-            projectId = Regex.Replace(Project.RemoveDiacritics(projectName), "[^a-z0-9]", "", RegexOptions.IgnoreCase);
-            packagePath = packageName.Replace('.', '\\');
-            if (packageName.Length > 0)
-            {
-                packageDot = packageName + ".";
-                packageSlash = packagePath + "\\";
-            }
+		    SetContext(projectName, packageName);
             string projectTemplate = FindProjectTemplate(templateDirectory);
             string projectPath = Path.Combine(projectLocation, projectName + Path.GetExtension(projectTemplate));
             projectPath = PathHelper.GetPhysicalPathName(projectPath);
@@ -72,9 +64,6 @@ namespace ProjectManager.Helpers
             EventManager.DispatchEvent(this, de);
             if (!de.Handled)
             {
-                defaultFlexSDK = PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
-                arguments = PluginBase.MainForm.CustomArguments.ToArray();
-                
                 Directory.CreateDirectory(projectLocation);
                 // manually copy important files
                 CopyFile(projectTemplate, projectPath);
@@ -135,7 +124,7 @@ namespace ProjectManager.Helpers
 		}
 
 		// copy a file, if it's an .as or .fdp file, replace template keywords
-		private void CopyFile(string source, string dest)
+		internal void CopyFile(string source, string dest)
 		{
             dest = ReplaceKeywords(dest); // you can use keywords in filenames too
             string ext = Path.GetExtension(source).ToLower();
@@ -185,9 +174,13 @@ namespace ProjectManager.Helpers
                     case "PACKAGESLASH": return packageSlash;
                     case "PACKAGESLASHALT": return packageSlash.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     case "DOLLAR": return "$";
-                    case "FLEXSDK": return defaultFlexSDK;
+                    case "FLEXSDK": 
+                        if (defaultFlexSDK == null) 
+                            defaultFlexSDK = PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
+                        return defaultFlexSDK;
                     case "APPDIR": return PathHelper.AppDir;
                     default:
+                        if (arguments == null) arguments = PluginBase.MainForm.CustomArguments.ToArray();
                         foreach (Argument arg in arguments)
                             if (arg.Key.ToUpper() == name) return arg.Value;
                         break;
@@ -195,6 +188,19 @@ namespace ProjectManager.Helpers
             }
             return match.Value;
 		}
+
+        internal void SetContext(string projectName, string packageName)
+        {
+            this.projectName = projectName;
+            this.packageName = packageName;
+            projectId = Regex.Replace(Project.RemoveDiacritics(projectName), "[^a-z0-9.-]", "", RegexOptions.IgnoreCase);
+            packagePath = packageName.Replace('.', '\\');
+            if (packageName.Length > 0)
+            {
+                packageDot = packageName + ".";
+                packageSlash = packagePath + "\\";
+            }
+        }
 
         /// <summary>
         /// Gets the clipboard text

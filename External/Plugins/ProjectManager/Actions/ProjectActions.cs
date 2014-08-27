@@ -108,12 +108,14 @@ namespace ProjectManager.Actions
 
                     if (FileInspector.IsFlexBuilderProject(fbProject))
                     {
-                        Project imported = AS3Project.Load(fbProject);
+                        AS3Project imported = AS3Project.Load(fbProject);
                         string path = Path.GetDirectoryName(imported.ProjectPath);
-                        string name = Path.GetFileName(path);
+                        string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
                         string newPath = Path.Combine(path, name + ".as3proj");
                         PatchProject(imported);
+                        PatchFbProject(imported);
                         imported.SaveAs(newPath);
+
                         return newPath;
                     }
                     else
@@ -126,6 +128,80 @@ namespace ProjectManager.Actions
                 }
             }
             return null;
+        }
+
+        private void PatchFbProject(AS3Project project)
+        {
+            if (project == null || !project.MovieOptions.Platform.StartsWith("AIR")) return;
+
+            // First we copy the needed project template files
+            project.TestMovieBehavior = TestMovieBehavior.Custom;
+            project.TestMovieCommand = "Run.bat";
+
+            bool isFlex = project.CompileTargets.Count > 0 && Path.GetExtension(project.CompileTargets[0]).ToLower() == ".mxml";
+            string projectPath;
+            var excludedFiles = new List<string>(); // This could be a setting, in any case, decided to do this in case someone added custom files to the project templates...
+            if (project.MovieOptions.Platform == "AIR Mobile")
+            {
+                projectPath = isFlex ? "195 ActionScript 3 - AIR Mobile Flex App" : "190 ActionScript 3 - AIR Mobile AS3 App";
+                excludedFiles.AddRange(new[] { "application.xml.template", "Project.as3proj", "Project.png", "Project.txt", "bin", "cert", "icons", "src" });
+            }
+            else
+            {
+                // The files are the same for Flex 3 and 4, so no need to discern them
+                projectPath = isFlex ? "180 ActionScript 3 - AIR Flex 4 Projector" : "160 ActionScript 3 - AIR AS3 Projector";
+                excludedFiles.AddRange(new[] { "application.xml.template", "Project.as3proj", "Project.png", "Project.txt", "bin", "src" });
+            }
+
+            projectPath = Path.Combine(PathHelper.ProjectsDir, projectPath);
+            if (!Directory.Exists(projectPath))
+            {
+                string info = TextHelper.GetString("Info.TemplateDirNotFound");
+                ErrorManager.ShowWarning(info, null);
+                return;
+            }
+            string path = Path.GetDirectoryName(project.ProjectPath);
+            var creator = new ProjectCreator();
+            creator.SetContext(Path.GetFileNameWithoutExtension(project.OutputPath), string.Empty);
+            foreach (var file in Directory.GetFiles(projectPath, "*.*", SearchOption.AllDirectories))
+            {
+                bool excluded = false;
+                foreach (var excludedFile in excludedFiles)
+                    if (file.StartsWith(Path.Combine(projectPath, excludedFile)))
+                    {
+                        excluded = true;
+                        break;
+                    }
+
+                if (excluded) continue;
+                var fileDirectory = Path.GetDirectoryName(file).Replace(projectPath, string.Empty);
+                if (fileDirectory.StartsWith("\\")) fileDirectory = fileDirectory.Substring(1);
+                var folder = Path.Combine(path, fileDirectory);
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                string newFile = Path.Combine(folder, Path.GetFileName(file));
+                if (Path.GetExtension(file).ToLower() == ".template")
+                {
+                    creator.CopyFile(file, newFile);
+                }
+                else
+                {
+                    File.Copy(file, newFile, true);
+                }
+            }
+
+            // We configure the batch files
+            char s = Path.DirectorySeparatorChar;
+            string descriptor = "src" + s + Path.GetFileNameWithoutExtension(project.OutputPath) + "-app.xml";
+            var configurator = new AirConfigurator {ApplicationSetupBatch = Path.Combine(path, "bat" + s + "SetupApplication.bat")};
+            configurator.ApplicationSetupParams[AirConfigurator.DescriptorPath] = descriptor;
+            configurator.ApplicationSetupParams[AirConfigurator.PackageDir] = Path.GetFileName(Path.GetDirectoryName(project.OutputPath));
+            configurator.SetUp();
+
+            // We change the descriptor file so it targets our output file. FB does this dynamically.
+            descriptor = Path.Combine(path, descriptor);
+            var fileInfo = FileHelper.GetEncodingFileInfo(descriptor);
+            string contents = Regex.Replace(fileInfo.Contents, "<content>\\[This value will be overwritten by (Flex|Flash) Builder in the output app.xml]</content>", "<content>" + Path.GetFileName(project.OutputPath) + "</content>");
+            FileHelper.WriteFile(descriptor, contents, System.Text.Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
         }
 
         private void PatchProject(Project project)

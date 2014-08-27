@@ -83,7 +83,7 @@ namespace ProjectManager.Projects.AS3
                         if (File.ReadAllText(mainFile).IndexOf("http://www.adobe.com/2006/mxml") > 0)
                         {
                             target = 3;
-                            additional = "-compatibility-version=3\n" + additional;
+                            additional = "-compatibility-version=3.0.0\n" + additional;
                             if (project.MovieOptions.Platform == PluginCore.PlatformData.FLASHPLAYER_PLATFORM)
                                 project.MovieOptions.Version = "9.0";
                         }
@@ -166,6 +166,7 @@ namespace ProjectManager.Projects.AS3
             ReadPaths("application", applications);
             if (applications.Count > 0)
             {
+                // Why doesn't it use mainApplicationPath?
                 project.OutputPath = Path.Combine(outputPath,
                     Path.GetFileNameWithoutExtension(applications[0]) + ".swf");
             }

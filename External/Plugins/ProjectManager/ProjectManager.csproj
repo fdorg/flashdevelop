@@ -17,6 +17,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +30,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -94,6 +94,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\TabColors.cs" />
+    <Compile Include="Helpers\AirConfigurator.cs" />
     <Compile Include="Helpers\FlexCompilerShell.cs" />
     <Compile Include="Controls\AS2\AS2PropertiesDialog.cs">
       <SubType>Form</SubType>
