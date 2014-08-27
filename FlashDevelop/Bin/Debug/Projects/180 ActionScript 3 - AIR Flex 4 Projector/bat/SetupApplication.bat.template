@@ -20,7 +20,8 @@ set APP_DIR=bin
 set FILE_OR_DIR=-C %APP_DIR% .
 
 :: Your application ID (must match <id> of Application descriptor)
-set APP_ID=$(PACKAGEDOT)$(PROJECTID)
+for /f "tokens=3 delims=<>" %%a in ('findstr /C:"<id>" %APP_XML%') do set APP_ID=%%a
+set APP_ID=%APP_ID: =%
 
 :: Output
 set AIR_PATH=air
