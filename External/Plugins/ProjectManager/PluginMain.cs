@@ -1321,10 +1321,16 @@ namespace ProjectManager
         /// </summary>
         private void TreeShowCommandPrompt()
         {
-            ProcessStartInfo cmdPrompt = new ProcessStartInfo();
-            cmdPrompt.FileName = "cmd.exe";
-            cmdPrompt.WorkingDirectory = Tree.SelectedPath;
-            Process.Start(cmdPrompt);
+            var de = new DataEvent(EventType.Command, "FileExplorer.PromptHere", Tree.SelectedPath);
+            EventManager.DispatchEvent(this, de);
+
+            if (!de.Handled)
+            {
+                ProcessStartInfo cmdPrompt = new ProcessStartInfo();
+                cmdPrompt.FileName = "cmd.exe";
+                cmdPrompt.WorkingDirectory = Tree.SelectedPath;
+                Process.Start(cmdPrompt);
+            }
         }
 
         /// <summary>
