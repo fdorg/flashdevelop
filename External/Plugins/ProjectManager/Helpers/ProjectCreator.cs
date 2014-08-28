@@ -86,7 +86,15 @@ namespace ProjectManager.Helpers
                 projectPath = PathHelper.GetPhysicalPathName(projectPath);
                 de = new DataEvent(EventType.Command, ProjectManagerEvents.ProjectCreated, para);
                 EventManager.DispatchEvent(this, de);
-                return ProjectLoader.Load(projectPath);
+                try
+                {
+                    return ProjectLoader.Load(projectPath);
+                }
+                catch (Exception ex)
+                {
+                    TraceManager.Add(ex.Message);
+                    return null;
+                }
             }
             else return null;
 		}

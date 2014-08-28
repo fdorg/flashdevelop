@@ -215,7 +215,7 @@ namespace FileExplorer
                 }*/
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("cmd")) config["cmd"] = "cmd.exe";
-                String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]);
+                String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
                 int start = cmd.StartsWith("\"") ? cmd.IndexOf("\"", 2) : 0;
                 int p = cmd.IndexOf(" ", start);
                 string quoted = !path.StartsWith("\"") ? path = "\"" + path + "\"" : path;

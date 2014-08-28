@@ -20,6 +20,7 @@ namespace ProjectManager.Projects
 
 		public MovieOptions()
 		{
+            Platform = "Custom";
             Language = "unknown";
 			Fps = 30;
 			Width = 800;

@@ -108,14 +108,7 @@ namespace PluginCore
             set
             {
                 this.path = value;
-                if (owner != null)
-                {
-                    InstalledSDKOwner o = owner;
-                    owner = null;
-                    isValid = o.ValidateSDK(this);
-                    owner = o;
-                }
-                else isValid = true;
+                Validate();
             }
         }
 
@@ -176,6 +169,18 @@ namespace PluginCore
                 return (this.name ?? "") + ";" + (this.version ?? "") + ";";
             else
                 return (this.name ?? "") + ";" + (this.version ?? "") + ";" + (this.path ?? "");
+        }
+
+        public void Validate()
+        {
+            if (owner != null)
+            {
+                InstalledSDKOwner o = owner;
+                owner = null;
+                isValid = o.ValidateSDK(this);
+                owner = o;
+            }
+            else isValid = true;
         }
     }
 
