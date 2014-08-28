@@ -587,7 +587,7 @@ namespace ProjectManager
 
         void SetProject(Project project, Boolean stealFocus, Boolean internalOpening)
         {
-            if (Tree.Projects.Contains(project)) return;
+            if (project == null || Tree.Projects.Contains(project)) return;
             if (activeProject != null) CloseProject(true);
 
             // configure
@@ -913,7 +913,7 @@ namespace ProjectManager
 
         private void BuildComplete(IProject project, bool runOutput)
         {
-            BroadcastBuildComplete(project);
+            if (project != null) BroadcastBuildComplete(project);
             if (buildQueue.Count > 0) ProcessBuildQueue();
             else if (this.buildingAll)
             {
@@ -1393,13 +1393,24 @@ namespace ProjectManager
             buildTimer.Stop();
             if (buildTimer.Tag == null)
             {
-                Project project = ProjectLoader.Load(buildQueue.Dequeue());
-                Boolean debugging = this.buildingAll ? !activeProject.TraceEnabled : !project.TraceEnabled;
-                this.buildActions.Build(project, false, debugging);
+                try
+                {
+                    Project project = ProjectLoader.Load(buildQueue.Dequeue());
+                    if (project != null)
+                    {
+                        Boolean debugging = this.buildingAll ? !activeProject.TraceEnabled : !project.TraceEnabled;
+                        this.buildActions.Build(project, false, debugging);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceManager.AddAsync(ex.Message);
+                    BuildComplete(null, false);
+                }
             } 
             else
             {
-                this.buildTimer.Tag = null;
+                buildTimer.Tag = null;
                 if (this.runOutput) this.TestMovie();
                 else this.BuildProject();
                 this.runOutput = false;
