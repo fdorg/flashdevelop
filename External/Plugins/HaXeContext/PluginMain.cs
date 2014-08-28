@@ -225,7 +225,13 @@ namespace HaXeContext
                 }
                 settingObject.InstalledSDKs = sdks.ToArray();
             }
-            else foreach (InstalledSDK sdk in settingObject.InstalledSDKs) ValidateSDK(sdk);
+            else
+            {
+                foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                {
+                    sdk.Validate();
+                }
+            }
             if (settingObject.CompletionServerPort == 0)
             {
                 settingObject.CompletionServerPort = 6000;
@@ -281,6 +287,7 @@ namespace HaXeContext
 
             string[] lookup = new string[] {
                 Path.Combine(path, "CHANGES.txt"),
+                Path.Combine(path, Path.Combine("extra", "CHANGES.txt")),
                 Path.Combine(path, Path.Combine("doc", "CHANGES.txt"))
             };
             string descriptor = null;
@@ -292,7 +299,7 @@ namespace HaXeContext
             if (descriptor != null)
             {
                 string raw = File.ReadAllText(descriptor);
-                Match mVer = Regex.Match(raw, "[0-9\\-]+\\s*:\\s*([0-9.]+)");
+                Match mVer = Regex.Match(raw, "[0-9\\-?]+\\s*:\\s*([0-9.]+)");
                 if (mVer.Success)
                 {
                     sdk.Version = mVer.Groups[1].Value;
@@ -305,6 +312,7 @@ namespace HaXeContext
             {
                 sdk.Version = "0.0";
                 sdk.Name = "Haxe ?";
+                return true;
             }
             else ErrorManager.ShowInfo("No change.txt found:\n" + descriptor);
             return false;
