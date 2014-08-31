@@ -70,7 +70,7 @@
 		<Name>Flash Player (AX)</Name>
 		<Version>14.0.0</Version>
 		<Build>145</Build>
-		<Desc>Debug Flash Player plugin for Interner Explorer</Desc>
+		<Desc>Debug Flash Player plugin for Internet Explorer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
