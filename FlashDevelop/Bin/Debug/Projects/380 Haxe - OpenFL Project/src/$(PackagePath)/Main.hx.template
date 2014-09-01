@@ -1,8 +1,8 @@
 package $(PackageName);
 
-import flash.display.Sprite;
-import flash.events.Event;
-import flash.Lib;
+import openfl.display.Sprite;
+import openfl.events.Event;
+import openfl.Lib;
 
 /**
 $(CBI)* ...
@@ -29,7 +29,7 @@ class Main extends Sprite $(CSLB){
 		// stage.stageWidth x stage.stageHeight @ stage.dpiScale
 		
 		// Assets:
-		// nme.Assets.getBitmapData("img/assetname.jpg");
+		// openfl.Assets.getBitmapData("img/assetname.jpg");
 	}
 
 	/* SETUP */
