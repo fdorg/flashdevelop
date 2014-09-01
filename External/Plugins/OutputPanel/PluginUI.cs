@@ -10,8 +10,8 @@ using WeifenLuo.WinFormsUI;
 using PluginCore.Managers;
 using PluginCore.Localization;
 using PluginCore.Controls;
-using PluginCore;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace OutputPanel
 {
@@ -24,19 +24,20 @@ namespace OutputPanel
         private System.Timers.Timer scrollTimer;
         private ToolStripMenuItem wrapTextItem;
         private ToolStripSpringTextBox findTextBox;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripButton toggleButton;
         private ToolStripButton clearButton;
         private ToolStrip toolStrip;
-        private Timer typingTimer;
-        private ToolStripButton toggleButton;
-        private ToolStripSeparator toolStripSeparator1;
-        private Timer autoShow;
-        private bool scrolling;
-        private bool muted;
         private ImageList imageList;
+        private Timer typingTimer;
+        private Boolean scrolling;
+        private Timer autoShow;
+        private Boolean muted;
 
         public PluginUI(PluginMain pluginMain)
         {
             this.InitializeTimers();
+            this.scrolling = false;
             this.pluginMain = pluginMain;
             this.logCount = TraceManager.TraceLog.Count;
             this.InitializeComponent();
@@ -48,8 +49,7 @@ namespace OutputPanel
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("146"));
 			this.imageList.Images.Add(PluginBase.MainForm.FindImage("147"));
 			this.imageList.Images.Add(PluginBase.MainForm.FindImage("147|17|5|4"));
-			this.scrolling = false;
-            this.toggleButton_Click(this, new EventArgs());
+            this.ToggleButtonClick(this, new EventArgs());
         }
 
         #region Windows Forms Designer Generated Code
@@ -93,9 +93,9 @@ namespace OutputPanel
             this.textLog.Text = "";
             this.textLog.WordWrap = false;
             this.textLog.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginUIKeyDown);
-            this.textLog.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textLog_MouseUp);
+            this.textLog.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TextLogMouseUp);
             this.textLog.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.LinkClicked);
-            this.textLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLog_MouseDown);
+            this.textLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TextLogMouseDown);
             // 
             // toolStrip
             // 
@@ -121,7 +121,7 @@ namespace OutputPanel
             this.toggleButton.Name = "toggleButton";
             this.toggleButton.Size = new System.Drawing.Size(23, 20);
             this.toggleButton.Text = "toolStripButton1";
-            this.toggleButton.Click += new System.EventHandler(this.toggleButton_Click);
+            this.toggleButton.Click += new System.EventHandler(this.ToggleButtonClick);
             // 
             // toolStripSeparator1
             // 
@@ -335,13 +335,11 @@ namespace OutputPanel
 				this.toggleButton.Image = this.imageList.Images[2];
 				return;
 			}
-//			SuspendResumeRedraw(true);
             IList<TraceItem> log = TraceManager.TraceLog;
             Int32 newCount = log.Count;
             if (newCount <= this.logCount)
             {
                 this.logCount = newCount;
-				//SuspendResumeRedraw(false);
                 return;
             }
             Int32 state;
@@ -418,24 +416,12 @@ namespace OutputPanel
                 this.textLog.SelectionColor = currentColor;
                 this.textLog.AppendText(newText);
             }
-			//this.textLog.Select(this.textLog.TextLength, 0);
-				if (oldSelectionLength != 0)
-				{
-					this.textLog.Select(oldSelectionStart, oldSelectionLength);
-				}
-				else if (scrolling)
-				{
-					this.textLog.Select(this.textLog.TextLength, 0);
-				}
-				else
-				{
-					this.textLog.Select(visibPos, 0);
-				}
-
+			if (oldSelectionLength != 0) this.textLog.Select(oldSelectionStart, oldSelectionLength);
+			else if (scrolling) this.textLog.Select(this.textLog.TextLength, 0);
+			else this.textLog.Select(visibPos, 0);
             this.logCount = newCount;
             this.scrollTimer.Enabled = true;
             this.TypingTimerTick(null, null);
-			//SuspendResumeRedraw(false);
         }
 
         /// <summary>
@@ -588,7 +574,8 @@ namespace OutputPanel
                     }
                     this.textLog.Focus();
                     this.textLog.Select(nearestMatch.Index, nearestMatch.Length);
-                    this.textLog.ScrollToCaret();
+                    try { this.textLog.ScrollToCaret(); }
+                    catch { /* WineMod: not supported */ }
                 }
             }
             catch { }
@@ -601,53 +588,40 @@ namespace OutputPanel
         {
 			int oldSelectionStart = this.textLog.SelectionStart;
 			int oldSelectionLength = this.textLog.SelectionLength;
-			//Int32 curPos = this.textLog.SelectionStart + this.textLog.SelectionLength;
             this.textLog.Select(0, this.textLog.TextLength);
             this.textLog.SelectionBackColor = this.textLog.BackColor;
-            //this.textLog.Select(curPos, 0);
 			this.textLog.Select(oldSelectionStart, oldSelectionLength);
         }
 
-        #endregion
-
-        private void toggleButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ToggleButtonClick(object sender, EventArgs e)
         {
             this.scrolling = !this.scrolling;
             this.toggleButton.Image = this.imageList.Images[(this.scrolling ? 0 : 1)];
             this.toggleButton.ToolTipText = (this.scrolling ? TextHelper.GetString("ToolTip.StopScrolling") : TextHelper.GetString("ToolTip.StartScrolling"));
-			if (this.scrolling) this.AddTraces();
+            if (this.scrolling) this.AddTraces();
         }
 
-        private void textLog_MouseDown(object sender, MouseEventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        private void TextLogMouseDown(object sender, MouseEventArgs e)
         {
             this.muted = true;
         }
 
-        private void textLog_MouseUp(object sender, MouseEventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        private void TextLogMouseUp(object sender, MouseEventArgs e)
         {
             this.muted = false;
-			this.AddTraces();
+            this.AddTraces();
         }
 
-		/*
-		private void SuspendResumeRedraw(bool suspend)
-		{
-			if (suspend)
-			{
-				SendMessage(this.Handle, WM_SETREDRAW, 0, 0);
-				SendMessage(this.textLog.Handle, WM_SETREDRAW, 0, 0);
-			}
-			else
-			{
-				SendMessage(this.textLog.Handle, WM_SETREDRAW, 1, 0);
-				SendMessage(this.Handle, WM_SETREDRAW, 1, 0);
-				this.Refresh();
-			}
-		}
-		[System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "SendMessageA", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Ansi, SetLastError = true)]
-		private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
-		private const int WM_SETREDRAW = 0xB;
-		*/
+        #endregion
 
     }
 
