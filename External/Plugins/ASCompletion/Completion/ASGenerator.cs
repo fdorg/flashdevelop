@@ -608,34 +608,35 @@ namespace ASCompletion.Completion
         {
             List<ICompletionListItem> known = new List<ICompletionListItem>();
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
-            ASResult result = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
-            if (result == null || result.InClass == null || found.inClass.QualifiedName.Equals(result.RelClass.QualifiedName))
-                result = null;
-            result = ASComplete.GetExpressionType(Sci, Sci.WordStartPosition(Sci.CurrentPos, true) - 1);
-            if (result != null && result.Type != null)
+            int currentPos = Sci.CurrentPos;
+            ASResult exprAtCursor = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(currentPos, true));
+            if (exprAtCursor == null || exprAtCursor.InClass == null || found.inClass.QualifiedName.Equals(exprAtCursor.RelClass.QualifiedName))
+                exprAtCursor = null;
+            ASResult exprLeft = ASComplete.GetExpressionType(Sci, Sci.WordStartPosition(currentPos, true) - 1);
+            if (exprLeft != null && exprLeft.Type == null) exprLeft = null;
+            if (exprLeft != null)
             {
                 ClassModel curClass = ASContext.Context.CurrentClass;
                 if (!isHaxe)
                 {
-                    if (result.Type.Equals(curClass)) result = null;
+                    if (exprLeft.Type.Equals(curClass)) exprLeft = null;
                 }
-                else
+                else 
                 {
-                    ClassModel aClass = curClass;
-                    while (!aClass.IsVoid())
+                    while (!curClass.IsVoid())
                     {
-                        if (aClass.Equals(result.Type))
+                        if (curClass.Equals(exprLeft.Type))
                         {
-                            result = null;
+                            exprLeft = null;
                             break;
                         }
-                        aClass.ResolveExtends();
-                        aClass = aClass.Extends;
+                        curClass.ResolveExtends();
+                        curClass = curClass.Extends;
                     }
                 }
             }
             string label;
-            if ((result != null && result.RelClass != null && (result.RelClass.Flags & FlagType.Interface) > 0)
+            if ((exprAtCursor != null && exprAtCursor.RelClass != null && (exprAtCursor.RelClass.Flags & FlagType.Interface) > 0)
                 || (found.inClass != null && (found.inClass.Flags & FlagType.Interface) > 0))
             {
                 label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
@@ -643,7 +644,7 @@ namespace ASCompletion.Completion
             }
             else
             {
-                string textAtCursor = Sci.GetWordFromPosition(Sci.CurrentPos);
+                string textAtCursor = Sci.GetWordFromPosition(currentPos);
                 bool isConst = textAtCursor != null && textAtCursor.ToUpper().Equals(textAtCursor);
                 if (isConst)
                 {
@@ -651,7 +652,7 @@ namespace ASCompletion.Completion
                     known.Add(new GeneratorItem(label, GeneratorJobType.Constant, found.member, found.inClass));
                 }
 
-                if (result == null)
+                if (exprAtCursor == null && exprLeft == null)
                 {
                     label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
                     known.Add(new GeneratorItem(label, GeneratorJobType.Variable, found.member, found.inClass));
@@ -660,7 +661,7 @@ namespace ASCompletion.Completion
                 label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
                 known.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
 
-                if (result == null)
+                if (exprAtCursor == null && exprLeft == null)
                 {
                     label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
                     known.Add(new GeneratorItem(label, GeneratorJobType.Function, found.member, found.inClass));
