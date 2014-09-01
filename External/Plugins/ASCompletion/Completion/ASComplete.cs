@@ -3178,7 +3178,7 @@ namespace ASCompletion.Completion
                     else if (c == '(')
                     {
                         braceCount--;
-                        if (braceCount == 0)
+                        if (braceCount == 0 && sqCount == 0)
                         {
                             int testPos = position - 1;
                             string testWord = GetWordLeft(Sci, ref testPos);
