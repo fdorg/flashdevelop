@@ -303,17 +303,21 @@ namespace ScintillaNet.Configuration
             try  // Choose first font that is found...
             {
                 String[] fonts = name.Split(',');
-                InstalledFontCollection installed = new InstalledFontCollection();
-                foreach (String option in fonts)
+                foreach (String font in fonts)
                 {
-                    foreach (FontFamily font in installed.Families)
-                    {
-                        if (option == font.Name) return option;
-                    }
+                    if (IsFontInstalled(font)) return font;
                 }
             }
             catch { /* No errors... */ }
             return name;
+        }
+
+        private static bool IsFontInstalled(string fontName)
+        {
+            using (var testFont = new Font(fontName, 9))
+            {
+                return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
         
     }
