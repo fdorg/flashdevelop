@@ -618,6 +618,7 @@ namespace AS3Context
         {
             sdk.Owner = this;
             string path = sdk.Path;
+            if (path == null) return false;
             Match mBin = Regex.Match(path, "[/\\\\]bin$", RegexOptions.IgnoreCase);
             if (mBin.Success)
                 sdk.Path = path = path.Substring(0, mBin.Index);
