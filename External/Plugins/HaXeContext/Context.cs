@@ -269,8 +269,9 @@ namespace HaXeContext
                 else if (contextSetup.TargetBuild.IndexOf("neko") >= 0)
                     lang = "neko";
             }
-            else if (lang == "flash")
+            else if (lang == "swf")
             {
+                lang = "flash";
                 hasAIRSupport = platform.StartsWith("AIR");
                 hasMobileSupport = platform == "AIR Mobile";
             }
