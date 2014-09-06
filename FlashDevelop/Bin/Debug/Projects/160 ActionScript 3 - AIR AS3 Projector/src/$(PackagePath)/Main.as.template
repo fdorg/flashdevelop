@@ -7,7 +7,7 @@ package $(PackageName)$(CSLB){
 	$(CBI)*/
 	public class Main extends Sprite $(CSLB){
 		
-		public function Main():void $(CSLB){
+		public function Main() $(CSLB){
 			
 		}
 		
