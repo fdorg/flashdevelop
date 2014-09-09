@@ -3024,7 +3024,10 @@ namespace ASCompletion.Completion
                 }
                 else if (c == ']')
                 {
-                    type = ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
+                    resolve = ASComplete.GetExpressionType(Sci, pos + 1);
+                    if (resolve.Type != null) type = resolve.Type;
+                    else type = ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
+                    resolve = null;
                 }
                 else if (word != null && Char.IsDigit(word[0]))
                 {
