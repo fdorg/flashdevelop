@@ -1302,7 +1302,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (word != null && Char.IsDigit(word[0])) word = null;
+            if (!string.IsNullOrEmpty(word) && Char.IsDigit(word[0])) word = null;
 
             if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)")))
                 word = null;
