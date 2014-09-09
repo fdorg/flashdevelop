@@ -2260,8 +2260,7 @@ namespace ASCompletion.Completion
 		{
 			ASResult notFound = new ASResult();
             notFound.Context = context;
-            if (expression == null || expression.Length == 0)
-                return notFound;
+            if (string.IsNullOrEmpty(expression)) return notFound;
 
             ContextFeatures features = ASContext.Context.Features;
             if (expression.StartsWith(features.dot))
@@ -2275,13 +2274,11 @@ namespace ASCompletion.Completion
 
 			// eval first token
 			string token = tokens[0];
+            if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
 
 			ASResult head;
-            if (token.Length == 0)
-                return notFound;
-            
-            else if (token.StartsWith("#"))
+            if (token.StartsWith("#"))
             {
                 Match mSub = re_sub.Match(token);
                 if (mSub.Success)
@@ -3596,7 +3593,7 @@ namespace ASCompletion.Completion
             {
                 ASExpr expr = GetExpression(sci, position);
                 expr.LocalVars = ParseLocalVars(expr);
-                if ((expr.Value == null) || (expr.Value.Length == 0))
+                if (string.IsNullOrEmpty(expr.Value))
                 {
                     ASResult res = new ASResult();
                     res.Context = expr;
