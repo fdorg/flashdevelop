@@ -1278,10 +1278,7 @@ namespace ASCompletion.Completion
             string line = Sci.GetLine(lineNum);
             StatementReturnType returnType = GetStatementReturnType(Sci, inClass, line, Sci.PositionFromLine(lineNum));
 
-            if (returnType == null)
-            {
-                return;
-            }
+            if (returnType == null) return;
             
             string type = null;
             string varname = null;
@@ -3033,21 +3030,14 @@ namespace ASCompletion.Completion
                 {
                     type = ctx.ResolveType(ctx.Features.numberKey, inClass.InFile);
                 }
-                else if (word != null && (word == "true" || word == "false"))
+                else if (word == "true" || word == "false")
                 {
                     type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
                 }
                 if (type != null && type.IsVoid()) type = null;
             }
-            if (resolve == null)
-            {
-                resolve = new ASResult();
-            }
-            if (resolve.Type == null)
-            {
-                resolve.Type = type;
-            }
-
+            if (resolve == null) resolve = new ASResult();
+            if (resolve.Type == null) resolve.Type = type;
             return new StatementReturnType(resolve, pos, word);
         }
 
