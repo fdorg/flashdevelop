@@ -702,7 +702,7 @@ namespace AS2Context
                 if (pkg == package && aFile.Classes.Count > 0)
                 {
                     foreach (ClassModel aClass in aFile.Classes)
-                        if (aClass.Name == cname && (aFile.Module == "" || aFile.Module == aClass.Name))
+                        if (aClass.Name == cname && (pkg == "" || aFile.Module == "" || aFile.Module == aClass.Name))
                         {
                             found = aClass;
                             return false;
