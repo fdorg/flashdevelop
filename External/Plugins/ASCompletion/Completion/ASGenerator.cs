@@ -803,12 +803,12 @@ namespace ASCompletion.Completion
             {
                 Hashtable parameters = new Hashtable();
                 parameters["scope"] = GetDefaultVisibility();
-                string labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromPatameter");
+                string labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
 
                 parameters = new Hashtable();
                 parameters["scope"] = Visibility.Public;
-                labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromPatameter");
+                labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
 
                 CompletionList.Show(known, false);
@@ -1278,10 +1278,7 @@ namespace ASCompletion.Completion
             string line = Sci.GetLine(lineNum);
             StatementReturnType returnType = GetStatementReturnType(Sci, inClass, line, Sci.PositionFromLine(lineNum));
 
-            if (returnType == null)
-            {
-                return;
-            }
+            if (returnType == null) return;
             
             string type = null;
             string varname = null;
@@ -1305,7 +1302,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (word != null && Char.IsDigit(word[0])) word = null;
+            if (!string.IsNullOrEmpty(word) && Char.IsDigit(word[0])) word = null;
 
             if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)")))
                 word = null;
@@ -3027,27 +3024,23 @@ namespace ASCompletion.Completion
                 }
                 else if (c == ']')
                 {
-                    type = ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
+                    resolve = ASComplete.GetExpressionType(Sci, pos + 1);
+                    if (resolve.Type != null) type = resolve.Type;
+                    else type = ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
+                    resolve = null;
                 }
                 else if (word != null && Char.IsDigit(word[0]))
                 {
                     type = ctx.ResolveType(ctx.Features.numberKey, inClass.InFile);
                 }
-                else if (word != null && (word == "true" || word == "false"))
+                else if (word == "true" || word == "false")
                 {
                     type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
                 }
                 if (type != null && type.IsVoid()) type = null;
             }
-            if (resolve == null)
-            {
-                resolve = new ASResult();
-            }
-            if (resolve.Type == null)
-            {
-                resolve.Type = type;
-            }
-
+            if (resolve == null) resolve = new ASResult();
+            if (resolve.Type == null) resolve.Type = type;
             return new StatementReturnType(resolve, pos, word);
         }
 
