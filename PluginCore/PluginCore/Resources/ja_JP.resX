@@ -5338,4 +5338,16 @@ UseData:"</value>
     <value>Wrong Android manifest XML:</value>
     <comment>Added after 4.6.3</comment>
   </data>
+  <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
+    <value>Generate protected field</value>
+    <comment>TODO: localize me</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
+    <value>Generate protected function</value>
+    <comment>TODO: localize me</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
+    <value>Declare protected variable</value>
+    <comment>TODO: localize me</comment>
+  </data>
 </root>

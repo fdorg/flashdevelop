@@ -5286,4 +5286,13 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Wrong Android manifest XML:</value>
     <comment>Added after 4.6.3</comment>
   </data>
+  <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
+    <value>Generate protected field</value>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
+    <value>Generate protected function</value>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
+    <value>Declare protected variable</value>
+  </data>
 </root>
