@@ -803,7 +803,7 @@ namespace ASCompletion.Completion
             {
                 Hashtable parameters = new Hashtable();
                 parameters["scope"] = GetDefaultVisibility();
-                string labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromPatameter");
+                string labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
 
                 parameters = new Hashtable();

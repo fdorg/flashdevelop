@@ -3464,7 +3464,7 @@
   <data name="ASCompletion.Label.GenerateConstructor" xml:space="preserve">
     <value>生成构造函数</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePrivateFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePrivateFieldFromParameter" xml:space="preserve">
     <value>生成 private 字段</value>
   </data>
   <data name="ASCompletion.Label.GeneratePublicFieldFromPatameter" xml:space="preserve">

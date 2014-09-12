@@ -3465,7 +3465,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="ASCompletion.Label.GenerateConstructor" xml:space="preserve">
     <value>Konstruktor erstellen</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePrivateFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePrivateFieldFromParameter" xml:space="preserve">
     <value>Generate private field</value>
   </data>
   <data name="ASCompletion.Label.GeneratePublicFieldFromPatameter" xml:space="preserve">
