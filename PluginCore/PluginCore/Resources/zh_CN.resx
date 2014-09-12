@@ -3467,7 +3467,7 @@
   <data name="ASCompletion.Label.GeneratePrivateFieldFromParameter" xml:space="preserve">
     <value>生成 private 字段</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePublicFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePublicFieldFromParameter" xml:space="preserve">
     <value>生成 public 字段</value>
   </data>
   <data name="ASCompletion.Label.GenerateToString" xml:space="preserve">

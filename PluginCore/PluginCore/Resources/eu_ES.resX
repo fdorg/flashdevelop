@@ -3459,7 +3459,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="ASCompletion.Label.GeneratePrivateFieldFromParameter" xml:space="preserve">
     <value>Parametrotik eremu pribatua sortu</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePublicFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePublicFieldFromParameter" xml:space="preserve">
     <value>Parametrotik eremu publikoa sortu</value>
   </data>
   <data name="ASCompletion.Label.GenerateToString" xml:space="preserve">

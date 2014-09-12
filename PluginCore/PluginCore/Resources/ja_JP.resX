@@ -3472,7 +3472,7 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="ASCompletion.Label.GeneratePrivateFieldFromParameter" xml:space="preserve">
     <value>プライベート変数を作成</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePublicFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePublicFieldFromParameter" xml:space="preserve">
     <value>パブリック変数を作成</value>
   </data>
   <data name="ASCompletion.Label.GenerateToString" xml:space="preserve">

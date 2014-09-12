@@ -808,7 +808,7 @@ namespace ASCompletion.Completion
 
                 parameters = new Hashtable();
                 parameters["scope"] = Visibility.Public;
-                labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromPatameter");
+                labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
 
                 CompletionList.Show(known, false);
