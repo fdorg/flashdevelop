@@ -88,7 +88,7 @@
 		<Type>Executable</Type>
 		<Info>http://flex.apache.org/index.html</Info>
 		<Urls>
-			<Url>http://www.apache.org/dyn/closer.cgi?path=/flex/installer/3.1/binaries/apache-flex-sdk-installer-3.1.0-bin.exe</Url>
+			<Url>http://mirror.netinch.com/pub/apache/flex/installer/3.1/binaries/apache-flex-sdk-installer-3.1.0-bin.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
