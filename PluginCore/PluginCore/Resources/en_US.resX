@@ -5288,11 +5288,14 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
     <value>Generate protected field</value>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
     <value>Generate protected function</value>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>Declare protected variable</value>
+    <comment>Added after 4.6.4</comment>
   </data>
 </root>

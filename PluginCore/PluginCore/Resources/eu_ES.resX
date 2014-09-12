@@ -5275,14 +5275,14 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
     <value>Generate protected field</value>
-    <comment>TODO: localize me</comment>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
     <value>Generate protected function</value>
-    <comment>TODO: localize me</comment>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>Declare protected variable</value>
-    <comment>TODO: localize me</comment>
+    <comment>Added after 4.6.4</comment>
   </data>
 </root>
