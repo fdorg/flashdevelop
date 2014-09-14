@@ -216,36 +216,42 @@ namespace PluginCore.Helpers
                     if (bytes.Length > 2 && (bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf))
                     {
                         startIndex = 3;
+                        info.BomLength = 3;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.UTF8.CodePage;
                     }
                     else if (bytes.Length > 3 && (bytes[0] == 0xff && bytes[1] == 0xfe && bytes[2] == 0x00 && bytes[3] == 0x00))
                     {
                         startIndex = 4;
+                        info.BomLength = 4;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.UTF32.CodePage;
                     }
                     else if (bytes.Length > 4 && ((bytes[0] == 0x2b && bytes[1] == 0x2f && bytes[2] == 0x76) && (bytes[3] == 0x38 || bytes[3] == 0x39 || bytes[3] == 0x2b || bytes[3] == 0x2f) && bytes[4] == 0x2D))
                     {
                         startIndex = 5;
+                        info.BomLength = 5;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.UTF7.CodePage;
                     }
                     else if (bytes.Length > 3 && ((bytes[0] == 0x2b && bytes[1] == 0x2f && bytes[2] == 0x76) && (bytes[3] == 0x38 || bytes[3] == 0x39 || bytes[3] == 0x2b || bytes[3] == 0x2f)))
                     {
                         startIndex = 4;
+                        info.BomLength = 4;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.UTF7.CodePage;
                     }
                     else if (bytes.Length > 1 && (bytes[0] == 0xff && bytes[1] == 0xfe))
                     {
                         startIndex = 2;
+                        info.BomLength = 2;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.Unicode.CodePage;
                     }
                     else if (bytes.Length > 1 && (bytes[0] == 0xfe && bytes[1] == 0xff))
                     {
                         startIndex = 2;
+                        info.BomLength = 2;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.BigEndianUnicode.CodePage;
                     }
@@ -290,6 +296,7 @@ namespace PluginCore.Helpers
         public Int32 CodePage = -1;
         public String Contents = String.Empty;
         public Boolean ContainsBOM = false;
+        public Int32 BomLength = 0;
     }
 
 }

@@ -6,7 +6,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 
-namespace CodeRefactor.CustomControls
+namespace CodeRefactor.Controls
 {
     public class SurroundMenu : ToolStripMenuItem
     {

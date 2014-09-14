@@ -1,0 +1,23 @@
+<platform name="Flash Player" flash="true" graphical="true" debugger="*">
+  <versions>
+    <version value="9.0" swf-version="9" />
+    <version value="10.0" swf-version="10" />
+    <version value="10.1" swf-version="10" />
+    <version value="10.2" swf-version="11" />
+    <version value="10.3" swf-version="12" />
+    <version value="11.0" swf-version="13" />
+    <version value="11.1" swf-version="14" />
+    <version value="11.2" swf-version="15" />
+    <version value="11.3" swf-version="16" />
+    <version value="11.4" swf-version="17" />
+    <version value="11.5" swf-version="18" />
+    <version value="11.6" swf-version="19" />
+    <version value="11.7" swf-version="20" />
+    <version value="11.8" swf-version="21" />
+    <version value="11.9" swf-version="22" />
+    <version value="12.0" swf-version="23" />
+    <version value="13.0" swf-version="24" />
+    <version value="14.0" swf-version="25" />
+    <version value="15.0" swf-version="26" />
+  </versions>
+</platform>

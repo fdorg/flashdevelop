@@ -1,4 +1,6 @@
-﻿using System;
+﻿// TODO: This form is getting huge, it should be refactored. It isn't hard, just abstract properties and link fields, possible values and valid versions together, taking into account that some versions add new values to existing properties. This would clean things like SetupUI, LoadProperties, SaveProperties...
+
+using System;
 using System.IO;
 using System.Xml;
 using System.Text;
@@ -9,7 +11,13 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using AirProperties.Forms;
+using ICSharpCode.SharpZipLib.Zip;
 using PluginCore.Localization;
+using ProjectManager.Projects;
+using System.Collections;
+using ProjectManager.Projects.AS3;
+using PluginCore.Managers;
 
 namespace AirProperties
 {
@@ -41,7 +49,16 @@ namespace AirProperties
         private List<PropertyManager.AirFileType> _fileTypes = new List<PropertyManager.AirFileType>();
         private readonly List<PropertyManager.AirApplicationIconField> _iconFields;
         private List<PropertyManager.AirExtension> _extensions = new List<PropertyManager.AirExtension>();
-                
+        private List<string> _removedExtensions = new List<string>();
+
+        // Android extra
+        private List<PropertyManager.AndroidPermission> _androidPermissions;
+        private AndroidManifestManager androidManifest;
+
+        // iOS extra
+        private IphonePlistManager iPhoneAdditions;
+        private IphonePlistManager iPhoneEntitlements;
+
         public Boolean IsPropertiesLoaded
         {
             get { return _isPropertiesLoaded; }
@@ -79,6 +96,7 @@ namespace AirProperties
                 new PropertyManager.AirApplicationIconField("512", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("1024", PropertyManager.AirVersion.V34)
             };
+
             if (this._pluginMain.Settings.SelectPropertiesFileOnOpen) SelectAndLoadPropertiesFile();
             else
             {
@@ -165,6 +183,29 @@ namespace AirProperties
             // Mobile additions
             this.AndroidManifestAdditionsTabPage.Text = TextHelper.GetString("Label.AndroidAdditions");
             this.IPhoneInfoAdditionsTabPage.Text = TextHelper.GetString("Label.IPhoneAdditions");
+            // New
+            this.DesktopResolutionLabel.Text = TextHelper.GetString("Label.Resolution");
+            this.AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            this.AndroidColorDepthLabel.Text = TextHelper.GetString("Label.ColorDepth");
+            this.AndroidPermissionsLabel.Text = TextHelper.GetString("Label.SelectPermForInfo");
+            this.AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            this.IPhoneInfoAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            this.IPhoneOtherBehaviorGroup.Text = TextHelper.GetString("Label.OtherBehavior");
+            this.label8.Text = TextHelper.GetString("Label.PushNotifications");
+            this.IPhoneExternalSWFsLabel.Text = TextHelper.GetString("Label.ExternalSWFs");
+            this.IPhoneLookGroup.Text = TextHelper.GetString("Label.LookAndFeel");
+            this.IPhonePrerrenderedIconLabel.Text = TextHelper.GetString("Label.PrerenderedIcon");
+            this.IPhoneStatusBarStyleLabel.Text = TextHelper.GetString("Label.StatusBarStyle");
+            this.IPhoneBackgroundBehaviorGroup.Text = TextHelper.GetString("Label.BackgroundBehavior");
+            this.IPhoneExitsOnSuspendLabel.Text = TextHelper.GetString("Label.ExitOnSuspend");
+            this.IPhoneDeviceBehaviorGroup.Text = TextHelper.GetString("Label.Display");
+            this.IPhoneResolutionExcludeButton.Text = TextHelper.GetString("Label.Exclude");
+            this.IPhoneResolutionLabel.Text = TextHelper.GetString("Label.Resolution");
+            this.IPhoneForceCPULabel.Text = TextHelper.GetString("Label.CPURendering");
+            this.IPhoneDeviceLabel.Text = TextHelper.GetString("Label.SupportedDevices");
+            this.IPhoneInfoAdditionsLabel.Text = TextHelper.GetString("Label.InfoAdditions");
+            this.IPhoneEntitlementsLabel.Text = TextHelper.GetString("Label.Entitlements");
+            this.ExtensionBrowseButton.Text = TextHelper.GetString("Label.Browse");
         }
 
         private void InitializeGraphics()
@@ -187,6 +228,9 @@ namespace AirProperties
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.CPU"), "cpu"));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.GPU"), "gpu"));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.Direct"), "direct"));
+            SoftKeyboardField.Items.Add(new ListItem(String.Empty, String.Empty));
+            SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.None"), "none"));
+            SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.Pan"), "pan"));
             OpenIconFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
             OpenPropertiesFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
             AndroidManifestAdditionsField.SelectionTabs = new int[] { 25, 50, 75, 100, 125, 150, 175, 200 };
@@ -220,6 +264,155 @@ namespace AirProperties
             }
         }
 
+        private void InitializeAndroidPermissions()
+        {
+            _androidPermissions = new List<PropertyManager.AndroidPermission>
+                {
+                    new PropertyManager.AndroidPermission("android.permission.INTERNET", "Allows applications to open network sockets. Removing the permission will prevent you from debugging your application on your device"),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_EXTERNAL_STORAGE", "Allows an application to write to external storage."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_PHONE_STATE", "Allows read only access to phone state."),
+                    new PropertyManager.AndroidPermission("android.permission.ACCESS_FINE_LOCATION", "Allows an app to access precise location from location sources such as GPS, cell towers, and Wi-Fi."),
+                    new PropertyManager.AndroidPermission("android.permission.ACCESS_COARSE_LOCATION", "Allows an app to access approximate location derived from network location sources such as cell towers and Wi-Fi."),
+                    new PropertyManager.AndroidPermission("android.permission.DISABLE_KEYGUARD","Allows applications to disable the keyguard. WAKE_LOCK should be toggled together to access AIR's SystemIdleMode APIs"),
+                    new PropertyManager.AndroidPermission("android.permission.WAKE_LOCK", "Allows using PowerManager WakeLocks to keep processor from sleeping or screen from dimming. Needed to access AIR's SystemIdleMode APIs"),
+                    new PropertyManager.AndroidPermission("android.permission.CAMERA","Required to be able to access the camera device."),
+                    new PropertyManager.AndroidPermission("android.permission.RECORD_AUDIO", "Allows an application to record audio"),
+                    new PropertyManager.AndroidPermission("android.permission.ACCESS_NETWORK_STATE", "Allows applications to access information about networks. ACCESS_WIFI_STATE should be toggled together in order to use AIR's NetworkInfo APIs"),
+                    new PropertyManager.AndroidPermission("android.permission.ACCESS_WIFI_STATE", "Allows applications to access information about Wi-Fi networks. Toggle ACCESS_NETWORK_STATE together in order to use AIR's NetworkInfo APIs"),
+                    new PropertyManager.AndroidPermission("android.permission.ACCESS_CHECKIN_PROPERTIES", "Allows read/write access to the \"properties\" table in the checkin database, to change values that get uploaded."),
+                    new PropertyManager.AndroidPermission("android.permission.ACCESS_LOCATION_EXTRA_COMMANDS", "Allows an application to access extra location provider commands"),
+                    new PropertyManager.AndroidPermission("android.permission.ACCESS_MOCK_LOCATION", "Allows an application to create mock location providers for testing"),
+                    new PropertyManager.AndroidPermission("android.permission.ACCESS_SURFACE_FLINGER", "Allows an application to use SurfaceFlinger's low level features."),
+                    new PropertyManager.AndroidPermission("android.permission.ACCOUNT_MANAGER", "Allows applications to call into AccountAuthenticators."),
+                    new PropertyManager.AndroidPermission("android.permission.ADD_VOICEMAIL", "Allows an application to add voicemails into the system."),
+                    new PropertyManager.AndroidPermission("android.permission.AUTHENTICATE_ACCOUNTS", "Allows an application to act as an AccountAuthenticator for the AccountManager"),
+                    new PropertyManager.AndroidPermission("android.permission.BATTERY_STATS", "Allows an application to collect battery statistics"),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_ACCESSIBILITY_SERVICE", "Must be required by an AccessibilityService, to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_APPWIDGET",	"Allows an application to tell the AppWidget service which application can access AppWidget's data."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_DEVICE_ADMIN", "Must be required by device administration receiver, to ensure that only the system can interact with it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_INPUT_METHOD", "Must be required by an InputMethodService, to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_NFC_SERVICE", "Must be required by a HostApduService or OffHostApduService to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_NOTIFICATION_LISTENER_SERVICE",	"Must be required by an NotificationListenerService, to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_PRINT_SERVICE",	"Must be required by a PrintService, to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_REMOTEVIEWS", "Must be required by a RemoteViewsService, to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_TEXT_SERVICE", "Must be required by a TextService (e.g. SpellCheckerService) to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_VPN_SERVICE", "Must be required by a VpnService, to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BIND_WALLPAPER", "Must be required by a WallpaperService, to ensure that only the system can bind to it."),
+                    new PropertyManager.AndroidPermission("android.permission.BLUETOOTH", "Allows applications to connect to paired bluetooth devices"),
+                    new PropertyManager.AndroidPermission("android.permission.BLUETOOTH_ADMIN"	,"Allows applications to discover and pair bluetooth devices"),
+                    new PropertyManager.AndroidPermission("android.permission.BLUETOOTH_PRIVILEGED", "Allows applications to pair bluetooth devices without user interaction."),
+                    new PropertyManager.AndroidPermission("android.permission.BODY_SENSORS",	"Allows an application to access data from sensors that the user uses to measure what is happening inside his/her body, such as heart rate."),
+                    new PropertyManager.AndroidPermission("android.permission.BRICK",	"Required to be able to disable the device (very dangerous!)."),
+                    new PropertyManager.AndroidPermission("android.permission.BROADCAST_PACKAGE_REMOVED"	,"Allows an application to broadcast a notification that an application package has been removed."),
+                    new PropertyManager.AndroidPermission("android.permission.BROADCAST_SMS","Allows an application to broadcast an SMS receipt notification."),
+                    new PropertyManager.AndroidPermission("android.permission.BROADCAST_STICKY", "Allows an application to broadcast sticky intents."),
+                    new PropertyManager.AndroidPermission("android.permission.BROADCAST_WAP_PUSH","Allows an application to broadcast a WAP PUSH receipt notification."),
+                    new PropertyManager.AndroidPermission("android.permission.CALL_PHONE","Allows an application to initiate a phone call without going through the Dialer user interface for the user to confirm the call being placed."),
+                    new PropertyManager.AndroidPermission("android.permission.CALL_PRIVILEGED","Allows an application to call any phone number, including emergency numbers, without going through the Dialer user interface for the user to confirm the call being placed."),
+                    new PropertyManager.AndroidPermission("android.permission.CAPTURE_AUDIO_OUTPUT","Allows an application to capture audio output."),
+                    new PropertyManager.AndroidPermission("android.permission.CAPTURE_SECURE_VIDEO_OUTPUT","Allows an application to capture secure video output."),
+                    new PropertyManager.AndroidPermission("android.permission.CAPTURE_VIDEO_OUTPUT","Allows an application to capture video output."),
+                    new PropertyManager.AndroidPermission("android.permission.CHANGE_COMPONENT_ENABLED_STATE","Allows an application to change whether an application component (other than its own) is enabled or not."),
+                    new PropertyManager.AndroidPermission("android.permission.CHANGE_CONFIGURATION","Allows an application to modify the current configuration, such as locale."),
+                    new PropertyManager.AndroidPermission("android.permission.CHANGE_NETWORK_STATE","Allows applications to change network connectivity state"),
+                    new PropertyManager.AndroidPermission("android.permission.CHANGE_WIFI_MULTICAST_STATE","Allows applications to enter Wi-Fi Multicast mode"),
+                    new PropertyManager.AndroidPermission("android.permission.CHANGE_WIFI_STATE","Allows applications to change Wi-Fi connectivity state"),
+                    new PropertyManager.AndroidPermission("android.permission.CLEAR_APP_CACHE","Allows an application to clear the caches of all installed applications on the device."),
+                    new PropertyManager.AndroidPermission("android.permission.CLEAR_APP_USER_DATA","Allows an application to clear user data."),
+                    new PropertyManager.AndroidPermission("android.permission.CONTROL_LOCATION_UPDATES","Allows enabling/disabling location update notifications from the radio."),
+                    new PropertyManager.AndroidPermission("android.permission.DELETE_CACHE_FILES","Allows an application to delete cache files."),
+                    new PropertyManager.AndroidPermission("android.permission.DELETE_PACKAGES","Allows an application to delete packages."),
+                    new PropertyManager.AndroidPermission("android.permission.DEVICE_POWER","Allows low-level access to power management."),
+                    new PropertyManager.AndroidPermission("android.permission.DIAGNOSTIC","Allows applications to RW to diagnostic resources."),
+                    new PropertyManager.AndroidPermission("android.permission.DUMP","Allows an application to retrieve state dump information from system services."),
+                    new PropertyManager.AndroidPermission("android.permission.EXPAND_STATUS_BAR", "Allows an application to expand or collapse the status bar."),
+                    new PropertyManager.AndroidPermission("android.permission.FACTORY_TEST", "Run as a manufacturer test application, running as the root user."),
+                    new PropertyManager.AndroidPermission("android.permission.FLASHLIGHT", "Allows access to the flashlight"),
+                    new PropertyManager.AndroidPermission("android.permission.FORCE_BACK", "Allows an application to force a BACK operation on whatever is the top activity."),
+                    new PropertyManager.AndroidPermission("android.permission.GET_ACCOUNTS", "Allows access to the list of accounts in the Accounts Service"),
+                    new PropertyManager.AndroidPermission("android.permission.GET_PACKAGE_SIZE", "Allows an application to find out the space used by any package."),
+                    new PropertyManager.AndroidPermission("android.permission.GET_TASKS", "Allows an application to get information about the currently or recently running tasks."),
+                    new PropertyManager.AndroidPermission("android.permission.GET_TOP_ACTIVITY_INFO", "Allows an application to retrieve private information about the current top activity, such as any assist context it can provide."),
+                    new PropertyManager.AndroidPermission("android.permission.GLOBAL_SEARCH", "This permission can be used on content providers to allow the global search system to access their data."),
+                    new PropertyManager.AndroidPermission("android.permission.HARDWARE_TEST", "Allows access to hardware peripherals."),
+                    new PropertyManager.AndroidPermission("android.permission.INJECT_EVENTS", "Allows an application to inject user events (keys, touch, trackball) into the event stream and deliver them to ANY window."),
+                    new PropertyManager.AndroidPermission("android.permission.INSTALL_LOCATION_PROVIDER", "Allows an application to install a location provider into the Location Manager."),
+                    new PropertyManager.AndroidPermission("android.permission.INSTALL_PACKAGES", "Allows an application to install packages."),
+                    new PropertyManager.AndroidPermission("android.permission.INSTALL_SHORTCUT", "Allows an application to install a shortcut in Launcher"),
+                    new PropertyManager.AndroidPermission("android.permission.INTERNAL_SYSTEM_WINDOW", "Allows an application to open windows that are for use by parts of the system user interface."),
+                    new PropertyManager.AndroidPermission("android.permission.KILL_BACKGROUND_PROCESSES", "Allows an application to call killBackgroundProcesses(String)."),
+                    new PropertyManager.AndroidPermission("android.permission.LOCATION_HARDWARE", "Allows an application to use location features in hardware, such as the geofencing api."),
+                    new PropertyManager.AndroidPermission("android.permission.MANAGE_ACCOUNTS", "Allows an application to manage the list of accounts in the AccountManager"),
+                    new PropertyManager.AndroidPermission("android.permission.MANAGE_APP_TOKENS", "Allows an application to manage (create, destroy, Z-order) application tokens in the window manager."),
+                    new PropertyManager.AndroidPermission("android.permission.MANAGE_DOCUMENTS", "Allows an application to manage access to documents, usually as part of a document picker."),
+                    new PropertyManager.AndroidPermission("android.permission.MASTER_CLEAR", "Not for use by third-party applications."),
+                    new PropertyManager.AndroidPermission("android.permission.MEDIA_CONTENT_CONTROL", "Allows an application to know what content is playing and control its playback."),
+                    new PropertyManager.AndroidPermission("android.permission.MODIFY_AUDIO_SETTINGS", "Allows an application to modify global audio settings"),
+                    new PropertyManager.AndroidPermission("android.permission.MODIFY_PHONE_STATE", "Allows modification of the telephony state - power on, mmi, etc."),
+                    new PropertyManager.AndroidPermission("android.permission.MOUNT_FORMAT_FILESYSTEMS", "Allows formatting file systems for removable storage."),
+                    new PropertyManager.AndroidPermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS", "Allows mounting and unmounting file systems for removable storage."),
+                    new PropertyManager.AndroidPermission("android.permission.NFC", "Allows applications to perform I/O operations over NFC"),
+                    new PropertyManager.AndroidPermission("android.permission.PROCESS_OUTGOING_CALLS", "Allows an application to modify or abort outgoing calls."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_CALENDAR", "Allows an application to read the user's calendar data."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_CALL_LOG", "Allows an application to read the user's call log."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_CONTACTS", "Allows an application to read the user's contacts data."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_EXTERNAL_STORAGE", "Allows an application to read from external storage."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_FRAME_BUFFER", "Allows an application to take screen shots and more generally get access to the frame buffer data."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_HISTORY_BOOKMARKS", "Allows an application to read (but not write) the user's browsing history and bookmarks."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_LOGS", "Allows an application to read the low-level system log files."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_PROFILE", "Allows an application to read the user's personal profile data."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_SMS", "Allows an application to read SMS messages."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_SOCIAL_STREAM", "Allows an application to read from the user's social stream."),
+                    new PropertyManager.AndroidPermission("android.permission.READ_SYNC_SETTINGS", "Allows applications to read the sync settings"),
+                    new PropertyManager.AndroidPermission("android.permission.READ_SYNC_STATS", "Allows applications to read the sync stats"),
+                    new PropertyManager.AndroidPermission("android.permission.READ_USER_DICTIONARY", "Allows an application to read the user dictionary."),
+                    new PropertyManager.AndroidPermission("android.permission.REBOOT", "Required to be able to reboot the device."),
+                    new PropertyManager.AndroidPermission("android.permission.RECEIVE_BOOT_COMPLETED", "Allows an application to receive the ACTION_BOOT_COMPLETED that is broadcast after the system finishes booting."),
+                    new PropertyManager.AndroidPermission("android.permission.RECEIVE_MMS", "Allows an application to monitor incoming MMS messages, to record or perform processing on them."),
+                    new PropertyManager.AndroidPermission("android.permission.RECEIVE_SMS", "Allows an application to monitor incoming SMS messages, to record or perform processing on them."),
+                    new PropertyManager.AndroidPermission("android.permission.RECEIVE_WAP_PUSH", "Allows an application to monitor incoming WAP push messages."),
+                    new PropertyManager.AndroidPermission("android.permission.REORDER_TASKS", "Allows an application to change the Z-order of tasks"),
+                    new PropertyManager.AndroidPermission("android.permission.SEND_RESPOND_VIA_MESSAGE", "Allows an application (Phone) to send a request to other applications to handle the respond-via-message action during incoming calls."),
+                    new PropertyManager.AndroidPermission("android.permission.SEND_SMS", "Allows an application to send SMS messages."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_ACTIVITY_WATCHER", "Allows an application to watch and control how activities are started globally in the system."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_ALARM", "Allows an application to broadcast an Intent to set an alarm for the user."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_ALWAYS_FINISH", "Allows an application to control whether activities are immediately finished when put in the background."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_ANIMATION_SCALE", "Modify the global animation scaling factor."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_DEBUG_APP", "Configure an application for debugging."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_ORIENTATION", "Allows low-level access to setting the orientation (actually rotation) of the screen."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_POINTER_SPEED", "Allows low-level access to setting the pointer speed."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_PROCESS_LIMIT", "Allows an application to set the maximum number of (not needed) application processes that can be running."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_TIME", "Allows applications to set the system time."),
+                    new PropertyManager.AndroidPermission("android.permission.SET_TIME_ZONE", "Allows applications to set the system time zone"),
+                    new PropertyManager.AndroidPermission("android.permission.SET_WALLPAPER", "Allows applications to set the wallpaper"),
+                    new PropertyManager.AndroidPermission("android.permission.SET_WALLPAPER_HINTS", "Allows applications to set the wallpaper hints"),
+                    new PropertyManager.AndroidPermission("android.permission.SIGNAL_PERSISTENT_PROCESSES", "Allow an application to request that a signal be sent to all persistent processes."),
+                    new PropertyManager.AndroidPermission("android.permission.STATUS_BAR", "Allows an application to open, close, or disable the status bar and its icons."),
+                    new PropertyManager.AndroidPermission("android.permission.SUBSCRIBED_FEEDS_READ", "Allows an application to allow access the subscribed feeds ContentProvider."),
+                    new PropertyManager.AndroidPermission("android.permission.SUBSCRIBED_FEEDS_WRITE", ""),
+                    new PropertyManager.AndroidPermission("android.permission.SYSTEM_ALERT_WINDOW", "Allows an application to open windows using the type TYPE_SYSTEM_ALERT, shown on top of all other applications."),
+                    new PropertyManager.AndroidPermission("android.permission.TRANSMIT_IR", "Allows using the device's IR transmitter, if available"),
+                    new PropertyManager.AndroidPermission("android.permission.UNINSTALL_SHORTCUT", "Allows an application to uninstall a shortcut in Launcher"),
+                    new PropertyManager.AndroidPermission("android.permission.UPDATE_DEVICE_STATS", "Allows an application to update device statistics."),
+                    new PropertyManager.AndroidPermission("android.permission.USE_CREDENTIALS", "Allows an application to request authtokens from the AccountManager"),
+                    new PropertyManager.AndroidPermission("android.permission.USE_SIP", "Allows an application to use SIP service"),
+                    new PropertyManager.AndroidPermission("android.permission.VIBRATE", "Allows access to the vibrator"),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_APN_SETTINGS", "Allows applications to write the apn settings."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_CALENDAR", "Allows an application to write (but not read) the user's calendar data."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_CALL_LOG", "Allows an application to write (but not read) the user's contacts data."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_CONTACTS", "Allows an application to write (but not read) the user's contacts data."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_GSERVICES", "Allows an application to modify the Google service map."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_HISTORY_BOOKMARKS", "Allows an application to write (but not read) the user's browsing history and bookmarks."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_PROFILE", "Allows an application to write (but not read) the user's personal profile data."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_SECURE_SETTINGS", "Allows an application to read or write the secure system settings."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_SETTINGS", "Allows an application to read or write the system settings."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_SMS", "Allows an application to write SMS messages."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_SOCIAL_STREAM", "Allows an application to write (but not read) the user's social stream data."),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_SYNC_SETTINGS", "Allows applications to write the sync settings"),
+                    new PropertyManager.AndroidPermission("android.permission.WRITE_USER_DICTIONARY", "Allows an application to write to the user dictionary."),
+                };
+        }
+
         private String GetSelectedLocale()
         {
             String item = (String)LocalesField.SelectedItem;
@@ -244,11 +437,52 @@ namespace AirProperties
         private void SetupUI()
         {
             // Remove unsupported properties
+            if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V36)
+            {
+                WindowedPlatformsTabPage.Controls.Remove(DesktopResolutionLabel);
+                WindowedPlatformsTabPage.Controls.Remove(DesktopResolutionCombo);
+                IPhoneBasicSettingsPanel.Controls.Remove(IPhoneResolutionExcludeButton);
+                IPhoneResolutionCombo.Width = IPhoneDeviceBehaviorGroup.Width - IPhoneResolutionCombo.Left - IPhoneResolutionCombo.Margin.Right;
+            }
+            else
+            {
+                DesktopResolutionCombo.Items.AddRange(new object[]
+                    {
+                        new ListItem(string.Empty, string.Empty),
+                        new ListItem(TextHelper.GetString("DesktopResolution.Standard"), "standard"),
+                        new ListItem(TextHelper.GetString("DesktopResolution.High"), "high")
+                    });
+            }
+            if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V33)
+            {
+                IPhonePushNotifcationsCombo.Items.AddRange(new object[]
+                    {
+                        new ListItem(string.Empty, string.Empty),
+                        new ListItem(TextHelper.GetString("IPhonePushNotifications.Development"), "development"),
+                        new ListItem(TextHelper.GetString("IPhonePushNotifications.Distribution"), "production")
+                    });
+            }
+            else
+            {
+                IPhoneBasicSettingsPanel.Controls.Remove(IPhoneOtherBehaviorGroup);
+            }
+            if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V32)
+            {
+                AspectRatioField.Items.Add(new ListItem(TextHelper.GetString("AspectRatio.Any"), "any"));
+            }
+            else
+            {
+                IPhoneBasicSettingsPanel.Controls.Remove(IPhoneBackgroundBehaviorGroup);
+                IPhoneBasicSettingsPanel.Controls.Remove(MinimumiOsVersionLabel);
+                IPhoneBasicSettingsPanel.Controls.Remove(MinimumiOsVersionField);
+            }
             if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V32)
             {
                 SupportedLanguagesLabel.Visible = false;
                 SupportedLanguagesField.Visible = false;
                 SupportedLanguagesButton.Visible = false;
+                NonWindowedPlatformsTabPage.Controls.Remove(DepthStencilLabel);
+                NonWindowedPlatformsTabPage.Controls.Remove(DepthStencilField);
             }
             if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
@@ -263,6 +497,20 @@ namespace AirProperties
                 AppPropertiesTabControl.TabPages.Remove(ExtensionsTabPage);
                 MobileAdditionsTabControl.TabPages.Remove(AndroidManifestAdditionsTabPage);
             }
+            else
+            {
+                InitializeAndroidPermissions();
+                foreach (var androidPermission in _androidPermissions)
+                {
+                    AndroidUserPermissionsList.Items.Add(androidPermission.Constant);
+                }
+                AndroidColorDepthCombo.Items.AddRange(new object[]
+                    {
+                        new ListItem(string.Empty, string.Empty),
+                        new ListItem("16bit", "16bit"),
+                        new ListItem("32bit", "32bit")
+                    });
+            }
             if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V20)
             {
                 SupportedProfilesGroupBox.Visible = false;
@@ -273,6 +521,50 @@ namespace AirProperties
                 FileTypeIconsPanel.RemoveRow(3);
                 FileTypeIconsPanel.RemoveRow(4);
                 AppPropertiesTabControl.TabPages.Remove(MobileAdditionsTabPage);
+            }
+            else
+            {
+                IPhoneDeviceCombo.DropDownClosed += IPhoneDeviceCombo_DropDownClosed;
+                IPhoneResolutionCombo.Items.AddRange(new object[]
+                    {
+                        new ListItem(string.Empty, string.Empty),
+                        new ListItem(TextHelper.GetString("IPhoneResolution.Standard"), "standard"),
+                        new ListItem(TextHelper.GetString("IPhoneResolution.High"), "high")
+                    });
+                IPhoneDeviceCombo.Items.AddRange(new object[]
+                    {
+                        new ListItem("iPhone/iPod", "1"), 
+                        new ListItem("iPad", "2")
+                    });
+                IPhoneBGModesCombo.Items.AddRange(new object[]
+                    {
+                        new ListItem(TextHelper.GetString("IPhoneBGMode.Location"), "location"),
+                        new ListItem(TextHelper.GetString("IPhoneBGMode.Audio"), "audio")
+                    });
+                IPhoneStatusBarStyleCombo.Items.AddRange(new object[]
+                    {
+                        new ListItem(string.Empty, string.Empty),
+                        new ListItem("UIStatusBarStyleDefault", "UIStatusBarStyleDefault"),
+                        new ListItem("UIStatusBarStyleLightContent", "UIStatusBarStyleLightContent"),
+                        new ListItem("UIStatusBarStyleBlackTranslucent", "UIStatusBarStyleBlackTranslucent"),
+                        new ListItem("UIStatusBarStyleBlackOpaque", "UIStatusBarStyleBlackOpaque")
+                    });
+                if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V26)
+                {
+                    IPhoneBasicSettingsPanel.Controls.Remove(IPhoneDeviceBehaviorGroup);
+                } else if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V34)
+                {
+                    IPhoneBasicSettingsPanel.Controls.Remove(IPhoneOtherBehaviorGroup);
+                }
+                else if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V37)
+                {
+                    IPhoneDeviceBehaviorGroup.Controls.Remove(IPhoneForceCPULabel);
+                    IPhoneDeviceBehaviorGroup.Controls.Remove(IPhoneForceCPUField);
+                    IPhoneDeviceBehaviorGroup.Controls.Remove(IPhoneForceCPUButton);
+                    IPhoneOtherBehaviorGroup.Controls.Remove(IPhoneExternalSWFsLabel);
+                    IPhoneOtherBehaviorGroup.Controls.Remove(IPhoneExternalSWFsField);
+                    IPhoneOtherBehaviorGroup.Controls.Remove(IPhoneExternalSWFsButton);
+                }
             }
             if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V153)
             {
@@ -325,7 +617,7 @@ namespace AirProperties
                     appIconButton.Click += AppIconButtonClick;
 
                     AppIconsPanel.RowStyles.Add(new RowStyle());
-        }
+                }
             }
         }
 
@@ -408,7 +700,7 @@ namespace AirProperties
                         {
                             PropertyManager.GetProperty("icon/image"+icon.Size+"x"+icon.Size, icon.Field);
                         }
-                    }                    
+                    }
                     // Initial Window tab
                     contentProperty = PropertyManager.GetProperty("initialWindow/content");
                     ContentField.Text = System.Web.HttpUtility.UrlDecode(contentProperty);
@@ -456,17 +748,36 @@ namespace AirProperties
                     // Mobile Additions tab
                     if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
                     {
-                        String iPhoneInfoAdditions = PropertyManager.GetProperty("iPhone/InfoAdditions");
-                        IPhoneInfoAdditionsField.Text = FormatXML(iPhoneInfoAdditions, String.Empty);
+                        IPhoneInfoAdditionsField.Text = PropertyManager.GetProperty("iPhone/InfoAdditions");
+
+                        // On older AIR versions adding your own entitlements was not allowed and you had to do it separatedly, which one? the one that added push support?
+                        IPhoneEntitlementsField.Text = PropertyManager.GetProperty("iPhone/Entitlements");
                     }
                     if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
                     {
-                        String androidManifestAdditions = PropertyManager.GetProperty("android/manifestAdditions");
-                        AndroidManifestAdditionsField.Text = FormatXML(androidManifestAdditions, "android");
+                        AndroidManifestAdditionsField.Text = PropertyManager.GetProperty("android/manifestAdditions");
+
+                        PropertyManager.GetProperty("android/colorDepth", AndroidColorDepthCombo, 0);
+                    }
+                    if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V25)
+                    {
+                        PropertyManager.GetProperty("iPhone/requestedDisplayResolution", IPhoneResolutionCombo, 0);
+                        PropertyManager.GetProperty("initialWindow/softKeyboardBehavior", SoftKeyboardField, 0);
                     }
                     if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V32)
                     {
                         PropertyManager.GetProperty("supportedLanguages", SupportedLanguagesField);
+                        PropertyManager.GetProperty("initialWindow/depthAndStencil", DepthStencilField);
+                    }
+                    if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V35)
+                    {
+                        PropertyManager.GetProperty("initialWindow/requestedDisplayResolution", DesktopResolutionCombo, 0);
+                        IPhoneResolutionExcludeButton.Tag = PropertyManager.GetAttribute("iPhone/requestedDisplayResolution/@excludeDevices");
+                    }
+                    if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V36)
+                    {
+                        PropertyManager.GetProperty("iPhone/forceCPURenderModeForDevices",IPhoneForceCPUField);
+                        PropertyManager.GetProperty("iPhone/externalSwfs", IPhoneExternalSWFsField);
                     }
                     //Validate all controls so the error provider activates on any invalid values
                     ValidateChildren();
@@ -493,6 +804,12 @@ namespace AirProperties
             String[] files = Directory.GetFiles(_propertiesFilePath, "*-app.xml");
             foreach (String file in files)
                 if (LooksLikeAIRProperties(file)) return file;
+            foreach (String srcPath in PluginCore.PluginBase.CurrentProject.SourcePaths)
+            {
+                files = Directory.GetFiles(ProjectPaths.GetAbsolutePath(_propertiesFilePath, srcPath), "*-app.xml");
+                foreach (String file in files)
+                    if (LooksLikeAIRProperties(file)) return file;
+            }
             files = Directory.GetFiles(_propertiesFilePath, "*.xml");
             foreach (String file in files)
                 if (LooksLikeAIRProperties(file)) return file;
@@ -515,7 +832,7 @@ namespace AirProperties
             catch { }
             return false;
         }
-                
+        
         private void SaveProperties()
         {
             string supportedProfilesProperty = String.Empty;
@@ -609,19 +926,70 @@ namespace AirProperties
                 if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
                 {
                     PropertyManager.SetExtensions(_extensions);
+
+                    bool refreshProject = false;
+                    var project = PluginCore.PluginBase.CurrentProject as ProjectManager.Projects.Project;
+                    foreach (var extension in _extensions)
+                    {
+                        if (!string.IsNullOrEmpty(extension.Path))
+                        {
+                            if (!project.IsLibraryAsset(extension.Path))
+                            {
+                                refreshProject = true;  // Just in case in the future the following condition isn't anymore needed...
+                                project.SetLibraryAsset(extension.Path, true);
+                            }
+                            var asset = project.GetAsset(extension.Path);
+                            if (asset.SwfMode != SwfAssetMode.ExternalLibrary)
+                            {
+                                asset.SwfMode = SwfAssetMode.ExternalLibrary;
+                                refreshProject = true;
+                            }
+                        }
+                    }
+
+                    foreach (var extension in _removedExtensions)
+                    {
+                        var asset = project.GetAsset(extension);
+                        if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
+                        {
+                            project.SetLibraryAsset(extension, false);
+                            refreshProject = true;
+                        }
+                    }
+
+                    if (refreshProject) project.Save();
                 }
                 // Mobile Additions tab
                 if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
                 {
                     PropertyManager.SetPropertyCData("iPhone/InfoAdditions", IPhoneInfoAdditionsField);
+                    PropertyManager.SetPropertyCData("iPhone/Entitlements", IPhoneEntitlementsField);
                 }
                 if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
                 {
                     PropertyManager.SetPropertyCData("android/manifestAdditions", AndroidManifestAdditionsField);
+                    PropertyManager.SetProperty("android/colorDepth", AndroidColorDepthCombo);
+                }
+                if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V25)
+                {
+                    PropertyManager.SetProperty("iPhone/requestedDisplayResolution", IPhoneResolutionCombo);
+                    PropertyManager.SetProperty("initialWindow/softKeyboardBehavior", SoftKeyboardField);
                 }
                 if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V32)
                 {
                     PropertyManager.SetProperty("supportedLanguages", SupportedLanguagesField);
+                    PropertyManager.SetProperty("initialWindow/depthAndStencil", DepthStencilField);
+                }
+                if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V35)
+                {
+                    PropertyManager.SetProperty("initialWindow/requestedDisplayResolution", DesktopResolutionCombo);
+                    if (IPhoneResolutionExcludeButton.Enabled)
+                        PropertyManager.SetAttribute("iPhone/requestedDisplayResolution/@excludeDevices", IPhoneResolutionExcludeButton.Tag as string);
+                }
+                if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V36)
+                {
+                    PropertyManager.SetProperty("iPhone/forceCPURenderModeForDevices", IPhoneForceCPUField);
+                    PropertyManager.SetProperty("iPhone/externalSwfs", IPhoneExternalSWFsField);
                 }
                 PropertyManager.CommitProperties(_propertiesFile);
             }
@@ -924,6 +1292,7 @@ namespace AirProperties
                
                 ExtensionRemoveButton.Enabled = true;
                 ExtensionIdField.Enabled = true;
+                ExtensionIdField.ReadOnly = !string.IsNullOrEmpty(selectedExtension.Path);
                 ExtensionIdField.Text = selectedExtension.ExtensionId;
             }
             else
@@ -935,47 +1304,54 @@ namespace AirProperties
             }
         }
 
-        // used to format CDATA values for Android and iPhone additions (which is XML)
-        private String FormatXML(string xml, string nameSpace)
+        private void FilliPhoneAdditionsFields()
         {
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
-            readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
-            NameTable nameTable = new NameTable();
-            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(nameTable);
-            namespaceManager.AddNamespace(nameSpace, nameSpace);
-            MemoryStream ms = new MemoryStream();
-            // Create a XMLTextWriter that will send its output to a memory stream (file)
-            XmlTextWriter xtw = new XmlTextWriter(ms, Encoding.Unicode);
-            XmlParserContext parserContext = new XmlParserContext(nameTable, namespaceManager, xtw.XmlLang, xtw.XmlSpace);
-            try
+            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIBackgroundModes") as string,
+                                         IPhoneBGModesCombo);
+            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIDeviceFamily") as IEnumerable,
+                                         IPhoneDeviceCombo);
+            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIApplicationExitsOnSuspend") as bool?,
+                                         IPhoneExitsOnSuspendCheck);
+            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIPrerenderedIcon") as string,
+                                         IPhonePrerrenderedIconCheck);
+            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIStatusBarStyle") as string,
+                                         IPhoneStatusBarStyleCombo, 0);
+
+            object minimumVersion;
+            if (iPhoneAdditions.TryGetValue("MinimumOSVersion", out minimumVersion))
+                MinimumiOsVersionField.Text = minimumVersion.ToString();
+
+        }
+
+        private void FilliPhoneEntitlementsFields()
+        {
+            if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V33)
+                WizardHelper.SetControlValue(iPhoneEntitlements.ValueOrNull("aps-environment") as string,
+                     IPhonePushNotifcationsCombo, 0);
+
+        }
+
+        private void FillAndroidManifestFields()
+        {
+            MinimumAndroidOsField.Text = androidManifest.UsesSdk == null || androidManifest.UsesSdk.MinSdkVersion <= 0
+                                             ? string.Empty : androidManifest.UsesSdk.MinSdkVersion.ToString();
+
+            for (int i = 0, count = AndroidUserPermissionsList.Items.Count; i < count; i++)
             {
-                // Load the unformatted XML text string into an XPath Document
-                XPathDocument doc = new XPathDocument(XmlReader.Create(new StringReader(xml), readerSettings, parserContext));
-                // Set the formatting property of the XML Text Writer to indented
-                // the text writer is where the indenting will be performed
-                xtw.Formatting = Formatting.Indented;
-                xtw.IndentChar = '\x09'; //tab
-                xtw.Indentation = 1;                
-                // write doc xml to the xmltextwriter
-                doc.CreateNavigator().WriteSubtree(xtw);
-                // Flush the contents of the text writer
-                // to the memory stream, which is simply a memory file
-                xtw.Flush();
-                // set to start of the memory stream (file)
-                ms.Seek(0, SeekOrigin.Begin);
-                // create a reader to read the contents of
-                // the memory stream (file)
-                StreamReader sr = new StreamReader(ms);
-                // return the formatted string to caller (without the namespace declaration)
-                return sr.ReadToEnd().Replace(" xmlns:" + nameSpace + "=\"" + nameSpace + "\"", ""); 
+                AndroidUserPermissionsList.SetItemChecked(i,
+                                                          androidManifest.UsesPermissions.ContainsName(
+                                                              (string) AndroidUserPermissionsList.Items[i]));
             }
-            catch (Exception)
-            {
-                //debug purposes only
-                //MessageBox.Show(ex.ToString());
-                //return original xml
-                return xml;
-            }
+        }
+
+        private static byte[] UnzipFile(ZipFile zfile, ZipEntry entry)
+        {
+            Stream stream = zfile.GetInputStream(entry);
+            byte[] data = new byte[entry.Size];
+            int length = stream.Read(data, 0, (int)entry.Size);
+            if (length != entry.Size)
+                throw new Exception("Corrupted archive");
+            return data;
         }
 
         #region Event Handlers
@@ -1171,6 +1547,9 @@ namespace AirProperties
             {
                 _extensions.Remove(selectedExtension);
                 ExtensionsListView.Items.RemoveAt(ExtensionsListView.SelectedIndices[0]);
+
+                if (!string.IsNullOrEmpty(selectedExtension.Path) && !_removedExtensions.Contains(selectedExtension.Path))
+                    _removedExtensions.Add(selectedExtension.Path);
             }
         }
 
@@ -1184,6 +1563,283 @@ namespace AirProperties
                 SupportedLanguagesField.Text = String.Join(" ", locales.ToArray());
             }
 
+        }
+
+        private void AndroidManifestAdditionsButton_Click(object sender, EventArgs e)
+        {
+            if (AndroidAdvancedSettingsPanel.Visible)
+            {
+                if (ValidationErrorProvider.GetError(AndroidManifestAdditionsField) != string.Empty)
+                    return;
+
+                FillAndroidManifestFields();
+                AndroidBasicSettingsPanel.Visible = true;
+                AndroidAdvancedSettingsPanel.Visible = false;
+                AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+
+            }
+            else
+            {
+                if (ValidationErrorProvider.GetError(MinimumAndroidOsField) != string.Empty)
+                    return;
+
+                AndroidManifestAdditionsField_Validating(AndroidManifestAdditionsField, null);
+
+                AndroidAdvancedSettingsPanel.Visible = true;
+                AndroidBasicSettingsPanel.Visible = false;
+                AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Basic");
+            }
+        }
+
+        private void AndroidUserPermissionsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (AndroidUserPermissionsList.SelectedItems.Count > 0)
+            {
+                AndroidPermissionsLabel.Text = _androidPermissions[AndroidUserPermissionsList.SelectedIndex].Description;
+            }
+            else
+            {
+                AndroidPermissionsLabel.Text = TextHelper.GetString("Label.SelectPermForInfo");
+            }
+        }
+
+        private void IPhoneInfoAdditionsButton_Click(object sender, EventArgs e)
+        {
+            if (IPhoneAdvancedSettingsPanel.Visible)
+            {
+                if (ValidationErrorProvider.GetError(IPhoneInfoAdditionsField) != string.Empty || ValidationErrorProvider.GetError(IPhoneEntitlementsField) != string.Empty)
+                    return;
+
+                FilliPhoneAdditionsFields();
+                FilliPhoneEntitlementsFields();
+                IPhoneBasicSettingsPanel.Visible = true;
+                IPhoneAdvancedSettingsPanel.Visible = false;
+                IPhoneInfoAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            }
+            else
+            {
+                IPhoneInfoAdditionsField_Validating(IPhoneEntitlementsField, null);
+                IPhoneEntitlementsField_Validating(IPhoneEntitlementsField, null);
+                
+                IPhoneAdvancedSettingsPanel.Visible = true;
+                IPhoneBasicSettingsPanel.Visible = false;
+                IPhoneInfoAdditionsButton.Text = TextHelper.GetString("Label.Basic");
+            }
+        }
+
+        private void IPhoneDeviceCombo_DropDownClosed(object sender, EventArgs e)
+        {
+            if (IPhoneDeviceCombo.CheckedItems.Count == 0)
+            {
+                String msg = TextHelper.GetString("Info.SelectAtleastOneItem");
+                ErrorManager.ShowWarning(msg, null);
+                IPhoneDeviceCombo.SetItemChecked(0, true);
+            }
+        }
+
+        private void IPhoneResolutionExcludeButton_Click(object sender, EventArgs e)
+        {
+            string devicesData = (string)(IPhoneResolutionExcludeButton.Tag ?? string.Empty);
+            string[] devices = devicesData.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            using (var iOSDevicesForm = new IOSDeviceManager(devices))
+            {
+                if (iOSDevicesForm.ShowDialog(this) == DialogResult.OK)
+                    IPhoneResolutionExcludeButton.Tag = iOSDevicesForm.SelectedDevices;
+            }
+        }
+
+        private void IPhoneForceCPUButton_Click(object sender, EventArgs e)
+        {
+            using (var iOSDevicesForm = new IOSDeviceManager(IPhoneForceCPUField.Text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)))
+            {
+                if (iOSDevicesForm.ShowDialog(this) == DialogResult.OK)
+                    IPhoneForceCPUField.Text = iOSDevicesForm.SelectedDevices;
+            }
+        }
+
+        private void IPhoneResolutionCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            IPhoneResolutionExcludeButton.Enabled = IPhoneResolutionCombo.SelectedIndex > 0;
+        }
+
+        private void IPhoneExternalSWFsButton_Click(object sender, EventArgs e)
+        {
+            using (var externalsFileDialog = new OpenFileDialog())
+            {
+                externalsFileDialog.InitialDirectory = Path.GetDirectoryName(_propertiesFile);
+                externalsFileDialog.CheckFileExists = true;
+                if (externalsFileDialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    var externalsFile = ProjectPaths.GetRelativePath(_propertiesFilePath, externalsFileDialog.FileName);
+                    if (externalsFile.StartsWith("..") || Path.IsPathRooted(externalsFile))
+                    {
+                        String msg = TextHelper.GetString("Info.CheckFileLocation");
+                        ErrorManager.ShowWarning(msg, null);
+                    }
+                    else
+                    {
+                        IPhoneExternalSWFsField.Text = externalsFile.Replace('\\', '/');
+                    }
+                }
+            }
+        }
+
+        private void ExtensionBrowseButton_Click(object sender, EventArgs e)
+        {
+            using (var extensionBrowser = new OpenFileDialog())
+            {
+                extensionBrowser.CheckFileExists = true;
+                extensionBrowser.Filter = TextHelper.GetString("Info.AneFilter");
+                extensionBrowser.InitialDirectory = _propertiesFilePath;
+
+                if (extensionBrowser.ShowDialog(this) == DialogResult.OK)
+                {
+                    ZipFile zFile;
+                    try
+                    {
+                        zFile = new ZipFile(extensionBrowser.FileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        String msg = TextHelper.GetString("Info.CouldNotLoadANE") + "\n" + ex.Message;
+                        ErrorManager.ShowWarning(msg, null);
+                        return;
+                    }
+                    var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
+
+                    if (entry == null)
+                    {
+                        String msg = TextHelper.GetString("Info.ANEDescFileNotFound");
+                        ErrorManager.ShowWarning(msg, null);
+                        return;
+                    }
+
+                    byte[] buffer = UnzipFile(zFile, entry);
+
+                    string extensionId = null;
+                    using (var stream = new MemoryStream(buffer))
+                    {
+                        using (var reader = XmlReader.Create(stream))
+                        {
+                            reader.MoveToContent();
+
+                            while (reader.Read())
+                            {
+                                if (reader.NodeType != XmlNodeType.Element) continue;
+
+                                if (reader.Name == "id")
+                                {
+                                    extensionId = reader.ReadInnerXml();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (extensionId == null)
+                    {
+                        String msg = TextHelper.GetString("Info.ExtensionIDNotFound");
+                        ErrorManager.ShowWarning(msg, null);
+                        return;
+                    }
+
+                    PropertyManager.AirExtension extension = null;
+
+                    // We look for the extension in case it is already added, and modify its path, maybe FD is missing the external library entry and the user
+                    //wants to add it.
+                    foreach (var existingExtension in _extensions)
+                    {
+                        if (existingExtension.ExtensionId == extensionId) extension = existingExtension;
+                        break;
+                    }
+                    if (extension == null)
+                    {
+                        extension = new PropertyManager.AirExtension() { ExtensionId = extensionId, IsValid = true };
+                        _extensions.Add(extension);
+                        //I don't validation and selection is needed in this case
+                        var extensionListItem = new ListViewItem(extension.ExtensionId);
+                        ExtensionsListView.Items.Add(extensionListItem);
+                    }
+                    extension.Path = extensionBrowser.FileName;
+                }
+            }
+        }
+
+        private void RenderModeField_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (DepthStencilField.Parent == null) return;
+
+            DepthStencilField.Enabled = ((ListItem)RenderModeField.SelectedItem).Value == "direct";
+        }
+
+        private void AppPropertiesTabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (AppPropertiesTabControl.SelectedTab == ExtensionsTabPage && _isPropertiesLoaded)
+            {
+                bool reloadSelected = false;
+                foreach (PropertyManager.AirExtension extension in _extensions)
+                {
+                    if (extension.IsValid && string.IsNullOrEmpty(extension.Path))
+                    {
+                        var project = PluginCore.PluginBase.CurrentProject as ProjectManager.Projects.Project;
+                        foreach (var externalPath in (project.CompilerOptions as MxmlcOptions).ExternalLibraryPaths)
+                        {
+                            if (Path.GetExtension(externalPath).ToUpperInvariant() == ".ANE")
+                            {
+
+                                string absolutePath = project.GetAbsolutePath(externalPath);
+                                ZipFile zFile;
+                                try
+                                {
+                                    zFile = new ZipFile(absolutePath);
+                                }
+                                catch (Exception)
+                                {
+                                    continue;
+                                }
+                                var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
+
+                                if (entry == null)
+                                {
+                                    continue;
+                                }
+
+                                byte[] buffer = UnzipFile(zFile, entry);
+
+                                string extensionId = null;
+                                using (var stream = new MemoryStream(buffer))
+                                {
+                                    using (var reader = XmlReader.Create(stream))
+                                    {
+                                        reader.MoveToContent();
+
+                                        while (reader.Read())
+                                        {
+                                            if (reader.NodeType != XmlNodeType.Element) continue;
+
+                                            if (reader.Name == "id")
+                                            {
+                                                extensionId = reader.ReadInnerXml();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (extensionId == extension.ExtensionId)
+                                {
+                                    reloadSelected = true;
+                                    extension.Path = absolutePath;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (reloadSelected) // In this case, does selecting the first item by default really improve UX in any significant way?
+                    LoadSelectedExtension();
+
+            }
         }
 
         #endregion
@@ -1639,6 +2295,201 @@ namespace AirProperties
                     e.Cancel = true;
                     break;
                 }
+            }
+        }
+
+        private void IPhoneExternalSWFsField_Validating(object sender, CancelEventArgs e)
+        {
+            var externalsFile = IPhoneExternalSWFsField.Text;
+            if (externalsFile == string.Empty) this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
+            else if (externalsFile.StartsWith("..") || Path.IsPathRooted(externalsFile))
+            {
+                this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Info.CheckFileLocation"));
+
+                e.Cancel = true;
+            }
+            else if (!File.Exists(ProjectPaths.GetAbsolutePath(Path.GetDirectoryName(_propertiesFile), externalsFile)))
+            {
+                this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Validation.MissingSWFContainer"));
+
+                e.Cancel = true;
+            }
+            else this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
+
+        }
+
+        private void IPhoneEntitlementsField_Validating(object sender, CancelEventArgs e)
+        {
+            bool fillUi = iPhoneEntitlements == null;
+            if (IPhoneAdvancedSettingsPanel.Visible || fillUi)
+            {
+                try
+                {
+                    iPhoneEntitlements =
+                        new IphonePlistManager("<Entitlements>" + IPhoneEntitlementsField.Text + "</Entitlements>") { RemoveOnNullValue = true };
+                    ValidationErrorProvider.SetError(IPhoneEntitlementsField, string.Empty);
+
+                    if (fillUi)
+                        FilliPhoneEntitlementsFields();
+                }
+                catch (Exception ex)
+                {
+                    ValidationErrorProvider.SetError(IPhoneEntitlementsField, TextHelper.GetString("Validation.WrongEntitlementsXML") + " " + ex.Message);
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                iPhoneEntitlements["aps-environment"] = IPhonePushNotifcationsCombo.SelectedIndex == 0 ? null : ((ListItem)IPhonePushNotifcationsCombo.SelectedItem).Value;
+
+                IPhoneEntitlementsField.Text = iPhoneEntitlements.GetPlistXml();
+            }
+        }
+
+        private void IPhoneInfoAdditionsField_Validating(object sender, CancelEventArgs e)
+        {
+            bool fillUi = iPhoneAdditions == null;
+            if (IPhoneAdvancedSettingsPanel.Visible || fillUi)
+            {
+                try
+                {
+                    iPhoneAdditions =
+                        new IphonePlistManager("<InfoAdditions>" + IPhoneInfoAdditionsField.Text + "</InfoAdditions>") { RemoveOnNullValue = true };
+                    ValidationErrorProvider.SetError(IPhoneInfoAdditionsField, string.Empty);
+
+                    if (fillUi)
+                        FilliPhoneAdditionsFields();
+                }
+                catch (Exception ex)
+                {
+                    ValidationErrorProvider.SetError(IPhoneInfoAdditionsField, TextHelper.GetString("Validation.WrongAdditionsXML") + " " + ex.Message);
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                List<string> selectedValues = null;
+                foreach (ListItem item in IPhoneBGModesCombo.CheckedItems)
+                {
+                    selectedValues = selectedValues ?? new List<string>();
+                    selectedValues.Add(item.Value);
+                }
+                iPhoneAdditions["UIBackgroundModes"] = selectedValues;
+                selectedValues = null;
+                foreach (ListItem item in IPhoneDeviceCombo.CheckedItems)
+                {
+                    selectedValues = selectedValues ?? new List<string>();
+                    selectedValues.Add(item.Value);
+                }
+                iPhoneAdditions["UIDeviceFamily"] = selectedValues;
+                iPhoneAdditions["UIApplicationExitsOnSuspend"] = IPhoneExitsOnSuspendCheck.CheckState == CheckState.Indeterminate ? null : (bool?)IPhoneExitsOnSuspendCheck.Checked;
+                iPhoneAdditions["UIPrerenderedIcon"] = IPhonePrerrenderedIconCheck.CheckState == CheckState.Indeterminate ? null : (bool?)IPhonePrerrenderedIconCheck.Checked;
+                iPhoneAdditions["UIStatusBarStyle"] = IPhoneStatusBarStyleCombo.SelectedIndex == 0 ? null : ((ListItem)IPhoneStatusBarStyleCombo.SelectedItem).Value;
+                iPhoneAdditions["MinimumOSVersion"] = MinimumiOsVersionField.Text == string.Empty ? null : MinimumiOsVersionField.Text;
+
+                IPhoneInfoAdditionsField.Text = iPhoneAdditions.GetPlistXml();
+            }
+        }
+
+        private void AndroidManifestAdditionsField_Validating(object sender, CancelEventArgs e)
+        {
+            bool fillUi = androidManifest == null;
+            if (AndroidAdvancedSettingsPanel.Visible || fillUi)
+            {
+                try
+                {
+                    androidManifest =
+                        new AndroidManifestManager(AndroidManifestAdditionsField.Text);
+                    ValidationErrorProvider.SetError(AndroidManifestAdditionsField, string.Empty);
+
+                    if (fillUi)
+                        FillAndroidManifestFields();
+                }
+                catch (Exception ex)
+                {
+                    ValidationErrorProvider.SetError(AndroidManifestAdditionsField, TextHelper.GetString("Validation.WrongManifestXML") + " " + ex.Message);
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                foreach (string item in AndroidUserPermissionsList.Items)
+                {
+                    if (AndroidUserPermissionsList.CheckedItems.Contains(item))
+                    {
+                        if (!androidManifest.UsesPermissions.ContainsName(item))
+                            androidManifest.UsesPermissions.Add(new AndroidManifestManager.UsesPermissionElement() { Name = item });
+                    }
+                    else if (androidManifest.UsesPermissions.ContainsName(item))
+                    {
+                        androidManifest.UsesPermissions.RemoveByName(item);
+                    }
+                }
+
+                if (MinimumAndroidOsField.Text == string.Empty)
+                    androidManifest.UsesSdk = null;
+                else
+                {
+                    var usesSdk = androidManifest.UsesSdk ?? new AndroidManifestManager.UsesSdkElement();
+                    usesSdk.MinSdkVersion = int.Parse(MinimumAndroidOsField.Text);
+                    androidManifest.UsesSdk = usesSdk;
+                }
+
+                AndroidManifestAdditionsField.Text = androidManifest.GetManifestXml();
+            }
+        }
+
+        private void MinimumiOsVersionField_Validating(object sender, CancelEventArgs e)
+        {
+            if (MinimumiOsVersionField.Text != string.Empty)
+            {
+                try
+                {
+                    var version = new Version(MinimumiOsVersionField.Text);
+                    if (version.Major > 4 || version.Minor > 2)
+                        this.ValidationErrorProvider.SetError(MinimumiOsVersionField, string.Empty);
+                    else
+                    {
+                        e.Cancel = true;
+                        // I think it's actually 4.2, but people should nowadays target 4.3 as a minimum
+                        this.ValidationErrorProvider.SetError(MinimumiOsVersionField, TextHelper.GetString("Validation.InvalidMinAIRVersion"));
+                    }
+                }
+                catch
+                {
+                    e.Cancel = true;
+                    this.ValidationErrorProvider.SetError(MinimumiOsVersionField, TextHelper.GetString("Validation.InvalidVersionValue"));
+                }
+
+            }
+            else
+            {
+                this.ValidationErrorProvider.SetError(MinimumiOsVersionField, string.Empty);
+            }
+        }
+
+        private void MinimumAndroidOsField_Validating(object sender, CancelEventArgs e)
+        {
+            int osVersion;
+            if (MinimumAndroidOsField.Text == string.Empty)
+            {
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
+
+                return;
+            }
+            if (!int.TryParse(MinimumAndroidOsField.Text, out osVersion))
+            {
+                e.Cancel = true;
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidVersionValue"));
+            }
+            else if (osVersion < 8) // IMHO, it should be 9, as 8 nowadays may give some problems
+            {
+                e.Cancel = true;
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidAndroidMinVersion"));
+            }
+            else
+            {
+                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
             }
         }
 

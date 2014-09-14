@@ -1633,32 +1633,39 @@ namespace FlashDevelop.Dialogs
         {
             this.Enabled = false;
             this.isLanguageSaved = true;
-            String[] confFiles = Directory.GetFiles(this.LangDir);
+            String[] confFiles = Directory.GetFiles(this.LangDir, "*.xml");
             foreach (String confFile in confFiles)
             {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(confFile);
-                XmlElement node = doc.SelectSingleNode(defaultStylePath) as XmlElement;
-                if (this.fontNameComboBox.Text != "") node.SetAttribute("font", fontNameComboBox.Text);
-                else node.RemoveAttribute("font");
-                if (this.fontSizeComboBox.Text != "") node.SetAttribute("size", fontSizeComboBox.Text);
-                else node.RemoveAttribute("size");
-                if (this.foregroundTextBox.Text != "") node.SetAttribute("fore", foregroundTextBox.Text);
-                else node.RemoveAttribute("fore");
-                if (this.backgroundTextBox.Text != "") node.SetAttribute("back", backgroundTextBox.Text);
-                else node.RemoveAttribute("back");
-                if (this.boldCheckBox.CheckState == CheckState.Checked) node.SetAttribute("bold", "true");
-                else if (this.boldCheckBox.CheckState == CheckState.Unchecked) node.SetAttribute("bold", "false");
-                else node.RemoveAttribute("bold");
-                if (this.italicsCheckBox.CheckState == CheckState.Checked) node.SetAttribute("italics", "true");
-                else if (this.italicsCheckBox.CheckState == CheckState.Unchecked) node.SetAttribute("italics", "false");
-                else node.RemoveAttribute("italics");
-                XmlTextWriter xmlWriter = new XmlTextWriter(confFile, Encoding.UTF8);
-                xmlWriter.Formatting = Formatting.Indented;
-                xmlWriter.IndentChar = '\t';
-                xmlWriter.Indentation = 1;
-                doc.Save(xmlWriter);
-                xmlWriter.Close();
+                try
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(confFile);
+                    XmlElement node = doc.SelectSingleNode(defaultStylePath) as XmlElement;
+                    if (this.fontNameComboBox.Text != "") node.SetAttribute("font", fontNameComboBox.Text);
+                    else node.RemoveAttribute("font");
+                    if (this.fontSizeComboBox.Text != "") node.SetAttribute("size", fontSizeComboBox.Text);
+                    else node.RemoveAttribute("size");
+                    if (this.foregroundTextBox.Text != "") node.SetAttribute("fore", foregroundTextBox.Text);
+                    else node.RemoveAttribute("fore");
+                    if (this.backgroundTextBox.Text != "") node.SetAttribute("back", backgroundTextBox.Text);
+                    else node.RemoveAttribute("back");
+                    if (this.boldCheckBox.CheckState == CheckState.Checked) node.SetAttribute("bold", "true");
+                    else if (this.boldCheckBox.CheckState == CheckState.Unchecked) node.SetAttribute("bold", "false");
+                    else node.RemoveAttribute("bold");
+                    if (this.italicsCheckBox.CheckState == CheckState.Checked) node.SetAttribute("italics", "true");
+                    else if (this.italicsCheckBox.CheckState == CheckState.Unchecked) node.SetAttribute("italics", "false");
+                    else node.RemoveAttribute("italics");
+                    XmlTextWriter xmlWriter = new XmlTextWriter(confFile, Encoding.UTF8);
+                    xmlWriter.Formatting = Formatting.Indented;
+                    xmlWriter.IndentChar = '\t';
+                    xmlWriter.Indentation = 1;
+                    doc.Save(xmlWriter);
+                    xmlWriter.Close();
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
+                }
             }
             this.RefreshConfiguration();
             this.Enabled = true;

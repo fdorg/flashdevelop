@@ -50,7 +50,10 @@ namespace FlashDebugger
         private Boolean m_DisablePanelsAutoshow = false;
         private Boolean m_VerboseOutput = false;
         private Boolean m_StartDebuggerOnTestMovie = true;
+        private Boolean m_BreakOnThrow = false;
 		private String m_SwitchToLayout = null;
+
+        public event EventHandler BreakOnThrowChanged;
 
         [DisplayName("Save Breakpoints")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
@@ -120,6 +123,24 @@ namespace FlashDebugger
             set { m_StartDebuggerOnTestMovie = value; }
         }
 
+        [DisplayName("Break When Error Is Thrown")]
+        [LocalizedCategory("FlashDebugger.Category.Misc")]
+        [LocalizedDescription("FlashDebugger.Description.BreakOnThrow")]
+        [DefaultValue(false)]
+        public bool BreakOnThrow
+        {
+            get { return m_BreakOnThrow; }
+            set 
+            {
+                if (m_BreakOnThrow == value)
+                    return;
+
+                m_BreakOnThrow = value;
+
+                if (BreakOnThrowChanged != null)
+                    BreakOnThrowChanged(this, EventArgs.Empty);
+            }
+        }
     }
 
 }

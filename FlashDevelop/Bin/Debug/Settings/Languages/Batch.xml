@@ -7,7 +7,7 @@
 			<!-- COLORING_START -->
 			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x000000" />
 			<use-styles>
-				<style name="default" fore="0x000033" back="0xffffff" size="9" font="Courier New" bold="false" />
+				<style name="default" fore="0x000033" back="0xffffff" size="9" font="Consolas,Courier New,monospace" bold="false" />
 				<style name="comment" fore="0x008000" />
 				<style name="word" />
 				<style name="label" fore="0xffffff" back="0x00a0ff" eolfilled="true" />

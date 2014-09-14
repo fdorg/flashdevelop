@@ -60,8 +60,8 @@ namespace FDBuild.Building.AS3
             WriteDefine("CONFIG::debug", debugMode ? "true" : "false");
             WriteDefine("CONFIG::release", debugMode ? "false" : "true");
             WriteDefine("CONFIG::timeStamp", "'" + DateTime.Now.ToString("d") + "'");
-            var isMobile = project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM;
-            var isDesktop = project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM;
+            var isMobile = project.MovieOptions.Platform == "AIR Mobile";
+            var isDesktop = project.MovieOptions.Platform == "AIR";
             WriteDefine("CONFIG::air", isMobile || isDesktop ? "true" : "false");
             WriteDefine("CONFIG::mobile", isMobile ? "true" : "false");
             WriteDefine("CONFIG::desktop", isDesktop ? "true" : "false");
@@ -131,15 +131,16 @@ namespace FDBuild.Building.AS3
         {
             int majorVersion = project.MovieOptions.MajorVersion;
             int minorVersion = project.MovieOptions.MinorVersion;
-            if (project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM 
-                || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM)
-                PluginCore.PlatformData.GuessFlashPlayerForAIR(ref majorVersion, ref minorVersion);
-
             string version;
             if (options.MinorVersion.Length > 0)
                 version = majorVersion + "." + options.MinorVersion;
             else
                 version = majorVersion + "." + minorVersion;
+
+            string platform = project.MovieOptions.Platform;
+            if (platform != PluginCore.PlatformData.FLASHPLAYER_PLATFORM
+                    && project.MovieOptions.HasPlatformSupport && project.MovieOptions.PlatformSupport.IsFlashPlatform)
+                version = PluginCore.PlatformData.ResolveFlashPlayerVersion(project.Language, platform, version);
 
             WriteElementString("target-player", version);
         }

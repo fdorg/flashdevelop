@@ -6,6 +6,7 @@ using System.Diagnostics;
 using PluginCore;
 using System.IO;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 
 namespace ProjectManager.Actions
 {
@@ -45,8 +46,10 @@ namespace ProjectManager.Actions
             else fileServed = "";
             pathServed = path;
 
-            TraceManager.Add("Web Server starting with root: " + path); 
-            var infos = new ProcessStartInfo("nekotools", "server -p " + portServed);
+            TraceManager.Add("Web Server starting with root: " + path);
+            var server = Path.Combine(PathHelper.ToolDir, "webserver\\server.cmd");
+            var infos = new ProcessStartInfo(server, portServed.ToString());
+            infos.Arguments = "" + portServed;
             infos.WorkingDirectory = pathServed;
             infos.WindowStyle = ProcessWindowStyle.Hidden;
             try
@@ -55,8 +58,7 @@ namespace ProjectManager.Actions
             }
             catch (Exception ex)
             {
-                TraceManager.Add("Unable to start nekotools server: " + ex.Message 
-                    + "\nMake sure Haxe is correctly installed on your system", 3);
+                TraceManager.Add("Unable to start the webserver: " + ex.Message, 3);
                 return;
             }
 

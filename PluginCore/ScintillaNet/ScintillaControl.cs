@@ -3958,7 +3958,7 @@ namespace ScintillaNet
 		/// </summary>
 		public void LowerCase()
 		{
-            this.ReplaceSel(this.SelText.ToLower());
+            SPerform(2340, 0, 0);
 		}	
 						
 		/// <summary>
@@ -3966,7 +3966,7 @@ namespace ScintillaNet
 		/// </summary>
 		public void UpperCase()
 		{
-            this.ReplaceSel(this.SelText.ToUpper());
+            SPerform(2341, 0, 0);
 		}	
 						
 		/// <summary>
@@ -5506,7 +5506,11 @@ namespace ScintillaNet
 		/// <summary>
 		/// Removes trailing spaces from each line
 		/// </summary>
-		public void StripTrailingSpaces()
+        public void StripTrailingSpaces()
+        {
+            this.StripTrailingSpaces(false);
+        }
+		public void StripTrailingSpaces(Boolean keepIndentTabs)
 		{
             this.BeginUndoAction();
             try
@@ -5522,6 +5526,15 @@ namespace ScintillaNet
                     {
                         i--;
                         ch = (char)this.CharAt(i);
+                    }
+                    if (keepIndentTabs && i == lineStart - 1)
+                    {
+                        ch = (char)this.CharAt(i + 1);
+                        while (i < lineEnd && ch == '\t')
+                        {
+                            i++;
+                            ch = (char)this.CharAt(i + 1);
+                        }
                     }
                     if (i < (lineEnd - 1))
                     {

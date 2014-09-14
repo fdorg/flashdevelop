@@ -38,6 +38,7 @@ namespace ASCompletion.Model
         public string Value;
 		public int LineFrom;
 		public int LineTo;
+        public List<ASMetaData> MetaDatas;
 
         public MemberModel()
         {

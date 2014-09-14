@@ -205,6 +205,7 @@ namespace FlashDebugger
                 }
                 catch (System.Exception){}
                 m_CurrentState = DebuggerState.Running;
+                m_Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
                 // now poke to see if the player is good enough
                 try
                 {
@@ -477,6 +478,15 @@ namespace FlashDebugger
             }
 		}
 
+        void settingObject_BreakOnThrowChanged(object sender, EventArgs e)
+        {
+            if (m_CurrentState != DebuggerState.Starting &&
+                m_CurrentState != DebuggerState.Stopped)
+            {
+                m_Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
+            }
+        }
+
 		internal virtual void initSession()
 		{
 			bool correctVersion = true;
@@ -499,6 +509,7 @@ namespace FlashDebugger
 			m_StepResume = false;
 
             runningIsolates = new Dictionary<int, IsolateInfo>();
+            PluginMain.settingObject.BreakOnThrowChanged += settingObject_BreakOnThrowChanged;
 		}
 
 		/// <summary> If we still have a socket try to send an exit message
@@ -506,6 +517,7 @@ namespace FlashDebugger
 		/// </summary>
 		internal virtual void exitSession()
 		{
+            PluginMain.settingObject.BreakOnThrowChanged -= settingObject_BreakOnThrowChanged;
             // clear out our watchpoint list and displays
 			// keep breakpoints around so that we can try to reapply them if we reconnect
 			if (m_Session != null)
@@ -781,6 +793,11 @@ namespace FlashDebugger
                     sb.Append(TextHelper.GetString("Info.InformationAboutFault")); //$NON-NLS-1$
 					sb.Append(e.information);
 				}
+                if (PluginMain.settingObject.VerboseOutput)
+                {
+                    sb.AppendLine();
+                    sb.Append(e.stackTrace());
+                }
 			}
 
             if (e.isolateId == 1)
@@ -1082,7 +1099,7 @@ namespace FlashDebugger
 					{
 						if (!files.ContainsKey(bp.FileFullPath))
 						{
-							files.Add(bp.FileFullPath, 0);
+							files.Add(bp.FileFullPath, int.MaxValue);
 						}
 					}
 				}
@@ -1101,22 +1118,13 @@ namespace FlashDebugger
 						foreach (SourceFile src in swf.getSourceList(m_Session))
 						{
 							String localPath = PluginMain.debugManager.GetLocalPath(src);
-							if (localPath != null && files.ContainsKey(localPath) && files[localPath] == 0)
+							if (localPath != null && files.ContainsKey(localPath) && files[localPath] > src.getId())
 							{
 								files[localPath] = src.getId();
-								nFiles--;
-								if (nFiles == 0)
-								{
-									break;
-								}
 							}
 						}
 					}
 					catch (InProgressException) { }
-					if (nFiles == 0)
-					{
-						break;
-					}
 				}
 			}
 
@@ -1126,7 +1134,7 @@ namespace FlashDebugger
 				{
 					if (bp.IsEnabled && !bp.IsDeleted)
 					{
-						if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != 0)
+						if (files.ContainsKey(bp.FileFullPath) && files[bp.FileFullPath] != int.MaxValue)
 						{
 							Location l = (i_Session != null) ? i_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1) : m_Session.setBreakpoint(files[bp.FileFullPath], bp.Line + 1);
                             if (l != null)

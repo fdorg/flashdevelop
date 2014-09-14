@@ -216,6 +216,12 @@ namespace FlashDevelop.Dialogs
                         {
                             Directory.CreateDirectory(data);
                         }
+                        else if (command.Action.ToLower() == "appman")
+                        {
+                            String locale = Globals.Settings.LocaleVersion.ToString();
+                            String appman = Path.Combine(PathHelper.ToolDir, "appman/AppMan.exe");
+                            ProcessHelper.StartAsync(appman, "-locale=" + locale);
+                        }
                     }
                     count++;
                     Int32 percent = (100 * count) / total;

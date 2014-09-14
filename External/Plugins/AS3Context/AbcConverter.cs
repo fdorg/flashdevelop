@@ -490,6 +490,30 @@ namespace AS3Context
             member.Access = Visibility.Public;
             member.Namespace = "public";
 
+            if (info.metadata != null && info.metadata.Count > 0)
+            {
+                var metadatas = member.MetaDatas;
+                foreach (var metaInfo in info.metadata)
+                {
+                    if (metaInfo.name == "__go_to_definition_help") continue;
+                    var meta = new ASMetaData(metaInfo.name);
+                    var rawParams = new System.Text.StringBuilder();
+                    meta.Params = new Dictionary<string, string>(metaInfo.Count);
+                    foreach (var entry in metaInfo)
+                    {
+                        if (entry.Length != 2) continue;
+                        meta.Params[entry[0]] = entry[1];
+                        if (rawParams.Length > 0) rawParams.Append(",");
+                        rawParams.Append(entry[0] + "=\"" + entry[1] + "\"");
+                    }
+                    meta.RawParams = rawParams.ToString();
+
+                    if (metadatas == null) metadatas = new List<ASMetaData>(info.metadata.Count);
+                    metadatas.Add(meta);
+                }
+                member.MetaDatas = metadatas;
+            }
+
             if (info is SlotInfo)
             {
                 SlotInfo slot = info as SlotInfo;
@@ -941,7 +965,8 @@ namespace AS3Context
             {
                 if (Name == "apiVersion")
                     ReadPrologMetadataApiVersion(doc);
-
+                else if (Name == "styles")
+                    ReadPrologMetadataStyles(doc);
                 Read();
             }
         }
@@ -990,6 +1015,21 @@ namespace AS3Context
                     doc.ExtraAsDocs.Add(new KeyValuePair<string, string>(asdocKey, asdocVal));
                 }
 
+                Read();
+            }
+        }
+
+        private void ReadPrologMetadataStyles(ASDocItem doc)
+        {
+            if (IsEmptyElement)
+                return;
+
+            string eon = Name;
+            ReadStartElement();
+            while (Name != eon)
+            {
+                if (Name == "style")
+                    ReadStyleMeta(doc);
                 Read();
             }
         }
@@ -1190,7 +1230,7 @@ namespace AS3Context
 
             string sName = GetAttribute("name");
             string sType = GetAttribute("type");
-            //string sInherit = GetAttribute("inherit");
+            string sInherit = GetAttribute("inherit");
             //string sFormat = GetAttribute("format");
             string sEnum = GetAttribute("enumeration");
             string sDefault = null;
@@ -1214,6 +1254,11 @@ namespace AS3Context
             meta.Params["name"] = sName;
             meta.Params["type"] = sType;
             meta.RawParams = String.Format("name=\"{0}\", type=\"{1}\"", sName, sType);
+            if (sInherit != null)
+            {
+                meta.Params["inherit"] = sInherit;
+                meta.RawParams += ", inherit=\"" + sInherit + "\"";
+            }
             if (sEnum != null)
             {
                 meta.Params["enumeration"] = sEnum;

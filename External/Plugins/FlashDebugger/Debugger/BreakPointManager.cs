@@ -65,7 +65,7 @@ namespace FlashDebugger
 					List<int> lines = GetMarkers(doc.SciControl, ScintillaHelper.markerBPEnabled);
 					BreakPointInfo cbinfo = m_BreakPointList.Find(delegate(BreakPointInfo info)
                     {
-                        return info.FileFullPath == doc.FileName;
+                        return info.FileFullPath.Equals(doc.FileName, StringComparison.OrdinalIgnoreCase);
                     });
                     string exp = string.Empty;
                     if (cbinfo != null)
@@ -126,7 +126,7 @@ namespace FlashDebugger
 		{
 			int index = m_BreakPointList.FindIndex(delegate(BreakPointInfo info)
 			{
-				return info.FileFullPath == fileName && info.Line == line;
+				return info.FileFullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase) && info.Line == line;
 			});
 			return index;
 		}
@@ -198,7 +198,7 @@ namespace FlashDebugger
                 {
 					foreach (BreakPointInfo info in m_BreakPointList)
                     {
-						if (info.FileFullPath == sci.FileName && !info.IsDeleted)
+                        if (info.FileFullPath.Equals(sci.FileName, StringComparison.OrdinalIgnoreCase) && !info.IsDeleted)
                         {
 							if (info.Line < 0 || info.Line + 1 > sci.LineCount) continue;
 							sci.MarkerAdd(info.Line, info.IsEnabled ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled);
@@ -217,11 +217,11 @@ namespace FlashDebugger
             {
                 ScintillaControl sci = documents[i].SciControl;
 				if (sci == null) continue;
-                if (sci.FileName == filefullpath)
+                if (sci.FileName.Equals(filefullpath, StringComparison.OrdinalIgnoreCase))
                 {
                     foreach (BreakPointInfo info in m_BreakPointList)
                     {
-                        if (info.FileFullPath == sci.FileName && !info.IsDeleted)
+                        if (info.FileFullPath.Equals(sci.FileName, StringComparison.OrdinalIgnoreCase) && !info.IsDeleted)
                         {
 							if (info.Line < 0 || info.Line + 1 > sci.LineCount) continue;
 							sci.MarkerAdd(info.Line, info.IsEnabled ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled);

@@ -377,7 +377,7 @@ namespace ASCompletion.Context
             }
             else shouldIgnore = true;
 
-            FileModel.Ignore.FileName = filename;
+            FileModel.Ignore.FileName = filename ?? "";
             // find the doc context(s)
             if (!shouldIgnore)
             {
@@ -1280,7 +1280,7 @@ namespace ASCompletion.Context
                 {
                     MainForm.OpenEditableDocument(aClass.InFile.FileName, false);
                     string name = (aClass.InFile.Version < 3) ? aClass.QualifiedName : aClass.Name;
-                    ASComplete.LocateMember("(class|interface)", name, aClass.LineFrom);
+                    ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
                 }
             }
             // classes
@@ -1290,7 +1290,7 @@ namespace ASCompletion.Context
                 if (!aClass.IsVoid())
                 {
                     string name = (aClass.InFile.Version < 3) ? aClass.QualifiedName : aClass.Name;
-                    ASComplete.LocateMember("(class|interface)", name, aClass.LineFrom);
+                    ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
                 }
             }
             else if (node.Tag != null && node.Tag is string)
@@ -1299,7 +1299,7 @@ namespace ASCompletion.Context
                 int line;
                 if (info.Length == 2 && int.TryParse(info[1], out line))
                 {
-                    ASComplete.LocateMember("(function|var|const|get|set|property|#region|,)", info[0], line);
+                    ASComplete.LocateMember("(function|var|const|get|set|property|#region|namespace|,)", info[0], line);
                 }
             }
         }

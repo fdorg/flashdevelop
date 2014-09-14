@@ -15,11 +15,6 @@ namespace LoomContext.Projects
             Platform = TargetPlatforms[0];
         }
 
-        public override bool DebuggerSupported
-        {
-            get { return true; }
-        }
-
         public override string[] TargetPlatforms
         {
             get { return new string[] { LOOM_PLATFORM }; }

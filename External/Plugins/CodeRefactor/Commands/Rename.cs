@@ -21,6 +21,7 @@ namespace CodeRefactor.Commands
         private String newName;
         private Boolean outputResults;
         private FindAllReferences findAllReferencesCommand;
+        private Move renamePackage;
 
         public String NewName
         {
@@ -52,7 +53,6 @@ namespace CodeRefactor.Commands
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         public Rename(ASResult target, Boolean outputResults) : this(target, outputResults, null)
         {
-
         }
 
         /// <summary>
@@ -79,9 +79,26 @@ namespace CodeRefactor.Commands
                 TraceManager.Add("refactor target is null");
                 return;
             }
-
             this.outputResults = outputResults;
-
+            if (target.IsPackage)
+            {
+                string package = target.Path.Replace('.', Path.DirectorySeparatorChar);
+                foreach (PathModel aPath in ASContext.Context.Classpath)
+                {
+                    if (aPath.IsValid && !aPath.Updating)
+                    {
+                        string path = Path.Combine(aPath.Path, package);
+                        if (aPath.IsValid && Directory.Exists(path))
+                        {
+                            this.newName = string.IsNullOrEmpty(newName) ? GetNewName(Path.GetFileName(path)) : newName;
+                            if (string.IsNullOrEmpty(this.newName)) return;
+                            renamePackage = new Move(new Dictionary<string, string> { { path, this.newName } }, true, true);
+                            return;
+                        }
+                    }
+                }
+                return;
+            }
             Boolean isEnum = target.Type.IsEnum();
             Boolean isVoid = target.Type.IsVoid();
             Boolean isClass = !isVoid && target.IsStatic && target.Member == null;
@@ -99,7 +116,7 @@ namespace CodeRefactor.Commands
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
             this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource);
             // register a completion listener to the FindAllReferences so we can rename the entries
-            this.findAllReferencesCommand.OnRefactorComplete += new EventHandler<RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>>>(this.OnFindAllReferencesCompleted);
+            this.findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
         }
 
         #region RefactorCommand Implementation
@@ -109,7 +126,8 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            this.findAllReferencesCommand.Execute();
+            if (renamePackage != null) renamePackage.Execute();
+            else this.findAllReferencesCommand.Execute();
         }
 
         /// <summary>
@@ -117,7 +135,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override Boolean IsValid()
         {
-            return !string.IsNullOrEmpty(this.newName);
+            return renamePackage != null ? renamePackage.IsValid() : !string.IsNullOrEmpty(this.newName);
         }
 
         #endregion
@@ -142,16 +160,15 @@ namespace CodeRefactor.Commands
                 RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName, sci.Text);
                 if (sci.IsModify) this.AssociatedDocumentHelper.MarkDocumentToKeep(sci.FileName);
             }
+            RenameFile(eventArgs.Results);
             this.Results = eventArgs.Results;
             if (this.outputResults) this.ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             PluginCore.Controls.MessageBar.Locked = false;
             this.FireOnRefactorComplete();
-
-            RenameFile();
         }
 
-        private void RenameFile()
+        private void RenameFile(IDictionary<string, List<SearchMatch>> results)
         {
             ASResult target = findAllReferencesCommand.CurrentTarget;
             Boolean isEnum = target.Type.IsEnum();
@@ -209,11 +226,16 @@ namespace CodeRefactor.Commands
                 {
                     doc.Save();
                     doc.Close();
+                    break;
                 }
 
-            File.Move(oldFileName, newFileName);
-            PluginCore.Managers.DocumentManager.MoveDocuments(oldFileName, newFileName);
-            PluginBase.MainForm.OpenEditableDocument(newFileName, false);
+            RefactoringHelper.Move(oldFileName, newFileName);
+            AssociatedDocumentHelper.LoadDocument(newFileName);
+            if (results.ContainsKey(oldFileName))
+            {
+                results[newFileName] = results[oldFileName];
+                results.Remove(oldFileName);
+            }
         }
 
         /// <summary>
@@ -271,7 +293,6 @@ namespace CodeRefactor.Commands
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
         }
 
-
         /// <summary>
         /// This retrieves the new name from the user
         /// </summary>
@@ -292,5 +313,4 @@ namespace CodeRefactor.Commands
         #endregion
 
     }
-
 }

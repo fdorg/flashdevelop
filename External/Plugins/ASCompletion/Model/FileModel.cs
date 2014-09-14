@@ -28,7 +28,7 @@ namespace ASCompletion.Model
     public class ASMetaData: IComparable
     {
         static private Regex reNameTypeParams = 
-            new Regex("[\"']([^\"']+)[\"']\\s*,\\s*(type|event|kind)\\s*=\\s*[\"']([^\"']+)", RegexOptions.Compiled);
+            new Regex("([^\"'\\s]+)\\s*=\\s*[\"']([^\"']+)[\"'],{0,1}\\s*", RegexOptions.Compiled);
 
         public int LineFrom;
         public int LineTo;
@@ -50,13 +50,13 @@ namespace ASCompletion.Model
             if (Enum.IsDefined(typeof(ASMetaKind), Name))
             {
                 Kind = (ASMetaKind)Enum.Parse(typeof(ASMetaKind), Name);
-                Match mParams = reNameTypeParams.Match(raw);
-                if (mParams.Success)
+                var mParams = reNameTypeParams.Matches(raw);
+                if (mParams.Count > 0)
                 {
-                    Params.Add("name", mParams.Groups[1].Value);
-                    Params.Add(mParams.Groups[2].Value, mParams.Groups[3].Value);
+                    for (int i = 0, c = mParams.Count; i < c; i++)
+                        Params.Add(mParams[i].Groups[1].Value, mParams[i].Groups[2].Value);
                 }
-                else if (Kind == ASMetaKind.Event) // invalid Event
+                else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
                     Kind = ASMetaKind.Unknown;
             }
         }
@@ -69,6 +69,25 @@ namespace ASCompletion.Model
             if (Kind == ASMetaKind.Event && meta.Kind == ASMetaKind.Event)
                 return Params["type"].CompareTo(meta.Params["type"]);
             return Name.CompareTo(meta.Name);
+        }
+
+        internal static void GenerateIntrinsic(List<ASMetaData> src, StringBuilder sb, string nl, string tab)
+        {
+            if (src == null) return;
+
+            foreach (var meta in src)
+            {
+                if (meta.Kind == ASMetaKind.Include)
+                {
+                    sb.Append(meta.RawParams).Append(nl);
+                }
+                else if (meta.Kind != ASMetaKind.Unknown)
+                {
+                    sb.Append(ClassModel.CommentDeclaration(meta.Comments, tab));
+                    sb.Append(tab).Append('[').Append(meta.Name).Append('(').Append(meta.RawParams).Append(")] ").Append(nl).Append(nl);
+                }
+            }
+
         }
     }
 
@@ -135,7 +154,7 @@ namespace ASCompletion.Model
         {
             Package = "";
             Module = "";
-            FileName = fileName;
+            FileName = fileName ?? "";
             haXe = (fileName.Length > 3) ? fileName.EndsWith(".hx") : false;
             //
             Namespaces = new Dictionary<string, Visibility>();
@@ -151,10 +170,10 @@ namespace ASCompletion.Model
             if (FileName.Length == 0) return null;
             
             string path = Path.GetDirectoryName(FileName);
-            if (Package.Length == 0 && FileName.Length > 0) return path;
+            if (String.IsNullOrEmpty(Package)) return path;
 
             // get up the packages path
-            string packPath = Path.DirectorySeparatorChar+Package.Replace('.', Path.DirectorySeparatorChar);
+            string packPath = Path.DirectorySeparatorChar + Package.Replace('.', Path.DirectorySeparatorChar);
             if (path.ToUpper().EndsWith(packPath.ToUpper()))
             {
                 return path.Substring(0, path.Length - packPath.Length);
@@ -172,7 +191,7 @@ namespace ASCompletion.Model
             if (OutOfDate)
             {
                 OutOfDate = false;
-                if (File.Exists(FileName) && (CachedModel || LastWriteTime < System.IO.File.GetLastWriteTime(FileName)))
+                if (FileName != "" && File.Exists(FileName) && (CachedModel || LastWriteTime < System.IO.File.GetLastWriteTime(FileName)))
                     try
                     {
                         ASFileParser.ParseFile(this);
@@ -270,24 +289,13 @@ namespace ASCompletion.Model
             }
 
             // event/style metadatas
-            if (MetaDatas != null)
-            {
-                foreach (ASMetaData meta in MetaDatas)
-                    if (meta.Kind == ASMetaKind.Include)
-                    {
-                        sb.Append(meta.RawParams).Append(nl);
-                    }
-                    else if (meta.Kind != ASMetaKind.Unknown)
-                    {
-                        sb.Append(ClassModel.CommentDeclaration(meta.Comments, tab));
-                        sb.Append(tab).Append('[').Append(meta.Name).Append('(').Append(meta.RawParams).Append(")] ").Append(nl).Append(nl);
-                    }
-            }
+            ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab);
 
             // members			
             string decl;
             foreach (MemberModel member in Members)
             {
+                ASMetaData.GenerateIntrinsic(member.MetaDatas, sb, nl, tab);
                 if ((member.Flags & FlagType.Variable) > 0)
                 {
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));

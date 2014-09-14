@@ -3469,10 +3469,10 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="ASCompletion.Label.GenerateConstructor" xml:space="preserve">
     <value>コンストラクタの生成</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePrivateFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePrivateFieldFromParameter" xml:space="preserve">
     <value>プライベート変数を作成</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePublicFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePublicFieldFromParameter" xml:space="preserve">
     <value>パブリック変数を作成</value>
   </data>
   <data name="ASCompletion.Label.GenerateToString" xml:space="preserve">
@@ -5141,5 +5141,201 @@ UseData:"</value>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
     <value>Type of the intendation guide behaviour.</value>
     <comment>Added after 4.6.0</comment>
+  </data>
+  <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
+    <value>Break when an exception is thrown, even if it is handled.</value>
+    <comment>Added after 4.6.1</comment>
+  </data>
+  <data name="ProjectManager.Label.RunProject" xml:space="preserve">
+    <value>&amp;Run Project</value>
+    <comment>Added after 4.6.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
+    <value>You are renaming a directory. Do you also want to update the references?</value>
+    <comment>Added after 4.6.1</comment>
+  </data>
+  <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
+    <value>Keep indent tabs when strip trailing spaces.</value>
+    <comment>Added after 4.6.2</comment>
+  </data>
+  <data name="AirProperties.AspectRatio.Any" xml:space="preserve">
+    <value>Any</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.DesktopResolution.High" xml:space="preserve">
+    <value>High</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.DesktopResolution.Standard" xml:space="preserve">
+    <value>Standard</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.ANEDescFileNotFound" xml:space="preserve">
+    <value>ANE descriptor file not found.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.AneFilter" xml:space="preserve">
+    <value>ANE Files (*.ane)|*.ane</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.CheckFileLocation" xml:space="preserve">
+    <value>The file must not be located at an upper or external directory from the descriptor file.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.CouldNotLoadANE" xml:space="preserve">
+    <value>Could not load ANE file:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.ExtensionIDNotFound" xml:space="preserve">
+    <value>Extension ID could not be retrieved.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.SelectAtleastOneItem" xml:space="preserve">
+    <value>At least one item must be chosen.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneBGMode.Audio" xml:space="preserve">
+    <value>Audio</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneBGMode.Location" xml:space="preserve">
+    <value>Location</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhonePushNotifications.Development" xml:space="preserve">
+    <value>Development</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhonePushNotifications.Distribution" xml:space="preserve">
+    <value>Distribution</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneResolution.High" xml:space="preserve">
+    <value>High</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneResolution.Standard" xml:space="preserve">
+    <value>Standard</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Advanced" xml:space="preserve">
+    <value>Advanced &gt;&gt;</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.BackgroundBehavior" xml:space="preserve">
+    <value>Background Behavior</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Basic" xml:space="preserve">
+    <value>&lt;&lt; Basic</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Browse" xml:space="preserve">
+    <value>Browse</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ColorDepth" xml:space="preserve">
+    <value>Color Depth</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.CPURendering" xml:space="preserve">
+    <value>CPU Rendering</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Display" xml:space="preserve">
+    <value>Display</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Entitlements" xml:space="preserve">
+    <value>Entitlements</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Exclude" xml:space="preserve">
+    <value>Exclude</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ExitOnSuspend" xml:space="preserve">
+    <value>Exit On Suspend</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ExternalSWFs" xml:space="preserve">
+    <value>External SWFs</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.InfoAdditions" xml:space="preserve">
+    <value>Info Additions</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.LookAndFeel" xml:space="preserve">
+    <value>Look And Feel</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.OtherBehavior" xml:space="preserve">
+    <value>Other Behavior</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.PrerenderedIcon" xml:space="preserve">
+    <value>Prerendered Icon</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.PushNotifications" xml:space="preserve">
+    <value>Push Notifications</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Resolution" xml:space="preserve">
+    <value>Resolution</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.SelectPermForInfo" xml:space="preserve">
+    <value>Select a permission to see its description.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.StatusBarStyle" xml:space="preserve">
+    <value>Status Bar Style</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.SupportedDevices" xml:space="preserve">
+    <value>Supported Devices</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.SoftKeyboard.None" xml:space="preserve">
+    <value>None</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.SoftKeyboard.Pan" xml:space="preserve">
+    <value>Pan</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Title.SelectIOSDevices" xml:space="preserve">
+    <value>Select Target iOS Devices</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidAndroidMinVersion" xml:space="preserve">
+    <value>Minimum supported Android version is 8.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidMinAIRVersion" xml:space="preserve">
+    <value>Minimum supported AIR version is 4.3.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidVersionValue" xml:space="preserve">
+    <value>Invalid version value.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.MissingSWFContainer" xml:space="preserve">
+    <value>The external SWFs file container does not exist. Please, check your path.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongAdditionsXML" xml:space="preserve">
+    <value>Wrong iPhone info additions XML:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongEntitlementsXML" xml:space="preserve">
+    <value>Wrong iPhone entitlements XML:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongManifestXML" xml:space="preserve">
+    <value>Wrong Android manifest XML:</value>
+    <comment>Added after 4.6.3</comment>
   </data>
 </root>

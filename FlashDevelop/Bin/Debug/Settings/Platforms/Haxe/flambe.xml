@@ -1,0 +1,11 @@
+<platform name="Flambe" targets="html,flash,android,ios,firefox" debugger="flash" 
+	external="cmd" external-capture="html,flash,android,ios,firefox" default-project="flambe.yaml">
+  <versions>
+    <version value="4.0">
+      <command name="display" value="flambe haxe-flags $(TargetBuild)"/>
+      <command name="build" value="flambe build --$(BuildConfig) $(TargetBuild)"/>
+      <command name="run" value="flambe run --$(BuildConfig) --no-build --no-fdb $(TargetBuild)"/>
+      <command name="clean" value="flambe clean"/>
+    </version>
+  </versions>
+</platform>

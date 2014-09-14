@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using PluginCore.Managers;
@@ -13,7 +12,6 @@ using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
 using System.Collections;
-using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
@@ -27,7 +25,10 @@ namespace HaXeContext
             new Regex("@haxe[\\s]+(?<params>.*)", RegexOptions.Compiled | RegexOptions.Multiline);
 
         static readonly protected Regex re_genericType =
-                    new Regex("(?<gen>[^<]+)<(?<type>.+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            new Regex("(?<gen>[^<]+)<(?<type>.+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        static readonly protected Regex re_Template =
+            new Regex("<(?<name>[a-z]+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         static public string FLASH_OLD = "flash";
         static public string FLASH_NEW = "flash9";
@@ -36,6 +37,7 @@ namespace HaXeContext
         
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
+        private string HaxeTarget;
         private bool hasAIRSupport;
         private bool hasMobileSupport;
         private bool resolvingDot;
@@ -142,43 +144,6 @@ namespace HaXeContext
         #endregion
 
         #region classpath management
-
-        public bool IsFlashTarget
-        {
-            get { return platform == HaxeMovieOptions.FLASHPLAYER_PLATFORM || platform == HaxeMovieOptions.AIR_PLATFORM; }
-        }
-        public bool IsJavaScriptTarget
-        {
-            get { return platform == HaxeMovieOptions.JAVASCRIPT_PLATFORM; }
-        }
-        public bool IsNekoTarget
-        {
-            get { return platform == HaxeMovieOptions.NEKO_PLATFORM; }
-        }
-        public bool IsPhpTarget
-        {
-            get { return platform == HaxeMovieOptions.PHP_PLATFORM; }
-        }
-        public bool IsCppTarget
-        {
-            get { return platform == HaxeMovieOptions.CPP_PLATFORM; }
-        }
-        public bool IsCsharpTarget
-        {
-            get { return platform == HaxeMovieOptions.CSHARP_PLATFORM; }
-        }
-        public bool IsJavaTarget
-        {
-            get { return platform == HaxeMovieOptions.JAVA_PLATFORM; }
-        }
-        public bool IsPythonTarget
-        {
-            get { return platform == HaxeMovieOptions.PYTHON_PLATFORM; }
-        }
-        public bool IsNmeTarget
-        {
-            get { return platform == HaxeMovieOptions.NME_PLATFORM; }
-        }
 
         private List<string> LookupLibrary(string lib)
         {
@@ -289,26 +254,11 @@ namespace HaXeContext
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
 
             // NOTE: version > 10 for non-Flash platforms
-            string lang;
+            string lang = GetHaxeTarget(platform);
             hasAIRSupport = hasMobileSupport = false;
             features.Directives = new List<string>();
-            if (IsJavaScriptTarget)
-            {
-                lang = "js";
-            }
-            else if (IsPhpTarget)
-            {
-                lang = "php";
-            }
-            else if (IsNekoTarget)
-            {
-                lang = "neko";
-            }
-            else if (IsCppTarget)
-            {
-                lang = "cpp";
-            }
-            else if (IsNmeTarget)
+
+            if (lang == null)
             {
                 lang = "cpp";
 
@@ -319,26 +269,14 @@ namespace HaXeContext
                 else if (contextSetup.TargetBuild.IndexOf("neko") >= 0)
                     lang = "neko";
             }
-            else if (IsCsharpTarget)
-            {
-                lang = "cs";
-            }
-            else if (IsJavaTarget)
-            {
-                lang = "java";
-            }
-            else if (IsPythonTarget)
-            {
-                lang = "python";
-            }
-            else if (IsFlashTarget)
+            else if (lang == "swf")
             {
                 lang = "flash";
-                hasAIRSupport = platform == "AIR" || platform == "AIR Mobile";
+                hasAIRSupport = platform.StartsWith("AIR");
                 hasMobileSupport = platform == "AIR Mobile";
             }
-            else lang = platform;
             features.Directives.Add(lang);
+            HaxeTarget = lang;
 
             //
             // Class pathes
@@ -370,7 +308,7 @@ namespace HaXeContext
                         FLASH_NEW = "flash";
                         FLASH_OLD = "flash8";
                     }
-                    if (lang == "flash")
+                    if (HaxeTarget == "flash")
                         lang = (majorVersion >= 6 && majorVersion < 9) ? FLASH_OLD : FLASH_NEW;
 
                     PathModel std = PathModel.GetModel(haxeCP, this);
@@ -403,10 +341,10 @@ namespace HaXeContext
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
             // swf-libs
-            if (IsFlashTarget && (platform == HaxeMovieOptions.AIR_PLATFORM || majorVersion >= 9) && proj != null)
+            if (HaxeTarget == "flash" && majorVersion >= 9 && proj != null)
             {
                 foreach(LibraryAsset asset in proj.LibraryAssets)
-                    if (asset.IsSwf || asset.IsSwc)
+                    if (asset.IsSwc)
                     {
                         string path = proj.GetAbsolutePath(asset.Path);
                         if (File.Exists(path)) AddPath(path);
@@ -470,6 +408,16 @@ namespace HaXeContext
             resolvingFunction = false;
             if (completionModeHandler == null) 
                 OnCompletionModeChange();
+        }
+
+        private string GetHaxeTarget(string platformName)
+        {
+            if (!PlatformData.SupportedLanguages.ContainsKey("haxe")) return null;
+            var haxeLang = PlatformData.SupportedLanguages["haxe"];
+            if (haxeLang == null) return null;
+            foreach (var platform in haxeLang.Platforms.Values)
+                if (platform.Name == platformName) return platform.HaxeTarget;
+            return null;
         }
 
         private void AppendPath(ContextSetupInfos contextSetup, string path)
@@ -800,7 +748,7 @@ namespace HaXeContext
 
             if (fileName.StartsWith("flash" + dirSeparator))
             {
-                if (!IsFlashTarget || majorVersion > 8) // flash9 remap
+                if (HaxeTarget != "flash" || majorVersion > 8) // flash9 remap
                     fileName = FLASH_NEW + fileName.Substring(5);
                 else
                     fileName = FLASH_OLD + fileName.Substring(5);
@@ -981,11 +929,24 @@ namespace HaXeContext
             foreach (ClassModel otherClass in aFile.Classes)
                 if (otherClass.IndexType == indexType) return otherClass;
 
+            // resolve T
+            string Tdef = "<T>";
+            string Tname = "T";
+            Match m = re_Template.Match(aClass.Type);
+            if (m.Success)
+            {
+                Tname = m.Groups[1].Value;
+                Tdef = "<" + Tname + ">";
+            }
+            Regex reReplaceType = new Regex("\\b" + Tname + "\\b");
+
             // clone the type
             aClass = aClass.Clone() as ClassModel;
-
             aClass.Name = baseType.Substring(baseType.LastIndexOf('.') + 1) + "<" + indexType + ">";
             aClass.IndexType = indexType;
+
+            if (aClass.ExtendsType != null && aClass.ExtendsType.IndexOf(Tname) >= 0)
+                aClass.ExtendsType = reReplaceType.Replace(aClass.ExtendsType, indexType);
 
             // special Haxe Proxy support
             if (aClass.Type == "haxe.remoting.Proxy<T>" || aClass.Type == "haxe.remoting.Proxy.Proxy<T>")
@@ -996,28 +957,17 @@ namespace HaXeContext
             string typed = "<" + indexType + ">";
             foreach (MemberModel member in aClass.Members)
             {
-                if (member.Name == baseType) member.Name = baseType.Replace("<T>", typed);
-                if (member.Type != null && member.Type.IndexOf('T') >= 0)
+                if (member.Type != null && member.Type.IndexOf(Tname) >= 0)
                 {
-                    if (member.Type == "T") member.Type = indexType;
-                    else member.Type = member.Type.Replace("<T>", typed);
+                    member.Type = reReplaceType.Replace(member.Type, indexType);
                 }
                 if (member.Parameters != null)
                 {
                     foreach (MemberModel param in member.Parameters)
                     {
-                        if (param.Type != null && param.Type.IndexOf('T') >= 0)
+                        if (param.Type != null && param.Type.IndexOf(Tname) >= 0)
                         {
-                            if (param.Type == "T") param.Type = indexType;
-                            else
-                            {
-                                param.Type = param.Type.Replace("<T>", typed);
-                                if (param.Type.IndexOf('-') > 0)
-                                {
-                                    param.Type = Regex.Replace(param.Type, "T\\s?->", indexType + " ->");
-                                    param.Type = Regex.Replace(param.Type, "->\\s?T", "-> " + indexType);
-                                }
-                            }
+                            param.Type = reReplaceType.Replace(param.Type, indexType);
                         }
                     }
                 }
@@ -1578,7 +1528,7 @@ namespace HaXeContext
                 if (cname.IndexOf('<') > 0) cname = cname.Substring(0, cname.IndexOf('<'));
                 command += cname;
 
-                if (IsFlashTarget && (append == null || append.IndexOf("-swf-version") < 0)) 
+                if (HaxeTarget == "flash" && (append == null || append.IndexOf("-swf-version") < 0)) 
                     command += " -swf-version " + majorVersion;
                 // classpathes
                 string hxPath = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);

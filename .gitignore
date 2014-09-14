@@ -9,12 +9,14 @@ Thumbs.db
 *.fdb
 *.fdl
 *.fda
+*.nupkg
 obj/
 FlashDevelop/Properties/AssemblyInfo.cs
 FlashDevelop/Bin/Debug/FlashDevelop.*
 FlashDevelop/Bin/Debug/PluginCore.*
 FlashDevelop/Bin/Debug/Plugins/
 FlashDevelop/Bin/Debug/Data/
+FlashDevelop/Bin/Debug/Apps/
 FlashDevelop/Bin/Debug/Settings/FormStates/
 PluginCore/Bin
 /FlashDevelop/Bin/Debug/Settings/FileStates

@@ -210,6 +210,7 @@ namespace ProjectManager
             menus.ProjectMenu.CloseProject.Click += delegate { CloseProject(false); };
             menus.ProjectMenu.OpenResource.Click += delegate { OpenResource(); };
             menus.ProjectMenu.TestMovie.Click += delegate { TestMovie(); };
+            menus.ProjectMenu.RunProject.Click += delegate { RunProject(); };
             menus.ProjectMenu.BuildProject.Click += delegate { BuildProject(); };
             menus.ProjectMenu.CleanProject.Click += delegate { CleanProject(); };
             menus.ProjectMenu.Properties.Click += delegate { OpenProjectProperties(); };
@@ -586,7 +587,7 @@ namespace ProjectManager
 
         void SetProject(Project project, Boolean stealFocus, Boolean internalOpening)
         {
-            if (Tree.Projects.Contains(project)) return;
+            if (project == null || Tree.Projects.Contains(project)) return;
             if (activeProject != null) CloseProject(true);
 
             // configure
@@ -861,15 +862,16 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.Custom)
             {
-                if (project.TraceEnabled && project.EnableInteractiveDebugger)
-                {
-                    de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
-                    EventManager.DispatchEvent(this, de);
-                    de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", null);
-                    EventManager.DispatchEvent(this, de);
-                }
                 if (project.TestMovieCommand != null && project.TestMovieCommand.Length > 0)
                 {
+                    if (project.TraceEnabled && project.EnableInteractiveDebugger)
+                    {
+                        de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
+                        EventManager.DispatchEvent(this, de);
+                        de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", null);
+                        EventManager.DispatchEvent(this, de);
+                    }
+
                     string cmd = MainForm.ProcessArgString(project.TestMovieCommand).Trim();
                     cmd = project.FixDebugReleasePath(cmd);
 
@@ -911,7 +913,7 @@ namespace ProjectManager
 
         private void BuildComplete(IProject project, bool runOutput)
         {
-            BroadcastBuildComplete(project);
+            if (project != null) BroadcastBuildComplete(project);
             if (buildQueue.Count > 0) ProcessBuildQueue();
             else if (this.buildingAll)
             {
@@ -986,6 +988,12 @@ namespace ProjectManager
             {
                 BroadcastBuildFailed(project);
             }
+        }
+
+        private void RunProject()
+        {
+            var de = new DataEvent(EventType.Command, ProjectManagerCommands.PlayOutput, null);
+            EventManager.DispatchEvent(this, de);
         }
 
         private void BuildProject() 
@@ -1204,7 +1212,7 @@ namespace ProjectManager
 
         private void TreeAlwaysCompileItems()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedPaths[0]);
+            Project project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.ToggleAlwaysCompile(project, Tree.SelectedPaths);
             // TODO report invalid action
@@ -1212,7 +1220,7 @@ namespace ProjectManager
 
         private void TreeDocumentClass()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedPaths[0]);
+            Project project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.ToggleDocumentClass(project, Tree.SelectedPaths);
             // TODO report invalid action
@@ -1313,10 +1321,16 @@ namespace ProjectManager
         /// </summary>
         private void TreeShowCommandPrompt()
         {
-            ProcessStartInfo cmdPrompt = new ProcessStartInfo();
-            cmdPrompt.FileName = "cmd.exe";
-            cmdPrompt.WorkingDirectory = Tree.SelectedPath;
-            Process.Start(cmdPrompt);
+            var de = new DataEvent(EventType.Command, "FileExplorer.PromptHere", Tree.SelectedPath);
+            EventManager.DispatchEvent(this, de);
+
+            if (!de.Handled)
+            {
+                ProcessStartInfo cmdPrompt = new ProcessStartInfo();
+                cmdPrompt.FileName = "cmd.exe";
+                cmdPrompt.WorkingDirectory = Tree.SelectedPath;
+                Process.Start(cmdPrompt);
+            }
         }
 
         /// <summary>
@@ -1385,13 +1399,24 @@ namespace ProjectManager
             buildTimer.Stop();
             if (buildTimer.Tag == null)
             {
-                Project project = ProjectLoader.Load(buildQueue.Dequeue());
-                Boolean debugging = this.buildingAll ? !activeProject.TraceEnabled : !project.TraceEnabled;
-                this.buildActions.Build(project, false, debugging);
+                try
+                {
+                    Project project = ProjectLoader.Load(buildQueue.Dequeue());
+                    if (project != null)
+                    {
+                        Boolean debugging = this.buildingAll ? !activeProject.TraceEnabled : !project.TraceEnabled;
+                        this.buildActions.Build(project, false, debugging);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceManager.AddAsync(ex.Message);
+                    BuildComplete(null, false);
+                }
             } 
             else
             {
-                this.buildTimer.Tag = null;
+                buildTimer.Tag = null;
                 if (this.runOutput) this.TestMovie();
                 else this.BuildProject();
                 this.runOutput = false;
