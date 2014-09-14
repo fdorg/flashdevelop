@@ -505,6 +505,7 @@ namespace ASCompletion.Model
         private string curComment;
         private bool isBlockComment;
         private ContextFeatures features;
+        private List<ASMetaData> carriedMetaData;
         #endregion
 
         #region tokenizer
@@ -1605,7 +1606,15 @@ namespace ASCompletion.Model
                         // metadata
                         else if (!inValue && c1 == '[')
                         {
-                            if (version == 3) LookupMeta(ref ba, ref i);
+                            if (version == 3)
+                            {
+                                var meta = LookupMeta(ref ba, ref i);
+                                if (meta != null)
+                                {
+                                    carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
+                                    carriedMetaData.Add(meta);
+                                }
+                            }
                             else if (features.hasCArrays && curMember != null && curMember.Type != null)
                             {
                                 if (ba[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
@@ -1682,7 +1691,7 @@ namespace ASCompletion.Model
             return true;
         }
 
-        private bool LookupMeta(ref string ba, ref int i)
+        private ASMetaData LookupMeta(ref string ba, ref int i)
         {
             int len = ba.Length;
             int i0 = i;
@@ -1706,13 +1715,13 @@ namespace ASCompletion.Model
                     {
                         i = i0;
                         line = line0;
-                        return false;
+                        return null;
                     }
                     else if (c == '(') parCount++;
                     else if (c == ')')
                     {
                         parCount--;
-                        if (parCount < 0) return false;
+                        if (parCount < 0) return null;
                         isComplex = true;
                     }
                     else if (c == ']') break;
@@ -1738,9 +1747,7 @@ namespace ASCompletion.Model
                 }
                 else lastComment = null;
             }
-            if (model.MetaDatas == null) model.MetaDatas = new List<ASMetaData>();
-            model.MetaDatas.Add(md);
-            return true;
+            return md;
         }
 
         private void FinalizeModel()
@@ -2254,6 +2261,15 @@ namespace ASCompletion.Model
                             context = 0;
                             modifiers = 0;
                         }
+                        if (carriedMetaData != null)
+                        {
+                            if (model.MetaDatas == null)
+                                model.MetaDatas = carriedMetaData;
+                            else
+                                foreach (var meta in carriedMetaData) model.MetaDatas.Add(meta);
+
+                            carriedMetaData = null;
+                        }
                         break;
 
                     case FlagType.Enum:
@@ -2426,6 +2442,16 @@ namespace ASCompletion.Model
                             }
                             //
                             curMember = member;
+
+                            if (carriedMetaData != null)
+                            {
+                                if (member.MetaDatas == null)
+                                    member.MetaDatas = carriedMetaData;
+                                else
+                                    foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+
+                                carriedMetaData = null;
+                            }
                         }
                         break;
 
@@ -2481,6 +2507,15 @@ namespace ASCompletion.Model
                         }
                         //
                         curMember = member;
+                        if (carriedMetaData != null)
+                        {
+                            if (member.MetaDatas == null)
+                                member.MetaDatas = carriedMetaData;
+                            else
+                                foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+
+                            carriedMetaData = null;
+                        }
                         break;
                 }
                 if (context != FlagType.Function && !inParams) curMethod = null;

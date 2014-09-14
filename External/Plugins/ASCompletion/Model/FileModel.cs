@@ -70,6 +70,25 @@ namespace ASCompletion.Model
                 return Params["type"].CompareTo(meta.Params["type"]);
             return Name.CompareTo(meta.Name);
         }
+
+        internal static void GenerateIntrinsic(List<ASMetaData> src, StringBuilder sb, string nl, string tab)
+        {
+            if (src == null) return;
+
+            foreach (var meta in src)
+            {
+                if (meta.Kind == ASMetaKind.Include)
+                {
+                    sb.Append(meta.RawParams).Append(nl);
+                }
+                else if (meta.Kind != ASMetaKind.Unknown)
+                {
+                    sb.Append(ClassModel.CommentDeclaration(meta.Comments, tab));
+                    sb.Append(tab).Append('[').Append(meta.Name).Append('(').Append(meta.RawParams).Append(")] ").Append(nl).Append(nl);
+                }
+            }
+
+        }
     }
 
     public class FileModel
@@ -270,24 +289,13 @@ namespace ASCompletion.Model
             }
 
             // event/style metadatas
-            if (MetaDatas != null)
-            {
-                foreach (ASMetaData meta in MetaDatas)
-                    if (meta.Kind == ASMetaKind.Include)
-                    {
-                        sb.Append(meta.RawParams).Append(nl);
-                    }
-                    else if (meta.Kind != ASMetaKind.Unknown)
-                    {
-                        sb.Append(ClassModel.CommentDeclaration(meta.Comments, tab));
-                        sb.Append(tab).Append('[').Append(meta.Name).Append('(').Append(meta.RawParams).Append(")] ").Append(nl).Append(nl);
-                    }
-            }
+            ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab);
 
             // members			
             string decl;
             foreach (MemberModel member in Members)
             {
+                ASMetaData.GenerateIntrinsic(member.MetaDatas, sb, nl, tab);
                 if ((member.Flags & FlagType.Variable) > 0)
                 {
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));
