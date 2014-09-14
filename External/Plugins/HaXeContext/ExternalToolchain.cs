@@ -330,7 +330,7 @@ namespace HaXeContext
                 var haxelib = GetHaxelib(hxproj);
                 if (haxelib == "haxelib")
                 {
-                    TraceManager.Add("Haxelib not found", -3);
+                    TraceManager.Add("haxelib.exe not found in SDK path", -3);
                     return null;
                 }
                 return haxelib;
@@ -352,6 +352,8 @@ namespace HaXeContext
             if (haxelib == null) return "haxelib";
             else if (Directory.Exists(haxelib)) haxelib = Path.Combine(haxelib, "haxelib.exe");
             else haxelib = haxelib.Replace("haxe.exe", "haxelib.exe");
+
+            if (!File.Exists(haxelib)) return "haxelib";
 
             // fix environment for command line tools
             string currentSDK = Path.GetDirectoryName(haxelib);
