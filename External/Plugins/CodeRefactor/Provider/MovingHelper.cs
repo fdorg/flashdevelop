@@ -10,34 +10,22 @@ namespace CodeRefactor.Provider
         private static List<QueueItem> queue = new List<QueueItem>();
         private static Move currentCommand;
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath)
         {
             AddToQueue(oldPathToNewPath, false);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults)
         {
             AddToQueue(oldPathToNewPath, outputResults, false);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
             queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming));
             if (currentCommand == null) MoveFirst();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private static void MoveFirst()
         {
             try
@@ -57,9 +45,6 @@ namespace CodeRefactor.Provider
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private static void OnRefactorComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<PluginCore.FRService.SearchMatch>>> e)
         {
             if (queue.Count > 0) MoveFirst();
