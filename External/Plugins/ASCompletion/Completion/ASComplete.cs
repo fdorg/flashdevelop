@@ -454,7 +454,7 @@ namespace ASCompletion.Completion
 
 			// get type at cursor position
 			int position = Sci.WordEndPosition(Sci.CurrentPos, true);
-			ASResult result = GetExpressionType(Sci, position);
+			ASResult result = GetExpressionType(Sci, position, false);
 
 			// browse to package folder
             if (result.IsPackage && result.InFile != null)
@@ -2256,7 +2256,7 @@ namespace ASCompletion.Completion
 		/// <param name="inClass">Class context</param>
 		/// <param name="complete">Complete (sub-expression) or partial (dot-completion) evaluation</param>
 		/// <returns>Class/member struct</returns>
-        static private ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction)
+        static private ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility = true)
 		{
 			ASResult notFound = new ASResult();
             notFound.Context = context;
@@ -2335,7 +2335,7 @@ namespace ASCompletion.Completion
                 return notFound;
 
             // resolve
-            ASResult result = EvalTail(context, inFile, head, tokens, complete);
+            ASResult result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
 
             // if failed, try as qualified class name
             if ((result == null || result.IsNull()) && tokens.Length > 1) 
@@ -2353,7 +2353,7 @@ namespace ASCompletion.Completion
             return result ?? notFound;
         }
 
-        static ASResult EvalTail(ASExpr context, FileModel inFile, ASResult head, string[] tokens, bool complete)
+        static ASResult EvalTail(ASExpr context, FileModel inFile, ASResult head, string[] tokens, bool complete, bool filterVisibility)
         {
 			// eval tail
 			int n = tokens.Length;
@@ -2366,7 +2366,7 @@ namespace ASCompletion.Completion
 			FlagType mask = head.IsStatic ? FlagType.Static : FlagType.Dynamic;
             // members visibility
             IASContext ctx = ASContext.Context;
-			ClassModel curClass = ctx.CurrentClass;
+            ClassModel curClass = ctx.CurrentClass;
             curClass.ResolveExtends();
             Visibility acc = ctx.TypesAffinity(curClass, step.Type);
 
@@ -2398,7 +2398,7 @@ namespace ASCompletion.Completion
                 }
                 else if (step.IsPackage)
                 {
-                    FindMember(token, inFile, step, mask, acc);
+                    FindMember(token, inFile, step, mask, filterVisibility ? acc : 0);
                     if (step.IsNull())
                         return step;
                 }
@@ -2423,7 +2423,7 @@ namespace ASCompletion.Completion
                     }
                     else
                     {
-                        FindMember(token, resultClass, step, mask, acc);
+                        FindMember(token, resultClass, step, mask, filterVisibility ? acc : 0);
                     }
 
                     // Haxe modules
@@ -3583,7 +3583,7 @@ namespace ASCompletion.Completion
 			return word;
 		}
 
-		static public ASResult GetExpressionType(ScintillaControl sci, int position)
+		static public ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility = true)
 		{
             // context
             int line = sci.LineFromPosition(position);
@@ -3602,7 +3602,7 @@ namespace ASCompletion.Completion
                 FileModel aFile = ASContext.Context.CurrentModel;
                 ClassModel aClass = ASContext.Context.CurrentClass;
                 // Expression before cursor
-                return EvalExpression(expr.Value, expr, aFile, aClass, true, false);
+                return EvalExpression(expr.Value, expr, aFile, aClass, true, false, filterVisibility);
             }
             finally
             {
