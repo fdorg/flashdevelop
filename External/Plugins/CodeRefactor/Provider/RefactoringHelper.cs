@@ -66,7 +66,7 @@ namespace CodeRefactor.Provider
 
         /// <summary>
         /// Checks if a given search match actually points to the given target source
-        /// </summary
+        /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
         public static ASResult DeclarationLookupResult(ScintillaNet.ScintillaControl Sci, int position)
         {
@@ -170,7 +170,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Checks if the given match actually is the declaration.
         /// </summary>
-        static public bool IsMatchTheTarget(ScintillaNet.ScintillaControl Sci, SearchMatch match, ASResult target)
+        public static bool IsMatchTheTarget(ScintillaNet.ScintillaControl Sci, SearchMatch match, ASResult target)
         {
             if (Sci == null || target == null || target.InFile == null || target.Member == null)
             {
@@ -184,9 +184,9 @@ namespace CodeRefactor.Provider
 
         /// <summary>
         /// Checks if a given search match actually points to the given target source
-        /// </summary
+        /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
-        static public bool DoesMatchPointToTarget(ScintillaNet.ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
+        public static bool DoesMatchPointToTarget(ScintillaNet.ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
             if (Sci == null || target == null) return false;
             FileModel targetInFile = null;
@@ -384,7 +384,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Replaces only the matches in the current sci control
         /// </summary>
-        public static void ReplaceMatches(IList<SearchMatch> matches, ScintillaControl sci, String replacement, String src)
+        public static void ReplaceMatches(IList<SearchMatch> matches, ScintillaControl sci, String replacement)
         {
             if (sci == null || matches == null || matches.Count == 0) return;
             sci.BeginUndoAction();
