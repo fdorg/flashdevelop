@@ -419,8 +419,11 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="FileExplorer.Info.NewFolderName" xml:space="preserve">
     <value>Neuer Ordner</value>
   </data>
+  <data name="FileExplorer.Label.FindHere" xml:space="preserve">
+    <value>&amp;Suchen und Ersetzen hier...</value>
+  </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
-    <value>&amp;Eingabeaufforderung ab hier...</value>
+    <value>&amp;Eingabeaufforderung hier...</value>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>&amp;Kopieren</value>
