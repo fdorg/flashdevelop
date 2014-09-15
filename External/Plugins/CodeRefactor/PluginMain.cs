@@ -167,7 +167,7 @@ namespace CodeRefactor
                             newPath = args[1];
                             if (IsValidForMove(oldPath, newPath))
                             {
-                                MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } });
+                                MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, true);
                                 e.Handled = true;
                             }
                             break;

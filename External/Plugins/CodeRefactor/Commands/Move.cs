@@ -14,10 +14,10 @@ using PluginCore;
 
 namespace CodeRefactor.Commands
 {
-    class Move : RefactorCommand<IDictionary<String, List<SearchMatch>>>
+    class Move : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
-        private Dictionary<string, string> oldPathToNewPath;
-        private bool outputResults;
+        public Dictionary<string, string> OldPathToNewPath;
+        public bool OutputResults;
         private bool renaming;
         private List<MoveTargetHelper> targets;
         private MoveTargetHelper currentTarget;
@@ -37,8 +37,8 @@ namespace CodeRefactor.Commands
 
         public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
-            this.oldPathToNewPath = oldPathToNewPath;
-            this.outputResults = outputResults;
+            OldPathToNewPath = oldPathToNewPath;
+            OutputResults = outputResults;
             this.renaming = renaming;
             Results = new Dictionary<string, List<SearchMatch>>();
             CreateListOfMoveTargets();
@@ -55,7 +55,7 @@ namespace CodeRefactor.Commands
             if (renaming)
             {
                 msg = TextHelper.GetString("Info.RenamingDirectory");
-                foreach (KeyValuePair<string, string> item in oldPathToNewPath)
+                foreach (KeyValuePair<string, string> item in OldPathToNewPath)
                 {
                     title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(item.Key));
                     break;
@@ -80,7 +80,7 @@ namespace CodeRefactor.Commands
 
         public override bool IsValid()
         {
-            return oldPathToNewPath != null;
+            return OldPathToNewPath != null;
         }
 
         #endregion
@@ -90,7 +90,7 @@ namespace CodeRefactor.Commands
         private void CreateListOfMoveTargets()
         {
             targets = new List<MoveTargetHelper>();
-            foreach (KeyValuePair<string, string> item in oldPathToNewPath)
+            foreach (KeyValuePair<string, string> item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
@@ -153,7 +153,7 @@ namespace CodeRefactor.Commands
                 fileNameToOpenedDoc.Add(doc.FileName, doc);
             }
             MessageBar.Locked = true;
-            foreach (KeyValuePair<string, string> item in oldPathToNewPath)
+            foreach (KeyValuePair<string, string> item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
@@ -237,43 +237,7 @@ namespace CodeRefactor.Commands
                 ASResult target = new ASResult() { Member = new MemberModel(newType, newType, FlagType.Import, 0) };
                 RefactoringHelper.FindTargetInFiles(target, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true);
             }
-            else
-            {
-                if (outputResults) ReportResults();
-                FireOnRefactorComplete();
-            }
-        }
-
-        private void ReportResults()
-        {
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
-            foreach (KeyValuePair<string, List<SearchMatch>> entry in Results)
-            {
-                Dictionary<int, int> lineOffsets = new Dictionary<int, int>();
-                Dictionary<int, string> lineChanges = new Dictionary<int, string>();
-                Dictionary<int, List<string>> reportableLines = new Dictionary<int, List<string>>();
-                foreach (SearchMatch match in entry.Value)
-                {
-                    int column = match.Column;
-                    int lineNumber = match.Line;
-                    string changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
-                    int offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
-                    column = column + offset;
-                    lineChanges[lineNumber] = changedLine;
-                    lineOffsets[lineNumber] = offset + (match.Value.Length - match.Length);
-                    if (!reportableLines.ContainsKey(lineNumber)) reportableLines[lineNumber] = new List<string>();
-                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": characters " + column + "-" + (column + match.Value.Length) + " : {0}");
-                }
-                foreach (KeyValuePair<int, List<string>> lineSetsToReport in reportableLines)
-                {
-                    string renamedLine = lineChanges[lineSetsToReport.Key].Trim();
-                    foreach (string lineToReport in lineSetsToReport.Value)
-                    {
-                        PluginCore.Managers.TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info);
-                    }
-                }
-            }
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+            else FireOnRefactorComplete();
         }
 
         #endregion
