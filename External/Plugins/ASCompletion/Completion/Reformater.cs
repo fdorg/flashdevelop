@@ -324,7 +324,6 @@ namespace ASCompletion.Completion
             int n = txt.Length;
             char c = '<', prev = ' ';
             int sub = 0, psub = 0, bsub = 0;
-            bool haxeFunc = false;
             while (i < n)
             {
                 if (c != ' ') prev = c;
@@ -333,19 +332,11 @@ namespace ASCompletion.Completion
                 if (c == '<') sub++;
                 else if (c == '>')
                 {
-                    if (haxeFunc) // '>' of Void->Void etc
+                    sub--;
+                    if (sub < 0)
                     {
-                        haxeFunc = false;
-                        continue;
-                    }
-                    else
-                    {
-                        sub--;
-                        if (sub < 0)
-                        {
-                            index = i;
-                            return true;
-                        }
+                        index = i;
+                        return true;
                     }
                 }
                 else if (options.IsHaXe && c == '{')
@@ -362,9 +353,10 @@ namespace ASCompletion.Completion
                     if (c == ')') bsub--;
                     continue;
                 }
-                else if (options.IsHaXe && c == '-')
+                // haxe function notation (Type->Type)
+                else if (options.IsHaXe && c == '-' && (i < n && txt[i] == '>'))
                 {
-                    haxeFunc = true;
+                    sub++;
                     continue;
                 }
                 else break;
