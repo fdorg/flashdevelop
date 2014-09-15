@@ -403,6 +403,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Find and Replace Here...</value>
+	<comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>Command &amp;Prompt Here...</value>

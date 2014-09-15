@@ -421,6 +421,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Suchen und Ersetzen hier...</value>
+	<comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>&amp;Eingabeaufforderung hier...</value>
