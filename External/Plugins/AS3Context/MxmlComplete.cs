@@ -488,9 +488,7 @@ namespace AS3Context
                             string eventType;
                             if (!meta.Params.TryGetValue("type", out eventType)) eventType = "flash.events.Event";
                             result = GetAutoCompletionValuesFromEventType(eventType);
-
                             return true;
-                            break;
                         case ASMetaKind.Style:
                             string inherit;
                             if (meta.Params != null && meta.Params.TryGetValue("inherit", out inherit) && inherit == "no" && tagClass != tmpClass)
@@ -534,7 +532,6 @@ namespace AS3Context
         {
             ClassModel tmpClass = mxmlContext.model.GetPublicClass();
             ClassModel eventClass = context.ResolveType(type, mxmlContext.model);
-            FlagType mask = FlagType.Function;
             Visibility acc = Visibility.Default | Visibility.Internal | Visibility.Private | Visibility.Protected | Visibility.Public;
 
             tmpClass.ResolveExtends();
@@ -607,7 +604,6 @@ namespace AS3Context
             else if (type == "Function")
             {
                 ClassModel tmpClass = mxmlContext.model.GetPublicClass();
-                FlagType mask = FlagType.Function;
                 Visibility acc = Visibility.Default | Visibility.Internal | Visibility.Private | Visibility.Protected | Visibility.Public;
 
                 tmpClass.ResolveExtends();
