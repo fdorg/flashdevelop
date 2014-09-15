@@ -318,25 +318,34 @@ namespace ASCompletion.Completion
             return sb.ToString();
         }
 
-        private static bool lookupGeneric( ReformatOptions options, string txt, ref int index)
+        private static bool lookupGeneric(ReformatOptions options, string txt, ref int index)
         {
             int i = index;
             int n = txt.Length;
             char c = '<', prev = ' ';
             int sub = 0, psub = 0, bsub = 0;
+            bool haxeFunc = false;
             while (i < n)
             {
                 if (c != ' ') prev = c;
                 c = txt[i++];
                 if (Char.IsLetterOrDigit(c) || c == '.' || c == ' ' || c == ',' || c == ':') continue;
                 if (c == '<') sub++;
-                else if (c == '>' && (!options.IsHaXe || prev != '-'))
+                else if (c == '>')
                 {
-                    sub--;
-                    if (sub < 0)
+                    if (haxeFunc) // '>' of Void->Void etc
                     {
-                        index = i;
-                        return true;
+                        haxeFunc = false;
+                        continue;
+                    }
+                    else
+                    {
+                        sub--;
+                        if (sub < 0)
+                        {
+                            index = i;
+                            return true;
+                        }
                     }
                 }
                 else if (options.IsHaXe && c == '{')
@@ -351,6 +360,11 @@ namespace ASCompletion.Completion
                 else if (bsub > 0)
                 {
                     if (c == ')') bsub--;
+                    continue;
+                }
+                else if (options.IsHaXe && c == '-')
+                {
+                    haxeFunc = true;
                     continue;
                 }
                 else break;
