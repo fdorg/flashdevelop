@@ -31,16 +31,10 @@ namespace CodeRefactor.Commands
         {
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, false)
         {
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
             this.oldPathToNewPath = oldPathToNewPath;
@@ -54,9 +48,6 @@ namespace CodeRefactor.Commands
 
         #region RefactorCommand Implementation
 
-        /// <summary>
-        /// 
-        /// </summary>
         protected override void ExecutionImplementation()
         {
             string msg;
@@ -87,9 +78,6 @@ namespace CodeRefactor.Commands
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public override bool IsValid()
         {
             return oldPathToNewPath != null;
@@ -99,9 +87,6 @@ namespace CodeRefactor.Commands
 
         #region Private Helper Methods
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void CreateListOfMoveTargets()
         {
             targets = new List<MoveTargetHelper>();
@@ -124,9 +109,6 @@ namespace CodeRefactor.Commands
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private bool IsValidFile(string file)
         {
             if (PluginBase.CurrentProject == null) return false;
@@ -134,9 +116,6 @@ namespace CodeRefactor.Commands
             return ext == ".as" || ext == ".hx" || ext == ".ls" && PluginBase.CurrentProject.DefaultSearchFilter.Contains(ext);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private MoveTargetHelper GetMoveTarget(string oldFilePath, string newPath)
         {
             MoveTargetHelper result = new MoveTargetHelper();
@@ -166,9 +145,6 @@ namespace CodeRefactor.Commands
             return result;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void MoveTargets()
         {
             Dictionary<string, ITabbedDocument> fileNameToOpenedDoc = new Dictionary<string, ITabbedDocument>();
@@ -216,9 +192,6 @@ namespace CodeRefactor.Commands
             MessageBar.Locked = false;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void UpdateReferencesNextTarget()
         {
             if (targets.Count > 0)
