@@ -384,7 +384,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Replaces only the matches in the current sci control
         /// </summary>
-        public static void ReplaceMatches(IList<SearchMatch> matches, ScintillaControl sci, String replacement, String src)
+        public static void ReplaceMatches(IList<SearchMatch> matches, ScintillaControl sci, String replacement)
         {
             if (sci == null || matches == null || matches.Count == 0) return;
             sci.BeginUndoAction();

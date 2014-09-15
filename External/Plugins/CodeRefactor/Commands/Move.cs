@@ -218,7 +218,7 @@ namespace CodeRefactor.Commands
                 string newFilePath = currentTarget.NewFilePath;
                 ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(newFilePath);
                 List<SearchMatch> matches = search.Matches(sci.Text);
-                RefactoringHelper.ReplaceMatches(matches, sci, "package " + currentTarget.NewPackage + " ", null);
+                RefactoringHelper.ReplaceMatches(matches, sci, "package " + currentTarget.NewPackage + " ");
                 int offset = "package ".Length;
                 foreach (SearchMatch match in matches)
                 {
@@ -301,7 +301,7 @@ namespace CodeRefactor.Commands
                 {
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
                 }
-                if (packageIsNotEmpty) RefactoringHelper.ReplaceMatches(matches, sci, newType, null);
+                if (packageIsNotEmpty) RefactoringHelper.ReplaceMatches(matches, sci, newType);
                 else
                 {
                     foreach (SearchMatch sm in matches)
