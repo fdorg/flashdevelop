@@ -66,7 +66,7 @@ namespace CodeRefactor.Provider
 
         /// <summary>
         /// Checks if a given search match actually points to the given target source
-        /// </summary
+        /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
         public static ASResult DeclarationLookupResult(ScintillaNet.ScintillaControl Sci, int position)
         {
@@ -184,7 +184,7 @@ namespace CodeRefactor.Provider
 
         /// <summary>
         /// Checks if a given search match actually points to the given target source
-        /// </summary
+        /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
         static public bool DoesMatchPointToTarget(ScintillaNet.ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
