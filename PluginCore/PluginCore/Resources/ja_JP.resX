@@ -402,6 +402,10 @@
     <value>NewFolder</value>
     <comment>E</comment>
   </data>
+  <data name="FileExplorer.Label.FindHere" xml:space="preserve">
+    <value>&amp;Find and Replace Here...</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>コマンドプロンプト(&amp;P)...</value>
   </data>

@@ -252,6 +252,7 @@ namespace FileExplorer
             this.menu.Items.Add(new ToolStripSeparator());
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFileHere"), null, new EventHandler(this.CreateFileHere)));
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFolderHere"), null, new EventHandler(this.CreateFolderHere)));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.FindHere"), null, new EventHandler(this.FindHere)));
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CommandPromptHere"), null, new EventHandler(this.CommandPromptHere)));
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ExploreHere"), null, new EventHandler(this.ExploreHere)));
             this.shellButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"), null, new EventHandler(this.ShowShellMenu));
@@ -863,6 +864,16 @@ namespace FileExplorer
         private void ExploreHere(Object sender, System.EventArgs e)
         {
             DataEvent de = new DataEvent(EventType.Command, "FileExplorer.Explore", this.selectedPath.Text);
+            EventManager.DispatchEvent(this, de);
+        }
+
+        /// <summary>
+        /// Opens the find and replace in files popup in the current path
+        /// </summary>
+        private void FindHere(Object sender, System.EventArgs e)
+        {
+            
+            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.FindHere", this.selectedPath.Text);
             EventManager.DispatchEvent(this, de);
         }
 

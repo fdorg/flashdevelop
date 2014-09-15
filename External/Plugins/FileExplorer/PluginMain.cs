@@ -143,6 +143,11 @@ namespace FileExplorer
                             evnt.Handled = true;
                             break;
 
+                        case "FileExplorer.FindHere":
+                            FindHere(evnt.Data.ToString());
+                            evnt.Handled = true;
+                            break;
+
                         case "FileExplorer.PromptHere":
                             PromptHere(evnt.Data.ToString());
                             evnt.Handled = true;
@@ -197,6 +202,17 @@ namespace FileExplorer
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
+            }
+        }
+
+        /// <summary>
+        /// Opens the selected path in command prompt
+        /// </summary>
+        private void FindHere(string path)
+        {
+            if (path != null && Directory.Exists(path))
+            {
+                PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
             }
         }
 

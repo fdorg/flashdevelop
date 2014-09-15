@@ -401,6 +401,10 @@
   <data name="FileExplorer.Info.NewFolderName" xml:space="preserve">
     <value>新建文件夹</value>
   </data>
+  <data name="FileExplorer.Label.FindHere" xml:space="preserve">
+    <value>&amp;Find and Replace Here...</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>在此启动命令提示符(&amp;P)...</value>
   </data>
