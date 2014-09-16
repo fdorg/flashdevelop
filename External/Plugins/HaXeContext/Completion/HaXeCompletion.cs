@@ -17,7 +17,7 @@ namespace HaXeContext
 
     internal class HaXeCompletion
     {
-        private static readonly Regex reListEntry = new Regex("<i n=\"([^\"]+)\"><t>([^<]*)</t><d>([^<]*)</d></i>",
+        private static readonly Regex reListEntry = new Regex("<i n=\"([^\"]+)\".*?><t>([^<]*)</t><d>([^<]*)</d></i>",
                                                               RegexOptions.Compiled | RegexOptions.Singleline);
         private static readonly Regex reArg = new Regex("^(-cp)\\s*([^\"'].*)$", 
                                                         RegexOptions.Compiled | RegexOptions.IgnoreCase);
