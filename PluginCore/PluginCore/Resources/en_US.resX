@@ -2502,6 +2502,18 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="FlashDevelop.Label.FullScreen" xml:space="preserve">
     <value>F&amp;ull Screen</value>
   </data>
+  <data name="FlashDevelop.Label.ZoomIn" xml:space="preserve">
+    <value>Zoom In</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Label.ZoomOut" xml:space="preserve">
+    <value>Zoom Out</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Label.ResetZoom" xml:space="preserve">
+    <value>Reset Zoom</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
   <data name="ASCompletion.Description.ReformatBraces" xml:space="preserve">
     <value>Automatically reformat braces according to the Coding Style Line Break option in the main application settings.</value>
   </data>
