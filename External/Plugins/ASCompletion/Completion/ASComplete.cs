@@ -3876,14 +3876,17 @@ namespace ASCompletion.Completion
                 return true*/
 
             // some haxe metadata needs paths will full packages, e.g. @:access(path)
-            if (ASContext.Context.CurrentModel.haXe)
+            if (ASContext.Context.CurrentMember == null && ASContext.Context.CurrentModel.haXe)
             {
-                String before = sci.Text.Substring(0, position);
+                int curLine = sci.LineFromPosition(position);
+                int curPosInLine = sci.MBSafePosition(sci.PositionInCurrentLine());
+                String line = sci.GetLine(curLine).Substring(0, curPosInLine);
+                
                 Regex openMetadata = new Regex("@:?(.*)\\(");
-                foreach (Match match in openMetadata.Matches(before))
+                foreach (Match match in openMetadata.Matches(line))
                 {
                     int matchEnd = match.Index + match.Length;
-                    if (before.IndexOf(')', matchEnd) < 0)
+                    if (line.IndexOf(')', matchEnd) < 0)
                     {
                         // position is inside a metadata's brackets
                         return false;

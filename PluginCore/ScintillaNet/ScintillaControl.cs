@@ -3250,6 +3250,11 @@ namespace ScintillaNet
 		{
 			return (int) SPerform(2167, (uint)line, 0);
 		}	
+
+        public int PositionInCurrentLine()
+        {
+            return CurrentPos - PositionFromLine(LineFromPosition(CurrentPos));
+        }
 						
 		/// <summary>
 		/// Scroll horizontally and vertically.
