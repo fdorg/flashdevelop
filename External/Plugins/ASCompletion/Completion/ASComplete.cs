@@ -3878,11 +3878,7 @@ namespace ASCompletion.Completion
             // some haxe metadata needs paths will full packages, e.g. @:access(path)
             if (ASContext.Context.CurrentMember == null && ASContext.Context.CurrentModel.haXe)
             {
-                int curLine = sci.LineFromPosition(position);
-                int curPosInLine = position - sci.PositionFromLine(curLine);
-                String line = sci.GetLine(curLine);
-                int length = sci.MBSafeLengthFromBytes(line, curPosInLine);
-                String lineUntilCursor = line.Substring(0, length);
+                String lineUntilCursor = sci.GetLineUntilPosition(position);
                 
                 Regex openMetadata = new Regex("@:?(.*)\\(");
                 foreach (Match match in openMetadata.Matches(lineUntilCursor))

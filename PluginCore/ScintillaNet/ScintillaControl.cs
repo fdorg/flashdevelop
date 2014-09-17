@@ -3250,6 +3250,16 @@ namespace ScintillaNet
 		{
 			return (int) SPerform(2167, (uint)line, 0);
 		}
+
+        public String GetLineUntilPosition(int pos)
+        {
+            int curLine = LineFromPosition(pos);
+            int curPosInLine = pos - PositionFromLine(curLine);
+            String line = GetLine(curLine);
+            int length = MBSafeLengthFromBytes(line, curPosInLine);
+            String lineUntilPos = line.Substring(0, length);
+            return lineUntilPos;
+        }
 						
 		/// <summary>
 		/// Scroll horizontally and vertically.
