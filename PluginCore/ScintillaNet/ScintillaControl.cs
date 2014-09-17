@@ -3249,7 +3249,17 @@ namespace ScintillaNet
 		public int PositionFromLine(int line)
 		{
 			return (int) SPerform(2167, (uint)line, 0);
-		}	
+		}
+
+        public String GetLineUntilPosition(int pos)
+        {
+            int curLine = LineFromPosition(pos);
+            int curPosInLine = pos - PositionFromLine(curLine);
+            String line = GetLine(curLine);
+            int length = MBSafeLengthFromBytes(line, curPosInLine);
+            String lineUntilPos = line.Substring(0, length);
+            return lineUntilPos;
+        }
 						
 		/// <summary>
 		/// Scroll horizontally and vertically.
@@ -6043,8 +6053,8 @@ namespace ScintillaNet
 			}
 			else
 			{
-				int mblenght = Encoding.UTF8.GetByteCount(text);
-				return mblenght;
+				int mblength = Encoding.UTF8.GetByteCount(text);
+                return mblength;
 			}
         }
 
