@@ -3875,6 +3875,22 @@ namespace ASCompletion.Completion
             /*if (cFile == inFile || features.hasPackages && cFile.Package == inFile.Package)
                 return true*/
 
+            // some haxe metadata needs paths will full packages, e.g. @:access(path)
+            if (ASContext.Context.CurrentModel.haXe)
+            {
+                String before = sci.Text.Substring(0, position);
+                Regex openMetadata = new Regex("@:?(.*)\\(");
+                foreach (Match match in openMetadata.Matches(before))
+                {
+                    int matchEnd = match.Index + match.Length;
+                    if (before.IndexOf(')', matchEnd) < 0)
+                    {
+                        // position is inside a metadata's brackets
+                        return false;
+                    }
+                }
+            }
+
             // type name already present in imports
             try
             {
