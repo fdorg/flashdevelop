@@ -59,6 +59,7 @@ namespace ResultsPanel
             this.InitializeTexts();
             this.InitializeLayout();
             this.ApplySettings();
+            Resize += PluginUI_Resize;
 		}
 		
 		#region Windows Forms Designer Generated Code
@@ -413,6 +414,11 @@ namespace ResultsPanel
 			}
 		}
 
+        void PluginUI_Resize(object sender, EventArgs e)
+        {
+            UpdateButtons();
+        }
+
         /// <summary>
         /// Opens the file and goes to the match
         /// </summary>
@@ -703,9 +709,16 @@ namespace ResultsPanel
         /// </summary>
         private void UpdateButtons()
         {
-            this.toolStripButtonError.Text = this.errorCount + " " + TextHelper.GetString("Filters.Errors");
-            this.toolStripButtonWarning.Text = this.warningCount + " " + TextHelper.GetString("Filters.Warnings");
-            this.toolStripButtonInfo.Text = this.messageCount + " " + TextHelper.GetString("Filters.Informations");
+            toolStripButtonError.Text = errorCount.ToString();
+            toolStripButtonWarning.Text = warningCount.ToString();
+            toolStripButtonInfo.Text = messageCount.ToString();
+
+            if (Width >= 400)
+            {
+                toolStripButtonError.Text += " " + TextHelper.GetString("Filters.Errors");
+                toolStripButtonWarning.Text += " " + TextHelper.GetString("Filters.Warnings");
+                toolStripButtonInfo.Text += " " + TextHelper.GetString("Filters.Informations");
+            }
         }
 
         /// <summary>
