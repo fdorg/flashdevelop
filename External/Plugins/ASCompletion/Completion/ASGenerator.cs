@@ -652,9 +652,11 @@ namespace ASCompletion.Completion
                     known.Add(new GeneratorItem(label, GeneratorJobType.Constant, found.member, found.inClass));
                 }
 
+                bool genProtectedDecl = ASContext.Context.Features.protectedKey != null && ASContext.CommonSettings.GenerateProtectedDeclarations;
                 if (exprAtCursor == null && exprLeft == null)
                 {
-                    label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
+                    if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedVar");
+                    else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
                     known.Add(new GeneratorItem(label, GeneratorJobType.Variable, found.member, found.inClass));
                 }
 
@@ -663,7 +665,8 @@ namespace ASCompletion.Completion
 
                 if (exprAtCursor == null && exprLeft == null)
                 {
-                    label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
+                    if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
+                    else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
                     known.Add(new GeneratorItem(label, GeneratorJobType.Function, found.member, found.inClass));
                 }
 
@@ -698,41 +701,25 @@ namespace ASCompletion.Completion
         private static void ShowNewMethodList(FoundDeclaration found)
         {
             List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
-
-            string autoSelect = "";
-
             ASResult result = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
-            if (!(result != null && result.RelClass != null))
-            {
+            if (result == null || result.RelClass == null || found.inClass.QualifiedName.Equals(result.RelClass.QualifiedName))
                 result = null;
-            }
-            else if (found.inClass.QualifiedName.Equals(result.RelClass.QualifiedName))
-            {
-                result = null;
-            }
-
+            string label;
             ClassModel inClass = result != null ? result.RelClass : found.inClass;
             bool isInterface = ClassIsInterface(inClass);
-
             if (!isInterface && result == null)
             {
-                string label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
+                if (ASContext.Context.Features.protectedKey != null && ASContext.CommonSettings.GenerateProtectedDeclarations)
+                    label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
+                else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
                 known.Add(new GeneratorItem(label, GeneratorJobType.Function, found.member, found.inClass));
             }
-
-            string labelFunPublic = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
-            if (isInterface)
-            {
-                labelFunPublic = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
-                autoSelect = labelFunPublic;
-            }
-            known.Add(new GeneratorItem(labelFunPublic, GeneratorJobType.FunctionPublic, found.member, found.inClass));
-
-            string labelCallback = TextHelper.GetString("ASCompletion.Label.GeneratePublicCallback");
-            known.Add(new GeneratorItem(labelCallback, GeneratorJobType.VariablePublic, found.member, found.inClass));
-
+            if (isInterface) label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
+            else label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
+            known.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
+            label = TextHelper.GetString("ASCompletion.Label.GeneratePublicCallback");
+            known.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
             CompletionList.Show(known, false);
         }
 
@@ -797,20 +784,20 @@ namespace ASCompletion.Completion
 
         private static void ShowFieldFromParameter(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             if (GetLangIsValid())
             {
+                List<ICompletionListItem> known = new List<ICompletionListItem>();
                 Hashtable parameters = new Hashtable();
                 parameters["scope"] = GetDefaultVisibility();
-                string labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
-                known.Add(new GeneratorItem(labelClass, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
-
+                string label;
+                if (ASContext.Context.Features.protectedKey != null && ASContext.CommonSettings.GenerateProtectedDeclarations)
+                    label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
+                else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
+                known.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
                 parameters = new Hashtable();
                 parameters["scope"] = Visibility.Public;
-                labelClass = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
-                known.Add(new GeneratorItem(labelClass, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
-
+                label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
+                known.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
                 CompletionList.Show(known, false);
             }
         }
