@@ -3879,7 +3879,7 @@ namespace ASCompletion.Completion
             if (ASContext.Context.CurrentMember == null && ASContext.Context.CurrentModel.haXe)
             {
                 int curLine = sci.LineFromPosition(position);
-                int curPosInLine = sci.PositionInCurrentLine();
+                int curPosInLine = position - sci.PositionFromLine(curLine);
                 String line = sci.GetLine(curLine);
                 int length = sci.MBSafeLengthFromBytes(line, curPosInLine);
                 String lineUntilCursor = line.Substring(0, length);
