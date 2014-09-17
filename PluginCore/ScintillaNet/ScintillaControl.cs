@@ -6048,8 +6048,8 @@ namespace ScintillaNet
 			}
 			else
 			{
-				int mblenght = Encoding.UTF8.GetByteCount(text);
-				return mblenght;
+				int mblength = Encoding.UTF8.GetByteCount(text);
+                return mblength;
 			}
         }
 

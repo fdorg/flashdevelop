@@ -3879,14 +3879,16 @@ namespace ASCompletion.Completion
             if (ASContext.Context.CurrentMember == null && ASContext.Context.CurrentModel.haXe)
             {
                 int curLine = sci.LineFromPosition(position);
-                int curPosInLine = sci.MBSafePosition(sci.PositionInCurrentLine());
-                String line = sci.GetLine(curLine).Substring(0, curPosInLine);
+                int curPosInLine = sci.PositionInCurrentLine();
+                String line = sci.GetLine(curLine);
+                int length = sci.MBSafeLengthFromBytes(line, curPosInLine);
+                String lineUntilCursor = line.Substring(0, length);
                 
                 Regex openMetadata = new Regex("@:?(.*)\\(");
-                foreach (Match match in openMetadata.Matches(line))
+                foreach (Match match in openMetadata.Matches(lineUntilCursor))
                 {
                     int matchEnd = match.Index + match.Length;
-                    if (line.IndexOf(')', matchEnd) < 0)
+                    if (lineUntilCursor.IndexOf(')', matchEnd) < 0)
                     {
                         // position is inside a metadata's brackets
                         return false;
