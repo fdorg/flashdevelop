@@ -49,6 +49,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashLogViewer", "External\Plugins\FlashLogViewer\FlashLogViewer.csproj", "{21912919-338F-431D-945B-F3C104A96B8E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroManager", "External\Plugins\MacroManager\MacroManager.csproj", "{E462A275-2DAF-411C-95ED-C6A35FEC29D8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93} = {EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASClassWizard", "External\Plugins\ASClassWizard\ASClassWizard.csproj", "{A2C159C1-7D21-4483-AEB1-38D9FDC4C7F3}"
 EndProject
