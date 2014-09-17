@@ -713,7 +713,7 @@ namespace ResultsPanel
             toolStripButtonWarning.Text = warningCount.ToString();
             toolStripButtonInfo.Text = messageCount.ToString();
 
-            if (Width >= 400)
+            if (Width >= 800)
             {
                 toolStripButtonError.Text += " " + TextHelper.GetString("Filters.Errors");
                 toolStripButtonWarning.Text += " " + TextHelper.GetString("Filters.Warnings");
