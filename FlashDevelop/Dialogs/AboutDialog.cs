@@ -25,7 +25,6 @@ namespace FlashDevelop.Dialogs
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();
-			this.versionLabel.LinkClicked += VersionLabelLinkClicked;
 		}
 
 		#region Windows Forms Designer Generated Code
@@ -79,6 +78,7 @@ namespace FlashDevelop.Dialogs
             this.versionLabel.TabIndex = 0;
             this.versionLabel.Text = "FlashDevelop 4.6.0.0 for .NET 2.0 (master#1234567890)";
             this.versionLabel.Click += new System.EventHandler(this.DialogCloseClick);
+            this.versionLabel.LinkClicked += VersionLabelLinkClicked;
             // 
             // AboutDialog
             //
@@ -120,28 +120,25 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ApplyLocalizedTexts()
         {
-            string name = Application.ProductName;
-            
+            String name = Application.ProductName;
             this.Text = " " + TextHelper.GetString("Title.AboutDialog");
             this.versionLabel.Font = new Font(this.Font, FontStyle.Bold);
             this.versionLabel.Text = name;
-            
             Regex shaRegex = new Regex("#([a-f0-9]*)");
-            string sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
-            string link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
+            String sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
+            String link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
             this.versionLabel.Links.Add(new LinkLabel.Link(name.IndexOf('('), versionLabel.Text.Length, link));
-            
             ToolTip tooltip = new ToolTip();
             tooltip.SetToolTip(versionLabel, link);
         }
 
-		void VersionLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        /// <summary>
+        /// When user clicks the link, open the Github commit in the browser.
+        /// </summary>
+		private void VersionLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string target = e.Link.LinkData as string;
-            if (target != null)
-            {
-            	System.Diagnostics.Process.Start(target);
-            }
+            string target = e.Link.LinkData as String;
+            if (target != null) System.Diagnostics.Process.Start(target);
         }
 
         /// <summary>

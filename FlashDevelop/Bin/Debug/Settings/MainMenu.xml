@@ -4,16 +4,16 @@
 		<menu label="Label.New" name="NewMenu">
 			<button label="Label.BlankDocument" click="New" shortcut="Control|N" />
 			<separator />
-			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" shortcut="Control|D0" />
-			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" shortcut="Control|D1" />
-			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.fdt" shortcut="Control|D2" />
-			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" shortcut="Control|D3" />
-			<button label="Label.HTMLDocument" click="NewFromTemplate" tag="html;$(TemplateDir)\HTML.fdt" shortcut="Control|D4" />
-			<button label="Label.JScriptDocument" click="NewFromTemplate" tag="js;$(TemplateDir)\JScript.js.fdt" shortcut="Control|D5" />
-			<button label="Label.CSSDocument" click="NewFromTemplate" tag="css;$(TemplateDir)\CSS.fdt" shortcut="Control|D6" />
-			<button label="Label.PHPDocument" click="NewFromTemplate" tag="php;$(TemplateDir)\PHP.fdt" shortcut="Control|D7" />
-			<button label="Label.XMLDocument" click="NewFromTemplate" tag="xml;$(TemplateDir)\XML.fdt" shortcut="Control|D8" />
-			<button label="Label.TextDocument" click="NewFromTemplate" tag="txt;$(TemplateDir)\TXT.fdt" shortcut="Control|D9" />
+			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" />
+			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" />
+			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.fdt" />
+			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" />
+			<button label="Label.HTMLDocument" click="NewFromTemplate" tag="html;$(TemplateDir)\HTML.fdt" />
+			<button label="Label.JScriptDocument" click="NewFromTemplate" tag="js;$(TemplateDir)\JScript.js.fdt" />
+			<button label="Label.CSSDocument" click="NewFromTemplate" tag="css;$(TemplateDir)\CSS.fdt" />
+			<button label="Label.PHPDocument" click="NewFromTemplate" tag="php;$(TemplateDir)\PHP.fdt" />
+			<button label="Label.XMLDocument" click="NewFromTemplate" tag="xml;$(TemplateDir)\XML.fdt" />
+			<button label="Label.TextDocument" click="NewFromTemplate" tag="txt;$(TemplateDir)\TXT.fdt" />
 		</menu>
 		<menu label="Label.Modify" name="ModifyMenu" flags="Enable:IsEditable">
 			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" />

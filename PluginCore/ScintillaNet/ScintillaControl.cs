@@ -4917,7 +4917,7 @@ namespace ScintillaNet
         /// </summary>
         public static void InitShortcuts()
         {
-            shortcutOverrides.Add("Scintilla.ResetZoom", Keys.None);
+            shortcutOverrides.Add("Scintilla.ResetZoom", Keys.Control | Keys.NumPad0);
             shortcutOverrides.Add("Scintilla.ZoomOut", Keys.Control | Keys.Subtract);
             shortcutOverrides.Add("Scintilla.ZoomIn", Keys.Control | Keys.Add);
             foreach (DictionaryEntry shortcut in shortcutOverrides)
