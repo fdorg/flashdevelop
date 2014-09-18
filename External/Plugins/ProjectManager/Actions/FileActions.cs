@@ -163,6 +163,7 @@ namespace ProjectManager.Actions
                         package = package.Replace(Path.DirectorySeparatorChar, '.');
                     }
 
+                    if (package == "") args = args.Replace(" $(Package)", "");
                     args = args.Replace("$(Package)", package);
 
                     if (package != "")

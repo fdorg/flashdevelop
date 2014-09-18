@@ -266,9 +266,7 @@ namespace ProjectManager
             pluginUI.Menu.AddLibraryAsset.Click += delegate { TreeAddAsset(); };
             pluginUI.Menu.AddExistingFile.Click += delegate { TreeAddExistingFile(); };
             pluginUI.Menu.TestMovie.Click += delegate { TestMovie(); };
-            pluginUI.Menu.BuildProject.Click += delegate { 
-                BuildProject(); 
-            };
+            pluginUI.Menu.BuildProject.Click += delegate { BuildProject(); };
             pluginUI.Menu.CloseProject.Click += delegate { CloseProject(false); };
             pluginUI.Menu.Properties.Click += delegate { OpenProjectProperties(); };
             pluginUI.Menu.ShellMenu.Click += delegate { TreeShowShellMenu(); };
