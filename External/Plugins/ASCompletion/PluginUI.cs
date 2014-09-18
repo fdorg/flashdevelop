@@ -750,7 +750,6 @@ namespace ASCompletion
 
         private void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
         {
-            int endRegion = 0;
             int index = 0;
             MemberModel region = null;
             MemberList regions = aFile.Regions;
@@ -761,13 +760,11 @@ namespace ASCompletion
                 MemberTreeNode node = new MemberTreeNode(region, ICON_PACKAGE);
                 tree.Add(node);
 
-                endRegion = (index + 1 < count) ? regions[index + 1].LineFrom : int.MaxValue;
-
                 MemberList regionMembers = new MemberList();
                 foreach (MemberModel import in aFile.Imports)
                 {
                     if (import.LineFrom >= region.LineFrom &&
-                        import.LineTo <= endRegion)
+                        import.LineTo <= region.LineTo)
                     {
                         regionMembers.Add(import);
                     }
@@ -776,7 +773,7 @@ namespace ASCompletion
                 foreach (MemberModel fileMember in aFile.Members)
                 {
                     if (fileMember.LineFrom >= region.LineFrom &&
-                        fileMember.LineTo <= endRegion)
+                        fileMember.LineTo <= region.LineTo)
                     {
                         regionMembers.Add(fileMember);
                     }
@@ -789,14 +786,14 @@ namespace ASCompletion
                         foreach (MemberModel clsMember in cls.Members)
                         {
                             if (clsMember.LineFrom >= region.LineFrom &&
-                                clsMember.LineTo <= endRegion)
+                                clsMember.LineTo <= region.LineTo)
                             {
                                 regionMembers.Add(clsMember);
                             }
                         }
                     }
                     else if (cls.LineFrom >= region.LineFrom &&
-                             cls.LineTo <= endRegion)
+                             cls.LineTo <= region.LineTo)
                     {
                         regionMembers.Add(cls);
                     }

@@ -313,7 +313,8 @@ namespace ASCompletion.Model
     public class ASFileParserRegexes
     {
         public static readonly Regex Spaces = new Regex("\\s+", RegexOptions.Compiled);
-        public static readonly Regex Region = new Regex(@"^(#|{)[ ]?region[:\\s]*(?<name>[^\r\n]*)", RegexOptions.Compiled);
+        public static readonly Regex RegionStart = new Regex(@"^(#|{)[ ]?region[:\\s]*(?<name>[^\r\n]*)", RegexOptions.Compiled);
+        public static readonly Regex RegionEnd = new Regex(@"^(#|})[ ]?endregion", RegexOptions.Compiled);
         public static readonly Regex QuotedString = new Regex("(\"(\\\\.|[^\"\\\\])*\")|('(\\\\.|[^'\\\\])*')", RegexOptions.Compiled);
         public static readonly Regex FunctionType = new Regex(@"\)\s*\:\s*(?<fType>[\w\$\.\<\>\@]+)", RegexOptions.Compiled);
         public static readonly Regex ValidTypeName = new Regex("^(\\s*of\\s*)?(?<type>[\\w.\\$]*)$", RegexOptions.Compiled);
@@ -918,7 +919,7 @@ namespace ASCompletion.Model
                     {
                         if (commentLength < COMMENTS_BUFFER) commentBuffer[commentLength++] = c1;
                     }
-                    else if (matching == 1 && (c1 == '#' || c1 == '{'))
+                    else if (matching == 1 && (c1 == '#' || c1 == '{') || c1 == '}')
                     {
                         commentBuffer[commentLength++] = c1;
                         while (i < len)
@@ -931,13 +932,28 @@ namespace ASCompletion.Model
                         }
 
                         string comment = new String(commentBuffer, 0, commentLength);
-                        Match match = ASFileParserRegexes.Region.Match(comment);
-                        if (match.Success)
+                        
+                        // region start
+                        Match matchStart = ASFileParserRegexes.RegionStart.Match(comment);
+                        if (matchStart.Success)
                         {
-                            string regionName = match.Groups["name"].Value.Trim();
+                            string regionName = matchStart.Groups["name"].Value.Trim();
                             MemberModel region = new MemberModel(regionName, String.Empty, FlagType.Declaration, Visibility.Default);
-                            region.LineFrom = region.LineTo = line;
+                            region.LineFrom = line;
                             model.Regions.Add(region);
+                        }
+                        else
+                        {
+                            // region end
+                            Match matchEnd = ASFileParserRegexes.RegionEnd.Match(comment);
+                            if (matchEnd.Success && model.Regions.Count > 0)
+                            {
+                                MemberModel region = model.Regions[model.Regions.Count - 1];
+                                if (region.LineTo == 0)
+                                {
+                                    region.LineTo = line;
+                                }
+                            }
                         }
                     }
                     continue;
