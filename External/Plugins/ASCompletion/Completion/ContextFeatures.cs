@@ -42,6 +42,7 @@ namespace ASCompletion.Completion
         public bool hasStaticInheritance;
         public bool hasInference;
         public bool checkFileName;
+        public char hiddenPackagePrefix;
 
         // C-style array type (ie. string[])
         public bool hasCArrays;
