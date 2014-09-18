@@ -349,7 +349,7 @@ namespace ProjectManager.Controls
             // 
             // dimensionsLabel
             // 
-            this.dimensionsLabel.Location = new System.Drawing.Point(8, 47);
+            this.dimensionsLabel.Location = new System.Drawing.Point(8, 46);
             this.dimensionsLabel.Name = "dimensionsLabel";
             this.dimensionsLabel.Size = new System.Drawing.Size(96, 13);
             this.dimensionsLabel.TabIndex = 3;
@@ -368,7 +368,7 @@ namespace ProjectManager.Controls
             // 
             // framerateLabel
             // 
-            this.framerateLabel.Location = new System.Drawing.Point(16, 98);
+            this.framerateLabel.Location = new System.Drawing.Point(16, 97);
             this.framerateLabel.Name = "framerateLabel";
             this.framerateLabel.Size = new System.Drawing.Size(88, 17);
             this.framerateLabel.TabIndex = 8;
@@ -395,7 +395,7 @@ namespace ProjectManager.Controls
             // 
             // exportinLabel
             // 
-            this.exportinLabel.Location = new System.Drawing.Point(8, 17);
+            this.exportinLabel.Location = new System.Drawing.Point(8, 16);
             this.exportinLabel.Name = "exportinLabel";
             this.exportinLabel.Size = new System.Drawing.Size(96, 18);
             this.exportinLabel.TabIndex = 0;
@@ -757,7 +757,7 @@ namespace ProjectManager.Controls
             this.CancelButton = this.btnCancel;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(366, 348);
-            this.MinimumSize = new System.Drawing.Size(375, 372);
+            this.MinimumSize = new System.Drawing.Size(377, 377);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.btnCancel);
