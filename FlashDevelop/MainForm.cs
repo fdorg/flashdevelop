@@ -1013,7 +1013,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Initalizes the windows state after show is called and
+        /// Initializes the windows state after show is called and
         /// check if we need to notify user for recovery files
         /// </summary>
         private void OnMainFormShow(Object sender, System.EventArgs e)
@@ -1499,7 +1499,6 @@ namespace FlashDevelop
                     else if (keyData == (Keys.Control | Keys.X)) return false;
                     else if (keyData == (Keys.Control | Keys.A)) return false;
                     else if (keyData == (Keys.Control | Keys.Z)) return false;
-                    else if (keyData == (Keys.Control | Keys.V)) return false;
                 }
                 /**
                 * Process special key combinations and allow "chaining" of 
@@ -2922,6 +2921,33 @@ namespace FlashDevelop
             {
                 this.CurrentDocument.IsSplitted = !this.CurrentDocument.IsSplitted;
                 ButtonManager.UpdateFlaggedButtons();
+            }
+        }
+
+        public void ZoomIn(Object sender, System.EventArgs e)
+        {
+            ScintillaControl sci = Globals.SciControl;
+            if (sci.Focused)
+            {
+                sci.ZoomIn();
+            }
+        }
+
+        public void ZoomOut(Object sender, System.EventArgs e)
+        {
+            ScintillaControl sci = Globals.SciControl;
+            if (sci.Focused)
+            {
+                sci.ZoomOut();
+            }
+        }
+
+        public void ResetZoom(Object sender, System.EventArgs e)
+        {
+            ScintillaControl sci = Globals.SciControl;
+            if (sci.Focused)
+            {
+                sci.ZoomLevel = 0;
             }
         }
 

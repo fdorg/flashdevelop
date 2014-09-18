@@ -4,7 +4,7 @@
 		<menu label="Label.New" name="NewMenu">
 			<button label="Label.BlankDocument" click="New" shortcut="Control|N" />
 			<separator />
-			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" shortcut="Control|D0" />
+			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" />
 			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" shortcut="Control|D1" />
 			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.fdt" shortcut="Control|D2" />
 			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" shortcut="Control|D3" />
@@ -112,6 +112,10 @@
 		<separator />
 		<button label="Label.FullScreen" click="ToggleFullScreen" shortcut="Shift|Alt|Enter" flags="Check:IsFullScreen" />
 		<button label="Label.SplitView" click="ToggleSplitView" shortcut="Control|Shift|Enter" flags="Check:IsSplitted" />
+		<separator />
+		<button label="Label.ZoomIn" click="ZoomIn" shortcut="Control|Oemplus" />
+		<button label="Label.ZoomOut" click="ZoomOut" shortcut="Control|OemMinus" />
+		<button label="Label.ResetZoom" click="ResetZoom" shortcut="Control|D0" />
 		<separator />
 	</menu>
 	<menu label="Label.Search" name="SearchMenu">

@@ -2500,6 +2500,18 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="FlashDevelop.Label.FullScreen" xml:space="preserve">
     <value>V&amp;ollbild</value>
   </data>
+  <data name="FlashDevelop.Label.ZoomIn" xml:space="preserve">
+    <value>Heranzoomen</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Label.ZoomOut" xml:space="preserve">
+    <value>Herauszoomen</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Label.ResetZoom" xml:space="preserve">
+    <value>Zoom zurücksetzen</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
   <data name="ASCompletion.Description.ReformatBraces" xml:space="preserve">
     <value>Formatiere automatisch die Klammern entsprechend der Coding Style Line Break Option in den FlashDevelop Haupteinstellungen.</value>
   </data>
