@@ -919,7 +919,7 @@ namespace ASCompletion.Model
                     {
                         if (commentLength < COMMENTS_BUFFER) commentBuffer[commentLength++] = c1;
                     }
-                    else if (matching == 1 && (c1 == '#' || c1 == '{') || c1 == '}')
+                    else if (matching == 1 && (c1 == '#' || c1 == '{' || c1 == '}'))
                     {
                         commentBuffer[commentLength++] = c1;
                         while (i < len)
