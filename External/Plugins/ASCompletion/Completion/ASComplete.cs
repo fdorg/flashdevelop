@@ -1927,6 +1927,8 @@ namespace ASCompletion.Completion
                 mix.Merge(decl);
             }
 
+            mix = FilterHaxeVisibility(mix);
+
 			// show
             List<ICompletionListItem> list = new List<ICompletionListItem>();
 			foreach(MemberModel member in mix)
@@ -2058,6 +2060,9 @@ namespace ASCompletion.Completion
 			// Consolidate known classes
 			MemberList known = new MemberList();
             known.Merge(ASContext.Context.GetVisibleExternalElements());
+
+            known = FilterHaxeVisibility(known);
+
             // show
             List<ICompletionListItem> list = new List<ICompletionListItem>();
 			foreach(MemberModel member in known)
@@ -2082,6 +2087,8 @@ namespace ASCompletion.Completion
                 // list visible classes
                 MemberList known = new MemberList();
                 known.Merge(ASContext.Context.GetVisibleExternalElements());
+
+                known = FilterHaxeVisibility(known);
 
                 // show
                 List<ICompletionListItem> list = new List<ICompletionListItem>();
@@ -2115,6 +2122,8 @@ namespace ASCompletion.Completion
                 MemberList known = new MemberList();
                 ClassModel cClass = ASContext.Context.CurrentClass;
                 known.Merge(ASContext.Context.GetVisibleExternalElements());
+
+                known = FilterHaxeVisibility(known);
 
                 // show
                 List<ICompletionListItem> list = new List<ICompletionListItem>();
@@ -2229,6 +2238,8 @@ namespace ASCompletion.Completion
                         known.Add(field);
             }
 
+            known = FilterHaxeVisibility(known);
+
             List<ICompletionListItem> list = new List<ICompletionListItem>();
             string prev = null;
             FlagType mask = (classesOnly) ? 
@@ -2243,6 +2254,21 @@ namespace ASCompletion.Completion
             }
 
             CompletionList.Show(list, false, tail);
+        }
+
+        /// <summary>
+        /// Removes haxe packages starting with "_", they're considered hidden
+        /// </summary>
+        private static MemberList FilterHaxeVisibility(MemberList list)
+        {
+            if (ASContext.Context.CurrentModel.haXe)
+            {
+                list.Items.RemoveAll(member =>
+                    (member.Type != null && (member.Type.StartsWith("_") || member.Type.Contains("._")))
+                );
+            }
+
+            return list;
         }
 		#endregion
 
