@@ -5883,12 +5883,21 @@ namespace ScintillaNet
         /// </summary>
         public void CollapseFunctions()
         {
-            for (int i = 0; i < LineCount; i++)
+            int lineCount = LineCount;
+
+            for (int i = 0; i < lineCount; i++)
             {
                 // Determine if function block
                 string line = GetLine(i);
-                if ((line.Contains("function") && line.Contains("(") && line.Contains(")")))
+                if (line.Contains("function"))
                 {
+                    // Find the line with the closing ) of the function header
+                    while (!line.Contains(")") && i < lineCount)
+                    {
+                        i++;
+                        line = GetLine(i);
+                    }
+
                     // Get the function closing brace
                     int maxSubOrd = LastChild(i, -1);
                     // Get brace if on the next line
