@@ -59,7 +59,6 @@ namespace ResultsPanel
             this.InitializeTexts();
             this.InitializeLayout();
             this.ApplySettings();
-            Resize += PluginUI_Resize;
 		}
 		
 		#region Windows Forms Designer Generated Code
@@ -216,6 +215,7 @@ namespace ResultsPanel
 			// PluginUI
 			//
             this.Name = "PluginUI";
+            this.Resize += this.PluginUIResize;
 			this.Controls.Add(this.entriesView);
             this.Controls.Add(this.toolStripFilters);
 			this.Size = new System.Drawing.Size(712, 246);
@@ -307,7 +307,9 @@ namespace ResultsPanel
         public void InitializeLayout()
         {
             foreach (ColumnHeader column in entriesView.Columns)
+            {
                 column.Width = ScaleHelper.Scale(column.Width);
+            }
         }
 
         /// <summary>
@@ -414,9 +416,12 @@ namespace ResultsPanel
 			}
 		}
 
-        void PluginUI_Resize(object sender, EventArgs e)
+        /// <summary>
+        /// Update the buttons when the panel resizes
+        /// </summary>
+        private void PluginUIResize(object sender, EventArgs e)
         {
-            UpdateButtons();
+            this.UpdateButtons();
         }
 
         /// <summary>
@@ -587,23 +592,20 @@ namespace ResultsPanel
                         inExec = true;
                         fileTest = fileTest.Substring(fileTest.IndexOf(']') + 1).TrimStart();
                     }
-                    if (fileTest.StartsWith("~/")) // relative to project root (Haxe)
-                        fileTest = fileTest.Substring(2);
-
+                    // relative to project root (Haxe)
+                    if (fileTest.StartsWith("~/")) fileTest = fileTest.Substring(2);
                     match = fileEntry.Match(fileTest);
                     if (!match.Success) match = fileEntry2.Match(fileTest);
                     if (match.Success && !this.ignoredEntries.ContainsKey(match.Value))
                     {
                         string filename = match.Groups["filename"].Value;
                         if (filename.Length < 3 || badCharacters.IsMatch(filename)) continue;
-
                         if (project != null && filename[0] != '/' && filename[1] != ':') // relative to project root
                         {
                             filename = PathHelper.ResolvePath(filename, projectDir);
                             if (filename == null) continue;
                         }
                         else if (!File.Exists(filename)) continue;
-
                         FileInfo fileInfo = new FileInfo(filename);
                         if (fileInfo != null)
                         {
@@ -628,7 +630,6 @@ namespace ResultsPanel
                             else icon = 0;
                             ListViewItem item = new ListViewItem("", icon);
                             item.Tag = match; // Save for later...
-                            
                             String matchLine = match.Groups["line"].Value;
                             if (matchLine.IndexOf(',') > 0)
                             {
@@ -709,15 +710,14 @@ namespace ResultsPanel
         /// </summary>
         private void UpdateButtons()
         {
-            toolStripButtonError.Text = errorCount.ToString();
-            toolStripButtonWarning.Text = warningCount.ToString();
-            toolStripButtonInfo.Text = messageCount.ToString();
-
-            if (Width >= 800)
+            this.toolStripButtonError.Text = errorCount.ToString();
+            this.toolStripButtonWarning.Text = warningCount.ToString();
+            this.toolStripButtonInfo.Text = messageCount.ToString();
+            if (this.Width >= 800)
             {
-                toolStripButtonError.Text += " " + TextHelper.GetString("Filters.Errors");
-                toolStripButtonWarning.Text += " " + TextHelper.GetString("Filters.Warnings");
-                toolStripButtonInfo.Text += " " + TextHelper.GetString("Filters.Informations");
+                this.toolStripButtonError.Text += " " + TextHelper.GetString("Filters.Errors");
+                this.toolStripButtonWarning.Text += " " + TextHelper.GetString("Filters.Warnings");
+                this.toolStripButtonInfo.Text += " " + TextHelper.GetString("Filters.Informations");
             }
         }
 
