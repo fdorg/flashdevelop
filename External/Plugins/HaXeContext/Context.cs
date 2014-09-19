@@ -251,8 +251,7 @@ namespace HaXeContext
 
             foreach (Match m in matches)
             {
-                string description = m.Groups[2].ToString();
-                features.metadata.Add(m.Groups[1].ToString(), description);
+                features.metadata.Add(m.Groups[1].ToString(), m.Groups[2].ToString());
             }
         }
 
