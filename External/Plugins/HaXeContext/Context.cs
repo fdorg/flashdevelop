@@ -129,6 +129,7 @@ namespace HaXeContext
             features.privateKey = "private";
             features.intrinsicKey = "extern";
             features.inlineKey = "inline";
+            features.hiddenPackagePrefix = '_';
 
             /* INITIALIZATION */
 

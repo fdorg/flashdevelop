@@ -294,6 +294,7 @@ namespace ASClassWizard
                 args = args.Replace("$(FileName)", fileName);
                 if (args.Contains("$(FileNameWithPackage)") || args.Contains("$(Package)"))
                 {
+                    if (package == "") args = args.Replace(" $(Package)", "");
                     args = args.Replace("$(Package)", package);
                     if (package != "") args = args.Replace("$(FileNameWithPackage)", package + "." + fileName);
                     else args = args.Replace("$(FileNameWithPackage)", fileName);

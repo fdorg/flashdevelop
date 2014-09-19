@@ -761,7 +761,11 @@ namespace ASCompletion
                 MemberTreeNode node = new MemberTreeNode(region, ICON_PACKAGE);
                 tree.Add(node);
 
-                endRegion = (index + 1 < count) ? regions[index + 1].LineFrom : int.MaxValue;
+                endRegion = region.LineTo;
+                if (endRegion == 0)
+                {
+                    endRegion = (index + 1 < count) ? regions[index + 1].LineFrom : int.MaxValue;
+                }
 
                 MemberList regionMembers = new MemberList();
                 foreach (MemberModel import in aFile.Imports)

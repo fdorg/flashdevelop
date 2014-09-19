@@ -2371,7 +2371,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Dokument:</value>
   </data>
   <data name="ProjectManager.Title.CustomTestMovieDocument" xml:space="preserve">
-    <value>Zu öffendes Dokument auswählen</value>
+    <value>Zu öffnendes Dokument auswählen</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Info.NotEnoughArguments" xml:space="preserve">

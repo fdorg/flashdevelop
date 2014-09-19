@@ -82,12 +82,14 @@ namespace ASCompletion.Model
 		private List<string> foundFiles;
         private List<string> explored;
         private string hashName;
+        private char hiddenPackagePrefix;
 
         public PathExplorer(IASContext context, PathModel pathModel)
         {
             this.context = context;
             this.pathModel = pathModel;
             hashName = pathModel.Path;
+            hiddenPackagePrefix = context.Features.hiddenPackagePrefix;
             foundFiles = new List<string>();
             explored = new List<string>();
         }
@@ -382,10 +384,19 @@ namespace ASCompletion.Model
             string[] dirs = Directory.GetDirectories(path);
             foreach (string dir in dirs)
             {
-                if (!explored.Contains(dir) && (File.GetAttributes(dir) & FileAttributes.Hidden) == 0
-                    && !Path.GetFileName(dir).StartsWith("."))
+                if (!explored.Contains(dir) 
+                    && (File.GetAttributes(dir) & FileAttributes.Hidden) == 0
+                    && !IgnoreDirectory(dir))
                     ExploreFolder(dir, masks);
             }
 		}
+
+        private bool IgnoreDirectory(string dir)
+        {
+            var name = Path.GetFileName(dir);
+            if (name[0] == '.') return true;
+            if (hiddenPackagePrefix != 0 && name[0] == hiddenPackagePrefix) return true;
+            return false;
+        }
 	}
 }
