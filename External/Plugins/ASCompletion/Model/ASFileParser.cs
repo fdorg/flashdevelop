@@ -313,8 +313,8 @@ namespace ASCompletion.Model
     public class ASFileParserRegexes
     {
         public static readonly Regex Spaces = new Regex("\\s+", RegexOptions.Compiled);
-        public static readonly Regex RegionStart = new Regex(@"^(#|{)[ ]?region[:\\s]*(?<name>[^\r\n]*)", RegexOptions.Compiled);
-        public static readonly Regex RegionEnd = new Regex(@"^(#|})[ ]?endregion", RegexOptions.Compiled);
+        public static readonly Regex RegionStart = new Regex(@"^{[ ]?region[:\\s]*(?<name>[^\r\n]*)", RegexOptions.Compiled);
+        public static readonly Regex RegionEnd = new Regex(@"^}[ ]?endregion", RegexOptions.Compiled);
         public static readonly Regex QuotedString = new Regex("(\"(\\\\.|[^\"\\\\])*\")|('(\\\\.|[^'\\\\])*')", RegexOptions.Compiled);
         public static readonly Regex FunctionType = new Regex(@"\)\s*\:\s*(?<fType>[\w\$\.\<\>\@]+)", RegexOptions.Compiled);
         public static readonly Regex ValidTypeName = new Regex("^(\\s*of\\s*)?(?<type>[\\w.\\$]*)$", RegexOptions.Compiled);
@@ -919,7 +919,7 @@ namespace ASCompletion.Model
                     {
                         if (commentLength < COMMENTS_BUFFER) commentBuffer[commentLength++] = c1;
                     }
-                    else if (matching == 1 && (c1 == '#' || c1 == '{' || c1 == '}'))
+                    else if (matching == 1 && (c1 == '{' || c1 == '}'))
                     {
                         commentBuffer[commentLength++] = c1;
                         while (i < len)
