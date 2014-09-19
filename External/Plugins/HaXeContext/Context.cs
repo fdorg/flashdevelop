@@ -140,6 +140,7 @@ namespace HaXeContext
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
+            LoadMetadata();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -229,6 +230,30 @@ namespace HaXeContext
             if (neko != null) path = neko.TrimEnd(new char[] { '/', '\\' }) + ";" + path;
             Environment.SetEnvironmentVariable("PATH", path);
             currentEnv = sdkPath;
+        }
+
+
+        private void LoadMetadata()
+        {
+            features.metadata = new Dictionary<string, string>();
+
+            Process process = createHaxeProcess("--help-metas");
+            process.Start();
+
+            String metaList = process.StandardOutput.ReadToEnd();
+            process.Close();
+
+            Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?= @:[a-zA-Z]* :)");
+            metaList = Regex.Replace(metaList, "\\s+", " ");
+            metaList += "@:fake :";
+
+            MatchCollection matches = regex.Matches(metaList);
+
+            foreach (Match m in matches)
+            {
+                string description = m.Groups[2].ToString();
+                features.metadata.Add(m.Groups[1].ToString(), description);
+            }
         }
 
         /// <summary>
