@@ -293,14 +293,14 @@ namespace ASCompletion.Completion
         static private Regex reNewLine = new Regex("[\r\n]+", RegexOptions.Compiled);
         static private Regex reKeepTags = new Regex("<([/]?(b|i|s|u))>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static private Regex reSpecialTags = new Regex("<([/]?)(code|small|strong|em)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reStripTags = new Regex("<[/]?[a-z]+>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static private Regex reStripTags = new Regex("<[/]?[a-z]+[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static private Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static private Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
 
 		static public CommentBlock ParseComment(string comment)
 		{
 			// cleanup
-            comment = comment.Replace("&lt;", "<").Replace("&gt;", ">");
+            comment = comment.Replace("&lt;", "<").Replace("&gt;", ">").Replace("&nbsp;", " ");
             comment = reKeepTags.Replace(comment, "[$1]");
             comment = reSpecialTags.Replace(comment, match =>
             {
