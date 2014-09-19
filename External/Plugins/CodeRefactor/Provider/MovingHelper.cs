@@ -87,7 +87,7 @@ namespace CodeRefactor.Provider
                     lineChanges[lineNumber] = changedLine;
                     lineOffsets[lineNumber] = offset + (match.Value.Length - match.Length);
                     if (!reportableLines.ContainsKey(lineNumber)) reportableLines[lineNumber] = new List<string>();
-                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": characters " + column + "-" + (column + match.Value.Length) + " : {0}");
+                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": chars " + column + "-" + (column + match.Value.Length) + " : {0}");
                 }
                 foreach (KeyValuePair<int, List<string>> lineSetsToReport in reportableLines)
                 {

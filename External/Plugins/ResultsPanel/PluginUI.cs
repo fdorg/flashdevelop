@@ -893,8 +893,8 @@ namespace ResultsPanel
         /**
         * Extract error caret position
         */
-        private Regex errorCharacter = new Regex("character[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
-        private Regex errorCharacters = new Regex("characters[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
+        private Regex errorCharacter = new Regex("(character|char)[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
+        private Regex errorCharacters = new Regex("(characters|chars)[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
         private Regex errorCharacters2 = new Regex(@"col: (?<start>[0-9]+)\s*", RegexOptions.Compiled);
 
         #endregion

@@ -276,7 +276,7 @@ namespace CodeRefactor.Commands
                         reportableLines[lineNumber] = new List<string>();
                     }
                     // the data we store matches the TraceManager.Add's formatting.  We insert the {0} at the end so that we can insert the final line state later
-                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line.ToString() + ": characters " + column + "-" + (column + newNameLength) + " : {0}");
+                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line.ToString() + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
                 }
                 // report all the lines
                 foreach (KeyValuePair<int, List<String>> lineSetsToReport in reportableLines)
