@@ -7,6 +7,7 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
 
 namespace CodeRefactor.Provider
 {
@@ -433,9 +434,10 @@ namespace CodeRefactor.Provider
             if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
             ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
             string newDocumentClass = null;
-            if (File.Exists(oldPath))
+
+            if (File.Exists(oldPath) && FileHelper.ConfirmOverwrite(newPath))
             {
-                File.Move(oldPath, newPath);
+                FileHelper.ForceMove(oldPath, newPath);
                 PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
                 if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
             }

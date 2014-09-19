@@ -1444,6 +1444,12 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="PluginCore.Docking.ToolTipWindowList" xml:space="preserve">
     <value>Liste der geöffneten Fenster</value>
   </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFile" xml:space="preserve">
+    <value>Dieser Ordner beinhaltet bereits eine Datei namens "{0}".{1}Möchten Sie diese Datei erstetzen?</value>
+  </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFolder" xml:space="preserve">
+    <value>Dieser Ordner beinhaltet bereits einen Ordner names "{0}".{1}{1}Wenn die Dateien in dem bereits existieren Ordner die gleichen Bezeichnungen haben wie in dem Ordner, den Sie gerade verschieben oder kopieren, werden diese ersetzt. Möchten Sie den Ordner verschieben oder kopieren?</value>
+  </data>
   <data name="ProjectManager.Category.Advanced" xml:space="preserve">
     <value>Erweitert</value>
   </data>
@@ -1716,12 +1722,6 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Info.FlashMovieFilter" xml:space="preserve">
     <value>Adobe Flash Dateien (*.swf)|*.swf</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFile" xml:space="preserve">
-    <value>Dieser Ordner beinhaltet bereits eine Datei namens "{0}".{1}Möchten Sie diese Datei erstetzen?</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFolder" xml:space="preserve">
-    <value>Dieser Ordner beinhaltet bereits einen Ordner names "{0}".{1}{1}Wenn die Dateien in dem bereits existieren Ordner die gleichen Bezeichnungen haben wie in dem Ordner, den Sie gerade verschieben oder kopieren, werden diese ersetzt. Möchten Sie den Ordner verschieben oder kopieren?</value>
   </data>
   <data name="ProjectManager.Info.General" xml:space="preserve">
     <value>Allgemein</value>

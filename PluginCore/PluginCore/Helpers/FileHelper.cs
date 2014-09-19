@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using PluginCore.Utilities;
 using PluginCore.Managers;
+using PluginCore.Localization;
 using PluginCore;
 
 namespace PluginCore.Helpers
@@ -275,6 +276,47 @@ namespace PluginCore.Helpers
             return info;
         }
 
+        /// <summary>
+        /// Moves a file, overwrites the file at the new location if there is one already.
+        /// </summary>
+        public static void ForceMove(String oldPath, String newPath)
+        {
+            if (File.Exists(newPath))
+            {
+                File.Delete(newPath);
+            }
+            File.Move(oldPath, newPath);
+        }
+
+        /// <summary>
+        /// If the path already exists, the user is asked to confirm
+        /// </summary>
+        public static bool ConfirmOverwrite(string path)
+        {
+            string name = Path.GetFileName(path);
+
+            if (Directory.Exists(path))
+            {
+                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.FolderAlreadyContainsFolder");
+
+                DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"),
+                    title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                return result == DialogResult.Yes;
+            }
+            else if (File.Exists(path))
+            {
+                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.FolderAlreadyContainsFile");
+
+                DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"),
+                    title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                return result == DialogResult.Yes;
+            }
+            else return true;
+        }
     }
 
     /// <summary>
