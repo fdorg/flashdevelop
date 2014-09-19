@@ -203,12 +203,12 @@ namespace CodeRefactor.Commands
                 string newType;
                 if (string.IsNullOrEmpty(oldFileModel.Package))
                 {
-                    search = new FRSearch("(package)+\\s*");
+                    search = new FRSearch("package");
                     newType = Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 else
                 {
-                    search = new FRSearch("(package)+\\s+(" + oldFileModel.Package + ")\\s*");
+                    search = new FRSearch("package\\s+(" + oldFileModel.Package + ")");
                     newType = oldFileModel.Package + "." + Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 search.IsRegex = true;
@@ -218,7 +218,10 @@ namespace CodeRefactor.Commands
                 string newFilePath = currentTarget.NewFilePath;
                 ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(newFilePath);
                 List<SearchMatch> matches = search.Matches(sci.Text);
-                RefactoringHelper.ReplaceMatches(matches, sci, "package " + currentTarget.NewPackage + " ");
+                string packageReplacement = "package";
+                if (currentTarget.NewPackage != "")
+                    packageReplacement += " " + currentTarget.NewPackage;
+                RefactoringHelper.ReplaceMatches(matches, sci, packageReplacement);
                 int offset = "package ".Length;
                 foreach (SearchMatch match in matches)
                 {
