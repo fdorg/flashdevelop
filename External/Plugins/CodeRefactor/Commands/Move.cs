@@ -204,6 +204,7 @@ namespace CodeRefactor.Commands
                 if (string.IsNullOrEmpty(oldFileModel.Package))
                 {
                     search = new FRSearch("package");
+                    search.WholeWord = true;
                     newType = Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 else
