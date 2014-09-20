@@ -357,7 +357,8 @@ namespace HaXeContext
 
             // fix environment for command line tools
             string currentSDK = Path.GetDirectoryName(haxelib);
-            Context.SetHaxeEnvironment(currentSDK);
+            DataEvent de = new DataEvent(EventType.Command, "Context.SetHaxeEnvironment", currentSDK);
+            EventManager.DispatchEvent(null, de);
             
             return haxelib;
         }

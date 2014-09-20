@@ -140,7 +140,6 @@ namespace HaXeContext
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
-            LoadMetadata();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -210,7 +209,7 @@ namespace HaXeContext
         /// <summary>
         /// Properly switch between different Haxe SDKs
         /// </summary>
-        static public void SetHaxeEnvironment(string sdkPath)
+        public void SetHaxeEnvironment(string sdkPath)
         {
             sdkPath = sdkPath.TrimEnd(new char[] { '/', '\\' });
             if (currentEnv == sdkPath) return;
@@ -232,8 +231,7 @@ namespace HaXeContext
             currentEnv = sdkPath;
         }
 
-
-        private void LoadMetadata()
+        public void LoadMetadata()
         {
             features.metadata = new Dictionary<string, string>();
 

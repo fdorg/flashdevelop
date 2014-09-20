@@ -139,12 +139,16 @@ namespace HaXeContext
                         var project = de.Data as IProject;
                         ExternalToolchain.Monitor(project);
                     }
+                    else if (de.Action == "Context.SetHaxeEnvironment")
+                    {
+                        contextInstance.SetHaxeEnvironment(de.Data as string);
+                    }
                     break;
 
                 case EventType.UIStarted:
                     ValidateSettings();
                     contextInstance = new Context(settingObject);
-                    // Associate this context with haXe language
+                    // Associate this context with haxe language
                     ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "haxe");
                     break;
             }
