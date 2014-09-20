@@ -150,6 +150,11 @@ namespace ASCompletion.Completion
 						break;
 
 					case ':':
+                        if (ASContext.Context.CurrentModel.haXe && 
+                            ASContext.Context.CurrentMember == null && Sci.CharAt(position - 2) == '@')
+                        {
+                            return HandleMetadataCompletion(Sci, autoHide);
+                        }
                         if (features.hasEcmaTyping)
                         {
                             return HandleColonCompletion(Sci, "", autoHide);
@@ -2091,6 +2096,21 @@ namespace ASCompletion.Completion
             }
 			return true;
 		}
+
+        static private bool HandleMetadataCompletion(ScintillaControl sci, bool autoHide)
+        {
+            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            foreach (KeyValuePair<string, string> meta in ASContext.Context.Features.metadata)
+            {
+                MemberModel member = new MemberModel();
+                member.Name = meta.Key;
+                member.Comments = meta.Value;
+                member.Type = "Compiler Metadata";
+                list.Add(new MemberItem(member));
+                CompletionList.Show(list, autoHide);
+            }
+            return true;
+        }
 
 		static private bool HandleColonCompletion(ScintillaControl Sci, string tail, bool autoHide)
 		{

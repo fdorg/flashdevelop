@@ -209,7 +209,7 @@ namespace HaXeContext
         /// <summary>
         /// Properly switch between different Haxe SDKs
         /// </summary>
-        static public void SetHaxeEnvironment(string sdkPath)
+        public void SetHaxeEnvironment(string sdkPath)
         {
             sdkPath = sdkPath.TrimEnd(new char[] { '/', '\\' });
             if (currentEnv == sdkPath) return;
@@ -229,6 +229,30 @@ namespace HaXeContext
             if (neko != null) path = neko.TrimEnd(new char[] { '/', '\\' }) + ";" + path;
             Environment.SetEnvironmentVariable("PATH", path);
             currentEnv = sdkPath;
+
+            LoadMetadata();
+        }
+
+        public void LoadMetadata()
+        {
+            features.metadata = new Dictionary<string, string>();
+
+            Process process = createHaxeProcess("--help-metas");
+            process.Start();
+
+            String metaList = process.StandardOutput.ReadToEnd();
+            process.Close();
+
+            Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?= @:[a-zA-Z]* :)");
+            metaList = Regex.Replace(metaList, "\\s+", " ");
+            metaList += "@:fake :";
+
+            MatchCollection matches = regex.Matches(metaList);
+
+            foreach (Match m in matches)
+            {
+                features.metadata.Add(m.Groups[1].ToString(), m.Groups[2].ToString());
+            }
         }
 
         /// <summary>

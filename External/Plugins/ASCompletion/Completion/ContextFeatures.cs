@@ -94,6 +94,8 @@ namespace ASCompletion.Completion
         public string inlineKey;
         public string namespaceKey;
 
+        public Dictionary<string, string> metadata = new Dictionary<string,string>();
+
         public MemberModel functionArguments;
 
         /// <summary>
