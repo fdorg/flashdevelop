@@ -221,16 +221,8 @@ namespace CodeRefactor.Commands
 
             if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return;
 
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
-                if (doc.FileName.Equals(oldFileName))
-                {
-                    doc.Save();
-                    doc.Close();
-                    break;
-                }
-
             RefactoringHelper.Move(oldFileName, newFileName);
-            AssociatedDocumentHelper.LoadDocument(newFileName);
+           
             if (results.ContainsKey(oldFileName))
             {
                 results[newFileName] = results[oldFileName];
