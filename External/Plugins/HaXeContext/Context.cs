@@ -229,6 +229,8 @@ namespace HaXeContext
             if (neko != null) path = neko.TrimEnd(new char[] { '/', '\\' }) + ";" + path;
             Environment.SetEnvironmentVariable("PATH", path);
             currentEnv = sdkPath;
+
+            LoadMetadata();
         }
 
         public void LoadMetadata()
