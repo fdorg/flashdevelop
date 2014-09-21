@@ -83,6 +83,7 @@ namespace ASCompletion.Completion
                 if (position < 2) return false;
 
                 char prevValue = (char)Sci.CharAt(position - 2);
+                bool skipQuoteCheck = false;
 
                 // haxe string interpolation
                 if (ctx.CurrentModel.haXe && Sci.GetStringType(position, false) == '\'')
@@ -95,10 +96,10 @@ namespace ASCompletion.Completion
                         return HandleInterpolationCompletion(Sci, autoHide, true);
                     }
                     else if (IsInterpolationExpr(Sci, position))
-                    { } // continue on with regular completion
-                    else return false;
+                        skipQuoteCheck = true; // continue on with regular completion
                 }
-                else
+                
+                if (!skipQuoteCheck)
                 {
                     // ignore text in comments & quoted text
                     Sci.Colourise(0, -1);
