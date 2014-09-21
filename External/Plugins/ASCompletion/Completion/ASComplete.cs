@@ -2278,7 +2278,6 @@ namespace ASCompletion.Completion
         }
 		#endregion
 
-        #region haxe_specific_completion
         static private bool HandleInterpolationCompletion(ScintillaControl sci, bool autoHide, bool expressions)
         {
             IASContext ctx = ASContext.Context;
@@ -2322,7 +2321,6 @@ namespace ASCompletion.Completion
             }
             return true;
         }
-        #endregion
 
         #region expression_evaluator
         /// <summary>
