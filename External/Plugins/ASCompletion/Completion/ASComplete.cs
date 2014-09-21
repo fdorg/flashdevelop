@@ -3701,12 +3701,15 @@ namespace ASCompletion.Completion
                 !features.stringInterpolationQuotes.Contains(sci.GetStringType(position)))
                 return false;
 
-            String line = sci.GetLineUntilPosition(position);
-            for (int i = line.Length - 1; i >= 0; i--)
+            char prev = ' ';
+            char c = ' ';
+            char next = (char)sci.CharAt(position);
+            for (int i = position; i > 0; i--)
             {
-                char c = line[i];
-                char prev = line[(i + 1 < line.Length) ? i + 1 : 1];
-                char next = line[(i - 1 >= 0) ? i - 1 : 0];
+                prev = c;
+                c = next;
+                next = (char)sci.CharAt(i);
+
                 if (c == '\'')
                     if (next != '\\')
                         return false;
