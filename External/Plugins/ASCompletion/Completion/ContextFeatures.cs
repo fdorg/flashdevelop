@@ -94,7 +94,7 @@ namespace ASCompletion.Completion
         public string intrinsicKey;
         public string inlineKey;
         public string namespaceKey;
-        public List<char> stringInterpolationQuotes = new List<char>();
+        public string stringInterpolationQuotes = "";
 
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 

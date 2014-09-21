@@ -88,7 +88,7 @@ namespace ASCompletion.Completion
 
                 // string interpolation
                 if (features.hasStringInterpolation &&
-                    features.stringInterpolationQuotes.Contains(Sci.GetStringType(position)))
+                    features.stringInterpolationQuotes.IndexOf(Sci.GetStringType(position)) >= 0)
                 {
                     if (Value == '$')
                         return HandleInterpolationCompletion(Sci, autoHide, false);
@@ -1611,7 +1611,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                if (IsInterpolationExpr(Sci, position) || (!IsLiteralStyle(style) && IsTextStyleEx(style)))
+                if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || IsInterpolationExpr(Sci, position))
                 {
                     c = (char)Sci.CharAt(position);
                     if (c == ';')
@@ -2276,7 +2276,6 @@ namespace ASCompletion.Completion
 
             CompletionList.Show(list, false, tail);
         }
-		#endregion
 
         static private bool HandleInterpolationCompletion(ScintillaControl sci, bool autoHide, bool expressions)
         {
@@ -2306,6 +2305,7 @@ namespace ASCompletion.Completion
 
             return true;
         }
+        #endregion
 
         static private bool HandleMetadataCompletion(ScintillaControl sci, bool autoHide)
         {
@@ -3696,7 +3696,7 @@ namespace ASCompletion.Completion
         {
             ContextFeatures features = ASContext.Context.Features;
             if (!features.hasStringInterpolation ||
-                !features.stringInterpolationQuotes.Contains(sci.GetStringType(position)))
+                features.stringInterpolationQuotes.IndexOf(sci.GetStringType(position)) < 0)
                 return false;
 
             char prev = ' ';

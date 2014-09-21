@@ -131,8 +131,7 @@ namespace HaXeContext
             features.intrinsicKey = "extern";
             features.inlineKey = "inline";
             features.hiddenPackagePrefix = '_';
-            features.stringInterpolationQuotes = new List<char>();
-            features.stringInterpolationQuotes.Add('\'');
+            features.stringInterpolationQuotes = "'";
 
             /* INITIALIZATION */
 
