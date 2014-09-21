@@ -47,7 +47,7 @@ namespace AirProperties
             V40 = 19,    // Version 4.0
             V130 = 20,    // Version 13.0
             V140 = 21,    // Version 14.0
-            V140 = 22    // Version 15.0
+            V150 = 22    // Version 15.0
         }
 
         public static Exception LastException
