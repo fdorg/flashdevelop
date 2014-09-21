@@ -92,7 +92,7 @@ namespace ASCompletion.Completion
                         return HandleInterpolationCompletion(Sci, autoHide, false);
                     else if (prevValue == '$' && Value == '{')
                     {
-                        ASComplete.InsertSymbol(Sci, "}");
+                        if (autoHide) ASComplete.InsertSymbol(Sci, "}");
                         return HandleInterpolationCompletion(Sci, autoHide, true);
                     }
                     else if (IsInterpolationExpr(Sci, position))
@@ -119,7 +119,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                // close brace/parents
+                // close brace/parens
                 if (autoHide) HandleClosingChar(Sci, Value, position);
 
 				// stop here if the class is not valid
@@ -239,7 +239,7 @@ namespace ASCompletion.Completion
             char c = (char)Sci.CharAt(position);
             if (c > 32 && ")]}-+/>*,;".IndexOf(c) < 0) return;
 
-            if (IsTextStyle(Sci.StyleAt(position - 2) & stylemask))
+            if (IsTextStyle(Sci.StyleAt(position - 2) & stylemask) || IsInterpolationExpr(Sci, position - 1))
             {
                 if (Value == '"')
                 {

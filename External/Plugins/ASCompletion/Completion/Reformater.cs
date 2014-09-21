@@ -139,7 +139,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                // litteral XML
+                // literal XML
                 if (c == '<')
                 {
                     int i2 = i;
@@ -168,7 +168,7 @@ namespace ASCompletion.Completion
                     needSpace = false;
                     continue;
                 }
-                // litteral Regexp
+                // literal Regexp
                 else if (c == '/')
                 {
                     int i2 = i;
