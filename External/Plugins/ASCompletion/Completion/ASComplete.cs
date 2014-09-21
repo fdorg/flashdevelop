@@ -65,6 +65,7 @@ namespace ASCompletion.Completion
 		static public bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
 		{
             IASContext ctx = ASContext.Context;
+            ContextFeatures features = ctx.Features;
 			if (ctx.Settings == null || !ctx.Settings.CompletionEnabled) 
                 return false;
 			try
@@ -85,8 +86,9 @@ namespace ASCompletion.Completion
                 char prevValue = (char)Sci.CharAt(position - 2);
                 bool skipQuoteCheck = false;
 
-                // haxe string interpolation
-                if (ctx.CurrentModel.haXe && Sci.GetStringType(position, false) == '\'')
+                // string interpolation
+                if (features.hasStringInterpolation &&
+                    features.stringInterpolationQuotes.Contains(Sci.GetStringType(position, false)))
                 {
                     if (Value == '$')
                         return HandleInterpolationCompletion(Sci, autoHide, false);
@@ -124,7 +126,6 @@ namespace ASCompletion.Completion
 
 				// stop here if the class is not valid
 				if (!ASContext.HasContext || !ASContext.Context.IsFileValid) return false;
-                ContextFeatures features = ASContext.Context.Features;
 
 				// handle
 				switch (Value)
@@ -2286,16 +2287,14 @@ namespace ASCompletion.Completion
 
             if (expr.ContextFunction != null)
             {
-                bool staticCtx = (expr.ContextFunction.Flags & FlagType.Static) > 0;
                 members.Merge(ctx.CurrentClass.GetSortedMembersList());
                 
-                if (staticCtx)
+                if ((expr.ContextFunction.Flags & FlagType.Static) > 0)
                     members.RemoveAllWithoutFlag(FlagType.Static);
             }
 
             members.Merge(ParseLocalVars(expr));
             
-            //expr.ContextFunction.flag
             if (!expressions)
             {
                 members.RemoveAllWithFlag(FlagType.Function);
@@ -3697,7 +3696,9 @@ namespace ASCompletion.Completion
         /// </summary>
         static private bool IsInterpolationExpr(ScintillaControl sci, int position)
         {
-            if (!ASContext.Context.CurrentModel.haXe || sci.GetStringType(position, false) != '\'')
+            ContextFeatures features = ASContext.Context.Features;
+            if (!features.hasStringInterpolation ||
+                !features.stringInterpolationQuotes.Contains(sci.GetStringType(position, false)))
                 return false;
 
             String line = sci.GetLineUntilPosition(position);

@@ -85,6 +85,7 @@ namespace HaXeContext
             features.hasStatics = true;
             features.hasTryCatch = true;
             features.hasInference = true;
+            features.hasStringInterpolation = true;
             features.checkFileName = false;
 
             // haxe directives
@@ -130,6 +131,8 @@ namespace HaXeContext
             features.intrinsicKey = "extern";
             features.inlineKey = "inline";
             features.hiddenPackagePrefix = '_';
+            features.stringInterpolationQuotes = new List<char>();
+            features.stringInterpolationQuotes.Add('\'');
 
             /* INITIALIZATION */
 
