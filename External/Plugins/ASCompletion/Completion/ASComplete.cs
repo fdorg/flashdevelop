@@ -99,7 +99,13 @@ namespace ASCompletion.Completion
                         if (Value == '$')
                             return HandleInterpolationCompletion(Sci, autoHide, false);
                         else if (prevValue == '$' && Value == '{')
+                        {
+                            ASComplete.InsertSymbol(Sci, "}");
                             return HandleInterpolationCompletion(Sci, autoHide, true);
+                        }
+                        else if (IsInterpolationExpr(Sci, position))
+                        { } // continue on with regular completion
+                        else return false;
                     }
                     else if (autoHide)
                     {
@@ -1600,7 +1606,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                if (!IsLiteralStyle(style) && IsTextStyleEx(style))
+                if (IsInterpolationExpr(Sci, position) || (!IsLiteralStyle(style) && IsTextStyleEx(style)))
                 {
                     c = (char)Sci.CharAt(position);
                     if (c == ';')
@@ -3680,6 +3686,30 @@ namespace ASCompletion.Completion
                     ASContext.Context.UpdateContext(ASContext.Context.CurrentLine);
             }
 		}
+
+        /// <summary>
+        /// Returns whether or not position is insidse of an expression
+        /// block in Haxe String interpolation ('${expr}')
+        /// </summary>
+        static private bool IsInterpolationExpr(ScintillaControl sci, int position)
+        {
+            if (!ASContext.Context.CurrentModel.haXe || sci.GetStringType(position, false) != '\'')
+                return false;
+
+            String line = sci.GetLineUntilPosition(position);
+            for (int i = line.Length - 1; i >= 0; i--)
+            {
+                char c = line[i];
+                char prev = line[(i + 1 < line.Length) ? i + 1 : 1];
+                char next = line[(i - 1 >= 0) ? i - 1 : 0];
+                if (c == '\'')
+                    if (next != '\\')
+                        return false;
+                if (c == '$' && prev == '{')
+                    return true;
+            }
+            return false;
+        }
 
         private static bool IsXmlType(ClassModel model)
         {
