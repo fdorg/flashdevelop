@@ -5470,18 +5470,19 @@ namespace ScintillaNet
         /// Detects the string-literal quote style
         /// </summary>
         /// <param name="position">lookup position</param>
-        /// <param name="checkAfter">whether to check after or before the position</param>
         /// <returns>' or " or Space if undefined</returns>
-        public char GetStringType(int position, bool checkAfter = true)
+        public char GetStringType(int position)
         {
-            int len = Length;
-            int step = checkAfter ? 1 : -1;
-            for (int i = position; checkAfter ? i < len : i >= 0; i += step)
+            char next = (char)CharAt(position);
+            char c;
+            for (int i = position; i > 0; i--)
             {
-                char c = (char)CharAt(i);
+                c = next;
+                next = (char)CharAt(i-1);
+
+                if (next == '\\' && (c == '\'' || c == '"')) i--;
                 if (c == '\'') return '\'';
                 else if (c == '"') return '"';
-                else if (c == '\\') i += step;
             }
             return ' ';
         }

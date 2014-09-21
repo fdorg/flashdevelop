@@ -88,7 +88,7 @@ namespace ASCompletion.Completion
 
                 // string interpolation
                 if (features.hasStringInterpolation &&
-                    features.stringInterpolationQuotes.Contains(Sci.GetStringType(position, false)))
+                    features.stringInterpolationQuotes.Contains(Sci.GetStringType(position)))
                 {
                     if (Value == '$')
                         return HandleInterpolationCompletion(Sci, autoHide, false);
@@ -3698,7 +3698,7 @@ namespace ASCompletion.Completion
         {
             ContextFeatures features = ASContext.Context.Features;
             if (!features.hasStringInterpolation ||
-                !features.stringInterpolationQuotes.Contains(sci.GetStringType(position, false)))
+                !features.stringInterpolationQuotes.Contains(sci.GetStringType(position)))
                 return false;
 
             String line = sci.GetLineUntilPosition(position);
