@@ -84,36 +84,39 @@ namespace ASCompletion.Completion
 
                 char prevValue = (char)Sci.CharAt(position - 2);
 
-				// ignore text in comments & quoted text
-				Sci.Colourise(0,-1);
-				int stylemask = (1 << Sci.StyleBits) -1;
-				int style = Sci.StyleAt(position-1) & stylemask;
-				if (!IsTextStyle(style) && !IsTextStyle(Sci.StyleAt(position) & stylemask))
-				{
-					// documentation completion
-                    if (ASContext.CommonSettings.SmartTipsEnabled && IsCommentStyle(style))
-						return ASDocumentation.OnChar(Sci, Value, position, style);
-                    // haxe string interpolation
-                    else if (ctx.CurrentModel.haXe && Sci.GetStringType(position, false) == '\'')
+                // haxe string interpolation
+                if (ctx.CurrentModel.haXe && Sci.GetStringType(position, false) == '\'')
+                {
+                    if (Value == '$')
+                        return HandleInterpolationCompletion(Sci, autoHide, false);
+                    else if (prevValue == '$' && Value == '{')
                     {
-                        if (Value == '$')
-                            return HandleInterpolationCompletion(Sci, autoHide, false);
-                        else if (prevValue == '$' && Value == '{')
-                        {
-                            ASComplete.InsertSymbol(Sci, "}");
-                            return HandleInterpolationCompletion(Sci, autoHide, true);
-                        }
-                        else if (IsInterpolationExpr(Sci, position))
-                        { } // continue on with regular completion
-                        else return false;
+                        ASComplete.InsertSymbol(Sci, "}");
+                        return HandleInterpolationCompletion(Sci, autoHide, true);
                     }
-                    else if (autoHide)
+                    else if (IsInterpolationExpr(Sci, position))
+                    { } // continue on with regular completion
+                    else return false;
+                }
+                else
+                {
+                    // ignore text in comments & quoted text
+                    Sci.Colourise(0, -1);
+                    int stylemask = (1 << Sci.StyleBits) - 1;
+                    int style = Sci.StyleAt(position - 1) & stylemask;
+                    if (!IsTextStyle(style) && !IsTextStyle(Sci.StyleAt(position) & stylemask))
                     {
-                        // close quotes
-                        HandleClosingChar(Sci, Value, position);
-                        return false;
-                    } 
-				}
+                        // documentation completion
+                        if (ASContext.CommonSettings.SmartTipsEnabled && IsCommentStyle(style))
+                            return ASDocumentation.OnChar(Sci, Value, position, style);
+                        else if (autoHide)
+                        {
+                            // close quotes
+                            HandleClosingChar(Sci, Value, position);
+                            return false;
+                        }
+                    }
+                }
 
                 // close brace/parents
                 if (autoHide) HandleClosingChar(Sci, Value, position);
