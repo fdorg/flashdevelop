@@ -477,6 +477,16 @@ namespace ASCompletion.Model
 				if (!added) items.Add(m);
 			}
 		}
+
+        public void RemoveAllWithFlag(FlagType flag)
+        {
+            items.RemoveAll(m => (m.Flags & flag) > 0);   
+        }
+
+        public void RemoveAllWithoutFlag(FlagType flag)
+        {
+            items.RemoveAll(m => (m.Flags & flag) == 0);
+        }
 	}
 
     public class ByKindMemberComparer : IComparer<MemberModel>

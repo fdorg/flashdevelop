@@ -82,6 +82,8 @@ namespace ASCompletion.Completion
                 int position = Sci.CurrentPos;
                 if (position < 2) return false;
 
+                char prevValue = (char)Sci.CharAt(position - 2);
+
 				// ignore text in comments & quoted text
 				Sci.Colourise(0,-1);
 				int stylemask = (1 << Sci.StyleBits) -1;
@@ -91,6 +93,14 @@ namespace ASCompletion.Completion
 					// documentation completion
                     if (ASContext.CommonSettings.SmartTipsEnabled && IsCommentStyle(style))
 						return ASDocumentation.OnChar(Sci, Value, position, style);
+                    // haxe string interpolation
+                    else if (ctx.CurrentModel.haXe && Sci.GetStringType(position, false) == '\'')
+                    {
+                        if (Value == '$')
+                            return HandleInterpolationCompletion(Sci, autoHide, false);
+                        else if (prevValue == '$' && Value == '{')
+                            return HandleInterpolationCompletion(Sci, autoHide, true);
+                    }
                     else if (autoHide)
                     {
                         // close quotes
@@ -115,7 +125,7 @@ namespace ASCompletion.Completion
                         break;
 
                     case '>':
-                        if (features.dot == "->" && Sci.CharAt(position - 2) == '-')
+                        if (features.dot == "->" && prevValue == '-')
                             return HandleDotCompletion(Sci, autoHide);
                         break;
 
@@ -151,7 +161,7 @@ namespace ASCompletion.Completion
 
 					case ':':
                         if (ASContext.Context.CurrentModel.haXe && 
-                            ASContext.Context.CurrentMember == null && Sci.CharAt(position - 2) == '@')
+                            ASContext.Context.CurrentMember == null && prevValue == '@')
                         {
                             return HandleMetadataCompletion(Sci, autoHide);
                         }
@@ -303,9 +313,15 @@ namespace ASCompletion.Completion
 			{
                 if (ASContext.HasContext && ASContext.Context.IsFileValid)
 				{
-					// force dot completion
-                    OnChar(Sci, '.', false);
-					return true;
+                    // try to get completion as if we had just typed the previous char
+                    if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
+                        return true;
+					else
+                    {
+                        // force dot completion
+                        OnChar(Sci, '.', false);
+                        return true;
+                    }
 				}
 				else return false;
 			}
@@ -2097,21 +2113,6 @@ namespace ASCompletion.Completion
 			return true;
 		}
 
-        static private bool HandleMetadataCompletion(ScintillaControl sci, bool autoHide)
-        {
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
-            foreach (KeyValuePair<string, string> meta in ASContext.Context.Features.metadata)
-            {
-                MemberModel member = new MemberModel();
-                member.Name = meta.Key;
-                member.Comments = meta.Value;
-                member.Type = "Compiler Metadata";
-                list.Add(new MemberItem(member));
-                CompletionList.Show(list, autoHide);
-            }
-            return true;
-        }
-
 		static private bool HandleColonCompletion(ScintillaControl Sci, string tail, bool autoHide)
 		{
             ComaExpression coma;
@@ -2266,8 +2267,56 @@ namespace ASCompletion.Completion
         }
 		#endregion
 
-		#region expression_evaluator
-		/// <summary>
+        #region haxe_specific_completion
+        static private bool HandleInterpolationCompletion(ScintillaControl sci, bool autoHide, bool expressions)
+        {
+            IASContext ctx = ASContext.Context;
+            MemberList members = new MemberList();
+            ASExpr expr = GetExpression(sci, sci.CurrentPos);
+
+            if (expr.ContextFunction != null)
+            {
+                bool staticCtx = (expr.ContextFunction.Flags & FlagType.Static) > 0;
+                members.Merge(ctx.CurrentClass.GetSortedMembersList());
+                
+                if (staticCtx)
+                    members.RemoveAllWithoutFlag(FlagType.Static);
+            }
+
+            members.Merge(ParseLocalVars(expr));
+            
+            //expr.ContextFunction.flag
+            if (!expressions)
+            {
+                members.RemoveAllWithFlag(FlagType.Function);
+            }
+            
+            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            foreach (MemberModel member in members)
+                list.Add(new MemberItem(member));
+            CompletionList.Show(list, autoHide);
+
+            return true;
+        }
+
+        static private bool HandleMetadataCompletion(ScintillaControl sci, bool autoHide)
+        {
+            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            foreach (KeyValuePair<string, string> meta in ASContext.Context.Features.metadata)
+            {
+                MemberModel member = new MemberModel();
+                member.Name = meta.Key;
+                member.Comments = meta.Value;
+                member.Type = "Compiler Metadata";
+                list.Add(new MemberItem(member));
+                CompletionList.Show(list, autoHide);
+            }
+            return true;
+        }
+        #endregion
+
+        #region expression_evaluator
+        /// <summary>
 		/// Find expression type in function context
 		/// </summary>
 		/// <param name="expression">To evaluate</param>
