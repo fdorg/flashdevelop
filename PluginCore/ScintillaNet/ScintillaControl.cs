@@ -5473,19 +5473,21 @@ namespace ScintillaNet
         /// <returns>' or " or Space if undefined</returns>
         public char GetStringType(int position)
         {
-            int len = Length;
-            int i = position;
-            while (i < len)
+            char next = (char)CharAt(position);
+            char c;
+            for (int i = position; i > 0; i--)
             {
-                char c = (char)CharAt(i++);
+                c = next;
+                next = (char)CharAt(i-1);
+
+                if (next == '\\' && (c == '\'' || c == '"')) i--;
                 if (c == '\'') return '\'';
                 else if (c == '"') return '"';
-                else if (c == '\\') i++;
             }
             return ' ';
         }
 		
-		#endregion
+		#endregion 
 
         #region Misc Custom Stuff
 
