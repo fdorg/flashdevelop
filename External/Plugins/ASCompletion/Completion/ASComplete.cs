@@ -2283,13 +2283,12 @@ namespace ASCompletion.Completion
             MemberList members = new MemberList();
             ASExpr expr = GetExpression(sci, sci.CurrentPos);
 
-            if (expr.ContextFunction != null)
-            {
-                members.Merge(ctx.CurrentClass.GetSortedMembersList());
-                
-                if ((expr.ContextFunction.Flags & FlagType.Static) > 0)
-                    members.RemoveAllWithoutFlag(FlagType.Static);
-            }
+            members.Merge(ctx.CurrentClass.GetSortedMembersList());
+
+            if ((expr.ContextMember.Flags & FlagType.Static) > 0)
+                members.RemoveAllWithoutFlag(FlagType.Static);
+            else
+                members.Merge(ctx.CurrentClass.GetSortedInheritedMembersList());
 
             members.Merge(ParseLocalVars(expr));
             
