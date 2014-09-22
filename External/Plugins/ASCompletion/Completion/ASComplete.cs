@@ -410,7 +410,7 @@ namespace ASCompletion.Completion
             int stylemask = (1 << sci.StyleBits) - 1;
             int style = sci.StyleAt(sci.CurrentPos - 1) & stylemask;
 
-            if (IsTextStyle(sci.StyleAt(sci.CurrentPos - 2) & stylemask) || IsInterpolationExpr(sci, sci.CurrentPos - 1))
+            if (IsTextStyle(sci.StyleAt(sci.CurrentPos - 2) & stylemask) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
             {
                 foreach (Braces braces in AddClosingBracesData)
                 {
