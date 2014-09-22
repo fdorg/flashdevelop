@@ -31,7 +31,7 @@ namespace ProjectManager
         bool showGlobalClasspaths = false;
         int maxRecentProjects = 10;
         string lastProject = string.Empty;
-        bool createProjectDirectory = false;
+        bool createProjectDirectory = true;
         bool useProjectSessions = false;
         bool disableExtFlashIntegration = false;
         string newProjectDefaultDirectory = string.Empty;
