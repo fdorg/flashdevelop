@@ -46,8 +46,6 @@ namespace ASCompletion.Completion
         #region fields
         static public Keys HelpKeys = Keys.F1;
 
-        // stores last char entered
-        static private LastCharData LastChar;
         //stores the currently used class namespace and name
         static private String currentClassHash = null;
         //stores the last completed member for each class
@@ -55,6 +53,9 @@ namespace ASCompletion.Completion
 
         static public ResolvedContext CurrentResolvedContext;
         static public event ResolvedContextChangeHandler OnResolvedContextChanged;
+
+        static private Braces[] AddClosingBracesData = new Braces[] { 
+            new Braces('(', ')'), new Braces('[', ']'), new Braces('"', '"'), new Braces('\'', '\'') };
         #endregion
 
         #region application_event_handlers
@@ -94,7 +95,6 @@ namespace ASCompletion.Completion
                         return HandleInterpolationCompletion(Sci, autoHide, false);
                     else if (prevValue == '$' && Value == '{')
                     {
-                        if (autoHide) ASComplete.InsertSymbol(Sci, "}");
                         return HandleInterpolationCompletion(Sci, autoHide, true);
                     }
                     else if (IsInterpolationExpr(Sci, position))
@@ -115,14 +115,14 @@ namespace ASCompletion.Completion
                         else if (autoHide)
                         {
                             // close quotes
-                            HandleClosingChar(Sci, Value, position);
+                            HandleAddClosingBraces(Sci, (char)Value, true);
                             return false;
                         }
                     }
                 }
 
                 // close brace/parens
-                if (autoHide) HandleClosingChar(Sci, Value, position);
+                if (autoHide) HandleAddClosingBraces(Sci, (char)Value, true);
 
 				// stop here if the class is not valid
 				if (!ASContext.HasContext || !ASContext.Context.IsFileValid) return false;
@@ -231,84 +231,6 @@ namespace ASCompletion.Completion
             // TODO track text changes -> LastChar
         }
 
-        private static void HandleClosingChar(ScintillaControl Sci, int Value, int position)
-        {
-            if (!ASContext.CommonSettings.AddClosingBraces) return;
-
-            int stylemask = (1 << Sci.StyleBits) - 1;
-            int style = Sci.StyleAt(position - 1) & stylemask;
-            char c = (char)Sci.CharAt(position);
-            if (c > 32 && ")]}-+/>*,;".IndexOf(c) < 0) return;
-
-            if (IsTextStyle(Sci.StyleAt(position - 2) & stylemask) || IsInterpolationExpr(Sci, position - 1))
-            {
-                if (Value == '"')
-                {
-                    ASComplete.InsertSymbol(Sci, "\"");
-                }
-                else if (Value == '\'')
-                {
-                    ASComplete.InsertSymbol(Sci, "'");
-                }
-                else if (Value == '[')
-                {
-                    ASComplete.InsertSymbol(Sci, "]");
-                }
-                else if (Value == '(')
-                {
-                    ASComplete.InsertSymbol(Sci, ")");
-                }
-                else if (Value == ')')
-                {
-                    if (LastChar != null
-                        && LastChar.Value == '('
-                        && LastChar.Position == position - 1)
-                    {
-                        LastChar = null;
-                        Sci.DeleteBack();
-                        Sci.SetSel(position, position);
-                    }
-                }
-                else if (Value == ']')
-                {
-                    if (LastChar != null
-                        && LastChar.Value == '['
-                        && LastChar.Position == position - 1)
-                    {
-                        LastChar = null;
-                        Sci.DeleteBack();
-                        Sci.SetSel(position, position);
-                    }
-                }
-                LastChar = new LastCharData(Value, position);
-            }
-            else
-            {
-                if (Value == '"')
-                {
-                    if (LastChar != null
-                        && LastChar.Value == '"'
-                        && LastChar.Position == position - 1)
-                    {
-                        LastChar = null;
-                        Sci.DeleteBack();
-                        Sci.SetSel(position, position);
-                    }
-                }
-                else if (Value == '\'')
-                {
-                    if (LastChar != null
-                        && LastChar.Value == '\''
-                        && LastChar.Position == position - 1)
-                    {
-                        LastChar = null;
-                        Sci.DeleteBack();
-                        Sci.SetSel(position, position);
-                    }
-                }
-            }
-        }
-
 		/// <summary>
 		/// Handle shortcuts
 		/// </summary>
@@ -336,6 +258,11 @@ namespace ASCompletion.Completion
 				}
 				else return false;
 			}
+            else if (keys == Keys.Back)
+            {
+                HandleAddClosingBraces(Sci, (char)Sci.CharAt(Sci.CurrentPos), false);
+                return false;
+            }
 			// show calltip
 			else if (keys == (Keys.Control | Keys.Shift | Keys.Space))
 			{
@@ -474,8 +401,53 @@ namespace ASCompletion.Completion
         }
 		#endregion
 
-		#region plugin commands
-		/// <summary>
+        #region add_closing_braces
+        public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
+        {
+            if (!ASContext.CommonSettings.AddClosingBraces)
+                return;
+
+            int stylemask = (1 << sci.StyleBits) - 1;
+            int style = sci.StyleAt(sci.CurrentPos - 1) & stylemask;
+
+            if (IsTextStyle(sci.StyleAt(sci.CurrentPos - 2) & stylemask) || IsInterpolationExpr(sci, sci.CurrentPos - 1))
+            {
+                foreach (Braces braces in AddClosingBracesData)
+                {
+                    if (addedChar)
+                        HandleAddBrace(sci, c, braces);
+                    else
+                        HandleRemoveBrace(sci, c, braces);
+                }
+            }
+        }
+
+        private static void HandleAddBrace(ScintillaControl sci, char c, Braces braces)
+        {
+            if (ASContext.CommonSettings.AddClosingBraces && c == braces.opening)
+            {
+                if ((char)sci.CharAt(sci.CurrentPos - 2) != braces.opening) // already an opening brace?
+                {
+                    sci.InsertText(sci.CurrentPos, braces.closing.ToString());
+                }
+            }
+        }
+
+        private static void HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
+        {
+            if (ASContext.CommonSettings.AddClosingBraces && c == braces.closing)
+            {
+                if ((char)sci.CharAt(sci.CurrentPos - 1) == braces.opening)
+                {
+                    sci.SetSel(sci.CurrentPos + 1, sci.CurrentPos + 1);
+                    sci.DeleteBack();
+                }
+            }
+        }
+        #endregion
+
+        #region plugin commands
+        /// <summary>
 		/// Using the text under at cursor position, search and open the object/class/member declaration
 		/// </summary>
 		/// <param name="Sci">Control</param>
@@ -4060,14 +4032,6 @@ namespace ASCompletion.Completion
                 PluginBase.MainForm.CallCommand("InsertSnippet", word);
         }
 
-        private static void InsertSymbol(ScintillaControl sci, string p)
-        {
-            if (ASContext.CommonSettings.AddClosingBraces)
-            {
-                sci.InsertText(sci.CurrentPos, p);
-            }
-        }
-
 		/// <summary>
 		/// Some characters can fire code generation
 		/// </summary>
@@ -4346,15 +4310,15 @@ namespace ASCompletion.Completion
 		}
 	}
 
-    sealed class LastCharData
+    sealed class Braces
     {
-        public int Value;
-        public int Position;
+        public char opening;
+        public char closing;
 
-        public LastCharData(int val, int pos)
+        public Braces(char opening, char closing)
         {
-            this.Value = val;
-            this.Position = pos;
+            this.opening = opening;
+            this.closing = closing;
         }
     }
 
