@@ -912,7 +912,8 @@ namespace HaXeContext
                             var type = import.Type;
                             int temp = type.IndexOf('<');
                             if (temp > 0) type = type.Substring(0, temp);
-                            package = type.Substring(0, type.LastIndexOf('.'));
+                            int dotIndex = type.LastIndexOf('.');
+                            if (dotIndex > 0) package = type.Substring(0, dotIndex);
                         }
                         break;
                     }
