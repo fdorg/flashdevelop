@@ -224,6 +224,27 @@ namespace ASCompletion.Model
             return items;
         }
 
+        /// <summary>
+        /// Returns all members inherited from super classes of this class.
+        /// Does not take static inheritance into account.
+        /// </summary>
+        internal MemberList GetSortedInheritedMembersList()
+        {
+            MemberList items = new MemberList();
+            ClassModel curClass = this;
+            do
+            {
+                curClass.ResolveExtends();
+                curClass = curClass.Extends;
+                MemberList newMembers = curClass.GetSortedMembersList();
+                items.Merge(newMembers);
+                
+            } while (curClass.Extends != ClassModel.VoidClass);
+            items.RemoveAllWithFlag(FlagType.Static);
+            items.Sort();
+            return items;
+        }
+
         #endregion
 
         #region Sorting
