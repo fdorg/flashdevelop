@@ -167,7 +167,7 @@
 		<button label="Label.SelectTheme" click="SelectTheme" image="40|30|2|3" />
 		<separator />
 		<button label="Label.CodeSnippets" click="EditSnippets" image="341|5|2|2" />
-		<button label="Label.KeyboardShortcuts" click="EditShortcuts" image="49|15|2|2" />
+		<button label="Label.KeyboardShortcuts" click="EditShortcuts" image="545" />
 		<button label="Label.CustomArguments" click="ShowArguments" image="242" />
 		<separator />
 		<button label="Label.ApplicationFiles" click="PluginCommand" tag="FileExplorer.Explore;$(BaseDir)" image="46|30|2|3" />
