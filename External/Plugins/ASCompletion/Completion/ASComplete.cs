@@ -55,7 +55,7 @@ namespace ASCompletion.Completion
         static public event ResolvedContextChangeHandler OnResolvedContextChanged;
 
         static private Braces[] AddClosingBracesData = new Braces[] { 
-            new Braces('(', ')'), new Braces('[', ']'), new Braces('"', '"'), new Braces('\'', '\'') };
+            new Braces('(', ')'), new Braces('[', ']'), new Braces('{', '}'), new Braces('"', '"'), new Braces('\'', '\'') };
         #endregion
 
         #region application_event_handlers
@@ -424,11 +424,24 @@ namespace ASCompletion.Completion
 
         private static void HandleAddBrace(ScintillaControl sci, char c, Braces braces)
         {
-            if (ASContext.CommonSettings.AddClosingBraces && c == braces.opening)
+            if (ASContext.CommonSettings.AddClosingBraces)
             {
-                if ((char)sci.CharAt(sci.CurrentPos - 2) != braces.opening) // already an opening brace?
+                if (c == braces.opening)
                 {
-                    sci.InsertText(sci.CurrentPos, braces.closing.ToString());
+                    // already an opening brace?
+                    if ((char)sci.CharAt(sci.CurrentPos - 2) != braces.opening)
+                    {
+                        sci.InsertText(sci.CurrentPos, braces.closing.ToString());
+                    }
+                }
+                else if (c == braces.closing)
+                {
+                    // already a closing brace?
+                    if ((char)sci.CharAt(sci.CurrentPos) == braces.closing)
+                    {
+                        sci.SetSel(sci.CurrentPos + 1, sci.CurrentPos + 1);
+                        sci.DeleteBack();
+                    }
                 }
             }
         }
@@ -1017,7 +1030,7 @@ namespace ASCompletion.Completion
                         }
                         if (txt.EndsWith("{") && (line > 1)) AutoCloseBrace(Sci, line);
                     }
-                    // code reformating
+                    // code reformatting
                     if (!ASContext.CommonSettings.DisableCodeReformat && !txt.EndsWith("*/"))
                         ReformatLine(Sci, Sci.PositionFromLine(line) - 1);
                 }
