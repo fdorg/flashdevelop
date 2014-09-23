@@ -2957,6 +2957,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   </data>
   <data name="ASCompletion.Description.AddClosingBraces" xml:space="preserve">
     <value>Irekitako giltzen (edo komatxoen) ondoren automatikoki ixteko giltza (edo komatxoa) jarriko ote den definitzen da, ( eta [ eta komatxoentzat.</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="ASClassWizard.Info.Description" xml:space="preserve">
     <value>ActionScript klaseak sortzeko morroi bat gehitzen zaio FlashDevelop-i.</value>
