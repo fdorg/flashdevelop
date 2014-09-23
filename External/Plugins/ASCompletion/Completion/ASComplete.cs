@@ -260,7 +260,7 @@ namespace ASCompletion.Completion
 			}
             else if (keys == Keys.Back)
             {
-                HandleAddClosingBraces(Sci, (char)Sci.CharAt(Sci.CurrentPos), false);
+                HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
                 return false;
             }
 			// show calltip
@@ -437,10 +437,9 @@ namespace ASCompletion.Completion
                 else if (c == braces.closing)
                 {
                     // already a closing brace?
-                    if ((char)sci.CharAt(sci.CurrentPos) == braces.closing)
+                    if (sci.CurrentChar == braces.closing)
                     {
-                        sci.SetSel(sci.CurrentPos + 1, sci.CurrentPos + 1);
-                        sci.DeleteBack();
+                        sci.DeleteForward();
                     }
                 }
             }
@@ -452,8 +451,7 @@ namespace ASCompletion.Completion
             {
                 if ((char)sci.CharAt(sci.CurrentPos - 1) == braces.opening)
                 {
-                    sci.SetSel(sci.CurrentPos + 1, sci.CurrentPos + 1);
-                    sci.DeleteBack();
+                    sci.DeleteForward();
                 }
             }
         }
@@ -1011,8 +1009,13 @@ namespace ASCompletion.Completion
 				string txt = Sci.GetLine(line-1).TrimEnd();
 				int style = Sci.BaseStyleAt(position);
 
-				// in comments
-                if (PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented && txt.EndsWith("*/"))
+                if (Sci.CurrentChar == '}')
+                {
+                    Sci.DeleteForward();
+                    AutoCloseBrace(Sci, line);
+                }
+                // in comments
+                else if (PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented && txt.EndsWith("*/"))
                     FixIndentationAfterComments(Sci, line);
                 else if (IsCommentStyle(style) && (Sci.BaseStyleAt(position + 1) == style))
                     FormatComments(Sci, txt, line);

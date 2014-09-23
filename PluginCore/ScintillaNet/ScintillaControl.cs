@@ -937,6 +937,17 @@ namespace ScintillaNet
 				SPerform(2141, (uint)value , 0);
 			}
 		}
+
+        /// <summary>
+        /// Returns the chracter at the caret posiion.
+        /// </summary>
+        public char CurrentChar
+        {
+            get
+            {
+                return (char)CharAt(CurrentPos);
+            }
+        }
 		
 		/// <summary>
 		/// Returns the position of the opposite end of the selection to the caret.
@@ -3852,7 +3863,16 @@ namespace ScintillaNet
 		public void DeleteBack()
 		{
 			SPerform(2326, 0, 0);
-		}	
+		}
+
+        /// <summary>
+        /// Delete the character after the caret.
+        /// </summary>
+        public void DeleteForward()
+        {
+            SetSel(CurrentPos + 1, CurrentPos + 1);
+            DeleteBack();
+        }
 						
 		/// <summary>
 		/// If selection is empty or all on one line replace the selection with a tab character.
