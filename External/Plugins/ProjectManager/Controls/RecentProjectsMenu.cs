@@ -55,7 +55,7 @@ namespace ProjectManager.Controls
 
         private void RebuildList()
         {
-            PluginMain.Settings.RecentProjects.RemoveAll(path => !File.Exists(path));
+            FileHelper.FilterByExisiting(PluginMain.Settings.RecentProjects, true);
 
             int count = PluginMain.Settings.RecentProjects.Count;
             int max = PluginMain.Settings.MaxRecentProjects;

@@ -236,7 +236,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                Globals.Settings.PreviousDocuments.RemoveAll(path => !File.Exists(path));
+                FileHelper.FilterByExisiting(Globals.Settings.PreviousDocuments, true);
 
                 ToolStripMenuItem reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 reopenMenu.DropDownItems.Clear();
