@@ -43,6 +43,7 @@ namespace ProjectManager.Controls
             PluginMain.Settings.RecentProjects.Insert(0, projectPath);
             RebuildList();
         }
+
         public void RemoveOpenedProject(string projectPath)
         {
             if (PluginMain.Settings.RecentProjects.Contains(projectPath))
@@ -54,6 +55,8 @@ namespace ProjectManager.Controls
 
         private void RebuildList()
         {
+            PluginMain.Settings.RecentProjects.RemoveAll(path => !File.Exists(path));
+
             int count = PluginMain.Settings.RecentProjects.Count;
             int max = PluginMain.Settings.MaxRecentProjects;
             if (count > max) PluginMain.Settings.RecentProjects.RemoveRange(max, count - max);
