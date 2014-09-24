@@ -120,7 +120,7 @@ namespace HaXeContext
                 "enum", "typedef", "class", "interface", "var", "function", "new", "cast", "return", "break", 
                 "continue", "if", "else", "for", "while", "do", "switch", "case", "default", "$type",
                 "null", "untyped", "true", "false", "try", "catch", "throw", "inline", "dynamic",
-                "extends", "using", "import", "implements", "abstract", "macro"
+                "extends", "using", "import", "implements", "abstract", "macro", "never", "get", "set"
             };
             features.varKey = "var";
             features.overrideKey = "override";
