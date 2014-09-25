@@ -612,7 +612,9 @@ namespace ASCompletion.Completion
             ASResult exprAtCursor = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(currentPos, true));
             if (exprAtCursor == null || exprAtCursor.InClass == null || found.inClass.QualifiedName.Equals(exprAtCursor.RelClass.QualifiedName))
                 exprAtCursor = null;
-            ASResult exprLeft = ASComplete.GetExpressionType(Sci, Sci.WordStartPosition(currentPos, true) - 1);
+            ASResult exprLeft = null;
+            int curWordStartPos = Sci.WordStartPosition(currentPos, true);
+            if ((char)Sci.CharAt(curWordStartPos - 1) == '.') exprLeft = ASComplete.GetExpressionType(Sci, curWordStartPos - 1);
             if (exprLeft != null && exprLeft.Type == null) exprLeft = null;
             if (exprLeft != null)
             {
