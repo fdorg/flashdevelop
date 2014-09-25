@@ -77,6 +77,8 @@ namespace ProjectManager.Controls
             ConfigurationSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             ConfigurationSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(ConfigurationSelector);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelector", Keys.Control | Keys.F5);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelectorToggle", Keys.Control | Keys.Shift | Keys.F5);
 
             TargetBuildSelector = new ToolStripComboBox();
             TargetBuildSelector.Name = "TargetBuildSelector";
@@ -90,6 +92,7 @@ namespace ProjectManager.Controls
             TargetBuildSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             TargetBuildSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(TargetBuildSelector);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F6);
         }
 
         public bool DisabledForBuild
@@ -138,6 +141,12 @@ namespace ProjectManager.Controls
                 TargetBuildSelector.Visible = false;
                 TargetBuildSelector.Enabled = false;
             }
+        }
+
+        
+        public void ToggleDebugRelease()
+        {
+            ConfigurationSelector.SelectedIndex = (ConfigurationSelector.SelectedIndex + 1) % 2;
         }
     }
 
@@ -252,7 +261,6 @@ namespace ProjectManager.Controls
                 }
             }
         }
-
 	}
 
 }

@@ -4194,6 +4194,11 @@ namespace ASCompletion.Completion
                 return member.Name; 
             }
         }
+
+        public override string ToString()
+        {
+            return Label;
+        }
     }
 
     /// <summary>

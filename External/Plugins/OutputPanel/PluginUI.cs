@@ -303,7 +303,7 @@ namespace OutputPanel
         /// </summary>
         public Boolean OnShortcut(Keys keys)
         {
-            if (this.textLog.Focused || this.findTextBox.Focused)
+            if (ContainsFocus)
             {
                 if (keys == Keys.F3)
                 {
@@ -319,6 +319,11 @@ namespace OutputPanel
                 {
                     ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
                     if (doc != null && doc.IsEditable) doc.SciControl.Focus();
+                }
+                else if (keys == (Keys.Control | Keys.F))
+                {
+                    findTextBox.Focus();
+                    return true;
                 }
             }
             return false;
