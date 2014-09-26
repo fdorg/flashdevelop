@@ -538,6 +538,20 @@ namespace ProjectManager
         private bool HandleKeyEvent(KeyEvent ke)
         {
             if (activeProject == null) return false;
+
+            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelector"))
+            {
+                pluginUI.menus.ConfigurationSelector.Focus();
+            }
+            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelectorToggle"))
+            {
+                pluginUI.menus.ToggleDebugRelease();
+            }
+            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.TargetBuildSelector"))
+            {
+                pluginUI.menus.TargetBuildSelector.Focus();
+            }
+
             // Handle tree-level simple shortcuts like copy/paste/del
             else if (Tree.Focused && !pluginUI.IsEditingLabel && ke != null)
             {

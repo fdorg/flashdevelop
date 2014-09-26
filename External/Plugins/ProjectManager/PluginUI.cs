@@ -21,7 +21,7 @@ namespace ProjectManager
 {
     public class PluginUI : DockPanelControl
     {
-        FDMenus menus;
+        public FDMenus menus;
         TreeBar treeBar;
         Project project;
         PluginMain plugin;
