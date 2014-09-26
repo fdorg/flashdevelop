@@ -606,7 +606,6 @@ namespace ASCompletion.Completion
 
         private static void ShowNewVarList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
             int currentPos = Sci.CurrentPos;
             ASResult exprAtCursor = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(currentPos, true));
@@ -618,6 +617,7 @@ namespace ASCompletion.Completion
             if (exprLeft != null && exprLeft.Type == null) exprLeft = null;
             if (exprLeft != null)
             {
+                if (exprLeft.Type.InFile != null && !File.Exists(exprLeft.Type.InFile.FileName)) return;
                 ClassModel curClass = ASContext.Context.CurrentClass;
                 if (!isHaxe)
                 {
@@ -637,6 +637,7 @@ namespace ASCompletion.Completion
                     }
                 }
             }
+            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string label;
             if ((exprAtCursor != null && exprAtCursor.RelClass != null && (exprAtCursor.RelClass.Flags & FlagType.Interface) > 0)
                 || (found.inClass != null && (found.inClass.Flags & FlagType.Interface) > 0))
