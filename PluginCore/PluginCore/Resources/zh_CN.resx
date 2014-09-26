@@ -672,6 +672,10 @@
   <data name="FlashDevelop.Description.WindowState" xml:space="preserve">
     <value>程序最后所知窗口状态.</value>
   </data>
+  <data name="FlashDevelop.Description.MultiInstanceMode" xml:space="preserve">
+    <value>Whether multiple instances of FlashDevelop can be opened.</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
     <value>使用键盘导航列表.</value>
   </data>

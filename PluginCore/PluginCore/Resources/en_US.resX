@@ -672,6 +672,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="FlashDevelop.Description.WindowState" xml:space="preserve">
     <value>Last known window state of the program.</value>
   </data>
+  <data name="FlashDevelop.Description.MultiInstanceMode" xml:space="preserve">
+    <value>Whether multiple instances of FlashDevelop can be opened.</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
     <value>When navigating using keyboard.</value>
   </data>

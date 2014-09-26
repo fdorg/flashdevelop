@@ -61,11 +61,27 @@ namespace FlashDevelop
         {
             get 
             {
-                String file = Path.Combine(PathHelper.AppDir, ".multi");
-                return File.Exists(file);
+                return File.Exists(MultiInstanceFile);
+            }
+            set
+            {
+                if (value)
+                {
+                    FileStream stream = File.Create(MultiInstanceFile);
+                    stream.Close();
+                }
+                else
+                    File.Delete(MultiInstanceFile);
             }
         }
 
+        private static string MultiInstanceFile
+        {
+            get
+            {
+                return Path.Combine(PathHelper.AppDir, ".multi");
+            }
+        }
     }
     
 }

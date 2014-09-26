@@ -673,6 +673,10 @@
   <data name="FlashDevelop.Description.WindowState" xml:space="preserve">
     <value>前回の終了時に記録した、プログラムウインドウの状態です。</value>
   </data>
+  <data name="FlashDevelop.Description.MultiInstanceMode" xml:space="preserve">
+    <value>Whether multiple instances of FlashDevelop can be opened.</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
     <value>補完リストをキーボードで操作したときにループさせます。</value>
   </data>
