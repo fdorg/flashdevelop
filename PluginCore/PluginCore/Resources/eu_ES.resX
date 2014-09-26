@@ -672,6 +672,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="FlashDevelop.Description.WindowState" xml:space="preserve">
     <value>Programaren azken leiho-egoera ezaguna.</value>
   </data>
+  <data name="FlashDevelop.Description.MultiInstanceMode" xml:space="preserve">
+    <value>Whether multiple instances of FlashDevelop can be opened.</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
     <value>Nabigatzerakoan teklatua erabili.</value>
   </data>

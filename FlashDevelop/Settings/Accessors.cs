@@ -733,6 +733,15 @@ namespace FlashDevelop.Settings
             set { this.windowState = value; }
         }
 
+        [DisplayName("Multi Instance Mode")]
+        [LocalizedCategory("FlashDevelop.Category.State")]
+        [LocalizedDescription("FlashDevelop.Description.MultiInstanceMode")]
+        public bool MultiInstanceMode
+        {
+            get { return Program.MultiInstanceMode; }
+            set { Program.MultiInstanceMode = value; }
+        }
+
         [DisplayName("Window Position")]
         [LocalizedCategory("FlashDevelop.Category.State")]
         [LocalizedDescription("FlashDevelop.Description.WindowPosition")]

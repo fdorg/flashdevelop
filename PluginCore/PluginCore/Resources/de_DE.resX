@@ -690,6 +690,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="FlashDevelop.Description.WindowState" xml:space="preserve">
     <value>Letzter Fensterstatus (maximiert, minimiert, frei schwebend)</value>
   </data>
+  <data name="FlashDevelop.Description.MultiInstanceMode" xml:space="preserve">
+    <value>Ob mehrere Instanzen von FlashDevelop geöffnet werden können.</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
     <value>Überlauf an beiden Enden der Vervollständigungsliste.</value>
   </data>
