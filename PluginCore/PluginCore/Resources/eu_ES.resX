@@ -1426,6 +1426,12 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="PluginCore.Docking.ToolTipWindowList" xml:space="preserve">
     <value>Leiho zerrenda</value>
   </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFile" xml:space="preserve">
+    <value>Karpeta honek jada badu "{0}" izeneko fitxategi bat.{1}Lehenagotik zegoen fitxategia ordezkatu nahi duzu?</value>
+  </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFolder" xml:space="preserve">
+    <value>Karpeta honek jada badu "{0}" izeneko karpeta bat.{1}{1}Lehenagotik dagoen karpetako fitxategiek mugitzen edo kopiatzen ari zaren {1} karpetako fitxategien izen berdinak badituzte, ordezkatu eginen dira. Oraindik {1} karpeta mugitu edo kopiatu nahi duzu?</value>
+  </data>
   <data name="ProjectManager.Category.Advanced" xml:space="preserve">
     <value>Aurreratua</value>
   </data>
@@ -1698,12 +1704,6 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="ProjectManager.Info.FlashMovieFilter" xml:space="preserve">
     <value>Flash pelikulak (*.swf)|*.swf</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFile" xml:space="preserve">
-    <value>Karpeta honek jada badu "{0}" izeneko fitxategi bat.{1}Lehenagotik zegoen fitxategia ordezkatu nahi duzu?</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFolder" xml:space="preserve">
-    <value>Karpeta honek jada badu "{0}" izeneko karpeta bat.{1}{1}Lehenagotik dagoen karpetako fitxategiek mugitzen edo kopiatzen ari zaren {1} karpetako fitxategien izen berdinak badituzte, ordezkatu eginen dira. Oraindik {1} karpeta mugitu edo kopiatu nahi duzu?</value>
   </data>
   <data name="ProjectManager.Info.General" xml:space="preserve">
     <value>Orokorra</value>

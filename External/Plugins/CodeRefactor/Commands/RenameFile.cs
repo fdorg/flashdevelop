@@ -1,14 +1,14 @@
-﻿using System;﻿
-using System.IO;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using ASCompletion.Context;
+﻿using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Provider;
 using PluginCore.FRService;
-using ScintillaNet;
-using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Localization;
+using ScintillaNet;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 
 namespace CodeRefactor.Commands
 {
@@ -84,8 +84,12 @@ namespace CodeRefactor.Commands
                 oldPath = tmpPath;
             }
             if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-            File.Move(oldPath, newPath);
-            PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+
+            if (FileHelper.ConfirmOverwrite(newPath))
+            {
+                FileHelper.ForceMove(oldPath, newPath);
+                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+            }
         }
 
         public override Boolean IsValid()

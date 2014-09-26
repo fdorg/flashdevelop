@@ -1427,6 +1427,12 @@
   <data name="PluginCore.Docking.ToolTipWindowList" xml:space="preserve">
     <value>窗口列表</value>
   </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFile" xml:space="preserve">
+    <value>这个文件夹已包含了一个 "{0}" 的文件名.{1}你想替换现有的文件吗?</value>
+  </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFolder" xml:space="preserve">
+    <value>这个文件夹已包含一个名叫  " {0} " 的文件夹. {1}{1} 如果移动或复制的文件在现有的文件夹中有相同的文件名在{1}文件夹中, 将会被替换. 你仍然将 {1} 移动或复制到这个文件夹中吗?</value>
+  </data>
   <data name="ProjectManager.Category.Advanced" xml:space="preserve">
     <value>高级</value>
   </data>
@@ -1699,12 +1705,6 @@
   </data>
   <data name="ProjectManager.Info.FlashMovieFilter" xml:space="preserve">
     <value>Flash 影片 (*.swf)|*.swf</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFile" xml:space="preserve">
-    <value>这个文件夹已包含了一个 "{0}" 的文件名.{1}你想替换现有的文件吗?</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFolder" xml:space="preserve">
-    <value>这个文件夹已包含一个名叫  " {0} " 的文件夹. {1}{1} 如果移动或复制的文件在现有的文件夹中有相同的文件名在{1}文件夹中, 将会被替换. 你仍然将 {1} 移动或复制到这个文件夹中吗?</value>
   </data>
   <data name="ProjectManager.Info.General" xml:space="preserve">
     <value>常规</value>

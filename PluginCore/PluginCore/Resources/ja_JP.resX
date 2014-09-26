@@ -1434,6 +1434,12 @@
   <data name="PluginCore.Docking.ToolTipWindowList" xml:space="preserve">
     <value>ウインドウリスト</value>
   </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFile" xml:space="preserve">
+    <value>このフォルダーには既に "{0}" の名前のファイルが含まれています。{1}既存のファイルと置き換えますか？</value>
+  </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFolder" xml:space="preserve">
+    <value>このフォルダーには既に "{0}" という名前のフォルダーが含まれています。{1}{1}もし{1}フォルダーに同じ名前を持つファイルがある場合は置き換えられます。本当に{1}フォルダーを移動またはコピーしますか？</value>
+  </data>
   <data name="ProjectManager.Category.Advanced" xml:space="preserve">
     <value>Advanced | 高度な設定</value>
   </data>
@@ -1700,12 +1706,6 @@
   </data>
   <data name="ProjectManager.Info.FlashMovieFilter" xml:space="preserve">
     <value>Flash ムービー (*.swf)|*.swf</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFile" xml:space="preserve">
-    <value>このフォルダーには既に "{0}" の名前のファイルが含まれています。{1}既存のファイルと置き換えますか？</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFolder" xml:space="preserve">
-    <value>このフォルダーには既に "{0}" という名前のフォルダーが含まれています。{1}{1}もし{1}フォルダーに同じ名前を持つファイルがある場合は置き換えられます。本当に{1}フォルダーを移動またはコピーしますか？</value>
   </data>
   <data name="ProjectManager.Info.General" xml:space="preserve">
     <value>総合</value>
