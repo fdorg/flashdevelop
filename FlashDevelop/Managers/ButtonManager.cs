@@ -11,6 +11,7 @@ using PluginCore.Managers;
 using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
+using System.IO;
 
 namespace FlashDevelop.Managers
 {
@@ -235,6 +236,8 @@ namespace FlashDevelop.Managers
         {
             try
             {
+                FileHelper.FilterByExisiting(Globals.Settings.PreviousDocuments, true);
+
                 ToolStripMenuItem reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 reopenMenu.DropDownItems.Clear();
                 for (Int32 i = 0; i < Globals.PreviousDocuments.Count; i++)
