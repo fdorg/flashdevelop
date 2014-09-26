@@ -2963,6 +2963,7 @@
   </data>
   <data name="ASCompletion.Description.AddClosingBraces" xml:space="preserve">
     <value>定义是否在左大括号（或 引号）之后添加右大括号（或 引号），为  (  和 [ 和 引号 自动匹配对应的 ) 和 ] 和  引号。</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="ASClassWizard.Info.Description" xml:space="preserve">
     <value>向 FlashDevelop 添加一个 ActionScript 类向导。</value>

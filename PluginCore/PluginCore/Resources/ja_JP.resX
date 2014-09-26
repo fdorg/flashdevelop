@@ -2964,6 +2964,7 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   </data>
   <data name="ASCompletion.Description.AddClosingBraces" xml:space="preserve">
     <value>「 ( 」または「 [ 」または「 " 」を入力したとき、自動的に対になる閉じ括弧（引用符）を挿入します。</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="ASClassWizard.Info.Description" xml:space="preserve">
     <value>FlashDevelop に ActionScript クラスウイザード機能を追加します。</value>

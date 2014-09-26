@@ -2967,7 +2967,8 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ASCompletion.Description.AddClosingBraces" xml:space="preserve">
-    <value>Gibt an, ob automatisch eine schließenden Klammer nach Eingabe von "(" oder "[" eingefügt werden soll. Gilt auch für Anführungszeichen.</value>
+    <value>Gibt an, ob automatisch eine schließende Klammer nach Eingabe von (, [ oder { eingefügt werden soll. Gilt auch für Anführungszeichen.</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="ASClassWizard.Info.Description" xml:space="preserve">
     <value>Fügt FlashDevelop einen Klassen-Assistenten hinzu</value>

@@ -2966,7 +2966,8 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ASCompletion.Description.AddClosingBraces" xml:space="preserve">
-    <value>Defines whether to add closing brace (or quote) after opening brace (or quote) automatically for ( and [ and quotes.</value>
+    <value>Defines whether to add the closing brace (or quote) after an opening brace (or quote) automatically for (, [, { and quotes.</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="ASClassWizard.Info.Description" xml:space="preserve">
     <value>Adds an ActionScript and Haxe class wizard to FlashDevelop.</value>

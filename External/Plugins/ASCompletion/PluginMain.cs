@@ -719,11 +719,12 @@ namespace ASCompletion
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
             PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", Keys.F1);
+            PluginBase.MainForm.RegisterShortcutItem("Completion.Delete", Keys.Back);
 
             // application events
             EventManager.AddEventHandler(this, eventMask);
             EventManager.AddEventHandler(this, EventType.UIStarted, HandlingPriority.Low);
-
+            
             // cursor position changes tracking
             timerPosition = new System.Timers.Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
