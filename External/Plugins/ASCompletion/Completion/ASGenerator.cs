@@ -606,6 +606,7 @@ namespace ASCompletion.Completion
 
         private static void ShowNewVarList(FoundDeclaration found)
         {
+            bool generateClass = GetLangIsValid();
             ScintillaNet.ScintillaControl Sci = ASContext.CurSciControl;
             int currentPos = Sci.CurrentPos;
             ASResult exprAtCursor = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(currentPos, true));
@@ -618,6 +619,7 @@ namespace ASCompletion.Completion
             if (exprLeft != null)
             {
                 if (exprLeft.Type.InFile != null && !File.Exists(exprLeft.Type.InFile.FileName)) return;
+                generateClass = false;
                 ClassModel curClass = ASContext.Context.CurrentClass;
                 if (!isHaxe)
                 {
@@ -676,7 +678,7 @@ namespace ASCompletion.Completion
                 label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
                 known.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
 
-                if (GetLangIsValid())
+                if (generateClass)
                 {
                     label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
                     known.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass));
