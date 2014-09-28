@@ -216,7 +216,7 @@ namespace ProjectManager
             menus.ProjectMenu.Properties.Click += delegate { OpenProjectProperties(); };
             menus.RecentProjects.ProjectSelected += delegate(string projectPath) { OpenProjectSilent(projectPath); };
 
-            buildActions = new BuildActions(MainForm,menus);
+            buildActions = new BuildActions(MainForm, this);
             buildActions.BuildComplete += BuildComplete;
             buildActions.BuildFailed += BuildFailed;
 
@@ -685,7 +685,7 @@ namespace ProjectManager
             {
                 pluginUI.SetProject(null);
                 Settings.LastProject = "";
-                menus.DisabledForBuild = true;
+                DisabledForBuild = true;
                 
                 PluginBase.CurrentSolution = null;
                 PluginBase.CurrentProject = null;
@@ -945,6 +945,15 @@ namespace ProjectManager
             this.runOutput = false;
             this.buildingAll = false;
             BroadcastBuildFailed(project);
+        }
+
+        public bool DisabledForBuild
+        {
+            get { return menus.DisabledForBuild; }
+            set
+            {
+                menus.DisabledForBuild = pluginUI.Menu.DisabledForBuild = value;
+            }
         }
 
         private bool ProjectBeforeSave(Project project, string fileName)

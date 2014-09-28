@@ -468,6 +468,15 @@ namespace ProjectManager.Controls.TreeView
             AddFileItems(menu, path, true);
         }
 
+        public bool DisabledForBuild
+        {
+            get { return !TestMovie.Enabled; }
+            set
+            {
+                BuildProject.Enabled = TestMovie.Enabled = !value;
+            }
+        }
+
         private void AddGenericFileItems(MergableMenu menu, string path)
         {
             menu.Add(Open, 0);
