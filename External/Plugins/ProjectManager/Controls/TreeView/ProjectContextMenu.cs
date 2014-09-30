@@ -477,7 +477,8 @@ namespace ProjectManager.Controls.TreeView
             get { return !TestMovie.Enabled; }
             set
             {
-                TestMovie.Enabled = BuildProject.Enabled = TestMovie.Enabled = CleanProject.Enabled = !value;
+                TestMovie.Enabled = RunProject.Enabled = BuildProject.Enabled =
+                    TestMovie.Enabled = CleanProject.Enabled = CloseProject.Enabled = !value;
             }
         }
 

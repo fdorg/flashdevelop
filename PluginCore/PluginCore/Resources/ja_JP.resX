@@ -1858,6 +1858,10 @@
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>プロジェクトをビルド(&amp;B)</value>
   </data>
+  <data name="ProjectManager.Label.CancelBuild" xml:space="preserve">
+    <value>Cancel Build</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>キャンセル</value>
   </data>

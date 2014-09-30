@@ -199,7 +199,7 @@ namespace ProjectManager.Actions
 			arguments = arguments.Replace("\\\"", "\""); // c# console args[] bugfix
 
             SetStatusBar(TextHelper.GetString("Info.BuildStarted"));
-            pluginMain.DisabledForBuild = true;
+            pluginMain.UpdateUIStatus(ProjectManagerUIStatus.Building);
 
             // Apache Flex compat
             if (project.Language == "as3") 
@@ -215,7 +215,7 @@ namespace ProjectManager.Actions
             fdProcess.StartProcess(fdBuildPath, "\"" + project.ProjectPath + "\"" + arguments,
                 project.Directory, delegate(bool success)
                 {
-                    pluginMain.DisabledForBuild = false;
+                    pluginMain.UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
                     if (success)
                     {
                         SetStatusBar(TextHelper.GetString("Info.BuildSucceeded"));

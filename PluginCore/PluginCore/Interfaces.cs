@@ -121,6 +121,7 @@ namespace PluginCore
         Color GetThemeColor(String id);
         IPlugin FindPlugin(String guid);
         Image FindImage(String data);
+        void KillProcess();
 
         #endregion
 

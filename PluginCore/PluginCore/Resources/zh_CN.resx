@@ -1856,6 +1856,10 @@
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>编译项目(&amp;B)</value>
   </data>
+  <data name="ProjectManager.Label.CancelBuild" xml:space="preserve">
+    <value>Cancel Build</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>取消(&amp;C)</value>
   </data>

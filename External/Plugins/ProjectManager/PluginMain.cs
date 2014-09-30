@@ -90,6 +90,7 @@ namespace ProjectManager
         private Queue<String> buildQueue;
         private Timer buildTimer;
         private bool listenToPathChange;
+        private ProjectManagerUIStatus uiStatus = ProjectManagerUIStatus.NotBuilding;
 
         private ProjectTreeView Tree { get { return pluginUI.Tree; } }
         public static IMainForm MainForm { get { return PluginBase.MainForm; } }
@@ -189,7 +190,7 @@ namespace ProjectManager
             menus.TestMovie.Enabled = false;
             menus.TestMovie.Click += delegate { TestMovie(); };
             menus.BuildProject.Enabled = false;
-            menus.BuildProject.Click += delegate { BuildProject(); };
+            menus.BuildProject.Click += BuildProjectClick;
             menus.View.Click += delegate { OpenPanel(); };
             menus.GlobalClasspaths.Click += delegate { OpenGlobalClasspaths(); };
             menus.ConfigurationSelector.SelectedIndexChanged += delegate 
@@ -211,7 +212,7 @@ namespace ProjectManager
             menus.ProjectMenu.OpenResource.Click += delegate { OpenResource(); };
             menus.ProjectMenu.TestMovie.Click += delegate { TestMovie(); };
             menus.ProjectMenu.RunProject.Click += delegate { RunProject(); };
-            menus.ProjectMenu.BuildProject.Click += delegate { BuildProject(); };
+            menus.ProjectMenu.BuildProject.Click += BuildProjectClick;
             menus.ProjectMenu.CleanProject.Click += delegate { CleanProject(); };
             menus.ProjectMenu.Properties.Click += delegate { OpenProjectProperties(); };
             menus.RecentProjects.ProjectSelected += delegate(string projectPath) { OpenProjectSilent(projectPath); };
@@ -267,7 +268,7 @@ namespace ProjectManager
             pluginUI.Menu.AddExistingFile.Click += delegate { TreeAddExistingFile(); };
             pluginUI.Menu.TestMovie.Click += delegate { TestMovie(); };
             pluginUI.Menu.RunProject.Click += delegate { RunProject(); };
-            pluginUI.Menu.BuildProject.Click += delegate { BuildProject(); };
+            pluginUI.Menu.BuildProject.Click += BuildProjectClick;
             pluginUI.Menu.CleanProject.Click += delegate { CleanProject(); };
             pluginUI.Menu.CloseProject.Click += delegate { CloseProject(false); };
             pluginUI.Menu.Properties.Click += delegate { OpenProjectProperties(); };
@@ -297,6 +298,14 @@ namespace ProjectManager
             buildTimer.Tick += new EventHandler(OnBuildTimerTick);
             buildingAll = false;
             runOutput = false;
+        }
+
+        private void BuildProjectClick(object sender, EventArgs e)
+        {
+            if (uiStatus == ProjectManagerUIStatus.NotBuilding)
+                BuildProject();
+            else if (uiStatus == ProjectManagerUIStatus.Building)
+                MainForm.KillProcess();
         }
 
         private void ApplyTargetBuild()
@@ -626,6 +635,7 @@ namespace ProjectManager
                 pluginUI.Focus();
             }
             TabColors.UpdateTabColors(Settings);
+            UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
         }
 
         private void SetActiveProject(Project project)
@@ -687,7 +697,7 @@ namespace ProjectManager
             {
                 pluginUI.SetProject(null);
                 Settings.LastProject = "";
-                DisabledForBuild = true;
+                UpdateUIStatus(ProjectManagerUIStatus.Disabled);
                 
                 PluginBase.CurrentSolution = null;
                 PluginBase.CurrentProject = null;
@@ -949,12 +959,42 @@ namespace ProjectManager
             BroadcastBuildFailed(project);
         }
 
-        public bool DisabledForBuild
+        private bool DisabledForBuild
         {
             get { return menus.DisabledForBuild; }
             set
             {
                 menus.DisabledForBuild = pluginUI.Menu.DisabledForBuild = value;
+            }
+        }
+
+        public void UpdateUIStatus(ProjectManagerUIStatus status)
+        {
+            ToolStripMenuItem contextMenuItem = pluginUI.Menu.BuildProject;
+            ToolStripMenuItem menuItem = menus.ProjectMenu.BuildProject;
+            ToolStripButton menuButton = menus.BuildProject;
+
+            uiStatus = status;
+
+            switch (status)
+            {
+                case ProjectManagerUIStatus.Disabled:
+                    DisabledForBuild = true;
+                    break;
+
+                case ProjectManagerUIStatus.NotBuilding:
+                    DisabledForBuild = false;
+                    menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text =
+                        TextHelper.GetString("Label.BuildProject").Replace("&", "");
+                    menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.Gear.Img;
+                    break;
+
+                case ProjectManagerUIStatus.Building:
+                    DisabledForBuild = true;
+                    menuButton.Enabled = menuItem.Enabled = contextMenuItem.Enabled = true;
+                    menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text = TextHelper.GetString("Label.CancelBuild");
+                    menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.X.Img;
+                    break;
             }
         }
 
@@ -1541,7 +1581,12 @@ namespace ProjectManager
         }
 
         #endregion
-
 	}
 
+    public enum ProjectManagerUIStatus
+    {
+        Building,
+        NotBuilding,
+        Disabled
+    }
 }

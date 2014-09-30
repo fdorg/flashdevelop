@@ -3814,6 +3814,14 @@ namespace FlashDevelop
         /// </summary>
         public void KillProcess(Object sender, System.EventArgs e)
         {
+            KillProcess();
+        }
+
+        /// <summary>
+        /// Stop the currently running process
+        /// </summary>
+        public void KillProcess()
+        {
             if (this.processRunner.IsRunning)
             {
                 this.processRunner.KillProcess();

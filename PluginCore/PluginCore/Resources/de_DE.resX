@@ -1873,6 +1873,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>Projekt &amp;erstellen</value>
   </data>
+  <data name="ProjectManager.Label.CancelBuild" xml:space="preserve">
+    <value>Erstellen abbrechen</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Abbrechen</value>
   </data>
