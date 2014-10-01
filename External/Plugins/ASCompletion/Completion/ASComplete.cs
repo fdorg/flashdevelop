@@ -3722,7 +3722,7 @@ namespace ASCompletion.Completion
                 c = next;
                 next = (char)sci.CharAt(i);
 
-                if (c == ')')
+                if (c == ')' || c == '}' || c == ';')
                     return false;
                 if (c == '(')
                     openingBracket = true;
