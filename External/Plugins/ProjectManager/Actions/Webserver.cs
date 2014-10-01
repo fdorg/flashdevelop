@@ -47,7 +47,7 @@ namespace ProjectManager.Actions
             pathServed = path;
 
             TraceManager.Add("Web Server starting with root: " + path);
-            var server = Path.Combine(PathHelper.ToolDir, "webserver\\server.cmd");
+            var server = Path.Combine(PathHelper.ToolDir, "webserver\\server.exe");
             var infos = new ProcessStartInfo(server, portServed.ToString());
             infos.Arguments = "" + portServed;
             infos.WorkingDirectory = pathServed;
