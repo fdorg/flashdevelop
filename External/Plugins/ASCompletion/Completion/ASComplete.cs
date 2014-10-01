@@ -3704,6 +3704,34 @@ namespace ASCompletion.Completion
             return false;
         }
 
+        /// <summary>
+        /// Whether the character at the position is inside of the
+        /// brackets of haxe metadata (@:allow(path) etc)
+        /// </summary>
+        static private bool IsMetadataArgument(ScintillaControl sci, int position)
+        {
+            if (!ASContext.Context.CurrentModel.haXe || ASContext.Context.CurrentMember != null)
+                return false;
+
+            char c = ' ';
+            char next = (char)sci.CharAt(position);
+            bool openingBracket = false;
+
+            for (int i = position; i > 0; i--)
+            {
+                c = next;
+                next = (char)sci.CharAt(i);
+
+                if (c == ')' || c == '}' || c == ';')
+                    return false;
+                if (c == '(')
+                    openingBracket = true;
+                if (openingBracket && c == ':' && next == '@')
+                    return true;
+            }
+            return false;
+        }
+
         private static bool IsXmlType(ClassModel model)
         {
             return model != null
@@ -3967,22 +3995,8 @@ namespace ASCompletion.Completion
             /*if (cFile == inFile || features.hasPackages && cFile.Package == inFile.Package)
                 return true*/
 
-            // some haxe metadata needs paths will full packages, e.g. @:access(path)
-            if (ASContext.Context.CurrentMember == null && ASContext.Context.CurrentModel.haXe)
-            {
-                String lineUntilCursor = sci.GetLineUntilPosition(position);
-                
-                Regex openMetadata = new Regex("@:?(.*)\\(");
-                foreach (Match match in openMetadata.Matches(lineUntilCursor))
-                {
-                    int matchEnd = match.Index + match.Length;
-                    if (lineUntilCursor.IndexOf(')', matchEnd) < 0)
-                    {
-                        // position is inside a metadata's brackets
-                        return false;
-                    }
-                }
-            }
+            if (IsMetadataArgument(sci, position))
+                return false;
 
             // type name already present in imports
             try
