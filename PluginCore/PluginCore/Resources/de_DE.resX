@@ -2887,6 +2887,10 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="ASCompletion.Info.GeneratorTemplate" xml:space="preserve">
     <value>Generatorvorlage</value>
   </data>
+  <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
+    <value>Drücken sie Tab um das Snippet für dieses Schlüsselwort einzufügen.</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
     <value>Suche...</value>
   </data>

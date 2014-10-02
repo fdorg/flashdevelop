@@ -2887,6 +2887,10 @@ Never - 起動時にスタートページを表示しません。</value>
     <value />
     <comment>ジェネレーターテンプレート</comment>
   </data>
+  <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
+    <value>Press Tab to insert the snippet for this keyword.</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
     <value>検索...</value>
   </data>

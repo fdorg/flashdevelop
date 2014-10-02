@@ -1942,7 +1942,12 @@ namespace ASCompletion.Completion
                 mix.Merge(ctx.GetVisibleExternalElements());
                 MemberList decl = new MemberList();
                 foreach (string key in features.codeKeywords)
-                    decl.Add(new MemberModel(key, key, FlagType.Template, 0));
+                {
+                    MemberModel member = new MemberModel(key, key, FlagType.Template, 0);
+                    if (HasSnippet(key))
+                        member.Comments = TextHelper.GetString("Info.InsertKeywordSnippet");
+                    decl.Add(member);
+                }
                 decl.Sort();
                 mix.Merge(decl);
             }
@@ -4055,11 +4060,16 @@ namespace ASCompletion.Completion
 
         private static void InsertSnippet(string word)
         {
+            if (HasSnippet(word))
+                PluginBase.MainForm.CallCommand("InsertSnippet", word);
+        }
+
+        private static bool HasSnippet(string word)
+        {
             String global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
             String specificDir = Path.Combine(PathHelper.SnippetDir, ASContext.Context.Settings.LanguageId);
             String specific = Path.Combine(specificDir, word + ".fds");
-            if (File.Exists(specific) || File.Exists(global))
-                PluginBase.MainForm.CallCommand("InsertSnippet", word);
+            return File.Exists(specific) || File.Exists(global);
         }
 
 		/// <summary>
