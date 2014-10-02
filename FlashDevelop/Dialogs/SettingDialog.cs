@@ -47,6 +47,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeComponent();
             this.InitializeGraphics(); 
             this.InitializeItemGroups();
+            this.InitializeContextMenu();
             this.PopulatePluginList(itemName, filter);
             this.ApplyLocalizedTexts();
         }
@@ -295,6 +296,23 @@ namespace FlashDevelop.Dialogs
             this.itemListView.Groups.Add(this.mainGroup);
             this.itemListView.Groups.Add(this.pluginsGroup);
             this.columnHeader.Width = ScaleHelper.Scale(this.columnHeader.Width);
+        }
+
+        private void InitializeContextMenu()
+        {
+            ContextMenuStrip contextMenu = new ContextMenuStrip();
+
+            ToolStripMenuItem collapseAll = new ToolStripMenuItem(TextHelper.GetString("Label.CollapseAll"));
+            collapseAll.ShortcutKeys = MainForm.Instance.GetShortcutItemKeys("ViewMenu.CollapseAll");
+            collapseAll.Click += delegate { itemPropertyGrid.CollapseAllGridItems(); };
+            contextMenu.Items.Add(collapseAll);
+
+            ToolStripMenuItem expandAll = new ToolStripMenuItem(TextHelper.GetString("Label.ExpandAll"));
+            expandAll.ShortcutKeys = MainForm.Instance.GetShortcutItemKeys("ViewMenu.ExpandAll");
+            expandAll.Click += delegate { itemPropertyGrid.ExpandAllGridItems(); };
+            contextMenu.Items.Add(expandAll);
+
+            itemPropertyGrid.ContextMenuStrip = contextMenu;
         }
 
         /// <summary>
