@@ -2891,6 +2891,10 @@ Never - 起動時にスタートページを表示しません。</value>
     <value>Press Tab to insert the snippet for this keyword.</value>
     <comment>Added after 4.6.4</comment>
   </data>
+  <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
+    <value>Press F1 to show details</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
     <value>検索...</value>
   </data>

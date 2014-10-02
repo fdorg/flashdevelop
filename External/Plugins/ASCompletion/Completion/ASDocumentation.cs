@@ -431,6 +431,7 @@ namespace ASCompletion.Completion
                         details += "\n" + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd 
                                 + " " + Get2LinesOf((string)cb.ParamDesc[i]).TrimStart();
 
+                        details += "\n(" + TextHelper.GetString("Info.ShowDetails") + ")";
 						return details;
 					}
 				}
@@ -442,6 +443,8 @@ namespace ASCompletion.Completion
 				else if (cb.Description != null && cb.Description.Length > 0) 
                     details += Get2LinesOf(cb.Description);
 			}
+
+            details += "\n(" + TextHelper.GetString("Info.ShowDetails") + ")";
 			return details;
 		}
 
