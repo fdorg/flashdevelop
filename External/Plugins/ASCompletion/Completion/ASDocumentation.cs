@@ -431,8 +431,7 @@ namespace ASCompletion.Completion
                         details += "\n" + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd 
                                 + " " + Get2LinesOf((string)cb.ParamDesc[i]).TrimStart();
 
-                        details += "\n(" + TextHelper.GetString("Info.ShowDetails") + ")";
-						return details;
+                        return AddShortcutDocs(details);
 					}
 				}
 			}
@@ -444,9 +443,13 @@ namespace ASCompletion.Completion
                     details += Get2LinesOf(cb.Description);
 			}
 
-            details += "\n(" + TextHelper.GetString("Info.ShowDetails") + ")";
-			return details;
+            return AddShortcutDocs(details);
 		}
+
+        static private string AddShortcutDocs(string details)
+        {
+            return details += "\n[i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i]";
+        }
 
         /// <summary>
         /// Split multiline text and return 2 lines or less of text
