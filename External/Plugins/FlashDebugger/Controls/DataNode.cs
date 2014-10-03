@@ -154,8 +154,8 @@ namespace FlashDebugger.Controls
             text = text.Replace("\r", "\\r");
             text = text.Replace("\t", "\\t");
             text = text.Replace("\v", "\\v");
-            if (text.Length > 65535)
-                text = text.Substring(0, 65535 - 5) + "[...]";
+            if (text.Length > 65533)
+                text = text.Substring(0, 65533 - 5) + "[...]";
             return text;
         }
 
