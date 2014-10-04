@@ -330,6 +330,7 @@ namespace FlashDebugger
             if (File.Exists(m_SaveFileFullPath))
             {
                 m_BreakPointList = Util.SerializeXML<List<BreakPointInfo>>.LoadFile(m_SaveFileFullPath);
+                m_BreakPointList.RemoveAll(info => info.Line < 0);
 
 				Uri u1 = new Uri(m_Project.ProjectPath);
                 foreach (BreakPointInfo info in m_BreakPointList)
