@@ -189,7 +189,7 @@ namespace AS3Context
 
         #region AS3 specific members
 
-        const string DEFAULT_FLASHVERSION = "10.1";
+        const string DEFAULT_FLASHVERSION = "14.0";
 
         private string flashVersion = DEFAULT_FLASHVERSION;
         private string as3ClassPath;
