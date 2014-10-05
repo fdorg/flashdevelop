@@ -1945,7 +1945,7 @@ namespace ASCompletion.Completion
                 {
                     MemberModel member = new MemberModel(key, key, FlagType.Template, 0);
                     if (HasSnippet(key))
-                        member.Comments = TextHelper.GetString("Info.InsertKeywordSnippet");
+                        member.Comments = "[i](" + TextHelper.GetString("Info.InsertKeywordSnippet") + ")[/i]";
                     decl.Add(member);
                 }
                 decl.Sort();

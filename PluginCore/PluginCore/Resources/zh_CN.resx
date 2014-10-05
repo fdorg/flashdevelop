@@ -2883,7 +2883,7 @@
     <value>生成模板</value>
   </data>
   <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
-    <value>Press Tab to insert the snippet for this keyword.</value>
+    <value>Press Tab to insert the snippet for this keyword</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
