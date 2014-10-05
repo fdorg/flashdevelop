@@ -1855,8 +1855,8 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>&amp;Proiektua eraiki</value>
   </data>
-  <data name="ProjectManager.Label.CancelBuild" xml:space="preserve">
-    <value>Cancel Build</value>
+  <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
+    <value>Stop Build</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">

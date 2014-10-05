@@ -992,7 +992,7 @@ namespace ProjectManager
                 case ProjectManagerUIStatus.Building:
                     DisabledForBuild = true;
                     menuButton.Enabled = menuItem.Enabled = contextMenuItem.Enabled = true;
-                    menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text = TextHelper.GetString("Label.CancelBuild");
+                    menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text = TextHelper.GetString("Label.StopBuild");
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.X.Img;
                     break;
             }
