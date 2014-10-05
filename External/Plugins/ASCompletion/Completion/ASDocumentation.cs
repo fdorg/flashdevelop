@@ -430,25 +430,25 @@ namespace ASCompletion.Completion
 					{
                         details += "\n" + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd 
                                 + " " + Get2LinesOf((string)cb.ParamDesc[i]).TrimStart();
-
-                        return AddShortcutDocs(details);
+                        return details;
 					}
 				}
 			}
 			// get description extract
             if (ASContext.CommonSettings.SmartTipsEnabled)
 			{
-				if (cb.InfoTip != null && cb.InfoTip.Length > 0) details += "\n"+cb.InfoTip;
+				if (cb.InfoTip != null && cb.InfoTip.Length > 0)
+                    details += "\n"+cb.InfoTip;
 				else if (cb.Description != null && cb.Description.Length > 0) 
                     details += Get2LinesOf(cb.Description);
 			}
 
-            return AddShortcutDocs(details);
+            return details;
 		}
 
-        static private string AddShortcutDocs(string details)
+        static private string GetShortcutDocs()
         {
-            return details += "\n[i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i]";
+            return "\n[i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i]";
         }
 
         /// <summary>
@@ -460,7 +460,7 @@ namespace ASCompletion.Completion
             text = "";
             int n = Math.Min(lines.Length, 2);
             for (int i = 0; i < n; i++) text += "\n" + lines[i];
-            if (lines.Length > 2) text += " \x86";
+            if (lines.Length > 2) text += " \x86" + GetShortcutDocs();
             return text;
         }
 		
