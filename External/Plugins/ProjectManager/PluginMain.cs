@@ -305,7 +305,15 @@ namespace ProjectManager
             if (uiStatus == ProjectManagerUIStatus.NotBuilding)
                 BuildProject();
             else if (uiStatus == ProjectManagerUIStatus.Building)
-                MainForm.KillProcess();
+            {
+                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.AreYouSureToStopBuild");
+
+                DialogResult result = MessageBox.Show(PluginBase.MainForm, message,
+                    title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                    MainForm.KillProcess();
+            }
         }
 
         private void ApplyTargetBuild()

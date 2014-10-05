@@ -1860,6 +1860,10 @@
     <value>Stop Build</value>
     <comment>Added after 4.6.4</comment>
   </data>
+  <data name="ProjectManager.Info.AreYouSureToStopBuild" xml:space="preserve">
+    <value>Are you sure you want to stop the build?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>取消(&amp;C)</value>
   </data>

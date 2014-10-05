@@ -1859,6 +1859,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>Stop Build</value>
     <comment>Added after 4.6.4</comment>
   </data>
+  <data name="ProjectManager.Info.AreYouSureToStopBuild" xml:space="preserve">
+    <value>Are you sure you want to stop the build?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Ezeztatu</value>
   </data>
