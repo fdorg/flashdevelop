@@ -14,10 +14,6 @@ namespace System.Windows.Forms
         public delegate void NodeClickedHandler(object sender, TreeNode node);
         public event NodeClickedHandler NodeClicked;
 
-        private const int TV_FIRST = 0x1100;
-        private const int TVM_SETBKCOLOR = TV_FIRST + 29;
-        private const int TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
-
         /*private const int TVS_NOTOOLTIPS = 0x80;
         private ToolTip tip;
         private int px;
@@ -33,16 +29,6 @@ namespace System.Windows.Forms
                 return p;
             }
         }*/
-
-        // prevents some flicker
-        protected override void WndProc(ref Message m)
-        {
-            // Stop erase background message
-            if (m.Msg == (int)0x0014)
-                m.Msg = (int)0x0000; // Set to null
-
-            base.WndProc(ref m);
-        }
 
         // find clicked node on mousedown
         protected override void OnMouseDown(MouseEventArgs e)
@@ -129,7 +115,7 @@ namespace System.Windows.Forms
             base.OnHandleCreated(e);
 
             if (DoubleBuffered)
-                NativeMethods.SendMessage(Handle, TVM_SETEXTENDEDSTYLE, (IntPtr)NativeMethods.TVS_EX_DOUBLEBUFFER, (IntPtr)NativeMethods.TVS_EX_DOUBLEBUFFER);
+                NativeMethods.SendMessage(Handle, NativeMethods.TVM_SETEXTENDEDSTYLE, (IntPtr)NativeMethods.TVS_EX_DOUBLEBUFFER, (IntPtr)NativeMethods.TVS_EX_DOUBLEBUFFER);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -151,6 +137,9 @@ namespace System.Windows.Forms
         {
             public const int WM_PRINTCLIENT = 0x0318;
             public const int PRF_CLIENT = 0x00000004;
+
+            private const int TV_FIRST = 0x1100;
+            public const int TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
             public const int TVS_EX_DOUBLEBUFFER = 0x0004;
 
             [DllImport("user32.dll")]
