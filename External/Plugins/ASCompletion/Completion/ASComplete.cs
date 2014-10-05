@@ -1944,8 +1944,7 @@ namespace ASCompletion.Completion
                 foreach (string key in features.codeKeywords)
                 {
                     MemberModel member = new MemberModel(key, key, FlagType.Template, 0);
-                    if (HasSnippet(key))
-                        member.Comments = "[i](" + TextHelper.GetString("Info.InsertKeywordSnippet") + ")[/i]";
+                    member.Comments = "[i](" + TextHelper.GetString("Info.InsertKeywordSnippet") + ")[/i]";
                     decl.Add(member);
                 }
                 decl.Sort();
@@ -1954,8 +1953,15 @@ namespace ASCompletion.Completion
 
 			// show
             List<ICompletionListItem> list = new List<ICompletionListItem>();
-			foreach(MemberModel member in mix)
-                list.Add(new MemberItem(member));
+            foreach (MemberModel member in mix)
+            {
+                MemberItem memberItem = new MemberItem(member);
+
+                if ((member.Flags & FlagType.Template) > 0)
+                    memberItem.ShowDetailsCondition = delegate { return HasSnippet(member.Name); };
+
+                list.Add(memberItem);
+            }
 			CompletionList.Show(list, autoHide, tail);
 
             // smart focus token
@@ -4158,6 +4164,7 @@ namespace ASCompletion.Completion
     /// </summary>
     public class MemberItem : ICompletionListItem
     {
+        public Func<bool> ShowDetailsCondition;
         private MemberModel member;
         private int icon;
 
@@ -4176,7 +4183,10 @@ namespace ASCompletion.Completion
         {
             get
             {
-                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
+                string result = ClassModel.MemberDeclaration(member);
+                if (ShowDetailsCondition == null || ShowDetailsCondition())
+                    result += ASDocumentation.GetTipDetails(member, null);
+                return result; 
             }
         }
 
@@ -4375,6 +4385,8 @@ namespace ASCompletion.Completion
         public ClassModel TokenType;
     }
 	#endregion
+
+    public delegate T Func<T>();
 }
 
 
