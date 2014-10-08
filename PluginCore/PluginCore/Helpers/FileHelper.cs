@@ -317,6 +317,11 @@ namespace PluginCore.Helpers
             }
             else return true;
         }
+
+        public static bool IsHaxeFile(string fileName)
+        {
+            return fileName.EndsWith(".hx") || fileName.EndsWith(".hxp");
+        }
     }
 
     /// <summary>
