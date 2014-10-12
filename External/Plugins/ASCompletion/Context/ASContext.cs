@@ -1521,6 +1521,7 @@ namespace ASCompletion.Context
         {
             if (string.IsNullOrEmpty(path)) return "";
             path = path.Trim();
+            if (path.Length == 0) return path;
             if (doPathNormalization)
                 path = path.Replace(dirAltSeparator, dirSeparator);
             path = path.Replace(dirSeparator + dirSeparator, dirSeparator);
@@ -1530,6 +1531,7 @@ namespace ASCompletion.Context
         {
             if (string.IsNullOrEmpty(path)) return "";
             path = path.Trim();
+            if (path.Length == 0) return path;
             if (doPathNormalization)
                 path = path.Replace(dirAltSeparator, dirSeparator);
             if (!path.EndsWith(dirSeparator))
