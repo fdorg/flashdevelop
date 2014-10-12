@@ -146,7 +146,7 @@ namespace PluginCore.Managers
         public TraceItem(object message, Int32 state)
         {
             this.timestamp = DateTime.Now;
-            this.message = message.ToString();
+            if (message != null) this.message = message.ToString();
             this.state = state;
         }
 
