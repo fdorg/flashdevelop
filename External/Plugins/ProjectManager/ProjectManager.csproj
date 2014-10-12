@@ -137,6 +137,7 @@
     <Compile Include="Projects\AS3\FlexProjectReader.cs" />
     <Compile Include="Projects\AS3\MxmlcOptions.cs" />
     <Compile Include="Projects\CompilerOptions.cs" />
+    <Compile Include="Projects\DefaultProjectTemplates.cs" />
     <Compile Include="Projects\Generic\GenericMovieOptions.cs" />
     <Compile Include="Projects\Generic\GenericOptions.cs" />
     <Compile Include="Projects\Generic\GenericProject.cs" />
