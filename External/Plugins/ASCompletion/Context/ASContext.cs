@@ -1070,7 +1070,7 @@ namespace ASCompletion.Context
         {
             ASResult result = new ASResult();
             result.InClass = ClassModel.VoidClass;
-
+            if (cFile == null) return result;
             // current class
             foreach (ClassModel aClass in cFile.Classes)
             {
