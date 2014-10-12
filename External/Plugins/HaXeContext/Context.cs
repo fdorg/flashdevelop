@@ -1165,8 +1165,8 @@ namespace HaXeContext
             if (expression.Value != "")
             {
                 // async processing
-                HaXeCompletion hc = new HaXeCompletion(sci, expression, autoHide, completionModeHandler);
-                hc.getList(OnDotCompletionResult);
+                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler);
+                hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
 
@@ -1174,97 +1174,20 @@ namespace HaXeContext
             return null; 
         }
 
-        internal void OnDotCompletionResult(HaXeCompletion hc, ArrayList al)
+        internal void OnDotCompletionResult(HaxeComplete hc, HaxeCompleteStatus status)
         {
             resolvingDot = false;
-            if (al == null || al.Count == 0)
-                return; // haxe.exe not found
 
-            ScintillaNet.ScintillaControl sci = hc.sci;
-            MemberList list = new MemberList();
-            string outputType = al[0].ToString();
-
-            if (outputType == "error")
+            switch (status)
             {
-                string err = al[1].ToString();
-                TraceManager.AddAsync(err, -3);
-                //sci.CallTipShow(sci.CurrentPos, err);
-                //sci.CharAdded += new ScintillaNet.CharAddedHandler(removeTip);
+                case HaxeCompleteStatus.ERROR:
+                    TraceManager.AddAsync(hc.Errors, -3);
+                    break;
 
-                // show default completion tooltip
-                if (!hxsettings.DisableMixedCompletion)
-                    return;
-            }
-            else if (outputType == "list")
-            {
-                foreach (ArrayList i in al[1] as ArrayList)
-                {
-                    string var = i[0].ToString();
-                    string type = i[1].ToString();
-                    string desc = i[2].ToString();
-
-                    FlagType flag = FlagType.Variable;
-
-                    MemberModel member = new MemberModel();
-                    member.Name = var;
-                    member.Access = Visibility.Public;
-                    member.Comments = desc;
-                    var p1 = desc.IndexOf('\r');
-                    var p2 = desc.IndexOf('\n');
-
-                    // Package or Class
-                    if (type == "")
-                    {
-                        string bl = var.Substring(0, 1);
-                        if (bl == bl.ToLower())
-                            flag = FlagType.Package;
-                        else
-                            flag = FlagType.Class;
-                    }
-                    // Function or Variable
-                    else
-                    {
-                        Array types = type.Split(new string[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
-
-                        // Function
-                        if (types.Length > 1)
-                        {
-                            flag = FlagType.Function;
-
-                            // Function's arguments
-                            member.Parameters = new List<MemberModel>();
-                            int j = 0;
-                            while (j < types.Length - 1)
-                            {
-                                MemberModel param = new MemberModel(types.GetValue(j).ToString(), "", FlagType.ParameterVar, Visibility.Public);
-                                member.Parameters.Add(param);
-                                j++;
-                            }
-
-                            // Function's return type
-                            member.Type = types.GetValue(types.Length - 1).ToString();
-                        }
-                        // Variable
-                        else
-                        {
-                            flag = FlagType.Variable;
-                            // Variable's type
-                            member.Type = type;
-                        }
-
-                    }
-
-                    member.Flags = flag;
-
-                    list.Add(member);
-                }
-            }
-
-            // update completion
-            if (list.Count > 0)
-            {
-                list.Sort();
-                ASComplete.DotContextResolved(sci, hc.expr, list, hc.autoHide);
+                case HaxeCompleteStatus.MEMBERS:
+                    if (hc.Members != null && hc.Members.Count > 0)
+                        ASComplete.DotContextResolved(hc.Sci, hc.Expr, hc.Members, hc.AutoHide);
+                    break;
             }
         }
 
@@ -1418,59 +1341,58 @@ namespace HaXeContext
                 return null;
 
             expression.Position++;
-            HaXeCompletion hc = new HaXeCompletion(sci, expression, autoHide, completionModeHandler);
-            hc.getList(OnFunctionCompletionResult);
+            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler);
+            hc.GetList(OnFunctionCompletionResult);
 
             resolvingFunction = true;
             return null; // running asynchronously
         }
 
-        internal void OnFunctionCompletionResult(HaXeCompletion hc, ArrayList al)
+        internal void OnFunctionCompletionResult(HaxeComplete hc, HaxeCompleteStatus status)
         {
             resolvingFunction = false;
-            if (al == null || al.Count == 0)
-                return; // haxe.exe not found
-
-            ScintillaNet.ScintillaControl sci = hc.sci;
-            string[] parts = hc.expr.Value.Split('.');
-            string name = parts[parts.Length - 1];
-
             MemberModel member = new MemberModel();
-            string outputType = al[0].ToString();
 
-            if (outputType == "type" )
+            switch (status)
             {
-                member.Name = name;
-                member.Flags = FlagType.Function;
-                member.Access = Visibility.Public;
+                case HaxeCompleteStatus.ERROR:
+                    TraceManager.AddAsync(hc.Errors, -3);
+                    break;
 
-                string type = al[1].ToString();
-
-                Array types = type.Split(new string[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
-
-                // Function's arguments
-                member.Parameters = new List<MemberModel>();
-                int j = 0;
-                while (j < types.Length - 1)
-                {
-                    MemberModel param = new MemberModel(types.GetValue(j).ToString(), "", FlagType.ParameterVar, Visibility.Public);
-                    member.Parameters.Add(param);
-                    j++;
-                }
-                // Function's return type
-                member.Type = types.GetValue(types.Length - 1).ToString();
-            }
-            else if ( outputType == "error" )
-            {
-                string err = al[1].ToString();
-                TraceManager.AddAsync(err, -3);
-                //sci.CallTipShow(sci.CurrentPos, err);
-                //sci.CharAdded += new ScintillaNet.CharAddedHandler(removeTip);
+                case HaxeCompleteStatus.TYPE:
+                    ExtractFunction(hc, member);
+                    break;
             }
             
             // show call tip
-            hc.expr.Position--;
-            ASComplete.FunctionContextResolved(sci, hc.expr, member, null, true);
+            hc.Expr.Position--;
+            ASComplete.FunctionContextResolved(hc.Sci, hc.Expr, member, null, true);
+        }
+
+        void ExtractFunction(HaxeComplete hc, MemberModel member)
+        {
+            string[] parts = hc.Expr.Value.Split('.');
+            string name = parts[parts.Length - 1];
+
+            member.Name = name;
+            member.Flags = FlagType.Function;
+            member.Access = Visibility.Public;
+
+            string type = hc.TypeName;
+            Array types = type.Split(new string[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Function's arguments
+            member.Parameters = new List<MemberModel>();
+            int j = 0;
+            while (j < types.Length - 1)
+            {
+                MemberModel param = new MemberModel(types.GetValue(j).ToString(), "", FlagType.ParameterVar, Visibility.Public);
+                member.Parameters.Add(param);
+                j++;
+            }
+
+            // Function's return type
+            member.Type = types.GetValue(types.Length - 1).ToString();
         }
 
         /*void removeTip(ScintillaNet.ScintillaControl sender, int ch)
@@ -1498,22 +1420,23 @@ namespace HaXeContext
         public override void CheckSyntax()
         {
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            HaXeCompletion hc = new HaXeCompletion(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler);
-            hc.getList(OnCheckSyntaxResult);
+            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler);
+            hc.GetList(OnCheckSyntaxResult);
         }
 
-        internal void OnCheckSyntaxResult(HaXeCompletion hc, ArrayList result)
+        internal void OnCheckSyntaxResult(HaxeComplete hc, HaxeCompleteStatus status)
         {
-            if (result.Count == 0 || (string)result[0] != "error")
+            switch (status)
             {
-                EventManager.DispatchEvent(this, new TextEvent(EventType.ProcessEnd, "Done(0)"));
-                return;
+                case HaxeCompleteStatus.ERROR:
+                    TraceManager.Add(hc.Errors);
+                    EventManager.DispatchEvent(this, new TextEvent(EventType.ProcessEnd, "Done(1)"));
+                    break;
+
+                default:
+                    EventManager.DispatchEvent(this, new TextEvent(EventType.ProcessEnd, "Done(0)"));
+                    break;
             }
-            foreach (string line in result)
-            {
-                if (line != "error") TraceManager.Add(line);
-            }
-            EventManager.DispatchEvent(this, new TextEvent(EventType.ProcessEnd, "Done(1)"));
         }
 
         /// <summary>
