@@ -992,7 +992,7 @@ namespace ASCompletion.Context
                 cFile.Context = this;
                 UpdateCurrentFile(false); // does update line & context
             }
-            else
+            else if (CurSciControl != null)
             {
                 cLine = CurSciControl.LineFromPosition(CurSciControl.CurrentPos);
                 UpdateContext(cLine);
