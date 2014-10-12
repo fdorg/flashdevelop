@@ -30,7 +30,7 @@ namespace HaXeContext
         // result
         public HaxeCompleteStatus Status;
         public string Errors;
-        public string TypeName;
+        public MemberModel Type;
         public MemberList Members;
 
         readonly IHaxeCompletionHandler handler;
@@ -178,14 +178,25 @@ namespace HaXeContext
             switch (reader.Name)
             {
                 case "type":
-                    TypeName = ReadValue(reader);
-                    return TypeName == "" ? HaxeCompleteStatus.FAILED : HaxeCompleteStatus.TYPE;
+                    ProcessType(reader);
+                    return HaxeCompleteStatus.TYPE;
 
                 case "list":
                     ProcessMembers(reader);
                     return HaxeCompleteStatus.MEMBERS;
             }
             return HaxeCompleteStatus.FAILED;
+        }
+
+        void ProcessType(XmlTextReader reader)
+        {
+            string[] parts = Expr.Value.Split('.');
+            string name = parts[parts.Length - 1];
+
+            var type = new MemberModel();
+            type.Name = name;
+            ExtractType(reader, type);
+            this.Type = type;
         }
 
         void ProcessMembers(XmlTextReader reader)

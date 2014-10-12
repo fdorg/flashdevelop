@@ -1351,7 +1351,6 @@ namespace HaXeContext
         internal void OnFunctionCompletionResult(HaxeComplete hc, HaxeCompleteStatus status)
         {
             resolvingFunction = false;
-            MemberModel member = new MemberModel();
 
             switch (status)
             {
@@ -1360,46 +1359,11 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.TYPE:
-                    ExtractFunction(hc, member);
+                    hc.Expr.Position--;
+                    ASComplete.FunctionContextResolved(hc.Sci, hc.Expr, hc.Type, null, true);
                     break;
             }
-            
-            // show call tip
-            hc.Expr.Position--;
-            ASComplete.FunctionContextResolved(hc.Sci, hc.Expr, member, null, true);
         }
-
-        void ExtractFunction(HaxeComplete hc, MemberModel member)
-        {
-            string[] parts = hc.Expr.Value.Split('.');
-            string name = parts[parts.Length - 1];
-
-            member.Name = name;
-            member.Flags = FlagType.Function;
-            member.Access = Visibility.Public;
-
-            string type = hc.TypeName;
-            Array types = type.Split(new string[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
-
-            // Function's arguments
-            member.Parameters = new List<MemberModel>();
-            int j = 0;
-            while (j < types.Length - 1)
-            {
-                MemberModel param = new MemberModel(types.GetValue(j).ToString(), "", FlagType.ParameterVar, Visibility.Public);
-                member.Parameters.Add(param);
-                j++;
-            }
-
-            // Function's return type
-            member.Type = types.GetValue(types.Length - 1).ToString();
-        }
-
-        /*void removeTip(ScintillaNet.ScintillaControl sender, int ch)
-        {
-            sender.CallTipCancel();
-            sender.CharAdded -= removeTip;
-        }*/
         #endregion
 
         #region command line compiler
