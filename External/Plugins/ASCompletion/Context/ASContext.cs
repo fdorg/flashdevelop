@@ -818,27 +818,32 @@ namespace ASCompletion.Context
 
             FileModel nFile;
             fileName = PathHelper.GetLongPathName(fileName);
-            
-            // check if in cache
-            foreach (PathModel aPath in classPath)
+            if (classPath != null)
             {
-                if (aPath.HasFile(fileName))
+                // check if in cache
+                foreach (PathModel aPath in classPath)
                 {
-                    nFile = aPath.GetFile(fileName);
-                    nFile.Check();
-                    return nFile;
+                    if (aPath.HasFile(fileName))
+                    {
+                        nFile = aPath.GetFile(fileName);
+                        nFile.Check();
+                        return nFile;
+                    }
                 }
             }
 
             // parse and add to cache
             nFile = ASFileParser.ParseFile(CreateFileModel(fileName));
-            string upName = fileName.ToUpper();
-            foreach (PathModel aPath in classPath)
+            if (classPath != null)
             {
-                if (upName.StartsWith(aPath.Path, StringComparison.OrdinalIgnoreCase))
+                string upName = fileName.ToUpper();
+                foreach (PathModel aPath in classPath)
                 {
-                    aPath.AddFile(nFile);
-                    return nFile;
+                    if (upName.StartsWith(aPath.Path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        aPath.AddFile(nFile);
+                        return nFile;
+                    }
                 }
             }
 
