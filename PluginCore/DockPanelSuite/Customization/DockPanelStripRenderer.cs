@@ -201,6 +201,8 @@ namespace System.Windows.Forms
 
         protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
         {
+            // Ensure padding on buttons if in high dpi mode
+            if (e.Graphics.DpiX >= 144) e.Item.Padding = new Padding(2, 1, 2, 1);
             if (renderer is ToolStripProfessionalRenderer)
             {
                 Boolean isOver = false;
@@ -299,22 +301,18 @@ namespace System.Windows.Forms
                 {
                     // Do we need to invert the drawing edge?
                     bool rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
-
                     // Find vertical position of the lowest grip line
                     int y = e.AffectedBounds.Bottom - 3 * 2 + 1;
-
                     // Draw three lines of grips
                     for (int i = 3; i >= 1; i--)
                     {
                         // Find the rightmost grip position on the line
                         int x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
-
                         // Draw grips from right to left on line
                         for (int j = 0; j < i; j++)
                         {
                             // Just the single grip glyph
                             DrawGripGlyph(e.Graphics, x, y, darkBrush, lightBrush);
-
                             // Move left to next grip position
                             x -= (rtl ? -4 : 4);
                         }
