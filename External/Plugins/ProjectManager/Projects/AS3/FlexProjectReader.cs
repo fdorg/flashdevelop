@@ -58,7 +58,7 @@ namespace ProjectManager.Projects.AS3
             project.CompilerOptions.Strict = GetAttribute("strict") == "true";
             project.CompilerOptions.Accessible = GetAttribute("generateAccessible") == "true";
 
-            string additional = GetAttribute("additionalCompilerArguments") ?? "";
+            string additional = GetAttribute("additionalCompilerArguments") ?? string.Empty;
             List<string> api = new List<string>();
             if (GetAttribute("useApolloConfig") == "true")
             {
@@ -83,7 +83,7 @@ namespace ProjectManager.Projects.AS3
                         if (File.ReadAllText(mainFile).IndexOf("http://www.adobe.com/2006/mxml") > 0)
                         {
                             target = 3;
-                            additional = "-compatibility-version=3\n" + additional;
+                            additional = "-compatibility-version=3.0.0\n" + additional;
                             if (project.MovieOptions.Platform == PluginCore.PlatformData.FLASHPLAYER_PLATFORM)
                                 project.MovieOptions.Version = "9.0";
                         }
@@ -91,7 +91,16 @@ namespace ProjectManager.Projects.AS3
                 catch { }
                 api.Add("Library\\AS3\\frameworks\\Flex" + target);
             }
-            project.CompilerOptions.Additional = additional.Split('\n');
+            string[] projectAdditional = project.CompilerOptions.Additional ?? new string[] { };
+            string[] fbAdditional = additional.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            if (fbAdditional.Length > 0)
+            {
+                // TODO: Analyze the additional arguments for better support
+                int offset = projectAdditional.Length;
+                Array.Resize(ref projectAdditional, projectAdditional.Length + fbAdditional.Length);
+                Array.Copy(fbAdditional, 0, projectAdditional, offset, fbAdditional.Length);
+            }
+            project.CompilerOptions.Additional = projectAdditional;
             if (api.Count > 0) project.CompilerOptions.IntrinsicPaths = api.ToArray();
 
             while (Read() && Name != "compiler")
@@ -166,6 +175,7 @@ namespace ProjectManager.Projects.AS3
             ReadPaths("application", applications);
             if (applications.Count > 0)
             {
+                // Why doesn't it use mainApplicationPath?
                 project.OutputPath = Path.Combine(outputPath,
                     Path.GetFileNameWithoutExtension(applications[0]) + ".swf");
             }
@@ -188,24 +198,23 @@ namespace ProjectManager.Projects.AS3
 
         private void ReadTheme()
         {
-            if (GetAttribute("themeIsDefault") == "false")
+            string themeLocation = GetAttribute("themeLocation").ToString().Replace("${EXTERNAL_THEME_DIR}/",
+                GetThemeFolderPath() + Path.DirectorySeparatorChar);
+
+            string themeFile = ".packagedThemes" + Path.DirectorySeparatorChar +
+                themeLocation.Substring(themeLocation.LastIndexOf('\\') + 1) + ".swc";
+
+            if (File.Exists(Path.Combine(project.Directory, themeFile)) ||
+                File.Exists(themeFile = Path.Combine(themeLocation, themeLocation.Substring(themeLocation.LastIndexOf('\\') + 1) + ".swc")))
             {
-                string themeLocation = GetAttribute("themeLocation").ToString().Replace("${EXTERNAL_THEME_DIR}/", 
-                    GetThemeFolderPath() + Path.DirectorySeparatorChar);
+                string[] additional = project.CompilerOptions.Additional ?? new string[] { };
+                Array.Resize(ref additional, additional.Length + 1);
 
-                string themeFile = ".packagedThemes" + Path.DirectorySeparatorChar + 
-                    themeLocation.Substring(themeLocation.LastIndexOf('\\') + 1) + ".swc";
+                additional[additional.Length - 1] = "-theme" + (GetAttribute("themeIsDefault") == "false" ? "+=" : "=") + SafeNativeMethods.GetShortPathName(themeFile);
 
-                if (File.Exists(Path.Combine(project.Directory, themeFile)) || 
-                    File.Exists(themeFile = Path.Combine(themeLocation, themeLocation.Substring(themeLocation.LastIndexOf('\\') + 1) + ".swc")))
-                {
-                    LibraryAsset asset = new LibraryAsset(project, themeFile);
-                    asset.SwfMode = SwfAssetMode.IncludedLibrary;   // Should it be a plain library instead?
-                    project.SwcLibraries.Add(asset);
+                project.CompilerOptions.Additional = additional;
 
-                    project.RebuildCompilerOptions();
-                }
-
+                project.RebuildCompilerOptions();
             }
         }
 
@@ -239,7 +248,7 @@ namespace ProjectManager.Projects.AS3
             StringBuilder builder = new StringBuilder();
             SafeNativeMethods.SHGetFolderPath(IntPtr.Zero, SafeNativeMethods.CSIDL_PROFILE, IntPtr.Zero, 0x0000, builder);
 
-            return builder.ToString() + Path.DirectorySeparatorChar + "Application Data" + Path.DirectorySeparatorChar + 
+            return builder.ToString() + Path.DirectorySeparatorChar + "Application Data" + Path.DirectorySeparatorChar +
                 "Adobe" + Path.DirectorySeparatorChar + "Flash Builder" + Path.DirectorySeparatorChar + "Themes";
         }
 
@@ -252,6 +261,22 @@ namespace ProjectManager.Projects.AS3
             public static extern int SHGetFolderPath(IntPtr hwndOwner, int nFolder, IntPtr hToken,
                uint dwFlags, [Out] StringBuilder pszPath);
 
+            [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+            private static extern Int32 GetShortPathName(String path, StringBuilder shortPath, Int32 shortPathLength);
+
+            public static String GetShortPathName(String longPath)
+            {
+                StringBuilder shortPath = new StringBuilder(longPath.Length + 1);
+
+                if (0 == GetShortPathName(longPath, shortPath, shortPath.Capacity))
+                {
+                    return longPath;
+                }
+
+                return shortPath.ToString();
+            }
+
         }
     }
 }
+
