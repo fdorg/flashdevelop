@@ -90,7 +90,7 @@ namespace HaXeContext
 
             // Get the current class edited (ensure completion even if class not reference in the project)
             var package = ASContext.Context.CurrentModel.Package;
-            if (package != "")
+            if (!string.IsNullOrEmpty(package))
             {
                 var cl = ASContext.Context.CurrentModel.Package + "." + GetMainClassName();
                 var libToAdd =
@@ -102,7 +102,7 @@ namespace HaXeContext
             else
                 hxmlArgs.Add(GetMainClassName());
 
-            hxmlArgs.Insert(0, "--display \"" + FileName + "\"@" + pos);
+            hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}", FileName, pos));
             hxmlArgs.Insert(1, "-D use_rtti_doc");
             hxmlArgs.Insert(2, "-D display-details");
             if (hxproj.TraceEnabled) hxmlArgs.Insert(2, "-debug");
@@ -261,7 +261,7 @@ namespace HaXeContext
             var type = ReadValue(reader);
 
             // Package or Class
-            if (type == "")
+            if (string.IsNullOrEmpty(type))
             {
                 if (member.Flags != 0) return;
 
@@ -278,14 +278,12 @@ namespace HaXeContext
                 {
                     member.Flags = FlagType.Function;
                     member.Parameters = new List<MemberModel>();
-                    int j = 0;
-                    while (j < types.Length - 1)
+                    for (int i = 0; i < types.Length - 1; i++)
                     {
-                        MemberModel param = new MemberModel(types[j], "", FlagType.ParameterVar, Visibility.Public);
+                        MemberModel param = new MemberModel(types[i].Trim(), "", FlagType.ParameterVar, Visibility.Public);
                         member.Parameters.Add(param);
-                        j++;
                     }
-                    member.Type = types[types.Length - 1];
+                    member.Type = types[types.Length - 1].Trim();
                 }
                 else
                 {
