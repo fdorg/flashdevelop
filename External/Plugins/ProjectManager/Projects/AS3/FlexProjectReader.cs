@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Xml;
 using System.Runtime.InteropServices;
+using PluginCore.Helpers;
 
 namespace ProjectManager.Projects.AS3
 {
@@ -198,24 +199,42 @@ namespace ProjectManager.Projects.AS3
 
         private void ReadTheme()
         {
+            char s = Path.DirectorySeparatorChar;
             string themeLocation = GetAttribute("themeLocation").ToString().Replace("${EXTERNAL_THEME_DIR}/",
-                GetThemeFolderPath() + Path.DirectorySeparatorChar);
+                GetThemeFolderPath() + s);
 
-            string themeFile = ".packagedThemes" + Path.DirectorySeparatorChar +
-                themeLocation.Substring(themeLocation.LastIndexOf('\\') + 1) + ".swc";
+            string themeName = themeLocation.Substring(themeLocation.LastIndexOf('\\') + 1).ToLower();
+            string themeFile = ".packagedThemes" + s + themeName;
+            string themeSwc = themeFile + ".swc";
+            string themeCss = themeFile + ".css";
 
-            if (File.Exists(Path.Combine(project.Directory, themeFile)) ||
-                File.Exists(themeFile = Path.Combine(themeLocation, themeLocation.Substring(themeLocation.LastIndexOf('\\') + 1) + ".swc")))
+            if (!File.Exists(Path.Combine(project.Directory, (themeFile = themeSwc))) && 
+                !File.Exists(Path.Combine(project.Directory, (themeFile = themeCss))))
             {
-                string[] additional = project.CompilerOptions.Additional ?? new string[] { };
-                Array.Resize(ref additional, additional.Length + 1);
+                if (!File.Exists(Path.Combine(themeLocation, (themeFile = themeName + ".swc"))) &&
+                    !File.Exists(Path.Combine(themeLocation, (themeFile = themeName + ".css")))) return;
 
-                additional[additional.Length - 1] = "-theme" + (GetAttribute("themeIsDefault") == "false" ? "+=" : "=") + SafeNativeMethods.GetShortPathName(themeFile);
+                foreach (var file in Directory.GetFiles(themeLocation, "*.*", SearchOption.TopDirectoryOnly))
+                {
+                    var relativePath = ".packagedThemes" + s + ProjectPaths.GetRelativePath(themeLocation, file);
+                    var directory = Path.GetDirectoryName(relativePath);
 
-                project.CompilerOptions.Additional = additional;
+                    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
 
-                project.RebuildCompilerOptions();
+                    File.Copy(file, relativePath);
+                }
+
+                themeFile = ".packagedThemes" + s + themeFile;
             }
+            
+            string[] additional = project.CompilerOptions.Additional ?? new string[] { };
+            Array.Resize(ref additional, additional.Length + 1);
+
+            additional[additional.Length - 1] = "-theme" + (GetAttribute("themeIsDefault") == "false" ? "+=" : "=") + PathHelper.GetShortPathName(themeFile);
+
+            project.CompilerOptions.Additional = additional;
+
+            project.RebuildCompilerOptions();
         }
 
         private void ReadBuildTargets()
@@ -245,37 +264,20 @@ namespace ProjectManager.Projects.AS3
 
         public static String GetThemeFolderPath()
         {
-            StringBuilder builder = new StringBuilder();
-            SafeNativeMethods.SHGetFolderPath(IntPtr.Zero, SafeNativeMethods.CSIDL_PROFILE, IntPtr.Zero, 0x0000, builder);
-
-            return builder.ToString() + Path.DirectorySeparatorChar + "Application Data" + Path.DirectorySeparatorChar +
-                "Adobe" + Path.DirectorySeparatorChar + "Flash Builder" + Path.DirectorySeparatorChar + "Themes";
-        }
-
-        private class SafeNativeMethods
-        {
-
-            public const int CSIDL_PROFILE = 0x0028;
-
-            [DllImport("shell32.dll")]
-            public static extern int SHGetFolderPath(IntPtr hwndOwner, int nFolder, IntPtr hToken,
-               uint dwFlags, [Out] StringBuilder pszPath);
-
-            [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-            private static extern Int32 GetShortPathName(String path, StringBuilder shortPath, Int32 shortPathLength);
-
-            public static String GetShortPathName(String longPath)
+            string themePath;
+            char s = Path.DirectorySeparatorChar;
+            switch (Environment.OSVersion.Platform)
             {
-                StringBuilder shortPath = new StringBuilder(longPath.Length + 1);
-
-                if (0 == GetShortPathName(longPath, shortPath, shortPath.Capacity))
-                {
-                    return longPath;
-                }
-
-                return shortPath.ToString();
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    return string.Format("{0}{1}Application Data{1}Adobe{1}Flash Builder{1}Themes",
+                                         Environment.GetEnvironmentVariable("USERPROFILE"), s);
+                default:
+                    return string.Format("{0}{1}Library{1}Application Support{1}Adobe{1}Flash Builder{1}Themes",
+                                         Environment.GetEnvironmentVariable("HOME"), s);
             }
-
         }
     }
 }

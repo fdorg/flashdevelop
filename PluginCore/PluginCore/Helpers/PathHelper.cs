@@ -288,7 +288,7 @@ namespace PluginCore.Helpers
         private static extern Int32 GetShortPathName(String lpszLongPath, StringBuilder lpszShortPath, Int32 cchBuffer);
         public static String GetShortPathName(String longName)
         {
-            Int32 max = longName.Length;
+            Int32 max = longName.Length + 1;
             StringBuilder sb = new StringBuilder(max);
             GetShortPathName(longName, sb, max);
             return sb.ToString();
@@ -314,39 +314,39 @@ namespace PluginCore.Helpers
             }
         }
 
-		/// <summary>
-		/// Gets the correct physical path from the file system
-		/// </summary>
+        /// <summary>
+        /// Gets the correct physical path from the file system
+        /// </summary>
         [DllImport("shell32.dll", EntryPoint = "#28")]
         private static extern uint SHILCreateFromPath([MarshalAs(UnmanagedType.LPWStr)] String pszPath, out IntPtr ppidl, ref int rgflnOut);
-		[DllImport("shell32.dll", EntryPoint = "SHGetPathFromIDListW")] 
+        [DllImport("shell32.dll", EntryPoint = "SHGetPathFromIDListW")] 
         private static extern bool SHGetPathFromIDList(IntPtr pidl, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder pszPath);
-		public static String GetPhysicalPathName(String path)
-		{
-			try
-			{
+        public static String GetPhysicalPathName(String path)
+        {
+            try
+            {
                 uint r;
                 IntPtr ppidl;
-				int rgflnOut = 0;
-				r = SHILCreateFromPath(path, out ppidl, ref rgflnOut);
-				if (r == 0)
-				{
-					StringBuilder sb = new StringBuilder(260);
-					if (SHGetPathFromIDList(ppidl, sb))
-					{
+                int rgflnOut = 0;
+                r = SHILCreateFromPath(path, out ppidl, ref rgflnOut);
+                if (r == 0)
+                {
+                    StringBuilder sb = new StringBuilder(260);
+                    if (SHGetPathFromIDList(ppidl, sb))
+                    {
                         Char sep = Path.DirectorySeparatorChar;
                         Char alt = Path.AltDirectorySeparatorChar;
                         return sb.ToString().Replace(alt, sep);
-					}
-				}
-				return path;
-			}
-			catch (Exception ex)
-			{
-				ErrorManager.ShowError(ex);
-				return path;
-			}
-		}
+                    }
+                }
+                return path;
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return path;
+            }
+        }
 
         /// <summary>
         /// Gets the 32-bit Java install path
