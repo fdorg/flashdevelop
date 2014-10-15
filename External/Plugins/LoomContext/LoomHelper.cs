@@ -26,6 +26,11 @@ namespace LoomContext
         {
             string loomPath = ResolveLoom();
             string loom = Path.Combine(loomPath, "loom.bat");
+            if (!File.Exists(loom))
+            {
+                ShowMissingLoomBatError();
+                return;
+            }
             string oldWD = PluginBase.MainForm.WorkingDirectory;
             PluginBase.MainForm.WorkingDirectory = project.Directory;
             PluginBase.MainForm.CallCommand("RunProcessCaptured", loom + ";compile");
@@ -40,11 +45,21 @@ namespace LoomContext
                 return;
             }
 
-            string loomPath = ResolveLoom();
-            ProcessStartInfo info = new ProcessStartInfo(Path.Combine(loomPath, "loom.bat"), "run");
+            string loom = Path.Combine(ResolveLoom(), "loom.bat");
+            if (!File.Exists(loom))
+            {
+                ShowMissingLoomBatError();
+                return;
+            }
+            ProcessStartInfo info = new ProcessStartInfo(loom, "run");
             Process process = new Process();
             process.StartInfo = info;
             process.Start();
+        }
+
+        private static void ShowMissingLoomBatError()
+        {
+            ErrorManager.ShowInfo("Could not find loom.bat. Is the Loom SDK installed?");
         }
 
         private static string ResolveLoom()
@@ -134,6 +149,12 @@ namespace LoomContext
             
             string loomPath = ResolveLoom();
             string loom = Path.Combine(loomPath, "loom.bat");
+            if (!File.Exists(loom))
+            {
+                ShowMissingLoomBatError();
+                return;
+            }
+
             string oldWD = PluginBase.MainForm.WorkingDirectory;
             string cmd = loom + ";new --force";
             if (!string.IsNullOrEmpty(pkg)) cmd += " --app-id " + pkg;
