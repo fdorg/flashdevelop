@@ -380,15 +380,19 @@ namespace ASCompletion.Model
             }
             catch { }
 
-            // explore subfolders
-            string[] dirs = Directory.GetDirectories(path);
-            foreach (string dir in dirs)
+            try
             {
-                if (!explored.Contains(dir) 
-                    && (File.GetAttributes(dir) & FileAttributes.Hidden) == 0
-                    && !IgnoreDirectory(dir))
-                    ExploreFolder(dir, masks);
+                // explore subfolders
+                string[] dirs = Directory.GetDirectories(path);
+                foreach (string dir in dirs)
+                {
+                    if (!explored.Contains(dir) 
+                        && (File.GetAttributes(dir) & FileAttributes.Hidden) == 0
+                        && !IgnoreDirectory(dir))
+                        ExploreFolder(dir, masks);
+                }
             }
+            catch { }
 		}
 
         private bool IgnoreDirectory(string dir)

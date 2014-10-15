@@ -563,8 +563,7 @@ namespace ASCompletion.Context
 		{
 			try
 			{
-				if (path == null || path.Length == 0)
-					return null;
+				if (string.IsNullOrEmpty(path)) return null;
                 if (Directory.Exists(path)) path = NormalizePath(path);
                 else if (File.Exists(path)) path = NormalizeFilename(path);
                 else return null;
@@ -813,32 +812,37 @@ namespace ASCompletion.Context
         /// <returns>File model</returns>
         public virtual FileModel GetCachedFileModel(string fileName)
         {
-            if (fileName == null || fileName.Length == 0 || !File.Exists(fileName)) 
+            if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName)) 
                 return new FileModel(fileName);
 
             FileModel nFile;
             fileName = PathHelper.GetLongPathName(fileName);
-            
-            // check if in cache
-            foreach (PathModel aPath in classPath)
+            if (classPath != null)
             {
-                if (aPath.HasFile(fileName))
+                // check if in cache
+                foreach (PathModel aPath in classPath)
                 {
-                    nFile = aPath.GetFile(fileName);
-                    nFile.Check();
-                    return nFile;
+                    if (aPath.HasFile(fileName))
+                    {
+                        nFile = aPath.GetFile(fileName);
+                        nFile.Check();
+                        return nFile;
+                    }
                 }
             }
 
             // parse and add to cache
             nFile = ASFileParser.ParseFile(CreateFileModel(fileName));
-            string upName = fileName.ToUpper();
-            foreach (PathModel aPath in classPath)
+            if (classPath != null)
             {
-                if (upName.StartsWith(aPath.Path, StringComparison.OrdinalIgnoreCase))
+                string upName = fileName.ToUpper();
+                foreach (PathModel aPath in classPath)
                 {
-                    aPath.AddFile(nFile);
-                    return nFile;
+                    if (upName.StartsWith(aPath.Path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        aPath.AddFile(nFile);
+                        return nFile;
+                    }
                 }
             }
 
@@ -950,8 +954,7 @@ namespace ASCompletion.Context
             // parse
             FileModel temp = new FileModel();
             temp.haXe = ASContext.Context.Settings.LanguageId == "HAXE";
-            if (src != null && src.Trim().Length > 0)
-                parser.ParseSrc(temp, src);
+            if (!string.IsNullOrEmpty(src)) parser.ParseSrc(temp, src);
             return temp;
         }
 
@@ -987,7 +990,7 @@ namespace ASCompletion.Context
                 cFile.Context = this;
                 UpdateCurrentFile(false); // does update line & context
             }
-            else
+            else if (CurSciControl != null)
             {
                 cLine = CurSciControl.LineFromPosition(CurSciControl.CurrentPos);
                 UpdateContext(cLine);
@@ -1070,7 +1073,7 @@ namespace ASCompletion.Context
         {
             ASResult result = new ASResult();
             result.InClass = ClassModel.VoidClass;
-
+            if (cFile == null) return result;
             // current class
             foreach (ClassModel aClass in cFile.Classes)
             {
@@ -1460,7 +1463,7 @@ namespace ASCompletion.Context
 		{
 			string src = null;
 			string dest = null;
-			if ((files != null) && (files.Length > 0))
+			if (!string.IsNullOrEmpty(files))
 			{
 				string[] list = files.Split(';');
 				if (list.Length == 1) dest = list[0];
@@ -1516,11 +1519,9 @@ namespace ASCompletion.Context
 
         static public string NormalizeFilename(string path)
         {
-            if (path == null)
-                return "";
+            if (string.IsNullOrEmpty(path)) return "";
             path = path.Trim();
-            if (path.Length == 0)
-                return path;
+            if (path.Length == 0) return path;
             if (doPathNormalization)
                 path = path.Replace(dirAltSeparator, dirSeparator);
             path = path.Replace(dirSeparator + dirSeparator, dirSeparator);
@@ -1528,11 +1529,9 @@ namespace ASCompletion.Context
         }
         static public string NormalizePath(string path)
         {
-            if (path == null)
-                return "";
+            if (string.IsNullOrEmpty(path)) return "";
             path = path.Trim();
-            if (path.Length == 0)
-                return path;
+            if (path.Length == 0) return path;
             if (doPathNormalization)
                 path = path.Replace(dirAltSeparator, dirSeparator);
             if (!path.EndsWith(dirSeparator))

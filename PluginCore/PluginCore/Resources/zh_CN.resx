@@ -1856,6 +1856,14 @@
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>编译项目(&amp;B)</value>
   </data>
+  <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
+    <value>Stop Build</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ProjectManager.Info.AreYouSureToStopBuild" xml:space="preserve">
+    <value>Are you sure you want to stop the build?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>取消(&amp;C)</value>
   </data>
@@ -3382,7 +3390,8 @@
     <value>启用所有断点</value>
   </data>
   <data name="FlashDebugger.Label.Exp" xml:space="preserve">
-    <value>条件</value>
+    <value>Condition</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Finish" xml:space="preserve">
     <value>完成(&amp;F)</value>
