@@ -1,0 +1,3 @@
+do $(CSLB){
+	{0}
+} while ($(EntryPoint));
