@@ -1942,11 +1942,7 @@ namespace ASCompletion.Completion
                 mix.Merge(ctx.GetVisibleExternalElements());
                 MemberList decl = new MemberList();
                 foreach (string key in features.codeKeywords)
-                {
-                    MemberModel member = new MemberModel(key, key, FlagType.Template, 0);
-                    member.Comments = "[i](" + TextHelper.GetString("Info.InsertKeywordSnippet") + ")[/i]";
-                    decl.Add(member);
-                }
+                    decl.Add(new MemberModel(key, key, FlagType.Template, 0));
                 decl.Sort();
                 mix.Merge(decl);
             }
@@ -1955,12 +1951,10 @@ namespace ASCompletion.Completion
             List<ICompletionListItem> list = new List<ICompletionListItem>();
             foreach (MemberModel member in mix)
             {
-                MemberItem memberItem = new MemberItem(member);
-
                 if ((member.Flags & FlagType.Template) > 0)
-                    memberItem.ShowDetailsCondition = delegate { return HasSnippet(member.Name); };
-
-                list.Add(memberItem);
+                    list.Add(new TemplateItem(member));
+                else
+                    list.Add(new MemberItem(member));
             }
 			CompletionList.Show(list, autoHide, tail);
 
@@ -4070,7 +4064,7 @@ namespace ASCompletion.Completion
                 PluginBase.MainForm.CallCommand("InsertSnippet", word);
         }
 
-        private static bool HasSnippet(string word)
+        public static bool HasSnippet(string word)
         {
             String global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
             String specificDir = Path.Combine(PathHelper.SnippetDir, ASContext.Context.Settings.LanguageId);
@@ -4164,8 +4158,7 @@ namespace ASCompletion.Completion
     /// </summary>
     public class MemberItem : ICompletionListItem
     {
-        public Func<bool> ShowDetailsCondition;
-        private MemberModel member;
+        protected MemberModel member;
         private int icon;
 
         public MemberItem(MemberModel oMember)
@@ -4179,14 +4172,11 @@ namespace ASCompletion.Completion
             get { return member.FullName; }
         }
 
-        public string Description
+        public virtual string Description
         {
             get
             {
-                string result = ClassModel.MemberDeclaration(member);
-                if (ShowDetailsCondition == null || ShowDetailsCondition())
-                    result += ASDocumentation.GetTipDetails(member, null);
-                return result; 
+                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null); 
             }
         }
 
@@ -4212,6 +4202,24 @@ namespace ASCompletion.Completion
         public override string ToString()
         {
             return Label;
+        }
+    }
+
+    /// <summary>
+    /// Template completion list item
+    /// </summary>
+    public class TemplateItem : MemberItem
+    {
+        public TemplateItem(MemberModel oMember) : base(oMember) { }
+
+        override public string Description
+        {
+            get
+            {
+                if (ASComplete.HasSnippet(member.Name))
+                    member.Comments = "[i](" + TextHelper.GetString("Info.InsertKeywordSnippet") + ")[/i]";
+                return base.Description;
+            }
         }
     }
 
@@ -4385,8 +4393,6 @@ namespace ASCompletion.Completion
         public ClassModel TokenType;
     }
 	#endregion
-
-    public delegate T Func<T>();
 }
 
 
