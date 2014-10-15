@@ -19,22 +19,22 @@ using System.Text.RegularExpressions;
 
 namespace ProjectManager.Actions
 {
-	public delegate void ProjectModifiedHandler(string[] paths);
+    public delegate void ProjectModifiedHandler(string[] paths);
 
-	/// <summary>
-	/// Provides high-level actions for working with Project files.
-	/// </summary>
-	public class ProjectActions
-	{
+    /// <summary>
+    /// Provides high-level actions for working with Project files.
+    /// </summary>
+    public class ProjectActions
+    {
         IWin32Window owner; // for dialogs
         string currentLang;
 
-		public event ProjectModifiedHandler ProjectModified;
+        public event ProjectModifiedHandler ProjectModified;
 
-		public ProjectActions(IWin32Window owner)
-		{
-			this.owner = owner;
-		}
+        public ProjectActions(IWin32Window owner)
+        {
+            this.owner = owner;
+        }
 
         #region New/Open Project
 
@@ -75,7 +75,7 @@ namespace ProjectManager.Actions
 
         public Project OpenProjectSilent(string path)
         {
-            try 
+            try
             {
                 String physical = PathHelper.GetPhysicalPathName(path);
                 Project loaded = ProjectLoader.Load(physical);
@@ -108,12 +108,14 @@ namespace ProjectManager.Actions
 
                     if (FileInspector.IsFlexBuilderProject(fbProject))
                     {
-                        Project imported = AS3Project.Load(fbProject);
+                        AS3Project imported = AS3Project.Load(fbProject);
                         string path = Path.GetDirectoryName(imported.ProjectPath);
-                        string name = Path.GetFileName(path);
+                        string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
                         string newPath = Path.Combine(path, name + ".as3proj");
                         PatchProject(imported);
+                        PatchFbProject(imported);
                         imported.SaveAs(newPath);
+
                         return newPath;
                     }
                     else
@@ -126,6 +128,85 @@ namespace ProjectManager.Actions
                 }
             }
             return null;
+        }
+
+        private void PatchFbProject(AS3Project project)
+        {
+            if (project == null || !project.MovieOptions.Platform.StartsWith("AIR")) return;
+
+            // We do this because the batch files cannot automatically detect the path changes caused by debug/release differences
+            bool trace = project.TraceEnabled;
+            project.TraceEnabled = false;
+            project.OutputPath = project.FixDebugReleasePath(project.OutputPath);
+            project.TraceEnabled = trace;
+
+            project.TestMovieBehavior = TestMovieBehavior.Custom;
+            project.TestMovieCommand = "Run.bat";
+
+            // We copy the needed project template files
+            bool isFlex = project.CompileTargets.Count > 0 && Path.GetExtension(project.CompileTargets[0]).ToLower() == ".mxml";
+            string projectPath;
+            var excludedFiles = new List<string>(); // This could be a setting, in any case, decided to do this in case someone added custom files to the project templates...
+            if (project.MovieOptions.Platform == "AIR Mobile")
+            {
+                projectPath = isFlex ? project.MovieOptions.PlatformSupport.GetProjectTemplate("flex") : project.MovieOptions.PlatformSupport.GetProjectTemplate("as3");
+                excludedFiles.AddRange(new[] { "application.xml.template", "Project.as3proj", "Project.png", "Project.txt", "bin", "cert", "icons", "src" });
+            }
+            else
+            {
+                // The files are the same for Flex 3 and 4, so no need to discern them
+                projectPath = isFlex ? project.MovieOptions.PlatformSupport.GetProjectTemplate("flex4") : project.MovieOptions.PlatformSupport.GetProjectTemplate("as3");
+                excludedFiles.AddRange(new[] { "application.xml.template", "Project.as3proj", "Project.png", "Project.txt", "bin", "src" });
+            }
+
+            if (projectPath == null || !Directory.Exists(projectPath = Path.Combine(PathHelper.ProjectsDir, projectPath)))
+            {
+                string info = TextHelper.GetString("Info.TemplateDirNotFound");
+                ErrorManager.ShowWarning(info, null);
+                return;
+            }
+            string path = Path.GetDirectoryName(project.ProjectPath);
+            var creator = new ProjectCreator();
+            creator.SetContext(Path.GetFileNameWithoutExtension(project.OutputPath), string.Empty);
+            foreach (var file in Directory.GetFiles(projectPath, "*.*", SearchOption.AllDirectories))
+            {
+                bool excluded = false;
+                foreach (var excludedFile in excludedFiles)
+                    if (file.StartsWith(Path.Combine(projectPath, excludedFile)))
+                    {
+                        excluded = true;
+                        break;
+                    }
+
+                if (excluded) continue;
+                var fileDirectory = Path.GetDirectoryName(file).Replace(projectPath, string.Empty);
+                if (fileDirectory.StartsWith("\\")) fileDirectory = fileDirectory.Substring(1);
+                var folder = Path.Combine(path, fileDirectory);
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                string newFile = Path.Combine(folder, Path.GetFileName(file));
+                if (Path.GetExtension(file).ToLower() == ".template")
+                {
+                    creator.CopyFile(file, newFile);
+                }
+                else
+                {
+                    File.Copy(file, newFile, true);
+                }
+            }
+
+            // We configure the batch files
+            char s = Path.DirectorySeparatorChar;
+            string descriptor = "src" + s + Path.GetFileNameWithoutExtension(project.OutputPath) + "-app.xml";
+            var configurator = new AirConfigurator { ApplicationSetupBatch = Path.Combine(path, "bat" + s + "SetupApplication.bat") };
+            configurator.ApplicationSetupParams[AirConfigurator.DescriptorPath] = descriptor;
+            configurator.ApplicationSetupParams[AirConfigurator.PackageDir] = Path.GetFileName(Path.GetDirectoryName(project.OutputPath));
+            configurator.SetUp();
+
+            // We change the descriptor file so it targets our output file. FB does this dynamically.
+            descriptor = Path.Combine(path, descriptor);
+            var fileInfo = FileHelper.GetEncodingFileInfo(descriptor);
+            string contents = Regex.Replace(fileInfo.Contents, "<content>\\[This value will be overwritten by (Flex|Flash) Builder in the output app.xml]</content>", "<content>" + Path.GetFileName(project.OutputPath) + "</content>");
+            FileHelper.WriteFile(descriptor, contents, System.Text.Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
         }
 
         private void PatchProject(Project project)
@@ -188,10 +269,10 @@ namespace ProjectManager.Actions
 
         #endregion
 
-		#region Update ASCompletion
+        #region Update ASCompletion
 
-		public void UpdateASCompletion(IMainForm mainForm, Project project)
-		{
+        public void UpdateASCompletion(IMainForm mainForm, Project project)
+        {
             List<string> classPaths = new List<string>();
             List<string> hiddenPaths = new List<string>();
             string version;
@@ -311,41 +392,41 @@ namespace ProjectManager.Actions
                 project.AdditionalPaths = info.ContainsKey("additional") ? info["additional"] as string[] : null;
             }
             else currentLang = null;
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#region Project File Reference Updating
+        #region Project File Reference Updating
 
-		public void RemoveAllReferences(Project project, string path)
-		{
-			if (project.IsLibraryAsset(path))
-				project.SetLibraryAsset(path, false);
+        public void RemoveAllReferences(Project project, string path)
+        {
+            if (project.IsLibraryAsset(path))
+                project.SetLibraryAsset(path, false);
 
-			if (project.IsCompileTarget(path))
-				project.SetCompileTarget(path, false);
-		}
+            if (project.IsCompileTarget(path))
+                project.SetCompileTarget(path, false);
+        }
 
-		public void MoveReferences(Project project, string fromPath, string toPath)
-		{
-			if (project.IsCompileTarget(fromPath))
-			{
-				project.SetCompileTarget(fromPath, false);
-				project.SetCompileTarget(toPath, true);
-			}
-			
-			if (project.IsLibraryAsset(fromPath))
-			{
-				project.ChangeAssetPath(fromPath,toPath);
-			}
-		}
+        public void MoveReferences(Project project, string fromPath, string toPath)
+        {
+            if (project.IsCompileTarget(fromPath))
+            {
+                project.SetCompileTarget(fromPath, false);
+                project.SetCompileTarget(toPath, true);
+            }
 
-		#endregion
+            if (project.IsLibraryAsset(fromPath))
+            {
+                project.ChangeAssetPath(fromPath, toPath);
+            }
+        }
 
-		#region Working with Project Files
+        #endregion
+
+        #region Working with Project Files
 
         public void InsertFile(IMainForm mainForm, Project project, string path, GenericNode node)
-		{
+        {
             if (!mainForm.CurrentDocument.IsEditable) return;
             string nodeType = (node != null) ? node.GetType().ToString() : null;
             string export = (node != null && node is ExportNode) ? (node as ExportNode).Export : null;
@@ -361,25 +442,25 @@ namespace ProjectManager.Actions
                 string msg = TextHelper.GetString("Info.EmbedNeedsOpenDocument");
                 ErrorManager.ShowInfo(msg);
             }
-		}
+        }
 
-		public void ToggleLibraryAsset(Project project, string[] paths)
-		{
-			foreach (string path in paths)
-			{
-				bool isResource = project.IsLibraryAsset(path);
-				project.SetLibraryAsset(path, !isResource);
-			}
-			project.Save();
+        public void ToggleLibraryAsset(Project project, string[] paths)
+        {
+            foreach (string path in paths)
+            {
+                bool isResource = project.IsLibraryAsset(path);
+                project.SetLibraryAsset(path, !isResource);
+            }
+            project.Save();
             OnProjectModified(paths);
-		}
+        }
 
-		public void ToggleShowHidden(Project project)
-		{
-			project.ShowHiddenPaths = !project.ShowHiddenPaths;
-			project.Save();
-			OnProjectModified(null);
-		}
+        public void ToggleShowHidden(Project project)
+        {
+            project.ShowHiddenPaths = !project.ShowHiddenPaths;
+            project.Save();
+            OnProjectModified(null);
+        }
 
         public void ToggleDocumentClass(Project project, string[] paths)
         {
@@ -393,17 +474,17 @@ namespace ProjectManager.Actions
         }
 
         public void ToggleAlwaysCompile(Project project, string[] paths)
-		{
-			foreach (string path in paths)
-			{
-				bool isTarget = project.IsCompileTarget(path);
-				project.SetCompileTarget(path, !isTarget);
-			}
+        {
+            foreach (string path in paths)
+            {
+                bool isTarget = project.IsCompileTarget(path);
+                project.SetCompileTarget(path, !isTarget);
+            }
             if (project.MaxTargetsCount > 0)
             {
                 while (project.CompileTargets.Count > project.MaxTargetsCount)
                 {
-                    int len = project.CompileTargets.Count; 
+                    int len = project.CompileTargets.Count;
                     string relPath = project.CompileTargets[0];
                     project.SetCompileTarget(relPath, false);
                     if (project.CompileTargets.Count == len) // safety if path is not removed
@@ -413,28 +494,29 @@ namespace ProjectManager.Actions
                     OnProjectModified(new string[] { path });
                 }
             }
-			project.Save();
-			OnProjectModified(paths);
-		}
+            project.Save();
+            OnProjectModified(paths);
+        }
 
-		public void ToggleHidden(Project project, string[] paths)
-		{
-			foreach (string path in paths)
-			{
-				bool isHidden = project.IsPathHidden(path);
-				project.SetPathHidden(path, !isHidden);
-			}
-			project.Save();
+        public void ToggleHidden(Project project, string[] paths)
+        {
+            foreach (string path in paths)
+            {
+                bool isHidden = project.IsPathHidden(path);
+                project.SetPathHidden(path, !isHidden);
+            }
+            project.Save();
 
-			OnProjectModified(null);
-		}
+            OnProjectModified(null);
+        }
 
-		#endregion
+        #endregion
 
-		private void OnProjectModified(string[] paths)
-		{
-			if (ProjectModified != null)
-				ProjectModified(paths);
-		}
+        private void OnProjectModified(string[] paths)
+        {
+            if (ProjectModified != null)
+                ProjectModified(paths);
+        }
     }
 }
+

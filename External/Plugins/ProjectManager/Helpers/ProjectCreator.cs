@@ -20,13 +20,13 @@ using ProjectManager.Projects.Generic;
 
 namespace ProjectManager.Helpers
 {
-	/// <summary>
-	/// Contains methods useful for working with project templates.
-	/// </summary>
-	public class ProjectCreator
-	{
+    /// <summary>
+    /// Contains methods useful for working with project templates.
+    /// </summary>
+    public class ProjectCreator
+    {
         private static Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-		string projectName;
+        string projectName;
         string projectId;
         string packageName;
         string packagePath;
@@ -42,22 +42,14 @@ namespace ProjectManager.Helpers
         private static bool isRunning;
         public static bool IsRunning { get { return isRunning; } }
 
-		/// <summary>
-		/// Creates a new project based on the specified template directory.
-		/// </summary>
-		public Project CreateProject(string templateDirectory, string projectLocation, string projectName, string packageName)
-		{
+        /// <summary>
+        /// Creates a new project based on the specified template directory.
+        /// </summary>
+        public Project CreateProject(string templateDirectory, string projectLocation, string projectName, string packageName)
+        {
             isRunning = true;
             if (!projectTypesSet) SetInitialProjectHash();
-			this.projectName = projectName;
-            this.packageName = packageName;
-            projectId = Regex.Replace(Project.RemoveDiacritics(projectName), "[^a-z0-9]", "", RegexOptions.IgnoreCase);
-            packagePath = packageName.Replace('.', '\\');
-            if (packageName.Length > 0)
-            {
-                packageDot = packageName + ".";
-                packageSlash = packagePath + "\\";
-            }
+            SetContext(projectName, packageName);
             string projectTemplate = FindProjectTemplate(templateDirectory);
             string projectPath = Path.Combine(projectLocation, projectName + Path.GetExtension(projectTemplate));
             projectPath = PathHelper.GetPhysicalPathName(projectPath);
@@ -72,9 +64,6 @@ namespace ProjectManager.Helpers
             EventManager.DispatchEvent(this, de);
             if (!de.Handled)
             {
-                defaultFlexSDK = PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
-                arguments = PluginBase.MainForm.CustomArguments.ToArray();
-                
                 Directory.CreateDirectory(projectLocation);
                 // manually copy important files
                 CopyFile(projectTemplate, projectPath);
@@ -97,7 +86,7 @@ namespace ProjectManager.Helpers
                 }
             }
             else return null;
-		}
+        }
 
         public static string FindProjectTemplate(string templateDirectory)
         {
@@ -111,44 +100,44 @@ namespace ProjectManager.Helpers
             return null;
         }
 
-		private void CopyProjectFiles(string sourceDir, string destDir, bool filter)
-		{
-			Directory.CreateDirectory(destDir);
+        private void CopyProjectFiles(string sourceDir, string destDir, bool filter)
+        {
+            Directory.CreateDirectory(destDir);
 
-			foreach (string file in Directory.GetFiles(sourceDir))
-			{
-				if (ShouldSkip(file, filter))
-					continue;
+            foreach (string file in Directory.GetFiles(sourceDir))
+            {
+                if (ShouldSkip(file, filter))
+                    continue;
 
-				string fileName = Path.GetFileName(file);
-				string destFile = Path.Combine(destDir,fileName);
+                string fileName = Path.GetFileName(file);
+                string destFile = Path.Combine(destDir, fileName);
 
-				CopyFile(file,destFile);
-			}
+                CopyFile(file, destFile);
+            }
 
             List<string> excludedDirs = new List<string>(PluginMain.Settings.ExcludedDirectories);
 
-			foreach (string dir in Directory.GetDirectories(sourceDir))
-			{
-				string dirName = Path.GetFileName(dir);
-		                dirName = ReplaceKeywords(dirName);
-				string destSubDir = Path.Combine(destDir, dirName);
+            foreach (string dir in Directory.GetDirectories(sourceDir))
+            {
+                string dirName = Path.GetFileName(dir);
+                dirName = ReplaceKeywords(dirName);
+                string destSubDir = Path.Combine(destDir, dirName);
 
-				// don't copy like .svn and stuff
-				if (excludedDirs.Contains(dirName.ToLower()))
-					continue;
+                // don't copy like .svn and stuff
+                if (excludedDirs.Contains(dirName.ToLower()))
+                    continue;
 
-				CopyProjectFiles(dir,destSubDir,false); // only filter the top directory
-			}
-		}
+                CopyProjectFiles(dir, destSubDir, false); // only filter the top directory
+            }
+        }
 
-		// copy a file, if it's an .as or .fdp file, replace template keywords
-		private void CopyFile(string source, string dest)
-		{
+        // copy a file, if it's an .as or .fdp file, replace template keywords
+        internal void CopyFile(string source, string dest)
+        {
             dest = ReplaceKeywords(dest); // you can use keywords in filenames too
             string ext = Path.GetExtension(source).ToLower();
-			if (FileInspector.IsProject(source, ext) || FileInspector.IsTemplate(source, ext))
-			{
+            if (FileInspector.IsProject(source, ext) || FileInspector.IsTemplate(source, ext))
+            {
                 if (FileInspector.IsTemplate(source, ext)) dest = dest.Substring(0, dest.LastIndexOf('.'));
 
                 Boolean saveBOM = PluginBase.MainForm.Settings.SaveUnicodeWithBOM;
@@ -160,12 +149,12 @@ namespace ProjectManager.Helpers
                 string src = File.ReadAllText(source);
                 src = ReplaceKeywords(ProcessCodeStyleLineBreaks(src));
                 FileHelper.WriteFile(dest, src, encoding, saveBOM);
-			}
-			else File.Copy(source, dest);
+            }
+            else File.Copy(source, dest);
         }
 
         private string ReplaceKeywords(string line)
-		{
+        {
             if (line.IndexOf("$") < 0) return line;
             if (packageName == "") line = line.Replace(" $(PackageName)", "");
             return line = reArgs.Replace(line, new MatchEvaluator(ReplaceVars));
@@ -189,21 +178,38 @@ namespace ProjectManager.Helpers
                     case "PACKAGENAME": return packageName;
                     case "PACKAGENAMELOWER": return packageName.ToLower();
                     case "PACKAGEPATH": return packagePath;
-                    case "PACKAGEPATHALT": return packagePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar); 
+                    case "PACKAGEPATHALT": return packagePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     case "PACKAGEDOT": return packageDot;
                     case "PACKAGESLASH": return packageSlash;
                     case "PACKAGESLASHALT": return packageSlash.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     case "DOLLAR": return "$";
-                    case "FLEXSDK": return defaultFlexSDK;
+                    case "FLEXSDK":
+                        if (defaultFlexSDK == null)
+                            defaultFlexSDK = PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
+                        return defaultFlexSDK;
                     case "APPDIR": return PathHelper.AppDir;
                     default:
+                        if (arguments == null) arguments = PluginBase.MainForm.CustomArguments.ToArray();
                         foreach (Argument arg in arguments)
                             if (arg.Key.ToUpper() == name) return arg.Value;
                         break;
                 }
             }
             return match.Value;
-		}
+        }
+
+        internal void SetContext(string projectName, string packageName)
+        {
+            this.projectName = projectName;
+            this.packageName = packageName;
+            projectId = Regex.Replace(Project.RemoveDiacritics(projectName), "[^a-z0-9.-]", "", RegexOptions.IgnoreCase);
+            packagePath = packageName.Replace('.', '\\');
+            if (packageName.Length > 0)
+            {
+                packageDot = packageName + ".";
+                packageSlash = packagePath + "\\";
+            }
+        }
 
         /// <summary>
         /// Gets the clipboard text
@@ -218,15 +224,15 @@ namespace ProjectManager.Helpers
             else return String.Empty;
         }
 
-		private bool ShouldSkip(string path, bool isProjectRoot)
-		{
-			string filename = Path.GetFileName(path).ToLower();
+        private bool ShouldSkip(string path, bool isProjectRoot)
+        {
+            string filename = Path.GetFileName(path).ToLower();
             if (isProjectRoot)
                 return projectTypes.ContainsKey(filename)
                     || filename == "project.txt"
                     || filename == "project.png";
             return filename == "dummy";
-		}
+        }
 
         private static void SetInitialProjectHash()
         {
@@ -275,7 +281,7 @@ namespace ProjectManager.Helpers
         public static string GetProjectFilters()
         {
             string[] exts = projectExt.ToArray();
-            string filters = "FlashDevelop Projects|" + String.Join(";", exts) 
+            string filters = "FlashDevelop Projects|" + String.Join(";", exts)
                 + "|Adobe Flex Builder Project|.actionScriptProperties";
             return filters;
         }
@@ -326,5 +332,5 @@ namespace ProjectManager.Helpers
             return text.Substring(startPos, endPos - startPos);
         }
         #endregion
-	}
+    }
 }
