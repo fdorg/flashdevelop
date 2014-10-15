@@ -32,7 +32,7 @@ namespace ProjectManager.Projects
 
         public static bool IsHaxeFile(string path, string ext)
         {
-            return FileHelper.IsHaxeFile(ext);
+            return FileHelper.IsHaxeExtension(ext);
         }
 
         public static bool IsMxml(string path, string ext)

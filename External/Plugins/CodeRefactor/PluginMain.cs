@@ -213,7 +213,7 @@ namespace CodeRefactor
                 return false;
             if (Directory.Exists(file)) return true;
             string ext = Path.GetExtension(file);
-            return (ext == ".as" || FileHelper.IsHaxeFile(ext) || ext == ".ls") && project.DefaultSearchFilter.Contains(ext);
+            return (ext == ".as" || FileHelper.IsHaxeExtension(ext) || ext == ".ls") && project.DefaultSearchFilter.Contains(ext);
         }
 
         #endregion

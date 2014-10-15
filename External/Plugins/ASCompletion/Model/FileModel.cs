@@ -156,7 +156,7 @@ namespace ASCompletion.Model
             Package = "";
             Module = "";
             FileName = fileName ?? "";
-            haXe = (fileName.Length > 3) ? FileHelper.IsHaxeFile(fileName) : false;
+            haXe = (fileName.Length > 3) ? FileHelper.IsHaxeExtension(Path.GetExtension(fileName)) : false;
             //
             Namespaces = new Dictionary<string, Visibility>();
             //

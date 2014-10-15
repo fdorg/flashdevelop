@@ -73,7 +73,7 @@ namespace ProjectManager.Projects.Haxe
 
         public override CompileTargetType AllowCompileTarget(string path, bool isDirectory)
         {
-            if (isDirectory || !FileHelper.IsHaxeFile(Path.GetExtension(path))) return CompileTargetType.None;
+            if (isDirectory || !FileHelper.IsHaxeExtension(Path.GetExtension(path))) return CompileTargetType.None;
 
             foreach (string cp in AbsoluteClasspaths)
                 if (path.StartsWith(cp, StringComparison.OrdinalIgnoreCase))

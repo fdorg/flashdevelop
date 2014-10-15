@@ -318,9 +318,9 @@ namespace PluginCore.Helpers
             else return true;
         }
 
-        public static bool IsHaxeFile(string fileName)
+        public static bool IsHaxeExtension(string extension)
         {
-            return fileName.EndsWith(".hx") || fileName.EndsWith(".hxp");
+            return extension == ".hx" || extension == ".hxp";
         }
     }
 
