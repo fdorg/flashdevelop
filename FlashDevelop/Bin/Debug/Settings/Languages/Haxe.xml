@@ -33,7 +33,7 @@
 			<line-comment><![CDATA[//]]></line-comment>
 			<comment-start><![CDATA[/*]]></comment-start>
 			<comment-end><![CDATA[*/]]></comment-end>
-			<file-extensions>hx</file-extensions>
+			<file-extensions>hx,hxp</file-extensions>
 			<use-keywords>
 				<keyword key="0" class="haxe-secondary-keywords" />
 				<keyword key="1" class="haxe-additional-keywords" />

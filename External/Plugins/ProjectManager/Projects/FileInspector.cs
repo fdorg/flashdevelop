@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using ProjectManager.Helpers;
+using PluginCore.Helpers;
 
 namespace ProjectManager.Projects
 {
@@ -31,7 +32,7 @@ namespace ProjectManager.Projects
 
         public static bool IsHaxeFile(string path, string ext)
         {
-            return ext == ".hx";
+            return FileHelper.IsHaxeExtension(ext);
         }
 
         public static bool IsMxml(string path, string ext)
