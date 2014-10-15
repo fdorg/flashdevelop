@@ -3382,7 +3382,8 @@
     <value>启用所有断点</value>
   </data>
   <data name="FlashDebugger.Label.Exp" xml:space="preserve">
-    <value>条件</value>
+    <value>Condition</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Finish" xml:space="preserve">
     <value>完成(&amp;F)</value>

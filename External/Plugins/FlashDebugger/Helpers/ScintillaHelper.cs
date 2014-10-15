@@ -330,16 +330,19 @@ namespace FlashDebugger
                 sci = GetScintillaControl(filefullpath);
             }
             Int32 i = GetScintillaControlIndex(sci);
-            PluginBase.MainForm.Documents[i].Activate();
-            if (line >= 0)
+            if (i != -1)
             {
-                sci.GotoLine(line);
-				if (bSelectLine)
+                PluginBase.MainForm.Documents[i].Activate();
+                if (line >= 0)
                 {
-                    Int32 start = sci.PositionFromLine(line);
-                    Int32 end = start + sci.LineLength(line);
-                    sci.SelectionStart = start;
-                    sci.SelectionEnd = end;
+                    sci.GotoLine(line);
+                    if (bSelectLine)
+                    {
+                        Int32 start = sci.PositionFromLine(line);
+                        Int32 end = start + sci.LineLength(line);
+                        sci.SelectionStart = start;
+                        sci.SelectionEnd = end;
+                    }
                 }
             }
         }

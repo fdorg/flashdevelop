@@ -152,10 +152,13 @@ namespace FlashDebugger
         void dgv_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            if (dgv.Rows[e.RowIndex].Cells["Line"].ColumnIndex == e.ColumnIndex)
+            DataGridViewRow row = dgv.Rows[e.RowIndex];
+            if ((row.Cells["FilePath"].ColumnIndex == e.ColumnIndex) ||
+                (row.Cells["FileName"].ColumnIndex == e.ColumnIndex) ||
+                (row.Cells["Line"].ColumnIndex == e.ColumnIndex)) 
             {
-                string filename = (string)dgv.Rows[e.RowIndex].Cells["FilePath"].Value;
-                int line = int.Parse((string)dgv.Rows[e.RowIndex].Cells["Line"].Value);
+                string filename = (string)row.Cells["FilePath"].Value;
+                int line = int.Parse((string)row.Cells["Line"].Value);
                 ScintillaHelper.ActivateDocument(filename, line - 1, true);
             }
         }
