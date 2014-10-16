@@ -2891,7 +2891,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
-    <value>Press F1 to show details</value>
+    <value>Press F1 to toggle details</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
