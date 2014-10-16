@@ -39,11 +39,11 @@ namespace HaXeContext
             Stop();
         }
 
-        public string[] GetCompletion(string[] args)
+        public string GetCompletion(string[] args)
         {
             if (!IsRunning()) StartServer();
             if (args == null)
-                return new string[0];
+                return string.Empty;
             try
             {
                 var client = new TcpClient("127.0.0.1", port);
@@ -54,7 +54,7 @@ namespace HaXeContext
                 writer.Write("\0");
                 writer.Flush();
                 var reader = new StreamReader(client.GetStream());
-                var lines = reader.ReadToEnd().Split('\n');
+                var lines = reader.ReadToEnd();
                 client.Close();
                 return lines;
             }
@@ -64,7 +64,7 @@ namespace HaXeContext
                 if (!failure && FallbackNeeded != null)
                     FallbackNeeded(false);
                 failure = true;
-                return new string[0];
+                return string.Empty;
             }
         }
 

@@ -3387,7 +3387,8 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
     <value>すべてのブレークポイントを有効(&amp;E)</value>
   </data>
   <data name="FlashDebugger.Label.Exp" xml:space="preserve">
-    <value>指数関数</value>
+    <value>Condition</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Finish" xml:space="preserve">
     <value>ステップアウト(&amp;F)</value>

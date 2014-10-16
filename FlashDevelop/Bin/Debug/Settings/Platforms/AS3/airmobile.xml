@@ -20,4 +20,8 @@
     <version value="14.0" swf-version="25" />
     <version value="15.0" swf-version="26" />
   </versions>
+  <templates>
+    <template target="as3" value="190 ActionScript 3 - AIR Mobile AS3 App" />
+    <template target="flex" value="195 ActionScript 3 - AIR Mobile Flex App" />
+  </templates>
 </platform>

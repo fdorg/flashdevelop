@@ -3390,7 +3390,8 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Enable All Breakpoints</value>
   </data>
   <data name="FlashDebugger.Label.Exp" xml:space="preserve">
-    <value>Exp</value>
+    <value>Condition</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Finish" xml:space="preserve">
     <value>Step &amp;Out</value>

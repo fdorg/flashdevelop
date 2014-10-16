@@ -240,6 +240,15 @@ namespace PluginCore
             }
             return LastVersion;
         }
+
+        public string GetProjectTemplate(string target)
+        {
+            var templateNode = RawData.SelectSingleNode("templates/template[@target='" + target + "']/@value");
+                
+            if (templateNode != null) return templateNode.Value;
+
+            return null;
+        }
     }
 
     public class PlatformVersion
