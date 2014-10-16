@@ -47,7 +47,9 @@ namespace ProjectManager.Controls.TreeView
         public ToolStripMenuItem SetDocumentClass = new ToolStripMenuItem(TextHelper.GetString("Label.SetDocumentClass"), Icons.DocumentClass.Img);
         public ToolStripMenuItem AddLibrary = new ToolStripMenuItem(TextHelper.GetString("Label.AddToLibrary"));
         public ToolStripMenuItem TestMovie = new ToolStripMenuItem(TextHelper.GetString("Label.TestMovie"), Icons.GreenCheck.Img);
+        public ToolStripMenuItem RunProject = new ToolStripMenuItem(TextHelper.GetString("Label.RunProject"));
         public ToolStripMenuItem BuildProject = new ToolStripMenuItem(TextHelper.GetString("Label.BuildProject"), Icons.Gear.Img);
+        public ToolStripMenuItem CleanProject = new ToolStripMenuItem(TextHelper.GetString("Label.CleanProject"));
         public ToolStripMenuItem CloseProject = new ToolStripMenuItem(TextHelper.GetString("Label.CloseProject"));
         public ToolStripMenuItem Properties = new ToolStripMenuItem(TextHelper.GetString("Label.Properties"), Icons.Options.Img);
         public ToolStripMenuItem ShellMenu = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"));
@@ -295,7 +297,9 @@ namespace ProjectManager.Controls.TreeView
         {
             bool showHidden = project.ShowHiddenPaths;
             menu.Add(TestMovie, 0);
+            menu.Add(RunProject, 0);
             menu.Add(BuildProject, 0);
+            menu.Add(CleanProject, 0);
             if (HasSubProjects()) menu.Add(TestAllProjects, 0);
             if (HasSubProjects()) menu.Add(BuildAllProjects, 0);
             menu.Add(CloseProject, 0);
@@ -466,6 +470,16 @@ namespace ProjectManager.Controls.TreeView
         private void AddFileItems(MergableMenu menu, string path)
         {
             AddFileItems(menu, path, true);
+        }
+
+        public bool DisabledForBuild
+        {
+            get { return !TestMovie.Enabled; }
+            set
+            {
+                TestMovie.Enabled = RunProject.Enabled = BuildProject.Enabled =
+                    TestMovie.Enabled = CleanProject.Enabled = CloseProject.Enabled = !value;
+            }
         }
 
         private void AddGenericFileItems(MergableMenu menu, string path)

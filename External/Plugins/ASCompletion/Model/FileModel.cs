@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using ASCompletion.Context;
 using System.Text.RegularExpressions;
+using PluginCore.Helpers;
 
 namespace ASCompletion.Model
 {
@@ -155,7 +156,7 @@ namespace ASCompletion.Model
             Package = "";
             Module = "";
             FileName = fileName ?? "";
-            haXe = (FileName.Length > 3) ? FileName.EndsWith(".hx") : false;
+            haXe = (fileName.Length > 3) ? FileHelper.IsHaxeExtension(Path.GetExtension(fileName)) : false;
             //
             Namespaces = new Dictionary<string, Visibility>();
             //

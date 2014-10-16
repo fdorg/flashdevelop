@@ -317,6 +317,11 @@ namespace PluginCore.Helpers
             }
             else return true;
         }
+
+        public static bool IsHaxeExtension(string extension)
+        {
+            return extension == ".hx" || extension == ".hxp";
+        }
     }
 
     /// <summary>

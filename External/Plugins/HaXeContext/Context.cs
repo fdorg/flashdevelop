@@ -1006,7 +1006,7 @@ namespace HaXeContext
         }
 
         /// <summary>
-        /// Prepare haXe intrinsic known vars/methods/classes
+        /// Prepare haxe intrinsic known vars/methods/classes
         /// </summary>
         protected override void InitTopLevelElements()
         {
@@ -1404,7 +1404,7 @@ namespace HaXeContext
         }
 
         /// <summary>
-        /// Run haXe compiler in the current class's base folder with current classpath
+        /// Run haxe compiler in the current class's base folder with current classpath
         /// </summary>
         /// <param name="append">Additional comiler switches</param>
         public override void RunCMD(string append)
