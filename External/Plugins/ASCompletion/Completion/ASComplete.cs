@@ -2310,16 +2310,34 @@ namespace ASCompletion.Completion
         }
 
         #region expression_evaluator
+
         /// <summary>
-		/// Find expression type in function context
-		/// </summary>
-		/// <param name="expression">To evaluate</param>
+        /// Find expression type in function context
+        /// </summary>
+        /// <param name="expression">To evaluate</param>
         /// <param name="context">Completion context</param>
         /// <param name="inFile">File context</param>
-		/// <param name="inClass">Class context</param>
-		/// <param name="complete">Complete (sub-expression) or partial (dot-completion) evaluation</param>
-		/// <returns>Class/member struct</returns>
-        static private ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility = true)
+        /// <param name="inClass">Class context</param>
+        /// <param name="complete">Complete (sub-expression) or partial (dot-completion) evaluation</param>
+        /// <param name="asFunction"></param>
+        /// <returns>Class/member struct</returns>
+        static private ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction)
+        {
+            return EvalExpression(expression, context, inFile, inClass, complete, asFunction, true);
+        }
+
+        /// <summary>
+        /// Find expression type in function context
+        /// </summary>
+        /// <param name="expression">To evaluate</param>
+        /// <param name="context">Completion context</param>
+        /// <param name="inFile">File context</param>
+        /// <param name="inClass">Class context</param>
+        /// <param name="complete">Complete (sub-expression) or partial (dot-completion) evaluation</param>
+        /// <param name="asFunction"></param>
+        /// <param name="filterVisibility"></param>
+        /// <returns>Class/member struct</returns>
+        static private ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
 		{
 			ASResult notFound = new ASResult();
             notFound.Context = context;
@@ -3646,7 +3664,12 @@ namespace ASCompletion.Completion
 			return word;
 		}
 
-		static public ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility = true)
+        static public ASResult GetExpressionType(ScintillaControl sci, int position)
+        {
+            return GetExpressionType(sci, position, true);
+        }
+
+		static public ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility)
 		{
             // context
             int line = sci.LineFromPosition(position);
