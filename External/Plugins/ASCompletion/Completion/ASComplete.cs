@@ -1949,8 +1949,13 @@ namespace ASCompletion.Completion
 
 			// show
             List<ICompletionListItem> list = new List<ICompletionListItem>();
-			foreach(MemberModel member in mix)
-                list.Add(new MemberItem(member));
+            foreach (MemberModel member in mix)
+            {
+                if ((member.Flags & FlagType.Template) > 0)
+                    list.Add(new TemplateItem(member));
+                else
+                    list.Add(new MemberItem(member));
+            }
 			CompletionList.Show(list, autoHide, tail);
 
             // smart focus token
@@ -4078,11 +4083,16 @@ namespace ASCompletion.Completion
 
         private static void InsertSnippet(string word)
         {
+            if (HasSnippet(word))
+                PluginBase.MainForm.CallCommand("InsertSnippet", word);
+        }
+
+        public static bool HasSnippet(string word)
+        {
             String global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
             String specificDir = Path.Combine(PathHelper.SnippetDir, ASContext.Context.Settings.LanguageId);
             String specific = Path.Combine(specificDir, word + ".fds");
-            if (File.Exists(specific) || File.Exists(global))
-                PluginBase.MainForm.CallCommand("InsertSnippet", word);
+            return File.Exists(specific) || File.Exists(global);
         }
 
 		/// <summary>
@@ -4171,7 +4181,7 @@ namespace ASCompletion.Completion
     /// </summary>
     public class MemberItem : ICompletionListItem
     {
-        private MemberModel member;
+        protected MemberModel member;
         private int icon;
 
         public MemberItem(MemberModel oMember)
@@ -4185,11 +4195,11 @@ namespace ASCompletion.Completion
             get { return member.FullName; }
         }
 
-        public string Description
+        public virtual string Description
         {
             get
             {
-                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
+                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null); 
             }
         }
 
@@ -4215,6 +4225,24 @@ namespace ASCompletion.Completion
         public override string ToString()
         {
             return Label;
+        }
+    }
+
+    /// <summary>
+    /// Template completion list item
+    /// </summary>
+    public class TemplateItem : MemberItem
+    {
+        public TemplateItem(MemberModel oMember) : base(oMember) { }
+
+        override public string Description
+        {
+            get
+            {
+                if (ASComplete.HasSnippet(member.Name))
+                    member.Comments = "[i](" + TextHelper.GetString("Info.InsertKeywordSnippet") + ")[/i]";
+                return base.Description;
+            }
         }
     }
 

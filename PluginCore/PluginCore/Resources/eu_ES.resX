@@ -2884,6 +2884,14 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="ASCompletion.Info.GeneratorTemplate" xml:space="preserve">
     <value>Sortzaile txantiloia</value>
   </data>
+  <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
+    <value>Press Tab to insert the snippet for this keyword</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
+    <value>Press F1 to toggle details</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
     <value>Bilatu...</value>
   </data>
