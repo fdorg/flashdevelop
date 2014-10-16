@@ -11,6 +11,7 @@ using ProjectManager.Projects;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore;
+using Ookii.Dialogs;
 
 namespace ProjectManager.Controls
 {
@@ -230,9 +231,10 @@ namespace ProjectManager.Controls
 
 		private void btnNewClasspath_Click(object sender, EventArgs e)
 		{
-			using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
 			{
                 dialog.RootFolder = Environment.SpecialFolder.Desktop;
+                dialog.UseDescriptionForTitle = true;
                 dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
 
 				if (project != null) dialog.SelectedPath = project.Directory;
@@ -285,9 +287,10 @@ namespace ProjectManager.Controls
 		{
 			ClasspathEntry entry = listBox.SelectedItem as ClasspathEntry;
 			if (entry == null) return; // you could have double-clicked on whitespace
-			using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
 			{
 				dialog.RootFolder = Environment.SpecialFolder.Desktop;
+                dialog.UseDescriptionForTitle = true;
                 dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
 				if (project != null)
 				{

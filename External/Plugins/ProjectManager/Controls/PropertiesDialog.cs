@@ -16,6 +16,7 @@ using PluginCore.Controls;
 using System.Collections;
 using ProjectManager.Actions;
 using System.Collections.Generic;
+using Ookii.Dialogs;
 
 namespace ProjectManager.Controls
 {
@@ -1388,7 +1389,7 @@ namespace ProjectManager.Controls
 
         private void browseButton_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folder = new FolderBrowserDialog();
+            VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog();
             if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
                 folder.SelectedPath = customTextBox.Text;
             if (folder.ShowDialog() == DialogResult.OK)
