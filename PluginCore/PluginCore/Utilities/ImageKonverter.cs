@@ -65,7 +65,8 @@ namespace PluginCore.Utilities
             Bitmap bitmap = new Bitmap(width, height, source.PixelFormat);
             Graphics graphicsImage = Graphics.FromImage(bitmap);
             graphicsImage.SmoothingMode = SmoothingMode.HighQuality;
-            graphicsImage.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphicsImage.PixelOffsetMode = PixelOffsetMode.Half;
+            graphicsImage.InterpolationMode = InterpolationMode.Bicubic;
             graphicsImage.DrawImage(source, 0, 0, bitmap.Width, bitmap.Height);
             graphicsImage.Dispose();
             return bitmap;

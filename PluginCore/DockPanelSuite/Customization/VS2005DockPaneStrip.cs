@@ -133,7 +133,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonClose == null)
-                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_Close);
+                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Close);
 
                 return _imageButtonClose;
             }
@@ -162,7 +162,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonWindowList == null)
-                    _imageButtonWindowList = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_Option);
+                    _imageButtonWindowList = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Option);
 
                 return _imageButtonWindowList;
             }
@@ -174,7 +174,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonWindowListOverflow == null)
-                    _imageButtonWindowListOverflow = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_OptionOverflow);
+                    _imageButtonWindowListOverflow = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_OptionOverflow);
 
                 return _imageButtonWindowListOverflow;
             }
