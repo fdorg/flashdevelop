@@ -1,0 +1,9 @@
+package $(Package);
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+abstract $(FileName)($(EntryPoint)) $(CSLB){
+
+}
