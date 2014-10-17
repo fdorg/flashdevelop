@@ -53,7 +53,7 @@ namespace ProjectManager.Actions
                 path = Path.GetDirectoryName(path);
             }
             else fileServed = "";
-            pathServed = path;
+            pathServed = path.TrimEnd(new char[] { '/', '\\' });
         }
 
         static void CreateServer()
