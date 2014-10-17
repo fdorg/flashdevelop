@@ -121,7 +121,7 @@ namespace AppMan
         {
             this.localeData = new LocaleData();
             String localeDir = Path.Combine(PathHelper.GetExeDirectory(), "Locales");
-            String localeFile = Path.Combine(PathHelper.GetExeDirectory(), this.localeId + ".xml");
+            String localeFile = Path.Combine(localeDir, this.localeId + ".xml");
             if (File.Exists(localeFile))
             {
                 this.localeData = ObjectSerializer.Deserialize(localeFile, this.localeData) as LocaleData;
