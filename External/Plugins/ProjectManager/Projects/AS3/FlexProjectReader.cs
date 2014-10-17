@@ -264,7 +264,6 @@ namespace ProjectManager.Projects.AS3
 
         public static String GetThemeFolderPath()
         {
-            string themePath;
             char s = Path.DirectorySeparatorChar;
             switch (Environment.OSVersion.Platform)
             {
