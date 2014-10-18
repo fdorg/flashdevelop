@@ -124,6 +124,7 @@ namespace PluginCore
                 DefaultProjectFile = GetList(node, "default-project"),
                 HaxeTarget = GetAttribute(node, "haxe-target"),
                 DebuggerSupported = GetList(node, "debugger"),
+                ReadOnlyProperties = ParseProjectProperties(node, "read-only-properties"),
                 RawData = node
             };
             platform.VersionNames = new string[platform.Versions.Count];
@@ -206,6 +207,25 @@ namespace PluginCore
             return attr != null ? attr.Value : null;
         }
 
+        private static List<ProjectProperty> ParseProjectProperties(XmlNode node, string attribute)
+        {
+            var attr = node.Attributes[attribute];
+            string[] properties = attr.Value.Split(',');
+            List<ProjectProperty> propertiesList = new List<ProjectProperty>();
+            foreach (string property in properties)
+            {
+                switch (property)
+                {
+                    case "classpaths":
+                        propertiesList.Add(ProjectProperty.Classpaths);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return propertiesList;
+        }
+
         #endregion
     }
 
@@ -230,6 +250,7 @@ namespace PluginCore
         public string[] DefaultProjectFile;
         public string HaxeTarget;
         public string[] DebuggerSupported;
+        public List<ProjectProperty> ReadOnlyProperties;
         public XmlNode RawData;
 
         public PlatformVersion GetVersion(string value)
@@ -266,5 +287,9 @@ namespace PluginCore
         public XmlNode RawData;
     }
 
+    public enum ProjectProperty
+    {
+        Classpaths
+    }
 }
 

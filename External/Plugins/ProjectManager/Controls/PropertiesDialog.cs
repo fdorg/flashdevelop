@@ -954,7 +954,30 @@ namespace ProjectManager.Controls
             classpathControl.Classpaths = project.Classpaths.ToArray();
             classpathControl.Language = project.Language;
             classpathControl.LanguageBox.Visible = false;
+            UpdateClasspathStatus(project.MovieOptions.Platform);
             classpathsChanged = false;
+        }
+
+        private void UpdateClasspathStatus(string platform)
+        {
+            LanguagePlatform langPlatform = null;
+            if (PlatformData.SupportedLanguages.ContainsKey(project.Language))
+            {
+                SupportedLanguage lang = PlatformData.SupportedLanguages[project.Language];
+                if (lang.Platforms.ContainsKey(platform))
+                    langPlatform = lang.Platforms[platform];
+            }
+
+            if (langPlatform != null && langPlatform.ReadOnlyProperties.Contains(ProjectProperty.Classpaths))
+            {
+                classpathControl.Enabled = false;
+                label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), platform);
+            }
+            else
+            {
+                classpathControl.Enabled = true;
+                label2.Text = TextHelper.GetString("Info.ProjectClasspaths");
+            }
         }
 
         private void InitSDKTab()
@@ -1221,6 +1244,7 @@ namespace ProjectManager.Controls
             InitTestMovieOptions();
             UpdateGeneralPanel();
             UpdateEditCommandButton();
+            UpdateClasspathStatus(platformCombo.Text);
 
             DetectExternalToolchain();
 
