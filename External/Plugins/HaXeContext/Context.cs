@@ -463,16 +463,25 @@ namespace HaXeContext
         {
             if (!path.WasExplored && !path.IsVirtual && !path.IsTemporaryPath)
             {
-                string haxelib = Path.Combine(path.Path, "haxelib.xml");
+                // enable stricter validation for haxelibs which tend to include a lot of unrelated code (samples, templates)
+                string haxelib = Path.Combine(path.Path, "haxelib.json");
                 if (File.Exists(haxelib))
                 {
                     path.ValidatePackage = true;
-                    
-                    string src = File.ReadAllText(haxelib);
-                    if (src.IndexOf("<project name=\"nme\"") >= 0)
+                }
+                else 
+                {
+                    haxelib = Path.Combine(path.Path, "haxelib.xml");
+                    if (File.Exists(haxelib))
                     {
-                        ManualExploration(path, new string[] { 
-                            "js", "jeash", "neash", "native", "browser", "flash", "neko", "tools", "samples", "project" });
+                        path.ValidatePackage = true;
+                        // let's hide confusing packages of NME library
+                        string src = File.ReadAllText(haxelib);
+                        if (src.IndexOf("<project name=\"nme\"") >= 0)
+                        {
+                            ManualExploration(path, new string[] { 
+                                "js", "jeash", "neash", "native", "browser", "flash", "neko", "tools", "samples", "project" });
+                        }
                     }
                 }
             }
@@ -804,17 +813,12 @@ namespace HaXeContext
                             file.Context = this;
                         }
                     }
-                    /*else if (File.Exists(path))
-                    {
-                        file = GetFileModel(path);
-                        if (file != null)
-                            aPath.AddFile(file);
-                    }*/
                     if (file != null)
                     {
-                        // add all classes (Haxe module)
+                        // add all public classes of Haxe modules
                         foreach (ClassModel c in file.Classes)
-                            if (c.IndexType == null) imports.Add(c);
+                            if (c.IndexType == null && c.Access == Visibility.Public) 
+                                imports.Add(c);
                         matched = true;
                     }
                 }
