@@ -401,7 +401,7 @@ namespace HaXeContext
                     }
             }
 
-            // add external pathes
+            // add external paths
             List<PathModel> initCP = classPath;
             classPath = new List<PathModel>();
             if (contextSetup.Classpath != null)
@@ -415,7 +415,7 @@ namespace HaXeContext
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
-            // add initial pathes
+            // add initial paths
             foreach (PathModel mpath in initCP) AddPath(mpath);
 
             // parse top-level elements

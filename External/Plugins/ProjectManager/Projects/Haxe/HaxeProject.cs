@@ -394,6 +394,15 @@ namespace ProjectManager.Projects.Haxe
                     }
                 }
             }
+
+            // don't add the output dir to the classpath (crowds completion with OpenFL)
+            int slashIndex = output.IndexOf("/");
+            string outputDir = null;
+            if (slashIndex > 0)
+                outputDir = output.Substring(0, slashIndex);
+            if (outputDir != null)
+                cps.RemoveAll(cp => cp.StartsWith(outputDir));
+            
             CompilerOptions.Directives = defs.ToArray();
             CompilerOptions.Libraries = libs.ToArray();
             CompilerOptions.Additional = add.ToArray();
