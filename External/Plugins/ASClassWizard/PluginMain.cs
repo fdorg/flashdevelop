@@ -245,7 +245,7 @@ namespace ASClassWizard
                 if (File.Exists(newFilePath))
                 {
                     string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                    string message = TextHelper.GetString("ProjectManager.Info.FolderAlreadyContainsFile");
+                    string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
                     DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, newFilePath, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                     if (result == DialogResult.Cancel) return;
                 }
