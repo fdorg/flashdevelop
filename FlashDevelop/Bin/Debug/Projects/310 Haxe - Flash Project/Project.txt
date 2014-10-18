@@ -1,1 +1,1 @@
-An ActionScript 3 project written in the Haxe language
+A Flash project written in the Haxe language
