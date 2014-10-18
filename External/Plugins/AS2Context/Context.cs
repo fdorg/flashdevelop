@@ -1022,11 +1022,7 @@ namespace AS2Context
                                 if (type.IndexType != null) continue;
                                 MemberModel item = type.ToMemberModel();
                                 if (type.Access != Visibility.Private)
-                                /*{
-                                    item.Type = item.Name;
-                                    item.Access = Visibility.Private;
-                                }*/
-                                pModel.Imports.Add(item);
+                                    pModel.Imports.Add(item);
                             }
                             foreach (MemberModel member in model.Members)
                                 pModel.Members.Add(member.Clone() as MemberModel);
