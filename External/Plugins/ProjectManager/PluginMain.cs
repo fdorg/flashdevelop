@@ -881,7 +881,7 @@ namespace ProjectManager
                 string doc = project.TestMovieCommand;
                 try
                 {
-                    if (string.IsNullOrEmpty(project.TestMovieCommand))
+                    if (string.IsNullOrEmpty(doc) || doc == "/" || doc == "\\")
                     {
                         doc = project.OutputPathAbsolute;
                         if (File.Exists(doc)) doc = Path.GetDirectoryName(doc);

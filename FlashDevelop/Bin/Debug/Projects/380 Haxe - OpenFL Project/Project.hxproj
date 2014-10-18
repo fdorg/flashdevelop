@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="application.xml" />
+    <movie path="project.xml" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
