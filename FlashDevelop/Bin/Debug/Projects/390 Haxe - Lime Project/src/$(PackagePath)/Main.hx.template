@@ -1,25 +1,37 @@
 package $(PackageName);
-import lime.gl.GL;
-import lime.Lime;
+
+import lime.app.Application;
+import lime.graphics.opengl.GL;
+import lime.graphics.RenderContext;
 
 /**
 $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
 
-class Main {
-	var lime:Lime;
-	
-	public function new () {
+class Main extends Application $(CSLB){
+
+	public function new() $(CSLB){
+		super();
 	}
 	
-	public function ready (lime:Lime):Void {
-		this.lime = lime;
+	public override function init(context:RenderContext):Void $(CSLB){
+		switch (context) $(CSLB){
+			case OPENGL(gl):
+			
+			default:
+		}
 	}
 	
-	private function render ():Void {
-		GL.viewport (0, 0, lime.config.width, lime.config.height);
-		GL.clearColor (1.0, 1.0, 1.0, 1.0);
-		GL.clear (GL.COLOR_BUFFER_BIT);
-	}	
+	public override function render(context:RenderContext):Void $(CSLB){
+		switch (context) $(CSLB){
+			case OPENGL(gl):
+				gl.viewport(0, 0, window.width, window.height);
+				gl.clearColor(1.0, 1.0, 1.0, 1.0);
+				gl.clear(gl.COLOR_BUFFER_BIT);
+				
+			default:
+		}
+	}
+	
 }
