@@ -267,10 +267,5 @@ namespace PluginCore
         public string Value;
         public XmlNode RawData;
     }
-
-    public enum ProjectProperty
-    {
-        Classpaths
-    }
 }
 
