@@ -1998,6 +1998,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Output file:</value>
   </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Paste</value>
   </data>

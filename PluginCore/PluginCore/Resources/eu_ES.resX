@@ -1996,6 +1996,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Irteera fitxategia:</value>
   </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Itsatsi</value>
   </data>

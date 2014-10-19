@@ -954,20 +954,13 @@ namespace ProjectManager.Controls
             classpathControl.Classpaths = project.Classpaths.ToArray();
             classpathControl.Language = project.Language;
             classpathControl.LanguageBox.Visible = false;
-            UpdateClasspathStatus(project.MovieOptions.Platform);
+            UpdateClasspaths(project.MovieOptions.Platform);
             classpathsChanged = false;
         }
 
-        private void UpdateClasspathStatus(string platform)
+        private void UpdateClasspaths(string platform)
         {
-            LanguagePlatform langPlatform = null;
-            if (PlatformData.SupportedLanguages.ContainsKey(project.Language))
-            {
-                SupportedLanguage lang = PlatformData.SupportedLanguages[project.Language];
-                if (lang.Platforms.ContainsKey(platform))
-                    langPlatform = lang.Platforms[platform];
-            }
-
+            LanguagePlatform langPlatform = GetLanguagePlatform(platform);
             if (langPlatform != null)
             {
                 string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
@@ -1133,6 +1126,18 @@ namespace ProjectManager.Controls
             else return (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), (testMovieCombo.SelectedItem as ComboItem).Value.ToString());
         }
 
+        private LanguagePlatform GetLanguagePlatform(string platform)
+        {
+            LanguagePlatform langPlatform = null;
+            if (PlatformData.SupportedLanguages.ContainsKey(project.Language))
+            {
+                SupportedLanguage lang = PlatformData.SupportedLanguages[project.Language];
+                if (lang.Platforms.ContainsKey(platform))
+                    langPlatform = lang.Platforms[platform];
+            }
+            return langPlatform;
+        }
+
 		protected void Modified()
 		{
 			btnApply.Enabled = true;
@@ -1264,7 +1269,7 @@ namespace ProjectManager.Controls
             InitTestMovieOptions();
             UpdateGeneralPanel();
             UpdateEditCommandButton();
-            UpdateClasspathStatus(platformCombo.Text);
+            UpdateClasspaths(platformCombo.Text);
 
             DetectExternalToolchain();
 
@@ -1415,6 +1420,12 @@ namespace ProjectManager.Controls
             bool isGraphical = project.MovieOptions.IsGraphical(GetPlatform());
             widthTextBox.Enabled = heightTextBox.Enabled = fpsTextBox.Enabled
                 = colorTextBox.Enabled = colorLabel.Enabled = isGraphical;
+
+            LanguagePlatform langPlatform = GetLanguagePlatform(platformCombo.Text);
+            if (langPlatform != null && langPlatform.ExternalToolchain != null)
+                exportinLabel.Text = TextHelper.GetString("Label.ConfigurationFile");
+            else
+                exportinLabel.Text = TextHelper.GetString("Label.OutputFile");
         }
 
         private void manageButton_Click(object sender, EventArgs e)

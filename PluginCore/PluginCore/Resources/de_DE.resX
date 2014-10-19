@@ -2015,6 +2015,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Ausgabedatei:</value>
   </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Konfigurationsdatei:</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Einfügen</value>
   </data>

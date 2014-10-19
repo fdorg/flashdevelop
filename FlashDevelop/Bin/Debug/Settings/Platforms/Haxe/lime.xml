@@ -1,5 +1,5 @@
 <platform name="Lime" targets="html5,flash,windows,neko,android,tizen,blackberry,webos" debugger="flash" 
-	external="haxelib" external-capture="windows,neko,android,tizen,blackberry,webos" default-project="project.xml,application.xml">
+  external="haxelib" external-capture="windows,neko,android,tizen,blackberry,webos" default-project="project.xml,application.xml">
   <versions>
     <version value="1.0">
       <command name="display" value="lime display &quot;$(OutputFile)&quot; $(TargetBuild) -$(BuildConfig)"/>
