@@ -1227,7 +1227,7 @@ namespace ASCompletion.Completion
             while (tempLine > 0)
             {
                 tempText = Sci.GetLine(tempLine).Trim();
-                if (insideClass && IsClassDecl(tempText, features.typesKeywords))
+                if (insideClass && IsTypeDecl(tempText, features.typesKeywords))
                 {
                     tempIndent = Sci.GetLineIndentation(tempLine);
                     tab = tempIndent + Sci.TabWidth;
@@ -1258,7 +1258,7 @@ namespace ASCompletion.Completion
 			return true;
 		}
 
-        private static bool IsClassDecl(string line, string[] typesKeywords)
+        private static bool IsTypeDecl(string line, string[] typesKeywords)
         {
             foreach (string keyword in typesKeywords)
                 if (line.IndexOf(keyword) >= 0) return true;

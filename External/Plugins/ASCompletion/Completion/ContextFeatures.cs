@@ -165,7 +165,20 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (foundMember == null) access.AddRange(members);
+            if (foundMember == null)
+            {
+                access.AddRange(members);
+            }
+            else if (foundMember == "class" || foundMember == "interface")
+            {
+                if (hasExtends) access.Add("extends");
+                if (hasImplements) access.Add("implements");
+            }
+            else if (foundMember == "abstract")
+            {
+                access.Add("to");
+                access.Add("from");
+            }
 
             access.Sort();
             return access;
