@@ -172,7 +172,7 @@ namespace ASCompletion.Completion
             else if (foundMember == "class" || foundMember == "interface")
             {
                 if (hasExtends) access.Add("extends");
-                if (hasImplements) access.Add("implements");
+                if (hasImplements && foundMember != "interface") access.Add("implements");
             }
             else if (foundMember == "abstract")
             {
