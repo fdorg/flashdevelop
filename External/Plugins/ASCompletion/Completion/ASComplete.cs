@@ -1224,12 +1224,16 @@ namespace ASCompletion.Completion
             int tempLine = line-1;
             int tempIndent;
             string tempText;
-            while(tempLine > 0)
+            while (tempLine > 0)
             {
                 tempText = Sci.GetLine(tempLine).Trim();
-                if (tempText.IndexOf("class") >= 0 || tempText.IndexOf("interface") >=0 || tempText.IndexOf("enum") >= 0) 
+                if (insideClass && IsClassDecl(tempText, features.typesKeywords))
+                {
+                    tempIndent = Sci.GetLineIndentation(tempLine);
+                    tab = tempIndent + Sci.TabWidth;
                     break;
-                if (tempText.Length > 0 && (tempText.EndsWith("}") || IsDeclaration(tempText)))
+                }
+                if (tempText.Length > 0 && (tempText.EndsWith("}") || IsDeclaration(tempText, features)))
                 {
                     tempIndent = Sci.GetLineIndentation(tempLine);
                     tab = tempIndent;
@@ -1254,9 +1258,15 @@ namespace ASCompletion.Completion
 			return true;
 		}
 
-        private static bool IsDeclaration(string line)
+        private static bool IsClassDecl(string line, string[] typesKeywords)
         {
-            ContextFeatures features = ASContext.Context.Features;
+            foreach (string keyword in typesKeywords)
+                if (line.IndexOf(keyword) >= 0) return true;
+            return false;
+        }
+
+        private static bool IsDeclaration(string line, ContextFeatures features)
+        {
             foreach (string keyword in features.accessKeywords)
                 if (line.StartsWith(keyword)) return true;
             foreach (string keyword in features.declKeywords)
