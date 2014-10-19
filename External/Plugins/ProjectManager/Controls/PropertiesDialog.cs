@@ -968,7 +968,7 @@ namespace ProjectManager.Controls
                     langPlatform = lang.Platforms[platform];
             }
 
-            if (langPlatform != null && langPlatform.ReadOnlyProperties.Contains(ProjectProperty.Classpaths))
+            if (langPlatform != null && langPlatform.ReadOnlyClasspaths)
             {
                 classpathControl.Enabled = false;
                 label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), platform);
@@ -1042,6 +1042,7 @@ namespace ProjectManager.Controls
 
             InitCombo(versionCombo, project.MovieOptions.TargetVersions(this.platformCombo.Text), project.MovieOptions.Version);
             versionCombo.SelectedIndexChanged += new EventHandler(versionCombo_SelectedIndexChanged);
+            UpdateVersionCombo();
 
             InitTestMovieOptions();
             UpdateGeneralPanel();
@@ -1054,6 +1055,19 @@ namespace ProjectManager.Controls
             editCommandButton.Visible = state == TestMovieBehavior.Custom 
                 || state == TestMovieBehavior.OpenDocument
                 || state == TestMovieBehavior.Webserver;
+        }
+
+        private void UpdateVersionCombo()
+        {
+            if (versionCombo.Items.Count > 1)
+            {
+                versionCombo.Enabled = true;
+            }
+            else
+            {
+                versionCombo.Enabled = false;
+                versionCombo.SelectedIndex = -1;
+            }
         }
 
         private void InitTestMovieOptions()
@@ -1241,6 +1255,7 @@ namespace ProjectManager.Controls
             this.versionCombo.SelectedIndex = Math.Max(0, this.versionCombo.Items.IndexOf(
                         project.MovieOptions.DefaultVersion(this.platformCombo.Text)));
 
+            UpdateVersionCombo();
             InitTestMovieOptions();
             UpdateGeneralPanel();
             UpdateEditCommandButton();
