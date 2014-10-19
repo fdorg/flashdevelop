@@ -124,7 +124,6 @@ namespace PluginCore
                 DefaultProjectFile = GetList(node, "default-project"),
                 HaxeTarget = GetAttribute(node, "haxe-target"),
                 DebuggerSupported = GetList(node, "debugger"),
-                ReadOnlyClasspaths = GetBool(node, "read-only-classpaths"),
                 RawData = node
             };
             platform.VersionNames = new string[platform.Versions.Count];
@@ -231,7 +230,6 @@ namespace PluginCore
         public string[] DefaultProjectFile;
         public string HaxeTarget;
         public string[] DebuggerSupported;
-        public bool ReadOnlyClasspaths;
         public XmlNode RawData;
 
         public PlatformVersion GetVersion(string value)

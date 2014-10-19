@@ -968,16 +968,21 @@ namespace ProjectManager.Controls
                     langPlatform = lang.Platforms[platform];
             }
 
-            if (langPlatform != null && langPlatform.ReadOnlyClasspaths)
+            if (langPlatform != null)
             {
-                classpathControl.Enabled = false;
-                label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), platform);
+                string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
+                PlatformVersion version = langPlatform.GetVersion(selectedVersion);
+                
+                if (version != null && version.Commands != null && version.Commands.ContainsKey("display"))
+                {
+                    classpathControl.Enabled = false;
+                    label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), platform);
+                    return;
+                }
             }
-            else
-            {
-                classpathControl.Enabled = true;
-                label2.Text = TextHelper.GetString("Info.ProjectClasspaths");
-            }
+
+            classpathControl.Enabled = true;
+            label2.Text = TextHelper.GetString("Info.ProjectClasspaths");
         }
 
         private void InitSDKTab()
