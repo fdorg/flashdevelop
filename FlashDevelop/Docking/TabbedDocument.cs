@@ -29,6 +29,7 @@ namespace FlashDevelop.Docking
         private SplitContainer splitContainer;
         private Boolean useCustomIcon;
         private Boolean isModified;
+        private int bookmarksCount;
         private FileInfo fileInfo;
 
         public TabbedDocument()
@@ -112,6 +113,14 @@ namespace FlashDevelop.Docking
                     else this.splitContainer.Panel2.Hide();
                 }
             }
+        }
+
+        /// <summary>
+        /// Does this document have any bookmarks?
+        /// </summary>
+        public Boolean HasBookmarks
+        {
+            get { return bookmarksCount > 0; }
         }
 
         /// <summary>
@@ -227,6 +236,7 @@ namespace FlashDevelop.Docking
             if (this.SciControl != null && this.DockPanel.ActiveContent != null && this.DockPanel.ActiveContent == this)
             {
                 this.SciControl.Focus();
+                this.InitBookmarks();
             }
         }
 
@@ -408,6 +418,7 @@ namespace FlashDevelop.Docking
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
                 this.SciControl.Focus();
+                this.InitBookmarks();
             }
             Globals.MainForm.OnDocumentReload(this);
         }
@@ -478,6 +489,29 @@ namespace FlashDevelop.Docking
         {
             TabTextManager.UpdateTabTexts();
             this.UpdateToolTipText();
+        }
+
+        public void ToggleBookmark(int line)
+        {
+            if (MarkerManager.HasMarker(SciControl, 0, line))
+                bookmarksCount--;
+            else
+                bookmarksCount++;
+            MarkerManager.ToggleMarker(SciControl, 0, line);
+            ButtonManager.UpdateFlaggedButtons();
+        }
+
+        public void ClearBookmarks()
+        {
+            bookmarksCount = 0;
+        }
+
+        private void InitBookmarks()
+        {
+            ClearBookmarks();
+            for (int i = 0; i < editor.LineCount; i++)
+                if (MarkerManager.HasMarker(SciControl, 0, i))
+                    bookmarksCount++;
         }
 
         /// <summary>

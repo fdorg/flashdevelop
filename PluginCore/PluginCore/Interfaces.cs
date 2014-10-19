@@ -65,6 +65,7 @@ namespace PluginCore
         Boolean IsBrowsable { get; }
         Boolean IsUntitled { get; }
         Boolean IsEditable { get; }
+        Boolean HasBookmarks { get; }
 
         #endregion
 
@@ -77,6 +78,8 @@ namespace PluginCore
         void Revert(Boolean showQuestion);
         void Save(String file);
         void Save();
+        void ToggleBookmark(int line);
+        void ClearBookmarks();
 
         #endregion
     }
