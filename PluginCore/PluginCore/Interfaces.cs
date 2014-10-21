@@ -98,7 +98,9 @@ namespace PluginCore
         #region IMainForm Methods
 
         void RefreshUI();
+        void KillProcess();
         void RefreshSciConfig();
+        void ThemeControls(Object control);
         void ClearTemporaryFiles(String file);
         void ShowSettingsDialog(String itemName);
         void ShowErrorDialog(Object sender, Exception ex);
@@ -121,7 +123,6 @@ namespace PluginCore
         Color GetThemeColor(String id);
         IPlugin FindPlugin(String guid);
         Image FindImage(String data);
-        void KillProcess();
 
         #endregion
 
