@@ -87,6 +87,7 @@ namespace AirProperties
                 new PropertyManager.AirApplicationIconField("72", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("76", PropertyManager.AirVersion.V39),
                 new PropertyManager.AirApplicationIconField("80", PropertyManager.AirVersion.V39),
+                new PropertyManager.AirApplicationIconField("96", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("100", PropertyManager.AirVersion.V34),
                 new PropertyManager.AirApplicationIconField("114", PropertyManager.AirVersion.V26),
                 new PropertyManager.AirApplicationIconField("120", PropertyManager.AirVersion.V39),
