@@ -202,7 +202,8 @@ namespace System.Windows.Forms
         protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
         {
             // Ensure padding on buttons if in high dpi mode
-            if (e.Graphics.DpiX >= 144) e.Item.Padding = new Padding(2, 1, 2, 1);
+            if (e.Graphics.DpiX >= 192) e.Item.Padding = new Padding(4, 2, 4, 2);
+            else if (e.Graphics.DpiX >= 120) e.Item.Padding = new Padding(2, 1, 2, 1);
             if (renderer is ToolStripProfessionalRenderer)
             {
                 Boolean isOver = false;

@@ -15,7 +15,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the display scale. Ideally would probably keep separate scales for X and Y.
         /// </summary>
-        private static double GetScale()
+        public static double GetScale()
         {
             if (curScale != double.MinValue) return curScale;
             using (var g = Graphics.FromHwnd(PluginBase.MainForm.Handle))
