@@ -1,10 +1,6 @@
-using System;
-using ASCompletion.Context;
-using ASCompletion.Model;
-using PluginCore;
-using PluginCore.Helpers;
-using ScintillaNet;
 using ASCompletion.Completion;
+using PluginCore;
+using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
