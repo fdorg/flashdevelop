@@ -41,7 +41,7 @@ namespace ProjectManager
         // These are string arrays because they are only edited by the propertygrid (which deals with them nicely)
         string[] excludedFileTypes = new string[] { ".p", ".abc", ".bak", ".tmp" };
         string[] excludedDirectories = new string[] { ".svn", "_svn", ".cvs", "_cvs", "cvs", "_sgbak", ".git", ".hg" };
-        string[] executableFileTypes = new string[] { ".exe", ".lnk", ".fla", ".doc", ".pps", ".psd", ".png", ".jpg", ".gif", ".xls", ".docproj", ".ttf", ".otf", ".wav", ".mp3", ".ppt", ".pptx", ".docx", ".xlsx", ".ai", ".pdf", ".zip", ".rar" };
+        string[] executableFileTypes = new string[] { ".exe", ".lnk", ".fla", ".flump", ".doc", ".pps", ".psd", ".png", ".jpg", ".gif", ".xls", ".docproj", ".ttf", ".otf", ".wav", ".mp3", ".ppt", ".pptx", ".docx", ".xlsx", ".ai", ".pdf", ".zip", ".rar" };
         string[] filteredDirectoryNames = new string[] { "src", "source", "sources", "as", "as2", "as3", "actionscript", "flash", "classes", "trunk", "svn", "git", "hg", "..", "." };
 
         HighlightType tabHighlightType = HighlightType.ExternalFiles;
