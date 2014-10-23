@@ -78,9 +78,6 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Ookii.Dialogs">
-      <HintPath>..\External\3rdParty\Ookii.Dialogs\Ookii.Dialogs.dll</HintPath>
-    </Reference>
     <Reference Include="Scripting, Version=2.7.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
