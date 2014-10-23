@@ -1153,6 +1153,7 @@ namespace FlashDevelop
                 ShortcutManager.SaveCustomShortcuts();
                 ArgumentDialog.SaveCustomArguments();
                 PluginServices.DisposePlugins();
+                this.KillProcess();
                 this.SaveAllSettings();
                 /* Restart if requested */
                 if (this.restartRequested)
