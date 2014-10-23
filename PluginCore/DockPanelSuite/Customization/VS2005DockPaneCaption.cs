@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Windows.Forms.VisualStyles;
 using PluginCore.DockPanelSuite;
+using PluginCore.Helpers;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -47,18 +48,51 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
         }
+        
+        // 100%
+        private static int _TextGapTop = 1;
+        private static int _TextGapBottom = 1;
+        private static int _TextGapLeft = 3;
+        private static int _TextGapRight = 3;
+        private static int _ButtonGapTop = 3;
+        private static int _ButtonGapBottom = 3;
+        private static int _ButtonGapBetween = 1;
+        private static int _ButtonGapLeft = 1;
+        private static int _ButtonGapRight = 1;
 
-		#region consts
-		private const int _TextGapTop = 1;
-		private const int _TextGapBottom = 1;
-		private const int _TextGapLeft = 3;
-		private const int _TextGapRight = 3;
-		private const int _ButtonGapTop = 2;
-		private const int _ButtonGapBottom = 3;
-		private const int _ButtonGapBetween = 1;
-		private const int _ButtonGapLeft = 1;
-		private const int _ButtonGapRight = 1;
-		#endregion
+        private ToolTip m_toolTip;
+
+        public VS2005DockPaneCaption(DockPane pane) : base(pane)
+        {
+            SuspendLayout();
+
+            Font = PluginCore.PluginBase.Settings.DefaultFont;
+            m_components = new Container();
+            m_toolTip = new ToolTip(Components);
+
+            // Adjust size based on scale
+            double scale = ScaleHelper.GetScale();
+            if (scale >= 2) // 200%
+            {
+                _TextGapTop = 2;
+                _TextGapBottom = 4;
+                _ButtonGapBottom = 4;
+            }
+            else if (scale >= 1.5) // 150%
+            {
+                _TextGapTop = 2;
+                _TextGapBottom = 4;
+                _ButtonGapBottom = 4;
+            }
+            else if (scale >= 1.2) // 120%
+            {
+                _TextGapTop = 2;
+                _TextGapBottom = 2;
+            }
+            // Else 100%
+
+            ResumeLayout();
+        }
 
         private static Bitmap _imageButtonClose;
         private static Bitmap ImageButtonClose
@@ -163,19 +197,6 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get { return m_components; }
         }
-
-		private ToolTip m_toolTip;
-
-		public VS2005DockPaneCaption(DockPane pane) : base(pane)
-		{
-			SuspendLayout();
-
-            Font = PluginCore.PluginBase.Settings.DefaultFont;
-            m_components = new Container();
-            m_toolTip = new ToolTip(Components);
-
-			ResumeLayout();
-		}
 
         protected override void Dispose(bool disposing)
         {
