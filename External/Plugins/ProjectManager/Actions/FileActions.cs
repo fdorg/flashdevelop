@@ -336,16 +336,19 @@ namespace ProjectManager.Actions
 
                 if (confirm)
                     result = MessageBox.Show(mainForm, message, caption,
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Warning);
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Warning);
 
                 if (result == DialogResult.OK)
                 {
+                    UnwatchClasspath();
                     if (!FileHelper.Recycle(path))
                     {
                         String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(error + " " + path);
                     }
+                    RewatchClasspath();
+
                     OnFileDeleted(path);
                 }
             }
@@ -377,6 +380,8 @@ namespace ProjectManager.Actions
 
                     if (result == DialogResult.OK)
                     {
+                        UnwatchClasspath();
+
                         foreach (string path in paths)
                         {
                             if (!FileHelper.Recycle(path))
@@ -386,6 +391,8 @@ namespace ProjectManager.Actions
                             }
                             OnFileDeleted(path);
                         }
+
+                        RewatchClasspath();
                     }
                 }
                 catch (Exception exception)
@@ -418,6 +425,8 @@ namespace ProjectManager.Actions
 
                 if (Directory.Exists(oldPath))
                 {
+                    UnwatchClasspath();
+
                     // this is required for renaming directories, don't ask me why
                     string oldPathFixed = (oldPath.EndsWith("\\")) ? oldPath : oldPath + "\\";
                     string newPathFixed = (newPath.EndsWith("\\")) ? newPath : newPath + "\\";
@@ -429,6 +438,7 @@ namespace ProjectManager.Actions
                         oldPathFixed = tmpPath;
                     }
                     Directory.Move(oldPathFixed, newPathFixed);
+                    RewatchClasspath();
                 }
                 else
                 {
@@ -464,6 +474,7 @@ namespace ProjectManager.Actions
 
             try
             {
+                UnwatchClasspath();
                 PushCurrentDirectory();
 
                 // try to fix toPath if it's a filename
@@ -489,6 +500,7 @@ namespace ProjectManager.Actions
                 else File.Move(fromPath, toPath);
 
                 OnFileMoved(fromPath, toPath);
+                RewatchClasspath();
             }
             catch (UserCancelException){}
             catch (Exception exception)
@@ -500,6 +512,7 @@ namespace ProjectManager.Actions
 
         private void MoveDirectory(string fromPath, string toPath)
         {
+            UnwatchClasspath();
             if (Directory.GetDirectoryRoot(fromPath) == Directory.GetDirectoryRoot(toPath)
                 && !Directory.Exists(toPath))
             {
@@ -517,6 +530,7 @@ namespace ProjectManager.Actions
                     throw;
                 }
             }
+            RewatchClasspath();
         }
 
         public void Copy(string fromPath, string toPath)
@@ -623,6 +637,18 @@ namespace ProjectManager.Actions
             }
             File.Copy(file, filePath, true);
             return filePath;
+        }
+
+        private void UnwatchClasspath()
+        {
+            DataEvent unwatch = new DataEvent(EventType.Command, "ASCompletion.UnwatchClassPath", null);
+            EventManager.DispatchEvent(this, unwatch);
+        }
+
+        private void RewatchClasspath()
+        {
+            DataEvent rewatch = new DataEvent(EventType.Command, "ASCompletion.RewatchClassPath", null);
+            EventManager.DispatchEvent(this, rewatch);
         }
 
         #endregion

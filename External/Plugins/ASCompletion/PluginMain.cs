@@ -371,8 +371,6 @@ namespace ASCompletion
                                         e.Handled = Commands.CreateTrustFile.Run(args[0], args[1]);
                                 }
                             }
-
-                            // 
                             else if (command == "ASCompletion.GetClassPath")
                             {
                                 if (cmdData != null)
@@ -389,6 +387,19 @@ namespace ASCompletion
                                         }
                                     }
                                 }
+                            }
+                            else if (command == "ASCompletion.UnwatchClassPath")
+                            {
+                                foreach (PathModel cp in ASContext.Context.Classpath)
+                                    cp.DisableWatcher();
+                            }
+                            else if (command == "ASCompletion.RewatchClassPath")
+                            {
+                                // classpaths could be invalid now - remove those, BuildClassPath() is too expensive
+                                ASContext.Context.Classpath.RemoveAll(cp => !Directory.Exists(cp.Path));
+
+                                foreach (PathModel cp in ASContext.Context.Classpath)
+                                    cp.EnableWatcher();
                             }
 
                             // Return requested language SDK list
