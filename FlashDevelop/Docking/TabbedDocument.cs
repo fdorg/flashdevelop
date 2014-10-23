@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using WeifenLuo.WinFormsUI;
 using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
@@ -29,7 +30,7 @@ namespace FlashDevelop.Docking
         private SplitContainer splitContainer;
         private Boolean useCustomIcon;
         private Boolean isModified;
-        private int bookmarksCount;
+        private List<int> bookmarks;
         private FileInfo fileInfo;
 
         public TabbedDocument()
@@ -44,6 +45,8 @@ namespace FlashDevelop.Docking
             this.BackColor = Color.White;
             this.useCustomIcon = false;
             this.StartBackupTiming();
+            this.bookmarks = new List<int>();
+            UITools.Manager.OnMarkerChanged += new UITools.LineEventHandler(this.OnMarkerChanged);
 		}
 
         /// <summary>
@@ -120,7 +123,7 @@ namespace FlashDevelop.Docking
         /// </summary>
         public Boolean HasBookmarks
         {
-            get { return bookmarksCount > 0; }
+            get { return bookmarks.Count > 0; }
         }
 
         /// <summary>
@@ -237,6 +240,32 @@ namespace FlashDevelop.Docking
             {
                 this.SciControl.Focus();
                 this.InitBookmarks();
+            }
+        }
+
+        private void OnMarkerChanged(ScintillaControl sci, int line)
+        {
+            if (sci != editor && sci != editor2)
+                return;
+
+            if (line == -1) // all markers cleared
+            {
+                bookmarks.Clear();
+                ButtonManager.UpdateFlaggedButtons();
+                return;
+            }
+
+            bool hadBookmark = bookmarks.Contains(line);
+            bool hasBookmark = MarkerManager.HasMarker(sci, 0, line);
+
+            if (hadBookmark != hasBookmark) // any change?
+            {
+                if (!hadBookmark && hasBookmark) //added bookmark
+                    bookmarks.Add(line);
+                else if (hadBookmark && !hasBookmark) // removed bookmark
+                    bookmarks.Remove(line);
+
+                ButtonManager.UpdateFlaggedButtons();
             }
         }
 
@@ -491,27 +520,12 @@ namespace FlashDevelop.Docking
             this.UpdateToolTipText();
         }
 
-        public void ToggleBookmark(int line)
+        public void InitBookmarks()
         {
-            if (MarkerManager.HasMarker(SciControl, 0, line))
-                bookmarksCount--;
-            else
-                bookmarksCount++;
-            MarkerManager.ToggleMarker(SciControl, 0, line);
-            ButtonManager.UpdateFlaggedButtons();
-        }
-
-        public void ClearBookmarks()
-        {
-            bookmarksCount = 0;
-        }
-
-        private void InitBookmarks()
-        {
-            ClearBookmarks();
+            bookmarks.Clear();
             for (int i = 0; i < editor.LineCount; i++)
                 if (MarkerManager.HasMarker(SciControl, 0, i))
-                    bookmarksCount++;
+                    bookmarks.Add(i);
         }
 
         /// <summary>

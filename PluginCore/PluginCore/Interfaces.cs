@@ -78,8 +78,6 @@ namespace PluginCore
         void Revert(Boolean showQuestion);
         void Save(String file);
         void Save();
-        void ToggleBookmark(int line);
-        void ClearBookmarks();
 
         #endregion
     }

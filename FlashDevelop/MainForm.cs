@@ -1440,7 +1440,7 @@ namespace FlashDevelop
             if (margin == 2)
             {
                 Int32 line = sci.LineFromPosition(position);
-                if (Control.ModifierKeys == Keys.Control) CurrentDocument.ToggleBookmark(line);
+                if (Control.ModifierKeys == Keys.Control) MarkerManager.ToggleMarker(sci, 0, line);
                 else sci.ToggleFold(line);
             }
         }
@@ -2948,7 +2948,7 @@ namespace FlashDevelop
         {
             ScintillaControl sci = Globals.SciControl;
             Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            CurrentDocument.ToggleBookmark(line);
+            MarkerManager.ToggleMarker(sci, 0, line);
         }
 
         /// <summary>
@@ -2977,8 +2977,6 @@ namespace FlashDevelop
         public void ClearBookmarks(Object sender, System.EventArgs e)
         {
             Globals.SciControl.MarkerDeleteAll(0);
-            foreach (ITabbedDocument document in Documents)
-                document.ClearBookmarks();
             UITools.Manager.MarkerChanged(Globals.SciControl, -1);
             ButtonManager.UpdateFlaggedButtons();
         }
