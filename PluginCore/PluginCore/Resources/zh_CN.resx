@@ -1762,7 +1762,7 @@
   </data>
   <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
     <value>Classpaths of {0} projects are determined by the output file.</value>
-    <comment>Added after 4.6.4</comment>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;项目文件夹&gt;</value>
@@ -2000,7 +2000,7 @@
   </data>
   <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
     <value>&amp;Configuration file:</value>
-    <comment>Added after 4.6.4</comment>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>粘贴(&amp;P)</value>

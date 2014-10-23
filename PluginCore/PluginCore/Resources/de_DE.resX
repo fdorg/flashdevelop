@@ -1779,7 +1779,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
     <value>Klassenpfade von {0}-Projekten werden von der Ausgabedatei bestimmt.</value>
-    <comment>Added after 4.6.4</comment>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;Projektverzeichnis&gt;</value>
@@ -2017,7 +2017,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
     <value>&amp;Konfigurationsdatei:</value>
-    <comment>Added after 4.6.4</comment>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Einfügen</value>
