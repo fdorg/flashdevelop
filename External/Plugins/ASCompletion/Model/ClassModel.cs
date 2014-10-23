@@ -59,6 +59,20 @@ namespace ASCompletion.Model
             }
         }
 
+        /// <summary>
+        /// The class name without its generic part (if present)
+        /// </summary>
+        public string BaseType
+        {
+            get
+            {
+                int genericIndex = Name.IndexOf('<');
+                if (genericIndex > 0)
+                    return Name.Substring(0, genericIndex);
+                else return Name;
+            }
+        }
+
         override public string FullName
         {
             get

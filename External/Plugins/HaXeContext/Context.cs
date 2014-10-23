@@ -959,7 +959,8 @@ namespace HaXeContext
             FileModel aFile = aClass.InFile;
             // is the type already cloned?
             foreach (ClassModel otherClass in aFile.Classes)
-                if (otherClass.IndexType == indexType) return otherClass;
+                if (otherClass.IndexType == indexType && otherClass.BaseType == baseType)
+                    return otherClass;
 
             // resolve T
             string Tdef = "<T>";
