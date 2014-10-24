@@ -62,34 +62,40 @@ namespace CodeRefactor.Commands
                 privateClassText = sci.SelText;
             }
             sci.BeginUndoAction();
-            foreach (MemberModel import in imports)
+            try
             {
-                sci.GotoLine(import.LineFrom);
-                this.ImportIndents.Add(new KeyValuePair<MemberModel, Int32>(import, sci.GetLineIndentation(import.LineFrom)));
-                sci.LineDelete();
-            }
-            if (this.TruncateImports)
-            {
-                for (Int32 j = 0; j < imports.Count; j++)
+                foreach (MemberModel import in imports)
                 {
-                    MemberModel import = imports[j];
-                    String[] parts = import.Type.Split('.');
-                    if (parts.Length > 0 && parts[parts.Length - 1] != "*")
-                    {
-                        parts[parts.Length - 1] = "*";
-                    }
-                    import.Type = String.Join(".", parts);
+                    sci.GotoLine(import.LineFrom);
+                    this.ImportIndents.Add(new KeyValuePair<MemberModel, Int32>(import, sci.GetLineIndentation(import.LineFrom)));
+                    sci.LineDelete();
                 }
+                if (this.TruncateImports)
+                {
+                    for (Int32 j = 0; j < imports.Count; j++)
+                    {
+                        MemberModel import = imports[j];
+                        String[] parts = import.Type.Split('.');
+                        if (parts.Length > 0 && parts[parts.Length - 1] != "*")
+                        {
+                            parts[parts.Length - 1] = "*";
+                        }
+                        import.Type = String.Join(".", parts);
+                    }
+                }
+                imports.Reverse();
+                Imports separatedImports = this.SeparateImports(imports, context.CurrentModel.PrivateSectionIndex);
+                if (separatedImports.PackageImports.Count > 0) InsertImports(separatedImports.PackageImports, publicClassText, sci, separatedImports.PackageImportsIndent);
+                if (context.CurrentModel.Classes.Count > 1 && separatedImports.PrivateImports.Count > 0)
+                {
+                    this.InsertImports(separatedImports.PrivateImports, privateClassText, sci, separatedImports.PrivateImportsIndent);
+                }
+                sci.SetSel(pos, pos);
             }
-            imports.Reverse();
-            Imports separatedImports = this.SeparateImports(imports, context.CurrentModel.PrivateSectionIndex);
-            if (separatedImports.PackageImports.Count > 0) InsertImports(separatedImports.PackageImports, publicClassText, sci, separatedImports.PackageImportsIndent);
-            if (context.CurrentModel.Classes.Count > 1 && separatedImports.PrivateImports.Count > 0)
+            finally
             {
-                this.InsertImports(separatedImports.PrivateImports, privateClassText, sci, separatedImports.PrivateImportsIndent);
+                sci.EndUndoAction();
             }
-            sci.SetSel(pos, pos);
-            sci.EndUndoAction();
             context.UpdateCurrentFile(true);
             this.FireOnRefactorComplete();
         }
