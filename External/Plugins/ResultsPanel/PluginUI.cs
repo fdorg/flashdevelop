@@ -388,12 +388,11 @@ namespace ResultsPanel
 
         /// <summary>
         /// Clears any result entries that are ignored.  Invoked from the context menu.
-        /// Note that this doesn't immediately reshow any entries that would come up.
-        /// The user must re-invoke the results panel listing again to see the ignored entries.
         /// </summary>
         public void ClearIgnoredEntries(Object sender, System.EventArgs e)
         {
             this.ignoredEntries.Clear();
+            this.FilterResults(false);
         }
 
         public bool IgnoreEntryShortcut()
