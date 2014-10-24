@@ -27,7 +27,9 @@ namespace ResultsPanel
         private ColumnHeader entryType;
         private ToolStripMenuItem nextEntry;
         private ToolStripMenuItem previousEntry;
+        private ToolStripMenuItem ignoreEntriesContextMenuItem;
         private ToolStripMenuItem ignoreEntryContextMenuItem;
+        private ToolStripMenuItem copyEntryContextMenuItem;
         private ToolStripMenuItem clearIgnoredEntriesContextMenuItem;
         private IDictionary<String, Boolean> ignoredEntries;
 		private List<ListViewItem> allListViewItems = new List<ListViewItem>();
@@ -263,29 +265,29 @@ namespace ResultsPanel
         public void InitializeContextMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearEntries"), null, new EventHandler(this.ClearOutputClick)));
-            ToolStripMenuItem copyEntry = new ToolStripMenuItem(TextHelper.GetString("Label.CopyEntry"), null, new EventHandler(this.CopyTextClick));
-            copyEntry.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.CopyEntry);
-            menu.Items.Add(copyEntry);
+            this.ignoreEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearEntries"), null, new EventHandler(this.ClearOutputClick));
+            menu.Items.Add(this.ignoreEntriesContextMenuItem);
+            this.copyEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyEntry"), null, new EventHandler(this.CopyTextClick));
+            this.copyEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.CopyEntry);
+            menu.Items.Add(this.copyEntryContextMenuItem);
             this.ignoreEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.IgnoreEntry"), null, new EventHandler(this.IgnoreEntryClick));
             this.ignoreEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.IgnoreEntry);
             menu.Items.Add(this.ignoreEntryContextMenuItem);
             this.clearIgnoredEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearIgnoredEntries"), null, new EventHandler(this.ClearIgnoredEntries));
-            this.clearIgnoredEntriesContextMenuItem.Visible = false;
             menu.Items.Add(this.clearIgnoredEntriesContextMenuItem);
             menu.Items.Add(new ToolStripSeparator());
             this.nextEntry = new ToolStripMenuItem(TextHelper.GetString("Label.NextEntry"), null, new EventHandler(this.NextEntry));
-            this.nextEntry.Enabled = false;
             this.nextEntry.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.NextError);
             menu.Items.Add(this.nextEntry);
             this.previousEntry = new ToolStripMenuItem(TextHelper.GetString("Label.PreviousEntry"), null, new EventHandler(this.PreviousEntry));
-            this.previousEntry.Enabled = false;
             this.previousEntry.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.PrevError);
             menu.Items.Add(this.previousEntry);
             this.entriesView.ContextMenuStrip = menu;
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer(false);
             this.toolStripFilters.Renderer = new DockPanelStripRenderer();
+            this.DisableContextMenuItems();
+            menu.Opening += ContextMenuOpening;
         }
 
         /// <summary>
@@ -392,7 +394,6 @@ namespace ResultsPanel
         public void ClearIgnoredEntries(Object sender, System.EventArgs e)
         {
             this.ignoredEntries.Clear();
-            this.clearIgnoredEntriesContextMenuItem.Visible = false;
         }
 
         public bool IgnoreEntryShortcut()
@@ -423,7 +424,6 @@ namespace ResultsPanel
             {
                 this.entriesView.Items.Remove(item);
             }
-            this.clearIgnoredEntriesContextMenuItem.Visible = (this.ignoredEntries.Count > 0);
         }
 
         /// <summary>
@@ -444,6 +444,13 @@ namespace ResultsPanel
         private void PluginUIResize(object sender, EventArgs e)
         {
             this.UpdateButtons();
+        }
+
+        private void ContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.nextEntry.Enabled = this.previousEntry.Enabled = this.ignoreEntriesContextMenuItem.Enabled = this.entriesView.Items.Count > 0;
+            this.ignoreEntryContextMenuItem.Enabled = this.copyEntryContextMenuItem.Enabled = this.entriesView.SelectedItems.Count > 0;
+            this.clearIgnoredEntriesContextMenuItem.Enabled = this.ignoredEntries.Count > 0;
         }
 
         /// <summary>
@@ -553,10 +560,17 @@ namespace ResultsPanel
             this.toolStripTextBoxFilter.Text = "";
             this.errorCount = this.messageCount = this.warningCount = 0;
             this.entriesView.Items.Clear();
-            this.nextEntry.Enabled = false;
-            this.previousEntry.Enabled = false;
+            this.DisableContextMenuItems();
             this.entryIndex = -1;
             this.UpdateButtons();
+        }
+
+        private void DisableContextMenuItems()
+        {
+            foreach (ToolStripItem item in this.entriesView.ContextMenuStrip.Items)
+            {
+                item.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -723,7 +737,6 @@ namespace ResultsPanel
                 }
                 else this.entriesView.EnsureVisible(0);
             }
-            this.nextEntry.Enabled = this.previousEntry.Enabled = this.entriesView.Items.Count > 0;
             if (!locked) this.entriesView.EndUpdate();
 		}
 
