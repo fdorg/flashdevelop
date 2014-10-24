@@ -74,8 +74,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             double scale = ScaleHelper.GetScale();
             if (scale >= 2) // 200%
             {
-                _TextGapTop = 2;
-                _TextGapBottom = 4;
+                _TextGapTop = 3;
+                _TextGapBottom = 6;
                 _ButtonGapBottom = 4;
             }
             else if (scale >= 1.5) // 150%
