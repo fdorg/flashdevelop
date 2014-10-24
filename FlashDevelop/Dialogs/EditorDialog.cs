@@ -994,9 +994,24 @@ namespace FlashDevelop.Dialogs
         private void InitializeGraphics()
         {
             ImageList imageList = new ImageList();
-            imageList.Images.Add(PluginBase.MainForm.FindImage("129"));
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.Images.Add(PluginBase.MainForm.FindImage("129")); // snippet;
+            imageList.Images.Add(PluginBase.MainForm.FindImage("328")); // palette;
+            imageList.Images.Add(PluginBase.MainForm.FindImage("55|24|3|3")); // revert
+            imageList.Images.Add(PluginBase.MainForm.FindImage("55|9|3|3")); // export
+            imageList.Images.Add(PluginBase.MainForm.FindImage("55|25|3|3")); // default
             this.itemListView.SmallImageList = imageList;
             this.itemListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            this.revertButton.ImageList = this.exportButton.ImageList = imageList;
+            this.disabledLineButton.ImageList = this.defaultButton.ImageList = imageList;
+            this.foregroundButton.ImageList = this.backgroundButton.ImageList = imageList;
+            this.caretForeButton.ImageList = this.caretlineBackButton.ImageList = imageList;
+            this.selectionForeButton.ImageList = this.selectionBackButton.ImageList = imageList;
+            this.marginBackButton.ImageList = this.marginForeButton.ImageList = imageList;
+            this.markerBackButton.ImageList = this.markerForeButton.ImageList = imageList;
+            this.printMarginButton.ImageList = this.highlightBackButton.ImageList = imageList;
+            this.modifiedLineButton.ImageList = this.bookmarkLineButton.ImageList = imageList;
+            this.errorLineButton.ImageList = this.debugLineButton.ImageList = imageList;
         }
 
         /// <summary>
@@ -1004,18 +1019,18 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void PopulateControls()
         {
-            Image colorImage = PluginBase.MainForm.FindImage("328");
-            this.revertButton.Image = PluginBase.MainForm.FindImage("55|24|3|3");
-            this.exportButton.Image = PluginBase.MainForm.FindImage("55|9|3|3");
-            this.defaultButton.Image = PluginBase.MainForm.FindImage("55|25|3|3");
-            this.foregroundButton.Image = this.backgroundButton.Image = colorImage;
-            this.caretForeButton.Image = this.caretlineBackButton.Image = colorImage;
-            this.selectionForeButton.Image = this.selectionBackButton.Image = colorImage;
-            this.marginBackButton.Image = this.marginForeButton.Image = colorImage;
-            this.markerBackButton.Image = this.markerForeButton.Image = colorImage;
-            this.printMarginButton.Image = this.highlightBackButton.Image = colorImage;
-            this.modifiedLineButton.Image = this.bookmarkLineButton.Image = colorImage;
-            this.errorLineButton.Image = this.debugLineButton.Image = this.disabledLineButton.Image = colorImage;
+            this.revertButton.ImageIndex = 2;
+            this.exportButton.ImageIndex = 3;
+            this.defaultButton.ImageIndex = 4;
+            this.foregroundButton.ImageIndex = this.backgroundButton.ImageIndex = 1;
+            this.caretForeButton.ImageIndex = this.caretlineBackButton.ImageIndex = 1;
+            this.selectionForeButton.ImageIndex = this.selectionBackButton.ImageIndex = 1;
+            this.marginBackButton.ImageIndex = this.marginForeButton.ImageIndex = 1;
+            this.markerBackButton.ImageIndex = this.markerForeButton.ImageIndex = 1;
+            this.printMarginButton.ImageIndex = this.highlightBackButton.ImageIndex = 1;
+            this.modifiedLineButton.ImageIndex = this.bookmarkLineButton.ImageIndex = 1;
+            this.errorLineButton.ImageIndex = this.debugLineButton.ImageIndex = 1; 
+            this.disabledLineButton.ImageIndex = 1;
             String[] languageFiles = Directory.GetFiles(this.LangDir, "*.xml");
             foreach (String language in languageFiles)
             {

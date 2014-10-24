@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 using PluginCore;
 
 namespace ProjectManager.Controls
@@ -155,8 +156,15 @@ namespace ProjectManager.Controls
 		{
 			InitializeComponent();
             InitializeLocalization();
-            btnDown.Image = Icons.DownArrow.Img;
-            btnUp.Image = Icons.UpArrow.Img;
+            ImageList imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.Images.Add(Icons.DownArrow.Img);
+            imageList.Images.Add(Icons.UpArrow.Img);
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            btnDown.ImageList = imageList;
+            btnUp.ImageList = imageList;
+            btnDown.ImageIndex = 0;
+            btnUp.ImageIndex = 1;
             btnRemove.Enabled = false;
             SetButtons();
 		}
