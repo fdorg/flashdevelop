@@ -12,6 +12,7 @@ using PluginCore.Utilities;
 using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
 
@@ -471,8 +472,12 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeGraphics()
         {
-            Image image = Globals.MainForm.FindImage("203");
-            this.browseButton.Image = image;
+            ImageList imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            imageList.Images.Add(Globals.MainForm.FindImage("203"));
+            this.browseButton.ImageList = imageList;
+            this.browseButton.ImageIndex = 0;
         }
 
         /// <summary>

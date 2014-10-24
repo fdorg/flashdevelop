@@ -28,6 +28,7 @@ namespace ProjectManager.Controls
         {
             this.plugin = plugin;
             this.InitializeComponent();
+            this.InitializeGraphics();
             this.InitializeLocalization();
             this.Font = PluginBase.Settings.DefaultFont;
             this.listBox.ItemHeight = this.listBox.Font.Height;
@@ -136,9 +137,21 @@ namespace ProjectManager.Controls
         /// <summary>
         /// 
         /// </summary>
+        private void InitializeGraphics()
+        {
+            ImageList imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("203"));
+            this.refreshButton.ImageList = imageList;
+            this.refreshButton.ImageIndex = 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void InitializeLocalization()
         {
-            this.refreshButton.Image = PluginBase.MainForm.FindImage("-1|24|0|0");
             this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
             this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
