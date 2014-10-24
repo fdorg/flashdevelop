@@ -13,6 +13,7 @@ using PluginCore.Managers;
 using System.Drawing;
 using System.Text;
 using PluginCore;
+using PluginCore.Controls;
 
 namespace ScintillaNet
 {
@@ -51,8 +52,9 @@ namespace ScintillaNet
                 directPointer = (int)SlowPerform(2185, 0, 0);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
-                DoubleClick += new DoubleClickHandler(OnBlockSelect);
-                DoubleClick += new DoubleClickHandler(OnSelectHighlight);
+                UpdateUI += new UpdateUIHandler(OnUpdateUI);
+                SelectionChanged += new SelectionChangedHandler(OnSelectionChanged);
+                DoubleClick += new DoubleClickHandler(OnDoubleClick);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
                 directPointer = DirectPointer;
@@ -112,6 +114,7 @@ namespace ScintillaNet
         public event AutoCCancelledHandler AutoCCancelled;
         public event AutoCCharDeletedHandler AutoCCharDeleted;
         public event UpdateSyncHandler UpdateSync;
+        public event SelectionChangedHandler SelectionChanged;
 		
 		#endregion
 
@@ -2191,6 +2194,10 @@ namespace ScintillaNet
                 SPerform(2516, (uint)(value ? 1 : 0), 0);
             }
         }
+
+        public int lastSelectionStart = 0;
+        public int lastSelectionEnd = 0;
+        public int lastSelectionLength = 0;
 
 		#endregion
 
@@ -5265,37 +5272,77 @@ namespace ScintillaNet
 		
 		#region Automated Features
 
+        private void OnDoubleClick(ScintillaControl sci)
+        {
+            if (Control.ModifierKeys == Keys.Control &&
+                PluginBase.MainForm.Settings.HighlightMatchingWordsMode == Enums.HighlightMatchingWordsMode.CtrlDoubleClick)
+                HighlightWordsMatchingSelected(sci);
+
+            SelectBlock(sci);
+        }
+
+        private System.Threading.Timer delay;
+
+        private void OnSelectionChanged(ScintillaControl sci)
+        {
+            if (PluginBase.MainForm.Settings.HighlightMatchingWordsMode == Enums.HighlightMatchingWordsMode.CurrentSelection)
+            {
+                if (delay != null)
+                {
+                    delay.Dispose();
+                    delay = null;
+                }
+
+                delay = new System.Threading.Timer(state =>
+                {
+                    if (delay != null)
+                    {
+                        delay.Dispose();
+                        delay = null;
+                    }
+                    HighlightWordsMatchingSelected(sci);
+                }, null, 1000, 1000);
+            }
+        }
+
+        private void OnUpdateUI(ScintillaControl sci)
+        {
+            //has the selection changed?
+            if (lastSelectionStart != sci.SelectionStart ||
+                lastSelectionEnd != sci.SelectionEnd ||
+                lastSelectionLength != sci.SelText.Length)
+                SelectionChanged(sci);
+
+            lastSelectionStart = sci.SelectionStart;
+            lastSelectionEnd = sci.SelectionEnd;
+            lastSelectionLength = sci.SelText.Length;
+        }
+
         /// <summary>
         /// Provides basic highlighting of selected text
         /// </summary>
-        private void OnSelectHighlight(ScintillaControl sci)
+        private void HighlightWordsMatchingSelected(ScintillaControl sci)
         {
+            if (sci.Text.Length == 0)
+                return;
+            Language language = Configuration.GetLanguage(sci.ConfigurationLanguage);
+            Int32 color = language.editorstyle.HighlightBackColor;
+            String word = sci.GetWordFromPosition(sci.CurrentPos);
+            if (String.IsNullOrEmpty(word))
+                return;
+            String pattern = word.Trim();
+            FRSearch search = new FRSearch(pattern);
+            search.WholeWord = true; search.NoCase = false;
+            search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
             sci.RemoveHighlights();
-            if (Control.ModifierKeys == Keys.Control && sci.SelText.Length != 0)
-            {
-                Language language = Configuration.GetLanguage(sci.ConfigurationLanguage);
-                Int32 color = language.editorstyle.HighlightBackColor;
-                String pattern = sci.SelText.Trim();
-                FRSearch search = new FRSearch(pattern);
-                search.WholeWord = true; search.NoCase = false;
-                search.Filter = SearchFilter.None; // Everywhere
-                sci.AddHighlights(search.Matches(sci.Text), color);
-                sci.hasHighlights = true;
-            }
-        }
-        private void OnCancelHighlight(ScintillaControl sci)
-        {
-            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0)
-            {
-                sci.RemoveHighlights();
-                sci.hasHighlights = false;
-            }
+            sci.AddHighlights(search.Matches(sci.Text), color);
+            sci.hasHighlights = true;
         }
 
         /// <summary>
         /// Provides the support for code block selection
         /// </summary>
-        private void OnBlockSelect(ScintillaControl sci)
+        private void SelectBlock(ScintillaControl sci)
         {
             int position = CurrentPos - 1;
             char character = (char)CharAt(position);
@@ -5307,6 +5354,15 @@ namespace ScintillaNet
                     int bracePosEnd = BraceMatch(position);
                     if (bracePosEnd != -1) SetSel(bracePosStart, bracePosEnd + 1);
                 }
+            }
+        }
+
+        private void OnCancelHighlight(ScintillaControl sci)
+        {
+            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0)
+            {
+                sci.RemoveHighlights();
+                sci.hasHighlights = false;
             }
         }
 

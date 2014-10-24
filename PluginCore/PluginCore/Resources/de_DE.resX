@@ -3125,7 +3125,11 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Suchen und Ersetzen</value>
   </data>
   <data name="FlashDevelop.Description.FilePollInterval" xml:space="preserve">
-    <value>Interval in dem geprüft wird, ob geöffnete Dateien außerhalb verändert wurden (Millisekunden).</value>
+    <value>Intervall in dem geprüft wird, ob geöffnete Dateien außerhalb verändert wurden (Millisekunden).</value>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsMode" xml:space="preserve">
+    <value>Wann Wörter die der momentanen Auswahl entsprechen hervorgehoben werden sollen.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
     <value>Aufgaben in ausgeschlossenen Pfaden werden nicht angezeigt.</value>

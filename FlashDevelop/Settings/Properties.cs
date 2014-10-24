@@ -40,6 +40,7 @@ namespace FlashDevelop.Settings
         private Int32 printMarginColumn = 0;
         private Int32 backupInterval = 15000;
         private Int32 filePollInterval = 3000;
+        private ScintillaNet.Enums.HighlightMatchingWordsMode highlightMatchingWordsMode = ScintillaNet.Enums.HighlightMatchingWordsMode.CurrentSelection;
         private LocaleVersion localeVersion = LocaleVersion.en_US;
         private List<String> previousDocuments = new List<String>();
         private List<String> disabledPlugins = new List<String>();
