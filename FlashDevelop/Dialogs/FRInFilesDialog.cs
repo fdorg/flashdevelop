@@ -15,6 +15,7 @@ using PluginCore.Managers;
 using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
+using Ookii.Dialogs;
 
 namespace FlashDevelop.Dialogs
 {
@@ -592,7 +593,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BrowseButtonClick(Object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
             String curDir = this.folderComboBox.Text;
             if (curDir == "<Project>") 
             {

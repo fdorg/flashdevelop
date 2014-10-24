@@ -12,6 +12,7 @@ using PluginCore.Managers;
 using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
+using Ookii.Dialogs;
 
 namespace FlashDevelop.Utilities
 {
@@ -208,7 +209,7 @@ namespace FlashDevelop.Utilities
 		/// </summary>
         public static String GetOpenDir()
 		{
-			FolderBrowserDialog fbd = new FolderBrowserDialog();
+            VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
             fbd.RootFolder = Environment.SpecialFolder.MyComputer;
             if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
             else return String.Empty;
