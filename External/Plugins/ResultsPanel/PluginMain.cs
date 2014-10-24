@@ -29,6 +29,7 @@ namespace ResultsPanel
         public Keys NextError = Keys.F12;
         public Keys PrevError = Keys.Shift | Keys.F12;
         public Keys CopyEntry = Keys.Control | Keys.C;
+        public Keys IgnoreEntry = Keys.Delete;
 
 	    #region Required Properties
 
@@ -170,6 +171,10 @@ namespace ResultsPanel
                     else if (ke.Value == this.CopyEntry)
                     {
                         ke.Handled = pluginUI.CopyTextShortcut();
+                    }
+                    else if (ke.Value == this.IgnoreEntry)
+                    {
+                        ke.Handled = pluginUI.IgnoreEntryShortcut();
                     }
                     break;
 

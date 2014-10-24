@@ -268,6 +268,7 @@ namespace ResultsPanel
             copyEntry.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.CopyEntry);
             menu.Items.Add(copyEntry);
             this.ignoreEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.IgnoreEntry"), null, new EventHandler(this.IgnoreEntryClick));
+            this.ignoreEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.IgnoreEntry);
             menu.Items.Add(this.ignoreEntryContextMenuItem);
             this.clearIgnoredEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearIgnoredEntries"), null, new EventHandler(this.ClearIgnoredEntries));
             this.clearIgnoredEntriesContextMenuItem.Visible = false;
@@ -392,6 +393,14 @@ namespace ResultsPanel
         {
             this.ignoredEntries.Clear();
             this.clearIgnoredEntriesContextMenuItem.Visible = false;
+        }
+
+        public bool IgnoreEntryShortcut()
+        {
+            if (!ContainsFocus || !entriesView.Focused)
+                return false;
+            IgnoreEntryClick(null, null);
+            return true;
         }
 
         /// <summary>
