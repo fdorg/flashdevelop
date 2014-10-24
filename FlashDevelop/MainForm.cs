@@ -2979,6 +2979,7 @@ namespace FlashDevelop
         {
             Globals.SciControl.MarkerDeleteAll(0);
             UITools.Manager.MarkerChanged(Globals.SciControl, -1);
+            ButtonManager.UpdateFlaggedButtons();
         }
 
         /// <summary>

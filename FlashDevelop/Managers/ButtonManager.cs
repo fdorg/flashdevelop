@@ -74,6 +74,14 @@ namespace FlashDevelop.Managers
             {
                 if (!document.IsUntitled) return false;
             }
+            else if (action.Contains("HasBookmarks"))
+            {
+                if (!document.HasBookmarks) return false;
+            }
+            else if (action.Contains("!HasBookmarks"))
+            {
+                if (document.HasBookmarks) return false;
+            }
             if (action.Contains("!HasModified"))
             {
                 if (Globals.MainForm.HasModifiedDocuments) return false;
