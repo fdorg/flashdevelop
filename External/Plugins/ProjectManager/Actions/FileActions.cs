@@ -347,7 +347,6 @@ namespace ProjectManager.Actions
                         String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(error + " " + path);
                     }
-                    RewatchClasspath();
 
                     OnFileDeleted(path);
                 }
@@ -356,7 +355,11 @@ namespace ProjectManager.Actions
             {
                 ErrorManager.ShowError(exception);
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                RewatchClasspath();
+                PopCurrentDirectory();
+            }
         }
 
         public void Delete(string[] paths)
@@ -391,15 +394,17 @@ namespace ProjectManager.Actions
                             }
                             OnFileDeleted(path);
                         }
-
-                        RewatchClasspath();
                     }
                 }
                 catch (Exception exception)
                 {
                     ErrorManager.ShowError(exception);
                 }
-                finally { PopCurrentDirectory(); }
+                finally
+                {
+                    RewatchClasspath();
+                    PopCurrentDirectory(); 
+                }
             }
         }
 
@@ -416,6 +421,7 @@ namespace ProjectManager.Actions
 
             try
             {
+                UnwatchClasspath();
                 PushCurrentDirectory();
 
                 string oldDir = Path.GetDirectoryName(oldPath);
@@ -425,8 +431,6 @@ namespace ProjectManager.Actions
 
                 if (Directory.Exists(oldPath))
                 {
-                    UnwatchClasspath();
-
                     // this is required for renaming directories, don't ask me why
                     string oldPathFixed = (oldPath.EndsWith("\\")) ? oldPath : oldPath + "\\";
                     string newPathFixed = (newPath.EndsWith("\\")) ? newPath : newPath + "\\";
@@ -438,7 +442,6 @@ namespace ProjectManager.Actions
                         oldPathFixed = tmpPath;
                     }
                     Directory.Move(oldPathFixed, newPathFixed);
-                    RewatchClasspath();
                 }
                 else
                 {
@@ -464,7 +467,11 @@ namespace ProjectManager.Actions
                 ErrorManager.ShowError(exception);
                 return false;
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                RewatchClasspath();
+                PopCurrentDirectory();
+            }
             return true;
         }
 
@@ -500,14 +507,17 @@ namespace ProjectManager.Actions
                 else File.Move(fromPath, toPath);
 
                 OnFileMoved(fromPath, toPath);
-                RewatchClasspath();
             }
             catch (UserCancelException){}
             catch (Exception exception)
             {
                 ErrorManager.ShowError(exception);
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                RewatchClasspath();
+                PopCurrentDirectory();
+            }
         }
 
         private void MoveDirectory(string fromPath, string toPath)
@@ -516,7 +526,15 @@ namespace ProjectManager.Actions
             if (Directory.GetDirectoryRoot(fromPath) == Directory.GetDirectoryRoot(toPath)
                 && !Directory.Exists(toPath))
             {
-                Directory.Move(fromPath, toPath);
+                try
+                {
+                    Directory.Move(fromPath, toPath);
+                }
+                catch (Exception)
+                { 
+                    throw;
+                }
+                finally { RewatchClasspath(); }
             }
             else
             {
@@ -529,8 +547,9 @@ namespace ProjectManager.Actions
                 {
                     throw;
                 }
+                finally { RewatchClasspath(); }
             }
-            RewatchClasspath();
+            
         }
 
         public void Copy(string fromPath, string toPath)
