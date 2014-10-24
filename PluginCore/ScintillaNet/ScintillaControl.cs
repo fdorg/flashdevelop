@@ -5281,27 +5281,23 @@ namespace ScintillaNet
             SelectBlock(sci);
         }
 
-        private System.Threading.Timer delay;
+        private System.Timers.Timer delay;
 
         private void OnSelectionChanged(ScintillaControl sci)
         {
             if (PluginBase.MainForm.Settings.HighlightMatchingWordsMode == Enums.HighlightMatchingWordsMode.CurrentSelection)
             {
                 if (delay != null)
-                {
-                    delay.Dispose();
-                    delay = null;
-                }
+                    delay.Enabled = false;
 
-                delay = new System.Threading.Timer(state =>
+                delay = new System.Timers.Timer(1000);
+                delay.Elapsed += delegate
                 {
-                    if (delay != null)
-                    {
-                        delay.Dispose();
-                        delay = null;
-                    }
+                    delay.Enabled = false;
                     HighlightWordsMatchingSelected(sci);
-                }, null, 1000, 1000);
+                };
+                delay.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
+                delay.Start();
             }
         }
 
