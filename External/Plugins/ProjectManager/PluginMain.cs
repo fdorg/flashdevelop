@@ -1084,22 +1084,27 @@ namespace ProjectManager
 
         private void CleanProject()
         {
-            DataEvent unwatch = new DataEvent(EventType.Command, "ASCompletion.UnwatchClassPath", null);
-            EventManager.DispatchEvent(this, unwatch);
-
-            Project project = activeProject; // TODO clean all projects
-
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
-            EventManager.DispatchEvent(this, de);
-            if (!de.Handled)
+            try
             {
+                DataEvent unwatch = new DataEvent(EventType.Command, "ASCompletion.UnwatchClassPath", null);
+                EventManager.DispatchEvent(this, unwatch);
+
+                Project project = activeProject; // TODO clean all projects
+
+                DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
+                EventManager.DispatchEvent(this, de);
+                if (de.Handled)
+                    return;
+
                 FlexCompilerShell.Cleanup();
                 if (!project.Clean())
                     ErrorManager.ShowInfo(TextHelper.GetString("Info.UnableToCleanProject"));
             }
-
-            DataEvent rewatch = new DataEvent(EventType.Command, "ASCompletion.RewatchClassPath", null);
-            EventManager.DispatchEvent(this, rewatch);
+            finally
+            {
+                DataEvent rewatch = new DataEvent(EventType.Command, "ASCompletion.RewatchClassPath", null);
+                EventManager.DispatchEvent(this, rewatch);
+            }
         }
 
         private void FileDeleted(string path)
