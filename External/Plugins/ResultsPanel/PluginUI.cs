@@ -264,7 +264,9 @@ namespace ResultsPanel
         {
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearEntries"), null, new EventHandler(this.ClearOutputClick)));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CopyEntry"), null, new EventHandler(this.CopyTextClick)));
+            ToolStripMenuItem copyEntry = new ToolStripMenuItem(TextHelper.GetString("Label.CopyEntry"), null, new EventHandler(this.CopyTextClick));
+            copyEntry.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.CopyEntry);
+            menu.Items.Add(copyEntry);
             this.ignoreEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.IgnoreEntry"), null, new EventHandler(this.IgnoreEntryClick));
             menu.Items.Add(this.ignoreEntryContextMenuItem);
             this.clearIgnoredEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearIgnoredEntries"), null, new EventHandler(this.ClearIgnoredEntries));
@@ -346,6 +348,17 @@ namespace ResultsPanel
         public void ClearOutputClick(Object sender, System.EventArgs e)
         {
             this.ClearOutput();
+        }
+
+        /// <summary>
+        /// Copies the current item or all items to clipboard
+        /// </summary>
+        public bool CopyTextShortcut()
+        {
+            if (!ContainsFocus || !entriesView.Focused)
+                return false;
+            CopyTextClick(null, null);
+            return true;
         }
 
         /// <summary>

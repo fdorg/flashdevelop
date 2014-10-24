@@ -28,6 +28,7 @@ namespace ResultsPanel
         // Shortcut management
         public Keys NextError = Keys.F12;
         public Keys PrevError = Keys.Shift | Keys.F12;
+        public Keys CopyEntry = Keys.Control | Keys.C;
 
 	    #region Required Properties
 
@@ -165,6 +166,10 @@ namespace ResultsPanel
                     {
                         ke.Handled = true;
                         this.pluginUI.PreviousEntry(null, null);
+                    }
+                    else if (ke.Value == this.CopyEntry)
+                    {
+                        ke.Handled = pluginUI.CopyTextShortcut();
                     }
                     break;
 
