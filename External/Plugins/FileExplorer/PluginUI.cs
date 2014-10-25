@@ -872,8 +872,7 @@ namespace FileExplorer
         /// </summary>
         private void FindHere(Object sender, System.EventArgs e)
         {
-            
-            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.FindHere", this.selectedPath.Text);
+            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.FindHere", this.GetSelectedFiles());
             EventManager.DispatchEvent(this, de);
         }
 
