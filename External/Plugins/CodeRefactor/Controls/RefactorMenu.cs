@@ -32,7 +32,7 @@ namespace CodeRefactor.Controls
                 this.DropDownItems.Add(this.surroundMenu);
             }
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.generatorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.InvokeCodeGenerator"), null, null, createSurroundMenu ? Keys.Control | Keys.Shift | Keys.D1 : Keys.None);
+            this.generatorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.InvokeCodeGenerator"), null, null, createSurroundMenu ? Keys.Control | Keys.D1 : Keys.None);
             this.DropDownItems.Add(this.generatorMenuItem);
             this.DropDownItems.Add(new ToolStripSeparator());
             this.organizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
