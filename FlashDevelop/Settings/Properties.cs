@@ -88,8 +88,8 @@ namespace FlashDevelop.Settings
         private Boolean viewModifiedLines = false;
         private Boolean wrapText = false;
         private FormWindowState windowState = FormWindowState.Maximized;
-        private Point windowPosition = new Point(100, 100);
-        private Size windowSize = new Size(800, 600);
+        private Point windowPosition = new Point(0, 0);
+        private Size windowSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         private Int32 uiHoverDelay = 500;
         private Int32 uiDisplayDelay = 100;
         private Boolean uiShowDetails = false;
