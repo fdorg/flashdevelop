@@ -376,6 +376,16 @@ namespace PluginCore.Controls
                 }
 				return true;
 			}
+
+            // toggle "long-description" for the hover tooltip
+            if (key == Keys.F1)
+            {
+                showDetails = !showDetails;
+                DataEvent de = new DataEvent(EventType.Command, "ASCompletion.RefreshTooltip", null);
+                EventManager.DispatchEvent(this, de);
+                return true;
+            }
+
 			// are we currently displaying something?
             if (!CompletionList.Active && !callTip.CallTipActive) return false;
 			

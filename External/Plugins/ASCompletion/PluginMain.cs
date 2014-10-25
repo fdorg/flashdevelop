@@ -403,6 +403,12 @@ namespace ASCompletion
                                 }
                                 e.Handled = true;
                             }
+
+                            else if (command == "ASCompletion.RefreshTooltip")
+                            {
+                                OnMouseHover(sci, lastHoverPosition);
+                                e.Handled = true;
+                            }
                         }
 
                         // Create a fake document from a FileModel
@@ -855,10 +861,14 @@ namespace ASCompletion
 				ASComplete.OnChar(Sci, Value, true);
 		}
 
+        private int lastHoverPosition;
+
 		private void OnMouseHover(ScintillaNet.ScintillaControl sci, int position)
 		{
 			if (!ASContext.Context.IsFileValid)
 				return;
+
+            lastHoverPosition = position;
 
 			// get word at mouse position
 			int style = sci.BaseStyleAt(position);
