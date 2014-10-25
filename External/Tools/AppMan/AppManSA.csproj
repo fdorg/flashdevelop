@@ -52,6 +52,9 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\AppMan.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\Program.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
@@ -50,6 +51,7 @@ namespace AppMan
             this.InitializeComponent();
             this.InitializeGraphics();
             this.InitializeContextMenu();
+            this.InitializeFormScaling();
             this.ApplyLocalizationStrings();
             this.Font = SystemFonts.MenuFont;
             Application.AddMessageFilter(this);
@@ -95,13 +97,33 @@ namespace AppMan
         }
 
         /// <summary>
+        /// Initialize the scaling of the form.
+        /// </summary>
+        private void InitializeFormScaling()
+        {
+            if (this.GetScale() > 1)
+            {
+                this.descHeader.Width = this.ScaleValue(265);
+                this.nameHeader.Width = this.ScaleValue(160);
+                this.versionHeader.Width = this.ScaleValue(100);
+                this.statusHeader.Width = this.ScaleValue(70);
+                this.typeHeader.Width = this.ScaleValue(75);
+            }
+        }
+
+        /// <summary>
         /// Initializes the graphics of the app.
         /// </summary>
         private void InitializeGraphics()
         {
+            ImageList imageList = new ImageList();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            this.cancelButton.Image = Image.FromStream(assembly.GetManifestResourceStream("AppMan.Resources.Cancel.png"));
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageSize = new Size(this.ScaleValue(24), this.ScaleValue(24));
+            imageList.Images.Add(Image.FromStream(assembly.GetManifestResourceStream("AppMan.Resources.Cancel.png")));
             this.Icon = new Icon(assembly.GetManifestResourceStream("AppMan.Resources.AppMan.ico"));
+            this.cancelButton.ImageList = imageList;
+            this.cancelButton.ImageIndex = 0;
         }
 
         /// <summary>
@@ -1215,6 +1237,36 @@ namespace AppMan
             {
                 DialogHelper.ShowError(ex.ToString());
             }
+        }
+
+        #endregion
+
+        #region Scaling Helpers
+
+        /// <summary>
+        /// Current scale of the form.
+        /// </summary>
+        private double curScale = double.MinValue;
+
+        /// <summary>
+        /// Resizes based on display scale.
+        /// </summary>
+        public int ScaleValue(Int32 value)
+        {
+            return (int)(value * GetScale());
+        }
+
+        /// <summary>
+        /// Gets the current display scale.
+        /// </summary>
+        public double GetScale()
+        {
+            if (curScale != double.MinValue) return curScale;
+            using (var g = Graphics.FromHwnd(this.Handle))
+            {
+                curScale = g.DpiX / 96f;
+            }
+            return curScale;
         }
 
         #endregion
