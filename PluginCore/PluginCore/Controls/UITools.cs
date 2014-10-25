@@ -378,7 +378,7 @@ namespace PluginCore.Controls
 			}
 
             // toggle "long-description" for the hover tooltip
-            if (key == Keys.F1)
+            if (Tip.Visible && key == Keys.F1)
             {
                 showDetails = !showDetails;
                 DataEvent de = new DataEvent(EventType.Command, "ASCompletion.RefreshTooltip", null);
