@@ -58,6 +58,7 @@ namespace ASCompletion
         private FlashErrorsWatcher flashErrorsWatcher;
         private bool checking = false;
         private System.Timers.Timer timerPosition;
+        private int lastHoverPosition;
 
         private Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
         private Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
@@ -713,6 +714,7 @@ namespace ASCompletion
             UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(OnMouseHover);
             UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(OnTextChanged);
             UITools.CallTip.OnUpdateCallTip += new MethodCallTip.UpdateCallTipHandler(OnUpdateCallTip);
+            UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateCallTipHandler(OnUpdateSimpleTip);
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts
@@ -855,8 +857,6 @@ namespace ASCompletion
 				ASComplete.OnChar(Sci, Value, true);
 		}
 
-        private int lastHoverPosition;
-
 		private void OnMouseHover(ScintillaNet.ScintillaControl sci, int position)
 		{
 			if (!ASContext.Context.IsFileValid)
@@ -891,7 +891,11 @@ namespace ASCompletion
 		{
             if (ASComplete.HasCalltip())
                 ASComplete.HandleFunctionCompletion(sci, false, true);
-            else if (UITools.Tip.Visible)
+        }
+
+        private void OnUpdateSimpleTip(ScintillaNet.ScintillaControl sci, Point mousePosition)
+        {
+            if (UITools.Tip.Visible)
                 OnMouseHover(sci, lastHoverPosition);
         }
 

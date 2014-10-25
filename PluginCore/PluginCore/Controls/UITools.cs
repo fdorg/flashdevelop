@@ -381,7 +381,7 @@ namespace PluginCore.Controls
             if (Tip.Visible && key == Keys.F1)
             {
                 showDetails = !showDetails;
-                callTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
                 return true;
             }
 
