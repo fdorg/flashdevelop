@@ -381,8 +381,7 @@ namespace PluginCore.Controls
             if (Tip.Visible && key == Keys.F1)
             {
                 showDetails = !showDetails;
-                DataEvent de = new DataEvent(EventType.Command, "ASCompletion.RefreshTooltip", null);
-                EventManager.DispatchEvent(this, de);
+                callTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
                 return true;
             }
 

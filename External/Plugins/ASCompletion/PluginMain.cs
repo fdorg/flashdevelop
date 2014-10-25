@@ -403,12 +403,6 @@ namespace ASCompletion
                                 }
                                 e.Handled = true;
                             }
-
-                            else if (command == "ASCompletion.RefreshTooltip")
-                            {
-                                OnMouseHover(sci, lastHoverPosition);
-                                e.Handled = true;
-                            }
                         }
 
                         // Create a fake document from a FileModel
@@ -895,8 +889,10 @@ namespace ASCompletion
 
 		private void OnUpdateCallTip(ScintillaNet.ScintillaControl sci, int position)
 		{
-			if (ASComplete.HasCalltip())
-				ASComplete.HandleFunctionCompletion(sci, false, true);
+            if (ASComplete.HasCalltip())
+                ASComplete.HandleFunctionCompletion(sci, false, true);
+            else if (UITools.Tip.Visible)
+                OnMouseHover(sci, lastHoverPosition);
         }
 
         void timerPosition_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
