@@ -98,6 +98,7 @@ namespace ProjectManager.Actions
             if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
             {
                 string fbProject = dialog.FileName;
+                string currentDirectory = Directory.GetCurrentDirectory();
 
                 try
                 {
@@ -123,6 +124,7 @@ namespace ProjectManager.Actions
                 }
                 catch (Exception exception)
                 {
+                    Directory.SetCurrentDirectory(currentDirectory);
                     string msg = TextHelper.GetString("Info.CouldNotOpenProject");
                     ErrorManager.ShowInfo(msg + " " + exception.Message);
                 }
