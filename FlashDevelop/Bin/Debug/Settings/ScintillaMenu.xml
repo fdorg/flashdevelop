@@ -35,10 +35,10 @@
 		<button label="Label.GotoMatchingBrace" click="GoToMatchingBrace" image="67" />
 		<button label="Label.GotoPositionOrLine" click="GoTo" image="67" />
 		<separator />
-		<button label="Label.ToggleBookmark" click="ToggleBookmark" image="402" />
-		<button label="Label.NextBookmark" click="NextBookmark" image="402|9|3|3" />
-		<button label="Label.PrevBookmark" click="PrevBookmark" image="402|1|-3|3" />
-		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" />
+		<button label="Label.ToggleBookmark" click="ToggleBookmark" image="402" flags="Enable:IsEditable" />
+		<button label="Label.NextBookmark" click="NextBookmark" image="402|9|3|3" flags="Enable:IsEditable|HasBookmarks" />
+		<button label="Label.PrevBookmark" click="PrevBookmark" image="402|1|-3|3" flags="Enable:IsEditable|HasBookmarks" />
+		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" flags="Enable:IsEditable|HasBookmarks" />
 	</menu>
 	<separator />
 	<button label="Label.Undo" click="ScintillaCommand" tag="Undo" image="73" flags="Enable:CanUndo" />
