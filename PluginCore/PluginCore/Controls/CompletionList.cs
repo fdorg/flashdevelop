@@ -795,35 +795,43 @@ namespace PluginCore.Controls
         /// </summary> 
 		static public bool ReplaceText(ScintillaControl sci, String tail, char trigger)
 		{
-            String triggers = PluginBase.Settings.InsertionTriggers ?? "";
-            if (triggers.Length > 0 && Regex.Unescape(triggers).IndexOf(trigger) < 0) return false;
-
-            ICompletionListItem item = null;
-            if (completionList.SelectedIndex >= 0)
+            sci.BeginUndoAction();
+            try
             {
-                item = completionList.Items[completionList.SelectedIndex] as ICompletionListItem;
-            }
-            Hide();
-            if (item != null)
-			{
-				String replace = item.Value;
-                if (replace != null)
+                String triggers = PluginBase.Settings.InsertionTriggers ?? "";
+                if (triggers.Length > 0 && Regex.Unescape(triggers).IndexOf(trigger) < 0) return false;
+
+                ICompletionListItem item = null;
+                if (completionList.SelectedIndex >= 0)
                 {
-                    sci.SetSel(startPos, sci.CurrentPos);
-                    if (word != null && tail.Length > 0)
-                    {
-                        if (replace.StartsWith(word, StringComparison.OrdinalIgnoreCase) && replace.IndexOf(tail) >= word.Length)
-                        {
-                            replace = replace.Substring(0, replace.IndexOf(tail));
-                        }
-                    }
-                    sci.ReplaceSel(replace);
-                    if (OnInsert != null) OnInsert(sci, startPos, replace, trigger, item);
-                    if (tail.Length > 0) sci.ReplaceSel(tail);
+                    item = completionList.Items[completionList.SelectedIndex] as ICompletionListItem;
                 }
-                return true;
-			}
-            return false;
+                Hide();
+                if (item != null)
+                {
+                    String replace = item.Value;
+                    if (replace != null)
+                    {
+                        sci.SetSel(startPos, sci.CurrentPos);
+                        if (word != null && tail.Length > 0)
+                        {
+                            if (replace.StartsWith(word, StringComparison.OrdinalIgnoreCase) && replace.IndexOf(tail) >= word.Length)
+                            {
+                                replace = replace.Substring(0, replace.IndexOf(tail));
+                            }
+                        }
+                        sci.ReplaceSel(replace);
+                        if (OnInsert != null) OnInsert(sci, startPos, replace, trigger, item);
+                        if (tail.Length > 0) sci.ReplaceSel(tail);
+                    }
+                    return true;
+                }
+                return false;
+            }
+            finally
+            {
+                sci.EndUndoAction();
+            }
         }
 		
 		#endregion
