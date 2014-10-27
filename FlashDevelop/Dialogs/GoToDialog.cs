@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using PluginCore.Localization;
 using FlashDevelop.Helpers;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs
@@ -22,6 +23,7 @@ namespace FlashDevelop.Dialogs
             this.Font = Globals.Settings.DefaultFont;
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
+            ScaleHelper.AdjustForHighDPI(this);
 		}
 		
 		#region Windows Forms Designer Generated Code

@@ -9,6 +9,7 @@ using FlashDevelop.Utilities;
 using FlashDevelop.Helpers;
 using PluginCore.FRService;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
 
@@ -45,6 +46,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeComponent();
             this.InitializeProperties();
             this.ApplyLocalizedTexts();
+            ScaleHelper.AdjustForHighDPI(this);
 		}
 		
 		#region Windows Forms Designer Generated Code

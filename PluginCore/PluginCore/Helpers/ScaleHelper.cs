@@ -1,10 +1,11 @@
-﻿using PluginCore.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.Text;
+using System.Windows.Forms;
+using PluginCore.Utilities;
 
 namespace PluginCore.Helpers
 {
@@ -82,6 +83,30 @@ namespace PluginCore.Helpers
             int width = Scale(image.Width);
             int height = Scale(image.Height);
             return (Bitmap)ImageKonverter.ImageResize(image, width, height);
+        }
+
+        /// <summary>
+        /// Adjusts the specified control for better high dpi look
+        /// </summary>
+        public static void AdjustForHighDPI(Control control, double multi)
+        {
+            double scale = ScaleHelper.GetScale();
+            foreach (Control ctrl in control.Controls)
+            {
+                if (ctrl is Button)
+                {
+                    if (scale >= 1.5)
+                    {
+                        double noPad = ctrl.Height * multi;
+                        ctrl.Height = (Int32)noPad;
+                    }
+                }
+                AdjustForHighDPI(ctrl, multi);
+            }
+        }
+        public static void AdjustForHighDPI(Control control)
+        {
+            AdjustForHighDPI(control, 0.92);
         }
 
     }

@@ -10,8 +10,9 @@ using PluginCore.Localization;
 using FlashDevelop.Settings;
 using FlashDevelop.Helpers;
 using PluginCore.Utilities;
-using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Controls;
+using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
@@ -47,6 +48,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeContextMenu();
             this.InitializeGraphics();
             this.ApplyLocalizedTexts();
+            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code
