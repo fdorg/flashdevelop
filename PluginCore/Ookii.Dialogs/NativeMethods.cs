@@ -54,6 +54,69 @@ namespace Ookii.Dialogs
 
         #endregion
 
+        #region KnownFolder Definitions
+
+        internal enum FFFP_MODE
+        {
+            FFFP_EXACTMATCH,
+            FFFP_NEARESTPARENTMATCH
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
+        internal struct KNOWNFOLDER_DEFINITION
+        {
+            internal NativeMethods.KF_CATEGORY category;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszName;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszCreator;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszDescription;
+            internal Guid fidParent;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszRelativePath;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszParsingName;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszToolTip;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszLocalizedName;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszIcon;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pszSecurity;
+            internal uint dwAttributes;
+            internal NativeMethods.KF_DEFINITION_FLAGS kfdFlags;
+            internal Guid ftidType;
+        }
+
+        internal enum KF_CATEGORY
+        {
+            KF_CATEGORY_VIRTUAL = 0x00000001,
+            KF_CATEGORY_FIXED = 0x00000002,
+            KF_CATEGORY_COMMON = 0x00000003,
+            KF_CATEGORY_PERUSER = 0x00000004
+        }
+
+        [Flags]
+        internal enum KF_DEFINITION_FLAGS
+        {
+            KFDF_PERSONALIZE = 0x00000001,
+            KFDF_LOCAL_REDIRECT_ONLY = 0x00000002,
+            KFDF_ROAMABLE = 0x00000004,
+        }
+
+
+        // Property System structs and consts
+        [StructLayout(LayoutKind.Sequential, Pack = 4)]
+        internal struct PROPERTYKEY
+        {
+            internal Guid fmtid;
+            internal uint pid;
+        }
+
+        #endregion
+
         #region File Operations Definitions
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]

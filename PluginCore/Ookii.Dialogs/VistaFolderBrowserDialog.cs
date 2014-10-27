@@ -25,8 +25,9 @@ namespace Ookii.Dialogs
         private FolderBrowserDialog _downlevelDialog;
         private string _description;
         private bool _useDescriptionForTitle;
-        private string _selectedPath;
+        private string[] _selectedPaths;
         private System.Environment.SpecialFolder _rootFolder;
+        private bool _multiselect;
 
         /// <summary>
         /// Occurs when the user clicks the Help button on the dialog box.
@@ -136,14 +137,39 @@ namespace Ookii.Dialogs
             {
                 if( _downlevelDialog != null )
                     return _downlevelDialog.SelectedPath;
-                return _selectedPath;
+                return _selectedPaths[0];
             }
             set
             {
                 if( _downlevelDialog != null )
                     _downlevelDialog.SelectedPath = value;
-                else
-                    _selectedPath = value ?? string.Empty;
+                _selectedPaths = new string[1];
+                _selectedPaths[0] = value ?? string.Empty;
+            }
+        }
+
+        public string[] SelectedPaths
+        {
+            get
+            {
+                if (_downlevelDialog != null)
+                    return new string[] {_downlevelDialog.SelectedPath };
+                return SelectedPathsInternal;
+            }
+        }
+
+        public bool Multiselect
+        {
+            get
+            {
+                if (_downlevelDialog != null)
+                    return false;
+                return _multiselect;
+            }
+            set
+            {
+                if (_downlevelDialog == null)
+                    _multiselect = value;
             }
         }
 
@@ -190,6 +216,26 @@ namespace Ookii.Dialogs
 
         #endregion
 
+        #region Internal Properties
+
+        internal string[] SelectedPathsInternal
+        {
+            private get
+            {
+                if (_selectedPaths == null)
+                {
+                    return new string[0];
+                }
+                return (string[])_selectedPaths.Clone();
+            }
+            set
+            {
+                _selectedPaths = value;
+            }
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -199,9 +245,10 @@ namespace Ookii.Dialogs
         {
             _description = string.Empty;
             _useDescriptionForTitle = false;
-            _selectedPath = string.Empty;
+            _selectedPaths = new string[] { string.Empty };
             _rootFolder = Environment.SpecialFolder.Desktop;
             _showNewFolderButton = true;
+            _multiselect = false;
         }
 
         #endregion
@@ -278,18 +325,21 @@ namespace Ookii.Dialogs
                 }
             }
 
-            dialog.SetOptions(NativeMethods.FOS.FOS_PICKFOLDERS | NativeMethods.FOS.FOS_FORCEFILESYSTEM | NativeMethods.FOS.FOS_FILEMUSTEXIST);
+            NativeMethods.FOS options = NativeMethods.FOS.FOS_PICKFOLDERS | NativeMethods.FOS.FOS_FORCEFILESYSTEM | NativeMethods.FOS.FOS_FILEMUSTEXIST;
+            if (Multiselect)
+                options |= NativeMethods.FOS.FOS_ALLOWMULTISELECT;
+            dialog.SetOptions(options);
 
-            if( !string.IsNullOrEmpty(_selectedPath) )
+            if( !string.IsNullOrEmpty(_selectedPaths[0]) )
             {
-                string parent = Path.GetDirectoryName(_selectedPath);
+                string parent = Path.GetDirectoryName(_selectedPaths[0]);
                 if( parent == null || !Directory.Exists(parent) )
                 {
-                    dialog.SetFileName(_selectedPath);
+                    dialog.SetFileName(_selectedPaths[0]);
                 }
                 else
                 {
-                    string folder = Path.GetFileName(_selectedPath);
+                    string folder = Path.GetFileName(_selectedPaths[0]);
                     dialog.SetFolder(NativeMethods.CreateItemFromParsingName(parent));
                     dialog.SetFileName(folder);
                 }
@@ -298,9 +348,30 @@ namespace Ookii.Dialogs
 
         private void GetResult(Ookii.Dialogs.Interop.IFileDialog dialog)
         {
-            Ookii.Dialogs.Interop.IShellItem item;
-            dialog.GetResult(out item);
-            item.GetDisplayName(NativeMethods.SIGDN.SIGDN_FILESYSPATH, out _selectedPath);
+            if (Multiselect)
+            {
+                Ookii.Dialogs.Interop.IShellItemArray results;
+                ((Ookii.Dialogs.Interop.IFileOpenDialog)dialog).GetResults(out results);
+                uint count;
+                results.GetCount(out count);
+                string[] selectedPaths = new string[count];
+                for (uint x = 0; x < count; ++x)
+                {
+                    Ookii.Dialogs.Interop.IShellItem item;
+                    results.GetItemAt(x, out item);
+                    string name;
+                    item.GetDisplayName(NativeMethods.SIGDN.SIGDN_FILESYSPATH, out name);
+                    selectedPaths[x] = name;
+                }
+                _selectedPaths = selectedPaths;
+
+            }
+            else
+            {
+                Ookii.Dialogs.Interop.IShellItem item;
+                dialog.GetResult(out item);
+                item.GetDisplayName(NativeMethods.SIGDN.SIGDN_FILESYSPATH, out _selectedPaths[0]);
+            }
         }
 
         #endregion

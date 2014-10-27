@@ -144,7 +144,7 @@ namespace FileExplorer
                             break;
 
                         case "FileExplorer.FindHere":
-                            FindHere(evnt.Data.ToString());
+                            FindHere((String[])evnt.Data);
                             evnt.Handled = true;
                             break;
 
@@ -208,10 +208,17 @@ namespace FileExplorer
         /// <summary>
         /// Opens the selected path in command prompt
         /// </summary>
-        private void FindHere(string path)
+        private void FindHere(string[] paths)
         {
-            if (path != null && Directory.Exists(path))
+            if (paths == null)
+                return;
+
+            List<string> pathsList = new List<string>(paths);
+            pathsList.RemoveAll(p => !Directory.Exists(p));
+
+            if (pathsList.Count > 0)
             {
+                String path = String.Join(";", pathsList.ToArray());
                 PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
             }
         }

@@ -1553,9 +1553,15 @@ namespace ProjectManager
 
         private void FindInFiles()
         {
-            String path = Tree.SelectedPath;
-            if (path != null && Directory.Exists(path))
+            if (Tree.SelectedPaths == null)
+                return;
+
+            List<string> paths = new List<string>(Tree.SelectedPaths);
+            paths.RemoveAll(p => !Directory.Exists(p));
+
+            if (paths.Count > 0)
             {
+                String path = String.Join(";", paths.ToArray());
                 PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
             }
         }
