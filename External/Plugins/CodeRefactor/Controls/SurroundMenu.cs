@@ -20,6 +20,22 @@ namespace CodeRefactor.Controls
             this.Text = TextHelper.GetString("Label.SurroundWith");
             this.image = PluginBase.MainForm.FindImage("559"); // empty
         }
+		
+        /// <summary>
+        /// 
+        /// </summary>
+        override public bool Enabled
+        {
+            set
+            {
+                base.Enabled = value;
+                // explicitly en- / disable drop down items, the menu can still open
+                foreach (ToolStripDropDownItem dropDownItem in DropDownItems)
+				{
+                    dropDownItem.Enabled = value;
+				}
+            }
+        }
 
         /// <summary>
         /// Generates the menu for the selected sci control
