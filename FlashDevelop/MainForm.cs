@@ -718,16 +718,6 @@ namespace FlashDevelop
                 this.amWatcher.EnableRaisingEvents = true;
             }
             catch {} // No errors...
-
-            // Load platforms data
-            try
-            {
-                PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError("Invalid 'Platforms' in Settings", ex);
-            }
         }
 
         /// <summary>
@@ -796,7 +786,8 @@ namespace FlashDevelop
                 this.appSettings = (SettingObject)obj;
             }
             SettingObject.EnsureValidity(this.appSettings);
-            FileStateManager.RemoveOldStateFiles();
+            PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
+            FileStateManager.RemoveOldStateFiles(); 
         }
 
         /// <summary>
@@ -868,8 +859,8 @@ namespace FlashDevelop
             this.dockPanel = new DockPanel();
             this.statusStrip = new StatusStrip();
             this.toolStripPanel = new ToolStripPanel();
-            this.toolStrip = StripBarManager.GetToolStrip(FileNameHelper.ToolBar);
             this.menuStrip = StripBarManager.GetMenuStrip(FileNameHelper.MainMenu);
+            this.toolStrip = StripBarManager.GetToolStrip(FileNameHelper.ToolBar);
             this.editorMenu = StripBarManager.GetContextMenu(FileNameHelper.ScintillaMenu);
             this.tabMenu = StripBarManager.GetContextMenu(FileNameHelper.TabMenu);
             this.toolStripStatusLabel = new ToolStripStatusLabel();
@@ -1692,6 +1683,14 @@ namespace FlashDevelop
         public void RegisterShortcutItem(String id, ToolStripMenuItem item)
         {
             ShortcutManager.RegisterItem(id, item);
+        }
+
+        /// <summary>
+        /// Registers a new secondary menu item with the shortcut manager
+        /// </summary>
+        public void RegisterSecondaryItem(String id, ToolStripItem item)
+        {
+            ShortcutManager.RegisterSecondaryItem(id, item);
         }
 
         /// <summary>

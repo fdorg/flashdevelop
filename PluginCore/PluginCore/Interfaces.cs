@@ -109,6 +109,7 @@ namespace PluginCore
         void AutoUpdateMenuItem(ToolStripItem item, String action);
         void RegisterShortcutItem(String id, Keys keys);
         void RegisterShortcutItem(String id, ToolStripMenuItem item);
+        void RegisterSecondaryItem(String id, ToolStripItem item);
         void FileFromTemplate(String templatePath, String newFilePath);
         DockContent OpenEditableDocument(String file, Boolean restoreFileState);
         DockContent OpenEditableDocument(String file);
@@ -255,6 +256,7 @@ namespace PluginCore
         Boolean ViewToolBar { get; set; }
         Boolean ViewStatusBar { get; set; }
         Boolean ViewWhitespace { get; set; }
+        Boolean ViewShortcuts { get; set; }
         Boolean WrapText { get; set; }
         ScintillaNet.Enums.EndOfLine EOLMode { get; set; }
         ScintillaNet.Enums.FoldFlag FoldFlags { get; set; }

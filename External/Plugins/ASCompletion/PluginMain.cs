@@ -668,6 +668,7 @@ namespace ASCompletion
                 button.Name = "CheckSyntax";
                 button.ToolTipText = TextHelper.GetString("Label.CheckSyntax").Replace("&", "");
                 button.Click += new EventHandler(CheckSyntax);
+                PluginBase.MainForm.RegisterSecondaryItem("FlashToolsMenu.CheckSyntax", button);
                 toolStrip.Items.Add(button);
                 menuItems.Add(button);
             }
@@ -699,6 +700,7 @@ namespace ASCompletion
                 {
                     image = mainForm.FindImage("99|9|3|-3");
                     item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration));
+                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
                     emenu.Items.Insert(4, item);
                     emenu.Items.Insert(5, new ToolStripSeparator());
                     menuItems.Add(item);

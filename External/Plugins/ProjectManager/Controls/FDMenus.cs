@@ -58,11 +58,13 @@ namespace ProjectManager.Controls
             BuildProject = new ToolStripButton(Icons.Gear.Img);
             BuildProject.Name = "BuildProject";
             BuildProject.ToolTipText = TextHelper.GetString("Label.BuildProject").Replace("&", "");
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.BuildProject", BuildProject);
             toolBar.Items.Add(BuildProject);
 
             TestMovie = new ToolStripButton(Icons.GreenCheck.Img);
             TestMovie.Name = "TestMovie";
             TestMovie.ToolTipText = TextHelper.GetString("Label.TestMovie").Replace("&", "");
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TestMovie", TestMovie);
             toolBar.Items.Add(TestMovie);
 
             ConfigurationSelector = new ToolStripComboBox();

@@ -421,7 +421,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Suchen und Ersetzen hier...</value>
-	<comment>Added after 4.6.4</comment>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>&amp;Eingabeaufforderung hier...</value>
@@ -1872,10 +1872,6 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>Projekt &amp;erstellen</value>
-  </data>
-  <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
-    <value>Erstellen stoppen</value>
-    <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
     <value>Möchten Sie das Erstellen wirklich stoppen?</value>
@@ -5313,5 +5309,9 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>Declare protected variable</value>
     <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
+    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
 </root>

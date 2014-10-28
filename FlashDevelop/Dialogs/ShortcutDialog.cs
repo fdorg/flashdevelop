@@ -256,7 +256,7 @@ namespace FlashDevelop.Dialogs
             this.listView.BeginUpdate();
             this.listView.Items.Clear();
             this.listView.ListViewItemSorter = new ListViewComparer();
-            foreach (ShortcutItem item in ShortcutManager.RegistedItems)
+            foreach (ShortcutItem item in ShortcutManager.RegisteredItems)
             {
                 if (!this.listView.Items.ContainsKey(item.Id) && 
                     (item.Id.ToLower().Contains(filter.ToLower()) || 

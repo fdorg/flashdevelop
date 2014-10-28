@@ -190,6 +190,7 @@ namespace CodeFormatter
         {
             String label = TextHelper.GetString("Label.CodeFormatter");
             this.contextMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.None);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeFormatter", this.contextMenuItem);
         }
         public void AttachContextMenuItem(ToolStripMenuItem contextMenu)
         {

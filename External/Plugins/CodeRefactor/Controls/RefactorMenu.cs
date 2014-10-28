@@ -37,21 +37,6 @@ namespace CodeRefactor.Controls
             this.DropDownItems.Add(new ToolStripSeparator());
             this.organizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
             this.truncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
-            if (createSurroundMenu) RegisterMenuItems();
-        }
-
-        /// <summary>
-        /// Registers the items with shortcut management
-        /// </summary>
-        private void RegisterMenuItems()
-        {
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Rename", this.renameMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractMethod", this.extractMethodMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractLocalVariable", this.extractLocalVariableMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.GenerateDelegateMethods", this.delegateMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.OrganizeImports", this.organizeMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.TruncateImports", this.truncateMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeGenerator", this.generatorMenuItem);
         }
 
         /// <summary>

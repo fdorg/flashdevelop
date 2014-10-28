@@ -404,7 +404,7 @@
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Find and Replace Here...</value>
-	<comment>Added after 4.6.4</comment>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>コマンドプロンプト(&amp;P)...</value>
@@ -5371,5 +5371,9 @@ UseData:"</value>
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>Declare protected variable</value>
     <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
+    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
 </root>

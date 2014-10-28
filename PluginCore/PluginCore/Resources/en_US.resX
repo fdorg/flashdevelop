@@ -5320,4 +5320,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Declare protected variable</value>
     <comment>Added after 4.6.4</comment>
   </data>
+  <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
+    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
 </root>
