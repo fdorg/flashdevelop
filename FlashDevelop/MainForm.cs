@@ -1694,6 +1694,15 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Updates a registered secondary menu item in the shortcut manager
+        /// - should be called when the tooltip changes.
+        /// </summary>
+        public void ApplySecondaryShortcut(ToolStripItem item)
+        {
+            ShortcutManager.ApplySecondaryShortcut(item);
+        }
+
+        /// <summary>
         /// Finds the specified composed/ready image
         /// </summary>
         public Image FindImage(String data)

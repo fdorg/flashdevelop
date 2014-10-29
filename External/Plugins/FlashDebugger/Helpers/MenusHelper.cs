@@ -116,20 +116,28 @@ namespace FlashDebugger
             m_ToolStripSeparator.Margin = new Padding(1, 0, 0, 0);
             StartContinueButton = new ToolStripButton(TextHelper.GetString("Label.Start"), imageList.Images["StartContinue"], new EventHandler(StartContinue_Click));
 			StartContinueButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            PluginBase.MainForm.RegisterSecondaryItem("DebugMenu.Start", StartContinueButton);
 			PauseButton = new ToolStripButton(TextHelper.GetString("Label.Pause"), imageList.Images["Pause"], new EventHandler(debugManager.Pause_Click));
 			PauseButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            PluginBase.MainForm.RegisterSecondaryItem("DebugMenu.Pause", PauseButton);
 			StopButton = new ToolStripButton(TextHelper.GetString("Label.Stop"), imageList.Images["Stop"], new EventHandler(debugManager.Stop_Click));
 			StopButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            PluginBase.MainForm.RegisterSecondaryItem("DebugMenu.Stop", StopButton);
 			CurrentButton = new ToolStripButton(TextHelper.GetString("Label.Current"), imageList.Images["Current"], new EventHandler(debugManager.Current_Click));
 			CurrentButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            PluginBase.MainForm.RegisterSecondaryItem("DebugMenu.Current", CurrentButton);
 			RunToCursorButton = new ToolStripButton(TextHelper.GetString("Label.RunToCursor"), imageList.Images["RunToCursor"], new EventHandler(ScintillaHelper.RunToCursor_Click));
 			RunToCursorButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            PluginBase.MainForm.RegisterSecondaryItem("DebugMenu.RunToCursor", RunToCursorButton);
 			StepButton = new ToolStripButton(TextHelper.GetString("Label.Step"), imageList.Images["Step"], new EventHandler(debugManager.Step_Click));
             StepButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            PluginBase.MainForm.RegisterSecondaryItem("DebugMenu.StepInto", StepButton);
 			NextButton = new ToolStripButton(TextHelper.GetString("Label.Next"), imageList.Images["Next"], new EventHandler(debugManager.Next_Click));
             NextButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            PluginBase.MainForm.RegisterSecondaryItem("DebugMenu.StepOver", NextButton);
             FinishButton = new ToolStripButton(TextHelper.GetString("Label.Finish"), imageList.Images["Finish"], new EventHandler(debugManager.Finish_Click));
             FinishButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            PluginBase.MainForm.RegisterSecondaryItem("DebugMenu.StepOut", FinishButton);
             m_ToolStripButtons = new ToolStripItem[] { m_ToolStripSeparator, StartContinueButton, PauseButton, StopButton, new ToolStripSeparator(), CurrentButton, RunToCursorButton, StepButton, NextButton, FinishButton };
             
             // Events

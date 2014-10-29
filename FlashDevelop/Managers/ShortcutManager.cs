@@ -133,15 +133,12 @@ namespace FlashDevelop.Managers
                             casted.ShortcutKeyDisplayString = view ? keytext : "";
                         }
                     }
-                    else if (item is ToolStripButton)
+                    else
                     {
-                        if (item.Image != null)
-                        {
-                            Int32 end = item.ToolTipText.IndexOf(" (");
-                            String keytext = view ? " (" + DataConverter.KeysToString(keys) + ")" : "";
-                            if (end != -1) item.ToolTipText = item.ToolTipText.Substring(0, end) + keytext;
-                            else item.ToolTipText = item.ToolTipText + keytext;
-                        }
+                        Int32 end = item.ToolTipText.IndexOf(" (");
+                        String keytext = view ? " (" + DataConverter.KeysToString(keys) + ")" : "";
+                        if (end != -1) item.ToolTipText = item.ToolTipText.Substring(0, end) + keytext;
+                        else item.ToolTipText = item.ToolTipText + keytext;
                     }
                 }
             }
