@@ -218,23 +218,8 @@
     <EmbeddedResource Include="Icons\ActionscriptFile.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AddFile.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\HtmlFile.png" />
     <EmbeddedResource Include="Icons\XmlFile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\HiddenItems.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\HiddenFile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\BlankPage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SilkPage.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\MxmlFile.png" />
