@@ -110,6 +110,7 @@ namespace PluginCore
         void RegisterShortcutItem(String id, Keys keys);
         void RegisterShortcutItem(String id, ToolStripMenuItem item);
         void RegisterSecondaryItem(String id, ToolStripItem item);
+        void ApplySecondaryShortcut(ToolStripItem item);
         void FileFromTemplate(String templatePath, String newFilePath);
         DockContent OpenEditableDocument(String file, Boolean restoreFileState);
         DockContent OpenEditableDocument(String file);

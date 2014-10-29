@@ -80,6 +80,7 @@ namespace ProjectManager.Controls
             ConfigurationSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(ConfigurationSelector);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelector", Keys.Control | Keys.F5);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.ConfigurationSelector", ConfigurationSelector);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelectorToggle", Keys.Control | Keys.Shift | Keys.F5);
 
             TargetBuildSelector = new ToolStripComboBox();
@@ -92,6 +93,7 @@ namespace ProjectManager.Controls
             TargetBuildSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(TargetBuildSelector);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F6);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TargetBuildSelector", TargetBuildSelector);
             EnableTargetBuildSelector(false);
         }
 
