@@ -231,6 +231,7 @@ namespace FlashDebugger
                 else StartContinueButton.Text = StartContinueMenu.Text = TextHelper.GetString("Label.Start");
 			}
 			else StartContinueButton.Text = StartContinueMenu.Text = TextHelper.GetString("Label.Continue");
+            PluginBase.MainForm.ApplySecondaryShortcut(StartContinueButton);
             //
 			StopButton.Enabled = StopMenu.Enabled = (state != DebuggerState.Initializing && state != DebuggerState.Stopped);
             PauseButton.Enabled = PauseMenu.Enabled = (state == DebuggerState.Running);
