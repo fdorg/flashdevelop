@@ -596,7 +596,11 @@ namespace FlashDevelop
                 if (file.ToLower().IndexOf("theme") != -1)
                 {
                     String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                    if (File.Exists(currentTheme))
+                    {
+                        ThemeManager.LoadTheme(currentTheme);
+                        ThemeManager.WalkControls(this);
+                    }
                     this.RefreshSciConfig();
                     this.Refresh();
                 }
@@ -786,8 +790,10 @@ namespace FlashDevelop
                 this.appSettings = (SettingObject)obj;
             }
             SettingObject.EnsureValidity(this.appSettings);
+            String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+            if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
             PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
-            FileStateManager.RemoveOldStateFiles(); 
+            FileStateManager.RemoveOldStateFiles();
         }
 
         /// <summary>
@@ -1080,10 +1086,9 @@ namespace FlashDevelop
                 if (!ne.Handled) this.New(null, null);
             }
             /**
-            * Load and apply current active theme
-            */ 
-            String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-            if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+            * Apply the default loaded theme
+            */
+            ThemeManager.WalkControls(this);
             /**
             * Notify plugins that the application is ready
             */
@@ -3601,12 +3606,17 @@ namespace FlashDevelop
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
                 String ext = Path.GetExtension(ofd.FileName).ToLower();
-                if (ext == ".fdi") ThemeManager.LoadTheme(ofd.FileName);
+                if (ext == ".fdi")
+                {
+                    ThemeManager.LoadTheme(ofd.FileName);
+                    ThemeManager.WalkControls(this);
+                }
                 else
                 {
                     this.CallCommand("ExtractZip", ofd.FileName + ";true");
                     String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                    ThemeManager.WalkControls(this);
                     this.RefreshSciConfig();
                     this.Refresh();
                 }

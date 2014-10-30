@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using FlashDevelop.Helpers;
 using PluginCore.Helpers;
+using System.Drawing.Imaging;
+using PluginCore.Utilities;
 
 namespace FlashDevelop.Managers
 {
@@ -22,7 +24,8 @@ namespace FlashDevelop.Managers
 
         static ImageManager()
         {
-            double scale = ScaleHelper.GetScale();
+            Double scale = ScaleHelper.GetScale();
+            String style = Globals.MainForm.GetThemeValue("ImageManager.ImageSet");
             Cache = new Dictionary<String, Bitmap>();
             if (scale >= 1.5)
             {
@@ -36,6 +39,10 @@ namespace FlashDevelop.Managers
                 Padding = 0;
                 Source = new Bitmap(FileNameHelper.Images);
             }
+            // Adjust images for different themes
+            if (style == "Dim") Source = (Bitmap)ImageKonverter.ImageAdjust(Source, -5, -2);
+            else if (style == "Dark") Source = (Bitmap)ImageKonverter.ImageAdjust(Source, -5, -10);
+            else if (style == "Bright") Source = (Bitmap)ImageKonverter.ImageAdjust(Source, 20, 0);
         }
 
         /// <summary>

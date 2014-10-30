@@ -1,3 +1,8 @@
+# FD UI THEME (5.0+)
+
+### Normal, Bright, Dim, Dark
+ImageManager.ImageSet=Normal
+
 # FD UI THEME (4.3+)
 
 ### EDIT CONTROLS
