@@ -511,6 +511,8 @@ namespace ScintillaNet
                 if (usestyle.HasItalics) StyleSetItalic(usestyle.key, usestyle.IsItalics);
                 if (usestyle.HasEolFilled) StyleSetEOLFilled(usestyle.key, usestyle.IsEolFilled);
             }
+            // Should probably depend on the context features?
+            SetProperty("lexer.cpp.interpolated.strings", (lang.name == "haxe") ? "1" : "0");
             // Clear the keywords lists	
             for (int j = 0; j < 9; j++) KeyWords(j, "");
             for (int j = 0; j < lang.usekeywords.Length; j++)
