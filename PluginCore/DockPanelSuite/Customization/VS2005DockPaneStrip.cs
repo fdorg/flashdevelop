@@ -846,9 +846,15 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (m_startDisplayingTab >= Tabs.Count)
                 m_startDisplayingTab = 0;
 
+            int x = 0;
             Rectangle rectTabStrip = TabsRectangle;
 
-            int x = rectTabStrip.X + rectTabStrip.Height / 2;
+            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+
+            // HACK
+            if (tabStyle == "Rect") x = rectTabStrip.X;
+            else x = rectTabStrip.X + rectTabStrip.Height / 2;
+
             bool overflow = false;
 
             // Originally all new documents that were considered overflow
@@ -896,7 +902,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 m_startDisplayingTab = 0;
                 FirstDisplayingTab = 0;
-                x = rectTabStrip.X + rectTabStrip.Height / 2;
+
+                // HACK
+                if (tabStyle == "Rect") x = rectTabStrip.X;
+                else x = rectTabStrip.X + rectTabStrip.Height / 2;
+
                 foreach (TabVS2005 tab in Tabs)
                 {
                     tab.TabX = x;
