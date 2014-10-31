@@ -1,7 +1,16 @@
 # FD UI THEME (5.0+)
 
-### Normal, Bright, Dim, Dark
-ImageManager.ImageSet=Normal
+# Default, Bright, Dim, Dark
+ImageManager.ImageSet=Default
+
+# Default, Large
+VS2005DockPaneStrip.TabSize=Default
+
+# Default, Block, Rect
+VS2005DockPaneStrip.TabStyle=Default
+
+#VS2005DockPaneStrip.DocTabActiveBorder=#ff0000
+#VS2005DockPaneStrip.DocTabInactiveBorder=#0000ff
 
 # FD UI THEME (4.3+)
 
