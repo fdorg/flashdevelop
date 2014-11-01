@@ -1087,7 +1087,15 @@ namespace FlashDevelop.Dialogs
             this.italicsCheckBox.CheckState = CheckState.Indeterminate;
             if (this.currentStyleNode.Attributes["font"] != null)
             {
-                this.fontNameComboBox.Text = this.currentStyleNode.Attributes["font"].Value;
+                String[] fonts = this.currentStyleNode.Attributes["font"].Value.Split(',');
+                foreach (String font in fonts)
+                {
+                    if (IsFontInstalled(font))
+                    {
+                        this.fontNameComboBox.Text = font;
+                        break;
+                    }
+                }
             }
             if (this.currentStyleNode.Attributes["size"] != null)
             {
@@ -1114,6 +1122,17 @@ namespace FlashDevelop.Dialogs
             this.UpdateSampleText();
             this.isLoadingItem = false;
             this.isItemSaved = true;
+        }
+
+        /// <summary>
+        /// Checks if font is installed
+        /// </summary>
+        private static Boolean IsFontInstalled(String fontName)
+        {
+            using (var testFont = new Font(fontName, 9))
+            {
+                return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
 
         /// <summary>
