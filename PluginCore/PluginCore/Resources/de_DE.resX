@@ -5314,4 +5314,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>View shortcuts in main menu, context menus and toolbars.</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
+    <value>Colorize first margin with 'gdefault' foreground color</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
 </root>

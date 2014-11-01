@@ -220,6 +220,16 @@ namespace FlashDevelop.Managers
                 sci.SetProperty("lexer.cpp.track.preprocessor", "0");
                 sci.SetVirtualSpaceOptions((Int32)Globals.Settings.VirtualSpaceMode);
                 sci.SetFoldFlags((Int32)Globals.Settings.FoldFlags);
+                /**
+                * Set if themes should colorize the first margin
+                */
+                Language language = SciConfig.GetLanguage(sci.ConfigurationLanguage);
+                if (language != null && language.editorstyle != null)
+                {
+                    Boolean colorizeMarkerBack = language.editorstyle.ColorizeMarkerBack;
+                    if (colorizeMarkerBack) sci.SetMarginTypeN(0, 3);
+                    else sci.SetMarginTypeN(0, 0);
+                }
                 /** 
                 * Set correct line number margin width
                 */
