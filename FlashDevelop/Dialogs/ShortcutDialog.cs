@@ -191,6 +191,7 @@ namespace FlashDevelop.Dialogs
             cms.Renderer = new DockPanelStripRenderer(false);
             cms.Items.Add(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcutClick);
             cms.Items.Add(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
+            cms.Items.Add(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefaultClick);
             this.listView.ContextMenuStrip = cms;
             // Search Invitation...
             this.searchInvitation = TextHelper.GetString("Label.Search");
@@ -329,13 +330,24 @@ namespace FlashDevelop.Dialogs
         private void RevertToDefaultClick(Object sender, EventArgs e)
         {
             if (this.listView.SelectedItems.Count > 0)
-            {
-                ListViewItem selected = this.listView.SelectedItems[0];
-                ShortcutItem item = selected.Tag as ShortcutItem;
-                selected.SubItems[1].Text = GetKeysAsString(item.Default);
-                item.Custom = item.Default;
-                this.UpdateItemHighlightFont(selected, item);
-            }
+                RevertToDefault(listView.SelectedItems[0]);
+        }
+
+        /// <summary>
+        /// Reverts all shortcut to their default value
+        /// </summary>
+        private void RevertAllToDefaultClick(Object sender, EventArgs e)
+        {
+            foreach (ListViewItem listItem in listView.Items)
+                RevertToDefault(listItem);
+        }
+
+        private void RevertToDefault(ListViewItem listItem)
+        {
+            ShortcutItem item = listItem.Tag as ShortcutItem;
+            listItem.SubItems[1].Text = GetKeysAsString(item.Default);
+            item.Custom = item.Default;
+            UpdateItemHighlightFont(listItem, item);
         }
 
         /// <summary>
