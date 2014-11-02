@@ -193,6 +193,7 @@ namespace FlashDevelop.Dialogs
             cms.Font = Globals.Settings.DefaultFont;
             cms.Renderer = new DockPanelStripRenderer(false);
             removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcutClick);
+            removeShortcut.ShortcutKeys = Keys.Delete;
             revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
             revertAllToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefaultClick);
             cms.Items.Add(removeShortcut);
@@ -340,6 +341,9 @@ namespace FlashDevelop.Dialogs
                             this.filterTextBox.SelectAll();
                         }
                     }
+                    // don't trigger list view default shortcuts like Ctrl+Add
+                    if (e.KeyData != Keys.Up && e.KeyData != Keys.Down)
+                        e.Handled = true;
                 }
             }
         }
