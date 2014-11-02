@@ -354,16 +354,14 @@ namespace FlashDebugger
 		static internal void RunToCursor_Click(Object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            int line = sci.LineFromPosition(sci.CurrentPos);
-			PluginMain.breakPointManager.SetTemporaryBreakPoint(PluginBase.MainForm.CurrentDocument.FileName, line);
+            PluginMain.breakPointManager.SetTemporaryBreakPoint(PluginBase.MainForm.CurrentDocument.FileName, sci.CurrentLine);
 			PluginMain.debugManager.Continue_Click(sender, e);
 		}
 
 		static internal void ToggleBreakPoint_Click(Object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            int line = sci.LineFromPosition(sci.CurrentPos);
-			ToggleMarker(sci, markerBPEnabled, line);
+            ToggleMarker(sci, markerBPEnabled, sci.CurrentLine);
         }
 
         static internal void DeleteAllBreakPoints_Click(Object sender, EventArgs e)
@@ -382,7 +380,7 @@ namespace FlashDebugger
         static internal void ToggleBreakPointEnable_Click(Object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
+            Int32 line = sci.CurrentLine;
 			if (IsMarkerSet(sci, markerBPEnabled, line))
             {
 				sci.MarkerDelete(line, markerBPEnabled);

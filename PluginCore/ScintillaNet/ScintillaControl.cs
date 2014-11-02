@@ -948,6 +948,17 @@ namespace ScintillaNet
                 return (char)CharAt(CurrentPos);
             }
         }
+
+        /// <summary>
+        /// Returns the line containing the current position.
+        /// </summary>
+        public int CurrentLine
+        {
+            get
+            {
+                return LineFromPosition(CurrentPos);
+            }
+        }
 		
 		/// <summary>
 		/// Returns the position of the opposite end of the selection to the caret.
@@ -2046,7 +2057,7 @@ namespace ScintillaNet
 			{
 				SPerform(2422, (uint)value, 0);
 			}
-		}	
+		}
 
 		/// <summary>
 		/// Retrieve the lexing language of the document.
@@ -2594,7 +2605,7 @@ namespace ScintillaNet
 		public void SetLineIndentation(int line, int indentSize)
 		{
 			SPerform(2126, (uint)line, (uint)indentSize);
-		}	
+		}
 
 		/// <summary>
 		/// Retrieve the position before the first non indentation character on a line.
@@ -2602,7 +2613,7 @@ namespace ScintillaNet
 		public int LineIndentPosition(int line)
 		{
 			return (int)SPerform(2128, (uint)line, 0);
-		}	
+		}
 
 		/// <summary>
 		/// Retrieve the column number of a position, taking tab width into account.
@@ -5368,7 +5379,7 @@ namespace ScintillaNet
                         this.BeginUndoAction();
                         try
                         {
-                            int curLine = LineFromPosition(CurrentPos);
+                            int curLine = CurrentLine;
                             int previousIndent = GetLineIndentation(curLine - 1);
                             IndentLine(curLine, previousIndent);
                             int position = LineIndentPosition(curLine);
@@ -5386,7 +5397,7 @@ namespace ScintillaNet
                         this.BeginUndoAction();
                         try
                         {
-                            int curLine = LineFromPosition(CurrentPos);
+                            int curLine = CurrentLine;
                             int tempLine = curLine;
                             int previousIndent;
                             string tempText;
@@ -6637,7 +6648,7 @@ namespace ScintillaNet
         /// </summary>
         public void CutAllowLineEx()
         {
-            if (this.SelTextSize == 0 && this.GetLine(this.LineFromPosition(this.CurrentPos)).Trim() != "")
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim() != "")
             {
                 this.LineCut();
             }
@@ -6649,7 +6660,7 @@ namespace ScintillaNet
         /// </summary>
         public void CopyAllowLineEx()
         {
-            if (this.SelTextSize == 0 && this.GetLine(this.LineFromPosition(this.CurrentPos)).Trim() != "")
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim() != "")
             {
                 this.CopyAllowLine();
             }

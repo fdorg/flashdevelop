@@ -972,7 +972,7 @@ namespace ASCompletion
             {
                 int position = sci.PositionFromLine(location.line) + location.column;
                 sci.SetSel(position, position);
-                int line = sci.LineFromPosition(sci.CurrentPos);
+                int line = sci.CurrentLine;
                 sci.EnsureVisible(line);
                 int top = sci.FirstVisibleLine;
                 int middle = top + sci.LinesOnScreen / 2;
