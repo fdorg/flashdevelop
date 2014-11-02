@@ -29,6 +29,7 @@ namespace FlashDebugger
             settingObject = settings;
 
             imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
 			imageList.Images.Add("StartContinue", Resource.StartContinue);
 			imageList.Images.Add("Pause", Resource.Pause);
 			imageList.Images.Add("Stop", Resource.Stop);
