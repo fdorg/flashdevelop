@@ -1,6 +1,6 @@
 # FD UI THEME (5.0+)
 
-# Default, Bright, Dim, Dark
+# Bright, Default, Dim, Dark, Darker, Black
 ImageManager.ImageSet=Default
 
 # Default, Large

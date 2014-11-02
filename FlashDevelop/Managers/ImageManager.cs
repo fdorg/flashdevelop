@@ -22,10 +22,12 @@ namespace FlashDevelop.Managers
         public static Bitmap Source;
         public static Dictionary<String, Bitmap> Cache;
 
+        /// <summary>
+        /// Static constructor 
+        /// </summary>
         static ImageManager()
         {
             Double scale = ScaleHelper.GetScale();
-            String style = Globals.MainForm.GetThemeValue("ImageManager.ImageSet");
             Cache = new Dictionary<String, Bitmap>();
             if (scale >= 1.5)
             {
@@ -39,10 +41,21 @@ namespace FlashDevelop.Managers
                 Padding = 0;
                 Source = new Bitmap(FileNameHelper.Images);
             }
-            // Adjust images for different themes
-            if (style == "Dim") Source = (Bitmap)ImageKonverter.ImageAdjust(Source, -5, -2);
-            else if (style == "Dark") Source = (Bitmap)ImageKonverter.ImageAdjust(Source, -5, -10);
-            else if (style == "Bright") Source = (Bitmap)ImageKonverter.ImageAdjust(Source, 20, 0);
+            Source = (Bitmap)AdjustImage(Source);
+        }
+
+        /// <summary>
+        /// Adjusts the image for different themes
+        /// </summary>
+        public static Image AdjustImage(Image image)
+        {
+            String style = Globals.MainForm.GetThemeValue("ImageManager.ImageSet");
+            if (style == "Bright") return ImageKonverter.ImageAdjust(Source, 20, 0);
+            else if (style == "Dim") return ImageKonverter.ImageAdjust(Source, -5, -2);
+            else if (style == "Dark") return ImageKonverter.ImageAdjust(Source, -5, -10);
+            else if (style == "Darker") return ImageKonverter.ImageAdjust(Source, -20, -20);
+            else if (style == "Black") return ImageKonverter.ImageAdjust(Source, -50, -25);
+            else return image;
         }
 
         /// <summary>

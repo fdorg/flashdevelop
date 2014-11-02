@@ -125,6 +125,7 @@ namespace PluginCore
         String GetThemeValue(String id);
         Color GetThemeColor(String id);
         IPlugin FindPlugin(String guid);
+        Image ImageSetAdjust(Image image);
         Image FindImage(String data);
 
         #endregion

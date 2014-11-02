@@ -1616,6 +1616,14 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Adjusts the image for different themes
+        /// </summary>
+        public Image ImageSetAdjust(Image image)
+        {
+            return ImageManager.AdjustImage(image);
+        }
+
+        /// <summary>
         /// Themes the controls from the parent
         /// </summary>
         public void ThemeControls(Object parent)
