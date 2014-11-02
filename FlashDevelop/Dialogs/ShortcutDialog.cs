@@ -23,6 +23,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.ColumnHeader idHeader;
         private System.Windows.Forms.ColumnHeader keyHeader;
         private System.Windows.Forms.TextBox filterTextBox;
+        private System.Windows.Forms.CheckBox viewCustom;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button closeButton;
         private System.String searchInvitation;
@@ -58,6 +59,7 @@ namespace FlashDevelop.Dialogs
             this.infoLabel = new System.Windows.Forms.Label();
             this.clearButton = new System.Windows.Forms.Button();
             this.filterTextBox = new System.Windows.Forms.TextBox();
+            this.viewCustom = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -77,10 +79,10 @@ namespace FlashDevelop.Dialogs
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.idHeader, this.keyHeader});
             this.listView.GridLines = true;
             this.listView.FullRowSelect = true;
-            this.listView.Location = new System.Drawing.Point(12, 40);
+            this.listView.Location = new System.Drawing.Point(12, 61);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(562, 335);
+            this.listView.Size = new System.Drawing.Size(562, 315);
             this.listView.TabIndex = 4;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -139,6 +141,13 @@ namespace FlashDevelop.Dialogs
             this.filterTextBox.Leave += new System.EventHandler(this.FilterTextBoxLeave);
             this.filterTextBox.Enter += new System.EventHandler(this.FilterTextBoxEnter);
             // 
+            // viewCustom
+            //
+            this.viewCustom.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left));
+            this.viewCustom.Location = new System.Drawing.Point(12, 35);
+            this.viewCustom.Size = new System.Drawing.Size(500, this.viewCustom.Size.Height);
+            this.viewCustom.Click += new System.EventHandler(this.ViewCustomClick);
+            // 
             // ShortcutDialog
             // 
             this.ShowIcon = false;
@@ -157,6 +166,7 @@ namespace FlashDevelop.Dialogs
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.closeButton);
+            this.Controls.Add(this.viewCustom);
             this.Controls.Add(this.listView);
             this.FormClosed += new FormClosedEventHandler(this.DialogClosed);
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
@@ -216,6 +226,7 @@ namespace FlashDevelop.Dialogs
             this.keyHeader.Text = TextHelper.GetString("Label.Shortcut");
             this.infoLabel.Text = TextHelper.GetString("Info.ShortcutEditInfo");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
+            this.viewCustom.Text = TextHelper.GetString("Label.ViewCustom");
             this.Text = " " + TextHelper.GetString("Title.Shortcuts");
         }
 
@@ -260,7 +271,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Populates the shortcut list view
         /// </summary>
-        private void PopulateListView(String filter)
+        private void PopulateListView(String filter, bool viewCustom)
         {
             this.listView.BeginUpdate();
             this.listView.Items.Clear();
@@ -269,7 +280,8 @@ namespace FlashDevelop.Dialogs
             {
                 if (!this.listView.Items.ContainsKey(item.Id) && 
                     (item.Id.ToLower().Contains(filter.ToLower()) || 
-                    GetKeysAsString(item.Custom).ToLower().Contains(filter.ToLower())))
+                    GetKeysAsString(item.Custom).ToLower().Contains(filter.ToLower())) &&
+                    !viewCustom || (item.Custom != item.Default))
                 {
                     ListViewItem lvi = new ListViewItem();
                     lvi.Text = lvi.Name = item.Id; lvi.Tag = item;
@@ -346,6 +358,11 @@ namespace FlashDevelop.Dialogs
                         e.Handled = true;
                 }
             }
+        }
+
+        private void ViewCustomClick(object sender, EventArgs e)
+        {
+            FilterTextChanged(null, null);
         }
 
         /// <summary>
@@ -436,6 +453,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ClearFilterClick(Object sender, EventArgs e)
         {
+            this.viewCustom.Checked = false;
             this.filterTextBox.Text = "";
             this.FilterTextBoxLeave(null, null);
         }
@@ -447,7 +465,7 @@ namespace FlashDevelop.Dialogs
         {
             String searchText = this.filterTextBox.Text.Trim();
             if (searchText == searchInvitation) searchText = "";
-            this.PopulateListView(searchText);
+            this.PopulateListView(searchText, viewCustom.Checked);
         }
 
         /// <summary>
