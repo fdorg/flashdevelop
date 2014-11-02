@@ -280,9 +280,10 @@ namespace FlashDevelop.Dialogs
             {
                 if (!this.listView.Items.ContainsKey(item.Id) && 
                     (item.Id.ToLower().Contains(filter.ToLower()) || 
-                    GetKeysAsString(item.Custom).ToLower().Contains(filter.ToLower())) &&
-                    !viewCustom || (item.Custom != item.Default))
+                    GetKeysAsString(item.Custom).ToLower().Contains(filter.ToLower())))
                 {
+                    if (viewCustom && item.Custom == item.Default)
+                        continue;
                     ListViewItem lvi = new ListViewItem();
                     lvi.Text = lvi.Name = item.Id; lvi.Tag = item;
                     lvi.SubItems.Add(GetKeysAsString(item.Custom));
