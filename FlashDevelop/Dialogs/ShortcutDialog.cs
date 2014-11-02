@@ -26,7 +26,10 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button closeButton;
         private System.String searchInvitation;
-    
+        private ToolStripMenuItem removeShortcut;
+        private ToolStripMenuItem revertToDefault;
+        private ToolStripMenuItem revertAllToDefault;
+
         public ShortcutDialog()
         {
             this.Owner = Globals.MainForm;
@@ -189,10 +192,14 @@ namespace FlashDevelop.Dialogs
             ContextMenuStrip cms = new ContextMenuStrip();
             cms.Font = Globals.Settings.DefaultFont;
             cms.Renderer = new DockPanelStripRenderer(false);
-            cms.Items.Add(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcutClick);
-            cms.Items.Add(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
-            cms.Items.Add(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefaultClick);
+            removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcutClick);
+            revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
+            revertAllToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefaultClick);
+            cms.Items.Add(removeShortcut);
+            cms.Items.Add(revertToDefault);
+            cms.Items.Add(revertAllToDefault);
             this.listView.ContextMenuStrip = cms;
+            this.listView.ContextMenuStrip.Opening += ContextMenuOpening;
             // Search Invitation...
             this.searchInvitation = TextHelper.GetString("Label.Search");
             this.searchInvitation = this.searchInvitation.Replace("&", "") + "...";
@@ -278,6 +285,33 @@ namespace FlashDevelop.Dialogs
                 ListViewItem item = this.listView.Items[0];
                 item.Selected = true;
             }
+        }
+
+        private void ContextMenuOpening(Object sender, EventArgs e)
+        {
+            if (listView.SelectedItems.Count > 0)
+            {
+                ShortcutItem current = listView.SelectedItems[0].Tag as ShortcutItem;
+                removeShortcut.Enabled = current.Custom != Keys.None;
+                revertToDefault.Enabled = current.Custom != current.Default;
+            }
+            else
+            {
+                removeShortcut.Enabled = revertToDefault.Enabled = false;
+            }
+
+            // any custom shortcuts?
+            bool customShortcut = false;
+            foreach (ListViewItem item in listView.Items)
+            {
+                ShortcutItem current = item.Tag as ShortcutItem;
+                if (current.Custom != current.Default)
+                {
+                    customShortcut = true;
+                    break;
+                }
+            }
+            revertAllToDefault.Enabled = customShortcut;
         }
 
         /// <summary>
