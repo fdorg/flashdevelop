@@ -994,6 +994,7 @@ namespace ProjectManager
                     DisabledForBuild = false;
                     menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text =
                         TextHelper.GetString("Label.BuildProject").Replace("&", "");
+                    PluginBase.MainForm.ApplySecondaryShortcut(menuButton);
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.Gear.Img;
                     break;
 
@@ -1001,6 +1002,7 @@ namespace ProjectManager
                     DisabledForBuild = true;
                     menuButton.Enabled = menuItem.Enabled = contextMenuItem.Enabled = true;
                     menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text = TextHelper.GetString("Label.StopBuild");
+                    PluginBase.MainForm.ApplySecondaryShortcut(menuButton);
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.X.Img;
                     break;
             }
@@ -1084,15 +1086,27 @@ namespace ProjectManager
 
         private void CleanProject()
         {
-            Project project = activeProject; // TODO clean all projects
+            try
+            {
+                DataEvent unwatch = new DataEvent(EventType.Command, "ASCompletion.UnwatchClassPath", null);
+                EventManager.DispatchEvent(this, unwatch);
 
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
-            EventManager.DispatchEvent(this, de);
-            if (de.Handled) return;
+                Project project = activeProject; // TODO clean all projects
 
-            FlexCompilerShell.Cleanup();
-            if (!project.Clean())
-                ErrorManager.ShowInfo(TextHelper.GetString("Info.UnableToCleanProject"));
+                DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
+                EventManager.DispatchEvent(this, de);
+                if (de.Handled)
+                    return;
+
+                FlexCompilerShell.Cleanup();
+                if (!project.Clean())
+                    ErrorManager.ShowInfo(TextHelper.GetString("Info.UnableToCleanProject"));
+            }
+            finally
+            {
+                DataEvent rewatch = new DataEvent(EventType.Command, "ASCompletion.RewatchClassPath", null);
+                EventManager.DispatchEvent(this, rewatch);
+            }
         }
 
         private void FileDeleted(string path)
@@ -1553,9 +1567,15 @@ namespace ProjectManager
 
         private void FindInFiles()
         {
-            String path = Tree.SelectedPath;
-            if (path != null && Directory.Exists(path))
+            if (Tree.SelectedPaths == null)
+                return;
+
+            List<string> paths = new List<string>(Tree.SelectedPaths);
+            paths.RemoveAll(p => !Directory.Exists(p));
+
+            if (paths.Count > 0)
             {
+                String path = String.Join(";", paths.ToArray());
                 PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
             }
         }

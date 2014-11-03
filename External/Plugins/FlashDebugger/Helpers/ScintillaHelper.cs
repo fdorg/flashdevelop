@@ -46,9 +46,9 @@ namespace FlashDebugger
 			mask |= GetMarkerMask(markerBPNotAvailable);
 			mask |= GetMarkerMask(markerCurrentLine);
 			sci.SetMarginMaskN(0, mask);
-            sci.MarkerDefinePixmap(markerBPEnabled, ScintillaNet.XPM.ConvertToXPM(ScaleHelper.Stretch(Properties.Resource.Enabled), "#00FF00"));
-            sci.MarkerDefinePixmap(markerBPDisabled, ScintillaNet.XPM.ConvertToXPM(ScaleHelper.Stretch(Properties.Resource.Disabled), "#00FF00"));
-            sci.MarkerDefinePixmap(markerCurrentLine, ScintillaNet.XPM.ConvertToXPM(ScaleHelper.Stretch(Properties.Resource.CurLine), "#00FF00"));
+            sci.MarkerDefinePixmap(markerBPEnabled, ScintillaNet.XPM.ConvertToXPM(Properties.Resource.Enabled, "#00FF00"));
+            sci.MarkerDefinePixmap(markerBPDisabled, ScintillaNet.XPM.ConvertToXPM(Properties.Resource.Disabled, "#00FF00"));
+            sci.MarkerDefinePixmap(markerCurrentLine, ScintillaNet.XPM.ConvertToXPM(Properties.Resource.CurLine, "#00FF00"));
             Language lang = PluginBase.MainForm.SciConfig.GetLanguage("as3"); // default
 			sci.MarkerSetBack(markerBPEnabled, lang.editorstyle.ErrorLineBack); // enable
             sci.MarkerSetBack(markerBPDisabled, lang.editorstyle.DisabledLineBack); // disable
@@ -354,16 +354,14 @@ namespace FlashDebugger
 		static internal void RunToCursor_Click(Object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            int line = sci.LineFromPosition(sci.CurrentPos);
-			PluginMain.breakPointManager.SetTemporaryBreakPoint(PluginBase.MainForm.CurrentDocument.FileName, line);
+            PluginMain.breakPointManager.SetTemporaryBreakPoint(PluginBase.MainForm.CurrentDocument.FileName, sci.CurrentLine);
 			PluginMain.debugManager.Continue_Click(sender, e);
 		}
 
 		static internal void ToggleBreakPoint_Click(Object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            int line = sci.LineFromPosition(sci.CurrentPos);
-			ToggleMarker(sci, markerBPEnabled, line);
+            ToggleMarker(sci, markerBPEnabled, sci.CurrentLine);
         }
 
         static internal void DeleteAllBreakPoints_Click(Object sender, EventArgs e)
@@ -382,7 +380,7 @@ namespace FlashDebugger
         static internal void ToggleBreakPointEnable_Click(Object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
+            Int32 line = sci.CurrentLine;
 			if (IsMarkerSet(sci, markerBPEnabled, line))
             {
 				sci.MarkerDelete(line, markerBPEnabled);

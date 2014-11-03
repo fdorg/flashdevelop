@@ -42,6 +42,7 @@ namespace FlashDevelop.Controls
         {
             this.Font = Globals.Settings.DefaultFont;
             this.InitializeComponent();
+            this.InitializeGraphics();
             this.InitializeEvents();
             this.InitializeTimers();
         }
@@ -205,6 +206,17 @@ namespace FlashDevelop.Controls
                 this.wholeWordCheckBox.Enabled = value;
                 this.findTextBox.Enabled = value;
             }
+        }
+
+        /// <summary>
+        /// Initializes the graphics used in the control.
+        /// </summary>
+        private void InitializeGraphics()
+        {
+            if (ScaleHelper.GetScale() < 1.5) return;
+            this.nextButton.Image = Globals.MainForm.FindImage("67");
+            this.previousButton.Image = Globals.MainForm.FindImage("63");
+            this.closeButton.Image = Globals.MainForm.FindImage("111");
         }
 
         /// <summary>

@@ -336,16 +336,18 @@ namespace ProjectManager.Actions
 
                 if (confirm)
                     result = MessageBox.Show(mainForm, message, caption,
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Warning);
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Warning);
 
                 if (result == DialogResult.OK)
                 {
+                    UnwatchClasspath();
                     if (!FileHelper.Recycle(path))
                     {
                         String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(error + " " + path);
                     }
+
                     OnFileDeleted(path);
                 }
             }
@@ -353,7 +355,11 @@ namespace ProjectManager.Actions
             {
                 ErrorManager.ShowError(exception);
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                RewatchClasspath();
+                PopCurrentDirectory();
+            }
         }
 
         public void Delete(string[] paths)
@@ -377,6 +383,8 @@ namespace ProjectManager.Actions
 
                     if (result == DialogResult.OK)
                     {
+                        UnwatchClasspath();
+
                         foreach (string path in paths)
                         {
                             if (!FileHelper.Recycle(path))
@@ -392,7 +400,11 @@ namespace ProjectManager.Actions
                 {
                     ErrorManager.ShowError(exception);
                 }
-                finally { PopCurrentDirectory(); }
+                finally
+                {
+                    RewatchClasspath();
+                    PopCurrentDirectory(); 
+                }
             }
         }
 
@@ -409,6 +421,7 @@ namespace ProjectManager.Actions
 
             try
             {
+                UnwatchClasspath();
                 PushCurrentDirectory();
 
                 string oldDir = Path.GetDirectoryName(oldPath);
@@ -454,7 +467,11 @@ namespace ProjectManager.Actions
                 ErrorManager.ShowError(exception);
                 return false;
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                RewatchClasspath();
+                PopCurrentDirectory();
+            }
             return true;
         }
 
@@ -464,6 +481,7 @@ namespace ProjectManager.Actions
 
             try
             {
+                UnwatchClasspath();
                 PushCurrentDirectory();
 
                 // try to fix toPath if it's a filename
@@ -495,15 +513,28 @@ namespace ProjectManager.Actions
             {
                 ErrorManager.ShowError(exception);
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                RewatchClasspath();
+                PopCurrentDirectory();
+            }
         }
 
         private void MoveDirectory(string fromPath, string toPath)
         {
+            UnwatchClasspath();
             if (Directory.GetDirectoryRoot(fromPath) == Directory.GetDirectoryRoot(toPath)
                 && !Directory.Exists(toPath))
             {
-                Directory.Move(fromPath, toPath);
+                try
+                {
+                    Directory.Move(fromPath, toPath);
+                }
+                catch (Exception)
+                { 
+                    throw;
+                }
+                finally { RewatchClasspath(); }
             }
             else
             {
@@ -516,7 +547,9 @@ namespace ProjectManager.Actions
                 {
                     throw;
                 }
+                finally { RewatchClasspath(); }
             }
+            
         }
 
         public void Copy(string fromPath, string toPath)
@@ -623,6 +656,18 @@ namespace ProjectManager.Actions
             }
             File.Copy(file, filePath, true);
             return filePath;
+        }
+
+        private void UnwatchClasspath()
+        {
+            DataEvent unwatch = new DataEvent(EventType.Command, "ASCompletion.UnwatchClassPath", null);
+            EventManager.DispatchEvent(this, unwatch);
+        }
+
+        private void RewatchClasspath()
+        {
+            DataEvent rewatch = new DataEvent(EventType.Command, "ASCompletion.RewatchClassPath", null);
+            EventManager.DispatchEvent(this, rewatch);
         }
 
         #endregion

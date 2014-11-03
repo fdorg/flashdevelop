@@ -10,7 +10,9 @@ using System.Windows.Forms;
 using ProjectManager.Projects;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 using PluginCore;
+using Ookii.Dialogs;
 
 namespace ProjectManager.Controls
 {
@@ -155,8 +157,15 @@ namespace ProjectManager.Controls
 		{
 			InitializeComponent();
             InitializeLocalization();
-            btnDown.Image = Icons.DownArrow.Img;
-            btnUp.Image = Icons.UpArrow.Img;
+            ImageList imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.Images.Add(Icons.DownArrow.Img);
+            imageList.Images.Add(Icons.UpArrow.Img);
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            btnDown.ImageList = imageList;
+            btnUp.ImageList = imageList;
+            btnDown.ImageIndex = 0;
+            btnUp.ImageIndex = 1;
             btnRemove.Enabled = false;
             SetButtons();
 		}
@@ -230,9 +239,10 @@ namespace ProjectManager.Controls
 
 		private void btnNewClasspath_Click(object sender, EventArgs e)
 		{
-			using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
 			{
                 dialog.RootFolder = Environment.SpecialFolder.Desktop;
+                dialog.UseDescriptionForTitle = true;
                 dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
 
 				if (project != null) dialog.SelectedPath = project.Directory;
@@ -285,9 +295,10 @@ namespace ProjectManager.Controls
 		{
 			ClasspathEntry entry = listBox.SelectedItem as ClasspathEntry;
 			if (entry == null) return; // you could have double-clicked on whitespace
-			using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
 			{
 				dialog.RootFolder = Environment.SpecialFolder.Desktop;
+                dialog.UseDescriptionForTitle = true;
                 dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
 				if (project != null)
 				{

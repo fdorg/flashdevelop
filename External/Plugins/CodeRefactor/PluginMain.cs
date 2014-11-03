@@ -262,9 +262,32 @@ namespace CodeRefactor
             this.viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
             this.editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
             PluginBase.MainForm.RegisterShortcutItem("SearchMenu.ViewReferences", this.viewReferencesItem);
+            PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.ViewReferences", this.editorReferencesItem);
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
             editorMenu.Items.Insert(7, this.editorReferencesItem);
+            RegisterMenuItems();
+        }
+
+        /// <summary>
+        /// Registers the menu items with the shortcut manager
+        /// </summary>
+        private void RegisterMenuItems()
+        {
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Rename", this.refactorMainMenu.RenameMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractMethod", this.refactorMainMenu.ExtractMethodMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractLocalVariable", this.refactorMainMenu.ExtractLocalVariableMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.GenerateDelegateMethods", this.refactorMainMenu.DelegateMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.OrganizeImports", this.refactorMainMenu.OrganizeMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.TruncateImports", this.refactorMainMenu.TruncateMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeGenerator", this.refactorMainMenu.CodeGeneratorMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Rename", this.refactorContextMenu.RenameMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractMethod", this.refactorContextMenu.ExtractMethodMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractLocalVariable", this.refactorContextMenu.ExtractLocalVariableMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.GenerateDelegateMethods", this.refactorContextMenu.DelegateMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.OrganizeImports", this.refactorContextMenu.OrganizeMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.TruncateImports", this.refactorContextMenu.TruncateMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeGenerator", this.refactorContextMenu.CodeGeneratorMenuItem);
         }
 
         /// <summary>

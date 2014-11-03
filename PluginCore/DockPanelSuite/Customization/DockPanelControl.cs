@@ -20,10 +20,14 @@ namespace System.Windows.Forms
     public class DockPanelControl : UserControl
     {
         DockBorders borders;
+        Pen borderPen;
 
         public DockPanelControl()
         {
             Borders = DockBorders.Left | DockBorders.Right;
+            Color color = PluginCore.PluginBase.MainForm.GetThemeColor("DockPanelControl.BorderColor");
+            if (color != Color.Empty) borderPen = new Pen(color);
+            else borderPen = SystemPens.ControlDark;
         }
 
         private DockBorders Borders
@@ -45,19 +49,19 @@ namespace System.Windows.Forms
             this.CheckDockPosition();
             if ((borders & DockBorders.Left) > 0)
             {
-                e.Graphics.DrawLine(SystemPens.ControlDark, e.ClipRectangle.Left, e.ClipRectangle.Top, e.ClipRectangle.Left, e.ClipRectangle.Bottom + 1);
+                e.Graphics.DrawLine(borderPen, e.ClipRectangle.Left, e.ClipRectangle.Top, e.ClipRectangle.Left, e.ClipRectangle.Bottom + 1);
             }
             if ((borders & DockBorders.Top) > 0)
             {
-                e.Graphics.DrawLine(SystemPens.ControlDark, e.ClipRectangle.Left, e.ClipRectangle.Top, e.ClipRectangle.Right, e.ClipRectangle.Top);
+                e.Graphics.DrawLine(borderPen, e.ClipRectangle.Left, e.ClipRectangle.Top, e.ClipRectangle.Right, e.ClipRectangle.Top);
             }
             if ((borders & DockBorders.Right) > 0)
             {
-                e.Graphics.DrawLine(SystemPens.ControlDark, e.ClipRectangle.Right - 1, e.ClipRectangle.Top, e.ClipRectangle.Right - 1, e.ClipRectangle.Bottom + 1);
+                e.Graphics.DrawLine(borderPen, e.ClipRectangle.Right - 1, e.ClipRectangle.Top, e.ClipRectangle.Right - 1, e.ClipRectangle.Bottom + 1);
             }
             if ((borders & DockBorders.Bottom) > 0)
             {
-                e.Graphics.DrawLine(SystemPens.ControlDark, e.ClipRectangle.Left, e.ClipRectangle.Bottom - 1, e.ClipRectangle.Right, e.ClipRectangle.Bottom - 1);
+                e.Graphics.DrawLine(borderPen, e.ClipRectangle.Left, e.ClipRectangle.Bottom - 1, e.ClipRectangle.Right, e.ClipRectangle.Bottom - 1);
             }
         }
 

@@ -127,9 +127,14 @@ namespace WeifenLuo.WinFormsUI.Docking
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			// if DockWindow is document, draw the border
-            if (DockState == DockState.Document)
-                e.Graphics.DrawRectangle(SystemPens.ControlDark, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
-
+            if (DockState == DockState.Document) 
+            {
+                Pen borderPen;
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("DockWindow.BorderColor");
+                if (color != Color.Empty) borderPen = new Pen(color);
+                else borderPen = SystemPens.ControlDark;
+                e.Graphics.DrawRectangle(borderPen, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
+            }
 			base.OnPaint(e);
 		}
 

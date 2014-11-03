@@ -179,7 +179,7 @@ namespace ASCompletion.Completion
                         Match m = Regex.Match(text, String.Format(patternEvent, ""), RegexOptions.IgnoreCase);
                         if (m.Success)
                         {
-                            int regexIndex = m.Index + Sci.PositionFromLine(Sci.LineFromPosition(Sci.CurrentPos));
+                            int regexIndex = m.Index + Sci.PositionFromLine(Sci.CurrentLine);
                             GenerateDefaultHandlerName(Sci, position, regexIndex, m.Groups["event"].Value, true);
                             resolve = ASComplete.GetExpressionType(Sci, Sci.CurrentPos);
                             if (resolve.Member == null || (resolve.Member.Flags & FlagType.AutomaticVar) > 0)
@@ -270,7 +270,7 @@ namespace ASCompletion.Completion
                 }
 
                 // "assign var to statement" suggestion
-                int curLine = Sci.LineFromPosition(Sci.CurrentPos);
+                int curLine = Sci.CurrentLine;
                 string ln = Sci.GetLine(curLine);
                 if (ln.Trim().Length > 0 && ln.TrimEnd().Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine) && ln.IndexOf("=") == -1)
                 {
@@ -306,7 +306,7 @@ namespace ASCompletion.Completion
                 && resolve.Type.QualifiedName == "String"
                 && found.inClass != ClassModel.VoidClass)
             {
-                int lineStartPos = Sci.PositionFromLine(Sci.LineFromPosition(Sci.CurrentPos));
+                int lineStartPos = Sci.PositionFromLine(Sci.CurrentLine);
                 string lineStart = text.Substring(0, Sci.CurrentPos - lineStartPos);
                 Match m = Regex.Match(lineStart, String.Format(@"new\s+(?<event>\w+)\s*\(\s*\w+", lineStart));
                 if (m.Success)
@@ -1266,7 +1266,7 @@ namespace ASCompletion.Completion
 
         private static void AssignStatementToVar(ClassModel inClass, ScintillaNet.ScintillaControl Sci, MemberModel member)
         {
-            int lineNum = Sci.LineFromPosition(Sci.CurrentPos);
+            int lineNum = Sci.CurrentLine;
             string line = Sci.GetLine(lineNum);
             StatementReturnType returnType = GetStatementReturnType(Sci, inClass, line, Sci.PositionFromLine(lineNum));
 
@@ -1656,8 +1656,6 @@ namespace ASCompletion.Completion
         {
             if (!RemoveLocalDeclaration(Sci, contextMember)) return;
 
-            int currLine = Sci.LineFromPosition(Sci.CurrentPos);
-
             int posStart = Sci.PositionFromLine(member.LineFrom);
             int posEnd = Sci.LineEndPosition(member.LineTo);
             Sci.SetSel(posStart, posEnd);
@@ -1682,7 +1680,7 @@ namespace ASCompletion.Completion
             string template = TemplateUtils.ToDeclarationString(memberCopy, TemplateUtils.GetTemplate("MethodDeclaration"));
             InsertCode(start, template);
 
-            int currPos = Sci.LineEndPosition(currLine);
+            int currPos = Sci.LineEndPosition(Sci.CurrentLine);
 
             Sci.SetSel(currPos, currPos);
             Sci.CurrentPos = currPos;
@@ -1953,7 +1951,7 @@ namespace ASCompletion.Completion
             StringBuilder membersString = new StringBuilder();
             StringBuilder oneMembersString;
             int len = 0;
-            int indent = Sci.GetLineIndentation(Sci.LineFromPosition(Sci.CurrentPos));
+            int indent = Sci.GetLineIndentation(Sci.CurrentLine);
             foreach (MemberModel m in members)
             {
                 if (((m.Flags & FlagType.Variable) > 0 || (m.Flags & FlagType.Getter) > 0)
@@ -2013,7 +2011,7 @@ namespace ASCompletion.Completion
             }
 
             ASResult returnType = null;
-            int lineNum = Sci.LineFromPosition(Sci.CurrentPos);
+            int lineNum = Sci.CurrentLine;
             string line = Sci.GetLine(lineNum);
             
             Match m = Regex.Match(line, "\\b" + Regex.Escape(contextToken) + "\\(");
@@ -3780,8 +3778,6 @@ namespace ASCompletion.Completion
         /// <returns>Completion was handled</returns>
         static private bool HandleOverrideCompletion(ScintillaNet.ScintillaControl Sci, bool autoHide)
         {
-            //int line = Sci.LineFromPosition(Sci.CurrentPos);
-
             // explore members
             IASContext ctx = ASContext.Context;
             ClassModel curClass = ctx.CurrentClass;

@@ -35,24 +35,8 @@ namespace PluginCore.Utilities
         /// </summary>
         public static String KeysToString(Keys keys)
         {
-            String str = "";
-            if ((keys & Keys.Alt) == Keys.Alt)
-            {
-                keys -= Keys.Alt;
-                str += "Alt+";
-            }
-            if ((keys & Keys.Control) == Keys.Control) 
-            {
-                keys -= Keys.Control;
-                str += "Ctrl+";
-            }
-            if ((keys & Keys.Shift) == Keys.Shift) 
-            {
-                keys -= Keys.Shift; 
-                str += "Shift+";
-            }
-            str += keys.ToString().Replace(", ", "+");
-            return str;
+            KeysConverter kc = new KeysConverter();
+            return kc.ConvertToString(keys);
         }
 
         /// <summary>

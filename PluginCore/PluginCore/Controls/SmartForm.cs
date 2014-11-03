@@ -85,6 +85,7 @@ namespace PluginCore.Controls
         /// </summary>
         private void SmartFormLoad(Object sender, EventArgs e)
         {
+            ScaleHelper.AdjustForHighDPI(this);
             if (!String.IsNullOrEmpty(this.formGuid) && File.Exists(this.FormPropsFile))
             {
                 Object obj = ObjectSerializer.Deserialize(this.FormPropsFile, this.formProps);

@@ -495,6 +495,24 @@ namespace ASCompletion.Model
             }
         }
 
+        /// <summary>
+        /// Temporarily disables the watcher to release the lock on directories / files
+        /// </summary>
+        public void DisableWatcher()
+        {
+            if (watcher != null)
+                watcher.EnableRaisingEvents = false;
+        }
+
+        /// <summary>
+        /// Should be called after DisableWatcher()
+        /// </summary>
+        public void EnableWatcher()
+        {
+            if (watcher != null)
+                watcher.EnableRaisingEvents = true;
+        }
+
         public bool HasFile(string fileName)
         {
             if (!IsValid) return false;

@@ -162,7 +162,7 @@ namespace ASCompletion.Completion
             if (ASContext.CommonSettings.JavadocTags == null || ASContext.CommonSettings.JavadocTags.Length == 0)
                 return false;
 
-            string txt = Sci.GetLine(Sci.LineFromPosition(Sci.CurrentPos)).TrimStart();
+            string txt = Sci.GetLine(Sci.CurrentLine).TrimStart();
 			if (!Regex.IsMatch(txt, "^\\*[\\s]*\\@"))
 				return false;
 			

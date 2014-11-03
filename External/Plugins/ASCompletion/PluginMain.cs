@@ -371,8 +371,6 @@ namespace ASCompletion
                                         e.Handled = Commands.CreateTrustFile.Run(args[0], args[1]);
                                 }
                             }
-
-                            // 
                             else if (command == "ASCompletion.GetClassPath")
                             {
                                 if (cmdData != null)
@@ -389,6 +387,19 @@ namespace ASCompletion
                                         }
                                     }
                                 }
+                            }
+                            else if (command == "ASCompletion.UnwatchClassPath")
+                            {
+                                foreach (PathModel cp in ASContext.Context.Classpath)
+                                    cp.DisableWatcher();
+                            }
+                            else if (command == "ASCompletion.RewatchClassPath")
+                            {
+                                // classpaths could be invalid now - remove those, BuildClassPath() is too expensive
+                                ASContext.Context.Classpath.RemoveAll(cp => !Directory.Exists(cp.Path));
+
+                                foreach (PathModel cp in ASContext.Context.Classpath)
+                                    cp.EnableWatcher();
                             }
 
                             // Return requested language SDK list
@@ -445,7 +456,7 @@ namespace ASCompletion
                                 details = new Hashtable();
                                 // Get closest list (Array or Vector)
                                 string closestListName = "", closestListItemType = "";
-                                ASComplete.FindClosestList(ASContext.Context, result.Context, sci.LineFromPosition(sci.CurrentPos), ref closestListName, ref closestListItemType);
+                                ASComplete.FindClosestList(ASContext.Context, result.Context, sci.CurrentLine, ref closestListName, ref closestListItemType);
                                 details.Add("TypClosestListName", closestListName);
                                 details.Add("TypClosestListItemType", closestListItemType);
                                 // get free iterator index
@@ -668,6 +679,7 @@ namespace ASCompletion
                 button.Name = "CheckSyntax";
                 button.ToolTipText = TextHelper.GetString("Label.CheckSyntax").Replace("&", "");
                 button.Click += new EventHandler(CheckSyntax);
+                PluginBase.MainForm.RegisterSecondaryItem("FlashToolsMenu.CheckSyntax", button);
                 toolStrip.Items.Add(button);
                 menuItems.Add(button);
             }
@@ -699,6 +711,7 @@ namespace ASCompletion
                 {
                     image = mainForm.FindImage("99|9|3|-3");
                     item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration));
+                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
                     emenu.Items.Insert(4, item);
                     emenu.Items.Insert(5, new ToolStripSeparator());
                     menuItems.Add(item);

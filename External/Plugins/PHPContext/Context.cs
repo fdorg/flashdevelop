@@ -170,7 +170,7 @@ namespace PHPContext
                 cFile.HasFiltering = true;
                 ASFileParser parser = new ASFileParser();
                 parser.ParseSrc(cFile, CurSciControl.Text);
-                cLine = CurSciControl.LineFromPosition(CurSciControl.CurrentPos);
+                cLine = CurSciControl.CurrentLine;
                 UpdateContext(cLine);
             }
         }

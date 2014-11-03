@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ASDocGen</RootNamespace>
     <AssemblyName>ASDocGen</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>ASDocGen.Program</StartupObject>
     <TargetZone>LocalIntranet</TargetZone>

@@ -263,10 +263,12 @@ namespace FlashDevelop.Dialogs
             imageList.Images.Add(Globals.MainForm.FindImage("341"));
             imageList.Images.Add(Globals.MainForm.FindImage("342"));
             imageList.Images.Add(Globals.MainForm.FindImage("50"));
-            this.clearFilterButton.Image = Globals.MainForm.FindImage("153");
+            imageList.Images.Add(Globals.MainForm.FindImage("153")); // clear
             this.infoPictureBox.Image = Globals.MainForm.FindImage("229");
             this.itemListView.SmallImageList = imageList;
             this.itemListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            this.clearFilterButton.ImageList = imageList;
+            this.clearFilterButton.ImageIndex = 3;
         }
 
         /// <summary>
