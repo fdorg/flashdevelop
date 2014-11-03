@@ -72,11 +72,11 @@ namespace FlashDevelop.Dialogs
             this.versionLabel.ForeColor = System.Drawing.Color.DarkGray;
             this.versionLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
             this.versionLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.versionLabel.Location = new System.Drawing.Point(25, 172);
+            this.versionLabel.Location = new System.Drawing.Point(23, 172);
             this.versionLabel.Name = "versionLabel";
             this.versionLabel.Size = new System.Drawing.Size(289, 15);
             this.versionLabel.TabIndex = 0;
-            this.versionLabel.Text = "FlashDevelop 4.6.0.0 for .NET 2.0 (master#1234567890)";
+            this.versionLabel.Text = "FlashDevelop 5.0.0.99 for .NET 3.5 (master#1234567890)";
             this.versionLabel.Click += new System.EventHandler(this.DialogCloseClick);
             this.versionLabel.LinkClicked += VersionLabelLinkClicked;
             // 

@@ -596,7 +596,11 @@ namespace FlashDevelop
                 if (file.ToLower().IndexOf("theme") != -1)
                 {
                     String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                    if (File.Exists(currentTheme))
+                    {
+                        ThemeManager.LoadTheme(currentTheme);
+                        ThemeManager.WalkControls(this);
+                    }
                     this.RefreshSciConfig();
                     this.Refresh();
                 }
@@ -718,16 +722,6 @@ namespace FlashDevelop
                 this.amWatcher.EnableRaisingEvents = true;
             }
             catch {} // No errors...
-
-            // Load platforms data
-            try
-            {
-                PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError("Invalid 'Platforms' in Settings", ex);
-            }
         }
 
         /// <summary>
@@ -796,6 +790,9 @@ namespace FlashDevelop
                 this.appSettings = (SettingObject)obj;
             }
             SettingObject.EnsureValidity(this.appSettings);
+            String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+            if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+            PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
             FileStateManager.RemoveOldStateFiles();
         }
 
@@ -868,8 +865,8 @@ namespace FlashDevelop
             this.dockPanel = new DockPanel();
             this.statusStrip = new StatusStrip();
             this.toolStripPanel = new ToolStripPanel();
-            this.toolStrip = StripBarManager.GetToolStrip(FileNameHelper.ToolBar);
             this.menuStrip = StripBarManager.GetMenuStrip(FileNameHelper.MainMenu);
+            this.toolStrip = StripBarManager.GetToolStrip(FileNameHelper.ToolBar);
             this.editorMenu = StripBarManager.GetContextMenu(FileNameHelper.ScintillaMenu);
             this.tabMenu = StripBarManager.GetContextMenu(FileNameHelper.TabMenu);
             this.toolStripStatusLabel = new ToolStripStatusLabel();
@@ -1089,10 +1086,9 @@ namespace FlashDevelop
                 if (!ne.Handled) this.New(null, null);
             }
             /**
-            * Load and apply current active theme
-            */ 
-            String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-            if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+            * Apply the default loaded theme
+            */
+            ThemeManager.WalkControls(this);
             /**
             * Notify plugins that the application is ready
             */
@@ -1360,7 +1356,7 @@ namespace FlashDevelop
             if (sci != null && document != null && document.IsEditable)
             {
                 Int32 column = sci.Column(sci.CurrentPos) + 1;
-                Int32 line = sci.LineFromPosition(sci.CurrentPos) + 1;
+                Int32 line = sci.CurrentLine + 1;
                 String statusText = " " + TextHelper.GetString("Info.StatusText");
                 var oldOS = this.OSVersion.Major < 6; // Vista is 6.0 and ok...
                 String file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
@@ -1620,6 +1616,14 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Adjusts the image for different themes
+        /// </summary>
+        public Image ImageSetAdjust(Image image)
+        {
+            return ImageManager.AdjustImage(image);
+        }
+
+        /// <summary>
         /// Themes the controls from the parent
         /// </summary>
         public void ThemeControls(Object parent)
@@ -1692,6 +1696,23 @@ namespace FlashDevelop
         public void RegisterShortcutItem(String id, ToolStripMenuItem item)
         {
             ShortcutManager.RegisterItem(id, item);
+        }
+
+        /// <summary>
+        /// Registers a new secondary menu item with the shortcut manager
+        /// </summary>
+        public void RegisterSecondaryItem(String id, ToolStripItem item)
+        {
+            ShortcutManager.RegisterSecondaryItem(id, item);
+        }
+
+        /// <summary>
+        /// Updates a registered secondary menu item in the shortcut manager
+        /// - should be called when the tooltip changes.
+        /// </summary>
+        public void ApplySecondaryShortcut(ToolStripItem item)
+        {
+            ShortcutManager.ApplySecondaryShortcut(item);
         }
 
         /// <summary>
@@ -2948,8 +2969,7 @@ namespace FlashDevelop
         public void ToggleBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.ToggleMarker(sci, 0, line);
+            MarkerManager.ToggleMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>
@@ -2958,8 +2978,7 @@ namespace FlashDevelop
         public void NextBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.NextMarker(sci, 0, line);
+            MarkerManager.NextMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>
@@ -2968,8 +2987,7 @@ namespace FlashDevelop
         public void PrevBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.PreviousMarker(sci, 0, line);
+            MarkerManager.PreviousMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>
@@ -3593,12 +3611,17 @@ namespace FlashDevelop
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
                 String ext = Path.GetExtension(ofd.FileName).ToLower();
-                if (ext == ".fdi") ThemeManager.LoadTheme(ofd.FileName);
+                if (ext == ".fdi")
+                {
+                    ThemeManager.LoadTheme(ofd.FileName);
+                    ThemeManager.WalkControls(this);
+                }
                 else
                 {
                     this.CallCommand("ExtractZip", ofd.FileName + ";true");
                     String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                    ThemeManager.WalkControls(this);
                     this.RefreshSciConfig();
                     this.Refresh();
                 }

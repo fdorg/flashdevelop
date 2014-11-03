@@ -1,15 +1,29 @@
 using System;
 using System.IO;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Utilities;
+using PluginCore;
 
 namespace CodeRefactor.Controls
 {
     public class SurroundMenu : ToolStripMenuItem
     {
+        private Image image;
+        private List<String> items;
+
+        public SurroundMenu()
+        {
+            this.Text = TextHelper.GetString("Label.SurroundWith");
+            this.image = PluginBase.MainForm.FindImage("559"); // empty
+        }
+		
+        /// <summary>
+        /// 
+        /// </summary>
         override public bool Enabled
         {
             set
@@ -17,15 +31,10 @@ namespace CodeRefactor.Controls
                 base.Enabled = value;
                 // explicitly en- / disable drop down items, the menu can still open
                 foreach (ToolStripDropDownItem dropDownItem in DropDownItems)
-                    dropDownItem.Enabled = value;    
+				{
+                    dropDownItem.Enabled = value;
+				}
             }
-        }
-
-        private List<String> items;
-
-        public SurroundMenu()
-        {
-            this.Text = TextHelper.GetString("Label.SurroundWith");
         }
 
         /// <summary>
@@ -67,7 +76,7 @@ namespace CodeRefactor.Controls
                 content = File.ReadAllText(itm);
                 if (content.IndexOf("{0}") > -1)
                 {
-                    this.DropDownItems.Insert(this.DropDownItems.Count, new ToolStripMenuItem(Path.GetFileNameWithoutExtension(itm)));
+                    this.DropDownItems.Insert(this.DropDownItems.Count, new ToolStripMenuItem(Path.GetFileNameWithoutExtension(itm), image));
                 }
             }
         }

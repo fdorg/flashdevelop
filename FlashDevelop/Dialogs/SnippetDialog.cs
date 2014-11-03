@@ -297,11 +297,16 @@ namespace FlashDevelop.Dialogs
         private void InitializeGraphics()
         {
             ImageList imageList = new ImageList();
-            this.revertButton.Image = PluginBase.MainForm.FindImage("342|24|3|3");
-            this.exportButton.Image = PluginBase.MainForm.FindImage("342|9|3|3");
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.Images.Add(PluginBase.MainForm.FindImage("341"));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("342|24|3|3")); // revert
+            imageList.Images.Add(PluginBase.MainForm.FindImage("342|9|3|3")); // export
             this.snippetListView.SmallImageList = imageList;
             this.snippetListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            this.revertButton.ImageList = imageList;
+            this.exportButton.ImageList = imageList;
+            this.revertButton.ImageIndex = 1;
+            this.exportButton.ImageIndex = 2;
         }
 
         /// <summary>

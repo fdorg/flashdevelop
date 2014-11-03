@@ -25,6 +25,7 @@ namespace FlashDevelop.Dialogs
             this.Font = Globals.Settings.DefaultFont;
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
+            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code

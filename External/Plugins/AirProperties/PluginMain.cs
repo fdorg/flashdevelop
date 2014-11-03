@@ -197,6 +197,7 @@ namespace AirProperties
             this.pmMenuButton.Text = TextHelper.GetString("Label.ProjectMenuItem").Replace("&", "").Replace("...", "");
             this.pmMenuButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.pmMenuButton.Click += new EventHandler(this.OpenWizard);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.AirApplicationProperties", this.pmMenuButton);
             toolStrip.Items.Insert(5, this.pmMenuButton);
         }
 

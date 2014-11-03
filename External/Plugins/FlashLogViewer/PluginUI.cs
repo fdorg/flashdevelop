@@ -98,7 +98,7 @@ namespace FlashLogViewer
             // 
             // clearFilterButton
             //
-            this.clearFilterButton.Enabled = false;
+            this.clearFilterButton.Enabled = true;
             this.clearFilterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.clearFilterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearFilterButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
@@ -147,7 +147,7 @@ namespace FlashLogViewer
             // 
             // filterComboBox
             //
-            this.filterComboBox.Enabled = false;
+            this.filterComboBox.Enabled = true;
             this.filterComboBox.Name = "filterComboBox";
             this.filterComboBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.filterComboBox.Size = new System.Drawing.Size(50, 28);
@@ -259,6 +259,7 @@ namespace FlashLogViewer
             this.imageList = new ImageList();
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.imageList.TransparentColor = Color.Transparent;
+            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("151"));
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("147"));
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("56|8|2|4"));
@@ -410,7 +411,7 @@ namespace FlashLogViewer
             this.refreshTimer.Interval = this.GetUpdateInterval();
             this.toggleButton.Image = this.imageList.Images[(enable ? 0 : 1)];
             this.toggleButton.ToolTipText = (enable ? TextHelper.GetString("ToolTip.StopTracking") : TextHelper.GetString("ToolTip.StartTracking"));
-            this.logComboBox.Enabled = this.filterComboBox.Enabled = this.clearFilterButton.Enabled = enable;
+            this.logComboBox.Enabled = enable;
             if (enable)
             {
                 this.lastPosition = 0;
@@ -527,6 +528,7 @@ namespace FlashLogViewer
         /// </summary>
         private void FilterTextBoxTextChanged(Object sender, EventArgs e)
         {
+            if (!this.tracking) return;
             if (this.filterComboBox.Text.Length == 0) this.reFilter = null;
             else
             {
