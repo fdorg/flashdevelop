@@ -50,11 +50,11 @@ namespace FlashDevelop.Managers
         public static Image AdjustImage(Image image)
         {
             String style = Globals.MainForm.GetThemeValue("ImageManager.ImageSet");
-            if (style == "Bright") return ImageKonverter.ImageAdjust(Source, 20, 0);
-            else if (style == "Dim") return ImageKonverter.ImageAdjust(Source, -5, -2);
-            else if (style == "Dark") return ImageKonverter.ImageAdjust(Source, -5, -10);
-            else if (style == "Darker") return ImageKonverter.ImageAdjust(Source, -20, -20);
-            else if (style == "Black") return ImageKonverter.ImageAdjust(Source, -50, -25);
+            if (style == "Bright") return ImageKonverter.ImageAdjust(image, 20, 0);
+            else if (style == "Dim") return ImageKonverter.ImageAdjust(image, -5, -2);
+            else if (style == "Dark") return ImageKonverter.ImageAdjust(image, -5, -10);
+            else if (style == "Darker") return ImageKonverter.ImageAdjust(image, -20, -20);
+            else if (style == "Black") return ImageKonverter.ImageAdjust(image, -50, -25);
             else return image;
         }
 

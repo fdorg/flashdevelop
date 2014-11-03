@@ -30,14 +30,14 @@ namespace FlashDebugger
 
             imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-			imageList.Images.Add("StartContinue", Resource.StartContinue);
-			imageList.Images.Add("Pause", Resource.Pause);
-			imageList.Images.Add("Stop", Resource.Stop);
-			imageList.Images.Add("Current", Resource.Current);
-			imageList.Images.Add("RunToCursor", Resource.RunToCursor);
-			imageList.Images.Add("Step", Resource.Step);
-			imageList.Images.Add("Next", Resource.Next);
-			imageList.Images.Add("Finish", Resource.Finish);
+			imageList.Images.Add("StartContinue", PluginBase.MainForm.ImageSetAdjust(Resource.StartContinue));
+			imageList.Images.Add("Pause", PluginBase.MainForm.ImageSetAdjust(Resource.Pause));
+			imageList.Images.Add("Stop", PluginBase.MainForm.ImageSetAdjust(Resource.Stop));
+			imageList.Images.Add("Current", PluginBase.MainForm.ImageSetAdjust(Resource.Current));
+			imageList.Images.Add("RunToCursor", PluginBase.MainForm.ImageSetAdjust(Resource.RunToCursor));
+			imageList.Images.Add("Step", PluginBase.MainForm.ImageSetAdjust(Resource.Step));
+			imageList.Images.Add("Next", PluginBase.MainForm.ImageSetAdjust(Resource.Next));
+            imageList.Images.Add("Finish", PluginBase.MainForm.ImageSetAdjust(Resource.Finish));
 
             ToolStripMenuItem tempItem;
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");

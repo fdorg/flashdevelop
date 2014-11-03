@@ -1130,6 +1130,7 @@ namespace FileExplorer
             if (File.Exists(path)) icon = IconExtractor.GetFileIcon(path, false, true);
             else icon = IconExtractor.GetFolderIcon(path, false, true);
             Image image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
+            image = PluginBase.MainForm.ImageSetAdjust(image);
             this.imageList.Images.Add(image); icon.Dispose(); image.Dispose();
             return this.imageList.Images.Count - 1;
         }
