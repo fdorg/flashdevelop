@@ -403,7 +403,7 @@
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Find and Replace Here...</value>
-	<comment>Added after 4.6.4</comment>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>在此启动命令提示符(&amp;P)...</value>
@@ -1760,6 +1760,10 @@
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>项目类路径是相对于项目位置.</value>
   </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Classpaths of {0} projects are determined by the output file.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;项目文件夹&gt;</value>
   </data>
@@ -1993,6 +1997,10 @@
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>输出文件(&amp;O):</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>粘贴(&amp;P)</value>
@@ -3828,9 +3836,17 @@
     <value>还原为默认值(&amp;D)</value>
     <comment>Added after 3.3.1</comment>
   </data>
+  <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
+    <value>Revert All To &amp;Default</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">
     <value>快捷键</value>
     <comment>Added after 3.3.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
+    <value>View customized only</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Title.Shortcuts" xml:space="preserve">
     <value>快捷键</value>
@@ -5319,5 +5335,13 @@
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>Declare protected variable</value>
     <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
+    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
+    <value>Colorize first margin with 'gdefault' foreground color</value>
+    <comment>Added after 4.7.0</comment>
   </data>
 </root>

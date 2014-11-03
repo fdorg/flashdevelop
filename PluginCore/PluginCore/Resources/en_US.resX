@@ -1760,6 +1760,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>Project classpaths are relative to the project location.</value>
   </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Classpaths of {0} projects are determined by the output file.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;Project Directory&gt;</value>
   </data>
@@ -1993,6 +1997,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Output file:</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Paste</value>
@@ -3836,6 +3844,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Revert To &amp;Default</value>
     <comment>Added after 3.3.1</comment>
   </data>
+  <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
+    <value>Revert All To &amp;Default</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">
     <value>Shortcut</value>
     <comment>Added after 3.3.1</comment>
@@ -3843,6 +3855,10 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="FlashDevelop.Title.Shortcuts" xml:space="preserve">
     <value>Shortcuts</value>
     <comment>Added after 3.3.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
+    <value>View customized only</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.UnableToLoadPlugin" xml:space="preserve">
     <value>Unable to load an incompatible or broken plugin:</value>
@@ -5319,5 +5335,13 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>Declare protected variable</value>
     <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
+    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
+    <value>Colorize first margin with 'gdefault' foreground color</value>
+    <comment>Added after 4.7.0</comment>
   </data>
 </root>

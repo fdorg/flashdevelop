@@ -403,7 +403,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Find and Replace Here...</value>
-	<comment>Added after 4.6.4</comment>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>Komando-gonbita hemen...</value>
@@ -1759,6 +1759,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>Proiektuaren bide-izenak proiektuaren kokapenari erlatiboak dira.</value>
   </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Classpaths of {0} projects are determined by the output file.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;Proiektuaren direktorioa&gt;</value>
   </data>
@@ -1991,6 +1995,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Irteera fitxategia:</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Itsatsi</value>
@@ -3819,6 +3827,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Lehenetsira &amp;Itzuli</value>
     <comment>Added after 3.3.1</comment>
   </data>
+  <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
+    <value>Revert All To &amp;Default</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">
     <value>Lasterbidea</value>
     <comment>Added after 3.3.1</comment>
@@ -3826,6 +3838,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="FlashDevelop.Title.Shortcuts" xml:space="preserve">
     <value>Lasterbideak</value>
     <comment>Added after 3.3.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
+    <value>View customized only</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.UnableToLoadPlugin" xml:space="preserve">
     <value>Plugin bateraezina ezin izan da kargatu:</value>
@@ -5306,5 +5322,13 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>Declare protected variable</value>
     <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
+    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
+    <value>Colorize first margin with 'gdefault' foreground color</value>
+    <comment>Added after 4.7.0</comment>
   </data>
 </root>

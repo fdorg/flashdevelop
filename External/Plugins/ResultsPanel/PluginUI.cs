@@ -246,6 +246,7 @@ namespace ResultsPanel
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.TransparentColor = Color.Transparent;
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             imageList.Images.Add(PluginBase.MainForm.FindImage("131")); // info
             imageList.Images.Add(PluginBase.MainForm.FindImage("197")); // error
             imageList.Images.Add(PluginBase.MainForm.FindImage("196")); // warning

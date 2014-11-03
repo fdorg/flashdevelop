@@ -107,7 +107,7 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        // process HaXe-specific stuff
+        // process Haxe-specific stuff
         protected override void ProcessNode(string name)
         {
             switch (name)

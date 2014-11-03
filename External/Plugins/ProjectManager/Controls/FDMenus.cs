@@ -58,11 +58,13 @@ namespace ProjectManager.Controls
             BuildProject = new ToolStripButton(Icons.Gear.Img);
             BuildProject.Name = "BuildProject";
             BuildProject.ToolTipText = TextHelper.GetString("Label.BuildProject").Replace("&", "");
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.BuildProject", BuildProject);
             toolBar.Items.Add(BuildProject);
 
             TestMovie = new ToolStripButton(Icons.GreenCheck.Img);
             TestMovie.Name = "TestMovie";
             TestMovie.ToolTipText = TextHelper.GetString("Label.TestMovie").Replace("&", "");
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TestMovie", TestMovie);
             toolBar.Items.Add(TestMovie);
 
             ConfigurationSelector = new ToolStripComboBox();
@@ -77,22 +79,32 @@ namespace ProjectManager.Controls
             ConfigurationSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             ConfigurationSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(ConfigurationSelector);
-            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelector", Keys.Control | Keys.F5);
-            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelectorToggle", Keys.Control | Keys.Shift | Keys.F5);
-
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelectorToggle", Keys.Control | Keys.F5);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.ConfigurationSelectorToggle", ConfigurationSelector);
+            
             TargetBuildSelector = new ToolStripComboBox();
             TargetBuildSelector.Name = "TargetBuildSelector";
             TargetBuildSelector.ToolTipText = TextHelper.GetString("ToolTip.TargetBuild");
-            TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDown;
             TargetBuildSelector.AutoSize = false;
-            TargetBuildSelector.Enabled = false;
             TargetBuildSelector.Width = ScaleHelper.Scale(85);
-            TargetBuildSelector.Visible = false;
             TargetBuildSelector.Margin = new Padding(1, 0, 0, 0);
             TargetBuildSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             TargetBuildSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(TargetBuildSelector);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F6);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TargetBuildSelector", TargetBuildSelector);
+            EnableTargetBuildSelector(false);
+        }
+
+        public void EnableTargetBuildSelector(bool enabled)
+        {
+            TargetBuildSelector.Enabled = enabled;
+            if (enabled) TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDown;
+            else
+            {
+                TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDownList;
+                TargetBuildSelector.Text = "";
+            }
         }
 
         public bool DisabledForBuild
@@ -101,7 +113,7 @@ namespace ProjectManager.Controls
             set
             {
                 BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.AllItemsEnabled = ConfigurationSelector.Enabled = !value;
-                TargetBuildSelector.Enabled = !value && TargetBuildSelector.Visible;
+                EnableTargetBuildSelector(!value && TargetBuildSelector.Enabled);
             }
         }
 
@@ -112,7 +124,7 @@ namespace ProjectManager.Controls
             ProjectMenu.ProjectItemsEnabled = true;
             TestMovie.Enabled = true;
             BuildProject.Enabled = true;
-            ProjectChanged(project); 
+            ProjectChanged(project);
         }
 
         public void ProjectChanged(Project project)
@@ -122,25 +134,18 @@ namespace ProjectManager.Controls
             {
                 TargetBuildSelector.Items.AddRange(project.MovieOptions.TargetBuildTypes);
                 string target = project.TargetBuild ?? project.MovieOptions.TargetBuildTypes[0];
-                if (!TargetBuildSelector.Items.Contains(target))
-                    TargetBuildSelector.Items.Insert(0, target);
+                if (!TargetBuildSelector.Items.Contains(target)) TargetBuildSelector.Items.Insert(0, target);
                 TargetBuildSelector.Text = target;
-                TargetBuildSelector.Visible = true;
-                TargetBuildSelector.Enabled = true;
+                EnableTargetBuildSelector(true);
             }
             else if (project.OutputType == OutputType.CustomBuild)
             {
                 string target = project.TargetBuild ?? "";
                 if (target != "") TargetBuildSelector.Items.Insert(0, target);
                 TargetBuildSelector.Text = target;
-                TargetBuildSelector.Visible = true;
-                TargetBuildSelector.Enabled = true;
+                EnableTargetBuildSelector(true);
             }
-            else
-            {
-                TargetBuildSelector.Visible = false;
-                TargetBuildSelector.Enabled = false;
-            }
+            else EnableTargetBuildSelector(false);
         }
 
         

@@ -105,6 +105,16 @@ namespace FlashDevelop.Settings
         }
 
         [DefaultValue(true)]
+        [DisplayName("View Shortcuts")]
+        [LocalizedCategory("FlashDevelop.Category.Display")]
+        [LocalizedDescription("FlashDevelop.Description.ViewShortcuts")]
+        public Boolean ViewShortcuts
+        {
+            get { return this.viewShortcuts; }
+            set { this.viewShortcuts = value; }
+        }
+
+        [DefaultValue(true)]
         [DisplayName("View Bookmarks")]
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.ViewBookmarks")]

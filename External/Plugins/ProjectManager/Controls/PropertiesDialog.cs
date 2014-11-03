@@ -16,6 +16,7 @@ using PluginCore.Controls;
 using System.Collections;
 using ProjectManager.Actions;
 using System.Collections.Generic;
+using Ookii.Dialogs;
 
 namespace ProjectManager.Controls
 {
@@ -954,7 +955,28 @@ namespace ProjectManager.Controls
             classpathControl.Classpaths = project.Classpaths.ToArray();
             classpathControl.Language = project.Language;
             classpathControl.LanguageBox.Visible = false;
+            UpdateClasspaths(project.MovieOptions.Platform);
             classpathsChanged = false;
+        }
+
+        private void UpdateClasspaths(string platform)
+        {
+            LanguagePlatform langPlatform = GetLanguagePlatform(platform);
+            if (langPlatform != null)
+            {
+                string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
+                PlatformVersion version = langPlatform.GetVersion(selectedVersion);
+                
+                if (version != null && version.Commands != null && version.Commands.ContainsKey("display"))
+                {
+                    classpathControl.Enabled = false;
+                    label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), platform);
+                    return;
+                }
+            }
+
+            classpathControl.Enabled = true;
+            label2.Text = TextHelper.GetString("Info.ProjectClasspaths");
         }
 
         private void InitSDKTab()
@@ -1019,6 +1041,7 @@ namespace ProjectManager.Controls
 
             InitCombo(versionCombo, project.MovieOptions.TargetVersions(this.platformCombo.Text), project.MovieOptions.Version);
             versionCombo.SelectedIndexChanged += new EventHandler(versionCombo_SelectedIndexChanged);
+            UpdateVersionCombo();
 
             InitTestMovieOptions();
             UpdateGeneralPanel();
@@ -1031,6 +1054,19 @@ namespace ProjectManager.Controls
             editCommandButton.Visible = state == TestMovieBehavior.Custom 
                 || state == TestMovieBehavior.OpenDocument
                 || state == TestMovieBehavior.Webserver;
+        }
+
+        private void UpdateVersionCombo()
+        {
+            if (versionCombo.Items.Count > 1)
+            {
+                versionCombo.Enabled = true;
+            }
+            else
+            {
+                versionCombo.Enabled = false;
+                versionCombo.SelectedIndex = -1;
+            }
         }
 
         private void InitTestMovieOptions()
@@ -1089,6 +1125,18 @@ namespace ProjectManager.Controls
         {
             if (testMovieCombo.SelectedIndex < 0) return TestMovieBehavior.Unknown;
             else return (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), (testMovieCombo.SelectedItem as ComboItem).Value.ToString());
+        }
+
+        private LanguagePlatform GetLanguagePlatform(string platform)
+        {
+            LanguagePlatform langPlatform = null;
+            if (PlatformData.SupportedLanguages.ContainsKey(project.Language))
+            {
+                SupportedLanguage lang = PlatformData.SupportedLanguages[project.Language];
+                if (lang.Platforms.ContainsKey(platform))
+                    langPlatform = lang.Platforms[platform];
+            }
+            return langPlatform;
         }
 
 		protected void Modified()
@@ -1218,9 +1266,11 @@ namespace ProjectManager.Controls
             this.versionCombo.SelectedIndex = Math.Max(0, this.versionCombo.Items.IndexOf(
                         project.MovieOptions.DefaultVersion(this.platformCombo.Text)));
 
+            UpdateVersionCombo();
             InitTestMovieOptions();
             UpdateGeneralPanel();
             UpdateEditCommandButton();
+            UpdateClasspaths(platformCombo.Text);
 
             DetectExternalToolchain();
 
@@ -1371,6 +1421,12 @@ namespace ProjectManager.Controls
             bool isGraphical = project.MovieOptions.IsGraphical(GetPlatform());
             widthTextBox.Enabled = heightTextBox.Enabled = fpsTextBox.Enabled
                 = colorTextBox.Enabled = colorLabel.Enabled = isGraphical;
+
+            LanguagePlatform langPlatform = GetLanguagePlatform(platformCombo.Text);
+            if (langPlatform != null && langPlatform.ExternalToolchain != null)
+                exportinLabel.Text = TextHelper.GetString("Label.ConfigurationFile");
+            else
+                exportinLabel.Text = TextHelper.GetString("Label.OutputFile");
         }
 
         private void manageButton_Click(object sender, EventArgs e)
@@ -1388,7 +1444,7 @@ namespace ProjectManager.Controls
 
         private void browseButton_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folder = new FolderBrowserDialog();
+            VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog();
             if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
                 folder.SelectedPath = customTextBox.Text;
             if (folder.ShowDialog() == DialogResult.OK)
