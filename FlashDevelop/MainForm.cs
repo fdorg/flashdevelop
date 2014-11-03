@@ -834,9 +834,11 @@ namespace FlashDevelop
         {
             try
             {
-                Point position = this.appSettings.WindowPosition;
-                if (position.X < -4 || position.Y < -12) this.Location = new Point(0, 0);
-                else this.Location = position; // Set zero position if window is hidden
+                Point position = new Point(this.appSettings.WindowPosition.X, this.appSettings.WindowPosition.Y);
+                if (position.X < -4) position.X = 0; // Set zero position if window is hidden
+                if (position.Y < -25) position.Y = 0;
+                this.Location = position;
+                this.WindowState = this.appSettings.WindowState;
                 String pluginDir = PathHelper.PluginDir; // Plugins of all users
                 if (Directory.Exists(pluginDir)) PluginServices.FindPlugins(pluginDir);
                 if (!this.StandaloneMode) // No user plugins on standalone...
@@ -965,7 +967,6 @@ namespace FlashDevelop
             this.AllowDrop = true;
             this.Name = "MainForm";
             this.Text = "FlashDevelop";
-            this.Size = new Size(800, 600);
             this.Controls.Add(this.dockPanel);
             this.Controls.Add(this.toolStripPanel);
             this.Controls.Add(this.statusStrip);
@@ -1015,7 +1016,6 @@ namespace FlashDevelop
         /// </summary>
         private void OnMainFormShow(Object sender, System.EventArgs e)
         {
-            this.WindowState = this.appSettings.WindowState;
             if (RecoveryDialog.ShouldShowDialog()) RecoveryDialog.Show();
         }
 
