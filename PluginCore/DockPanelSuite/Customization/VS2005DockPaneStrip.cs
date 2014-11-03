@@ -1221,10 +1221,14 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
 
-            // CHANGED - NICK
-            rectText.Y += ScaleHelper.Scale(2);
-
-            // CHANGED - MIKA
+            // Adjust text
+            double scale = ScaleHelper.GetScale();
+            if (scale == 2)
+            {
+                String tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
+                if (tabSize == "Default") rectText.Y += ScaleHelper.Scale(1);
+            }
+            else rectText.Y += ScaleHelper.Scale(2);
             if (Font.SizeInPoints <= 8F) rectText.Y -= ScaleHelper.Scale(1);
 
             if (DockPane.DockPanel.ShowDocumentIcon)
