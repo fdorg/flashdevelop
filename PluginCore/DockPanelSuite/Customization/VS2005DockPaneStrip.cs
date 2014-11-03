@@ -424,7 +424,12 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		private static Pen PenToolWindowTabBorder
 		{
-            get { return SystemPens.ControlDark; }
+            get 
+            {
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolBorderColor");
+                if (color != Color.Empty) return new Pen(color);
+                else return SystemPens.ControlDark;
+            }
 		}
 
         // HACK

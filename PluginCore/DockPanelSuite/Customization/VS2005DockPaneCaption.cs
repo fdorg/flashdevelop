@@ -392,10 +392,14 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (ClientRectangle.Width == 0 || ClientRectangle.Height == 0)
                 return;
 
+            Pen borderPen = SystemPens.ControlDark;
+
+            Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BorderColor");
+            if (color != Color.Empty) borderPen = new Pen(color);
+
             if (DockPane.IsActivated)
             {
                 // HACK: Looks more like VS2005..
-                Pen borderPen = SystemPens.ControlDark;
                 LinearGradientBrush brush = new LinearGradientBrush(ClientRectangle, ActiveBackColorGradientBegin, ActiveBackColorGradientEnd, LinearGradientMode.Vertical);
                 brush.Blend = ActiveBackColorGradientBlend;
                 g.FillRectangle(brush, ClientRectangle);
@@ -407,7 +411,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             else
             {
                 // HACK: Looks more like VS2005..
-                Pen borderPen = SystemPens.ControlDark;
                 SolidBrush fillBrush = new SolidBrush(InactiveBackColor);
                 g.FillRectangle(fillBrush, ClientRectangle);
                 Rectangle fixedRect = ClientRectangle;
