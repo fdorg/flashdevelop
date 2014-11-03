@@ -1117,8 +1117,8 @@ namespace FlashDevelop.Dialogs
             this.fontSizeComboBox.Text = "";
             this.foregroundTextBox.Text = "";
             this.backgroundTextBox.Text = "";
-            this.boldCheckBox.CheckState = CheckState.Unchecked;
-            this.italicsCheckBox.CheckState = CheckState.Unchecked;
+            this.boldCheckBox.CheckState = CheckState.Indeterminate;
+            this.italicsCheckBox.CheckState = CheckState.Indeterminate;
             if (this.currentStyleNode.Attributes["font"] != null)
             {
                 String[] fonts = this.currentStyleNode.Attributes["font"].Value.Split(',');
@@ -1212,7 +1212,7 @@ namespace FlashDevelop.Dialogs
             this.errorLineTextBox.Text = "";
             this.debugLineTextBox.Text = "";
             this.disabledLineTextBox.Text = "";
-            this.colorizeCheckBox.CheckState = CheckState.Unchecked;
+            this.colorizeCheckBox.CheckState = CheckState.Indeterminate;
             this.editorStyleNode = this.languageDoc.SelectSingleNode(editorStylePath) as XmlElement;
             if (this.editorStyleNode.Attributes["caret-fore"] != null)
             {
@@ -1276,7 +1276,6 @@ namespace FlashDevelop.Dialogs
             }
             if (this.editorStyleNode.Attributes["colorize-marker-back"] != null)
             {
-                this.colorizeCheckBox.CheckState = CheckState.Unchecked;
                 this.colorizeCheckBox.Checked = Boolean.Parse(this.editorStyleNode.Attributes["colorize-marker-back"].Value);
             }
             this.isLoadingEditor = false;
