@@ -45,6 +45,6 @@
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="Custom" />
-    <option testMovieCommand="run.bat" />
+    <option testMovieCommand="run.bat $(BuildConfig)" />
   </options>
 </project>

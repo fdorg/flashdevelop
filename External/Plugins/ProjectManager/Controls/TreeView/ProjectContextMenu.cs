@@ -11,6 +11,7 @@ using ProjectManager.Projects.AS2;
 using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore;
+using PluginCore.Utilities;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -72,6 +73,22 @@ namespace ProjectManager.Controls.TreeView
             this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             NothingToDo.Enabled = false;
             NoProjectOutput.Enabled = false;
+            // Register menu items
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TestMovie", TestMovie);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.Properties", Properties);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.RunProject", RunProject);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.BuildProject", BuildProject);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.CleanProject", CleanProject);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.CloseProject", CloseProject);
+            // Set default key strings
+            if (PluginBase.Settings.ViewShortcuts)
+            {
+                this.Open.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
+                this.Cut.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control|Keys.X);
+                this.Copy.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
+                this.Paste.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.P);
+                this.Delete.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Delete);
+            }
         }
 
         public ProjectTreeView ProjectTree

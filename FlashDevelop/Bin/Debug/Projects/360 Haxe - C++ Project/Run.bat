@@ -1,3 +1,7 @@
 @echo off
-bin\Main-debug.exe
+if %1 == debug (
+	bin\Main-debug.exe
+) else (
+	bin\Main.exe
+)
 pause

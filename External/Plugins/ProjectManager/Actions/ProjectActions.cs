@@ -16,6 +16,7 @@ using PluginCore.Helpers;
 using ICSharpCode.SharpZipLib.Zip;
 using ProjectManager.Controls.TreeView;
 using System.Text.RegularExpressions;
+using Ookii.Dialogs;
 
 namespace ProjectManager.Actions
 {
@@ -98,6 +99,7 @@ namespace ProjectManager.Actions
             if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
             {
                 string fbProject = dialog.FileName;
+                string currentDirectory = Directory.GetCurrentDirectory();
 
                 try
                 {
@@ -123,6 +125,7 @@ namespace ProjectManager.Actions
                 }
                 catch (Exception exception)
                 {
+                    Directory.SetCurrentDirectory(currentDirectory);
                     string msg = TextHelper.GetString("Info.CouldNotOpenProject");
                     ErrorManager.ShowInfo(msg + " " + exception.Message);
                 }
@@ -223,9 +226,10 @@ namespace ProjectManager.Actions
             {
                 if (zFile.GetEntry(".actionscriptProperties") != null)
                 {
-                    using (FolderBrowserDialog saveDialog = new FolderBrowserDialog())
+                    using (VistaFolderBrowserDialog saveDialog = new VistaFolderBrowserDialog())
                     {
                         saveDialog.ShowNewFolderButton = true;
+                        saveDialog.UseDescriptionForTitle = true;
                         saveDialog.Description = TextHelper.GetString("Title.ImportPackagedProject");
 
                         if (saveDialog.ShowDialog() == DialogResult.OK)

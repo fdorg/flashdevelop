@@ -99,7 +99,9 @@ namespace PluginCore
         #region IMainForm Methods
 
         void RefreshUI();
+        void KillProcess();
         void RefreshSciConfig();
+        void ThemeControls(Object control);
         void ClearTemporaryFiles(String file);
         void ShowSettingsDialog(String itemName);
         void ShowErrorDialog(Object sender, Exception ex);
@@ -107,6 +109,8 @@ namespace PluginCore
         void AutoUpdateMenuItem(ToolStripItem item, String action);
         void RegisterShortcutItem(String id, Keys keys);
         void RegisterShortcutItem(String id, ToolStripMenuItem item);
+        void RegisterSecondaryItem(String id, ToolStripItem item);
+        void ApplySecondaryShortcut(ToolStripItem item);
         void FileFromTemplate(String templatePath, String newFilePath);
         DockContent OpenEditableDocument(String file, Boolean restoreFileState);
         DockContent OpenEditableDocument(String file);
@@ -121,8 +125,8 @@ namespace PluginCore
         String GetThemeValue(String id);
         Color GetThemeColor(String id);
         IPlugin FindPlugin(String guid);
+        Image ImageSetAdjust(Image image);
         Image FindImage(String data);
-        void KillProcess();
 
         #endregion
 
@@ -254,6 +258,7 @@ namespace PluginCore
         Boolean ViewToolBar { get; set; }
         Boolean ViewStatusBar { get; set; }
         Boolean ViewWhitespace { get; set; }
+        Boolean ViewShortcuts { get; set; }
         Boolean WrapText { get; set; }
         ScintillaNet.Enums.EndOfLine EOLMode { get; set; }
         ScintillaNet.Enums.FoldFlag FoldFlags { get; set; }
