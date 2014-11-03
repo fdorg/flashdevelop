@@ -714,7 +714,7 @@ namespace ASCompletion
             UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(OnMouseHover);
             UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(OnTextChanged);
             UITools.CallTip.OnUpdateCallTip += new MethodCallTip.UpdateCallTipHandler(OnUpdateCallTip);
-            UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateCallTipHandler(OnUpdateSimpleTip);
+            UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateTipHandler(OnUpdateSimpleTip);
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts

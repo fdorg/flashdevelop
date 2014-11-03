@@ -17,10 +17,10 @@ namespace PluginCore.Controls
 	/// </summary>
 	public class RichToolTip
 	{
-        public delegate void UpdateCallTipHandler(ScintillaControl sender, Point mousePosition);
+        public delegate void UpdateTipHandler(ScintillaControl sender, Point mousePosition);
 
         // events
-        public event UpdateCallTipHandler OnUpdateSimpleTip;
+        public event UpdateTipHandler OnUpdateSimpleTip;
 
 		// controls
 		protected Panel toolTip;
