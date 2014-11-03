@@ -1279,6 +1279,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="FlashDevelop.Label.WholeWord" xml:space="preserve">
     <value>Hitz osoa</value>
   </data>
+  <data name="FlashDevelop.Label.More" xml:space="preserve">
+    <value>&amp;More...</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.WindowsExplorer" xml:space="preserve">
     <value>Windows Arakatzailea</value>
   </data>

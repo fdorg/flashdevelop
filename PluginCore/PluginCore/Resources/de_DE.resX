@@ -1297,6 +1297,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="FlashDevelop.Label.WholeWord" xml:space="preserve">
     <value>&amp;Ganzes Wort</value>
   </data>
+  <data name="FlashDevelop.Label.More" xml:space="preserve">
+    <value>&amp;Mehr...</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.WindowsExplorer" xml:space="preserve">
     <value>Windows &amp;Explorer</value>
   </data>
