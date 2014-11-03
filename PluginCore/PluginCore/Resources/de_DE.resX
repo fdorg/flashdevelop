@@ -421,7 +421,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Suchen und Ersetzen hier...</value>
-	<comment>Added after 4.6.4</comment>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>&amp;Eingabeaufforderung hier...</value>
@@ -1872,10 +1872,6 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>Projekt &amp;erstellen</value>
-  </data>
-  <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
-    <value>Erstellen stoppen</value>
-    <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
     <value>Möchten Sie das Erstellen wirklich stoppen?</value>
@@ -3829,6 +3825,10 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Standardzuweisung &amp;wiederherstellen</value>
     <comment>Added after 3.3.1</comment>
   </data>
+  <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
+    <value>Alle Standardzuweisungen &amp;wiederherstellen</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">
     <value>Tastenkombination</value>
     <comment>Added after 3.3.1</comment>
@@ -3836,6 +3836,10 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="FlashDevelop.Title.Shortcuts" xml:space="preserve">
     <value>Tastenkombinationen</value>
     <comment>Added after 3.3.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
+    <value>Nur angepasste zeigen</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.UnableToLoadPlugin" xml:space="preserve">
     <value>Folgendes Plugin konnte nicht geladen werden:</value>
@@ -5313,5 +5317,13 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>Declare protected variable</value>
     <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
+    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
+    <value>Colorize first margin with 'gdefault' foreground color</value>
+    <comment>Added after 4.7.0</comment>
   </data>
 </root>

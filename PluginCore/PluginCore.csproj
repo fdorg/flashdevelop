@@ -29,7 +29,7 @@
     </UpgradeBackupLocation>
     <SignAssembly>false</SignAssembly>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -297,6 +297,16 @@
     <Compile Include="BBCode\IndexTree.cs" />
     <Compile Include="BBCode\IPairTag.cs" />
     <Compile Include="BBCode\PairTag.cs" />
+    <Compile Include="Ookii.Dialogs\Interop\COMGuids.cs" />
+    <Compile Include="Ookii.Dialogs\Interop\ErrorHelper.cs" />
+    <Compile Include="Ookii.Dialogs\Interop\ShellComInterfaces.cs" />
+    <Compile Include="Ookii.Dialogs\Interop\ShellWrapperDefinitions.cs" />
+    <Compile Include="Ookii.Dialogs\Interop\WindowHandleWrapper.cs" />
+    <Compile Include="Ookii.Dialogs\NativeMethods.cs" />
+    <Compile Include="Ookii.Dialogs\SafeHandles.cs" />
+    <Compile Include="Ookii.Dialogs\VistaFolderBrowserDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
@@ -558,6 +568,8 @@
     <Content Include="DockPanelSuite\Resources\DockPane_Dock.bmp" />
     <Content Include="DockPanelSuite\Resources\DockPane_Option.bmp" />
     <Content Include="DockPanelSuite\Resources\DockPane_OptionOverflow.bmp" />
+    <Content Include="Ookii.Dialogs\license.txt" />
+    <Content Include="Ookii.Dialogs\VistaFolderBrowserDialog.bmp" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

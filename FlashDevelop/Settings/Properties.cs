@@ -82,6 +82,7 @@ namespace FlashDevelop.Settings
         private Boolean viewBookmarks = true;
         private Boolean viewLineNumbers = true;
         private Boolean viewIndentationGuides = true;
+        private Boolean viewShortcuts = true;
         private Boolean viewToolBar = true;
         private Boolean viewStatusBar = true;
         private Boolean viewWhitespace = false;

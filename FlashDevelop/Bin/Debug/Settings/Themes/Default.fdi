@@ -1,3 +1,37 @@
+# FD UI THEME (5.0+)
+
+# Bright, Default, Dim, Dark, Darker, Black
+ImageManager.ImageSet=Default
+
+# Default, Large
+VS2005DockPaneStrip.TabSize=Default
+
+# Default, Block, Rect
+VS2005DockPaneStrip.TabStyle=Default
+
+#VS2005DockPaneStrip.DocTabActiveBorder=#ff0000
+#VS2005DockPaneStrip.DocTabInactiveBorder=#0000ff
+#VS2005DockPaneStrip.ToolBorderColor=#ff0000
+#VS2005DockPaneCaption.BorderColor=#ff0000
+
+#ToolStrip.BorderColor=#ff0000
+#DockWindow.BorderColor=#ff0000
+#DockPanelControl.BorderColor=#ff0000
+#ToolStripSeparator.ForeColor=#00ff00
+
+#ToolStripItem.ArrowColor=#ff0000
+#ToolStripItem.TextColor=#0000ff
+
+#ToolStripMenu.TitleBackColor=#ff00ff
+#ToolStripMenu.TitleBorderColor=#0000ff
+#ToolStripMenu.SeparatorColor=#00ff00
+#ToolStripMenu.DropDownBackColor=#0000ff
+#ToolStripMenu.DropDownBorderColor=#0000ff
+#ToolStripMenu.MarginBorderColor=#ff0000
+#ToolStripMenu.MarginBackColor=#ff0000
+#ToolStripMenu.BorderColor=#ff00ff
+#ToolStripMenu.BackColor=#0000ff
+
 # FD UI THEME (4.3+)
 
 ### EDIT CONTROLS

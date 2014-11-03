@@ -83,7 +83,7 @@ namespace CodeRefactor.Provider
                 if (model == null || model.FileName == "") return null;
                 ClassModel inClass = result.InClass ?? result.Type;
                 // for Back command
-                int lookupLine = Sci.LineFromPosition(Sci.CurrentPos);
+                int lookupLine = Sci.CurrentLine;
                 int lookupCol = Sci.CurrentPos - Sci.PositionFromLine(lookupLine);
                 ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
                 // open the file

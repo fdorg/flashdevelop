@@ -59,7 +59,6 @@ namespace FlashDevelop.Managers
                     }
                     String currentFile = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (file != currentFile) File.Copy(file, currentFile, true);
-                    WalkControls(Globals.MainForm);
                 }
             }
             catch (Exception ex)

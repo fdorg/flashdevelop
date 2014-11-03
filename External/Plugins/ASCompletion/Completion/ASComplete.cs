@@ -533,7 +533,7 @@ namespace ASCompletion.Completion
             // for Back command
             if (Sci != null)
             {
-                int lookupLine = Sci.LineFromPosition(Sci.CurrentPos);
+                int lookupLine = Sci.CurrentLine;
                 int lookupCol = Sci.CurrentPos - Sci.PositionFromLine(lookupLine);
                 ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
             }
@@ -2051,7 +2051,7 @@ namespace ASCompletion.Completion
                     }
                 }
                 // try member
-                string currentLine = sci.GetLine(sci.LineFromPosition(sci.CurrentPos));
+                string currentLine = sci.GetLine(sci.CurrentLine);
                 Match mVarNew = Regex.Match(currentLine, "\\s*(?<name>[a-z_$][a-z._$0-9]*)(?<decl>[: ]*)(?<type>[a-z.0-9<>]*)\\s*=\\s*new\\s", RegexOptions.IgnoreCase);
                 if (mVarNew.Success)
                 {

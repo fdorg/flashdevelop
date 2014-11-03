@@ -25,10 +25,12 @@ a:hover
 	color: darkblue;
 	text-decoration: underline;
 }
-#wrapper {
-	width: 600px;
+#wrapper 
+{
+	width: auto;
 	padding: 18px;
 	padding-left: 25px;
+	padding-right: 25px;
 	padding-top: 0px;
 }
 #header 

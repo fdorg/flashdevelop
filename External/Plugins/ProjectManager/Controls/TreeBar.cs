@@ -7,6 +7,7 @@ using ProjectManager.Controls.TreeView;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace ProjectManager.Controls
 {
@@ -46,6 +47,7 @@ namespace ProjectManager.Controls
             ProjectProperties = new ToolStripButton(Icons.Options.Img);
             ProjectProperties.ToolTipText = TextHelper.GetString("ToolTip.ProjectProperties");
             ProjectProperties.Padding = new Padding(0);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.Properties", ProjectProperties);
 
             Synchronize = new ToolStripButton(Icons.SyncToFile.Img);
             Synchronize.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
@@ -59,6 +61,7 @@ namespace ProjectManager.Controls
             ProjectTypes.ToolTipText = TextHelper.GetString("ToolTip.ProjectTypes");
             ProjectTypes.Alignment = ToolStripItemAlignment.Right;
             ProjectTypes.Padding = new Padding(0);
+            PluginBase.MainForm.RegisterSecondaryItem("FlashToolsMenu.TypeExplorer", ProjectTypes);
             
             Separator = new ToolStripSeparator();
             Separator.Margin = new Padding(0, 0, 1, 0);

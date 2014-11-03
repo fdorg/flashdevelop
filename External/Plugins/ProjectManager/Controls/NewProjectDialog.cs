@@ -14,6 +14,7 @@ using PluginCore.Managers;
 using PluginCore;
 using System.Collections.Generic;
 using PluginCore.Controls;
+using Ookii.Dialogs;
 
 namespace ProjectManager.Controls
 {
@@ -506,8 +507,9 @@ namespace ProjectManager.Controls
 
 		private void browseButton_Click(object sender, System.EventArgs e)
 		{
-			FolderBrowserDialog dialog = new FolderBrowserDialog();
+            VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
 			dialog.RootFolder = Environment.SpecialFolder.Desktop;
+            dialog.UseDescriptionForTitle = true;
             dialog.Description = TextHelper.GetString("Info.SelectProjectDirectory");
 
 			string selectedPath = locationTextBox.Text;
