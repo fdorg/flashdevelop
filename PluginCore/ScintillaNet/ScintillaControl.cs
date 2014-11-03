@@ -5017,6 +5017,9 @@ namespace ScintillaNet
             AddShortcut("NewLine", Keys.Return, sci => sci.NewLine());
         }
 
+        /// <summary>
+        /// Adds a new shortcut override
+        /// </summary>
         private static void AddShortcut(String displayName, Keys keys, Action<ScintillaControl> action)
         {
             shortcutOverrides.Add("Scintilla." + displayName, new ShortcutOverride(keys, action));
@@ -5051,6 +5054,9 @@ namespace ScintillaNet
             catch (Exception) { return false; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private class ShortcutOverride
         {
             public Keys keys;
