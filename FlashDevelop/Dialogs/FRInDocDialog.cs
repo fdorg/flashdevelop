@@ -9,6 +9,7 @@ using FlashDevelop.Utilities;
 using FlashDevelop.Helpers;
 using PluginCore.FRService;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
 
@@ -45,6 +46,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeComponent();
             this.InitializeProperties();
             this.ApplyLocalizedTexts();
+            ScaleHelper.AdjustForHighDPI(this);
 		}
 		
 		#region Windows Forms Designer Generated Code
@@ -550,7 +552,7 @@ namespace FlashDevelop.Dialogs
                         FRDialogGenerics.SelectMatch(sci, matches[i]);
                         String replaceWith = this.GetReplaceText(matches[i]);
                         FRSearch.PadIndexes(matches, i, matches[i].Value, replaceWith);
-                        sci.EnsureVisible(sci.LineFromPosition(sci.CurrentPos));
+                        sci.EnsureVisible(sci.CurrentLine);
                         sci.ReplaceSel(replaceWith);
                     }
                 }

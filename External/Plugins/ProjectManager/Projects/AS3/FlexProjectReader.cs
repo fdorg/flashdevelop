@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Runtime.InteropServices;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace ProjectManager.Projects.AS3
 {
     class FlexProjectReader : ProjectReader
     {
-        AS3Project project;
-        string mainApp;
-        string outputPath;
-        string fpVersion;
-        PathCollection applications;
+        private static Regex reArgs = new Regex(@"\$\{(\w+)\}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        
+        private AS3Project project;
+        private string mainApp;
+        private string outputPath;
+        private string fpVersion;
+        private PathCollection applications;
 
         public IDictionary<string, string> EnvironmentPaths { get; set; }
 
@@ -22,6 +26,7 @@ namespace ProjectManager.Projects.AS3
             : base(filename, new AS3Project(filename))
         {
             this.project = base.Project as AS3Project;
+            Directory.SetCurrentDirectory(project.Directory);
         }
 
         protected override void ProcessRootNode()
@@ -123,7 +128,22 @@ namespace ProjectManager.Projects.AS3
             if (!IsEmptyElement)
             {
                 ReadStartElement("compilerSourcePath");
-                ReadPaths("compilerSourcePathEntry", project.Classpaths);
+                var paths = project.Classpaths;
+                while (Name == "compilerSourcePathEntry")
+                {
+                    string path = OSPath(GetAttribute("path"));
+                        
+                    string pathTmp = "linked-src" + Path.DirectorySeparatorChar + 
+                        path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+
+                    if (!Directory.Exists(pathTmp) && !File.Exists(pathTmp))
+                        pathTmp = reArgs.Replace(path, ReplaceVars);
+                    
+                    if (pathTmp.Length > 0 && !pathTmp.StartsWith("$"))
+                        paths.Add(pathTmp);
+
+                    Read();
+                }
             }
         }
 
@@ -143,19 +163,19 @@ namespace ProjectManager.Projects.AS3
                         break;
 
                     case "libraryPathEntry":
-                        string path = GetAttribute("path") ?? "";
+                        string path = GetAttribute("path") ?? string.Empty;
+                        if (path.Length == 0) break;
+                        path = OSPath(path);
 
-                        if (path.StartsWith("$") && EnvironmentPaths != null)
-                        {
-                            string value;
-                            string environmentPath = path.Substring(2, path.IndexOf('}') - 2);
-                            if (EnvironmentPaths.TryGetValue(environmentPath, out value))
-                                path = path.Replace("${" + environmentPath + "}", value);
-                        }
+                        string pathTmp = "linked-swc" + Path.DirectorySeparatorChar + 
+                            path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
 
-                        if (path.Length > 0 && !path.StartsWith("$"))
+                        if (!Directory.Exists(pathTmp) && !File.Exists(pathTmp))
+                            pathTmp = reArgs.Replace(path, ReplaceVars);
+                            
+                        if (pathTmp.Length > 0 && !pathTmp.StartsWith("$"))
                         {
-                            asset = new LibraryAsset(project, path.Replace('/', '\\'));
+                            asset = new LibraryAsset(project, pathTmp);
                             if (exclude || GetAttribute("linkType").ToString() == "2")
                                 asset.SwfMode = SwfAssetMode.ExternalLibrary;
                             else
@@ -200,21 +220,48 @@ namespace ProjectManager.Projects.AS3
         private void ReadTheme()
         {
             char s = Path.DirectorySeparatorChar;
-            string themeLocation = GetAttribute("themeLocation").ToString().Replace("${EXTERNAL_THEME_DIR}/",
-                GetThemeFolderPath() + s);
+            string themeLocation = OSPath(GetAttribute("themeLocation"));
+            bool isSdk = GetAttribute("themeIsSDK") == "true";
+            string themeName = themeLocation.Substring(themeLocation.LastIndexOf(Path.DirectorySeparatorChar) + 1).ToLower();
+            string[] tmpPaths;
 
-            string themeName = themeLocation.Substring(themeLocation.LastIndexOf('\\') + 1).ToLower();
-            string themeFile = ".packagedThemes" + s + themeName;
-            string themeSwc = themeFile + ".swc";
-            string themeCss = themeFile + ".css";
-
-            if (!File.Exists(Path.Combine(project.Directory, (themeFile = themeSwc))) && 
-                !File.Exists(Path.Combine(project.Directory, (themeFile = themeCss))))
+            if (!isSdk)
             {
-                if (!File.Exists(Path.Combine(themeLocation, (themeFile = themeName + ".swc"))) &&
-                    !File.Exists(Path.Combine(themeLocation, (themeFile = themeName + ".css")))) return;
+                tmpPaths = new[] {".packagedThemes", reArgs.Replace(themeLocation, ReplaceVars)};
+            }
+            else
+            {
+                tmpPaths = new [] {reArgs.Replace(themeLocation, ReplaceVars)};
+            }
 
-                foreach (var file in Directory.GetFiles(themeLocation, "*.*", SearchOption.TopDirectoryOnly))
+            string themeFile = string.Empty;
+            bool themeFound = false;
+            foreach (var tmpPath in tmpPaths)
+            {
+                themeFound = true;
+                themeLocation = tmpPath;
+                var metaFile = Path.Combine(tmpPath, "metadata.xml");
+                if (File.Exists(metaFile))
+                {
+                    var doc = new XmlDocument();
+                    doc.Load(metaFile);
+
+                    themeFile = doc.FirstChild.SelectSingleNode("mainFile").InnerText;
+                    if (File.Exists(Path.Combine(tmpPath, themeFile))) break;
+                }
+
+                if (File.Exists(Path.Combine(tmpPath, themeFile = themeName + ".swc")) ||
+                    File.Exists(Path.Combine(tmpPath, themeFile = themeName + ".css")))
+                    break;
+
+                themeFound = false;
+            }
+
+            if (!themeFound) return;
+
+            if (!isSdk)
+            {
+                foreach (var file in Directory.GetFiles(themeLocation, "*.*", SearchOption.AllDirectories))
                 {
                     var relativePath = ".packagedThemes" + s + ProjectPaths.GetRelativePath(themeLocation, file);
                     var directory = Path.GetDirectoryName(relativePath);
@@ -226,6 +273,8 @@ namespace ProjectManager.Projects.AS3
 
                 themeFile = ".packagedThemes" + s + themeFile;
             }
+            else
+                themeFile = Path.Combine(themeLocation, themeFile);
             
             string[] additional = project.CompilerOptions.Additional ?? new string[] { };
             Array.Resize(ref additional, additional.Length + 1);
@@ -262,7 +311,31 @@ namespace ProjectManager.Projects.AS3
             return null;
         }
 
-        public static String GetThemeFolderPath()
+        private string ReplaceVars(Match match)
+        {
+            if (match.Groups.Count > 0)
+            {
+                string name = match.Groups[1].Value.ToUpperInvariant();
+                string value;
+                if (EnvironmentPaths != null && EnvironmentPaths.TryGetValue(name, out value))
+                    return value;
+
+                switch (name)
+                {
+                    case "EXTERNAL_THEME_DIR":
+                        var path = GetThemeFolderPath();
+                        if (path == string.Empty) return match.Value;
+                        return path;
+                    case "SDK_THEMES_DIR":
+                        return PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
+                    //case "PROJECT_FRAMEWORKS":    // We're leaving this one commented for the moment
+                    //    return Path.Combine(PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk", "frameworks");
+                }
+            }
+            return match.Value;
+        }
+
+        public static string GetThemeFolderPath()
         {
             char s = Path.DirectorySeparatorChar;
             switch (Environment.OSVersion.Platform)
@@ -271,13 +344,29 @@ namespace ProjectManager.Projects.AS3
                 case PlatformID.Win32S:
                 case PlatformID.Win32Windows:
                 case PlatformID.WinCE:
-                    return string.Format("{0}{1}Application Data{1}Adobe{1}Flash Builder{1}Themes",
-                                         Environment.GetEnvironmentVariable("USERPROFILE"), s);
+                    // The path should be the first one by default, but depending of Java versions may be resolved in other ways.
+                    // It can be customized as well, in which case it cannot be easily got (we should check FB Java parameters, and then maybe
+                    // Eclipse configuration files to get workspaces and their settings if further inspection is needed)
+                    // For the later one in this list some Java versions are not even returning the right path... it's using this registry key:
+                    // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\Desktop
+                    // which use is discouraged to use, and other registry key should take precendence, but it's suggested to use the method here
+                    string path;
+                    if (!Directory.Exists(path = string.Format("{0}{1}Application Data{1}Adobe{1}Flash Builder{1}Themes",
+                                      Environment.GetEnvironmentVariable("USERPROFILE"), s)) &&
+                        !Directory.Exists(path = string.Format("{0}{1}Application Data{1}Adobe{1}Flash Builder{1}Themes",
+                                      Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)), s)) &&
+                        !Directory.Exists(path = string.Format("{0}{1}Adobe{1}Flash Builder{1}Themes",
+                                      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), s)))
+
+                        return string.Empty;
+
+                    return path;
+                    
                 default:
                     return string.Format("{0}{1}Library{1}Application Support{1}Adobe{1}Flash Builder{1}Themes",
-                                         Environment.GetEnvironmentVariable("HOME"), s);
+                                      Environment.GetEnvironmentVariable("HOME"), s);
             }
         }
+
     }
 }
-

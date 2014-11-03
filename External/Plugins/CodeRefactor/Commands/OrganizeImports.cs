@@ -173,12 +173,12 @@ namespace CodeRefactor.Commands
                         {
                             sci.NewLine();
                             sci.GotoLine(++curLine);
-                            sci.SetLineIndentation(sci.LineFromPosition(sci.CurrentPos) - 1, indent);
+                            sci.SetLineIndentation(sci.CurrentLine - 1, indent);
                             DeletedImportsCompensation--;
                         }
                         prevPackage = currentPackage;
                     }
-                    curLine = sci.LineFromPosition(sci.CurrentPos);
+                    curLine = sci.CurrentLine;
                     sci.InsertText(sci.CurrentPos, importStringToInsert);
                     sci.SetLineIndentation(curLine, indent);
                     sci.GotoLine(++curLine);

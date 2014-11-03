@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore;
@@ -19,8 +20,9 @@ namespace CodeRefactor.Controls
 
         public RefactorMenu(Boolean createSurroundMenu)
         {
+            Image empty = PluginBase.MainForm.FindImage("559");
             this.Text = TextHelper.GetString("Label.Refactor");
-            this.renameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename"), null) as ToolStripMenuItem;
+            this.renameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename"), empty) as ToolStripMenuItem;
             this.extractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
             this.extractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
 			this.delegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
@@ -35,21 +37,6 @@ namespace CodeRefactor.Controls
             this.DropDownItems.Add(new ToolStripSeparator());
             this.organizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
             this.truncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
-            if (createSurroundMenu) RegisterMenuItems();
-        }
-
-        /// <summary>
-        /// Registers the items with shortcut management
-        /// </summary>
-        private void RegisterMenuItems()
-        {
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Rename", this.renameMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractMethod", this.extractMethodMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractLocalVariable", this.extractLocalVariableMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.GenerateDelegateMethods", this.delegateMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.OrganizeImports", this.organizeMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.TruncateImports", this.truncateMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeGenerator", this.generatorMenuItem);
         }
 
         /// <summary>

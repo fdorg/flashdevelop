@@ -392,7 +392,7 @@ namespace ASCompletion.Context
                     }
                 }
                 currentLine = -1;
-                SetCurrentLine(doc.SciControl.LineFromPosition(doc.SciControl.CurrentPos));
+                SetCurrentLine(doc.SciControl.CurrentLine);
             }
             // no context
             if (context == defaultContext) Panel.UpdateView(FileModel.Ignore);
@@ -992,7 +992,7 @@ namespace ASCompletion.Context
             }
             else if (CurSciControl != null)
             {
-                cLine = CurSciControl.LineFromPosition(CurSciControl.CurrentPos);
+                cLine = CurSciControl.CurrentLine;
                 UpdateContext(cLine);
             }
             // completion need refresh
@@ -1009,7 +1009,7 @@ namespace ASCompletion.Context
                 return;
             ASFileParser parser = new ASFileParser();
             parser.ParseSrc(cFile, CurSciControl.Text);
-            cLine = CurSciControl.LineFromPosition(CurSciControl.CurrentPos);
+            cLine = CurSciControl.CurrentLine;
             UpdateContext(cLine);
 
             // update outline

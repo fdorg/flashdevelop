@@ -52,6 +52,9 @@ namespace ScintillaNet.Configuration
         [XmlAttributeAttribute("disabledline-back")]
         public string disabledlineback;
 
+        [XmlAttributeAttribute("colorize-marker-back")]
+        public string colorizemarkerback;
+
 		public int ResolveColor(string aColor)
 		{
 			if (aColor != null)
@@ -264,6 +267,18 @@ namespace ScintillaNet.Configuration
                     return ResolveColor(disabledlineback);
                 }
                 return ResolveColor("0xcccccc");
+            }
+        }
+
+        public bool ColorizeMarkerBack
+        {
+            get
+            {
+                if (colorizemarkerback != null && colorizemarkerback.Length > 0)
+                {
+                    return colorizemarkerback.ToLower() == "true";
+                }
+                return false;
             }
         }
 

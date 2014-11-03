@@ -12,8 +12,10 @@ using PluginCore.Utilities;
 using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
+using Ookii.Dialogs;
 
 namespace FlashDevelop.Dialogs
 {
@@ -471,8 +473,12 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeGraphics()
         {
-            Image image = Globals.MainForm.FindImage("203");
-            this.browseButton.Image = image;
+            ImageList imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            imageList.Images.Add(Globals.MainForm.FindImage("203"));
+            this.browseButton.ImageList = imageList;
+            this.browseButton.ImageIndex = 0;
         }
 
         /// <summary>
@@ -519,23 +525,26 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void FindButtonClick(Object sender, EventArgs e)
         {
-            String path = this.folderComboBox.Text;
             String mask = this.extensionComboBox.Text;
             Boolean recursive = this.subDirectoriesCheckBox.Checked;
             if (!String.IsNullOrEmpty(this.findComboBox.Text) && this.IsValidFileMask(mask))
             {
-                FRConfiguration config = this.GetFRConfig(path, mask, recursive);
-                if (config == null) return;
-                config.CacheDocuments = true;
-                this.UpdateUIState(true);
-                this.runner = new FRRunner();
-                this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
-                this.runner.Finished += new FRFinishedHandler(this.FindFinished);
-                this.runner.SearchAsync(config);
-                //
-                FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
-                FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
-                FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
+                string[] paths = this.folderComboBox.Text.Split(';');
+                foreach (string path in paths)
+                {
+                    FRConfiguration config = this.GetFRConfig(path, mask, recursive);
+                    if (config == null) return;
+                    config.CacheDocuments = true;
+                    this.UpdateUIState(true);
+                    this.runner = new FRRunner();
+                    this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
+                    this.runner.Finished += new FRFinishedHandler(this.FindFinished);
+                    this.runner.SearchAsync(config);
+                    
+                    FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
+                    FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
+                    FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
+                }
             }
         }
 
@@ -544,7 +553,6 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ReplaceButtonClick(Object sender, EventArgs e)
         {
-            String path = this.folderComboBox.Text;
             String mask = this.extensionComboBox.Text;
             Boolean recursive = this.subDirectoriesCheckBox.Checked;
             if (!String.IsNullOrEmpty(this.findComboBox.Text) && this.IsValidFileMask(mask))
@@ -556,21 +564,26 @@ namespace FlashDevelop.Dialogs
                     DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                     if (result == DialogResult.Cancel) return;
                 }
-                FRConfiguration config = this.GetFRConfig(path, mask, recursive);
-                if (config == null) return;
-                config.CacheDocuments = true;
-                config.UpdateSourceFileOnly = false;
-                config.Replacement = this.replaceComboBox.Text;
-                this.UpdateUIState(true);
-                this.runner = new FRRunner();
-                this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
-                this.runner.Finished += new FRFinishedHandler(this.ReplaceFinished);
-                this.runner.ReplaceAsync(config);
-                //
-                FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
-                FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
-                FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
-                FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
+
+                string[] paths = this.folderComboBox.Text.Split(';');
+                foreach (string path in paths)
+                {
+                    FRConfiguration config = this.GetFRConfig(path, mask, recursive);
+                    if (config == null) return;
+                    config.CacheDocuments = true;
+                    config.UpdateSourceFileOnly = false;
+                    config.Replacement = this.replaceComboBox.Text;
+                    this.UpdateUIState(true);
+                    this.runner = new FRRunner();
+                    this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
+                    this.runner.Finished += new FRFinishedHandler(this.ReplaceFinished);
+                    this.runner.ReplaceAsync(config);
+                    //
+                    FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
+                    FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
+                    FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
+                    FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
+                }
             }
         }
 
@@ -587,7 +600,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BrowseButtonClick(Object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
+            fbd.Multiselect = true;
             String curDir = this.folderComboBox.Text;
             if (curDir == "<Project>") 
             {
@@ -601,7 +615,7 @@ namespace FlashDevelop.Dialogs
             if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
             if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
             {
-                this.folderComboBox.Text = fbd.SelectedPath;
+                this.folderComboBox.Text = String.Join(";", fbd.SelectedPaths);
                 this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
             }
         }

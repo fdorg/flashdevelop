@@ -119,28 +119,28 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="DockIndicator_PaneDiamond" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockIndicator_PaneDiamond.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockIndicator_PaneDiamond.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockIndicator_PaneDiamond_Bottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockIndicator_PaneDiamond_Bottom.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockIndicator_PaneDiamond_Bottom.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockIndicator_PaneDiamond_Fill" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockIndicator_PaneDiamond_Fill.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockIndicator_PaneDiamond_Fill.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockIndicator_PaneDiamond_Hotspot" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockIndicator_PaneDiamond_Hotspot.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockIndicator_PaneDiamond_Hotspot.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockIndicator_PaneDiamond_HotspotIndex" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockIndicator_PaneDiamond_HotspotIndex.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockIndicator_PaneDiamond_HotspotIndex.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockIndicator_PaneDiamond_Left" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockIndicator_PaneDiamond_Left.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockIndicator_PaneDiamond_Left.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockIndicator_PaneDiamond_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockIndicator_PaneDiamond_Right.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockIndicator_PaneDiamond_Right.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockIndicator_PaneDiamond_Top" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockIndicator_PaneDiamond_Top.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockIndicator_PaneDiamond_Top.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockIndicator_PanelBottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\DockIndicator_PanelBottom.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -176,18 +176,18 @@
     <value>Resources\DockPanel.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockPane_AutoHide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockPane_AutoHide.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockPane_AutoHide.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockPane_Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockPane_Close.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockPane_Close.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockPane_Dock" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockPane_Dock.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockPane_Dock.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockPane_Option" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockPane_Option.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockPane_Option.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DockPane_OptionOverflow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DockPane_OptionOverflow.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\DockPane_OptionOverflow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

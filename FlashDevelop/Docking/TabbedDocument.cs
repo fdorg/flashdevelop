@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using WeifenLuo.WinFormsUI;
 using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
@@ -23,6 +24,7 @@ namespace FlashDevelop.Docking
         private Timer focusTimer;
         private Timer backupTimer;
         private String previousText;
+        private List<Int32> bookmarks;
         private ScintillaControl editor;
         private ScintillaControl editor2;
         private ScintillaControl lastEditor;
@@ -35,8 +37,10 @@ namespace FlashDevelop.Docking
 		{
             this.focusTimer = new Timer();
             this.focusTimer.Interval = 100;
+            this.bookmarks = new List<Int32>();
             this.focusTimer.Tick += new EventHandler(this.OnFocusTimer);
             this.ControlAdded += new ControlEventHandler(this.DocumentControlAdded);
+            UITools.Manager.OnMarkerChanged += new UITools.LineEventHandler(this.OnMarkerChanged);
             this.DockPanel = Globals.MainForm.DockPanel;
             this.Font = Globals.Settings.DefaultFont;
             this.DockAreas = DockAreas.Document;
@@ -112,6 +116,14 @@ namespace FlashDevelop.Docking
                     else this.splitContainer.Panel2.Hide();
                 }
             }
+        }
+
+        /// <summary>
+        /// Does this document have any bookmarks?
+        /// </summary>
+        public Boolean HasBookmarks
+        {
+            get { return bookmarks.Count > 0; }
         }
 
         /// <summary>
@@ -227,6 +239,29 @@ namespace FlashDevelop.Docking
             if (this.SciControl != null && this.DockPanel.ActiveContent != null && this.DockPanel.ActiveContent == this)
             {
                 this.SciControl.Focus();
+                this.InitBookmarks();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void OnMarkerChanged(ScintillaControl sci, Int32 line)
+        {
+            if (sci != this.editor && sci != this.editor2) return;
+            if (line == -1) // all markers cleared
+            {
+                this.bookmarks.Clear();
+                ButtonManager.UpdateFlaggedButtons();
+                return;
+            }
+            Boolean hadBookmark = this.bookmarks.Contains(line);
+            Boolean hasBookmark = MarkerManager.HasMarker(sci, 0, line);
+            if (hadBookmark != hasBookmark) // any change?
+            {
+                if (!hadBookmark && hasBookmark) this.bookmarks.Add(line);
+                else if (hadBookmark && !hasBookmark) this.bookmarks.Remove(line);
+                ButtonManager.UpdateFlaggedButtons();
             }
         }
 
@@ -408,6 +443,7 @@ namespace FlashDevelop.Docking
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
                 this.SciControl.Focus();
+                this.InitBookmarks();
             }
             Globals.MainForm.OnDocumentReload(this);
         }
@@ -478,6 +514,18 @@ namespace FlashDevelop.Docking
         {
             TabTextManager.UpdateTabTexts();
             this.UpdateToolTipText();
+        }
+
+        /// <summary>
+        /// Checks the bookmarks when document is active.
+        /// </summary>
+        public void InitBookmarks()
+        {
+            this.bookmarks.Clear();
+            for (Int32 i = 0; i < editor.LineCount; i++) 
+            {
+                if (MarkerManager.HasMarker(SciControl, 0, i)) this.bookmarks.Add(i);
+            }
         }
 
         /// <summary>

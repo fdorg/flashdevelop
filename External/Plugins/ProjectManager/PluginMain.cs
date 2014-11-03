@@ -994,6 +994,7 @@ namespace ProjectManager
                     DisabledForBuild = false;
                     menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text =
                         TextHelper.GetString("Label.BuildProject").Replace("&", "");
+                    PluginBase.MainForm.ApplySecondaryShortcut(menuButton);
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.Gear.Img;
                     break;
 
@@ -1001,6 +1002,7 @@ namespace ProjectManager
                     DisabledForBuild = true;
                     menuButton.Enabled = menuItem.Enabled = contextMenuItem.Enabled = true;
                     menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text = TextHelper.GetString("Label.StopBuild");
+                    PluginBase.MainForm.ApplySecondaryShortcut(menuButton);
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.X.Img;
                     break;
             }
@@ -1553,9 +1555,15 @@ namespace ProjectManager
 
         private void FindInFiles()
         {
-            String path = Tree.SelectedPath;
-            if (path != null && Directory.Exists(path))
+            if (Tree.SelectedPaths == null)
+                return;
+
+            List<string> paths = new List<string>(Tree.SelectedPaths);
+            paths.RemoveAll(p => !Directory.Exists(p));
+
+            if (paths.Count > 0)
             {
+                String path = String.Join(";", paths.ToArray());
                 PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
             }
         }

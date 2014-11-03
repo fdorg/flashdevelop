@@ -30,6 +30,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             this.InitializeUpdating();
+            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code

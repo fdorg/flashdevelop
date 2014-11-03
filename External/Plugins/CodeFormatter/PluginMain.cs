@@ -190,6 +190,7 @@ namespace CodeFormatter
         {
             String label = TextHelper.GetString("Label.CodeFormatter");
             this.contextMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.None);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeFormatter", this.contextMenuItem);
         }
         public void AttachContextMenuItem(ToolStripMenuItem contextMenu)
         {
@@ -202,8 +203,7 @@ namespace CodeFormatter
         public Boolean IsSupportedLanguage(String file)
         {
             String lang = ScintillaControl.Configuration.GetLanguageFromFile(file);
-            if (lang == "as2" || lang == "as3" || lang == "haxe" || lang == "jscript" || lang == "html" || lang == "xml") return true;
-            else return false;
+            return (lang == "as2" || lang == "as3" || lang == "jscript" || lang == "html" || lang == "xml");
         }
 
 		/// <summary>
