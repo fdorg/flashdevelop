@@ -25,7 +25,7 @@
 	<style name="extended_pseudoelement" />
 	<style name="media" fore="0x800000" />
 	<style name="variable" fore="0x00aa00" />
-	<style name="gdefault" fore="0xc0c0c0" />
+	<style name="gdefault" fore="0xefece9" />
 	<style name="linenumber" fore="0x666666" />
 	<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
 	<style name="bracebad" bold="true" />
