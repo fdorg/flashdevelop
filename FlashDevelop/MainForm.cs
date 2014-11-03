@@ -1356,7 +1356,7 @@ namespace FlashDevelop
             if (sci != null && document != null && document.IsEditable)
             {
                 Int32 column = sci.Column(sci.CurrentPos) + 1;
-                Int32 line = sci.LineFromPosition(sci.CurrentPos) + 1;
+                Int32 line = sci.CurrentLine + 1;
                 String statusText = " " + TextHelper.GetString("Info.StatusText");
                 var oldOS = this.OSVersion.Major < 6; // Vista is 6.0 and ok...
                 String file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
@@ -2969,8 +2969,7 @@ namespace FlashDevelop
         public void ToggleBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.ToggleMarker(sci, 0, line);
+            MarkerManager.ToggleMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>
@@ -2979,8 +2978,7 @@ namespace FlashDevelop
         public void NextBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.NextMarker(sci, 0, line);
+            MarkerManager.NextMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>
@@ -2989,8 +2987,7 @@ namespace FlashDevelop
         public void PrevBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.PreviousMarker(sci, 0, line);
+            MarkerManager.PreviousMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>

@@ -83,7 +83,7 @@ namespace PluginCore.Controls
             startPos = memberPos + toolTipRTB.Text.IndexOf('(');
             currentPos = sci.CurrentPos;
 			deltaPos = startPos - currentPos + 1;
-            currentLine = sci.LineFromPosition(currentPos);
+            currentLine = sci.CurrentLine;
             PositionControl(sci);
             // state
             isActive = true;
@@ -192,7 +192,7 @@ namespace PluginCore.Controls
                     {
                         sci.CharRight();
                         currentPos = sci.CurrentPos;
-                        if (sci.LineFromPosition(sci.CurrentPos) != currentLine) Hide();
+                        if (sci.CurrentLine != currentLine) Hide();
                         else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
                     }
                     return true;
@@ -205,7 +205,7 @@ namespace PluginCore.Controls
                         if (currentPos < startPos) Hide();
                         else
                         {
-                            if (sci.LineFromPosition(sci.CurrentPos) != currentLine) Hide();
+                            if (sci.CurrentLine != currentLine) Hide();
                             else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
                         }
                     }

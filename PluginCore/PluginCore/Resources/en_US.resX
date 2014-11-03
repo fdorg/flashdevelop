@@ -3836,6 +3836,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Revert To &amp;Default</value>
     <comment>Added after 3.3.1</comment>
   </data>
+  <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
+    <value>Revert All To &amp;Default</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">
     <value>Shortcut</value>
     <comment>Added after 3.3.1</comment>
@@ -3843,6 +3847,10 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="FlashDevelop.Title.Shortcuts" xml:space="preserve">
     <value>Shortcuts</value>
     <comment>Added after 3.3.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
+    <value>View customized only</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.UnableToLoadPlugin" xml:space="preserve">
     <value>Unable to load an incompatible or broken plugin:</value>

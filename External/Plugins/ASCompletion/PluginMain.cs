@@ -445,7 +445,7 @@ namespace ASCompletion
                                 details = new Hashtable();
                                 // Get closest list (Array or Vector)
                                 string closestListName = "", closestListItemType = "";
-                                ASComplete.FindClosestList(ASContext.Context, result.Context, sci.LineFromPosition(sci.CurrentPos), ref closestListName, ref closestListItemType);
+                                ASComplete.FindClosestList(ASContext.Context, result.Context, sci.CurrentLine, ref closestListName, ref closestListItemType);
                                 details.Add("TypClosestListName", closestListName);
                                 details.Add("TypClosestListItemType", closestListItemType);
                                 // get free iterator index

@@ -552,7 +552,7 @@ namespace FlashDevelop.Dialogs
                         FRDialogGenerics.SelectMatch(sci, matches[i]);
                         String replaceWith = this.GetReplaceText(matches[i]);
                         FRSearch.PadIndexes(matches, i, matches[i].Value, replaceWith);
-                        sci.EnsureVisible(sci.LineFromPosition(sci.CurrentPos));
+                        sci.EnsureVisible(sci.CurrentLine);
                         sci.ReplaceSel(replaceWith);
                     }
                 }
