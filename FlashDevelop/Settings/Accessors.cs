@@ -774,11 +774,11 @@ namespace FlashDevelop.Settings
 
         #endregion
 
-        #region Controls
+        #region Completion List
 
         [DefaultValue(500)]
         [DisplayName("Hover Delay")]
-        [LocalizedCategory("FlashDevelop.Category.Controls")]
+        [LocalizedCategory("FlashDevelop.Category.CompletionList")]
         [LocalizedDescription("FlashDevelop.Description.HoverDelay")]
         public Int32 HoverDelay
         {
@@ -795,7 +795,7 @@ namespace FlashDevelop.Settings
 
         [DefaultValue(100)]
         [DisplayName("Display Delay")]
-        [LocalizedCategory("FlashDevelop.Category.Controls")]
+        [LocalizedCategory("FlashDevelop.Category.CompletionList")]
         [LocalizedDescription("FlashDevelop.Description.DisplayDelay")]
         public Int32 DisplayDelay
         {
@@ -805,7 +805,7 @@ namespace FlashDevelop.Settings
 
         [DefaultValue(false)]
         [DisplayName("Show Details")]
-        [LocalizedCategory("FlashDevelop.Category.Controls")]
+        [LocalizedCategory("FlashDevelop.Category.CompletionList")]
         [LocalizedDescription("FlashDevelop.Description.ShowDetails")]
         public Boolean ShowDetails
         {
@@ -815,7 +815,7 @@ namespace FlashDevelop.Settings
 
         [DefaultValue(true)]
         [DisplayName("Auto Filter List")]
-        [LocalizedCategory("FlashDevelop.Category.Controls")]
+        [LocalizedCategory("FlashDevelop.Category.CompletionList")]
         [LocalizedDescription("FlashDevelop.Description.AutoFilterList")]
         public Boolean AutoFilterList
         {
@@ -825,7 +825,7 @@ namespace FlashDevelop.Settings
 
         [DefaultValue(true)]
         [DisplayName("Enable AutoHide")]
-        [LocalizedCategory("FlashDevelop.Category.Controls")]
+        [LocalizedCategory("FlashDevelop.Category.CompletionList")]
         [LocalizedDescription("FlashDevelop.Description.EnableAutoHide")]
         public Boolean EnableAutoHide
         {
@@ -835,7 +835,7 @@ namespace FlashDevelop.Settings
 
         [DefaultValue(false)]
         [DisplayName("Wrap List")]
-        [LocalizedCategory("FlashDevelop.Category.Controls")]
+        [LocalizedCategory("FlashDevelop.Category.CompletionList")]
         [LocalizedDescription("FlashDevelop.Description.WrapList")]
         public Boolean WrapList
         {
@@ -845,7 +845,7 @@ namespace FlashDevelop.Settings
 
         [DefaultValue(false)]
         [DisplayName("Disable Smart Matching")]
-        [LocalizedCategory("FlashDevelop.Category.Controls")]
+        [LocalizedCategory("FlashDevelop.Category.CompletionList")]
         [LocalizedDescription("FlashDevelop.Description.DisableSmartMatch")]
         public Boolean DisableSmartMatch
         {
@@ -855,7 +855,7 @@ namespace FlashDevelop.Settings
 
         [DefaultValue("")]
         [DisplayName("Completion List Insertion Triggers")]
-        [LocalizedCategory("FlashDevelop.Category.Controls")]
+        [LocalizedCategory("FlashDevelop.Category.CompletionList")]
         [LocalizedDescription("FlashDevelop.Description.InsertionTriggers")]
         public String InsertionTriggers
         {

@@ -492,8 +492,8 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="FlashConnect.Info.InvalidMessage" xml:space="preserve">
     <value>Die erhaltene Xml-Nachricht war ungültig.</value>
   </data>
-  <data name="FlashDevelop.Category.Controls" xml:space="preserve">
-    <value>Steuerungen</value>
+  <data name="FlashDevelop.Category.CompletionList" xml:space="preserve">
+    <value>Codevervollständigung</value>
   </data>
   <data name="FlashDevelop.Category.Display" xml:space="preserve">
     <value>Anzeige</value>
@@ -691,7 +691,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
     <value>Letzter Fensterstatus (maximiert, minimiert, frei schwebend)</value>
   </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
-    <value>Überlauf an beiden Enden der Vervollständigungsliste.</value>
+    <value>Überlauf an beiden Enden der Vervollständigungsliste mit der nach oben / nach unten Taste.</value>
   </data>
   <data name="FlashDevelop.Description.WrapText" xml:space="preserve">
     <value>Bricht lange Zeilen im Editor um (nicht im zugrundeliegenden Dokument)</value>

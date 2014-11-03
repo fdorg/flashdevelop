@@ -474,8 +474,8 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="FlashConnect.Info.InvalidMessage" xml:space="preserve">
     <value>The received xml message was invalid.</value>
   </data>
-  <data name="FlashDevelop.Category.Controls" xml:space="preserve">
-    <value>Controls</value>
+  <data name="FlashDevelop.Category.CompletionList" xml:space="preserve">
+    <value>Completion List</value>
   </data>
   <data name="FlashDevelop.Category.Display" xml:space="preserve">
     <value>Display</value>
@@ -673,7 +673,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Last known window state of the program.</value>
   </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
-    <value>When navigating using keyboard.</value>
+    <value>When navigating using the up and down keys.</value>
   </data>
   <data name="FlashDevelop.Description.WrapText" xml:space="preserve">
     <value>Wraps the texts in the editor.</value>

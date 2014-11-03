@@ -475,8 +475,9 @@
   <data name="FlashConnect.Info.InvalidMessage" xml:space="preserve">
     <value>XML メッセージの受信が無効です。</value>
   </data>
-  <data name="FlashDevelop.Category.Controls" xml:space="preserve">
-    <value>Controls | 操作</value>
+  <data name="FlashDevelop.Category.CompletionList" xml:space="preserve">
+    <value>Completion List</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Category.Display" xml:space="preserve">
     <value>Display | 表示</value>
@@ -675,6 +676,7 @@
   </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
     <value>補完リストをキーボードで操作したときにループさせます。</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Description.WrapText" xml:space="preserve">
     <value>エディターのテキストを右端で折り返します。</value>
