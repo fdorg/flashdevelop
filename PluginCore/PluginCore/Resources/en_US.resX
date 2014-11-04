@@ -1280,6 +1280,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="FlashDevelop.Label.WholeWord" xml:space="preserve">
     <value>&amp;Whole word</value>
   </data>
+  <data name="FlashDevelop.Label.More" xml:space="preserve">
+    <value>&amp;More...</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.WindowsExplorer" xml:space="preserve">
     <value>Windows &amp;Explorer</value>
   </data>
