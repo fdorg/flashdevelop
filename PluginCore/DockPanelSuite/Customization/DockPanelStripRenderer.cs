@@ -217,7 +217,7 @@ namespace System.Windows.Forms
                     {
                         Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.TitleBackColor");
                         Color border2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.TitleBorderColor");
-                        if (back != Color.Empty && border != Color.Empty)
+                        if (back2 != Color.Empty && border2 != Color.Empty)
                         {
                             e.Graphics.FillRectangle(new SolidBrush(back2), new Rectangle(0, 0, e.Item.Width, e.Item.Height));
                             e.Graphics.DrawRectangle(new Pen(border2), 0, 0, e.Item.Width - 1, e.Item.Height);
