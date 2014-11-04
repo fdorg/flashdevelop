@@ -1,5 +1,5 @@
 ﻿<!-- COLORING_START -->
-<editor-style caret-fore="0x000000" caretline-back="0xe0e0e0" selection-fore="0xffffff" selection-back="0x3399ff" margin-fore="0xf6f6f6" margin-back="0xf6f6f6" colorize-marker-back="true" marker-back="0xbcbcbc" />
+<editor-style caret-fore="0x000000" caretline-back="0xe0e0e0" selection-fore="0xffffff" selection-back="0x3399ff" margin-fore="0xf6f6f6" margin-back="0xf6f6f6" colorize-marker-back="true" marker-back="0xb6b6b6" marker-fore="0xf6f6f6" />
 <use-styles>
 	<style name="default" fore="0x222222" back="0xf6f6f6" size="9" font="Consolas,Courier New,monospace" />
 	<style name="comment" fore="0x008000" />
