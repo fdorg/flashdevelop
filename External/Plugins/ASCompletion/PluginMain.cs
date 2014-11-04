@@ -58,6 +58,7 @@ namespace ASCompletion
         private FlashErrorsWatcher flashErrorsWatcher;
         private bool checking = false;
         private System.Timers.Timer timerPosition;
+        private int lastHoverPosition;
 
         private Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
         private Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
@@ -713,6 +714,7 @@ namespace ASCompletion
             UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(OnMouseHover);
             UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(OnTextChanged);
             UITools.CallTip.OnUpdateCallTip += new MethodCallTip.UpdateCallTipHandler(OnUpdateCallTip);
+            UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateTipHandler(OnUpdateSimpleTip);
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts
@@ -860,6 +862,8 @@ namespace ASCompletion
 			if (!ASContext.Context.IsFileValid)
 				return;
 
+            lastHoverPosition = position;
+
 			// get word at mouse position
 			int style = sci.BaseStyleAt(position);
 			if (!ASComplete.IsTextStyle(style))
@@ -885,8 +889,14 @@ namespace ASCompletion
 
 		private void OnUpdateCallTip(ScintillaNet.ScintillaControl sci, int position)
 		{
-			if (ASComplete.HasCalltip())
-				ASComplete.HandleFunctionCompletion(sci, false, true);
+            if (ASComplete.HasCalltip())
+                ASComplete.HandleFunctionCompletion(sci, false, true);
+        }
+
+        private void OnUpdateSimpleTip(ScintillaNet.ScintillaControl sci, Point mousePosition)
+        {
+            if (UITools.Tip.Visible)
+                OnMouseHover(sci, lastHoverPosition);
         }
 
         void timerPosition_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

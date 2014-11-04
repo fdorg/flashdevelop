@@ -17,6 +17,11 @@ namespace PluginCore.Controls
 	/// </summary>
 	public class RichToolTip
 	{
+        public delegate void UpdateTipHandler(ScintillaControl sender, Point mousePosition);
+
+        // events
+        public event UpdateTipHandler OnUpdateSimpleTip;
+
 		// controls
 		protected Panel toolTip;
         protected RichTextBox toolTipRTB;
@@ -25,6 +30,7 @@ namespace PluginCore.Controls
 		protected string cachedRtf;
 		protected Dictionary<String, String> rtfCache;
 		protected List<String> rtfCacheList;
+        protected Point mousePos;
 
 		#region Public Properties
 		
@@ -170,7 +176,7 @@ namespace PluginCore.Controls
 		public void ShowAtMouseLocation()
 		{
             //ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-			Point mousePos = ((Form)PluginBase.MainForm).PointToClient(Control.MousePosition);
+			mousePos = ((Form)PluginBase.MainForm).PointToClient(Control.MousePosition);
             toolTip.Left = mousePos.X;// +sci.Left;
             if (toolTip.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
             {
@@ -180,6 +186,11 @@ namespace PluginCore.Controls
 			toolTip.Show();
 			toolTip.BringToFront();
 		}
+
+        public void UpdateTip(ScintillaControl sci)
+        {
+            if (OnUpdateSimpleTip != null) OnUpdateSimpleTip(sci, mousePos);
+        }
 		
 		public virtual void Hide()
 		{
