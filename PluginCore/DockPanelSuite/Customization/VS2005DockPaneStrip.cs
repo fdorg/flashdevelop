@@ -1223,7 +1223,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             // Adjust text
             double scale = ScaleHelper.GetScale();
-            if (scale == 2)
+            if (scale >= 1.5)
             {
                 String tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
                 if (tabSize == "Default") rectText.Y += ScaleHelper.Scale(1);

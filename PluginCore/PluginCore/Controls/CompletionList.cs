@@ -359,11 +359,13 @@ namespace PluginCore.Controls
             bool selected = (e.State & DrawItemState.Selected) > 0;
 			Brush textBrush = (selected) ? SystemBrushes.HighlightText : fore == Color.Empty ? SystemBrushes.WindowText : new SolidBrush(fore);
             Brush packageBrush = Brushes.Gray;
-			Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top + 1, e.Bounds.Width, e.Bounds.Height);
+			Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
 			if (item != null)
 			{
                 Graphics g = e.Graphics;
-                g.DrawImage(item.Icon, 1, e.Bounds.Top + ((e.Bounds.Height - item.Icon.Height) / 2));
+                float newHeight = e.Bounds.Height - 2;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.DrawImage(item.Icon, 1, e.Bounds.Top + ((e.Bounds.Height - newHeight) / 2), newHeight, newHeight);
                 int p = item.Label.LastIndexOf('.');
                 if (p > 0 && !selected)
                 {
