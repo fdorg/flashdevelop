@@ -402,8 +402,8 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>Karpeta berria</value>
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
-    <value>&amp;Find and Replace Here...</value>
-	<comment>Added after 4.6.4</comment>
+    <value>&amp;Hemen bilatu eta ordezkatu...</value>
+  <comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>Komando-gonbita hemen...</value>
@@ -3800,7 +3800,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Esparru erreferentzia esplizitua sortu - normalean 'this' hitz-gakoa.</value>
   </data>
   <data name="FlashDevelop.Info.ShortcutEditInfo" xml:space="preserve">
-    <value>Item bat aukeratu eta menu item lasterbide teklak sakatuta lasterbideak editatu daitezke.</value>
+    <value>Elementu bat aukeratu eta menu-elementu lasterbide teklak sakatuta lasterbideak editatu daitezke.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.Command" xml:space="preserve">
@@ -4492,7 +4492,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DontIndentPackageItems" xml:space="preserve">
-    <value>Pakete item-ak ez koskatu.</value>
+    <value>Pakete-elementuak ez koskatu.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.ElseIfOnSameLine" xml:space="preserve">
@@ -5096,167 +5096,167 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
-    <value>Type of the intendation guide behaviour.</value>
+    <value>Koskatze gidaren portaera mota.</value>
     <comment>Added after 4.6.0</comment>
   </data>
   <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
-    <value>Break when an exception is thrown, even if it is handled.</value>
+    <value>Salbuespen bat altxatzean eten, nahiz eta kudeatua izan.</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
-    <value>&amp;Run Project</value>
+    <value>&amp;Proiektua abiarazi</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
-    <value>You are renaming a directory. Do you also want to update the references?</value>
+    <value>Karpeta bat berrizendatzen ari zara. Erreferentziak ere eguneratu nahi dituzu?</value>
     <comment>Added after 4.6.1</comment>
   </data>
-  <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
+  <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve"> <!-- TODO: ez dakit zer erran nahi duen -->
     <value>Keep indent tabs when strip trailing spaces.</value>
     <comment>Added after 4.6.2</comment>
   </data>
   <data name="AirProperties.AspectRatio.Any" xml:space="preserve">
-    <value>Any</value>
+    <value>Edozein</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.DesktopResolution.High" xml:space="preserve">
-    <value>High</value>
+    <value>Altua</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.DesktopResolution.Standard" xml:space="preserve">
-    <value>Standard</value>
+    <value>Estandarra</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.ANEDescFileNotFound" xml:space="preserve">
-    <value>ANE descriptor file not found.</value>
+    <value>ANE fitxetegi descriptorea ez da aurkitu.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.AneFilter" xml:space="preserve">
-    <value>ANE Files (*.ane)|*.ane</value>
+    <value>ANE Fitxategiak (*.ane)|*.ane</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.CheckFileLocation" xml:space="preserve">
-    <value>The file must not be located at an upper or external directory from the descriptor file.</value>
+    <value>Fitxategiak ezin da deskriptorearekiko goiko edo kanpoko karpeta batean egon.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.CouldNotLoadANE" xml:space="preserve">
-    <value>Could not load ANE file:</value>
+    <value>Ezin izan da ANE fitxategia kargatu:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.ExtensionIDNotFound" xml:space="preserve">
-    <value>Extension ID could not be retrieved.</value>
+    <value>Luzapenaren IDa ezin izan da berreskuratu.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.SelectAtleastOneItem" xml:space="preserve">
-    <value>At least one item must be chosen.</value>
+    <value>Elementu bat aukeratu behar da gutxienez.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhoneBGMode.Audio" xml:space="preserve">
-    <value>Audio</value>
+    <value>Audioa</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhoneBGMode.Location" xml:space="preserve">
-    <value>Location</value>
+    <value>Kokapena</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhonePushNotifications.Development" xml:space="preserve">
-    <value>Development</value>
+    <value>Garapena</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhonePushNotifications.Distribution" xml:space="preserve">
-    <value>Distribution</value>
+    <value>Banaketa</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhoneResolution.High" xml:space="preserve">
-    <value>High</value>
+    <value>Altua</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhoneResolution.Standard" xml:space="preserve">
-    <value>Standard</value>
+    <value>Estandarra</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Advanced" xml:space="preserve">
-    <value>Advanced &gt;&gt;</value>
+    <value>Aurreratua &gt;&gt;</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.BackgroundBehavior" xml:space="preserve">
-    <value>Background Behavior</value>
+    <value>Atzeko planoko portaera</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Basic" xml:space="preserve">
-    <value>&lt;&lt; Basic</value>
+    <value>&lt;&lt; Oinarrizkoa</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Browse" xml:space="preserve">
-    <value>Browse</value>
+    <value>Bilatu</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ColorDepth" xml:space="preserve">
-    <value>Color Depth</value>
+    <value>Kolore sakonera</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.CPURendering" xml:space="preserve">
-    <value>CPU Rendering</value>
+    <value>CPU Errendaketa</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Display" xml:space="preserve">
-    <value>Display</value>
+    <value>Erakutsi</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Entitlements" xml:space="preserve">
-    <value>Entitlements</value>
+    <value>Eskubideak</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Exclude" xml:space="preserve">
-    <value>Exclude</value>
+    <value>Baztertu</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ExitOnSuspend" xml:space="preserve">
-    <value>Exit On Suspend</value>
+    <value>Esekitzean irten</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ExternalSWFs" xml:space="preserve">
-    <value>External SWFs</value>
+    <value>Kanpoko SWFak</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.InfoAdditions" xml:space="preserve">
-    <value>Info Additions</value>
+    <value>Info gehigarriak</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.LookAndFeel" xml:space="preserve">
-    <value>Look And Feel</value>
+    <value>Itxura</value> <!-- TODO: hau aldatu, berezkoa "Look and Feel" -->
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.OtherBehavior" xml:space="preserve">
-    <value>Other Behavior</value>
+    <value>Beste portaerak</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.PrerenderedIcon" xml:space="preserve">
-    <value>Prerendered Icon</value>
+    <value>Aurreerrendatutako ikonoa</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.PushNotifications" xml:space="preserve">
-    <value>Push Notifications</value>
+    <value>Jakinarazpena jarri</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Resolution" xml:space="preserve">
-    <value>Resolution</value>
+    <value>Bereizmena</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.SelectPermForInfo" xml:space="preserve">
-    <value>Select a permission to see its description.</value>
+    <value>Baimen bat aukeratu bere deskribapena ikusteko.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.StatusBarStyle" xml:space="preserve">
-    <value>Status Bar Style</value>
+    <value>Egoera barraren itxura</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.SupportedDevices" xml:space="preserve">
-    <value>Supported Devices</value>
+    <value>Onartutako gailuak</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.SoftKeyboard.None" xml:space="preserve">
-    <value>None</value>
+    <value>Hutsa</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.SoftKeyboard.Pan" xml:space="preserve">
@@ -5264,27 +5264,27 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Title.SelectIOSDevices" xml:space="preserve">
-    <value>Select Target iOS Devices</value>
+    <value>Aukeratu helburuko iOS gailuak</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidAndroidMinVersion" xml:space="preserve">
-    <value>Minimum supported Android version is 8.</value>
+    <value>Onartutako Android bertsio baxuena 8 da.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidMinAIRVersion" xml:space="preserve">
-    <value>Minimum supported AIR version is 4.3.</value>
+    <value>Onartutako AIR bertsio baxuena 4.3 da.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidVersionValue" xml:space="preserve">
-    <value>Invalid version value.</value>
+    <value>Bertsio zenbaki baliogabea.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.MissingSWFContainer" xml:space="preserve">
-    <value>The external SWFs file container does not exist. Please, check your path.</value>
+    <value>Kanpoko SWFs fitxategia ez da existitzen. Mesedez, egiaztatu bide-izena.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.WrongAdditionsXML" xml:space="preserve">
-    <value>Wrong iPhone info additions XML:</value>
+    <value>iPhone informazio gehigarri okerra XML:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.WrongEntitlementsXML" xml:space="preserve">
@@ -5292,19 +5292,19 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.WrongManifestXML" xml:space="preserve">
-    <value>Wrong Android manifest XML:</value>
+    <value>Android manifestu okerra XML:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
-    <value>Generate protected field</value>
+    <value>protected eremua sortu</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
-    <value>Generate protected function</value>
+    <value>protected funtzioa sortu</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
-    <value>Declare protected variable</value>
+    <value>protected aldagaia deklaratu</value>
     <comment>Added after 4.6.4</comment>
   </data>
 </root>
