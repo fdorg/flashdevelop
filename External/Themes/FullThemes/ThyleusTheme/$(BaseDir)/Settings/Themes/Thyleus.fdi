@@ -1,3 +1,37 @@
+# FD UI THEME (5.0+)
+
+# Bright, Default, Dim, Dark, Darker, Black
+ImageManager.ImageSet=Dark
+
+# Default, Large
+VS2005DockPaneStrip.TabSize=Default
+
+# Default, Block, Rect
+VS2005DockPaneStrip.TabStyle=Default
+
+VS2005DockPaneStrip.DocTabActiveBorder=#696463
+VS2005DockPaneStrip.DocTabInactiveBorder=#696463
+VS2005DockPaneStrip.ToolBorderColor=#696463
+VS2005DockPaneCaption.BorderColor=#696463
+
+ToolStrip.BorderColor=#696463
+DockWindow.BorderColor=#696463
+DockPanelControl.BorderColor=#696463
+ToolStripSeparator.ForeColor=#9D9895
+
+ToolStripItem.ArrowColor=#474443
+ToolStripItem.TextColor=#363330
+
+ToolStripMenu.TitleBackColor=#CBC8C5
+ToolStripMenu.TitleBorderColor=#696463
+ToolStripMenu.SeparatorColor=#B5B0AC
+ToolStripMenu.DropDownBackColor=#CBC8C5
+ToolStripMenu.DropDownBorderColor=#696463
+ToolStripMenu.MarginBorderColor=#B6B3AF
+ToolStripMenu.MarginBackColor=#CBC8C5
+ToolStripMenu.BorderColor=#696463
+ToolStripMenu.BackColor=#DFDEDB
+
 # FD UI THEME (4.3+) 
 
 ### EDIT CONTROLS
@@ -51,33 +85,33 @@ Panel.BackColor=#D0CDCC
 ### MAIN INTERFACE
 
 QuickFind.ForeColor=#222222
-QuickFind.BackColor=#948E8D
+QuickFind.BackColor=#94918D
 
-SplitterControl.BackColor=#948E8D
-SplitContainer.BackColor=#948E8D
-SplitterPanel.BackColor=#948E8D
+SplitterControl.BackColor=#94918D
+SplitContainer.BackColor=#94918D
+SplitterPanel.BackColor=#94918D
 
 LinkLabel.ForeColor=#222222
-LinkLabel.BackColor=#948E8D
+LinkLabel.BackColor=#94918D
 
 ### MENUS AND TOOLBARS
 
 TreeBar.ForeColor=#222222
-TreeBar.BackColor=#948E8D
+TreeBar.BackColor=#94918D
 
 StatusStrip.ForeColor=#222222
-StatusStrip.BackColor=#948E8D
+StatusStrip.BackColor=#94918D
 
 MenuStrip.ForeColor=#222222
-MenuStrip.BackColor=#948E8D
+MenuStrip.BackColor=#94918D
 
 ToolStrip.ForeColor=#222222
-ToolStrip.BackColor=#948E8D
+ToolStrip.BackColor=#94918D
 ToolStrip.3dLightColor=#AEA8A6
 ToolStrip.3dDarkColor=#696463
 
-ToolStripItem.BackColor=#D6D3D1
-ToolStripItem.BorderColor=#8A8684
+ToolStripItem.BackColor=#CBC8C5
+ToolStripItem.BorderColor=#85817E
 
 ToolStripComboBoxControl.ForeColor=#222222
 ToolStripComboBoxControl.BackColor=#D0CDCC
@@ -98,14 +132,14 @@ VS2005DockPaneCaption.TabGradientEnd=#3C372F
 
 VS2005DockPaneStrip.ForeColor=#222222
 VS2005DockPaneStrip.TabForeColor=#222222
-VS2005DockPaneStrip.DocBackColor=#BDBAB9
-VS2005DockPaneStrip.ToolBackColor=#948E8D
+VS2005DockPaneStrip.DocBackColor=#ABA8A5
+VS2005DockPaneStrip.ToolBackColor=#94918D
 VS2005DockPaneStrip.ToolActiveBackColor=#F0EDEC
-VS2005DockPaneStrip.DocActiveBackColor=#E8E8E8
-VS2005DockPaneStrip.DocInactiveBackColor=#D6D3D1
-VS2005DockPaneStrip.TabSeparatorColor=#9A8A81
-VS2005DockPaneStrip.TabStripColor=#678CB1
+VS2005DockPaneStrip.DocActiveBackColor=#E2E2E2
+VS2005DockPaneStrip.DocInactiveBackColor=#C8C4C1
+VS2005DockPaneStrip.TabSeparatorColor=#C0B092
+VS2005DockPaneStrip.TabStripColor=#C0B092
 
 VS2005AutoHideStrip.ForeColor=#222222
-VS2005AutoHideStrip.BackColor=#948E8D
+VS2005AutoHideStrip.BackColor=#94918D
 VS2005AutoHideStrip.BorderColor=#696463
