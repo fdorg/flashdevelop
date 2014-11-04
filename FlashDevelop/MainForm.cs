@@ -46,11 +46,14 @@ namespace FlashDevelop
         {
             MainForm.Instance = this;
             PluginBase.Initialize(this);
+            this.DoubleBuffered = true;
             this.InitializeErrorLog();
             this.InitializeSettings();
             this.InitializeLocalization();
             if (this.InitializeFirstRun() != DialogResult.Abort)
             {
+                // Suspend layout!
+                this.SuspendLayout();
                 this.InitializeConfig();
                 this.InitializeRendering();
                 this.InitializeComponents();
@@ -828,17 +831,27 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Initializes the window position and size
+        /// </summary>
+        public void InitializeWindow()
+        {
+            this.WindowState = this.appSettings.WindowState;
+            Point position = new Point(this.appSettings.WindowPosition.X, this.appSettings.WindowPosition.Y);
+            if (position.X < -4) position.X = 0;
+            if (position.Y < -25) position.Y = 0;
+            this.Location = position;
+            // Continue/perform layout!
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        /// <summary>
         /// Initialises the plugins, restores the layout and sets an fixed position
         /// </summary>
         public void InitializeMainForm()
         {
             try
             {
-                Point position = new Point(this.appSettings.WindowPosition.X, this.appSettings.WindowPosition.Y);
-                if (position.X < -4) position.X = 0; // Set zero position if window is hidden
-                if (position.Y < -25) position.Y = 0;
-                this.Location = position;
-                this.WindowState = this.appSettings.WindowState;
                 String pluginDir = PathHelper.PluginDir; // Plugins of all users
                 if (Directory.Exists(pluginDir)) PluginServices.FindPlugins(pluginDir);
                 if (!this.StandaloneMode) // No user plugins on standalone...
@@ -879,7 +892,6 @@ namespace FlashDevelop
             this.openFileDialog = new OpenFileDialog();
             this.colorDialog = new ColorDialog();
             this.printDialog = new PrintDialog();
-            this.SuspendLayout();
             //
             // toolStripPanel
             //
@@ -981,8 +993,6 @@ namespace FlashDevelop
             this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
             this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
             this.Resize += new EventHandler(this.OnMainFormResize);
-            this.ResumeLayout(false);
-            this.PerformLayout();
         }
 
         #endregion
@@ -1102,6 +1112,10 @@ namespace FlashDevelop
             * Apply all settings to all documents
             */
             this.ApplyAllSettings();
+            /**
+            * Initialize window and continue layout
+            */
+            this.InitializeWindow();
         }
 
         /// <summary>
