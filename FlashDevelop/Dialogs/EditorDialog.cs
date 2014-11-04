@@ -1276,6 +1276,7 @@ namespace FlashDevelop.Dialogs
             }
             if (this.editorStyleNode.Attributes["colorize-marker-back"] != null)
             {
+                this.colorizeCheckBox.CheckState = CheckState.Unchecked;
                 this.colorizeCheckBox.Checked = Boolean.Parse(this.editorStyleNode.Attributes["colorize-marker-back"].Value);
             }
             this.isLoadingEditor = false;
