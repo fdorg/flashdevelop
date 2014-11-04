@@ -402,7 +402,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>Karpeta berria</value>
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
-    <value>&amp;Find and Replace Here...</value>
+    <value>&amp;Hemen bilatu eta ordezkatu...</value>
   <comment>Added after 4.6.4</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
