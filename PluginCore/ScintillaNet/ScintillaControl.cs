@@ -4949,72 +4949,9 @@ namespace ScintillaNet
         public static void InitShortcuts()
         {
             // reference: http://www.scintilla.org/SciTEDoc.html "Keyboard commands"
-
-            // Zoom
             AddShortcut("ResetZoom", Keys.Control | Keys.NumPad0, sci => sci.ResetZoom());
             AddShortcut("ZoomOut", Keys.Control | Keys.Subtract, sci => sci.ZoomOut());
             AddShortcut("ZoomIn", Keys.Control | Keys.Add, sci => sci.ZoomIn());
-
-            // Indent
-            AddShortcut("Indent", Keys.Tab, sci => sci.Tab());
-            AddShortcut("Dedent", Keys.Shift | Keys.Tab, sci => sci.BackTab());
-
-            // Delete
-            AddShortcut("DeleteBack", Keys.Back, sci => sci.DeleteBack());
-            AddShortcut("DelWordLeft", Keys.Control | Keys.Back, sci => sci.DelWordLeft());
-            AddShortcut("DelLineLeft", Keys.Control | Keys.Shift | Keys.Back, sci => sci.DelLineLeft());
-            AddShortcut("DeleteForward", Keys.Delete, sci => sci.DeleteForward());
-            AddShortcut("DelWordRight", Keys.Control | Keys.Delete, sci => sci.DelWordRight());
-            AddShortcut("DelLineRight", Keys.Control | Keys.Shift | Keys.Delete, sci => sci.DelLineRight());
-
-            // Scroll
-            AddShortcut("LineScrollUp", Keys.Control | Keys.Up, sci => sci.LineScrollUp());
-            AddShortcut("LineScrollDown", Keys.Control | Keys.Down, sci => sci.LineScrollDown());
-
-            // Word
-            AddShortcut("WordLeft", Keys.Control | Keys.Left, sci => sci.WordLeft());
-            AddShortcut("WordLeftExtend", Keys.Control | Keys.Shift | Keys.Left, sci => sci.WordLeftExtend());
-            AddShortcut("WordRight", Keys.Control | Keys.Right, sci => sci.WordRight());
-            AddShortcut("WordRightExtend", Keys.Control | Keys.Shift | Keys.Right, sci => sci.WordRightExtend());
-
-            // Char
-            AddShortcut("CharLeft", Keys.Left, sci => sci.CharLeft());
-            AddShortcut("CharLeftExtend", Keys.Shift | Keys.Left, sci => sci.CharLeftExtend());
-            AddShortcut("CharLeftRectExtend", Keys.Alt | Keys.Shift | Keys.Left, sci => sci.CharLeftRectExtend());
-            AddShortcut("CharRight", Keys.Right, sci => sci.CharRight());
-            AddShortcut("CharRightExtend", Keys.Shift | Keys.Right, sci => sci.CharRightExtend());
-            AddShortcut("CharRightRectExtend", Keys.Alt | Keys.Shift | Keys.Right, sci => sci.CharRightRectExtend());
-
-            // Document
-            AddShortcut("DocumentStart", Keys.Control | Keys.Home, sci => sci.DocumentStart());
-            AddShortcut("DocumentStartExtend", Keys.Control | Keys.Shift | Keys.Home, sci => sci.DocumentStartExtend());
-            AddShortcut("DocumentEnd", Keys.Control | Keys.End, sci => sci.DocumentEnd());
-            AddShortcut("DocumentEndExtend", Keys.Control | Keys.Shift | Keys.End, sci => sci.DocumentEndExtend());
-
-            // Line Start
-            AddShortcut("LineStart", Keys.Home, sci => sci.Home());
-            AddShortcut("LineStartExtend", Keys.Shift | Keys.Home, sci => sci.HomeExtend());
-            AddShortcut("LineStartRectExtend", Keys.Alt | Keys.Shift | Keys.Home, sci => sci.HomeRectExtend());
-            AddShortcut("LineStartDisplay", Keys.Alt | Keys.Home, sci => sci.HomeDisplay());
-
-            // Line End
-            AddShortcut("LineEnd", Keys.End, sci => sci.LineEnd());
-            AddShortcut("LineEndExtend", Keys.Shift | Keys.End, sci => sci.LineEndExtend());
-            AddShortcut("LineEndRectExtend", Keys.Alt | Keys.Shift | Keys.End, sci => sci.LineEndRectExtend());
-            AddShortcut("LineEndDisplay", Keys.Alt | Keys.End, sci => sci.LineEndDisplay());
-
-            // Line Up
-            AddShortcut("LineUp", Keys.Up, sci => sci.LineUp());
-            AddShortcut("LineUpExtend", Keys.Shift | Keys.Up, sci => sci.LineUpExtend());
-            AddShortcut("LineUpRectExtend", Keys.Shift | Keys.Alt | Keys.Up, sci => sci.LineUpRectExtend());
-
-            // Line Down
-            AddShortcut("LineDown", Keys.Down, sci => sci.LineDown());
-            AddShortcut("LineDownExtend", Keys.Shift | Keys.Down, sci => sci.LineDownExtend());
-            AddShortcut("LineDownRectExtend", Keys.Shift | Keys.Alt | Keys.Down, sci => sci.LineDownRectExtend());
-
-            // Misc
-            AddShortcut("NewLine", Keys.Return, sci => sci.NewLine());
         }
 
         /// <summary>
@@ -5055,7 +4992,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// 
+        /// Shortcut override object
         /// </summary>
         private class ShortcutOverride
         {
