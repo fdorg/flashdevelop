@@ -263,7 +263,6 @@ namespace ProjectManager.Controls
             {
                 destination.DrawImage(overlay, new Rectangle(x, y, overlay.Width, overlay.Height), new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
             }
-            composed = (Bitmap)PluginBase.MainForm.ImageSetAdjust(composed);
             return composed;
         }
 

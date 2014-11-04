@@ -90,7 +90,7 @@ namespace System.Windows.Forms
             else if (e.ToolStrip is ToolStripDropDownMenu)
             {
                 Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.BorderColor");
-                if (back2 != Color.Empty)
+                if (renderer is ToolStripProfessionalRenderer && back2 != Color.Empty)
                 {
                     e.Graphics.DrawRectangle(new Pen(back2), e.AffectedBounds.Top, e.AffectedBounds.Left, e.AffectedBounds.Width - 1, e.AffectedBounds.Height - 1);
                 }
