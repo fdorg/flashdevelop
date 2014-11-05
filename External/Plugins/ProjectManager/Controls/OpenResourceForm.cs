@@ -74,7 +74,7 @@ namespace ProjectManager.Controls
             this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.refreshButton.Location = new System.Drawing.Point(465, 30);
             this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(26, 24);
+            this.refreshButton.Size = new System.Drawing.Size(26, 23);
             this.refreshButton.TabIndex = 3;
             this.refreshButton.Click += new EventHandler(RefreshButtonClick);
             // 
@@ -142,7 +142,7 @@ namespace ProjectManager.Controls
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("203"));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0"));
             this.refreshButton.ImageList = imageList;
             this.refreshButton.ImageIndex = 0;
         }

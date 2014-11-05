@@ -6,12 +6,17 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using PluginCore.Utilities;
+using System.Collections;
 
 namespace PluginCore.Helpers
 {
     public class ScaleHelper
     {
+        /// <summary>
+        /// Private properties
+        /// </summary>
         private static double curScale = double.MinValue;
+        private static HashSet<Control> adjustedItems = new HashSet<Control>();
 
         /// <summary>
         /// Gets the display scale. Ideally would probably keep separate scales for X and Y.
@@ -90,6 +95,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void AdjustForHighDPI(Control control, double multi)
         {
+            if (IsAdjusted(control)) return;
             double scale = ScaleHelper.GetScale();
             foreach (Control ctrl in control.Controls)
             {
@@ -107,6 +113,23 @@ namespace PluginCore.Helpers
         public static void AdjustForHighDPI(Control control)
         {
             AdjustForHighDPI(control, 0.92);
+        }
+
+        /// <summary>
+        /// Keep track and adjust forms only once
+        /// </summary>
+        private static Boolean IsAdjusted(Control control)
+        {
+            if (control is Form)
+            {
+                if (adjustedItems.Contains(control)) return true;
+                else
+                {
+                    adjustedItems.Add(control);
+                    return false;
+                }
+            }
+            else return false;
         }
 
     }

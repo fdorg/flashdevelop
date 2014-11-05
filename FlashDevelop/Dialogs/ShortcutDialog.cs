@@ -79,7 +79,7 @@ namespace FlashDevelop.Dialogs
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.idHeader, this.keyHeader});
             this.listView.GridLines = true;
             this.listView.FullRowSelect = true;
-            this.listView.Location = new System.Drawing.Point(12, 61);
+            this.listView.Location = new System.Drawing.Point(12, 59);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
             this.listView.Size = new System.Drawing.Size(562, 315);
@@ -144,7 +144,7 @@ namespace FlashDevelop.Dialogs
             // viewCustom
             //
             this.viewCustom.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left));
-            this.viewCustom.Location = new System.Drawing.Point(12, 35);
+            this.viewCustom.Location = new System.Drawing.Point(12, 33);
             this.viewCustom.Size = new System.Drawing.Size(500, this.viewCustom.Size.Height);
             this.viewCustom.Click += new System.EventHandler(this.ViewCustomClick);
             // 
