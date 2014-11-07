@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.Localization;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore;
 
 namespace FlashDevelop.Controls
@@ -181,6 +182,16 @@ namespace FlashDevelop.Controls
         {
             this.toolStrip.Renderer = new DockPanelStripRenderer(true);
             this.addressComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
+            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            if (ScaleHelper.GetScale() >= 1.5)
+            {
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(Browser));
+                this.goButton.Image = ((System.Drawing.Image)(resources.GetObject("goButton.Image32")));
+                this.forwardButton.Image = ((System.Drawing.Image)(resources.GetObject("forwardButton.Image32")));
+                this.refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image32")));
+                this.backButton.Image = ((System.Drawing.Image)(resources.GetObject("backButton.Image32")));
+                this.Refresh();
+            }
         }
 
         /// <summary>
