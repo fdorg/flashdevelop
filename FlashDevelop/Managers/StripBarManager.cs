@@ -234,7 +234,7 @@ namespace FlashDevelop.Managers
         {
             String syntaxXml = "";
             String[] syntaxFiles = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
-            String xmlTmpl = "<button label=\"{0}\" click=\"ChangeSyntax\" tag=\"{1}\" flags=\"Enable:IsEditable+Check:IsEditable|IsActiveSyntax\" />";
+            String xmlTmpl = "<button label=\"{0}\" click=\"ChangeSyntax\" tag=\"{1}\" image=\"559\" flags=\"Enable:IsEditable+Check:IsEditable|IsActiveSyntax\" />";
             for (Int32 i = 0; i < syntaxFiles.Length; i++)
             {
                 String fileName = Path.GetFileNameWithoutExtension(syntaxFiles[i]);

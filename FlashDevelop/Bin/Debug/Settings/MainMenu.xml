@@ -58,7 +58,7 @@
 			</menu>
 		</menu>
 		<menu label="Label.LineEnds" name="EOLMenu" flags="Enable:IsEditable">
-			<button label="Label.CRLF" click="ConvertEOL" tag="0" flags="Check:IsEditable|IsActiveEOL" />
+			<button label="Label.CRLF" click="ConvertEOL" tag="0" image="559" flags="Check:IsEditable|IsActiveEOL" />
 			<button label="Label.CR" click="ConvertEOL" tag="1" flags="Check:IsEditable|IsActiveEOL" />
 			<button label="Label.LF" click="ConvertEOL" tag="2" flags="Check:IsEditable|IsActiveEOL" />
 		</menu>

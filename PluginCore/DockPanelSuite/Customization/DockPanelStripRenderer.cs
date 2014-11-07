@@ -326,7 +326,8 @@ namespace System.Windows.Forms
                 LinearGradientBrush backBrush = new LinearGradientBrush(backRect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                 e.Graphics.FillRectangle(borderBrush, borderRect);
                 e.Graphics.FillRectangle(backBrush, backRect);
-                e.Graphics.DrawImage(e.Image, 5 + ((backRect.Width - e.ImageRectangle.Width) / 2), 3 + ((backRect.Height - e.ImageRectangle.Height) / 2), e.ImageRectangle.Width, e.ImageRectangle.Height);
+                Image image = PluginBase.MainForm.FindImage("485");
+                e.Graphics.DrawImage(image, e.ImageRectangle, new Rectangle(Point.Empty, image.Size), GraphicsUnit.Pixel);
             }
             else renderer.DrawItemCheck(e);
         }
@@ -340,16 +341,16 @@ namespace System.Windows.Forms
                 using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
                 {
                     // Do we need to invert the drawing edge?
-                    bool rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
+                    Boolean rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
                     // Find vertical position of the lowest grip line
-                    int y = e.AffectedBounds.Bottom - 3 * 2 + 1;
+                    Int32 y = e.AffectedBounds.Bottom - 3 * 2 + 1;
                     // Draw three lines of grips
-                    for (int i = 3; i >= 1; i--)
+                    for (Int32 i = 3; i >= 1; i--)
                     {
                         // Find the rightmost grip position on the line
-                        int x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
+                        Int32 x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
                         // Draw grips from right to left on line
-                        for (int j = 0; j < i; j++)
+                        for (Int32 j = 0; j < i; j++)
                         {
                             // Just the single grip glyph
                             DrawGripGlyph(e.Graphics, x, y, darkBrush, lightBrush);
@@ -363,7 +364,7 @@ namespace System.Windows.Forms
             }
             else renderer.DrawStatusStripSizingGrip(e);
         }
-        private void DrawGripGlyph(Graphics g, int x, int y, Brush darkBrush, Brush lightBrush)
+        private void DrawGripGlyph(Graphics g, Int32 x, Int32 y, Brush darkBrush, Brush lightBrush)
         {
             g.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
             g.FillRectangle(darkBrush, x, y, 2, 2);
@@ -371,9 +372,55 @@ namespace System.Windows.Forms
 
         protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
         {
-            Color text = PluginBase.MainForm.GetThemeColor("ToolStripItem.ArrowColor");
-            if (text != Color.Empty) e.ArrowColor = text;
-            renderer.DrawArrow(e);
+            Graphics g = e.Graphics;
+            Rectangle dropDownRect = e.ArrowRectangle;
+            Color color = PluginBase.MainForm.GetThemeColor("ToolStripItem.ArrowColor");
+            if (color != Color.Empty) e.ArrowColor = color;
+            else e.ArrowColor = SystemColors.MenuText;
+            using (Brush brush = new SolidBrush(e.ArrowColor))
+            {
+                Point[] arrow;
+                Int32 hor = ScaleHelper.Scale(2);
+                Int32 ver = ScaleHelper.Scale(2);
+                Point middle = new Point(dropDownRect.Left + dropDownRect.Width / 2, dropDownRect.Top + dropDownRect.Height / 2);
+                switch (e.Direction)
+                {
+                    case ArrowDirection.Up:
+                        arrow = new Point[] 
+                        {
+                            new Point(middle.X - hor, middle.Y + 1),
+                            new Point(middle.X + hor + 1, middle.Y + 1),
+                            new Point(middle.X, middle.Y - ver)
+                        };
+                        break;
+                    case ArrowDirection.Left:
+                        arrow = new Point[] 
+                        {
+                            new Point(middle.X + hor, middle.Y - 2 * ver),
+                            new Point(middle.X + hor, middle.Y + 2 * ver),
+                            new Point(middle.X - hor, middle.Y)
+                        };
+                        break;
+                    case ArrowDirection.Right:
+                        arrow = new Point[] 
+                        {
+                            new Point(middle.X - hor, middle.Y - 2 * ver),
+                            new Point(middle.X - hor, middle.Y + 2 * ver),
+                            new Point(middle.X + hor, middle.Y)
+                        };
+                        break;
+                    case ArrowDirection.Down:
+                    default:
+                        arrow = new Point[] 
+                        {
+                            new Point(middle.X - hor, middle.Y - 1),
+                            new Point(middle.X + hor + 1, middle.Y - 1),
+                            new Point(middle.X, middle.Y + ver) 
+                        };
+                        break;
+                }
+                g.FillPolygon(brush, arrow);
+            }
         }
 
         protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
@@ -392,6 +439,8 @@ namespace System.Windows.Forms
 
         protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
         {
+            // Do not render set blank image if its a checked. Workaround for incorrect menu width.
+            if (e.Item is ToolStripMenuItem && e.Item != null && ((ToolStripMenuItem)e.Item).Checked) return;
             renderer.DrawItemImage(e);
         }
 
