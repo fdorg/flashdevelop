@@ -1,6 +1,6 @@
 ﻿* 
 {
-	font-size: 8pt;
+	font-size: 9pt;
 	font-family: "Trebuchet MS", Georgia, Times, serif;
 	color: #111111;
 }
@@ -9,7 +9,7 @@ body
 	background-color: #f9f9f9;
 	padding: 0px;
 	margin: 0px;
-		background-image: url(images/pageHeader.png);
+	background-image: url(images/pageHeader.png);
 	background-repeat: repeat-x;
 	background-position: top;
 }
