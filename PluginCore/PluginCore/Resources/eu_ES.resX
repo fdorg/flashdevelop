@@ -474,8 +474,9 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="FlashConnect.Info.InvalidMessage" xml:space="preserve">
     <value>Jasotako xml mezua baliogabea da.</value>
   </data>
-  <data name="FlashDevelop.Category.Controls" xml:space="preserve">
-    <value>Kontrolak</value>
+  <data name="FlashDevelop.Category.CompletionList" xml:space="preserve">
+    <value>Completion List</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Category.Display" xml:space="preserve">
     <value>Bistaratu</value>
@@ -674,6 +675,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
     <value>Nabigatzerakoan teklatua erabili.</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Description.WrapText" xml:space="preserve">
     <value>Editorean testua biltzen da.</value>

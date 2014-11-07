@@ -474,8 +474,9 @@
   <data name="FlashConnect.Info.InvalidMessage" xml:space="preserve">
     <value>收到的 XML 消息是无效的.</value>
   </data>
-  <data name="FlashDevelop.Category.Controls" xml:space="preserve">
-    <value>控制</value>
+  <data name="FlashDevelop.Category.CompletionList" xml:space="preserve">
+    <value>Completion List</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Category.Display" xml:space="preserve">
     <value>显示</value>
@@ -674,6 +675,7 @@
   </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
     <value>使用键盘导航列表.</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Description.WrapText" xml:space="preserve">
     <value>在文本编辑器中自动换行.</value>
