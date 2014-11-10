@@ -421,19 +421,22 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Suchen und Ersetzen hier...</value>
-    <comment>Added after 4.6.4</comment>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>&amp;Eingabeaufforderung hier...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>&amp;Kopieren</value>
   </data>
   <data name="FileExplorer.Label.CreateFileHere" xml:space="preserve">
     <value>&amp;Erstelle Datei hier...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CreateFolderHere" xml:space="preserve">
     <value>Erstelle &amp;Ordner hier...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Delete" xml:space="preserve">
     <value>&amp;Löschen</value>
@@ -443,6 +446,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="FileExplorer.Label.ExploreHere" xml:space="preserve">
     <value>E&amp;xplorer hier starten...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Paste" xml:space="preserve">
     <value>Ein&amp;fügen</value>
@@ -3678,6 +3682,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   </data>
   <data name="ProjectManager.Label.SearchString" xml:space="preserve">
     <value>Suche: (GROSSSCHEIBUNG um per Abkürzung zu suchen)</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Title.OpenResource" xml:space="preserve">
     <value>Öffne Ressource</value>
