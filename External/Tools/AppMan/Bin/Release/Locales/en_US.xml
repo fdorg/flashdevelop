@@ -25,6 +25,7 @@
 	<ContinueWithNextItem>Trying to continue with the next item.</ContinueWithNextItem>
 	<DownloadingError>Error while downloading file: </DownloadingError>
 	<ExtractingError>Error while extracting file: </ExtractingError>
+	<DeleteDirError>Error while deleting directory: </DeleteDirError>
 	<!-- Labels -->
 	<SelectLabel>Select:</SelectLabel>
 	<ExploreLabel>Explore...</ExploreLabel>
@@ -34,8 +35,9 @@
 	<ToggleCheckedLabel>Toggle Checked</ToggleCheckedLabel>
 	<ShowInfoLabel>Show Info...</ShowInfoLabel>
 	<!-- Types -->
-	<ExecutableType>Executable</ExecutableType>
-	<ArchiveType>Archive</ArchiveType>
+	<TypeExecutable>Executable</TypeExecutable>
+	<TypeArchive>Archive</TypeArchive>
+	<TypeLink>Link</TypeLink>
 	<!-- Dialogs -->
 	<MainFormTitle>AppMan</MainFormTitle>
 	<ConfirmTitle>Confirm</ConfirmTitle>

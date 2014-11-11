@@ -45,7 +45,7 @@
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Tools\appman\</OutputPath>
-    <DefineConstants>FLASHDEVELOP WIN32</DefineConstants>
+    <DefineConstants>FLASHDEVELOP;WIN32</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
