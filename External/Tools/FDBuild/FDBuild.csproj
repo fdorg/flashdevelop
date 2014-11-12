@@ -106,6 +106,9 @@
     <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\MxmlcOptions.cs">
       <Link>Projects\AS3\MxmlcOptions.cs</Link>
     </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\MxmlNamespace.cs">
+      <Link>Projects\AS3\MxmlNamespace.cs</Link>
+    </Compile>
     <Compile Include="..\..\Plugins\ProjectManager\Projects\BuildEventVars.cs">
       <Link>Projects\BuildEventVars.cs</Link>
     </Compile>
@@ -202,6 +205,12 @@
     <Compile Include="Mono\UsageComplementAttribute.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
+      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+      <Name>PluginCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
