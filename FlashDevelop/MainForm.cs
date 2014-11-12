@@ -67,6 +67,19 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Reduce artifacts on FlashDevelop start
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+
+        /// <summary>
         /// Initializes some extra error logging
         /// </summary>
         private void InitializeErrorLog()
