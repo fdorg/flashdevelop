@@ -21,7 +21,7 @@
 	<style name="commentdockeyword" />
 	<style name="commentdockeyworderror" />
 	<style name="globalclass" />
-	<style name="gdefault" fore="0xd4d4d4" />
+	<style name="gdefault" fore="0xe0e0e0" />
 	<style name="linenumber" fore="0x999999" />
 	<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
 	<style name="bracebad" bold="true" />

@@ -126,7 +126,7 @@ DockPanel.BackColor=#A8A8A8
 AutoHideWindowControl.BackColor=#888888
 
 VS2005DockPaneCaption.ForeColor=#EEEEEE
-VS2005DockPaneCaption.BackColor=#8B8B8B
+VS2005DockPaneCaption.BackColor=#858585
 VS2005DockPaneCaption.TabGradientStart=#999999
 VS2005DockPaneCaption.TabGradientEnd=#666666
 
