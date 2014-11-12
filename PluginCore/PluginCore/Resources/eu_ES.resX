@@ -1559,6 +1559,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
     <value>SWF fitxategian sartuko den lokalizazioa (adib: eu_ES) zehazten da.</value>
   </data>
+  <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
+    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
     <value>Sarrera puntu nagusi estatikoa duen klasea zehazten da.</value>
   </data>

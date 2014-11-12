@@ -1577,6 +1577,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
     <value>Gibt die Sprachen der Ressourcen an, welche in die SWF-Datei kompiliert werden sollen. Wenn nichts ausgewählt: "en_US".</value>
   </data>
+  <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
+    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
     <value>Gibt das Dokument an, welches den statischen Haupteinstiegspunkt enthält.</value>
   </data>

@@ -11,6 +11,7 @@ namespace ProjectManager.Projects.AS3
 
         [Category("Location")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
+        [DisplayName("Manifest File")]
         public string Manifest { get; set; }
 
         [Category("Properties")]

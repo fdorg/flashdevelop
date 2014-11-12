@@ -56,8 +56,8 @@ namespace ProjectManager.Projects.AS3
         public string Locale { get { return locale; } set { locale = value; } }
 
         [LocalizedCategory("ProjectManager.Category.Advanced")]
-        [DisplayName("Namespaces")]
-        [Description("Specify a URI to associate with a manifest of components for use as MXML elements.")]
+        [DisplayName("MXML Namespaces")]
+        [LocalizedDescription("ProjectManager.Description.Namespaces")]
         [DefaultValue(null)]
         public MxmlNamespace[] Namespaces { get; set; }
 
