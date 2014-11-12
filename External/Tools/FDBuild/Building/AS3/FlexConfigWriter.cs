@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections;
 using ProjectManager.Projects;
 
+
 namespace FDBuild.Building.AS3
 {
     class FlexConfigWriter : XmlTextWriter
@@ -48,6 +49,7 @@ namespace FDBuild.Building.AS3
                     AddCompilerOptions(options, debugMode);
                     AddClassPaths(extraClasspaths);
                     AddLibraries();
+                    AddNamespaces(options);
                 WriteEndElement();
                 AddRSLs();
                 AddCompileTargets();
@@ -193,6 +195,31 @@ namespace FDBuild.Building.AS3
                 }
                 WriteEndElement();
             }
+        }
+
+        private void AddNamespaces(MxmlcOptions options)
+        {
+            if (options.Namespaces == null || options.Namespaces.Length == 0) return;
+
+            WriteStartElement("namespaces");
+
+            foreach (var ns in options.Namespaces)
+            {
+                string path = ns.Manifest.Trim();
+                string uri = ns.Uri.Trim();
+                if (path.Length == 0 || uri.Length == 0) continue;
+                path = project.GetAbsolutePath(path);
+                if (!File.Exists(path)) continue;
+
+                WriteStartElement("namespace");
+
+                WriteElementString("uri", uri);
+                WriteElementString("manifest", path);
+
+                WriteEndElement();
+            }
+
+            WriteEndElement();
         }
 
         private void AddRSLs()

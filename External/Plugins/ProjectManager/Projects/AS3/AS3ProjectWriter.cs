@@ -100,6 +100,8 @@ namespace ProjectManager.Projects.AS3
             WriteOption("compilerConstants", string.Join("\n", options.CompilerConstants));
             WriteOption("minorVersion", options.MinorVersion);
 
+            WriteNamespaces(options);
+
             WriteEndElement();
         }
 
@@ -108,6 +110,26 @@ namespace ProjectManager.Projects.AS3
             WriteStartElement(name);
             WritePaths(items, "element");
             WriteEndElement();
+        }
+
+        void WriteNamespaces(MxmlcOptions options)
+        {
+            if (options.Namespaces == null || options.Namespaces.Length == 0) return;
+            var namespaces = new StringBuilder();
+            foreach (var ns in options.Namespaces)
+            {
+                if (string.IsNullOrEmpty(ns.Uri) || string.IsNullOrEmpty(ns.Manifest)) continue;
+
+                string relPath = project.GetRelativePath(ns.Manifest);
+
+                namespaces.Append(ns.Uri).Append('\n').Append(relPath).Append('\n');
+            }
+
+            if (namespaces.Length == 0) return;
+            
+            namespaces.Remove(namespaces.Length - 1, 1);
+
+            WriteOption("namespaces", namespaces.ToString());
         }
     }
 }

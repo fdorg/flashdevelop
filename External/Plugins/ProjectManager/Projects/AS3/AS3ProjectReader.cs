@@ -173,10 +173,24 @@ namespace ProjectManager.Projects.AS3
                     case "additional": options.Additional = Value.Split('\n'); break;
                     case "compilerConstants": options.CompilerConstants = Value.Split('\n'); break;
                     case "minorVersion": options.MinorVersion = Value; break;
+                    case "namespaces": options.Namespaces = ReadNamespaces(); break;
                 }
                 Read();
             }
             ReadEndElement();
+        }
+
+        private MxmlNamespace[] ReadNamespaces()
+        {
+            var data = Value.Split('\n');
+            int entriesNo = data.Length;
+            if (entriesNo < 2) return null;
+            var namespaces = new MxmlNamespace[entriesNo / 2];
+            int j = 0;
+            for (int i = 0; i < entriesNo; i += 2)
+                namespaces[j++] = new MxmlNamespace {Uri = data[i], Manifest = data[i + 1]};
+
+            return namespaces;
         }
     }
 }
