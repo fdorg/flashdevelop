@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.AccessControl;
+using PluginCore;
 
 namespace PluginCore.Utilities
 {
@@ -16,28 +17,6 @@ namespace PluginCore.Utilities
 
     public class SingleInstanceApp
     {
-        //win32 translation of APIs, message constants and structures
-        private class NativeMethods
-        {
-            [DllImport("user32.dll")]
-            public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-            [DllImport("user32.dll")]
-            public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
-
-            [DllImport("user32.dll")]
-            public static extern UInt32 SetForegroundWindow(IntPtr hwnd);
-
-            public const short WM_COPYDATA = 74;
-
-            public struct COPYDATASTRUCT
-            {
-                public int dwData;
-                public int cbData;
-                public IntPtr lpData;
-            }
-        }
-
         //a utility window to communicate between application instances
         private class SIANativeWindow : NativeWindow
         {
@@ -51,10 +30,10 @@ namespace PluginCore.Utilities
             //The window procedure that handles notifications from new application instances
             protected override void WndProc(ref Message m)
             {
-                if (m.Msg == NativeMethods.WM_COPYDATA)
+                if (m.Msg == Win32.WM_COPYDATA)
                 {
                     //convert the message LParam to the WM_COPYDATA structure
-                    NativeMethods.COPYDATASTRUCT data = (NativeMethods.COPYDATASTRUCT)Marshal.PtrToStructure(m.LParam, typeof(NativeMethods.COPYDATASTRUCT));
+                    Win32.COPYDATASTRUCT data = (Win32.COPYDATASTRUCT)Marshal.PtrToStructure(m.LParam, typeof(Win32.COPYDATASTRUCT));
                     object obj = null;
                     if (data.cbData > 0 && data.lpData != IntPtr.Zero)
                     {
@@ -146,7 +125,7 @@ namespace PluginCore.Utilities
         private bool NotifyPreviousInstance(object message)
         {
             //First, find the window of the previous instance
-            IntPtr handle = NativeMethods.FindWindow(null, _id);
+            IntPtr handle = Win32.FindWindow(null, _id);
             if (handle != IntPtr.Zero)
             {
                 //create a GCHandle to hold the serialized object. 
@@ -154,7 +133,7 @@ namespace PluginCore.Utilities
                 try
                 {
                     byte[] buffer;
-                    NativeMethods.COPYDATASTRUCT data = new NativeMethods.COPYDATASTRUCT();
+                    Win32.COPYDATASTRUCT data = new Win32.COPYDATASTRUCT();
                     if (message != null)
                     {
                         //serialize the object into a byte array
@@ -171,8 +150,8 @@ namespace PluginCore.Utilities
                     GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
                     try
                     {
-                        NativeMethods.SendMessage(handle, NativeMethods.WM_COPYDATA, IntPtr.Zero, dataHandle.AddrOfPinnedObject());
-                        NativeMethods.SetForegroundWindow(handle); // Give focus to first instance
+                        Win32.SendMessage(handle, Win32.WM_COPYDATA, IntPtr.Zero, dataHandle.AddrOfPinnedObject());
+                        Win32.SetForegroundWindow(handle); // Give focus to first instance
                         return true;
                     }
                     finally

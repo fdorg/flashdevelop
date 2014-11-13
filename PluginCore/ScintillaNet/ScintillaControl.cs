@@ -46,8 +46,8 @@ namespace ScintillaNet
         {
             try
             {
-                IntPtr lib = WinAPI.LoadLibrary(fullpath);
-                hwndScintilla = WinAPI.CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
+                IntPtr lib = LoadLibrary(fullpath);
+                hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
                 directPointer = (int)SlowPerform(2185, 0, 0);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
@@ -2244,7 +2244,7 @@ namespace ScintillaNet
 		/// </summary>
         public new bool Focus()
         {
-            return WinAPI.SetFocus(hwndScintilla) != IntPtr.Zero;
+            return SetFocus(hwndScintilla) != IntPtr.Zero;
         }
 
 		/// <summary>
@@ -5012,6 +5012,18 @@ namespace ScintillaNet
 
         // Stops all sci events from firing...
         public bool DisableAllSciEvents = false;
+
+        [DllImport("kernel32.dll")]
+        public extern static IntPtr LoadLibrary(string lpLibFileName);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int width, int height, IntPtr hWndParent, int hMenu, IntPtr hInstance, string lpParam);
+
+        [DllImport("kernel32.dll", EntryPoint = "SendMessage")]
+        public static extern int SendMessageStr(IntPtr hWnd, int message, int data, string s);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetFocus(IntPtr hwnd);
 
 		[DllImport("gdi32.dll")] 
 		public static extern int GetDeviceCaps(IntPtr hdc, Int32 capindex);

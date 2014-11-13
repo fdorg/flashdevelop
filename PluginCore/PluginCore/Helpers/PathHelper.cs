@@ -271,40 +271,34 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Converts a long path to a short representative one using ellipsis if necessary
         /// </summary>
-        [DllImport("Shlwapi.dll", CharSet = CharSet.Auto)]
-        private static extern Boolean PathCompactPathEx([MarshalAs(UnmanagedType.LPTStr)] StringBuilder pszOut, [MarshalAs(UnmanagedType.LPTStr)] String pszSource, [MarshalAs(UnmanagedType.U4)] Int32 cchMax, [MarshalAs(UnmanagedType.U4)] Int32 dwReserved);
         public static String GetCompactPath(String path)
         {
             Int32 max = 64;
             StringBuilder sb = new StringBuilder(max);
-            PathCompactPathEx(sb, path, max, 0);
+            Win32.PathCompactPathEx(sb, path, max, 0);
             return sb.ToString();
         }
 
         /// <summary>
         /// Converts a long filename to a short one
         /// </summary>
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        private static extern Int32 GetShortPathName(String lpszLongPath, StringBuilder lpszShortPath, Int32 cchBuffer);
         public static String GetShortPathName(String longName)
         {
             Int32 max = longName.Length + 1;
             StringBuilder sb = new StringBuilder(max);
-            GetShortPathName(longName, sb, max);
+            Win32.GetShortPathName(longName, sb, max);
             return sb.ToString();
         }
 
         /// <summary>
         /// Converts a short filename to a long one
         /// </summary>
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        private static extern Int32 GetLongPathName([MarshalAs(UnmanagedType.LPTStr)] String path, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder longPath, Int32 longPathLength);
         public static String GetLongPathName(String shortName)
         {
             try
             {
                 StringBuilder longNameBuffer = new StringBuilder(256);
-                PathHelper.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
+                Win32.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
                 return longNameBuffer.ToString();
             }
             catch (Exception ex)
@@ -317,10 +311,6 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the correct physical path from the file system
         /// </summary>
-        [DllImport("shell32.dll", EntryPoint = "#28")]
-        private static extern uint SHILCreateFromPath([MarshalAs(UnmanagedType.LPWStr)] String pszPath, out IntPtr ppidl, ref int rgflnOut);
-        [DllImport("shell32.dll", EntryPoint = "SHGetPathFromIDListW")] 
-        private static extern bool SHGetPathFromIDList(IntPtr pidl, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder pszPath);
         public static String GetPhysicalPathName(String path)
         {
             try
@@ -328,11 +318,11 @@ namespace PluginCore.Helpers
                 uint r;
                 IntPtr ppidl;
                 int rgflnOut = 0;
-                r = SHILCreateFromPath(path, out ppidl, ref rgflnOut);
+                r = Win32.SHILCreateFromPath(path, out ppidl, ref rgflnOut);
                 if (r == 0)
                 {
                     StringBuilder sb = new StringBuilder(260);
-                    if (SHGetPathFromIDList(ppidl, sb))
+                    if (Win32.SHGetPathFromIDList(ppidl, sb))
                     {
                         Char sep = Path.DirectorySeparatorChar;
                         Char alt = Path.AltDirectorySeparatorChar;

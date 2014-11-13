@@ -8,6 +8,7 @@ using ProjectManager.Projects;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using ProjectManager.Projects.AS3;
+using PluginCore;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -181,7 +182,7 @@ namespace ProjectManager.Controls.TreeView
                     if (projects.Count > 0)
                     {
                         ExpandedPaths = PluginMain.Settings.GetPrefs(projects[0]).ExpandedPaths;
-                        Win32.Scrolling.SetScrollPos(this, new Point());
+                        Win32.SetScrollPos(this, new Point());
                     }
                     else Project = null;
 
@@ -293,7 +294,7 @@ namespace ProjectManager.Controls.TreeView
         {
             // store old tree state
             List<string> previouslyExpanded = ExpandedPaths;
-            Point scrollPos = Win32.Scrolling.GetScrollPos(this);
+            Point scrollPos = Win32.GetScrollPos(this);
             string currentPath = SelectedNode != null ? SelectedNode.BackingPath : null;
 
             try
@@ -315,7 +316,7 @@ namespace ProjectManager.Controls.TreeView
             finally
             {
                 EndUpdate();
-                Win32.Scrolling.SetScrollPos(this, scrollPos);
+                Win32.SetScrollPos(this, scrollPos);
             }
         }
 
@@ -367,7 +368,7 @@ namespace ProjectManager.Controls.TreeView
 		/// </summary>
 		public void RefreshTree(string[] paths)
         {
-            Point scrollPos = Win32.Scrolling.GetScrollPos(this);
+            Point scrollPos = Win32.GetScrollPos(this);
             try
             {
                 BeginUpdate();
@@ -389,7 +390,7 @@ namespace ProjectManager.Controls.TreeView
             finally
             {
                 EndUpdate();
-                Win32.Scrolling.SetScrollPos(this, scrollPos);
+                Win32.SetScrollPos(this, scrollPos);
             }
 		}
 

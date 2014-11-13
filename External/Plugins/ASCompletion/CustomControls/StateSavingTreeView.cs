@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using PluginCore;
-using Win32;
 
 namespace System.Windows.Forms
 {
@@ -138,7 +137,7 @@ namespace System.Windows.Forms
                 topNode.EnsureVisible();
 
 			// manually scroll all the way to the left
-			Win32.Scrolling.scrollToLeft(this);
+			Win32.ScrollToLeft(this);
 		}
 
 		public TreeNode FindClosestPath(string path)

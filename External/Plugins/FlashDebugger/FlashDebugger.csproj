@@ -156,7 +156,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Utilities.cs" />
-    <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resource.resx">
