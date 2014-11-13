@@ -395,16 +395,7 @@ namespace FlashDebugger
         /// </summary>
         private void flashInterface_BreakpointEvent(object sender)
 		{
-			Location loc = FlashInterface.getCurrentLocation();
-			// todo checking for loc here, but should handle swfloaded case and wait with breakpoint event
-			if (loc != null && PluginMain.breakPointManager.ShouldBreak(loc.getFile(), loc.getLine()))
-			{
-				UpdateUI(DebuggerState.BreakHalt);
-			}
-			else
-			{
-				FlashInterface.StepResume();
-			}
+			UpdateUI(DebuggerState.BreakHalt);
 		}
 
         /// <summary>
