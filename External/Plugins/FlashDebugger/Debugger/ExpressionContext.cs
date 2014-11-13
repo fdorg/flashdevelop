@@ -189,7 +189,7 @@ namespace FlashDebugger
 
         public int getIsolateId()
         {
-			if (contextVal == null) return 1;
+			if (contextVal == null) return frame.getIsolateId();
             return contextVal.getIsolateId();
         }
     }

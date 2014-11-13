@@ -142,6 +142,7 @@ namespace FlashDebugger
         {
             public IsolateSession i_Session = null;
 			public Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
+			public Boolean requestPause;
         }
 
 		// breakpoint mappings
@@ -293,10 +294,25 @@ namespace FlashDebugger
                                 if (BreakpointEvent != null)
                                 {
                                     m_RequestPause = true;
-									if (!isDebuggerSuspended)
+									// trigger only for main worker here (if we are main worker, or if we are not and are not suspended)
+									if (ActiveSession == 1 || !isDebuggerSuspended)
 									{
-										ActiveSession = 1;
-										BreakpointEvent(this);
+										Frame[] frames = m_Session.getFrames();
+										Location loc = null;
+										if (frames.Length > 0)
+										{
+											loc = frames[0].getLocation();
+										}
+										if (loc != null && m_BreakPointManager.ShouldBreak(loc.getFile(), loc.getLine(), frames[0]))
+										{
+											ActiveSession = 1;
+											BreakpointEvent(this);
+										}
+										else
+										{
+											m_RequestResume = true;
+											m_StepResume = true;
+										}
 									}
 									else
 									{
@@ -450,6 +466,23 @@ namespace FlashDebugger
                         }
                     }
                     // sleep for a bit, then process our events.
+
+					// process isolates
+					foreach (var kv in runningIsolates)
+					{
+						if (kv.Value.requestPause)
+						{
+							try
+							{
+								kv.Value.i_Session.suspend();
+							}
+							catch (Exception e)
+							{
+								TraceManager.AddAsync("Isolate suspend exception: " + e.ToString());
+							}
+						}
+						kv.Value.requestPause = false;
+					}
 
                     try
                     {
@@ -676,28 +709,90 @@ namespace FlashDebugger
                 }
                 else if (e is BreakEvent)
                 {
-                    // we ignore these for now
+                    // handle only worker events
 					BreakEvent be = (BreakEvent)e;
 					if (PluginMain.settingObject.VerboseOutput)
 						TraceManager.AddAsync("Worker " + be.isolateId + " BreakEvent");
 					if (be.isolateId > 1 && runningIsolates.ContainsKey(be.isolateId))
 					{
-						// switch only if we are not in break mode already!
-						if (!isDebuggerSuspended)
+						IsolateInfo ii = runningIsolates[be.isolateId];
+						if (!ii.i_Session.isSuspended())
 						{
-							// todo, check for valid id?
-							ActiveSession = be.isolateId;
-							if (BreakpointEvent != null)
+							continue;
+						}
+						Frame[] frames = ii.i_Session.getFrames();
+						Location loc = null;
+						if (frames.Length > 0)
+						{
+							loc = frames[0].getLocation();
+						}
+
+						if (ii.i_Session.suspendReason() == 1) // SuspendReason_.Breakpoint
+						{
+							if (loc != null && m_BreakPointManager.ShouldBreak(loc.getFile(), loc.getLine(), frames[0]))
 							{
-								//m_RequestPause = true;
-								BreakpointEvent(this);
+								// switch and break only if we are not dealing with some other thread
+								if (ActiveSession == be.isolateId || !isDebuggerSuspended)
+								{
+									ActiveSession = be.isolateId;
+									if (BreakpointEvent != null) BreakpointEvent(this);
+								}
+								else
+								{
+									if (ThreadsEvent != null) ThreadsEvent(this);
+								}
+							}
+							else
+							{
+								ii.i_Session.stepContinue();
 							}
 						}
-						else
+						else if (ii.i_Session.suspendReason() == 3) //SuspendReason_.Fault
 						{
-							if (ThreadsEvent != null)
+							if (ActiveSession == be.isolateId || !isDebuggerSuspended)
 							{
-								ThreadsEvent(this);
+								ActiveSession = be.isolateId;
+								if (FaultEvent != null) FaultEvent(this); else ii.i_Session.resume();
+							}
+							else
+							{
+								if (ThreadsEvent != null) ThreadsEvent(this);
+							}
+						}
+						else if (ii.i_Session.suspendReason() == 5) //SuspendReason_.Step
+						{
+							if (ActiveSession == be.isolateId || !isDebuggerSuspended)
+							{
+								ActiveSession = be.isolateId;
+								if (StepEvent != null) StepEvent(this); else ii.i_Session.resume();
+							}
+							else
+							{
+								if (ThreadsEvent != null) ThreadsEvent(this);
+							}
+						}
+						else if (ii.i_Session.suspendReason() == 4) //SuspendReason_.StopRequest
+						{
+							if (ActiveSession == be.isolateId || !isDebuggerSuspended)
+							{
+								ActiveSession = be.isolateId;
+								if (PauseEvent != null) PauseEvent(this); else ii.i_Session.resume();
+							}
+							else
+							{
+								if (ThreadsEvent != null) ThreadsEvent(this);
+							}
+						}
+						else if (ii.i_Session.suspendReason() == 2) //SuspendReason_.Watch
+						{
+							if (ActiveSession == be.isolateId || !isDebuggerSuspended)
+							{
+								ActiveSession = be.isolateId;
+								if (WatchpointEvent != null) WatchpointEvent(this); else ii.i_Session.resume();
+							}
+							else
+							{
+								if (ThreadsEvent != null) ThreadsEvent(this);
 							}
 						}
 					}
@@ -1018,13 +1113,15 @@ namespace FlashDebugger
 			{
 				if (!runningIsolates[ActiveSession].i_Session.isSuspended())
 				{
-					runningIsolates[ActiveSession].i_Session.suspend();
+					runningIsolates[ActiveSession].requestPause = true;
+					m_SuspendWait.Set();
 				}
 				return;
 			}
 			if (!m_Session.isSuspended())
 			{
 				m_RequestPause = true;
+				m_SuspendWait.Set();
 			}
 		}
 
