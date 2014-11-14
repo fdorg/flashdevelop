@@ -473,6 +473,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 			if (content == null)
 				return;
 
+            SetActiveAutoHideContent(content);
+
 			content.DockHandler.Activate();
 		}
 
@@ -480,13 +482,19 @@ namespace WeifenLuo.WinFormsUI.Docking
 		{
 			base.OnMouseHover(e);
 
+            if (!DockPanel.ShowAutoHideContentOnHover) return;
+
 			IDockContent content = HitTest();
-			if (content != null && DockPanel.ActiveAutoHideContent != content)
-				DockPanel.ActiveAutoHideContent = content;
+            SetActiveAutoHideContent(content);
 
 			// requires further tracking of mouse hover behavior,
             ResetMouseEventArgs();
 		}
+
+        private void SetActiveAutoHideContent(IDockContent content)
+        {
+            if (content != null && DockPanel.ActiveAutoHideContent != content) DockPanel.ActiveAutoHideContent = content;
+        }
 
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
