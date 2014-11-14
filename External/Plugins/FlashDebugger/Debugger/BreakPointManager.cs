@@ -133,6 +133,11 @@ namespace FlashDebugger
 
 		public Boolean ShouldBreak(SourceFile file, int line)
 		{
+			return ShouldBreak(file, line, null);
+		}
+
+		public Boolean ShouldBreak(SourceFile file, int line, Frame frame)
+		{
 			String localPath = PluginMain.debugManager.GetLocalPath(file);
 			if (localPath == null)
 			{
@@ -158,7 +163,12 @@ namespace FlashDebugger
 				{
                     try
                     {
-                        var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
+						if (frame == null)
+						{
+							// take currently active worker and frame
+							frame = PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame];
+						}
+                        var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, frame);
                         var val = bpInfo.ParsedExpression.evaluate(ctx);
                         if (val is java.lang.Boolean)
                         {
