@@ -6,10 +6,21 @@ using System.Runtime.InteropServices;
 
 namespace PluginCore
 {
-    // Other Win32 stuff: Ookii.Dialogs, InteropSHFileOperation, ShellContextMenu, ScintillaControl, DockPanelSuite, AS3Context.ListViewXP
+    // Other Win32 stuff to handle: Ookii.Dialogs, InteropSHFileOperation, ShellContextMenu, ScintillaControl, ListViewXP, FixedTreeView
 
     public class Win32
     {
+        // INIT
+        private static Boolean shouldUseWin32 = Type.GetType("Mono.Runtime") == null;
+
+        /// <summary>
+        /// Checks if Win32 functionality should be used
+        /// </summary>
+        public static Boolean ShouldUseWin32()
+        {
+            return shouldUseWin32;
+        }
+
         #region Enums
 
         public enum SHGFI
@@ -258,14 +269,6 @@ namespace PluginCore
         }
 
         #endregion
-
-        /// <summary>
-        /// Checks if Win32 functionality should be used
-        /// </summary>
-        public static Boolean ShouldUseWin32()
-        {
-            return true;
-        }
 
     }
 

@@ -61,12 +61,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         [DllImport("user32.dll")]
         public static extern IntPtr CallNextHookEx(IntPtr hhook, int code, IntPtr wParam, IntPtr lParam);
 
-		//
-		//
-		//
+		/// <summary>
+		/// Check if Win32 should be used
+		/// </summary>
         public static bool ShouldUseWin32()
         {
-            return true;
+            // PluginCore handles this
+            return PluginCore.Win32.ShouldUseWin32();
         }
 	}
 }

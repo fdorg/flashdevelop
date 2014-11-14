@@ -114,8 +114,7 @@ namespace System.Windows.Forms
         {
             base.OnHandleCreated(e);
 
-            if (DoubleBuffered)
-                NativeMethods.SendMessage(Handle, NativeMethods.TVM_SETEXTENDEDSTYLE, (IntPtr)NativeMethods.TVS_EX_DOUBLEBUFFER, (IntPtr)NativeMethods.TVS_EX_DOUBLEBUFFER);
+            if (DoubleBuffered) Win32.SendMessage(Handle, Win32.TVM_SETEXTENDEDSTYLE, (IntPtr)Win32.TVS_EX_DOUBLEBUFFER, (IntPtr)Win32.TVS_EX_DOUBLEBUFFER);
         }
 
         protected override void OnPaint(PaintEventArgs e)

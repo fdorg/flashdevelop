@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Text;
+using PluginCore;
 
 // From: http://www.vesic.org/english/blog/winforms/full-screen-maximize/
 
