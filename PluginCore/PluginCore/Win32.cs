@@ -6,9 +6,6 @@ using System.Runtime.InteropServices;
 
 namespace PluginCore
 {
-    // Other Win32 stuff to handle: ScintillaControl
-    // TODO: Can some of the Win32 be removed?
-
     public class Win32
     {
         // INIT

@@ -352,14 +352,16 @@ namespace SourceControl
             CheckPathExists(settingObject.TortoiseHGProcPath, "TortoiseHG (Proc)");
         }
 
-        private void CheckPathExists(string path, string name)
+        /// <summary>
+        /// 
+        /// </summary>
+        private void CheckPathExists(String path, String name)
         {
-            if (string.IsNullOrEmpty(path)) return;
+            if (String.IsNullOrEmpty(path)) return;
             if (!Path.IsPathRooted(path)) return;
             if (!File.Exists(path))
             {
-                string msg = String.Format(TextHelper.GetString("FlashDevelop.Info.InvalidToolPath"), name, "SourceControl") 
-                    + ":\n" + path;
+                String msg = String.Format(TextHelper.GetString("FlashDevelop.Info.InvalidToolPath"), name, "SourceControl") + ":\n" + path;
                 TraceManager.AddAsync(msg, -3);
             }
         }
