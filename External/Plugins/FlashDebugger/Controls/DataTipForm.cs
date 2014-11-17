@@ -91,8 +91,11 @@ namespace FlashDebugger.Controls
 		{
 			Point screenPoint = PointToScreen(new Point(e.X, e.Y));
 			Win32.HitTest ht = DoHitTest(e.X, e.Y);
-			Win32.ReleaseCapture();
-			Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, (int)(screenPoint.Y << 16 | screenPoint.X));
+            if (Win32.ShouldUseWin32()) 
+            { 
+			    Win32.ReleaseCapture();
+			    Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, (int)(screenPoint.Y << 16 | screenPoint.X));
+            }
 		}
 
 		private Win32.HitTest DoHitTest(int X, int Y)

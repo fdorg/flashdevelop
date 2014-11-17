@@ -25,7 +25,7 @@ namespace FlashDevelop.Controls
             this.Save(form);
             form.WindowState = FormWindowState.Maximized;
             form.FormBorderStyle = FormBorderStyle.None;
-            Win32.SetWinFullScreen(form.Handle);
+            if (Win32.ShouldUseWin32()) Win32.SetWinFullScreen(form.Handle);
         }
 
         /// <summary>

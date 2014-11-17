@@ -49,7 +49,8 @@ namespace AS3Context.Controls
 		/// </summary>
 		public void SetExStyles()
 		{
-			styles = (LVS_EX)PluginCore.Win32.SendMessage(this.Handle, (int) LVM.LVM_GETEXTENDEDLISTVIEWSTYLE, 0,0);
+            if (!PluginCore.Win32.ShouldUseWin32()) return;
+            styles = (LVS_EX)PluginCore.Win32.SendMessage(this.Handle, (int) LVM.LVM_GETEXTENDEDLISTVIEWSTYLE, 0,0);
 			styles |= LVS_EX.LVS_EX_DOUBLEBUFFER | LVS_EX.LVS_EX_BORDERSELECT;
             PluginCore.Win32.SendMessage(this.Handle, (int)LVM.LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (int)styles);
 		}
@@ -60,6 +61,7 @@ namespace AS3Context.Controls
 		/// <param name="exStyle">The Styles you wish to set.</param>
 		public void SetExStyles(LVS_EX exStyle)
 		{
+            if (!PluginCore.Win32.ShouldUseWin32()) return;
             styles = (LVS_EX)PluginCore.Win32.SendMessage(this.Handle, (int)LVM.LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0);
 			styles |= exStyle;
             PluginCore.Win32.SendMessage(this.Handle, (int)LVM.LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (int)styles);
