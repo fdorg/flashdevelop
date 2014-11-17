@@ -40,6 +40,7 @@ namespace Aga.Controls.Tree
 			Tree.ChangeInput();
 			Tree.FullUpdate();
 			Tree.OnColumnWidthChanged(Column);
+			Tree.OnColumnHeightChanged(Column);
 		}
 
         public override bool MouseMove(MouseEventArgs args)

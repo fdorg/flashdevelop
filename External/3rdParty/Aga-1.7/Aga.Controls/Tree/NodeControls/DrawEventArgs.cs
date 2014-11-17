@@ -56,6 +56,22 @@ namespace Aga.Controls.Tree.NodeControls
 			get { return _control; }
 		}
 
+        private string _highLightToken;
+
+        public string HighLightToken
+        {
+            get { return _highLightToken; }
+            set { _highLightToken = value; }
+        }
+
+        private Color _highLightColor = Color.Yellow;
+        public Color HighLightColor
+        {
+            get { return _highLightColor; }
+            set { _highLightColor = value; }
+        }
+        
+
 		public DrawEventArgs(TreeNodeAdv node, EditableControl control, DrawContext context, string text)
 			: base(node)
 		{

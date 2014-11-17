@@ -47,7 +47,19 @@ namespace Aga.Controls.Tree.NodeControls
 			textBox.KeyDown += EditorKeyDown;
 			_label = textBox.Text;
 			SetEditControlProperties(textBox, node);
+			textBox.PreviewKeyDown += new PreviewKeyDownEventHandler(textBox_PreviewKeyDown);
 			return textBox;
+		}
+
+		void textBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			switch (e.KeyCode)
+			{
+				case Keys.Enter:
+				case Keys.Escape:
+					e.IsInputKey = true;
+					break;
+			}
 		}
 
 		protected virtual TextBox CreateTextBox()

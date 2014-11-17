@@ -1,3 +1,34 @@
+1.7.0.1 (r98)
+[r98] Fixed: Issue #44 - tree nodes are now properly saved and restored when 'ITreeModel.StructureChanged' event is raised.
+[r97] Fixed: Issue #23, added support for whole page mouse scrolling
+[r96] Added: Option to choose custom highlight colors
+[r95] Fixed: Issue #48 UseCompatibleTextRendering is backwards
+[r94] Added: Option to auto span columns
+[r93] Fixed: TreeView control sometimes not being updated when using columns
+[r92] Added: Option to Highlight text for BaseTextControl
+[r91] Added: custom background paint mode
+[r90] Fixed: Incorrect behavior of TreeViewAdv.ColumnHeaderHeight property, logic and design is now separated.
+[r89] Option to modify node visibility via callback
+[r88] NodeTextBox: Process Enter, Escape Key as Input Key.
+[r87] NodesInserted and NodesRemoved events now supports the case, when the parent has not been loaded.
+[r86] added ColumnHeaderHeight, AutoHeaderHeight Property. 
+ Used default for AutoHeaderHeight False (not as in patch used).
+[r85] When the last child of an item is removed it becomes to be a leaf. in this case, parentNode.Nodes.Clear() was not called and the child is not removed from Nodes list. (bug in ReadChilds method).
+[r84] bugfix of bugfix
+[r83] Bug while restoring the Selection after StructureChange is now fixed (hopefully definitely). Laurent Nicot, thanks for the detailed feedback and the Test-Case.
+[r82] Fixed a bug: selected nodes were not correctly restored after structure change event.
+[r81] EnsureVisible(TreeNodeAdv node) does not fail in case the node parameter is the root node.
+[r80] Bugfix: StructureChange missed to clear _selection on restore (causing invalid SelectedNode in case the selection path is not found anymore).
+[r79] prevent unneeded selection change event on structure change
+[r78] Don't reset scroll position on structure change.
+[r77] Fix threading problem with _expandingNodes related to AbortBackgroundExpandingThreads() 
+[r76] - FIX: Redraw when Focus Lost ( to update selection color from active to inactive).
+- NEW: Property InactiveSelection on TreeViewAdv to choose if selection gets inactive or not when unfocused.
+ - FIX: Try to Restore Selection when StructureChanged
+[r75] NodeCheckBox has a new Property ReverseCheckOrder: changes the order from Indeterminate, Unchecked, Checked to Indeterminate, Checked, Unchecked.
+[r74] TreeViewAdv.cs, TreeViewAdv.Designer.cs: moved and completed Dispose method. Unregister events on dispose to prevent memory-leaks: ExpandingIcon.IconChanged event to static Object was never unregistered -> tree view was not collected by garbage collection until application quits.
+[r73] node edit bug
+
 1.7.0
 + EditableNodeControl imroved
 + NodeCombobox improved
