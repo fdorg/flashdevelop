@@ -3432,6 +3432,10 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="FlashDebugger.Label.Stop" xml:space="preserve">
     <value>停止(&amp;T)</value>
   </data>
+  <data name="FlashDebugger.Label.BreakOnAllErrors" xml:space="preserve">
+    <value>Break On All &amp;Errors</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDebugger.Label.ToggleBreakpoint" xml:space="preserve">
     <value>ブレークポイントの設定/解除</value>
   </data>
@@ -3467,6 +3471,46 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   </data>
   <data name="FlashDebugger.Title.StackTrace" xml:space="preserve">
     <value>コールスタック</value>
+  </data>
+  <data name="FlashDebugger.BreakPoints.RemoveSelected" xml:space="preserve">
+    <value>Remove selected breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.RemoveAll" xml:space="preserve">
+    <value>Remove all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ToggleAll" xml:space="preserve">
+    <value>Toggle all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ExportAll" xml:space="preserve">
+    <value>Export all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ImportAll" xml:space="preserve">
+    <value>Import breakpoints from a file</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterAll" xml:space="preserve">
+    <value>In All Columns</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterPath" xml:space="preserve">
+    <value>In File Path</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterFile" xml:space="preserve">
+    <value>In File Name</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterLine" xml:space="preserve">
+    <value>In File Line</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterExp" xml:space="preserve">
+    <value>In Expression</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Flex PMD に使用するための既定のカスタムルールセットファイルを指定します。</value>

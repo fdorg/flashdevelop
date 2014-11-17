@@ -53,6 +53,7 @@ namespace FlashDebugger
         private Boolean m_BreakOnThrow = false;
 		private String m_SwitchToLayout = null;
 
+        [field: NonSerialized]
         public event EventHandler BreakOnThrowChanged;
 
         [DisplayName("Save Breakpoints")]

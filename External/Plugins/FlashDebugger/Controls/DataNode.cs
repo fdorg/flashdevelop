@@ -7,14 +7,6 @@ namespace FlashDebugger.Controls
 {
 	public class DataNode : Node, IComparable<DataNode>
     {
-        public override string Text
-        {
-            get
-			{
-				return base.Text;
-			}
-        }
-
 		private int m_ChildrenShowLimit = 500;
 		public int ChildrenShowLimit
 		{
@@ -90,15 +82,7 @@ namespace FlashDebugger.Controls
 				{
 					if (m_Value.getValue().getValueAsObject() != null)
 					{
-						if (!m_bEditing)
-						{
-                            temp = "\"" + escape(m_Value.ToString()) + "\"";
-						}
-						else
-						{
-                            temp = m_Value.ToString();
-						}
-                        return temp;
+                        return "\"" + escape(m_Value.ToString()) + "\"";
 					}
 				}
 				else if (type == VariableType_.NULL)
@@ -123,22 +107,11 @@ namespace FlashDebugger.Controls
 				{
 					return;
 				}
-                throw new NotImplementedException();
-#if false
-				int type = m_Value.getValue().getType();
-				if (type == VariableType_.NUMBER)
-				{
-					m_Value.setValue(type, value);
-				}
-				else if (type == VariableType.BOOLEAN)
-				{
-					m_Value.setValue(type, value.ToLower());
-				}
-				else if (type == VariableType.STRING)
-				{
-					m_Value.setValue(type, value);
-				}
-#endif
+                
+                flash.tools.debugger.expression.IASTBuilder b = new flash.tools.debugger.expression.ASTBuilder(false);
+                flash.tools.debugger.expression.ValueExp exp = b.parse(new java.io.StringReader(this.GetVariablePath() + "=" + value));
+                var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
+                exp.evaluate(ctx);
 			}
         }
 
@@ -159,12 +132,19 @@ namespace FlashDebugger.Controls
             return text;
         }
 
-		public Variable Variable
+        public Variable Variable
 		{
 			get
 			{
 				return m_Value;
 			}
+            set
+            {
+                if (m_Value == value) return;
+
+                m_Value = value;
+                this.NotifyModel();
+            }
 		}
 
         public override bool IsLeaf
@@ -203,4 +183,22 @@ namespace FlashDebugger.Controls
 
 	}
 
+    internal static class NodeExtensions
+    {
+        public static String GetVariablePath(this Node node)
+        {
+            String ret = string.Empty;
+            if (node.Tag != null && node.Tag is String)
+                return (String)node.Tag; // fix for: live tip value has no parent
+            if (node.Parent != null) ret = node.Parent.GetVariablePath();
+            if (node is DataNode)
+            {
+                DataNode datanode = node as DataNode;
+                if (ret != "" && datanode.Variable != null) ret += ".";
+                if (datanode.Variable != null) ret += datanode.Variable.getName();
+            }
+            return ret;
+        }
+
+    }
 }

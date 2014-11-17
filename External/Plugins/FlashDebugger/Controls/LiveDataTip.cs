@@ -94,7 +94,7 @@ namespace FlashDebugger
                         ValueExp exp = b.parse(new java.io.StringReader(leftword));
                         var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[debugManager.CurrentFrame]);
                         var obj = exp.evaluate(ctx);
-						if ((Variable)obj != null)
+                        if (obj as Variable != null)
 						{
 							Show(dataTipPoint, (Variable)obj, leftword);
 						}
