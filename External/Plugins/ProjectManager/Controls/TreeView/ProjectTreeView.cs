@@ -292,9 +292,10 @@ namespace ProjectManager.Controls.TreeView
 		/// </summary>
         public void RebuildTree()
         {
+            Point scrollPos = new Point();
             // store old tree state
             List<string> previouslyExpanded = ExpandedPaths;
-            Point scrollPos = Win32.GetScrollPos(this);
+            if (Win32.ShouldUseWin32()) scrollPos = Win32.GetScrollPos(this);
             string currentPath = SelectedNode != null ? SelectedNode.BackingPath : null;
 
             try
@@ -316,7 +317,7 @@ namespace ProjectManager.Controls.TreeView
             finally
             {
                 EndUpdate();
-                Win32.SetScrollPos(this, scrollPos);
+                if (Win32.ShouldUseWin32()) Win32.SetScrollPos(this, scrollPos);
             }
         }
 
@@ -368,7 +369,8 @@ namespace ProjectManager.Controls.TreeView
 		/// </summary>
 		public void RefreshTree(string[] paths)
         {
-            Point scrollPos = Win32.GetScrollPos(this);
+            Point scrollPos = new Point();
+            if (Win32.ShouldUseWin32()) scrollPos = Win32.GetScrollPos(this);
             try
             {
                 BeginUpdate();
@@ -390,7 +392,7 @@ namespace ProjectManager.Controls.TreeView
             finally
             {
                 EndUpdate();
-                Win32.SetScrollPos(this, scrollPos);
+                if (Win32.ShouldUseWin32()) Win32.SetScrollPos(this, scrollPos);
             }
 		}
 

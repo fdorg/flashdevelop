@@ -243,8 +243,12 @@ namespace PluginCore.Controls
 			{
                 if (!callTip.CallTipActive || !callTip.Focused)
                 {
-                    Win32.SendMessage((IntPtr)CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
-                    return true;
+                    if (Win32.ShouldUseWin32())
+                    {
+                        Win32.SendMessage((IntPtr)CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        return true;
+                    }
+                    else return false;
                 }
                 else return false;
 			}

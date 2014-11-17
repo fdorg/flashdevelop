@@ -81,7 +81,8 @@ namespace ProjectManager.Controls.TreeView
             else ForeColorRequest = SystemColors.ControlText;
 
 			// make the plus/minus sign correct
-            bool empty = !Directory.Exists(BackingPath) || Win32.PathIsDirectoryEmpty(BackingPath);
+            // TODO: Check if this works ok!
+            bool empty = !Directory.Exists(BackingPath) || FolderHelper.IsDirectoryEmpty(BackingPath);
 
 			if (!empty)
 			{

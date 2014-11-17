@@ -216,11 +216,13 @@ namespace System.Windows.Forms
 		//  SendMessage function to scroll up or down automatically.
 		private void DragScroll(DragEventArgs e)
 		{
-			// Set a constant to define the autoscroll region
+            if (!PluginCore.Win32.ShouldUseWin32()) return;
+
+            // Set a constant to define the autoscroll region
 			const Single scrollRegion = 20;
 
 			// See where the cursor is
-			Point pt =  PointToClient(Cursor.Position);
+			Point pt = PointToClient(Cursor.Position);
 
 			// See if we need to scroll up or down
 			if ((pt.Y + scrollRegion) > Height)

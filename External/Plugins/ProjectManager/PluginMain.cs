@@ -272,7 +272,7 @@ namespace ProjectManager
             pluginUI.Menu.CleanProject.Click += delegate { CleanProject(); };
             pluginUI.Menu.CloseProject.Click += delegate { CloseProject(false); };
             pluginUI.Menu.Properties.Click += delegate { OpenProjectProperties(); };
-            pluginUI.Menu.ShellMenu.Click += delegate { TreeShowShellMenu(); };
+            if (Win32.ShouldUseWin32()) pluginUI.Menu.ShellMenu.Click += delegate { TreeShowShellMenu(); };
             pluginUI.Menu.CommandPrompt.Click += delegate { TreeShowCommandPrompt(); };
             pluginUI.Menu.BuildProjectFile.Click += delegate { BackgroundBuild(); };
             pluginUI.Menu.BuildProjectFiles.Click += delegate { BackgroundBuild(); };

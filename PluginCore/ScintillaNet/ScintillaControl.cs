@@ -5019,9 +5019,6 @@ namespace ScintillaNet
         [DllImport("user32.dll")]
         public static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int width, int height, IntPtr hWndParent, int hMenu, IntPtr hInstance, string lpParam);
 
-        [DllImport("kernel32.dll", EntryPoint = "SendMessage")]
-        public static extern int SendMessageStr(IntPtr hWnd, int message, int data, string s);
-
         [DllImport("user32.dll")]
         public static extern IntPtr SetFocus(IntPtr hwnd);
 
@@ -5050,12 +5047,6 @@ namespace ScintillaNet
 		{
 			return (UInt32)SendMessage((int)hwndScintilla, message, (int)wParam, (int)lParam);
 		}
-
-		public UInt32 FastPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
-		{
-			return (UInt32)Perform(directPointer, message, wParam, lParam);
-		}
-
 		public UInt32 SPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
 		{
 			return (UInt32)Perform(directPointer, message, wParam, lParam);

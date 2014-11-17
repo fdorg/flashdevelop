@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using System.Text;
+using Microsoft.Win32;
 using System.Security;
 using System.Security.Principal;
 using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
 
@@ -273,10 +275,28 @@ namespace PluginCore.Helpers
         /// </summary>
         public static String GetCompactPath(String path)
         {
-            Int32 max = 64;
-            StringBuilder sb = new StringBuilder(max);
-            Win32.PathCompactPathEx(sb, path, max, 0);
-            return sb.ToString();
+            try
+            {
+                if (Win32.ShouldUseWin32())
+                {
+                    Int32 max = 64;
+                    StringBuilder sb = new StringBuilder(max);
+                    Win32.PathCompactPathEx(sb, path, max, 0);
+                    return sb.ToString();
+                }
+                else // For other platforms
+                {
+                    const String pattern = @"^(w+:|)([^]+[^]+).*([^]+[^]+)$";
+                    const String replacement = "$1$2...$3";
+                    if (Regex.IsMatch(path, pattern)) return Regex.Replace(path, pattern, replacement);
+                    else return path;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return path;
+            }
         }
 
         /// <summary>
@@ -284,10 +304,22 @@ namespace PluginCore.Helpers
         /// </summary>
         public static String GetShortPathName(String longName)
         {
-            Int32 max = longName.Length + 1;
-            StringBuilder sb = new StringBuilder(max);
-            Win32.GetShortPathName(longName, sb, max);
-            return sb.ToString();
+            try
+            {
+                if (Win32.ShouldUseWin32())
+                {
+                    Int32 max = longName.Length + 1;
+                    StringBuilder sb = new StringBuilder(max);
+                    Win32.GetShortPathName(longName, sb, max);
+                    return sb.ToString();
+                }
+                else return longName; // For other platforms
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return longName;
+            }
         }
 
         /// <summary>
@@ -297,9 +329,13 @@ namespace PluginCore.Helpers
         {
             try
             {
-                StringBuilder longNameBuffer = new StringBuilder(256);
-                Win32.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
-                return longNameBuffer.ToString();
+                if (Win32.ShouldUseWin32())
+                {
+                    StringBuilder longNameBuffer = new StringBuilder(256);
+                    Win32.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
+                    return longNameBuffer.ToString();
+                }
+                else return shortName; // For other platforms
             }
             catch (Exception ex)
             {
@@ -315,18 +351,21 @@ namespace PluginCore.Helpers
         {
             try
             {
-                uint r;
-                IntPtr ppidl;
-                int rgflnOut = 0;
-                r = Win32.SHILCreateFromPath(path, out ppidl, ref rgflnOut);
-                if (r == 0)
+                if (Win32.ShouldUseWin32())
                 {
-                    StringBuilder sb = new StringBuilder(260);
-                    if (Win32.SHGetPathFromIDList(ppidl, sb))
+                    uint r;
+                    IntPtr ppidl;
+                    int rgflnOut = 0;
+                    r = Win32.SHILCreateFromPath(path, out ppidl, ref rgflnOut);
+                    if (r == 0)
                     {
-                        Char sep = Path.DirectorySeparatorChar;
-                        Char alt = Path.AltDirectorySeparatorChar;
-                        return sb.ToString().Replace(alt, sep);
+                        StringBuilder sb = new StringBuilder(260);
+                        if (Win32.SHGetPathFromIDList(ppidl, sb))
+                        {
+                            Char sep = Path.DirectorySeparatorChar;
+                            Char alt = Path.AltDirectorySeparatorChar;
+                            return sb.ToString().Replace(alt, sep);
+                        }
                     }
                 }
                 return path;
@@ -344,10 +383,10 @@ namespace PluginCore.Helpers
         public static String GetJavaInstallPath()
         {
             String javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-            using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
+            using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(javaKey))
             {
                 String currentVersion = rk.GetValue("CurrentVersion").ToString();
-                using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
+                using (RegistryKey key = rk.OpenSubKey(currentVersion))
                 {
                     return key.GetValue("JavaHome").ToString();
                 }

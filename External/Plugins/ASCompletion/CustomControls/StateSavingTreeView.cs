@@ -137,7 +137,7 @@ namespace System.Windows.Forms
                 topNode.EnsureVisible();
 
 			// manually scroll all the way to the left
-			Win32.ScrollToLeft(this);
+			if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(this);
 		}
 
 		public TreeNode FindClosestPath(string path)

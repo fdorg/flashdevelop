@@ -6,7 +6,8 @@ using System.Runtime.InteropServices;
 
 namespace PluginCore
 {
-    // Other Win32 stuff to handle: Ookii.Dialogs, InteropSHFileOperation, ShellContextMenu, ScintillaControl, ListViewXP, FixedTreeView
+    // Other Win32 stuff to handle: ScintillaControl
+    // TODO: Can some of the Win32 be removed?
 
     public class Win32
     {
@@ -139,9 +140,6 @@ namespace PluginCore
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(Point pt);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern Boolean GetScrollRange(IntPtr hWnd, Int32 nBar, out Int32 lpMinPos, out Int32 lpMaxPos);
-
         [DllImport("user32.dll")]
         public static extern Int32 GetScrollPos(IntPtr hWnd, Int32 nBar);
 
@@ -158,14 +156,11 @@ namespace PluginCore
         public static extern UInt32 SetForegroundWindow(IntPtr hwnd);
 
         [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]
-        public static extern Boolean PathIsDirectoryEmpty([In] String lpszPath);
-
-        [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]
         public static extern Boolean PathCompactPathEx([MarshalAs(UnmanagedType.LPTStr)] StringBuilder pszOut, [MarshalAs(UnmanagedType.LPTStr)] String pszSource, [MarshalAs(UnmanagedType.U4)] Int32 cchMax, [MarshalAs(UnmanagedType.U4)] Int32 dwReserved);
-        
+
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         public static extern Int32 GetLongPathName([MarshalAs(UnmanagedType.LPTStr)] String path, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder longPath, Int32 longPathLength);
-
+        
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         public static extern Int32 GetShortPathName(String lpszLongPath, StringBuilder lpszShortPath, Int32 cchBuffer);
 
@@ -231,33 +226,6 @@ namespace PluginCore
         {
             SetScrollPos(ctrl.Handle, SB_HORZ, scrollPosition.X, true);
             SetScrollPos(ctrl.Handle, SB_VERT, scrollPosition.Y, true);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void ScrollToBottom(Control ctrl)
-        {
-            Int32 min, max;
-            GetScrollRange(ctrl.Handle, SB_VERT, out min, out max);
-            SendMessage(ctrl.Handle, WM_VSCROLL, SB_RIGHT, max);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void ScrollToTop(Control ctrl)
-        {
-            SendMessage(ctrl.Handle, WM_VSCROLL, SB_LEFT, 0);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void ScrollToRight(Control ctrl)
-        {
-            Int32 min, max;
-            GetScrollRange(ctrl.Handle, SB_HORZ, out min, out max);
-            SendMessage(ctrl.Handle, WM_HSCROLL, SB_RIGHT, max);
         }
 
         /// <summary>

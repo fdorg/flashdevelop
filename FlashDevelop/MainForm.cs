@@ -1495,7 +1495,7 @@ namespace FlashDevelop
         /// </summary>
         public Boolean PreFilterMessage(ref Message m)
         {
-            if (m.Msg == 0x20a) // WM_MOUSEWHEEL
+            if (Win32.ShouldUseWin32() && m.Msg == 0x20a) // WM_MOUSEWHEEL
             {
                 Int32 x = unchecked((short)(long)m.LParam);
                 Int32 y = unchecked((short)((long)m.LParam >> 16));
@@ -1865,7 +1865,7 @@ namespace FlashDevelop
                     OpenDocumentFromParameters(args[i]);
                 }
             }
-            Win32.RestoreWindow(this.Handle);
+            if (Win32.ShouldUseWin32()) Win32.RestoreWindow(this.Handle);
             /**
             * Notify plugins about start arguments
             */
