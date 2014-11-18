@@ -177,7 +177,7 @@ namespace System.Windows.Forms
                     }
                 }
             }
-            else
+            else if (Win32.IsRunningOnWindows())
             {
                 if (e.GripStyle == ToolStripGripStyle.Hidden) return;
                 using (Brush lightBrush = new SolidBrush(this.colorTable.GripLight))
@@ -199,6 +199,7 @@ namespace System.Windows.Forms
                     }
                 }
             }
+            else renderer.DrawGrip(e);
         }
 
         protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
@@ -252,7 +253,7 @@ namespace System.Windows.Forms
             // Ensure padding on buttons if in high dpi mode
             if (e.Graphics.DpiX >= 192) e.Item.Padding = new Padding(4, 2, 4, 2);
             else if (e.Graphics.DpiX >= 120) e.Item.Padding = new Padding(2, 1, 2, 1);
-            else if (renderer is ToolStripSystemRenderer)
+            else if (renderer is ToolStripSystemRenderer && Win32.IsRunningOnWindows())
             {
                 e.Item.Padding = new Padding(2, 2, 2, 2);
             }

@@ -929,8 +929,16 @@ namespace FlashDevelop
             // toolStripPanel
             //
             this.toolStripPanel.Dock = DockStyle.Top;
-            this.toolStripPanel.Controls.Add(this.toolStrip);
-            this.toolStripPanel.Controls.Add(this.menuStrip);
+            if (Win32.IsRunningOnMono())
+            {
+                this.toolStripPanel.Controls.Add(this.menuStrip);
+                this.toolStripPanel.Controls.Add(this.toolStrip);
+            }
+            else 
+            {
+                this.toolStripPanel.Controls.Add(this.toolStrip);
+                this.toolStripPanel.Controls.Add(this.menuStrip);
+            }
             this.tabMenu.Font = Globals.Settings.DefaultFont;
             this.toolStrip.Font = Globals.Settings.DefaultFont;
             this.menuStrip.Font = Globals.Settings.DefaultFont;

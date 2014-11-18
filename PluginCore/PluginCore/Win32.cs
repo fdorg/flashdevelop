@@ -19,6 +19,22 @@ namespace PluginCore
             return shouldUseWin32;
         }
 
+        /// <summary>
+        /// Checks if we are running on Windows
+        /// </summary>
+        public static Boolean IsRunningOnWindows()
+        {
+            return shouldUseWin32;
+        }
+
+        /// <summary>
+        /// Checks if we are running on Mono
+        /// </summary>
+        public static Boolean IsRunningOnMono()
+        {
+            return !shouldUseWin32;
+        }
+
         #region Enums
 
         public enum SHGFI

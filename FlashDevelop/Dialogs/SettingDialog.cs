@@ -428,6 +428,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void FilterPropertySheet()
         {
+            if (Win32.IsRunningOnMono()) return;
             LocalizedDescriptionAttribute lda = null;
             Object settingsObj = this.itemPropertyGrid.SelectedObject;
             String text = this.filterText.Text;
