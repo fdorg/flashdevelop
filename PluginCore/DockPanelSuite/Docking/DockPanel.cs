@@ -32,6 +32,9 @@ namespace WeifenLuo.WinFormsUI.Docking
 		{
             ShowAutoHideContentOnHover = true;
 
+            String value = PluginCore.PluginBase.MainForm.GetThemeValue("DockPanel.ShowAutoHideContentOn");
+            if (value == "Click") ShowAutoHideContentOnHover = false;
+
             m_focusManager = new FocusManagerImpl(this);
 			m_extender = new DockPanelExtender(this);
 			m_panes = new DockPaneCollection();
