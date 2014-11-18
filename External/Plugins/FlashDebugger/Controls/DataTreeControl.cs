@@ -214,8 +214,18 @@ namespace FlashDebugger.Controls
 			if (node is DataNode)
 			{
 				DataNode datanode = node as DataNode;
-				if (ret != "" && datanode.Variable != null) ret += ".";
-				if (datanode.Variable != null) ret += datanode.Variable.getName();
+				if (datanode.Variable != null)
+				{
+					if (ret == "") return datanode.Variable.getName();
+					if ((datanode.Variable.getAttributes() & 0x00020000) == 0x00020000) //VariableAttribute_.IS_DYNAMIC
+					{
+						ret += "[\"" + datanode.Variable.getName() + "\"]";
+					}
+					else
+					{
+						ret += "." + datanode.Variable.getName();
+					}
+				}
 			}
 			return ret;
 		}
