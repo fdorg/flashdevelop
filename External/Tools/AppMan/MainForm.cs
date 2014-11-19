@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using AppMan.Utilities;
@@ -64,48 +63,8 @@ namespace AppMan
             this.InitializeFormScaling();
             this.ApplyLocalizationStrings();
             this.Font = SystemFonts.MenuFont;
-            #if WIN32
-            Application.AddMessageFilter(this);
-            #endif
+            if (!Win32.IsRunningOnMono) Application.AddMessageFilter(this);
         }
-
-        #region WIN32 Stuff
-
-        #if WIN32
-        [DllImport("user32.dll")]
-        public static extern IntPtr WindowFromPoint(Point pt);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp);
-
-        /// <summary>
-        /// Handles the mouse wheel on hover
-        /// </summary>
-        public Boolean PreFilterMessage(ref Message m)
-        {
-            if (m.Msg == 0x20a) // WM_MOUSEWHEEL
-            {
-                Point pos = new Point(m.LParam.ToInt32() & 0xffff, m.LParam.ToInt32() >> 16);
-                IntPtr hWnd = WindowFromPoint(pos);
-                if (hWnd != IntPtr.Zero)
-                {
-                    if (Control.FromHandle(hWnd) != null)
-                    {
-                        SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
-                        return true;
-                    }
-                    else if (this.listView != null && hWnd == this.listView.Handle)
-                    {
-                        SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        #endif
-
-        #endregion
 
         #region Initialization
 
@@ -302,6 +261,32 @@ namespace AppMan
         #endregion
 
         #region Event Handlers
+
+        /// <summary>
+        /// Handles the mouse wheel on hover
+        /// </summary>
+        public Boolean PreFilterMessage(ref Message m)
+        {
+            if (!Win32.IsRunningOnMono && m.Msg == 0x20a) // WM_MOUSEWHEEL
+            {
+                Point pos = new Point(m.LParam.ToInt32() & 0xffff, m.LParam.ToInt32() >> 16);
+                IntPtr hWnd = Win32.WindowFromPoint(pos);
+                if (hWnd != IntPtr.Zero)
+                {
+                    if (Control.FromHandle(hWnd) != null)
+                    {
+                        Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                        return true;
+                    }
+                    else if (this.listView != null && hWnd == this.listView.Handle)
+                    {
+                        Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         /// <summary>
         /// On MainForm show, initializes the UI and the props.
