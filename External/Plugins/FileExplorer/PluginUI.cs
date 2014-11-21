@@ -1137,10 +1137,14 @@ namespace FileExplorer
                 else icon = IconExtractor.GetFolderIcon(path, false, true);
                 image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
                 image = PluginBase.MainForm.ImageSetAdjust(image);
-                icon.Dispose(); 
+                icon.Dispose();
             }
-            else image = PluginBase.MainForm.FindImage("526");
-            this.imageList.Images.Add(image); image.Dispose();
+            else
+            {
+                if (File.Exists(path)) image = PluginBase.MainForm.FindImage("526");
+                else image = PluginBase.MainForm.FindImage("203");
+            }
+            this.imageList.Images.Add(image);
             return this.imageList.Images.Count - 1;
         }
 
