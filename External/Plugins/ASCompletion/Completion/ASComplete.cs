@@ -1350,8 +1350,9 @@ namespace ASCompletion.Completion
 			else UITools.CallTip.CallTipSetHlt(start + 1, end, true);
 		}
 
-        static string[] featStart = new string[] { "/*", "{", "<", "[", "(" };
-        static string[] featEnd = new string[] { "*/", "}", ">", "]", ")" };
+		static string[] featStart = new string[] { "/*", "{", "<", "[", "(", "\"" };
+		static string[] featEnd = new string[] { "*/", "}", ">", "]", ")", "\"" };
+		static string[] featEscape = new string[] { null, null, null, null, null, "\\" };
 
 		static private int FindNearSymbolInFunctDef(string defBody, string symbol, int startAt)
 		{
@@ -1360,19 +1361,55 @@ namespace ASCompletion.Completion
 			while (true)
 			{
 				end = defBody.IndexOf(symbol, startAt);
-                if (end < 0) break;
-                bool cont = false;
-                for (int i = 0; i < featStart.Length; i++)
-                {
-                    featBeg = defBody.IndexOf(featStart[i], startAt);
-                    if (featBeg >= 0 && featBeg < end)
-                    {
-                        startAt = Math.Max(featBeg + 1, defBody.IndexOf(featEnd[i], featBeg));
-                        cont = true;
-                        break;
-                    }
-                }
-                if (!cont) break;
+				if (end < 0) break;
+				bool cont = false;
+				for (int i = 0; i < featStart.Length; i++)
+				{
+					featBeg = defBody.IndexOf(featStart[i], startAt);
+					if (featBeg >= 0 && featBeg < end)
+					{
+						if (featEscape[i] != null)
+						{
+							string escaped = featEscape[i] + featEnd[i];
+							startAt = featBeg + 1;
+							while (startAt < defBody.Length)
+							{
+								int escapedPos = defBody.IndexOf(escaped, startAt);
+								int nonEscapedPos = defBody.IndexOf(featEnd[i], startAt);
+								if (escapedPos >= 0 && nonEscapedPos >= 0)
+								{
+									escapedPos += featEscape[i].Length;
+									if (escapedPos == nonEscapedPos) // featEnd is escaped
+									{
+										startAt = escapedPos + 1; // +1 so defBody.IndexOf(featEnd[i], pos) does not find the same (escaped) featEnd
+										continue;
+									}
+									else if (nonEscapedPos < escapedPos) // escaped featEnd occurs after closest featEnd
+									{
+										startAt = nonEscapedPos;
+										break;
+									}
+								}
+								else if (escapedPos < 0 && nonEscapedPos >= 0) // no escaped featEnd found
+								{
+									startAt = nonEscapedPos;
+									break;
+								}
+								else if (escapedPos < 0 && nonEscapedPos < 0) // no featEnd found
+								{
+									break; // startAt = featBeg + 1
+								}
+							}
+						}
+						else
+						{
+							startAt = Math.Max(featBeg + 1, defBody.IndexOf(featEnd[i], featBeg + 1));
+						}
+						cont = true;
+						break;
+					}
+				}
+				if (!cont) break;
 			}
 			return end;
 		}
