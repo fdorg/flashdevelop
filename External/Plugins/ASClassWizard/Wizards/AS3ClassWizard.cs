@@ -99,7 +99,6 @@ namespace ASClassWizard.Wizards
                 if (project.Language == "haxe")
                 {
                     this.internalRadio.Text = "private";
-                    this.finalCheck.Enabled = false;
                     this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
                     this.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
                 }
