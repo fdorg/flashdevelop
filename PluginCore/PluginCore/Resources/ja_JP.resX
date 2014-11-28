@@ -3012,6 +3012,14 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="ASClassWizard.Wizard.Error.InvalidClassName" xml:space="preserve">
     <value>クラス名に無効な文字列が含まれています。</value>
   </data>
+  <data name="ASClassWizard.Wizard.Error.EmptyClassName" xml:space="preserve">
+    <value>Class name can't be empty.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseClassName" xml:space="preserve">
+    <value>Class name must start with an uppercase letter.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
     <value>パッケージフォルダーを選んでください:</value>
   </data>

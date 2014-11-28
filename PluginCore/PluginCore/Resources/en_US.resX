@@ -3015,8 +3015,13 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="ASClassWizard.Wizard.Error.InvalidClassName" xml:space="preserve">
     <value>Class name contains invalid characters.</value>
   </data>
-  <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
-    <value>Choose a package folder:</value>
+  <data name="ASClassWizard.Wizard.Error.EmptyClassName" xml:space="preserve">
+    <value>Class name can't be empty.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseClassName" xml:space="preserve">
+    <value>Class name must start with an uppercase letter.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ASClassWizard.Wizard.Label.CodeGeneration" xml:space="preserve">
     <value>Code generation:</value>

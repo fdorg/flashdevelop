@@ -3011,6 +3011,14 @@
   <data name="ASClassWizard.Wizard.Error.InvalidClassName" xml:space="preserve">
     <value>类名称包含无效字符.</value>
   </data>
+  <data name="ASClassWizard.Wizard.Error.EmptyClassName" xml:space="preserve">
+    <value>Class name can't be empty.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseClassName" xml:space="preserve">
+    <value>Class name must start with an uppercase letter.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
     <value>选择一个包文件夹:</value>
   </data>

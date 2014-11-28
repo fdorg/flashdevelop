@@ -34,7 +34,9 @@ namespace ASClassWizard.Wizards
     {
         private string directoryPath;
         private Project project;
-        public const string REG_IDENTIFIER = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
+        public const string REG_IDENTIFIER_AS = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
+        // $ is not a valid char in haxe class names
+        public const string REG_IDENTIFIER_HAXE = "^[a-zA-Z_][a-zA-Z0-9_]*$";
 
         public AS3ClassWizard()
         {
@@ -112,10 +114,14 @@ namespace ASClassWizard.Wizards
         private void ValidateClass()
         {
             string errorMessage = "";
-            if (getClassName() == "" || !Regex.Match(getClassName(), REG_IDENTIFIER, RegexOptions.Singleline).Success)
-            {
+            string regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
+            if (getClassName() == "")
+                errorMessage = TextHelper.GetString("Wizard.Error.EmptyClassName");
+            else if (!Regex.Match(getClassName(), regex, RegexOptions.Singleline).Success)
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidClassName");
-            }
+            else if (project.Language == "haxe" && Char.IsLower(getClassName()[0]))
+                errorMessage = TextHelper.GetString("Wizard.Error.LowercaseClassName");
+
             if (errorMessage != "")
             {
                 okButton.Enabled = false;
