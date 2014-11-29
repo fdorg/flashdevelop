@@ -7,7 +7,7 @@ call bat\SetupApplication.bat
 :: Generate
 echo.
 echo Generating a self-signed certificate...
-call adt -certificate -cn %CERT_NAME% 1024-RSA %CERT_FILE% %CERT_PASS%
+call adt -certificate -cn %CERT_NAME% 2048-RSA %CERT_FILE% %CERT_PASS%
 if errorlevel 1 goto failed
 
 :succeed
