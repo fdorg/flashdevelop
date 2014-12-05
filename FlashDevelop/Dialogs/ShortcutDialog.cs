@@ -124,7 +124,7 @@ namespace FlashDevelop.Dialogs
             // searchLabel
             // 
             this.searchLabel.AutoSize = true;
-            this.searchLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.searchLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.searchLabel.Location = new System.Drawing.Point(10, 10);
             this.searchLabel.Name = "searchLabel";
             this.searchLabel.TabIndex = 0;
@@ -171,6 +171,7 @@ namespace FlashDevelop.Dialogs
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(586, 416);
+            this.MinimumSize = new System.Drawing.Size(400, 250);
             this.Controls.Add(this.filterTextBox);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.infoLabel);
