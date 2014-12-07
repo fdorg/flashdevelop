@@ -403,19 +403,22 @@
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Find and Replace Here...</value>
-    <comment>Added after 4.6.4</comment>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>在此启动命令提示符(&amp;P)...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>复制(&amp;O)</value>
   </data>
   <data name="FileExplorer.Label.CreateFileHere" xml:space="preserve">
     <value>在这里创建文件(&amp;C)...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CreateFolderHere" xml:space="preserve">
     <value>在这里创建文件夹(&amp;F)...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Delete" xml:space="preserve">
     <value>删除(&amp;D)</value>
@@ -425,6 +428,7 @@
   </data>
   <data name="FileExplorer.Label.ExploreHere" xml:space="preserve">
     <value>浏览到这里(&amp;X)...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Paste" xml:space="preserve">
     <value>粘贴(&amp;P)</value>
@@ -3728,6 +3732,7 @@
   </data>
   <data name="ProjectManager.Label.SearchString" xml:space="preserve">
     <value>搜寻字符串: (供缩写搜索大写)</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Title.OpenResource" xml:space="preserve">
     <value>打开资源</value>

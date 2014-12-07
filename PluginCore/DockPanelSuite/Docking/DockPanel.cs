@@ -30,6 +30,11 @@ namespace WeifenLuo.WinFormsUI.Docking
         
 		public DockPanel()
 		{
+            ShowAutoHideContentOnHover = true;
+
+            String value = PluginCore.PluginBase.MainForm.GetThemeValue("DockPanel.ShowAutoHideContentOn");
+            if (value == "Click") ShowAutoHideContentOnHover = false;
+
             m_focusManager = new FocusManagerImpl(this);
 			m_extender = new DockPanelExtender(this);
 			m_panes = new DockPaneCollection();
@@ -137,24 +142,51 @@ namespace WeifenLuo.WinFormsUI.Docking
 			set	{	AutoHideWindow.ActiveContent = value;	}
 		}
 
-        private bool m_allowEndUserDocking = true;
+        private bool m_allowEndUserDocking = NativeMethods.ShouldUseWin32();
 		[LocalizedCategory("Category_Docking")]
 		[LocalizedDescription("DockPanel_AllowEndUserDocking_Description")]
 		[DefaultValue(true)]
 		public bool AllowEndUserDocking
 		{
-			get	{	return m_allowEndUserDocking;	}
-			set	{	m_allowEndUserDocking = value;	}
+            get
+            {
+                if (!NativeMethods.ShouldUseWin32() && m_allowEndUserDocking)
+                    m_allowEndUserDocking = false;
+
+                return m_allowEndUserDocking;
+            }
+            set
+            {
+                if (!NativeMethods.ShouldUseWin32() && value)
+                {
+                    Console.Write("AllowEndUserDocking can only be false if running on Mono");
+                    return;
+                }
+                m_allowEndUserDocking = value;
+            }
 		}
 
-        private bool m_allowEndUserNestedDocking = true;
+        private bool m_allowEndUserNestedDocking = NativeMethods.ShouldUseWin32();
         [LocalizedCategory("Category_Docking")]
         [LocalizedDescription("DockPanel_AllowEndUserNestedDocking_Description")]
         [DefaultValue(true)]
         public bool AllowEndUserNestedDocking
         {
-            get { return m_allowEndUserNestedDocking; }
-            set { m_allowEndUserNestedDocking = value; }
+            get
+            {
+                if (!NativeMethods.ShouldUseWin32() && m_allowEndUserDocking)
+                    m_allowEndUserDocking = false;
+                return m_allowEndUserNestedDocking;
+            }
+            set
+            {
+                if (!NativeMethods.ShouldUseWin32() && value) 
+                {
+                    Console.Write("AllowEndUserNestedDocking can only be false if running on Mono");
+                    return;
+                }
+                m_allowEndUserNestedDocking = value;
+            }
         }
 
         private DockContentCollection m_contents = new DockContentCollection();
@@ -213,6 +245,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 				Refresh();
 			}
 		}
+
+        public bool ShowAutoHideContentOnHover { get; set; }
 
 		[Browsable(false)]
 		public DockPanelExtender Extender
@@ -688,6 +722,10 @@ namespace WeifenLuo.WinFormsUI.Docking
 				return;
 
 			FloatWindows.Remove(floatWindow);
+
+            if (FloatWindows.Count != 0) return;
+            if (ParentForm == null) return;
+            ParentForm.Focus();
 		}
 
 		public void SetPaneIndex(DockPane pane, int index)

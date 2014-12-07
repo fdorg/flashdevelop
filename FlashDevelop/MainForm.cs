@@ -93,6 +93,39 @@ namespace FlashDevelop
 
         #endregion
 
+        #region Flicker Prevention
+
+        // See: http://www.angryhacker.com/blog/archive/2010/07/21/how-to-get-rid-of-flicker-on-windows-forms-applications.aspx
+
+        private Int32 originalStyle = -1;
+        private Boolean enableBuffering = true;
+
+        /// <summary>
+        /// Reduce artifacts on FlashDevelop start
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                if (originalStyle == -1) originalStyle = base.CreateParams.ExStyle;
+                CreateParams cp = base.CreateParams;
+                if (enableBuffering) cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
+                else cp.ExStyle = originalStyle;
+                return cp;
+            }
+        }
+
+        /// <summary>
+        /// Turn off buffering after form show
+        /// </summary>
+        private void TurnOffBuffering()
+        {
+            this.enableBuffering = false;
+            this.MaximizeBox = true;
+        }
+
+        #endregion
+
         #region Private Properties
 
         /* AppMan */
@@ -896,8 +929,16 @@ namespace FlashDevelop
             // toolStripPanel
             //
             this.toolStripPanel.Dock = DockStyle.Top;
-            this.toolStripPanel.Controls.Add(this.toolStrip);
-            this.toolStripPanel.Controls.Add(this.menuStrip);
+            if (Win32.IsRunningOnMono())
+            {
+                this.toolStripPanel.Controls.Add(this.menuStrip);
+                this.toolStripPanel.Controls.Add(this.toolStrip);
+            }
+            else 
+            {
+                this.toolStripPanel.Controls.Add(this.toolStrip);
+                this.toolStripPanel.Controls.Add(this.menuStrip);
+            }
             this.tabMenu.Font = Globals.Settings.DefaultFont;
             this.toolStrip.Font = Globals.Settings.DefaultFont;
             this.menuStrip.Font = Globals.Settings.DefaultFont;
@@ -1026,6 +1067,7 @@ namespace FlashDevelop
         /// </summary>
         private void OnMainFormShow(Object sender, System.EventArgs e)
         {
+            this.TurnOffBuffering();
             if (RecoveryDialog.ShouldShowDialog()) RecoveryDialog.Show();
         }
 
@@ -1461,7 +1503,7 @@ namespace FlashDevelop
         /// </summary>
         public Boolean PreFilterMessage(ref Message m)
         {
-            if (m.Msg == 0x20a) // WM_MOUSEWHEEL
+            if (Win32.ShouldUseWin32() && m.Msg == 0x20a) // WM_MOUSEWHEEL
             {
                 Int32 x = unchecked((short)(long)m.LParam);
                 Int32 y = unchecked((short)((long)m.LParam >> 16));
@@ -1831,7 +1873,7 @@ namespace FlashDevelop
                     OpenDocumentFromParameters(args[i]);
                 }
             }
-            Win32.RestoreWindow(this.Handle);
+            if (Win32.ShouldUseWin32()) Win32.RestoreWindow(this.Handle);
             /**
             * Notify plugins about start arguments
             */
@@ -1842,7 +1884,7 @@ namespace FlashDevelop
         /// <summary>
         /// 
         /// </summary>
-        private void OpenDocumentFromParameters(string file)
+        private void OpenDocumentFromParameters(String file)
         {
             Match openParams = Regex.Match(file, "@([0-9]+)($|:([0-9]+)$)"); // path@line:col
             if (openParams.Success)

@@ -237,25 +237,22 @@ namespace PluginCore.Controls
 		
 		#region Scintilla Hook
 		
-		private const int WM_MOUSEWHEEL = 0x20A;
-        private const int WM_KEYDOWN = 0x100;
-        private const int WM_KEYUP = 0x101;
-
-		[DllImport("User32.dll")]
-        static extern Int32 SendMessage(int hWnd, int Msg, int wParam, int lParam);
-        
 		public bool PreFilterMessage(ref Message m)
 		{
-			if (m.Msg == WM_MOUSEWHEEL) // capture all MouseWheel events 
+            if (m.Msg == Win32.WM_MOUSEWHEEL) // capture all MouseWheel events 
 			{
                 if (!callTip.CallTipActive || !callTip.Focused)
                 {
-                    SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
-                    return true;
+                    if (Win32.ShouldUseWin32())
+                    {
+                        Win32.SendMessage((IntPtr)CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        return true;
+                    }
+                    else return false;
                 }
                 else return false;
 			}
-            else if (m.Msg == WM_KEYDOWN)
+            else if (m.Msg == Win32.WM_KEYDOWN)
             {
                 if ((int)m.WParam == 17) // Ctrl
                 {
@@ -263,7 +260,7 @@ namespace PluginCore.Controls
                     if (callTip.CallTipActive && !callTip.Focused) callTip.FadeOut();
                 }
             }
-            else if (m.Msg == WM_KEYUP)
+            else if (m.Msg == Win32.WM_KEYUP)
             {
                 if ((int)m.WParam == 17 || (int)m.WParam == 18) // Ctrl / AltGr
                 {

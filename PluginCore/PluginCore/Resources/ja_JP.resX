@@ -404,19 +404,22 @@
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Find and Replace Here...</value>
-    <comment>Added after 4.6.4</comment>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>コマンドプロンプト(&amp;P)...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>コピー(&amp;C)</value>
   </data>
   <data name="FileExplorer.Label.CreateFileHere" xml:space="preserve">
     <value>新規ファイル(&amp;N)...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CreateFolderHere" xml:space="preserve">
     <value>新規フォルダー(&amp;F)...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Delete" xml:space="preserve">
     <value>削除(&amp;D)</value>
@@ -426,6 +429,7 @@
   </data>
   <data name="FileExplorer.Label.ExploreHere" xml:space="preserve">
     <value>エクスプローラーで開く(&amp;X)...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Paste" xml:space="preserve">
     <value>貼り付け(&amp;P)</value>
@@ -3743,6 +3747,7 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   </data>
   <data name="ProjectManager.Label.SearchString" xml:space="preserve">
     <value>文字列検索（略称の場合は大文字）:</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Title.OpenResource" xml:space="preserve">
     <value>リソースを開く</value>

@@ -32,6 +32,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                 graphicsPath.Reset();
             
             int curveSize = 6;
+
+            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            if (tabStyle == "Rect" || tabStyle == "Block")
+            {
+                curveSize = 1;
+            }
+
             if (upCorner)
             {
                 graphicsPath.AddLine(rect.Left, rect.Bottom, rect.Left, rect.Top + curveSize / 2);

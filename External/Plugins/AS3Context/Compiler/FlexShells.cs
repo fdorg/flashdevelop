@@ -487,9 +487,7 @@ namespace AS3Context.Compiler
             		{
 	                	if (File.Exists(filename))
 	                	{
-		                	StringBuilder sb = new StringBuilder(1024);
-		                	GetLongPathName(filename, sb, (uint)1024);
-							filename = sb.ToString();
+                            filename = PathHelper.GetLongPathName(filename);
 	                	}
             		}
             		catch {}
@@ -621,22 +619,5 @@ namespace AS3Context.Compiler
         }
         #endregion
 
-        #region Win32
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError=true)]
-		static extern uint GetShortPathName(
-		   [MarshalAs(UnmanagedType.LPTStr)]
-		   string lpszLongPath,
-		   [MarshalAs(UnmanagedType.LPTStr)]
-		   StringBuilder lpszShortPath,
-		   uint cchBuffer);
-        
-        [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Auto)]
-		static extern uint GetLongPathName(
-		    string lpszShortPath,
-		    [Out] StringBuilder lpszLongPath,
-		    uint cchBuffer);
-
-        #endregion
     }
 }

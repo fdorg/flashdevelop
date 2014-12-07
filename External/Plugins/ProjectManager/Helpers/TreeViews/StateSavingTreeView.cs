@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using PluginCore;
-using Win32;
 
 namespace System.Windows.Forms
 {
@@ -120,7 +119,7 @@ namespace System.Windows.Forms
 				topNode.EnsureVisible();
 
 			// manually scroll all the way to the left
-			Win32.Scrolling.scrollToLeft(this);
+            if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(this);
 		}
 
 		private TreeNode FindClosestPath(string path)
@@ -146,20 +145,6 @@ namespace System.Windows.Forms
 			}
 			return null;
 		}
-
-		/*private void HScroll(System.IntPtr direction)
-		{
-			//Set  direction to 0 to scroll left 1 char
-			//Set  direction to 1 to scroll right 1 char
-			//Set  direction to 2 to scroll 1 page left
-			//Set  direction to 3 to scroll 1 page right
-			System.Windows.Forms.Message hScrollMessage = new Message();
-
-			hScrollMessage.HWnd   = Handle;
-			hScrollMessage.Msg    = 0x0114;  // // #define WM_HSCROLL 0x0114
-			hScrollMessage.WParam = direction;
-			this.DefWndProc( ref hScrollMessage );
-		}*/
 
 		#endregion
 	}

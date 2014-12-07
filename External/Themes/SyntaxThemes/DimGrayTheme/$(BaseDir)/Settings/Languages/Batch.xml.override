@@ -9,7 +9,7 @@
 	<style name="command" fore="0x000099" />
 	<style name="identifier" fore="0xa31515" />
 	<style name="operator" />
-	<style name="gdefault" fore="0xd4d4d4" />
+	<style name="gdefault" fore="0xe0e0e0" />
 	<style name="linenumber" fore="0x999999" />
 	<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
 	<style name="bracebad" bold="true" />

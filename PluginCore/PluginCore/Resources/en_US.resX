@@ -402,20 +402,23 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>New Folder</value>
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
-    <value>&amp;Find And Replace Here...</value>
-    <comment>Added after 4.6.4</comment>
+    <value>&amp;Find And Replace...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
-    <value>Command &amp;Prompt Here...</value>
+    <value>Command &amp;Prompt...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>C&amp;opy</value>
   </data>
   <data name="FileExplorer.Label.CreateFileHere" xml:space="preserve">
-    <value>&amp;Create File Here...</value>
+    <value>&amp;Create File...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CreateFolderHere" xml:space="preserve">
-    <value>Create &amp;Folder Here...</value>
+    <value>Create &amp;Folder...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Delete" xml:space="preserve">
     <value>&amp;Delete</value>
@@ -424,7 +427,8 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>&amp;Edit</value>
   </data>
   <data name="FileExplorer.Label.ExploreHere" xml:space="preserve">
-    <value>E&amp;xplore Here...</value>
+    <value>E&amp;xplore...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Paste" xml:space="preserve">
     <value>&amp;Paste</value>
@@ -3735,7 +3739,8 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Open &amp;Resource...</value>
   </data>
   <data name="ProjectManager.Label.SearchString" xml:space="preserve">
-    <value>Search string: (UPPERCASE for search by abbreviation)</value>
+    <value>Search: (UPPERCASE for search by abbreviation)</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Title.OpenResource" xml:space="preserve">
     <value>Open Resource</value>

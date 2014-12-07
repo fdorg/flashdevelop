@@ -39,23 +39,26 @@ namespace ScintillaNet
 
         public ScintillaControl() : this("SciLexer.dll")
         {
-            DragAcceptFiles(this.Handle, 1);
+            if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
 
         public ScintillaControl(string fullpath)
         {
             try
             {
-                IntPtr lib = WinAPI.LoadLibrary(fullpath);
-                hwndScintilla = WinAPI.CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
-                directPointer = (int)SlowPerform(2185, 0, 0);
+                if (Win32.ShouldUseWin32())
+                {
+                    IntPtr lib = LoadLibrary(fullpath);
+                    hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
+                    directPointer = (int)SlowPerform(2185, 0, 0);
+                    directPointer = DirectPointer;
+                }
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 DoubleClick += new DoubleClickHandler(OnSelectHighlight);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
-                directPointer = DirectPointer;
             }
             catch (Exception ex)
             {
@@ -65,7 +68,7 @@ namespace ScintillaNet
 
         public void OnResize(object sender, EventArgs e)
         {
-            SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
+            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
         }
 
 		#endregion
@@ -2244,7 +2247,7 @@ namespace ScintillaNet
 		/// </summary>
         public new bool Focus()
         {
-            return WinAPI.SetFocus(hwndScintilla) != IntPtr.Zero;
+            return SetFocus(hwndScintilla) != IntPtr.Zero;
         }
 
 		/// <summary>
@@ -5013,6 +5016,15 @@ namespace ScintillaNet
         // Stops all sci events from firing...
         public bool DisableAllSciEvents = false;
 
+        [DllImport("kernel32.dll")]
+        public extern static IntPtr LoadLibrary(string lpLibFileName);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int width, int height, IntPtr hWndParent, int hMenu, IntPtr hInstance, string lpParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetFocus(IntPtr hwnd);
+
 		[DllImport("gdi32.dll")] 
 		public static extern int GetDeviceCaps(IntPtr hdc, Int32 capindex);
 		
@@ -5038,15 +5050,10 @@ namespace ScintillaNet
 		{
 			return (UInt32)SendMessage((int)hwndScintilla, message, (int)wParam, (int)lParam);
 		}
-
-		public UInt32 FastPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
-		{
-			return (UInt32)Perform(directPointer, message, wParam, lParam);
-		}
-
 		public UInt32 SPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
 		{
-			return (UInt32)Perform(directPointer, message, wParam, lParam);
+            if (Win32.ShouldUseWin32()) return (UInt32)Perform(directPointer, message, wParam, lParam);
+            else return (UInt32)Encoding.ASCII.CodePage;
 		}
 
         public override bool PreProcessMessage(ref Message m)
@@ -5267,7 +5274,7 @@ namespace ScintillaNet
 			}
 			else if (m.Msg == WM_DROPFILES)
 			{
-				HandleFileDrop(m.WParam);
+				if (Win32.ShouldUseWin32()) HandleFileDrop(m.WParam);
 			}
 			else
 			{

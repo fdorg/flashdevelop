@@ -53,11 +53,11 @@ namespace ProjectManager.Controls
             // infoLabel
             // 
             this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(11, 9);
+            this.infoLabel.Location = new System.Drawing.Point(10, 10);
             this.infoLabel.Name = "infoLabel";
             this.infoLabel.Size = new System.Drawing.Size(273, 13);
             this.infoLabel.TabIndex = 0;
-            this.infoLabel.Text = "Search string: (UPPERCASE for search by abbreviation)";
+            this.infoLabel.Text = "Search: (UPPERCASE for search by abbreviation)";
             // 
             // textBox
             // 

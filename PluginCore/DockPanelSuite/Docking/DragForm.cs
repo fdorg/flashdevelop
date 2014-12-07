@@ -55,10 +55,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		public virtual void Show(bool bActivate)
 		{
-			if (bActivate)
-				Show();
-			else
-				NativeMethods.ShowWindow(Handle, (int)Win32.ShowWindowStyles.SW_SHOWNOACTIVATE);
+			if (bActivate) Show();
+			else if (NativeMethods.ShouldUseWin32()) NativeMethods.ShowWindow(Handle, (int)Win32.ShowWindowStyles.SW_SHOWNOACTIVATE);
 		}
 	}
 }

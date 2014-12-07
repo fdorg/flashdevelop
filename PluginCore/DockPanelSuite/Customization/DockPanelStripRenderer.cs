@@ -113,15 +113,12 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripSystemRenderer)
             {
-                if (e.ToolStrip is ToolStripDropDownMenu)
-                {
-                    renderer.DrawSeparator(e);
-                    e.Graphics.DrawLine(SystemPens.ControlDark, e.Item.ContentRectangle.Left, e.Item.ContentRectangle.Top, e.Item.ContentRectangle.Right, e.Item.ContentRectangle.Top);
-                }
+                if (e.ToolStrip is ToolStripDropDownMenu) renderer.DrawSeparator(e);
                 else
                 {
                     Int32 middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
-                    e.Graphics.DrawLine(SystemPens.ControlDark, middle, e.Item.ContentRectangle.Top + 1, middle, e.Item.ContentRectangle.Bottom - 2);
+                    e.Graphics.DrawLine(SystemPens.ControlDark, middle - 1, e.Item.ContentRectangle.Top + 1, middle - 1, e.Item.ContentRectangle.Bottom - 2);
+                    e.Graphics.DrawLine(SystemPens.ControlLightLight, middle, e.Item.ContentRectangle.Top + 1, middle, e.Item.ContentRectangle.Bottom - 2);
                 }
             }
             else if (e.Item is ToolStripSeparator && e.Vertical)
@@ -170,9 +167,31 @@ namespace System.Windows.Forms
                     }
                 }
                 Color back = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
-                using (Brush darkBrush = new SolidBrush(back == Color.Empty ? this.colorTable.GripDark: back))
+                using (Brush darkBrush = new SolidBrush(back == Color.Empty ? this.colorTable.GripDark : back))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 5, 2, 2);
+                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    {
+                        e.Graphics.FillRectangle(darkBrush, r);
+                        r.Offset(0, 4);
+                    }
+                }
+            }
+            else if (Win32.IsRunningOnWindows())
+            {
+                if (e.GripStyle == ToolStripGripStyle.Hidden) return;
+                using (Brush lightBrush = new SolidBrush(this.colorTable.GripLight))
+                {
+                    Rectangle r = new Rectangle(e.GripBounds.Left, e.GripBounds.Top + 8, 2, 2);
+                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    {
+                        e.Graphics.FillRectangle(lightBrush, r);
+                        r.Offset(0, 4);
+                    }
+                }
+                using (Brush darkBrush = new SolidBrush(this.colorTable.GripDark))
+                {
+                    Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 7, 2, 2);
                     for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(darkBrush, r);
@@ -234,6 +253,10 @@ namespace System.Windows.Forms
             // Ensure padding on buttons if in high dpi mode
             if (e.Graphics.DpiX >= 192) e.Item.Padding = new Padding(4, 2, 4, 2);
             else if (e.Graphics.DpiX >= 120) e.Item.Padding = new Padding(2, 1, 2, 1);
+            else if (renderer is ToolStripSystemRenderer && Win32.IsRunningOnWindows())
+            {
+                e.Item.Padding = new Padding(2, 2, 2, 2);
+            }
             if (renderer is ToolStripProfessionalRenderer)
             {
                 Boolean isOver = false;
@@ -425,9 +448,22 @@ namespace System.Windows.Forms
 
         protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
         {
-            Color text = PluginBase.MainForm.GetThemeColor("ToolStripItem.TextColor");
-            if (text != Color.Empty) e.TextColor = text;
+            if (renderer is ToolStripProfessionalRenderer) 
+            {
+                Color text = PluginBase.MainForm.GetThemeColor("ToolStripItem.TextColor");
+                if (text != Color.Empty) e.TextColor = text;
+            }
             renderer.DrawItemText(e);
+        }
+
+        protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
+        {
+            if (renderer is ToolStripProfessionalRenderer)
+            {
+                // Do not render set blank image if its a checked. Workaround for incorrect menu width.
+                if (e.Item is ToolStripMenuItem && e.Item != null && ((ToolStripMenuItem)e.Item).Checked) return;
+            }
+            renderer.DrawItemImage(e);
         }
 
         #region Reuse Some Renderer Stuff
@@ -435,13 +471,6 @@ namespace System.Windows.Forms
         protected override void OnRenderItemBackground(ToolStripItemRenderEventArgs e)
         {
             renderer.DrawItemBackground(e);
-        }
-
-        protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
-        {
-            // Do not render set blank image if its a checked. Workaround for incorrect menu width.
-            if (e.Item is ToolStripMenuItem && e.Item != null && ((ToolStripMenuItem)e.Item).Checked) return;
-            renderer.DrawItemImage(e);
         }
 
         protected override void OnRenderLabelBackground(ToolStripItemRenderEventArgs e)

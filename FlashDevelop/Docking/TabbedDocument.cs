@@ -498,7 +498,7 @@ namespace FlashDevelop.Docking
         private void UpdateDocumentIcon(String file)
         {
             if (this.useCustomIcon) return;
-            if (!this.IsBrowsable) this.Icon = IconExtractor.GetFileIcon(file, true);
+            if (Win32.ShouldUseWin32() && !this.IsBrowsable) this.Icon = IconExtractor.GetFileIcon(file, true);
             else
             {
                 Image image = Globals.MainForm.FindImage("480");

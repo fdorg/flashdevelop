@@ -9,10 +9,12 @@ VS2005DockPaneStrip.TabSize=Default
 # Default, Block, Rect
 VS2005DockPaneStrip.TabStyle=Default
 
-VS2005DockPaneStrip.DocTabActiveBorder=#696463
-VS2005DockPaneStrip.DocTabInactiveBorder=#696463
-VS2005DockPaneStrip.ToolBorderColor=#696463
-VS2005DockPaneCaption.BorderColor=#696463
+# Default, Underlined
+VS2005AutoHideStrip.TabStyle=Default
+VS2005AutoHideStrip.TabUnderlineColor=#ff0000
+
+# Default (Hover), Click
+DockPanel.ShowAutoHideContentOn=Hover
 
 ToolStrip.BorderColor=#696463
 DockWindow.BorderColor=#696463
@@ -21,6 +23,11 @@ ToolStripSeparator.ForeColor=#9D9895
 
 ToolStripItem.ArrowColor=#474443
 ToolStripItem.TextColor=#363330
+
+VS2005DockPaneStrip.DocTabActiveBorder=#696463
+VS2005DockPaneStrip.DocTabInactiveBorder=#696463
+VS2005DockPaneStrip.ToolBorderColor=#696463
+VS2005DockPaneCaption.BorderColor=#696463
 
 ToolStripMenu.TitleBackColor=#CBC8C5
 ToolStripMenu.TitleBorderColor=#696463

@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Text;
+using PluginCore;
 
 // From: http://www.vesic.org/english/blog/winforms/full-screen-maximize/
 
@@ -24,7 +25,7 @@ namespace FlashDevelop.Controls
             this.Save(form);
             form.WindowState = FormWindowState.Maximized;
             form.FormBorderStyle = FormBorderStyle.None;
-            Win32.SetWinFullScreen(form.Handle);
+            if (Win32.ShouldUseWin32()) Win32.SetWinFullScreen(form.Handle);
         }
 
         /// <summary>

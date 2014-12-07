@@ -7,6 +7,7 @@ using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
 using FlashDevelop;
+using PluginCore;
 
 namespace FlashDevelop
 {
@@ -15,13 +16,25 @@ namespace FlashDevelop
         [STAThread]
         static void Main(String[] arguments)
         {
-            if (SingleInstanceApp.AlreadyExists)
+            if (Win32.ShouldUseWin32()) 
             {
-                Boolean reUse = Array.IndexOf(arguments, "-reuse") > -1;
-                if (!MultiInstanceMode || reUse) SingleInstanceApp.NotifyExistingInstance(arguments);
-                else RunFlashDevelopWithErrorHandling(arguments, false);
+                if (SingleInstanceApp.AlreadyExists)
+                {
+                    Boolean reUse = Array.IndexOf(arguments, "-reuse") > -1;
+                    if (!MultiInstanceMode || reUse) SingleInstanceApp.NotifyExistingInstance(arguments);
+                    else RunFlashDevelopWithErrorHandling(arguments, false);
+                }
+                else RunFlashDevelopWithErrorHandling(arguments, true);
             }
-            else RunFlashDevelopWithErrorHandling(arguments, true);
+            else // For other platforms
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                MainForm.IsFirst = true;
+                MainForm.Arguments = arguments;
+                MainForm mainForm = new MainForm();
+                Application.Run(mainForm);
+            }
         }
 
         /// <summary>

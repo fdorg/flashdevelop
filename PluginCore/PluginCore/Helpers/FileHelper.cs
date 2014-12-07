@@ -17,14 +17,31 @@ namespace PluginCore.Helpers
         /// </summary>
         public static Boolean Recycle(String path)
         {
-            InteropSHFileOperation fo = new InteropSHFileOperation();
-            fo.wFunc = InteropSHFileOperation.FO_Func.FO_DELETE;
-            fo.fFlags.FOF_ALLOWUNDO = true;
-            fo.fFlags.FOF_NOCONFIRMATION = true;
-            fo.fFlags.FOF_NOERRORUI = true;
-            fo.fFlags.FOF_SILENT = true;
-            fo.pFrom = path;
-            return fo.Execute();
+            if (Win32.ShouldUseWin32())
+            {
+                InteropSHFileOperation fo = new InteropSHFileOperation();
+                fo.wFunc = InteropSHFileOperation.FO_Func.FO_DELETE;
+                fo.fFlags.FOF_ALLOWUNDO = true;
+                fo.fFlags.FOF_NOCONFIRMATION = true;
+                fo.fFlags.FOF_NOERRORUI = true;
+                fo.fFlags.FOF_SILENT = true;
+                fo.pFrom = path;
+                return fo.Execute();
+            }
+            else // Delete directly on other platforms
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                    return true;
+                }
+                else if (Directory.Exists(path))
+                {
+                    Directory.Delete(path);
+                    return true;
+                }
+                return false;
+            }
         }
 
         /// <summary>
