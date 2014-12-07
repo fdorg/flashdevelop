@@ -3519,6 +3519,18 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>In Expression</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDebugger.Error.InvalidFile" xml:space="preserve">
+    <value>Error loading the selected file, it may not be valid</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
+    <value>Variable could not be reevaluated</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
+    <value>Only scalar variables can be modified</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Default custom ruleset file for the Flex PMD.</value>
   </data>

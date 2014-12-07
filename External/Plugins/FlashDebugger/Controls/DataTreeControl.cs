@@ -62,16 +62,17 @@ namespace FlashDebugger.Controls
             _model = new DataTreeModel();
             _tree.Model = _model;
             this.Controls.Add(_tree);
-            _tree.Expanding += new EventHandler<TreeViewAdvEventArgs>(TreeExpanding);
-            _tree.SelectionChanged += new EventHandler(TreeSelectionChanged);
+            _tree.Expanding += TreeExpanding;
+            _tree.SelectionChanged += TreeSelectionChanged;
             _tree.LoadOnDemand = true;
             _tree.AutoRowHeight = true;
-            NameNodeTextBox.IsEditEnabledValueNeeded += new EventHandler<NodeControlValueEventArgs>(NameNodeTextBox_IsEditEnabledValueNeeded);
-            ValueNodeTextBox.DrawText += new EventHandler<DrawEventArgs>(ValueNodeTextBox_DrawText);
-            ValueNodeTextBox.IsEditEnabledValueNeeded += new EventHandler<NodeControlValueEventArgs>(ValueNodeTextBox_IsEditEnabledValueNeeded);
-            ValueNodeTextBox.EditorShowing += new System.ComponentModel.CancelEventHandler(ValueNodeTextBox_EditorShowing);
-            ValueNodeTextBox.ChangesApplied += new EventHandler(ValueNodeTextBox_ChangesApplied);
-            _tree.NodeMouseDoubleClick += new EventHandler<TreeNodeAdvMouseEventArgs>(_tree_NodeMouseDoubleClick);
+            NameNodeTextBox.IsEditEnabledValueNeeded += NameNodeTextBox_IsEditEnabledValueNeeded;
+            ValueNodeTextBox.DrawText += ValueNodeTextBox_DrawText;
+            ValueNodeTextBox.IsEditEnabledValueNeeded += ValueNodeTextBox_IsEditEnabledValueNeeded;
+            ValueNodeTextBox.EditorShowing += ValueNodeTextBox_EditorShowing;
+            ValueNodeTextBox.EditorHided += ValueNodeTextBox_EditorHided;
+            ValueNodeTextBox.LabelChanged += ValueNodeTextBox_LabelChanged;
+            _tree.NodeMouseDoubleClick += _tree_NodeMouseDoubleClick;
             _contextMenuStrip = new ContextMenuStrip();
             if (PluginBase.MainForm != null && PluginBase.Settings != null)
             {
@@ -103,7 +104,7 @@ namespace FlashDebugger.Controls
             e.Value = false;
         }
 
-        void ValueNodeTextBox_ChangesApplied(object sender, EventArgs e)
+        void ValueNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
             NodeTextBox box = sender as NodeTextBox;
             if (box.Parent.CurrentNode == null) return;
@@ -119,8 +120,10 @@ namespace FlashDebugger.Controls
                 var obj = exp.evaluate(ctx);
                 
                 node.Variable = (Variable)obj;
-                if (node.Variable != null && node.IsLeaf && node.Nodes.Count > 0)
-                    node.Nodes.Clear();
+
+                if (!watchMode)
+                    PanelsHelper.watchUI.UpdateElements();
+
                 if (ValueChanged != null)
                     ValueChanged(this, EventArgs.Empty);
             }
@@ -137,6 +140,12 @@ namespace FlashDebugger.Controls
             node.IsEditing = true;
         }
 
+        void ValueNodeTextBox_EditorHided(object sender, EventArgs e)
+        {
+            // We need to update the tree to avoid some draw problems
+            Tree.FullUpdate();
+        }
+
         void ValueNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
         {
             DataNode node = e.Node.Tag as DataNode;
@@ -145,7 +154,11 @@ namespace FlashDebugger.Controls
                 e.Value = false;
                 return;
             }
-            if (node.Variable.isAttributeSet(VariableAttribute_.READ_ONLY))
+            int type = node.Variable.getValue().getType();
+            // FDB only allows setting the value of scalar variables.
+            // Strings can be null, however there is no way with FDB of discerning this case.
+            if (node.Variable.isAttributeSet(VariableAttribute_.READ_ONLY) || type != VariableType_.BOOLEAN && type != VariableType_.NUMBER && 
+                type != VariableType_.STRING)
             {
                 e.Value = false;
             }

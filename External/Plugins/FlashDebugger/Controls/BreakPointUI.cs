@@ -369,17 +369,17 @@ namespace FlashDebugger
 
         private void InitializeLocalization()
         {
-            tsbRemoveSelected.ToolTipText = TextHelper.GetString("FlashDebugger.BreakPoints.RemoveSelected");
-            tsbRemoveFiltered.ToolTipText = TextHelper.GetString("FlashDebugger.BreakPoints.RemoveAll");
-            tsbAlternateFiltered.ToolTipText = TextHelper.GetString("FlashDebugger.BreakPoints.ToggleAll");
-            tsbExportFiltered.ToolTipText = TextHelper.GetString("FlashDebugger.BreakPoints.ExportAll");
-            tsbImport.ToolTipText = TextHelper.GetString("FlashDebugger.BreakPoints.ImportAll");
+            tsbRemoveSelected.ToolTipText = TextHelper.GetString("BreakPoints.RemoveSelected");
+            tsbRemoveFiltered.ToolTipText = TextHelper.GetString("BreakPoints.RemoveAll");
+            tsbAlternateFiltered.ToolTipText = TextHelper.GetString("BreakPoints.ToggleAll");
+            tsbExportFiltered.ToolTipText = TextHelper.GetString("BreakPoints.ExportAll");
+            tsbImport.ToolTipText = TextHelper.GetString("BreakPoints.ImportAll");
 
-            tscbFilterColumns.Items.Add(TextHelper.GetString("FlashDebugger.BreakPoints.FilterAll"));
-            tscbFilterColumns.Items.Add(TextHelper.GetString("FlashDebugger.BreakPoints.FilterPath"));
-            tscbFilterColumns.Items.Add(TextHelper.GetString("FlashDebugger.BreakPoints.FilterFile"));
-            tscbFilterColumns.Items.Add(TextHelper.GetString("FlashDebugger.BreakPoints.FilterLine"));
-            tscbFilterColumns.Items.Add(TextHelper.GetString("FlashDebugger.BreakPoints.FilterExp"));
+            tscbFilterColumns.Items.Add(TextHelper.GetString("BreakPoints.FilterAll"));
+            tscbFilterColumns.Items.Add(TextHelper.GetString("BreakPoints.FilterPath"));
+            tscbFilterColumns.Items.Add(TextHelper.GetString("BreakPoints.FilterFile"));
+            tscbFilterColumns.Items.Add(TextHelper.GetString("BreakPoints.FilterLine"));
+            tscbFilterColumns.Items.Add(TextHelper.GetString("BreakPoints.FilterExp"));
 
             tscbFilterColumns.SelectedIndex = 0;
         }
@@ -487,7 +487,14 @@ namespace FlashDebugger
                 fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
                 if (fileDialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    breakPointManager.Save(fileDialog.FileName);
+                    try
+                    {
+                        breakPointManager.Save(fileDialog.FileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorManager.ShowError(ex);
+                    }
                 }
             }
         }
@@ -507,7 +514,7 @@ namespace FlashDebugger
                     }
                     catch (Exception ex)
                     {
-                        ErrorManager.ShowWarning("Invalid file", ex);
+                        ErrorManager.ShowWarning(TextHelper.GetString("Error.InvalidFile"), ex);
                     }
                 }
             }
