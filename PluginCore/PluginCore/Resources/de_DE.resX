@@ -3639,7 +3639,12 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Fehlerzeile:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Synchronisieren</value>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
+    <value>Locate Document Class</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.FilterSettings" xml:space="preserve">
     <value>Suche:</value>
@@ -5333,6 +5338,10 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   </data>
   <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
     <value>Colorize first margin with 'gdefault' foreground color</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
+    <value>Track current active document in Project Tree.</value>
     <comment>Added after 4.7.0</comment>
   </data>
 </root>

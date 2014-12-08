@@ -11,11 +11,11 @@ using PluginCore;
 
 namespace ProjectManager.Controls
 {
-	/// <summary>
-	/// Tree view top toolbar
-	/// </summary>
-	public class TreeBar : ToolStrip
-	{
+    /// <summary>
+    /// Tree view top toolbar
+    /// </summary>
+    public class TreeBar : ToolStrip
+    {
         public ToolStripButton ShowHidden;
         public ToolStripButton RefreshSelected;
         public ToolStripButton ProjectProperties;
@@ -52,9 +52,10 @@ namespace ProjectManager.Controls
             Synchronize = new ToolStripButton(Icons.SyncToFile.Img);
             Synchronize.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
             Synchronize.Padding = new Padding(0);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectTree.LocateActiveFile", Keys.Shift | Keys.Alt | Keys.L);
 
             SynchronizeMain = new ToolStripButton(Icons.ActionScriptCompile.Img);
-            SynchronizeMain.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
+            SynchronizeMain.ToolTipText = TextHelper.GetString("ToolTip.SynchronizeMain");
             SynchronizeMain.Padding = new Padding(0);
 
             ProjectTypes = new ToolStripButton(Icons.AllClasses.Img);
@@ -82,6 +83,6 @@ namespace ProjectManager.Controls
                 ProjectProperties.Image = value ? Icons.OptionsWithIssues.Img : Icons.Options.Img;
             }
         }
-	}    
+    }    
 
 }
