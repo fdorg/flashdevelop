@@ -133,7 +133,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonClose == null)
-                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_Close);
+                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Close);
 
                 return _imageButtonClose;
             }
@@ -162,7 +162,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonWindowList == null)
-                    _imageButtonWindowList = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_Option);
+                    _imageButtonWindowList = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Option);
 
                 return _imageButtonWindowList;
             }
@@ -174,7 +174,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonWindowListOverflow == null)
-                    _imageButtonWindowListOverflow = PluginCore.Helpers.ScaleHelper.Stretch(Resources.DockPane_OptionOverflow);
+                    _imageButtonWindowListOverflow = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_OptionOverflow);
 
                 return _imageButtonWindowListOverflow;
             }
@@ -365,9 +365,15 @@ namespace WeifenLuo.WinFormsUI.Docking
 			get	{	return ScaleHelper.Scale(_DocumentButtonGapRight);	}
 		}
 
+        // HACK
 		private static int DocumentTabGapTop
 		{
-			get	{	return ScaleHelper.Scale(_DocumentTabGapTop);	}
+			get	
+            {
+                String tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
+                if (tabSize == "Large") return ScaleHelper.Scale(_DocumentTabGapTop - 2);
+                else return ScaleHelper.Scale(_DocumentTabGapTop);
+            }
 		}
 
 		private static int DocumentTabGapLeft
@@ -385,9 +391,15 @@ namespace WeifenLuo.WinFormsUI.Docking
             get { return ScaleHelper.Scale(_DocumentIconGapBottom); }
         }
 
+        // HACK
 		private static int DocumentIconGapLeft
 		{
-            get { return ScaleHelper.Scale(_DocumentIconGapLeft); }
+            get 
+            {
+                String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+                if (tabStyle == "Rect") return ScaleHelper.Scale(_DocumentIconGapLeft - 4);
+                else return ScaleHelper.Scale(_DocumentIconGapLeft); 
+            }
 		}
 
         private static int DocumentIconGapRight
@@ -412,17 +424,34 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		private static Pen PenToolWindowTabBorder
 		{
-            get { return SystemPens.ControlDark; }
+            get 
+            {
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolBorderColor");
+                if (color != Color.Empty) return new Pen(color);
+                else return SystemPens.ControlDark;
+            }
 		}
 
+        // HACK
         private static Pen PenDocumentTabActiveBorder
         {
-            get { return SystemPens.ControlDark; }
+            get 
+            {
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabActiveBorder");
+                if (color != Color.Empty) return new Pen(color);
+                else return SystemPens.ControlDark;
+            }
         }
 
+        // HACK
         private static Pen PenDocumentTabInactiveBorder
         {
-            get { return SystemPens.ControlDark; }
+            get 
+            {
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabInactiveBorder");
+                if (color != Color.Empty) return new Pen(color);
+                else return SystemPens.ControlDark;
+            }
         }
 
         // HACK
@@ -822,9 +851,15 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (m_startDisplayingTab >= Tabs.Count)
                 m_startDisplayingTab = 0;
 
+            int x = 0;
             Rectangle rectTabStrip = TabsRectangle;
 
-            int x = rectTabStrip.X + rectTabStrip.Height / 2;
+            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+
+            // HACK
+            if (tabStyle == "Rect") x = rectTabStrip.X;
+            else x = rectTabStrip.X + rectTabStrip.Height / 2;
+
             bool overflow = false;
 
             // Originally all new documents that were considered overflow
@@ -872,7 +907,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 m_startDisplayingTab = 0;
                 FirstDisplayingTab = 0;
-                x = rectTabStrip.X + rectTabStrip.Height / 2;
+
+                // HACK
+                if (tabStyle == "Rect") x = rectTabStrip.X;
+                else x = rectTabStrip.X + rectTabStrip.Height / 2;
+
                 foreach (TabVS2005 tab in Tabs)
                 {
                     tab.TabX = x;
@@ -1047,6 +1086,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             int curveSize = 6;
 
+            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            if (tabStyle == "Block")
+            {
+                curveSize = 1;
+            }
+            
+
             GraphicsPath.Reset();
             Rectangle rect = GetTabRectangle(Tabs.IndexOf(tab));
             if (rtlTransform)
@@ -1173,10 +1219,16 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DocumentIconWidth, DocumentIconHeight);
             Rectangle rectText = rectIcon;
 
-            // CHANGED - NICK
-            rectText.Y += ScaleHelper.Scale(2);
+            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
 
-            // CHANGED - MIKA
+            // Adjust text
+            double scale = ScaleHelper.GetScale();
+            if (scale >= 1.5)
+            {
+                String tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
+                if (tabSize == "Default") rectText.Y += ScaleHelper.Scale(1);
+            }
+            else rectText.Y += ScaleHelper.Scale(2);
             if (Font.SizeInPoints <= 8F) rectText.Y -= ScaleHelper.Scale(1);
 
             if (DockPane.DockPanel.ShowDocumentIcon)
@@ -1204,7 +1256,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (DockPane.ActiveContent == tab.Content)
             {
-                g.FillPath(BrushDocumentActiveBackground, path);
+                if (tabStyle == "Rect") g.FillRectangle(BrushDocumentActiveBackground, rectTab);
+                else g.FillPath(BrushDocumentActiveBackground, path);
 
                 // Change by Mika: add color strip to tabs
                 SolidBrush stripBrush = new SolidBrush(stripColor);
@@ -1215,7 +1268,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 stripRect.Y += 1;
                 g.FillRectangle(stripBrush, stripRect);
 
-                g.DrawPath(PenDocumentTabActiveBorder, path);
+                if (tabStyle == "Rect") g.DrawRectangle(PenDocumentTabActiveBorder, rectTab);
+                else g.DrawPath(PenDocumentTabActiveBorder, path);
 
                 Color sepColor = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.TabSeparatorColor");
 
@@ -1236,7 +1290,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 // Draw separator
                 using (Pen pen = new Pen(sepColor))
                 {
-                    g.DrawLine(pen, r.Left + 2, r.Bottom - 1, right, r.Bottom - 1);
+                    if (tabStyle == "Rect") g.DrawLine(pen, rectTab.Left + 2, rectTab.Bottom - 1, right, rectTab.Bottom - 1);
+                    else g.DrawLine(pen, r.Left + 2, r.Bottom - 1, right, r.Bottom - 1);
                 }
 
                 if (DockPane.IsActiveDocumentPane)
@@ -1258,7 +1313,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
 
                 //g.FillPath(BrushDocumentInactiveBackground, path);
-                g.FillPath(tabBrush, path);
+                if (tabStyle == "Rect") g.FillRectangle(tabBrush, rectTab);
+                else g.FillPath(tabBrush, path);
 
                 // Change by Mika: add color strip to tabs
                 SolidBrush stripBrush = new SolidBrush(stripColor);
@@ -1269,7 +1325,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 stripRect.Y += 1;
                 g.FillRectangle(stripBrush, stripRect);
 
-                g.DrawPath(PenDocumentTabInactiveBorder, path);
+                if (tabStyle == "Rect") g.DrawRectangle(PenDocumentTabInactiveBorder, rectTab);
+                else g.DrawPath(PenDocumentTabInactiveBorder, path);
+
                 TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, Font, rectText, ColorDocumentInactiveText, DocumentTextFormat);
             }
 

@@ -21,6 +21,17 @@ namespace FlashDevelop.Helpers
         }
 
         /// <summary>
+        /// Path to the large system image file
+        /// </summary>
+        public static String Images32
+        {
+            get
+            {
+                return GetSettingFile("Images32.png");
+            }
+        }
+
+        /// <summary>
         /// Path to the toolbar file
         /// </summary>
         public static String ToolBar

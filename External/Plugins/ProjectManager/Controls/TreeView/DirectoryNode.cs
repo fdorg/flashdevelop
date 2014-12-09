@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Managers;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS3;
@@ -47,9 +48,6 @@ namespace ProjectManager.Controls.TreeView
                 node.Dispose();
 		}
 
-        [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]
-        static extern bool PathIsDirectoryEmpty([In] string lpszPath);
-
 		public override void Refresh(bool recursive)
 		{
 			if (IsInvalid) return;
@@ -83,7 +81,8 @@ namespace ProjectManager.Controls.TreeView
             else ForeColorRequest = SystemColors.ControlText;
 
 			// make the plus/minus sign correct
-            bool empty = !Directory.Exists(BackingPath) || PathIsDirectoryEmpty(BackingPath);
+            // TODO: Check if this works ok!
+            bool empty = !Directory.Exists(BackingPath) || FolderHelper.IsDirectoryEmpty(BackingPath);
 
 			if (!empty)
 			{

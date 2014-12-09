@@ -32,6 +32,7 @@ namespace Aga.Controls.Tree
 		#region Internal Properties
 
 		private IRowLayout _rowLayout;
+		private IHeaderLayout _headerLayout;
 
 		private bool _dragMode;
 		private bool DragMode
@@ -52,18 +53,10 @@ namespace Aga.Controls.Tree
 			}
 		}
 
-        // HACK: Made public
-		public int ColumnHeaderHeight
-		{
-			get
-			{
-				if (UseColumns)
-					return _columnHeaderHeight;
-				else
-					return 0;
-			}
-		}
-
+		internal int ActualColumnHeaderHeight
+        {
+            get { return UseColumns ? ColumnHeaderHeight : 0; }
+        }
 		/// <summary>
 		/// returns all nodes, which parent is expanded
 		/// </summary>
@@ -75,7 +68,7 @@ namespace Aga.Controls.Tree
 				while (node != null)
 				{
 					node = node.NextVisibleNode;
-					if (node != null)
+                    if (node != null && node.IsVisibleOverride)
 						yield return node;
 				}
 			}
@@ -194,8 +187,8 @@ namespace Aga.Controls.Tree
 			get
 			{
 				Rectangle r = ClientRectangle;
-				//r.Y += ColumnHeaderHeight;
-				//r.Height -= ColumnHeaderHeight;
+                //r.Y += ActualColumnHeaderHeight;
+				//r.Height -= ActualColumnHeaderHeight;
 				int w = _vScrollBar.Visible ? _vScrollBar.Width : 0;
 				int h = _hScrollBar.Visible ? _hScrollBar.Height : 0;
 				return new Rectangle(r.X, r.Y, r.Width - w, r.Height - h);
@@ -213,6 +206,85 @@ namespace Aga.Controls.Tree
 		#region Public Properties
 
 		#region DesignTime
+        private BackgroundPaintMode _backgroundPaintMode = BackgroundPaintMode.Default;
+        [Category("Appearance")]
+        public BackgroundPaintMode BackgroundPaintMode
+        {
+            get
+            {
+                return _backgroundPaintMode;
+            }
+            set
+            {
+                _backgroundPaintMode = value;
+            }
+        }
+
+
+
+        private Color _backgroundColor2 = SystemColors.Window;
+        [Category("Appearance")]
+        public Color BackColor2
+        {
+            get
+            {
+                return _backgroundColor2;
+            }
+            set
+            {
+                _backgroundColor2 = value;
+            }
+        }
+
+
+        private Color _highlightColorActive = SystemColors.Highlight;
+        internal SolidBrush _highlightColorActiveBrush = (SolidBrush)SystemBrushes.Highlight;
+        [Category("Appearance")]
+        public Color HighlightColorActive
+        {
+            get
+            {
+                return _highlightColorActive;
+            }
+            set
+            {
+                _highlightColorActive = value;
+                _highlightColorActiveBrush = new SolidBrush(_highlightColorActive);
+            }
+        }
+
+        private Color _highlightColorInactive = SystemColors.InactiveBorder;
+        internal SolidBrush _highlightColorInactiveBrush = (SolidBrush)SystemBrushes.InactiveBorder;
+        
+        [Category("Appearance")]
+        public Color HighlightColorInactive
+        {
+            get
+            {
+                return _highlightColorInactive;
+            }
+            set
+            {
+                _highlightColorInactive = value;
+                _highlightColorInactiveBrush = new SolidBrush(_highlightColorInactive);
+
+            }
+        }
+
+
+         private bool _AutoSpanColumns = false;
+        [DefaultValue(false), Category("Appearance")]
+        public bool AutoSpanColumns
+        {
+            get
+            {
+                return _AutoSpanColumns;
+            }
+            set
+            {
+                _AutoSpanColumns = value;
+            }
+        }
 
 		private bool _shiftFirstNode;
 		[DefaultValue(false), Category("Behavior")]
@@ -373,12 +445,12 @@ namespace Aga.Controls.Tree
             set
             {
                 base.Font = value;
-                _columnHeaderHeight = base.Font.Height + 9;
+                ColumnHeaderHeight = base.Font.Height + 9;
             }
         }
         // End font property
 
-		private BorderStyle _borderStyle = BorderStyle.Fixed3D;
+        private BorderStyle _borderStyle = BorderStyle.Fixed3D;
 		[DefaultValue(BorderStyle.Fixed3D), Category("Appearance")]
 		public BorderStyle BorderStyle
 		{
@@ -414,6 +486,28 @@ namespace Aga.Controls.Tree
 					_rowLayout = new AutoRowHeightLayout(this, RowHeight);
 				else
 					_rowLayout = new FixedRowHeightLayout(this, RowHeight);
+				FullUpdate();
+			}
+		}
+
+		private bool _autoHeaderHeight = false;
+		/// <summary>
+		/// Set to true to expand header height to fit the text of it's largest column.
+		/// </summary>
+		[DefaultValue(false), Category("Appearance"), Description("Expand each header height to fit the text of it's largest column.")]
+		public bool AutoHeaderHeight
+		{
+			get
+			{
+				return _autoHeaderHeight;
+			}
+			set
+			{
+				_autoHeaderHeight = value;
+				if (value)
+					_headerLayout = new AutoHeaderHeightLayout(this, ActualColumnHeaderHeight);
+				else
+					_headerLayout = new FixedHeaderHeightLayout(this, ActualColumnHeaderHeight);
 				FullUpdate();
 			}
 		}
@@ -472,6 +566,18 @@ namespace Aga.Controls.Tree
 			set
 			{
 				_hideSelection = value;
+				UpdateView();
+			}
+		}
+
+		bool _inactiveSelection = true;
+		[DefaultValue(true), Category("Behavior")]
+		public bool InactiveSelection
+		{
+			get { return _inactiveSelection; }
+			set
+			{
+				_inactiveSelection = value;
 				UpdateView();
 			}
 		}
@@ -604,9 +710,39 @@ namespace Aga.Controls.Tree
 			set { _asyncExpanding = value; }
 		}
 
+        [DefaultValue(20), Category("Appearance")]
+        public int ColumnHeaderHeight
+        {
+            get
+            {
+                return _headerLayout.PreferredHeaderHeight;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException("value");
+                _headerLayout.PreferredHeaderHeight = value;
+                FullUpdate();
+            }
+        }
+		
+
 		#endregion
 
 		#region RunTime
+
+        public delegate void VisibleOverride(object node, ref bool visible);
+
+        private VisibleOverride _onVisibleOverride;
+        public VisibleOverride OnVisibleOverride
+        {
+            get { return _onVisibleOverride; }
+            set
+            {
+                _onVisibleOverride = value;
+                FullUpdate();
+            }
+        }
 
 		private IToolTipProvider _defaultToolTipProvider = null;
 		[Browsable(false)]

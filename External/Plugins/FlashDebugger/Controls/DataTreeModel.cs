@@ -4,7 +4,7 @@ namespace FlashDebugger.Controls
 {
     public class DataTreeModel : TreeModel
     {
-		static private char[] chTrims = { '.' };
+        static private char[] chTrims = { '.' };
 
         public string GetFullPath(Node node)
         {
@@ -12,7 +12,7 @@ namespace FlashDebugger.Controls
             else
             {
                 string path = string.Empty;
-				while (node != Root && node != null)
+                while (node != Root && node != null)
                 {
                     path = string.Format("{0}.{1}", node.Text, path);
                     node = node.Parent;
@@ -21,7 +21,7 @@ namespace FlashDebugger.Controls
             }
         }
 
-		public Node FindNode(string path)
+        public Node FindNode(string path)
         {
             if (path == string.Empty) return Root;
             else return FindNode(Root, path, 0);
@@ -29,7 +29,7 @@ namespace FlashDebugger.Controls
 
         private Node FindNode(Node root, string path, int level)
         {
-			foreach (Node node in root.Nodes)
+            foreach (Node node in root.Nodes)
             {
                 if (path == GetFullPath(node)) return node;
                 else

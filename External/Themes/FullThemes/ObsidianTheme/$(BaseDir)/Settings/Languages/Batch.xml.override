@@ -1,0 +1,20 @@
+﻿<!-- COLORING_START -->
+<editor-style caret-fore="0xFFFFFF" caretline-back="0xe2F393C" selection-fore="0xE0E2E4" selection-back="0x804000" margin-fore="0x293134" margin-back="0x293134" marker-fore="0x293134" marker-back="0x71888C" highlight-back="0xFFFFFF" colorize-marker-back="true" />
+<use-styles>
+	<style name="default" fore="0xE0E2E4" back="0x293134" size="9" font="Consolas,Courier New,monospace" />
+	<style name="comment" fore="0x7D8C93" />
+	<style name="word" fore="0x93C763" />
+	<style name="label" fore="0xffffff" back="0x255B83" eolfilled="true" />
+	<style name="hide" fore="0xE8E2B7" />
+	<style name="command" fore="0xEC7600" />
+	<style name="identifier" />
+	<style name="operator" />
+	<style name="gdefault" fore="0x333F42" />
+	<style name="linenumber" fore="0x81969A" />
+	<style name="bracelight" fore="0x72898D" back="0xe2F393C" bold="true" />
+	<style name="bracebad" bold="true" />
+	<style name="controlchar" fore="0xffffff" />
+	<style name="indentguide" fore="0xc0c0c0" />
+	<style name="lastpredefined" fore="0x666666" />
+</use-styles>
+<!-- COLORING_END -->

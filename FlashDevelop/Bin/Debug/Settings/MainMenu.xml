@@ -2,7 +2,7 @@
 <mainmenu>
 	<menu label="Label.File" name="FileMenu">
 		<menu label="Label.New" name="NewMenu">
-			<button label="Label.BlankDocument" click="New" shortcut="Control|N" />
+			<button label="Label.BlankDocument" click="New" shortcut="Control|N" image="559" />
 			<separator />
 			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" />
 			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" />
@@ -16,7 +16,7 @@
 			<button label="Label.TextDocument" click="NewFromTemplate" tag="txt;$(TemplateDir)\TXT.fdt" />
 		</menu>
 		<menu label="Label.Modify" name="ModifyMenu" flags="Enable:IsEditable">
-			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" />
+			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" image="559" />
 			<button label="Label.Duplicate" click="Duplicate" shortcut="Control|Shift|N" flags="Enable:IsEditable" />
 			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|T" flags="Enable:IsEditable|CanUndo" />
 		</menu>
@@ -43,14 +43,14 @@
 			<button label="Label.SaveBOM" click="ToggleSaveBOM" flags="Check:IsEditable|SaveBOM+Disable:IsDefaultEncoding" />
 			<separator />
 			<menu label="Label.ConvertTextTo" name="ConvertToMenu" flags="Enable:IsEditable">
-				<button label="Label.8Bits" click="ConvertEncoding" tag="0" />
+				<button label="Label.8Bits" click="ConvertEncoding" tag="0" image="559" />
 				<button label="Label.BigEndian" click="ConvertEncoding" tag="1201" />
 				<button label="Label.LittleEndian" click="ConvertEncoding" tag="1200" />
 				<button label="Label.UTF8" click="ConvertEncoding" tag="65001" />
 				<button label="Label.UTF7" click="ConvertEncoding" tag="65000" />
 			</menu>
-			<menu label="Label.OpenFilesIn" name="OpenInMenu" flags="Enable:IsEditable">
-				<button label="Label.8Bits" click="OpenIn" tag="0" />
+			<menu label="Label.OpenFilesIn" name="OpenInMenu" flags="Enable:IsEditable" image="559">
+				<button label="Label.8Bits" click="OpenIn" tag="0" image="559" />
 				<button label="Label.BigEndian" click="OpenIn" tag="1201" />
 				<button label="Label.LittleEndian" click="OpenIn" tag="1200" />
 				<button label="Label.UTF8" click="OpenIn" tag="65001" />
@@ -58,7 +58,7 @@
 			</menu>
 		</menu>
 		<menu label="Label.LineEnds" name="EOLMenu" flags="Enable:IsEditable">
-			<button label="Label.CRLF" click="ConvertEOL" tag="0" flags="Check:IsEditable|IsActiveEOL" />
+			<button label="Label.CRLF" click="ConvertEOL" tag="0" image="559" flags="Check:IsEditable|IsActiveEOL" />
 			<button label="Label.CR" click="ConvertEOL" tag="1" flags="Check:IsEditable|IsActiveEOL" />
 			<button label="Label.LF" click="ConvertEOL" tag="2" flags="Check:IsEditable|IsActiveEOL" />
 		</menu>
@@ -131,7 +131,7 @@
 		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" flags="Enable:IsEditable|HasBookmarks" />
 	</menu>
 	<menu label="Label.Insert" name="InsertMenu">
-		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" />
+		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" image="559" />
 		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" />
 		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" flags="Enable:IsEditable" />
 		<separator />
@@ -158,7 +158,7 @@
 			<button label="Label.CompareFiles" click="RunProcess" tag="$(Quote)$(AppDir)\Tools\diffui\diffui.exe$(Quote)" image="37|16|-1|-1" />
 		</menu>
 		<menu label="Label.WebTools" name="WebToolsMenu">
-			<button label="Label.HTMLValidator" click="Browse" tag="http://validator.w3.org/" />
+			<button label="Label.HTMLValidator" click="Browse" tag="http://validator.w3.org/" image="559" />
 			<button label="Label.CSSValidator" click="Browse" tag="http://jigsaw.w3.org/css-validator/" />
 		</menu>
 		<separator />
@@ -184,7 +184,7 @@
 		<button label="Label.CheckUpdates" click="CheckUpdates" image="181|8|0|4" />
 		<separator />
 		<menu label="Label.TechnicalSpecifications" name="TechSpecsMenu">
-			<button label="&amp;CSS 2.1" click="Browse" tag="http://www.w3.org/TR/CSS2" />
+			<button label="&amp;CSS 2.1" click="Browse" tag="http://www.w3.org/TR/CSS2" image="559" />
 			<button label="H&amp;TML 5" click="Browse" tag="http://www.w3.org/TR/html5" />
 			<button label="&amp;HTML 4.01" click="Browse" tag="http://www.w3.org/TR/html401" />
 			<button label="&amp;XHTML 1.1" click="Browse" tag="http://www.w3.org/TR/xhtml11" />
@@ -194,7 +194,7 @@
 			<button label="&amp;WCAG 1.0" click="Browse" tag="http://www.w3.org/TR/WCAG10" />
 		</menu>
 		<menu label="Label.LanguageReferences" name="LangRefsMenu">
-			<button label="&amp;Flash" click="Browse" tag="http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/index.html" />
+			<button label="&amp;Flash" click="Browse" tag="http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/index.html" image="559" />
 			<button label="&amp;Haxe" click="Browse" tag="http://haxe.org/ref" />
 			<button label="&amp;MySQL" click="Browse" tag="http://dev.mysql.com/doc/mysql/en/" />
 			<button label="&amp;PHP" click="Browse" tag="http://www.php.net/manual/en/" />

@@ -17,16 +17,20 @@ namespace FlashDevelop.Dialogs
 {
     public class ShortcutDialog : SmartForm
     {
+        private ToolStripMenuItem removeShortcut;
+        private ToolStripMenuItem revertToDefault;
+        private ToolStripMenuItem revertAllToDefault;
         private System.Windows.Forms.Label infoLabel;
+        private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ColumnHeader idHeader;
         private System.Windows.Forms.ColumnHeader keyHeader;
         private System.Windows.Forms.TextBox filterTextBox;
+        private System.Windows.Forms.CheckBox viewCustom;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button closeButton;
-        private System.String searchInvitation;
-    
+
         public ShortcutDialog()
         {
             this.Owner = Globals.MainForm;
@@ -36,6 +40,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeContextMenu();
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();
+            this.PopulateListView("", false);
             this.ApplyScaling();
         }
 
@@ -53,8 +58,10 @@ namespace FlashDevelop.Dialogs
             this.closeButton = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.infoLabel = new System.Windows.Forms.Label();
+            this.searchLabel = new System.Windows.Forms.Label();
             this.clearButton = new System.Windows.Forms.Button();
             this.filterTextBox = new System.Windows.Forms.TextBox();
+            this.viewCustom = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,10 +81,10 @@ namespace FlashDevelop.Dialogs
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.idHeader, this.keyHeader});
             this.listView.GridLines = true;
             this.listView.FullRowSelect = true;
-            this.listView.Location = new System.Drawing.Point(12, 40);
+            this.listView.Location = new System.Drawing.Point(12, 62);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(562, 335);
+            this.listView.Size = new System.Drawing.Size(562, 312);
             this.listView.TabIndex = 4;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -114,10 +121,19 @@ namespace FlashDevelop.Dialogs
             this.infoLabel.TabIndex = 6;
             this.infoLabel.Text = "Shortcuts can be edited by selecting an item and pressing valid menu item shortcut keys.";
             // 
+            // searchLabel
+            // 
+            this.searchLabel.AutoSize = true;
+            this.searchLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
+            this.searchLabel.Location = new System.Drawing.Point(10, 10);
+            this.searchLabel.Name = "searchLabel";
+            this.searchLabel.TabIndex = 0;
+            this.searchLabel.Text = "Search:";
+            // 
             // clearButton
             //
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.clearButton.Location = new System.Drawing.Point(549, 10);
+            this.clearButton.Location = new System.Drawing.Point(549, 30);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(26, 23);
             this.clearButton.TabIndex = 2;
@@ -127,14 +143,20 @@ namespace FlashDevelop.Dialogs
             // filterTextBox
             // 
             this.filterTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.filterTextBox.Location = new System.Drawing.Point(12, 12);
+            this.filterTextBox.Location = new System.Drawing.Point(12, 32);
             this.filterTextBox.Name = "filterTextBox";
             this.filterTextBox.Size = new System.Drawing.Size(530, 20);
             this.filterTextBox.TabIndex = 1;
             this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
             this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextChanged);
-            this.filterTextBox.Leave += new System.EventHandler(this.FilterTextBoxLeave);
-            this.filterTextBox.Enter += new System.EventHandler(this.FilterTextBoxEnter);
+            // 
+            // viewCustom
+            //
+            this.viewCustom.AutoSize = true;
+            this.viewCustom.CheckAlign = ContentAlignment.MiddleRight;
+            this.viewCustom.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.viewCustom.Location = new System.Drawing.Point(471, 9);
+            this.viewCustom.Click += new System.EventHandler(this.ViewCustomClick);
             // 
             // ShortcutDialog
             // 
@@ -149,12 +171,15 @@ namespace FlashDevelop.Dialogs
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(586, 416);
+            this.MinimumSize = new System.Drawing.Size(400, 250);
             this.Controls.Add(this.filterTextBox);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.closeButton);
+            this.Controls.Add(this.viewCustom);
             this.Controls.Add(this.listView);
+            this.Controls.Add(this.searchLabel);
             this.FormClosed += new FormClosedEventHandler(this.DialogClosed);
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -172,8 +197,13 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeGraphics()
         {
+            ImageList imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.Images.Add(Globals.MainForm.FindImage("153")); // clear
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.pictureBox.Image = Globals.MainForm.FindImage("229");
-            this.clearButton.Image = Globals.MainForm.FindImage("153");
+            this.clearButton.ImageList = imageList;
+            this.clearButton.ImageIndex = 0;
         }
 
         /// <summary>
@@ -184,13 +214,15 @@ namespace FlashDevelop.Dialogs
             ContextMenuStrip cms = new ContextMenuStrip();
             cms.Font = Globals.Settings.DefaultFont;
             cms.Renderer = new DockPanelStripRenderer(false);
-            cms.Items.Add(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcutClick);
-            cms.Items.Add(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
+            this.removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcutClick);
+            this.removeShortcut.ShortcutKeys = Keys.Delete;
+            this.revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
+            this.revertAllToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefaultClick);
+            cms.Items.Add(this.removeShortcut);
+            cms.Items.Add(this.revertToDefault);
+            cms.Items.Add(this.revertAllToDefault);
             this.listView.ContextMenuStrip = cms;
-            // Search Invitation...
-            this.searchInvitation = TextHelper.GetString("Label.Search");
-            this.searchInvitation = this.searchInvitation.Replace("&", "") + "...";
-            this.filterTextBox.Text = this.searchInvitation;
+            this.listView.ContextMenuStrip.Opening += this.ContextMenuOpening;
         }
 
         /// <summary>
@@ -202,6 +234,8 @@ namespace FlashDevelop.Dialogs
             this.keyHeader.Text = TextHelper.GetString("Label.Shortcut");
             this.infoLabel.Text = TextHelper.GetString("Info.ShortcutEditInfo");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
+            this.viewCustom.Text = TextHelper.GetString("Label.ViewCustom");
+            this.searchLabel.Text = TextHelper.GetString("Label.Search").Replace("&", "") + ":";
             this.Text = " " + TextHelper.GetString("Title.Shortcuts");
         }
 
@@ -246,17 +280,18 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Populates the shortcut list view
         /// </summary>
-        private void PopulateListView(String filter)
+        private void PopulateListView(String filter, Boolean viewCustom)
         {
             this.listView.BeginUpdate();
             this.listView.Items.Clear();
             this.listView.ListViewItemSorter = new ListViewComparer();
-            foreach (ShortcutItem item in ShortcutManager.RegistedItems)
+            foreach (ShortcutItem item in ShortcutManager.RegisteredItems)
             {
                 if (!this.listView.Items.ContainsKey(item.Id) && 
                     (item.Id.ToLower().Contains(filter.ToLower()) || 
                     GetKeysAsString(item.Custom).ToLower().Contains(filter.ToLower())))
                 {
+                    if (viewCustom && item.Custom == item.Default) continue;
                     ListViewItem lvi = new ListViewItem();
                     lvi.Text = lvi.Name = item.Id; lvi.Tag = item;
                     lvi.SubItems.Add(GetKeysAsString(item.Custom));
@@ -272,6 +307,31 @@ namespace FlashDevelop.Dialogs
                 ListViewItem item = this.listView.Items[0];
                 item.Selected = true;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ContextMenuOpening(Object sender, EventArgs e)
+        {
+            Boolean customShortcut = false;
+            if (this.listView.SelectedItems.Count > 0)
+            {
+                ShortcutItem current = this.listView.SelectedItems[0].Tag as ShortcutItem;
+                this.removeShortcut.Enabled = current.Custom != Keys.None;
+                this.revertToDefault.Enabled = current.Custom != current.Default;
+            }
+            else this.removeShortcut.Enabled = revertToDefault.Enabled = false;
+            foreach (ListViewItem item in listView.Items)
+            {
+                ShortcutItem current = item.Tag as ShortcutItem;
+                if (current.Custom != current.Default)
+                {
+                    customShortcut = true;
+                    break;
+                }
+            }
+            this.revertAllToDefault.Enabled = customShortcut;
         }
 
         /// <summary>
@@ -300,8 +360,18 @@ namespace FlashDevelop.Dialogs
                             this.filterTextBox.SelectAll();
                         }
                     }
+                    // Don't trigger list view default shortcuts like Ctrl+Add
+                    if (e.KeyData != Keys.Up && e.KeyData != Keys.Down) e.Handled = true;
                 }
             }
+        }
+
+        /// <summary>
+        /// Filter the list view for custom items
+        /// </summary>
+        private void ViewCustomClick(Object sender, EventArgs e)
+        {
+            this.FilterTextChanged(null, null);
         }
 
         /// <summary>
@@ -323,14 +393,26 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void RevertToDefaultClick(Object sender, EventArgs e)
         {
-            if (this.listView.SelectedItems.Count > 0)
-            {
-                ListViewItem selected = this.listView.SelectedItems[0];
-                ShortcutItem item = selected.Tag as ShortcutItem;
-                selected.SubItems[1].Text = GetKeysAsString(item.Default);
-                item.Custom = item.Default;
-                this.UpdateItemHighlightFont(selected, item);
-            }
+            if (this.listView.SelectedItems.Count > 0) this.RevertToDefault(listView.SelectedItems[0]);
+        }
+
+        /// <summary>
+        /// Reverts all shortcut to their default value
+        /// </summary>
+        private void RevertAllToDefaultClick(Object sender, EventArgs e)
+        {
+            foreach (ListViewItem listItem in listView.Items) this.RevertToDefault(listItem);
+        }
+
+        /// <summary>
+        /// Revert the selected items shortcut to default
+        /// </summary>
+        private void RevertToDefault(ListViewItem listItem)
+        {
+            ShortcutItem item = listItem.Tag as ShortcutItem;
+            listItem.SubItems[1].Text = this.GetKeysAsString(item.Default);
+            item.Custom = item.Default;
+            this.UpdateItemHighlightFont(listItem, item);
         }
 
         /// <summary>
@@ -349,40 +431,12 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-        /// When user enters control, handle it
-        /// </summary>
-        private void FilterTextBoxEnter(Object sender, System.EventArgs e)
-        {
-            if (this.filterTextBox.Text == searchInvitation)
-            {
-                this.filterTextBox.TextChanged -= new EventHandler(this.FilterTextChanged);
-                this.filterTextBox.Text = "";
-                this.filterTextBox.TextChanged += new EventHandler(this.FilterTextChanged);
-                this.filterTextBox.ForeColor = System.Drawing.SystemColors.WindowText;
-            }
-        }
-
-        /// <summary>
-        /// When user leaves control, handle it
-        /// </summary>
-        private void FilterTextBoxLeave(Object sender, System.EventArgs e)
-        {
-            if (this.filterTextBox.Text == "")
-            {
-                this.filterTextBox.TextChanged -= new EventHandler(this.FilterTextChanged);
-                this.filterTextBox.Text = searchInvitation;
-                this.filterTextBox.TextChanged += new EventHandler(this.FilterTextChanged);
-                this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
-            }
-        }
-
-        /// <summary>
         /// Clears the filter text field
         /// </summary>
         private void ClearFilterClick(Object sender, EventArgs e)
         {
+            this.viewCustom.Checked = false;
             this.filterTextBox.Text = "";
-            this.FilterTextBoxLeave(null, null);
         }
 
         /// <summary>
@@ -391,8 +445,7 @@ namespace FlashDevelop.Dialogs
         private void FilterTextChanged(Object sender, EventArgs e)
         {
             String searchText = this.filterTextBox.Text.Trim();
-            if (searchText == searchInvitation) searchText = "";
-            this.PopulateListView(searchText);
+            this.PopulateListView(searchText, viewCustom.Checked);
         }
 
         /// <summary>

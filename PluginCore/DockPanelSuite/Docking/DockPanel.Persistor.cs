@@ -233,10 +233,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public static void SaveAsXml(DockPanel dockPanel, Stream stream, Encoding encoding, bool upstream)
             {
-                XmlTextWriter xmlOut = new XmlTextWriter(stream, encoding);
-
-                // Use indenting for readability
-                xmlOut.Formatting = Formatting.Indented;
+                XmlWriter xmlOut = XmlWriter.Create(stream, new XmlWriterSettings() { Encoding = encoding, Indent = true });
 
                 if (!upstream)
                     xmlOut.WriteStartDocument();
@@ -253,9 +250,11 @@ namespace WeifenLuo.WinFormsUI.Docking
                 xmlOut.WriteAttributeString("DockRightPortion", dockPanel.DockRightPortion.ToString(CultureInfo.InvariantCulture));
                 xmlOut.WriteAttributeString("DockTopPortion", dockPanel.DockTopPortion.ToString(CultureInfo.InvariantCulture));
                 xmlOut.WriteAttributeString("DockBottomPortion", dockPanel.DockBottomPortion.ToString(CultureInfo.InvariantCulture));
-                xmlOut.WriteAttributeString("ActiveDocumentPane", dockPanel.Panes.IndexOf(dockPanel.ActiveDocumentPane).ToString(CultureInfo.InvariantCulture));
-                xmlOut.WriteAttributeString("ActivePane", dockPanel.Panes.IndexOf(dockPanel.ActivePane).ToString(CultureInfo.InvariantCulture));
-
+                if (NativeMethods.ShouldUseWin32()) 
+                { 
+                    xmlOut.WriteAttributeString("ActiveDocumentPane", dockPanel.Panes.IndexOf(dockPanel.ActiveDocumentPane).ToString(CultureInfo.InvariantCulture));
+                    xmlOut.WriteAttributeString("ActivePane", dockPanel.Panes.IndexOf(dockPanel.ActivePane).ToString(CultureInfo.InvariantCulture));
+                }
                 // Contents
                 xmlOut.WriteStartElement("Contents");
                 xmlOut.WriteAttributeString("Count", dockPanel.Contents.Count.ToString(CultureInfo.InvariantCulture));

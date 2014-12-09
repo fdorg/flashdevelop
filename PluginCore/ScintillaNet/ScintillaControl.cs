@@ -28,7 +28,7 @@ namespace ScintillaNet
         private bool isHiliteSelected = true;
         private bool useHighlightGuides = true;
 		private static Scintilla sciConfiguration = null;
-        private static Hashtable shortcutOverrides = new Hashtable();
+        private static Dictionary<String, ShortcutOverride> shortcutOverrides = new Dictionary<String, ShortcutOverride>();
         private Enums.IndentView indentView = Enums.IndentView.Real;
 		private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
 		private Hashtable ignoredKeys = new Hashtable();
@@ -39,23 +39,26 @@ namespace ScintillaNet
 
         public ScintillaControl() : this("SciLexer.dll")
         {
-            DragAcceptFiles(this.Handle, 1);
+            if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
 
         public ScintillaControl(string fullpath)
         {
             try
             {
-                IntPtr lib = WinAPI.LoadLibrary(fullpath);
-                hwndScintilla = WinAPI.CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
-                directPointer = (int)SlowPerform(2185, 0, 0);
+                if (Win32.ShouldUseWin32())
+                {
+                    IntPtr lib = LoadLibrary(fullpath);
+                    hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
+                    directPointer = (int)SlowPerform(2185, 0, 0);
+                    directPointer = DirectPointer;
+                }
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 DoubleClick += new DoubleClickHandler(OnSelectHighlight);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
-                directPointer = DirectPointer;
             }
             catch (Exception ex)
             {
@@ -65,7 +68,7 @@ namespace ScintillaNet
 
         public void OnResize(object sender, EventArgs e)
         {
-            SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
+            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
         }
 
 		#endregion
@@ -946,6 +949,17 @@ namespace ScintillaNet
             get
             {
                 return (char)CharAt(CurrentPos);
+            }
+        }
+
+        /// <summary>
+        /// Returns the line containing the current position.
+        /// </summary>
+        public int CurrentLine
+        {
+            get
+            {
+                return LineFromPosition(CurrentPos);
             }
         }
 		
@@ -2046,7 +2060,7 @@ namespace ScintillaNet
 			{
 				SPerform(2422, (uint)value, 0);
 			}
-		}	
+		}
 
 		/// <summary>
 		/// Retrieve the lexing language of the document.
@@ -2233,7 +2247,7 @@ namespace ScintillaNet
 		/// </summary>
         public new bool Focus()
         {
-            return WinAPI.SetFocus(hwndScintilla) != IntPtr.Zero;
+            return SetFocus(hwndScintilla) != IntPtr.Zero;
         }
 
 		/// <summary>
@@ -2594,7 +2608,7 @@ namespace ScintillaNet
 		public void SetLineIndentation(int line, int indentSize)
 		{
 			SPerform(2126, (uint)line, (uint)indentSize);
-		}	
+		}
 
 		/// <summary>
 		/// Retrieve the position before the first non indentation character on a line.
@@ -2602,7 +2616,7 @@ namespace ScintillaNet
 		public int LineIndentPosition(int line)
 		{
 			return (int)SPerform(2128, (uint)line, 0);
-		}	
+		}
 
 		/// <summary>
 		/// Retrieve the column number of a position, taking tab width into account.
@@ -4937,15 +4951,19 @@ namespace ScintillaNet
         /// </summary>
         public static void InitShortcuts()
         {
-            shortcutOverrides.Add("Scintilla.ResetZoom", Keys.Control | Keys.NumPad0);
-            shortcutOverrides.Add("Scintilla.ZoomOut", Keys.Control | Keys.Subtract);
-            shortcutOverrides.Add("Scintilla.ZoomIn", Keys.Control | Keys.Add);
-            foreach (DictionaryEntry shortcut in shortcutOverrides)
-            {
-                String id = (String)shortcut.Key;
-                Keys keys = (Keys)shortcut.Value;
-                PluginBase.MainForm.RegisterShortcutItem(id, keys);
-            }
+            // reference: http://www.scintilla.org/SciTEDoc.html "Keyboard commands"
+            AddShortcut("ResetZoom", Keys.Control | Keys.NumPad0, sci => sci.ResetZoom());
+            AddShortcut("ZoomOut", Keys.Control | Keys.Subtract, sci => sci.ZoomOut());
+            AddShortcut("ZoomIn", Keys.Control | Keys.Add, sci => sci.ZoomIn());
+        }
+
+        /// <summary>
+        /// Adds a new shortcut override
+        /// </summary>
+        private static void AddShortcut(String displayName, Keys keys, Action<ScintillaControl> action)
+        {
+            shortcutOverrides.Add("Scintilla." + displayName, new ShortcutOverride(keys, action));
+            PluginBase.MainForm.RegisterShortcutItem("Scintilla." + displayName, keys);
         }
 
         /// <summary>
@@ -4953,7 +4971,7 @@ namespace ScintillaNet
         /// </summary>
         public static void UpdateShortcut(String id, Keys shortcut)
         {
-            if (id.StartsWith("Scintilla.")) shortcutOverrides[id] = shortcut;
+            if (id.StartsWith("Scintilla.")) shortcutOverrides[id].keys = shortcut;
         }
 
         /// <summary>
@@ -4963,13 +4981,11 @@ namespace ScintillaNet
         {
             try
             {
-                if (!shortcutOverrides.ContainsValue((Keys)keys)) return false;
-                foreach (DictionaryEntry shortcut in shortcutOverrides)
+                foreach (ShortcutOverride shortcut in shortcutOverrides.Values)
                 {
-                    if ((Keys)keys == (Keys)shortcut.Value)
+                    if ((Keys)keys == shortcut.keys)
                     {
-                        String id = shortcut.Key.ToString().Replace("Scintilla.", "");
-                        this.GetType().GetMethod(id).Invoke(this, null);
+                        shortcut.action(this);
                         return true;
                     }
                 }
@@ -4978,12 +4994,36 @@ namespace ScintillaNet
             catch (Exception) { return false; }
         }
 
+        /// <summary>
+        /// Shortcut override object
+        /// </summary>
+        private class ShortcutOverride
+        {
+            public Keys keys;
+            public Action<ScintillaControl> action;
+
+            public ShortcutOverride(Keys keys, Action<ScintillaControl> action)
+            {
+                this.keys = keys;
+                this.action = action;
+            }
+        }
+
         #endregion
 
         #region Scintilla External
 
         // Stops all sci events from firing...
         public bool DisableAllSciEvents = false;
+
+        [DllImport("kernel32.dll")]
+        public extern static IntPtr LoadLibrary(string lpLibFileName);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int width, int height, IntPtr hWndParent, int hMenu, IntPtr hInstance, string lpParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetFocus(IntPtr hwnd);
 
 		[DllImport("gdi32.dll")] 
 		public static extern int GetDeviceCaps(IntPtr hdc, Int32 capindex);
@@ -5010,15 +5050,10 @@ namespace ScintillaNet
 		{
 			return (UInt32)SendMessage((int)hwndScintilla, message, (int)wParam, (int)lParam);
 		}
-
-		public UInt32 FastPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
-		{
-			return (UInt32)Perform(directPointer, message, wParam, lParam);
-		}
-
 		public UInt32 SPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
 		{
-			return (UInt32)Perform(directPointer, message, wParam, lParam);
+            if (Win32.ShouldUseWin32()) return (UInt32)Perform(directPointer, message, wParam, lParam);
+            else return (UInt32)Encoding.ASCII.CodePage;
 		}
 
         public override bool PreProcessMessage(ref Message m)
@@ -5239,7 +5274,7 @@ namespace ScintillaNet
 			}
 			else if (m.Msg == WM_DROPFILES)
 			{
-				HandleFileDrop(m.WParam);
+				if (Win32.ShouldUseWin32()) HandleFileDrop(m.WParam);
 			}
 			else
 			{
@@ -5368,7 +5403,7 @@ namespace ScintillaNet
                         this.BeginUndoAction();
                         try
                         {
-                            int curLine = LineFromPosition(CurrentPos);
+                            int curLine = CurrentLine;
                             int previousIndent = GetLineIndentation(curLine - 1);
                             IndentLine(curLine, previousIndent);
                             int position = LineIndentPosition(curLine);
@@ -5386,7 +5421,7 @@ namespace ScintillaNet
                         this.BeginUndoAction();
                         try
                         {
-                            int curLine = LineFromPosition(CurrentPos);
+                            int curLine = CurrentLine;
                             int tempLine = curLine;
                             int previousIndent;
                             string tempText;
@@ -5413,7 +5448,7 @@ namespace ScintillaNet
                                     previousIndent += TabWidth;
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
-                            if (Lexer == 3 && tempText.EndsWith(":") && !tempText.EndsWith("::"))
+                            if (Lexer == 3 && tempText.EndsWith(":") && !tempText.EndsWith("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
                             {
                                 int prevLine = tempLine;
                                 while (--prevLine > 0)
@@ -6637,7 +6672,7 @@ namespace ScintillaNet
         /// </summary>
         public void CutAllowLineEx()
         {
-            if (this.SelTextSize == 0 && this.GetLine(this.LineFromPosition(this.CurrentPos)).Trim() != "")
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim() != "")
             {
                 this.LineCut();
             }
@@ -6649,7 +6684,7 @@ namespace ScintillaNet
         /// </summary>
         public void CopyAllowLineEx()
         {
-            if (this.SelTextSize == 0 && this.GetLine(this.LineFromPosition(this.CurrentPos)).Trim() != "")
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim() != "")
             {
                 this.CopyAllowLine();
             }

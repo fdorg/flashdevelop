@@ -11,6 +11,7 @@ using ProjectManager.Projects.AS2;
 using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore;
+using PluginCore.Utilities;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -72,6 +73,22 @@ namespace ProjectManager.Controls.TreeView
             this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             NothingToDo.Enabled = false;
             NoProjectOutput.Enabled = false;
+            // Register menu items
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TestMovie", TestMovie);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.Properties", Properties);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.RunProject", RunProject);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.BuildProject", BuildProject);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.CleanProject", CleanProject);
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.CloseProject", CloseProject);
+            // Set default key strings
+            if (PluginBase.Settings.ViewShortcuts)
+            {
+                this.Open.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
+                this.Cut.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control|Keys.X);
+                this.Copy.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
+                this.Paste.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.P);
+                this.Delete.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Delete);
+            }
         }
 
         public ProjectTreeView ProjectTree
@@ -307,7 +324,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Browse, 1);
             menu.Add(FindInFiles, 1);
             menu.Add(CommandPrompt, 1);
-            menu.Add(ShellMenu, 1);
+            if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 1);
             menu.Add(Paste, 2);
             menu.Add(ShowHidden, 3, showHidden);
             menu.Add(Properties, 4);
@@ -319,7 +336,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Browse, 0);
             menu.Add(FindInFiles, 0);
             menu.Add(CommandPrompt, 0);
-            menu.Add(ShellMenu, 0);
+            if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             menu.Add(Paste, 1);
             menu.Add(RemoveSourcePath, 2, true);
             AddHideItems(menu, path, 3);
@@ -336,7 +353,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Browse, 0);
             menu.Add(FindInFiles, 0);
             menu.Add(CommandPrompt, 0);
-            menu.Add(ShellMenu, 0);
+            if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             AddCompileTargetItems(menu, path, true);
             if (projectTree.SelectedPaths.Length == 1 && project.IsCompilable)
             {
@@ -355,7 +372,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
             menu.Add(FindAndReplace, 0);
-            menu.Add(ShellMenu, 0);
+            if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             AddCompileTargetItems(menu, path, false);
             AddFileItems(menu, path);
         }
@@ -391,7 +408,7 @@ namespace ProjectManager.Controls.TreeView
             bool addLibrary = project.HasLibraries && project.IsLibraryAsset(path);
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
-            menu.Add(ShellMenu, 0);
+            if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             menu.Add(Insert, 0);
             if (project.HasLibraries) menu.Add(AddLibrary, 2, addLibrary);
             if (addLibrary) menu.Add(LibraryOptions, 2);
@@ -403,7 +420,7 @@ namespace ProjectManager.Controls.TreeView
             bool addLibrary = project.HasLibraries && project.IsLibraryAsset(path);
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
-            menu.Add(ShellMenu, 0);
+            if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             menu.Add(Insert, 0);
             if (addLibrary)
             {
@@ -419,7 +436,7 @@ namespace ProjectManager.Controls.TreeView
         {
             bool addLibrary = project.IsLibraryAsset(path);
             menu.Add(Execute, 0);
-            menu.Add(ShellMenu, 0);
+            if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             menu.Add(AddLibrary, 2, addLibrary);
             if (addLibrary) menu.Add(LibraryOptions, 2);
             if (!this.IsExternalSwc(path)) AddFileItems(menu, path);
@@ -443,7 +460,7 @@ namespace ProjectManager.Controls.TreeView
                 menu.Add(Open, 0);
                 menu.Add(Execute, 0);
                 menu.Add(FindAndReplace, 0);
-                menu.Add(ShellMenu, 0); 
+                if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0); 
                 AddFileItems(menu, node.BackingPath);
             }
             else menu.Add(NoProjectOutput, 0);
@@ -487,7 +504,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Open, 0);
             menu.Add(Execute, 0);
             menu.Add(FindAndReplace, 0);
-            menu.Add(ShellMenu, 0);
+            if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 0);
             menu.Add(Insert, 0);
             if (IsBuildable(path))
             {

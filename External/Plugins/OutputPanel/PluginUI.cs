@@ -46,6 +46,7 @@ namespace OutputPanel
             this.imageList = new ImageList();
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.imageList.TransparentColor = Color.Transparent;
+            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.Images.Add(PluginBase.MainForm.FindImage("146"));
 			this.imageList.Images.Add(PluginBase.MainForm.FindImage("147"));
 			this.imageList.Images.Add(PluginBase.MainForm.FindImage("147|17|5|4"));

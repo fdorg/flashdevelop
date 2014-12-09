@@ -403,19 +403,22 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Hemen bilatu eta ordezkatu...</value>
-  <comment>Added after 4.6.4</comment>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>Komando-gonbita hemen...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>Kopiatu</value>
   </data>
   <data name="FileExplorer.Label.CreateFileHere" xml:space="preserve">
     <value>Fitxategia hemen sortu...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CreateFolderHere" xml:space="preserve">
     <value>Karpeta hemen sortu...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Delete" xml:space="preserve">
     <value>Ezabatu</value>
@@ -425,6 +428,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="FileExplorer.Label.ExploreHere" xml:space="preserve">
     <value>Arakatu hemen</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Paste" xml:space="preserve">
     <value>Itsatsi</value>
@@ -1278,6 +1282,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="FlashDevelop.Label.WholeWord" xml:space="preserve">
     <value>Hitz osoa</value>
+  </data>
+  <data name="FlashDevelop.Label.More" xml:space="preserve">
+    <value>&amp;More...</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Label.WindowsExplorer" xml:space="preserve">
     <value>Windows Arakatzailea</value>
@@ -3415,6 +3423,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="FlashDebugger.Label.Stop" xml:space="preserve">
     <value>G&amp;elditu</value>
   </data>
+  <data name="FlashDebugger.Label.BreakOnAllErrors" xml:space="preserve">
+    <value>Break On All &amp;Errors</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDebugger.Label.ToggleBreakpoint" xml:space="preserve">
     <value>Eten-puntuak Txandakatu</value>
   </data>
@@ -3450,6 +3462,58 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   </data>
   <data name="FlashDebugger.Title.StackTrace" xml:space="preserve">
     <value>Pila</value>
+  </data>
+  <data name="FlashDebugger.BreakPoints.RemoveSelected" xml:space="preserve">
+    <value>Remove selected breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.RemoveAll" xml:space="preserve">
+    <value>Remove all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ToggleAll" xml:space="preserve">
+    <value>Toggle all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ExportAll" xml:space="preserve">
+    <value>Export all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ImportAll" xml:space="preserve">
+    <value>Import breakpoints from a file</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterAll" xml:space="preserve">
+    <value>In All Columns</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterPath" xml:space="preserve">
+    <value>In File Path</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterFile" xml:space="preserve">
+    <value>In File Name</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterLine" xml:space="preserve">
+    <value>In File Line</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterExp" xml:space="preserve">
+    <value>In Expression</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.InvalidFile" xml:space="preserve">
+    <value>Error loading the selected file, it may not be valid</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
+    <value>Variable could not be reevaluated</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
+    <value>Only scalar variables can be modified</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Flex PMD-arentzako lehenetsitako arau-multzo pertsonalizatuen fitxategia custom ruleset file for the Flex PMD.</value>
@@ -3629,7 +3693,12 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Errore lerroa:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Sinkronizatu</value>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
+    <value>Locate Document Class</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.FilterSettings" xml:space="preserve">
     <value>Filtroen ezarpenak:</value>
@@ -3672,6 +3741,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   </data>
   <data name="ProjectManager.Label.SearchString" xml:space="preserve">
     <value>Katea bilatu: (laburdura bideko bilakerarako LETRA LARRIZ)</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Title.OpenResource" xml:space="preserve">
     <value>Baliabidea Ireki</value>
@@ -3819,6 +3889,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Lehenetsira &amp;Itzuli</value>
     <comment>Added after 3.3.1</comment>
   </data>
+  <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
+    <value>Revert All To &amp;Default</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">
     <value>Lasterbidea</value>
     <comment>Added after 3.3.1</comment>
@@ -3826,6 +3900,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="FlashDevelop.Title.Shortcuts" xml:space="preserve">
     <value>Lasterbideak</value>
     <comment>Added after 3.3.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
+    <value>View customized only</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.UnableToLoadPlugin" xml:space="preserve">
     <value>Plugin bateraezina ezin izan da kargatu:</value>
@@ -5111,7 +5189,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Karpeta bat berrizendatzen ari zara. Erreferentziak ere eguneratu nahi dituzu?</value>
     <comment>Added after 4.6.1</comment>
   </data>
-  <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve"> <!-- TODO: ez dakit zer erran nahi duen -->
+  <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
     <value>Keep indent tabs when strip trailing spaces.</value>
     <comment>Added after 4.6.2</comment>
   </data>
@@ -5224,7 +5302,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.LookAndFeel" xml:space="preserve">
-    <value>Itxura</value> <!-- TODO: hau aldatu, berezkoa "Look and Feel" -->
+    <value>TODO: hau aldatu, berezkoa "Look and Feel"</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.OtherBehavior" xml:space="preserve">
@@ -5306,5 +5384,17 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
     <value>protected aldagaia deklaratu</value>
     <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
+    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
+    <value>Colorize first margin with 'gdefault' foreground color</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
+    <value>Track current active document in Project Tree.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
 </root>

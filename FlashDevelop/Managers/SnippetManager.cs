@@ -205,8 +205,7 @@ namespace FlashDevelop.Managers
             {
                 if (icon == null)
                 {
-                    Image image = Globals.MainForm.FindImage("341");
-                    this.icon = new Bitmap(image);
+                    this.icon = (Bitmap)Globals.MainForm.FindImage("341");
                 }
                 return icon;
             }

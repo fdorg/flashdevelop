@@ -107,14 +107,14 @@ namespace ProjectManager.Controls
 			imageList.TransparentColor = Color.Transparent;
 
             BulletAdd = Get(0);
-            SilkPage = GetResource("Icons.SilkPage.png");
+            SilkPage = Get(526);
             XmlFile = GetResource("Icons.XmlFile.png");
             MxmlFile = GetResource("Icons.MxmlFile.png");
             MxmlFileCompile = GetResource("Icons.MxmlFileCompile.png");
-            HiddenItems = GetResource("Icons.HiddenItems.png");
+            HiddenItems = GetGray("292");
             HiddenFolder = GetGray("203");
-            HiddenFile = GetResource("Icons.HiddenFile.png");
-            BlankFile = GetResource("Icons.BlankPage.png");
+            HiddenFile = GetGray("526");
+            BlankFile = Get(526);
             Project = Get(274);
             ProjectClasspath = Get(98);
             Classpath = Get(98);
@@ -133,7 +133,7 @@ namespace ProjectManager.Controls
             FlashCS3 = GetResource("Icons.FlashCS3.png");
             ActionScriptCompile = GetResource("Icons.ActionscriptCompile.png");
             HtmlFile = GetResource("Icons.HtmlFile.png");
-            AddFile = GetResource("Icons.AddFile.png"); //Get("304|0|5|4");
+            AddFile = Get("526|0|5|4");
 			OpenFile = Get(214);
             EditFile = Get(282);
             Browse = Get(56);
@@ -200,6 +200,7 @@ namespace ProjectManager.Controls
             catch {
                 image = new Bitmap(16, 16);
             }
+            image = (Bitmap)PluginBase.MainForm.ImageSetAdjust(image);
 			imageList.Images.Add(ScaleHelper.Scale(image));
 			return new FDImage(image,imageList.Images.Count-1);
 		}
@@ -246,6 +247,7 @@ namespace ProjectManager.Controls
             {
                 Icon icon = IconExtractor.GetFileIcon(file, true);
                 Image image = ScaleHelper.Scale(icon.ToBitmap());
+                image = (Bitmap)PluginBase.MainForm.ImageSetAdjust(image);
                 icon.Dispose(); imageList.Images.Add(image);
                 int index = imageList.Images.Count - 1; // of the icon we just added
                 FDImage fdImage = new FDImage(image, index);

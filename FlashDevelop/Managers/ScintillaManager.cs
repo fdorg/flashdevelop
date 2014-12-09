@@ -220,11 +220,21 @@ namespace FlashDevelop.Managers
                 sci.SetProperty("lexer.cpp.track.preprocessor", "0");
                 sci.SetVirtualSpaceOptions((Int32)Globals.Settings.VirtualSpaceMode);
                 sci.SetFoldFlags((Int32)Globals.Settings.FoldFlags);
+                /**
+                * Set if themes should colorize the first margin
+                */
+                Language language = SciConfig.GetLanguage(sci.ConfigurationLanguage);
+                if (language != null && language.editorstyle != null)
+                {
+                    Boolean colorizeMarkerBack = language.editorstyle.ColorizeMarkerBack;
+                    if (colorizeMarkerBack) sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Fore);
+                    else sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+                }
                 /** 
                 * Set correct line number margin width
                 */
                 Boolean viewLineNumbers = Globals.Settings.ViewLineNumbers;
-                if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleHelper.Scale(31));
+                if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleHelper.Scale(36));
                 else sci.SetMarginWidthN(1, 0);
                 /**
                 * Set correct bookmark margin width
@@ -326,16 +336,16 @@ namespace FlashDevelop.Managers
             sci.XOffset = 0;
             sci.ZoomLevel = 0;
             sci.UsePopUp(false);
-            sci.SetMarginTypeN(0, 0);
-            sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
-            sci.SetMarginTypeN(1, 1);
-            sci.SetMarginMaskN(1, 0);
-            sci.SetMarginTypeN(2, 0);
-            sci.SetMarginMaskN(2, -33554432 | 1 << 2);
-            sci.SetMultiSelectionTyping(true);
-            sci.MarginSensitiveN(2, true);
-            sci.MarkerDefinePixmap(0, XpmBookmark);
+            sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Symbol);
             sci.SetMarginMaskN(0, MarkerManager.MARKERS);
+            sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
+            sci.SetMarginTypeN(1, (Int32)ScintillaNet.Enums.MarginType.Number);
+            sci.SetMarginMaskN(1, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+            sci.SetMarginTypeN(2, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+            sci.SetMarginMaskN(2, -33554432 | 1 << 2);
+            sci.MarginSensitiveN(2, true);
+            sci.SetMultiSelectionTyping(true);
+            sci.MarkerDefinePixmap(0, XpmBookmark);
             sci.MarkerDefine(2, ScintillaNet.Enums.MarkerSymbol.Fullrect);
             sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.Folder, ScintillaNet.Enums.MarkerSymbol.BoxPlus);
             sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderOpen, ScintillaNet.Enums.MarkerSymbol.BoxMinus);

@@ -1,0 +1,123 @@
+﻿<!-- COLORING_START -->
+<editor-style caret-fore="0xFFFFFF" caretline-back="0xFBC404" selection-fore="0x000000" selection-back="0x8E8775" margin-fore="0x302d26" margin-back="0x302d26" highlight-back="0xffffff" marker-fore="0x302d26" marker-back="0x726A65" colorize-marker-back="true" />
+<use-styles>
+	<style name="default" fore="0xf9f9f9" back="0x302d26" size="9" font="Consolas,Courier New,monospace" />
+	<style name="tag" fore="0xb6a129" />
+	<style name="tagunknown" fore="0xF1C8A3" />
+	<style name="attribute" fore="0xFFFFC1" />
+	<style name="attributeunknown" fore="0xFFFFC1" />
+	<style name="number" fore="0x7bc654" />
+	<style name="doublestring" fore="0xd38b38" />
+	<style name="singlestring" fore="0xd38b38" />
+	<style name="other" fore="0xF1C8A3" />
+	<style name="comment" fore="0x8F8B76" />
+	<style name="entity" />
+	<style name="tagend" fore="0xb6a129" />
+	<style name="xmlstart" fore="0xEEA382" />
+	<style name="xmlend" fore="0xEEA382" />
+	<style name="script" fore="0x808080" bold="true" />
+	<style name="asp" fore="0xffff00" />
+	<style name="aspat" fore="0xffdf00" />
+	<style name="cdata" fore="0x808040" />
+	<style name="question" fore="0xEE7A11" bold="true" />
+	<style name="value" fore="0x804000" />
+	<style name="xccomment" fore="0x8F8B76" />
+	<style name="sgml_default" fore="0xEEA382" />
+	<style name="sgml_command" fore="0xEEA382" bold="true" />
+	<style name="sgml_1st_param" fore="0xEEA382" />
+	<style name="sgml_doublestring" fore="0xd38b38" />
+	<style name="sgml_simplestring" fore="0xd38b38" />
+	<style name="sgml_error" fore="0xff0000" />
+	<style name="sgml_special" fore="0x668CFF" />
+	<style name="sgml_entity" fore="0x999999" />
+	<style name="sgml_comment" fore="0x8F8B76" />
+	<style name="sgml_1st_param_comment" fore="0x8F8B76" />
+	<style name="sgml_block_default" fore="0xEEA382" />
+	<style name="j_start" />
+	<style name="j_default" />
+	<style name="j_comment" fore="0x8F8B76" />
+	<style name="j_commentline" fore="0x8F8B76" />
+	<style name="j_commentdoc" fore="0x8F8B76" />
+	<style name="j_number" fore="0x7bc654" />
+	<style name="j_word" />
+	<style name="j_keyword" fore="0xD15F2E" bold="true" />
+	<style name="j_doublestring" fore="0xBADD2F" />
+	<style name="j_singlestring" fore="0xBADD2F" />
+	<style name="j_symbols" />
+	<style name="j_stringeol" />
+	<style name="j_regex" />
+	<style name="ja_start" />
+	<style name="ja_default" />
+	<style name="ja_comment" />
+	<style name="ja_commentline" />
+	<style name="ja_commentdoc" />
+	<style name="ja_number" />
+	<style name="ja_word" />
+	<style name="ja_keyword" />
+	<style name="ja_doublestring" />
+	<style name="ja_singlestring" />
+	<style name="ja_symbols" />
+	<style name="ja_stringeol" />
+	<style name="ja_regex" />
+	<style name="b_start" />
+	<style name="b_default" />
+	<style name="b_commentline" />
+	<style name="b_number" />
+	<style name="b_word" />
+	<style name="b_string" />
+	<style name="b_identifier" />
+	<style name="b_stringeol" />
+	<style name="ba_start" />
+	<style name="ba_default" />
+	<style name="ba_commentline" />
+	<style name="ba_number" />
+	<style name="ba_word" />
+	<style name="ba_string" />
+	<style name="ba_identifier" />
+	<style name="ba_stringeol" />
+	<style name="p_start" />
+	<style name="p_default" />
+	<style name="p_commentline" />
+	<style name="p_number" />
+	<style name="p_string" />
+	<style name="p_character" />
+	<style name="p_word" />
+	<style name="p_triple" />
+	<style name="p_tripledouble" />
+	<style name="p_classname" />
+	<style name="p_defname" />
+	<style name="p_operator" />
+	<style name="p_identifier" />
+	<style name="pa_start" />
+	<style name="pa_default" />
+	<style name="pa_commentline" />
+	<style name="pa_number" />
+	<style name="pa_string" />
+	<style name="pa_character" />
+	<style name="pa_word" />
+	<style name="pa_triple" />
+	<style name="pa_tripledouble" />
+	<style name="pa_classname" />
+	<style name="pa_defname" />
+	<style name="pa_operator" />
+	<style name="pa_identifier" />
+	<style name="php_default" />
+	<style name="php_hstring" fore="0xBADD2F" />
+	<style name="php_simplestring" fore="0xBADD2F" />
+	<style name="php_complex_variable" />
+	<style name="php_word" fore="0xD15F2E" />
+	<style name="php_number" fore="0x7bc654" />
+	<style name="php_variable" />
+	<style name="php_comment" fore="0x8F8B76" />
+	<style name="php_commentline" fore="0x8F8B76" />
+	<style name="php_hstring_variable" />
+	<style name="php_operator" />
+	<style name="gdefault" fore="0x47423D" />
+	<style name="linenumber" fore="0x716B5E" />
+	<style name="bracelight" fore="0x8B8538" bold="true" back="0x423F35" />
+	<style name="bracebad" bold="true" fore="0xFF8000" />
+	<style name="controlchar" />
+	<style name="indentguide" fore="0x9B9484" />
+	<style name="lastpredefined" fore="0x666666" />
+</use-styles>
+<!-- COLORING_END -->

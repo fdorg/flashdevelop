@@ -4,6 +4,12 @@ using System.Text;
 
 namespace Aga.Controls.Tree
 {
+
+    public enum BackgroundPaintMode
+    {
+        Default,Gradiant
+    }
+
 	public enum DrawSelectionMode
 	{
 		None, Active, Inactive, FullRowSelect

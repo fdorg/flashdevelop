@@ -1,31 +1,34 @@
-﻿using PluginCore.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.Text;
+using System.Windows.Forms;
+using PluginCore.Utilities;
+using System.Collections;
 
 namespace PluginCore.Helpers
 {
     public class ScaleHelper
     {
-        private static double _scale = double.MinValue;
+        /// <summary>
+        /// Private properties
+        /// </summary>
+        private static double curScale = double.MinValue;
+        private static HashSet<Control> adjustedItems = new HashSet<Control>();
 
         /// <summary>
         /// Gets the display scale. Ideally would probably keep separate scales for X and Y.
         /// </summary>
-        private static double GetScale()
+        public static double GetScale()
         {
-            if (_scale != double.MinValue)
-                return _scale;
-
+            if (curScale != double.MinValue) return curScale;
             using (var g = Graphics.FromHwnd(PluginBase.MainForm.Handle))
             {
-                _scale = g.DpiX / 96f;
+                curScale = g.DpiX / 96f;
             }
-
-            return _scale;
+            return curScale;
         }
 
         /// <summary>
@@ -81,47 +84,54 @@ namespace PluginCore.Helpers
         /// </summary>
         public static Bitmap Scale(Bitmap image)
         {
-            if (GetScale() == 1)
-                return image;
-
-            if (GetScale() >= 2)
-                return Stretch(image);
-
+            if (GetScale() == 1) return image;
             int width = Scale(image.Width);
             int height = Scale(image.Height);
-
             return (Bitmap)ImageKonverter.ImageResize(image, width, height);
         }
 
         /// <summary>
-        /// Resizes the image based on the display scale. Uses default quality settings. Necessary to not break the DockPanel bitmaps.
+        /// Adjusts the specified control for better high dpi look
         /// </summary>
-        public static Bitmap Stretch(Bitmap image)
+        public static void AdjustForHighDPI(Control control, double multi)
         {
-            if (GetScale() == 1)
-                return image;
-
-            int width = Scale(image.Width);
-            int height = Scale(image.Height);
-
-            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            Graphics graphicsImage = Graphics.FromImage(bitmap);
-            graphicsImage.SmoothingMode = SmoothingMode.HighQuality;
-            graphicsImage.InterpolationMode = InterpolationMode.NearestNeighbor;
-
-            // use an image attribute in order to remove the black/gray border around image after resize
-            // (most obvious on white images), see this post for more information:
-            // http://www.codeproject.com/KB/GDI-plus/imgresizoutperfgdiplus.aspx
-            using (var attribute = new ImageAttributes())
+            if (IsAdjusted(control)) return;
+            double scale = ScaleHelper.GetScale();
+            foreach (Control ctrl in control.Controls)
             {
-                attribute.SetWrapMode(WrapMode.TileFlipXY);
-
-                // draws the resized image to the bitmap
-                graphicsImage.DrawImage(image, new Rectangle(new Point(0, 0), bitmap.Size), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attribute);
+                if (ctrl is Button)
+                {
+                    if (scale >= 1.5)
+                    {
+                        double noPad = ctrl.Height * multi;
+                        ctrl.Height = (Int32)noPad;
+                    }
+                }
+                AdjustForHighDPI(ctrl, multi);
             }
-
-            graphicsImage.Dispose();
-            return bitmap;
         }
+        public static void AdjustForHighDPI(Control control)
+        {
+            AdjustForHighDPI(control, 0.92);
+        }
+
+        /// <summary>
+        /// Keep track and adjust forms only once
+        /// </summary>
+        private static Boolean IsAdjusted(Control control)
+        {
+            if (control is Form)
+            {
+                if (adjustedItems.Contains(control)) return true;
+                else
+                {
+                    adjustedItems.Add(control);
+                    return false;
+                }
+            }
+            else return false;
+        }
+
     }
+
 }

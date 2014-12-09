@@ -64,8 +64,8 @@ namespace ProjectManager
         public const string BeforeSave = "ProjectManager.BeforeSave";
     }
 
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         const string pluginName = "ProjectManager";
         const string pluginAuth = "FlashDevelop Team";
         const string pluginGuid = "30018864-fadd-1122-b2a5-779832cbbf23";
@@ -165,13 +165,13 @@ namespace ProjectManager
         public string Help { get { return pluginHelp; } }
         [Browsable(false)] // explicit implementation so we can reuse the "Settings" var name
         object IPlugin.Settings { get { return Settings; } }
-		
-		#endregion
-		
-		#region Initialize/Dispose
-		
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Initialize/Dispose
+        
+        public void Initialize()
+        {
             LoadSettings();
             pluginImage = MainForm.FindImage("100");
             pluginDesc = TextHelper.GetString("Info.Description");
@@ -272,7 +272,7 @@ namespace ProjectManager
             pluginUI.Menu.CleanProject.Click += delegate { CleanProject(); };
             pluginUI.Menu.CloseProject.Click += delegate { CloseProject(false); };
             pluginUI.Menu.Properties.Click += delegate { OpenProjectProperties(); };
-            pluginUI.Menu.ShellMenu.Click += delegate { TreeShowShellMenu(); };
+            if (Win32.ShouldUseWin32()) pluginUI.Menu.ShellMenu.Click += delegate { TreeShowShellMenu(); };
             pluginUI.Menu.CommandPrompt.Click += delegate { TreeShowCommandPrompt(); };
             pluginUI.Menu.BuildProjectFile.Click += delegate { BackgroundBuild(); };
             pluginUI.Menu.BuildProjectFiles.Click += delegate { BackgroundBuild(); };
@@ -336,9 +336,9 @@ namespace ProjectManager
             if (e.KeyCode == Keys.Enter) // leave target build input field to apply
                 PluginBase.MainForm.CurrentDocument.Activate();
         }
-		
-		public void Dispose()
-		{
+        
+        public void Dispose()
+        {
             // we have to fiddle this a little since we only get once change to save our settings!
             // (further saves will be ignored by FD design)
             Project project = activeProject; 
@@ -347,14 +347,14 @@ namespace ProjectManager
             Settings.LastProject = lastProject;
             FlexCompilerShell.Cleanup(); // in case it was used
             SaveSettings();
-		}
-		
+        }
+        
         #endregion
 
         #region Plugin Events
 
         public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
-		{
+        {
             TextEvent te = e as TextEvent;
             DataEvent de = e as DataEvent;
             Project project;
@@ -433,6 +433,7 @@ namespace ProjectManager
 
                 case EventType.FileSwitch:
                     TabColors.UpdateTabColors(Settings);
+                    if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
                     break;
 
                 case EventType.ProcessStart:
@@ -570,6 +571,10 @@ namespace ProjectManager
             {
                 pluginUI.menus.TargetBuildSelector.Focus();
             }
+            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectTree.LocateActiveFile"))
+            {
+                TreeSyncToCurrentFile();
+            }
 
             // Handle tree-level simple shortcuts like copy/paste/del
             else if (Tree.Focused && !pluginUI.IsEditingLabel && ke != null)
@@ -585,8 +590,8 @@ namespace ProjectManager
             else return false;
             return true;
         }
-		
-		#endregion
+        
+        #endregion
 
         #region Custom Methods
 
@@ -939,7 +944,7 @@ namespace ProjectManager
             }
         }
         
-		#endregion
+        #endregion
 
         #region Event Handlers
 
@@ -994,6 +999,7 @@ namespace ProjectManager
                     DisabledForBuild = false;
                     menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text =
                         TextHelper.GetString("Label.BuildProject").Replace("&", "");
+                    PluginBase.MainForm.ApplySecondaryShortcut(menuButton);
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.Gear.Img;
                     break;
 
@@ -1001,6 +1007,7 @@ namespace ProjectManager
                     DisabledForBuild = true;
                     menuButton.Enabled = menuItem.Enabled = contextMenuItem.Enabled = true;
                     menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text = TextHelper.GetString("Label.StopBuild");
+                    PluginBase.MainForm.ApplySecondaryShortcut(menuButton);
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.X.Img;
                     break;
             }
@@ -1553,9 +1560,15 @@ namespace ProjectManager
 
         private void FindInFiles()
         {
-            String path = Tree.SelectedPath;
-            if (path != null && Directory.Exists(path))
+            if (Tree.SelectedPaths == null)
+                return;
+
+            List<string> paths = new List<string>(Tree.SelectedPaths);
+            paths.RemoveAll(p => !Directory.Exists(p));
+
+            if (paths.Count > 0)
             {
+                String path = String.Join(";", paths.ToArray());
                 PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
             }
         }
@@ -1589,7 +1602,7 @@ namespace ProjectManager
         }
 
         #endregion
-	}
+    }
 
     public enum ProjectManagerUIStatus
     {

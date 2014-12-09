@@ -9,7 +9,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "4.7.0"
+!define VERSION "5.0.0"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "FlashDevelop.org"
@@ -98,15 +98,13 @@ InstType "un.Full"
 Function GetDotNETVersion
 	
 	Push $0
-	Push $1
-	System::Call "mscoree::GetCORVersion(w .r0, i ${NSIS_MAX_STRLEN}, *i) i .r1"
-	StrCmp $1 "error" 0 +2
+	ClearErrors
+	ReadRegStr $0 HKLM "Software\Microsoft\NET Framework Setup\NDP\v3.5" "Version"
+	IfErrors 0 +2
 	StrCpy $0 "not_found"
-	Pop $1
 	Exch $0
 	
 FunctionEnd
-
 
 Function GetFlashVersion
 	
@@ -615,13 +613,12 @@ Function .onInit
 	Call GetDotNETVersion
 	Pop $0
 	${If} $0 == "not_found"
-	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 2.0 runtime before installing FlashDevelop."
-	Abort
-	${EndIf}
-	StrCpy $0 $0 "" 1 # skip "v"
-	${VersionCompare} $0 "2.0.50727" $1
+	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing FlashDevelop."
+	${Else}
+	${VersionCompare} $0 "3.5" $1
 	${If} $1 == 2
-	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 2.0 runtime before installing FlashDevelop. You have $0."
+	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing FlashDevelop. You have $0."
+	${EndIf}
 	${EndIf}
 	
 	Call GetFDInstDir

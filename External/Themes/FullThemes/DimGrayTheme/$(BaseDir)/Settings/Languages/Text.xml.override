@@ -1,0 +1,32 @@
+﻿<!-- COLORING_START -->
+<editor-style caret-fore="0x000000" caretline-back="0xe0e0e0" selection-fore="0xffffff" selection-back="0x3399ff" margin-fore="0xf6f6f6" margin-back="0xf6f6f6" colorize-marker-back="true" marker-back="0xb6b6b6" marker-fore="0xf6f6f6" />
+<use-styles>
+	<style name="default" fore="0x222222" back="0xf6f6f6" size="9" font="Consolas,Courier New,monospace" />
+	<style name="comment" />
+	<style name="commentline" />
+	<style name="commentdoc" />
+	<style name="number" />
+	<style name="word" />
+	<style name="string" />
+	<style name="character" />
+	<style name="uuid" />
+	<style name="preprocessor" />
+	<style name="operator" />
+	<style name="identifier" />
+	<style name="stringeol" />
+	<style name="verbatim" />
+	<style name="regex" />
+	<style name="commentlinedoc" />
+	<style name="word2" />
+	<style name="commentdockeyword" />
+	<style name="commentdockeyworderror" />
+	<style name="globalclass" />
+	<style name="gdefault" fore="0xe0e0e0" />
+	<style name="linenumber" fore="0x999999" />
+	<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+	<style name="bracebad" bold="true" />
+	<style name="controlchar" fore="0xffffff" />
+	<style name="indentguide" fore="0xc0c0c0" />
+	<style name="lastpredefined" fore="0x666666" />
+</use-styles>
+<!-- COLORING_END -->

@@ -37,7 +37,7 @@ namespace Aga.Controls.Tree
 					return 0;
 				else
 				{
-					int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ColumnHeaderHeight;
+					int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ActualColumnHeaderHeight;
 					int y = 0;
 					for (int i = _treeView.RowCount - 1; i >= 0; i--)
 					{
@@ -58,7 +58,7 @@ namespace Aga.Controls.Tree
 					return 0;
 				else
 				{
-					int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ColumnHeaderHeight;
+					int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ActualColumnHeaderHeight;
 					int y = 0;
 					for (int i = _treeView.FirstVisibleRow; i < _treeView.RowCount; i++)
 					{
@@ -117,7 +117,7 @@ namespace Aga.Controls.Tree
 
 		public int GetRowAt(Point point)
 		{
-			int py = point.Y - _treeView.ColumnHeaderHeight;
+			int py = point.Y - _treeView.ActualColumnHeaderHeight;
 			int y = 0;
 			for (int i = _treeView.FirstVisibleRow; i < _treeView.RowCount; i++)
 			{
@@ -132,7 +132,7 @@ namespace Aga.Controls.Tree
 
 		public int GetFirstRow(int lastPageRow)
 		{
-			int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ColumnHeaderHeight;
+			int pageHeight = _treeView.DisplayRectangle.Height - _treeView.ActualColumnHeaderHeight;
 			int y = 0;
 			for (int i = lastPageRow; i >= 0; i--)
 			{

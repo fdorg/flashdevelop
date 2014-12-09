@@ -77,7 +77,7 @@
 				<keyword key="5" class="css-vendor-prefixes" />
 			</use-keywords>
 			<!-- COLORING_START -->
-			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" colorize-marker-back="true" margin-fore="0xffffff" margin-back="0xffffff" marker-back="0xbcbcbc" />
 			<use-styles>
 				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Consolas,Courier New,monospace" />
 				<style name="tag" fore="0x800000" />
@@ -103,7 +103,7 @@
 				<style name="extended_pseudoelement" />
 				<style name="media" fore="0x800000" />
 				<style name="variable" fore="0x00aa00" />
-				<style name="gdefault" fore="0x800000" />
+				<style name="gdefault" fore="0xefece9" />
 				<style name="linenumber" fore="0x666666" />
 				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
 				<style name="bracebad" bold="true" />

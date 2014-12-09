@@ -4,7 +4,7 @@
  * - flicker free
  * - extends StateSavingTreeView
  */
-
+using PluginCore;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
@@ -34,10 +34,10 @@ namespace System.Windows.Forms
         protected override void OnMouseDown(MouseEventArgs e)
         {
             clickedNode = this.GetNodeAt(e.X, e.Y);
-            if (clickedNode != null)
+            if (Win32.ShouldUseWin32() && clickedNode != null)
             {
                 TreeNode currentNode = clickedNode;
-                int offset = 25 - Win32.Scrolling.GetScrollPos(this.Handle, Win32.Scrolling.SB_HORZ);
+                int offset = 25 - Win32.GetScrollPos(this.Handle, Win32.SB_HORZ);
                 while (currentNode.Parent != null)
                 {
                     offset += 20;
@@ -114,37 +114,24 @@ namespace System.Windows.Forms
         {
             base.OnHandleCreated(e);
 
-            if (DoubleBuffered)
-                NativeMethods.SendMessage(Handle, NativeMethods.TVM_SETEXTENDEDSTYLE, (IntPtr)NativeMethods.TVS_EX_DOUBLEBUFFER, (IntPtr)NativeMethods.TVS_EX_DOUBLEBUFFER);
+            if (Win32.ShouldUseWin32() && DoubleBuffered) Win32.SendMessage(Handle, Win32.TVM_SETEXTENDEDSTYLE, (IntPtr)Win32.TVS_EX_DOUBLEBUFFER, (IntPtr)Win32.TVS_EX_DOUBLEBUFFER);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (GetStyle(ControlStyles.UserPaint))
+            if (Win32.ShouldUseWin32() && GetStyle(ControlStyles.UserPaint))
             {
                 Message m = new Message();
                 m.HWnd = Handle;
-                m.Msg = NativeMethods.WM_PRINTCLIENT;
+                m.Msg = Win32.WM_PRINTCLIENT;
                 m.WParam = e.Graphics.GetHdc();
-                m.LParam = (IntPtr)NativeMethods.PRF_CLIENT;
+                m.LParam = (IntPtr)Win32.PRF_CLIENT;
                 DefWndProc(ref m);
                 e.Graphics.ReleaseHdc(m.WParam);
             }
             base.OnPaint(e);
         }
 
-        private static class NativeMethods
-        {
-            public const int WM_PRINTCLIENT = 0x0318;
-            public const int PRF_CLIENT = 0x00000004;
-
-            private const int TV_FIRST = 0x1100;
-            public const int TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
-            public const int TVS_EX_DOUBLEBUFFER = 0x0004;
-
-            [DllImport("user32.dll")]
-            public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-        }
     }
+
 }

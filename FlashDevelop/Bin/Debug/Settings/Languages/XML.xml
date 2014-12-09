@@ -46,7 +46,7 @@
 				<keyword key="5" class="sgml-and-dtd-keywords" />
 			</use-keywords>
 			<!-- COLORING_START -->
-			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" colorize-marker-back="true" margin-fore="0xffffff" margin-back="0xffffff" marker-back="0xbcbcbc" />
 			<use-styles>
 				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Consolas,Courier New,monospace" />
 				<style name="tag" fore="0x000099" />
@@ -159,7 +159,7 @@
 				<style name="php_commentline" fore="0x808080" />
 				<style name="php_hstring_variable" />
 				<style name="php_operator" fore="0x000099" />
-				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="gdefault" fore="0xefece9" />
 				<style name="linenumber" fore="0x666666" />
 				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
 				<style name="bracebad" bold="true" />

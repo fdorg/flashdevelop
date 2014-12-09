@@ -120,43 +120,45 @@ namespace ASCompletion
         private void InitializeControls()
         {
             InitializeComponent();
+            treeIcons.ColorDepth = ColorDepth.Depth32Bit;
             treeIcons.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            treeIcons.Images.AddRange( new Bitmap[] {
-                new Bitmap(GetStream("FilePlain.png")),
-                new Bitmap(GetStream("FolderClosed.png")),
-                new Bitmap(GetStream("FolderOpen.png")),
-                new Bitmap(GetStream("CheckAS.png")),
-                new Bitmap(GetStream("QuickBuild.png")),
-                new Bitmap(GetStream("Package.png")),
-                new Bitmap(GetStream("Interface.png")),
-                new Bitmap(GetStream("Intrinsic.png")),
-                new Bitmap(GetStream("Class.png")),
-                new Bitmap(GetStream("Variable.png")),
-                new Bitmap(GetStream("VariableProtected.png")),
-                new Bitmap(GetStream("VariablePrivate.png")),
-                new Bitmap(GetStream("VariableStatic.png")),
-                new Bitmap(GetStream("VariableStaticProtected.png")),
-                new Bitmap(GetStream("VariableStaticPrivate.png")),
-                new Bitmap(GetStream("Const.png")),
-                new Bitmap(GetStream("ConstProtected.png")),
-                new Bitmap(GetStream("ConstPrivate.png")),
-                new Bitmap(GetStream("Const.png")),
-                new Bitmap(GetStream("ConstProtected.png")),
-                new Bitmap(GetStream("ConstPrivate.png")),
-                new Bitmap(GetStream("Method.png")),
-                new Bitmap(GetStream("MethodProtected.png")),
-                new Bitmap(GetStream("MethodPrivate.png")),
-                new Bitmap(GetStream("MethodStatic.png")),
-                new Bitmap(GetStream("MethodStaticProtected.png")),
-                new Bitmap(GetStream("MethodStaticPrivate.png")),
-                new Bitmap(GetStream("Property.png")),
-                new Bitmap(GetStream("PropertyProtected.png")),
-                new Bitmap(GetStream("PropertyPrivate.png")),
-                new Bitmap(GetStream("PropertyStatic.png")),
-                new Bitmap(GetStream("PropertyStaticProtected.png")),
-                new Bitmap(GetStream("PropertyStaticPrivate.png")),
-                new Bitmap(GetStream("Template.png")),
-                new Bitmap(GetStream("Declaration.png"))
+            treeIcons.Images.AddRange( new Image[] 
+            {
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FilePlain.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FolderClosed.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FolderOpen.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("CheckAS.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("QuickBuild.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Package.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Interface.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Intrinsic.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Class.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Variable.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableProtected.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariablePrivate.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStatic.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStaticProtected.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStaticPrivate.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Const.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstProtected.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstPrivate.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Const.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstProtected.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstPrivate.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Method.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodProtected.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodPrivate.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStatic.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStaticProtected.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStaticPrivate.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Property.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyProtected.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyPrivate.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStatic.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStaticProtected.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStaticPrivate.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Template.png"))),
+                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Declaration.png")))
             });
 
             toolStrip.Renderer = new DockPanelStripRenderer();
@@ -188,14 +190,13 @@ namespace ASCompletion
         public static System.IO.Stream GetStream(String name)
         {
             String prefix = "ASCompletion.Icons.";
-            List<string> resources = new List<string>(Assembly.GetExecutingAssembly().GetManifestResourceNames());
             Assembly assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream(prefix + name);
-            return stream;
+            return assembly.GetManifestResourceStream(prefix + name);
         }
 
         private void InitializeTexts()
         {
+            this.noneItem.Image = PluginBase.MainForm.FindImage("559");
             this.noneItem.Text = TextHelper.GetString("Outline.SortNone");
             this.sortedItem.Text = TextHelper.GetString("Outline.SortDefault");
             this.sortedByKindItem.Text = TextHelper.GetString("Outline.SortedByKind");
@@ -972,7 +973,7 @@ namespace ASCompletion
             {
                 int position = sci.PositionFromLine(location.line) + location.column;
                 sci.SetSel(position, position);
-                int line = sci.LineFromPosition(sci.CurrentPos);
+                int line = sci.CurrentLine;
                 sci.EnsureVisible(line);
                 int top = sci.FirstVisibleLine;
                 int middle = top + sci.LinesOnScreen / 2;
@@ -1016,7 +1017,7 @@ namespace ASCompletion
                 outlineTree.BeginUpdate();
                 TreeNodeCollection nodes = outlineTree.Nodes;
                 HilightDeclarationInGroup(nodes, text);
-                Win32.Scrolling.scrollToLeft(outlineTree);
+                if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(outlineTree);
             }
             catch (Exception ex)
             {

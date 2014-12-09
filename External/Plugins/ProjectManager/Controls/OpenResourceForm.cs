@@ -28,6 +28,7 @@ namespace ProjectManager.Controls
         {
             this.plugin = plugin;
             this.InitializeComponent();
+            this.InitializeGraphics();
             this.InitializeLocalization();
             this.Font = PluginBase.Settings.DefaultFont;
             this.listBox.ItemHeight = this.listBox.Font.Height;
@@ -52,11 +53,11 @@ namespace ProjectManager.Controls
             // infoLabel
             // 
             this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(11, 9);
+            this.infoLabel.Location = new System.Drawing.Point(10, 10);
             this.infoLabel.Name = "infoLabel";
             this.infoLabel.Size = new System.Drawing.Size(273, 13);
             this.infoLabel.TabIndex = 0;
-            this.infoLabel.Text = "Search string: (UPPERCASE for search by abbreviation)";
+            this.infoLabel.Text = "Search: (UPPERCASE for search by abbreviation)";
             // 
             // textBox
             // 
@@ -73,7 +74,7 @@ namespace ProjectManager.Controls
             this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.refreshButton.Location = new System.Drawing.Point(465, 30);
             this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(26, 24);
+            this.refreshButton.Size = new System.Drawing.Size(26, 23);
             this.refreshButton.TabIndex = 3;
             this.refreshButton.Click += new EventHandler(RefreshButtonClick);
             // 
@@ -136,9 +137,21 @@ namespace ProjectManager.Controls
         /// <summary>
         /// 
         /// </summary>
+        private void InitializeGraphics()
+        {
+            ImageList imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0"));
+            this.refreshButton.ImageList = imageList;
+            this.refreshButton.ImageIndex = 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void InitializeLocalization()
         {
-            this.refreshButton.Image = PluginBase.MainForm.FindImage("-1|24|0|0");
             this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
             this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
             this.Text = " " + TextHelper.GetString("Title.OpenResource");

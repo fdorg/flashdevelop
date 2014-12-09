@@ -46,11 +46,14 @@ namespace FlashDevelop
         {
             MainForm.Instance = this;
             PluginBase.Initialize(this);
+            this.DoubleBuffered = true;
             this.InitializeErrorLog();
             this.InitializeSettings();
             this.InitializeLocalization();
             if (this.InitializeFirstRun() != DialogResult.Abort)
             {
+                // Suspend layout!
+                this.SuspendLayout();
                 this.InitializeConfig();
                 this.InitializeRendering();
                 this.InitializeComponents();
@@ -86,6 +89,39 @@ namespace FlashDevelop
         private void MainFormLoaded(Object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        #endregion
+
+        #region Flicker Prevention
+
+        // See: http://www.angryhacker.com/blog/archive/2010/07/21/how-to-get-rid-of-flicker-on-windows-forms-applications.aspx
+
+        private Int32 originalStyle = -1;
+        private Boolean enableBuffering = true;
+
+        /// <summary>
+        /// Reduce artifacts on FlashDevelop start
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                if (originalStyle == -1) originalStyle = base.CreateParams.ExStyle;
+                CreateParams cp = base.CreateParams;
+                if (enableBuffering) cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
+                else cp.ExStyle = originalStyle;
+                return cp;
+            }
+        }
+
+        /// <summary>
+        /// Turn off buffering after form show
+        /// </summary>
+        private void TurnOffBuffering()
+        {
+            this.enableBuffering = false;
+            this.MaximizeBox = true;
         }
 
         #endregion
@@ -596,7 +632,11 @@ namespace FlashDevelop
                 if (file.ToLower().IndexOf("theme") != -1)
                 {
                     String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                    if (File.Exists(currentTheme))
+                    {
+                        ThemeManager.LoadTheme(currentTheme);
+                        ThemeManager.WalkControls(this);
+                    }
                     this.RefreshSciConfig();
                     this.Refresh();
                 }
@@ -718,16 +758,6 @@ namespace FlashDevelop
                 this.amWatcher.EnableRaisingEvents = true;
             }
             catch {} // No errors...
-
-            // Load platforms data
-            try
-            {
-                PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError("Invalid 'Platforms' in Settings", ex);
-            }
         }
 
         /// <summary>
@@ -796,6 +826,9 @@ namespace FlashDevelop
                 this.appSettings = (SettingObject)obj;
             }
             SettingObject.EnsureValidity(this.appSettings);
+            String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+            if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+            PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
             FileStateManager.RemoveOldStateFiles();
         }
 
@@ -831,15 +864,27 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Initializes the window position and size
+        /// </summary>
+        public void InitializeWindow()
+        {
+            this.WindowState = this.appSettings.WindowState;
+            Point position = new Point(this.appSettings.WindowPosition.X, this.appSettings.WindowPosition.Y);
+            if (position.X < -4) position.X = 0;
+            if (position.Y < -25) position.Y = 0;
+            this.Location = position;
+            // Continue/perform layout!
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        /// <summary>
         /// Initialises the plugins, restores the layout and sets an fixed position
         /// </summary>
         public void InitializeMainForm()
         {
             try
             {
-                Point position = this.appSettings.WindowPosition;
-                if (position.X < -4 || position.Y < -12) this.Location = new Point(0, 0);
-                else this.Location = position; // Set zero position if window is hidden
                 String pluginDir = PathHelper.PluginDir; // Plugins of all users
                 if (Directory.Exists(pluginDir)) PluginServices.FindPlugins(pluginDir);
                 if (!this.StandaloneMode) // No user plugins on standalone...
@@ -868,8 +913,8 @@ namespace FlashDevelop
             this.dockPanel = new DockPanel();
             this.statusStrip = new StatusStrip();
             this.toolStripPanel = new ToolStripPanel();
-            this.toolStrip = StripBarManager.GetToolStrip(FileNameHelper.ToolBar);
             this.menuStrip = StripBarManager.GetMenuStrip(FileNameHelper.MainMenu);
+            this.toolStrip = StripBarManager.GetToolStrip(FileNameHelper.ToolBar);
             this.editorMenu = StripBarManager.GetContextMenu(FileNameHelper.ScintillaMenu);
             this.tabMenu = StripBarManager.GetContextMenu(FileNameHelper.TabMenu);
             this.toolStripStatusLabel = new ToolStripStatusLabel();
@@ -880,13 +925,20 @@ namespace FlashDevelop
             this.openFileDialog = new OpenFileDialog();
             this.colorDialog = new ColorDialog();
             this.printDialog = new PrintDialog();
-            this.SuspendLayout();
             //
             // toolStripPanel
             //
             this.toolStripPanel.Dock = DockStyle.Top;
-            this.toolStripPanel.Controls.Add(this.toolStrip);
-            this.toolStripPanel.Controls.Add(this.menuStrip);
+            if (Win32.IsRunningOnMono())
+            {
+                this.toolStripPanel.Controls.Add(this.menuStrip);
+                this.toolStripPanel.Controls.Add(this.toolStrip);
+            }
+            else 
+            {
+                this.toolStripPanel.Controls.Add(this.toolStrip);
+                this.toolStripPanel.Controls.Add(this.menuStrip);
+            }
             this.tabMenu.Font = Globals.Settings.DefaultFont;
             this.toolStrip.Font = Globals.Settings.DefaultFont;
             this.menuStrip.Font = Globals.Settings.DefaultFont;
@@ -968,7 +1020,6 @@ namespace FlashDevelop
             this.AllowDrop = true;
             this.Name = "MainForm";
             this.Text = "FlashDevelop";
-            this.Size = new Size(800, 600);
             this.Controls.Add(this.dockPanel);
             this.Controls.Add(this.toolStripPanel);
             this.Controls.Add(this.statusStrip);
@@ -983,8 +1034,6 @@ namespace FlashDevelop
             this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
             this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
             this.Resize += new EventHandler(this.OnMainFormResize);
-            this.ResumeLayout(false);
-            this.PerformLayout();
         }
 
         #endregion
@@ -1018,7 +1067,7 @@ namespace FlashDevelop
         /// </summary>
         private void OnMainFormShow(Object sender, System.EventArgs e)
         {
-            this.WindowState = this.appSettings.WindowState;
+            this.TurnOffBuffering();
             if (RecoveryDialog.ShouldShowDialog()) RecoveryDialog.Show();
         }
 
@@ -1089,10 +1138,9 @@ namespace FlashDevelop
                 if (!ne.Handled) this.New(null, null);
             }
             /**
-            * Load and apply current active theme
-            */ 
-            String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-            if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+            * Apply the default loaded theme
+            */
+            ThemeManager.WalkControls(this);
             /**
             * Notify plugins that the application is ready
             */
@@ -1106,6 +1154,10 @@ namespace FlashDevelop
             * Apply all settings to all documents
             */
             this.ApplyAllSettings();
+            /**
+            * Initialize window and continue layout
+            */
+            this.InitializeWindow();
         }
 
         /// <summary>
@@ -1360,7 +1412,7 @@ namespace FlashDevelop
             if (sci != null && document != null && document.IsEditable)
             {
                 Int32 column = sci.Column(sci.CurrentPos) + 1;
-                Int32 line = sci.LineFromPosition(sci.CurrentPos) + 1;
+                Int32 line = sci.CurrentLine + 1;
                 String statusText = " " + TextHelper.GetString("Info.StatusText");
                 var oldOS = this.OSVersion.Major < 6; // Vista is 6.0 and ok...
                 String file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
@@ -1451,7 +1503,7 @@ namespace FlashDevelop
         /// </summary>
         public Boolean PreFilterMessage(ref Message m)
         {
-            if (m.Msg == 0x20a) // WM_MOUSEWHEEL
+            if (Win32.ShouldUseWin32() && m.Msg == 0x20a) // WM_MOUSEWHEEL
             {
                 Int32 x = unchecked((short)(long)m.LParam);
                 Int32 y = unchecked((short)((long)m.LParam >> 16));
@@ -1620,6 +1672,14 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Adjusts the image for different themes
+        /// </summary>
+        public Image ImageSetAdjust(Image image)
+        {
+            return ImageManager.AdjustImage(image);
+        }
+
+        /// <summary>
         /// Themes the controls from the parent
         /// </summary>
         public void ThemeControls(Object parent)
@@ -1692,6 +1752,23 @@ namespace FlashDevelop
         public void RegisterShortcutItem(String id, ToolStripMenuItem item)
         {
             ShortcutManager.RegisterItem(id, item);
+        }
+
+        /// <summary>
+        /// Registers a new secondary menu item with the shortcut manager
+        /// </summary>
+        public void RegisterSecondaryItem(String id, ToolStripItem item)
+        {
+            ShortcutManager.RegisterSecondaryItem(id, item);
+        }
+
+        /// <summary>
+        /// Updates a registered secondary menu item in the shortcut manager
+        /// - should be called when the tooltip changes.
+        /// </summary>
+        public void ApplySecondaryShortcut(ToolStripItem item)
+        {
+            ShortcutManager.ApplySecondaryShortcut(item);
         }
 
         /// <summary>
@@ -1796,7 +1873,7 @@ namespace FlashDevelop
                     OpenDocumentFromParameters(args[i]);
                 }
             }
-            Win32.RestoreWindow(this.Handle);
+            if (Win32.ShouldUseWin32()) Win32.RestoreWindow(this.Handle);
             /**
             * Notify plugins about start arguments
             */
@@ -1807,7 +1884,7 @@ namespace FlashDevelop
         /// <summary>
         /// 
         /// </summary>
-        private void OpenDocumentFromParameters(string file)
+        private void OpenDocumentFromParameters(String file)
         {
             Match openParams = Regex.Match(file, "@([0-9]+)($|:([0-9]+)$)"); // path@line:col
             if (openParams.Success)
@@ -2948,8 +3025,7 @@ namespace FlashDevelop
         public void ToggleBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.ToggleMarker(sci, 0, line);
+            MarkerManager.ToggleMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>
@@ -2958,8 +3034,7 @@ namespace FlashDevelop
         public void NextBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.NextMarker(sci, 0, line);
+            MarkerManager.NextMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>
@@ -2968,8 +3043,7 @@ namespace FlashDevelop
         public void PrevBookmark(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 line = sci.LineFromPosition(sci.CurrentPos);
-            MarkerManager.PreviousMarker(sci, 0, line);
+            MarkerManager.PreviousMarker(sci, 0, sci.CurrentLine);
         }
 
         /// <summary>
@@ -3593,12 +3667,17 @@ namespace FlashDevelop
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
                 String ext = Path.GetExtension(ofd.FileName).ToLower();
-                if (ext == ".fdi") ThemeManager.LoadTheme(ofd.FileName);
+                if (ext == ".fdi")
+                {
+                    ThemeManager.LoadTheme(ofd.FileName);
+                    ThemeManager.WalkControls(this);
+                }
                 else
                 {
                     this.CallCommand("ExtractZip", ofd.FileName + ";true");
                     String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                    ThemeManager.WalkControls(this);
                     this.RefreshSciConfig();
                     this.Refresh();
                 }

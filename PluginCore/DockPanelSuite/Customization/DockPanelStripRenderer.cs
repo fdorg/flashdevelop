@@ -65,6 +65,15 @@ namespace System.Windows.Forms
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
         {
             if (e.ToolStrip is StatusStrip) return;
+            else if (e.ToolStrip is ToolStripDropDownMenu)
+            {
+                Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.BackColor");
+                if (back2 != Color.Empty)
+                {
+                    e.Graphics.FillRectangle(new SolidBrush(back2), e.AffectedBounds.Top, e.AffectedBounds.Left, e.AffectedBounds.Width, e.AffectedBounds.Height);
+                    return;
+                }
+            }
             ToolStripRenderEventArgs ea = new ToolStripRenderEventArgs(e.Graphics, e.ToolStrip, new Rectangle(-10, -3, e.AffectedBounds.Width + 20, e.AffectedBounds.Height + 6), e.BackColor);
             renderer.DrawToolStripBackground(ea);
         }
@@ -80,16 +89,23 @@ namespace System.Windows.Forms
             }
             else if (e.ToolStrip is ToolStripDropDownMenu)
             {
-                renderer.DrawToolStripBorder(e);
+                Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.BorderColor");
+                if (renderer is ToolStripProfessionalRenderer && back2 != Color.Empty)
+                {
+                    e.Graphics.DrawRectangle(new Pen(back2), e.AffectedBounds.Top, e.AffectedBounds.Left, e.AffectedBounds.Width - 1, e.AffectedBounds.Height - 1);
+                }
+                else renderer.DrawToolStripBorder(e);
                 if (renderer is ToolStripProfessionalRenderer && e.ConnectedArea.Width > 0)
                 {
-                    e.Graphics.DrawLine(SystemPens.ControlLight, e.ConnectedArea.Left, e.ConnectedArea.Top, e.ConnectedArea.Right - 1, e.ConnectedArea.Top);
+                    Color back = PluginBase.MainForm.GetThemeColor("ToolStripMenu.SeparatorColor");
+                    e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlLight : new Pen(back), e.ConnectedArea.Left, e.ConnectedArea.Top, e.ConnectedArea.Right - 1, e.ConnectedArea.Top);
                 }
             }
             else if (this.drawBottomBorder)
             {
                 Rectangle r = e.AffectedBounds;
-                e.Graphics.DrawLine(SystemPens.ControlDark, r.Left, r.Bottom - 1, r.Right, r.Bottom - 1);
+                Color back = PluginBase.MainForm.GetThemeColor("ToolStrip.BorderColor");
+                e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlDark : new Pen(back), r.Left, r.Bottom - 1, r.Right, r.Bottom - 1);
             }
         }
 
@@ -97,19 +113,12 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripSystemRenderer)
             {
-                if (e.ToolStrip is ToolStripDropDownMenu)
-                {
-                    renderer.DrawSeparator(e);
-                    Pen pen = new Pen(SystemColors.ControlDark);
-                    e.Graphics.DrawLine(pen, e.Item.ContentRectangle.Left, e.Item.ContentRectangle.Top, e.Item.ContentRectangle.Right, e.Item.ContentRectangle.Top);
-                    pen.Dispose();
-                }
+                if (e.ToolStrip is ToolStripDropDownMenu) renderer.DrawSeparator(e);
                 else
                 {
-                    Pen pen = new Pen(SystemColors.ControlDark);
                     Int32 middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
-                    e.Graphics.DrawLine(pen, middle, e.Item.ContentRectangle.Top + 1, middle, e.Item.ContentRectangle.Bottom - 2);
-                    pen.Dispose();
+                    e.Graphics.DrawLine(SystemPens.ControlDark, middle - 1, e.Item.ContentRectangle.Top + 1, middle - 1, e.Item.ContentRectangle.Bottom - 2);
+                    e.Graphics.DrawLine(SystemPens.ControlLightLight, middle, e.Item.ContentRectangle.Top + 1, middle, e.Item.ContentRectangle.Bottom - 2);
                 }
             }
             else if (e.Item is ToolStripSeparator && e.Vertical)
@@ -125,10 +134,21 @@ namespace System.Windows.Forms
                     Pen pen2 = new Pen(light);
                     e.Graphics.DrawLine(pen2, middle, e.Item.ContentRectangle.Top + 2, middle, e.Item.ContentRectangle.Bottom - 4);
                     pen2.Dispose();
-                } 
+                }
                 else renderer.DrawSeparator(e);
             }
-            else renderer.DrawSeparator(e);
+            else
+            {
+                Color sepFore = PluginBase.MainForm.GetThemeColor("ToolStripSeparator.ForeColor");
+                if (sepFore != Color.Empty)
+                {
+                    Pen pen2 = new Pen(sepFore);
+                    Int32 middle = e.Item.ContentRectangle.Top + e.Item.ContentRectangle.Height / 2;
+                    e.Graphics.DrawLine(pen2, 32, middle, e.Item.ContentRectangle.Right - 6, middle);
+                    pen2.Dispose();
+                }
+                else renderer.DrawSeparator(e);
+            }
         }
 
         protected override void OnRenderGrip(ToolStripGripRenderEventArgs e)
@@ -147,9 +167,31 @@ namespace System.Windows.Forms
                     }
                 }
                 Color back = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
-                using (Brush darkBrush = new SolidBrush(back == Color.Empty ? this.colorTable.GripDark: back))
+                using (Brush darkBrush = new SolidBrush(back == Color.Empty ? this.colorTable.GripDark : back))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 5, 2, 2);
+                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    {
+                        e.Graphics.FillRectangle(darkBrush, r);
+                        r.Offset(0, 4);
+                    }
+                }
+            }
+            else if (Win32.IsRunningOnWindows())
+            {
+                if (e.GripStyle == ToolStripGripStyle.Hidden) return;
+                using (Brush lightBrush = new SolidBrush(this.colorTable.GripLight))
+                {
+                    Rectangle r = new Rectangle(e.GripBounds.Left, e.GripBounds.Top + 8, 2, 2);
+                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    {
+                        e.Graphics.FillRectangle(lightBrush, r);
+                        r.Offset(0, 4);
+                    }
+                }
+                using (Brush darkBrush = new SolidBrush(this.colorTable.GripDark))
+                {
+                    Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 7, 2, 2);
                     for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(darkBrush, r);
@@ -192,7 +234,14 @@ namespace System.Windows.Forms
                     }
                     if (((ToolStripMenuItem)e.Item).DropDown.Visible && !e.Item.IsOnDropDown)
                     {
-                        renderer.DrawMenuItemBackground(e);
+                        Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.TitleBackColor");
+                        Color border2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.TitleBorderColor");
+                        if (back2 != Color.Empty && border2 != Color.Empty)
+                        {
+                            e.Graphics.FillRectangle(new SolidBrush(back2), new Rectangle(0, 0, e.Item.Width, e.Item.Height));
+                            e.Graphics.DrawRectangle(new Pen(border2), 0, 0, e.Item.Width - 1, e.Item.Height);
+                        }
+                        else renderer.DrawMenuItemBackground(e);
                     }
                 }
             }
@@ -201,6 +250,13 @@ namespace System.Windows.Forms
 
         protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
         {
+            // Ensure padding on buttons if in high dpi mode
+            if (e.Graphics.DpiX >= 192) e.Item.Padding = new Padding(4, 2, 4, 2);
+            else if (e.Graphics.DpiX >= 120) e.Item.Padding = new Padding(2, 1, 2, 1);
+            else if (renderer is ToolStripSystemRenderer && Win32.IsRunningOnWindows())
+            {
+                e.Item.Padding = new Padding(2, 2, 2, 2);
+            }
             if (renderer is ToolStripProfessionalRenderer)
             {
                 Boolean isOver = false;
@@ -247,13 +303,22 @@ namespace System.Windows.Forms
                     Rectangle rectBack = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
                     LinearGradientBrush backBrush = new LinearGradientBrush(rectBack, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                     e.Graphics.FillRectangle(backBrush, rectBack);
-
                     Rectangle rect2 = new Rectangle(rectBack.Left - 1, rectBack.Top - 1, rectBack.Width + 1, rectBack.Height + 1);
                     Rectangle rect3 = new Rectangle(rect2.Left + 1, rect2.Top + 1, rect2.Width - 2, rect2.Height - 2);
                     e.Graphics.DrawRectangle(new Pen(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border), rect2);
                     e.Graphics.DrawRectangle(new Pen(back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back), rect3);
                 }
-                if (e.Item.Pressed) renderer.DrawDropDownButtonBackground(e);
+                if (e.Item.Pressed)
+                {
+                    Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBackColor");
+                    Color border2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
+                    if (back2 != Color.Empty && border2 != Color.Empty)
+                    {
+                        e.Graphics.FillRectangle(new SolidBrush(back2), new Rectangle(0, 0, e.Item.Width, e.Item.Height));
+                        e.Graphics.DrawRectangle(new Pen(border2), new Rectangle(0, 0, e.Item.Width - 1, e.Item.Height - 1));
+                    }
+                    else renderer.DrawDropDownButtonBackground(e);
+                }
             }
             else renderer.DrawDropDownButtonBackground(e);
         }
@@ -262,12 +327,12 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
-                SolidBrush line = new SolidBrush(SystemColors.ControlLight);
+                Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.MarginBackColor");
+                Color border = PluginBase.MainForm.GetThemeColor("ToolStripMenu.MarginBorderColor");
                 Rectangle rect = new Rectangle(e.AffectedBounds.Width, 0, 1, e.AffectedBounds.Height);
                 Rectangle rect2 = new Rectangle(0, 0, e.AffectedBounds.Width, e.AffectedBounds.Height);
-                LinearGradientBrush back = new LinearGradientBrush(rect2, this.colorTable.ImageMarginGradientBegin, this.colorTable.ImageMarginGradientEnd, 0.2f);
-                e.Graphics.FillRectangle(back, rect2);
-                e.Graphics.FillRectangle(line, rect);
+                e.Graphics.FillRectangle(new LinearGradientBrush(rect2, back2 == Color.Empty ? this.colorTable.ImageMarginGradientBegin : back2, back2 == Color.Empty ? this.colorTable.ImageMarginGradientEnd : back2, 0.2f), rect2);
+                e.Graphics.FillRectangle(new SolidBrush(border == Color.Empty ? SystemColors.ControlLight : border), rect);
             }
             else renderer.DrawImageMargin(e);
         }
@@ -284,7 +349,8 @@ namespace System.Windows.Forms
                 LinearGradientBrush backBrush = new LinearGradientBrush(backRect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                 e.Graphics.FillRectangle(borderBrush, borderRect);
                 e.Graphics.FillRectangle(backBrush, backRect);
-                e.Graphics.DrawImage(e.Image, 5 + ((backRect.Width - e.ImageRectangle.Width) / 2), 3 + ((backRect.Height - e.ImageRectangle.Height) / 2), e.ImageRectangle.Width, e.ImageRectangle.Height);
+                Image image = PluginBase.MainForm.FindImage("485");
+                e.Graphics.DrawImage(image, e.ImageRectangle, new Rectangle(Point.Empty, image.Size), GraphicsUnit.Pixel);
             }
             else renderer.DrawItemCheck(e);
         }
@@ -298,23 +364,19 @@ namespace System.Windows.Forms
                 using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
                 {
                     // Do we need to invert the drawing edge?
-                    bool rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
-
+                    Boolean rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
                     // Find vertical position of the lowest grip line
-                    int y = e.AffectedBounds.Bottom - 3 * 2 + 1;
-
+                    Int32 y = e.AffectedBounds.Bottom - 3 * 2 + 1;
                     // Draw three lines of grips
-                    for (int i = 3; i >= 1; i--)
+                    for (Int32 i = 3; i >= 1; i--)
                     {
                         // Find the rightmost grip position on the line
-                        int x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
-
+                        Int32 x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
                         // Draw grips from right to left on line
-                        for (int j = 0; j < i; j++)
+                        for (Int32 j = 0; j < i; j++)
                         {
                             // Just the single grip glyph
                             DrawGripGlyph(e.Graphics, x, y, darkBrush, lightBrush);
-
                             // Move left to next grip position
                             x -= (rtl ? -4 : 4);
                         }
@@ -325,11 +387,83 @@ namespace System.Windows.Forms
             }
             else renderer.DrawStatusStripSizingGrip(e);
         }
-
-        private void DrawGripGlyph(Graphics g, int x, int y, Brush darkBrush, Brush lightBrush)
+        private void DrawGripGlyph(Graphics g, Int32 x, Int32 y, Brush darkBrush, Brush lightBrush)
         {
             g.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
             g.FillRectangle(darkBrush, x, y, 2, 2);
+        }
+
+        protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            Rectangle dropDownRect = e.ArrowRectangle;
+            Color color = PluginBase.MainForm.GetThemeColor("ToolStripItem.ArrowColor");
+            if (color != Color.Empty) e.ArrowColor = color;
+            else e.ArrowColor = SystemColors.MenuText;
+            using (Brush brush = new SolidBrush(e.ArrowColor))
+            {
+                Point[] arrow;
+                Int32 hor = ScaleHelper.Scale(2);
+                Int32 ver = ScaleHelper.Scale(2);
+                Point middle = new Point(dropDownRect.Left + dropDownRect.Width / 2, dropDownRect.Top + dropDownRect.Height / 2);
+                switch (e.Direction)
+                {
+                    case ArrowDirection.Up:
+                        arrow = new Point[] 
+                        {
+                            new Point(middle.X - hor, middle.Y + 1),
+                            new Point(middle.X + hor + 1, middle.Y + 1),
+                            new Point(middle.X, middle.Y - ver)
+                        };
+                        break;
+                    case ArrowDirection.Left:
+                        arrow = new Point[] 
+                        {
+                            new Point(middle.X + hor, middle.Y - 2 * ver),
+                            new Point(middle.X + hor, middle.Y + 2 * ver),
+                            new Point(middle.X - hor, middle.Y)
+                        };
+                        break;
+                    case ArrowDirection.Right:
+                        arrow = new Point[] 
+                        {
+                            new Point(middle.X - hor, middle.Y - 2 * ver),
+                            new Point(middle.X - hor, middle.Y + 2 * ver),
+                            new Point(middle.X + hor, middle.Y)
+                        };
+                        break;
+                    case ArrowDirection.Down:
+                    default:
+                        arrow = new Point[] 
+                        {
+                            new Point(middle.X - hor, middle.Y - 1),
+                            new Point(middle.X + hor + 1, middle.Y - 1),
+                            new Point(middle.X, middle.Y + ver) 
+                        };
+                        break;
+                }
+                g.FillPolygon(brush, arrow);
+            }
+        }
+
+        protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
+        {
+            if (renderer is ToolStripProfessionalRenderer) 
+            {
+                Color text = PluginBase.MainForm.GetThemeColor("ToolStripItem.TextColor");
+                if (text != Color.Empty) e.TextColor = text;
+            }
+            renderer.DrawItemText(e);
+        }
+
+        protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
+        {
+            if (renderer is ToolStripProfessionalRenderer)
+            {
+                // Do not render set blank image if its a checked. Workaround for incorrect menu width.
+                if (e.Item is ToolStripMenuItem && e.Item != null && ((ToolStripMenuItem)e.Item).Checked) return;
+            }
+            renderer.DrawItemImage(e);
         }
 
         #region Reuse Some Renderer Stuff
@@ -337,21 +471,6 @@ namespace System.Windows.Forms
         protected override void OnRenderItemBackground(ToolStripItemRenderEventArgs e)
         {
             renderer.DrawItemBackground(e);
-        }
-
-        protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
-        {
-            renderer.DrawItemText(e);
-        }
-
-        protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
-        {
-            renderer.DrawItemImage(e);
-        }
-
-        protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
-        {
-            renderer.DrawArrow(e);
         }
 
         protected override void OnRenderLabelBackground(ToolStripItemRenderEventArgs e)

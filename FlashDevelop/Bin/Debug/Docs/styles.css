@@ -1,12 +1,12 @@
 body 
 {
-	font-size: 8pt;
+	font-size: 9pt;
 	font-family: "Trebuchet MS", Georgia, Times, serif;
 	padding-top: 12px;
 }
 h4 
 {
-	font-size: 9pt;
+	font-size: 12pt;
 	border-bottom: 1px dotted #999999;
 }
 ul 
@@ -25,10 +25,12 @@ a:hover
 	color: darkblue;
 	text-decoration: underline;
 }
-#wrapper {
-	width: 600px;
+#wrapper 
+{
+	width: auto;
 	padding: 18px;
 	padding-left: 25px;
+	padding-right: 25px;
 	padding-top: 0px;
 }
 #header 

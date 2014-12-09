@@ -287,19 +287,23 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
             else x = TabGapLeft + rectTabStrip.X;
 
+            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005AutoHideStrip.TabStyle");
+
             foreach (Pane pane in GetPanes(dockState))
             {
                 foreach (TabVS2005 tab in pane.AutoHideTabs)
                 {
-                    int width = imageWidth + ImageGapLeft + ImageGapRight +
-                        TextRenderer.MeasureText(tab.Content.DockHandler.TabText, Font).Width +
-                        TextGapLeft + TextGapRight;
+                    int width;
+
+                    if (tabStyle == "Underlined") width = TextRenderer.MeasureText(tab.Content.DockHandler.TabText, Font).Width + TextGapLeft + TextGapRight;
+                    else width = imageWidth + ImageGapLeft + ImageGapRight + TextRenderer.MeasureText(tab.Content.DockHandler.TabText, Font).Width + TextGapLeft + TextGapRight;
+                    
                     tab.TabX = x;
                     tab.TabWidth = width;
                     x += width;
                 }
 
-                x += TabGapBetween;
+                x += TabGapBetween ;
             }
         }
 
@@ -337,7 +341,26 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             GraphicsPath path = GetTabOutline(tab, false, true);
             g.FillPath(BrushTabBackground, path);
-            g.DrawPath(PenTabBorder, path);
+
+            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005AutoHideStrip.TabStyle");
+            Color tabUlColor = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005AutoHideStrip.TabUnderlineColor");
+
+            if (tabStyle == "Underlined")
+            {
+                Int32 spacing = ScaleHelper.Scale(4);
+                Brush brush = tabUlColor != Color.Empty ? new SolidBrush(tabUlColor) : SystemBrushes.Highlight;
+                if (dockState == DockState.DockLeftAutoHide || dockState == DockState.DockRightAutoHide)
+                {
+                    g.FillRectangle(brush, new Rectangle(rectTabOrigin.X + spacing, rectTabOrigin.Y, rectTabOrigin.Width - (spacing * 2), spacing));
+                    rectTabOrigin.Y += spacing;
+                }
+                else
+                {
+                    g.FillRectangle(brush, new Rectangle(rectTabOrigin.X + spacing, rectTabOrigin.Bottom - spacing, rectTabOrigin.Width - (spacing * 2), rectTabOrigin.Bottom));
+                    rectTabOrigin.Y -= spacing;
+                }
+            }
+            else g.DrawPath(PenTabBorder, path);
 
             // Set no rotate for drawing icon and text
 			Matrix matrixRotate = g.Transform;
@@ -359,7 +382,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 			rectImage.Height = imageHeight;
 			rectImage.Width = imageWidth;
 			rectImage = GetTransformedRectangle(dockState, rectImage);
-			g.DrawIcon(((Form)content).Icon, RtlTransform(rectImage, dockState));
+
+            if (tabStyle != "Underlined") g.DrawIcon(((Form)content).Icon, RtlTransform(rectImage, dockState));
 
 			// Draw the text
 			Rectangle rectText = rectTabOrigin;
@@ -367,8 +391,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             // CHANGED - Mika
             if (Font.SizeInPoints > 8F) rectText.Y += 1;
 
-			rectText.X += ImageGapLeft + imageWidth + ImageGapRight + TextGapLeft;
-			rectText.Width -= ImageGapLeft + imageWidth + ImageGapRight + TextGapLeft;
+            if (tabStyle == "Underlined") rectText.X += TextGapRight;
+            else
+            {
+                rectText.X += ImageGapLeft + imageWidth + ImageGapRight + TextGapLeft;
+                rectText.Width -= ImageGapLeft + imageWidth + ImageGapRight + TextGapLeft;
+            }
+
 			rectText = RtlTransform(GetTransformedRectangle(dockState, rectText), dockState);
 			if (dockState == DockState.DockLeftAutoHide || dockState == DockState.DockRightAutoHide)
 				g.DrawString(content.DockHandler.TabText, Font, BrushTabText, rectText, StringFormatTabVertical);

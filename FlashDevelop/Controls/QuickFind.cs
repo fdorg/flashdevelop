@@ -33,6 +33,7 @@ namespace FlashDevelop.Controls
         private ToolStripControlHost matchCaseHost;
         private ToolStripControlHost highlightHost;
         private ToolStripButton previousButton;
+        private ToolStripButton moreButton;
         private EscapeTextBox findTextBox;
         private ToolStripLabel findLabel;
         private ToolStripLabel infoLabel;
@@ -42,6 +43,7 @@ namespace FlashDevelop.Controls
         {
             this.Font = Globals.Settings.DefaultFont;
             this.InitializeComponent();
+            this.InitializeGraphics();
             this.InitializeEvents();
             this.InitializeTimers();
         }
@@ -77,6 +79,7 @@ namespace FlashDevelop.Controls
             this.highlightCheckBox = new CheckBox();
             this.nextButton = new ToolStripButton();
             this.closeButton = new ToolStripButton();
+            this.moreButton = new ToolStripButton();
             this.highlightHost = new ToolStripControlHost(this.highlightCheckBox);
             this.matchCaseHost = new ToolStripControlHost(this.matchCaseCheckBox);
             this.wholeWordHost = new ToolStripControlHost(this.wholeWordCheckBox);
@@ -158,6 +161,13 @@ namespace FlashDevelop.Controls
             this.findTextBox.OnKeyEscape += new KeyEscapeEvent(this.FindTextBoxOnKeyEscape);
             this.findTextBox.Margin = new Padding(0, 1, 7, 2);
             //
+            // moreButton
+            //
+            this.moreButton.Click += new EventHandler(this.MoreButtonClick);
+            this.moreButton.Text = TextHelper.GetString("Label.More");
+            this.moreButton.Alignment = ToolStripItemAlignment.Right;
+            this.moreButton.Margin = new Padding(0, 1, 5, 2);
+            //
             // QuickFind
             //
             this.Items.Add(this.closeButton);
@@ -169,6 +179,7 @@ namespace FlashDevelop.Controls
             this.Items.Add(this.wholeWordHost);
             this.Items.Add(this.highlightHost);
             this.Items.Add(this.infoLabel);
+            this.Items.Add(this.moreButton);
             this.GripStyle = ToolStripGripStyle.Hidden;
             this.Renderer = new QuickFindRenderer();
             this.Padding = new Padding(4, 4, 0, 3);
@@ -205,6 +216,17 @@ namespace FlashDevelop.Controls
                 this.wholeWordCheckBox.Enabled = value;
                 this.findTextBox.Enabled = value;
             }
+        }
+
+        /// <summary>
+        /// Initializes the graphics used in the control.
+        /// </summary>
+        private void InitializeGraphics()
+        {
+            if (ScaleHelper.GetScale() < 1.5) return;
+            this.nextButton.Image = Globals.MainForm.FindImage("67");
+            this.previousButton.Image = Globals.MainForm.FindImage("63");
+            this.closeButton.Image = Globals.MainForm.FindImage("111");
         }
 
         /// <summary>
@@ -514,6 +536,15 @@ namespace FlashDevelop.Controls
         {
             this.Hide();
             this.ApplyFixedDocumentPadding();
+        }
+
+        /// <summary>
+        /// Open the Find And Replace dialog
+        /// </summary>
+        private void MoreButtonClick(Object sender, EventArgs e)
+        {
+            this.CloseButtonClick(null, null);
+            PluginBase.MainForm.CallCommand("FindAndReplaceFrom", this.findTextBox.Text);
         }
 
         /// <summary>
