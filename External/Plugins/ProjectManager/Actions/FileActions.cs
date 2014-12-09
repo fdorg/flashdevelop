@@ -27,6 +27,8 @@ namespace ProjectManager.Actions
         public const string FileCopy = "ProjectManager.FileActions.Copy";
         public const string FileCut = "ProjectManager.FileActions.Cut";
         public const string FilePaste = "ProjectManager.FileActions.Paste";
+        public const string FileEnableWatchers = "ProjectManager.FileActions.EnableWatchers";
+        public const string FileDisableWatchers = "ProjectManager.FileActions.DisableWatchers";
     }
 
     /// <summary>
@@ -341,7 +343,7 @@ namespace ProjectManager.Actions
 
                 if (result == DialogResult.OK)
                 {
-                    UnwatchClasspath();
+                    DisableWatchers();
                     if (!FileHelper.Recycle(path))
                     {
                         String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
@@ -357,7 +359,7 @@ namespace ProjectManager.Actions
             }
             finally
             {
-                RewatchClasspath();
+                EnableWatchers();
                 PopCurrentDirectory();
             }
         }
@@ -383,7 +385,7 @@ namespace ProjectManager.Actions
 
                     if (result == DialogResult.OK)
                     {
-                        UnwatchClasspath();
+                        DisableWatchers();
 
                         foreach (string path in paths)
                         {
@@ -402,7 +404,7 @@ namespace ProjectManager.Actions
                 }
                 finally
                 {
-                    RewatchClasspath();
+                    EnableWatchers();
                     PopCurrentDirectory(); 
                 }
             }
@@ -421,7 +423,7 @@ namespace ProjectManager.Actions
 
             try
             {
-                UnwatchClasspath();
+                DisableWatchers();
                 PushCurrentDirectory();
 
                 string oldDir = Path.GetDirectoryName(oldPath);
@@ -469,7 +471,7 @@ namespace ProjectManager.Actions
             }
             finally
             {
-                RewatchClasspath();
+                EnableWatchers();
                 PopCurrentDirectory();
             }
             return true;
@@ -481,7 +483,7 @@ namespace ProjectManager.Actions
 
             try
             {
-                UnwatchClasspath();
+                DisableWatchers();
                 PushCurrentDirectory();
 
                 // try to fix toPath if it's a filename
@@ -515,14 +517,14 @@ namespace ProjectManager.Actions
             }
             finally
             {
-                RewatchClasspath();
+                EnableWatchers();
                 PopCurrentDirectory();
             }
         }
 
         private void MoveDirectory(string fromPath, string toPath)
         {
-            UnwatchClasspath();
+            DisableWatchers();
             if (Directory.GetDirectoryRoot(fromPath) == Directory.GetDirectoryRoot(toPath)
                 && !Directory.Exists(toPath))
             {
@@ -534,7 +536,7 @@ namespace ProjectManager.Actions
                 { 
                     throw;
                 }
-                finally { RewatchClasspath(); }
+                finally { EnableWatchers(); }
             }
             else
             {
@@ -547,7 +549,7 @@ namespace ProjectManager.Actions
                 {
                     throw;
                 }
-                finally { RewatchClasspath(); }
+                finally { EnableWatchers(); }
             }
             
         }
@@ -658,16 +660,16 @@ namespace ProjectManager.Actions
             return filePath;
         }
 
-        private void UnwatchClasspath()
+        private void DisableWatchers()
         {
-            DataEvent unwatch = new DataEvent(EventType.Command, "ASCompletion.UnwatchClassPath", null);
-            EventManager.DispatchEvent(this, unwatch);
+            DataEvent disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
+            EventManager.DispatchEvent(this, disableWatchers);
         }
 
-        private void RewatchClasspath()
+        private void EnableWatchers()
         {
-            DataEvent rewatch = new DataEvent(EventType.Command, "ASCompletion.RewatchClassPath", null);
-            EventManager.DispatchEvent(this, rewatch);
+            DataEvent enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
+            EventManager.DispatchEvent(this, enableWatchers);
         }
 
         #endregion

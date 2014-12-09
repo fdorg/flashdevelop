@@ -1088,8 +1088,8 @@ namespace ProjectManager
         {
             try
             {
-                DataEvent unwatch = new DataEvent(EventType.Command, "ASCompletion.UnwatchClassPath", null);
-                EventManager.DispatchEvent(this, unwatch);
+                DataEvent disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
+                EventManager.DispatchEvent(this, disableWatchers);
 
                 Project project = activeProject; // TODO clean all projects
 
@@ -1104,8 +1104,8 @@ namespace ProjectManager
             }
             finally
             {
-                DataEvent rewatch = new DataEvent(EventType.Command, "ASCompletion.RewatchClassPath", null);
-                EventManager.DispatchEvent(this, rewatch);
+                DataEvent enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
+                EventManager.DispatchEvent(this, enableWatchers);
             }
         }
 

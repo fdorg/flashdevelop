@@ -388,12 +388,12 @@ namespace ASCompletion
                                     }
                                 }
                             }
-                            else if (command == "ASCompletion.UnwatchClassPath")
+                            else if (command == "ProjectManager.FileActions.DisableWatchers")
                             {
                                 foreach (PathModel cp in ASContext.Context.Classpath)
                                     cp.DisableWatcher();
                             }
-                            else if (command == "ASCompletion.RewatchClassPath")
+                            else if (command == "ProjectManager.FileActions.EnableWatchers")
                             {
                                 // classpaths could be invalid now - remove those, BuildClassPath() is too expensive
                                 ASContext.Context.Classpath.RemoveAll(cp => !Directory.Exists(cp.Path));
