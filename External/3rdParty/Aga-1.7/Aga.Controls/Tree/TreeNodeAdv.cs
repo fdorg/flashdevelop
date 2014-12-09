@@ -158,6 +158,12 @@ namespace Aga.Controls.Tree
 			}
 		}
 
+
+		internal void SetSelectedInternal(bool value)
+		{
+			_isSelected = value;
+		}
+
 		/// <summary>
 		/// Returns true if all parent nodes of this node are expanded.
 		/// </summary>
@@ -268,6 +274,16 @@ namespace Aga.Controls.Tree
 				return null;
 			}
 		}
+
+        internal bool IsVisibleOverride {get 
+        {
+            bool visible = true;
+            if (Tree.OnVisibleOverride != null)
+                Tree.OnVisibleOverride(this.Tag, ref visible);
+           return visible;
+        }}
+
+         
 
 		internal TreeNodeAdv NextVisibleNode
 		{

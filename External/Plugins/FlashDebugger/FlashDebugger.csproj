@@ -19,6 +19,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -31,7 +32,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -56,8 +56,10 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -74,9 +76,9 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="Aga, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Aga, Version=1.7.0.1, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
       <HintPath>..\..\..\FlashDevelop\Bin\Debug\Aga.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="fdb.j4n, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -158,6 +160,9 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\BreakPointUI.resx">
+      <DependentUpon>BreakPointUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
@@ -173,12 +178,17 @@
     </Content>
     <Content Include="Icons\Continue.png" />
     <Content Include="Icons\Current.png" />
+    <None Include="Icons\DeleteBreakpoints.png" />
+    <None Include="Icons\DeleteBreakpoint.png" />
+    <None Include="Icons\ExportBreakpoints.png" />
     <Content Include="Icons\Finish.png" />
+    <None Include="Icons\ImportBreakpoints.png" />
     <Content Include="Icons\Next.png" />
     <Content Include="Icons\Pause.png" />
     <Content Include="Icons\Step.png" />
     <Content Include="Icons\RunToCursor.png" />
     <Content Include="Icons\Stop.png" />
+    <None Include="Icons\ToggleBreakpoints.png" />
     <Content Include="jni4net.j-0.8.4.0.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

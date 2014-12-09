@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using Aga.Controls.Properties;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.ComponentModel;
@@ -26,6 +23,18 @@ namespace Aga.Controls.Tree.NodeControls
 		{
 			get { return _threeState; }
 			set { _threeState = value; }
+		}
+
+		bool _reverseCheckOrder;
+		/// <summary>
+		/// Reverses the Order. 
+		/// From Indeterminate, Unchecked, Checked to Indeterminate, Checked, Unchecked.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool ReverseCheckOrder
+		{
+			get { return _reverseCheckOrder; }
+			set { _reverseCheckOrder = value; }
 		}
 
 		#endregion
@@ -134,14 +143,26 @@ namespace Aga.Controls.Tree.NodeControls
 			args.Handled = true;
 		}
 
-		private CheckState GetNewState(CheckState state)
+		protected virtual CheckState GetNewState(CheckState state)
 		{
-			if (state == CheckState.Indeterminate)
-				return CheckState.Unchecked;
-			else if(state == CheckState.Unchecked)
-				return CheckState.Checked;
-			else 
-				return ThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
+			if (ReverseCheckOrder)
+			{
+				if (state == CheckState.Indeterminate)
+					return CheckState.Checked;
+				else if (state == CheckState.Checked)
+					return CheckState.Unchecked;
+				else
+					return ThreeState ? CheckState.Indeterminate : CheckState.Checked;
+			}
+			else
+			{
+				if (state == CheckState.Indeterminate)
+					return CheckState.Unchecked;
+				else if (state == CheckState.Unchecked)
+					return CheckState.Checked;
+				else
+					return ThreeState ? CheckState.Indeterminate : CheckState.Unchecked;
+			}
 		}
 
 		public override void KeyDown(KeyEventArgs args)

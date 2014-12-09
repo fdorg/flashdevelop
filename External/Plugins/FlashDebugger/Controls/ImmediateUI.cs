@@ -56,33 +56,45 @@ namespace FlashDebugger.Controls
                 //}
                 string line = "";
                 if (curLine<this.textBox.Lines.Length) line = this.textBox.Lines[curLine];
-                if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.Text += "\r\n";
+                if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.AppendText(Environment.NewLine);
                 try
                 {
                     this.history.Add(line);
                     this.historyPos = this.history.Count;
                     if (line == "swfs")
                     {
-                        this.textBox.Text += processSwfs();
+                        this.textBox.AppendText(processSwfs());
                     }
                     else if (line.StartsWith("p "))
                     {
-                        this.textBox.Text += processExpr(line.Substring(2));
+                        this.textBox.AppendText(processExpr(line.Substring(2)));
                     }
                     else if (line.StartsWith("g "))
                     {
-                        this.textBox.Text += processGlobal(line.Substring(2));
+                        this.textBox.AppendText(processGlobal(line.Substring(2)));
                     }
                     else
                     {
-                        this.textBox.Text += "Commands: swfs, p <exptr>, g <value id>";
+                        this.textBox.AppendText("Commands: swfs, p <exptr>, g <value id>");
                     }
+                }
+                catch (NoSuchVariableException ex)
+                {
+                    this.textBox.AppendText(ex.ToString());
+                }
+                catch (PlayerDebugException ex)
+                {
+                    this.textBox.AppendText(ex.ToString());
+                }
+                catch (PlayerFaultException ex)
+                {
+                    this.textBox.AppendText(ex.ToString());
                 }
                 catch (Exception ex)
                 {
-                    this.textBox.Text += ex.ToString();
+                    this.textBox.AppendText(!string.IsNullOrEmpty(ex.Message) ? ex.GetType().FullName + ": " + ex.Message : ex.ToString());
                 }
-                if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.Text += "\r\n";
+                if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.AppendText(Environment.NewLine);
                 this.textBox.Select(this.textBox.Text.Length, 0);
                 this.textBox.ScrollToCaret();
             }
@@ -90,14 +102,16 @@ namespace FlashDebugger.Controls
 
         private string processSwfs()
         {
-                string ret = "";
+                StringBuilder ret = new StringBuilder();
 
                 foreach (SwfInfo info in PluginMain.debugManager.FlashInterface.Session.getSwfs())
                 {
-					if (info == null) continue;
-                    ret += info.getPath() + "\tswfsize " + info.getSwfSize() + "\tprocesscomplete " + info.isProcessingComplete() + "\tunloaded " + info.isUnloaded() + "\turl " + info.getUrl() + "\tsourcecount "+info.getSourceCount(PluginMain.debugManager.FlashInterface.Session) + "\r\n";
+                    if (info == null) continue;
+                    ret.Append(info.getPath()).Append("\tswfsize ").Append(info.getSwfSize()).Append("\tprocesscomplete ").Append(info.isProcessingComplete())
+                        .Append("\tunloaded ").Append(info.isUnloaded()).Append("\turl ").Append(info.getUrl()).Append("\tsourcecount ")
+                        .Append(info.getSourceCount(PluginMain.debugManager.FlashInterface.Session)).AppendLine();
                 }
-                return ret;
+                return ret.ToString();
         }
 
         private string processExpr(string expr)

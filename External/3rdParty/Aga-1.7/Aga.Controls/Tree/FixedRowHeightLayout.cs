@@ -31,7 +31,7 @@ namespace Aga.Controls.Tree
 		{
 			get
 			{
-				return Math.Max((_treeView.DisplayRectangle.Height - _treeView.ColumnHeaderHeight) / _rowHeight, 0);
+				return Math.Max((_treeView.DisplayRectangle.Height - _treeView.ActualColumnHeaderHeight) / _rowHeight, 0);
 			}
 		}
 
@@ -45,7 +45,7 @@ namespace Aga.Controls.Tree
 
 		public int GetRowAt(Point point)
 		{
-			point = new Point(point.X, point.Y + (_treeView.FirstVisibleRow * _rowHeight) - _treeView.ColumnHeaderHeight);
+			point = new Point(point.X, point.Y + (_treeView.FirstVisibleRow * _rowHeight) - _treeView.ActualColumnHeaderHeight);
 			return point.Y / _rowHeight;
 		}
 
