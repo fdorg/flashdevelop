@@ -3639,7 +3639,12 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
     <value>エラー行の背景:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>同期</value>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
+    <value>Locate Document Class</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="AS3Context.Label.AutoStartProfilerOFF" xml:space="preserve">
     <value>プロファイラーの自動開始:無効</value>
@@ -5395,6 +5400,10 @@ UseData:"</value>
   </data>
   <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
     <value>Colorize first margin with 'gdefault' foreground color</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
+    <value>Track current active document in Project Tree.</value>
     <comment>Added after 4.7.0</comment>
   </data>
 </root>

@@ -106,7 +106,7 @@ namespace ProjectManager
         [LocalizedCategory("ProjectManager.Category.OtherOptions")]
         [DefaultValue(10)]
         public Int32 MaxRecentProjects
-		{
+        {
             get { return maxRecentProjects; }
             set { maxRecentProjects = value; FireChanged("MaxRecentProjects"); }
         }
@@ -135,10 +135,10 @@ namespace ProjectManager
         [LocalizedDescription("ProjectManager.Description.ExcludedFileTypes")]
         [LocalizedCategory("ProjectManager.Category.Exclusions")]
         public string[] ExcludedFileTypes
-		{
+        {
             get { return excludedFileTypes; }
             set { excludedFileTypes = value; FireChanged("ExcludedFileTypes"); }
-		}
+        }
 
         [DisplayName("Executable File Types")]
         [LocalizedDescription("ProjectManager.Description.ExecutableFileTypes")]
@@ -153,10 +153,10 @@ namespace ProjectManager
         [LocalizedDescription("ProjectManager.Description.ExcludedDirectories")]
         [LocalizedCategory("ProjectManager.Category.Exclusions")]
         public string[] ExcludedDirectories
-		{
+        {
             get { return excludedDirectories; }
             set { excludedDirectories = value; FireChanged("ExcludedDirectories"); }
-		}
+        }
 
         [DisplayName("Filtered Directory Names")]
         [LocalizedDescription("ProjectManager.Description.FilteredDirectoryNames")]
@@ -172,17 +172,17 @@ namespace ProjectManager
         [LocalizedCategory("ProjectManager.Category.ProjectTree")]
         [DefaultValue(true)]
         public bool ShowProjectClasspaths
-		{
+        {
             get { return showProjectClasspaths; }
             set { showProjectClasspaths = value; FireChanged("ShowProjectClasspaths"); }
-		}
+        }
 
         [DisplayName("Show Global Classpaths")]
         [LocalizedDescription("ProjectManager.Description.ShowGlobalClasspaths")]
         [LocalizedCategory("ProjectManager.Category.ProjectTree")]
         [DefaultValue(false)]
         public bool ShowGlobalClasspaths
-		{
+        {
             get { return showGlobalClasspaths; }
             set { showGlobalClasspaths = value; FireChanged("DisableMxmlMapping"); }
         }
@@ -206,6 +206,12 @@ namespace ProjectManager
             get { return tabHighlightType; }
             set { tabHighlightType = value; }
         }
+
+        [DisplayName("Track Active Document")]
+        [LocalizedDescription("ProjectManager.Description.TrackActiveDocument")]
+        [LocalizedCategory("ProjectManager.Category.ProjectTree")]
+        [DefaultValue(false)]
+        public bool TrackActiveDocument { get; set; }
 
         #endregion
 
