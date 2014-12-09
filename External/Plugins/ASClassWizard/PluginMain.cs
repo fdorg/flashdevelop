@@ -399,7 +399,7 @@ namespace ASClassWizard
             {
                 access = lastFileOptions.isPublic ? "public " : "private ";
                 access += lastFileOptions.isDynamic ? "dynamic " : "";
-                if (lastFileOptions.isFinal) classMetadata += "\n@:final";
+                if (lastFileOptions.isFinal) classMetadata += "@:final\n";
             }
             else
             {
