@@ -3009,7 +3009,15 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>&amp;Entfernen</value>
   </data>
   <data name="ASClassWizard.Wizard.Error.InvalidClassName" xml:space="preserve">
-    <value>Der Klassenname hat ungültige Zeichen.</value>
+    <value>Der Klassenname enthält ungültige Zeichen.</value>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.EmptyClassName" xml:space="preserve">
+    <value>Der Klassenname darf nicht leer sein.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseClassName" xml:space="preserve">
+    <value>Der Klassename muss mit einem Großbuchstaben beginnen.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
     <value>Wählen Sie ein Package aus:</value>
