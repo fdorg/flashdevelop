@@ -1091,15 +1091,27 @@ namespace ProjectManager
 
         private void CleanProject()
         {
-            Project project = activeProject; // TODO clean all projects
+            try
+            {
+                DataEvent disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
+                EventManager.DispatchEvent(this, disableWatchers);
 
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
-            EventManager.DispatchEvent(this, de);
-            if (de.Handled) return;
+                Project project = activeProject; // TODO clean all projects
 
-            FlexCompilerShell.Cleanup();
-            if (!project.Clean())
-                ErrorManager.ShowInfo(TextHelper.GetString("Info.UnableToCleanProject"));
+                DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
+                EventManager.DispatchEvent(this, de);
+                if (de.Handled)
+                    return;
+
+                FlexCompilerShell.Cleanup();
+                if (!project.Clean())
+                    ErrorManager.ShowInfo(TextHelper.GetString("Info.UnableToCleanProject"));
+            }
+            finally
+            {
+                DataEvent enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
+                EventManager.DispatchEvent(this, enableWatchers);
+            }
         }
 
         private void FileDeleted(string path)

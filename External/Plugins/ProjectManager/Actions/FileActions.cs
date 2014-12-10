@@ -27,6 +27,8 @@ namespace ProjectManager.Actions
         public const string FileCopy = "ProjectManager.FileActions.Copy";
         public const string FileCut = "ProjectManager.FileActions.Cut";
         public const string FilePaste = "ProjectManager.FileActions.Paste";
+        public const string FileEnableWatchers = "ProjectManager.FileActions.EnableWatchers";
+        public const string FileDisableWatchers = "ProjectManager.FileActions.DisableWatchers";
     }
 
     /// <summary>
@@ -336,16 +338,18 @@ namespace ProjectManager.Actions
 
                 if (confirm)
                     result = MessageBox.Show(mainForm, message, caption,
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Warning);
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Warning);
 
                 if (result == DialogResult.OK)
                 {
+                    DisableWatchers();
                     if (!FileHelper.Recycle(path))
                     {
                         String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(error + " " + path);
                     }
+
                     OnFileDeleted(path);
                 }
             }
@@ -353,7 +357,11 @@ namespace ProjectManager.Actions
             {
                 ErrorManager.ShowError(exception);
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                EnableWatchers();
+                PopCurrentDirectory();
+            }
         }
 
         public void Delete(string[] paths)
@@ -377,6 +385,8 @@ namespace ProjectManager.Actions
 
                     if (result == DialogResult.OK)
                     {
+                        DisableWatchers();
+
                         foreach (string path in paths)
                         {
                             if (!FileHelper.Recycle(path))
@@ -392,7 +402,11 @@ namespace ProjectManager.Actions
                 {
                     ErrorManager.ShowError(exception);
                 }
-                finally { PopCurrentDirectory(); }
+                finally
+                {
+                    EnableWatchers();
+                    PopCurrentDirectory(); 
+                }
             }
         }
 
@@ -409,6 +423,7 @@ namespace ProjectManager.Actions
 
             try
             {
+                DisableWatchers();
                 PushCurrentDirectory();
 
                 string oldDir = Path.GetDirectoryName(oldPath);
@@ -454,7 +469,11 @@ namespace ProjectManager.Actions
                 ErrorManager.ShowError(exception);
                 return false;
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                EnableWatchers();
+                PopCurrentDirectory();
+            }
             return true;
         }
 
@@ -464,6 +483,7 @@ namespace ProjectManager.Actions
 
             try
             {
+                DisableWatchers();
                 PushCurrentDirectory();
 
                 // try to fix toPath if it's a filename
@@ -495,15 +515,28 @@ namespace ProjectManager.Actions
             {
                 ErrorManager.ShowError(exception);
             }
-            finally { PopCurrentDirectory(); }
+            finally
+            {
+                EnableWatchers();
+                PopCurrentDirectory();
+            }
         }
 
         private void MoveDirectory(string fromPath, string toPath)
         {
+            DisableWatchers();
             if (Directory.GetDirectoryRoot(fromPath) == Directory.GetDirectoryRoot(toPath)
                 && !Directory.Exists(toPath))
             {
-                Directory.Move(fromPath, toPath);
+                try
+                {
+                    Directory.Move(fromPath, toPath);
+                }
+                catch (Exception)
+                { 
+                    throw;
+                }
+                finally { EnableWatchers(); }
             }
             else
             {
@@ -516,7 +549,9 @@ namespace ProjectManager.Actions
                 {
                     throw;
                 }
+                finally { EnableWatchers(); }
             }
+            
         }
 
         public void Copy(string fromPath, string toPath)
@@ -623,6 +658,18 @@ namespace ProjectManager.Actions
             }
             File.Copy(file, filePath, true);
             return filePath;
+        }
+
+        private void DisableWatchers()
+        {
+            DataEvent disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
+            EventManager.DispatchEvent(this, disableWatchers);
+        }
+
+        private void EnableWatchers()
+        {
+            DataEvent enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
+            EventManager.DispatchEvent(this, enableWatchers);
         }
 
         #endregion
