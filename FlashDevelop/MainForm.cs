@@ -161,7 +161,7 @@ namespace FlashDevelop
         private ContextMenuStrip editorMenu;
 
         /* Working Dir */
-        String workingDirectory = String.Empty;
+        private String workingDirectory = String.Empty;
 
         /* Form State */
         private FormState formState;
