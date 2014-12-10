@@ -1,3 +1,48 @@
+# HG changeset patch
+# User Gama11 <jensfischer95@gmail.com>
+# Date 1414766015 -3600
+#      Fri Oct 31 15:33:35 2014 +0100
+# Node ID c207ae6c51f3fe90455dddc88069ac3923881fb9
+# Parent  168666bf4ac56b2ed5b948152c3a460d2b39d393
+$$ escaping
+
+diff --git a/lexers/LexCPP.cxx b/lexers/LexCPP.cxx
+--- a/lexers/LexCPP.cxx
++++ b/lexers/LexCPP.cxx
+@@ -1028,16 +1028,20 @@
+ 					if (sc.chNext == '\"' || sc.chNext == '\'' || sc.chNext == '\\') {
+ 						sc.Forward();
+ 					}
+-                } else if (options.interpolatedStrings && sc.ch == '$') {
+-                    sc.SetState(SCE_C_DEFAULT|activitySet);
+-                    interpolationType = (sc.chNext == '{') ? 2 : 1;
+-				} else if (sc.ch == '\'') {
++                } else if (sc.ch == '\'') {
+ 					if (sc.chNext == '_') {
+ 						sc.ChangeState(SCE_C_USERLITERAL|activitySet);
+ 					} else {
+ 						sc.ForwardSetState(SCE_C_DEFAULT|activitySet);
+ 					}
+-				}
++                } else if (options.interpolatedStrings && sc.ch == '$') {
++                    if (sc.chNext == '$') {
++                        sc.Forward(); //eat escaped dollar sign
++                    } else {
++                        sc.SetState(SCE_C_DEFAULT | activitySet);
++                        interpolationType = (sc.chNext == '{') ? 2 : 1;
++                    }
++                }
+ 				break;
+ 			case SCE_C_REGEX:
+ 				if (sc.atLineStart) {
+# HG changeset patch
+# User Gama11 <jensfischer95@gmail.com>
+# Date 1414702000 -3600
+#      Thu Oct 30 21:46:40 2014 +0100
+# Node ID d9d7342e56a25e6172b687a735e38ca67ed9ee3d
+# Parent  ae2518f9b3c98898e47b67b1a4dab51f0c01f4d6
+String interpolation
+
 diff --git a/lexers/LexCPP.cxx b/lexers/LexCPP.cxx
 --- a/lexers/LexCPP.cxx
 +++ b/lexers/LexCPP.cxx
