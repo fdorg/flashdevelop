@@ -403,7 +403,7 @@
     <comment>E</comment>
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
-    <value>&amp;Find and Replace Here...</value>
+    <value>検索と置換(&amp;F).</value>
     <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
@@ -1867,11 +1867,11 @@
     <value>プロジェクトをビルド(&amp;B)</value>
   </data>
   <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
-    <value>Stop Build</value>
+    <value>ビルド停止</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Info.AreYouSureToStopBuild" xml:space="preserve">
-    <value>Are you sure you want to stop the build?</value>
+    <value>本当にビルドを停止しますか？</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
@@ -2904,11 +2904,11 @@ Never - 起動時にスタートページを表示しません。</value>
     <comment>ジェネレーターテンプレート</comment>
   </data>
   <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
-    <value>Press Tab to insert the snippet for this keyword</value>
+    <value>タブキーでこのキーワードをスニペットに挿入します。</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
-    <value>Press F1 to toggle details</value>
+    <value>F1キーで詳細に切り替えます。</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
@@ -5201,61 +5201,61 @@ UseData:"</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.InstallSoftware" xml:space="preserve">
-    <value>Install Software...</value>
+    <value>ソフトウェアをインストール...</value>
     <comment>Added after 4.5.0</comment>
   </data>
   <data name="FlashDevelop.Info.ZipConfirmRemove" xml:space="preserve">
-    <value>Can the following zip file be removed:</value>
+    <value>以下のZIPファイルを使用してファイルを削除します。よろしいですか？:</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
-    <value>The zip file was removed succesfully.</value>
+    <value>ファイルの削除に成功しました。</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
-    <value>You are moving file[s]. Do you also want to update the references?</value>
+    <value>ファイルの移動がありました。参照も更新しますか？</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Info.UpdatingReferences" xml:space="preserve">
-    <value>Updating References...</value>
+    <value>参照を更新中です...</value>
     <comment>Modified after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
-    <value>Moving File[s]</value>
+    <value>ファイルの移動</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Title.Threads" xml:space="preserve">
-    <value>Threads</value>
+    <value>スレッド</value>
   </data>
   <data name="FlashDebugger.Label.ViewThreadsPanel" xml:space="preserve">
-    <value>Threads Panel</value>
+    <value>スレッドパネル</value>
   </data>
   <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
-    <value>Shows the macro in the main toolbar.</value>
+    <value>このマクロをメインのツールバーに配置します。</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
-    <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
+    <value>デバッガーがスタートしたときにレイアウトを切り替えます。デバッガーが停止したときは前のレイアウトに戻ります。レイアウトを選択した場合、デバッガーパネルは自動的に表示されません。</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
-    <value>Type of the intendation guide behaviour.</value>
+    <value>インデントの挙動タイプを選択します。</value>
     <comment>Added after 4.6.0</comment>
   </data>
   <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
-    <value>Break when an exception is thrown, even if it is handled.</value>
+    <value>エクセプションが送出された時、たとえハンドリングしていてもブレークを行う。</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
-    <value>&amp;Run Project</value>
+    <value>プロジェクトを実行(&amp;R)</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
-    <value>You are renaming a directory. Do you also want to update the references?</value>
+    <value>ディレクトリ名が変更されました。参照も更新しますか？</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
-    <value>Keep indent tabs when strip trailing spaces.</value>
+    <value>タブインデントの末尾のスペースを維持する。</value>
     <comment>Added after 4.6.2</comment>
   </data>
   <data name="AirProperties.AspectRatio.Any" xml:space="preserve">
@@ -5271,7 +5271,7 @@ UseData:"</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.ANEDescFileNotFound" xml:space="preserve">
-    <value>ANE descriptor file not found.</value>
+    <value>ネイティブ拡張記述ファイルが見つかりません。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.AneFilter" xml:space="preserve">
@@ -5279,19 +5279,19 @@ UseData:"</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.CheckFileLocation" xml:space="preserve">
-    <value>The file must not be located at an upper or external directory from the descriptor file.</value>
+    <value>このファイルは記述ファイルよりも上か別のディレクトリにあってはいけません。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.CouldNotLoadANE" xml:space="preserve">
-    <value>Could not load ANE file:</value>
+    <value>ANEファイルが読めません。 file:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.ExtensionIDNotFound" xml:space="preserve">
-    <value>Extension ID could not be retrieved.</value>
+    <value>Extension ID が見つかりません。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.SelectAtleastOneItem" xml:space="preserve">
-    <value>At least one item must be chosen.</value>
+    <value>どれかは選ぶ必要があります。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhoneBGMode.Audio" xml:space="preserve">
@@ -5319,31 +5319,31 @@ UseData:"</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Advanced" xml:space="preserve">
-    <value>Advanced &gt;&gt;</value>
+    <value>高度な設定 &gt;&gt;</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.BackgroundBehavior" xml:space="preserve">
-    <value>Background Behavior</value>
+    <value>バックグラウンドでの挙動</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Basic" xml:space="preserve">
-    <value>&lt;&lt; Basic</value>
+    <value>&lt;&lt; 基本的な設定</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Browse" xml:space="preserve">
-    <value>Browse</value>
+    <value>開く</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ColorDepth" xml:space="preserve">
-    <value>Color Depth</value>
+    <value>色深度</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.CPURendering" xml:space="preserve">
-    <value>CPU Rendering</value>
+    <value>CPU レンダリング</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Display" xml:space="preserve">
-    <value>Display</value>
+    <value>表示</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Entitlements" xml:space="preserve">
@@ -5355,7 +5355,7 @@ UseData:"</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ExitOnSuspend" xml:space="preserve">
-    <value>Exit On Suspend</value>
+    <value>実行を終了</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ExternalSWFs" xml:space="preserve">
@@ -5367,35 +5367,35 @@ UseData:"</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.LookAndFeel" xml:space="preserve">
-    <value>Look And Feel</value>
+    <value>ルックアンドフィール</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.OtherBehavior" xml:space="preserve">
-    <value>Other Behavior</value>
+    <value>その他の挙動</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.PrerenderedIcon" xml:space="preserve">
-    <value>Prerendered Icon</value>
+    <value>アイコンのグレア効果</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.PushNotifications" xml:space="preserve">
-    <value>Push Notifications</value>
+    <value>プッシュ通知</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Resolution" xml:space="preserve">
-    <value>Resolution</value>
+    <value>解像度</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.SelectPermForInfo" xml:space="preserve">
-    <value>Select a permission to see its description.</value>
+    <value>パーミッションを選択すると説明が表示されます。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.StatusBarStyle" xml:space="preserve">
-    <value>Status Bar Style</value>
+    <value>ステータスバー</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.SupportedDevices" xml:space="preserve">
-    <value>Supported Devices</value>
+    <value>サポートデバイス</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.SoftKeyboard.None" xml:space="preserve">
@@ -5407,47 +5407,47 @@ UseData:"</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Title.SelectIOSDevices" xml:space="preserve">
-    <value>Select Target iOS Devices</value>
+    <value>ターゲット iOS デバイスを選択</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidAndroidMinVersion" xml:space="preserve">
-    <value>Minimum supported Android version is 8.</value>
+    <value>アンドロイドの最小対応バージョンは8です。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidMinAIRVersion" xml:space="preserve">
-    <value>Minimum supported AIR version is 4.3.</value>
+    <value>AIRの最小対応バージョンは4.3です。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidVersionValue" xml:space="preserve">
-    <value>Invalid version value.</value>
+    <value>無効なバージョンです。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.MissingSWFContainer" xml:space="preserve">
-    <value>The external SWFs file container does not exist. Please, check your path.</value>
+    <value>External SWFsコンテナがありません。ファイルパスをチェックしてください。</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.WrongAdditionsXML" xml:space="preserve">
-    <value>Wrong iPhone info additions XML:</value>
+    <value>iPhone Additions XML が間違っています。:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.WrongEntitlementsXML" xml:space="preserve">
-    <value>Wrong iPhone entitlements XML:</value>
+    <value>iPhone Entitlements XML が間違っています。:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.WrongManifestXML" xml:space="preserve">
-    <value>Wrong Android manifest XML:</value>
+    <value>Android Manifest XML が間違っています。:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
-    <value>Generate protected field</value>
+    <value>protected 変数を生成</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
-    <value>Generate protected function</value>
+    <value>protected メソッドスタブの生成</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
-    <value>Declare protected variable</value>
+    <value>protected 変数を作成</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
