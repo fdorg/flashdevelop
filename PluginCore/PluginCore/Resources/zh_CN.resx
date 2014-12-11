@@ -3139,6 +3139,10 @@
   <data name="FlashDevelop.Description.FilePollInterval" xml:space="preserve">
     <value>以毫秒为单位检查打开文件更改时的时间间隔。 </value>
   </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsMode" xml:space="preserve">
+    <value>When words matching the current selection should be highlighted.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
     <value>排除路径下的任务不显示在任务列表中。</value>
   </data>

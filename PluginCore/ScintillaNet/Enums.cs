@@ -497,4 +497,10 @@ namespace ScintillaNet.Enums
         SML = 97
     }
 
+    public enum HighlightMatchingWordsMode
+    {
+        SelectionOrPosition,
+        SelectedWord,
+        None
+    }
 }

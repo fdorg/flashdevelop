@@ -360,6 +360,16 @@ namespace FlashDevelop.Settings
             set { this.filePollInterval = value; }
         }
 
+        [DefaultValue(ScintillaNet.Enums.HighlightMatchingWordsMode.SelectionOrPosition)]
+        [DisplayName("Highlight Matching Words Mode")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsMode")]
+        public ScintillaNet.Enums.HighlightMatchingWordsMode HighlightMatchingWordsMode
+        {
+            get { return this.highlightMatchingWordsMode; }
+            set { this.highlightMatchingWordsMode = value; }
+        }
+
         #endregion
 
         #region Locale
