@@ -73,11 +73,6 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="PluginCore, Version=2.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\FlashDevelop\Bin\Debug\PluginCore.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -113,5 +108,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
+      <Project>{61885f70-b4dc-4b44-852d-5d6d03f2a734}</Project>
+      <Name>PluginCore</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

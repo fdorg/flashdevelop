@@ -12,8 +12,8 @@ using FlashDevelop.Dialogs;
 using FlashDevelop.Helpers;
 using PluginCore.Managers;
 using PluginCore.Controls;
-using PluginCore;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
