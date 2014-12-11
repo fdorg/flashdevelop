@@ -10,10 +10,10 @@ using System.Drawing.Printing;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
+using PluginCore.Controls;
 using System.Drawing;
 using System.Text;
 using PluginCore;
-using PluginCore.Controls;
 
 namespace ScintillaNet
 {
@@ -28,6 +28,7 @@ namespace ScintillaNet
 		private bool isBraceMatching = true;
         private bool isHiliteSelected = true;
         private bool useHighlightGuides = true;
+        private System.Timers.Timer highlightDelay;
 		private static Scintilla sciConfiguration = null;
         private static Dictionary<String, ShortcutOverride> shortcutOverrides = new Dictionary<String, ShortcutOverride>();
         private Enums.IndentView indentView = Enums.IndentView.Real;
@@ -35,6 +36,9 @@ namespace ScintillaNet
 		private Hashtable ignoredKeys = new Hashtable();
         private string configLanguage = String.Empty;
         private string fileName = String.Empty;
+        private int lastSelectionLength = 0;
+        private int lastSelectionStart = 0;
+        private int lastSelectionEnd = 0;
 		
 		#region Scintilla Main
 
@@ -54,11 +58,10 @@ namespace ScintillaNet
                     directPointer = (int)SlowPerform(2185, 0, 0);
                     directPointer = DirectPointer;
                 }
+                UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
-                UpdateUI += new UpdateUIHandler(OnUpdateUI);
-                SelectionChanged += new SelectionChangedHandler(OnSelectionChanged);
-                DoubleClick += new DoubleClickHandler(OnDoubleClick);
+                DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
             }
@@ -2208,10 +2211,6 @@ namespace ScintillaNet
                 SPerform(2516, (uint)(value ? 1 : 0), 0);
             }
         }
-
-        public int lastSelectionStart = 0;
-        public int lastSelectionEnd = 0;
-        public int lastSelectionLength = 0;
 
 		#endregion
 
@@ -5307,54 +5306,50 @@ namespace ScintillaNet
 		
 		#region Automated Features
 
-        private void OnDoubleClick(ScintillaControl sci)
-        {
-            SelectBlock(sci);
-        }
-
-        private System.Timers.Timer delay;
-
-        private void OnSelectionChanged(ScintillaControl sci)
-        {
-            switch (PluginBase.MainForm.Settings.HighlightMatchingWordsMode)
-            {
-                case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
-                    StartHighlightSelectionTimer(sci);
-                    break;
-
-                case Enums.HighlightMatchingWordsMode.SelectedWord:
-                    if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
-                        StartHighlightSelectionTimer(sci);
-                    break;
-            }
-        }
-
-        private void StartHighlightSelectionTimer(ScintillaControl sci)
-        {
-            if (delay != null)
-                delay.Enabled = false;
-
-            delay = new System.Timers.Timer(1000);
-            delay.Elapsed += delegate
-            {
-                delay.Enabled = false;
-                HighlightWordsMatchingSelected(sci);
-            };
-            delay.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
-            delay.Start();
-        }
-
+        /// <summary>
+        /// Support for selection highlighting and selection changed event
+        /// </summary>
         private void OnUpdateUI(ScintillaControl sci)
         {
-            //has the selection changed?
-            if (lastSelectionStart != sci.SelectionStart ||
-                lastSelectionEnd != sci.SelectionEnd ||
-                lastSelectionLength != sci.SelText.Length)
-                SelectionChanged(sci);
-
+            if (lastSelectionStart != sci.SelectionStart || lastSelectionEnd != sci.SelectionEnd || lastSelectionLength != sci.SelText.Length)
+            {
+                if (SelectionChanged != null) SelectionChanged(sci);
+                switch (PluginBase.MainForm.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
+                {
+                    case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
+                    {
+                        StartHighlightSelectionTimer(sci);
+                        break;
+                    }
+                    case Enums.HighlightMatchingWordsMode.SelectedWord:
+                    {
+                        if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
+                        {
+                            StartHighlightSelectionTimer(sci);
+                        }
+                        break;
+                    }
+                }
+            }
             lastSelectionStart = sci.SelectionStart;
             lastSelectionEnd = sci.SelectionEnd;
             lastSelectionLength = sci.SelText.Length;
+        }
+
+        /// <summary>
+        /// Use timer for aggressive selection highlighting
+        /// </summary>
+        private void StartHighlightSelectionTimer(ScintillaControl sci)
+        {
+            if (highlightDelay != null) highlightDelay.Enabled = false;
+            highlightDelay = new System.Timers.Timer(1000);
+            highlightDelay.Elapsed += delegate
+            {
+                highlightDelay.Enabled = false;
+                HighlightWordsMatchingSelected(sci);
+            };
+            highlightDelay.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
+            highlightDelay.Start();
         }
 
         /// <summary>
@@ -5362,28 +5357,25 @@ namespace ScintillaNet
         /// </summary>
         private void HighlightWordsMatchingSelected(ScintillaControl sci)
         {
-            if (sci.Text.Length == 0)
-                return;
+            if (sci.Text.Length == 0) return;
             Language language = Configuration.GetLanguage(sci.ConfigurationLanguage);
             Int32 color = language.editorstyle.HighlightBackColor;
             String word = sci.GetWordFromPosition(sci.CurrentPos);
-            if (String.IsNullOrEmpty(word))
-                return;
+            if (String.IsNullOrEmpty(word)) return;
             String pattern = word.Trim();
             FRSearch search = new FRSearch(pattern);
             search.WholeWord = true; search.NoCase = false;
             search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
             sci.RemoveHighlights();
-            List<SearchMatch> test = search.Matches(sci.Text); 
+            List<SearchMatch> test = search.Matches(sci.Text);
             sci.AddHighlights(test, color);
-
             sci.hasHighlights = true;
         }
 
         /// <summary>
         /// Provides the support for code block selection
         /// </summary>
-        private void SelectBlock(ScintillaControl sci)
+        private void OnBlockSelect(ScintillaControl sci)
         {
             int position = CurrentPos - 1;
             char character = (char)CharAt(position);
@@ -5398,11 +5390,13 @@ namespace ScintillaNet
             }
         }
 
+        /// <summary>
+        /// Cancel highlights if not using aggressive highlighting
+        /// </summary>
         private void OnCancelHighlight(ScintillaControl sci)
         {
-            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0 &&
-                PluginBase.MainForm.Settings.HighlightMatchingWordsMode
-                != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
+            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0 
+                && PluginBase.MainForm.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
             {
                 sci.RemoveHighlights();
                 sci.hasHighlights = false;
