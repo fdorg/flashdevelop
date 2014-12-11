@@ -499,8 +499,8 @@ namespace ScintillaNet.Enums
 
     public enum HighlightMatchingWordsMode
     {
-        CurrentSelection,
-        CtrlDoubleClick,
+        SelectionOrPosition,
+        SelectedWord,
         None
     }
 }

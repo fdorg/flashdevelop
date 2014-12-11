@@ -350,7 +350,7 @@ namespace FlashDevelop.Settings
             set { this.filePollInterval = value; }
         }
 
-        [DefaultValue(ScintillaNet.Enums.HighlightMatchingWordsMode.CurrentSelection)]
+        [DefaultValue(ScintillaNet.Enums.HighlightMatchingWordsMode.SelectionOrPosition)]
         [DisplayName("Highlight Matching Words Mode")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsMode")]

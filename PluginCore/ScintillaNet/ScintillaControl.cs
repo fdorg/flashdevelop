@@ -5274,10 +5274,6 @@ namespace ScintillaNet
 
         private void OnDoubleClick(ScintillaControl sci)
         {
-            if (Control.ModifierKeys == Keys.Control &&
-                PluginBase.MainForm.Settings.HighlightMatchingWordsMode == Enums.HighlightMatchingWordsMode.CtrlDoubleClick)
-                HighlightWordsMatchingSelected(sci);
-
             SelectBlock(sci);
         }
 
@@ -5285,20 +5281,32 @@ namespace ScintillaNet
 
         private void OnSelectionChanged(ScintillaControl sci)
         {
-            if (PluginBase.MainForm.Settings.HighlightMatchingWordsMode == Enums.HighlightMatchingWordsMode.CurrentSelection)
+            switch (PluginBase.MainForm.Settings.HighlightMatchingWordsMode)
             {
-                if (delay != null)
-                    delay.Enabled = false;
+                case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
+                    StartHighlightSelectionTimer(sci);
+                    break;
 
-                delay = new System.Timers.Timer(1000);
-                delay.Elapsed += delegate
-                {
-                    delay.Enabled = false;
-                    HighlightWordsMatchingSelected(sci);
-                };
-                delay.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
-                delay.Start();
+                case Enums.HighlightMatchingWordsMode.SelectedWord:
+                    if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
+                        StartHighlightSelectionTimer(sci);
+                    break;
             }
+        }
+
+        private void StartHighlightSelectionTimer(ScintillaControl sci)
+        {
+            if (delay != null)
+                delay.Enabled = false;
+
+            delay = new System.Timers.Timer(1000);
+            delay.Elapsed += delegate
+            {
+                delay.Enabled = false;
+                HighlightWordsMatchingSelected(sci);
+            };
+            delay.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
+            delay.Start();
         }
 
         private void OnUpdateUI(ScintillaControl sci)
@@ -5331,7 +5339,9 @@ namespace ScintillaNet
             search.WholeWord = true; search.NoCase = false;
             search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
             sci.RemoveHighlights();
-            sci.AddHighlights(search.Matches(sci.Text), color);
+            List<SearchMatch> test = search.Matches(sci.Text); 
+            sci.AddHighlights(test, color);
+
             sci.hasHighlights = true;
         }
 
@@ -5355,7 +5365,9 @@ namespace ScintillaNet
 
         private void OnCancelHighlight(ScintillaControl sci)
         {
-            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0)
+            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0 &&
+                PluginBase.MainForm.Settings.HighlightMatchingWordsMode
+                != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
             {
                 sci.RemoveHighlights();
                 sci.hasHighlights = false;
