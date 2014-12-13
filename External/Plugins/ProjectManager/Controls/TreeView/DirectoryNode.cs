@@ -63,6 +63,7 @@ namespace ProjectManager.Controls.TreeView
                 insideLibrarypath = (Parent as DirectoryNode).insideLibrarypath;
             }
 
+            string colorId = "ProjectTreeView.ForeColor";
             if (project != null)
             {
                 if (project.IsPathHidden(BackingPath))
@@ -76,6 +77,14 @@ namespace ProjectManager.Controls.TreeView
                     ImageIndex = Icons.FolderCompile.Index;
                 else if (insideLibrarypath == null && project.IsLibraryAsset(BackingPath))
                 {
+                    LibraryAsset asset = project.GetAsset(BackingPath);
+                    if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
+                        colorId = "ProjectTreeView.ForeColor.ExternalLibrary";
+                    else if (asset.SwfMode == SwfAssetMode.Library)
+                        colorId = "ProjectTreeView.ForeColor.Library";
+                    else if (asset.SwfMode == SwfAssetMode.IncludedLibrary)
+                        colorId = "ProjectTreeView.ForeColor.IncludedLibrary";
+
                     insideLibrarypath = this;
                     ImageIndex = Icons.LibrarypathFolder.Index;
                 }
@@ -86,8 +95,9 @@ namespace ProjectManager.Controls.TreeView
 
             SelectedImageIndex = ImageIndex;
 
-            Color color = PluginCore.PluginBase.MainForm.GetThemeColor("ProjectTreeView.ForeColor");
-            if (color != Color.Empty) ForeColorRequest = color;
+            Color textColor = PluginCore.PluginBase.MainForm.GetThemeColor(colorId);
+            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = Color.Blue;
+            if (textColor != Color.Empty) ForeColorRequest = textColor;
             else ForeColorRequest = SystemColors.ControlText;
 
 			// make the plus/minus sign correct

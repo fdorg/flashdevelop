@@ -75,29 +75,29 @@ namespace ProjectManager.Controls.TreeView
 
 			Text = Path.GetFileName(path);
 
+            string colorId = "ProjectTreeView.ForeColor";
             if (project.IsLibraryAsset(path))
             {
                 LibraryAsset asset = project.GetAsset(path);
-				if (asset.IsSwc)
-				{
-					if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
-						ForeColorRequest = Color.DarkBlue;
-					else if (asset.SwfMode == SwfAssetMode.Library)
-						ForeColorRequest = Color.Blue;
-					else if (asset.SwfMode == SwfAssetMode.IncludedLibrary)
-						ForeColorRequest = Color.DarkCyan;
-				} 
-				else ForeColorRequest = Color.Blue;
+                if (asset.IsSwc)
+                {
+                    if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
+                        colorId = "ProjectTreeView.ForeColor.ExternalLibrary";
+                    else if (asset.SwfMode == SwfAssetMode.Library)
+                        colorId = "ProjectTreeView.ForeColor.Library";
+                    else if (asset.SwfMode == SwfAssetMode.IncludedLibrary)
+                        colorId = "ProjectTreeView.ForeColor.IncludedLibrary";
+                }
 
                 if (asset != null && asset.HasManualID)
                     Text += " (" + asset.ManualID + ")";
             }
-            else
-            {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("ProjectTreeView.ForeColor");
-                if (color != Color.Empty) ForeColorRequest = color;
-                else ForeColorRequest = SystemColors.ControlText;
-            }
+
+            Color textColor = PluginCore.PluginBase.MainForm.GetThemeColor(colorId);
+            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = Color.Blue;
+
+            if (textColor != Color.Empty) ForeColorRequest = textColor;
+            else ForeColorRequest = SystemColors.ControlText;
 
             // hook for plugins
             if (OnFileNodeRefresh != null) OnFileNodeRefresh(this);

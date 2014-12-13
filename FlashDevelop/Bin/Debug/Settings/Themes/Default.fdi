@@ -39,6 +39,10 @@ DockPanel.ShowAutoHideContentOn=Hover
 #ToolStripMenu.BorderColor=#ff00ff
 #ToolStripMenu.BackColor=#0000ff
 
+ProjectTreeView.ForeColor.Library=#0000FF
+ProjectTreeView.ForeColor.ExternalLibrary=#00008B
+ProjectTreeView.ForeColor.IncludedLibrary=#008B8B
+
 # FD UI THEME (4.3+)
 
 ### EDIT CONTROLS
