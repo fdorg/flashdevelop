@@ -77,8 +77,17 @@ namespace ProjectManager.Controls.TreeView
 
             if (project.IsLibraryAsset(path))
             {
-                ForeColorRequest = Color.Blue;
                 LibraryAsset asset = project.GetAsset(path);
+				if (asset.IsSwc)
+				{
+					if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
+						ForeColorRequest = Color.DarkBlue;
+					else if (asset.SwfMode == SwfAssetMode.Library)
+						ForeColorRequest = Color.Blue;
+					else if (asset.SwfMode == SwfAssetMode.IncludedLibrary)
+						ForeColorRequest = Color.DarkCyan;
+				} 
+				else ForeColorRequest = Color.Blue;
 
                 if (asset != null && asset.HasManualID)
                     Text += " (" + asset.ManualID + ")";
