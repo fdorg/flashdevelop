@@ -163,6 +163,11 @@ namespace ProjectManager.Projects
             return ext == ".template";
         }
 
+
+        public static bool isDirectory(string path)
+        {
+            return System.IO.Directory.Exists(path);
+        }
     }
 
 }

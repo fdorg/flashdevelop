@@ -30,8 +30,10 @@ namespace ProjectManager.Controls.TreeView
 
 		bool dirty;
         DirectoryNode insideClasspath;
+        DirectoryNode insideLibrarypath;
 
         public DirectoryNode InsideClasspath { get { return insideClasspath; } }
+        public DirectoryNode InsideLibrarypath { get { return insideLibrarypath; } }
 
 		public DirectoryNode(string directory) : base(directory)
 		{
@@ -55,8 +57,11 @@ namespace ProjectManager.Controls.TreeView
 			base.Refresh(recursive);
 
             // item icon
-            if (Parent is DirectoryNode) 
+            if (Parent is DirectoryNode)
+            {
                 insideClasspath = (Parent as DirectoryNode).insideClasspath;
+                insideLibrarypath = (Parent as DirectoryNode).insideLibrarypath;
+            }
 
             if (project != null)
             {
@@ -69,6 +74,11 @@ namespace ProjectManager.Controls.TreeView
                 }
                 else if (insideClasspath != null && project.IsCompileTarget(BackingPath))
                     ImageIndex = Icons.FolderCompile.Index;
+                else if (insideLibrarypath == null && project.IsLibraryAsset(BackingPath))
+                {
+                    insideLibrarypath = this;
+                    ImageIndex = Icons.LibrarypathFolder.Index;
+                }
                 else
                     ImageIndex = Icons.Folder.Index;
             }
