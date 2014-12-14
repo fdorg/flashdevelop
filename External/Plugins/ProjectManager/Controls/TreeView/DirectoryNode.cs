@@ -79,11 +79,11 @@ namespace ProjectManager.Controls.TreeView
                 {
                     LibraryAsset asset = project.GetAsset(BackingPath);
                     if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
-                        colorId = "ProjectTreeView.ForeColor.ExternalLibrary";
+                        colorId = "ProjectTreeView.ExternalLibraryTextColor";
                     else if (asset.SwfMode == SwfAssetMode.Library)
-                        colorId = "ProjectTreeView.ForeColor.Library";
+                        colorId = "ProjectTreeView.LibraryTextColor";
                     else if (asset.SwfMode == SwfAssetMode.IncludedLibrary)
-                        colorId = "ProjectTreeView.ForeColor.IncludedLibrary";
+                        colorId = "ProjectTreeView.IncludedLibraryTextColor";
 
                     insideLibrarypath = this;
                     ImageIndex = Icons.LibrarypathFolder.Index;
