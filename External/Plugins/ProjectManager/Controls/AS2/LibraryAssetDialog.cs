@@ -402,7 +402,10 @@ namespace ProjectManager.Controls.AS2
 			this.Text = "\"" + System.IO.Path.GetFileName(asset.Path) + "\"";
 			InitializeComponent();
             isAS3 = (project.Language == "as3");
-            isSWC = asset.IsSwc || asset.SwfMode == SwfAssetMode.Library || asset.SwfMode == SwfAssetMode.IncludedLibrary || asset.SwfMode == SwfAssetMode.ExternalLibrary;
+            isSWC = asset.IsSwc 
+                || asset.SwfMode == SwfAssetMode.Library 
+                || asset.SwfMode == SwfAssetMode.IncludedLibrary 
+                || asset.SwfMode == SwfAssetMode.ExternalLibrary;
 
 			#region Setup Tabs
 
