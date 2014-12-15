@@ -75,20 +75,29 @@ namespace ProjectManager.Controls.TreeView
 
 			Text = Path.GetFileName(path);
 
+            string colorId = "ProjectTreeView.ForeColor";
             if (project.IsLibraryAsset(path))
             {
-                ForeColorRequest = Color.Blue;
                 LibraryAsset asset = project.GetAsset(path);
+                if (asset.IsSwc)
+                {
+                    if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
+                        colorId = "ProjectTreeView.ExternalLibraryTextColor";
+                    else if (asset.SwfMode == SwfAssetMode.Library)
+                        colorId = "ProjectTreeView.LibraryTextColor";
+                    else if (asset.SwfMode == SwfAssetMode.IncludedLibrary)
+                        colorId = "ProjectTreeView.IncludedLibraryTextColor";
+                }
 
                 if (asset != null && asset.HasManualID)
                     Text += " (" + asset.ManualID + ")";
             }
-            else
-            {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("ProjectTreeView.ForeColor");
-                if (color != Color.Empty) ForeColorRequest = color;
-                else ForeColorRequest = SystemColors.ControlText;
-            }
+
+            Color textColor = PluginCore.PluginBase.MainForm.GetThemeColor(colorId);
+            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = Color.Blue;
+
+            if (textColor != Color.Empty) ForeColorRequest = textColor;
+            else ForeColorRequest = SystemColors.ControlText;
 
             // hook for plugins
             if (OnFileNodeRefresh != null) OnFileNodeRefresh(this);

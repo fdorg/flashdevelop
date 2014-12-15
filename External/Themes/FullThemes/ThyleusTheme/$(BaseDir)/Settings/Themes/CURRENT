@@ -39,6 +39,10 @@ ToolStripMenu.MarginBackColor=#CBC8C5
 ToolStripMenu.BorderColor=#696463
 ToolStripMenu.BackColor=#DFDEDB
 
+ProjectTreeView.LibraryTextColor=#0000FF
+ProjectTreeView.ExternalLibraryTextColor=#00008B
+ProjectTreeView.IncludedLibraryTextColor=#008B8B
+
 # FD UI THEME (4.3+) 
 
 ### EDIT CONTROLS

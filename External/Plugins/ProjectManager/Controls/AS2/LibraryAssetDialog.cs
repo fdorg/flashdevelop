@@ -13,6 +13,7 @@ namespace ProjectManager.Controls.AS2
 	public class LibraryAssetDialog : System.Windows.Forms.Form
 	{
         Boolean isAS3;
+        Boolean isSWC;
         Boolean modified;
         LibraryAsset asset;
 
@@ -401,10 +402,14 @@ namespace ProjectManager.Controls.AS2
 			this.Text = "\"" + System.IO.Path.GetFileName(asset.Path) + "\"";
 			InitializeComponent();
             isAS3 = (project.Language == "as3");
+            isSWC = asset.IsSwc 
+                || asset.SwfMode == SwfAssetMode.Library 
+                || asset.SwfMode == SwfAssetMode.IncludedLibrary 
+                || asset.SwfMode == SwfAssetMode.ExternalLibrary;
 
 			#region Setup Tabs
 
-            if (asset.IsSwc)
+            if (isSWC)
             {
                 tabControl.TabPages.Remove(fontTabPage);
                 tabControl.TabPages.Remove(advancedTabPage);
@@ -426,7 +431,7 @@ namespace ProjectManager.Controls.AS2
             {
                 tabControl.TabPages.Remove(swfTabPage);
             }
-            else if (asset.IsSwf)
+            else if (isSWC)
             {
                 tabControl.TabPages.Remove(fontTabPage);
             }
@@ -526,7 +531,7 @@ namespace ProjectManager.Controls.AS2
 
 		private void okButton_Click(object sender, System.EventArgs e)
 		{
-            if (modified && !asset.IsSwc) Apply();
+            if (modified && !isSWC) Apply();
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}

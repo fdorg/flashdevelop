@@ -127,13 +127,13 @@ namespace ProjectManager.Projects.AS3
 
         public override bool IsLibraryAsset(string path)
         {
-            if (!FileInspector.IsSwc(path)) return base.IsLibraryAsset(path);
+            if (!FileInspector.IsSwc(path) && !base.IsDirectory(path)) return base.IsLibraryAsset(path);
             else return SwcLibraries.Contains(path) || SwcLibraries.Contains(GetRelativePath(path));
         }
 
         public override LibraryAsset GetAsset(string path)
         {
-            if (!FileInspector.IsSwc(path)) return base.GetAsset(path);
+            if (!FileInspector.IsSwc(path) && !base.IsDirectory(path)) return base.GetAsset(path);
             else return SwcLibraries[GetRelativePath(path)];
         }
 
@@ -151,7 +151,7 @@ namespace ProjectManager.Projects.AS3
 
         public override void SetLibraryAsset(string path, bool isLibraryAsset)
         {
-            if (!FileInspector.IsSwc(path)) base.SetLibraryAsset(path, isLibraryAsset);
+            if (!FileInspector.IsSwc(path) && !base.IsDirectory(path)) base.SetLibraryAsset(path, isLibraryAsset);
             else
             {
                 string relPath = GetRelativePath(path);
