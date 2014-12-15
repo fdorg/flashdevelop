@@ -2593,7 +2593,8 @@ namespace ASCompletion.Completion
                     result.Type = ResolveType("Function", null);
                 return result;
             }
-
+            if (context.CurrentModel.haXe && !inClass.IsVoid() && token == "new" && local.BeforeBody)
+                return EvalVariable(inClass.Name, local, inFile, inClass);
             // local vars
             if (local.LocalVars != null)
             {
@@ -2625,7 +2626,6 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-
 			// method parameters
             if (local.ContextFunction != null && local.ContextFunction.Parameters != null)
 			{
@@ -2637,24 +2637,23 @@ namespace ASCompletion.Completion
                     return result;
                 }
 			}
-
-			// class members
+            // class members
             if (!inClass.IsVoid())
             {
                 FindMember(token, inClass, result, 0, 0);
                 if (!result.IsNull())
                     return result;
             }
+            // file member
             if (inFile.Version != 2 || inClass.IsVoid())
             {
-                // file member
                 FindMember(token, inFile, result, 0, 0);
                 if (!result.IsNull())
                     return result;
             }
-
 			// current file types
             foreach(ClassModel aClass in inFile.Classes)
+            {
                 if (aClass.Name == token)
                 {
                     if (!context.InPrivateSection || aClass.Access == Visibility.Private)
@@ -2664,7 +2663,7 @@ namespace ASCompletion.Completion
                         return result;
                     }
                 }
-
+            }
             // visible types & declarations
             var visible = context.GetVisibleExternalElements();
             foreach (MemberModel aDecl in visible)
