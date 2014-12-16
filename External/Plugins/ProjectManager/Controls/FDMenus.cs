@@ -100,11 +100,7 @@ namespace ProjectManager.Controls
         {
             TargetBuildSelector.Enabled = enabled;
             if (enabled) TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDown;
-            else
-            {
-                TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDownList;
-                TargetBuildSelector.Text = "";
-            }
+            else TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         public bool DisabledForBuild
