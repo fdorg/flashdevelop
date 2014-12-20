@@ -5413,7 +5413,7 @@ namespace ScintillaNet
                                     previousIndent += TabWidth;
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
-                            if (Lexer == 3 && tempText.EndsWith(":") && !tempText.EndsWith("::"))
+                            if (Lexer == 3 && tempText.EndsWith(":") && !tempText.EndsWith("::") && !IsComment(tempText))
                             {
                                 int prevLine = tempLine;
                                 while (--prevLine > 0)
@@ -6532,11 +6532,41 @@ namespace ScintillaNet
         /// </summary>
         public bool IsComment(string str)
         {
-            bool ret;
             String lineComment = Configuration.GetLanguage(ConfigurationLanguage).linecomment;
-            String blockComment = Configuration.GetLanguage(ConfigurationLanguage).commentstart;
-            ret = ((!String.IsNullOrEmpty(lineComment) && str.StartsWith(lineComment)) || (!String.IsNullOrEmpty(blockComment) && str.StartsWith(blockComment)));
-            return ret;
+            if(!String.IsNullOrEmpty(lineComment) && str.StartsWith(lineComment)) return true;
+            String commentstart = Configuration.GetLanguage(ConfigurationLanguage).commentstart;
+            if (!String.IsNullOrEmpty(commentstart) && str.StartsWith(commentstart)) return true;
+            String commentend = Configuration.GetLanguage(ConfigurationLanguage).commentend;
+            if (String.IsNullOrEmpty(commentstart) || String.IsNullOrEmpty(commentend)) return false;
+            int curLine = LineFromPosition(CurrentPos);
+            int tmpLine = curLine;
+            int commentstartLine = -1;
+            while(tmpLine-- > 0)
+            {
+                string line = GetLine(tmpLine).TrimStart();
+                if(line.StartsWith(commentend)) return false;
+                if(line.StartsWith(commentstart))
+                {
+                    commentstartLine = tmpLine;
+                    break;
+                }
+            }
+            if (commentstartLine == -1) return false;
+            tmpLine = curLine;
+            int commentendLine = -1;
+            int lineCount = LineCount;
+            while(tmpLine < lineCount)
+            {
+                string line = GetLine(tmpLine).TrimStart();
+                if(line.StartsWith(commentstart)) return false;
+                if(line.StartsWith(commentend))
+                {
+                    commentendLine = tmpLine;
+                    break;
+                }
+                tmpLine++;
+            }
+            return curLine > commentstartLine && curLine < commentendLine;
         }
  
         /// <summary>
