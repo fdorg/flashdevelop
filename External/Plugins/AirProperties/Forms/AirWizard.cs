@@ -94,6 +94,7 @@ namespace AirProperties
                 new PropertyManager.AirApplicationIconField("128", PropertyManager.AirVersion.V10),
                 new PropertyManager.AirApplicationIconField("144", PropertyManager.AirVersion.V33),
                 new PropertyManager.AirApplicationIconField("152", PropertyManager.AirVersion.V39),
+                new PropertyManager.AirApplicationIconField("192", PropertyManager.AirVersion.V150),
                 new PropertyManager.AirApplicationIconField("512", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("1024", PropertyManager.AirVersion.V34)
             };
