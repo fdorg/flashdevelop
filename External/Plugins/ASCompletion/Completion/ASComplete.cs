@@ -2415,7 +2415,8 @@ namespace ASCompletion.Completion
 			if (head.IsNull()) return notFound;
 
             // accessing instance member in static function, exit
-            if (IsStatic(context.ContextFunction) && head.RelClass == inClass
+            if (IsStatic(context.ContextFunction) && context.WordBefore != features.overrideKey
+                && head.RelClass == inClass
                 && head.Member != null && !IsStatic(head.Member)
                 && (head.Member.Flags & FlagType.Constructor) == 0)
                 return notFound;
@@ -3939,8 +3940,6 @@ namespace ASCompletion.Completion
         {
             ContextFeatures features = ASContext.Context.Features;
             FileModel cFile = ASContext.Context.CurrentModel;
-            ClassModel cClass = ASContext.Context.CurrentClass;
-            MemberModel cMember = ASContext.Context.CurrentMember;
             FileModel inFile = null;
             MemberModel import = null;
 
