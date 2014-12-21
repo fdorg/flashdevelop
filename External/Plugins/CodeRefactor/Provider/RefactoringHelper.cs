@@ -335,7 +335,7 @@ namespace CodeRefactor.Provider
         private static List<String> GetAllProjectRelatedFiles(IProject project)
         {
             List<String> files = new List<String>();
-            string filter = GetSearchPatternFromLang(project.Language.ToLower());
+            string filter = project.DefaultSearchFilter;
             if (string.IsNullOrEmpty(filter)) return files;
             IASContext context = ASContext.GetLanguageContext(project.Language);
             if (context == null) return files;
@@ -344,7 +344,8 @@ namespace CodeRefactor.Provider
                 string path = pathModel.Path;
                 String absolute = project.GetAbsolutePath(path);
                 if (Directory.Exists(path))
-                    files.AddRange(Directory.GetFiles(absolute, filter, SearchOption.AllDirectories));
+                    foreach (string filterMask in filter.Split(';'))
+                        files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
             }
             // If no source paths are defined, get files directly from project path
             if (project.SourcePaths.Length == 0)
@@ -359,8 +360,10 @@ namespace CodeRefactor.Provider
         {
             if (lang == "haxe")
                 return "*.hx";
-            if (lang == "as2" || lang == "as3")
+            if (lang == "as2")
                 return "*.as";
+            if (lang == "as3")
+                return "*.as;*.mxml";
             if (lang == "loom")
                 return "*.ls";
 
@@ -391,11 +394,12 @@ namespace CodeRefactor.Provider
             sci.BeginUndoAction();
             try
             {
-                for (Int32 i = 0; i < matches.Count; i++)
+                for (int i = 0, matchCount = matches.Count; i < matchCount; i++)
                 {
-                    SelectMatch(sci, matches[i]);
-                    FRSearch.PadIndexes((List<SearchMatch>)matches, i, matches[i].Value, replacement);
-                    sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(matches[i].Index)));
+                    var match = matches[i];
+                    SelectMatch(sci, match);
+                    FRSearch.PadIndexes((List<SearchMatch>)matches, i, match.Value, replacement);
+                    sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
                     sci.ReplaceSel(replacement);
                 }
             }
@@ -416,6 +420,68 @@ namespace CodeRefactor.Provider
             Int32 line = sci.LineFromPosition(start);
             sci.EnsureVisible(line);
             sci.SetSel(start, end);
+        }
+
+        /// <summary>
+        /// Copies found file or directory based on the specified paths.
+        /// If affected file was designated as a Document Class, updates project accordingly.
+        /// </summary>
+        /// <param name="oldPath"></param>
+        /// <param name="newPath"></param>
+        public static void Copy(string oldPath, string newPath)
+        {
+            Copy(oldPath, newPath, true);
+        }
+
+        public static void Copy(string oldPath, string newPath, bool renaming)
+        {
+            Copy(oldPath, newPath, renaming, true);
+        }
+
+        public static void Copy(string oldPath, string newPath, bool renaming, bool simulateMove)
+        {
+            if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
+            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+            string newDocumentClass = null;
+
+            if (File.Exists(oldPath) && FileHelper.ConfirmOverwrite(newPath))
+            {
+                File.Copy(oldPath, newPath, true);
+                if (simulateMove)
+                {
+                    PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                    if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
+                }
+            }
+            else if (Directory.Exists(oldPath))
+            {
+                newPath = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
+                if (!FileHelper.ConfirmOverwrite(newPath)) return;
+                string searchPattern = project.DefaultSearchFilter;
+                if (simulateMove)
+                {
+                    // We need to use our own method for moving directories if folders in the new path already exist
+                    FileHelper.CopyDirectory(oldPath, newPath, true);
+                    foreach (string pattern in searchPattern.Split(';'))
+                    {
+                        foreach (string file in Directory.GetFiles(oldPath, pattern, SearchOption.AllDirectories))
+                        {
+                            if (project.IsDocumentClass(file))
+                            {
+                                newDocumentClass = file.Replace(oldPath, newPath);
+                                break;
+                            }
+                            PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                        }
+                        if (newDocumentClass != null) break;
+                    }
+                }
+            }
+            if (!string.IsNullOrEmpty(newDocumentClass))
+            {
+                project.SetDocumentClass(newDocumentClass, true);
+                project.Save();
+            }
         }
 
         /// <summary>
@@ -444,16 +510,22 @@ namespace CodeRefactor.Provider
             else if (Directory.Exists(oldPath))
             {
                 newPath = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
-                string searchPattern = GetSearchPatternFromLang(project.Language.ToLower());
-                foreach (string file in Directory.GetFiles(oldPath, searchPattern, SearchOption.AllDirectories))
+                if (!FileHelper.ConfirmOverwrite(newPath)) return;
+                string searchPattern = project.DefaultSearchFilter;
+                foreach (string pattern in searchPattern.Split(';'))
                 {
-                    if (project.IsDocumentClass(file))
+                    foreach (string file in Directory.GetFiles(oldPath, pattern, SearchOption.AllDirectories))
                     {
-                        newDocumentClass = file.Replace(oldPath, newPath);
-                        break;
+                        if (project.IsDocumentClass(file))
+                        {
+                            newDocumentClass = file.Replace(oldPath, newPath);
+                            break;
+                        }
                     }
+                    if (newDocumentClass != null) break;
                 }
-                Directory.Move(oldPath, newPath);
+                // We need to use our own method for moving directories if folders in the new path already exist
+                FileHelper.ForceMoveDirectory(oldPath, newPath);
                 PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
             }
             if (!string.IsNullOrEmpty(newDocumentClass))

@@ -212,8 +212,7 @@ namespace CodeRefactor
                 || !Regex.Match(Path.GetFileNameWithoutExtension(file), REG_IDENTIFIER, RegexOptions.Singleline).Success)
                 return false;
             if (Directory.Exists(file)) return true;
-            string ext = Path.GetExtension(file);
-            return (ext == ".as" || FileHelper.IsHaxeExtension(ext) || ext == ".ls") && project.DefaultSearchFilter.Contains(ext);
+            return FileHelper.FileMatchesSearchFilter(file, project.DefaultSearchFilter);
         }
 
         #endregion

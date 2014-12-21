@@ -71,6 +71,7 @@ namespace CodeRefactor.Commands
                 {
                     sci.SelectText(oldFileName, sci.PositionFromLine(line));
                     Rename command = new Rename(RefactoringHelper.GetDefaultRefactorTarget(), true, newFileName);
+                    command.RegisterDocumentHelper(AssociatedDocumentHelper);
                     command.Execute();
                     return;
                 }
