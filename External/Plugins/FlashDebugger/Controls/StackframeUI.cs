@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using flash.tools.debugger;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace FlashDebugger
@@ -15,15 +18,31 @@ namespace FlashDebugger
         private ToolStripLabel toolStripLabelFilter;
         private ToolStripSpringTextBox toolStripTextBoxFilter;
         private ToolStripButton clearFilterButton;
+        private ToolStripDropDownButton toolStripDropDownOptions;
+        private ToolStripMenuItem toolStripItemMatchCase;
+        private ToolStripMenuItem toolStripItemRegEx;
+        private ToolStripMenuItem toolStripItemNegate;
         private ToolStrip toolStripFilters;
+
+        private List<ListViewItem> wholeFrameStack;
 
         public StackframeUI(PluginMain pluginMain, ImageList imageList)
         {
             this.pluginMain = pluginMain;
+            wholeFrameStack = new List<ListViewItem>();
 
+            InitializeComponents(imageList);
+        }
+
+        private void InitializeComponents(ImageList imageList)
+        {
             this.toolStripLabelFilter = new System.Windows.Forms.ToolStripLabel();
             this.toolStripTextBoxFilter = new System.Windows.Forms.ToolStripSpringTextBox();
             this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownOptions = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripItemMatchCase = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripItemRegEx = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripItemNegate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripFilters = new PluginCore.Controls.ToolStripEx();
             this.toolStripFilters.SuspendLayout();
 
@@ -33,6 +52,7 @@ namespace FlashDebugger
             this.toolStripTextBoxFilter.Name = "toolStripTextBoxFilter";
             this.toolStripTextBoxFilter.Size = new System.Drawing.Size(100, 25);
             this.toolStripTextBoxFilter.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
+            this.toolStripTextBoxFilter.Enabled = false;
             this.toolStripTextBoxFilter.TextChanged += new System.EventHandler(this.ToolStripButtonErrorCheckedChanged);
             // 
             // toolStripLabelFilter
@@ -51,7 +71,36 @@ namespace FlashDebugger
             this.clearFilterButton.Name = "clearFilterButton";
             this.clearFilterButton.Size = new System.Drawing.Size(23, 26);
             this.clearFilterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
             this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButtonClick);
+            // 
+            // toolStripItemMatchCase
+            // 
+            this.toolStripItemMatchCase.Name = "toolStripItemMatchCase";
+            this.toolStripItemMatchCase.CheckOnClick = true;
+            this.toolStripItemMatchCase.Text = "Match case";
+            // 
+            // toolStripItemRegEx
+            // 
+            this.toolStripItemRegEx.Name = "toolStripItemRegEx";
+            this.toolStripItemRegEx.CheckOnClick = true;
+            this.toolStripItemRegEx.Text = "Regular Expression";
+            // 
+            // toolStripItemNegate
+            // 
+            this.toolStripItemNegate.Name = "toolStripItemNegate";
+            this.toolStripItemNegate.CheckOnClick = true;
+            this.toolStripItemNegate.Text = "Match opposite";
+            // 
+            // toolStripDropDownOptions
+            // 
+            this.toolStripDropDownOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripItemMatchCase,
+            this.toolStripItemRegEx,
+            this.toolStripItemNegate});
+            this.toolStripDropDownOptions.Name = "toolStripDropDownOptions";
+            this.toolStripDropDownOptions.Text = "Options";
 
             // 
             // toolStripFilters
@@ -64,15 +113,17 @@ namespace FlashDebugger
             this.toolStripFilters.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabelFilter,
             this.toolStripTextBoxFilter, 
-            this.clearFilterButton});
+            this.clearFilterButton,
+            this.toolStripDropDownOptions});
             this.toolStripFilters.Name = "toolStripFilters";
             this.toolStripFilters.Location = new System.Drawing.Point(1, 0);
             this.toolStripFilters.Size = new System.Drawing.Size(710, 25);
             this.toolStripFilters.TabIndex = 0;
             this.toolStripFilters.Text = "toolStripFilters";
 
-            lv = new ListView();
-            lv.ShowItemToolTips = true;
+            // lv
+            this.lv = new ListView();
+            this.lv.ShowItemToolTips = true;
             this.imageColumnHeader = new ColumnHeader();
             this.imageColumnHeader.Text = string.Empty;
             this.imageColumnHeader.Width = 20;
@@ -80,12 +131,12 @@ namespace FlashDebugger
             this.frameColumnHeader = new ColumnHeader();
             this.frameColumnHeader.Text = string.Empty;
 
-            lv.Columns.AddRange(new ColumnHeader[] {
+            this.lv.Columns.AddRange(new ColumnHeader[] {
             this.imageColumnHeader,
             this.frameColumnHeader});
-            lv.FullRowSelect = true;
-            lv.BorderStyle = BorderStyle.None;
-            lv.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lv.FullRowSelect = true;
+            this.lv.BorderStyle = BorderStyle.None;
+            this.lv.Dock = System.Windows.Forms.DockStyle.Fill;
 
             foreach (ColumnHeader column in lv.Columns)
                 column.Width = ScaleHelper.Scale(column.Width);
@@ -104,13 +155,9 @@ namespace FlashDebugger
             this.toolStripFilters.PerformLayout();
         }
 
-        void lv_SizeChanged(object sender, EventArgs e)
-        {
-            this.frameColumnHeader.Width = lv.Width - this.imageColumnHeader.Width;
-        }
-
         public void ClearItem()
         {
+            wholeFrameStack.Clear();
             lv.Items.Clear();
         }
 
@@ -129,17 +176,21 @@ namespace FlashDebugger
 
         public void AddFrames(Frame[] frames)
         {
+            lv.BeginUpdate();
             lv.Items.Clear();
+            wholeFrameStack.Clear();
             if (frames.GetLength(0) > 0)
             {
                 foreach (Frame item in frames)
                 {
                     String title = item.getCallSignature();
                     if (item.getLocation().getFile() != null) title += " at " + item.getLocation().getFile() + ":" + item.getLocation().getLine();
-                    lv.Items.Add(new ListViewItem(new string[] {"", title}, -1));
+                    wholeFrameStack.Add(lv.Items.Add(new ListViewItem(new string[] {"", title}, -1)));
                 }
                 lv.Items[0].ImageIndex = currentImageIndex;
             }
+            lv.EndUpdate();
+            toolStripTextBoxFilter.Enabled = lv.Items.Count > 0;
         }
 
         void lv_KeyDown(object sender, KeyEventArgs e)
@@ -172,6 +223,11 @@ namespace FlashDebugger
             }
         }
 
+        private void lv_SizeChanged(object sender, EventArgs e)
+        {
+            this.frameColumnHeader.Width = lv.Width - this.imageColumnHeader.Width;
+        }
+
         /// <summary>
         /// Clears the filter control text
         /// </summary>
@@ -196,8 +252,28 @@ namespace FlashDebugger
         private void FilterResults()
         {
             lv.BeginUpdate();
-            string filterText = toolStripTextBoxFilter.Text.ToLower();
+            string filterText = toolStripTextBoxFilter.Text;
             lv.Items.Clear();
+
+            foreach (var item in wholeFrameStack)
+            {
+                bool match;
+                if (toolStripItemRegEx.Checked)
+                {
+                    match = Regex.IsMatch(item.SubItems[1].Text, filterText,
+                        toolStripItemMatchCase.Checked ? RegexOptions.None : RegexOptions.IgnoreCase);
+                }
+                else
+                {
+                    match = item.SubItems[1].Text.IndexOf(filterText,
+                        toolStripItemMatchCase.Checked ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase) > -1;
+                }
+
+                if (toolStripItemNegate.Checked) match = !match;
+
+                if (match) lv.Items.Add(item);
+            }
+
             lv.EndUpdate();
         }
 
