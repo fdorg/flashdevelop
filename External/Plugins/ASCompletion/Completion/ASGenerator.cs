@@ -3531,7 +3531,7 @@ namespace ASCompletion.Completion
 
         static private void GenerateGetter(string name, MemberModel member, int position)
         {
-            string acc = GetPublicAccessor(member);
+            string acc = isHaxe ? GetPrivateAccessor(member) : GetPublicAccessor(member);
             string template = TemplateUtils.GetTemplate("Getter");
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
@@ -3543,7 +3543,7 @@ namespace ASCompletion.Completion
 
         static private void GenerateSetter(string name, MemberModel member, int position)
         {
-            string acc = GetPublicAccessor(member);
+            string acc = isHaxe ? GetPrivateAccessor(member) : GetPublicAccessor(member);
             string template = TemplateUtils.GetTemplate("Setter");
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
@@ -3564,7 +3564,7 @@ namespace ASCompletion.Completion
                 GenerateGetter(name, member, position);
                 return;
             }
-            string acc = GetPublicAccessor(member);
+            string acc = isHaxe ? GetPrivateAccessor(member) : GetPublicAccessor(member);
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Type", FormatType(member.Type));
@@ -3583,11 +3583,8 @@ namespace ASCompletion.Completion
 
         static public string GetPrivateKeyword()
         {
-            string acc;
-            if (GetDefaultVisibility() == Visibility.Protected)
-                acc = ASContext.Context.Features.protectedKey ?? "protected";
-            else acc = ASContext.Context.Features.privateKey ?? "private";
-            return acc;
+            if (GetDefaultVisibility() == Visibility.Protected) return ASContext.Context.Features.protectedKey ?? "protected";
+            return ASContext.Context.Features.privateKey ?? "private";
         }
 
         static private string GetPublicAccessor(MemberModel member)
@@ -3749,15 +3746,11 @@ namespace ASCompletion.Completion
         static private string GetDeclaration(MemberModel member, bool addModifiers)
         {
             // modifiers
-            FlagType ft = member.Flags;
-            string modifiers = "";
-
-            modifiers += TemplateUtils.GetStaticExternOverride(member);
-
-            if (addModifiers)
-                modifiers += TemplateUtils.GetModifiers(member);
+            string modifiers = TemplateUtils.GetStaticExternOverride(member);
+            if (addModifiers) modifiers += TemplateUtils.GetModifiers(member);
             
             // signature
+            FlagType ft = member.Flags;
             if ((ft & FlagType.Getter) > 0)
                 return String.Format("{0}function get {1}", modifiers, member.ToDeclarationString());
             else if ((ft & FlagType.Setter) > 0)
