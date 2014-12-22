@@ -334,30 +334,24 @@ namespace FlashDebugger
             ActivateDocument(filefullpath, -1, false);
         }
 
-        static public void ActivateDocument(string filefullpath, int line, Boolean bSelectLine)
+        static public ScintillaControl ActivateDocument(string filefullpath, int line, Boolean bSelectLine)
         {
-            ScintillaControl sci = GetScintillaControl(filefullpath);
-            if (sci == null)
+            PluginBase.MainForm.OpenEditableDocument(filefullpath, false);
+            if (PluginBase.MainForm.CurrentDocument.FileName != filefullpath) return null;
+            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (line >= 0)
             {
-                PluginBase.MainForm.OpenEditableDocument(filefullpath);
-                sci = GetScintillaControl(filefullpath);
-            }
-            Int32 i = GetScintillaControlIndex(sci);
-            if (i != -1)
-            {
-                PluginBase.MainForm.Documents[i].Activate();
-                if (line >= 0)
+                sci.EnsureVisible(line);
+                Int32 start = sci.PositionFromLine(line);
+                if (bSelectLine)
                 {
-                    sci.GotoLine(line);
-                    if (bSelectLine)
-                    {
-                        Int32 start = sci.PositionFromLine(line);
-                        Int32 end = start + sci.LineLength(line);
-                        sci.SelectionStart = start;
-                        sci.SelectionEnd = end;
-                    }
+                    Int32 end = start + sci.LineLength(line);
+                    sci.SetSel(start, end);
                 }
+                else
+                    sci.SetSel(start, start);
             }
+            return sci;
         }
 
         #endregion

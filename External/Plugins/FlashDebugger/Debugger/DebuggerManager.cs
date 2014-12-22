@@ -564,10 +564,7 @@ namespace FlashDebugger
 		{
 			if ((PluginBase.MainForm as Form).InvokeRequired)
 			{
-				(PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate()
-				{
-					ResetCurrentLocation();
-				});
+				(PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)ResetCurrentLocation);
 				return;
 			}
 			if (CurrentLocation.getFile() != null)
@@ -597,37 +594,20 @@ namespace FlashDebugger
 		{
 			if ((PluginBase.MainForm as Form).InvokeRequired)
 			{
-				(PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate()
-				{
-					GotoCurrentLocation(bSetMarker);
-				});
+			    (PluginBase.MainForm as Form).BeginInvoke(new Action<bool>(GotoCurrentLocation), bSetMarker);
 				return;
 			}
 			if (CurrentLocation != null && CurrentLocation.getFile() != null)
 			{
-				ScintillaControl sci;
-				String localPath = GetLocalPath(CurrentLocation.getFile());
+                String localPath = GetLocalPath(CurrentLocation.getFile());
 				if (localPath != null)
 				{
-					sci = ScintillaHelper.GetScintillaControl(localPath);
-					if (sci == null)
+                    int line = CurrentLocation.getLine() - 1;
+                    ScintillaControl sci = ScintillaHelper.ActivateDocument(localPath, line, false);
+                    if (sci == null) return;
+					if (bSetMarker)
 					{
-						PluginBase.MainForm.OpenEditableDocument(localPath);
-						sci = ScintillaHelper.GetScintillaControl(localPath);
-					}
-					if (sci != null)
-					{
-						Int32 i = ScintillaHelper.GetScintillaControlIndex(sci);
-						if (i != -1)
-						{
-							PluginBase.MainForm.Documents[i].Activate();
-							Int32 line = CurrentLocation.getLine() - 1;
-							sci.GotoLine(line);
-							if (bSetMarker)
-							{
-								sci.MarkerAdd(line, ScintillaHelper.markerCurrentLine);
-							}
-						}
+						sci.MarkerAdd(line, ScintillaHelper.markerCurrentLine);
 					}
 				}
 			}
