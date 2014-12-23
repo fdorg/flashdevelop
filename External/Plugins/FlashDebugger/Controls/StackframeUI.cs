@@ -248,7 +248,7 @@ namespace FlashDebugger
                             }
                         }
                     }
-                    var listItem = new ListViewItem(new[] {"", title}, -1)
+                    var listItem = new ListViewItem(new[] {string.Empty, title}, -1)
                         {
                             Tag = new ListItemData {Frame = item, Index = i++}
                         };
@@ -406,6 +406,7 @@ namespace FlashDebugger
                 }
             }
 
+            bool lastExternal = false;
             foreach (var item in wholeFrameStack)
             {
                 bool match = true;
@@ -425,7 +426,23 @@ namespace FlashDebugger
                     if (toolStripItemNegate.Checked) match = !match;
                 }
 
-                if (match) lv.Items.Add(item);
+                if (match)
+                {
+                    if (item.SubItems[1].ForeColor == System.Drawing.SystemColors.GrayText)
+                    {
+                        if (lastExternal) continue;
+                        lv.Items.Add(new ListViewItem(new[] { string.Empty, "[External code]" }, -1)
+                        {
+                            Tag = new ListItemData { Index = -1 }
+                        });
+                        lastExternal = true;
+                    }
+                    else
+                    {
+                        lastExternal = false;
+                        lv.Items.Add(item);
+                    }
+                }
             }
             
             lv.EndUpdate();
