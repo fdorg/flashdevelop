@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -36,6 +37,7 @@ namespace FlashDebugger
         private ToolStripMenuItem justMyCodeContextMenuItem;
 
         private List<ListViewItem> wholeFrameStack;
+        private int lastSelected;
 
         private List<string> userPaths;
         private bool justMyCode;
@@ -180,11 +182,10 @@ namespace FlashDebugger
             this.copyContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, new EventHandler(this.CopyTextClick));
             this.copyContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
             this.copyAllContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyAll"), null, new EventHandler(this.CopyAllTextClick));
-            this.copyAllContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.Shift | Keys.C);
             this.setFrameContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.SetCurrentFrame"), null, new EventHandler(this.SetCurrentFrameClick));
             this.setFrameContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
             this.gotoSourceContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.GotoSource"), null, new EventHandler(this.GotoSourceClick));
-            this.gotoSourceContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.Enter);
+            this.gotoSourceContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Shift | Keys.Enter);
             this.justMyCodeContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.JustMyCode"), null, new EventHandler(this.JustMyCodeClick));
             this.justMyCodeContextMenuItem.CheckOnClick = true;
             menu.Items.AddRange(new ToolStripItem[] {this.copyContextMenuItem, this.copyAllContextMenuItem, new ToolStripSeparator(), 
@@ -210,15 +211,41 @@ namespace FlashDebugger
 
         public void ActiveItem()
         {
-            foreach (ListViewItem item in wholeFrameStack)
+            lv.Items[lastSelected].ImageIndex = -1;
+            int index = PluginMain.debugManager.CurrentFrame;
+            var selectedItem = wholeFrameStack[index];
+            if (justMyCode)
             {
-                if (item.ImageIndex == currentImageIndex)
+                // We'll have to check for every item to make sure
+                for (int i = 0, count = lv.Items.Count; i < count; i++)
                 {
-                    item.ImageIndex = -1;
-                    break;
+                    var itemData = (ListItemData)lv.Items[i].Tag;
+                    if (itemData.Index < index) continue;
+                    if (itemData.Index == index)
+                    {
+                        lv.Items[i].ImageIndex = currentImageIndex;
+                        lastSelected = i;
+                        break;
+                    }
+                    if (itemData.Index > index)
+                    {
+                        lv.Items[i - 1].ImageIndex = currentImageIndex;
+                        lastSelected = i - 1;
+                        break;
+                    }
+                    if (i == count - 1 && itemData.Index == -1)
+                    {
+                        lv.Items[i].ImageIndex = currentImageIndex;
+                        lastSelected = i;
+                        break;
+                    }
                 }
             }
-            lv.SelectedItems[0].ImageIndex = currentImageIndex;
+            else
+            {
+                lastSelected = PluginMain.debugManager.CurrentFrame;
+                selectedItem.ImageIndex = currentImageIndex;
+            }
         }
 
         public void AddFrames(Frame[] frames)
@@ -240,7 +267,10 @@ namespace FlashDebugger
                         {
                             foreach (string cp in project.AbsoluteClasspaths)
                             {
-                                if (sourceFile.getFullPath().ToString() == cp)
+                                string pathBackSlash = cp.TrimEnd(new[]{Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar});
+                                pathBackSlash = pathBackSlash.IndexOf(Path.AltDirectorySeparatorChar.ToString()) > -1 ?
+                                    pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
+                                if (sourceFile.getFullPath().ToString().StartsWith(pathBackSlash))
                                 {
                                     ownFile = true;
                                     break;
@@ -252,10 +282,10 @@ namespace FlashDebugger
                         {
                             Tag = new ListItemData {Frame = item, Index = i++}
                         };
+                    listItem.UseItemStyleForSubItems = false;
                     if (!ownFile) listItem.SubItems[1].ForeColor = System.Drawing.SystemColors.GrayText;
                     wholeFrameStack.Add(listItem);
                 }
-                wholeFrameStack[0].ImageIndex = currentImageIndex;
                 FilterResults();
             }
             else
@@ -269,23 +299,15 @@ namespace FlashDebugger
 
             if (e.KeyCode == Keys.Return)
             {
-                if ((e.Modifiers & Keys.Control) > 0)
+                if ((e.Modifiers & Keys.Shift) > 0)
                     GotoSourceClick(sender, e);
                 else
-                {
-                    PluginMain.debugManager.CurrentFrame = ((ListItemData)lv.SelectedItems[0].Tag).Index;
-                    ActiveItem();
-                }
+                    SetCurrentFrameClick(sender, e);
             }
             else if (e.KeyCode == Keys.C)
             {
                 if ((e.Modifiers & Keys.Control) > 0)
-                {
-                    if ((e.Modifiers & Keys.Shift) > 0)
-                        CopyAllTextClick(sender, e);
-                    else
-                        CopyTextClick(sender, e);
-                }
+                    CopyTextClick(sender, e);
             }
         }
 
@@ -353,6 +375,7 @@ namespace FlashDebugger
         private void SetCurrentFrameClick(Object sender, EventArgs e)
         {
             int index = ((ListItemData)lv.SelectedItems[0].Tag).Index;
+            if (index == -1) return;
             if (PluginMain.debugManager.CurrentFrame == index)
             {
                 Location tmp = PluginMain.debugManager.CurrentLocation;
@@ -362,13 +385,14 @@ namespace FlashDebugger
             else
             {
                 PluginMain.debugManager.CurrentFrame = index;
-                ActiveItem();
             }
+            ActiveItem();
         }
 
         private void GotoSourceClick(Object sender, EventArgs e)
         {
-            var frame = (Frame)lv.SelectedItems[0].Tag;
+            var frame = ((ListItemData)lv.SelectedItems[0].Tag).Frame;
+            if (frame == null) return;
             string file = PluginMain.debugManager.GetLocalPath(frame.getLocation().getFile());
             if (file == null) return;
             ScintillaHelper.ActivateDocument(file,
@@ -407,9 +431,11 @@ namespace FlashDebugger
             }
 
             bool lastExternal = false;
+            int currentFrame = PluginMain.debugManager.CurrentFrame;
             foreach (var item in wholeFrameStack)
             {
                 bool match = true;
+                item.ImageIndex = -1;
                 if (filterText != string.Empty)
                 {
                     if (regex != null)
@@ -428,23 +454,47 @@ namespace FlashDebugger
 
                 if (match)
                 {
-                    if (item.SubItems[1].ForeColor == System.Drawing.SystemColors.GrayText)
+                    if (justMyCode && item.SubItems[1].ForeColor == System.Drawing.SystemColors.GrayText)
                     {
-                        if (lastExternal) continue;
-                        lv.Items.Add(new ListViewItem(new[] { string.Empty, "[External code]" }, -1)
+                        if (lastExternal)
+                        {
+                            if (((ListItemData) item.Tag).Index == currentFrame)
+                            {
+                                lv.Items[lv.Items.Count - 1].ImageIndex = currentImageIndex;
+                                lastSelected = lv.Items.Count - 1;
+                            }
+                            continue;
+                        }
+                        var newItem = lv.Items.Add(new ListViewItem(new[] { string.Empty, "[External Code]" }, -1)
                         {
                             Tag = new ListItemData { Index = -1 }
                         });
+
+                        newItem.UseItemStyleForSubItems = false;
+                        newItem.SubItems[1].ForeColor = System.Drawing.SystemColors.GrayText;
+                        if (((ListItemData) item.Tag).Index == currentFrame)
+                        {
+                            newItem.ImageIndex = currentImageIndex;
+                            lastSelected = lv.Items.Count - 1;
+                        }
+                        
                         lastExternal = true;
                     }
                     else
                     {
                         lastExternal = false;
                         lv.Items.Add(item);
+                        if (((ListItemData)item.Tag).Index == currentFrame)
+                        {
+                            item.ImageIndex = currentImageIndex;
+                            lastSelected = lv.Items.Count - 1;
+                        }
                     }
                 }
             }
-            
+
+            wholeFrameStack[PluginMain.debugManager.CurrentFrame].ImageIndex = currentImageIndex;
+
             lv.EndUpdate();
         }
 
