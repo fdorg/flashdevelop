@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Context;
 using PluginCore.Localization;
 using PluginCore.Utilities;
+using ProjectManager.Projects;
 using flash.tools.debugger;
 using PluginCore;
 using PluginCore.Helpers;
@@ -35,6 +37,9 @@ namespace FlashDebugger
 
         private List<ListViewItem> wholeFrameStack;
 
+        private List<string> userPaths;
+        private bool justMyCode;
+
         public StackframeUI(PluginMain pluginMain, ImageList imageList)
         {
             this.pluginMain = pluginMain;
@@ -42,6 +47,7 @@ namespace FlashDebugger
 
             InitializeComponents(imageList);
             InitializeContextMenu();
+            InitializeLocalization();
         }
 
         private void InitializeComponents(ImageList imageList)
@@ -180,24 +186,31 @@ namespace FlashDebugger
             this.gotoSourceContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.GotoSource"), null, new EventHandler(this.GotoSourceClick));
             this.gotoSourceContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.Enter);
             this.justMyCodeContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.JustMyCode"), null, new EventHandler(this.JustMyCodeClick));
+            this.justMyCodeContextMenuItem.CheckOnClick = true;
             menu.Items.AddRange(new ToolStripItem[] {this.copyContextMenuItem, this.copyAllContextMenuItem, new ToolStripSeparator(), 
                 this.setFrameContextMenuItem, this.gotoSourceContextMenuItem, this.justMyCodeContextMenuItem});
             this.lv.ContextMenuStrip = menu;
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer(false);
             this.toolStripFilters.Renderer = new DockPanelStripRenderer();
-            //menu.Opening += ContextMenuOpening;
+            menu.Opening += ContextMenuOpening;
+        }
+
+        private void InitializeLocalization()
+        {
+            this.toolStripLabelFilter.Text = TextHelper.GetString("Label.Filter");
         }
 
         public void ClearItem()
         {
             wholeFrameStack.Clear();
             lv.Items.Clear();
+            toolStripTextBoxFilter.Enabled = lv.Enabled = false;
         }
 
         public void ActiveItem()
         {
-            foreach (ListViewItem item in lv.Items)
+            foreach (ListViewItem item in wholeFrameStack)
             {
                 if (item.ImageIndex == currentImageIndex)
                 {
@@ -210,39 +223,68 @@ namespace FlashDebugger
 
         public void AddFrames(Frame[] frames)
         {
-            lv.BeginUpdate();
-            lv.Items.Clear();
             wholeFrameStack.Clear();
             if (frames.GetLength(0) > 0)
             {
-                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                foreach (var pathModel in context.Classpath)
-                {
-                    if (!pathModel.IsVirtual)
-                    {
-                        
-                    }
-                }
+                Project project = PluginBase.CurrentProject as Project;
+                int i = 0;
                 foreach (Frame item in frames)
                 {
                     String title = item.getCallSignature();
-                    if (item.getLocation().getFile() != null) title += " at " + item.getLocation().getFile() + ":" + item.getLocation().getLine();
-                    wholeFrameStack.Add(lv.Items.Add(new ListViewItem(new string[] {"", title}, -1) {Tag = item}));
+                    bool ownFile = false;
+                    SourceFile sourceFile = item.getLocation().getFile();
+                    if (sourceFile != null)
+                    {
+                        title += " at " + sourceFile + ":" + item.getLocation().getLine();
+                        if (project != null)
+                        {
+                            foreach (string cp in project.AbsoluteClasspaths)
+                            {
+                                if (sourceFile.getFullPath().ToString() == cp)
+                                {
+                                    ownFile = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    var listItem = new ListViewItem(new[] {"", title}, -1)
+                        {
+                            Tag = new ListItemData {Frame = item, Index = i++}
+                        };
+                    if (!ownFile) listItem.SubItems[1].ForeColor = System.Drawing.SystemColors.GrayText;
+                    wholeFrameStack.Add(listItem);
                 }
-                lv.Items[0].ImageIndex = currentImageIndex;
+                wholeFrameStack[0].ImageIndex = currentImageIndex;
+                FilterResults();
             }
-            lv.EndUpdate();
-            toolStripTextBoxFilter.Enabled = lv.Items.Count > 0;
+            else
+                lv.Items.Clear();
+            toolStripTextBoxFilter.Enabled = lv.Enabled = lv.Items.Count > 0;
         }
 
         private void Lv_KeyDown(object sender, KeyEventArgs e)
         {
+            if (lv.SelectedIndices.Count == 0) return;
+
             if (e.KeyCode == Keys.Return)
             {
-                if (lv.SelectedIndices.Count > 0)
+                if ((e.Modifiers & Keys.Control) > 0)
+                    GotoSourceClick(sender, e);
+                else
                 {
-                    PluginMain.debugManager.CurrentFrame = lv.SelectedIndices[0];
+                    PluginMain.debugManager.CurrentFrame = ((ListItemData)lv.SelectedItems[0].Tag).Index;
                     ActiveItem();
+                }
+            }
+            else if (e.KeyCode == Keys.C)
+            {
+                if ((e.Modifiers & Keys.Control) > 0)
+                {
+                    if ((e.Modifiers & Keys.Shift) > 0)
+                        CopyAllTextClick(sender, e);
+                    else
+                        CopyTextClick(sender, e);
                 }
             }
         }
@@ -250,19 +292,7 @@ namespace FlashDebugger
         void Lv_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (lv.SelectedIndices.Count > 0)
-            {
-                if (PluginMain.debugManager.CurrentFrame == lv.SelectedIndices[0])
-                {
-                    Location tmp = PluginMain.debugManager.CurrentLocation;
-                    PluginMain.debugManager.CurrentLocation = null;
-                    PluginMain.debugManager.CurrentLocation = tmp;
-                }
-                else
-                {
-                    PluginMain.debugManager.CurrentFrame = lv.SelectedIndices[0];
-                    ActiveItem();
-                }
-            }
+                SetCurrentFrameClick(sender, e);
         }
 
         private void Lv_SizeChanged(object sender, EventArgs e)
@@ -291,6 +321,65 @@ namespace FlashDebugger
         private void FilterOption_Click(Object sender, EventArgs e)
         {
             if (clearFilterButton.Enabled) FilterResults();
+        }
+
+        private void ContextMenuOpening(Object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            copyContextMenuItem.Enabled = setFrameContextMenuItem.Enabled = gotoSourceContextMenuItem.Enabled = lv.SelectedItems.Count > 0;
+            copyAllContextMenuItem.Enabled = lv.Items.Count > 0;
+        }
+
+        private void CopyTextClick(Object sender, EventArgs e)
+        {
+            Clipboard.SetText(lv.SelectedItems[0].SubItems[1].Text);
+        }
+
+        private void CopyAllTextClick(Object sender, EventArgs e)
+        {
+            var sb = new StringBuilder();
+            string filter = toolStripTextBoxFilter.Text.Trim();
+            if (filter != string.Empty)
+            {
+                sb.Append(TextHelper.GetString("Label.Filter")).AppendLine(filter).AppendLine();
+            }
+            foreach (ListViewItem item in lv.Items)
+            {
+                sb.AppendLine(item.SubItems[1].Text);
+            }
+
+            Clipboard.SetText(sb.ToString());
+        }
+
+        private void SetCurrentFrameClick(Object sender, EventArgs e)
+        {
+            int index = ((ListItemData)lv.SelectedItems[0].Tag).Index;
+            if (PluginMain.debugManager.CurrentFrame == index)
+            {
+                Location tmp = PluginMain.debugManager.CurrentLocation;
+                PluginMain.debugManager.CurrentLocation = null;
+                PluginMain.debugManager.CurrentLocation = tmp;
+            }
+            else
+            {
+                PluginMain.debugManager.CurrentFrame = index;
+                ActiveItem();
+            }
+        }
+
+        private void GotoSourceClick(Object sender, EventArgs e)
+        {
+            var frame = (Frame)lv.SelectedItems[0].Tag;
+            string file = PluginMain.debugManager.GetLocalPath(frame.getLocation().getFile());
+            if (file == null) return;
+            ScintillaHelper.ActivateDocument(file,
+                                             frame.getLocation().getLine() - 1, false);
+        }
+
+        private void JustMyCodeClick(Object sender, EventArgs e)
+        {
+            justMyCode = justMyCodeContextMenuItem.Checked;
+
+            FilterResults();
         }
 
         /// <summary>
@@ -342,31 +431,11 @@ namespace FlashDebugger
             lv.EndUpdate();
         }
 
-        private void CopyTextClick(Object sender, EventArgs e)
+        private class ListItemData
         {
-            
+            public Frame Frame;
+            public int Index;
         }
-
-        private void CopyAllTextClick(Object sender, EventArgs e)
-        {
-            
-        }
-
-        private void SetCurrentFrameClick(Object sender, EventArgs e)
-        {
-            
-        }
-
-        private void GotoSourceClick(Object sender, EventArgs e)
-        {
-            
-        }
-
-        private void JustMyCodeClick(Object sender, EventArgs e)
-        {
-            
-        }
-
     }
 
 }
