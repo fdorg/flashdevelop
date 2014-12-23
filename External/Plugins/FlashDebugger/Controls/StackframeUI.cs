@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ASCompletion.Context;
+using PluginCore.Localization;
+using PluginCore.Utilities;
 using flash.tools.debugger;
 using PluginCore;
 using PluginCore.Helpers;
@@ -24,6 +27,12 @@ namespace FlashDebugger
         private ToolStripMenuItem toolStripItemNegate;
         private ToolStrip toolStripFilters;
 
+        private ToolStripMenuItem copyContextMenuItem;
+        private ToolStripMenuItem copyAllContextMenuItem;
+        private ToolStripMenuItem setFrameContextMenuItem;
+        private ToolStripMenuItem gotoSourceContextMenuItem;
+        private ToolStripMenuItem justMyCodeContextMenuItem;
+
         private List<ListViewItem> wholeFrameStack;
 
         public StackframeUI(PluginMain pluginMain, ImageList imageList)
@@ -32,6 +41,7 @@ namespace FlashDebugger
             wholeFrameStack = new List<ListViewItem>();
 
             InitializeComponents(imageList);
+            InitializeContextMenu();
         }
 
         private void InitializeComponents(ImageList imageList)
@@ -53,7 +63,7 @@ namespace FlashDebugger
             this.toolStripTextBoxFilter.Size = new System.Drawing.Size(100, 25);
             this.toolStripTextBoxFilter.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.toolStripTextBoxFilter.Enabled = false;
-            this.toolStripTextBoxFilter.TextChanged += new System.EventHandler(this.ToolStripButtonErrorCheckedChanged);
+            this.toolStripTextBoxFilter.TextChanged += new System.EventHandler(this.ToolStripTextFieldFilter_Changed);
             // 
             // toolStripLabelFilter
             //
@@ -72,25 +82,28 @@ namespace FlashDebugger
             this.clearFilterButton.Size = new System.Drawing.Size(23, 26);
             this.clearFilterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
-            this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButtonClick);
+            this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButton_Click);
             // 
             // toolStripItemMatchCase
             // 
             this.toolStripItemMatchCase.Name = "toolStripItemMatchCase";
             this.toolStripItemMatchCase.CheckOnClick = true;
             this.toolStripItemMatchCase.Text = "Match case";
+            this.toolStripItemNegate.Click += FilterOption_Click;
             // 
             // toolStripItemRegEx
             // 
             this.toolStripItemRegEx.Name = "toolStripItemRegEx";
             this.toolStripItemRegEx.CheckOnClick = true;
             this.toolStripItemRegEx.Text = "Regular Expression";
+            this.toolStripItemNegate.Click += FilterOption_Click;
             // 
             // toolStripItemNegate
             // 
             this.toolStripItemNegate.Name = "toolStripItemNegate";
             this.toolStripItemNegate.CheckOnClick = true;
             this.toolStripItemNegate.Text = "Match opposite";
+            this.toolStripItemNegate.Click += FilterOption_Click;
             // 
             // toolStripDropDownOptions
             // 
@@ -145,14 +158,35 @@ namespace FlashDebugger
             currentImageIndex = imageList.Images.IndexOfKey("StartContinue");
 
             lv.View = System.Windows.Forms.View.Details;
-            lv.MouseDoubleClick += new MouseEventHandler(lv_MouseDoubleClick);
-            lv.KeyDown += new KeyEventHandler(lv_KeyDown);
-            lv.SizeChanged += new EventHandler(lv_SizeChanged);
+            lv.MouseDoubleClick += new MouseEventHandler(Lv_MouseDoubleClick);
+            lv.KeyDown += new KeyEventHandler(Lv_KeyDown);
+            lv.SizeChanged += new EventHandler(Lv_SizeChanged);
 
             this.Controls.Add(lv);
             this.Controls.Add(toolStripFilters);
             this.toolStripFilters.ResumeLayout(false);
             this.toolStripFilters.PerformLayout();
+        }
+
+        public void InitializeContextMenu()
+        {
+            ContextMenuStrip menu = new ContextMenuStrip();
+            this.copyContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, new EventHandler(this.CopyTextClick));
+            this.copyContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
+            this.copyAllContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyAll"), null, new EventHandler(this.CopyAllTextClick));
+            this.copyAllContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.Shift | Keys.C);
+            this.setFrameContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.SetCurrentFrame"), null, new EventHandler(this.SetCurrentFrameClick));
+            this.setFrameContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
+            this.gotoSourceContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.GotoSource"), null, new EventHandler(this.GotoSourceClick));
+            this.gotoSourceContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.Enter);
+            this.justMyCodeContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.JustMyCode"), null, new EventHandler(this.JustMyCodeClick));
+            menu.Items.AddRange(new ToolStripItem[] {this.copyContextMenuItem, this.copyAllContextMenuItem, new ToolStripSeparator(), 
+                this.setFrameContextMenuItem, this.gotoSourceContextMenuItem, this.justMyCodeContextMenuItem});
+            this.lv.ContextMenuStrip = menu;
+            menu.Font = PluginBase.Settings.DefaultFont;
+            menu.Renderer = new DockPanelStripRenderer(false);
+            this.toolStripFilters.Renderer = new DockPanelStripRenderer();
+            //menu.Opening += ContextMenuOpening;
         }
 
         public void ClearItem()
@@ -181,11 +215,19 @@ namespace FlashDebugger
             wholeFrameStack.Clear();
             if (frames.GetLength(0) > 0)
             {
+                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                foreach (var pathModel in context.Classpath)
+                {
+                    if (!pathModel.IsVirtual)
+                    {
+                        
+                    }
+                }
                 foreach (Frame item in frames)
                 {
                     String title = item.getCallSignature();
                     if (item.getLocation().getFile() != null) title += " at " + item.getLocation().getFile() + ":" + item.getLocation().getLine();
-                    wholeFrameStack.Add(lv.Items.Add(new ListViewItem(new string[] {"", title}, -1)));
+                    wholeFrameStack.Add(lv.Items.Add(new ListViewItem(new string[] {"", title}, -1) {Tag = item}));
                 }
                 lv.Items[0].ImageIndex = currentImageIndex;
             }
@@ -193,7 +235,7 @@ namespace FlashDebugger
             toolStripTextBoxFilter.Enabled = lv.Items.Count > 0;
         }
 
-        void lv_KeyDown(object sender, KeyEventArgs e)
+        private void Lv_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Return)
             {
@@ -205,7 +247,7 @@ namespace FlashDebugger
             }
         }
 
-        void lv_MouseDoubleClick(object sender, MouseEventArgs e)
+        void Lv_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (lv.SelectedIndices.Count > 0)
             {
@@ -223,7 +265,7 @@ namespace FlashDebugger
             }
         }
 
-        private void lv_SizeChanged(object sender, EventArgs e)
+        private void Lv_SizeChanged(object sender, EventArgs e)
         {
             this.frameColumnHeader.Width = lv.Width - this.imageColumnHeader.Width;
         }
@@ -231,7 +273,7 @@ namespace FlashDebugger
         /// <summary>
         /// Clears the filter control text
         /// </summary>
-        private void ClearFilterButtonClick(Object sender, System.EventArgs e)
+        private void ClearFilterButton_Click(Object sender, System.EventArgs e)
         {
             this.clearFilterButton.Enabled = false;
             this.toolStripTextBoxFilter.Clear();
@@ -240,10 +282,15 @@ namespace FlashDebugger
         /// <summary>
         /// Filter the result on check change
         /// </summary>
-        private void ToolStripButtonErrorCheckedChanged(Object sender, EventArgs e)
+        private void ToolStripTextFieldFilter_Changed(Object sender, EventArgs e)
         {
-            this.clearFilterButton.Enabled = this.toolStripTextBoxFilter.Text.Trim().Length > 0;
+            this.clearFilterButton.Enabled = this.toolStripTextBoxFilter.Text.Trim() != string.Empty;
             this.FilterResults();
+        }
+
+        private void FilterOption_Click(Object sender, EventArgs e)
+        {
+            if (clearFilterButton.Enabled) FilterResults();
         }
 
         /// <summary>
@@ -252,29 +299,72 @@ namespace FlashDebugger
         private void FilterResults()
         {
             lv.BeginUpdate();
-            string filterText = toolStripTextBoxFilter.Text;
+            string filterText = toolStripTextBoxFilter.Text.Trim();
             lv.Items.Clear();
+
+            Regex regex = null;
+
+            if (toolStripItemRegEx.Checked)
+            {
+                try
+                {
+                    regex = new Regex(filterText, toolStripItemMatchCase.Checked ? RegexOptions.None
+                                    : RegexOptions.IgnoreCase);
+                }
+                catch (Exception)
+                {
+                    return;
+                }
+            }
 
             foreach (var item in wholeFrameStack)
             {
-                bool match;
-                if (toolStripItemRegEx.Checked)
+                bool match = true;
+                if (filterText != string.Empty)
                 {
-                    match = Regex.IsMatch(item.SubItems[1].Text, filterText,
-                        toolStripItemMatchCase.Checked ? RegexOptions.None : RegexOptions.IgnoreCase);
-                }
-                else
-                {
-                    match = item.SubItems[1].Text.IndexOf(filterText,
-                        toolStripItemMatchCase.Checked ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase) > -1;
-                }
+                    if (regex != null)
+                    {
+                        match = regex.IsMatch(item.SubItems[1].Text);
+                    }
+                    else
+                    {
+                        match = item.SubItems[1].Text.IndexOf(filterText,
+                            toolStripItemMatchCase.Checked ? StringComparison.Ordinal
+                                : StringComparison.OrdinalIgnoreCase) > -1;
+                    }
 
-                if (toolStripItemNegate.Checked) match = !match;
+                    if (toolStripItemNegate.Checked) match = !match;
+                }
 
                 if (match) lv.Items.Add(item);
             }
-
+            
             lv.EndUpdate();
+        }
+
+        private void CopyTextClick(Object sender, EventArgs e)
+        {
+            
+        }
+
+        private void CopyAllTextClick(Object sender, EventArgs e)
+        {
+            
+        }
+
+        private void SetCurrentFrameClick(Object sender, EventArgs e)
+        {
+            
+        }
+
+        private void GotoSourceClick(Object sender, EventArgs e)
+        {
+            
+        }
+
+        private void JustMyCodeClick(Object sender, EventArgs e)
+        {
+            
         }
 
     }
