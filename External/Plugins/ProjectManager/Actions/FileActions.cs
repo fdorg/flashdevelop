@@ -443,10 +443,11 @@ namespace ProjectManager.Actions
                         Directory.Move(oldPathFixed, tmpPath);
                         oldPathFixed = tmpPath;
                     }
-                    if (FileHelper.ConfirmOverwrite(newPathFixed))
+                    if (FileHelper.ConfirmOverwrite(newPath))
                     {
-                        FileHelper.ForceMove(oldPathFixed, newPathFixed);
+                        FileHelper.ForceMoveDirectory(oldPathFixed, newPathFixed);
                     }
+                    else return false;
                 }
                 else
                 {
