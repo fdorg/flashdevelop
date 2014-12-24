@@ -405,6 +405,21 @@ namespace ProjectManager.Actions
                 return false;
             }
 
+            bool isDirectory = Directory.Exists(oldPath);
+
+            if (!isDirectory)
+            {
+                string oldExt = Path.GetExtension(oldPath);
+                string newExt = Path.GetExtension(newName);
+
+                string caption = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.ExtensionChangeWarning");
+
+                if (oldExt.ToUpperInvariant() != newExt.ToUpperInvariant() &&
+                    MessageBox.Show(message, caption, MessageBoxButtons.YesNo) == DialogResult.No)
+                    return false;
+            }
+
             if (CancelAction(ProjectFileActionsEvents.FileRename, new string[] { oldPath, newName })) return false;
 
             try
@@ -416,7 +431,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(newPath);
 
-                if (Directory.Exists(oldPath))
+                if (isDirectory)
                 {
                     // this is required for renaming directories, don't ask me why
                     string oldPathFixed = (oldPath.EndsWith("\\")) ? oldPath : oldPath + "\\";
@@ -428,7 +443,10 @@ namespace ProjectManager.Actions
                         Directory.Move(oldPathFixed, tmpPath);
                         oldPathFixed = tmpPath;
                     }
-                    Directory.Move(oldPathFixed, newPathFixed);
+                    if (FileHelper.ConfirmOverwrite(newPathFixed))
+                    {
+                        FileHelper.ForceMove(oldPathFixed, newPathFixed);
+                    }
                 }
                 else
                 {

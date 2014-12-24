@@ -5320,4 +5320,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Declare protected variable</value>
     <comment>Added after 4.6.4</comment>
   </data>
+  <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
+    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
 </root>
