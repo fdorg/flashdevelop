@@ -504,7 +504,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(toPath);
 
-                if (Directory.Exists(fromPath)) MoveDirectory(fromPath, toPath);
+                if (Directory.Exists(fromPath)) FileHelper.ForceMoveDirectory(fromPath, toPath);
                 else File.Move(fromPath, toPath);
 
                 OnFileMoved(fromPath, toPath);
@@ -515,27 +515,6 @@ namespace ProjectManager.Actions
                 ErrorManager.ShowError(exception);
             }
             finally { PopCurrentDirectory(); }
-        }
-
-        private void MoveDirectory(string fromPath, string toPath)
-        {
-            if (Directory.GetDirectoryRoot(fromPath) == Directory.GetDirectoryRoot(toPath)
-                && !Directory.Exists(toPath))
-            {
-                Directory.Move(fromPath, toPath);
-            }
-            else
-            {
-                try
-                {
-                    CopyDirectory(fromPath, toPath);
-                    Directory.Delete(fromPath, true);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
         }
 
         public void Copy(string fromPath, string toPath)
@@ -590,7 +569,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(toPath);
 
-                if (Directory.Exists(fromPath)) CopyDirectory(fromPath, toPath);
+                if (Directory.Exists(fromPath)) FileHelper.CopyDirectory(fromPath, toPath, true);
                 else File.Copy(fromPath, toPath, true);
 
                 OnFilePasted(fromPath, toPath);
@@ -602,26 +581,6 @@ namespace ProjectManager.Actions
             catch (Exception exception)
             {
                 ErrorManager.ShowError(exception);
-            }
-        }
-
-        private void CopyDirectory(string fromPath, string toPath)
-        {
-            if (!Directory.Exists(toPath))
-                Directory.CreateDirectory(toPath);
-
-            foreach (string file in Directory.GetFiles(fromPath))
-            {
-                string name = Path.GetFileName(file);
-                string destFile = Path.Combine(toPath, name);
-                File.Copy(file, destFile, true);
-            }
-
-            foreach (string subdir in Directory.GetDirectories(fromPath))
-            {
-                string name = Path.GetFileName(subdir);
-                string destDir = Path.Combine(toPath, name);
-                CopyDirectory(subdir, destDir);
             }
         }
 
