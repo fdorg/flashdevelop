@@ -540,19 +540,6 @@ namespace ASCompletion.Completion
 
             if (model != ASContext.Context.CurrentModel)
             {
-                // cached files declarations have no line numbers
-                if (model.CachedModel && model.Context != null)
-                {
-                    ASFileParser.ParseFile(model);
-                    if (inClass != null && !inClass.IsVoid())
-                    {
-                        inClass = model.GetClassByName(inClass.Name);
-                        if (result.Member != null)
-                            result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
-                    }
-                    else result.Member = model.Members.Search(result.Member.Name, 0, 0);
-                }
-
                 if (model.FileName.Length > 0 && File.Exists(model.FileName))
                     ASContext.MainForm.OpenEditableDocument(model.FileName, false);
                 else
