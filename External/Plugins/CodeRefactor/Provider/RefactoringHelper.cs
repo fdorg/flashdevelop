@@ -351,7 +351,8 @@ namespace CodeRefactor.Provider
             if (project.SourcePaths.Length == 0)
             {
                 String projRoot = Path.GetDirectoryName(project.ProjectPath);
-                files.AddRange(Directory.GetFiles(projRoot, filter, SearchOption.AllDirectories));
+                foreach (string filterMask in filter.Split(';'))
+                    files.AddRange(Directory.GetFiles(projRoot, filterMask, SearchOption.AllDirectories));
             }
             return files;
         }
