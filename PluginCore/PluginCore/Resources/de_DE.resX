@@ -1771,7 +1771,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
     <value>Der ausgewählte Pfad steht in einem Konflikt mit einem bereits existierenden Klassenpfad {0}. Möchten Sie ihn dennoch hinzufüen?</value>
   </data>
   <data name="ProjectManager.Info.Platform" xml:space="preserve">
-    <value>Platform</value>
+    <value>Plattform</value>
   </data>
   <data name="ProjectManager.Info.Popup" xml:space="preserve">
     <value>In Popup ausführen</value>
@@ -1784,6 +1784,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>Projekt-Klassenpfade sind relativ zum Projektverzeichnis.</value>
+  </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Klassenpfade von {0}-Projekten werden von der Ausgabedatei bestimmt.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;Projektverzeichnis&gt;</value>
@@ -2014,6 +2018,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Ausgabedatei:</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Konfigurationsdatei:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Einfügen</value>
@@ -4192,7 +4200,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.NonWindowedPlatforms" xml:space="preserve">
-    <value>Fensterlose Platformen</value>
+    <value>Fensterlose Plattformen</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.Ok" xml:space="preserve">
@@ -4268,7 +4276,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.WindowedPlatforms" xml:space="preserve">
-    <value>Platformen mit Fenstern</value>
+    <value>Plattformen mit Fenstern</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Locale.ChineseSimplified" xml:space="preserve">
