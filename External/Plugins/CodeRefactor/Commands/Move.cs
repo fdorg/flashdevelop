@@ -9,6 +9,7 @@ using CodeRefactor.Provider;
 using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
+using ProjectManager.Projects;
 using ScintillaNet;
 using PluginCore;
 using PluginCore.Helpers;
@@ -17,13 +18,16 @@ namespace CodeRefactor.Commands
 {
     class Move : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
+
         public Dictionary<string, string> OldPathToNewPath;
         public bool OutputResults;
         private bool renaming;
         private List<MoveTargetHelper> targets;
-        private List<String> filesToReopen;
+        private List<string> filesToReopen;
         private int currentTargetIndex;
         private ASResult currentTargetResult;
+
+        private bool targetsOutsideClasspath;
 
         #region Constructors
 
@@ -60,6 +64,19 @@ namespace CodeRefactor.Commands
             RegisterDocumentHelper(AssociatedDocumentHelper);
 
             CreateListOfMoveTargets();
+
+            if (targetsOutsideClasspath)
+            {
+                msg = TextHelper.GetString("Info.MovingOutsideClasspath");
+                title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
+                if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    MoveTargets();
+                    ReopenInitialFiles();
+                }
+                FireOnRefactorComplete();
+                return;
+            }
 
             if (renaming)
             {
@@ -101,7 +118,7 @@ namespace CodeRefactor.Commands
         private void CreateListOfMoveTargets()
         {
             targets = new List<MoveTargetHelper>();
-            filesToReopen = new List<String>();
+            filesToReopen = new List<string>();
             IProject project = PluginBase.CurrentProject;
             if (project == null) return;
             IASContext context = ASContext.GetLanguageContext(project.Language);
@@ -138,8 +155,9 @@ namespace CodeRefactor.Commands
 
                     if (FileHelper.FileMatchesSearchFilter(oldPath, filterMask))
                     {
-                        targets.Add(GetMoveTarget(context, oldPath, newPath, null));
-                        break;
+                        var target = GetMoveTarget(context, oldPath, newPath, null);
+                        if (target == null) continue;
+                        targets.Add(target);
                     }
                 }
                 else if(Directory.Exists(oldPath))
@@ -151,7 +169,13 @@ namespace CodeRefactor.Commands
                     // Do not load every file and check for matches to save memory and computation time
                     foreach (string mask in filterMask.Split(';'))
                         foreach (string oldFilePath in Directory.GetFiles(oldPath, mask, SearchOption.AllDirectories))
-                            targets.Add(GetMoveTarget(context, oldFilePath, oldFilePath.Replace(oldPath, newPath), oldPath));
+                        {
+                            var target = GetMoveTarget(context, oldFilePath, oldFilePath.Replace(oldPath, newPath),
+                                                       oldPath);
+                            // If target == null there's no chance of the others being valid, actually, neither on the outer loop
+                            if (target == null) break;
+                            targets.Add(target);
+                        }
                 }
             }
         }
@@ -164,11 +188,12 @@ namespace CodeRefactor.Commands
             result.NewFilePath = newPath;
             result.OwnerPath = ownerPath;
             IProject project = PluginBase.CurrentProject;
-            string newPackage = project.GetAbsolutePath(Path.GetDirectoryName(newPath));
+            string newPackage = result.NewPackage = project.GetAbsolutePath(Path.GetDirectoryName(newPath));
             if (!string.IsNullOrEmpty(newPackage))
             {
                 foreach (PathModel pathModel in context.Classpath)
                 {
+                    if (pathModel.IsVirtual) continue;
                     string path = project.GetAbsolutePath(pathModel.Path);
                     if (path == newPackage)
                     {
@@ -181,6 +206,17 @@ namespace CodeRefactor.Commands
                         break;
                     }
                 }
+            }
+
+            if (result.NewPackage == newPackage)
+            {
+                targetsOutsideClasspath = true;
+                return null;
+            }
+            if (newPackage == result.OldFileModel.FullPackage && Path.GetFileName(result.OldFileModel.FileName) == Path.GetFileName(newPath))
+            {
+                // moving file to another classpath at the same level, no need to refactor
+                return null;
             }
             result.NewPackage = newPackage;
             return result;
@@ -278,7 +314,7 @@ namespace CodeRefactor.Commands
             }
 
             // We need to remove files from the collection so later it may be closed by CloseTemporarilyOpenedDocuments,
-            // otherwise there may be problems updating contents.
+            // otherwise there may be problems refreshing contents.
             foreach (var file in fileMatches) AssociatedDocumentHelper.InitiallyOpenedFiles.Remove(file);
         }
 
