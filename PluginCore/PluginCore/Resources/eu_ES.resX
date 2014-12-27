@@ -1768,7 +1768,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>Proiektuaren bide-izenak proiektuaren kokapenari erlatiboak dira.</value>
   </data>
   <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
-    <value>Classpaths of {0} projects are determined by the output file.</value>
+    <value>Classpaths of {0} projects are determined by the Configuration file.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">

@@ -806,6 +806,8 @@ namespace ProjectManager.Controls
         private Boolean classpathsChanged;
         private Boolean assetsChanged;
         private Boolean sdkChanged;
+        private Boolean isPropertyGridReadOnly;
+        private LanguagePlatform langPlatform;
 
 		public event EventHandler OpenGlobalClasspaths;
 
@@ -915,6 +917,8 @@ namespace ProjectManager.Controls
 		{
             this.Text = " " + project.Name + " (" + project.Language.ToUpper() + ") " + TextHelper.GetString("Info.Properties");
 
+            langPlatform = GetLanguagePlatform(project.MovieOptions.Platform);
+
             InitOutputTab();
             InitBuildTab();
             InitOptionsTab();
@@ -934,9 +938,23 @@ namespace ProjectManager.Controls
 
         private void InitOptionsTab()
         {
+            UpdateCompilerOptions();
+        }
+
+        private void UpdateCompilerOptions()
+        {
+            var readOnly = IsExternalConfiguration();
+            if (readOnly == isPropertyGridReadOnly && propertyGrid.SelectedObject != null) 
+                return;
+            isPropertyGridReadOnly = readOnly;
+
             // clone the compiler options object because the PropertyGrid modifies its
             // object directly
             optionsCopy = project.CompilerOptions.Clone();
+
+            if (isPropertyGridReadOnly)
+                TypeDescriptor.AddAttributes(optionsCopy, new Attribute[] { new ReadOnlyAttribute(true) });
+
             propertyGrid.SelectedObject = optionsCopy;
             propertiesChanged = false;
         }
@@ -955,24 +973,17 @@ namespace ProjectManager.Controls
             classpathControl.Classpaths = project.Classpaths.ToArray();
             classpathControl.Language = project.Language;
             classpathControl.LanguageBox.Visible = false;
-            UpdateClasspaths(project.MovieOptions.Platform);
+            UpdateClasspaths();
             classpathsChanged = false;
         }
 
-        private void UpdateClasspaths(string platform)
+        private void UpdateClasspaths()
         {
-            LanguagePlatform langPlatform = GetLanguagePlatform(platform);
-            if (langPlatform != null)
+            if (IsExternalConfiguration())
             {
-                string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
-                PlatformVersion version = langPlatform.GetVersion(selectedVersion);
-                
-                if (version != null && version.Commands != null && version.Commands.ContainsKey("display"))
-                {
-                    classpathControl.Enabled = false;
-                    label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), platform);
-                    return;
-                }
+                classpathControl.Enabled = false;
+                label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), langPlatform.Name);
+                return;
             }
 
             classpathControl.Enabled = true;
@@ -1075,7 +1086,7 @@ namespace ProjectManager.Controls
             string platform = GetPlatform();
 
             List<TestMovieBehavior> options = new List<TestMovieBehavior>();
-            if (/*output == OutputType.Application &&*/ platform == PlatformData.FLASHPLAYER_PLATFORM)
+            if (platform == PlatformData.FLASHPLAYER_PLATFORM)
             {
                 options.Add(TestMovieBehavior.Default);
                 options.Add(TestMovieBehavior.NewTab);
@@ -1125,18 +1136,6 @@ namespace ProjectManager.Controls
         {
             if (testMovieCombo.SelectedIndex < 0) return TestMovieBehavior.Unknown;
             else return (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), (testMovieCombo.SelectedItem as ComboItem).Value.ToString());
-        }
-
-        private LanguagePlatform GetLanguagePlatform(string platform)
-        {
-            LanguagePlatform langPlatform = null;
-            if (PlatformData.SupportedLanguages.ContainsKey(project.Language))
-            {
-                SupportedLanguage lang = PlatformData.SupportedLanguages[project.Language];
-                if (lang.Platforms.ContainsKey(platform))
-                    langPlatform = lang.Platforms[platform];
-            }
-            return langPlatform;
         }
 
 		protected void Modified()
@@ -1261,6 +1260,8 @@ namespace ProjectManager.Controls
 
         void platformCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
+            langPlatform = GetLanguagePlatform(platformCombo.Text);
+
             this.versionCombo.Items.Clear();
             this.versionCombo.Items.AddRange(project.MovieOptions.TargetVersions(this.platformCombo.Text));
             this.versionCombo.SelectedIndex = Math.Max(0, this.versionCombo.Items.IndexOf(
@@ -1270,37 +1271,12 @@ namespace ProjectManager.Controls
             InitTestMovieOptions();
             UpdateGeneralPanel();
             UpdateEditCommandButton();
-            UpdateClasspaths(platformCombo.Text);
-
             DetectExternalToolchain();
+            UpdateClasspaths();
+            UpdateCompilerOptions();
 
             platformChanged = true;
             Modified();
-        }
-
-        private void DetectExternalToolchain()
-        {
-            if (!PlatformData.SupportedLanguages.ContainsKey(project.Language)) return;
-            var lang = PlatformData.SupportedLanguages[project.Language];
-
-            var platformName = (platformCombo.SelectedItem ?? "").ToString();
-            if (!lang.Platforms.ContainsKey(platformName)) return;
-
-            var platform = lang.Platforms[platformName];
-            if (platform.ExternalToolchain == null) return;
-
-            SelectItem(outputCombo, OutputType.Application);
-            SelectItem(testMovieCombo, TestMovieBehavior.Custom);
-            project.TestMovieCommand = "";
-
-            if (platform.DefaultProjectFile == null) return;
-
-            foreach(string fileName in platform.DefaultProjectFile)
-                if (File.Exists(project.GetAbsolutePath(fileName)))
-                {
-                    outputSwfBox.Text = fileName;
-                    break;
-                }
         }
 
         private void SelectItem(ComboBox combo, object value)
@@ -1422,8 +1398,7 @@ namespace ProjectManager.Controls
             widthTextBox.Enabled = heightTextBox.Enabled = fpsTextBox.Enabled
                 = colorTextBox.Enabled = colorLabel.Enabled = isGraphical;
 
-            LanguagePlatform langPlatform = GetLanguagePlatform(platformCombo.Text);
-            if (langPlatform != null && langPlatform.ExternalToolchain != null)
+            if (IsExternalToolchain())
                 exportinLabel.Text = TextHelper.GetString("Label.ConfigurationFile");
             else
                 exportinLabel.Text = TextHelper.GetString("Label.OutputFile");
@@ -1458,6 +1433,49 @@ namespace ProjectManager.Controls
             customTextBox.Text = "";
             sdkChanged = true;
             Modified();
+        }
+
+        /* PLATFORM CONFIGURATION */
+
+        private void DetectExternalToolchain()
+        {
+            if (!IsExternalToolchain()) return;
+
+            SelectItem(outputCombo, OutputType.Application);
+            SelectItem(testMovieCombo, TestMovieBehavior.Custom);
+            project.TestMovieCommand = "";
+
+            if (langPlatform.DefaultProjectFile == null) return;
+
+            foreach (string fileName in langPlatform.DefaultProjectFile)
+                if (File.Exists(project.GetAbsolutePath(fileName)))
+                {
+                    outputSwfBox.Text = fileName;
+                    break;
+                }
+        }
+
+        private bool IsExternalConfiguration()
+        {
+            string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
+            PlatformVersion version = langPlatform.GetVersion(selectedVersion);
+            return version != null && version.Commands != null && version.Commands.ContainsKey("display");
+        }
+
+        private bool IsExternalToolchain()
+        {
+            return langPlatform != null && langPlatform.ExternalToolchain != null;
+        }
+
+        private LanguagePlatform GetLanguagePlatform(string platformName)
+        {
+            if (PlatformData.SupportedLanguages.ContainsKey(project.Language))
+            {
+                SupportedLanguage lang = PlatformData.SupportedLanguages[project.Language];
+                if (lang.Platforms.ContainsKey(platformName))
+                    return lang.Platforms[platformName];
+            }
+            return null;
         }
 
 	}
