@@ -2,18 +2,17 @@
 using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using flash.tools.debugger;
+using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS3;
 using ScintillaNet;
-using PluginCore;
 using net.sf.jni4net;
-using PluginCore.Helpers;
-using ProjectManager.Projects.Haxe;
-using System.Text;
 
 namespace FlashDebugger
 {
@@ -269,13 +268,13 @@ namespace FlashDebugger
                     return localPath;
                 }
             }
-            Project project = PluginBase.CurrentProject as Project;
+            IProject project = PluginBase.CurrentProject;
             if (project != null)
             {
-                foreach (string cp in project.AbsoluteClasspaths)
+                foreach (string cp in project.SourcePaths.Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language))
+                    .Select(project.GetAbsolutePath).Distinct())
                 {
                     StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
-                    localPathBuilder.Append(pathSeparator);
                     localPathBuilder.Append(cp);
                     localPathBuilder.Append(pathSeparator);
                     localPathBuilder.Append(pathFromPackage);
