@@ -3529,9 +3529,15 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        static private void GenerateGetter(string name, MemberModel member, int position)
+        private static void GenerateGetter(string name, MemberModel member, int position)
         {
-            string acc = isHaxe ? GetPrivateAccessor(member) : GetPublicAccessor(member);
+            string acc;
+            if (isHaxe)
+            {
+                acc = GetStaticKeyword(member);
+                if (!string.IsNullOrEmpty(acc)) acc += " ";
+            }
+            else acc = GetPublicAccessor(member);
             string template = TemplateUtils.GetTemplate("Getter");
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
@@ -3541,9 +3547,14 @@ namespace ASCompletion.Completion
             InsertCode(position, decl);
         }
 
-        static private void GenerateSetter(string name, MemberModel member, int position)
+        private static void GenerateSetter(string name, MemberModel member, int position)
         {
-            string acc = isHaxe ? GetPrivateAccessor(member) : GetPublicAccessor(member);
+            string acc;
+            if (isHaxe)
+            {
+                acc = GetStaticKeyword(member);
+                if (!string.IsNullOrEmpty(acc)) acc += " ";
+            } else acc = GetPublicAccessor(member);
             string template = TemplateUtils.GetTemplate("Setter");
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
@@ -3554,7 +3565,7 @@ namespace ASCompletion.Completion
             InsertCode(position, decl);
         }
 
-        static private void GenerateGetterSetter(string name, MemberModel member, int position)
+        private static void GenerateGetterSetter(string name, MemberModel member, int position)
         {
             string template = TemplateUtils.GetTemplate("GetterSetter");
             if (template == "")
@@ -3564,7 +3575,13 @@ namespace ASCompletion.Completion
                 GenerateGetter(name, member, position);
                 return;
             }
-            string acc = isHaxe ? GetPrivateAccessor(member) : GetPublicAccessor(member);
+            string acc;
+            if (isHaxe)
+            {
+                acc = GetStaticKeyword(member);
+                if (!string.IsNullOrEmpty(acc)) acc += " ";
+            }
+            else acc = GetPublicAccessor(member);
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Type", FormatType(member.Type));
@@ -3574,24 +3591,30 @@ namespace ASCompletion.Completion
             InsertCode(position, decl);
         }
 
-        static private string GetPrivateAccessor(MemberModel member)
+        private static string GetStaticKeyword(MemberModel member)
         {
-            string acc = GetPrivateKeyword();
-            if ((member.Flags & FlagType.Static) > 0) acc = (ASContext.Context.Features.staticKey ?? "static") + " " + acc;
-            return acc;
+            if ((member.Flags & FlagType.Static) > 0) return ASContext.Context.Features.staticKey ?? "static";
+            return string.Empty;
         }
 
-        static public string GetPrivateKeyword()
+        private static string GetPrivateAccessor(MemberModel member)
+        {
+            string acc = GetStaticKeyword(member);
+            if (!string.IsNullOrEmpty(acc)) acc += " ";
+            return acc + GetPrivateKeyword();
+        }
+
+        private static string GetPrivateKeyword()
         {
             if (GetDefaultVisibility() == Visibility.Protected) return ASContext.Context.Features.protectedKey ?? "protected";
             return ASContext.Context.Features.privateKey ?? "private";
         }
 
-        static private string GetPublicAccessor(MemberModel member)
+        private static string GetPublicAccessor(MemberModel member)
         {
-            string acc = ASContext.Context.Features.publicKey ?? "public";
-            if ((member.Flags & FlagType.Static) > 0) acc = (ASContext.Context.Features.staticKey ?? "static") + " " + acc;
-            return acc;
+            string acc = GetStaticKeyword(member);
+            if (!string.IsNullOrEmpty(acc)) acc += " ";
+            return acc + ASContext.Context.Features.publicKey ?? "public";
         }
 
         private static MemberModel GetLatestMemberForFunction(ClassModel inClass, Visibility funcVisi, MemberModel isStatic)
