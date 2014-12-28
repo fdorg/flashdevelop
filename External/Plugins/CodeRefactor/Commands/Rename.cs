@@ -242,7 +242,10 @@ namespace CodeRefactor.Commands
                 reopen = true;
             }
             if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(newFileName, out doc))
+            {
                 doc.Close();
+                reopen = true;
+            }
 
             // name casing changed
             if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
