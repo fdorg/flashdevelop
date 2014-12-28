@@ -5278,7 +5278,6 @@ UseData:"</value>
   </data>
   <data name="AirProperties.Label.ExitOnSuspend" xml:space="preserve">
     <value>実行を終了</value>
-    <value>Exit On Suspend</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ExternalSWFs" xml:space="preserve">
