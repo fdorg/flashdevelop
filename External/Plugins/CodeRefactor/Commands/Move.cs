@@ -121,8 +121,6 @@ namespace CodeRefactor.Commands
             filesToReopen = new List<string>();
             IProject project = PluginBase.CurrentProject;
             if (project == null) return;
-            IASContext context = ASContext.GetLanguageContext(project.Language);
-            if (context == null) return;
             string filterMask = project.DefaultSearchFilter;
             foreach (KeyValuePair<string, string> item in OldPathToNewPath)
             {
@@ -155,7 +153,7 @@ namespace CodeRefactor.Commands
 
                     if (FileHelper.FileMatchesSearchFilter(oldPath, filterMask))
                     {
-                        var target = GetMoveTarget(context, oldPath, newPath, null);
+                        var target = GetMoveTarget(oldPath, newPath, null);
                         if (target == null) continue;
                         targets.Add(target);
                     }
@@ -170,8 +168,7 @@ namespace CodeRefactor.Commands
                     foreach (string mask in filterMask.Split(';'))
                         foreach (string oldFilePath in Directory.GetFiles(oldPath, mask, SearchOption.AllDirectories))
                         {
-                            var target = GetMoveTarget(context, oldFilePath, oldFilePath.Replace(oldPath, newPath),
-                                                       oldPath);
+                            var target = GetMoveTarget(oldFilePath, oldFilePath.Replace(oldPath, newPath), oldPath);
                             // If target == null there's no chance of the others being valid, actually, neither on the outer loop
                             if (target == null) break;
                             targets.Add(target);
@@ -180,7 +177,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        private MoveTargetHelper GetMoveTarget(IASContext context, string oldFilePath, string newPath, string ownerPath)
+        private MoveTargetHelper GetMoveTarget(string oldFilePath, string newPath, string ownerPath)
         {
             MoveTargetHelper result = new MoveTargetHelper();
             result.OldFilePath = oldFilePath;
@@ -191,10 +188,13 @@ namespace CodeRefactor.Commands
             string newPackage = result.NewPackage = project.GetAbsolutePath(Path.GetDirectoryName(newPath));
             if (!string.IsNullOrEmpty(newPackage))
             {
-                foreach (PathModel pathModel in context.Classpath)
+                // NOTE: Could be simplified in .NET 3.5 with LINQ .Concat.Select.Distinct
+                var visited = new Dictionary<string, byte>();
+                foreach (string sourcePath in project.SourcePaths)
                 {
-                    if (pathModel.IsVirtual) continue;
-                    string path = project.GetAbsolutePath(pathModel.Path);
+                    string path = project.GetAbsolutePath(sourcePath);
+                    if (visited.ContainsKey(path)) continue;
+                    visited[path] = 1;
                     if (path == newPackage)
                     {
                         newPackage = "";
@@ -204,6 +204,25 @@ namespace CodeRefactor.Commands
                     {
                         newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
                         break;
+                    }
+                }
+                if (result.NewPackage == newPackage)
+                {
+                    foreach (string globalPath in ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language))
+                    {
+                        string path = project.GetAbsolutePath(globalPath);
+                        if (visited.ContainsKey(path)) continue;
+                        visited[path] = 1;
+                        if (path == newPackage)
+                        {
+                            newPackage = "";
+                            break;
+                        }
+                        else if (newPackage.StartsWith(path))
+                        {
+                            newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
+                            break;
+                        }
                     }
                 }
             }
@@ -373,7 +392,7 @@ namespace CodeRefactor.Commands
                                           Member = new MemberModel(oldType, oldType, FlagType.Constructor, 0), 
                                           Type = ASContext.Context.ResolveType(oldType, oldFileModel),
                                       };
-                RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true);
+                RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true);
             }
             else
             {

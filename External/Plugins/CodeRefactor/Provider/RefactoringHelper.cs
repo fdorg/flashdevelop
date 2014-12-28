@@ -246,6 +246,23 @@ namespace CodeRefactor.Provider
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
         public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous)
         {
+            return FindTargetInFiles(target, progressReportHandler, findFinishedHandler, asynchronous, false);
+        }
+
+        /// <summary>
+        /// Finds the given target in all project files.
+        /// If the target is a local variable or function parameter, it will only search the associated file.
+        /// Note: if running asynchronously, you must supply a listener to "findFinishedHandler" to retrieve the results.
+        /// If running synchronously, do not set listeners and instead use the return value.
+        /// </summary>
+        /// <param name="target">the source member to find references to</param>
+        /// <param name="progressReportHandler">event to fire as search results are compiled</param>
+        /// <param name="findFinishedHandler">event to fire once searching is finished</param>
+        /// <param name="asynchronous">executes in asynchronous mode</param>
+        /// <param name="onlySourceFiles">searches only on defined classpaths</param>
+        /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
+        public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous, Boolean onlySourceFiles)
+        {
             Boolean currentFileOnly = false;
             // checks target is a member
             if (target == null || ((target.Member == null || String.IsNullOrEmpty(target.Member.Name))
@@ -285,12 +302,12 @@ namespace CodeRefactor.Provider
             }
             else if (target.Member != null && !CheckFlag(target.Member.Flags, FlagType.Constructor))
             {
-                config = new FRConfiguration(GetAllProjectRelatedFiles(project), GetFRSearch(target.Member.Name));
+                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles), GetFRSearch(target.Member.Name));
             }
             else
             {
                 target.Member = null;
-                config = new FRConfiguration(GetAllProjectRelatedFiles(project), GetFRSearch(target.Type.Name));
+                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles), GetFRSearch(target.Type.Name));
             }
             config.CacheDocuments = true;
             FRRunner runner = new FRRunner();
@@ -332,26 +349,52 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Gets all files related to the project
         /// </summary>
-        private static List<String> GetAllProjectRelatedFiles(IProject project)
+        private static List<String> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles)
         {
             List<String> files = new List<String>();
             string filter = project.DefaultSearchFilter;
             if (string.IsNullOrEmpty(filter)) return files;
-            IASContext context = ASContext.GetLanguageContext(project.Language);
-            if (context == null) return files;
-            foreach (PathModel pathModel in context.Classpath)
+            string[] filters = project.DefaultSearchFilter.Split(';');
+            if (!onlySourceFiles)
             {
-                string path = pathModel.Path;
-                String absolute = project.GetAbsolutePath(path);
-                if (Directory.Exists(path))
-                    foreach (string filterMask in filter.Split(';'))
-                        files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
+                IASContext context = ASContext.GetLanguageContext(project.Language);
+                if (context == null) return files;
+                foreach (PathModel pathModel in context.Classpath)
+                {
+                    string absolute = project.GetAbsolutePath(pathModel.Path);
+                    if (Directory.Exists(absolute))
+                        foreach (string filterMask in filters)
+                            files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
+                }
+            }
+            else
+            {
+                // NOTE: Could be simplified in .NET 3.5 with LINQ .Concat.Select.Distinct
+                var visited = new Dictionary<string, byte>();
+                foreach (string path in project.SourcePaths)
+                {
+                    string absolute = project.GetAbsolutePath(path);
+                    if (visited.ContainsKey(absolute)) continue;
+                    visited[absolute] = 1;
+                    if (Directory.Exists(absolute))
+                        foreach (string filterMask in filters)
+                            files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
+                }
+                foreach (string path in ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language))
+                {
+                    string absolute = project.GetAbsolutePath(path);
+                    if (visited.ContainsKey(absolute)) continue;
+                    visited[absolute] = 1;
+                    if (Directory.Exists(absolute))
+                        foreach (string filterMask in filters)
+                            files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
+                }
             }
             // If no source paths are defined, get files directly from project path
             if (project.SourcePaths.Length == 0)
             {
                 String projRoot = Path.GetDirectoryName(project.ProjectPath);
-                foreach (string filterMask in filter.Split(';'))
+                foreach (string filterMask in filters)
                     files.AddRange(Directory.GetFiles(projRoot, filterMask, SearchOption.AllDirectories));
             }
             return files;

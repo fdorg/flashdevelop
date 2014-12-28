@@ -114,7 +114,7 @@ namespace CodeRefactor.Commands
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
-            this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource);
+            this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) {OnlySourceFiles = true};
             // register a completion listener to the FindAllReferences so we can rename the entries
             this.findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
         }
