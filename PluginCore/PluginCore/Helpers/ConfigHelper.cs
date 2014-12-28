@@ -25,7 +25,7 @@ namespace PluginCore.Helpers
         public static Dictionary<string, SimpleIni> Cache = new Dictionary<string, SimpleIni>();
 
         /// <summary>
-        /// Read a simple config file and returns its variables as a collection of dictionnaries.
+        /// Read a simple config file and returns its variables as a collection of dictionaries.
         /// </summary>
         public static SimpleIni Parse(string configPath, bool cache)
         {
