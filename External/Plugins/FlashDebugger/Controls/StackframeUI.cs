@@ -283,6 +283,7 @@ namespace FlashDebugger
                             Tag = new ListItemData {Frame = item, Index = i++}
                         };
                     listItem.UseItemStyleForSubItems = false;
+                    // TODO: Apply proper theming colour
                     if (!ownFile) listItem.SubItems[1].ForeColor = System.Drawing.SystemColors.GrayText;
                     wholeFrameStack.Add(listItem);
                 }
@@ -454,6 +455,7 @@ namespace FlashDebugger
 
                 if (match)
                 {
+                    // TODO: Check proper theming colour
                     if (justMyCode && item.SubItems[1].ForeColor == System.Drawing.SystemColors.GrayText)
                     {
                         if (lastExternal)
@@ -471,6 +473,7 @@ namespace FlashDebugger
                         });
 
                         newItem.UseItemStyleForSubItems = false;
+                        // TODO: Apply proper theming colour
                         newItem.SubItems[1].ForeColor = System.Drawing.SystemColors.GrayText;
                         if (((ListItemData) item.Tag).Index == currentFrame)
                         {
