@@ -161,7 +161,7 @@ namespace ProjectManager.Controls.TreeView
                 items.Add(GetCustomAddFile(file));
             }
             string[] dirNames = customDir.Split('\\');
-            return new ToolStripMenuItem((string)dirNames.GetValue(dirNames.Length - 1), null, items.ToArray());
+            return new ToolStripMenuItem((string)dirNames.GetValue(dirNames.Length - 1), Icons.Folder.Img, items.ToArray());
         }
 
         private ToolStripMenuItem GetCustomAddFile(string file)
