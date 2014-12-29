@@ -3781,9 +3781,7 @@ namespace ASCompletion.Completion
             // explore members
             IASContext ctx = ASContext.Context;
             ClassModel curClass = ctx.CurrentClass;
-            if (curClass.IsVoid())
-                return false;
-            ContextFeatures features = ASContext.Context.Features;
+            if (curClass.IsVoid()) return false;
 
             List<MemberModel> members = new List<MemberModel>();
             curClass.ResolveExtends(); // Resolve inheritance chain
@@ -3854,8 +3852,7 @@ namespace ASCompletion.Completion
             FlagType flags = member.Flags;
             string acc = "";
             string decl = "";
-            if (features.hasNamespaces && member.Namespace != null
-                && member.Namespace.Length > 0 && member.Namespace != "internal")
+            if (features.hasNamespaces && !string.IsNullOrEmpty(member.Namespace) && member.Namespace != "internal")
                 acc = member.Namespace;
             else if ((member.Access & Visibility.Public) > 0) acc = features.publicKey;
             else if ((member.Access & Visibility.Internal) > 0) acc = features.internalKey;

@@ -616,7 +616,7 @@ namespace FlashDevelop
             {
                 if (this.Documents.Length == 0)
                 {
-                    this.New(null, null);
+                    this.SmartNew(null, null);
                     return null;
                 }
                 else return null;
@@ -1135,7 +1135,7 @@ namespace FlashDevelop
             {
                 NotifyEvent ne = new NotifyEvent(EventType.FileEmpty);
                 EventManager.DispatchEvent(this, ne);
-                if (!ne.Handled) this.New(null, null);
+                if (!ne.Handled) this.SmartNew(null, null);
             }
             /**
             * Apply the default loaded theme
@@ -1196,7 +1196,7 @@ namespace FlashDevelop
             {
                 NotifyEvent fe = new NotifyEvent(EventType.FileEmpty);
                 EventManager.DispatchEvent(this, fe);
-                if (!fe.Handled) this.New(null, null);
+                if (!fe.Handled) this.SmartNew(null, null);
             }
             if (!e.Cancel)
             {
@@ -1370,7 +1370,7 @@ namespace FlashDevelop
             {
                 NotifyEvent ne = new NotifyEvent(EventType.FileEmpty);
                 EventManager.DispatchEvent(this, ne);
-                if (!ne.Handled) this.New(null, null);
+                if (!ne.Handled) this.SmartNew(null, null);
             }
         }
 
