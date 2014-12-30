@@ -307,24 +307,24 @@ namespace CodeRefactor.Commands
 
         private void CloseDocuments(string oldDirectory, string newDirectory)
         {
-            string oldPathAddBacklash = oldDirectory.Contains(Path.DirectorySeparatorChar.ToString())
-                                         ? oldDirectory + Path.DirectorySeparatorChar
-                                         : oldDirectory + Path.AltDirectorySeparatorChar;
-            string newPathAddBacklash = newDirectory.Contains(Path.DirectorySeparatorChar.ToString())
-                                         ? newDirectory + Path.DirectorySeparatorChar
-                                         : newDirectory + Path.AltDirectorySeparatorChar;
+            string oldPath = oldDirectory.Contains(Path.DirectorySeparatorChar.ToString())
+                                 ? oldDirectory + Path.DirectorySeparatorChar
+                                 : oldDirectory + Path.AltDirectorySeparatorChar;
+            string newPath = newDirectory.Contains(Path.DirectorySeparatorChar.ToString())
+                                 ? newDirectory + Path.DirectorySeparatorChar
+                                 : newDirectory + Path.AltDirectorySeparatorChar;
 
             var fileMatches = new List<string>();
             foreach (var item in AssociatedDocumentHelper.InitiallyOpenedFiles)
             {
-                if (item.Key.StartsWith(oldPathAddBacklash))
+                if (item.Key.StartsWith(oldPath))
                 {
                     item.Value.Save();
                     item.Value.Close();
-                    filesToReopen.Add(item.Key.Replace(oldPathAddBacklash, newPathAddBacklash));
+                    filesToReopen.Add(item.Key.Replace(oldPath, newPath));
                     fileMatches.Add(item.Key);
                 }
-                else if (item.Key.StartsWith(newPathAddBacklash))
+                else if (item.Key.StartsWith(newPath))
                 {
                     item.Value.Save();
                     item.Value.Close();
