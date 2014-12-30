@@ -146,6 +146,7 @@ namespace ASCompletion
 		*/
 		public void Dispose()
 		{
+            timerPosition.Enabled = false;
             PathExplorer.StopBackgroundExploration();
             SaveSettings();
 		}
