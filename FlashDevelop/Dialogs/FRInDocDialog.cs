@@ -624,6 +624,18 @@ namespace FlashDevelop.Dialogs
             this.CenterToParent();
         }
 
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            if ((keyData & (Keys.Enter | Keys.Shift)) > 0)
+            {
+                FindNext(false, false);
+
+                return true;
+            }
+
+            return base.ProcessDialogKey(keyData);
+        }
+
         /// <summary>
         /// Gets the replacement text and escapes it if needed
         /// </summary>

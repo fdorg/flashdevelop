@@ -360,7 +360,10 @@ namespace FlashDevelop.Controls
             if (e.KeyChar == (Char)Keys.Return && this.findTextBox.Text.Trim() != "")
             {
                 e.Handled = true;
-                this.FindNext(this.findTextBox.Text, false);
+                if ((ModifierKeys & Keys.Shift) == Keys.Shift)
+                    FindPrev(findTextBox.Text, false);
+                else
+                    FindNext(findTextBox.Text, false);
             }
         }
 
