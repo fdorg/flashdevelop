@@ -20,23 +20,6 @@ function parseXmlDocument(xml)
 }
 
 /**
-* Downloads XML document from url.
-*/
-function loadXmlDocument(url, callback)
-{
-	var loader = new ActiveXObject("Microsoft.XMLDOM");
-	loader.onreadystatechange = function()
-	{
-		if (loader.readyState == 4) 
-		{
-			var status = loader.parseError.errorCode;
-			callback(loader, status);
-		}
-	}
-	loader.load(url);
-}
-
-/**
 * Downloads text document from url.
 */
 function loadTextDocument(url, callback)
@@ -83,10 +66,11 @@ function addSlashes(s)
 /**
 * Parses the rss feed xml document.
 */
-function handleRssFeedXml(xml, status)
+function handleRssFeedXml(text, status)
 {
 	var html = "";
-	if (status == 0)
+	var xml = parseXmlDocument(text);
+	if (status == 200)
 	{
 		var items = new Array();
 		var xmlItems = xml.getElementsByTagName("item");
@@ -182,6 +166,7 @@ function getProjectType(extension)
 		case ".as3proj" : return getLocaleString("projectTypeAS3");
 		case ".fdproj" : return getLocaleString("projectTypeGeneric");
 		case ".hxproj" : return getLocaleString("projectTypeHaXe");
+		case ".lsproj" : return getLocaleString("projectTypeLoom");
 		default : return getLocaleString("projectTypeUnknown");
 	}
 }
@@ -224,7 +209,7 @@ function handleXmlData(projectXml, rssUrl)
 	{
 		var fd3Url = "http://www.flashdevelop.org/latest.txt";
 		loadTextDocument(fd3Url, handleVersionInfo);
-		loadXmlDocument(rssUrl, handleRssFeedXml);
+		loadTextDocument(rssUrl, handleRssFeedXml);
 	}
 	var xml = parseXmlDocument(projectXml);
 	handleProjectXml(xml);

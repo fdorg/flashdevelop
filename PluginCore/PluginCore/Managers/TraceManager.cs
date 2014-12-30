@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using PluginCore;
 
 namespace PluginCore.Managers
 {
-	public class TraceManager
+    public class TraceManager
 	{
         private static Boolean synchronizing;
         private static Int32 MAX_QUEUE = 1000;
@@ -27,7 +25,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds a new entry to the log
         /// </summary>
-        public static void Add(String message)
+        public static void Add(object message)
         {
             Add(message, 0);
         }
@@ -35,7 +33,7 @@ namespace PluginCore.Managers
         /// <summary>
 		/// Adds a new entry to the log
 		/// </summary>
-		public static void Add(String message, Int32 state)
+        public static void Add(object message, Int32 state)
         {
             Add(new TraceItem(message, state));
         }
@@ -43,7 +41,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds a new entry to the log in an unsafe threading context
         /// </summary>
-        public static void AddAsync(String message)
+        public static void AddAsync(object message)
         {
             AddAsync(message, 0);
         }
@@ -63,7 +61,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds a new entry to the log in an unsafe threading context
         /// </summary>
-        public static void AddAsync(String message, Int32 state)
+        public static void AddAsync(object message, Int32 state)
         {
             if ((PluginBase.MainForm as Form).InvokeRequired)
             {
@@ -143,10 +141,10 @@ namespace PluginCore.Managers
         private DateTime timestamp;
         private String message;
 
-        public TraceItem(String message, Int32 state)
+        public TraceItem(object message, Int32 state)
         {
             this.timestamp = DateTime.Now;
-            this.message = message;
+            if (message != null) this.message = message.ToString();
             this.state = state;
         }
 

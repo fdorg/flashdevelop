@@ -1,11 +1,14 @@
 using System;
 using System.Text;
 using System.Drawing;
+using PluginCore;
+using System.Collections.Generic;
 
 namespace ProjectManager.Projects
 {
 	public abstract class MovieOptions
 	{
+        public string Language;
 		public int Fps;
 		public int Width;
 		public int Height;
@@ -17,6 +20,8 @@ namespace ProjectManager.Projects
 
 		public MovieOptions()
 		{
+            Platform = "Custom";
+            Language = "unknown";
 			Fps = 30;
 			Width = 800;
 			Height = 600;
@@ -38,12 +43,57 @@ namespace ProjectManager.Projects
             }
         }
 
-        public abstract string[] TargetPlatforms { get; }
-        public abstract string[] TargetVersions(string platform);
-        public abstract string DefaultVersion(string platform);
+        public virtual bool HasSupport
+        {
+            get { return PlatformData.SupportedLanguages.ContainsKey(Language); }
+        }
+
+        public virtual SupportedLanguage LanguageSupport
+        {
+            get { return PlatformData.SupportedLanguages[Language]; }
+        }
+
+        public virtual bool HasPlatformSupport
+        {
+            get { return HasSupport && Platform != null && LanguageSupport.Platforms.ContainsKey(Platform); }
+        }
+
+        public virtual LanguagePlatform PlatformSupport
+        {
+            get { return LanguageSupport.Platforms[Platform]; }
+        }
+
+        public virtual string[] TargetPlatforms 
+        {
+            get
+            {
+                if (HasSupport) return LanguageSupport.PlatformNames;
+                return new string[] { "Custom" };
+            }
+        }
+
+        public virtual string[] TargetVersions(string platform)
+        {
+            if (HasSupport)
+            {
+                var platforms = LanguageSupport.Platforms;
+                if (platform != null && platforms.ContainsKey(platform)) return platforms[platform].VersionNames;
+            }
+            return new string[] { "0.0" };
+        }
+
+        public virtual string DefaultVersion(string platform)
+        {
+            if (HasSupport)
+            {
+                var platforms = LanguageSupport.Platforms;
+                if (platform != null && platforms.ContainsKey(platform)) return platforms[platform].LastVersion.Value;
+            }
+            return "0.0";
+        }
+
         public abstract OutputType[] OutputTypes { get; }
         public abstract OutputType DefaultOutput(string platform);
-        public abstract bool IsGraphical(string platform);
 
         public virtual bool HasOutput(OutputType output)
         {
@@ -61,7 +111,34 @@ namespace ProjectManager.Projects
             }
         }
 
-        public abstract bool DebuggerSupported { get; }
+        public virtual bool IsGraphical(string platform)
+        {
+            if (HasSupport)
+            {
+                var platforms = LanguageSupport.Platforms;
+                if (platform != null && platforms.ContainsKey(platform)) return platforms[platform].IsGraphical;
+            }
+            return false;
+        }
+        
+        public virtual bool DebuggerSupported(string targetBuild)
+        {
+            if (HasPlatformSupport)
+            {
+                var debugger = PlatformSupport.DebuggerSupported;
+                if (debugger == null) return false;
+                
+                if (string.IsNullOrEmpty(targetBuild)) 
+                    return debugger.Length > 0 && debugger[0] == "*";
+
+                foreach (string target in debugger)
+                {
+                    if (target == "*") return true;
+                    else if (targetBuild.StartsWith(target)) return true;
+                }
+            }
+            return false;
+        }
 
 	}
 }

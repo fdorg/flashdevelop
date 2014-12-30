@@ -157,7 +157,7 @@ namespace CodeRefactor.Commands
                 PluginBase.MainForm.OpenEditableDocument(entry.Key);
                 ScintillaControl sci = ASContext.CurSciControl;
                 // replace matches in the current file with the new name
-                RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName, sci.Text);
+                RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName);
                 if (sci.IsModify) this.AssociatedDocumentHelper.MarkDocumentToKeep(sci.FileName);
             }
             RenameFile(eventArgs.Results);
@@ -221,16 +221,8 @@ namespace CodeRefactor.Commands
 
             if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return;
 
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
-                if (doc.FileName.Equals(oldFileName))
-                {
-                    doc.Save();
-                    doc.Close();
-                    break;
-                }
-
             RefactoringHelper.Move(oldFileName, newFileName);
-            AssociatedDocumentHelper.LoadDocument(newFileName);
+           
             if (results.ContainsKey(oldFileName))
             {
                 results[newFileName] = results[oldFileName];
@@ -276,7 +268,7 @@ namespace CodeRefactor.Commands
                         reportableLines[lineNumber] = new List<string>();
                     }
                     // the data we store matches the TraceManager.Add's formatting.  We insert the {0} at the end so that we can insert the final line state later
-                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line.ToString() + ": characters " + column + "-" + (column + newNameLength) + " : {0}");
+                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line.ToString() + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
                 }
                 // report all the lines
                 foreach (KeyValuePair<int, List<String>> lineSetsToReport in reportableLines)

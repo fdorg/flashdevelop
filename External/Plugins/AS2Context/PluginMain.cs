@@ -197,7 +197,13 @@ namespace AS2Context
                 }
                 settingObject.InstalledSDKs = allSdks.ToArray();
             }
-            else foreach (InstalledSDK sdk in settingObject.InstalledSDKs) ValidateSDK(sdk);
+            else
+            {
+                foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                {
+                    sdk.Validate();
+                }
+            }
             settingObject.OnClasspathChanged += SettingObjectOnClasspathChanged;
         }
 

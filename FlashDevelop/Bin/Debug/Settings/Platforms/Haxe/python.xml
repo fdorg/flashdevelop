@@ -1,0 +1,5 @@
+<platform name="Python" haxe-target="python">
+  <versions>
+    <version value="1.0" />
+  </versions>
+</platform>

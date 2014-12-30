@@ -426,7 +426,7 @@ namespace BasicCompletion
                 Language config = ScintillaControl.Configuration.GetLanguage(lang);
                 String characters = config.characterclass.Characters;
                 // Do not autocomplete in word
-                Char c = (char)sci.CharAt(sci.CurrentPos);
+                Char c = sci.CurrentChar;
                 if (characters.IndexOf(c) >= 0) return;
                 // Autocomplete after typing word chars only
                 if (characters.IndexOf((char)value) < 0) return;

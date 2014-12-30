@@ -13,7 +13,7 @@ package $(PackageName)$(CSLB){
 	$(CBI)*/
 	public class Main extends Sprite $(CSLB){
 		
-		public function Main():void $(CSLB){
+		public function Main() $(CSLB){
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			stage.addEventListener(Event.DEACTIVATE, deactivate);

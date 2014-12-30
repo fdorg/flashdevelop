@@ -189,7 +189,7 @@ namespace AppMan
             // 
             this.allLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.allLinkLabel.AutoSize = true;
-            this.allLinkLabel.Location = new System.Drawing.Point(56, 491);
+            this.allLinkLabel.Location = new System.Drawing.Point(61, 491);
             this.allLinkLabel.Name = "allLinkLabel";
             this.allLinkLabel.Size = new System.Drawing.Size(21, 15);
             this.allLinkLabel.TabIndex = 6;
@@ -201,7 +201,7 @@ namespace AppMan
             // 
             this.newLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.newLinkLabel.AutoSize = true;
-            this.newLinkLabel.Location = new System.Drawing.Point(122, 491);
+            this.newLinkLabel.Location = new System.Drawing.Point(127, 491);
             this.newLinkLabel.Name = "newLinkLabel";
             this.newLinkLabel.Size = new System.Drawing.Size(31, 15);
             this.newLinkLabel.TabIndex = 8;
@@ -213,7 +213,7 @@ namespace AppMan
             // 
             this.instLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.instLinkLabel.AutoSize = true;
-            this.instLinkLabel.Location = new System.Drawing.Point(159, 491);
+            this.instLinkLabel.Location = new System.Drawing.Point(164, 491);
             this.instLinkLabel.Name = "instLinkLabel";
             this.instLinkLabel.Size = new System.Drawing.Size(51, 15);
             this.instLinkLabel.TabIndex = 9;
@@ -235,7 +235,7 @@ namespace AppMan
             // 
             this.noneLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.noneLinkLabel.AutoSize = true;
-            this.noneLinkLabel.Location = new System.Drawing.Point(80, 491);
+            this.noneLinkLabel.Location = new System.Drawing.Point(85, 491);
             this.noneLinkLabel.Name = "noneLinkLabel";
             this.noneLinkLabel.Size = new System.Drawing.Size(36, 15);
             this.noneLinkLabel.TabIndex = 7;
@@ -258,7 +258,7 @@ namespace AppMan
             // 
             this.updateLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.updateLinkLabel.AutoSize = true;
-            this.updateLinkLabel.Location = new System.Drawing.Point(216, 491);
+            this.updateLinkLabel.Location = new System.Drawing.Point(221, 491);
             this.updateLinkLabel.Name = "updateLinkLabel";
             this.updateLinkLabel.Size = new System.Drawing.Size(50, 15);
             this.updateLinkLabel.TabIndex = 13;

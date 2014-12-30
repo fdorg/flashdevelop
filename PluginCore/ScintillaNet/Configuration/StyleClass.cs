@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
+using System.Drawing.Text;
 
 namespace ScintillaNet.Configuration
 {
@@ -147,7 +148,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-				if (font != null) return ResolveString(font);
+                if (font != null) return ResolveFont(font);
 				StyleClass p = ParentClass;
                 if (p != null) return p.FontName;
 				return "Courier New";
@@ -287,6 +288,36 @@ namespace ScintillaNet.Configuration
                 }
             }
             return number;
+        }
+
+        public string ResolveFont(string name)
+        {
+            Value value = null;
+            if (name != null)
+            {
+                for (value = _parent.MasterScintilla.GetValue(name); value != null; value = _parent.MasterScintilla.GetValue(name))
+                {
+                    name = value.val;
+                }
+            }
+            try  // Choose first font that is found...
+            {
+                String[] fonts = name.Split(',');
+                foreach (String font in fonts)
+                {
+                    if (IsFontInstalled(font)) return font;
+                }
+            }
+            catch { /* No errors... */ }
+            return name;
+        }
+
+        private static bool IsFontInstalled(string fontName)
+        {
+            using (var testFont = new Font(fontName, 9))
+            {
+                return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
         
     }

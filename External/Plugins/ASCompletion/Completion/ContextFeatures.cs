@@ -41,7 +41,9 @@ namespace ASCompletion.Completion
         public bool hasE4X;
         public bool hasStaticInheritance;
         public bool hasInference;
+        public bool hasStringInterpolation;
         public bool checkFileName;
+        public char hiddenPackagePrefix;
 
         // C-style array type (ie. string[])
         public bool hasCArrays;
@@ -92,6 +94,9 @@ namespace ASCompletion.Completion
         public string intrinsicKey;
         public string inlineKey;
         public string namespaceKey;
+        public string stringInterpolationQuotes = "";
+
+        public Dictionary<string, string> metadata = new Dictionary<string,string>();
 
         public MemberModel functionArguments;
 

@@ -2,26 +2,28 @@
 <Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<keyword-classes>
 		<keyword-class name="haxe-primary-keywords">
-			abstract break case catch class continue default do else enum extends for function if implements import in interface macro new package return switch throw try typedef using var while $type 
+			abstract break case catch class continue default do else enum extends for function if implements import in
+			interface  new package return switch throw try typedef using var while $type 
 		</keyword-class>
 		<keyword-class name="haxe-secondary-keywords">
 			null true false
 		</keyword-class>
 		<keyword-class name="haxe-additional-keywords">
-			Void Int Float Dynamic Bool UInt Iterator Array List Hash IntHash Date String Xml
+			Void Float Int Bool Dynamic Iterator Iterable ArrayAccess Array Class Date DateTools Enum EnumValue EReg
+			IntIterator Lambda List Map Math Reflect Std String StringBuf StringTools Sys Type UInt Xml 
 		</keyword-class>
 		<keyword-class name="haxe-documentation-keywords">
 			author copy default deprecated eventType example exampleText exception haxe inheritDoc internal link
 			param private return see serial serialData serialField since throws usage version
 		</keyword-class>
 		<keyword-class name="haxe-additional-keywords3">
-			dynamic extern inline override private public static
+			dynamic macro extern inline override private public static
 		</keyword-class>
 		<keyword-class name="haxe-additional-keywords4">
-			untyped cast trace
+			untyped cast trace __cpp__ __global__ __js__ __php__ __cs__ __java__ 
 		</keyword-class>
 		<keyword-class name="haxe-additional-keywords5">
-			super this arguments
+			super this
 		</keyword-class>
 	</keyword-classes>
 	<languages>
@@ -31,7 +33,7 @@
 			<line-comment><![CDATA[//]]></line-comment>
 			<comment-start><![CDATA[/*]]></comment-start>
 			<comment-end><![CDATA[*/]]></comment-end>
-			<file-extensions>hx</file-extensions>
+			<file-extensions>hx,hxp</file-extensions>
 			<use-keywords>
 				<keyword key="0" class="haxe-secondary-keywords" />
 				<keyword key="1" class="haxe-additional-keywords" />
@@ -44,7 +46,7 @@
 			<!-- COLORING_START -->
 			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
 			<use-styles>
-				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Consolas,Courier New,monospace" />
 				<style name="comment" fore="0x008000" />
 				<style name="commentline" fore="0x008000" />
 				<style name="commentdoc" fore="0x008000" />

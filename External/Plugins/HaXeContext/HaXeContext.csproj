@@ -113,12 +113,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context.cs" />
-    <Compile Include="Completion\HaXeCompletion.cs" />
+    <Compile Include="Completion\HaxeComplete.cs" />
     <Compile Include="Completion\IHaxeCompletionHandler.cs" />
     <Compile Include="Completion\CompilerCompletionHandler.cs" />
     <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
     <Compile Include="HaXeSettings.cs" />
-    <Compile Include="NMEHelper.cs" />
+    <Compile Include="ExternalToolchain.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

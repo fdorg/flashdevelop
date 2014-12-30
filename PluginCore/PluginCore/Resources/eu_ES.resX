@@ -401,6 +401,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="FileExplorer.Info.NewFolderName" xml:space="preserve">
     <value>Karpeta berria</value>
   </data>
+  <data name="FileExplorer.Label.FindHere" xml:space="preserve">
+    <value>&amp;Hemen bilatu eta ordezkatu...</value>
+  <comment>Added after 4.6.4</comment>
+  </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>Komando-gonbita hemen...</value>
   </data>
@@ -1422,6 +1426,12 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="PluginCore.Docking.ToolTipWindowList" xml:space="preserve">
     <value>Leiho zerrenda</value>
   </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFile" xml:space="preserve">
+    <value>Karpeta honek jada badu "{0}" izeneko fitxategi bat.{1}Lehenagotik zegoen fitxategia ordezkatu nahi duzu?</value>
+  </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFolder" xml:space="preserve">
+    <value>Karpeta honek jada badu "{0}" izeneko karpeta bat.{1}{1}Lehenagotik dagoen karpetako fitxategiek mugitzen edo kopiatzen ari zaren {1} karpetako fitxategien izen berdinak badituzte, ordezkatu eginen dira. Oraindik {1} karpeta mugitu edo kopiatu nahi duzu?</value>
+  </data>
   <data name="ProjectManager.Category.Advanced" xml:space="preserve">
     <value>Aurreratua</value>
   </data>
@@ -1695,12 +1705,6 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="ProjectManager.Info.FlashMovieFilter" xml:space="preserve">
     <value>Flash pelikulak (*.swf)|*.swf</value>
   </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFile" xml:space="preserve">
-    <value>Karpeta honek jada badu "{0}" izeneko fitxategi bat.{1}Lehenagotik zegoen fitxategia ordezkatu nahi duzu?</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFolder" xml:space="preserve">
-    <value>Karpeta honek jada badu "{0}" izeneko karpeta bat.{1}{1}Lehenagotik dagoen karpetako fitxategiek mugitzen edo kopiatzen ari zaren {1} karpetako fitxategien izen berdinak badituzte, ordezkatu eginen dira. Oraindik {1} karpeta mugitu edo kopiatu nahi duzu?</value>
-  </data>
   <data name="ProjectManager.Info.General" xml:space="preserve">
     <value>Orokorra</value>
   </data>
@@ -1850,6 +1854,14 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>&amp;Proiektua eraiki</value>
+  </data>
+  <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
+    <value>Stop Build</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ProjectManager.Info.AreYouSureToStopBuild" xml:space="preserve">
+    <value>Are you sure you want to stop the build?</value>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Ezeztatu</value>
@@ -2872,6 +2884,14 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="ASCompletion.Info.GeneratorTemplate" xml:space="preserve">
     <value>Sortzaile txantiloia</value>
   </data>
+  <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
+    <value>Press Tab to insert the snippet for this keyword</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
+    <value>Press F1 to toggle details</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
     <value>Bilatu...</value>
   </data>
@@ -2953,6 +2973,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   </data>
   <data name="ASCompletion.Description.AddClosingBraces" xml:space="preserve">
     <value>Irekitako giltzen (edo komatxoen) ondoren automatikoki ixteko giltza (edo komatxoa) jarriko ote den definitzen da, ( eta [ eta komatxoentzat.</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="ASClassWizard.Info.Description" xml:space="preserve">
     <value>ActionScript klaseak sortzeko morroi bat gehitzen zaio FlashDevelop-i.</value>
@@ -3369,7 +3390,8 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Eten-puntu Guztiak Gaitu</value>
   </data>
   <data name="FlashDebugger.Label.Exp" xml:space="preserve">
-    <value>Exp</value>
+    <value>Condition</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Finish" xml:space="preserve">
     <value>&amp;Bukatu</value>
@@ -3456,10 +3478,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="ASCompletion.Label.GenerateConstructor" xml:space="preserve">
     <value>Eraikitzailea sortu</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePrivateFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePrivateFieldFromParameter" xml:space="preserve">
     <value>Parametrotik eremu pribatua sortu</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePublicFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePublicFieldFromParameter" xml:space="preserve">
     <value>Parametrotik eremu publikoa sortu</value>
   </data>
   <data name="ASCompletion.Label.GenerateToString" xml:space="preserve">
@@ -3778,7 +3800,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Esparru erreferentzia esplizitua sortu - normalean 'this' hitz-gakoa.</value>
   </data>
   <data name="FlashDevelop.Info.ShortcutEditInfo" xml:space="preserve">
-    <value>Item bat aukeratu eta menu item lasterbide teklak sakatuta lasterbideak editatu daitezke.</value>
+    <value>Elementu bat aukeratu eta menu-elementu lasterbide teklak sakatuta lasterbideak editatu daitezke.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.Command" xml:space="preserve">
@@ -4470,7 +4492,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DontIndentPackageItems" xml:space="preserve">
-    <value>Pakete item-ak ez koskatu.</value>
+    <value>Pakete-elementuak ez koskatu.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.ElseIfOnSameLine" xml:space="preserve">
@@ -5074,23 +5096,215 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
-    <value>Type of the intendation guide behaviour.</value>
+    <value>Koskatze gidaren portaera mota.</value>
     <comment>Added after 4.6.0</comment>
   </data>
   <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
-    <value>Break when an exception is thrown, even if it is handled.</value>
+    <value>Salbuespen bat altxatzean eten, nahiz eta kudeatua izan.</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
-    <value>&amp;Run Project</value>
+    <value>&amp;Proiektua abiarazi</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
-    <value>You are renaming a directory. Do you also want to update the references?</value>
+    <value>Karpeta bat berrizendatzen ari zara. Erreferentziak ere eguneratu nahi dituzu?</value>
     <comment>Added after 4.6.1</comment>
   </data>
-  <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
+  <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve"> <!-- TODO: ez dakit zer erran nahi duen -->
     <value>Keep indent tabs when strip trailing spaces.</value>
     <comment>Added after 4.6.2</comment>
+  </data>
+  <data name="AirProperties.AspectRatio.Any" xml:space="preserve">
+    <value>Edozein</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.DesktopResolution.High" xml:space="preserve">
+    <value>Altua</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.DesktopResolution.Standard" xml:space="preserve">
+    <value>Estandarra</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.ANEDescFileNotFound" xml:space="preserve">
+    <value>ANE fitxetegi descriptorea ez da aurkitu.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.AneFilter" xml:space="preserve">
+    <value>ANE Fitxategiak (*.ane)|*.ane</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.CheckFileLocation" xml:space="preserve">
+    <value>Fitxategiak ezin da deskriptorearekiko goiko edo kanpoko karpeta batean egon.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.CouldNotLoadANE" xml:space="preserve">
+    <value>Ezin izan da ANE fitxategia kargatu:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.ExtensionIDNotFound" xml:space="preserve">
+    <value>Luzapenaren IDa ezin izan da berreskuratu.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.SelectAtleastOneItem" xml:space="preserve">
+    <value>Elementu bat aukeratu behar da gutxienez.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneBGMode.Audio" xml:space="preserve">
+    <value>Audioa</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneBGMode.Location" xml:space="preserve">
+    <value>Kokapena</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhonePushNotifications.Development" xml:space="preserve">
+    <value>Garapena</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhonePushNotifications.Distribution" xml:space="preserve">
+    <value>Banaketa</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneResolution.High" xml:space="preserve">
+    <value>Altua</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneResolution.Standard" xml:space="preserve">
+    <value>Estandarra</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Advanced" xml:space="preserve">
+    <value>Aurreratua &gt;&gt;</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.BackgroundBehavior" xml:space="preserve">
+    <value>Atzeko planoko portaera</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Basic" xml:space="preserve">
+    <value>&lt;&lt; Oinarrizkoa</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Browse" xml:space="preserve">
+    <value>Bilatu</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ColorDepth" xml:space="preserve">
+    <value>Kolore sakonera</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.CPURendering" xml:space="preserve">
+    <value>CPU Errendaketa</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Display" xml:space="preserve">
+    <value>Erakutsi</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Entitlements" xml:space="preserve">
+    <value>Eskubideak</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Exclude" xml:space="preserve">
+    <value>Baztertu</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ExitOnSuspend" xml:space="preserve">
+    <value>Esekitzean irten</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ExternalSWFs" xml:space="preserve">
+    <value>Kanpoko SWFak</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.InfoAdditions" xml:space="preserve">
+    <value>Info gehigarriak</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.LookAndFeel" xml:space="preserve">
+    <value>Itxura</value> <!-- TODO: hau aldatu, berezkoa "Look and Feel" -->
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.OtherBehavior" xml:space="preserve">
+    <value>Beste portaerak</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.PrerenderedIcon" xml:space="preserve">
+    <value>Aurreerrendatutako ikonoa</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.PushNotifications" xml:space="preserve">
+    <value>Jakinarazpena jarri</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Resolution" xml:space="preserve">
+    <value>Bereizmena</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.SelectPermForInfo" xml:space="preserve">
+    <value>Baimen bat aukeratu bere deskribapena ikusteko.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.StatusBarStyle" xml:space="preserve">
+    <value>Egoera barraren itxura</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.SupportedDevices" xml:space="preserve">
+    <value>Onartutako gailuak</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.SoftKeyboard.None" xml:space="preserve">
+    <value>Hutsa</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.SoftKeyboard.Pan" xml:space="preserve">
+    <value>Pan</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Title.SelectIOSDevices" xml:space="preserve">
+    <value>Aukeratu helburuko iOS gailuak</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidAndroidMinVersion" xml:space="preserve">
+    <value>Onartutako Android bertsio baxuena 8 da.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidMinAIRVersion" xml:space="preserve">
+    <value>Onartutako AIR bertsio baxuena 4.3 da.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidVersionValue" xml:space="preserve">
+    <value>Bertsio zenbaki baliogabea.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.MissingSWFContainer" xml:space="preserve">
+    <value>Kanpoko SWFs fitxategia ez da existitzen. Mesedez, egiaztatu bide-izena.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongAdditionsXML" xml:space="preserve">
+    <value>iPhone informazio gehigarri okerra XML:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongEntitlementsXML" xml:space="preserve">
+    <value>Wrong iPhone entitlements XML:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongManifestXML" xml:space="preserve">
+    <value>Android manifestu okerra XML:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
+    <value>protected eremua sortu</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
+    <value>protected funtzioa sortu</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
+    <value>protected aldagaia deklaratu</value>
+    <comment>Added after 4.6.4</comment>
   </data>
 </root>

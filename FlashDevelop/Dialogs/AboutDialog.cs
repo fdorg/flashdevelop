@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Helpers;
 using PluginCore.Helpers;
@@ -14,7 +15,7 @@ namespace FlashDevelop.Dialogs
     public class AboutDialog : Form
 	{
         private System.Windows.Forms.Label copyLabel;
-        private System.Windows.Forms.Label versionLabel;
+        private System.Windows.Forms.LinkLabel versionLabel;
         private System.Windows.Forms.PictureBox imageBox;
 
 		public AboutDialog()
@@ -36,7 +37,8 @@ namespace FlashDevelop.Dialogs
         {
             this.imageBox = new System.Windows.Forms.PictureBox();
             this.copyLabel = new System.Windows.Forms.Label();
-            this.versionLabel = new System.Windows.Forms.Label();
+            this.versionLabel = new System.Windows.Forms.LinkLabel();
+            this.versionLabel.LinkColor = System.Drawing.Color.DarkGray;
             ((System.ComponentModel.ISupportInitialize)(this.imageBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -76,6 +78,7 @@ namespace FlashDevelop.Dialogs
             this.versionLabel.TabIndex = 0;
             this.versionLabel.Text = "FlashDevelop 4.6.0.0 for .NET 2.0 (master#1234567890)";
             this.versionLabel.Click += new System.EventHandler(this.DialogCloseClick);
+            this.versionLabel.LinkClicked += VersionLabelLinkClicked;
             // 
             // AboutDialog
             //
@@ -117,9 +120,25 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ApplyLocalizedTexts()
         {
+            String name = Application.ProductName;
             this.Text = " " + TextHelper.GetString("Title.AboutDialog");
             this.versionLabel.Font = new Font(this.Font, FontStyle.Bold);
-            this.versionLabel.Text = Application.ProductName;
+            this.versionLabel.Text = name;
+            Regex shaRegex = new Regex("#([a-f0-9]*)");
+            String sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
+            String link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
+            this.versionLabel.Links.Add(new LinkLabel.Link(name.IndexOf('('), versionLabel.Text.Length, link));
+            ToolTip tooltip = new ToolTip();
+            tooltip.SetToolTip(versionLabel, link);
+        }
+
+        /// <summary>
+        /// When user clicks the link, open the Github commit in the browser.
+        /// </summary>
+		private void VersionLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string target = e.Link.LinkData as String;
+            if (target != null) System.Diagnostics.Process.Start(target);
         }
 
         /// <summary>

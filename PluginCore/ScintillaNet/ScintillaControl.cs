@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Collections;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace ScintillaNet
         private bool isHiliteSelected = true;
         private bool useHighlightGuides = true;
 		private static Scintilla sciConfiguration = null;
+        private static Hashtable shortcutOverrides = new Hashtable();
         private Enums.IndentView indentView = Enums.IndentView.Real;
 		private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
 		private Hashtable ignoredKeys = new Hashtable();
@@ -935,6 +937,17 @@ namespace ScintillaNet
 				SPerform(2141, (uint)value , 0);
 			}
 		}
+
+        /// <summary>
+        /// Returns the chracter at the caret posiion.
+        /// </summary>
+        public char CurrentChar
+        {
+            get
+            {
+                return (char)CharAt(CurrentPos);
+            }
+        }
 		
 		/// <summary>
 		/// Returns the position of the opposite end of the selection to the caret.
@@ -3249,7 +3262,20 @@ namespace ScintillaNet
 		public int PositionFromLine(int line)
 		{
 			return (int) SPerform(2167, (uint)line, 0);
-		}	
+		}
+		
+		/// <summary>
+		/// Retrieve the text from line before position
+		/// </summary>
+        public String GetLineUntilPosition(int pos)
+        {
+            int curLine = LineFromPosition(pos);
+            int curPosInLine = pos - PositionFromLine(curLine);
+            String line = GetLine(curLine);
+            int length = MBSafeLengthFromBytes(line, curPosInLine);
+            String lineUntilPos = line.Substring(0, length);
+            return lineUntilPos;
+        }
 						
 		/// <summary>
 		/// Scroll horizontally and vertically.
@@ -3837,7 +3863,16 @@ namespace ScintillaNet
 		public void DeleteBack()
 		{
 			SPerform(2326, 0, 0);
-		}	
+		}
+
+        /// <summary>
+        /// Delete the character after the caret.
+        /// </summary>
+        public void DeleteForward()
+        {
+            SetSel(CurrentPos + 1, CurrentPos + 1);
+            DeleteBack();
+        }
 						
 		/// <summary>
 		/// If selection is empty or all on one line replace the selection with a tab character.
@@ -3904,7 +3939,15 @@ namespace ScintillaNet
 		{
 			SPerform(2334, 0, 0);
 		}	
-						
+		
+        /// <summary>
+        /// Reset the text zooming by setting zoom level to 0.
+        /// </summary>
+		public void ResetZoom()
+        {
+            SPerform(2373, 0, 0);
+        }
+
 		/// <summary>
 		/// Delete the word to the left of the caret.
 		/// </summary>
@@ -4887,7 +4930,57 @@ namespace ScintillaNet
 	
 		#endregion
 		
-		#region Scintilla External
+        #region Scintilla Shortcuts
+
+        /// <summary>
+        /// Initializes the user customizable shortcut overrides
+        /// </summary>
+        public static void InitShortcuts()
+        {
+            shortcutOverrides.Add("Scintilla.ResetZoom", Keys.Control | Keys.NumPad0);
+            shortcutOverrides.Add("Scintilla.ZoomOut", Keys.Control | Keys.Subtract);
+            shortcutOverrides.Add("Scintilla.ZoomIn", Keys.Control | Keys.Add);
+            foreach (DictionaryEntry shortcut in shortcutOverrides)
+            {
+                String id = (String)shortcut.Key;
+                Keys keys = (Keys)shortcut.Value;
+                PluginBase.MainForm.RegisterShortcutItem(id, keys);
+            }
+        }
+
+        /// <summary>
+        /// Updates the shortcut if it changes or needs updating
+        /// </summary>
+        public static void UpdateShortcut(String id, Keys shortcut)
+        {
+            if (id.StartsWith("Scintilla.")) shortcutOverrides[id] = shortcut;
+        }
+
+        /// <summary>
+        /// Execute the shortcut override using reflection
+        /// </summary>
+        private Boolean ExecuteShortcut(Int32 keys)
+        {
+            try
+            {
+                if (!shortcutOverrides.ContainsValue((Keys)keys)) return false;
+                foreach (DictionaryEntry shortcut in shortcutOverrides)
+                {
+                    if ((Keys)keys == (Keys)shortcut.Value)
+                    {
+                        String id = shortcut.Key.ToString().Replace("Scintilla.", "");
+                        this.GetType().GetMethod(id).Invoke(this, null);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception) { return false; }
+        }
+
+        #endregion
+
+        #region Scintilla External
 
         // Stops all sci events from firing...
         public bool DisableAllSciEvents = false;
@@ -4934,9 +5027,10 @@ namespace ScintillaNet
             {
                 case WM_KEYDOWN:
                 {
-                    if (!IsFocus || ignoreAllKeys || ignoredKeys.ContainsKey((Int32)Control.ModifierKeys + (Int32)m.WParam))
+                    Int32 keys = (Int32)Control.ModifierKeys + (Int32)m.WParam;
+                    if (!IsFocus || ignoreAllKeys || ignoredKeys.ContainsKey(keys))
                     {
-                        if (base.PreProcessMessage(ref m)) return true;
+                        if (this.ExecuteShortcut(keys) || base.PreProcessMessage(ref m)) return true;
                     }
                     if (((Control.ModifierKeys & Keys.Control) != 0) && ((Control.ModifierKeys & Keys.Alt) == 0))
                     {
@@ -5399,19 +5493,21 @@ namespace ScintillaNet
         /// <returns>' or " or Space if undefined</returns>
         public char GetStringType(int position)
         {
-            int len = Length;
-            int i = position;
-            while (i < len)
+            char next = (char)CharAt(position);
+            char c;
+            for (int i = position; i > 0; i--)
             {
-                char c = (char)CharAt(i++);
+                c = next;
+                next = (char)CharAt(i-1);
+
+                if (next == '\\' && (c == '\'' || c == '"')) i--;
                 if (c == '\'') return '\'';
                 else if (c == '"') return '"';
-                else if (c == '\\') i++;
             }
             return ' ';
         }
 		
-		#endregion
+		#endregion 
 
         #region Misc Custom Stuff
 
@@ -5809,12 +5905,21 @@ namespace ScintillaNet
         /// </summary>
         public void CollapseFunctions()
         {
-            for (int i = 0; i < LineCount; i++)
+            int lineCount = LineCount;
+
+            for (int i = 0; i < lineCount; i++)
             {
                 // Determine if function block
                 string line = GetLine(i);
-                if ((line.Contains("function") && line.Contains("(") && line.Contains(")")))
+                if (line.Contains("function"))
                 {
+                    // Find the line with the closing ) of the function header
+                    while (!line.Contains(")") && i < lineCount)
+                    {
+                        i++;
+                        line = GetLine(i);
+                    }
+
                     // Get the function closing brace
                     int maxSubOrd = LastChild(i, -1);
                     // Get brace if on the next line
@@ -6043,8 +6148,8 @@ namespace ScintillaNet
 			}
 			else
 			{
-				int mblenght = Encoding.UTF8.GetByteCount(text);
-				return mblenght;
+				int mblength = Encoding.UTF8.GetByteCount(text);
+                return mblength;
 			}
         }
 

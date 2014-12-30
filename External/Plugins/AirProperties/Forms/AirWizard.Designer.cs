@@ -176,6 +176,57 @@
         private System.Windows.Forms.RichTextBox IPhoneInfoAdditionsField;
         private System.Windows.Forms.Label IPhoneInfoAdditionsCDataLabel2;
         private System.Windows.Forms.Label IPhoneInfoAdditionsCDataLabel;
+        private System.Windows.Forms.CheckedListBox AndroidUserPermissionsList;
+        private System.Windows.Forms.ComboBox AndroidColorDepthCombo;
+        private System.Windows.Forms.Label AndroidColorDepthLabel;
+        private System.Windows.Forms.Button AndroidManifestAdditionsButton;
+        private System.Windows.Forms.Label AndroidPermissionsLabel;
+        private System.Windows.Forms.Button IPhoneInfoAdditionsButton;
+        private System.Windows.Forms.Label IPhoneEntitlementsCDataLabel2;
+        private System.Windows.Forms.Label IPhoneEntitlementsCDataLabel;
+        private System.Windows.Forms.Label IPhoneEntitlementsLabel;
+        private System.Windows.Forms.Label IPhoneInfoAdditionsLabel;
+        private System.Windows.Forms.RichTextBox IPhoneEntitlementsField;
+        private System.Windows.Forms.Button IPhoneExternalSWFsButton;
+        private System.Windows.Forms.TextBox IPhoneExternalSWFsField;
+        private System.Windows.Forms.Label IPhoneExternalSWFsLabel;
+        private System.Windows.Forms.ComboBox IPhonePushNotifcationsCombo;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox IPhoneStatusBarStyleCombo;
+        private System.Windows.Forms.Label IPhoneStatusBarStyleLabel;
+        private System.Windows.Forms.Label IPhonePrerrenderedIconLabel;
+        private System.Windows.Forms.Label IPhoneExitsOnSuspendLabel;
+        private AirProperties.Controls.CheckedComboBox IPhoneBGModesCombo;
+        private System.Windows.Forms.Label IPhoneBGModesLabel;
+        private System.Windows.Forms.Label IPhoneForceCPULabel;
+        private System.Windows.Forms.ComboBox IPhoneResolutionCombo;
+        private System.Windows.Forms.Label IPhoneResolutionLabel;
+        private AirProperties.Controls.CheckedComboBox IPhoneDeviceCombo;
+        private System.Windows.Forms.Label IPhoneDeviceLabel;
+        private System.Windows.Forms.Panel AndroidAdvancedSettingsPanel;
+        private System.Windows.Forms.Panel AndroidBasicSettingsPanel;
+        private System.Windows.Forms.Panel IPhoneBasicSettingsPanel;
+        private System.Windows.Forms.Panel IPhoneAdvancedSettingsPanel;
+        private System.Windows.Forms.GroupBox IPhoneOtherBehaviorGroup;
+        private System.Windows.Forms.GroupBox IPhoneLookGroup;
+        private System.Windows.Forms.GroupBox IPhoneBackgroundBehaviorGroup;
+        private System.Windows.Forms.GroupBox IPhoneDeviceBehaviorGroup;
+        private System.Windows.Forms.ComboBox DesktopResolutionCombo;
+        private System.Windows.Forms.Label DesktopResolutionLabel;
+        private System.Windows.Forms.CheckBox IPhonePrerrenderedIconCheck;
+        private System.Windows.Forms.CheckBox IPhoneExitsOnSuspendCheck;
+        private System.Windows.Forms.Button IPhoneResolutionExcludeButton;
+        private System.Windows.Forms.Button IPhoneForceCPUButton;
+        private System.Windows.Forms.TextBox IPhoneForceCPUField;
+        private System.Windows.Forms.Button ExtensionBrowseButton;
+        private System.Windows.Forms.Label DepthStencilLabel;
+        private System.Windows.Forms.CheckBox DepthStencilField;
+        private System.Windows.Forms.Label SoftKeyboardLabel;
+        private System.Windows.Forms.ComboBox SoftKeyboardField;
+        private System.Windows.Forms.Label MinimumAndroidOsLabel;
+        private System.Windows.Forms.ComboBox MinimumAndroidOsField;
+        private System.Windows.Forms.Label MinimumiOsVersionLabel;
+        private System.Windows.Forms.ComboBox MinimumiOsVersionField;
 
         #region Windows Form Designer Generated Code
 
@@ -271,6 +322,8 @@
             this.InitialWindowTabPage = new System.Windows.Forms.TabPage();
             this.InitialWindowTabControl = new System.Windows.Forms.TabControl();
             this.WindowedPlatformsTabPage = new System.Windows.Forms.TabPage();
+            this.DesktopResolutionCombo = new System.Windows.Forms.ComboBox();
+            this.DesktopResolutionLabel = new System.Windows.Forms.Label();
             this.TitleField = new System.Windows.Forms.TextBox();
             this.WindowBoundsGroupBox = new System.Windows.Forms.GroupBox();
             this.MaximumSizeLabel = new System.Windows.Forms.Label();
@@ -318,8 +371,8 @@
             this.RemoveFileTypeButton = new System.Windows.Forms.Button();
             this.NewFileTypeButton = new System.Windows.Forms.Button();
             this.FileTypesListView = new System.Windows.Forms.ListView();
-            this.FileTypeNameColumnHeader = new System.Windows.Forms.ColumnHeader();
-            this.FileTypeExtensionColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.FileTypeNameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.FileTypeExtensionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.FileTypeDetailsTabControl = new System.Windows.Forms.TabControl();
             this.FileTypeDetailsTabPage = new System.Windows.Forms.TabPage();
             this.FileTypeContentTypeField = new System.Windows.Forms.TextBox();
@@ -357,28 +410,77 @@
             this.FileTypeIconField512 = new System.Windows.Forms.TextBox();
             this.FileTypeIconButton512 = new System.Windows.Forms.Button();
             this.ExtensionsTabPage = new System.Windows.Forms.TabPage();
+            this.ExtensionBrowseButton = new System.Windows.Forms.Button();
             this.ExtensionIdField = new System.Windows.Forms.TextBox();
             this.ExtensionIdLabel = new System.Windows.Forms.Label();
             this.ExtensionRemoveButton = new System.Windows.Forms.Button();
             this.ExtensionAddButton = new System.Windows.Forms.Button();
             this.ExtensionsListView = new System.Windows.Forms.ListView();
-            this.ExtensionsColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.ExtensionsColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.MobileAdditionsTabPage = new System.Windows.Forms.TabPage();
             this.MobileAdditionsTabControl = new System.Windows.Forms.TabControl();
             this.AndroidManifestAdditionsTabPage = new System.Windows.Forms.TabPage();
+            this.AndroidManifestAdditionsButton = new System.Windows.Forms.Button();
+            this.AndroidBasicSettingsPanel = new System.Windows.Forms.Panel();
+            this.AndroidColorDepthLabel = new System.Windows.Forms.Label();
+            this.AndroidColorDepthCombo = new System.Windows.Forms.ComboBox();
+            this.AndroidPermissionsLabel = new System.Windows.Forms.Label();
+            this.AndroidUserPermissionsList = new System.Windows.Forms.CheckedListBox();
+            this.AndroidAdvancedSettingsPanel = new System.Windows.Forms.Panel();
             this.AndroidManifestAdditionsField = new System.Windows.Forms.RichTextBox();
-            this.AndroidManifestAdditionsCDataLabel2 = new System.Windows.Forms.Label();
             this.AndroidManifestAdditionsCDataLabel = new System.Windows.Forms.Label();
+            this.AndroidManifestAdditionsCDataLabel2 = new System.Windows.Forms.Label();
             this.IPhoneInfoAdditionsTabPage = new System.Windows.Forms.TabPage();
-            this.IPhoneInfoAdditionsField = new System.Windows.Forms.RichTextBox();
-            this.IPhoneInfoAdditionsCDataLabel2 = new System.Windows.Forms.Label();
+            this.IPhoneInfoAdditionsButton = new System.Windows.Forms.Button();
+            this.IPhoneBasicSettingsPanel = new System.Windows.Forms.Panel();
+            this.IPhoneOtherBehaviorGroup = new System.Windows.Forms.GroupBox();
+            this.IPhonePushNotifcationsCombo = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.IPhoneExternalSWFsField = new System.Windows.Forms.TextBox();
+            this.IPhoneExternalSWFsButton = new System.Windows.Forms.Button();
+            this.IPhoneExternalSWFsLabel = new System.Windows.Forms.Label();
+            this.IPhoneLookGroup = new System.Windows.Forms.GroupBox();
+            this.IPhonePrerrenderedIconCheck = new System.Windows.Forms.CheckBox();
+            this.IPhonePrerrenderedIconLabel = new System.Windows.Forms.Label();
+            this.IPhoneStatusBarStyleLabel = new System.Windows.Forms.Label();
+            this.IPhoneStatusBarStyleCombo = new System.Windows.Forms.ComboBox();
+            this.IPhoneBackgroundBehaviorGroup = new System.Windows.Forms.GroupBox();
+            this.IPhoneExitsOnSuspendCheck = new System.Windows.Forms.CheckBox();
+            this.IPhoneExitsOnSuspendLabel = new System.Windows.Forms.Label();
+            this.IPhoneBGModesLabel = new System.Windows.Forms.Label();
+            this.IPhoneDeviceBehaviorGroup = new System.Windows.Forms.GroupBox();
+            this.IPhoneForceCPUButton = new System.Windows.Forms.Button();
+            this.IPhoneForceCPUField = new System.Windows.Forms.TextBox();
+            this.IPhoneResolutionExcludeButton = new System.Windows.Forms.Button();
+            this.IPhoneResolutionCombo = new System.Windows.Forms.ComboBox();
+            this.IPhoneResolutionLabel = new System.Windows.Forms.Label();
+            this.IPhoneForceCPULabel = new System.Windows.Forms.Label();
+            this.IPhoneDeviceLabel = new System.Windows.Forms.Label();
+            this.IPhoneAdvancedSettingsPanel = new System.Windows.Forms.Panel();
+            this.IPhoneInfoAdditionsLabel = new System.Windows.Forms.Label();
+            this.IPhoneEntitlementsCDataLabel2 = new System.Windows.Forms.Label();
             this.IPhoneInfoAdditionsCDataLabel = new System.Windows.Forms.Label();
+            this.IPhoneEntitlementsCDataLabel = new System.Windows.Forms.Label();
+            this.IPhoneInfoAdditionsCDataLabel2 = new System.Windows.Forms.Label();
+            this.IPhoneEntitlementsLabel = new System.Windows.Forms.Label();
+            this.IPhoneInfoAdditionsField = new System.Windows.Forms.RichTextBox();
+            this.IPhoneEntitlementsField = new System.Windows.Forms.RichTextBox();
             this.ValidationErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.BorderLabel = new System.Windows.Forms.Label();
             this.HelpButton1 = new System.Windows.Forms.Button();
             this.OpenIconFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.OpenPropertiesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ListViewStateImageList = new System.Windows.Forms.ImageList(this.components);
+            this.DepthStencilLabel = new System.Windows.Forms.Label();
+            this.DepthStencilField = new System.Windows.Forms.CheckBox();
+            this.SoftKeyboardLabel = new System.Windows.Forms.Label();
+            this.SoftKeyboardField = new System.Windows.Forms.ComboBox();
+            this.MinimumAndroidOsLabel = new System.Windows.Forms.Label();
+            this.MinimumAndroidOsField = new System.Windows.Forms.ComboBox();
+            this.MinimumiOsVersionLabel = new System.Windows.Forms.Label();
+            this.MinimumiOsVersionField = new System.Windows.Forms.ComboBox();
+            this.IPhoneBGModesCombo = new AirProperties.Controls.CheckedComboBox();
+            this.IPhoneDeviceCombo = new AirProperties.Controls.CheckedComboBox();
             this.TitlePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TitlePictureBox)).BeginInit();
             this.AppPropertiesTabControl.SuspendLayout();
@@ -393,7 +495,6 @@
             this.ApplicationTabPage.SuspendLayout();
             this.AppIconsGroupBox.SuspendLayout();
             this.AppIconsPanel2.SuspendLayout();
-            this.AppIconsPanel.SuspendLayout();
             this.InitialWindowTabPage.SuspendLayout();
             this.InitialWindowTabControl.SuspendLayout();
             this.WindowedPlatformsTabPage.SuspendLayout();
@@ -408,7 +509,15 @@
             this.MobileAdditionsTabPage.SuspendLayout();
             this.MobileAdditionsTabControl.SuspendLayout();
             this.AndroidManifestAdditionsTabPage.SuspendLayout();
+            this.AndroidBasicSettingsPanel.SuspendLayout();
+            this.AndroidAdvancedSettingsPanel.SuspendLayout();
             this.IPhoneInfoAdditionsTabPage.SuspendLayout();
+            this.IPhoneBasicSettingsPanel.SuspendLayout();
+            this.IPhoneOtherBehaviorGroup.SuspendLayout();
+            this.IPhoneLookGroup.SuspendLayout();
+            this.IPhoneBackgroundBehaviorGroup.SuspendLayout();
+            this.IPhoneDeviceBehaviorGroup.SuspendLayout();
+            this.IPhoneAdvancedSettingsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ValidationErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -430,9 +539,10 @@
             this.TitleDescription.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.TitleDescription.Location = new System.Drawing.Point(28, 32);
             this.TitleDescription.Name = "TitleDescription";
-            this.TitleDescription.Size = new System.Drawing.Size(447, 26);
+            this.TitleDescription.Size = new System.Drawing.Size(713, 13);
             this.TitleDescription.TabIndex = 2;
-            this.TitleDescription.Text = "Configure the properties of your AIR application. For a detailed explanation of the available properties and their accepted values, click the Help button.";
+            this.TitleDescription.Text = "Configure the properties of your AIR application. For a detailed explanation of t" +
+    "he available properties and their accepted values, click the Help button.";
             // 
             // TitleHeading
             // 
@@ -440,7 +550,7 @@
             this.TitleHeading.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.TitleHeading.Location = new System.Drawing.Point(13, 13);
             this.TitleHeading.Name = "TitleHeading";
-            this.TitleHeading.Size = new System.Drawing.Size(156, 13);
+            this.TitleHeading.Size = new System.Drawing.Size(130, 13);
             this.TitleHeading.TabIndex = 1;
             this.TitleHeading.Text = "AIR Application Properties";
             // 
@@ -457,6 +567,7 @@
             // CancelButton1
             // 
             this.CancelButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.CancelButton1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelButton1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.CancelButton1.Location = new System.Drawing.Point(494, 432);
             this.CancelButton1.Name = "CancelButton1";
@@ -480,7 +591,9 @@
             // 
             // AppPropertiesTabControl
             // 
-            this.AppPropertiesTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.AppPropertiesTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.AppPropertiesTabControl.Controls.Add(this.DetailsTabPage);
             this.AppPropertiesTabControl.Controls.Add(this.InstallationTabPage);
             this.AppPropertiesTabControl.Controls.Add(this.ApplicationTabPage);
@@ -493,6 +606,7 @@
             this.AppPropertiesTabControl.SelectedIndex = 0;
             this.AppPropertiesTabControl.Size = new System.Drawing.Size(557, 339);
             this.AppPropertiesTabControl.TabIndex = 1;
+            this.AppPropertiesTabControl.SelectedIndexChanged += new System.EventHandler(this.AppPropertiesTabControl_SelectedIndexChanged);
             // 
             // DetailsTabPage
             // 
@@ -532,7 +646,7 @@
             this.VersionPanel.Location = new System.Drawing.Point(6, 217);
             this.VersionPanel.Name = "VersionPanel";
             this.VersionPanel.Padding = new System.Windows.Forms.Padding(0, 0, 18, 0);
-            this.VersionPanel.Size = new System.Drawing.Size(541, 21);
+            this.VersionPanel.Size = new System.Drawing.Size(541, 20);
             this.VersionPanel.TabIndex = 16;
             this.VersionPanel.Visible = false;
             // 
@@ -552,7 +666,7 @@
             this.VersionField.Location = new System.Drawing.Point(94, 0);
             this.VersionField.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.VersionField.Name = "VersionField";
-            this.VersionField.Size = new System.Drawing.Size(426, 21);
+            this.VersionField.Size = new System.Drawing.Size(426, 20);
             this.VersionField.TabIndex = 10;
             this.VersionField.Validating += new System.ComponentModel.CancelEventHandler(this.VersionField_Validating);
             // 
@@ -621,7 +735,7 @@
             // 
             this.CopyrightField.Location = new System.Drawing.Point(100, 191);
             this.CopyrightField.Name = "CopyrightField";
-            this.CopyrightField.Size = new System.Drawing.Size(426, 21);
+            this.CopyrightField.Size = new System.Drawing.Size(426, 20);
             this.CopyrightField.TabIndex = 12;
             // 
             // DescriptionField
@@ -639,7 +753,7 @@
             this.IDField.Location = new System.Drawing.Point(100, 49);
             this.IDField.MaxLength = 212;
             this.IDField.Name = "IDField";
-            this.IDField.Size = new System.Drawing.Size(426, 21);
+            this.IDField.Size = new System.Drawing.Size(426, 20);
             this.IDField.TabIndex = 4;
             this.IDField.Validating += new System.ComponentModel.CancelEventHandler(this.IDField_Validating);
             // 
@@ -648,7 +762,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.NameField, 2);
             this.NameField.Location = new System.Drawing.Point(100, 75);
             this.NameField.Name = "NameField";
-            this.NameField.Size = new System.Drawing.Size(426, 21);
+            this.NameField.Size = new System.Drawing.Size(426, 20);
             this.NameField.TabIndex = 6;
             // 
             // CopyrightLabel
@@ -657,7 +771,7 @@
             this.CopyrightLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.CopyrightLabel.Location = new System.Drawing.Point(23, 194);
             this.CopyrightLabel.Name = "CopyrightLabel";
-            this.CopyrightLabel.Size = new System.Drawing.Size(54, 13);
+            this.CopyrightLabel.Size = new System.Drawing.Size(51, 13);
             this.CopyrightLabel.TabIndex = 11;
             this.CopyrightLabel.Text = "Copyright";
             // 
@@ -677,7 +791,7 @@
             this.NameLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.NameLabel.Location = new System.Drawing.Point(23, 78);
             this.NameLabel.Name = "NameLabel";
-            this.NameLabel.Size = new System.Drawing.Size(34, 13);
+            this.NameLabel.Size = new System.Drawing.Size(35, 13);
             this.NameLabel.TabIndex = 5;
             this.NameLabel.Text = "Name";
             // 
@@ -701,7 +815,7 @@
             this.VersionPanel25.Controls.Add(this.VersionLabelField);
             this.VersionPanel25.Location = new System.Drawing.Point(6, 217);
             this.VersionPanel25.Name = "VersionPanel25";
-            this.VersionPanel25.Size = new System.Drawing.Size(523, 47);
+            this.VersionPanel25.Size = new System.Drawing.Size(523, 46);
             this.VersionPanel25.TabIndex = 17;
             // 
             // VersionNoLabel
@@ -720,7 +834,7 @@
             this.VersionNoField.Location = new System.Drawing.Point(94, 26);
             this.VersionNoField.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.VersionNoField.Name = "VersionNoField";
-            this.VersionNoField.Size = new System.Drawing.Size(104, 21);
+            this.VersionNoField.Size = new System.Drawing.Size(104, 20);
             this.VersionNoField.TabIndex = 12;
             this.VersionNoField.Validating += new System.ComponentModel.CancelEventHandler(this.VersionNoField_Validating);
             // 
@@ -730,7 +844,7 @@
             this.VersionLabelLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.VersionLabelLabel.Location = new System.Drawing.Point(17, 3);
             this.VersionLabelLabel.Name = "VersionLabelLabel";
-            this.VersionLabelLabel.Size = new System.Drawing.Size(70, 13);
+            this.VersionLabelLabel.Size = new System.Drawing.Size(71, 13);
             this.VersionLabelLabel.TabIndex = 9;
             this.VersionLabelLabel.Text = "Version Label";
             // 
@@ -740,27 +854,8 @@
             this.VersionLabelField.Location = new System.Drawing.Point(94, 0);
             this.VersionLabelField.MaxLength = 212;
             this.VersionLabelField.Name = "VersionLabelField";
-            this.VersionLabelField.Size = new System.Drawing.Size(426, 21);
+            this.VersionLabelField.Size = new System.Drawing.Size(426, 20);
             this.VersionLabelField.TabIndex = 10;
-            // 
-            // SupportedLanguagesLabel
-            // 
-            this.SupportedLanguagesLabel.AutoSize = true;
-            this.SupportedLanguagesLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.SupportedLanguagesLabel.Location = new System.Drawing.Point(23, 272);
-            this.SupportedLanguagesLabel.Name = "SupportedLanguagesLabel";
-            this.SupportedLanguagesLabel.Size = new System.Drawing.Size(60, 13);
-            this.SupportedLanguagesLabel.TabIndex = 18;
-            this.SupportedLanguagesLabel.Text = "Languages";
-            // 
-            // SupportedLanguagesField
-            // 
-            this.ValidationErrorProvider.SetIconPadding(this.SupportedLanguagesField, 2);
-            this.SupportedLanguagesField.Location = new System.Drawing.Point(100, 269);
-            this.SupportedLanguagesField.MaxLength = 212;
-            this.SupportedLanguagesField.Name = "SupportedLanguagesField";
-            this.SupportedLanguagesField.Size = new System.Drawing.Size(391, 21);
-            this.SupportedLanguagesField.TabIndex = 19;
             // 
             // SupportedLanguagesButton
             // 
@@ -772,6 +867,25 @@
             this.SupportedLanguagesButton.Text = "...";
             this.SupportedLanguagesButton.UseVisualStyleBackColor = true;
             this.SupportedLanguagesButton.Click += new System.EventHandler(this.SupportedLanguagesButton_Click);
+            // 
+            // SupportedLanguagesField
+            // 
+            this.ValidationErrorProvider.SetIconPadding(this.SupportedLanguagesField, 2);
+            this.SupportedLanguagesField.Location = new System.Drawing.Point(100, 269);
+            this.SupportedLanguagesField.MaxLength = 212;
+            this.SupportedLanguagesField.Name = "SupportedLanguagesField";
+            this.SupportedLanguagesField.Size = new System.Drawing.Size(391, 20);
+            this.SupportedLanguagesField.TabIndex = 19;
+            // 
+            // SupportedLanguagesLabel
+            // 
+            this.SupportedLanguagesLabel.AutoSize = true;
+            this.SupportedLanguagesLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.SupportedLanguagesLabel.Location = new System.Drawing.Point(23, 272);
+            this.SupportedLanguagesLabel.Name = "SupportedLanguagesLabel";
+            this.SupportedLanguagesLabel.Size = new System.Drawing.Size(60, 13);
+            this.SupportedLanguagesLabel.TabIndex = 18;
+            this.SupportedLanguagesLabel.Text = "Languages";
             // 
             // InstallationTabPage
             // 
@@ -829,7 +943,7 @@
             this.ExtendedTvLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.ExtendedTvLabel.Location = new System.Drawing.Point(190, 44);
             this.ExtendedTvLabel.Name = "ExtendedTvLabel";
-            this.ExtendedTvLabel.Size = new System.Drawing.Size(68, 13);
+            this.ExtendedTvLabel.Size = new System.Drawing.Size(69, 13);
             this.ExtendedTvLabel.TabIndex = 6;
             this.ExtendedTvLabel.Text = "Extended TV";
             // 
@@ -849,7 +963,7 @@
             this.TvLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.TvLabel.Location = new System.Drawing.Point(190, 22);
             this.TvLabel.Name = "TvLabel";
-            this.TvLabel.Size = new System.Drawing.Size(19, 13);
+            this.TvLabel.Size = new System.Drawing.Size(21, 13);
             this.TvLabel.TabIndex = 2;
             this.TvLabel.Text = "TV";
             // 
@@ -869,7 +983,7 @@
             this.MobileDeviceLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.MobileDeviceLabel.Location = new System.Drawing.Point(7, 66);
             this.MobileDeviceLabel.Name = "MobileDeviceLabel";
-            this.MobileDeviceLabel.Size = new System.Drawing.Size(72, 13);
+            this.MobileDeviceLabel.Size = new System.Drawing.Size(75, 13);
             this.MobileDeviceLabel.TabIndex = 8;
             this.MobileDeviceLabel.Text = "Mobile Device";
             // 
@@ -909,7 +1023,7 @@
             this.DesktopLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.DesktopLabel.Location = new System.Drawing.Point(7, 22);
             this.DesktopLabel.Name = "DesktopLabel";
-            this.DesktopLabel.Size = new System.Drawing.Size(46, 13);
+            this.DesktopLabel.Size = new System.Drawing.Size(47, 13);
             this.DesktopLabel.TabIndex = 0;
             this.DesktopLabel.Text = "Desktop";
             // 
@@ -919,7 +1033,7 @@
             this.PublisherIdField.Location = new System.Drawing.Point(137, 126);
             this.PublisherIdField.MaxLength = 42;
             this.PublisherIdField.Name = "PublisherIdField";
-            this.PublisherIdField.Size = new System.Drawing.Size(389, 21);
+            this.PublisherIdField.Size = new System.Drawing.Size(389, 20);
             this.PublisherIdField.TabIndex = 9;
             this.PublisherIdField.Validating += new System.ComponentModel.CancelEventHandler(this.PublisherIDField_Validating);
             // 
@@ -938,7 +1052,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.MinimumPatchLevelField, 2);
             this.MinimumPatchLevelField.Location = new System.Drawing.Point(137, 22);
             this.MinimumPatchLevelField.Name = "MinimumPatchLevelField";
-            this.MinimumPatchLevelField.Size = new System.Drawing.Size(84, 21);
+            this.MinimumPatchLevelField.Size = new System.Drawing.Size(84, 20);
             this.MinimumPatchLevelField.TabIndex = 1;
             // 
             // MinPatchLevelLabel
@@ -948,7 +1062,7 @@
             this.MinPatchLevelLabel.Location = new System.Drawing.Point(23, 25);
             this.MinPatchLevelLabel.Name = "MinPatchLevelLabel";
             this.MinPatchLevelLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.MinPatchLevelLabel.Size = new System.Drawing.Size(105, 13);
+            this.MinPatchLevelLabel.Size = new System.Drawing.Size(108, 13);
             this.MinPatchLevelLabel.TabIndex = 0;
             this.MinPatchLevelLabel.Text = "Minimum Patch Level";
             // 
@@ -957,7 +1071,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.FileNameField, 2);
             this.FileNameField.Location = new System.Drawing.Point(137, 48);
             this.FileNameField.Name = "FileNameField";
-            this.FileNameField.Size = new System.Drawing.Size(389, 21);
+            this.FileNameField.Size = new System.Drawing.Size(389, 20);
             this.FileNameField.TabIndex = 3;
             this.FileNameField.Validating += new System.ComponentModel.CancelEventHandler(this.FileNameField_Validating);
             // 
@@ -967,7 +1081,7 @@
             this.FileNameLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileNameLabel.Location = new System.Drawing.Point(23, 52);
             this.FileNameLabel.Name = "FileNameLabel";
-            this.FileNameLabel.Size = new System.Drawing.Size(53, 13);
+            this.FileNameLabel.Size = new System.Drawing.Size(54, 13);
             this.FileNameLabel.TabIndex = 2;
             this.FileNameLabel.Text = "File Name";
             // 
@@ -976,7 +1090,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.ProgramMenuFolderField, 2);
             this.ProgramMenuFolderField.Location = new System.Drawing.Point(137, 100);
             this.ProgramMenuFolderField.Name = "ProgramMenuFolderField";
-            this.ProgramMenuFolderField.Size = new System.Drawing.Size(389, 21);
+            this.ProgramMenuFolderField.Size = new System.Drawing.Size(389, 20);
             this.ProgramMenuFolderField.TabIndex = 7;
             this.ProgramMenuFolderField.Validating += new System.ComponentModel.CancelEventHandler(this.ProgramMenuFolderField_Validating);
             // 
@@ -985,7 +1099,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.InstallFolderField, 2);
             this.InstallFolderField.Location = new System.Drawing.Point(137, 74);
             this.InstallFolderField.Name = "InstallFolderField";
-            this.InstallFolderField.Size = new System.Drawing.Size(389, 21);
+            this.InstallFolderField.Size = new System.Drawing.Size(389, 20);
             this.InstallFolderField.TabIndex = 5;
             this.InstallFolderField.Validating += new System.ComponentModel.CancelEventHandler(this.InstallFolderField_Validating);
             // 
@@ -995,7 +1109,7 @@
             this.ProgramMenuFolderLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.ProgramMenuFolderLabel.Location = new System.Drawing.Point(23, 106);
             this.ProgramMenuFolderLabel.Name = "ProgramMenuFolderLabel";
-            this.ProgramMenuFolderLabel.Size = new System.Drawing.Size(109, 13);
+            this.ProgramMenuFolderLabel.Size = new System.Drawing.Size(108, 13);
             this.ProgramMenuFolderLabel.TabIndex = 6;
             this.ProgramMenuFolderLabel.Text = "Program Menu Folder";
             // 
@@ -1005,7 +1119,7 @@
             this.InstallFolderLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.InstallFolderLabel.Location = new System.Drawing.Point(23, 79);
             this.InstallFolderLabel.Name = "InstallFolderLabel";
-            this.InstallFolderLabel.Size = new System.Drawing.Size(69, 13);
+            this.InstallFolderLabel.Size = new System.Drawing.Size(66, 13);
             this.InstallFolderLabel.TabIndex = 4;
             this.InstallFolderLabel.Text = "Install Folder";
             // 
@@ -1041,7 +1155,7 @@
             this.CustomUpdateUILabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.CustomUpdateUILabel.Location = new System.Drawing.Point(23, 25);
             this.CustomUpdateUILabel.Name = "CustomUpdateUILabel";
-            this.CustomUpdateUILabel.Size = new System.Drawing.Size(95, 13);
+            this.CustomUpdateUILabel.Size = new System.Drawing.Size(94, 13);
             this.CustomUpdateUILabel.TabIndex = 0;
             this.CustomUpdateUILabel.Text = "Custom Update UI";
             // 
@@ -1062,7 +1176,7 @@
             this.BrowersInvocationLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.BrowersInvocationLabel.Location = new System.Drawing.Point(202, 25);
             this.BrowersInvocationLabel.Name = "BrowersInvocationLabel";
-            this.BrowersInvocationLabel.Size = new System.Drawing.Size(128, 13);
+            this.BrowersInvocationLabel.Size = new System.Drawing.Size(126, 13);
             this.BrowersInvocationLabel.TabIndex = 2;
             this.BrowersInvocationLabel.Text = "Allow Browser Invocation";
             // 
@@ -1082,9 +1196,9 @@
             this.AppIconsPanel2.AutoScroll = true;
             this.AppIconsPanel2.Controls.Add(this.AppIconsPanel);
             this.AppIconsPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AppIconsPanel2.Location = new System.Drawing.Point(3, 20);
+            this.AppIconsPanel2.Location = new System.Drawing.Point(3, 19);
             this.AppIconsPanel2.Name = "AppIconsPanel2";
-            this.AppIconsPanel2.Size = new System.Drawing.Size(497, 222);
+            this.AppIconsPanel2.Size = new System.Drawing.Size(497, 223);
             this.AppIconsPanel2.TabIndex = 13;
             // 
             // AppIconsPanel
@@ -1098,7 +1212,17 @@
             this.AppIconsPanel.Location = new System.Drawing.Point(0, 0);
             this.AppIconsPanel.Name = "AppIconsPanel";
             this.AppIconsPanel.RowCount = 10;
-            this.AppIconsPanel.Size = new System.Drawing.Size(479, 263);
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.AppIconsPanel.Size = new System.Drawing.Size(497, 200);
             this.AppIconsPanel.TabIndex = 12;
             // 
             // InitialWindowTabPage
@@ -1126,6 +1250,8 @@
             // 
             // WindowedPlatformsTabPage
             // 
+            this.WindowedPlatformsTabPage.Controls.Add(this.DesktopResolutionCombo);
+            this.WindowedPlatformsTabPage.Controls.Add(this.DesktopResolutionLabel);
             this.WindowedPlatformsTabPage.Controls.Add(this.TitleField);
             this.WindowedPlatformsTabPage.Controls.Add(this.WindowBoundsGroupBox);
             this.WindowedPlatformsTabPage.Controls.Add(this.TitleLabel);
@@ -1149,11 +1275,30 @@
             this.WindowedPlatformsTabPage.Text = "Windowed Platforms";
             this.WindowedPlatformsTabPage.UseVisualStyleBackColor = true;
             // 
+            // DesktopResolutionCombo
+            // 
+            this.DesktopResolutionCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.DesktopResolutionCombo.FormattingEnabled = true;
+            this.DesktopResolutionCombo.Location = new System.Drawing.Point(387, 34);
+            this.DesktopResolutionCombo.Name = "DesktopResolutionCombo";
+            this.DesktopResolutionCombo.Size = new System.Drawing.Size(89, 21);
+            this.DesktopResolutionCombo.TabIndex = 18;
+            // 
+            // DesktopResolutionLabel
+            // 
+            this.DesktopResolutionLabel.AutoSize = true;
+            this.DesktopResolutionLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DesktopResolutionLabel.Location = new System.Drawing.Point(299, 37);
+            this.DesktopResolutionLabel.Name = "DesktopResolutionLabel";
+            this.DesktopResolutionLabel.Size = new System.Drawing.Size(57, 13);
+            this.DesktopResolutionLabel.TabIndex = 17;
+            this.DesktopResolutionLabel.Text = "Resolution";
+            // 
             // TitleField
             // 
             this.TitleField.Location = new System.Drawing.Point(92, 10);
             this.TitleField.Name = "TitleField";
-            this.TitleField.Size = new System.Drawing.Size(384, 21);
+            this.TitleField.Size = new System.Drawing.Size(384, 20);
             this.TitleField.TabIndex = 3;
             // 
             // WindowBoundsGroupBox
@@ -1188,7 +1333,7 @@
             this.MaximumSizeLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.MaximumSizeLabel.Location = new System.Drawing.Point(267, 49);
             this.MaximumSizeLabel.Name = "MaximumSizeLabel";
-            this.MaximumSizeLabel.Size = new System.Drawing.Size(73, 13);
+            this.MaximumSizeLabel.Size = new System.Drawing.Size(74, 13);
             this.MaximumSizeLabel.TabIndex = 34;
             this.MaximumSizeLabel.Text = "Maximum Size";
             // 
@@ -1198,7 +1343,7 @@
             this.MinimumSizeLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.MinimumSizeLabel.Location = new System.Drawing.Point(267, 22);
             this.MinimumSizeLabel.Name = "MinimumSizeLabel";
-            this.MinimumSizeLabel.Size = new System.Drawing.Size(69, 13);
+            this.MinimumSizeLabel.Size = new System.Drawing.Size(71, 13);
             this.MinimumSizeLabel.TabIndex = 33;
             this.MinimumSizeLabel.Text = "Minimum Size";
             // 
@@ -1208,7 +1353,7 @@
             this.X3Label.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.X3Label.Location = new System.Drawing.Point(403, 49);
             this.X3Label.Name = "X3Label";
-            this.X3Label.Size = new System.Drawing.Size(13, 13);
+            this.X3Label.Size = new System.Drawing.Size(12, 13);
             this.X3Label.TabIndex = 32;
             this.X3Label.Text = "x";
             // 
@@ -1217,7 +1362,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.MaxSizeYField, 2);
             this.MaxSizeYField.Location = new System.Drawing.Point(432, 46);
             this.MaxSizeYField.Name = "MaxSizeYField";
-            this.MaxSizeYField.Size = new System.Drawing.Size(38, 21);
+            this.MaxSizeYField.Size = new System.Drawing.Size(38, 20);
             this.MaxSizeYField.TabIndex = 31;
             this.MaxSizeYField.Validating += new System.ComponentModel.CancelEventHandler(this.MaxSizeYField_Validating);
             // 
@@ -1226,7 +1371,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.MaxSizeXField, 2);
             this.MaxSizeXField.Location = new System.Drawing.Point(346, 46);
             this.MaxSizeXField.Name = "MaxSizeXField";
-            this.MaxSizeXField.Size = new System.Drawing.Size(38, 21);
+            this.MaxSizeXField.Size = new System.Drawing.Size(38, 20);
             this.MaxSizeXField.TabIndex = 30;
             this.MaxSizeXField.Validating += new System.ComponentModel.CancelEventHandler(this.MaxSizeXField_Validating);
             // 
@@ -1236,7 +1381,7 @@
             this.X2Label.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.X2Label.Location = new System.Drawing.Point(403, 22);
             this.X2Label.Name = "X2Label";
-            this.X2Label.Size = new System.Drawing.Size(13, 13);
+            this.X2Label.Size = new System.Drawing.Size(12, 13);
             this.X2Label.TabIndex = 28;
             this.X2Label.Text = "x";
             // 
@@ -1245,7 +1390,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.MinSizeYField, 2);
             this.MinSizeYField.Location = new System.Drawing.Point(432, 19);
             this.MinSizeYField.Name = "MinSizeYField";
-            this.MinSizeYField.Size = new System.Drawing.Size(38, 21);
+            this.MinSizeYField.Size = new System.Drawing.Size(38, 20);
             this.MinSizeYField.TabIndex = 27;
             this.MinSizeYField.Validating += new System.ComponentModel.CancelEventHandler(this.MinSizeYField_Validating);
             // 
@@ -1254,7 +1399,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.MinSizeXField, 2);
             this.MinSizeXField.Location = new System.Drawing.Point(346, 19);
             this.MinSizeXField.Name = "MinSizeXField";
-            this.MinSizeXField.Size = new System.Drawing.Size(38, 21);
+            this.MinSizeXField.Size = new System.Drawing.Size(38, 20);
             this.MinSizeXField.TabIndex = 26;
             this.MinSizeXField.Validating += new System.ComponentModel.CancelEventHandler(this.MinSizeXField_Validating);
             // 
@@ -1264,7 +1409,7 @@
             this.X1Label.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.X1Label.Location = new System.Drawing.Point(156, 49);
             this.X1Label.Name = "X1Label";
-            this.X1Label.Size = new System.Drawing.Size(13, 13);
+            this.X1Label.Size = new System.Drawing.Size(12, 13);
             this.X1Label.TabIndex = 24;
             this.X1Label.Text = "x";
             // 
@@ -1273,7 +1418,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.HeightField, 2);
             this.HeightField.Location = new System.Drawing.Point(185, 46);
             this.HeightField.Name = "HeightField";
-            this.HeightField.Size = new System.Drawing.Size(38, 21);
+            this.HeightField.Size = new System.Drawing.Size(38, 20);
             this.HeightField.TabIndex = 23;
             this.HeightField.Validating += new System.ComponentModel.CancelEventHandler(this.HeightField_Validating);
             // 
@@ -1282,7 +1427,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.WidthField, 2);
             this.WidthField.Location = new System.Drawing.Point(99, 46);
             this.WidthField.Name = "WidthField";
-            this.WidthField.Size = new System.Drawing.Size(38, 21);
+            this.WidthField.Size = new System.Drawing.Size(38, 20);
             this.WidthField.TabIndex = 22;
             this.WidthField.Validating += new System.ComponentModel.CancelEventHandler(this.WidthField_Validating);
             // 
@@ -1292,7 +1437,7 @@
             this.YLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.YLabel.Location = new System.Drawing.Point(223, 22);
             this.YLabel.Name = "YLabel";
-            this.YLabel.Size = new System.Drawing.Size(21, 13);
+            this.YLabel.Size = new System.Drawing.Size(18, 13);
             this.YLabel.TabIndex = 21;
             this.YLabel.Text = "(y)";
             // 
@@ -1302,7 +1447,7 @@
             this.XLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.XLabel.Location = new System.Drawing.Point(137, 22);
             this.XLabel.Name = "XLabel";
-            this.XLabel.Size = new System.Drawing.Size(21, 13);
+            this.XLabel.Size = new System.Drawing.Size(18, 13);
             this.XLabel.TabIndex = 20;
             this.XLabel.Text = "(x)";
             // 
@@ -1311,7 +1456,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.YField, 20);
             this.YField.Location = new System.Drawing.Point(185, 19);
             this.YField.Name = "YField";
-            this.YField.Size = new System.Drawing.Size(38, 21);
+            this.YField.Size = new System.Drawing.Size(38, 20);
             this.YField.TabIndex = 19;
             this.YField.Validating += new System.ComponentModel.CancelEventHandler(this.YField_Validating);
             // 
@@ -1320,7 +1465,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.XField, 20);
             this.XField.Location = new System.Drawing.Point(99, 19);
             this.XField.Name = "XField";
-            this.XField.Size = new System.Drawing.Size(38, 21);
+            this.XField.Size = new System.Drawing.Size(38, 20);
             this.XField.TabIndex = 18;
             this.XField.Validating += new System.ComponentModel.CancelEventHandler(this.XField_Validating);
             // 
@@ -1330,7 +1475,7 @@
             this.InitialSizeLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.InitialSizeLabel.Location = new System.Drawing.Point(17, 49);
             this.InitialSizeLabel.Name = "InitialSizeLabel";
-            this.InitialSizeLabel.Size = new System.Drawing.Size(55, 13);
+            this.InitialSizeLabel.Size = new System.Drawing.Size(54, 13);
             this.InitialSizeLabel.TabIndex = 15;
             this.InitialSizeLabel.Text = "Initial Size";
             // 
@@ -1340,7 +1485,7 @@
             this.InitialLocationLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.InitialLocationLabel.Location = new System.Drawing.Point(17, 22);
             this.InitialLocationLabel.Name = "InitialLocationLabel";
-            this.InitialLocationLabel.Size = new System.Drawing.Size(76, 13);
+            this.InitialLocationLabel.Size = new System.Drawing.Size(75, 13);
             this.InitialLocationLabel.TabIndex = 13;
             this.InitialLocationLabel.Text = "Initial Location";
             // 
@@ -1360,7 +1505,7 @@
             this.ResizableLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.ResizableLabel.Location = new System.Drawing.Point(299, 63);
             this.ResizableLabel.Name = "ResizableLabel";
-            this.ResizableLabel.Size = new System.Drawing.Size(52, 13);
+            this.ResizableLabel.Size = new System.Drawing.Size(53, 13);
             this.ResizableLabel.TabIndex = 10;
             this.ResizableLabel.Text = "Resizable";
             // 
@@ -1391,7 +1536,7 @@
             this.SystemChromeLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.SystemChromeLabel.Location = new System.Drawing.Point(4, 37);
             this.SystemChromeLabel.Name = "SystemChromeLabel";
-            this.SystemChromeLabel.Size = new System.Drawing.Size(82, 13);
+            this.SystemChromeLabel.Size = new System.Drawing.Size(80, 13);
             this.SystemChromeLabel.TabIndex = 4;
             this.SystemChromeLabel.Text = "System Chrome";
             // 
@@ -1422,7 +1567,7 @@
             this.MinimizableLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.MinimizableLabel.Location = new System.Drawing.Point(4, 85);
             this.MinimizableLabel.Name = "MinimizableLabel";
-            this.MinimizableLabel.Size = new System.Drawing.Size(60, 13);
+            this.MinimizableLabel.Size = new System.Drawing.Size(61, 13);
             this.MinimizableLabel.TabIndex = 12;
             this.MinimizableLabel.Text = "Minimizable";
             // 
@@ -1432,7 +1577,7 @@
             this.TransparentLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.TransparentLabel.Location = new System.Drawing.Point(158, 63);
             this.TransparentLabel.Name = "TransparentLabel";
-            this.TransparentLabel.Size = new System.Drawing.Size(66, 13);
+            this.TransparentLabel.Size = new System.Drawing.Size(64, 13);
             this.TransparentLabel.TabIndex = 8;
             this.TransparentLabel.Text = "Transparent";
             // 
@@ -1475,12 +1620,14 @@
             this.VisibleLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.VisibleLabel.Location = new System.Drawing.Point(4, 63);
             this.VisibleLabel.Name = "VisibleLabel";
-            this.VisibleLabel.Size = new System.Drawing.Size(36, 13);
+            this.VisibleLabel.Size = new System.Drawing.Size(37, 13);
             this.VisibleLabel.TabIndex = 6;
             this.VisibleLabel.Text = "Visible";
             // 
             // NonWindowedPlatformsTabPage
             // 
+            this.NonWindowedPlatformsTabPage.Controls.Add(this.DepthStencilLabel);
+            this.NonWindowedPlatformsTabPage.Controls.Add(this.DepthStencilField);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.RenderModeLabel);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.RenderModeField);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.ApectRatioLabel);
@@ -1489,6 +1636,8 @@
             this.NonWindowedPlatformsTabPage.Controls.Add(this.AutoOrientsLabel);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.FullScreenField);
             this.NonWindowedPlatformsTabPage.Controls.Add(this.AutoOrientsField);
+            this.NonWindowedPlatformsTabPage.Controls.Add(this.SoftKeyboardLabel);
+            this.NonWindowedPlatformsTabPage.Controls.Add(this.SoftKeyboardField);
             this.NonWindowedPlatformsTabPage.Location = new System.Drawing.Point(4, 22);
             this.NonWindowedPlatformsTabPage.Name = "NonWindowedPlatformsTabPage";
             this.NonWindowedPlatformsTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -1503,7 +1652,7 @@
             this.RenderModeLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.RenderModeLabel.Location = new System.Drawing.Point(4, 38);
             this.RenderModeLabel.Name = "RenderModeLabel";
-            this.RenderModeLabel.Size = new System.Drawing.Size(71, 13);
+            this.RenderModeLabel.Size = new System.Drawing.Size(72, 13);
             this.RenderModeLabel.TabIndex = 2;
             this.RenderModeLabel.Text = "Render Mode";
             // 
@@ -1511,11 +1660,12 @@
             // 
             this.RenderModeField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RenderModeField.FormattingEnabled = true;
-            this.RenderModeField.Location = new System.Drawing.Point(82, 35);
+            this.RenderModeField.Location = new System.Drawing.Point(84, 35);
             this.RenderModeField.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.RenderModeField.Name = "RenderModeField";
             this.RenderModeField.Size = new System.Drawing.Size(98, 21);
             this.RenderModeField.TabIndex = 3;
+            this.RenderModeField.SelectedIndexChanged += new System.EventHandler(this.RenderModeField_SelectedIndexChanged);
             // 
             // ApectRatioLabel
             // 
@@ -1531,17 +1681,17 @@
             // 
             this.FullscreenLabel.AutoSize = true;
             this.FullscreenLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.FullscreenLabel.Location = new System.Drawing.Point(4, 86);
+            this.FullscreenLabel.Location = new System.Drawing.Point(4, 110);
             this.FullscreenLabel.Name = "FullscreenLabel";
             this.FullscreenLabel.Size = new System.Drawing.Size(55, 13);
-            this.FullscreenLabel.TabIndex = 6;
+            this.FullscreenLabel.TabIndex = 8;
             this.FullscreenLabel.Text = "Fullscreen";
             // 
             // AspectRatioField
             // 
             this.AspectRatioField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AspectRatioField.FormattingEnabled = true;
-            this.AspectRatioField.Location = new System.Drawing.Point(82, 10);
+            this.AspectRatioField.Location = new System.Drawing.Point(84, 10);
             this.AspectRatioField.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.AspectRatioField.Name = "AspectRatioField";
             this.AspectRatioField.Size = new System.Drawing.Size(98, 21);
@@ -1551,20 +1701,20 @@
             // 
             this.AutoOrientsLabel.AutoSize = true;
             this.AutoOrientsLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.AutoOrientsLabel.Location = new System.Drawing.Point(4, 64);
+            this.AutoOrientsLabel.Location = new System.Drawing.Point(4, 88);
             this.AutoOrientsLabel.Name = "AutoOrientsLabel";
-            this.AutoOrientsLabel.Size = new System.Drawing.Size(68, 13);
-            this.AutoOrientsLabel.TabIndex = 4;
+            this.AutoOrientsLabel.Size = new System.Drawing.Size(65, 13);
+            this.AutoOrientsLabel.TabIndex = 6;
             this.AutoOrientsLabel.Text = "Auto Orients";
             // 
             // FullScreenField
             // 
             this.FullScreenField.AutoSize = true;
             this.FullScreenField.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.FullScreenField.Location = new System.Drawing.Point(82, 86);
+            this.FullScreenField.Location = new System.Drawing.Point(84, 110);
             this.FullScreenField.Name = "FullScreenField";
             this.FullScreenField.Size = new System.Drawing.Size(15, 14);
-            this.FullScreenField.TabIndex = 7;
+            this.FullScreenField.TabIndex = 9;
             this.FullScreenField.ThreeState = true;
             this.FullScreenField.UseVisualStyleBackColor = true;
             // 
@@ -1572,10 +1722,10 @@
             // 
             this.AutoOrientsField.AutoSize = true;
             this.AutoOrientsField.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.AutoOrientsField.Location = new System.Drawing.Point(82, 64);
+            this.AutoOrientsField.Location = new System.Drawing.Point(84, 88);
             this.AutoOrientsField.Name = "AutoOrientsField";
             this.AutoOrientsField.Size = new System.Drawing.Size(15, 14);
-            this.AutoOrientsField.TabIndex = 5;
+            this.AutoOrientsField.TabIndex = 7;
             this.AutoOrientsField.ThreeState = true;
             this.AutoOrientsField.UseVisualStyleBackColor = true;
             // 
@@ -1584,7 +1734,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.ContentField, 2);
             this.ContentField.Location = new System.Drawing.Point(73, 22);
             this.ContentField.Name = "ContentField";
-            this.ContentField.Size = new System.Drawing.Size(448, 21);
+            this.ContentField.Size = new System.Drawing.Size(448, 20);
             this.ContentField.TabIndex = 1;
             this.ContentField.Validating += new System.ComponentModel.CancelEventHandler(this.ContentField_Validating);
             // 
@@ -1594,7 +1744,7 @@
             this.ContentLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.ContentLabel.Location = new System.Drawing.Point(23, 25);
             this.ContentLabel.Name = "ContentLabel";
-            this.ContentLabel.Size = new System.Drawing.Size(46, 13);
+            this.ContentLabel.Size = new System.Drawing.Size(44, 13);
             this.ContentLabel.TabIndex = 0;
             this.ContentLabel.Text = "Content";
             // 
@@ -1650,8 +1800,8 @@
             this.FileTypesListView.TabIndex = 0;
             this.FileTypesListView.UseCompatibleStateImageBehavior = false;
             this.FileTypesListView.View = System.Windows.Forms.View.Details;
-            this.FileTypesListView.Validating += new System.ComponentModel.CancelEventHandler(this.FileTypesListView_Validating);
             this.FileTypesListView.SelectedIndexChanged += new System.EventHandler(this.FileTypesListView_SelectedIndexChanged);
+            this.FileTypesListView.Validating += new System.ComponentModel.CancelEventHandler(this.FileTypesListView_Validating);
             // 
             // FileTypeNameColumnHeader
             // 
@@ -1697,7 +1847,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.FileTypeContentTypeField, 2);
             this.FileTypeContentTypeField.Location = new System.Drawing.Point(90, 95);
             this.FileTypeContentTypeField.Name = "FileTypeContentTypeField";
-            this.FileTypeContentTypeField.Size = new System.Drawing.Size(389, 21);
+            this.FileTypeContentTypeField.Size = new System.Drawing.Size(389, 20);
             this.FileTypeContentTypeField.TabIndex = 7;
             this.FileTypeContentTypeField.Validating += new System.ComponentModel.CancelEventHandler(this.FileTypeContentTypeField_Validating);
             // 
@@ -1708,7 +1858,7 @@
             this.FTContentTypeLabel.Location = new System.Drawing.Point(11, 99);
             this.FTContentTypeLabel.Name = "FTContentTypeLabel";
             this.FTContentTypeLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.FTContentTypeLabel.Size = new System.Drawing.Size(73, 13);
+            this.FTContentTypeLabel.Size = new System.Drawing.Size(71, 13);
             this.FTContentTypeLabel.TabIndex = 6;
             this.FTContentTypeLabel.Text = "Content Type";
             // 
@@ -1717,7 +1867,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.FileTypeNameField, 2);
             this.FileTypeNameField.Location = new System.Drawing.Point(90, 14);
             this.FileTypeNameField.Name = "FileTypeNameField";
-            this.FileTypeNameField.Size = new System.Drawing.Size(389, 21);
+            this.FileTypeNameField.Size = new System.Drawing.Size(389, 20);
             this.FileTypeNameField.TabIndex = 1;
             this.FileTypeNameField.Validating += new System.ComponentModel.CancelEventHandler(this.FileTypeNameField_Validating);
             // 
@@ -1727,7 +1877,7 @@
             this.FTNameLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FTNameLabel.Location = new System.Drawing.Point(12, 17);
             this.FTNameLabel.Name = "FTNameLabel";
-            this.FTNameLabel.Size = new System.Drawing.Size(34, 13);
+            this.FTNameLabel.Size = new System.Drawing.Size(35, 13);
             this.FTNameLabel.TabIndex = 0;
             this.FTNameLabel.Text = "Name";
             // 
@@ -1736,7 +1886,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.FileTypeDescriptionField, 2);
             this.FileTypeDescriptionField.Location = new System.Drawing.Point(90, 68);
             this.FileTypeDescriptionField.Name = "FileTypeDescriptionField";
-            this.FileTypeDescriptionField.Size = new System.Drawing.Size(389, 21);
+            this.FileTypeDescriptionField.Size = new System.Drawing.Size(389, 20);
             this.FileTypeDescriptionField.TabIndex = 5;
             this.FileTypeDescriptionField.Validating += new System.ComponentModel.CancelEventHandler(this.FileTypeDescriptionField_Validating);
             // 
@@ -1745,7 +1895,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.FileTypeExtensionField, 2);
             this.FileTypeExtensionField.Location = new System.Drawing.Point(90, 41);
             this.FileTypeExtensionField.Name = "FileTypeExtensionField";
-            this.FileTypeExtensionField.Size = new System.Drawing.Size(72, 21);
+            this.FileTypeExtensionField.Size = new System.Drawing.Size(72, 20);
             this.FileTypeExtensionField.TabIndex = 3;
             this.FileTypeExtensionField.Validating += new System.ComponentModel.CancelEventHandler(this.FileTypeExtensionField_Validating);
             // 
@@ -1766,7 +1916,7 @@
             this.FTExtensionLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FTExtensionLabel.Location = new System.Drawing.Point(12, 44);
             this.FTExtensionLabel.Name = "FTExtensionLabel";
-            this.FTExtensionLabel.Size = new System.Drawing.Size(54, 13);
+            this.FTExtensionLabel.Size = new System.Drawing.Size(53, 13);
             this.FTExtensionLabel.TabIndex = 2;
             this.FTExtensionLabel.Text = "Extension";
             // 
@@ -1826,7 +1976,7 @@
             this.FileTypeIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.FileTypeIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.FileTypeIconsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.FileTypeIconsPanel.Size = new System.Drawing.Size(481, 211);
+            this.FileTypeIconsPanel.Size = new System.Drawing.Size(482, 211);
             this.FileTypeIconsPanel.TabIndex = 24;
             // 
             // FileTypeIconLabel16
@@ -1836,7 +1986,7 @@
             this.FileTypeIconLabel16.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileTypeIconLabel16.Location = new System.Drawing.Point(3, 6);
             this.FileTypeIconLabel16.Name = "FileTypeIconLabel16";
-            this.FileTypeIconLabel16.Size = new System.Drawing.Size(43, 13);
+            this.FileTypeIconLabel16.Size = new System.Drawing.Size(42, 13);
             this.FileTypeIconLabel16.TabIndex = 0;
             this.FileTypeIconLabel16.Text = "16 x 16";
             // 
@@ -1846,7 +1996,7 @@
             this.FileTypeIconField16.Location = new System.Drawing.Point(74, 3);
             this.FileTypeIconField16.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.FileTypeIconField16.Name = "FileTypeIconField16";
-            this.FileTypeIconField16.Size = new System.Drawing.Size(343, 21);
+            this.FileTypeIconField16.Size = new System.Drawing.Size(343, 20);
             this.FileTypeIconField16.TabIndex = 1;
             this.FileTypeIconField16.Validating += new System.ComponentModel.CancelEventHandler(this.ValidateFileTypeIconField);
             // 
@@ -1869,7 +2019,7 @@
             this.FileTypeIconLabel29.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileTypeIconLabel29.Location = new System.Drawing.Point(3, 32);
             this.FileTypeIconLabel29.Name = "FileTypeIconLabel29";
-            this.FileTypeIconLabel29.Size = new System.Drawing.Size(43, 13);
+            this.FileTypeIconLabel29.Size = new System.Drawing.Size(42, 13);
             this.FileTypeIconLabel29.TabIndex = 3;
             this.FileTypeIconLabel29.Text = "29 x 29";
             // 
@@ -1879,7 +2029,7 @@
             this.FileTypeIconField29.Location = new System.Drawing.Point(74, 29);
             this.FileTypeIconField29.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.FileTypeIconField29.Name = "FileTypeIconField29";
-            this.FileTypeIconField29.Size = new System.Drawing.Size(343, 21);
+            this.FileTypeIconField29.Size = new System.Drawing.Size(343, 20);
             this.FileTypeIconField29.TabIndex = 4;
             this.FileTypeIconField29.Validating += new System.ComponentModel.CancelEventHandler(this.ValidateFileTypeIconField);
             // 
@@ -1902,7 +2052,7 @@
             this.FileTypeIconLabel32.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileTypeIconLabel32.Location = new System.Drawing.Point(3, 58);
             this.FileTypeIconLabel32.Name = "FileTypeIconLabel32";
-            this.FileTypeIconLabel32.Size = new System.Drawing.Size(43, 13);
+            this.FileTypeIconLabel32.Size = new System.Drawing.Size(42, 13);
             this.FileTypeIconLabel32.TabIndex = 6;
             this.FileTypeIconLabel32.Text = "32 x 32";
             // 
@@ -1912,7 +2062,7 @@
             this.FileTypeIconField32.Location = new System.Drawing.Point(74, 55);
             this.FileTypeIconField32.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.FileTypeIconField32.Name = "FileTypeIconField32";
-            this.FileTypeIconField32.Size = new System.Drawing.Size(343, 21);
+            this.FileTypeIconField32.Size = new System.Drawing.Size(343, 20);
             this.FileTypeIconField32.TabIndex = 7;
             this.FileTypeIconField32.Validating += new System.ComponentModel.CancelEventHandler(this.ValidateFileTypeIconField);
             // 
@@ -1935,7 +2085,7 @@
             this.FileTypeIconLabel36.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileTypeIconLabel36.Location = new System.Drawing.Point(3, 84);
             this.FileTypeIconLabel36.Name = "FileTypeIconLabel36";
-            this.FileTypeIconLabel36.Size = new System.Drawing.Size(43, 13);
+            this.FileTypeIconLabel36.Size = new System.Drawing.Size(42, 13);
             this.FileTypeIconLabel36.TabIndex = 9;
             this.FileTypeIconLabel36.Text = "36 x 36";
             // 
@@ -1945,7 +2095,7 @@
             this.FileTypeIconField36.Location = new System.Drawing.Point(74, 81);
             this.FileTypeIconField36.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.FileTypeIconField36.Name = "FileTypeIconField36";
-            this.FileTypeIconField36.Size = new System.Drawing.Size(343, 21);
+            this.FileTypeIconField36.Size = new System.Drawing.Size(343, 20);
             this.FileTypeIconField36.TabIndex = 10;
             this.FileTypeIconField36.Validating += new System.ComponentModel.CancelEventHandler(this.ValidateFileTypeIconField);
             // 
@@ -1968,7 +2118,7 @@
             this.FileTypeIconLabel48.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileTypeIconLabel48.Location = new System.Drawing.Point(3, 110);
             this.FileTypeIconLabel48.Name = "FileTypeIconLabel48";
-            this.FileTypeIconLabel48.Size = new System.Drawing.Size(43, 13);
+            this.FileTypeIconLabel48.Size = new System.Drawing.Size(42, 13);
             this.FileTypeIconLabel48.TabIndex = 12;
             this.FileTypeIconLabel48.Text = "48 x 48";
             // 
@@ -1978,7 +2128,7 @@
             this.FileTypeIconField48.Location = new System.Drawing.Point(74, 107);
             this.FileTypeIconField48.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.FileTypeIconField48.Name = "FileTypeIconField48";
-            this.FileTypeIconField48.Size = new System.Drawing.Size(343, 21);
+            this.FileTypeIconField48.Size = new System.Drawing.Size(343, 20);
             this.FileTypeIconField48.TabIndex = 13;
             this.FileTypeIconField48.Validating += new System.ComponentModel.CancelEventHandler(this.ValidateFileTypeIconField);
             // 
@@ -2001,7 +2151,7 @@
             this.FileTypeIconLabel72.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileTypeIconLabel72.Location = new System.Drawing.Point(3, 136);
             this.FileTypeIconLabel72.Name = "FileTypeIconLabel72";
-            this.FileTypeIconLabel72.Size = new System.Drawing.Size(43, 13);
+            this.FileTypeIconLabel72.Size = new System.Drawing.Size(42, 13);
             this.FileTypeIconLabel72.TabIndex = 15;
             this.FileTypeIconLabel72.Text = "72 x 72";
             // 
@@ -2011,7 +2161,7 @@
             this.FileTypeIconField72.Location = new System.Drawing.Point(74, 133);
             this.FileTypeIconField72.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.FileTypeIconField72.Name = "FileTypeIconField72";
-            this.FileTypeIconField72.Size = new System.Drawing.Size(343, 21);
+            this.FileTypeIconField72.Size = new System.Drawing.Size(343, 20);
             this.FileTypeIconField72.TabIndex = 16;
             this.FileTypeIconField72.Validating += new System.ComponentModel.CancelEventHandler(this.ValidateFileTypeIconField);
             // 
@@ -2034,7 +2184,7 @@
             this.FileTypeIconLabel128.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileTypeIconLabel128.Location = new System.Drawing.Point(3, 162);
             this.FileTypeIconLabel128.Name = "FileTypeIconLabel128";
-            this.FileTypeIconLabel128.Size = new System.Drawing.Size(55, 13);
+            this.FileTypeIconLabel128.Size = new System.Drawing.Size(54, 13);
             this.FileTypeIconLabel128.TabIndex = 18;
             this.FileTypeIconLabel128.Text = "128 x 128";
             // 
@@ -2044,7 +2194,7 @@
             this.FileTypeIconField128.Location = new System.Drawing.Point(74, 159);
             this.FileTypeIconField128.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.FileTypeIconField128.Name = "FileTypeIconField128";
-            this.FileTypeIconField128.Size = new System.Drawing.Size(343, 21);
+            this.FileTypeIconField128.Size = new System.Drawing.Size(343, 20);
             this.FileTypeIconField128.TabIndex = 19;
             this.FileTypeIconField128.Validating += new System.ComponentModel.CancelEventHandler(this.ValidateFileTypeIconField);
             // 
@@ -2067,7 +2217,7 @@
             this.FileTypeIconLabel512.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.FileTypeIconLabel512.Location = new System.Drawing.Point(3, 190);
             this.FileTypeIconLabel512.Name = "FileTypeIconLabel512";
-            this.FileTypeIconLabel512.Size = new System.Drawing.Size(55, 13);
+            this.FileTypeIconLabel512.Size = new System.Drawing.Size(54, 13);
             this.FileTypeIconLabel512.TabIndex = 21;
             this.FileTypeIconLabel512.Text = "512 x 512";
             // 
@@ -2076,7 +2226,7 @@
             this.ValidationErrorProvider.SetIconPadding(this.FileTypeIconField512, 36);
             this.FileTypeIconField512.Location = new System.Drawing.Point(74, 185);
             this.FileTypeIconField512.Name = "FileTypeIconField512";
-            this.FileTypeIconField512.Size = new System.Drawing.Size(343, 21);
+            this.FileTypeIconField512.Size = new System.Drawing.Size(343, 20);
             this.FileTypeIconField512.TabIndex = 22;
             this.FileTypeIconField512.Validating += new System.ComponentModel.CancelEventHandler(this.ValidateFileTypeIconField);
             // 
@@ -2093,6 +2243,7 @@
             // 
             // ExtensionsTabPage
             // 
+            this.ExtensionsTabPage.Controls.Add(this.ExtensionBrowseButton);
             this.ExtensionsTabPage.Controls.Add(this.ExtensionIdField);
             this.ExtensionsTabPage.Controls.Add(this.ExtensionIdLabel);
             this.ExtensionsTabPage.Controls.Add(this.ExtensionRemoveButton);
@@ -2106,14 +2257,25 @@
             this.ExtensionsTabPage.Text = "Extensions";
             this.ExtensionsTabPage.UseVisualStyleBackColor = true;
             // 
+            // ExtensionBrowseButton
+            // 
+            this.ExtensionBrowseButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.ExtensionBrowseButton.Location = new System.Drawing.Point(456, 35);
+            this.ExtensionBrowseButton.Name = "ExtensionBrowseButton";
+            this.ExtensionBrowseButton.Size = new System.Drawing.Size(75, 23);
+            this.ExtensionBrowseButton.TabIndex = 1;
+            this.ExtensionBrowseButton.Text = "Browse";
+            this.ExtensionBrowseButton.UseVisualStyleBackColor = true;
+            this.ExtensionBrowseButton.Click += new System.EventHandler(this.ExtensionBrowseButton_Click);
+            // 
             // ExtensionIdField
             // 
             this.ValidationErrorProvider.SetIconPadding(this.ExtensionIdField, 2);
             this.ExtensionIdField.Location = new System.Drawing.Point(88, 145);
             this.ExtensionIdField.MaxLength = 212;
             this.ExtensionIdField.Name = "ExtensionIdField";
-            this.ExtensionIdField.Size = new System.Drawing.Size(352, 21);
-            this.ExtensionIdField.TabIndex = 7;
+            this.ExtensionIdField.Size = new System.Drawing.Size(352, 20);
+            this.ExtensionIdField.TabIndex = 5;
             this.ExtensionIdField.Validating += new System.ComponentModel.CancelEventHandler(this.ExtensionIdField_Validating);
             // 
             // ExtensionIdLabel
@@ -2122,27 +2284,27 @@
             this.ExtensionIdLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.ExtensionIdLabel.Location = new System.Drawing.Point(15, 148);
             this.ExtensionIdLabel.Name = "ExtensionIdLabel";
-            this.ExtensionIdLabel.Size = new System.Drawing.Size(68, 13);
-            this.ExtensionIdLabel.TabIndex = 6;
+            this.ExtensionIdLabel.Size = new System.Drawing.Size(67, 13);
+            this.ExtensionIdLabel.TabIndex = 4;
             this.ExtensionIdLabel.Text = "Extension ID";
             // 
             // ExtensionRemoveButton
             // 
             this.ExtensionRemoveButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.ExtensionRemoveButton.Location = new System.Drawing.Point(456, 73);
+            this.ExtensionRemoveButton.Location = new System.Drawing.Point(456, 93);
             this.ExtensionRemoveButton.Name = "ExtensionRemoveButton";
             this.ExtensionRemoveButton.Size = new System.Drawing.Size(75, 23);
-            this.ExtensionRemoveButton.TabIndex = 5;
+            this.ExtensionRemoveButton.TabIndex = 3;
             this.ExtensionRemoveButton.Text = "Remove";
             this.ExtensionRemoveButton.Click += new System.EventHandler(this.ExtensionRemoveButton_Click);
             // 
             // ExtensionAddButton
             // 
             this.ExtensionAddButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.ExtensionAddButton.Location = new System.Drawing.Point(456, 44);
+            this.ExtensionAddButton.Location = new System.Drawing.Point(456, 64);
             this.ExtensionAddButton.Name = "ExtensionAddButton";
             this.ExtensionAddButton.Size = new System.Drawing.Size(75, 23);
-            this.ExtensionAddButton.TabIndex = 4;
+            this.ExtensionAddButton.TabIndex = 2;
             this.ExtensionAddButton.Text = "New";
             this.ExtensionAddButton.UseVisualStyleBackColor = true;
             this.ExtensionAddButton.Click += new System.EventHandler(this.ExtensionAddButton_Click);
@@ -2160,11 +2322,11 @@
             this.ExtensionsListView.Name = "ExtensionsListView";
             this.ExtensionsListView.ShowItemToolTips = true;
             this.ExtensionsListView.Size = new System.Drawing.Size(422, 115);
-            this.ExtensionsListView.TabIndex = 3;
+            this.ExtensionsListView.TabIndex = 0;
             this.ExtensionsListView.UseCompatibleStateImageBehavior = false;
             this.ExtensionsListView.View = System.Windows.Forms.View.Details;
-            this.ExtensionsListView.Validating += new System.ComponentModel.CancelEventHandler(this.ExtensionsListView_Validating);
             this.ExtensionsListView.SelectedIndexChanged += new System.EventHandler(this.ExtensionsListView_SelectedIndexChanged);
+            this.ExtensionsListView.Validating += new System.ComponentModel.CancelEventHandler(this.ExtensionsListView_Validating);
             // 
             // ExtensionsColumnHeader
             // 
@@ -2194,88 +2356,441 @@
             // 
             // AndroidManifestAdditionsTabPage
             // 
-            this.AndroidManifestAdditionsTabPage.Controls.Add(this.AndroidManifestAdditionsField);
-            this.AndroidManifestAdditionsTabPage.Controls.Add(this.AndroidManifestAdditionsCDataLabel2);
-            this.AndroidManifestAdditionsTabPage.Controls.Add(this.AndroidManifestAdditionsCDataLabel);
-            this.AndroidManifestAdditionsTabPage.Font = new System.Drawing.Font("Courier New", 9F);
+            this.AndroidManifestAdditionsTabPage.Controls.Add(this.AndroidManifestAdditionsButton);
+            this.AndroidManifestAdditionsTabPage.Controls.Add(this.AndroidBasicSettingsPanel);
+            this.AndroidManifestAdditionsTabPage.Controls.Add(this.AndroidAdvancedSettingsPanel);
             this.AndroidManifestAdditionsTabPage.Location = new System.Drawing.Point(4, 22);
             this.AndroidManifestAdditionsTabPage.Name = "AndroidManifestAdditionsTabPage";
             this.AndroidManifestAdditionsTabPage.Padding = new System.Windows.Forms.Padding(3);
             this.AndroidManifestAdditionsTabPage.Size = new System.Drawing.Size(505, 251);
             this.AndroidManifestAdditionsTabPage.TabIndex = 0;
-            this.AndroidManifestAdditionsTabPage.Text = "Android Manifest Additions";
+            this.AndroidManifestAdditionsTabPage.Text = "Android";
             this.AndroidManifestAdditionsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // AndroidManifestAdditionsButton
+            // 
+            this.AndroidManifestAdditionsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AndroidManifestAdditionsButton.Location = new System.Drawing.Point(391, 225);
+            this.AndroidManifestAdditionsButton.Name = "AndroidManifestAdditionsButton";
+            this.AndroidManifestAdditionsButton.Size = new System.Drawing.Size(99, 23);
+            this.AndroidManifestAdditionsButton.TabIndex = 1;
+            this.AndroidManifestAdditionsButton.Text = "Advanced >>";
+            this.AndroidManifestAdditionsButton.UseVisualStyleBackColor = true;
+            this.AndroidManifestAdditionsButton.Click += new System.EventHandler(this.AndroidManifestAdditionsButton_Click);
+            // 
+            // AndroidBasicSettingsPanel
+            // 
+            this.AndroidBasicSettingsPanel.Controls.Add(this.MinimumAndroidOsLabel);
+            this.AndroidBasicSettingsPanel.Controls.Add(this.MinimumAndroidOsField);
+            this.AndroidBasicSettingsPanel.Controls.Add(this.AndroidColorDepthLabel);
+            this.AndroidBasicSettingsPanel.Controls.Add(this.AndroidColorDepthCombo);
+            this.AndroidBasicSettingsPanel.Controls.Add(this.AndroidPermissionsLabel);
+            this.AndroidBasicSettingsPanel.Controls.Add(this.AndroidUserPermissionsList);
+            this.AndroidBasicSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AndroidBasicSettingsPanel.Location = new System.Drawing.Point(3, 3);
+            this.AndroidBasicSettingsPanel.Name = "AndroidBasicSettingsPanel";
+            this.AndroidBasicSettingsPanel.Size = new System.Drawing.Size(499, 245);
+            this.AndroidBasicSettingsPanel.TabIndex = 0;
+            // 
+            // AndroidColorDepthLabel
+            // 
+            this.AndroidColorDepthLabel.AutoSize = true;
+            this.AndroidColorDepthLabel.Location = new System.Drawing.Point(9, 7);
+            this.AndroidColorDepthLabel.Name = "AndroidColorDepthLabel";
+            this.AndroidColorDepthLabel.Size = new System.Drawing.Size(63, 13);
+            this.AndroidColorDepthLabel.TabIndex = 0;
+            this.AndroidColorDepthLabel.Text = "Color Depth";
+            // 
+            // AndroidColorDepthCombo
+            // 
+            this.AndroidColorDepthCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AndroidColorDepthCombo.FormattingEnabled = true;
+            this.AndroidColorDepthCombo.Location = new System.Drawing.Point(113, 4);
+            this.AndroidColorDepthCombo.Name = "AndroidColorDepthCombo";
+            this.AndroidColorDepthCombo.Size = new System.Drawing.Size(121, 21);
+            this.AndroidColorDepthCombo.TabIndex = 1;
+            // 
+            // AndroidPermissionsLabel
+            // 
+            this.AndroidPermissionsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AndroidPermissionsLabel.Location = new System.Drawing.Point(9, 219);
+            this.AndroidPermissionsLabel.Name = "AndroidPermissionsLabel";
+            this.AndroidPermissionsLabel.Size = new System.Drawing.Size(373, 30);
+            this.AndroidPermissionsLabel.TabIndex = 5;
+            this.AndroidPermissionsLabel.Text = "Select a permission to see its description";
+            // 
+            // AndroidUserPermissionsList
+            // 
+            this.AndroidUserPermissionsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AndroidUserPermissionsList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.AndroidUserPermissionsList.FormattingEnabled = true;
+            this.AndroidUserPermissionsList.IntegralHeight = false;
+            this.AndroidUserPermissionsList.Location = new System.Drawing.Point(12, 28);
+            this.AndroidUserPermissionsList.Name = "AndroidUserPermissionsList";
+            this.AndroidUserPermissionsList.Size = new System.Drawing.Size(475, 189);
+            this.AndroidUserPermissionsList.TabIndex = 4;
+            this.AndroidUserPermissionsList.SelectedIndexChanged += new System.EventHandler(this.AndroidUserPermissionsList_SelectedIndexChanged);
+            // 
+            // AndroidAdvancedSettingsPanel
+            // 
+            this.AndroidAdvancedSettingsPanel.Controls.Add(this.AndroidManifestAdditionsField);
+            this.AndroidAdvancedSettingsPanel.Controls.Add(this.AndroidManifestAdditionsCDataLabel);
+            this.AndroidAdvancedSettingsPanel.Controls.Add(this.AndroidManifestAdditionsCDataLabel2);
+            this.AndroidAdvancedSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AndroidAdvancedSettingsPanel.Location = new System.Drawing.Point(3, 3);
+            this.AndroidAdvancedSettingsPanel.Name = "AndroidAdvancedSettingsPanel";
+            this.AndroidAdvancedSettingsPanel.Size = new System.Drawing.Size(499, 245);
+            this.AndroidAdvancedSettingsPanel.TabIndex = 12;
+            this.AndroidAdvancedSettingsPanel.Visible = false;
             // 
             // AndroidManifestAdditionsField
             // 
             this.AndroidManifestAdditionsField.AcceptsTab = true;
+            this.AndroidManifestAdditionsField.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.AndroidManifestAdditionsField.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.AndroidManifestAdditionsField.Location = new System.Drawing.Point(15, 28);
+            this.AndroidManifestAdditionsField.Font = new System.Drawing.Font("Courier New", 9F);
+            this.AndroidManifestAdditionsField.Location = new System.Drawing.Point(12, 24);
             this.AndroidManifestAdditionsField.Name = "AndroidManifestAdditionsField";
-            this.AndroidManifestAdditionsField.Size = new System.Drawing.Size(475, 191);
+            this.AndroidManifestAdditionsField.Size = new System.Drawing.Size(480, 193);
             this.AndroidManifestAdditionsField.TabIndex = 5;
             this.AndroidManifestAdditionsField.Text = "";
             this.AndroidManifestAdditionsField.WordWrap = false;
-            // 
-            // AndroidManifestAdditionsCDataLabel2
-            // 
-            this.AndroidManifestAdditionsCDataLabel2.AutoSize = true;
-            this.AndroidManifestAdditionsCDataLabel2.Font = new System.Drawing.Font("Courier New", 9F);
-            this.AndroidManifestAdditionsCDataLabel2.ForeColor = System.Drawing.Color.DimGray;
-            this.AndroidManifestAdditionsCDataLabel2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.AndroidManifestAdditionsCDataLabel2.Location = new System.Drawing.Point(12, 222);
-            this.AndroidManifestAdditionsCDataLabel2.Name = "AndroidManifestAdditionsCDataLabel2";
-            this.AndroidManifestAdditionsCDataLabel2.Size = new System.Drawing.Size(28, 15);
-            this.AndroidManifestAdditionsCDataLabel2.TabIndex = 3;
-            this.AndroidManifestAdditionsCDataLabel2.Text = "]]>";
+            this.AndroidManifestAdditionsField.Validating += new System.ComponentModel.CancelEventHandler(this.AndroidManifestAdditionsField_Validating);
             // 
             // AndroidManifestAdditionsCDataLabel
             // 
             this.AndroidManifestAdditionsCDataLabel.AutoSize = true;
             this.AndroidManifestAdditionsCDataLabel.Font = new System.Drawing.Font("Courier New", 9F);
             this.AndroidManifestAdditionsCDataLabel.ForeColor = System.Drawing.Color.DimGray;
-            this.AndroidManifestAdditionsCDataLabel.Location = new System.Drawing.Point(12, 10);
+            this.AndroidManifestAdditionsCDataLabel.Location = new System.Drawing.Point(9, 6);
             this.AndroidManifestAdditionsCDataLabel.Name = "AndroidManifestAdditionsCDataLabel";
             this.AndroidManifestAdditionsCDataLabel.Size = new System.Drawing.Size(70, 15);
             this.AndroidManifestAdditionsCDataLabel.TabIndex = 2;
             this.AndroidManifestAdditionsCDataLabel.Text = "<![CDATA[";
             // 
+            // AndroidManifestAdditionsCDataLabel2
+            // 
+            this.AndroidManifestAdditionsCDataLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AndroidManifestAdditionsCDataLabel2.AutoSize = true;
+            this.AndroidManifestAdditionsCDataLabel2.Font = new System.Drawing.Font("Courier New", 9F);
+            this.AndroidManifestAdditionsCDataLabel2.ForeColor = System.Drawing.Color.DimGray;
+            this.AndroidManifestAdditionsCDataLabel2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.AndroidManifestAdditionsCDataLabel2.Location = new System.Drawing.Point(9, 220);
+            this.AndroidManifestAdditionsCDataLabel2.Name = "AndroidManifestAdditionsCDataLabel2";
+            this.AndroidManifestAdditionsCDataLabel2.Size = new System.Drawing.Size(28, 15);
+            this.AndroidManifestAdditionsCDataLabel2.TabIndex = 3;
+            this.AndroidManifestAdditionsCDataLabel2.Text = "]]>";
+            // 
             // IPhoneInfoAdditionsTabPage
             // 
-            this.IPhoneInfoAdditionsTabPage.Controls.Add(this.IPhoneInfoAdditionsField);
-            this.IPhoneInfoAdditionsTabPage.Controls.Add(this.IPhoneInfoAdditionsCDataLabel2);
-            this.IPhoneInfoAdditionsTabPage.Controls.Add(this.IPhoneInfoAdditionsCDataLabel);
+            this.IPhoneInfoAdditionsTabPage.Controls.Add(this.IPhoneInfoAdditionsButton);
+            this.IPhoneInfoAdditionsTabPage.Controls.Add(this.IPhoneBasicSettingsPanel);
+            this.IPhoneInfoAdditionsTabPage.Controls.Add(this.IPhoneAdvancedSettingsPanel);
             this.IPhoneInfoAdditionsTabPage.Location = new System.Drawing.Point(4, 22);
             this.IPhoneInfoAdditionsTabPage.Name = "IPhoneInfoAdditionsTabPage";
             this.IPhoneInfoAdditionsTabPage.Padding = new System.Windows.Forms.Padding(3);
             this.IPhoneInfoAdditionsTabPage.Size = new System.Drawing.Size(505, 251);
             this.IPhoneInfoAdditionsTabPage.TabIndex = 1;
-            this.IPhoneInfoAdditionsTabPage.Text = "iPhone Info Additions";
+            this.IPhoneInfoAdditionsTabPage.Text = "iOS";
             this.IPhoneInfoAdditionsTabPage.UseVisualStyleBackColor = true;
             // 
-            // IPhoneInfoAdditionsField
+            // IPhoneInfoAdditionsButton
             // 
-            this.IPhoneInfoAdditionsField.AcceptsTab = true;
-            this.IPhoneInfoAdditionsField.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.IPhoneInfoAdditionsField.Font = new System.Drawing.Font("Courier New", 9F);
-            this.IPhoneInfoAdditionsField.Location = new System.Drawing.Point(15, 28);
-            this.IPhoneInfoAdditionsField.Name = "IPhoneInfoAdditionsField";
-            this.IPhoneInfoAdditionsField.Size = new System.Drawing.Size(475, 191);
-            this.IPhoneInfoAdditionsField.TabIndex = 8;
-            this.IPhoneInfoAdditionsField.Text = "";
-            this.IPhoneInfoAdditionsField.WordWrap = false;
+            this.IPhoneInfoAdditionsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.IPhoneInfoAdditionsButton.Location = new System.Drawing.Point(391, 225);
+            this.IPhoneInfoAdditionsButton.Name = "IPhoneInfoAdditionsButton";
+            this.IPhoneInfoAdditionsButton.Size = new System.Drawing.Size(99, 23);
+            this.IPhoneInfoAdditionsButton.TabIndex = 33;
+            this.IPhoneInfoAdditionsButton.Text = "Advanced >>";
+            this.IPhoneInfoAdditionsButton.UseVisualStyleBackColor = true;
+            this.IPhoneInfoAdditionsButton.Click += new System.EventHandler(this.IPhoneInfoAdditionsButton_Click);
             // 
-            // IPhoneInfoAdditionsCDataLabel2
+            // IPhoneBasicSettingsPanel
             // 
-            this.IPhoneInfoAdditionsCDataLabel2.AutoSize = true;
-            this.IPhoneInfoAdditionsCDataLabel2.Font = new System.Drawing.Font("Courier New", 9F);
-            this.IPhoneInfoAdditionsCDataLabel2.ForeColor = System.Drawing.Color.DimGray;
-            this.IPhoneInfoAdditionsCDataLabel2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.IPhoneInfoAdditionsCDataLabel2.Location = new System.Drawing.Point(12, 222);
-            this.IPhoneInfoAdditionsCDataLabel2.Name = "IPhoneInfoAdditionsCDataLabel2";
-            this.IPhoneInfoAdditionsCDataLabel2.Size = new System.Drawing.Size(28, 15);
-            this.IPhoneInfoAdditionsCDataLabel2.TabIndex = 7;
-            this.IPhoneInfoAdditionsCDataLabel2.Text = "]]>";
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.MinimumiOsVersionLabel);
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.MinimumiOsVersionField);
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneOtherBehaviorGroup);
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneLookGroup);
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneBackgroundBehaviorGroup);
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneDeviceBehaviorGroup);
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneDeviceCombo);
+            this.IPhoneBasicSettingsPanel.Controls.Add(this.IPhoneDeviceLabel);
+            this.IPhoneBasicSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.IPhoneBasicSettingsPanel.Location = new System.Drawing.Point(3, 3);
+            this.IPhoneBasicSettingsPanel.Name = "IPhoneBasicSettingsPanel";
+            this.IPhoneBasicSettingsPanel.Size = new System.Drawing.Size(499, 245);
+            this.IPhoneBasicSettingsPanel.TabIndex = 34;
+            // 
+            // IPhoneOtherBehaviorGroup
+            // 
+            this.IPhoneOtherBehaviorGroup.Controls.Add(this.IPhonePushNotifcationsCombo);
+            this.IPhoneOtherBehaviorGroup.Controls.Add(this.label8);
+            this.IPhoneOtherBehaviorGroup.Controls.Add(this.IPhoneExternalSWFsField);
+            this.IPhoneOtherBehaviorGroup.Controls.Add(this.IPhoneExternalSWFsButton);
+            this.IPhoneOtherBehaviorGroup.Controls.Add(this.IPhoneExternalSWFsLabel);
+            this.IPhoneOtherBehaviorGroup.Location = new System.Drawing.Point(255, 111);
+            this.IPhoneOtherBehaviorGroup.Name = "IPhoneOtherBehaviorGroup";
+            this.IPhoneOtherBehaviorGroup.Size = new System.Drawing.Size(241, 74);
+            this.IPhoneOtherBehaviorGroup.TabIndex = 0;
+            this.IPhoneOtherBehaviorGroup.TabStop = false;
+            this.IPhoneOtherBehaviorGroup.Text = "Other Behavior";
+            // 
+            // IPhonePushNotifcationsCombo
+            // 
+            this.IPhonePushNotifcationsCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IPhonePushNotifcationsCombo.FormattingEnabled = true;
+            this.IPhonePushNotifcationsCombo.Location = new System.Drawing.Point(104, 15);
+            this.IPhonePushNotifcationsCombo.Name = "IPhonePushNotifcationsCombo";
+            this.IPhonePushNotifcationsCombo.Size = new System.Drawing.Size(131, 21);
+            this.IPhonePushNotifcationsCombo.TabIndex = 24;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 18);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(92, 13);
+            this.label8.TabIndex = 23;
+            this.label8.Text = "Push Notifications";
+            // 
+            // IPhoneExternalSWFsField
+            // 
+            this.IPhoneExternalSWFsField.Location = new System.Drawing.Point(104, 44);
+            this.IPhoneExternalSWFsField.Name = "IPhoneExternalSWFsField";
+            this.IPhoneExternalSWFsField.Size = new System.Drawing.Size(96, 20);
+            this.IPhoneExternalSWFsField.TabIndex = 26;
+            this.IPhoneExternalSWFsField.Validating += new System.ComponentModel.CancelEventHandler(this.IPhoneExternalSWFsField_Validating);
+            // 
+            // IPhoneExternalSWFsButton
+            // 
+            this.IPhoneExternalSWFsButton.Location = new System.Drawing.Point(206, 42);
+            this.IPhoneExternalSWFsButton.Name = "IPhoneExternalSWFsButton";
+            this.IPhoneExternalSWFsButton.Size = new System.Drawing.Size(29, 22);
+            this.IPhoneExternalSWFsButton.TabIndex = 27;
+            this.IPhoneExternalSWFsButton.Text = "...";
+            this.IPhoneExternalSWFsButton.UseVisualStyleBackColor = true;
+            this.IPhoneExternalSWFsButton.Click += new System.EventHandler(this.IPhoneExternalSWFsButton_Click);
+            // 
+            // IPhoneExternalSWFsLabel
+            // 
+            this.IPhoneExternalSWFsLabel.AutoSize = true;
+            this.IPhoneExternalSWFsLabel.Location = new System.Drawing.Point(6, 45);
+            this.IPhoneExternalSWFsLabel.Name = "IPhoneExternalSWFsLabel";
+            this.IPhoneExternalSWFsLabel.Size = new System.Drawing.Size(77, 13);
+            this.IPhoneExternalSWFsLabel.TabIndex = 25;
+            this.IPhoneExternalSWFsLabel.Text = "External SWFs";
+            // 
+            // IPhoneLookGroup
+            // 
+            this.IPhoneLookGroup.Controls.Add(this.IPhonePrerrenderedIconCheck);
+            this.IPhoneLookGroup.Controls.Add(this.IPhonePrerrenderedIconLabel);
+            this.IPhoneLookGroup.Controls.Add(this.IPhoneStatusBarStyleLabel);
+            this.IPhoneLookGroup.Controls.Add(this.IPhoneStatusBarStyleCombo);
+            this.IPhoneLookGroup.Location = new System.Drawing.Point(255, 31);
+            this.IPhoneLookGroup.Name = "IPhoneLookGroup";
+            this.IPhoneLookGroup.Size = new System.Drawing.Size(241, 74);
+            this.IPhoneLookGroup.TabIndex = 0;
+            this.IPhoneLookGroup.TabStop = false;
+            this.IPhoneLookGroup.Text = "Look && Feel";
+            // 
+            // IPhonePrerrenderedIconCheck
+            // 
+            this.IPhonePrerrenderedIconCheck.AutoSize = true;
+            this.IPhonePrerrenderedIconCheck.Location = new System.Drawing.Point(220, 18);
+            this.IPhonePrerrenderedIconCheck.Name = "IPhonePrerrenderedIconCheck";
+            this.IPhonePrerrenderedIconCheck.Size = new System.Drawing.Size(15, 14);
+            this.IPhonePrerrenderedIconCheck.TabIndex = 1;
+            this.IPhonePrerrenderedIconCheck.ThreeState = true;
+            this.IPhonePrerrenderedIconCheck.UseVisualStyleBackColor = true;
+            // 
+            // IPhonePrerrenderedIconLabel
+            // 
+            this.IPhonePrerrenderedIconLabel.AutoSize = true;
+            this.IPhonePrerrenderedIconLabel.Location = new System.Drawing.Point(6, 18);
+            this.IPhonePrerrenderedIconLabel.Name = "IPhonePrerrenderedIconLabel";
+            this.IPhonePrerrenderedIconLabel.Size = new System.Drawing.Size(92, 13);
+            this.IPhonePrerrenderedIconLabel.TabIndex = 0;
+            this.IPhonePrerrenderedIconLabel.Text = "Prerrendered Icon";
+            // 
+            // IPhoneStatusBarStyleLabel
+            // 
+            this.IPhoneStatusBarStyleLabel.AutoSize = true;
+            this.IPhoneStatusBarStyleLabel.Location = new System.Drawing.Point(6, 44);
+            this.IPhoneStatusBarStyleLabel.Name = "IPhoneStatusBarStyleLabel";
+            this.IPhoneStatusBarStyleLabel.Size = new System.Drawing.Size(82, 13);
+            this.IPhoneStatusBarStyleLabel.TabIndex = 2;
+            this.IPhoneStatusBarStyleLabel.Text = "Status Bar Style";
+            // 
+            // IPhoneStatusBarStyleCombo
+            // 
+            this.IPhoneStatusBarStyleCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IPhoneStatusBarStyleCombo.FormattingEnabled = true;
+            this.IPhoneStatusBarStyleCombo.Location = new System.Drawing.Point(104, 42);
+            this.IPhoneStatusBarStyleCombo.Name = "IPhoneStatusBarStyleCombo";
+            this.IPhoneStatusBarStyleCombo.Size = new System.Drawing.Size(131, 21);
+            this.IPhoneStatusBarStyleCombo.TabIndex = 3;
+            // 
+            // IPhoneBackgroundBehaviorGroup
+            // 
+            this.IPhoneBackgroundBehaviorGroup.Controls.Add(this.IPhoneExitsOnSuspendCheck);
+            this.IPhoneBackgroundBehaviorGroup.Controls.Add(this.IPhoneBGModesCombo);
+            this.IPhoneBackgroundBehaviorGroup.Controls.Add(this.IPhoneExitsOnSuspendLabel);
+            this.IPhoneBackgroundBehaviorGroup.Controls.Add(this.IPhoneBGModesLabel);
+            this.IPhoneBackgroundBehaviorGroup.Location = new System.Drawing.Point(9, 111);
+            this.IPhoneBackgroundBehaviorGroup.Name = "IPhoneBackgroundBehaviorGroup";
+            this.IPhoneBackgroundBehaviorGroup.Size = new System.Drawing.Size(240, 74);
+            this.IPhoneBackgroundBehaviorGroup.TabIndex = 0;
+            this.IPhoneBackgroundBehaviorGroup.TabStop = false;
+            this.IPhoneBackgroundBehaviorGroup.Text = "Background Behavior";
+            // 
+            // IPhoneExitsOnSuspendCheck
+            // 
+            this.IPhoneExitsOnSuspendCheck.AutoSize = true;
+            this.IPhoneExitsOnSuspendCheck.Location = new System.Drawing.Point(219, 44);
+            this.IPhoneExitsOnSuspendCheck.Name = "IPhoneExitsOnSuspendCheck";
+            this.IPhoneExitsOnSuspendCheck.Size = new System.Drawing.Size(15, 14);
+            this.IPhoneExitsOnSuspendCheck.TabIndex = 18;
+            this.IPhoneExitsOnSuspendCheck.ThreeState = true;
+            this.IPhoneExitsOnSuspendCheck.UseVisualStyleBackColor = true;
+            // 
+            // IPhoneExitsOnSuspendLabel
+            // 
+            this.IPhoneExitsOnSuspendLabel.AutoSize = true;
+            this.IPhoneExitsOnSuspendLabel.Location = new System.Drawing.Point(6, 44);
+            this.IPhoneExitsOnSuspendLabel.Name = "IPhoneExitsOnSuspendLabel";
+            this.IPhoneExitsOnSuspendLabel.Size = new System.Drawing.Size(82, 13);
+            this.IPhoneExitsOnSuspendLabel.TabIndex = 17;
+            this.IPhoneExitsOnSuspendLabel.Text = "Exit on suspend";
+            // 
+            // IPhoneBGModesLabel
+            // 
+            this.IPhoneBGModesLabel.AutoSize = true;
+            this.IPhoneBGModesLabel.Location = new System.Drawing.Point(6, 18);
+            this.IPhoneBGModesLabel.Name = "IPhoneBGModesLabel";
+            this.IPhoneBGModesLabel.Size = new System.Drawing.Size(100, 13);
+            this.IPhoneBGModesLabel.TabIndex = 15;
+            this.IPhoneBGModesLabel.Text = "Background Modes";
+            // 
+            // IPhoneDeviceBehaviorGroup
+            // 
+            this.IPhoneDeviceBehaviorGroup.Controls.Add(this.IPhoneForceCPUButton);
+            this.IPhoneDeviceBehaviorGroup.Controls.Add(this.IPhoneForceCPUField);
+            this.IPhoneDeviceBehaviorGroup.Controls.Add(this.IPhoneResolutionExcludeButton);
+            this.IPhoneDeviceBehaviorGroup.Controls.Add(this.IPhoneResolutionCombo);
+            this.IPhoneDeviceBehaviorGroup.Controls.Add(this.IPhoneResolutionLabel);
+            this.IPhoneDeviceBehaviorGroup.Controls.Add(this.IPhoneForceCPULabel);
+            this.IPhoneDeviceBehaviorGroup.Location = new System.Drawing.Point(9, 31);
+            this.IPhoneDeviceBehaviorGroup.Name = "IPhoneDeviceBehaviorGroup";
+            this.IPhoneDeviceBehaviorGroup.Size = new System.Drawing.Size(240, 74);
+            this.IPhoneDeviceBehaviorGroup.TabIndex = 28;
+            this.IPhoneDeviceBehaviorGroup.TabStop = false;
+            this.IPhoneDeviceBehaviorGroup.Text = "Display";
+            // 
+            // IPhoneForceCPUButton
+            // 
+            this.IPhoneForceCPUButton.Location = new System.Drawing.Point(205, 41);
+            this.IPhoneForceCPUButton.Name = "IPhoneForceCPUButton";
+            this.IPhoneForceCPUButton.Size = new System.Drawing.Size(29, 22);
+            this.IPhoneForceCPUButton.TabIndex = 5;
+            this.IPhoneForceCPUButton.Text = "...";
+            this.IPhoneForceCPUButton.UseVisualStyleBackColor = true;
+            this.IPhoneForceCPUButton.Click += new System.EventHandler(this.IPhoneForceCPUButton_Click);
+            // 
+            // IPhoneForceCPUField
+            // 
+            this.IPhoneForceCPUField.Location = new System.Drawing.Point(112, 42);
+            this.IPhoneForceCPUField.Name = "IPhoneForceCPUField";
+            this.IPhoneForceCPUField.Size = new System.Drawing.Size(87, 20);
+            this.IPhoneForceCPUField.TabIndex = 4;
+            // 
+            // IPhoneResolutionExcludeButton
+            // 
+            this.IPhoneResolutionExcludeButton.Location = new System.Drawing.Point(205, 15);
+            this.IPhoneResolutionExcludeButton.Name = "IPhoneResolutionExcludeButton";
+            this.IPhoneResolutionExcludeButton.Size = new System.Drawing.Size(29, 23);
+            this.IPhoneResolutionExcludeButton.TabIndex = 2;
+            this.IPhoneResolutionExcludeButton.Text = "Exc";
+            this.IPhoneResolutionExcludeButton.UseVisualStyleBackColor = true;
+            this.IPhoneResolutionExcludeButton.Click += new System.EventHandler(this.IPhoneResolutionExcludeButton_Click);
+            // 
+            // IPhoneResolutionCombo
+            // 
+            this.IPhoneResolutionCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IPhoneResolutionCombo.FormattingEnabled = true;
+            this.IPhoneResolutionCombo.Location = new System.Drawing.Point(112, 15);
+            this.IPhoneResolutionCombo.Name = "IPhoneResolutionCombo";
+            this.IPhoneResolutionCombo.Size = new System.Drawing.Size(87, 21);
+            this.IPhoneResolutionCombo.TabIndex = 1;
+            this.IPhoneResolutionCombo.SelectedIndexChanged += new System.EventHandler(this.IPhoneResolutionCombo_SelectedIndexChanged);
+            // 
+            // IPhoneResolutionLabel
+            // 
+            this.IPhoneResolutionLabel.AutoSize = true;
+            this.IPhoneResolutionLabel.Location = new System.Drawing.Point(6, 18);
+            this.IPhoneResolutionLabel.Name = "IPhoneResolutionLabel";
+            this.IPhoneResolutionLabel.Size = new System.Drawing.Size(57, 13);
+            this.IPhoneResolutionLabel.TabIndex = 0;
+            this.IPhoneResolutionLabel.Text = "Resolution";
+            // 
+            // IPhoneForceCPULabel
+            // 
+            this.IPhoneForceCPULabel.AutoSize = true;
+            this.IPhoneForceCPULabel.Location = new System.Drawing.Point(6, 45);
+            this.IPhoneForceCPULabel.Name = "IPhoneForceCPULabel";
+            this.IPhoneForceCPULabel.Size = new System.Drawing.Size(81, 13);
+            this.IPhoneForceCPULabel.TabIndex = 3;
+            this.IPhoneForceCPULabel.Text = "CPU Rendering";
+            // 
+            // IPhoneDeviceLabel
+            // 
+            this.IPhoneDeviceLabel.AutoSize = true;
+            this.IPhoneDeviceLabel.Location = new System.Drawing.Point(9, 7);
+            this.IPhoneDeviceLabel.Name = "IPhoneDeviceLabel";
+            this.IPhoneDeviceLabel.Size = new System.Drawing.Size(98, 13);
+            this.IPhoneDeviceLabel.TabIndex = 9;
+            this.IPhoneDeviceLabel.Text = "Supported Devices";
+            // 
+            // IPhoneAdvancedSettingsPanel
+            // 
+            this.IPhoneAdvancedSettingsPanel.Controls.Add(this.IPhoneInfoAdditionsLabel);
+            this.IPhoneAdvancedSettingsPanel.Controls.Add(this.IPhoneEntitlementsCDataLabel2);
+            this.IPhoneAdvancedSettingsPanel.Controls.Add(this.IPhoneInfoAdditionsCDataLabel);
+            this.IPhoneAdvancedSettingsPanel.Controls.Add(this.IPhoneEntitlementsCDataLabel);
+            this.IPhoneAdvancedSettingsPanel.Controls.Add(this.IPhoneInfoAdditionsCDataLabel2);
+            this.IPhoneAdvancedSettingsPanel.Controls.Add(this.IPhoneEntitlementsLabel);
+            this.IPhoneAdvancedSettingsPanel.Controls.Add(this.IPhoneInfoAdditionsField);
+            this.IPhoneAdvancedSettingsPanel.Controls.Add(this.IPhoneEntitlementsField);
+            this.IPhoneAdvancedSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.IPhoneAdvancedSettingsPanel.Location = new System.Drawing.Point(3, 3);
+            this.IPhoneAdvancedSettingsPanel.Name = "IPhoneAdvancedSettingsPanel";
+            this.IPhoneAdvancedSettingsPanel.Size = new System.Drawing.Size(499, 245);
+            this.IPhoneAdvancedSettingsPanel.TabIndex = 35;
+            this.IPhoneAdvancedSettingsPanel.Visible = false;
+            // 
+            // IPhoneInfoAdditionsLabel
+            // 
+            this.IPhoneInfoAdditionsLabel.AutoSize = true;
+            this.IPhoneInfoAdditionsLabel.Location = new System.Drawing.Point(3, 3);
+            this.IPhoneInfoAdditionsLabel.Name = "IPhoneInfoAdditionsLabel";
+            this.IPhoneInfoAdditionsLabel.Size = new System.Drawing.Size(71, 13);
+            this.IPhoneInfoAdditionsLabel.TabIndex = 29;
+            this.IPhoneInfoAdditionsLabel.Text = "Info Additions";
+            // 
+            // IPhoneEntitlementsCDataLabel2
+            // 
+            this.IPhoneEntitlementsCDataLabel2.AutoSize = true;
+            this.IPhoneEntitlementsCDataLabel2.Font = new System.Drawing.Font("Courier New", 9F);
+            this.IPhoneEntitlementsCDataLabel2.ForeColor = System.Drawing.Color.DimGray;
+            this.IPhoneEntitlementsCDataLabel2.Location = new System.Drawing.Point(3, 213);
+            this.IPhoneEntitlementsCDataLabel2.Name = "IPhoneEntitlementsCDataLabel2";
+            this.IPhoneEntitlementsCDataLabel2.Size = new System.Drawing.Size(28, 15);
+            this.IPhoneEntitlementsCDataLabel2.TabIndex = 32;
+            this.IPhoneEntitlementsCDataLabel2.Text = "]]>";
             // 
             // IPhoneInfoAdditionsCDataLabel
             // 
@@ -2283,11 +2798,68 @@
             this.IPhoneInfoAdditionsCDataLabel.Font = new System.Drawing.Font("Courier New", 9F);
             this.IPhoneInfoAdditionsCDataLabel.ForeColor = System.Drawing.Color.DimGray;
             this.IPhoneInfoAdditionsCDataLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.IPhoneInfoAdditionsCDataLabel.Location = new System.Drawing.Point(12, 10);
+            this.IPhoneInfoAdditionsCDataLabel.Location = new System.Drawing.Point(80, 2);
             this.IPhoneInfoAdditionsCDataLabel.Name = "IPhoneInfoAdditionsCDataLabel";
             this.IPhoneInfoAdditionsCDataLabel.Size = new System.Drawing.Size(70, 15);
             this.IPhoneInfoAdditionsCDataLabel.TabIndex = 6;
             this.IPhoneInfoAdditionsCDataLabel.Text = "<![CDATA[";
+            // 
+            // IPhoneEntitlementsCDataLabel
+            // 
+            this.IPhoneEntitlementsCDataLabel.AutoSize = true;
+            this.IPhoneEntitlementsCDataLabel.Font = new System.Drawing.Font("Courier New", 9F);
+            this.IPhoneEntitlementsCDataLabel.ForeColor = System.Drawing.Color.DimGray;
+            this.IPhoneEntitlementsCDataLabel.Location = new System.Drawing.Point(73, 147);
+            this.IPhoneEntitlementsCDataLabel.Name = "IPhoneEntitlementsCDataLabel";
+            this.IPhoneEntitlementsCDataLabel.Size = new System.Drawing.Size(70, 15);
+            this.IPhoneEntitlementsCDataLabel.TabIndex = 31;
+            this.IPhoneEntitlementsCDataLabel.Text = "<![CDATA[";
+            // 
+            // IPhoneInfoAdditionsCDataLabel2
+            // 
+            this.IPhoneInfoAdditionsCDataLabel2.AutoSize = true;
+            this.IPhoneInfoAdditionsCDataLabel2.Font = new System.Drawing.Font("Courier New", 9F);
+            this.IPhoneInfoAdditionsCDataLabel2.ForeColor = System.Drawing.Color.DimGray;
+            this.IPhoneInfoAdditionsCDataLabel2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.IPhoneInfoAdditionsCDataLabel2.Location = new System.Drawing.Point(3, 124);
+            this.IPhoneInfoAdditionsCDataLabel2.Name = "IPhoneInfoAdditionsCDataLabel2";
+            this.IPhoneInfoAdditionsCDataLabel2.Size = new System.Drawing.Size(28, 15);
+            this.IPhoneInfoAdditionsCDataLabel2.TabIndex = 7;
+            this.IPhoneInfoAdditionsCDataLabel2.Text = "]]>";
+            // 
+            // IPhoneEntitlementsLabel
+            // 
+            this.IPhoneEntitlementsLabel.AutoSize = true;
+            this.IPhoneEntitlementsLabel.Location = new System.Drawing.Point(3, 149);
+            this.IPhoneEntitlementsLabel.Name = "IPhoneEntitlementsLabel";
+            this.IPhoneEntitlementsLabel.Size = new System.Drawing.Size(64, 13);
+            this.IPhoneEntitlementsLabel.TabIndex = 30;
+            this.IPhoneEntitlementsLabel.Text = "Entitlements";
+            // 
+            // IPhoneInfoAdditionsField
+            // 
+            this.IPhoneInfoAdditionsField.AcceptsTab = true;
+            this.IPhoneInfoAdditionsField.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.IPhoneInfoAdditionsField.Font = new System.Drawing.Font("Courier New", 9F);
+            this.IPhoneInfoAdditionsField.Location = new System.Drawing.Point(6, 19);
+            this.IPhoneInfoAdditionsField.Name = "IPhoneInfoAdditionsField";
+            this.IPhoneInfoAdditionsField.Size = new System.Drawing.Size(475, 102);
+            this.IPhoneInfoAdditionsField.TabIndex = 8;
+            this.IPhoneInfoAdditionsField.Text = "";
+            this.IPhoneInfoAdditionsField.WordWrap = false;
+            this.IPhoneInfoAdditionsField.Validating += new System.ComponentModel.CancelEventHandler(this.IPhoneInfoAdditionsField_Validating);
+            // 
+            // IPhoneEntitlementsField
+            // 
+            this.IPhoneEntitlementsField.AcceptsTab = true;
+            this.IPhoneEntitlementsField.Font = new System.Drawing.Font("Courier New", 9F);
+            this.IPhoneEntitlementsField.Location = new System.Drawing.Point(6, 165);
+            this.IPhoneEntitlementsField.Name = "IPhoneEntitlementsField";
+            this.IPhoneEntitlementsField.Size = new System.Drawing.Size(475, 45);
+            this.IPhoneEntitlementsField.TabIndex = 28;
+            this.IPhoneEntitlementsField.Text = "";
+            this.IPhoneEntitlementsField.WordWrap = false;
+            this.IPhoneEntitlementsField.Validating += new System.ComponentModel.CancelEventHandler(this.IPhoneEntitlementsField_Validating);
             // 
             // ValidationErrorProvider
             // 
@@ -2296,8 +2868,8 @@
             // 
             // BorderLabel
             // 
-            this.BorderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.BorderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.BorderLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.BorderLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.BorderLabel.Location = new System.Drawing.Point(0, 75);
@@ -2334,11 +2906,132 @@
             this.ListViewStateImageList.TransparentColor = System.Drawing.Color.Transparent;
             this.ListViewStateImageList.Images.SetKeyName(0, "agt_action_success.png");
             // 
+            // DepthStencilLabel
+            // 
+            this.DepthStencilLabel.AutoSize = true;
+            this.DepthStencilLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DepthStencilLabel.Location = new System.Drawing.Point(4, 132);
+            this.DepthStencilLabel.Name = "DepthStencilLabel";
+            this.DepthStencilLabel.Size = new System.Drawing.Size(80, 13);
+            this.DepthStencilLabel.TabIndex = 10;
+            this.DepthStencilLabel.Text = "Depth && Stencil";
+            // 
+            // DepthStencilField
+            // 
+            this.DepthStencilField.AutoSize = true;
+            this.DepthStencilField.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DepthStencilField.Location = new System.Drawing.Point(84, 132);
+            this.DepthStencilField.Name = "DepthStencilField";
+            this.DepthStencilField.Size = new System.Drawing.Size(15, 14);
+            this.DepthStencilField.TabIndex = 11;
+            this.DepthStencilField.ThreeState = true;
+            this.DepthStencilField.UseVisualStyleBackColor = true;
+            // 
+            // SoftKeyboardLabel
+            // 
+            this.SoftKeyboardLabel.AutoSize = true;
+            this.SoftKeyboardLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.SoftKeyboardLabel.Location = new System.Drawing.Point(4, 62);
+            this.SoftKeyboardLabel.Name = "SoftKeyboardLabel";
+            this.SoftKeyboardLabel.Size = new System.Drawing.Size(74, 13);
+            this.SoftKeyboardLabel.TabIndex = 4;
+            this.SoftKeyboardLabel.Text = "Soft Keyboard";
+            // 
+            // SoftKeyboardField
+            // 
+            this.SoftKeyboardField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SoftKeyboardField.FormattingEnabled = true;
+            this.SoftKeyboardField.Location = new System.Drawing.Point(84, 59);
+            this.SoftKeyboardField.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.SoftKeyboardField.Name = "SoftKeyboardField";
+            this.SoftKeyboardField.Size = new System.Drawing.Size(98, 21);
+            this.SoftKeyboardField.TabIndex = 5;
+            // 
+            // MinimumAndroidOsLabel
+            // 
+            this.MinimumAndroidOsLabel.AutoSize = true;
+            this.MinimumAndroidOsLabel.Location = new System.Drawing.Point(262, 7);
+            this.MinimumAndroidOsLabel.Name = "MinimumAndroidOsLabel";
+            this.MinimumAndroidOsLabel.Size = new System.Drawing.Size(66, 13);
+            this.MinimumAndroidOsLabel.TabIndex = 2;
+            this.MinimumAndroidOsLabel.Text = "Minimum OS";
+            // 
+            // MinimumAndroidOsField
+            // 
+            this.MinimumAndroidOsField.FormattingEnabled = true;
+            this.MinimumAndroidOsField.Items.AddRange(new object[] {
+            "",
+            "8",
+            "9",
+            "14",
+            "16",
+            "17",
+            "18",
+            "19"});
+            this.MinimumAndroidOsField.Location = new System.Drawing.Point(366, 4);
+            this.MinimumAndroidOsField.Name = "MinimumAndroidOsField";
+            this.MinimumAndroidOsField.Size = new System.Drawing.Size(121, 21);
+            this.MinimumAndroidOsField.TabIndex = 3;
+            this.MinimumAndroidOsField.Validating += new System.ComponentModel.CancelEventHandler(this.MinimumAndroidOsField_Validating);
+            // 
+            // MinimumiOsVersionLabel
+            // 
+            this.MinimumiOsVersionLabel.AutoSize = true;
+            this.MinimumiOsVersionLabel.Location = new System.Drawing.Point(262, 7);
+            this.MinimumiOsVersionLabel.Name = "MinimumiOsVersionLabel";
+            this.MinimumiOsVersionLabel.Size = new System.Drawing.Size(66, 13);
+            this.MinimumiOsVersionLabel.TabIndex = 29;
+            this.MinimumiOsVersionLabel.Text = "Minimum OS";
+            // 
+            // MinimumiOsVersionField
+            // 
+            this.MinimumiOsVersionField.FormattingEnabled = true;
+            this.MinimumiOsVersionField.Items.AddRange(new object[] {
+            "",
+            "4.3",
+            "5.0",
+            "6.0",
+            "7.0",
+            "7.1",
+            "8.0"});
+            this.MinimumiOsVersionField.Location = new System.Drawing.Point(366, 4);
+            this.MinimumiOsVersionField.Name = "MinimumiOsVersionField";
+            this.MinimumiOsVersionField.Size = new System.Drawing.Size(121, 21);
+            this.MinimumiOsVersionField.TabIndex = 30;
+            this.MinimumiOsVersionField.Validating += new System.ComponentModel.CancelEventHandler(this.MinimumiOsVersionField_Validating);
+            // 
+            // IPhoneBGModesCombo
+            // 
+            this.IPhoneBGModesCombo.CheckOnClick = true;
+            this.IPhoneBGModesCombo.DropDownHeight = 1;
+            this.IPhoneBGModesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IPhoneBGModesCombo.FormattingEnabled = true;
+            this.IPhoneBGModesCombo.IntegralHeight = false;
+            this.IPhoneBGModesCombo.Location = new System.Drawing.Point(112, 15);
+            this.IPhoneBGModesCombo.Name = "IPhoneBGModesCombo";
+            this.IPhoneBGModesCombo.Size = new System.Drawing.Size(122, 21);
+            this.IPhoneBGModesCombo.TabIndex = 16;
+            this.IPhoneBGModesCombo.ValueSeparator = ", ";
+            // 
+            // IPhoneDeviceCombo
+            // 
+            this.IPhoneDeviceCombo.CheckOnClick = true;
+            this.IPhoneDeviceCombo.DropDownHeight = 1;
+            this.IPhoneDeviceCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IPhoneDeviceCombo.FormattingEnabled = true;
+            this.IPhoneDeviceCombo.IntegralHeight = false;
+            this.IPhoneDeviceCombo.Location = new System.Drawing.Point(113, 4);
+            this.IPhoneDeviceCombo.Name = "IPhoneDeviceCombo";
+            this.IPhoneDeviceCombo.Size = new System.Drawing.Size(121, 21);
+            this.IPhoneDeviceCombo.TabIndex = 10;
+            this.IPhoneDeviceCombo.ValueSeparator = ", ";
+            // 
             // AirWizard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
+            this.CancelButton = this.CancelButton1;
             this.ClientSize = new System.Drawing.Size(581, 467);
             this.Controls.Add(this.HelpButton1);
             this.Controls.Add(this.BorderLabel);
@@ -2376,8 +3069,6 @@
             this.AppIconsGroupBox.ResumeLayout(false);
             this.AppIconsPanel2.ResumeLayout(false);
             this.AppIconsPanel2.PerformLayout();
-            this.AppIconsPanel.ResumeLayout(false);
-            this.AppIconsPanel.PerformLayout();
             this.InitialWindowTabPage.ResumeLayout(false);
             this.InitialWindowTabPage.PerformLayout();
             this.InitialWindowTabControl.ResumeLayout(false);
@@ -2400,9 +3091,23 @@
             this.MobileAdditionsTabPage.ResumeLayout(false);
             this.MobileAdditionsTabControl.ResumeLayout(false);
             this.AndroidManifestAdditionsTabPage.ResumeLayout(false);
-            this.AndroidManifestAdditionsTabPage.PerformLayout();
+            this.AndroidBasicSettingsPanel.ResumeLayout(false);
+            this.AndroidBasicSettingsPanel.PerformLayout();
+            this.AndroidAdvancedSettingsPanel.ResumeLayout(false);
+            this.AndroidAdvancedSettingsPanel.PerformLayout();
             this.IPhoneInfoAdditionsTabPage.ResumeLayout(false);
-            this.IPhoneInfoAdditionsTabPage.PerformLayout();
+            this.IPhoneBasicSettingsPanel.ResumeLayout(false);
+            this.IPhoneBasicSettingsPanel.PerformLayout();
+            this.IPhoneOtherBehaviorGroup.ResumeLayout(false);
+            this.IPhoneOtherBehaviorGroup.PerformLayout();
+            this.IPhoneLookGroup.ResumeLayout(false);
+            this.IPhoneLookGroup.PerformLayout();
+            this.IPhoneBackgroundBehaviorGroup.ResumeLayout(false);
+            this.IPhoneBackgroundBehaviorGroup.PerformLayout();
+            this.IPhoneDeviceBehaviorGroup.ResumeLayout(false);
+            this.IPhoneDeviceBehaviorGroup.PerformLayout();
+            this.IPhoneAdvancedSettingsPanel.ResumeLayout(false);
+            this.IPhoneAdvancedSettingsPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ValidationErrorProvider)).EndInit();
             this.ResumeLayout(false);
 

@@ -293,14 +293,14 @@ namespace ASCompletion.Completion
         static private Regex reNewLine = new Regex("[\r\n]+", RegexOptions.Compiled);
         static private Regex reKeepTags = new Regex("<([/]?(b|i|s|u))>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static private Regex reSpecialTags = new Regex("<([/]?)(code|small|strong|em)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reStripTags = new Regex("<[/]?[a-z]+>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static private Regex reStripTags = new Regex("<[/]?[a-z]+[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static private Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static private Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
 
 		static public CommentBlock ParseComment(string comment)
 		{
 			// cleanup
-            comment = comment.Replace("&lt;", "<").Replace("&gt;", ">");
+            comment = comment.Replace("&lt;", "<").Replace("&gt;", ">").Replace("&nbsp;", " ");
             comment = reKeepTags.Replace(comment, "[$1]");
             comment = reSpecialTags.Replace(comment, match =>
             {
@@ -430,20 +430,26 @@ namespace ASCompletion.Completion
 					{
                         details += "\n" + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd 
                                 + " " + Get2LinesOf((string)cb.ParamDesc[i]).TrimStart();
-
-						return details;
+                        return details;
 					}
 				}
 			}
 			// get description extract
             if (ASContext.CommonSettings.SmartTipsEnabled)
 			{
-				if (cb.InfoTip != null && cb.InfoTip.Length > 0) details += "\n"+cb.InfoTip;
+				if (cb.InfoTip != null && cb.InfoTip.Length > 0)
+                    details += "\n"+cb.InfoTip;
 				else if (cb.Description != null && cb.Description.Length > 0) 
                     details += Get2LinesOf(cb.Description);
 			}
-			return details;
+
+            return details;
 		}
+
+        static private string GetShortcutDocs()
+        {
+            return "\n[i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i]";
+        }
 
         /// <summary>
         /// Split multiline text and return 2 lines or less of text
@@ -454,7 +460,7 @@ namespace ASCompletion.Completion
             text = "";
             int n = Math.Min(lines.Length, 2);
             for (int i = 0; i < n; i++) text += "\n" + lines[i];
-            if (lines.Length > 2) text += " \x86";
+            if (lines.Length > 2) text += " \x86" + GetShortcutDocs();
             return text;
         }
 		

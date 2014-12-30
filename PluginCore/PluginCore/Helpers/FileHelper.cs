@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using PluginCore.Utilities;
 using PluginCore.Managers;
+using PluginCore.Localization;
 using PluginCore;
 
 namespace PluginCore.Helpers
@@ -216,36 +217,42 @@ namespace PluginCore.Helpers
                     if (bytes.Length > 2 && (bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf))
                     {
                         startIndex = 3;
+                        info.BomLength = 3;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.UTF8.CodePage;
                     }
                     else if (bytes.Length > 3 && (bytes[0] == 0xff && bytes[1] == 0xfe && bytes[2] == 0x00 && bytes[3] == 0x00))
                     {
                         startIndex = 4;
+                        info.BomLength = 4;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.UTF32.CodePage;
                     }
                     else if (bytes.Length > 4 && ((bytes[0] == 0x2b && bytes[1] == 0x2f && bytes[2] == 0x76) && (bytes[3] == 0x38 || bytes[3] == 0x39 || bytes[3] == 0x2b || bytes[3] == 0x2f) && bytes[4] == 0x2D))
                     {
                         startIndex = 5;
+                        info.BomLength = 5;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.UTF7.CodePage;
                     }
                     else if (bytes.Length > 3 && ((bytes[0] == 0x2b && bytes[1] == 0x2f && bytes[2] == 0x76) && (bytes[3] == 0x38 || bytes[3] == 0x39 || bytes[3] == 0x2b || bytes[3] == 0x2f)))
                     {
                         startIndex = 4;
+                        info.BomLength = 4;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.UTF7.CodePage;
                     }
                     else if (bytes.Length > 1 && (bytes[0] == 0xff && bytes[1] == 0xfe))
                     {
                         startIndex = 2;
+                        info.BomLength = 2;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.Unicode.CodePage;
                     }
                     else if (bytes.Length > 1 && (bytes[0] == 0xfe && bytes[1] == 0xff))
                     {
                         startIndex = 2;
+                        info.BomLength = 2;
                         info.ContainsBOM = true;
                         info.CodePage = Encoding.BigEndianUnicode.CodePage;
                     }
@@ -269,6 +276,52 @@ namespace PluginCore.Helpers
             return info;
         }
 
+        /// <summary>
+        /// Moves a file, overwrites the file at the new location if there is one already.
+        /// </summary>
+        public static void ForceMove(String oldPath, String newPath)
+        {
+            if (File.Exists(newPath))
+            {
+                File.Delete(newPath);
+            }
+            File.Move(oldPath, newPath);
+        }
+
+        /// <summary>
+        /// If the path already exists, the user is asked to confirm
+        /// </summary>
+        public static bool ConfirmOverwrite(string path)
+        {
+            string name = Path.GetFileName(path);
+
+            if (Directory.Exists(path))
+            {
+                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.FolderAlreadyContainsFolder");
+
+                DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"),
+                    title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                return result == DialogResult.Yes;
+            }
+            else if (File.Exists(path))
+            {
+                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.FolderAlreadyContainsFile");
+
+                DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"),
+                    title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                return result == DialogResult.Yes;
+            }
+            else return true;
+        }
+
+        public static bool IsHaxeExtension(string extension)
+        {
+            return extension == ".hx" || extension == ".hxp";
+        }
     }
 
     /// <summary>
@@ -290,6 +343,7 @@ namespace PluginCore.Helpers
         public Int32 CodePage = -1;
         public String Contents = String.Empty;
         public Boolean ContainsBOM = false;
+        public Int32 BomLength = 0;
     }
 
 }

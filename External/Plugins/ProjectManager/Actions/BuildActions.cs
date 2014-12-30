@@ -29,7 +29,7 @@ namespace ProjectManager.Actions
         static bool setPlayerglobalHomeEnv;
 
 		IMainForm mainForm;
-        FDMenus menus;
+        PluginMain pluginMain;
 		FDProcessRunner fdProcess;
         string ipcName;
 
@@ -38,10 +38,10 @@ namespace ProjectManager.Actions
 
         public string IPCName { get { return ipcName; } }
 
-		public BuildActions(IMainForm mainForm, FDMenus menus)
+		public BuildActions(IMainForm mainForm, PluginMain pluginMain)
 		{
 			this.mainForm = mainForm;
-            this.menus = menus;
+            this.pluginMain = pluginMain;
 
 			// setup FDProcess helper class
 			this.fdProcess = new FDProcessRunner(mainForm);
@@ -133,8 +133,7 @@ namespace ProjectManager.Actions
             }
             
             // close running AIR projector
-            if (project.MovieOptions.Platform == AS3MovieOptions.AIR_PLATFORM 
-                || project.MovieOptions.Platform == AS3MovieOptions.AIR_MOBILE_PLATFORM)
+            if (project.MovieOptions.Platform.StartsWith("AIR"))
             {
                 foreach (Process proc in Process.GetProcessesByName("adl"))
                 {
@@ -200,7 +199,7 @@ namespace ProjectManager.Actions
 			arguments = arguments.Replace("\\\"", "\""); // c# console args[] bugfix
 
             SetStatusBar(TextHelper.GetString("Info.BuildStarted"));
-            menus.DisabledForBuild = true;
+            pluginMain.UpdateUIStatus(ProjectManagerUIStatus.Building);
 
             // Apache Flex compat
             if (project.Language == "as3") 
@@ -216,7 +215,7 @@ namespace ProjectManager.Actions
             fdProcess.StartProcess(fdBuildPath, "\"" + project.ProjectPath + "\"" + arguments,
                 project.Directory, delegate(bool success)
                 {
-                    menus.DisabledForBuild = false;
+                    pluginMain.UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
                     if (success)
                     {
                         SetStatusBar(TextHelper.GetString("Info.BuildSucceeded"));

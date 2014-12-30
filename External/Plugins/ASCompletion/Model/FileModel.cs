@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using ASCompletion.Context;
 using System.Text.RegularExpressions;
+using PluginCore.Helpers;
 
 namespace ASCompletion.Model
 {
@@ -69,6 +70,25 @@ namespace ASCompletion.Model
             if (Kind == ASMetaKind.Event && meta.Kind == ASMetaKind.Event)
                 return Params["type"].CompareTo(meta.Params["type"]);
             return Name.CompareTo(meta.Name);
+        }
+
+        internal static void GenerateIntrinsic(List<ASMetaData> src, StringBuilder sb, string nl, string tab)
+        {
+            if (src == null) return;
+
+            foreach (var meta in src)
+            {
+                if (meta.Kind == ASMetaKind.Include)
+                {
+                    sb.Append(meta.RawParams).Append(nl);
+                }
+                else if (meta.Kind != ASMetaKind.Unknown)
+                {
+                    sb.Append(ClassModel.CommentDeclaration(meta.Comments, tab));
+                    sb.Append(tab).Append('[').Append(meta.Name).Append('(').Append(meta.RawParams).Append(")] ").Append(nl).Append(nl);
+                }
+            }
+
         }
     }
 
@@ -136,7 +156,7 @@ namespace ASCompletion.Model
             Package = "";
             Module = "";
             FileName = fileName ?? "";
-            haXe = (fileName.Length > 3) ? fileName.EndsWith(".hx") : false;
+            haXe = (FileName.Length > 3) ? FileHelper.IsHaxeExtension(Path.GetExtension(FileName)) : false;
             //
             Namespaces = new Dictionary<string, Visibility>();
             //
@@ -270,24 +290,13 @@ namespace ASCompletion.Model
             }
 
             // event/style metadatas
-            if (MetaDatas != null)
-            {
-                foreach (ASMetaData meta in MetaDatas)
-                    if (meta.Kind == ASMetaKind.Include)
-                    {
-                        sb.Append(meta.RawParams).Append(nl);
-                    }
-                    else if (meta.Kind != ASMetaKind.Unknown)
-                    {
-                        sb.Append(ClassModel.CommentDeclaration(meta.Comments, tab));
-                        sb.Append(tab).Append('[').Append(meta.Name).Append('(').Append(meta.RawParams).Append(")] ").Append(nl).Append(nl);
-                    }
-            }
+            ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab);
 
             // members			
             string decl;
             foreach (MemberModel member in Members)
             {
+                ASMetaData.GenerateIntrinsic(member.MetaDatas, sb, nl, tab);
                 if ((member.Flags & FlagType.Variable) > 0)
                 {
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));

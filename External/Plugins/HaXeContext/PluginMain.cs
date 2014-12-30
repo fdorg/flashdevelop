@@ -119,10 +119,8 @@ namespace HaXeContext
                     if (de == null) return;
                     if (de.Action == "ProjectManager.RunCustomCommand")
                     {
-                        if (contextInstance.IsNmeTarget)
-                        {
-                            e.Handled = NMEHelper.Run(de.Data as string);
-                        }
+                        if (ExternalToolchain.HandleProject(PluginBase.CurrentProject))
+                            e.Handled = ExternalToolchain.Run(de.Data as string);
                     }
                     else if (de.Action == "ProjectManager.BuildingProject" || de.Action == "ProjectManager.TestingProject")
                     {
@@ -132,18 +130,25 @@ namespace HaXeContext
                     }
                     else if (de.Action == "ProjectManager.CleanProject")
                     {
-                        NMEHelper.Clean(de.Data as IProject);
+                        var project = de.Data as IProject;
+                        if (ExternalToolchain.HandleProject(project))
+                            e.Handled = ExternalToolchain.Clean(project);
                     }
                     else if (de.Action == "ProjectManager.Project")
                     {
-                        NMEHelper.Monitor(de.Data as IProject);
+                        var project = de.Data as IProject;
+                        ExternalToolchain.Monitor(project);
+                    }
+                    else if (de.Action == "Context.SetHaxeEnvironment")
+                    {
+                        contextInstance.SetHaxeEnvironment(de.Data as string);
                     }
                     break;
 
                 case EventType.UIStarted:
                     ValidateSettings();
                     contextInstance = new Context(settingObject);
-                    // Associate this context with haXe language
+                    // Associate this context with haxe language
                     ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "haxe");
                     break;
             }
@@ -224,7 +229,13 @@ namespace HaXeContext
                 }
                 settingObject.InstalledSDKs = sdks.ToArray();
             }
-            else foreach (InstalledSDK sdk in settingObject.InstalledSDKs) ValidateSDK(sdk);
+            else
+            {
+                foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                {
+                    sdk.Validate();
+                }
+            }
             if (settingObject.CompletionServerPort == 0)
             {
                 settingObject.CompletionServerPort = 6000;
@@ -280,6 +291,7 @@ namespace HaXeContext
 
             string[] lookup = new string[] {
                 Path.Combine(path, "CHANGES.txt"),
+                Path.Combine(path, Path.Combine("extra", "CHANGES.txt")),
                 Path.Combine(path, Path.Combine("doc", "CHANGES.txt"))
             };
             string descriptor = null;
@@ -291,7 +303,7 @@ namespace HaXeContext
             if (descriptor != null)
             {
                 string raw = File.ReadAllText(descriptor);
-                Match mVer = Regex.Match(raw, "[0-9\\-]+\\s*:\\s*([0-9.]+)");
+                Match mVer = Regex.Match(raw, "[0-9\\-?]+\\s*:\\s*([0-9.]+)");
                 if (mVer.Success)
                 {
                     sdk.Version = mVer.Groups[1].Value;
@@ -304,6 +316,7 @@ namespace HaXeContext
             {
                 sdk.Version = "0.0";
                 sdk.Name = "Haxe ?";
+                return true;
             }
             else ErrorManager.ShowInfo("No change.txt found:\n" + descriptor);
             return false;

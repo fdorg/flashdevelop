@@ -65,6 +65,7 @@ namespace PluginCore
         Boolean IsBrowsable { get; }
         Boolean IsUntitled { get; }
         Boolean IsEditable { get; }
+        Boolean HasBookmarks { get; }
 
         #endregion
 
@@ -121,6 +122,7 @@ namespace PluginCore
         Color GetThemeColor(String id);
         IPlugin FindPlugin(String guid);
         Image FindImage(String data);
+        void KillProcess();
 
         #endregion
 

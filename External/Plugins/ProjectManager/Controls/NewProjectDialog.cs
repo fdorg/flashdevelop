@@ -150,6 +150,7 @@ namespace ProjectManager.Controls
             this.label1.Size = new System.Drawing.Size(68, 16);
             this.label1.TabIndex = 4;
             this.label1.Text = "&Location:";
+            this.label1.AutoSize = true;
             // 
             // descriptionLabel
             // 
@@ -182,6 +183,7 @@ namespace ProjectManager.Controls
             this.label2.Size = new System.Drawing.Size(68, 16);
             this.label2.TabIndex = 2;
             this.label2.Text = "&Name:";
+            this.label2.AutoSize = true;
             // 
             // nameTextBox
             // 
@@ -220,6 +222,7 @@ namespace ProjectManager.Controls
             this.label3.Size = new System.Drawing.Size(71, 15);
             this.label3.TabIndex = 7;
             this.label3.Text = "&Package:";
+            this.label3.AutoSize = true;
             // 
             // packageTextBox
             // 

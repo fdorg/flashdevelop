@@ -58,6 +58,7 @@ namespace ASCompletion
         private FlashErrorsWatcher flashErrorsWatcher;
         private bool checking = false;
         private System.Timers.Timer timerPosition;
+        private int lastHoverPosition;
 
         private Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
         private Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
@@ -713,17 +714,19 @@ namespace ASCompletion
             UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(OnMouseHover);
             UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(OnTextChanged);
             UITools.CallTip.OnUpdateCallTip += new MethodCallTip.UpdateCallTipHandler(OnUpdateCallTip);
+            UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateTipHandler(OnUpdateSimpleTip);
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
             PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", Keys.F1);
+            PluginBase.MainForm.RegisterShortcutItem("Completion.Delete", Keys.Back);
 
             // application events
             EventManager.AddEventHandler(this, eventMask);
             EventManager.AddEventHandler(this, EventType.UIStarted, HandlingPriority.Low);
-
+            
             // cursor position changes tracking
             timerPosition = new System.Timers.Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
@@ -859,6 +862,8 @@ namespace ASCompletion
 			if (!ASContext.Context.IsFileValid)
 				return;
 
+            lastHoverPosition = position;
+
 			// get word at mouse position
 			int style = sci.BaseStyleAt(position);
 			if (!ASComplete.IsTextStyle(style))
@@ -884,8 +889,14 @@ namespace ASCompletion
 
 		private void OnUpdateCallTip(ScintillaNet.ScintillaControl sci, int position)
 		{
-			if (ASComplete.HasCalltip())
-				ASComplete.HandleFunctionCompletion(sci, false, true);
+            if (ASComplete.HasCalltip())
+                ASComplete.HandleFunctionCompletion(sci, false, true);
+        }
+
+        private void OnUpdateSimpleTip(ScintillaNet.ScintillaControl sci, Point mousePosition)
+        {
+            if (UITools.Tip.Visible)
+                OnMouseHover(sci, lastHoverPosition);
         }
 
         void timerPosition_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

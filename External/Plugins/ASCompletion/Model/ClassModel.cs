@@ -59,6 +59,20 @@ namespace ASCompletion.Model
             }
         }
 
+        /// <summary>
+        /// The class name without its generic part (if present)
+        /// </summary>
+        public string BaseType
+        {
+            get
+            {
+                int genericIndex = Name.IndexOf('<');
+                if (genericIndex > 0)
+                    return Name.Substring(0, genericIndex);
+                else return Name;
+            }
+        }
+
         override public string FullName
         {
             get
@@ -114,7 +128,15 @@ namespace ASCompletion.Model
                 resolvedExtend = null;
                 return VoidClass;
             }
-            if (ExtendsType == null || ExtendsType.Length == 0)
+            string objectKey = InFile.Context.Features.objectKey;
+            if (Name == objectKey && !string.IsNullOrEmpty(InFile.Package))
+            {
+                string info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), objectKey, objectKey);
+                PluginCore.Controls.MessageBar.ShowWarning(info);
+                resolvedExtend = null;
+                return VoidClass;
+            }
+            if (string.IsNullOrEmpty(ExtendsType))
             {
                 if (this == VoidClass || (Flags & FlagType.Interface) > 0)
                 {
@@ -135,14 +157,18 @@ namespace ASCompletion.Model
                 // check loops in inheritance
                 if (extensionList != null)
                 {
-                    foreach(ClassModel model in extensionList)
-                    if (model.QualifiedName == extends.QualifiedName)
+                    if (extends.Name != objectKey)
                     {
-                        if (extends.Name == InFile.Context.Features.objectKey) break;
-                        string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
-                        PluginCore.Controls.MessageBar.ShowWarning(info);
-                        resolvedExtend = null;
-                        return VoidClass;
+                        foreach(ClassModel model in extensionList)
+                        {
+                            if (model.QualifiedName == extends.QualifiedName)
+                            {
+                                string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
+                                PluginCore.Controls.MessageBar.ShowWarning(info);
+                                resolvedExtend = null;
+                                return VoidClass;
+                            }
+                        }
                     }
                     extensionList.Add(extends);
                 }
@@ -201,7 +227,6 @@ namespace ASCompletion.Model
             return copy;
         }
 
-        
         #region Completion-dedicated methods
 
         public MemberModel ToMemberModel()
@@ -220,6 +245,27 @@ namespace ASCompletion.Model
             MemberList items = new MemberList();
             foreach (MemberModel item in Members)
                 if ((item.Flags & FlagType.Constructor) == 0) items.Add(item);
+            items.Sort();
+            return items;
+        }
+
+        /// <summary>
+        /// Returns all members inherited from super classes of this class.
+        /// Does not take static inheritance into account.
+        /// </summary>
+        internal MemberList GetSortedInheritedMembersList()
+        {
+            MemberList items = new MemberList();
+            ClassModel curClass = this;
+            do
+            {
+                curClass.ResolveExtends();
+                curClass = curClass.Extends;
+                MemberList newMembers = curClass.GetSortedMembersList();
+                items.Merge(newMembers);
+                
+            } while (curClass.Extends != ClassModel.VoidClass);
+            items.RemoveAllWithFlag(FlagType.Static);
             items.Sort();
             return items;
         }
@@ -304,9 +350,10 @@ namespace ASCompletion.Model
 
             // MEMBERS
             int count = 0;
-            foreach (MemberModel var in Members)
+            foreach (MemberModel var in Members) 
                 if ((var.Flags & FlagType.Variable) > 0)
                 {
+                    ASMetaData.GenerateIntrinsic(var.MetaDatas, sb, nl, tab);
                     String comment = CommentDeclaration(var.Comments, tab);
                     if (count == 0 || comment != "") sb.Append(nl);
                     sb.Append(comment);
@@ -323,6 +370,7 @@ namespace ASCompletion.Model
                 {
                     if (prevProperty != property.Name) sb.Append(nl);
                     prevProperty = property.Name;
+                    ASMetaData.GenerateIntrinsic(property.MetaDatas, sb, nl, tab);
                     sb.Append(CommentDeclaration(property.Comments, tab));
                     FlagType flags = (property.Flags & ~(FlagType.Setter | FlagType.Getter)) | FlagType.Function;
 
@@ -365,6 +413,7 @@ namespace ASCompletion.Model
                     decl = MemberDeclaration(method, preventVis);
                     if (InFile.haXe && (method.Flags & FlagType.Constructor) > 0)
                         decl = decl.Replace("function " + method.Name, "function new");
+                    ASMetaData.GenerateIntrinsic(method.MetaDatas, sb, nl, tab);
                     sb.Append(nl).Append(CommentDeclaration(method.Comments, tab));
                     sb.Append(tab).Append(decl).Append(semi).Append(nl);
                 }

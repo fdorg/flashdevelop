@@ -190,7 +190,7 @@ namespace CodeRefactor.Commands
                 // Outputs the lines as they change
                 foreach (SearchMatch match in entry.Value)
                 {
-                    TraceManager.Add(entry.Key + ":" + match.Line + ": characters " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                    TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
                 }
             }
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");

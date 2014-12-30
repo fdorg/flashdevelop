@@ -30,13 +30,13 @@ namespace FDBuild
                 Environment.CurrentDirectory = Path.GetDirectoryName(options.ProjectFile);
             string directory = Environment.CurrentDirectory;
             string toolsDir = Path.GetDirectoryName(ProjectPaths.ApplicationDirectory);
+            string firstRunDir = Path.GetDirectoryName(toolsDir);
 
             // try and automagically figure out flashdevelop's library path
             // it should be at ..\..\Library
             if (options.LibraryDir == null)
                 try
                 {
-                    string firstRunDir = Path.GetDirectoryName(toolsDir);
                     string libraryDir = Path.Combine(firstRunDir, "Library");
                     if (Directory.Exists(libraryDir))
                         options.LibraryDir = libraryDir;
@@ -48,6 +48,19 @@ namespace FDBuild
                 SwfmillLibraryBuilder.ExecutablePath = Path.Combine(swfmillPath, "swfmill.exe");
             else
                 SwfmillLibraryBuilder.ExecutablePath = "swfmill.exe"; // hope you have it in your environment path!
+
+            // figure user settings PlatformData
+            string platformsFile = Path.Combine("Settings", "Platforms");
+            if (File.Exists(Path.Combine(firstRunDir, ".local")))
+            {
+                PluginCore.PlatformData.Load(Path.Combine(firstRunDir, platformsFile));
+            }
+            else
+            {
+                string userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string fdDir = Path.Combine(userAppDir, "FlashDevelop");
+                PluginCore.PlatformData.Load(Path.Combine(fdDir, platformsFile));
+            }
 
             try
             {

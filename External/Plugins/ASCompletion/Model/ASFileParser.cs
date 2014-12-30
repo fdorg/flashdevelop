@@ -313,7 +313,8 @@ namespace ASCompletion.Model
     public class ASFileParserRegexes
     {
         public static readonly Regex Spaces = new Regex("\\s+", RegexOptions.Compiled);
-        public static readonly Regex Region = new Regex(@"^(#|{)[ ]?region[:\\s]*(?<name>[^\r\n]*)", RegexOptions.Compiled);
+        public static readonly Regex RegionStart = new Regex(@"^{[ ]?region[:\\s]*(?<name>[^\r\n]*)", RegexOptions.Compiled);
+        public static readonly Regex RegionEnd = new Regex(@"^}[ ]?endregion", RegexOptions.Compiled);
         public static readonly Regex QuotedString = new Regex("(\"(\\\\.|[^\"\\\\])*\")|('(\\\\.|[^'\\\\])*')", RegexOptions.Compiled);
         public static readonly Regex FunctionType = new Regex(@"\)\s*\:\s*(?<fType>[\w\$\.\<\>\@]+)", RegexOptions.Compiled);
         public static readonly Regex ValidTypeName = new Regex("^(\\s*of\\s*)?(?<type>[\\w.\\$]*)$", RegexOptions.Compiled);
@@ -505,6 +506,7 @@ namespace ASCompletion.Model
         private string curComment;
         private bool isBlockComment;
         private ContextFeatures features;
+        private List<ASMetaData> carriedMetaData;
         #endregion
 
         #region tokenizer
@@ -917,7 +919,7 @@ namespace ASCompletion.Model
                     {
                         if (commentLength < COMMENTS_BUFFER) commentBuffer[commentLength++] = c1;
                     }
-                    else if (matching == 1 && (c1 == '#' || c1 == '{'))
+                    else if (matching == 1 && (c1 == '{' || c1 == '}'))
                     {
                         commentBuffer[commentLength++] = c1;
                         while (i < len)
@@ -930,13 +932,28 @@ namespace ASCompletion.Model
                         }
 
                         string comment = new String(commentBuffer, 0, commentLength);
-                        Match match = ASFileParserRegexes.Region.Match(comment);
-                        if (match.Success)
+                        
+                        // region start
+                        Match matchStart = ASFileParserRegexes.RegionStart.Match(comment);
+                        if (matchStart.Success)
                         {
-                            string regionName = match.Groups["name"].Value.Trim();
+                            string regionName = matchStart.Groups["name"].Value.Trim();
                             MemberModel region = new MemberModel(regionName, String.Empty, FlagType.Declaration, Visibility.Default);
-                            region.LineFrom = region.LineTo = line;
+                            region.LineFrom = line;
                             model.Regions.Add(region);
+                        }
+                        else
+                        {
+                            // region end
+                            Match matchEnd = ASFileParserRegexes.RegionEnd.Match(comment);
+                            if (matchEnd.Success && model.Regions.Count > 0)
+                            {
+                                MemberModel region = model.Regions[model.Regions.Count - 1];
+                                if (region.LineTo == 0)
+                                {
+                                    region.LineTo = line;
+                                }
+                            }
                         }
                     }
                     continue;
@@ -1605,7 +1622,15 @@ namespace ASCompletion.Model
                         // metadata
                         else if (!inValue && c1 == '[')
                         {
-                            if (version == 3) LookupMeta(ref ba, ref i);
+                            if (version == 3)
+                            {
+                                var meta = LookupMeta(ref ba, ref i);
+                                if (meta != null)
+                                {
+                                    carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
+                                    carriedMetaData.Add(meta);
+                                }
+                            }
                             else if (features.hasCArrays && curMember != null && curMember.Type != null)
                             {
                                 if (ba[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
@@ -1682,7 +1707,7 @@ namespace ASCompletion.Model
             return true;
         }
 
-        private bool LookupMeta(ref string ba, ref int i)
+        private ASMetaData LookupMeta(ref string ba, ref int i)
         {
             int len = ba.Length;
             int i0 = i;
@@ -1706,13 +1731,13 @@ namespace ASCompletion.Model
                     {
                         i = i0;
                         line = line0;
-                        return false;
+                        return null;
                     }
                     else if (c == '(') parCount++;
                     else if (c == ')')
                     {
                         parCount--;
-                        if (parCount < 0) return false;
+                        if (parCount < 0) return null;
                         isComplex = true;
                     }
                     else if (c == ']') break;
@@ -1738,9 +1763,7 @@ namespace ASCompletion.Model
                 }
                 else lastComment = null;
             }
-            if (model.MetaDatas == null) model.MetaDatas = new List<ASMetaData>();
-            model.MetaDatas.Add(md);
-            return true;
+            return md;
         }
 
         private void FinalizeModel()
@@ -2254,6 +2277,15 @@ namespace ASCompletion.Model
                             context = 0;
                             modifiers = 0;
                         }
+                        if (carriedMetaData != null)
+                        {
+                            if (model.MetaDatas == null)
+                                model.MetaDatas = carriedMetaData;
+                            else
+                                foreach (var meta in carriedMetaData) model.MetaDatas.Add(meta);
+
+                            carriedMetaData = null;
+                        }
                         break;
 
                     case FlagType.Enum:
@@ -2426,6 +2458,16 @@ namespace ASCompletion.Model
                             }
                             //
                             curMember = member;
+
+                            if (carriedMetaData != null)
+                            {
+                                if (member.MetaDatas == null)
+                                    member.MetaDatas = carriedMetaData;
+                                else
+                                    foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+
+                                carriedMetaData = null;
+                            }
                         }
                         break;
 
@@ -2481,6 +2523,15 @@ namespace ASCompletion.Model
                         }
                         //
                         curMember = member;
+                        if (carriedMetaData != null)
+                        {
+                            if (member.MetaDatas == null)
+                                member.MetaDatas = carriedMetaData;
+                            else
+                                foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+
+                            carriedMetaData = null;
+                        }
                         break;
                 }
                 if (context != FlagType.Function && !inParams) curMethod = null;

@@ -143,6 +143,11 @@ namespace FileExplorer
                             evnt.Handled = true;
                             break;
 
+                        case "FileExplorer.FindHere":
+                            FindHere(evnt.Data.ToString());
+                            evnt.Handled = true;
+                            break;
+
                         case "FileExplorer.PromptHere":
                             PromptHere(evnt.Data.ToString());
                             evnt.Handled = true;
@@ -203,6 +208,17 @@ namespace FileExplorer
         /// <summary>
         /// Opens the selected path in command prompt
         /// </summary>
+        private void FindHere(string path)
+        {
+            if (path != null && Directory.Exists(path))
+            {
+                PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
+            }
+        }
+
+        /// <summary>
+        /// Opens the selected path in command prompt
+        /// </summary>
         private void PromptHere(string path)
         {
             try
@@ -215,7 +231,7 @@ namespace FileExplorer
                 }*/
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("cmd")) config["cmd"] = "cmd.exe";
-                String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]);
+                String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
                 int start = cmd.StartsWith("\"") ? cmd.IndexOf("\"", 2) : 0;
                 int p = cmd.IndexOf(" ", start);
                 string quoted = !path.StartsWith("\"") ? path = "\"" + path + "\"" : path;

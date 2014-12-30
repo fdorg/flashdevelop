@@ -117,7 +117,7 @@ namespace ProjectManager.Actions
                     if (!Path.HasExtension(newFilePath) && extension != ".ext")
                         newFilePath = Path.ChangeExtension(newFilePath, extension);
 
-                    if (!ConfirmOverwrite(newFilePath)) return;
+                    if (!FileHelper.ConfirmOverwrite(newFilePath)) return;
 
                     // save this so when we are asked to process args, we know what file it's talking about
                     lastFileFromTemplate = newFilePath;
@@ -163,6 +163,7 @@ namespace ProjectManager.Actions
                         package = package.Replace(Path.DirectorySeparatorChar, '.');
                     }
 
+                    if (package == "") args = args.Replace(" $(Package)", "");
                     args = args.Replace("$(Package)", package);
 
                     if (package != "")
@@ -439,7 +440,12 @@ namespace ProjectManager.Actions
                         File.Move(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
-                    File.Move(oldPath, newPath);
+
+                    if (FileHelper.ConfirmOverwrite(newPath))
+                    {
+                        FileHelper.ForceMove(oldPath, newPath);
+                    }
+                    else return false;
                 }
                 OnFileMoved(oldPath, newPath);
             }
@@ -466,7 +472,7 @@ namespace ProjectManager.Actions
 
                 toPath = Path.Combine(toPath, Path.GetFileName(fromPath));
 
-                if (!ConfirmOverwrite(toPath)) return;
+                if (!FileHelper.ConfirmOverwrite(toPath)) return;
 
                 if (File.Exists(toPath))
                 {
@@ -561,7 +567,7 @@ namespace ProjectManager.Actions
                     toPath = copyPath;
                 }
 
-                if (!ConfirmOverwrite(toPath)) return;
+                if (!FileHelper.ConfirmOverwrite(toPath)) return;
 
                 OnFileCreated(toPath);
 
@@ -578,35 +584,6 @@ namespace ProjectManager.Actions
             {
                 ErrorManager.ShowError(exception);
             }
-        }
-
-        private bool ConfirmOverwrite(string path)
-        {
-            string name = Path.GetFileName(path);
-
-            if (Directory.Exists(path))
-            {
-                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.FolderAlreadyContainsFolder");
-
-                DialogResult result = MessageBox.Show(mainForm, string.Format(message, name, "\n"),
-                    title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Cancel) throw new UserCancelException();
-                return result == DialogResult.Yes;
-            }
-            else if (File.Exists(path))
-            {
-                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.FolderAlreadyContainsFile");
-
-                DialogResult result = MessageBox.Show(mainForm, string.Format(message, name, "\n"),
-                    title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Cancel) throw new UserCancelException();
-                return result == DialogResult.Yes;
-            }
-            else return true;
         }
 
         private void CopyDirectory(string fromPath, string toPath)

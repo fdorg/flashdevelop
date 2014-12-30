@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
@@ -334,18 +334,25 @@ namespace ProjectManager.Controls
         {
             if (Directory.Exists(folder) && !isFolderHidden(folder))
             {
-                String[] temp = Directory.GetFiles(folder, "*.*");
-                foreach (String file in temp)
+                try
                 {
-                    String extension = Path.GetExtension(file);
-                    String[] filters = PluginBase.CurrentProject.DefaultSearchFilter.Split(';');
-                    Boolean ignored = Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, extension) > -1;
-                    if (ignored || (this.checkBox.Checked && Array.IndexOf(filters, "*" + extension) == -1)) continue;
-                    files.Add(file);
+                    String[] temp = Directory.GetFiles(folder, "*.*");
+                    foreach (String file in temp)
+                    {
+                        String extension = Path.GetExtension(file);
+                        String[] filters = PluginBase.CurrentProject.DefaultSearchFilter.Split(';');
+                        Boolean ignored = Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, extension) > -1;
+                        if (ignored || (this.checkBox.Checked && Array.IndexOf(filters, "*" + extension) == -1)) continue;
+                        files.Add(file);
+                    }
+                    foreach (string sub in Directory.GetDirectories(folder))
+                    {
+                        AddFilesInFolder(files, sub);
+                    }
                 }
-                foreach (string sub in Directory.GetDirectories(folder))
+                catch (PathTooLongException)
                 {
-                    AddFilesInFolder(files, sub);
+                    // Catch this error to avoid crashing the IDE.  There isn't really a graceful way to handle this.
                 }
             }
         }

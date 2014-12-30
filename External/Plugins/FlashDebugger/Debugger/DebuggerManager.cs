@@ -73,14 +73,6 @@ namespace FlashDebugger
                 if (project == null || !project.EnableInteractiveDebugger) return false;
                 currentProject = project as Project;
 
-                // ignore non-flash haxe targets
-                if (project is HaxeProject)
-                {
-                    HaxeProject hproj = project as HaxeProject;
-                    if (hproj.MovieOptions.Platform == HaxeMovieOptions.NME_PLATFORM
-                        && (hproj.TargetBuild != null && !hproj.TargetBuild.StartsWith("flash")))
-                        return false;
-                }
                 // Give a console warning for non external player...
                 if (currentProject.TestMovieBehavior == TestMovieBehavior.NewTab || currentProject.TestMovieBehavior == TestMovieBehavior.NewWindow)
                 {
@@ -403,16 +395,7 @@ namespace FlashDebugger
         /// </summary>
         private void flashInterface_BreakpointEvent(object sender)
 		{
-			Location loc = FlashInterface.getCurrentLocation();
-			// todo checking for loc here, but should handle swfloaded case and wait with breakpoint event
-			if (loc != null && PluginMain.breakPointManager.ShouldBreak(loc.getFile(), loc.getLine()))
-			{
-				UpdateUI(DebuggerState.BreakHalt);
-			}
-			else
-			{
-				FlashInterface.StepResume();
-			}
+			UpdateUI(DebuggerState.BreakHalt);
 		}
 
         /// <summary>

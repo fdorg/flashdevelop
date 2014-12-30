@@ -79,7 +79,7 @@
 			<!-- COLORING_START -->
 			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" />
 			<use-styles>
-				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Courier New" />
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Consolas,Courier New,monospace" />
 				<style name="tag" fore="0x800000" />
 				<style name="class" fore="0x800000" />
 				<style name="pseudoclass" fore="0x800000" />

@@ -419,8 +419,12 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="FileExplorer.Info.NewFolderName" xml:space="preserve">
     <value>Neuer Ordner</value>
   </data>
+  <data name="FileExplorer.Label.FindHere" xml:space="preserve">
+    <value>&amp;Suchen und Ersetzen hier...</value>
+	<comment>Added after 4.6.4</comment>
+  </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
-    <value>&amp;Eingabeaufforderung ab hier...</value>
+    <value>&amp;Eingabeaufforderung hier...</value>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>&amp;Kopieren</value>
@@ -1440,6 +1444,12 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="PluginCore.Docking.ToolTipWindowList" xml:space="preserve">
     <value>Liste der geöffneten Fenster</value>
   </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFile" xml:space="preserve">
+    <value>Dieser Ordner beinhaltet bereits eine Datei namens "{0}".{1}Möchten Sie diese Datei erstetzen?</value>
+  </data>
+  <data name="PluginCore.Info.FolderAlreadyContainsFolder" xml:space="preserve">
+    <value>Dieser Ordner beinhaltet bereits einen Ordner names "{0}".{1}{1}Wenn die Dateien in dem bereits existieren Ordner die gleichen Bezeichnungen haben wie in dem Ordner, den Sie gerade verschieben oder kopieren, werden diese ersetzt. Möchten Sie den Ordner verschieben oder kopieren?</value>
+  </data>
   <data name="ProjectManager.Category.Advanced" xml:space="preserve">
     <value>Erweitert</value>
   </data>
@@ -1713,12 +1723,6 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="ProjectManager.Info.FlashMovieFilter" xml:space="preserve">
     <value>Adobe Flash Dateien (*.swf)|*.swf</value>
   </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFile" xml:space="preserve">
-    <value>Dieser Ordner beinhaltet bereits eine Datei namens "{0}".{1}Möchten Sie diese Datei erstetzen?</value>
-  </data>
-  <data name="ProjectManager.Info.FolderAlreadyContainsFolder" xml:space="preserve">
-    <value>Dieser Ordner beinhaltet bereits einen Ordner names "{0}".{1}{1}Wenn die Dateien in dem bereits existieren Ordner die gleichen Bezeichnungen haben wie in dem Ordner, den Sie gerade verschieben oder kopieren, werden diese ersetzt. Möchten Sie den Ordner verschieben oder kopieren?</value>
-  </data>
   <data name="ProjectManager.Info.General" xml:space="preserve">
     <value>Allgemein</value>
   </data>
@@ -1868,6 +1872,14 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
     <value>Projekt &amp;erstellen</value>
+  </data>
+  <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
+    <value>Erstellen stoppen</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
+    <value>Möchten Sie das Erstellen wirklich stoppen?</value>
+    <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Abbrechen</value>
@@ -2367,7 +2379,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Dokument:</value>
   </data>
   <data name="ProjectManager.Title.CustomTestMovieDocument" xml:space="preserve">
-    <value>Zu öffendes Dokument auswählen</value>
+    <value>Zu öffnendes Dokument auswählen</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Info.NotEnoughArguments" xml:space="preserve">
@@ -2883,6 +2895,14 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="ASCompletion.Info.GeneratorTemplate" xml:space="preserve">
     <value>Generatorvorlage</value>
   </data>
+  <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
+    <value>Drücken Sie Tab um das Snippet für dieses Schlüsselwort einzufügen</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
+    <value>Drücken sie F1 für detaillierte Hinweise</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
     <value>Suche...</value>
   </data>
@@ -2963,7 +2983,8 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ASCompletion.Description.AddClosingBraces" xml:space="preserve">
-    <value>Gibt an, ob automatisch eine schließenden Klammer nach Eingabe von "(" oder "[" eingefügt werden soll. Gilt auch für Anführungszeichen.</value>
+    <value>Gibt an, ob automatisch eine schließende Klammer nach Eingabe von (, [ oder { eingefügt werden soll. Gilt auch für Anführungszeichen.</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="ASClassWizard.Info.Description" xml:space="preserve">
     <value>Fügt FlashDevelop einen Klassen-Assistenten hinzu</value>
@@ -3381,7 +3402,8 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Alle Haltepunkte aktivieren</value>
   </data>
   <data name="FlashDebugger.Label.Exp" xml:space="preserve">
-    <value>Ausdruck</value>
+    <value>Bedingung</value>
+    <comment>Modified after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Finish" xml:space="preserve">
     <value>&amp;Zurückspringen</value>
@@ -3465,10 +3487,10 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="ASCompletion.Label.GenerateConstructor" xml:space="preserve">
     <value>Konstruktor erstellen</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePrivateFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePrivateFieldFromParameter" xml:space="preserve">
     <value>Generate private field</value>
   </data>
-  <data name="ASCompletion.Label.GeneratePublicFieldFromPatameter" xml:space="preserve">
+  <data name="ASCompletion.Label.GeneratePublicFieldFromParameter" xml:space="preserve">
     <value>Generate public field</value>
   </data>
   <data name="ASCompletion.Label.GenerateToString" xml:space="preserve">
@@ -5099,5 +5121,197 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
     <value>Keep indent tabs when strip trailing spaces.</value>
     <comment>Added after 4.6.2</comment>
+  </data>
+  <data name="AirProperties.AspectRatio.Any" xml:space="preserve">
+    <value>Any</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.DesktopResolution.High" xml:space="preserve">
+    <value>High</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.DesktopResolution.Standard" xml:space="preserve">
+    <value>Standard</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.ANEDescFileNotFound" xml:space="preserve">
+    <value>ANE descriptor file not found.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.AneFilter" xml:space="preserve">
+    <value>ANE Files (*.ane)|*.ane</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.CheckFileLocation" xml:space="preserve">
+    <value>The file must not be located at an upper or external directory from the descriptor file.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.CouldNotLoadANE" xml:space="preserve">
+    <value>Could not load ANE file:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.ExtensionIDNotFound" xml:space="preserve">
+    <value>Extension ID could not be retrieved.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Info.SelectAtleastOneItem" xml:space="preserve">
+    <value>At least one item must be chosen.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneBGMode.Audio" xml:space="preserve">
+    <value>Audio</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneBGMode.Location" xml:space="preserve">
+    <value>Location</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhonePushNotifications.Development" xml:space="preserve">
+    <value>Development</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhonePushNotifications.Distribution" xml:space="preserve">
+    <value>Distribution</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneResolution.High" xml:space="preserve">
+    <value>High</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.IPhoneResolution.Standard" xml:space="preserve">
+    <value>Standard</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Advanced" xml:space="preserve">
+    <value>Advanced &gt;&gt;</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.BackgroundBehavior" xml:space="preserve">
+    <value>Background Behavior</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Basic" xml:space="preserve">
+    <value>&lt;&lt; Basic</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Browse" xml:space="preserve">
+    <value>Browse</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ColorDepth" xml:space="preserve">
+    <value>Color Depth</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.CPURendering" xml:space="preserve">
+    <value>CPU Rendering</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Display" xml:space="preserve">
+    <value>Display</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Entitlements" xml:space="preserve">
+    <value>Entitlements</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Exclude" xml:space="preserve">
+    <value>Exclude</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ExitOnSuspend" xml:space="preserve">
+    <value>Exit On Suspend</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.ExternalSWFs" xml:space="preserve">
+    <value>External SWFs</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.InfoAdditions" xml:space="preserve">
+    <value>Info Additions</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.LookAndFeel" xml:space="preserve">
+    <value>Look And Feel</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.OtherBehavior" xml:space="preserve">
+    <value>Other Behavior</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.PrerenderedIcon" xml:space="preserve">
+    <value>Prerendered Icon</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.PushNotifications" xml:space="preserve">
+    <value>Push Notifications</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.Resolution" xml:space="preserve">
+    <value>Resolution</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.SelectPermForInfo" xml:space="preserve">
+    <value>Select a permission to see its description.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.StatusBarStyle" xml:space="preserve">
+    <value>Status Bar Style</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Label.SupportedDevices" xml:space="preserve">
+    <value>Supported Devices</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.SoftKeyboard.None" xml:space="preserve">
+    <value>None</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.SoftKeyboard.Pan" xml:space="preserve">
+    <value>Pan</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Title.SelectIOSDevices" xml:space="preserve">
+    <value>Select Target iOS Devices</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidAndroidMinVersion" xml:space="preserve">
+    <value>Minimum supported Android version is 8.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidMinAIRVersion" xml:space="preserve">
+    <value>Minimum supported AIR version is 4.3.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.InvalidVersionValue" xml:space="preserve">
+    <value>Invalid version value.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.MissingSWFContainer" xml:space="preserve">
+    <value>The external SWFs file container does not exist. Please, check your path.</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongAdditionsXML" xml:space="preserve">
+    <value>Wrong iPhone info additions XML:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongEntitlementsXML" xml:space="preserve">
+    <value>Wrong iPhone entitlements XML:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="AirProperties.Validation.WrongManifestXML" xml:space="preserve">
+    <value>Wrong Android manifest XML:</value>
+    <comment>Added after 4.6.3</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
+    <value>Generate protected field</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
+    <value>Generate protected function</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
+    <value>Declare protected variable</value>
+    <comment>Added after 4.6.4</comment>
   </data>
 </root>

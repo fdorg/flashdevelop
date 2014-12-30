@@ -4,16 +4,16 @@
 		<menu label="Label.New" name="NewMenu">
 			<button label="Label.BlankDocument" click="New" shortcut="Control|N" />
 			<separator />
-			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" shortcut="Control|D0" />
-			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" shortcut="Control|D1" />
-			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.fdt" shortcut="Control|D2" />
-			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" shortcut="Control|D3" />
-			<button label="Label.HTMLDocument" click="NewFromTemplate" tag="html;$(TemplateDir)\HTML.fdt" shortcut="Control|D4" />
-			<button label="Label.JScriptDocument" click="NewFromTemplate" tag="js;$(TemplateDir)\JScript.js.fdt" shortcut="Control|D5" />
-			<button label="Label.CSSDocument" click="NewFromTemplate" tag="css;$(TemplateDir)\CSS.fdt" shortcut="Control|D6" />
-			<button label="Label.PHPDocument" click="NewFromTemplate" tag="php;$(TemplateDir)\PHP.fdt" shortcut="Control|D7" />
-			<button label="Label.XMLDocument" click="NewFromTemplate" tag="xml;$(TemplateDir)\XML.fdt" shortcut="Control|D8" />
-			<button label="Label.TextDocument" click="NewFromTemplate" tag="txt;$(TemplateDir)\TXT.fdt" shortcut="Control|D9" />
+			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" />
+			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" />
+			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.fdt" />
+			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" />
+			<button label="Label.HTMLDocument" click="NewFromTemplate" tag="html;$(TemplateDir)\HTML.fdt" />
+			<button label="Label.JScriptDocument" click="NewFromTemplate" tag="js;$(TemplateDir)\JScript.js.fdt" />
+			<button label="Label.CSSDocument" click="NewFromTemplate" tag="css;$(TemplateDir)\CSS.fdt" />
+			<button label="Label.PHPDocument" click="NewFromTemplate" tag="php;$(TemplateDir)\PHP.fdt" />
+			<button label="Label.XMLDocument" click="NewFromTemplate" tag="xml;$(TemplateDir)\XML.fdt" />
+			<button label="Label.TextDocument" click="NewFromTemplate" tag="txt;$(TemplateDir)\TXT.fdt" />
 		</menu>
 		<menu label="Label.Modify" name="ModifyMenu" flags="Enable:IsEditable">
 			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" />
@@ -126,9 +126,9 @@
 		<button label="Label.GotoMatchingBrace" click="GoToMatchingBrace" shortcut="Control|M" image="67" flags="Enable:IsEditable" />
 		<separator />
 		<button label="Label.ToggleBookmark" click="ToggleBookmark" shortcut="Control|F2" image="402" flags="Enable:IsEditable" />
-		<button label="Label.NextBookmark" click="NextBookmark" shortcut="F2" image="402|9|3|3" flags="Enable:IsEditable" />
-		<button label="Label.PrevBookmark" click="PrevBookmark" shortcut="Shift|F2" image="402|1|-3|3" flags="Enable:IsEditable" />
-		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" flags="Enable:IsEditable" />
+		<button label="Label.NextBookmark" click="NextBookmark" shortcut="F2" image="402|9|3|3" flags="Enable:IsEditable|HasBookmarks" />
+		<button label="Label.PrevBookmark" click="PrevBookmark" shortcut="Shift|F2" image="402|1|-3|3" flags="Enable:IsEditable|HasBookmarks" />
+		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" flags="Enable:IsEditable|HasBookmarks" />
 	</menu>
 	<menu label="Label.Insert" name="InsertMenu">
 		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" />
@@ -167,7 +167,7 @@
 		<button label="Label.SelectTheme" click="SelectTheme" image="40|30|2|3" />
 		<separator />
 		<button label="Label.CodeSnippets" click="EditSnippets" image="341|5|2|2" />
-		<button label="Label.KeyboardShortcuts" click="EditShortcuts" image="49|15|2|2" />
+		<button label="Label.KeyboardShortcuts" click="EditShortcuts" image="545" />
 		<button label="Label.CustomArguments" click="ShowArguments" image="242" />
 		<separator />
 		<button label="Label.ApplicationFiles" click="PluginCommand" tag="FileExplorer.Explore;$(BaseDir)" image="46|30|2|3" />
@@ -196,7 +196,7 @@
 		<menu label="Label.LanguageReferences" name="LangRefsMenu">
 			<button label="&amp;Flash" click="Browse" tag="http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/index.html" />
 			<button label="&amp;Haxe" click="Browse" tag="http://haxe.org/ref" />
-			<button label="&amp;MYSQL" click="Browse" tag="http://dev.mysql.com/doc/mysql/en/" />
+			<button label="&amp;MySQL" click="Browse" tag="http://dev.mysql.com/doc/mysql/en/" />
 			<button label="&amp;PHP" click="Browse" tag="http://www.php.net/manual/en/" />
 		</menu>
 		<separator />

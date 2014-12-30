@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using PluginCore;
+using System.IO;
 
 namespace ProjectManager.Projects.Haxe
 {
@@ -22,54 +23,88 @@ namespace ProjectManager.Projects.Haxe
 
         protected override void PostProcess()
         {
-            if (project.MovieOptions.Platform == HaxeMovieOptions.NME_PLATFORM)
-                project.MovieOptions.TargetBuildTypes = PlatformData.NME_TARGETS;
+            var options = project.MovieOptions;
 
             if (version > 1)
             {
+                bool needSave = false;
                 // old projects fix
-                if (project.MovieOptions.Platform == HaxeMovieOptions.NME_PLATFORM && project.TargetBuild == null 
+                if (options.Platform == "NME" && project.TargetBuild == null
                     && project.TestMovieCommand != "" && project.TestMovieBehavior != TestMovieBehavior.OpenDocument)
                 {
                     project.TestMovieCommand = "";
+                    needSave = true;
+                }
+                if (options.Platform == "NME")
+                {
+                    options.Platform = GetBuilder(project.OutputPath);
+                    options.Version = "1.0";
+                    needSave = true;
+                }
+                if (options.Platform == null)
+                {
+                    options.Platform = PlatformData.FLASHPLAYER_PLATFORM;
+                    needSave = true;
+                }
+                if (options.HasPlatformSupport)
+                {
+                    var platform = options.PlatformSupport;
+                    options.TargetBuildTypes = platform.Targets;
+                    needSave = true;
+                }
+                if (needSave)
+                {
                     try { project.Save(); }
                     catch { }
                 }
                 return;
             }
 
-            if (project.MovieOptions.MajorVersion > 10)
+            if (options.MajorVersion > 10)
             {
                 // old projects fix
                 string platform = null;
-                switch (project.MovieOptions.MajorVersion)
+                switch (options.MajorVersion)
                 {
                     case 11: 
-                        platform = HaxeMovieOptions.JAVASCRIPT_PLATFORM; 
-                        project.MovieOptions.MajorVersion = 0; 
+                        platform = "JavaScript"; 
+                        options.MajorVersion = 0; 
                         break;
                     case 12: 
-                        platform = HaxeMovieOptions.NEKO_PLATFORM; 
-                        project.MovieOptions.MajorVersion = 0; 
+                        platform = "Neko"; 
+                        options.MajorVersion = 0; 
                         break;
                     case 13: 
-                        platform = HaxeMovieOptions.PHP_PLATFORM; 
-                        project.MovieOptions.MajorVersion = 0; 
+                        platform = "PHP"; 
+                        options.MajorVersion = 0; 
                         break;
                     case 14: 
-                        platform = HaxeMovieOptions.CPP_PLATFORM; 
-                        project.MovieOptions.MajorVersion = 0; 
+                        platform = "C++"; 
+                        options.MajorVersion = 0; 
                         break;
                 }
                 if (platform == null)
                 {
-                    platform = HaxeMovieOptions.FLASHPLAYER_PLATFORM;
-                    project.MovieOptions.MajorVersion = 10;
+                    platform = PlatformData.FLASHPLAYER_PLATFORM;
+                    options.MajorVersion = 14;
                 }
-                project.MovieOptions.Platform = platform;
+                options.Platform = platform;
             }
             try { project.Save(); } 
             catch { }
+        }
+
+        static string GetBuilder(string projectFile)
+        {
+            if (string.IsNullOrEmpty(projectFile))
+                return "Lime";
+            switch (Path.GetExtension(projectFile).ToLower())
+            {
+                case ".nmml":
+                    return "Nme";
+                default:
+                    return "Lime";
+            }
         }
 
         // process HaXe-specific stuff

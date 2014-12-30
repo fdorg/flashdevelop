@@ -118,7 +118,7 @@ namespace ProjectManager.Projects
 		public string Directory { get { return Path.GetDirectoryName(path); } }
         public bool TraceEnabled { set { traceEnabled = value; } get { return traceEnabled; } }
         public string TargetBuild { set { targetBuild = value; } get { return targetBuild; } }
-        public virtual bool EnableInteractiveDebugger { get { return movieOptions.DebuggerSupported; } }
+        public virtual bool EnableInteractiveDebugger { get { return movieOptions.DebuggerSupported(TargetBuild); } }
         public string[] AdditionalPaths; // temporary storage of resolved classpaths
 		
 		// we only provide getters for these to preserve the original pointer

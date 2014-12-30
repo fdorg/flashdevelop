@@ -1,0 +1,5 @@
+<platform name="Java" haxe-target="java">
+  <versions>
+    <version value="1.0" />
+  </versions>
+</platform>

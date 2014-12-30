@@ -419,6 +419,7 @@ namespace FlashDevelop.Dialogs
             ShortcutDialog shortcutDialog = new ShortcutDialog();
             shortcutDialog.CenterToParent();
             shortcutDialog.Show(Globals.MainForm);
+            shortcutDialog.filterTextBox.Focus();
         }
 
         #endregion

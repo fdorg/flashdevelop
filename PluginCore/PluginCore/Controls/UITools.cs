@@ -376,6 +376,15 @@ namespace PluginCore.Controls
                 }
 				return true;
 			}
+
+            // toggle "long-description" for the hover tooltip
+            if (Tip.Visible && key == Keys.F1)
+            {
+                showDetails = !showDetails;
+                simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                return true;
+            }
+
 			// are we currently displaying something?
             if (!CompletionList.Active && !callTip.CallTipActive) return false;
 			

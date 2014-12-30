@@ -139,7 +139,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                // litteral XML
+                // literal XML
                 if (c == '<')
                 {
                     int i2 = i;
@@ -168,7 +168,7 @@ namespace ASCompletion.Completion
                     needSpace = false;
                     continue;
                 }
-                // litteral Regexp
+                // literal Regexp
                 else if (c == '/')
                 {
                     int i2 = i;
@@ -318,7 +318,7 @@ namespace ASCompletion.Completion
             return sb.ToString();
         }
 
-        private static bool lookupGeneric( ReformatOptions options, string txt, ref int index)
+        private static bool lookupGeneric(ReformatOptions options, string txt, ref int index)
         {
             int i = index;
             int n = txt.Length;
@@ -330,7 +330,7 @@ namespace ASCompletion.Completion
                 c = txt[i++];
                 if (Char.IsLetterOrDigit(c) || c == '.' || c == ' ' || c == ',' || c == ':') continue;
                 if (c == '<') sub++;
-                else if (c == '>' && (!options.IsHaXe || prev != '-'))
+                else if (c == '>')
                 {
                     sub--;
                     if (sub < 0)
@@ -351,6 +351,12 @@ namespace ASCompletion.Completion
                 else if (bsub > 0)
                 {
                     if (c == ')') bsub--;
+                    continue;
+                }
+                // haxe function notation (Type->Type)
+                else if (options.IsHaXe && c == '-' && (i < n && txt[i] == '>'))
+                {
+                    sub++;
                     continue;
                 }
                 else break;

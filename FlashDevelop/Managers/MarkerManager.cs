@@ -27,10 +27,18 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void ToggleMarker(ScintillaControl sci, Int32 marker, Int32 line)
         {
-            Int32 lineMask = sci.MarkerGet(line);
-            if ((lineMask & GetMarkerMask(marker)) == 0) sci.MarkerAdd(line, marker);
+            if (!HasMarker(sci, marker, line)) sci.MarkerAdd(line, marker);
             else sci.MarkerDelete(line, marker);
             UITools.Manager.MarkerChanged(sci, line);
+        }
+
+        /// <summary>
+        /// Whether a certain line has a certain marker.
+        /// </summary>
+        public static bool HasMarker(ScintillaControl sci, Int32 marker, Int32 line)
+        {
+            Int32 lineMask = sci.MarkerGet(line);
+            return (lineMask & GetMarkerMask(marker)) > 0;
         }
 
         /// <summary>

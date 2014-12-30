@@ -1,4 +1,6 @@
-﻿using System;
+﻿// TODO: Some of these methods should be merged with WizardHelper
+
+using System;
 using System.IO;
 using System.Xml;
 using System.Text;
@@ -20,7 +22,7 @@ namespace AirProperties
         private static AirVersion _version;
         private static Boolean _unsupportedVersion;
         private const String _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        private const String _MaxSupportedVersion = "14.0";
+        private const String _MaxSupportedVersion = "16.0";
 
         public enum AirVersion
         {
@@ -44,7 +46,9 @@ namespace AirProperties
             V39 = 18,    // Version 3.9
             V40 = 19,    // Version 4.0
             V130 = 20,    // Version 13.0
-            V140 = 21    // Version 14.0
+            V140 = 21,    // Version 14.0
+            V150 = 22,    // Version 15.0
+            V160 = 23    // Version 16.0
         }
 
         public static Exception LastException
@@ -119,11 +123,13 @@ namespace AirProperties
                     else if (nsuri.StartsWith(_BaseAirNamespace + "4.0")) _version = AirVersion.V40;
                     else if (nsuri.StartsWith(_BaseAirNamespace + "13.0")) _version = AirVersion.V130;
                     else if (nsuri.StartsWith(_BaseAirNamespace + "14.0")) _version = AirVersion.V140;
+                    else if (nsuri.StartsWith(_BaseAirNamespace + "15.0")) _version = AirVersion.V150;
+                    else if (nsuri.StartsWith(_BaseAirNamespace + "16.0")) _version = AirVersion.V160;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V140;
+                        _version = AirVersion.V160;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
@@ -133,10 +139,6 @@ namespace AirProperties
             catch (Exception ex)
             {
                 _lastException = ex;
-            }
-            finally
-            {
-                // Nothing to clean up
             }
             _isInitialised = result;
             return result;
@@ -154,52 +156,66 @@ namespace AirProperties
             {
                 _lastException = ex;
             }
-            finally
-            {
-                // Nothing to clean up
-            }
             _isInitialised = result;
             return result;
         }
 
         public static void GetAttribute(string attribute, TextBox field)
         {
-            XmlNode propertyNode;
-            propertyNode = _rootNode.Attributes.GetNamedItem(attribute);
-            if (propertyNode != null) field.Text = propertyNode.InnerText.Trim();
-            else field.Text = "";
+            field.Text = GetAttribute(attribute);
         }
 
         public static String GetAttribute(string attribute)
         {
             XmlNode propertyNode;
-            propertyNode = _rootNode.Attributes.GetNamedItem(attribute);
+            if (attribute.IndexOf('/') > -1)
+                propertyNode = _rootNode.SelectSingleNode("air:" + attribute.Replace("/", "/air:").Replace("/air:@", "/@"), _namespaceManager);
+            else
+                propertyNode = _rootNode.Attributes.GetNamedItem(attribute);
             if (propertyNode != null) return propertyNode.InnerText.Trim();
-            else return "";
+            return string.Empty;
         }
 
         public static void SetAttribute(string attribute, TextBox field)
         {
-            XmlNode propertyNode;
+            SetAttribute(attribute, field.Text);
+        }
+
+        public static void SetAttribute(string attribute, string value)
+        {
             XmlAttribute attributeNode;
-            propertyNode = _rootNode.Attributes.GetNamedItem(attribute);
-            if (propertyNode != null)
+            if (attribute.IndexOf('/') > -1)
+                attributeNode = _rootNode.SelectSingleNode("air:" + attribute.Replace("/", "/air:").Replace("/air:@", "/@"), _namespaceManager) as XmlAttribute;
+            else
+                attributeNode = _rootNode.Attributes.GetNamedItem(attribute) as XmlAttribute;
+            if (attributeNode != null)
             {
-                if (field.Text != "") propertyNode.InnerText = field.Text;
+                if (!string.IsNullOrEmpty(value)) attributeNode.InnerText = value;
                 else
                 {
                     // Remove the attribute, reverting to system default
-                    _rootNode.Attributes.RemoveNamedItem(attribute);
+                    XmlNode attributeParent;
+                    if (attribute.IndexOf('/') > -1)
+                        attributeParent = _rootNode.SelectSingleNode("air:" + attribute.Substring(0, attribute.LastIndexOf('/')).Replace("/", "/air:"), _namespaceManager);
+                    else
+                        attributeParent = _rootNode;
+                    attributeParent.Attributes.Remove(attributeNode);
                 }
             }
             else
             {
                 // Only add attribute if there is a value to add
-                if (field.Text != "")
+                if (!string.IsNullOrEmpty(value))
                 {
-                    attributeNode = _descriptorFile.CreateAttribute(attribute);
-                    attributeNode.Value = field.Text;
-                    _rootNode.Attributes.Append(attributeNode);
+                    XmlNode propertyNode;
+                    string attributeName = attribute.Substring(attribute.IndexOf("@") + 1);
+                    attributeNode = _descriptorFile.CreateAttribute(attributeName);
+                    attributeNode.Value = value;
+                    if (attribute.IndexOf('/') > -1)
+                        propertyNode = _rootNode.SelectSingleNode("air:" + attribute.Substring(0, attribute.LastIndexOf('/')).Replace("/", "/air:"), _namespaceManager);
+                    else
+                        propertyNode = _rootNode;
+                    propertyNode.Attributes.Append(attributeNode);
                 }
             }
         }
@@ -1058,7 +1074,6 @@ namespace AirProperties
 
         public class AirExtension
         {
-            private bool _isValid = false;
             private string _extensionId = String.Empty;
 
             public String ExtensionId
@@ -1067,10 +1082,21 @@ namespace AirProperties
                 set { _extensionId = value; }
             }
 
-            public Boolean IsValid
+            public Boolean IsValid { get; set; }
+
+            public String Path { get; set; }
+        }
+
+        public class AndroidPermission
+        {
+            public String Constant { get; set; }
+
+            public String Description { get; set; }
+
+            public AndroidPermission(string constant, string description)
             {
-                get { return _isValid; }
-                set { _isValid = value; }
+                Constant = constant;
+                Description = description;
             }
         }
      
