@@ -22,6 +22,7 @@ namespace ProjectManager.Controls
         public ToolStripComboBox TargetBuildSelector;
         public RecentProjectsMenu RecentProjects;
 		public ProjectMenu ProjectMenu;
+        private Solution solution;
 
 		public FDMenus(IMainForm mainForm)
 		{
@@ -111,18 +112,22 @@ namespace ProjectManager.Controls
             }
         }
 
-        public void SetProject(Project project)
+        public void SetSolution(Solution solution)
         {
-            RecentProjects.AddOpenedProject(project.ProjectPath);
+            this.solution = solution;
+            RecentProjects.AddOpenedProject(solution.SolutionPath);
             ConfigurationSelector.Enabled = true;
             ProjectMenu.ProjectItemsEnabled = true;
             TestMovie.Enabled = true;
             BuildProject.Enabled = true;
-            ProjectChanged(project);
+
+            ProjectChanged(solution.MainProject as Project);
         }
 
         public void ProjectChanged(Project project)
         {
+            if (project != solution.MainProject) return;
+
             TargetBuildSelector.Items.Clear();
             if (project.MovieOptions.TargetBuildTypes != null)
             {

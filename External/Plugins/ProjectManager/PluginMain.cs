@@ -83,6 +83,7 @@ namespace ProjectManager
         private DockContent pluginPanel;
         private PluginUI pluginUI;
         private Image pluginImage;
+        private Solution solution;
         private Project activeProject;
         private OpenResourceForm projectResources;
         private Boolean runOutput;
@@ -208,13 +209,13 @@ namespace ProjectManager
             menus.ProjectMenu.NewProject.Click += delegate { NewProject(); };
             menus.ProjectMenu.OpenProject.Click += delegate { OpenProject(); };
             menus.ProjectMenu.ImportProject.Click += delegate { ImportProject(); };
-            menus.ProjectMenu.CloseProject.Click += delegate { CloseProject(false); };
+            menus.ProjectMenu.CloseProject.Click += delegate { CloseSolution(false); };
             menus.ProjectMenu.OpenResource.Click += delegate { OpenResource(); };
             menus.ProjectMenu.TestMovie.Click += delegate { TestMovie(); };
             menus.ProjectMenu.RunProject.Click += delegate { RunProject(); };
             menus.ProjectMenu.BuildProject.Click += BuildProjectClick;
             menus.ProjectMenu.CleanProject.Click += delegate { CleanProject(); };
-            menus.ProjectMenu.Properties.Click += delegate { OpenProjectProperties(); };
+            menus.ProjectMenu.Properties.Click += delegate { OpenProjectProperties(activeProject); };
             menus.RecentProjects.ProjectSelected += delegate(string projectPath) { OpenProjectSilent(projectPath); };
 
             buildActions = new BuildActions(MainForm, this);
@@ -239,7 +240,7 @@ namespace ProjectManager
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
             pluginUI.TreeBar.Synchronize.Click += delegate { TreeSyncToCurrentFile(); };
             pluginUI.TreeBar.SynchronizeMain.Click += delegate { TreeSyncToMainFile(); };
-            pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(); };
+            pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(activeProject); };
             pluginUI.TreeBar.RefreshSelected.Click += delegate { TreeRefreshSelectedNode(); };
             pluginUI.TreeBar.ProjectTypes.Click += delegate 
             {
@@ -270,8 +271,8 @@ namespace ProjectManager
             pluginUI.Menu.RunProject.Click += delegate { RunProject(); };
             pluginUI.Menu.BuildProject.Click += BuildProjectClick;
             pluginUI.Menu.CleanProject.Click += delegate { CleanProject(); };
-            pluginUI.Menu.CloseProject.Click += delegate { CloseProject(false); };
-            pluginUI.Menu.Properties.Click += delegate { OpenProjectProperties(); };
+            pluginUI.Menu.CloseProject.Click += delegate { CloseSolution(false); };
+            pluginUI.Menu.Properties.Click += delegate { TreeOpenProjectProperties(); };
             if (Win32.ShouldUseWin32()) pluginUI.Menu.ShellMenu.Click += delegate { TreeShowShellMenu(); };
             pluginUI.Menu.CommandPrompt.Click += delegate { TreeShowCommandPrompt(); };
             pluginUI.Menu.BuildProjectFile.Click += delegate { BackgroundBuild(); };
@@ -319,15 +320,16 @@ namespace ProjectManager
         private void ApplyTargetBuild()
         {
             string target = menus.TargetBuildSelector.Text;
-            Project project = activeProject;
-            if (project != null && project.TargetBuild != target)
+            if (solution != null && solution.TargetBuild != target)
             {
                 if (!menus.TargetBuildSelector.Items.Contains(target))
                     menus.TargetBuildSelector.Items.Insert(0, target);
+
                 FlexCompilerShell.Cleanup();
-                project.TargetBuild = menus.TargetBuildSelector.Text;
-                project.UpdateVars(false);
-                projectActions.UpdateASCompletion(MainForm, project);
+                solution.TargetBuild = menus.TargetBuildSelector.Text;
+
+                activeProject.UpdateVars(false);
+                projectActions.UpdateASCompletion(MainForm, activeProject);
             }
         }
 
@@ -343,10 +345,10 @@ namespace ProjectManager
             // (further saves will be ignored by FD design)
             Project project = activeProject; 
             string lastProject = (project != null) ? project.ProjectPath : "";
-            CloseProject(true);
+            CloseSolution(true);
             Settings.LastProject = lastProject;
-            FlexCompilerShell.Cleanup(); // in case it was used
             SaveSettings();
+            FlexCompilerShell.Cleanup(); // in case it was used
         }
         
         #endregion
@@ -373,7 +375,7 @@ namespace ProjectManager
 
                 // replace $(SomeVariable) type stuff with things we know about
                 case EventType.ProcessArgs:
-                    project = activeProject; // replace arguments using active project data
+                    project = activeProject;
 
                     if (!ProjectCreator.IsRunning)
                     {
@@ -472,13 +474,13 @@ namespace ProjectManager
                     }
                     else if (de.Action == ProjectManagerCommands.InstalledSDKsChanged)
                     {
-                        project = activeProject; // TODO refresh SDK for all projects
-                        BuildActions.GetCompilerPath(project); // refresh project's SDK
+                        foreach(Project proj in solution.Projects)
+                            BuildActions.GetCompilerPath(proj); // refresh project's SDK
                         e.Handled = true;
                     }
                     else if (de.Action == ProjectManagerCommands.BuildProject)
                     {
-                        if (Tree.Projects.Count > 0)
+                        if (solution != null)
                         {
                             AutoSelectConfiguration((string)de.Data);
                             BuildProject();
@@ -487,8 +489,7 @@ namespace ProjectManager
                     }
                     else if (de.Action == ProjectManagerCommands.TestMovie)
                     {
-                        project = activeProject; // TODO we need a "runnable" project
-                        if (project != null)
+                        if (solution != null)
                         {
                             AutoSelectConfiguration((string)de.Data);
                             TestMovie();
@@ -497,7 +498,7 @@ namespace ProjectManager
                     }
                     else if (de.Action == ProjectManagerCommands.PlayOutput)
                     {
-                        if (activeProject != null || de.Data != null)
+                        if (solution != null || de.Data != null)
                         {
                             OpenSwf((string)de.Data);
                             de.Handled = true;
@@ -513,7 +514,7 @@ namespace ProjectManager
                     }
                     else if (de.Action == ProjectManagerCommands.HotBuild)
                     {
-                        if (activeProject != null)
+                        if (solution != null)
                         {
                             AutoSelectConfiguration((string)de.Data);
                             TestMovie();
@@ -595,10 +596,10 @@ namespace ProjectManager
 
         #region Custom Methods
 
-        bool RestoreProjectSession(Project project)
+        bool RestoreSession()
         {
-            if (project == null || !Settings.UseProjectSessions) return false;
-            String hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
+            if (solution == null || !Settings.UseProjectSessions) return false;
+            String hash = HashCalculator.CalculateSHA1(solution.SolutionPath.ToLower());
             String sessionDir = Path.Combine(SettingsDir, "Sessions");
             String sessionFile = Path.Combine(sessionDir, hash + ".fdb");
             if (File.Exists(sessionFile))
@@ -609,38 +610,44 @@ namespace ProjectManager
             return false;
         }
 
-        void SaveProjectSession()
+        void SaveSession()
         {
-            Project project = Tree.Projects.Count > 0 ? Tree.Projects[0] : null; // TODO we need a main project/solution
-
-            if (project == null || !Settings.UseProjectSessions) return;
-            String hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
+            if (solution == null || !Settings.UseProjectSessions) return;
+            String hash = HashCalculator.CalculateSHA1(solution.SolutionPath.ToLower());
             String sessionDir = Path.Combine(SettingsDir, "Sessions");
             String sessionFile = Path.Combine(sessionDir, hash + ".fdb");
             if (!Directory.Exists(sessionDir)) Directory.CreateDirectory(sessionDir);
             PluginBase.MainForm.CallCommand("SaveSession", sessionFile);
         }
 
-        void SetProject(Project project, Boolean stealFocus, Boolean internalOpening)
+        void SetSolution(Solution solution, Boolean stealFocus, Boolean internalOpening)
         {
-            if (project == null || Tree.Projects.Contains(project)) return;
-            if (activeProject != null) CloseProject(true);
+            if (solution == null) return;
+            if (this.solution != null) CloseSolution(true);
+            this.solution = solution;
+            PluginBase.CurrentSolution = solution;
 
             // configure
-            var prefs = PluginMain.Settings.GetPrefs(project);
-            project.TraceEnabled = prefs.DebugMode;
-            project.TargetBuild = prefs.TargetBuild;
-            project.UpdateVars(true);
+            var prefs = PluginMain.Settings.GetPrefs(solution);
+            solution.TraceEnabled = prefs.DebugMode;
+            solution.TargetBuild = prefs.TargetBuild;
+            solution.UpdateVars();
 
-            SetActiveProject(project);
+            pluginUI.SetSolution(solution);
+            menus.SetSolution(solution);
+
+            SetActiveProject(solution.RunProject as Project);
 
             // events
-            project.ClasspathChanged += new ChangedHandler(ProjectClasspathsChanged);
-            project.BeforeSave += new BeforeSaveHandler(ProjectBeforeSave);
+            foreach (Project project in solution.Projects)
+            {
+                project.ClasspathChanged += new ChangedHandler(ProjectClasspathsChanged);
+                project.BeforeSave += new BeforeSaveHandler(ProjectBeforeSave);
+            }
             listenToPathChange = true;
 
             // activate
-            if (!internalOpening) RestoreProjectSession(project);
+            if (!internalOpening) RestoreSession();
 
             if (stealFocus)
             {
@@ -670,33 +677,32 @@ namespace ProjectManager
 
             // ui
             pluginUI.SetProject(project);
-            menus.SetProject(project); // TODO this should reflect the "solution"
             pluginUI.NotifyIssues();
         }
 
-        void SetProject(Project project, Boolean stealFocus)
+        void SetSolution(Solution solution, Boolean stealFocus)
         {
-            SetProject(project, stealFocus, false);
+            SetSolution(solution, stealFocus, false);
         }
-        void SetProject(Project project)
+        void SetSolution(Solution solution)
         {
-            SetProject(project, true, false);
+            SetSolution(solution, true, false);
         }
 
-        void CloseProject(bool internalClosing)
+        void CloseSolution(bool internalClosing)
         {
-            Project project = Tree.Projects.Count > 0 ? Tree.Projects[0] : null; // TODO we need a main project/solution
-            if (project == null) return; // already closed
+            if (solution == null) return;
             listenToPathChange = false;
 
             // save project prefs
-            ProjectPreferences prefs = Settings.GetPrefs(project);
+            ProjectPreferences prefs = Settings.GetPrefs(solution);
             prefs.ExpandedPaths = Tree.ExpandedPaths;
-            prefs.DebugMode = project.TraceEnabled;
-            prefs.TargetBuild = project.TargetBuild;
-            
-            if (!PluginBase.MainForm.ClosingEntirely) SaveProjectSession();
+            prefs.DebugMode = solution.TraceEnabled;
+            prefs.TargetBuild = solution.TargetBuild;
 
+            SaveSession();
+
+            solution = null;
             activeProject = null;
             if (projectResources != null)
             {
@@ -708,7 +714,7 @@ namespace ProjectManager
 
             if (!internalClosing)
             {
-                pluginUI.SetProject(null);
+                pluginUI.SetSolution(null);
                 Settings.LastProject = "";
                 UpdateUIStatus(ProjectManagerUIStatus.Disabled);
                 
@@ -732,9 +738,9 @@ namespace ProjectManager
         {
             // try to open the last opened project
             string lastProject = Settings.LastProject;
-            if (lastProject != null && lastProject != "" && File.Exists(lastProject))
+            if (!string.IsNullOrEmpty(lastProject) && File.Exists(lastProject))
             {
-                SetProject(projectActions.OpenProjectSilent(lastProject), false, true);
+                SetSolution(projectActions.OpenProjectSilent(lastProject), false, true);
             }
         }
 
@@ -750,9 +756,8 @@ namespace ProjectManager
             }
         }
 
-        void OpenProjectProperties()
+        void OpenProjectProperties(Project project)
         {
-            Project project = activeProject;
             using (PropertiesDialog dialog = project.CreatePropertiesDialog())
             {
                 project.UpdateVars(false);
@@ -761,17 +766,20 @@ namespace ProjectManager
                 dialog.ShowDialog(pluginUI);
 
                 if (dialog.ClasspathsChanged || dialog.AssetsChanged)
-                    Tree.RebuildTree();
+                    Tree.RebuildTree(project);
 
                 if (dialog.PropertiesChanged)
                 {
                     project.PropertiesChanged();
                     project.UpdateVars(true);
-                    BroadcastProjectInfo(project);
+                    if (project == activeProject) BroadcastProjectInfo(project);
                     project.Save();
                     menus.ProjectChanged(project);
                 }
-                else projectActions.UpdateASCompletion(MainForm, project);
+                else if (project == activeProject)
+                {
+                    projectActions.UpdateASCompletion(MainForm, project);
+                }
             }
         }
 
@@ -1024,23 +1032,24 @@ namespace ProjectManager
         {
             if (!listenToPathChange) return;
             listenToPathChange = false;
-            projectActions.UpdateASCompletion(MainForm, project);
-            pluginUI.NotifyIssues();
+            if (project == activeProject)
+            {
+                projectActions.UpdateASCompletion(MainForm, project);
+                pluginUI.NotifyIssues();
+            }
             FlexCompilerShell.Cleanup(); // clear compile cache for this project
-            Tree.RebuildTree();
+            Tree.RebuildTree(project);
             listenToPathChange = true;
         }
 
         private void NewProject()
         {
-            Project project = projectActions.NewProject();
-            if (project != null) SetProject(project);
+            SetSolution(projectActions.NewProject());
         }
 
         private void OpenProject()
         {
-            Project project = projectActions.OpenProject();
-            if (project != null) SetProject(project);
+            SetSolution(projectActions.OpenProject());
         }
 
         private void ImportProject()
@@ -1051,8 +1060,7 @@ namespace ProjectManager
 
         private void OpenProjectSilent(string projectPath)
         {
-            Project project = projectActions.OpenProjectSilent(projectPath);
-            if (project != null) SetProject(project);
+            SetSolution(projectActions.OpenProjectSilent(projectPath));
         }
 
         private void TestMovie()
@@ -1164,16 +1172,11 @@ namespace ProjectManager
             EventManager.DispatchEvent(this, de);
         }
 
-        public void PropertiesClick(object sender, EventArgs e)
-        {
-            OpenProjectProperties();
-        }
-
         private void SettingChanged(string setting)
         {
             if (setting == "ExcludedFileTypes" || setting == "ExcludedDirectories" || setting == "ShowProjectClasspaths" || setting == "ShowGlobalClasspaths" || setting == "GlobalClasspath")
             {
-                Tree.RebuildTree();
+                Tree.RebuildTree(null);
             }
             else if (setting == "ExecutableFileTypes")
             {
@@ -1388,6 +1391,13 @@ namespace ProjectManager
                 projectActions.ToggleHidden(project, Tree.SelectedPaths);
         }
 
+        private void TreeOpenProjectProperties()
+        {
+            Project project = Tree.ProjectOf(Tree.SelectedNode);
+            if (project != null)
+                OpenProjectProperties(project);
+        }
+
         public void ToggleShowHidden()
         {
             Project project = activeProject; // TODO apply to all projects
@@ -1400,7 +1410,7 @@ namespace ProjectManager
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.UserRefreshTree, Tree);
             EventManager.DispatchEvent(this, de);
 
-            Project project = activeProject; // TODO apply to all projects?
+            Project project = activeProject;
             projectActions.UpdateASCompletion(MainForm, project);
 
             Tree.RefreshTree();

@@ -23,7 +23,7 @@ namespace ProjectManager
     {
         public FDMenus menus;
         TreeBar treeBar;
-        Project project;
+        Solution solution;
         PluginMain plugin;
         LinkLabel help;
         ProjectTreeView tree;
@@ -125,27 +125,25 @@ namespace ProjectManager
             treeBar.ProjectHasIssues = BuildActions.LatestSDKMatchQuality > 0;
         }
 
+        public void SetSolution(Solution solution)
+        {
+            if (this.solution == solution) return;
+            this.solution = solution;
+
+            tree.Solution = solution;
+            help.Visible = (solution == null);
+
+            if (solution != null)
+            {
+                TreeBar.ShowHidden.Checked = solution.ShowHiddenPaths;
+                IsTraceDisabled = !solution.TraceEnabled;
+            }
+        }
+
         public void SetProject(Project project)
         {
-            if (this.project == project) return;
-
-            this.project = project;
-
-            List<Project> projects = tree.Projects;
-            projects.Clear(); // only one project active
-            if (project != null) projects.Add(project);
-            else projects.Clear();
-            tree.Projects = projects;
             tree.Project = project;
             tree_AfterSelect(tree, null);
-
-            help.Visible = (project == null);
-
-            if (project != null)
-            {
-                TreeBar.ShowHidden.Checked = project.ShowHiddenPaths;
-                IsTraceDisabled = !project.TraceEnabled;
-            }
         }
 
         #region Public Properties
@@ -160,7 +158,7 @@ namespace ProjectManager
             set
             {
                 menus.ConfigurationSelector.SelectedIndex = (value) ? 1 : 0;
-                PluginMain.Settings.GetPrefs(project).DebugMode = !value;
+                PluginMain.Settings.GetPrefs(solution).DebugMode = !value;
             }
         }
 
@@ -281,7 +279,6 @@ namespace ProjectManager
         }
 
         #endregion
-
     }
 
     /// <summary>

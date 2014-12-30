@@ -203,6 +203,18 @@ namespace PluginCore
         #endregion
     }
 
+    public interface ISolution
+    {
+        #region ISolution Methods
+        #endregion
+
+        #region ISolution Properties
+        String Name { get; }
+        String SolutionPath { get; }
+        IProject[] Projects { get; }
+        #endregion
+    }
+
     public interface ISettings
     {
         #region ISettings Properties

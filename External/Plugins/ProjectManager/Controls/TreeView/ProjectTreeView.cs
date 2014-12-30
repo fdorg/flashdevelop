@@ -21,6 +21,7 @@ namespace ProjectManager.Controls.TreeView
 	{
         Dictionary<string, GenericNode> nodeMap;
 		List<Project> projects = new List<Project>();
+        Solution solution;
         Project activeProject;
 		string pathToSelect;
 
@@ -143,6 +144,8 @@ namespace ProjectManager.Controls.TreeView
 			get { return activeProject; }
 			set
 			{
+                if (activeProject == value) return;
+
                 activeProject = value;
                 string path = activeProject != null ? activeProject.Directory : null;
                 SelectedNode = null;
@@ -159,38 +162,21 @@ namespace ProjectManager.Controls.TreeView
             }
 		}
 
-        public List<Project> Projects
+        public Solution Solution
         {
-            get { return projects; }
+            get { return solution; }
             set
             {
-                projects = value != null ? new List<Project>(value) : new List<Project>();
+                solution = value;
+                if (solution != null)
+                {
+                    List<Project> newProjects = new List<Project>();
+                    foreach (Project project in solution.Projects)
+                        newProjects.Add(project);
+                    
+                    var treeState = PluginMain.Settings.GetPrefs(solution).ExpandedPaths;
 
-                try
-                {
-                    BeginUpdate();
-                    BuildTree();
-                }
-                finally
-                {
-                    EndUpdate();
-                }
-                Refresh();
-
-                try
-                {
-                    if (projects.Count > 0)
-                    {
-                        ExpandedPaths = PluginMain.Settings.GetPrefs(projects[0]).ExpandedPaths;
-                        Win32.SetScrollPos(this, new Point());
-                    }
-                    else Project = null;
-
-                    if (Nodes.Count > 0) SelectedNode = Nodes[0] as GenericNode;
-                }
-                finally
-                {
-                    EndUpdate();
+                    SetProjects(newProjects, treeState);
                 }
             }
         }
@@ -286,11 +272,45 @@ namespace ProjectManager.Controls.TreeView
 
 		#endregion
 
-		#region TreeView Population
+        #region TreeView Population
+
+        private void SetProjects(List<Project> newProjects, List<string> treeState)
+        {
+            projects = newProjects;
+
+            try
+            {
+                BeginUpdate();
+                BuildTree();
+            }
+            finally
+            {
+                EndUpdate();
+            }
+            Refresh();
+
+            try
+            {
+                BeginUpdate();
+                if (projects.Count > 0)
+                {
+                    ExpandedPaths = treeState;
+                    Win32.SetScrollPos(this, new Point());
+                }
+                else Project = null;
+
+                if (Nodes.Count > 0) SelectedNode = Nodes[0] as GenericNode;
+            }
+            finally
+            {
+                EndUpdate();
+            }
+        }
+
         /// <summary>
 		/// Rebuilds the tree from scratch.
 		/// </summary>
-        public void RebuildTree()
+        public void RebuildTree(Project forProject)
         {
             Point scrollPos = new Point();
             // store old tree state
@@ -301,6 +321,8 @@ namespace ProjectManager.Controls.TreeView
             try
             {
                 BeginUpdate();
+
+                // TODO only rebuid part of tree corresponding to the optional 'forProject'
                 BuildTree();
 
                 // BUG: avoid nodes expansion to generate redraws

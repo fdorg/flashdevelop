@@ -250,19 +250,19 @@ namespace ProjectManager
         /// Returns the preferences object for the given project
         /// and creates a new instance if necessary.
         /// </summary>
-        public ProjectPreferences GetPrefs(Project project)
+        public ProjectPreferences GetPrefs(Solution solution)
         {
             foreach (ProjectPreferences prefs in projectPrefList)
-                if (prefs.ProjectPath == project.ProjectPath)
+                if (prefs.ProjectPath == solution.SolutionPath)
                     return prefs;
 
             // ok, we haven't seen this project before.  let's take this opportunity
             // to clean out any prefs for projects that don't exist anymore
             CleanOldPrefs();
 
-            ProjectPreferences newPrefs = new ProjectPreferences(project.ProjectPath);
-            newPrefs.DebugMode = project.EnableInteractiveDebugger
-                && project.OutputType != OutputType.OtherIDE && project.OutputPath != "";
+            ProjectPreferences newPrefs = new ProjectPreferences(solution.SolutionPath);
+            Project project = solution.RunProject as Project;
+            newPrefs.DebugMode = solution.GetDefaultTraceEnabled();
             projectPrefList.Add(newPrefs);
             return newPrefs;
         }

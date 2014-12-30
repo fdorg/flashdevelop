@@ -39,7 +39,7 @@ namespace ProjectManager.Actions
 
         #region New/Open Project
 
-        public Project NewProject()
+        public Solution NewProject()
         {
             NewProjectDialog dialog = new NewProjectDialog();
             if (dialog.ShowDialog(owner) == DialogResult.OK)
@@ -50,7 +50,7 @@ namespace ProjectManager.Actions
                     ProjectCreator creator = new ProjectCreator();
                     Project created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
                     PatchProject(created);
-                    return created;
+                    return new Solution(created);
                 }
                 catch (Exception exception)
                 {
@@ -62,7 +62,7 @@ namespace ProjectManager.Actions
             return null;
         }
 
-        public Project OpenProject()
+        public Solution OpenProject()
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
@@ -74,14 +74,17 @@ namespace ProjectManager.Actions
                 return null;
         }
 
-        public Project OpenProjectSilent(string path)
+        public Solution OpenProjectSilent(string path)
         {
             try
             {
                 String physical = PathHelper.GetPhysicalPathName(path);
-                Project loaded = ProjectLoader.Load(physical);
-                PatchProject(loaded);
-                return loaded;
+                Solution solution = new Solution(physical);
+
+                foreach(Project loaded in solution.Projects)
+                    PatchProject(loaded);
+
+                return solution;
             }
             catch (Exception exception)
             {
