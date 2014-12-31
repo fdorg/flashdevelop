@@ -149,7 +149,6 @@
     <Compile Include="Projects\LibraryAsset.cs" />
     <Compile Include="Projects\MovieOptions.cs" />
     <Compile Include="Projects\BuildEventVars.cs" />
-    <Compile Include="Projects\FileInspector.cs" />
     <Compile Include="Projects\HiddenPathCollection.cs" />
     <Compile Include="Projects\MoreProjectPaths.cs" />
     <Compile Include="Projects\PathCollection.cs" />

@@ -16,6 +16,7 @@
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,7 +29,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -79,6 +79,9 @@
     <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\ConfigHelper.cs">
       <Link>Building\AS3\ConfigHelper.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\FileInspector.cs">
+      <Link>Building\FileInspector.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\JvmConfigHelper.cs">
       <Link>Building\AS3\JvmConfigHelper.cs</Link>
     </Compile>
@@ -126,9 +129,6 @@
     </Compile>
     <Compile Include="..\..\Plugins\ProjectManager\Projects\CompilerOptions.cs">
       <Link>Projects\CompilerOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Plugins\ProjectManager\Projects\FileInspector.cs">
-      <Link>Projects\FileInspector.cs</Link>
     </Compile>
     <Compile Include="..\..\Plugins\ProjectManager\Projects\Generic\GenericMovieOptions.cs">
       <Link>Projects\Generic\GenericMovieOptions.cs</Link>

@@ -22,40 +22,6 @@ namespace PluginCore.Localization
     }
 }
 
-namespace PluginCore.Helpers
-{
-    public class FileHelper
-    {
-        public static bool IsHaxeExtension(string extension)
-        {
-            return extension == ".hx" || extension == ".hxp";
-        }
-    }
-
-    public class PathHelper
-    {
-        public static String GetShortPathName(String longName)
-        {
-            if (Environment.OSVersion.Platform != PlatformID.MacOSX && Environment.OSVersion.Platform != PlatformID.Unix)
-            {
-                Int32 max = longName.Length + 1;
-                StringBuilder sb = new StringBuilder(max);
-                NativeMethods.GetShortPathName(longName, sb, max);
-                return sb.ToString();
-            }
-            
-            return longName; // For other platforms
-        }
-
-        private class NativeMethods
-        {
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-            public static extern Int32 GetShortPathName(String lpszLongPath, StringBuilder lpszShortPath, Int32 cchBuffer);
-        }
-
-    }
-}
-
 namespace PluginCore
 {
     interface IProject { }

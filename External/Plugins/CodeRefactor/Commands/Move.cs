@@ -114,7 +114,7 @@ namespace CodeRefactor.Commands
         {
             if (PluginBase.CurrentProject == null) return false;
             string ext = Path.GetExtension(file);
-            return ext == ".as" || FileHelper.IsHaxeExtension(ext) || ext == ".ls" && PluginBase.CurrentProject.DefaultSearchFilter.Contains(ext);
+            return ext == ".as" || FileInspector.IsHaxeFile(file, ext) || ext == ".ls" && PluginBase.CurrentProject.DefaultSearchFilter.Contains(ext);
         }
 
         private MoveTargetHelper GetMoveTarget(string oldFilePath, string newPath)
