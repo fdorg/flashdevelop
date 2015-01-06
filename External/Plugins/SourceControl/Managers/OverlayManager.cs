@@ -49,8 +49,8 @@ namespace SourceControl.Managers
             {
                 if (node is DirectoryNode)
                 {
-                    if (UpdateNodeStatus(node as GenericNode))
-                        RefreshNodes(node.Nodes);
+                    UpdateNodeStatus(node as GenericNode);
+                    RefreshNodes(node.Nodes);
                 }
                 else if (node is FileNode)
                 {
