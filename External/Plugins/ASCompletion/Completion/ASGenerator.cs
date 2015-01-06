@@ -3235,36 +3235,27 @@ namespace ASCompletion.Completion
 
         private static void GenerateFunction(MemberModel member, int position, bool detach, ClassModel inClass)
         {
-            bool isInterface = ClassIsInterface(inClass);
-            bool isConstructor = (member.Flags & FlagType.Constructor) > 0;
             string template = "";
-            string result = "";
-            if (isInterface)
+            string decl = "";
+            if ((inClass.Flags & FlagType.Interface) > 0)
             {
                 template = TemplateUtils.GetTemplate("IFunction");
-                result = TemplateUtils.ToDeclarationString(member, template);
+                decl = TemplateUtils.ToDeclarationString(member, template);
             }
-            else if (isConstructor)
+            else if ((member.Flags & FlagType.Constructor) > 0)
             {
                 template = TemplateUtils.GetTemplate("Constructor");
-                result = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
             }
             else
             {
                 template = TemplateUtils.GetTemplate("Function");
-                result = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                result = TemplateUtils.ReplaceTemplateVariable(result, "Body", null);
+                decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", null);
             }
-
-            if (detach)
-            {
-                result = NewLine + TemplateUtils.ReplaceTemplateVariable(result, "BlankLine", NewLine);
-            }
-            else
-            {
-                result = TemplateUtils.ReplaceTemplateVariable(result, "BlankLine", null);
-            }
-            InsertCode(position, result);
+            if (detach) decl = NewLine + TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
+            else decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", null);
+            InsertCode(position, decl);
         }
 
         private static bool ClassIsInterface(ClassModel cm)
