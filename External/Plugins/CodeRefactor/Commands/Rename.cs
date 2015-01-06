@@ -114,7 +114,7 @@ namespace CodeRefactor.Commands
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
-            this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource);
+            this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) {OnlySourceFiles = true};
             // register a completion listener to the FindAllReferences so we can rename the entries
             this.findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
         }
@@ -126,8 +126,18 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            if (renamePackage != null) renamePackage.Execute();
-            else this.findAllReferencesCommand.Execute();
+            if (renamePackage != null)
+            {
+                renamePackage.RegisterDocumentHelper(AssociatedDocumentHelper);
+                renamePackage.Execute();
+            }
+            else
+            {
+                // To get the initial open documents, finding all references will interfere if we try later
+                // We may already have an AssociatedDocumentHelper
+                RegisterDocumentHelper(AssociatedDocumentHelper);
+                findAllReferencesCommand.Execute();
+            }
         }
 
         /// <summary>
@@ -154,14 +164,16 @@ namespace CodeRefactor.Commands
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
                 // re-open the document and replace all the text
-                PluginBase.MainForm.OpenEditableDocument(entry.Key);
-                ScintillaControl sci = ASContext.CurSciControl;
+                var sci = AssociatedDocumentHelper.LoadDocument(entry.Key);
                 // replace matches in the current file with the new name
                 RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName);
-                if (sci.IsModify) this.AssociatedDocumentHelper.MarkDocumentToKeep(sci.FileName);
+                //Uncomment if we want to keep modified files
+                //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
+                PluginBase.MainForm.CurrentDocument.Save();
             }
             RenameFile(eventArgs.Results);
             this.Results = eventArgs.Results;
+            AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
             if (this.outputResults) this.ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             PluginCore.Controls.MessageBar.Locked = false;
@@ -221,13 +233,37 @@ namespace CodeRefactor.Commands
 
             if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return;
 
-            RefactoringHelper.Move(oldFileName, newFileName);
-           
+            // We close previous files to avoid unwanted "file modified" dialogs
+            ITabbedDocument doc;
+            Boolean reopen = false;
+            if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldFileName, out doc))
+            {
+                doc.Close();
+                reopen = true;
+            }
+            if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(newFileName, out doc))
+            {
+                doc.Close();
+                reopen = true;
+            }
+
+            // name casing changed
+            if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
+            {
+                string tmpPath = oldFileName + "$renaming$";
+                RefactoringHelper.Move(oldFileName, tmpPath);
+                RefactoringHelper.Move(tmpPath, newFileName);
+            }
+            else
+                RefactoringHelper.Move(oldFileName, newFileName);
+            
             if (results.ContainsKey(oldFileName))
             {
                 results[newFileName] = results[oldFileName];
                 results.Remove(oldFileName);
             }
+            if (reopen)
+                PluginBase.MainForm.OpenEditableDocument(newFileName);
         }
 
         /// <summary>

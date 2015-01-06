@@ -27,7 +27,7 @@ namespace ProjectManager.Projects.Haxe
         public override bool ReadOnly { get { return false; } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application && IsFlashOutput; } }
         public override bool RequireLibrary { get { return IsFlashOutput; } }
-        public override string DefaultSearchFilter { get { return "*.hx"; } }
+        public override string DefaultSearchFilter { get { return "*.hx;*.hxp"; } }
 
         public override String LibrarySWFPath
         {

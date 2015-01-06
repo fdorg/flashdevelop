@@ -405,6 +405,21 @@ namespace ProjectManager.Actions
                 return false;
             }
 
+            bool isDirectory = Directory.Exists(oldPath);
+
+            if (!isDirectory)
+            {
+                string oldExt = Path.GetExtension(oldPath);
+                string newExt = Path.GetExtension(newName);
+
+                string caption = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.ExtensionChangeWarning");
+
+                if (oldExt.ToUpperInvariant() != newExt.ToUpperInvariant() &&
+                    MessageBox.Show(message, caption, MessageBoxButtons.YesNo) == DialogResult.No)
+                    return false;
+            }
+
             if (CancelAction(ProjectFileActionsEvents.FileRename, new string[] { oldPath, newName })) return false;
 
             try
@@ -416,7 +431,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(newPath);
 
-                if (Directory.Exists(oldPath))
+                if (isDirectory)
                 {
                     // this is required for renaming directories, don't ask me why
                     string oldPathFixed = (oldPath.EndsWith("\\")) ? oldPath : oldPath + "\\";
@@ -428,7 +443,11 @@ namespace ProjectManager.Actions
                         Directory.Move(oldPathFixed, tmpPath);
                         oldPathFixed = tmpPath;
                     }
-                    Directory.Move(oldPathFixed, newPathFixed);
+                    if (FileHelper.ConfirmOverwrite(newPath))
+                    {
+                        FileHelper.ForceMoveDirectory(oldPathFixed, newPathFixed);
+                    }
+                    else return false;
                 }
                 else
                 {
@@ -485,7 +504,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(toPath);
 
-                if (Directory.Exists(fromPath)) MoveDirectory(fromPath, toPath);
+                if (Directory.Exists(fromPath)) FileHelper.ForceMoveDirectory(fromPath, toPath);
                 else File.Move(fromPath, toPath);
 
                 OnFileMoved(fromPath, toPath);
@@ -496,27 +515,6 @@ namespace ProjectManager.Actions
                 ErrorManager.ShowError(exception);
             }
             finally { PopCurrentDirectory(); }
-        }
-
-        private void MoveDirectory(string fromPath, string toPath)
-        {
-            if (Directory.GetDirectoryRoot(fromPath) == Directory.GetDirectoryRoot(toPath)
-                && !Directory.Exists(toPath))
-            {
-                Directory.Move(fromPath, toPath);
-            }
-            else
-            {
-                try
-                {
-                    CopyDirectory(fromPath, toPath);
-                    Directory.Delete(fromPath, true);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
         }
 
         public void Copy(string fromPath, string toPath)
@@ -571,7 +569,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(toPath);
 
-                if (Directory.Exists(fromPath)) CopyDirectory(fromPath, toPath);
+                if (Directory.Exists(fromPath)) FileHelper.CopyDirectory(fromPath, toPath, true);
                 else File.Copy(fromPath, toPath, true);
 
                 OnFilePasted(fromPath, toPath);
@@ -583,26 +581,6 @@ namespace ProjectManager.Actions
             catch (Exception exception)
             {
                 ErrorManager.ShowError(exception);
-            }
-        }
-
-        private void CopyDirectory(string fromPath, string toPath)
-        {
-            if (!Directory.Exists(toPath))
-                Directory.CreateDirectory(toPath);
-
-            foreach (string file in Directory.GetFiles(fromPath))
-            {
-                string name = Path.GetFileName(file);
-                string destFile = Path.Combine(toPath, name);
-                File.Copy(file, destFile, true);
-            }
-
-            foreach (string subdir in Directory.GetDirectories(fromPath))
-            {
-                string name = Path.GetFileName(subdir);
-                string destDir = Path.Combine(toPath, name);
-                CopyDirectory(subdir, destDir);
             }
         }
 

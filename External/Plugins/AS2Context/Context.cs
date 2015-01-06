@@ -795,7 +795,7 @@ namespace AS2Context
                 {
                     string pathname = package.Replace('.', Path.DirectorySeparatorChar);
                     string fullpath = Path.GetDirectoryName(cFile.FileName);
-                    if (!fullpath.ToUpper().EndsWith(pathname.ToUpper()))
+                    if (!fullpath.EndsWith(pathname))
                     {
                         if (settings.FixPackageAutomatically && CurSciControl != null)
                         {
