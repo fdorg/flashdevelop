@@ -11,8 +11,8 @@ namespace SourceControl.Managers
 {
     public class VCManager
     {
-        Timer refreshTimer;
-        OverlayManager ovManager;
+        private Timer refreshTimer;
+        private OverlayManager ovManager;
 
         public VCManager(OverlayManager ovManager)
         {
