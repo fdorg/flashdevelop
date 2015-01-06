@@ -86,7 +86,6 @@ namespace SourceControl.Actions
             fsWatchers.ForceRefresh();
         }
 
-
         #region file actions
 
         internal static bool HandleFileBeforeRename(string path)
