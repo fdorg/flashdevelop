@@ -167,6 +167,8 @@ namespace ProjectManager.Controls
         public ToolStripMenuItem OpenProject;
         public ToolStripMenuItem ImportProject;
         public ToolStripMenuItem CloseProject;
+        public ToolStripMenuItem AddExistingProject;
+        public ToolStripMenuItem AddNewProject;
         public ToolStripMenuItem OpenResource;
         public ToolStripMenuItem TestMovie;
         public ToolStripMenuItem RunProject;
@@ -196,6 +198,16 @@ namespace ProjectManager.Controls
             CloseProject = new ToolStripMenuItem(TextHelper.GetString("Label.CloseProject"));
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.CloseProject", CloseProject);
             AllItems.Add(CloseProject);
+
+            AddExistingProject = new ToolStripMenuItem("Existing Project...");
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AddExistingProject", AddExistingProject);
+
+            AddNewProject = new ToolStripMenuItem("New Project...");
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AddNewProject", AddNewProject);
+
+            var Add = new ToolStripMenuItem("Add");
+            Add.DropDown.Items.Add(AddExistingProject);
+            Add.DropDown.Items.Add(AddNewProject);
 
             OpenResource = new ToolStripMenuItem(TextHelper.GetString("Label.OpenResource"));
             OpenResource.Image = PluginBase.MainForm.FindImage("209");
@@ -235,6 +247,7 @@ namespace ProjectManager.Controls
             base.DropDownItems.Add(ImportProject);
             base.DropDownItems.Add(CloseProject);
             base.DropDownItems.Add(new ToolStripSeparator());
+            base.DropDownItems.Add(Add);
             base.DropDownItems.Add(OpenResource);
             base.DropDownItems.Add(new ToolStripSeparator());
             base.DropDownItems.Add(TestMovie);
@@ -269,6 +282,6 @@ namespace ProjectManager.Controls
                 }
             }
         }
-	}
+    }
 
 }

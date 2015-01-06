@@ -85,5 +85,12 @@ namespace ProjectManager.Projects
             return project.EnableInteractiveDebugger
                 && project.OutputType != OutputType.OtherIDE && project.OutputPath != "";
         }
+
+        internal void Add(Project project)
+        {
+            List<IProject> temp = new List<IProject>(Projects);
+            temp.Add(project);
+            Projects = temp.ToArray();
+        }
     }
 }

@@ -92,6 +92,7 @@ namespace ProjectManager
         private Timer buildTimer;
         private bool listenToPathChange;
         private ProjectManagerUIStatus uiStatus = ProjectManagerUIStatus.NotBuilding;
+        private SolutionTracking solutionTracking;
 
         private ProjectTreeView Tree { get { return pluginUI.Tree; } }
         public static IMainForm MainForm { get { return PluginBase.MainForm; } }
@@ -210,6 +211,8 @@ namespace ProjectManager
             menus.ProjectMenu.OpenProject.Click += delegate { OpenProject(); };
             menus.ProjectMenu.ImportProject.Click += delegate { ImportProject(); };
             menus.ProjectMenu.CloseProject.Click += delegate { CloseSolution(false); };
+            menus.ProjectMenu.AddExistingProject.Click += delegate { AddExistingProject(); };
+            menus.ProjectMenu.AddNewProject.Click += delegate { AddNewProject(); };
             menus.ProjectMenu.OpenResource.Click += delegate { OpenResource(); };
             menus.ProjectMenu.TestMovie.Click += delegate { TestMovie(); };
             menus.ProjectMenu.RunProject.Click += delegate { RunProject(); };
@@ -299,6 +302,9 @@ namespace ProjectManager
             buildTimer.Tick += new EventHandler(OnBuildTimerTick);
             buildingAll = false;
             runOutput = false;
+
+            solutionTracking = new SolutionTracking(pluginUI, Settings);
+            solutionTracking.ActiveProject += solutionTracking_ActiveProject;
         }
 
         private void BuildProjectClick(object sender, EventArgs e)
@@ -430,12 +436,11 @@ namespace ProjectManager
                     {
                         Tree.RefreshNode(Tree.NodeMap[path]);
                     }
-                    TabColors.UpdateTabColors(Settings);
+                    solutionTracking.Update();
                     break;
 
                 case EventType.FileSwitch:
-                    TabColors.UpdateTabColors(Settings);
-                    if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
+                    solutionTracking.Update();
                     break;
 
                 case EventType.ProcessStart:
@@ -658,6 +663,12 @@ namespace ProjectManager
             UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
         }
 
+        private void ReloadSolution()
+        {
+            pluginUI.SetSolution(null);
+            pluginUI.SetSolution(solution);
+        }
+
         private void SetActiveProject(Project project)
         {
             activeProject = project;
@@ -727,6 +738,21 @@ namespace ProjectManager
                 projectActions.UpdateASCompletion(MainForm, null);
             }
             TabColors.UpdateTabColors(Settings);
+        }
+
+        private void AddExistingProject()
+        {
+            if (solution == null) return;
+            var temp = projectActions.OpenProject();
+            if (temp == null) return;
+            Project project = temp.MainProject as Project;
+            solution.Add(project);
+            ReloadSolution();
+        }
+
+        private void AddNewProject()
+        {
+            
         }
         
         public void OpenPanel()
@@ -955,6 +981,11 @@ namespace ProjectManager
         #endregion
 
         #region Event Handlers
+
+        void solutionTracking_ActiveProject(Project project)
+        {
+            if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
+        }
 
         private void BuildComplete(IProject project, bool runOutput)
         {
