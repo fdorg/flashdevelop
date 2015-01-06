@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using ProjectManager.Controls.TreeView;
 using SourceControl.Managers;

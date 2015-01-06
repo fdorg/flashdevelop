@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using PluginCore;
 using System.IO;
 using SourceControl.Sources;
@@ -9,32 +8,23 @@ using ProjectManager.Projects;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
-using PluginCore.Managers;
 using PluginCore.Localization;
-using System.Threading;
 
 namespace SourceControl.Actions
 {
     public class ProjectWatcher
     {
-        private static bool initialized = false;
-
-        static internal readonly List<IVCManager> VCManagers = new List<IVCManager>();
-        static VCManager vcManager;
-        static FSWatchers fsWatchers;
-        static OverlayManager ovManager;
-        static Project currentProject;
-
-        public static bool Initialized { get { return initialized; } }
+        internal static readonly List<IVCManager> VCManagers = new List<IVCManager>();
         public static Image Skin { get; set; }
-        public static Project CurrentProject { get { return currentProject; } }
-        public static VCManager VcManager { get { return vcManager; } }
+        private static bool initialized = false;
+        private static VCManager vcManager;
+        private static FSWatchers fsWatchers;
+        private static OverlayManager ovManager;
+        private static Project currentProject;
 
         public static void Init()
         {
-            if (initialized)
-                return;
-
+            if (initialized) return;
             if (Skin == null)
             {
                 try
@@ -47,13 +37,10 @@ namespace SourceControl.Actions
                     Skin = new Bitmap(160, 16);
                 }
             }
-            
             fsWatchers = new FSWatchers();
             ovManager = new OverlayManager(fsWatchers);
             vcManager = new VCManager(ovManager);
-
             SetProject(PluginBase.CurrentProject as Project);
-
             initialized = true;
         }
 
@@ -71,12 +58,11 @@ namespace SourceControl.Actions
         internal static void SetProject(Project project)
         {
             currentProject = project;
-
             fsWatchers.SetProject(project);
             ovManager.Reset();
-
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
-                if (document.IsEditable) HandleFileReload(document.FileName);
+                if (document.IsEditable)
+                    HandleFileReload(document.FileName);
         }
 
         internal static void SelectionChanged()
@@ -88,7 +74,6 @@ namespace SourceControl.Actions
         {
             fsWatchers.ForceRefresh();
         }
-
 
         #region file actions
 
@@ -280,14 +265,10 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileReload(string path)
         {
-            if (!initialized)
-                return false;
-
+            if (!initialized) return false;
             WatcherVCResult result = fsWatchers.ResolveVC(path, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
-                return false;
-
-            return result.Manager.FileActions.FileReload(path);
+            return result != null && result.Status != VCItemStatus.Unknown 
+                && result.Manager.FileActions.FileReload(path);
         }
 
         internal static bool HandleFileModifyRO(string path)

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using PluginCore;
 using SourceControl.Actions;
@@ -13,20 +11,18 @@ namespace SourceControl.Managers
 {
     public class VCManager
     {
-        Timer refreshTimer;
-        OverlayManager ovManager;
+        private Timer refreshTimer;
+        private OverlayManager ovManager;
 
         public VCManager(OverlayManager ovManager)
         {
             this.ovManager = ovManager;
-
             if (PluginMain.SCSettings.EnableSVN) AddVCManager(new SubversionManager());
             if (PluginMain.SCSettings.EnableGIT) AddVCManager(new GitManager());
             if (PluginMain.SCSettings.EnableHG) AddVCManager(new MercurialManager());
-
             refreshTimer = new Timer();
             refreshTimer.Interval = 100;
-            refreshTimer.Tick += new EventHandler(refreshTimer_Tick);
+            refreshTimer.Tick += RefreshTimer_Tick;
             refreshTimer.Stop();
         }
 
@@ -39,10 +35,10 @@ namespace SourceControl.Managers
         public void AddVCManager(IVCManager manager)
         {
             ProjectWatcher.VCManagers.Add(manager);
-            manager.OnChange += manager_OnChange;
+            manager.OnChange += Manager_OnChange;
         }
 
-        void manager_OnChange(IVCManager sender)
+        private void Manager_OnChange(IVCManager sender)
         {
             (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
             {
@@ -51,7 +47,7 @@ namespace SourceControl.Managers
             });
         }
 
-        void refreshTimer_Tick(object sender, EventArgs e)
+        private void RefreshTimer_Tick(object sender, EventArgs e)
         {
             refreshTimer.Stop();
             ovManager.Refresh();
