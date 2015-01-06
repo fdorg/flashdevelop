@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using PluginCore;
 using System.IO;
 using SourceControl.Sources;
@@ -9,9 +8,7 @@ using ProjectManager.Projects;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
-using PluginCore.Managers;
 using PluginCore.Localization;
-using System.Threading;
 
 namespace SourceControl.Actions
 {
