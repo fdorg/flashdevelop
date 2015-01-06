@@ -91,7 +91,7 @@ namespace SourceControl.Sources.Subversion
             if (!statusCache.ContainsKey(rootPath))
             {
                 status = new Status(rootPath);
-                status.OnResult += new StatusResult(status_OnResult);
+                status.OnResult += new StatusResult(Status_OnResult);
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];
@@ -99,7 +99,7 @@ namespace SourceControl.Sources.Subversion
             status.Update();
         }
 
-        void status_OnResult(Status status)
+        private void Status_OnResult(Status status)
         {
             ignoreDirty = false;
             if (OnChange != null) OnChange(this);

@@ -13,18 +13,12 @@ namespace SourceControl.Sources.Git
         IVCFileActions fileActions = new FileActions();
         Regex reIgnore = new Regex("[/\\\\]\\.git([/\\\\]|$)");
         bool ignoreDirty = false;
-        //string checkPathForCommit;
-        //System.Timers.Timer checkPathTimer;
 
         public IVCMenuItems MenuItems { get { return menuItems; } }
         public IVCFileActions FileActions { get { return fileActions; } }
 
         public GitManager()
         {
-            /*checkPathTimer = new System.Timers.Timer();
-            checkPathTimer.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
-            checkPathTimer.Interval = 1000;
-            checkPathTimer.Elapsed += checkPathTimer_Tick;*/
         }
 
         public bool IsPathUnderVC(string path)
@@ -95,7 +89,7 @@ namespace SourceControl.Sources.Git
             if (!statusCache.ContainsKey(rootPath))
             {
                 status = new Status(rootPath);
-                status.OnResult += new StatusResult(status_OnResult);
+                status.OnResult += new StatusResult(Status_OnResult);
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];
@@ -103,7 +97,7 @@ namespace SourceControl.Sources.Git
             status.Update();
         }
 
-        void status_OnResult(Status status)
+        private void Status_OnResult(Status status)
         {
             ignoreDirty = false;
             if (OnChange != null) OnChange(this);
@@ -116,24 +110,11 @@ namespace SourceControl.Sources.Git
             {
                 if (reIgnore.IsMatch(path))
                 {
-                    //checkHead(rootPath);
                     return false;
                 }
                 return statusCache[rootPath].SetPathDirty(path);
             }
             return false;
         }
-
-        /*private void checkHead(string rootPath)
-        {
-            checkPathForCommit = rootPath;
-            checkPathTimer.Stop();
-            checkPathTimer.Start();
-        }
-
-        void checkPathTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            TraceManager.Add("check head");
-        }*/
     }
 }

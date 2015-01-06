@@ -13,17 +13,15 @@ namespace SourceControl.Managers
         public const string META_ROOT = "SourceControl.ROOT";
         public const string META_STATUS = "SourceControl.STATUS";
 
-        ProjectTreeView currentTree;
-        FSWatchers fsWatchers;
+        private ProjectTreeView currentTree;
+        private FSWatchers fsWatchers;
 
         public OverlayManager(FSWatchers fsWatchers)
         {
             this.fsWatchers = fsWatchers;
-
+            OverlayMap.Init();
             FileNode.OnFileNodeRefresh += new FileNodeRefresh(FileNode_OnFileNodeRefresh);
             DirectoryNode.OnDirectoryNodeRefresh += new DirectoryNodeRefresh(DirectoryNode_OnDirectoryNodeRefresh);
-
-            OverlayMap.Init();
         }
 
         internal void Dispose()
@@ -40,11 +38,9 @@ namespace SourceControl.Managers
 
         internal void Refresh()
         {
-            if (currentTree != null)
-            {
-                RefreshNodes(currentTree.Nodes);
-                SelectionChanged();
-            }
+            if (currentTree == null) return;
+            RefreshNodes(currentTree.Nodes);
+            SelectionChanged();
         }
 
         private void RefreshNodes(TreeNodeCollection nodes)
@@ -69,7 +65,7 @@ namespace SourceControl.Managers
             TreeContextMenuUpdate.SetMenu(currentTree, state);
         }
 
-        void ResetNodes(TreeNodeCollection nodes)
+        private void ResetNodes(TreeNodeCollection nodes)
         {
             foreach (TreeNode node in nodes)
             {
@@ -87,32 +83,25 @@ namespace SourceControl.Managers
             }
         }
 
-        void DirectoryNode_OnDirectoryNodeRefresh(DirectoryNode node)
+        private void DirectoryNode_OnDirectoryNodeRefresh(DirectoryNode node)
         {
-            if (node is ProjectNode)
-                currentTree = node.TreeView as ProjectTreeView;
-
+            if (node is ProjectNode) currentTree = node.TreeView as ProjectTreeView;
             UpdateNodeStatus(node);
         }
 
-        void FileNode_OnFileNodeRefresh(FileNode node)
+        private void FileNode_OnFileNodeRefresh(FileNode node)
         {
             UpdateNodeStatus(node);
         }
 
-        bool UpdateNodeStatus(GenericNode node)
+        private bool UpdateNodeStatus(GenericNode node)
         {
-            if (node.Meta == null)
-                node.Meta = new Dictionary<string, object>();
-
-            if (!node.Meta.ContainsKey(META_VC))
-                LocateVC(node);
-
+            if (node.Meta == null) node.Meta = new Dictionary<string, object>();
+            if (!node.Meta.ContainsKey(META_VC)) LocateVC(node);
             IVCManager currentVC = node.Meta[META_VC] as IVCManager;
-            string root = (string)node.Meta[META_ROOT];
-
             if (currentVC != null && currentTree != null)
             {
+                string root = (string)node.Meta[META_ROOT];
                 VCItemStatus status = currentVC.GetOverlay(node.BackingPath, root);
                 node.Meta[META_STATUS] = status;
                 OverlayMap.SetOverlay(status, node, currentTree);
@@ -121,23 +110,21 @@ namespace SourceControl.Managers
             return false;
         }
 
-        void LocateVC(GenericNode node)
+        private void LocateVC(GenericNode node)
         {
             node.Meta[META_VC] = null;
             node.Meta[META_ROOT] = null;
             node.Meta[META_STATUS] = VCItemStatus.Unknown;
-
             if (node.Parent != null && node.Parent is GenericNode)
             {
                 GenericNode parent = (GenericNode)node.Parent;
-                if (parent.Meta != null && parent.Meta.ContainsKey(META_VC))
+                if (parent.Meta != null && parent.Meta.ContainsKey(META_VC) && parent.Meta[META_VC] != null)
                 {
                     node.Meta[META_VC] = parent.Meta[META_VC];
                     node.Meta[META_ROOT] = parent.Meta[META_ROOT];
                     return;
                 }
             }
-
             WatcherVCResult result = fsWatchers.ResolveVC(node.BackingPath);
             if (result != null)
             {
@@ -151,10 +138,10 @@ namespace SourceControl.Managers
 
     class OverlayMap: Dictionary<int, int>
     {
-        static Image iconSkin;
-        static Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
+        private static Image iconSkin;
+        private static Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
 
-        static public void Init()
+        public static void Init()
         {
             iconSkin = GetSkin();
 
@@ -174,7 +161,7 @@ namespace SourceControl.Managers
             return ProjectWatcher.Skin; //can be changed by external SC-Plugin
         }
 
-        static public void Reset()
+        public static void Reset()
         {
             foreach (OverlayMap map in maps.Values)
                 map.Clear();
@@ -185,7 +172,7 @@ namespace SourceControl.Managers
             maps.Add(status, new OverlayMap());
         }
 
-        static public void SetOverlay(VCItemStatus status, TreeNode node, TreeView tree)
+        public static void SetOverlay(VCItemStatus status, TreeNode node, TreeView tree)
         {
             if (!maps.ContainsKey(status)) return;
             OverlayMap map = maps[status];
@@ -211,10 +198,6 @@ namespace SourceControl.Managers
             map[node.ImageIndex] = index;
             node.SelectedImageIndex = node.ImageIndex = index;
         }
-
-        public OverlayMap()
-        {
-        }
     }
 
     #endregion
@@ -239,9 +222,7 @@ namespace SourceControl.Managers
 
         public ProjectSelectionState(ProjectTreeView tree)
         {
-            if (tree == null || tree.SelectedNodes.Count == 0)
-                return;
-
+            if (tree == null || tree.SelectedNodes.Count == 0) return;
             foreach (TreeNode node in tree.SelectedNodes)
             {
                 if (node is FileNode) Files++;
@@ -262,9 +243,22 @@ namespace SourceControl.Managers
                 else if (status == VCItemStatus.Ignored) Ignored++;
                 else if (status == VCItemStatus.Added) Added++;
                 else if (status == VCItemStatus.Conflicted) Conflict++;
-                else if (status == VCItemStatus.Modified) { Modified++; Revert++; Diff++; }
-                else if (status == VCItemStatus.Deleted) { Revert++; Diff++; }
-                else if (status == VCItemStatus.Replaced) { Replaced++; Revert++; }
+                else if (status == VCItemStatus.Modified)
+                { 
+                    Modified++;
+                    Revert++;
+                    Diff++;
+                }
+                else if (status == VCItemStatus.Deleted)
+                {
+                    Revert++;
+                    Diff++;
+                }
+                else if (status == VCItemStatus.Replaced)
+                {
+                    Replaced++;
+                    Revert++;
+                }
                 else Other++;
                 Total++;
             }
