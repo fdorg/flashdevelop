@@ -2229,13 +2229,7 @@ namespace ASCompletion.Completion
                 {
                     if (subClosuresCount == 0)
                     {
-                        if (c == '[')
-                        {
-                            result = new ASResult();
-                            result.Type = ctx.ResolveType(ctx.Features.arrayKey, null);
-                            types.Insert(0, result);
-                        }
-                        else if (c == '{')
+                        if (c == '{')
                         {
                             if (sb.ToString().TrimStart().Length > 0)
                             {
@@ -2274,6 +2268,14 @@ namespace ASCompletion.Completion
                 }
                 else if ((c == ')' || c == ']' || c == '>' || c == '}') && !wasEscapeChar && !isDoubleQuote && !isSingleQuote)
                 {
+                    if (c == ']')
+                    {
+                        result = ASComplete.GetExpressionType(Sci, p);
+                        if (result.Type != null) result.Member = null;
+                        else result.Type = ctx.ResolveType(ctx.Features.arrayKey, null);
+                        types.Insert(0, result);
+                        writeParam = true;
+                    }
                     subClosuresCount--;
                     sb.Append(c);
                     wasEscapeChar = false;
@@ -2380,7 +2382,7 @@ namespace ASCompletion.Completion
                                 types.Insert(0, result);
                             }
                         }
-
+                        
                         if (types.Count == 0)
                         {
                             result = new ASResult();
