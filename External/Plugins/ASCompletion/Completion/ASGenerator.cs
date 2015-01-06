@@ -712,7 +712,7 @@ namespace ASCompletion.Completion
                 result = null;
             string label;
             ClassModel inClass = result != null ? result.RelClass : found.inClass;
-            bool isInterface = ClassIsInterface(inClass);
+            bool isInterface = (inClass.Flags & FlagType.Interface) > 0;
             if (!isInterface && result == null)
             {
                 if (ASContext.Context.Features.protectedKey != null && ASContext.CommonSettings.GenerateProtectedDeclarations)
@@ -3259,12 +3259,7 @@ namespace ASCompletion.Completion
             else decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", null);
             InsertCode(position, decl);
         }
-
-        private static bool ClassIsInterface(ClassModel cm)
-        {
-            return (cm.Flags & FlagType.Interface) > 0;
-        }
-
+        
         private static void GenerateVariable(MemberModel member, int position, bool detach)
         {
             string result = "";
