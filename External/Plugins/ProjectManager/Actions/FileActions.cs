@@ -27,8 +27,6 @@ namespace ProjectManager.Actions
         public const string FileCopy = "ProjectManager.FileActions.Copy";
         public const string FileCut = "ProjectManager.FileActions.Cut";
         public const string FilePaste = "ProjectManager.FileActions.Paste";
-        public const string FileEnableWatchers = "ProjectManager.FileActions.EnableWatchers";
-        public const string FileDisableWatchers = "ProjectManager.FileActions.DisableWatchers";
     }
 
     /// <summary>
@@ -338,18 +336,16 @@ namespace ProjectManager.Actions
 
                 if (confirm)
                     result = MessageBox.Show(mainForm, message, caption,
-                        MessageBoxButtons.OKCancel,
-                        MessageBoxIcon.Warning);
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning);
 
                 if (result == DialogResult.OK)
                 {
-                    DisableWatchers();
                     if (!FileHelper.Recycle(path))
                     {
                         String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(error + " " + path);
                     }
-
                     OnFileDeleted(path);
                 }
             }
@@ -357,11 +353,7 @@ namespace ProjectManager.Actions
             {
                 ErrorManager.ShowError(exception);
             }
-            finally
-            {
-                EnableWatchers();
-                PopCurrentDirectory();
-            }
+            finally { PopCurrentDirectory(); }
         }
 
         public void Delete(string[] paths)
@@ -385,8 +377,6 @@ namespace ProjectManager.Actions
 
                     if (result == DialogResult.OK)
                     {
-                        DisableWatchers();
-
                         foreach (string path in paths)
                         {
                             if (!FileHelper.Recycle(path))
@@ -402,11 +392,7 @@ namespace ProjectManager.Actions
                 {
                     ErrorManager.ShowError(exception);
                 }
-                finally
-                {
-                    EnableWatchers();
-                    PopCurrentDirectory(); 
-                }
+                finally { PopCurrentDirectory(); }
             }
         }
 
@@ -419,11 +405,25 @@ namespace ProjectManager.Actions
                 return false;
             }
 
+            bool isDirectory = Directory.Exists(oldPath);
+
+            if (!isDirectory)
+            {
+                string oldExt = Path.GetExtension(oldPath);
+                string newExt = Path.GetExtension(newName);
+
+                string caption = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.ExtensionChangeWarning");
+
+                if (oldExt.ToUpperInvariant() != newExt.ToUpperInvariant() &&
+                    MessageBox.Show(message, caption, MessageBoxButtons.YesNo) == DialogResult.No)
+                    return false;
+            }
+
             if (CancelAction(ProjectFileActionsEvents.FileRename, new string[] { oldPath, newName })) return false;
 
             try
             {
-                DisableWatchers();
                 PushCurrentDirectory();
 
                 string oldDir = Path.GetDirectoryName(oldPath);
@@ -431,7 +431,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(newPath);
 
-                if (Directory.Exists(oldPath))
+                if (isDirectory)
                 {
                     // this is required for renaming directories, don't ask me why
                     string oldPathFixed = (oldPath.EndsWith("\\")) ? oldPath : oldPath + "\\";
@@ -443,7 +443,11 @@ namespace ProjectManager.Actions
                         Directory.Move(oldPathFixed, tmpPath);
                         oldPathFixed = tmpPath;
                     }
-                    Directory.Move(oldPathFixed, newPathFixed);
+                    if (FileHelper.ConfirmOverwrite(newPath))
+                    {
+                        FileHelper.ForceMoveDirectory(oldPathFixed, newPathFixed);
+                    }
+                    else return false;
                 }
                 else
                 {
@@ -469,11 +473,7 @@ namespace ProjectManager.Actions
                 ErrorManager.ShowError(exception);
                 return false;
             }
-            finally
-            {
-                EnableWatchers();
-                PopCurrentDirectory();
-            }
+            finally { PopCurrentDirectory(); }
             return true;
         }
 
@@ -483,7 +483,6 @@ namespace ProjectManager.Actions
 
             try
             {
-                DisableWatchers();
                 PushCurrentDirectory();
 
                 // try to fix toPath if it's a filename
@@ -505,7 +504,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(toPath);
 
-                if (Directory.Exists(fromPath)) MoveDirectory(fromPath, toPath);
+                if (Directory.Exists(fromPath)) FileHelper.ForceMoveDirectory(fromPath, toPath);
                 else File.Move(fromPath, toPath);
 
                 OnFileMoved(fromPath, toPath);
@@ -515,43 +514,7 @@ namespace ProjectManager.Actions
             {
                 ErrorManager.ShowError(exception);
             }
-            finally
-            {
-                EnableWatchers();
-                PopCurrentDirectory();
-            }
-        }
-
-        private void MoveDirectory(string fromPath, string toPath)
-        {
-            DisableWatchers();
-            if (Directory.GetDirectoryRoot(fromPath) == Directory.GetDirectoryRoot(toPath)
-                && !Directory.Exists(toPath))
-            {
-                try
-                {
-                    Directory.Move(fromPath, toPath);
-                }
-                catch (Exception)
-                { 
-                    throw;
-                }
-                finally { EnableWatchers(); }
-            }
-            else
-            {
-                try
-                {
-                    CopyDirectory(fromPath, toPath);
-                    Directory.Delete(fromPath, true);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-                finally { EnableWatchers(); }
-            }
-            
+            finally { PopCurrentDirectory(); }
         }
 
         public void Copy(string fromPath, string toPath)
@@ -606,7 +569,7 @@ namespace ProjectManager.Actions
 
                 OnFileCreated(toPath);
 
-                if (Directory.Exists(fromPath)) CopyDirectory(fromPath, toPath);
+                if (Directory.Exists(fromPath)) FileHelper.CopyDirectory(fromPath, toPath, true);
                 else File.Copy(fromPath, toPath, true);
 
                 OnFilePasted(fromPath, toPath);
@@ -618,26 +581,6 @@ namespace ProjectManager.Actions
             catch (Exception exception)
             {
                 ErrorManager.ShowError(exception);
-            }
-        }
-
-        private void CopyDirectory(string fromPath, string toPath)
-        {
-            if (!Directory.Exists(toPath))
-                Directory.CreateDirectory(toPath);
-
-            foreach (string file in Directory.GetFiles(fromPath))
-            {
-                string name = Path.GetFileName(file);
-                string destFile = Path.Combine(toPath, name);
-                File.Copy(file, destFile, true);
-            }
-
-            foreach (string subdir in Directory.GetDirectories(fromPath))
-            {
-                string name = Path.GetFileName(subdir);
-                string destDir = Path.Combine(toPath, name);
-                CopyDirectory(subdir, destDir);
             }
         }
 
@@ -658,18 +601,6 @@ namespace ProjectManager.Actions
             }
             File.Copy(file, filePath, true);
             return filePath;
-        }
-
-        private void DisableWatchers()
-        {
-            DataEvent disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
-            EventManager.DispatchEvent(this, disableWatchers);
-        }
-
-        private void EnableWatchers()
-        {
-            DataEvent enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
-            EventManager.DispatchEvent(this, enableWatchers);
         }
 
         #endregion

@@ -5409,4 +5409,12 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Track current active document in Project Tree.</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
+    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
+    <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
 </root>
