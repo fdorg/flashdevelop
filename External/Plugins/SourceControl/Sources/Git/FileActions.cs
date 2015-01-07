@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-
-namespace SourceControl.Sources.Git
+﻿namespace SourceControl.Sources.Git
 {
     class FileActions : IVCFileActions
     {

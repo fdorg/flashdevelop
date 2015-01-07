@@ -1,11 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
-using System.Threading;
 using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore;

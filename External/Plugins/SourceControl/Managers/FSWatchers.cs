@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using SourceControl.Sources;
 using System.Windows.Forms;
-using PluginCore;
 using System.IO;
 using SourceControl.Actions;
 using ProjectManager.Projects;

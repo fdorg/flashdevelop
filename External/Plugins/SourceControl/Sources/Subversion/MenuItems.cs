@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using PluginCore;
 using ProjectManager.Controls.TreeView;
-using System.Diagnostics;
 using PluginCore.Localization;
 
 namespace SourceControl.Sources.Subversion

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using PluginCore;
 using System.Text.RegularExpressions;
-using PluginCore.Managers;
 
 namespace SourceControl.Sources.Git
 {
