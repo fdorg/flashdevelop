@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using PluginCore;
 using System.Text.RegularExpressions;
 
 namespace SourceControl.Sources.Subversion

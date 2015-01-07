@@ -1,9 +1,7 @@
 using System;
 using System.IO;
 using System.Drawing;
-using System.Windows.Forms;
 using System.ComponentModel;
-using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Managers;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PluginCore.Utilities;
-using System.IO;
-using PluginCore.Managers;
+﻿using System.IO;
 
 namespace SourceControl.Sources.Subversion
 {
