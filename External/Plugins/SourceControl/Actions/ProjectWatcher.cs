@@ -17,10 +17,10 @@ namespace SourceControl.Actions
         private static bool initialized = false;
 
         static internal readonly List<IVCManager> VCManagers = new List<IVCManager>();
-        static VCManager vcManager;
-        static FSWatchers fsWatchers;
-        static OverlayManager ovManager;
-        static Project currentProject;
+        private static VCManager vcManager;
+        private static FSWatchers fsWatchers;
+        private static OverlayManager ovManager;
+        private static Project currentProject;
 
         public static bool Initialized { get { return initialized; } }
         public static Image Skin { get; set; }

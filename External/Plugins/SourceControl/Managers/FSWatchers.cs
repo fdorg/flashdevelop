@@ -10,11 +10,11 @@ namespace SourceControl.Managers
 {
     public class FSWatchers
     {
-        Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
-        List<IVCManager> dirtyVC = new List<IVCManager>();
-        System.Timers.Timer updateTimer;
-        string lastDirtyPath;
-        bool disposing;
+        private Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
+        private List<IVCManager> dirtyVC = new List<IVCManager>();
+        private System.Timers.Timer updateTimer;
+        private string lastDirtyPath;
+        private bool disposing;
 
         public FSWatchers()
         {
@@ -31,7 +31,7 @@ namespace SourceControl.Managers
             Clear();
         }
 
-        void Clear()
+        private void Clear()
         {
             try
             {
@@ -191,7 +191,7 @@ namespace SourceControl.Managers
             updateTimer.Start();
         }
 
-        void updateTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
+        private void updateTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
             updateTimer.Stop();
             updateTimer.Interval = 4000;

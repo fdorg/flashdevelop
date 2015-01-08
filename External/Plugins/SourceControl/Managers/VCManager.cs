@@ -11,8 +11,8 @@ namespace SourceControl.Managers
 {
     public class VCManager
     {
-        Timer refreshTimer;
-        OverlayManager ovManager;
+        private Timer refreshTimer;
+        private OverlayManager ovManager;
 
         public VCManager(OverlayManager ovManager)
         {
@@ -40,7 +40,7 @@ namespace SourceControl.Managers
             manager.OnChange += manager_OnChange;
         }
 
-        void manager_OnChange(IVCManager sender)
+        private void manager_OnChange(IVCManager sender)
         {
             (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
             {
@@ -49,7 +49,7 @@ namespace SourceControl.Managers
             });
         }
 
-        void refreshTimer_Tick(object sender, EventArgs e)
+        private void refreshTimer_Tick(object sender, EventArgs e)
         {
             refreshTimer.Stop();
             ovManager.Refresh();

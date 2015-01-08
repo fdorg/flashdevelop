@@ -7,9 +7,9 @@ namespace SourceControl.Sources
 {
     class Ignores: List<IgnoreEntry>
     {
-        string root;
-        string ignoreFile;
-        DateTime lastWrite;
+        private string root;
+        private string ignoreFile;
+        private DateTime lastWrite;
 
         public Ignores(string path, string name)
         {

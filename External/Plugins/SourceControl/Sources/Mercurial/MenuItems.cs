@@ -9,21 +9,21 @@ namespace SourceControl.Sources.Mercurial
 {
     class MenuItems : IVCMenuItems
     {
-        TreeNode[] currentNodes;
-        IVCManager currentManager;
+        private TreeNode[] currentNodes;
+        private IVCManager currentManager;
 
-        ToolStripItem update;
-        ToolStripItem commit;
-        ToolStripItem push;
-        ToolStripItem showLog;
-        ToolStripItem midSeparator;
-        //ToolStripItem diff;
-        ToolStripItem diffChange;
-        ToolStripItem add;
-        ToolStripItem ignore;
-        ToolStripItem undoAdd;
-        ToolStripItem revert;
-        ToolStripItem editConflict;
+        private ToolStripItem update;
+        private ToolStripItem commit;
+        private ToolStripItem push;
+        private ToolStripItem showLog;
+        private ToolStripItem midSeparator;
+        //private ToolStripItem diff;
+        private ToolStripItem diffChange;
+        private ToolStripItem add;
+        private ToolStripItem ignore;
+        private ToolStripItem undoAdd;
+        private ToolStripItem revert;
+        private ToolStripItem editConflict;
 
         public TreeNode[] CurrentNodes { set { currentNodes = value; } }
         public IVCManager CurrentManager { set { currentManager = value; } }
@@ -75,37 +75,37 @@ namespace SourceControl.Sources.Mercurial
             return paths.ToArray();
         }
 
-        void EditConflict_Click(object sender, EventArgs e)
+        private void EditConflict_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("merge", GetPaths());
         }
 
-        void Revert_Click(object sender, EventArgs e)
+        private void Revert_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("revert", GetPaths());
         }
 
-        void UndoAdd_Click(object sender, EventArgs e)
+        private void UndoAdd_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("forget", GetPaths());
         }
 
-        void Add_Click(object sender, EventArgs e)
+        private void Add_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("add", GetPaths());
         }
 
-        void Ignore_Click(object sender, EventArgs e)
+        private void Ignore_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("ignore", GetPaths());
         }
 
-        void DiffChange_Click(object sender, EventArgs e)
+        private void DiffChange_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("vdiff", GetPaths());
         }
 
-        void Diff_Click(object sender, EventArgs e)
+        private void Diff_Click(object sender, EventArgs e)
         {
             if (currentNodes == null || currentNodes.Length != 2)
                 return;
@@ -114,22 +114,22 @@ namespace SourceControl.Sources.Mercurial
             TortoiseProc.Execute("vdiff", path1, path2);
         }
 
-        void ShowLog_Click(object sender, EventArgs e)
+        private void ShowLog_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("log", GetPaths());
         }
 
-        void Push_Click(object sender, EventArgs e)
+        private void Push_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("push", GetPaths());
         }
 
-        void Commit_Click(object sender, EventArgs e)
+        private void Commit_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("commit", GetPaths());
         }
 
-        void Update_Click(object sender, EventArgs e)
+        private void Update_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("pull", GetPaths());
         }

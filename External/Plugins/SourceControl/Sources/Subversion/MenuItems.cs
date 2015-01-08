@@ -9,21 +9,21 @@ namespace SourceControl.Sources.Subversion
 {
     class MenuItems : IVCMenuItems
     {
-        TreeNode[] currentNodes;
-        IVCManager currentManager;
+        private TreeNode[] currentNodes;
+        private IVCManager currentManager;
 
-        ToolStripItem update;
-        ToolStripItem commit;
-        ToolStripItem push;
-        ToolStripItem showLog;
-        ToolStripItem midSeparator;
-        ToolStripItem diff;
-        ToolStripItem diffChange;
-        ToolStripItem add;
-        ToolStripItem ignore;
-        ToolStripItem undoAdd;
-        ToolStripItem revert;
-        ToolStripItem editConflict;
+        private ToolStripItem update;
+        private ToolStripItem commit;
+        private ToolStripItem push;
+        private ToolStripItem showLog;
+        private ToolStripItem midSeparator;
+        private ToolStripItem diff;
+        private ToolStripItem diffChange;
+        private ToolStripItem add;
+        private ToolStripItem ignore;
+        private ToolStripItem undoAdd;
+        private ToolStripItem revert;
+        private ToolStripItem editConflict;
 
         public TreeNode[] CurrentNodes { set { currentNodes = value; } }
         public IVCManager CurrentManager { set { currentManager = value; } }
@@ -72,37 +72,37 @@ namespace SourceControl.Sources.Subversion
             return String.Join("*", paths.ToArray());
         }
 
-        void EditConflict_Click(object sender, EventArgs e)
+        private void EditConflict_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("conflicteditor", GetPaths());
         }
 
-        void Revert_Click(object sender, EventArgs e)
+        private void Revert_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("revert", GetPaths());
         }
 
-        void UndoAdd_Click(object sender, EventArgs e)
+        private void UndoAdd_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("revert", GetPaths());
         }
 
-        void Add_Click(object sender, EventArgs e)
+        private void Add_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("add", GetPaths());
         }
 
-        void Ignore_Click(object sender, EventArgs e)
+        private void Ignore_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("ignore", GetPaths());
         }
 
-        void DiffChange_Click(object sender, EventArgs e)
+        private void DiffChange_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("diff", GetPaths());
         }
 
-        void Diff_Click(object sender, EventArgs e)
+        private void Diff_Click(object sender, EventArgs e)
         {
             if (currentNodes == null || currentNodes.Length != 2)
                 return;
@@ -111,17 +111,17 @@ namespace SourceControl.Sources.Subversion
             TortoiseProc.Execute("diff", path1, path2);
         }
 
-        void ShowLog_Click(object sender, EventArgs e)
+        private void ShowLog_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("log", GetPaths());
         }
 
-        void Commit_Click(object sender, EventArgs e)
+        private void Commit_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("commit", GetPaths());
         }
 
-        void Update_Click(object sender, EventArgs e)
+        private void Update_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("update", GetPaths());
         }

@@ -8,11 +8,11 @@ namespace SourceControl.Sources.Git
     {
         public event VCManagerStatusChange OnChange;
 
-        Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
-        IVCMenuItems menuItems = new MenuItems();
-        IVCFileActions fileActions = new FileActions();
-        Regex reIgnore = new Regex("[/\\\\]\\.git([/\\\\]|$)");
-        bool ignoreDirty = false;
+        private Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
+        private IVCMenuItems menuItems = new MenuItems();
+        private IVCFileActions fileActions = new FileActions();
+        private Regex reIgnore = new Regex("[/\\\\]\\.git([/\\\\]|$)");
+        private bool ignoreDirty = false;
         //string checkPathForCommit;
         //System.Timers.Timer checkPathTimer;
 
@@ -103,7 +103,7 @@ namespace SourceControl.Sources.Git
             status.Update();
         }
 
-        void status_OnResult(Status status)
+        private void status_OnResult(Status status)
         {
             ignoreDirty = false;
             if (OnChange != null) OnChange(this);

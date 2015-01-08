@@ -12,10 +12,10 @@ namespace SourceControl.Sources.Subversion
 
         public string RootPath;
 
-        StatusNode root = new StatusNode(".", VCItemStatus.Unknown);
-        StatusNode temp;
-        string dirty;
-        string updatingPath;
+        private StatusNode root = new StatusNode(".", VCItemStatus.Unknown);
+        private StatusNode temp;
+        private string dirty;
+        private string updatingPath;
 
         public Status(string path)
         {

@@ -13,8 +13,8 @@ namespace SourceControl.Managers
         public const string META_ROOT = "SourceControl.ROOT";
         public const string META_STATUS = "SourceControl.STATUS";
 
-        ProjectTreeView currentTree;
-        FSWatchers fsWatchers;
+        private ProjectTreeView currentTree;
+        private FSWatchers fsWatchers;
 
         public OverlayManager(FSWatchers fsWatchers)
         {
@@ -69,7 +69,7 @@ namespace SourceControl.Managers
             TreeContextMenuUpdate.SetMenu(currentTree, state);
         }
 
-        void ResetNodes(TreeNodeCollection nodes)
+        private void ResetNodes(TreeNodeCollection nodes)
         {
             foreach (TreeNode node in nodes)
             {
@@ -87,7 +87,7 @@ namespace SourceControl.Managers
             }
         }
 
-        void DirectoryNode_OnDirectoryNodeRefresh(DirectoryNode node)
+        private void DirectoryNode_OnDirectoryNodeRefresh(DirectoryNode node)
         {
             if (node is ProjectNode)
                 currentTree = node.TreeView as ProjectTreeView;
@@ -95,12 +95,12 @@ namespace SourceControl.Managers
             UpdateNodeStatus(node);
         }
 
-        void FileNode_OnFileNodeRefresh(FileNode node)
+        private void FileNode_OnFileNodeRefresh(FileNode node)
         {
             UpdateNodeStatus(node);
         }
 
-        bool UpdateNodeStatus(GenericNode node)
+        private bool UpdateNodeStatus(GenericNode node)
         {
             if (node.Meta == null)
                 node.Meta = new Dictionary<string, object>();
@@ -121,7 +121,7 @@ namespace SourceControl.Managers
             return false;
         }
 
-        void LocateVC(GenericNode node)
+        private void LocateVC(GenericNode node)
         {
             node.Meta[META_VC] = null;
             node.Meta[META_ROOT] = null;
@@ -151,8 +151,8 @@ namespace SourceControl.Managers
 
     class OverlayMap: Dictionary<int, int>
     {
-        static Image iconSkin;
-        static Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
+        private static Image iconSkin;
+        private static Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
 
         static public void Init()
         {

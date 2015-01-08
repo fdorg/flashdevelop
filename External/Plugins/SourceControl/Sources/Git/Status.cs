@@ -13,11 +13,11 @@ namespace SourceControl.Sources.Git
         public string RootPath;
         public string Branch;
 
-        StatusNode root = new StatusNode(".", VCItemStatus.Undefined);
-        StatusNode temp;
-        string dirty;
-        string updatingPath;
-        Ignores ignores;
+        private StatusNode root = new StatusNode(".", VCItemStatus.Undefined);
+        private StatusNode temp;
+        private string dirty;
+        private string updatingPath;
+        private Ignores ignores;
 
         public Status(string path)
         {
