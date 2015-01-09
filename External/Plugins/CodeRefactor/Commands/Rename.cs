@@ -6,10 +6,10 @@ using PluginCore.FRService;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ScintillaNet;
-using PluginCore;
 
 namespace CodeRefactor.Commands
 {
@@ -23,6 +23,9 @@ namespace CodeRefactor.Commands
         private FindAllReferences findAllReferencesCommand;
         private Move renamePackage;
 
+        private String oldFileName;
+        private String newFileName;
+
         public String NewName
         {
             get { return this.newName; }
@@ -33,7 +36,8 @@ namespace CodeRefactor.Commands
         /// Outputs found results.
         /// Uses the current text location as the declaration target.
         /// </summary>
-        public Rename() : this(true)
+        public Rename()
+            : this(true)
         {
         }
 
@@ -42,7 +46,8 @@ namespace CodeRefactor.Commands
         /// Uses the current text location as the declaration target.
         /// </summary>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        public Rename(Boolean outputResults) : this(RefactoringHelper.GetDefaultRefactorTarget(), outputResults)
+        public Rename(Boolean outputResults)
+            : this(RefactoringHelper.GetDefaultRefactorTarget(), outputResults)
         {
         }
 
@@ -51,7 +56,8 @@ namespace CodeRefactor.Commands
         /// </summary>
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        public Rename(ASResult target, Boolean outputResults) : this(target, outputResults, null)
+        public Rename(ASResult target, Boolean outputResults)
+            : this(target, outputResults, null)
         {
         }
 
@@ -61,7 +67,8 @@ namespace CodeRefactor.Commands
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="newName">If provided, will not query the user for a new name.</param>
-        public Rename(ASResult target, Boolean outputResults, String newName) : this(target, outputResults, newName, false)
+        public Rename(ASResult target, Boolean outputResults, String newName)
+            : this(target, outputResults, newName, false)
         {
         }
 
@@ -101,7 +108,7 @@ namespace CodeRefactor.Commands
             }
             Boolean isEnum = target.Type.IsEnum();
             Boolean isVoid = target.Type.IsVoid();
-            Boolean isClass = !isVoid && target.IsStatic && target.Member == null;
+            Boolean isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
 
             if (!string.IsNullOrEmpty(newName))
                 this.newName = newName;
@@ -114,7 +121,7 @@ namespace CodeRefactor.Commands
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
-            this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) {OnlySourceFiles = true};
+            this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) { OnlySourceFiles = true };
             // register a completion listener to the FindAllReferences so we can rename the entries
             this.findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
         }
@@ -136,7 +143,17 @@ namespace CodeRefactor.Commands
                 // To get the initial open documents, finding all references will interfere if we try later
                 // We may already have an AssociatedDocumentHelper
                 RegisterDocumentHelper(AssociatedDocumentHelper);
-                findAllReferencesCommand.Execute();
+
+                // Targets have to be validated before getting and modifying all references, otherwise we may end with some bad state
+                if (ValidateTargets())
+                {
+                    findAllReferencesCommand.Execute();
+                }
+                else
+                {
+                    AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
+                    FireOnRefactorComplete();
+                }
             }
         }
 
@@ -151,6 +168,67 @@ namespace CodeRefactor.Commands
         #endregion
 
         #region Private Helper Methods
+
+        private bool ValidateTargets()
+        {
+            ASResult target = findAllReferencesCommand.CurrentTarget;
+            Boolean isEnum = target.Type.IsEnum();
+            Boolean isClass = false;
+
+            if (!isEnum)
+            {
+                Boolean isVoid = target.Type.IsVoid();
+                isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
+            }
+
+            Boolean isGlobalFunction = false;
+            Boolean isGlobalNamespace = false;
+
+            if (!isEnum && !isClass && (target.InClass == null || target.InClass.IsVoid()))
+            {
+                isGlobalFunction = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Function);
+                isGlobalNamespace = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
+            }
+
+            // Types with not their own file
+            if (!isEnum && !isClass && !isGlobalFunction && !isGlobalNamespace)
+                return true;
+
+            FileModel inFile;
+            String originName;
+
+            if (isEnum || isClass)
+            {
+                inFile = target.Type.InFile;
+                originName = target.Type.Name;
+            }
+            else
+            {
+                inFile = target.Member.InFile;
+                originName = target.Member.Name;
+            }
+
+            // Is this possible? should return false? I'm inclined to think so
+            if (inFile == null) return true;
+
+            oldFileName = inFile.FileName;
+            String oldName = Path.GetFileNameWithoutExtension(oldFileName);
+
+            // Private classes and similars
+            if (string.IsNullOrEmpty(oldName) || !oldName.Equals(originName))
+                return true;
+
+            String fullPath = Path.GetFullPath(inFile.FileName);
+            fullPath = Path.GetDirectoryName(fullPath);
+
+            newFileName = Path.Combine(fullPath, NewName + Path.GetExtension(oldFileName));
+
+            // No point in refactoring if the old and new name is the same
+            if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return false;
+
+            // Check if the new file name already exists
+            return FileHelper.ConfirmOverwrite(newFileName);
+        }
 
         /// <summary>
         /// Renames the given the set of matched references
@@ -171,7 +249,7 @@ namespace CodeRefactor.Commands
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
                 PluginBase.MainForm.CurrentDocument.Save();
             }
-            RenameFile(eventArgs.Results);
+            if (newFileName != null) RenameFile(eventArgs.Results);
             this.Results = eventArgs.Results;
             AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
             if (this.outputResults) this.ReportResults();
@@ -182,57 +260,6 @@ namespace CodeRefactor.Commands
 
         private void RenameFile(IDictionary<string, List<SearchMatch>> results)
         {
-            ASResult target = findAllReferencesCommand.CurrentTarget;
-            Boolean isEnum = target.Type.IsEnum();
-            Boolean isClass = false;
-            Boolean isConstructor = false;
-
-            if (!isEnum)
-            {
-                Boolean isVoid = target.Type.IsVoid();
-                isClass = !isVoid && target.IsStatic && target.Member == null;
-                isConstructor = !isVoid && !isClass && RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor);
-            }
-
-            Boolean isGlobalFunction = false;
-            Boolean isGlobalNamespace = false;
-
-            if (!isEnum && !isClass && !isConstructor && (target.InClass == null || target.InClass.IsVoid()))
-            {
-                isGlobalFunction = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Function);
-                isGlobalNamespace = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
-            }
-
-            if (!isEnum && !isClass && !isConstructor && !isGlobalFunction && !isGlobalNamespace) return;
-
-            FileModel inFile = null;
-            String originName = null;
-
-            if (isEnum || isClass)
-            {
-                inFile = target.Type.InFile;
-                originName = target.Type.Name;
-            }
-            else
-            {
-                inFile = target.Member.InFile;
-                originName = target.Member.Name;
-            }
-
-            if (inFile == null) return;
-
-            String oldFileName = inFile.FileName;
-            String oldName = Path.GetFileNameWithoutExtension(oldFileName);
-
-            if (!string.IsNullOrEmpty(oldName) && !oldName.Equals(originName)) return;
-
-            String fullPath = Path.GetFullPath(inFile.FileName);
-            fullPath = Path.GetDirectoryName(fullPath);
-
-            String newFileName = Path.Combine(fullPath, NewName + Path.GetExtension(oldFileName));
-
-            if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return;
-
             // We close previous files to avoid unwanted "file modified" dialogs
             ITabbedDocument doc;
             Boolean reopen = false;
@@ -255,8 +282,18 @@ namespace CodeRefactor.Commands
                 RefactoringHelper.Move(tmpPath, newFileName);
             }
             else
-                RefactoringHelper.Move(oldFileName, newFileName);
-            
+            {
+                var project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+                FileHelper.ForceMove(oldFileName, newFileName);
+                DocumentManager.MoveDocuments(oldFileName, newFileName);
+                if (project.IsDocumentClass(oldFileName))
+                {
+                    project.SetDocumentClass(newFileName, true);
+                    project.Save();
+                }
+
+            }
+
             if (results.ContainsKey(oldFileName))
             {
                 results[newFileName] = results[oldFileName];
@@ -314,7 +351,7 @@ namespace CodeRefactor.Commands
                     foreach (String lineToReport in lineSetsToReport.Value)
                     {
                         // use the String.Format and replace the {0} from above with our final line state
-                        TraceManager.Add(String.Format(lineToReport, renamedLine),  (Int32)TraceType.Info);
+                        TraceManager.Add(String.Format(lineToReport, renamedLine), (Int32)TraceType.Info);
                     }
                 }
             }
