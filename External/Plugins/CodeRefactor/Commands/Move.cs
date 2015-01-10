@@ -189,10 +189,11 @@ namespace CodeRefactor.Commands
             if (!string.IsNullOrEmpty(newPackage))
             {
                 var basePaths = project.SourcePaths.Length == 0 ? new[] {Path.GetDirectoryName(project.ProjectPath)} : project.SourcePaths;
-
-                foreach (string path in basePaths.
+                var lookupPaths = basePaths.
                     Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language)).
-                    Select(project.GetAbsolutePath).Distinct())
+                    Select(project.GetAbsolutePath).Distinct();
+
+                foreach (string path in lookupPaths)
                 {
                     if (path == newPackage)
                     {

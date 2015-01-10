@@ -370,9 +370,10 @@ namespace CodeRefactor.Provider
             }
             else
             {
-                foreach (string path in project.SourcePaths.
+                var lookupPaths = project.SourcePaths.
                     Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language)).
-                    Select(project.GetAbsolutePath).Distinct())
+                    Select(project.GetAbsolutePath).Distinct();
+                foreach (string path in lookupPaths)
                 {
                     if (Directory.Exists(path))
                         foreach (string filterMask in filters)
