@@ -402,12 +402,7 @@ namespace CodeRefactor.Commands
                 UserInterfaceManager.ProgressDialog.Show();
                 UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
-                currentTargetResult = new ASResult
-                                      {
-                                          IsStatic = true,
-                                          Member = new MemberModel(oldType, oldType, FlagType.Constructor, 0), 
-                                          Type = ASContext.Context.ResolveType(oldType, oldFileModel),
-                                      };
+                currentTargetResult = RefactoringHelper.GetRefactorTargetFromFile(oldFileModel.FileName, AssociatedDocumentHelper);
                 RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true);
             }
             else
