@@ -95,7 +95,7 @@ namespace SourceControl.Sources.Git
             if (!statusCache.ContainsKey(rootPath))
             {
                 status = new Status(rootPath);
-                status.OnResult += new StatusResult(status_OnResult);
+                status.OnResult += new StatusResult(Status_OnResult);
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];
@@ -103,7 +103,7 @@ namespace SourceControl.Sources.Git
             status.Update();
         }
 
-        void status_OnResult(Status status)
+        void Status_OnResult(Status status)
         {
             ignoreDirty = false;
             if (OnChange != null) OnChange(this);

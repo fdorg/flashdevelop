@@ -74,7 +74,7 @@ namespace SourceControl.Sources.Mercurial
             return true;
         }
 
-        override protected void runner_ProcessEnded(object sender, int exitCode)
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -87,7 +87,7 @@ namespace SourceControl.Sources.Mercurial
             if (OnResult != null) OnResult(this);
         }
 
-        override protected void runner_Output(object sender, string line)
+        override protected void Runner_Output(object sender, string line)
         {
             int fileIndex = 0;
             if (line.Length < fileIndex || line.Length < 3) return;
