@@ -24,7 +24,7 @@ namespace SourceControl.Managers
 
             refreshTimer = new Timer();
             refreshTimer.Interval = 100;
-            refreshTimer.Tick += new EventHandler(refreshTimer_Tick);
+            refreshTimer.Tick += new EventHandler(RefreshTimer_Tick);
             refreshTimer.Stop();
         }
 
@@ -37,10 +37,10 @@ namespace SourceControl.Managers
         public void AddVCManager(IVCManager manager)
         {
             ProjectWatcher.VCManagers.Add(manager);
-            manager.OnChange += manager_OnChange;
+            manager.OnChange += Manager_OnChange;
         }
 
-        private void manager_OnChange(IVCManager sender)
+        private void Manager_OnChange(IVCManager sender)
         {
             (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
             {
@@ -49,7 +49,7 @@ namespace SourceControl.Managers
             });
         }
 
-        private void refreshTimer_Tick(object sender, EventArgs e)
+        private void RefreshTimer_Tick(object sender, EventArgs e)
         {
             refreshTimer.Stop();
             ovManager.Refresh();
