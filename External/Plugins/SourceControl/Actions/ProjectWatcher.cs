@@ -16,7 +16,7 @@ namespace SourceControl.Actions
     {
         private static bool initialized = false;
 
-        static internal readonly List<IVCManager> VCManagers = new List<IVCManager>();
+        internal static readonly List<IVCManager> VCManagers = new List<IVCManager>();
         private static VCManager vcManager;
         private static FSWatchers fsWatchers;
         private static OverlayManager ovManager;

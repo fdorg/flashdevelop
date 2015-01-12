@@ -13,7 +13,7 @@ namespace SourceControl.Actions
     {
         private static ToolStripMenuItem scItem;
 
-        static internal void SetMenu(ProjectTreeView tree, ProjectSelectionState state)
+        internal static void SetMenu(ProjectTreeView tree, ProjectSelectionState state)
         {
             if (tree == null || state.Manager == null) return;
             
