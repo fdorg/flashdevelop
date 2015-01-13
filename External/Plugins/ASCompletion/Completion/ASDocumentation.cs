@@ -455,7 +455,7 @@ namespace ASCompletion.Completion
 
         static private string GetShortcutDocs()
         {
-            return "\n[i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i]";
+            return "\n[COLOR=#666666:MULTIPLY][i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i][/COLOR]";
         }
 
         /// <summary>
