@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.Localization;
-using PluginCore.Utilities;
 using PluginCore.Managers;
 
 namespace SourceControl.Sources.Subversion
@@ -14,10 +12,10 @@ namespace SourceControl.Sources.Subversion
 
         public string RootPath;
 
-        StatusNode root = new StatusNode(".", VCItemStatus.Unknown);
-        StatusNode temp;
-        string dirty;
-        string updatingPath;
+        private StatusNode root = new StatusNode(".", VCItemStatus.Unknown);
+        private StatusNode temp;
+        private string dirty;
+        private string updatingPath;
 
         public Status(string path)
         {
@@ -67,7 +65,7 @@ namespace SourceControl.Sources.Subversion
             return true;
         }
 
-        override protected void runner_ProcessEnded(object sender, int exitCode)
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -95,7 +93,7 @@ namespace SourceControl.Sources.Subversion
             if (OnResult != null) OnResult(this);
         }
 
-        override protected void runner_Output(object sender, string line)
+        override protected void Runner_Output(object sender, string line)
         {
             int fileIndex = 30;
             if (line.Length < fileIndex) return;

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
-using System.Threading;
 using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore;
@@ -32,9 +30,9 @@ namespace SourceControl.Sources.Subversion
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
                 runner.Run(cmd, args);
-                runner.Output += new LineOutputHandler(runner_Output);
-                runner.Error += new LineOutputHandler(runner_Error);
-                runner.ProcessEnded += new ProcessEndedHandler(runner_ProcessEnded);
+                runner.Output += new LineOutputHandler(Runner_Output);
+                runner.Error += new LineOutputHandler(Runner_Error);
+                runner.ProcessEnded += new ProcessEndedHandler(Runner_ProcessEnded);
             }
             catch (Exception ex)
             {
@@ -52,7 +50,7 @@ namespace SourceControl.Sources.Subversion
             return resolve ?? cmd;
         }
 
-        protected virtual void runner_ProcessEnded(object sender, int exitCode)
+        protected virtual void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             DisplayErrors();
@@ -69,12 +67,12 @@ namespace SourceControl.Sources.Subversion
             }
         }
 
-        protected virtual void runner_Error(object sender, string line)
+        protected virtual void Runner_Error(object sender, string line)
         {
             errors.Add(line.StartsWith("svn: ") ? line.Substring(5) : line);
         }
 
-        protected virtual void runner_Output(object sender, string line)
+        protected virtual void Runner_Output(object sender, string line)
         {
         }
     }

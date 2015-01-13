@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.IO;
 
@@ -8,10 +6,10 @@ namespace SourceControl.Sources.Subversion
 {
     static class TortoiseProc
     {
-        static private string resolvedCmd;
-        static private string qualifiedCmd;
+        private static string resolvedCmd;
+        private static string qualifiedCmd;
 
-        static public void Execute(string command, string path)
+        public static void Execute(string command, string path)
         {
             string args = String.Format("/command:{0} /path:\"{1}\"", command, path);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
@@ -19,7 +17,7 @@ namespace SourceControl.Sources.Subversion
             Process.Start(info);
         }
 
-        static public void Execute(string command, string path1, string path2)
+        public static void Execute(string command, string path1, string path2)
         {
             string args = String.Format("/command:{0} /path:\"{1}\" /path2:\"{2}\"", command, path1, path2);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
@@ -27,7 +25,7 @@ namespace SourceControl.Sources.Subversion
             Process.Start(info);
         }
 
-        static private string GetTortoiseProc()
+        private static string GetTortoiseProc()
         {
             string cmd = PluginMain.SCSettings.TortoiseSVNProcPath;
             if (cmd != null && File.Exists(cmd)) return cmd;
@@ -35,7 +33,7 @@ namespace SourceControl.Sources.Subversion
             return ResolveTortoiseProcPath(cmd);
         }
 
-        static private string ResolveTortoiseProcPath(string cmd)
+        private static string ResolveTortoiseProcPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

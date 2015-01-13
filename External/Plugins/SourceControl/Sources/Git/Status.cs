@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.Localization;
-using PluginCore.Utilities;
 using PluginCore.Managers;
 
 namespace SourceControl.Sources.Git
@@ -13,13 +11,12 @@ namespace SourceControl.Sources.Git
         public event StatusResult OnResult;
 
         public string RootPath;
-        public string Branch;
 
-        StatusNode root = new StatusNode(".", VCItemStatus.Undefined);
-        StatusNode temp;
-        string dirty;
-        string updatingPath;
-        Ignores ignores;
+        private StatusNode root = new StatusNode(".", VCItemStatus.Undefined);
+        private StatusNode temp;
+        private string dirty;
+        private string updatingPath;
+        private Ignores ignores;
 
         public Status(string path)
         {
@@ -77,7 +74,7 @@ namespace SourceControl.Sources.Git
             return true;
         }
 
-        override protected void runner_ProcessEnded(object sender, int exitCode)
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -90,10 +87,10 @@ namespace SourceControl.Sources.Git
             if (OnResult != null) OnResult(this);
         }
 
-        override protected void runner_Output(object sender, string line)
+        override protected void Runner_Output(object sender, string line)
         {
             int fileIndex = 3;
-            if (line.Length < fileIndex || line.Length < 3) return;
+            if (line.Length < fileIndex) return;
 
             char c0 = line[0];
             char c1 = line[1];
@@ -108,11 +105,7 @@ namespace SourceControl.Sources.Git
             else if (c0 == 'R') s = VCItemStatus.Added; // renamed
             else if (c0 == 'M' || c1 == 'M') s = VCItemStatus.Modified;
             else if (c0 == 'D' || c1 == 'D') s = VCItemStatus.Deleted;
-            else if (c0 == '#')
-            {
-                Branch = line.Substring(fileIndex);
-                return;
-            }
+            else if (c0 == '#') return;
 
             int p = line.IndexOf(" -> ");
             if (p > 0) line = line.Substring(p + 4);
@@ -125,7 +118,7 @@ namespace SourceControl.Sources.Git
 
     class StatusNode
     {
-        static public StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
+        public static StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
 
         public bool HasChildren;
         public string Name;

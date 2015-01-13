@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using PluginCore;
 using System.Text.RegularExpressions;
 
 namespace SourceControl.Sources.Subversion
@@ -13,11 +8,11 @@ namespace SourceControl.Sources.Subversion
     {
         public event VCManagerStatusChange OnChange;
 
-        Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
-        IVCMenuItems menuItems = new MenuItems();
-        IVCFileActions fileActions = new FileActions();
-        Regex reIgnore = new Regex("[/\\\\][._]svn[/\\\\]");
-        bool ignoreDirty = false;
+        private Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
+        private IVCMenuItems menuItems = new MenuItems();
+        private IVCFileActions fileActions = new FileActions();
+        private Regex reIgnore = new Regex("[/\\\\][._]svn[/\\\\]");
+        private bool ignoreDirty = false;
 
         public IVCMenuItems MenuItems { get { return menuItems; } }
         public IVCFileActions FileActions { get { return fileActions; } }
@@ -96,7 +91,7 @@ namespace SourceControl.Sources.Subversion
             if (!statusCache.ContainsKey(rootPath))
             {
                 status = new Status(rootPath);
-                status.OnResult += new StatusResult(status_OnResult);
+                status.OnResult += new StatusResult(Status_OnResult);
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];
@@ -104,7 +99,7 @@ namespace SourceControl.Sources.Subversion
             status.Update();
         }
 
-        void status_OnResult(Status status)
+        private void Status_OnResult(Status status)
         {
             ignoreDirty = false;
             if (OnChange != null) OnChange(this);

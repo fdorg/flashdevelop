@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using SourceControl.Managers;
 
@@ -82,11 +79,11 @@ namespace SourceControl.Sources
         ToolStripItem EditConflict { get; }
 
         /* OR completely custom items list */
-        Dictionary<ToolStripItem, VCMenutItemProperties> Items { get; }
+        Dictionary<ToolStripItem, VCMenuItemProperties> Items { get; }
     }
 
     public delegate bool ShowVCMenuItemDelegate(ProjectSelectionState state);
-    public struct VCMenutItemProperties
+    public struct VCMenuItemProperties
     {
         public ShowVCMenuItemDelegate Show;
         public ShowVCMenuItemDelegate Enable;

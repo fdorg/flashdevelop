@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using PluginCore;
 using ProjectManager.Controls.TreeView;
-using System.Diagnostics;
 using ProjectManager.Helpers;
 using PluginCore.Localization;
 
@@ -12,21 +10,21 @@ namespace SourceControl.Sources.Git
 {
     class MenuItems : IVCMenuItems
     {
-        TreeNode[] currentNodes;
-        IVCManager currentManager;
+        private TreeNode[] currentNodes;
+        private IVCManager currentManager;
 
-        ToolStripItem update;
-        ToolStripItem commit;
-        ToolStripItem push;
-        ToolStripItem showLog;
-        ToolStripItem midSeparator;
-        ToolStripItem diff;
-        ToolStripItem diffChange;
-        ToolStripItem add;
-        ToolStripItem ignore;
-        ToolStripItem undoAdd;
-        ToolStripItem revert;
-        ToolStripItem editConflict;
+        private ToolStripItem update;
+        private ToolStripItem commit;
+        private ToolStripItem push;
+        private ToolStripItem showLog;
+        private ToolStripItem midSeparator;
+        private ToolStripItem diff;
+        private ToolStripItem diffChange;
+        private ToolStripItem add;
+        private ToolStripItem ignore;
+        private ToolStripItem undoAdd;
+        private ToolStripItem revert;
+        private ToolStripItem editConflict;
 
         public TreeNode[] CurrentNodes { set { currentNodes = value; } }
         public IVCManager CurrentManager { set { currentManager = value; } }
@@ -44,8 +42,8 @@ namespace SourceControl.Sources.Git
         public ToolStripItem Revert { get { return revert; } }
         public ToolStripItem EditConflict { get { return editConflict; } }
 
-        private Dictionary<ToolStripItem, VCMenutItemProperties> items = new Dictionary<ToolStripItem, VCMenutItemProperties>();
-        public Dictionary<ToolStripItem, VCMenutItemProperties> Items { get { return items; } }
+        private Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
+        public Dictionary<ToolStripItem, VCMenuItemProperties> Items { get { return items; } }
 
         public MenuItems()
         {
@@ -78,37 +76,37 @@ namespace SourceControl.Sources.Git
             return paths.ToArray();
         }
 
-        void EditConflict_Click(object sender, EventArgs e)
+        private void EditConflict_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("conflicteditor", GetPaths());
         }
 
-        void Revert_Click(object sender, EventArgs e)
+        private void Revert_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("revert", GetPaths());
         }
 
-        void UndoAdd_Click(object sender, EventArgs e)
+        private void UndoAdd_Click(object sender, EventArgs e)
         {
             new ResetCommand(GetPathsArray());
         }
 
-        void Add_Click(object sender, EventArgs e)
+        private void Add_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("add", GetPaths());
         }
 
-        void Ignore_Click(object sender, EventArgs e)
+        private void Ignore_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("ignore", GetPaths());
         }
 
-        void DiffChange_Click(object sender, EventArgs e)
+        private void DiffChange_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("diff", GetPaths());
         }
 
-        void Diff_Click(object sender, EventArgs e)
+        private void Diff_Click(object sender, EventArgs e)
         {
             if (currentNodes == null || currentNodes.Length != 2)
                 return;
@@ -117,17 +115,17 @@ namespace SourceControl.Sources.Git
             TortoiseProc.Execute("diff", path1, path2);
         }
 
-        void ShowLog_Click(object sender, EventArgs e)
+        private void ShowLog_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("log", GetPaths());
         }
 
-        void Push_Click(object sender, EventArgs e)
+        private void Push_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("push", GetPaths());
         }
 
-        void Commit_Click(object sender, EventArgs e)
+        private void Commit_Click(object sender, EventArgs e)
         {
             String title = TextHelper.GetString("Label.Commit");
             String msg = TextHelper.GetString("Info.EnterMessage");
@@ -138,7 +136,7 @@ namespace SourceControl.Sources.Git
             new CommitCommand(GetPathsArray(), led.Line);
         }
 
-        void Update_Click(object sender, EventArgs e)
+        private void Update_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("pull", GetPaths());
         }

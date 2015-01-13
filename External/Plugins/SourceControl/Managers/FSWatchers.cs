@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using SourceControl.Sources;
 using System.Windows.Forms;
-using PluginCore;
 using System.IO;
 using SourceControl.Actions;
 using ProjectManager.Projects;
@@ -12,18 +10,18 @@ namespace SourceControl.Managers
 {
     public class FSWatchers
     {
-        Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
-        List<IVCManager> dirtyVC = new List<IVCManager>();
-        System.Timers.Timer updateTimer;
-        string lastDirtyPath;
-        bool disposing;
+        private Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
+        private List<IVCManager> dirtyVC = new List<IVCManager>();
+        private System.Timers.Timer updateTimer;
+        private string lastDirtyPath;
+        private bool disposing;
 
         public FSWatchers()
         {
             updateTimer = new System.Timers.Timer();
             updateTimer.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
             updateTimer.Interval = 4000;
-            updateTimer.Elapsed += updateTimer_Tick;
+            updateTimer.Elapsed += UpdateTimer_Tick;
             updateTimer.Start();
         }
 
@@ -33,7 +31,7 @@ namespace SourceControl.Managers
             Clear();
         }
 
-        void Clear()
+        private void Clear()
         {
             try
             {
@@ -113,19 +111,14 @@ namespace SourceControl.Managers
                     return;
                 }
 
-            if (rootDir)
+            if (rootDir && ParentDirUnderVC(path)) return;
+            if (depth >= 3) return;
+            foreach (string dir in Directory.GetDirectories(path))
             {
-                if (ParentDirUnderVC(path)) return;
+                FileInfo info = new FileInfo(dir);
+                if ((info.Attributes & FileAttributes.Hidden) == 0)
+                    ExploreDirectory(dir, false, depth++);
             }
-
-            string[] dirs = Directory.GetDirectories(path);
-            if (depth < 3)
-                foreach (string dir in dirs)
-                {
-                    FileInfo info = new FileInfo(dir);
-                    if ((info.Attributes & FileAttributes.Hidden) == 0)
-                        ExploreDirectory(dir, false, depth++);
-                }
         }
 
         private void CreateWatcher(string path, IVCManager manager)
@@ -133,8 +126,8 @@ namespace SourceControl.Managers
             var watcher = new FileSystemWatcher(path);
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.Attributes;
-            watcher.Changed += new FileSystemEventHandler(watcher_Changed);
-            watcher.Deleted += new FileSystemEventHandler(watcher_Changed);
+            watcher.Changed += new FileSystemEventHandler(Watcher_Changed);
+            watcher.Deleted += new FileSystemEventHandler(Watcher_Changed);
             watcher.EnableRaisingEvents = true;
             watchers.Add(watcher, manager);
 
@@ -167,7 +160,7 @@ namespace SourceControl.Managers
             return false;
         }
 
-        private void watcher_Changed(object sender, FileSystemEventArgs e)
+        private void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (lastDirtyPath != null && e.FullPath.StartsWith(lastDirtyPath))
                 return;
@@ -193,7 +186,7 @@ namespace SourceControl.Managers
             updateTimer.Start();
         }
 
-        void updateTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
+        private void UpdateTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
             updateTimer.Stop();
             updateTimer.Interval = 4000;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using PluginCore;
 using System.IO;
 using SourceControl.Sources;
@@ -9,26 +8,24 @@ using ProjectManager.Projects;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
-using PluginCore.Managers;
 using PluginCore.Localization;
-using System.Threading;
 
 namespace SourceControl.Actions
 {
-    public class ProjectWatcher
+    public static class ProjectWatcher
     {
         private static bool initialized = false;
 
-        static internal readonly List<IVCManager> VCManagers = new List<IVCManager>();
-        static VCManager vcManager;
-        static FSWatchers fsWatchers;
-        static OverlayManager ovManager;
-        static Project currentProject;
+        internal static readonly List<IVCManager> VCManagers = new List<IVCManager>();
+        private static VCManager vcManager;
+        private static FSWatchers fsWatchers;
+        private static OverlayManager ovManager;
+        private static Project currentProject;
 
         public static bool Initialized { get { return initialized; } }
         public static Image Skin { get; set; }
         public static Project CurrentProject { get { return currentProject; } }
-        public static VCManager VcManager { get { return vcManager; } }
+        public static VCManager VCManager { get { return vcManager; } }
 
         public static void Init()
         {

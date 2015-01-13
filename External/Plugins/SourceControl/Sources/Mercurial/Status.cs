@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.Localization;
-using PluginCore.Utilities;
 using PluginCore.Managers;
 
 namespace SourceControl.Sources.Mercurial
@@ -14,11 +12,11 @@ namespace SourceControl.Sources.Mercurial
 
         public string RootPath;
 
-        StatusNode root = new StatusNode(".", VCItemStatus.Undefined);
-        StatusNode temp;
-        string dirty;
-        string updatingPath;
-        Ignores ignores;
+        private StatusNode root = new StatusNode(".", VCItemStatus.Undefined);
+        private StatusNode temp;
+        private string dirty;
+        private string updatingPath;
+        private Ignores ignores;
 
         public Status(string path)
         {
@@ -76,7 +74,7 @@ namespace SourceControl.Sources.Mercurial
             return true;
         }
 
-        override protected void runner_ProcessEnded(object sender, int exitCode)
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -89,7 +87,7 @@ namespace SourceControl.Sources.Mercurial
             if (OnResult != null) OnResult(this);
         }
 
-        override protected void runner_Output(object sender, string line)
+        override protected void Runner_Output(object sender, string line)
         {
             int fileIndex = 0;
             if (line.Length < fileIndex || line.Length < 3) return;
@@ -117,7 +115,7 @@ namespace SourceControl.Sources.Mercurial
 
     class StatusNode
     {
-        static public StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
+        public static StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
 
         public bool HasChildren;
         public string Name;
