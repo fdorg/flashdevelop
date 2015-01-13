@@ -403,7 +403,14 @@ namespace CodeRefactor.Commands
                 UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
                 currentTargetResult = RefactoringHelper.GetRefactorTargetFromFile(oldFileModel.FileName, AssociatedDocumentHelper);
-                RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true);
+                if (currentTargetResult != null)
+                    RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true);
+                else
+                {
+                    currentTargetIndex++;
+                    UserInterfaceManager.ProgressDialog.Hide();
+                    UpdateReferencesNextTarget();
+                }
             }
             else
             {
