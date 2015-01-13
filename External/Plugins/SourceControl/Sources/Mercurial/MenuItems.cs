@@ -17,7 +17,6 @@ namespace SourceControl.Sources.Mercurial
         ToolStripItem push;
         ToolStripItem showLog;
         ToolStripItem midSeparator;
-        //ToolStripItem diff;
         ToolStripItem diffChange;
         ToolStripItem add;
         ToolStripItem ignore;
@@ -33,7 +32,7 @@ namespace SourceControl.Sources.Mercurial
         public ToolStripItem Push { get { return push; } }
         public ToolStripItem ShowLog { get { return showLog; } }
         public ToolStripItem MidSeparator { get { return midSeparator; } }
-        public ToolStripItem Diff { get { return /*diff*/null; } }
+        public ToolStripItem Diff { get { return null; } }
         public ToolStripItem DiffChange { get { return diffChange; } }
         public ToolStripItem Add { get { return add; } }
         public ToolStripItem Ignore { get { return ignore; } }
@@ -41,8 +40,8 @@ namespace SourceControl.Sources.Mercurial
         public ToolStripItem Revert { get { return revert; } }
         public ToolStripItem EditConflict { get { return editConflict; } }
 
-        private Dictionary<ToolStripItem, VCMenutItemProperties> items = new Dictionary<ToolStripItem, VCMenutItemProperties>();
-        public Dictionary<ToolStripItem, VCMenutItemProperties> Items { get { return items; } }
+        private Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
+        public Dictionary<ToolStripItem, VCMenuItemProperties> Items { get { return items; } }
 
         public MenuItems()
         {
@@ -51,7 +50,6 @@ namespace SourceControl.Sources.Mercurial
             push = new ToolStripMenuItem(TextHelper.GetString("Label.Push"), PluginBase.MainForm.FindImage("159|9|-3|3"), Push_Click);
             showLog = new ToolStripMenuItem(TextHelper.GetString("Label.ShowLog"), PluginBase.MainForm.FindImage("95"), ShowLog_Click);
             midSeparator = new ToolStripSeparator();
-            //diff = new ToolStripMenuItem(TextHelper.GetString("Label.Diff"), PluginBase.MainForm.FindImage("251"), Diff_Click);
             diffChange = new ToolStripMenuItem(TextHelper.GetString("Label.DiffWithPrevious"), PluginBase.MainForm.FindImage("251"), DiffChange_Click);
             add = new ToolStripMenuItem(TextHelper.GetString("Label.Add"), PluginBase.MainForm.FindImage("33"), Add_Click);
             ignore = new ToolStripMenuItem(TextHelper.GetString("Label.AddToIgnoreList"), PluginBase.MainForm.FindImage("166"), Ignore_Click);
@@ -103,15 +101,6 @@ namespace SourceControl.Sources.Mercurial
         void DiffChange_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("vdiff", GetPaths());
-        }
-
-        void Diff_Click(object sender, EventArgs e)
-        {
-            if (currentNodes == null || currentNodes.Length != 2)
-                return;
-            string path1 = (currentNodes[0] as GenericNode).BackingPath;
-            string path2 = (currentNodes[1] as GenericNode).BackingPath;
-            TortoiseProc.Execute("vdiff", path1, path2);
         }
 
         void ShowLog_Click(object sender, EventArgs e)

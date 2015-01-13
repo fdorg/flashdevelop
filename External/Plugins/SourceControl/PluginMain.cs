@@ -23,7 +23,6 @@ namespace SourceControl
         private String pluginAuth = "FlashDevelop Team";
         private static Settings settingObject;
         private String settingFilename;
-        private Image pluginImage;
         private Boolean ready;
 
 	    #region Required Properties
@@ -306,7 +305,6 @@ namespace SourceControl
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginDesc = TextHelper.GetString("Info.Description");
-            this.pluginImage = PluginBase.MainForm.FindImage("100");
         }
 
         /// <summary>
