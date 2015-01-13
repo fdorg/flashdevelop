@@ -48,7 +48,7 @@ namespace SourceControl.Sources.Git
 
             temp = new StatusNode(".", VCItemStatus.Undefined);
             updatingPath = RootPath;
-            if (dirty != null) dirty = null;
+            dirty = null;
             ignores.Update();
 
             Run("status -s -b --porcelain", updatingPath);
@@ -57,7 +57,11 @@ namespace SourceControl.Sources.Git
         public bool SetPathDirty(string path)
         {
             if (path == null) return false;
-            if (dirty == null || dirty == "") { dirty = path; return true; }
+            if (string.IsNullOrEmpty(dirty))
+            {
+                dirty = path;
+                return true;
+            }
 
             char sep = Path.DirectorySeparatorChar;
             string[] p1 = dirty.Split(sep);
@@ -90,7 +94,7 @@ namespace SourceControl.Sources.Git
         override protected void Runner_Output(object sender, string line)
         {
             int fileIndex = 3;
-            if (line.Length < fileIndex || line.Length < 3) return;
+            if (line.Length < fileIndex) return;
 
             char c0 = line[0];
             char c1 = line[1];

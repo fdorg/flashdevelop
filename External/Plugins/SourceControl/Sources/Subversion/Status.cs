@@ -33,22 +33,18 @@ namespace SourceControl.Sources.Subversion
 
             temp = new StatusNode(".", VCItemStatus.Unknown);
             updatingPath = RootPath;
-
-            if (dirty != null)
-            {
-                /*if (File.Exists(dirty)) dirty = Path.GetDirectoryName(dirty);
-                StatusNode dirtyNode = root.FindPath(dirty);
-                if (dirtyNode != null)
-                    updatingPath = dirty;*/
-                dirty = null;
-            }
+            dirty = null;
             Run("status -v", updatingPath);
         }
 
         public bool SetPathDirty(string path)
         {
             if (path == null) return false;
-            if (dirty == null || dirty == "") { dirty = path; return true; }
+            if (string.IsNullOrEmpty(dirty))
+            {
+                dirty = path;
+                return true;
+            }
 
             char sep = Path.DirectorySeparatorChar;
             string[] p1 = dirty.Split(sep);
@@ -75,21 +71,6 @@ namespace SourceControl.Sources.Subversion
             }
 
             if (updatingPath == RootPath) root = temp;
-            /*else
-            {
-                StatusNode updateNode = root.FindPath(Path.GetDirectoryName(updatingPath));
-                if (updateNode != null)
-                {
-                    if (updateNode.Parent == null) root = temp;
-                    else
-                    {
-                        string name = Path.GetFileName(updatingPath);
-                        if (updateNode.Children.ContainsKey(name))
-                            updateNode.Children.Remove(name);
-                        updateNode.Children.Add(name, temp);
-                    }
-                }
-            }*/
             if (OnResult != null) OnResult(this);
         }
 
