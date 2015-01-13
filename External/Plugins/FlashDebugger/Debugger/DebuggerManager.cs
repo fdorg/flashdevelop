@@ -271,8 +271,11 @@ namespace FlashDebugger
             IProject project = PluginBase.CurrentProject;
             if (project != null)
             {
-                foreach (string cp in project.SourcePaths.Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language))
-                    .Select(project.GetAbsolutePath).Distinct())
+                var basePaths = project.SourcePaths.Length == 0 ? new[] { Path.GetDirectoryName(project.ProjectPath) } : project.SourcePaths;
+                var lookupPaths = basePaths.
+                                    Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language)).
+                                    Select(project.GetAbsolutePath).Distinct();
+                foreach (string cp in lookupPaths)
                 {
                     StringBuilder localPathBuilder = new StringBuilder(260/*Windows max path length*/);
                     localPathBuilder.Append(cp);
