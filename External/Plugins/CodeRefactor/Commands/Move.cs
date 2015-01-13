@@ -1,7 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -9,7 +10,6 @@ using CodeRefactor.Provider;
 using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
-using ProjectManager.Projects;
 using ScintillaNet;
 using PluginCore;
 using PluginCore.Helpers;
@@ -188,41 +188,22 @@ namespace CodeRefactor.Commands
             string newPackage = result.NewPackage = project.GetAbsolutePath(Path.GetDirectoryName(newPath));
             if (!string.IsNullOrEmpty(newPackage))
             {
-                // NOTE: Could be simplified in .NET 3.5 with LINQ .Concat.Select.Distinct
-                var visited = new Dictionary<string, byte>();
-                foreach (string sourcePath in project.SourcePaths)
+                var basePaths = project.SourcePaths.Length == 0 ? new[] {Path.GetDirectoryName(project.ProjectPath)} : project.SourcePaths;
+                var lookupPaths = basePaths.
+                    Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language)).
+                    Select(project.GetAbsolutePath).Distinct();
+
+                foreach (string path in lookupPaths)
                 {
-                    string path = project.GetAbsolutePath(sourcePath);
-                    if (visited.ContainsKey(path)) continue;
-                    visited[path] = 1;
                     if (path == newPackage)
                     {
                         newPackage = "";
                         break;
                     }
-                    else if (newPackage.StartsWith(path))
+                    if (newPackage.StartsWith(path))
                     {
                         newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
                         break;
-                    }
-                }
-                if (result.NewPackage == newPackage)
-                {
-                    foreach (string globalPath in ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language))
-                    {
-                        string path = project.GetAbsolutePath(globalPath);
-                        if (visited.ContainsKey(path)) continue;
-                        visited[path] = 1;
-                        if (path == newPackage)
-                        {
-                            newPackage = "";
-                            break;
-                        }
-                        else if (newPackage.StartsWith(path))
-                        {
-                            newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
-                            break;
-                        }
                     }
                 }
             }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using PluginCore.FRService;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -369,25 +370,14 @@ namespace CodeRefactor.Provider
             }
             else
             {
-                // NOTE: Could be simplified in .NET 3.5 with LINQ .Concat.Select.Distinct
-                var visited = new Dictionary<string, byte>();
-                foreach (string path in project.SourcePaths)
+                var lookupPaths = project.SourcePaths.
+                    Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language)).
+                    Select(project.GetAbsolutePath).Distinct();
+                foreach (string path in lookupPaths)
                 {
-                    string absolute = project.GetAbsolutePath(path);
-                    if (visited.ContainsKey(absolute)) continue;
-                    visited[absolute] = 1;
-                    if (Directory.Exists(absolute))
+                    if (Directory.Exists(path))
                         foreach (string filterMask in filters)
-                            files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
-                }
-                foreach (string path in ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language))
-                {
-                    string absolute = project.GetAbsolutePath(path);
-                    if (visited.ContainsKey(absolute)) continue;
-                    visited[absolute] = 1;
-                    if (Directory.Exists(absolute))
-                        foreach (string filterMask in filters)
-                            files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
+                            files.AddRange(Directory.GetFiles(path, filterMask, SearchOption.AllDirectories));
                 }
             }
             // If no source paths are defined, get files directly from project path
