@@ -21,13 +21,14 @@ namespace ASCompletion.Completion
 {
 	public class CommentBlock
 	{
-		public string Description;
-		public string InfoTip;
-		public string Return;
-		public ArrayList ParamName; // TODO: change ArrayList for List<string>
-		public ArrayList ParamDesc;
-		public ArrayList TagName;
-		public ArrayList TagDesc;
+        public string Description;
+        public string InfoTip;
+        public string Return;
+        public bool IsFunctionWithArguments;
+        public ArrayList ParamName; // TODO: change ArrayList for List<string>
+        public ArrayList ParamDesc;
+        public ArrayList TagName;
+        public ArrayList TagDesc;
 	}
 	
 	public class ASDocumentation
@@ -408,8 +409,14 @@ namespace ASCompletion.Completion
 		static public string GetTipShortDetails(MemberModel member, string highlightParam)
 		{
             if (member == null || member.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
-			CommentBlock cb = ParseComment(member.Comments);
+            CommentBlock cb = ParseComment(member.Comments);
+            cb.IsFunctionWithArguments = IsFunctionWidthArguments(member);
             return " \u2026" + GetTipShortDetails(cb, highlightParam);
+        }
+
+        static bool IsFunctionWidthArguments(MemberModel member)
+        {
+            return (member.Flags & FlagType.Function) > 0 && member.Parameters.Count > 0;
         }
 
         /// <summary>
@@ -429,7 +436,7 @@ namespace ASCompletion.Completion
 					if (highlightParam == (string)cb.ParamName[i])
 					{
                         details += "\n" + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd 
-                                + " " + Get2LinesOf((string)cb.ParamDesc[i]).TrimStart();
+                                + " " + Get2LinesOf((string)cb.ParamDesc[i], true).TrimStart();
                         return details;
 					}
 				}
@@ -440,7 +447,7 @@ namespace ASCompletion.Completion
 				if (cb.InfoTip != null && cb.InfoTip.Length > 0)
                     details += "\n"+cb.InfoTip;
 				else if (cb.Description != null && cb.Description.Length > 0) 
-                    details += Get2LinesOf(cb.Description);
+                    details += Get2LinesOf(cb.Description, cb.IsFunctionWithArguments);
 			}
 
             return details;
@@ -448,7 +455,7 @@ namespace ASCompletion.Completion
 
         static private string GetShortcutDocs()
         {
-            return "\n[i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i]";
+            return "\n[COLOR=#666666:MULTIPLY][i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i][/COLOR]";
         }
 
         /// <summary>
@@ -456,11 +463,16 @@ namespace ASCompletion.Completion
         /// </summary>
         static public string Get2LinesOf(string text)
         {
+            return Get2LinesOf(text, false);
+        }
+
+        static public string Get2LinesOf(string text, bool alwaysAddShortcutDocs)
+        {
             string[] lines = text.Split('\n');
             text = "";
             int n = Math.Min(lines.Length, 2);
             for (int i = 0; i < n; i++) text += "\n" + lines[i];
-            if (lines.Length > 2) text += " \x86" + GetShortcutDocs();
+            if (lines.Length > 2 || alwaysAddShortcutDocs) text += " \x86" + GetShortcutDocs();
             return text;
         }
 		
@@ -473,7 +485,8 @@ namespace ASCompletion.Completion
 		static public string GetTipFullDetails(MemberModel member, string highlightParam)
 		{
             if (member == null || member.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
-			CommentBlock cb = ParseComment(member.Comments);
+            CommentBlock cb = ParseComment(member.Comments);
+            cb.IsFunctionWithArguments = IsFunctionWidthArguments(member);
             return GetTipFullDetails(cb, highlightParam);
         }
 
