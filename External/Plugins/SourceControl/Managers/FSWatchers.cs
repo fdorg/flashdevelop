@@ -111,19 +111,14 @@ namespace SourceControl.Managers
                     return;
                 }
 
-            if (rootDir)
+            if (rootDir && ParentDirUnderVC(path)) return;
+            if (depth >= 3) return;
+            foreach (string dir in Directory.GetDirectories(path))
             {
-                if (ParentDirUnderVC(path)) return;
+                FileInfo info = new FileInfo(dir);
+                if ((info.Attributes & FileAttributes.Hidden) == 0)
+                    ExploreDirectory(dir, false, depth++);
             }
-
-            string[] dirs = Directory.GetDirectories(path);
-            if (depth < 3)
-                foreach (string dir in dirs)
-                {
-                    FileInfo info = new FileInfo(dir);
-                    if ((info.Attributes & FileAttributes.Hidden) == 0)
-                        ExploreDirectory(dir, false, depth++);
-                }
         }
 
         private void CreateWatcher(string path, IVCManager manager)
