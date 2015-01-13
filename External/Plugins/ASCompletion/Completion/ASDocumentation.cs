@@ -21,14 +21,14 @@ namespace ASCompletion.Completion
 {
 	public class CommentBlock
 	{
-		public string Description;
-		public string InfoTip;
-		public string Return;
+        public string Description;
+        public string InfoTip;
+        public string Return;
         public bool IsFunctionWithArguments;
         public ArrayList ParamName; // TODO: change ArrayList for List<string>
-		public ArrayList ParamDesc;
-		public ArrayList TagName;
-		public ArrayList TagDesc;
+        public ArrayList ParamDesc;
+        public ArrayList TagName;
+        public ArrayList TagDesc;
 	}
 	
 	public class ASDocumentation
@@ -409,7 +409,7 @@ namespace ASCompletion.Completion
 		static public string GetTipShortDetails(MemberModel member, string highlightParam)
 		{
             if (member == null || member.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
-			CommentBlock cb = ParseComment(member.Comments);
+            CommentBlock cb = ParseComment(member.Comments);
             cb.IsFunctionWithArguments = IsFunctionWidthArguments(member);
             return " \u2026" + GetTipShortDetails(cb, highlightParam);
         }
