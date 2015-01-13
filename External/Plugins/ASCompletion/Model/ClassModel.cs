@@ -11,7 +11,7 @@ namespace ASCompletion.Model
     /// <summary>
     /// Object representation of an Actionscript class
     /// </summary>
-    [Serializable()]
+    [Serializable]
     public class ClassModel: MemberModel
     {
         static public ClassModel VoidClass;
@@ -47,6 +47,7 @@ namespace ASCompletion.Model
         public string ExtendsType;
         public string IndexType;
         public List<string> Implements;
+        [NonSerialized]
         private WeakReference resolvedExtend;
 
         public string QualifiedName

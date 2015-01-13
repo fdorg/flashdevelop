@@ -9,6 +9,7 @@ using PluginCore.Helpers;
 
 namespace ASCompletion.Model
 {
+    [Serializable]
     public class InlineRange
     {
         public string Syntax;
@@ -26,6 +27,7 @@ namespace ASCompletion.Model
         }
     }
 
+    [Serializable]
     public class ASMetaData: IComparable
     {
         static private Regex reNameTypeParams = 
@@ -92,17 +94,20 @@ namespace ASCompletion.Model
         }
     }
 
+    [Serializable]
     public class FileModel
     {
         static public FileModel Ignore = new FileModel();
 
+        [NonSerialized]
         public System.Windows.Forms.TreeState OutlineState;
 
+        [NonSerialized]
         public IASContext Context;
 
+        [NonSerialized]
         public bool OutOfDate;
         public DateTime LastWriteTime;
-        public bool CachedModel;
 
         public bool HasFiltering;
         public string InlinedIn;
@@ -192,7 +197,7 @@ namespace ASCompletion.Model
             if (OutOfDate)
             {
                 OutOfDate = false;
-                if (FileName != "" && File.Exists(FileName) && (CachedModel || LastWriteTime < System.IO.File.GetLastWriteTime(FileName)))
+                if (FileName != "" && File.Exists(FileName) && LastWriteTime < System.IO.File.GetLastWriteTime(FileName))
                     try
                     {
                         ASFileParser.ParseFile(this);
