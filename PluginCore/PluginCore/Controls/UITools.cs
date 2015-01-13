@@ -378,7 +378,7 @@ namespace PluginCore.Controls
 			}
 
             // toggle "long-description" for the hover tooltip
-            if (Tip.Visible && key == Keys.F1)
+            if (key == Keys.F1 && Tip.Visible && !CompletionList.Active)
             {
                 showDetails = !showDetails;
                 simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
