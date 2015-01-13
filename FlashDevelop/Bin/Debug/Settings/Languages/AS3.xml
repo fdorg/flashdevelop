@@ -38,7 +38,7 @@
 			param private return see serial serialData serialField since throws usage version langversion playerversion productversion
 		</keyword-class>
 		<keyword-class name="as3-additional-keywords3">
-			dynamic private public static intrinsic internal native override protected AS3 final 
+			dynamic private public static intrinsic internal native override protected AS3 final inline
 		</keyword-class>
 		<keyword-class name="as3-additional-keywords4">
 			<!-- trace addEventListener removeEventListener hasListener addChild addChildAt removeChild removeChildAt -->

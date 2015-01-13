@@ -77,10 +77,15 @@ namespace LoomContext
             features.importKey = "import";
             features.typesPreKeys = new string[] { "import", "new", "typeof", "is", "as", "extends", "implements" };
             features.codeKeywords = new string[] { 
-                "class", "interface", "var", "function", "const", "new", "delete", "typeof", "is", "as", "return", 
+                "var", "function", "const", "new", "delete", "typeof", "is", "as", "return", 
                 "break", "continue", "if", "else", "for", "each", "in", "while", "do", "switch", "case", "default", "with",
-                "null", "true", "false", "try", "catch", "finally", "throw", "delegate", "struct", "enum"
+                "null", "true", "false", "try", "catch", "finally", "throw"
             };
+            features.accessKeywords = new string[] { 
+                "extern", "dynamic", "inline", "final", "public", "private", "protected", "internal", "static", "override"
+            };
+            features.declKeywords = new string[] { "var", "function", "const", "get", "set" };
+            features.typesKeywords = new string[] { "import", "class", "interface", "delegate", "struct", "enum" };
             features.varKey = "var";
             features.constKey = "const";
             features.functionKey = "function";

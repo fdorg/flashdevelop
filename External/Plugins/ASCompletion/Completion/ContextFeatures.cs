@@ -78,7 +78,10 @@ namespace ASCompletion.Completion
         public string importKey;
         public string importKeyAlt;
         public string[] typesPreKeys = new string[] { };
+        public string[] accessKeywords = new string[] { };
         public string[] codeKeywords = new string[] { };
+        public string[] declKeywords = new string[] { };
+        public string[] typesKeywords = new string[] { };
         public string varKey;
         public string constKey;
         public string functionKey;
@@ -118,26 +121,13 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="text">Context</param>
         /// <returns>Keywords list</returns>
-        internal List<string> GetDeclarationKeywords(string text)
+        internal List<string> GetDeclarationKeywords(string text, bool insideClass)
         {
-            List<string> access = new List<string>();
-            if (staticKey != null) access.Add(staticKey);
-            if (finalKey != null) access.Add(finalKey);
-            if (overrideKey != null) access.Add(overrideKey);
-            if (publicKey != null) access.Add(publicKey);
-            if (internalKey != null) access.Add(internalKey);
-            if (protectedKey != null) access.Add(protectedKey);
-            if (privateKey != null) access.Add(privateKey);
-            if (inlineKey != null) access.Add(inlineKey);
-            List<string> members = new List<string>();
-            if (varKey != null) members.Add(varKey);
-            if (constKey != null) members.Add(constKey);
-            if (functionKey != null) members.Add(functionKey);
-            if (namespaceKey != null) members.Add(namespaceKey);
+            List<string> access = new List<string>(accessKeywords);
+            List<string> members = new List<string>(declKeywords);
+            if (!insideClass) members.AddRange(typesKeywords);
 
-            bool foundMember = false;
-            bool foundAccess = false;
-            bool foundSpecial = false;
+            string foundMember = null;
 
             if (text != null)
             {
@@ -146,7 +136,7 @@ namespace ASCompletion.Completion
                 {
                     if (token.Length > 0 && members.Contains(token))
                     {
-                        foundMember = true;
+                        foundMember = token;
                         break;
                     }
                 }
@@ -154,54 +144,42 @@ namespace ASCompletion.Completion
                 {
                     if (token.Length > 0 && access.Contains(token))
                     {
-                        foundAccess = true;
-                        if (token == staticKey || token == finalKey)
+                        access.Remove(token);
+                        if (token == overrideKey)
                         {
-                            foundSpecial = true;
-                            access.Remove(token);
+                            members.Clear();
+                            members.Add(functionKey);
                         }
-                        else if (token == overrideKey)
+                        else if (token == privateKey || token == internalKey || token == publicKey)
                         {
-                            foundSpecial = true;
-                            if (varKey != null) members.Remove(varKey);
-                            if (constKey != null) members.Remove(constKey);
-                            if (namespaceKey != null) members.Remove(namespaceKey);
-                            access.Add("flash_proxy");
+                            if (privateKey != null) access.Remove(privateKey);
+                            if (internalKey != null) access.Remove(internalKey);
+                            if (publicKey != null) access.Remove(publicKey);
                         }
-                        else if (token == inlineKey)
+                        else 
                         {
-                            foundSpecial = true;
-                            access.Remove(token);
-                            if (varKey != null) members.Remove(varKey);
-                            if (constKey != null) members.Remove(constKey);
-                            if (namespaceKey != null) members.Remove(namespaceKey);
-                        }
-                        else
-                        {
-                            bool keepStatic = staticKey != null && access.Contains(staticKey);
-                            bool keepFinal = finalKey != null && access.Contains(finalKey);
-                            bool keepOverride = overrideKey != null && access.Contains(overrideKey);
-                            bool keepInline = inlineKey != null && access.Contains(inlineKey);
-                            access.Clear();
-                            if (keepStatic) access.Add(staticKey);
-                            if (keepFinal) access.Add(finalKey);
-                            if (keepOverride) access.Add(overrideKey);
-                            if (keepInline) access.Add(inlineKey);
+                            if (importKey != null) members.Remove(importKey);
+                            if (importKeyAlt != null) members.Remove(importKeyAlt);
                         }
                     }
                 }
             }
 
-            if (!foundMember)
+            if (foundMember == null)
             {
-                foreach (string token in members) access.Add(token);
-
-                if (hasExtends && !foundSpecial) access.Add("extends");
-                if (hasImplements && !foundSpecial) access.Add("implements");
-
-                if (!foundAccess && importKey != null) access.Add(importKey);
-                if (!foundAccess && importKeyAlt != null) access.Add(importKeyAlt);
+                access.AddRange(members);
             }
+            else if (foundMember == "class" || foundMember == "interface")
+            {
+                if (hasExtends) access.Add("extends");
+                if (hasImplements && foundMember != "interface") access.Add("implements");
+            }
+            else if (foundMember == "abstract")
+            {
+                access.Add("to");
+                access.Add("from");
+            }
+
             access.Sort();
             return access;
         }
