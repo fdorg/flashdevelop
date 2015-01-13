@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PluginCore.Utilities;
-using System.IO;
-using PluginCore.Managers;
-
-namespace SourceControl.Sources.Git
+﻿namespace SourceControl.Sources.Git
 {
     class CommitCommand : BaseCommand
     {

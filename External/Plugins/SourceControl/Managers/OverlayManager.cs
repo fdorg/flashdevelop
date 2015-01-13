@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using SourceControl.Sources;
 using System.Drawing;
 using System.Windows.Forms;
-using PluginCore;
 using ProjectManager.Controls.TreeView;
 using SourceControl.Actions;
-using System.IO;
-using System.Drawing.Imaging;
-using System.Reflection;
 
 namespace SourceControl.Managers
 {
