@@ -1768,6 +1768,10 @@
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>项目类路径是相对于项目位置.</value>
   </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Classpaths of {0} projects are determined by the output file.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;项目文件夹&gt;</value>
   </data>
@@ -2001,6 +2005,10 @@
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>输出文件(&amp;O):</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>粘贴(&amp;P)</value>

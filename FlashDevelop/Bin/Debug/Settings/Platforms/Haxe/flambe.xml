@@ -1,5 +1,5 @@
-<platform name="Flambe" targets="html,flash,android,ios,firefox" debugger="flash" 
-	external="cmd" external-capture="html,flash,android,ios,firefox" default-project="flambe.yaml">
+<platform name="Flambe" targets="html,flash,android,ios,firefox" debugger="flash"
+  external="cmd" external-capture="html,flash,android,ios,firefox" default-project="flambe.yaml">
   <versions>
     <version value="4.0">
       <command name="display" value="flambe haxe-flags $(TargetBuild)"/>
