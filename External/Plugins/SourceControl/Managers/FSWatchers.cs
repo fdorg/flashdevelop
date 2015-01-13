@@ -111,14 +111,11 @@ namespace SourceControl.Managers
                     return;
                 }
 
-            if (rootDir)
-            {
-                if (ParentDirUnderVC(path)) return;
-            }
+            if (rootDir && ParentDirUnderVC(path))
+                return;
 
-            string[] dirs = Directory.GetDirectories(path);
             if (depth < 3)
-                foreach (string dir in dirs)
+                foreach (string dir in Directory.GetDirectories(path))
                 {
                     FileInfo info = new FileInfo(dir);
                     if ((info.Attributes & FileAttributes.Hidden) == 0)
