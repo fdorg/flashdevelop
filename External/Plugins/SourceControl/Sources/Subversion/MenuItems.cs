@@ -41,8 +41,8 @@ namespace SourceControl.Sources.Subversion
         public ToolStripItem Revert { get { return revert; } }
         public ToolStripItem EditConflict { get { return editConflict; } }
 
-        private Dictionary<ToolStripItem, VCMenutItemProperties> items = new Dictionary<ToolStripItem, VCMenutItemProperties>();
-        public Dictionary<ToolStripItem, VCMenutItemProperties> Items { get { return items; } }
+        private Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
+        public Dictionary<ToolStripItem, VCMenuItemProperties> Items { get { return items; } }
 
         public MenuItems()
         {

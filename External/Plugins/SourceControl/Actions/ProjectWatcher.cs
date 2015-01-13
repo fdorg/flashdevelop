@@ -12,7 +12,7 @@ using PluginCore.Localization;
 
 namespace SourceControl.Actions
 {
-    public class ProjectWatcher
+    public static class ProjectWatcher
     {
         private static bool initialized = false;
 
@@ -25,7 +25,7 @@ namespace SourceControl.Actions
         public static bool Initialized { get { return initialized; } }
         public static Image Skin { get; set; }
         public static Project CurrentProject { get { return currentProject; } }
-        public static VCManager VcManager { get { return vcManager; } }
+        public static VCManager VCManager { get { return vcManager; } }
 
         public static void Init()
         {

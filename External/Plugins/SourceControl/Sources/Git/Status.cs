@@ -11,7 +11,6 @@ namespace SourceControl.Sources.Git
         public event StatusResult OnResult;
 
         public string RootPath;
-        public string Branch;
 
         private StatusNode root = new StatusNode(".", VCItemStatus.Undefined);
         private StatusNode temp;
@@ -106,11 +105,7 @@ namespace SourceControl.Sources.Git
             else if (c0 == 'R') s = VCItemStatus.Added; // renamed
             else if (c0 == 'M' || c1 == 'M') s = VCItemStatus.Modified;
             else if (c0 == 'D' || c1 == 'D') s = VCItemStatus.Deleted;
-            else if (c0 == '#')
-            {
-                Branch = line.Substring(fileIndex);
-                return;
-            }
+            else if (c0 == '#') return;
 
             int p = line.IndexOf(" -> ");
             if (p > 0) line = line.Substring(p + 4);
