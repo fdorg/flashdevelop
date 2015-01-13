@@ -90,7 +90,7 @@ namespace SourceControl.Sources.Git
         override protected void Runner_Output(object sender, string line)
         {
             int fileIndex = 3;
-            if (line.Length < fileIndex || line.Length < 3) return;
+            if (line.Length < fileIndex) return;
 
             char c0 = line[0];
             char c1 = line[1];
