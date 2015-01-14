@@ -57,7 +57,7 @@ namespace ASCompletion.Model
                 if (mParams.Count > 0)
                 {
                     for (int i = 0, c = mParams.Count; i < c; i++)
-                        Params.Add(mParams[i].Groups[1].Value, mParams[i].Groups[2].Value);
+                        Params[mParams[i].Groups[1].Value] = mParams[i].Groups[2].Value;
                 }
                 else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
                     Kind = ASMetaKind.Unknown;

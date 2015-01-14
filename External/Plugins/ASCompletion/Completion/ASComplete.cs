@@ -152,7 +152,7 @@ namespace ASCompletion.Completion
                                 return HandleFunctionCompletion(Sci, autoHide);
                             break;
                         }
-                        if (word == "class" || word == "package" || word == "interface") 
+                        if (word == "package" || Array.IndexOf(features.typesKeywords, word) >= 0) 
                             return false;
                         // new/extends/instanceof/...
                         if (features.HasTypePreKey(word))
@@ -161,9 +161,7 @@ namespace ASCompletion.Completion
                         if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
 							return HandleImportCompletion(Sci, "", autoHide);
                         // public/internal/private/protected/static
-                        if (word == features.publicKey || word == features.internalKey
-                            || word == features.protectedKey || word == features.privateKey
-                            || word == features.staticKey || word == features.inlineKey)
+                        if (Array.IndexOf(features.accessKeywords, word) >= 0)
                             return HandleDeclarationCompletion(Sci, "", autoHide);
                         // override
                         if (word == features.overrideKey)
@@ -1198,8 +1196,10 @@ namespace ASCompletion.Completion
             if (Sci.CharAt(position - 1) <= 32) tail = "";
 
             // completion support
-            ContextFeatures features = ASContext.Context.Features;
-            List<string> support = features.GetDeclarationKeywords(Sci.GetLine(line));
+            IASContext ctx = ASContext.Context;
+            ContextFeatures features = ctx.Features;
+            bool insideClass = !ctx.CurrentClass.IsVoid() && ctx.CurrentClass.LineFrom < line;
+            List<string> support = features.GetDeclarationKeywords(Sci.GetLine(line), insideClass);
             if (support.Count == 0) return true;
             
             // current model
@@ -1211,12 +1211,16 @@ namespace ASCompletion.Completion
             int tempLine = line-1;
             int tempIndent;
             string tempText;
-            while(tempLine > 0)
+            while (tempLine > 0)
             {
                 tempText = Sci.GetLine(tempLine).Trim();
-                if (tempText.IndexOf("class") >= 0 || tempText.IndexOf("interface") >=0 || tempText.IndexOf("enum") >= 0) 
+                if (insideClass && IsTypeDecl(tempText, features.typesKeywords))
+                {
+                    tempIndent = Sci.GetLineIndentation(tempLine);
+                    tab = tempIndent + Sci.TabWidth;
                     break;
-                if (tempText.Length > 0 && (tempText.EndsWith("}") || IsDeclaration(tempText)))
+                }
+                if (tempText.Length > 0 && (tempText.EndsWith("}") || IsDeclaration(tempText, features)))
                 {
                     tempIndent = Sci.GetLineIndentation(tempLine);
                     tab = tempIndent;
@@ -1241,20 +1245,19 @@ namespace ASCompletion.Completion
 			return true;
 		}
 
-        private static bool IsDeclaration(string line)
+        private static bool IsTypeDecl(string line, string[] typesKeywords)
         {
-            ContextFeatures features = ASContext.Context.Features;
-            if (!string.IsNullOrEmpty(features.privateKey) && line.StartsWith(features.privateKey)) return true;
-            if (!string.IsNullOrEmpty(features.protectedKey) && line.StartsWith(features.protectedKey)) return true;
-            if (!string.IsNullOrEmpty(features.internalKey) && line.StartsWith(features.internalKey)) return true;
-            if (!string.IsNullOrEmpty(features.publicKey) && line.StartsWith(features.publicKey)) return true;
-            if (!string.IsNullOrEmpty(features.varKey) && line.StartsWith(features.varKey)) return true;
-            if (!string.IsNullOrEmpty(features.constKey) && line.StartsWith(features.constKey)) return true;
-            if (!string.IsNullOrEmpty(features.overrideKey) && line.StartsWith(features.overrideKey)) return true;
-            if (!string.IsNullOrEmpty(features.inlineKey) && line.StartsWith(features.inlineKey)) return true;
-            if (!string.IsNullOrEmpty(features.functionKey) && line.StartsWith(features.functionKey)) return true;
-            if (!string.IsNullOrEmpty(features.staticKey) && line.StartsWith(features.staticKey)) return true;
-            if (!string.IsNullOrEmpty(features.finalKey) && line.StartsWith(features.finalKey)) return true;
+            foreach (string keyword in typesKeywords)
+                if (line.IndexOf(keyword) >= 0) return true;
+            return false;
+        }
+
+        private static bool IsDeclaration(string line, ContextFeatures features)
+        {
+            foreach (string keyword in features.accessKeywords)
+                if (line.StartsWith(keyword)) return true;
+            foreach (string keyword in features.declKeywords)
+                if (line.StartsWith(keyword)) return true;
             return false;
         }
 
@@ -1751,9 +1754,7 @@ namespace ASCompletion.Completion
 
 			// complete keyword
             string word = expr.WordBefore;
-            if (word != null &&
-                (word == features.varKey || word == features.functionKey || word == features.constKey
-                || word == features.getKey || word == features.setKey))
+            if (word != null && Array.IndexOf(features.declKeywords, word) >= 0)
                 return false;
             ClassModel argumentType = null;
             if (dotIndex < 0)
@@ -1927,11 +1928,7 @@ namespace ASCompletion.Completion
                 mix.Merge(cFile.GetSortedMembersList());
                 mix.Merge(ctx.GetTopLevelElements());
                 mix.Merge(ctx.GetVisibleExternalElements());
-                MemberList decl = new MemberList();
-                foreach (string key in features.codeKeywords)
-                    decl.Add(new MemberModel(key, key, FlagType.Template, 0));
-                decl.Sort();
-                mix.Merge(decl);
+                mix.Merge(GetKeywords());
             }
 
 			// show
@@ -1952,6 +1949,30 @@ namespace ASCompletion.Completion
             if (outOfDate) ctx.SetOutOfDate();
 			return true;
 		}
+
+        private static MemberList GetKeywords()
+        {
+            IASContext ctx = ASContext.Context;
+            ContextFeatures features = ctx.Features;
+            ClassModel cClass = ctx.CurrentClass;
+            bool inClass = !cClass.IsVoid();
+
+            MemberList decl = new MemberList();
+            if (inClass || !ctx.CurrentModel.haXe)
+            {
+                foreach (string key in features.codeKeywords)
+                    decl.Add(new MemberModel(key, key, FlagType.Template, 0));
+            }
+            if (!inClass)
+            {
+                foreach (string key in features.accessKeywords)
+                    decl.Add(new MemberModel(key, key, FlagType.Template, 0));
+                foreach (string key in features.typesKeywords)
+                    decl.Add(new MemberModel(key, key, FlagType.Template, 0));
+            }
+            decl.Sort();
+            return decl;
+        }
 
         private static bool DeclarationSectionOnly()
         {

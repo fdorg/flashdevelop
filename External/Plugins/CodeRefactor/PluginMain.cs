@@ -290,16 +290,6 @@ namespace CodeRefactor
         }
 
         /// <summary>
-        /// Gets if the current documents language is haxe
-        /// </summary>
-        private Boolean LanguageIsHaxe()
-        {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return false;
-            return document.SciControl.ConfigurationLanguage == "haxe";
-        }
-
-        /// <summary>
         /// Gets if the language is valid for refactoring
         /// </summary>
         private Boolean GetLanguageIsValid()
@@ -362,7 +352,7 @@ namespace CodeRefactor
                 IASContext context = ASContext.Context;
                 if (context != null && context.CurrentModel != null)
                 {
-                    bool truncate = (langIsValid && context.CurrentModel.Imports.Count > 0) && !this.LanguageIsHaxe();
+                    bool truncate = langIsValid && context.CurrentModel.Imports.Count > 0;
                     bool organize = (langIsValid && context.CurrentModel.Imports.Count > 1);
                     this.refactorContextMenu.OrganizeMenuItem.Enabled = organize;
                     this.refactorContextMenu.TruncateMenuItem.Enabled = truncate;
