@@ -410,13 +410,14 @@ namespace ASCompletion.Completion
 		{
             if (member == null || member.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
             CommentBlock cb = ParseComment(member.Comments);
-            cb.IsFunctionWithArguments = IsFunctionWidthArguments(member);
+            cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return " \u2026" + GetTipShortDetails(cb, highlightParam);
         }
 
-        static bool IsFunctionWidthArguments(MemberModel member)
+        static bool IsFunctionWithArguments(MemberModel member)
         {
-            return (member.Flags & FlagType.Function) > 0 && member.Parameters.Count > 0;
+            return member != null && (member.Flags & FlagType.Function) > 0
+                && member.Parameters != null && member.Parameters.Count > 0;
         }
 
         /// <summary>
@@ -486,7 +487,7 @@ namespace ASCompletion.Completion
 		{
             if (member == null || member.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
             CommentBlock cb = ParseComment(member.Comments);
-            cb.IsFunctionWithArguments = IsFunctionWidthArguments(member);
+            cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return GetTipFullDetails(cb, highlightParam);
         }
 
