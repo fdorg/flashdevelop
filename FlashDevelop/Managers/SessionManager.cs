@@ -76,7 +76,7 @@ namespace FlashDevelop.Managers
                         {
                             NotifyEvent ne = new NotifyEvent(EventType.FileEmpty);
                             EventManager.DispatchEvent(Globals.MainForm, ne);
-                            if (!ne.Handled) Globals.MainForm.New(null, null);
+                            if (!ne.Handled) Globals.MainForm.SmartNew(null, null);
                         }
                         DocumentManager.ActivateDocument(session.Index);
                     }

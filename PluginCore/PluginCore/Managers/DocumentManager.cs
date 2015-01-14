@@ -65,7 +65,10 @@ namespace PluginCore.Managers
             ITabbedDocument current = PluginBase.MainForm.CurrentDocument;
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
-                if (document.IsEditable)
+                /* We need to check for virtual models, another more generic option would be 
+                 *  Path.GetFileName(document.FileName).IndexOfAny(Path.GetInvalidFileNameChars()) == -1
+                 * But this one is used in more places */
+                if (document.IsEditable && !document.Text.StartsWith("[model] "))
                 {
                     String filename = Path.GetFullPath(document.FileName);
                     if (filename.StartsWith(oldPath))

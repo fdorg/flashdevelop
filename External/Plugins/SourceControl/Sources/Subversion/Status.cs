@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.Localization;
-using PluginCore.Utilities;
 using PluginCore.Managers;
 
 namespace SourceControl.Sources.Subversion
@@ -35,22 +33,18 @@ namespace SourceControl.Sources.Subversion
 
             temp = new StatusNode(".", VCItemStatus.Unknown);
             updatingPath = RootPath;
-
-            if (dirty != null)
-            {
-                /*if (File.Exists(dirty)) dirty = Path.GetDirectoryName(dirty);
-                StatusNode dirtyNode = root.FindPath(dirty);
-                if (dirtyNode != null)
-                    updatingPath = dirty;*/
-                dirty = null;
-            }
+            dirty = null;
             Run("status -v", updatingPath);
         }
 
         public bool SetPathDirty(string path)
         {
             if (path == null) return false;
-            if (dirty == null || dirty == "") { dirty = path; return true; }
+            if (string.IsNullOrEmpty(dirty))
+            {
+                dirty = path;
+                return true;
+            }
 
             char sep = Path.DirectorySeparatorChar;
             string[] p1 = dirty.Split(sep);
@@ -67,7 +61,7 @@ namespace SourceControl.Sources.Subversion
             return true;
         }
 
-        override protected void runner_ProcessEnded(object sender, int exitCode)
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -77,25 +71,10 @@ namespace SourceControl.Sources.Subversion
             }
 
             if (updatingPath == RootPath) root = temp;
-            /*else
-            {
-                StatusNode updateNode = root.FindPath(Path.GetDirectoryName(updatingPath));
-                if (updateNode != null)
-                {
-                    if (updateNode.Parent == null) root = temp;
-                    else
-                    {
-                        string name = Path.GetFileName(updatingPath);
-                        if (updateNode.Children.ContainsKey(name))
-                            updateNode.Children.Remove(name);
-                        updateNode.Children.Add(name, temp);
-                    }
-                }
-            }*/
             if (OnResult != null) OnResult(this);
         }
 
-        override protected void runner_Output(object sender, string line)
+        override protected void Runner_Output(object sender, string line)
         {
             int fileIndex = 30;
             if (line.Length < fileIndex) return;

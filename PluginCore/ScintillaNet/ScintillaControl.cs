@@ -71,6 +71,12 @@ namespace ScintillaNet
             }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (highlightDelay != null) highlightDelay.Stop();
+            base.Dispose(disposing);
+        }
+
         public void OnResize(object sender, EventArgs e)
         {
             if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
@@ -5341,35 +5347,41 @@ namespace ScintillaNet
         /// </summary>
         private void StartHighlightSelectionTimer(ScintillaControl sci)
         {
-            if (highlightDelay != null) highlightDelay.Enabled = false;
-            highlightDelay = new System.Timers.Timer(1000);
-            highlightDelay.Elapsed += delegate
+            if (highlightDelay == null)
             {
-                highlightDelay.Enabled = false;
-                HighlightWordsMatchingSelected(sci);
-            };
-            highlightDelay.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
+                highlightDelay = new System.Timers.Timer(2000);
+                highlightDelay.Elapsed += highlightDelay_Elapsed;
+                highlightDelay.SynchronizingObject = this as Control;
+            }
+            else highlightDelay.Stop();
             highlightDelay.Start();
+        }
+
+        void highlightDelay_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            highlightDelay.Stop();
+            HighlightWordsMatchingSelected();
         }
 
         /// <summary>
         /// Provides basic highlighting of selected text
         /// </summary>
-        private void HighlightWordsMatchingSelected(ScintillaControl sci)
+        private void HighlightWordsMatchingSelected()
         {
-            if (sci.Text.Length == 0) return;
-            Language language = Configuration.GetLanguage(sci.ConfigurationLanguage);
+            if (TextLength == 0 || TextLength > 64 * 1024) return;
+            Language language = Configuration.GetLanguage(ConfigurationLanguage);
             Int32 color = language.editorstyle.HighlightBackColor;
-            String word = sci.GetWordFromPosition(sci.CurrentPos);
+            String word = GetWordFromPosition(CurrentPos);
             if (String.IsNullOrEmpty(word)) return;
             String pattern = word.Trim();
             FRSearch search = new FRSearch(pattern);
-            search.WholeWord = true; search.NoCase = false;
+            search.WholeWord = true; 
+            search.NoCase = false;
             search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
-            sci.RemoveHighlights();
-            List<SearchMatch> test = search.Matches(sci.Text);
-            sci.AddHighlights(test, color);
-            sci.hasHighlights = true;
+            RemoveHighlights();
+            List<SearchMatch> test = search.Matches(Text);
+            AddHighlights(test, color);
+            hasHighlights = true;
         }
 
         /// <summary>

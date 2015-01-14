@@ -806,6 +806,8 @@ namespace ProjectManager.Controls
         private Boolean classpathsChanged;
         private Boolean assetsChanged;
         private Boolean sdkChanged;
+        private Boolean isPropertyGridReadOnly;
+        private LanguagePlatform langPlatform;
 
 		public event EventHandler OpenGlobalClasspaths;
 
@@ -915,6 +917,8 @@ namespace ProjectManager.Controls
 		{
             this.Text = " " + project.Name + " (" + project.Language.ToUpper() + ") " + TextHelper.GetString("Info.Properties");
 
+            langPlatform = GetLanguagePlatform(project.MovieOptions.Platform);
+
             InitOutputTab();
             InitBuildTab();
             InitOptionsTab();
@@ -934,9 +938,23 @@ namespace ProjectManager.Controls
 
         private void InitOptionsTab()
         {
+            UpdateCompilerOptions();
+        }
+
+        private void UpdateCompilerOptions()
+        {
+            var readOnly = IsExternalConfiguration();
+            if (readOnly == isPropertyGridReadOnly && propertyGrid.SelectedObject != null) 
+                return;
+            isPropertyGridReadOnly = readOnly;
+
             // clone the compiler options object because the PropertyGrid modifies its
             // object directly
             optionsCopy = project.CompilerOptions.Clone();
+
+            if (isPropertyGridReadOnly)
+                TypeDescriptor.AddAttributes(optionsCopy, new Attribute[] { new ReadOnlyAttribute(true) });
+
             propertyGrid.SelectedObject = optionsCopy;
             propertiesChanged = false;
         }
@@ -955,7 +973,21 @@ namespace ProjectManager.Controls
             classpathControl.Classpaths = project.Classpaths.ToArray();
             classpathControl.Language = project.Language;
             classpathControl.LanguageBox.Visible = false;
+            UpdateClasspaths();
             classpathsChanged = false;
+        }
+
+        private void UpdateClasspaths()
+        {
+            if (IsExternalConfiguration())
+            {
+                classpathControl.Enabled = false;
+                label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), langPlatform.Name);
+                return;
+            }
+
+            classpathControl.Enabled = true;
+            label2.Text = TextHelper.GetString("Info.ProjectClasspaths");
         }
 
         private void InitSDKTab()
@@ -1020,6 +1052,7 @@ namespace ProjectManager.Controls
 
             InitCombo(versionCombo, project.MovieOptions.TargetVersions(this.platformCombo.Text), project.MovieOptions.Version);
             versionCombo.SelectedIndexChanged += new EventHandler(versionCombo_SelectedIndexChanged);
+            UpdateVersionCombo();
 
             InitTestMovieOptions();
             UpdateGeneralPanel();
@@ -1034,13 +1067,26 @@ namespace ProjectManager.Controls
                 || state == TestMovieBehavior.Webserver;
         }
 
+        private void UpdateVersionCombo()
+        {
+            if (versionCombo.Items.Count > 1)
+            {
+                versionCombo.Enabled = true;
+            }
+            else
+            {
+                versionCombo.Enabled = false;
+                versionCombo.SelectedIndex = -1;
+            }
+        }
+
         private void InitTestMovieOptions()
         {
             OutputType output = GetOutput();
             string platform = GetPlatform();
 
             List<TestMovieBehavior> options = new List<TestMovieBehavior>();
-            if (/*output == OutputType.Application &&*/ platform == PlatformData.FLASHPLAYER_PLATFORM)
+            if (platform == PlatformData.FLASHPLAYER_PLATFORM)
             {
                 options.Add(TestMovieBehavior.Default);
                 options.Add(TestMovieBehavior.NewTab);
@@ -1214,44 +1260,23 @@ namespace ProjectManager.Controls
 
         void platformCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
+            langPlatform = GetLanguagePlatform(platformCombo.Text);
+
             this.versionCombo.Items.Clear();
             this.versionCombo.Items.AddRange(project.MovieOptions.TargetVersions(this.platformCombo.Text));
             this.versionCombo.SelectedIndex = Math.Max(0, this.versionCombo.Items.IndexOf(
                         project.MovieOptions.DefaultVersion(this.platformCombo.Text)));
 
+            UpdateVersionCombo();
             InitTestMovieOptions();
             UpdateGeneralPanel();
             UpdateEditCommandButton();
-
             DetectExternalToolchain();
+            UpdateClasspaths();
+            UpdateCompilerOptions();
 
             platformChanged = true;
             Modified();
-        }
-
-        private void DetectExternalToolchain()
-        {
-            if (!PlatformData.SupportedLanguages.ContainsKey(project.Language)) return;
-            var lang = PlatformData.SupportedLanguages[project.Language];
-
-            var platformName = (platformCombo.SelectedItem ?? "").ToString();
-            if (!lang.Platforms.ContainsKey(platformName)) return;
-
-            var platform = lang.Platforms[platformName];
-            if (platform.ExternalToolchain == null) return;
-
-            SelectItem(outputCombo, OutputType.Application);
-            SelectItem(testMovieCombo, TestMovieBehavior.Custom);
-            project.TestMovieCommand = "";
-
-            if (platform.DefaultProjectFile == null) return;
-
-            foreach(string fileName in platform.DefaultProjectFile)
-                if (File.Exists(project.GetAbsolutePath(fileName)))
-                {
-                    outputSwfBox.Text = fileName;
-                    break;
-                }
         }
 
         private void SelectItem(ComboBox combo, object value)
@@ -1372,6 +1397,11 @@ namespace ProjectManager.Controls
             bool isGraphical = project.MovieOptions.IsGraphical(GetPlatform());
             widthTextBox.Enabled = heightTextBox.Enabled = fpsTextBox.Enabled
                 = colorTextBox.Enabled = colorLabel.Enabled = isGraphical;
+
+            if (IsExternalToolchain())
+                exportinLabel.Text = TextHelper.GetString("Label.ConfigurationFile");
+            else
+                exportinLabel.Text = TextHelper.GetString("Label.OutputFile");
         }
 
         private void manageButton_Click(object sender, EventArgs e)
@@ -1403,6 +1433,49 @@ namespace ProjectManager.Controls
             customTextBox.Text = "";
             sdkChanged = true;
             Modified();
+        }
+
+        /* PLATFORM CONFIGURATION */
+
+        private void DetectExternalToolchain()
+        {
+            if (!IsExternalToolchain()) return;
+
+            SelectItem(outputCombo, OutputType.Application);
+            SelectItem(testMovieCombo, TestMovieBehavior.Custom);
+            project.TestMovieCommand = "";
+
+            if (langPlatform.DefaultProjectFile == null) return;
+
+            foreach (string fileName in langPlatform.DefaultProjectFile)
+                if (File.Exists(project.GetAbsolutePath(fileName)))
+                {
+                    outputSwfBox.Text = fileName;
+                    break;
+                }
+        }
+
+        private bool IsExternalConfiguration()
+        {
+            string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
+            PlatformVersion version = langPlatform.GetVersion(selectedVersion);
+            return version != null && version.Commands != null && version.Commands.ContainsKey("display");
+        }
+
+        private bool IsExternalToolchain()
+        {
+            return langPlatform != null && langPlatform.ExternalToolchain != null;
+        }
+
+        private LanguagePlatform GetLanguagePlatform(string platformName)
+        {
+            if (PlatformData.SupportedLanguages.ContainsKey(project.Language))
+            {
+                SupportedLanguage lang = PlatformData.SupportedLanguages[project.Language];
+                if (lang.Platforms.ContainsKey(platformName))
+                    return lang.Platforms[platformName];
+            }
+            return null;
         }
 
 	}

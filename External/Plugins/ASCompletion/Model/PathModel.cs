@@ -8,6 +8,7 @@ using ASCompletion.Context;
 using PluginCore.Managers;
 using System.Windows.Forms;
 using PluginCore.Bridge;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ASCompletion.Model
 {
@@ -590,6 +591,56 @@ namespace ASCompletion.Model
                 files.Clear();
             }
             ReleaseWatcher();
+        }
+
+        public void Serialize(string path)
+        {
+            lock (lockObject)
+            {
+                try
+                {
+                    using (Stream stream = File.Open(path, FileMode.Create))
+                    {
+                        BinaryFormatter bin = new BinaryFormatter();
+                        bin.Serialize(stream, files);
+                    }
+                }
+                catch (Exception)
+                {
+                    TraceManager.AddAsync("Failed to serialize: " + path);
+                }
+            }
+        }
+
+        public bool Deserialize(string path)
+        {
+            try
+            {
+                using (Stream stream = File.Open(path, FileMode.Open))
+                {
+                    BinaryFormatter bin = new BinaryFormatter();
+                    var newFiles = (Dictionary<string, FileModel>)bin.Deserialize(stream);
+
+                    lock (lockObject)
+                    {
+                        foreach (string key in newFiles.Keys)
+                        {
+                            var aFile = newFiles[key];
+                            if (File.Exists(aFile.FileName))
+                            {
+                                aFile.Context = Owner;
+                                files[key] = aFile;
+                            }
+                        }
+                    }
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                TraceManager.AddAsync("Failed to deserialize: " + path);
+                return false;
+            }
         }
     }
 }
