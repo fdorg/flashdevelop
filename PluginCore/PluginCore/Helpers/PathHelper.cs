@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using System.Text;
+using Microsoft.Win32;
 using System.Security;
 using System.Security.Principal;
 using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
 
@@ -225,7 +227,7 @@ namespace PluginCore.Helpers
                 }
                 catch {} // Not working...
             }
-            String userProfile = Environment.GetEnvironmentVariable("USERPROFILE");
+            String userProfile = Environment.GetEnvironmentVariable(Win32.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
             return Path.Combine(userProfile, "mm.cfg");
         }
 
@@ -271,41 +273,69 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Converts a long path to a short representative one using ellipsis if necessary
         /// </summary>
-        [DllImport("Shlwapi.dll", CharSet = CharSet.Auto)]
-        private static extern Boolean PathCompactPathEx([MarshalAs(UnmanagedType.LPTStr)] StringBuilder pszOut, [MarshalAs(UnmanagedType.LPTStr)] String pszSource, [MarshalAs(UnmanagedType.U4)] Int32 cchMax, [MarshalAs(UnmanagedType.U4)] Int32 dwReserved);
         public static String GetCompactPath(String path)
         {
-            Int32 max = 64;
-            StringBuilder sb = new StringBuilder(max);
-            PathCompactPathEx(sb, path, max, 0);
-            return sb.ToString();
+            try
+            {
+                if (Win32.ShouldUseWin32())
+                {
+                    Int32 max = 64;
+                    StringBuilder sb = new StringBuilder(max);
+                    Win32.PathCompactPathEx(sb, path, max, 0);
+                    return sb.ToString();
+                }
+                else // For other platforms
+                {
+                    const String pattern = @"^(w+:|)([^]+[^]+).*([^]+[^]+)$";
+                    const String replacement = "$1$2...$3";
+                    if (Regex.IsMatch(path, pattern)) return Regex.Replace(path, pattern, replacement);
+                    else return path;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return path;
+            }
         }
 
         /// <summary>
         /// Converts a long filename to a short one
         /// </summary>
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        private static extern Int32 GetShortPathName(String lpszLongPath, StringBuilder lpszShortPath, Int32 cchBuffer);
         public static String GetShortPathName(String longName)
         {
-            Int32 max = longName.Length + 1;
-            StringBuilder sb = new StringBuilder(max);
-            GetShortPathName(longName, sb, max);
-            return sb.ToString();
+            try
+            {
+                if (Win32.ShouldUseWin32())
+                {
+                    Int32 max = longName.Length + 1;
+                    StringBuilder sb = new StringBuilder(max);
+                    Win32.GetShortPathName(longName, sb, max);
+                    return sb.ToString();
+                }
+                else return longName; // For other platforms
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return longName;
+            }
         }
 
         /// <summary>
         /// Converts a short filename to a long one
         /// </summary>
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        private static extern Int32 GetLongPathName([MarshalAs(UnmanagedType.LPTStr)] String path, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder longPath, Int32 longPathLength);
         public static String GetLongPathName(String shortName)
         {
             try
             {
-                StringBuilder longNameBuffer = new StringBuilder(256);
-                PathHelper.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
-                return longNameBuffer.ToString();
+                if (Win32.ShouldUseWin32())
+                {
+                    StringBuilder longNameBuffer = new StringBuilder(256);
+                    Win32.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
+                    return longNameBuffer.ToString();
+                }
+                else return shortName; // For other platforms
             }
             catch (Exception ex)
             {
@@ -317,26 +347,25 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the correct physical path from the file system
         /// </summary>
-        [DllImport("shell32.dll", EntryPoint = "#28")]
-        private static extern uint SHILCreateFromPath([MarshalAs(UnmanagedType.LPWStr)] String pszPath, out IntPtr ppidl, ref int rgflnOut);
-        [DllImport("shell32.dll", EntryPoint = "SHGetPathFromIDListW")] 
-        private static extern bool SHGetPathFromIDList(IntPtr pidl, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder pszPath);
         public static String GetPhysicalPathName(String path)
         {
             try
             {
-                uint r;
-                IntPtr ppidl;
-                int rgflnOut = 0;
-                r = SHILCreateFromPath(path, out ppidl, ref rgflnOut);
-                if (r == 0)
+                if (Win32.ShouldUseWin32())
                 {
-                    StringBuilder sb = new StringBuilder(260);
-                    if (SHGetPathFromIDList(ppidl, sb))
+                    uint r;
+                    IntPtr ppidl;
+                    int rgflnOut = 0;
+                    r = Win32.SHILCreateFromPath(path, out ppidl, ref rgflnOut);
+                    if (r == 0)
                     {
-                        Char sep = Path.DirectorySeparatorChar;
-                        Char alt = Path.AltDirectorySeparatorChar;
-                        return sb.ToString().Replace(alt, sep);
+                        StringBuilder sb = new StringBuilder(260);
+                        if (Win32.SHGetPathFromIDList(ppidl, sb))
+                        {
+                            Char sep = Path.DirectorySeparatorChar;
+                            Char alt = Path.AltDirectorySeparatorChar;
+                            return sb.ToString().Replace(alt, sep);
+                        }
                     }
                 }
                 return path;
@@ -354,10 +383,10 @@ namespace PluginCore.Helpers
         public static String GetJavaInstallPath()
         {
             String javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-            using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
+            using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(javaKey))
             {
                 String currentVersion = rk.GetValue("CurrentVersion").ToString();
-                using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
+                using (RegistryKey key = rk.OpenSubKey(currentVersion))
                 {
                     return key.GetValue("JavaHome").ToString();
                 }

@@ -99,12 +99,6 @@ namespace ProjectManager.Controls
         public void EnableTargetBuildSelector(bool enabled)
         {
             TargetBuildSelector.Enabled = enabled;
-            if (enabled) TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDown;
-            else
-            {
-                TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDownList;
-                TargetBuildSelector.Text = "";
-            }
         }
 
         public bool DisabledForBuild
@@ -134,7 +128,7 @@ namespace ProjectManager.Controls
             {
                 TargetBuildSelector.Items.AddRange(project.MovieOptions.TargetBuildTypes);
                 string target = project.TargetBuild ?? project.MovieOptions.TargetBuildTypes[0];
-                if (!TargetBuildSelector.Items.Contains(target)) TargetBuildSelector.Items.Insert(0, target);
+                if (target != "" && !TargetBuildSelector.Items.Contains(target)) TargetBuildSelector.Items.Insert(0, target);
                 TargetBuildSelector.Text = target;
                 EnableTargetBuildSelector(true);
             }
@@ -145,7 +139,11 @@ namespace ProjectManager.Controls
                 TargetBuildSelector.Text = target;
                 EnableTargetBuildSelector(true);
             }
-            else EnableTargetBuildSelector(false);
+            else
+            {
+                TargetBuildSelector.Text = "";
+                EnableTargetBuildSelector(false);
+            }
         }
 
         

@@ -152,7 +152,7 @@ namespace PluginCore.Controls
             UpdateTip(sci);
         }
 
-        public void UpdateTip(ScintillaControl sci)
+        public new void UpdateTip(ScintillaControl sci)
         {
             if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
         }

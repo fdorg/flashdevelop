@@ -201,7 +201,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Helpers\ProjectCreator.cs" />
-    <Compile Include="Helpers\Scrolling.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="PluginUI.cs">
       <SubType>UserControl</SubType>

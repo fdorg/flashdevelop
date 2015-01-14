@@ -12,8 +12,8 @@ using FlashDevelop.Dialogs;
 using FlashDevelop.Helpers;
 using PluginCore.Managers;
 using PluginCore.Controls;
-using PluginCore;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
@@ -300,21 +300,21 @@ namespace FlashDevelop.Dialogs
             this.columnHeader.Width = ScaleHelper.Scale(this.columnHeader.Width);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void InitializeContextMenu()
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
-
             ToolStripMenuItem collapseAll = new ToolStripMenuItem(TextHelper.GetString("Label.CollapseAll"));
             collapseAll.ShortcutKeys = MainForm.Instance.GetShortcutItemKeys("ViewMenu.CollapseAll");
-            collapseAll.Click += delegate { itemPropertyGrid.CollapseAllGridItems(); };
+            collapseAll.Click += delegate { this.itemPropertyGrid.CollapseAllGridItems(); };
             contextMenu.Items.Add(collapseAll);
-
             ToolStripMenuItem expandAll = new ToolStripMenuItem(TextHelper.GetString("Label.ExpandAll"));
             expandAll.ShortcutKeys = MainForm.Instance.GetShortcutItemKeys("ViewMenu.ExpandAll");
-            expandAll.Click += delegate { itemPropertyGrid.ExpandAllGridItems(); };
+            expandAll.Click += delegate { this.itemPropertyGrid.ExpandAllGridItems(); };
             contextMenu.Items.Add(expandAll);
-
-            itemPropertyGrid.ContextMenuStrip = contextMenu;
+            this.itemPropertyGrid.ContextMenuStrip = contextMenu;
         }
 
         /// <summary>
@@ -428,6 +428,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void FilterPropertySheet()
         {
+            if (Win32.IsRunningOnMono()) return;
             LocalizedDescriptionAttribute lda = null;
             Object settingsObj = this.itemPropertyGrid.SelectedObject;
             String text = this.filterText.Text;
@@ -447,9 +448,9 @@ namespace FlashDevelop.Dialogs
                         i++;
                     }
                 }
-                itemPropertyGrid.BrowsableProperties = browsables;
-                itemPropertyGrid.SelectedObject = settingsObj;
-                itemPropertyGrid.Refresh();
+                this.itemPropertyGrid.BrowsableProperties = browsables;
+                this.itemPropertyGrid.SelectedObject = settingsObj;
+                this.itemPropertyGrid.Refresh();
             }
         }
 

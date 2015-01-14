@@ -421,19 +421,22 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
     <value>&amp;Suchen und Ersetzen hier...</value>
-    <comment>Added after 4.6.4</comment>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
     <value>&amp;Eingabeaufforderung hier...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>&amp;Kopieren</value>
   </data>
   <data name="FileExplorer.Label.CreateFileHere" xml:space="preserve">
     <value>&amp;Erstelle Datei hier...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CreateFolderHere" xml:space="preserve">
     <value>Erstelle &amp;Ordner hier...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Delete" xml:space="preserve">
     <value>&amp;Löschen</value>
@@ -443,6 +446,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="FileExplorer.Label.ExploreHere" xml:space="preserve">
     <value>E&amp;xplorer hier starten...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Paste" xml:space="preserve">
     <value>Ein&amp;fügen</value>
@@ -1771,7 +1775,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
     <value>Der ausgewählte Pfad steht in einem Konflikt mit einem bereits existierenden Klassenpfad {0}. Möchten Sie ihn dennoch hinzufüen?</value>
   </data>
   <data name="ProjectManager.Info.Platform" xml:space="preserve">
-    <value>Platform</value>
+    <value>Plattform</value>
   </data>
   <data name="ProjectManager.Info.Popup" xml:space="preserve">
     <value>In Popup ausführen</value>
@@ -1784,6 +1788,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>Projekt-Klassenpfade sind relativ zum Projektverzeichnis.</value>
+  </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Klassenpfade von {0}-Projekten werden von der Ausgabedatei bestimmt.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;Projektverzeichnis&gt;</value>
@@ -2014,6 +2022,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Ausgabedatei:</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Konfigurationsdatei:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Einfügen</value>
@@ -3009,7 +3021,15 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>&amp;Entfernen</value>
   </data>
   <data name="ASClassWizard.Wizard.Error.InvalidClassName" xml:space="preserve">
-    <value>Der Klassenname hat ungültige Zeichen.</value>
+    <value>Der Klassenname enthält ungültige Zeichen.</value>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.EmptyClassName" xml:space="preserve">
+    <value>Der Klassenname darf nicht leer sein.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseClassName" xml:space="preserve">
+    <value>Der Klassename muss mit einem Großbuchstaben beginnen.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
     <value>Wählen Sie ein Package aus:</value>
@@ -3129,7 +3149,11 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Suchen und Ersetzen</value>
   </data>
   <data name="FlashDevelop.Description.FilePollInterval" xml:space="preserve">
-    <value>Interval in dem geprüft wird, ob geöffnete Dateien außerhalb verändert wurden (Millisekunden).</value>
+    <value>Intervall in dem geprüft wird, ob geöffnete Dateien außerhalb verändert wurden (Millisekunden).</value>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsMode" xml:space="preserve">
+    <value>Wann Wörter die der momentanen Auswahl entsprechen hervorgehoben werden sollen.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
     <value>Aufgaben in ausgeschlossenen Pfaden werden nicht angezeigt.</value>
@@ -3431,6 +3455,10 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="FlashDebugger.Label.Stop" xml:space="preserve">
     <value>S&amp;topp</value>
   </data>
+  <data name="FlashDebugger.Label.BreakOnAllErrors" xml:space="preserve">
+    <value>Break On All &amp;Errors</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDebugger.Label.ToggleBreakpoint" xml:space="preserve">
     <value>Haltepunkt umschalten</value>
   </data>
@@ -3466,6 +3494,58 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   </data>
   <data name="FlashDebugger.Title.StackTrace" xml:space="preserve">
     <value>Stack</value>
+  </data>
+  <data name="FlashDebugger.BreakPoints.RemoveSelected" xml:space="preserve">
+    <value>Remove selected breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.RemoveAll" xml:space="preserve">
+    <value>Remove all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ToggleAll" xml:space="preserve">
+    <value>Toggle all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ExportAll" xml:space="preserve">
+    <value>Export all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ImportAll" xml:space="preserve">
+    <value>Import breakpoints from a file</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterAll" xml:space="preserve">
+    <value>In All Columns</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterPath" xml:space="preserve">
+    <value>In File Path</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterFile" xml:space="preserve">
+    <value>In File Name</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterLine" xml:space="preserve">
+    <value>In File Line</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterExp" xml:space="preserve">
+    <value>In Expression</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.InvalidFile" xml:space="preserve">
+    <value>Error loading the selected file, it may not be valid</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
+    <value>Variable could not be reevaluated</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
+    <value>Only scalar variables can be modified</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Standard Regeldatei für Flex PMD.</value>
@@ -3639,7 +3719,12 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Fehlerzeile:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Synchronisieren</value>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
+    <value>Locate Document Class</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.FilterSettings" xml:space="preserve">
     <value>Suche:</value>
@@ -3682,6 +3767,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   </data>
   <data name="ProjectManager.Label.SearchString" xml:space="preserve">
     <value>Suche: (GROSSSCHEIBUNG um per Abkürzung zu suchen)</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Title.OpenResource" xml:space="preserve">
     <value>Öffne Ressource</value>
@@ -4118,7 +4204,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.NonWindowedPlatforms" xml:space="preserve">
-    <value>Fensterlose Platformen</value>
+    <value>Fensterlose Plattformen</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.Ok" xml:space="preserve">
@@ -4194,7 +4280,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.WindowedPlatforms" xml:space="preserve">
-    <value>Platformen mit Fenstern</value>
+    <value>Plattformen mit Fenstern</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Locale.ChineseSimplified" xml:space="preserve">
@@ -5333,5 +5419,17 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
     <value>Colorize first margin with 'gdefault' foreground color</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
+    <value>Track current active document in Project Tree.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
+    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
+    <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
+    <comment>Added after 4.6.4</comment>
   </data>
 </root>

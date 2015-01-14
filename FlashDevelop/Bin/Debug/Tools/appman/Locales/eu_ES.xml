@@ -25,6 +25,7 @@
 	<ContinueWithNextItem>Hurrengo elementuarekin jarraitzen saiatzen.</ContinueWithNextItem>
 	<DownloadingError>Fitxategia deskargatzean errorea: </DownloadingError>
 	<ExtractingError>Fitxategia erauztean errorea: </ExtractingError>
+	<DeleteDirError>Error while deleting directory: </DeleteDirError>
 	<!-- Labels -->
 	<SelectLabel>Aukeratu:</SelectLabel>
 	<ExploreLabel>Arakatu...</ExploreLabel>
@@ -34,8 +35,9 @@
 	<ToggleCheckedLabel>Toggle Aktibatua</ToggleCheckedLabel>
 	<ShowInfoLabel>Informazioa erakutsi...</ShowInfoLabel>
 	<!-- Types -->
-	<ExecutableType>Exekutagarria</ExecutableType>
-	<ArchiveType>Fitxategia</ArchiveType>
+	<TypeExecutable>Exekutagarria</TypeExecutable>
+	<TypeArchive>Fitxategia</TypeArchive>
+	<TypeLink>Link</TypeLink>
 	<!-- Dialogs -->
 	<MainFormTitle>AppMan</MainFormTitle>
 	<ConfirmTitle>Baieztatu</ConfirmTitle>

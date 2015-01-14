@@ -128,7 +128,7 @@ namespace Aga.Controls.Tree.NodeControls
 			CheckThread();
 			Font font = GetDrawingFont(node, context, label);
 			Size s = Size.Empty;
-			if (UseCompatibleTextRendering)
+			if (!UseCompatibleTextRendering)
 				s = TextRenderer.MeasureText(label, font);
 			else
 			{
@@ -170,18 +170,16 @@ namespace Aga.Controls.Tree.NodeControls
 				return;
 
 			PerformanceAnalyzer.Start("BaseTextControl.Draw");
-			string label = GetLabel(node);
+
 			Rectangle bounds = GetBounds(node, context);
 			Rectangle focusRect = new Rectangle(bounds.X, context.Bounds.Y,	
 				bounds.Width, context.Bounds.Height);
+            
+            DrawEventArgs args;
+			CreateBrushes(node, context, out args);
 
-			Brush backgroundBrush;
-			Color textColor;
-			Font font;
-			CreateBrushes(node, context, label, out backgroundBrush, out textColor, out font, ref label);
-
-			if (backgroundBrush != null)
-				context.Graphics.FillRectangle(backgroundBrush, focusRect);
+			if (args.BackgroundBrush != null)
+				context.Graphics.FillRectangle(args.BackgroundBrush, focusRect);
 			if (context.DrawFocus)
 			{
 				focusRect.Width--;
@@ -194,14 +192,49 @@ namespace Aga.Controls.Tree.NodeControls
 			}
 			
 			PerformanceAnalyzer.Start("BaseTextControl.DrawText");
-			if (UseCompatibleTextRendering)
-				TextRenderer.DrawText(context.Graphics, label, font, bounds, textColor, _formatFlags);
-			else
-				context.Graphics.DrawString(label, font, GetFrush(textColor), bounds, _format);
-			PerformanceAnalyzer.Finish("BaseTextControl.DrawText");
+            
+            DrawHighLight(context, bounds, args);
+            
+            if (!UseCompatibleTextRendering)
+                TextRenderer.DrawText(context.Graphics, args.Text, args.Font, bounds, args.TextColor, _formatFlags);
+            else
+               context.Graphics.DrawString(args.Text, args.Font, GetFrush(args.TextColor), bounds, _format);
 
+
+			PerformanceAnalyzer.Finish("BaseTextControl.DrawText");
 			PerformanceAnalyzer.Finish("BaseTextControl.Draw");
 		}
+
+        private void DrawHighLight(DrawContext context, Rectangle bounds, DrawEventArgs args)
+        {
+            string label = args.Text;
+            if (!String.IsNullOrEmpty(args.HighLightToken) && label.ToLower().Contains(args.HighLightToken.ToLower()))
+            {
+                Graphics g = context.Graphics;
+                int numChars = label.Length;
+                CharacterRange[] characterRanges = new CharacterRange[1];
+                int idx = label.ToLower().IndexOf(args.HighLightToken.ToLower());
+                //Get the max width.. for the complete length
+                SizeF size = g.MeasureString(label, args.Font);
+
+                //Assume the string is in a stratight line, just to work out the 
+                //regions. We will adjust the containing rectangles later.
+                RectangleF layoutRect =
+                    new RectangleF(0.0f, 0.0f, size.Width, size.Height);
+
+                //
+                // Set up the array to accept the regions.
+                Region[] stringRegions = new Region[numChars];
+                for (int i = 0; i < 1; i++)
+                    characterRanges[i] = new CharacterRange(idx, args.HighLightToken.Length);
+
+                _format.SetMeasurableCharacterRanges(characterRanges);
+
+                stringRegions = context.Graphics.MeasureCharacterRanges(label, args.Font, bounds, _format);
+                RectangleF highLightedBounds = stringRegions[0].GetBounds(g);
+                g.FillRectangle(GetFrush(args.HighLightColor), Rectangle.Round(highLightedBounds));
+            }
+        }
 
 		private static Dictionary<Color, Brush> _brushes = new Dictionary<Color,Brush>();
 		private static Brush GetFrush(Color color)
@@ -217,42 +250,30 @@ namespace Aga.Controls.Tree.NodeControls
 			return br;
 		}
 
-		private void CreateBrushes(TreeNodeAdv node, DrawContext context, string text, out Brush backgroundBrush, out Color textColor, out Font font, ref string label)
+		private void CreateBrushes(TreeNodeAdv node, DrawContext context, out DrawEventArgs args)
 		{
-			textColor = SystemColors.ControlText;
-			backgroundBrush = null;
-			font = context.Font;
+            args = new DrawEventArgs(node, this, context, GetLabel(node));
+			args.TextColor = SystemColors.ControlText;
+            args.BackgroundBrush = null;
+			args.Font = context.Font;
 			if (context.DrawSelection == DrawSelectionMode.Active)
 			{
-				textColor = SystemColors.HighlightText;
-                backgroundBrush = SystemBrushes.Highlight;
+                args.TextColor = SystemColors.HighlightText;
+                args.BackgroundBrush = Parent._highlightColorActiveBrush;
 			}
 			else if (context.DrawSelection == DrawSelectionMode.Inactive)
 			{
-				textColor = SystemColors.ControlText;
-                backgroundBrush = SystemBrushes.InactiveBorder;
+                args.TextColor = SystemColors.ControlText;
+                args.BackgroundBrush = Parent._highlightColorInactiveBrush;
 			}
 			else if (context.DrawSelection == DrawSelectionMode.FullRowSelect)
-				textColor = SystemColors.HighlightText;
+                args.TextColor = SystemColors.HighlightText;
 
 			if (!context.Enabled)
-				textColor = SystemColors.GrayText;
+                args.TextColor = SystemColors.GrayText;
 
 			if (DrawTextMustBeFired(node))
-			{
-				DrawEventArgs args = new DrawEventArgs(node, this, context, text);
-				args.Text = label;
-				args.TextColor = textColor;
-				args.BackgroundBrush = backgroundBrush;
-				args.Font = font;
-
-				OnDrawText(args);
-
-				textColor = args.TextColor;
-				backgroundBrush = args.BackgroundBrush;
-				font = args.Font;
-				label = args.Text;
-			}
+                OnDrawText(args);
 		}
 
 		public string GetLabel(TreeNodeAdv node)

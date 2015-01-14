@@ -843,9 +843,9 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary> 
-		static public int GetHandle()
+		static public IntPtr GetHandle()
 		{
-			return (int)completionList.Handle;
+			return completionList.Handle;
 		}
 
         /// <summary>

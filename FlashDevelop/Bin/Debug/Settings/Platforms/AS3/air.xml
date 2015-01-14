@@ -19,6 +19,7 @@
     <version value="13.0" swf-version="24" />
     <version value="14.0" swf-version="25" />
     <version value="15.0" swf-version="26" />
+    <version value="16.0" swf-version="27" />
   </versions>
   <templates>
     <template target="as3" value="160 ActionScript 3 - AIR AS3 Projector" />

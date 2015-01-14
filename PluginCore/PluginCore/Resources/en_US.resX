@@ -402,20 +402,23 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>New Folder</value>
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
-    <value>&amp;Find And Replace Here...</value>
-    <comment>Added after 4.6.4</comment>
+    <value>&amp;Find And Replace...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
-    <value>Command &amp;Prompt Here...</value>
+    <value>Command &amp;Prompt...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
     <value>C&amp;opy</value>
   </data>
   <data name="FileExplorer.Label.CreateFileHere" xml:space="preserve">
-    <value>&amp;Create File Here...</value>
+    <value>&amp;Create File...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CreateFolderHere" xml:space="preserve">
-    <value>Create &amp;Folder Here...</value>
+    <value>Create &amp;Folder...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Delete" xml:space="preserve">
     <value>&amp;Delete</value>
@@ -424,7 +427,8 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>&amp;Edit</value>
   </data>
   <data name="FileExplorer.Label.ExploreHere" xml:space="preserve">
-    <value>E&amp;xplore Here...</value>
+    <value>E&amp;xplore...</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Paste" xml:space="preserve">
     <value>&amp;Paste</value>
@@ -1768,6 +1772,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>Project classpaths are relative to the project location.</value>
   </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Classpaths of {0} projects are determined by the Configuration file.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;Project Directory&gt;</value>
   </data>
@@ -2001,6 +2009,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Output file:</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Paste</value>
@@ -3015,8 +3027,13 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="ASClassWizard.Wizard.Error.InvalidClassName" xml:space="preserve">
     <value>Class name contains invalid characters.</value>
   </data>
-  <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
-    <value>Choose a package folder:</value>
+  <data name="ASClassWizard.Wizard.Error.EmptyClassName" xml:space="preserve">
+    <value>Class name can't be empty.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseClassName" xml:space="preserve">
+    <value>Class name must start with an uppercase letter.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ASClassWizard.Wizard.Label.CodeGeneration" xml:space="preserve">
     <value>Code generation:</value>
@@ -3138,6 +3155,10 @@ Please note that with injection enabled, you will not be able to use many projec
   </data>
   <data name="FlashDevelop.Description.FilePollInterval" xml:space="preserve">
     <value>Interval in milliseconds to check changes to open files.</value>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsMode" xml:space="preserve">
+    <value>When words matching the current selection should be highlighted.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
     <value>Tasks under the excluded paths are not shown in the task list.</value>
@@ -3439,6 +3460,10 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="FlashDebugger.Label.Stop" xml:space="preserve">
     <value>S&amp;top</value>
   </data>
+  <data name="FlashDebugger.Label.BreakOnAllErrors" xml:space="preserve">
+    <value>Break On All &amp;Errors</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="FlashDebugger.Label.ToggleBreakpoint" xml:space="preserve">
     <value>Toggle Breakpoint</value>
   </data>
@@ -3474,6 +3499,58 @@ Please note that with injection enabled, you will not be able to use many projec
   </data>
   <data name="FlashDebugger.Title.StackTrace" xml:space="preserve">
     <value>Stack</value>
+  </data>
+  <data name="FlashDebugger.BreakPoints.RemoveSelected" xml:space="preserve">
+    <value>Remove selected breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.RemoveAll" xml:space="preserve">
+    <value>Remove all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ToggleAll" xml:space="preserve">
+    <value>Toggle all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ExportAll" xml:space="preserve">
+    <value>Export all listed breakpoints</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.ImportAll" xml:space="preserve">
+    <value>Import breakpoints from a file</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterAll" xml:space="preserve">
+    <value>In All Columns</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterPath" xml:space="preserve">
+    <value>In File Path</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterFile" xml:space="preserve">
+    <value>In File Name</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterLine" xml:space="preserve">
+    <value>In File Line</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.BreakPoints.FilterExp" xml:space="preserve">
+    <value>In Expression</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.InvalidFile" xml:space="preserve">
+    <value>Error loading the selected file, it may not be valid</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
+    <value>Variable could not be reevaluated</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
+    <value>Only scalar variables can be modified</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Default custom ruleset file for the Flex PMD.</value>
@@ -3653,7 +3730,12 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Error line:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Synchronize</value>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
+    <value>Locate Document Class</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.FilterSettings" xml:space="preserve">
     <value>Filter settings:</value>
@@ -3695,7 +3777,8 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Open &amp;Resource...</value>
   </data>
   <data name="ProjectManager.Label.SearchString" xml:space="preserve">
-    <value>Search string: (UPPERCASE for search by abbreviation)</value>
+    <value>Search: (UPPERCASE for search by abbreviation)</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Title.OpenResource" xml:space="preserve">
     <value>Open Resource</value>
@@ -5343,5 +5426,17 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
     <value>Colorize first margin with 'gdefault' foreground color</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
+    <value>Track current active document in Project Tree.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
+    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
+    <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
+    <comment>Added after 4.6.4</comment>
   </data>
 </root>

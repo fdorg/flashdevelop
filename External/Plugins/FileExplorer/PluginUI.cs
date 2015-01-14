@@ -252,11 +252,15 @@ namespace FileExplorer
             this.menu.Items.Add(new ToolStripSeparator());
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFileHere"), null, new EventHandler(this.CreateFileHere)));
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFolderHere"), null, new EventHandler(this.CreateFolderHere)));
+            this.menu.Items.Add(new ToolStripSeparator());
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ExploreHere"), null, new EventHandler(this.ExploreHere)));
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.FindHere"), null, new EventHandler(this.FindHere)));
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CommandPromptHere"), null, new EventHandler(this.CommandPromptHere)));
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ExploreHere"), null, new EventHandler(this.ExploreHere)));
-            this.shellButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"), null, new EventHandler(this.ShowShellMenu));
-            this.menu.Items.Add(this.shellButton);
+            if (Win32.ShouldUseWin32())
+            {
+                this.shellButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"), null, new EventHandler(this.ShowShellMenu));
+                this.menu.Items.Add(this.shellButton);
+            }
             this.menu.Items.Add(new ToolStripSeparator());
             this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.TrustHere"), null, new EventHandler(this.TrustHere)));
             this.separator = new ToolStripSeparator();
@@ -1125,13 +1129,22 @@ namespace FileExplorer
 		/// </summary>
         private int ExtractIconIfNecessary(String path)
         {
-            Icon icon;
+            Icon icon; Image image;
             Size size = ScaleHelper.Scale(new Size(16, 16));
-            if (File.Exists(path)) icon = IconExtractor.GetFileIcon(path, false, true);
-            else icon = IconExtractor.GetFolderIcon(path, false, true);
-            Image image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
-            image = PluginBase.MainForm.ImageSetAdjust(image);
-            this.imageList.Images.Add(image); icon.Dispose(); image.Dispose();
+            if (Win32.ShouldUseWin32())
+            {
+                if (File.Exists(path)) icon = IconExtractor.GetFileIcon(path, false, true);
+                else icon = IconExtractor.GetFolderIcon(path, false, true);
+                image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
+                image = PluginBase.MainForm.ImageSetAdjust(image);
+                icon.Dispose();
+            }
+            else
+            {
+                if (File.Exists(path)) image = PluginBase.MainForm.FindImage("526");
+                else image = PluginBase.MainForm.FindImage("203");
+            }
+            this.imageList.Images.Add(image);
             return this.imageList.Images.Count - 1;
         }
 

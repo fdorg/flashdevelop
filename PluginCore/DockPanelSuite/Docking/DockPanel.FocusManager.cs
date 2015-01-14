@@ -124,6 +124,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             public FocusManagerImpl(DockPanel dockPanel)
             {
                 m_dockPanel = dockPanel;
+                if (!NativeMethods.ShouldUseWin32()) return;
                 m_localWindowsHook = new LocalWindowsHook(Win32.HookType.WH_CALLWNDPROCRET);
                 m_hookEventHandler = new LocalWindowsHook.HookEventHandler(HookEventHandler);
                 m_localWindowsHook.HookInvoked += m_hookEventHandler;
@@ -143,7 +144,10 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     if (!m_disposed && disposing)
                     {
-                        m_localWindowsHook.Dispose();
+                        if (NativeMethods.ShouldUseWin32())
+                        {
+                            m_localWindowsHook.Dispose();
+                        }
                         m_disposed = true;
                     }
 
@@ -174,7 +178,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     if (!handler.Form.SelectNextControl(handler.Form.ActiveControl, true, true, true, true))
                     // Since DockContent Form is not selectalbe, use Win32 SetFocus instead
                     // HACK: This isn't working so good.  doesn't matter because we do our own focusing. -NICK
-                    { }// NativeMethods.SetFocus(handler.Form.Handle);
+                    {}// if (NativeMethods.ShouldUseWin32()) NativeMethods.SetFocus(handler.Form.Handle);
                 }
             }
 
@@ -278,28 +282,26 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return false;
             }
 
-            private int m_countSuspendFocusTracking = 0;
+            private uint m_countSuspendFocusTracking = 0;
             public void SuspendFocusTracking()
             {
                 m_countSuspendFocusTracking++;
-                m_localWindowsHook.HookInvoked -= m_hookEventHandler;
+                if (NativeMethods.ShouldUseWin32()) m_localWindowsHook.HookInvoked -= m_hookEventHandler;
             }
 
             public void ResumeFocusTracking()
             {
-                if (m_countSuspendFocusTracking > 0)
-                    m_countSuspendFocusTracking--;
+                if (m_countSuspendFocusTracking == 0) return;
 
-                if (m_countSuspendFocusTracking == 0)
+                if (--m_countSuspendFocusTracking == 0)
                 {
                     if (ContentActivating != null)
                     {
                         Activate(ContentActivating);
                         ContentActivating = null;
                     }
-                    m_localWindowsHook.HookInvoked += m_hookEventHandler;
-                    if (!InRefreshActiveWindow)
-                        RefreshActiveWindow();
+                    if (NativeMethods.ShouldUseWin32()) m_localWindowsHook.HookInvoked += m_hookEventHandler;
+                    if (!InRefreshActiveWindow) RefreshActiveWindow();
                 }
             }
 
@@ -387,7 +389,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             private void SetActivePane()
             {
-                DockPane value = GetPaneFromHandle(NativeMethods.GetFocus());
+                DockPane value = !NativeMethods.ShouldUseWin32() ? null : GetPaneFromHandle(NativeMethods.GetFocus());
                 if (m_activePane == value)
                     return;
 

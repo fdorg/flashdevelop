@@ -32,11 +32,18 @@ namespace Aga.Controls.Tree
 			_editingNode = CurrentNode;
 
 			editor.Validating += EditorValidating;
+			editor.Leave += EditorLeave;
+			editor.LostFocus += EditorLeave;
 			UpdateEditorBounds();
 			UpdateView();
 			editor.Parent = this;
 			editor.Focus();
 			owner.UpdateEditor(editor);
+		}
+
+		void EditorLeave(object sender, EventArgs e)
+		{
+			HideEditor(true);
 		}
 
 		internal bool HideEditor(bool applyChanges)
@@ -53,6 +60,8 @@ namespace Aga.Controls.Tree
 				if (CurrentEditor != null)
 				{
 					CurrentEditor.Validating -= EditorValidating;
+					CurrentEditor.Leave -= EditorLeave;
+					CurrentEditor.LostFocus -= EditorLeave;
 					CurrentEditorOwner.DoDisposeEditor(CurrentEditor);
 
 					CurrentEditor.Parent = null;
@@ -112,7 +121,7 @@ namespace Aga.Controls.Tree
 					Point p = info.Bounds.Location;
 					p.X += info.Control.LeftMargin;
 					p.X -= OffsetX;
-					p.Y -= (_rowLayout.GetRowBounds(FirstVisibleRow).Y - ColumnHeaderHeight);
+					p.Y -= (_rowLayout.GetRowBounds(FirstVisibleRow).Y - ActualColumnHeaderHeight);
 					int width = DisplayRectangle.Width - p.X;
 					if (UseColumns && info.Control.ParentColumn != null && Columns.Contains(info.Control.ParentColumn))
 					{

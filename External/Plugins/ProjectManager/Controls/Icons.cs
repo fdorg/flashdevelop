@@ -92,6 +92,7 @@ namespace ProjectManager.Controls
         public static FDImage AllClasses;
         public static FDImage SyncToFile;
         public static FDImage ClasspathFolder;
+        public static FDImage LibrarypathFolder;
         public static FDImage DocumentClass;
         public static FDImage CommandPrompt;
 
@@ -162,6 +163,7 @@ namespace ProjectManager.Controls
             AllClasses = Get(202);
             SyncToFile = Get("315|9|-3|-4");
             ClasspathFolder = Get(544);
+            LibrarypathFolder = Get(208);
             DocumentClass = Get(147);
             CommandPrompt = Get(57);
 		}

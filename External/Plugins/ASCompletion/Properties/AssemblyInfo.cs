@@ -10,7 +10,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("FlashDevelop.org")]
 [assembly: AssemblyProduct("ASCompletion")]
-[assembly: AssemblyCopyright("FlashDevelop.org 2005-2014")]
+[assembly: AssemblyCopyright("FlashDevelop.org 2005-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("1.0.0.0")]

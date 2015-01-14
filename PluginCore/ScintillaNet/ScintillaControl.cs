@@ -10,6 +10,7 @@ using System.Drawing.Printing;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
+using PluginCore.Controls;
 using System.Drawing;
 using System.Text;
 using PluginCore;
@@ -27,6 +28,7 @@ namespace ScintillaNet
 		private bool isBraceMatching = true;
         private bool isHiliteSelected = true;
         private bool useHighlightGuides = true;
+        private System.Timers.Timer highlightDelay;
 		private static Scintilla sciConfiguration = null;
         private static Dictionary<String, ShortcutOverride> shortcutOverrides = new Dictionary<String, ShortcutOverride>();
         private Enums.IndentView indentView = Enums.IndentView.Real;
@@ -34,28 +36,34 @@ namespace ScintillaNet
 		private Hashtable ignoredKeys = new Hashtable();
         private string configLanguage = String.Empty;
         private string fileName = String.Empty;
+        private int lastSelectionLength = 0;
+        private int lastSelectionStart = 0;
+        private int lastSelectionEnd = 0;
 		
 		#region Scintilla Main
 
         public ScintillaControl() : this("SciLexer.dll")
         {
-            DragAcceptFiles(this.Handle, 1);
+            if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
 
         public ScintillaControl(string fullpath)
         {
             try
             {
-                IntPtr lib = WinAPI.LoadLibrary(fullpath);
-                hwndScintilla = WinAPI.CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
-                directPointer = (int)SlowPerform(2185, 0, 0);
+                if (Win32.ShouldUseWin32())
+                {
+                    IntPtr lib = LoadLibrary(fullpath);
+                    hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
+                    directPointer = (int)SlowPerform(2185, 0, 0);
+                    directPointer = DirectPointer;
+                }
+                UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
-                DoubleClick += new DoubleClickHandler(OnSelectHighlight);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
-                directPointer = DirectPointer;
             }
             catch (Exception ex)
             {
@@ -63,9 +71,15 @@ namespace ScintillaNet
             }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (highlightDelay != null) highlightDelay.Stop();
+            base.Dispose(disposing);
+        }
+
         public void OnResize(object sender, EventArgs e)
         {
-            SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
+            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
         }
 
 		#endregion
@@ -112,6 +126,7 @@ namespace ScintillaNet
         public event AutoCCancelledHandler AutoCCancelled;
         public event AutoCCharDeletedHandler AutoCCharDeleted;
         public event UpdateSyncHandler UpdateSync;
+        public event SelectionChangedHandler SelectionChanged;
 		
 		#endregion
 
@@ -2244,7 +2259,7 @@ namespace ScintillaNet
 		/// </summary>
         public new bool Focus()
         {
-            return WinAPI.SetFocus(hwndScintilla) != IntPtr.Zero;
+            return SetFocus(hwndScintilla) != IntPtr.Zero;
         }
 
 		/// <summary>
@@ -5013,6 +5028,15 @@ namespace ScintillaNet
         // Stops all sci events from firing...
         public bool DisableAllSciEvents = false;
 
+        [DllImport("kernel32.dll")]
+        public extern static IntPtr LoadLibrary(string lpLibFileName);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int width, int height, IntPtr hWndParent, int hMenu, IntPtr hInstance, string lpParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetFocus(IntPtr hwnd);
+
 		[DllImport("gdi32.dll")] 
 		public static extern int GetDeviceCaps(IntPtr hdc, Int32 capindex);
 		
@@ -5038,15 +5062,10 @@ namespace ScintillaNet
 		{
 			return (UInt32)SendMessage((int)hwndScintilla, message, (int)wParam, (int)lParam);
 		}
-
-		public UInt32 FastPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
-		{
-			return (UInt32)Perform(directPointer, message, wParam, lParam);
-		}
-
 		public UInt32 SPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
 		{
-			return (UInt32)Perform(directPointer, message, wParam, lParam);
+            if (Win32.ShouldUseWin32()) return (UInt32)Perform(directPointer, message, wParam, lParam);
+            else return (UInt32)Encoding.ASCII.CodePage;
 		}
 
         public override bool PreProcessMessage(ref Message m)
@@ -5267,7 +5286,7 @@ namespace ScintillaNet
 			}
 			else if (m.Msg == WM_DROPFILES)
 			{
-				HandleFileDrop(m.WParam);
+				if (Win32.ShouldUseWin32()) HandleFileDrop(m.WParam);
 			}
 			else
 			{
@@ -5294,30 +5313,75 @@ namespace ScintillaNet
 		#region Automated Features
 
         /// <summary>
+        /// Support for selection highlighting and selection changed event
+        /// </summary>
+        private void OnUpdateUI(ScintillaControl sci)
+        {
+            if (lastSelectionStart != sci.SelectionStart || lastSelectionEnd != sci.SelectionEnd || lastSelectionLength != sci.SelText.Length)
+            {
+                if (SelectionChanged != null) SelectionChanged(sci);
+                switch (PluginBase.MainForm.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
+                {
+                    case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
+                    {
+                        StartHighlightSelectionTimer(sci);
+                        break;
+                    }
+                    case Enums.HighlightMatchingWordsMode.SelectedWord:
+                    {
+                        if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
+                        {
+                            StartHighlightSelectionTimer(sci);
+                        }
+                        break;
+                    }
+                }
+            }
+            lastSelectionStart = sci.SelectionStart;
+            lastSelectionEnd = sci.SelectionEnd;
+            lastSelectionLength = sci.SelText.Length;
+        }
+
+        /// <summary>
+        /// Use timer for aggressive selection highlighting
+        /// </summary>
+        private void StartHighlightSelectionTimer(ScintillaControl sci)
+        {
+            if (highlightDelay == null)
+            {
+                highlightDelay = new System.Timers.Timer(2000);
+                highlightDelay.Elapsed += highlightDelay_Elapsed;
+                highlightDelay.SynchronizingObject = this as Control;
+            }
+            else highlightDelay.Stop();
+            highlightDelay.Start();
+        }
+
+        void highlightDelay_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            highlightDelay.Stop();
+            HighlightWordsMatchingSelected();
+        }
+
+        /// <summary>
         /// Provides basic highlighting of selected text
         /// </summary>
-        private void OnSelectHighlight(ScintillaControl sci)
+        private void HighlightWordsMatchingSelected()
         {
-            sci.RemoveHighlights();
-            if (Control.ModifierKeys == Keys.Control && sci.SelText.Length != 0)
-            {
-                Language language = Configuration.GetLanguage(sci.ConfigurationLanguage);
-                Int32 color = language.editorstyle.HighlightBackColor;
-                String pattern = sci.SelText.Trim();
-                FRSearch search = new FRSearch(pattern);
-                search.WholeWord = true; search.NoCase = false;
-                search.Filter = SearchFilter.None; // Everywhere
-                sci.AddHighlights(search.Matches(sci.Text), color);
-                sci.hasHighlights = true;
-            }
-        }
-        private void OnCancelHighlight(ScintillaControl sci)
-        {
-            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0)
-            {
-                sci.RemoveHighlights();
-                sci.hasHighlights = false;
-            }
+            if (TextLength == 0 || TextLength > 64 * 1024) return;
+            Language language = Configuration.GetLanguage(ConfigurationLanguage);
+            Int32 color = language.editorstyle.HighlightBackColor;
+            String word = GetWordFromPosition(CurrentPos);
+            if (String.IsNullOrEmpty(word)) return;
+            String pattern = word.Trim();
+            FRSearch search = new FRSearch(pattern);
+            search.WholeWord = true; 
+            search.NoCase = false;
+            search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
+            RemoveHighlights();
+            List<SearchMatch> test = search.Matches(Text);
+            AddHighlights(test, color);
+            hasHighlights = true;
         }
 
         /// <summary>
@@ -5335,6 +5399,19 @@ namespace ScintillaNet
                     int bracePosEnd = BraceMatch(position);
                     if (bracePosEnd != -1) SetSel(bracePosStart, bracePosEnd + 1);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Cancel highlights if not using aggressive highlighting
+        /// </summary>
+        private void OnCancelHighlight(ScintillaControl sci)
+        {
+            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0 
+                && PluginBase.MainForm.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
+            {
+                sci.RemoveHighlights();
+                sci.hasHighlights = false;
             }
         }
 
@@ -5441,7 +5518,7 @@ namespace ScintillaNet
                                     previousIndent += TabWidth;
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
-                            if (Lexer == 3 && tempText.EndsWith(":") && !tempText.EndsWith("::"))
+                            if (Lexer == 3 && tempText.EndsWith(":") && !tempText.EndsWith("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
                             {
                                 int prevLine = tempLine;
                                 while (--prevLine > 0)

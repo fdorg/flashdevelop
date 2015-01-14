@@ -1017,7 +1017,7 @@ namespace ASCompletion
                 outlineTree.BeginUpdate();
                 TreeNodeCollection nodes = outlineTree.Nodes;
                 HilightDeclarationInGroup(nodes, text);
-                Win32.Scrolling.scrollToLeft(outlineTree);
+                if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(outlineTree);
             }
             catch (Exception ex)
             {

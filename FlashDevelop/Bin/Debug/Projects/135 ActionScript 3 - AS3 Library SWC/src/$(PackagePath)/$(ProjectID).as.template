@@ -1,0 +1,14 @@
+package $(PackageName)$(CSLB){
+	
+	/**
+	$(CBI)* ...
+	$(CBI)* @author $(DefaultUser)
+	$(CBI)*/
+	public class $(ProjectID) {
+		
+		public function $(ProjectID)() $(CSLB){
+		}
+		
+	}
+	
+}

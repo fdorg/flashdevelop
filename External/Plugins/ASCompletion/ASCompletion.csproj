@@ -110,9 +110,6 @@
     <Compile Include="Win32\FixedTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Win32\Scrolling.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\CheckAS.png" />

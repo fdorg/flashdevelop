@@ -371,6 +371,11 @@ namespace ProjectManager.Projects
 
 		#endregion
 
+
+        public bool IsDirectory(string path)
+        {
+            return System.IO.Directory.Exists(path);
+        }
     }
 
     public enum OutputType

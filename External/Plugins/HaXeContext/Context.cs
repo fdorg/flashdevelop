@@ -117,11 +117,13 @@ namespace HaXeContext
             features.importKeyAlt = "using";
             features.typesPreKeys = new string[] { "import", "new", "extends", "implements", "using" };
             features.codeKeywords = new string[] { 
-                "enum", "typedef", "class", "interface", "var", "function", "new", "cast", "return", "break", 
+                "var", "function", "new", "cast", "return", "break", 
                 "continue", "if", "else", "for", "while", "do", "switch", "case", "default", "$type",
-                "null", "untyped", "true", "false", "try", "catch", "throw", "inline", "dynamic",
-                "extends", "using", "import", "implements", "abstract", "macro"
+                "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
             };
+            features.declKeywords = new string[] { "var", "function" };
+            features.accessKeywords = new string[] { "extern", "inline", "dynamic", "macro", "override", "public", "private", "static" };
+            features.typesKeywords = new string[] { "import", "using", "class", "interface", "typedef", "enum", "abstract" };
             features.varKey = "var";
             features.overrideKey = "override";
             features.functionKey = "function";

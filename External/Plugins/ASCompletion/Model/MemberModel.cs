@@ -18,11 +18,11 @@ namespace ASCompletion.Model
 	/// <summary>
 	/// Object representation of an Actionscript MemberModel
 	/// </summary>
+    [Serializable]
 	public class MemberModel: ICloneable, IComparable
     {
 		public static String TypedCallbackHLStart = "<[BGCOLOR=#2F90:NORMAL]"; // <- with alpha (0x02)
 		public static String TypedCallbackHLEnd = "[/BGCOLOR]>";
-
 
         public FileModel InFile;
         public bool IsPackageLevel;
@@ -253,6 +253,7 @@ namespace ASCompletion.Model
 	/// <summary>
 	/// Strong-typed MemberModel list with special merging/searching methods
 	/// </summary>
+    [Serializable]
 	public class MemberList: IEnumerable
 	{
 		private List<MemberModel> items;

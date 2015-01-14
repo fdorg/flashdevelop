@@ -27,6 +27,8 @@ namespace Aga.Controls.Tree
 
 		private const int HeaderLeftMargin = 5;
         private const int HeaderRightMargin = 5;   
+		private const int HeaderTopMargin = 3;
+        private const int HeaderBottomMargin = 3;   
 		private const int SortOrderMarkMargin = 8;
 
         private TextFormatFlags _headerFlags;
@@ -213,6 +215,61 @@ namespace Aga.Controls.Tree
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
+		}
+
+		internal Size GetActualSize(DrawContext context)
+		{
+			if (IsVisible)
+			{
+				Size s = MeasureSize(context);
+				return new Size(s.Width + HeaderLeftMargin, HeaderTopMargin + s.Height + HeaderBottomMargin);
+			}
+			return Size.Empty;
+		}
+
+		public Size MeasureSize(DrawContext context)
+		{
+			return GetLabelSize(context);
+		}
+
+		protected Size GetLabelSize(DrawContext context)
+		{
+			return GetLabelSize(context, Header);
+		}
+
+		protected Size GetLabelSize(DrawContext context, string label)
+		{
+			PerformanceAnalyzer.Start("GetLabelSize");
+
+			Font font = GetDrawingFont(context, label);
+			Size s = Size.Empty;
+			if (!UseCompatibleTextRendering)
+				s = TextRenderer.MeasureText(label, font);
+			else
+			{
+				SizeF sf = context.Graphics.MeasureString(label, font);
+				s = new Size((int)Math.Ceiling(sf.Width), (int)Math.Ceiling(sf.Height));
+			}
+
+			PerformanceAnalyzer.Finish("GetLabelSize");
+
+			if (!s.IsEmpty)
+				return s;
+			else
+				return new Size(10, font.Height);
+		}
+
+		protected Font GetDrawingFont(DrawContext context, string label)
+		{
+			return context.Font;
+		}
+
+		private bool _useCompatibleTextRendering = false;
+		[DefaultValue(false)]
+		public bool UseCompatibleTextRendering
+		{
+			get { return _useCompatibleTextRendering; }
+			set { _useCompatibleTextRendering = value; }
 		}
 
 		#region Draw

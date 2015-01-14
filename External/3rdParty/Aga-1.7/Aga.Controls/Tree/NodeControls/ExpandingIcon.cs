@@ -64,10 +64,13 @@ namespace Aga.Controls.Tree.NodeControls
 		{
             while (_animatingThread != null)
 			{
-				if (_index < _gif.FrameCount - 1)
-					_index++;
-				else
-					_index = 0;
+				lock (_lock)
+				{
+					if (_index < _gif.FrameCount - 1)
+						_index++;
+					else
+						_index = 0;
+				}
 
 				if (IconChanged != null)
 					IconChanged(null, EventArgs.Empty);

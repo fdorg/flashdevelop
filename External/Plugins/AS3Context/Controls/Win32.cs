@@ -6,7 +6,12 @@ using System.Drawing;
 
 namespace AS3Context.Controls
 {
-    #region LVS_EX
+    public enum LVM
+	{
+		LVM_FIRST					=0x1000, 
+		LVM_SETEXTENDEDLISTVIEWSTYLE=(LVM_FIRST + 54),
+		LVM_GETEXTENDEDLISTVIEWSTYLE=(LVM_FIRST + 55),
+	}
     public enum LVS_EX
 	{
 		LVS_EX_GRIDLINES        =0x00000001,
@@ -31,40 +36,23 @@ namespace AS3Context.Controls
 		LVS_EX_SNAPTOGRID       =0x00080000,  
 		LVS_EX_SIMPLESELECT     =0x00100000  
 	}
-	#endregion
-
-	#region LVM
-	public enum LVM
-	{
-		LVM_FIRST					=0x1000, 
-		LVM_SETEXTENDEDLISTVIEWSTYLE=(LVM_FIRST + 54),
-		LVM_GETEXTENDEDLISTVIEWSTYLE=(LVM_FIRST + 55),
-	}
-	#endregion
-
 
 	[ToolboxBitmap(typeof(System.Windows.Forms.ListView))]
 	public class ListViewXP :System.Windows.Forms.ListView
 	{
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		public static extern int SendMessage(IntPtr handle, int messg, int wparam, int lparam);
-
-
 		private LVS_EX styles;
 
-		public ListViewXP()
-		{
-
-		}
+		public ListViewXP(){}
 
 		/// <summary>
 		/// Sets Double_Buffering and BorderSelect style
 		/// </summary>
 		public void SetExStyles()
 		{
-			styles = (LVS_EX)SendMessage(this.Handle, (int) LVM.LVM_GETEXTENDEDLISTVIEWSTYLE, 0,0);
+            if (!PluginCore.Win32.ShouldUseWin32()) return;
+            styles = (LVS_EX)PluginCore.Win32.SendMessage(this.Handle, (int) LVM.LVM_GETEXTENDEDLISTVIEWSTYLE, 0,0);
 			styles |= LVS_EX.LVS_EX_DOUBLEBUFFER | LVS_EX.LVS_EX_BORDERSELECT;
-			SendMessage(this.Handle, (int) LVM.LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (int) styles);
+            PluginCore.Win32.SendMessage(this.Handle, (int)LVM.LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (int)styles);
 		}
 
 		/// <summary>
@@ -73,9 +61,10 @@ namespace AS3Context.Controls
 		/// <param name="exStyle">The Styles you wish to set.</param>
 		public void SetExStyles(LVS_EX exStyle)
 		{
-			styles = (LVS_EX)SendMessage(this.Handle, (int) LVM.LVM_GETEXTENDEDLISTVIEWSTYLE, 0,0);
+            if (!PluginCore.Win32.ShouldUseWin32()) return;
+            styles = (LVS_EX)PluginCore.Win32.SendMessage(this.Handle, (int)LVM.LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0);
 			styles |= exStyle;
-			SendMessage(this.Handle, (int) LVM.LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (int) styles);
+            PluginCore.Win32.SendMessage(this.Handle, (int)LVM.LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (int)styles);
 		}
 		
 	}

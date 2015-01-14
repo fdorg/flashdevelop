@@ -344,6 +344,7 @@
     <Compile Include="PluginCore\Utilities\ProcessRunner.cs" />
     <Compile Include="PluginCore\Utilities\InteropSHFileOperation.cs" />
     <Compile Include="PluginCore\Utilities\SingleInstanceApp.cs" />
+    <Compile Include="PluginCore\Win32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginCore\Controls\MethodCallTip.cs" />
     <Compile Include="PluginCore\Controls\CompletionList.cs" />
@@ -428,9 +429,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ScintillaNet\Structs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNet\WinAPI.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ScintillaNet\XPM.cs">
@@ -545,14 +543,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Bottom.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Fill.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Hotspot.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_HotspotIndex.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Left.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Right.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Top.bmp" />
+    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond.png" />
+    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Bottom.png" />
+    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Fill.png" />
+    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Hotspot.png" />
+    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_HotspotIndex.png" />
+    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Left.png" />
+    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Right.png" />
+    <Content Include="DockPanelSuite\Resources\DockIndicator_PaneDiamond_Top.png" />
     <Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom.bmp" />
     <Content Include="DockPanelSuite\Resources\DockIndicator_PanelBottom_Active.bmp" />
     <Content Include="DockPanelSuite\Resources\DockIndicator_PanelFill.bmp" />
@@ -564,11 +562,11 @@
     <Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop.bmp" />
     <Content Include="DockPanelSuite\Resources\DockIndicator_PanelTop_Active.bmp" />
     <Content Include="DockPanelSuite\Resources\DockPanel.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPane_AutoHide.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Close.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Dock.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPane_Option.bmp" />
-    <Content Include="DockPanelSuite\Resources\DockPane_OptionOverflow.bmp" />
+    <Content Include="DockPanelSuite\Resources\DockPane_AutoHide.png" />
+    <Content Include="DockPanelSuite\Resources\DockPane_Close.png" />
+    <Content Include="DockPanelSuite\Resources\DockPane_Dock.png" />
+    <Content Include="DockPanelSuite\Resources\DockPane_Option.png" />
+    <Content Include="DockPanelSuite\Resources\DockPane_OptionOverflow.png" />
     <Content Include="Ookii.Dialogs\license.txt" />
     <Content Include="Ookii.Dialogs\VistaFolderBrowserDialog.bmp" />
   </ItemGroup>
@@ -594,6 +592,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

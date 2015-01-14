@@ -4,7 +4,7 @@ $(Import)/**
 $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-class $(FileName)$(Extends)$(Implements)$(CSLB){
+$(ClassMetadata)class $(FileName)$(Extends)$(Implements)$(CSLB){
 
 	$(Access)function new($(ConstructorArguments)) $(CSLB){
 		$(Super)$(EntryPoint)

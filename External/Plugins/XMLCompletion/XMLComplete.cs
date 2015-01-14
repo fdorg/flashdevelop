@@ -345,6 +345,7 @@ namespace XMLCompletion
                     {
                         if ((position < 2) || ((Char)sci.CharAt(position-2) != '<')) return;
                         ctag = new XMLContextTag();
+                        ctag.Position = position - 2;
                         ctag.Closing = true;
                     }
                     else 

@@ -249,13 +249,16 @@ namespace WeifenLuo.WinFormsUI.Docking
 					Form.FormBorderStyle = FormBorderStyle.None;
 					Form.ShowInTaskbar = false;
                     Form.WindowState = FormWindowState.Normal;
-					NativeMethods.SetWindowPos(Form.Handle, IntPtr.Zero, 0, 0, 0, 0,
-						Win32.FlagsSetWindowPos.SWP_NOACTIVATE |
-						Win32.FlagsSetWindowPos.SWP_NOMOVE |
-						Win32.FlagsSetWindowPos.SWP_NOSIZE |
-						Win32.FlagsSetWindowPos.SWP_NOZORDER |
-						Win32.FlagsSetWindowPos.SWP_NOOWNERZORDER |
-						Win32.FlagsSetWindowPos.SWP_FRAMECHANGED);
+
+                    if (!NativeMethods.ShouldUseWin32()) return;
+
+				    NativeMethods.SetWindowPos(Form.Handle, IntPtr.Zero, 0, 0, 0, 0,
+					    Win32.FlagsSetWindowPos.SWP_NOACTIVATE |
+					    Win32.FlagsSetWindowPos.SWP_NOMOVE |
+					    Win32.FlagsSetWindowPos.SWP_NOSIZE |
+					    Win32.FlagsSetWindowPos.SWP_NOZORDER |
+					    Win32.FlagsSetWindowPos.SWP_NOOWNERZORDER |
+					    Win32.FlagsSetWindowPos.SWP_FRAMECHANGED);
 				}
 			}
 		}
@@ -519,35 +522,45 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             if (Form.ContainsFocus)
+            {
                 if (DockState == DockState.Hidden || DockState == DockState.Unknown)
-                    DockPanel.ContentFocusManager.GiveUpFocus(Content);
-
+                {
+                    if (NativeMethods.ShouldUseWin32())
+                    {
+                        DockPanel.ContentFocusManager.GiveUpFocus(Content);
+                    }
+                }
+            }
             SetPaneAndVisible(Pane);
 
-			if (oldPane != null && !oldPane.IsDisposed && oldDockState == oldPane.DockState)
-				RefreshDockPane(oldPane);
+			if (oldPane != null && !oldPane.IsDisposed && oldDockState == oldPane.DockState) RefreshDockPane(oldPane);
 
 			if (Pane != null && DockState == Pane.DockState)
 			{
-				if ((Pane != oldPane) ||
-					(Pane == oldPane && oldDockState != oldPane.DockState))
-					RefreshDockPane(Pane);
+                if ((Pane != oldPane) || (Pane == oldPane && oldDockState != oldPane.DockState))
+                {
+                    RefreshDockPane(Pane);
+                }
 			}
 
             if (oldDockState != DockState)
             {
-                if (DockState == DockState.Hidden || DockState == DockState.Unknown ||
-                    DockHelper.IsDockStateAutoHide(DockState))
-                    DockPanel.ContentFocusManager.RemoveFromList(Content);
-                else
-                    DockPanel.ContentFocusManager.AddToList(Content);
-
+                if (DockState == DockState.Hidden || DockState == DockState.Unknown || DockHelper.IsDockStateAutoHide(DockState))
+                {
+                    if (NativeMethods.ShouldUseWin32())
+                    {
+                        DockPanel.ContentFocusManager.RemoveFromList(Content);
+                    }
+                    else if (NativeMethods.ShouldUseWin32())
+                    {
+                        DockPanel.ContentFocusManager.AddToList(Content);
+                    }
+                }
                 OnDockStateChanged(EventArgs.Empty);
             }
 			ResumeSetDockState();
 
-            if (dockPanel != null)
-                dockPanel.ResumeLayout(true, true);
+            if (dockPanel != null) dockPanel.ResumeLayout(true, true);
 		}
 
 		private static void RefreshDockPane(DockPane pane)
@@ -629,10 +642,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		public void Activate()
 		{
-			if (DockPanel == null)
-				Form.Activate();
-			else if (Pane == null)
-				Show(DockPanel);
+			if (DockPanel == null) Form.Activate();
+			else if (Pane == null) Show(DockPanel);
 			else
 			{
 				IsHidden = false;
@@ -642,17 +653,18 @@ namespace WeifenLuo.WinFormsUI.Docking
                     Form.Activate();
                     return;
                 }
-                else if (DockHelper.IsDockStateAutoHide(DockState))
-                    DockPanel.ActiveAutoHideContent = Content;
+                else if (DockHelper.IsDockStateAutoHide(DockState)) DockPanel.ActiveAutoHideContent = Content;
 
                 if (!Form.ContainsFocus)
-                    DockPanel.ContentFocusManager.Activate(Content);
+                {
+                    if (NativeMethods.ShouldUseWin32()) DockPanel.ContentFocusManager.Activate(Content);
+                }
 			}
 		}
 
         public void GiveUpFocus()
         {
-            DockPanel.ContentFocusManager.GiveUpFocus(Content);
+            if (NativeMethods.ShouldUseWin32()) DockPanel.ContentFocusManager.GiveUpFocus(Content);
         }
 
 		private IntPtr m_activeWindowHandle = IntPtr.Zero;
@@ -725,11 +737,22 @@ namespace WeifenLuo.WinFormsUI.Docking
             // Change the parent of a control with focus may result in the first
             // MDI child form get activated. 
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            bool bRestureFocus = false;
+            bool bRestoreFocus = false;
             if (Form.ContainsFocus)
             {
-                DockPanel.SaveFocus();
-                bRestureFocus = true;
+                // Suggested as a fix for a memory leak by bugreports
+                if (value == null && !IsFloat)
+                {
+                    if (NativeMethods.ShouldUseWin32())
+                    {
+                        DockPanel.ContentFocusManager.GiveUpFocus(this.Content);
+                    }
+                    else
+                    {
+                        DockPanel.SaveFocus();
+                        bRestoreFocus = true;
+                    }
+                }
             }
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -740,7 +763,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             // Change the parent of a control with focus may result in the first
             // MDI child form get activated. 
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if (bRestureFocus)
+            if (bRestoreFocus)
                 Activate();
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
@@ -758,10 +781,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 			if (dockPanel == null)
 				throw(new ArgumentNullException(Strings.DockContentHandler_Show_NullDockPanel));
 
-			if (DockState == DockState.Unknown)
-				Show(dockPanel, DefaultShowState);
-			else			
-				Activate();
+			if (DockState == DockState.Unknown) Show(dockPanel, DefaultShowState);
+			else Activate();
 		}
 
 		public void Show(DockPanel dockPanel, DockState dockState)

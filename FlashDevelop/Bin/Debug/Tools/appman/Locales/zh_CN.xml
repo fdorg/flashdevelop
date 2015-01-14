@@ -25,6 +25,7 @@
 	<ContinueWithNextItem>尝试继续开始下一项.</ContinueWithNextItem>
 	<DownloadingError>下载内容出错: </DownloadingError>
 	<ExtractingError>抽取文件内容出错: </ExtractingError>
+	<DeleteDirError>Error while deleting directory: </DeleteDirError>
 	<!-- Labels -->
 	<SelectLabel>选择:</SelectLabel>
 	<ExploreLabel>浏览...</ExploreLabel>
@@ -34,8 +35,9 @@
 	<ToggleCheckedLabel>选中开关</ToggleCheckedLabel>
 	<ShowInfoLabel>显示信息...</ShowInfoLabel>
 	<!-- Types -->
-	<ExecutableType>可执行文件</ExecutableType>
-	<ArchiveType>存档文件</ArchiveType>
+	<TypeExecutable>可执行文件</TypeExecutable>
+	<TypeArchive>存档文件</TypeArchive>
+	<TypeLink>Link</TypeLink>
 	<!-- Dialogs -->
 	<MainFormTitle>AppMan</MainFormTitle>
 	<ConfirmTitle>确认</ConfirmTitle>

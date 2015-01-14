@@ -111,6 +111,7 @@ namespace Aga.Controls.Threading
 				{
 					foreach (Thread t in _threads.Values)
 						t.Abort();
+					_threads.Clear();
 				}
 			}
 		}

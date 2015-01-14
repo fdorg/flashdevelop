@@ -210,31 +210,30 @@ namespace System.Windows.Forms
 
 		#region Auto-Scroll
 
-		[DllImport("user32.dll")]
-		private static extern int SendMessage (IntPtr hWnd, int wMsg, int wParam, int lParam);
-
 		// Implement an "autoscroll" routine for drag
 		//  and drop. If the drag cursor moves to the bottom
 		//  or top of the treeview, call the Windows API
 		//  SendMessage function to scroll up or down automatically.
 		private void DragScroll(DragEventArgs e)
 		{
-			// Set a constant to define the autoscroll region
+            if (!PluginCore.Win32.ShouldUseWin32()) return;
+
+            // Set a constant to define the autoscroll region
 			const Single scrollRegion = 20;
 
 			// See where the cursor is
-			Point pt =  PointToClient(Cursor.Position);
+			Point pt = PointToClient(Cursor.Position);
 
 			// See if we need to scroll up or down
 			if ((pt.Y + scrollRegion) > Height)
 			{
 				// Call the API to scroll down
-				SendMessage(Handle, (int)277, (int)1, 0);
+                PluginCore.Win32.SendMessage(Handle, (int)277, (int)1, 0);
 			}
 			else if (pt.Y < (Top + scrollRegion))
 			{
 				// Call thje API to scroll up
-				SendMessage(Handle, (int)277, (int)0, 0);
+				PluginCore.Win32.SendMessage(Handle, (int)277, (int)0, 0);
 			}
 		}
 

@@ -74,6 +74,7 @@ namespace FlashDebugger.Controls
                     var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                     var obj = exp.evaluate(ctx);
                     node = new DataNode((Variable)obj);
+                    node.Tag = item;
 				}
 				catch { }
 				node.Text = item;

@@ -321,6 +321,7 @@ namespace ASClassWizard
             string inheritedMethods = "";
             string paramString = "";
             string superConstructor = "";
+            string classMetadata = "";
             int index;
             // resolve imports
             if (lastFileOptions.interfaces != null && lastFileOptions.interfaces.Count > 0)
@@ -398,6 +399,7 @@ namespace ASClassWizard
             {
                 access = lastFileOptions.isPublic ? "public " : "private ";
                 access += lastFileOptions.isDynamic ? "dynamic " : "";
+                if (lastFileOptions.isFinal) classMetadata += "@:final\n";
             }
             else
             {
@@ -427,6 +429,7 @@ namespace ASClassWizard
             args = args.Replace("$(InheritedMethods)", inheritedMethods);
             args = args.Replace("$(ConstructorArguments)", paramString);
             args = args.Replace("$(Super)", superConstructor);
+            args = args.Replace("$(ClassMetadata)", classMetadata);
             return args;
         }
 

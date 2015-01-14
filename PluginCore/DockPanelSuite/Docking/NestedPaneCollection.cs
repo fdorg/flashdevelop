@@ -52,12 +52,14 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		private void CheckFloatWindowDispose()
 		{
-			if (Count == 0 && Container.DockState == DockState.Float)
-			{
-				FloatWindow floatWindow = (FloatWindow)Container;
-				if (!floatWindow.Disposing && !floatWindow.IsDisposed)
-					NativeMethods.PostMessage(((FloatWindow)Container).Handle, FloatWindow.WM_CHECKDISPOSE, 0, 0);
-			}
+            if (Count != 0 || Container.DockState != DockState.Float) return;
+
+            FloatWindow floatWindow = (FloatWindow)Container;
+            if (floatWindow.Disposing || floatWindow.IsDisposed) return;
+
+            if (!NativeMethods.ShouldUseWin32()) return;
+
+            NativeMethods.PostMessage(((FloatWindow)Container).Handle, FloatWindow.WM_CHECKDISPOSE, 0, 0);
 		}
 
 		internal void Remove(DockPane pane)
