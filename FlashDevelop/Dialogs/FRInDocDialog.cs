@@ -628,7 +628,7 @@ namespace FlashDevelop.Dialogs
 
         protected override bool ProcessDialogKey(Keys keyData)
         {
-            if ((keyData & (Keys.Enter | Keys.Shift)) > 0)
+            if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
             {
                 FindNext(false, false);
 
