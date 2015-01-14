@@ -896,7 +896,7 @@ namespace FlashDebugger
 			}
 
             if (e.isolateId == 1)
-                TraceManager.AddAsync(sb, 3);
+                TraceManager.AddAsync(sb.ToString(), 3);
             else
                 TraceManager.AddAsync("Worker " + e.isolateId + ": " + sb.ToString(), 3);
 		}
@@ -917,7 +917,7 @@ namespace FlashDebugger
 			System.Collections.IDictionary args = new System.Collections.Hashtable();
 			args["size"] = e.swfSize.ToString("N0"); //$NON-NLS-1$
 			sb.Append(replaceInlineReferences(TextHelper.GetString("Info.SizeAfterDecompression"), args));
-			TraceManager.AddAsync(sb);
+            TraceManager.AddAsync(sb.ToString());
 		}
 
 		/// <summary> Perform the tasks need for when a swf is unloaded
@@ -932,7 +932,7 @@ namespace FlashDebugger
 			sb.Append(TextHelper.GetString("Info.LinePrefixWhenSwfUnloaded")); //$NON-NLS-1$
 			sb.Append(' ');
 			sb.Append(name);
-			TraceManager.AddAsync(sb);
+            TraceManager.AddAsync(sb.ToString());
 		}
 
         /// <summary> Perform the tasks need for when an isolate is created
