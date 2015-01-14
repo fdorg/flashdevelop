@@ -18,13 +18,14 @@ Download
 Platform
 --------
 
-* Microsoft Windows .NET 2.0 application (Windows XP, Windows Vista, Windows 7, Windows 8)
-* Includes native (Qt) Mac OSX/Linux helper to improve virtualization (VirtualBox, VMWare, Parallels)
+* Microsoft Windows .NET 3.5 application for XP, Vista, 7 and 8
+* Mac OSX/Linux compatible using virtualization software or Wine/CrossOver
+* Includes native (Qt) Mac OSX/Linux helper to improve virtualization
 
 Building
 --------
 
-* Open in Visual Studio 2010 or C# Express 2010 (free),
+* Open in Visual Studio 2013 or C# Express 2013 (free),
 * Click the solution and select "Release|x86" from "Active config" in Properties panel,
 * Build PluginCore project first, then FlashDevelop and then the entire solution.
 
