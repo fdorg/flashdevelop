@@ -67,6 +67,51 @@ namespace CodeRefactor.Provider
         }
 
         /// <summary>
+        /// Retrieves the refactoring target based on the file.
+        /// </summary>
+        public static ASResult GetRefactorTargetFromFile(string path, DocumentHelper associatedDocumentHelper)
+        {
+            String fileName = Path.GetFileNameWithoutExtension(path);
+            Int32 line = 0;
+            ScintillaControl sci = associatedDocumentHelper.LoadDocument(path);
+            if (sci == null) return null; // Should not happen...
+            List<ClassModel> classes = ASContext.Context.CurrentModel.Classes;
+            if (classes.Count > 0)
+            {
+                foreach (ClassModel classModel in classes)
+                {
+                    if (classModel.Name.Equals(fileName))
+                    {
+                        // Optimization, we don't need to make a full lookup in this case
+                        return new ASResult
+                        {
+                            IsStatic = true,
+                            Type = classModel
+                        };
+                    }
+                }
+            }
+            else
+            {
+                foreach (MemberModel member in ASContext.Context.CurrentModel.Members)
+                {
+                    if (member.Name.Equals(fileName))
+                    {
+                        line = member.LineFrom;
+                        break;
+                    }
+                }
+            }
+            if (line > 0)
+            {
+                sci.SelectText(fileName, sci.PositionFromLine(line));
+                return GetDefaultRefactorTarget();
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Checks if a given search match actually points to the given target source
         /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>

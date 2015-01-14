@@ -41,36 +41,10 @@ namespace CodeRefactor.Commands
             String title = String.Format(TextHelper.GetString("Title.RenameDialog"), oldFileName);
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                Int32 line = 0;
-                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(oldPath);
-                if (sci == null) return; // Should not happen...
-                List<ClassModel> classes = ASContext.Context.CurrentModel.Classes;
-                if (classes.Count > 0)
+                var target = RefactoringHelper.GetRefactorTargetFromFile(oldPath, AssociatedDocumentHelper);
+                if (target != null)
                 {
-                    foreach (ClassModel classModel in classes)
-                    {
-                        if (classModel.Name.Equals(oldFileName))
-                        {
-                            line = classModel.LineFrom;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (MemberModel member in ASContext.Context.CurrentModel.Members)
-                    {
-                        if (member.Name.Equals(oldFileName))
-                        {
-                            line = member.LineFrom;
-                            break;
-                        }
-                    }
-                }
-                if (line > 0)
-                {
-                    sci.SelectText(oldFileName, sci.PositionFromLine(line));
-                    Rename command = new Rename(RefactoringHelper.GetDefaultRefactorTarget(), true, newFileName);
+                    Rename command = new Rename(target, true, newFileName);
                     command.RegisterDocumentHelper(AssociatedDocumentHelper);
                     command.Execute();
                     return;

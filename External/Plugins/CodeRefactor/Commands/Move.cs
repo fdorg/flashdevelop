@@ -14,6 +14,22 @@ using ScintillaNet;
 using PluginCore;
 using PluginCore.Helpers;
 
+/* Considerations and known problems: 
+ *  A. When moving a model that makes use of other models in the old package there will be a problem
+ *  as new needed imports aren't added, there are two solutions available:
+ *     1. Scan for each model references with respect to the class being moved and add the import if needed.
+ *     2. Add an * import if there are remaining files in the old package and forget about it.
+ *  At any rate, it should be discussed first if this is really a task for this refactoring command.
+ *  B. Adding needed imports currently fails if both public and private classes need of it.
+ *  C. The resulting code isn't 100% right if there is another member with the same name imported. It thinks
+ *  it's already imported, and would require to fully qualify all references.
+ *  D. If a model already importing the type is in the new package, the import declaration could be deleted,
+ *  but it's kept.
+ *  E. If a model imports the whole new package, it doesn't need to import the class, but it currently does.
+ *  
+ * For some of these points using Context.IsImported would help a bit, although not entirely, and would require
+ * several calls with different parameters to cover all possibilities.
+ */
 namespace CodeRefactor.Commands
 {
     class Move : RefactorCommand<IDictionary<string, List<SearchMatch>>>
@@ -367,13 +383,15 @@ namespace CodeRefactor.Commands
                 UserInterfaceManager.ProgressDialog.Show();
                 UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
-                currentTargetResult = new ASResult
-                                      {
-                                          IsStatic = true,
-                                          Member = new MemberModel(oldType, oldType, FlagType.Constructor, 0), 
-                                          Type = ASContext.Context.ResolveType(oldType, oldFileModel),
-                                      };
-                RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true);
+                currentTargetResult = RefactoringHelper.GetRefactorTargetFromFile(oldFileModel.FileName, AssociatedDocumentHelper);
+                if (currentTargetResult != null)
+                    RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true);
+                else
+                {
+                    currentTargetIndex++;
+                    UserInterfaceManager.ProgressDialog.Hide();
+                    UpdateReferencesNextTarget();
+                }
             }
             else
             {
@@ -471,7 +489,6 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
             MessageBar.Locked = true;
             var currentTarget = targets[currentTargetIndex];
-            bool isNotHaxe = !PluginBase.CurrentProject.Language.StartsWith("haxe");
             string targetName = Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
             string oldType = (currentTarget.OldFileModel.Package + "." + targetName).Trim('.');
             string newType = (currentTarget.NewPackage + "." + targetName).Trim('.');
@@ -519,8 +536,9 @@ namespace CodeRefactor.Commands
                     }
                 }
                 string directory = Path.GetDirectoryName(file);
+                // Let's check if we need to add the import. Check the considerations at the start of the file
                 // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
-                if (isNotHaxe && directory != Path.GetDirectoryName(currentTarget.NewFilePath) && directory != currentTarget.OwnerPath 
+                if (directory != Path.GetDirectoryName(currentTarget.NewFilePath) && directory != currentTarget.OwnerPath 
                     && ASContext.Context.CurrentModel.Imports.Search(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0) == null)
                 {
                     sci.GotoLine(currLine);
