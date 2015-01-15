@@ -374,6 +374,10 @@ namespace OutputPanel
                         }
                     }
                 }
+                if (state == 1 || state == -1)
+                {
+                    state = GetHighlightState(message);
+                }
                 switch (state)
                 {
                     case 0: // Info
@@ -427,6 +431,19 @@ namespace OutputPanel
             this.logCount = newCount;
             this.scrollTimer.Enabled = true;
             this.TypingTimerTick(null, null);
+        }
+
+        /// <summary>
+        /// Searches an entry for keywords to highlight
+        /// </summary>
+        public int GetHighlightState(String message)
+        {
+            foreach (HighlightKeyword entry in this.pluginMain.PluginSettings.Keywords)
+            {
+                if (message.Contains(entry.Keyword)) return (int) entry.Level;
+            }
+
+            return 1;
         }
 
         /// <summary>
