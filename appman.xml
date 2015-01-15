@@ -16,27 +16,27 @@
 	<Entry>
 		<Id>flexairsdk</Id>
 		<Name>Flex + AIR SDK</Name>
-		<Version>4.6.0+15.0.0</Version>
-		<Build>23201B+356</Build>
+		<Version>4.6.0+16.0.0</Version>
+		<Build>23201B+272</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://airdownload.adobe.com/air/win/download/15.0/AdobeAIRSDK.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/16.0/AdobeAIRSDK.zip</Url>
 			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-16.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
-		<Version>15.0.0</Version>
-		<Build>356</Build>
+		<Version>16.0.0</Version>
+		<Build>272</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>AS3</Group>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/15.0/AIRSDK_Compiler.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/16.0/AIRSDK_Compiler.zip</Url>
 			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-16.zip</Url>
 		</Urls>
 	</Entry>
@@ -44,7 +44,7 @@
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
 		<Version>16.0.0</Version>
-		<Build>235</Build>
+		<Build>257</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>AS3</Group>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
@@ -56,7 +56,7 @@
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
 		<Version>16.0.0</Version>
-		<Build>235</Build>
+		<Build>257</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -69,7 +69,7 @@
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
 		<Version>16.0.0</Version>
-		<Build>235</Build>
+		<Build>257</Build>
 		<Desc>Debug Flash Player plugin for Internet Explorer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
@@ -94,14 +94,14 @@
 	<Entry>
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
-		<Version>15.0.0</Version>
-		<Build>356</Build>
+		<Version>16.0.0</Version>
+		<Build>272</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>AS3</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/products/air.html</Info>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/15.0/AdobeAIRInstaller.exe</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/16.0/AdobeAIRInstaller.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -145,40 +145,40 @@
 	<Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows</Name>
-		<Version>1.9.4</Version>
-		<Build>2</Build>
+		<Version>1.9.5</Version>
+		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140929/Git-1.9.4-preview20140929.exe</Url>
+			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20141217/Git-1.9.5-preview20141217.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN</Name>
-		<Version>1.8.8</Version>
+		<Version>1.8.10</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://downloads.sourceforge.net/project/tortoisesvn/1.8.8/Application/TortoiseSVN-1.8.8.25755-win32-svn-1.8.10.msi</Url>
+			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.10/Application/TortoiseSVN-1.8.10.26129-win32-svn-1.8.11.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>sliksvn</Id>
 		<Name>SlikSVN</Name>
-		<Version>1.8.10</Version>
+		<Version>1.8.11</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Other</Group>
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.10-win32.msi</Url>
+			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.11-win32.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
