@@ -154,6 +154,9 @@ namespace ASCompletion.Completion
                         }
                         if (word == "package" || Array.IndexOf(features.typesKeywords, word) >= 0) 
                             return false;
+                        // override
+                        if (word == features.overrideKey)
+                            return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, word);
                         // new/extends/instanceof/...
                         if (features.HasTypePreKey(word))
 							return HandleNewCompletion(Sci, "", autoHide, word);
@@ -163,9 +166,6 @@ namespace ASCompletion.Completion
                         // public/internal/private/protected/static
                         if (Array.IndexOf(features.accessKeywords, word) >= 0)
                             return HandleDeclarationCompletion(Sci, "", autoHide);
-                        // override
-                        if (word == features.overrideKey)
-                            return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, word);
 						break;
 
 					case ':':
