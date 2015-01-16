@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using PluginCore;
 using Win32;
 
@@ -34,7 +35,7 @@ namespace System.Windows.Forms
 
 		public void BeginStatefulUpdate()
 		{
-			base.BeginUpdate();
+			BeginUpdate();
 			SaveExpandedState();
 			SaveScrollState();
 		}
@@ -48,9 +49,22 @@ namespace System.Windows.Forms
 		public void EndStatefulUpdate()
 		{
 			RestoreExpandedState();
-			base.EndUpdate();
+			EndUpdate();
 			RestoreScrollState();
 		}
+
+        new public void BeginUpdate()
+        {
+            NativeMethods.SendMessage(Handle, NativeMethods.WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
+            base.BeginUpdate();
+        }
+
+        new public void EndUpdate()
+        {
+            base.EndUpdate();
+            NativeMethods.SendMessage(Handle, NativeMethods.WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);
+            Refresh();
+        }
 
 		#region Expanded State Saving
 
@@ -138,7 +152,7 @@ namespace System.Windows.Forms
                 topNode.EnsureVisible();
 
 			// manually scroll all the way to the left
-			Win32.Scrolling.scrollToLeft(this);
+			Scrolling.scrollToLeft(this);
 		}
 
 		public TreeNode FindClosestPath(string path)
@@ -180,5 +194,20 @@ namespace System.Windows.Forms
 		}*/
 
 		#endregion
+
+	    protected static class NativeMethods
+	    {
+            public const int WM_SETREDRAW = 0xB;
+            public const int WM_PRINTCLIENT = 0x0318;
+	        public const int PRF_CLIENT = 0x00000004;
+
+	        private const int TV_FIRST = 0x1100;
+	        public const int TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
+	        public const int TVS_EX_DOUBLEBUFFER = 0x0004;
+
+	        [DllImport("user32.dll")]
+	        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+	    }
 	}
 }

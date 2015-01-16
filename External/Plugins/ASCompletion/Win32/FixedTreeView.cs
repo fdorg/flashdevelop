@@ -5,8 +5,6 @@
  * - extends StateSavingTreeView
  */
 
-using System.Runtime.InteropServices;
-
 namespace System.Windows.Forms
 {
     public class FixedTreeView : StateSavingTreeView
@@ -131,20 +129,6 @@ namespace System.Windows.Forms
                 e.Graphics.ReleaseHdc(m.WParam);
             }
             base.OnPaint(e);
-        }
-
-        private static class NativeMethods
-        {
-            public const int WM_PRINTCLIENT = 0x0318;
-            public const int PRF_CLIENT = 0x00000004;
-
-            private const int TV_FIRST = 0x1100;
-            public const int TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
-            public const int TVS_EX_DOUBLEBUFFER = 0x0004;
-
-            [DllImport("user32.dll")]
-            public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
         }
     }
 }
