@@ -534,6 +534,16 @@ namespace CodeRefactor.Commands
                 if (actualMatches.Count == 0) continue;
                 int currLine = -1;
                 sci = AssociatedDocumentHelper.LoadDocument(file);
+                string directory = Path.GetDirectoryName(file);
+                // Let's check if we need to add the import. Check the considerations at the start of the file
+                // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
+                bool needsImport = directory != Path.GetDirectoryName(currentTarget.NewFilePath) &&
+                                   directory != currentTarget.OwnerPath &&
+                                   ASContext.Context.CurrentModel.Imports.Search(targetName,
+                                                                                 FlagType.Class & FlagType.Function &
+                                                                                 FlagType.Namespace, 0) == null;
+
+                // Replace matches
                 for (int i = actualMatches.Count - 1; i >= 0; i--)
                 {
                     var sm = actualMatches[i];
@@ -548,17 +558,14 @@ namespace CodeRefactor.Commands
                         sm.LineEnd = sci.SelectionEnd;
                         sm.LineText = sci.GetLine(sm.Line - 1);
                         sm.Value = newType;
+                        if (needsImport) sm.Line++;
                     }
                     else
                     {
                         actualMatches.RemoveAt(i);
                     }
                 }
-                string directory = Path.GetDirectoryName(file);
-                // Let's check if we need to add the import. Check the considerations at the start of the file
-                // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
-                if (directory != Path.GetDirectoryName(currentTarget.NewFilePath) && directory != currentTarget.OwnerPath 
-                    && ASContext.Context.CurrentModel.Imports.Search(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0) == null)
+                if (needsImport)
                 {
                     sci.GotoLine(currLine);
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
