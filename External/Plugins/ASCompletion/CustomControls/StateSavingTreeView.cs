@@ -33,7 +33,7 @@ namespace System.Windows.Forms
 
 		public void BeginStatefulUpdate()
 		{
-			base.BeginUpdate();
+			BeginUpdate();
 			SaveExpandedState();
 			SaveScrollState();
 		}
@@ -47,9 +47,22 @@ namespace System.Windows.Forms
 		public void EndStatefulUpdate()
 		{
 			RestoreExpandedState();
-			base.EndUpdate();
+			EndUpdate();
 			RestoreScrollState();
 		}
+
+        new public void BeginUpdate()
+        {
+            Win32.SendMessage(Handle, Win32.WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
+            base.BeginUpdate();
+        }
+
+        new public void EndUpdate()
+        {
+            base.EndUpdate();
+            Win32.SendMessage(Handle, Win32.WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);
+            Refresh();
+        }
 
 		#region Expanded State Saving
 
@@ -164,20 +177,8 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		/*private void HScroll(System.IntPtr direction)
-		{
-			//Set  direction to 0 to scroll left 1 char
-			//Set  direction to 1 to scroll right 1 char
-			//Set  direction to 2 to scroll 1 page left
-			//Set  direction to 3 to scroll 1 page right
-			System.Windows.Forms.Message hScrollMessage = new Message();
-
-			hScrollMessage.HWnd   = Handle;
-			hScrollMessage.Msg    = 0x0114;  // // #define WM_HSCROLL 0x0114
-			hScrollMessage.WParam = direction;
-			this.DefWndProc( ref hScrollMessage );
-		}*/
-
 		#endregion
+
 	}
+
 }

@@ -118,6 +118,7 @@ namespace PluginCore
         public const Int32 WM_VSCROLL = 0x0115;
         public const UInt32 SWP_SHOWWINDOW = 64;
         public const Int32 SW_RESTORE = 9;
+        public const Int32 WM_SETREDRAW = 0xB;
         public const Int32 WM_PRINTCLIENT = 0x0318;
         public const Int32 PRF_CLIENT = 0x00000004;
         public const Int32 TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
