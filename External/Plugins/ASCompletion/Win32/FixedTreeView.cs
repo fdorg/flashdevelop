@@ -75,7 +75,7 @@ namespace System.Windows.Forms
                 string text = currentNode.Text;
                 if ((prev == text) && (px == e.X) && (py == e.Y))
                     return;
-				
+                
                 // text dimensions
                 int offset = 25 - Win32.Scrolling.GetScrollPos(this.Handle, Win32.Scrolling.SB_HORZ);
                 while (currentNode.Parent != null)
