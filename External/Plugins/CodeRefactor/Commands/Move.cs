@@ -518,6 +518,7 @@ namespace CodeRefactor.Commands
                 for (int i = actualMatches.Count - 1; i >= 0; i--)
                 {
                     var sm = actualMatches[i];
+                    if (currLine == -1) currLine = sm.Line - 1;
                     if (sm.LineText.Contains(oldType))
                     {
                         sm.Index -= sci.MBSafeTextLength(oldType) - sci.MBSafeTextLength(targetName);
@@ -531,7 +532,6 @@ namespace CodeRefactor.Commands
                     }
                     else
                     {
-                        if (currLine == -1) currLine = sm.Line - 1;
                         actualMatches.RemoveAt(i);
                     }
                 }

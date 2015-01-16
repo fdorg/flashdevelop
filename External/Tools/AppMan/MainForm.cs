@@ -1234,7 +1234,11 @@ namespace AppMan
                             this.entryStates[inst.Id] = state;
                             item.SubItems[3].ForeColor = color;
                             item.SubItems[3].Text = text;
-                            break;
+                            // If we get an exact match, we don't need to compare more...
+                            if (dep.Version == inst.Version && dep.Build == inst.Build)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
