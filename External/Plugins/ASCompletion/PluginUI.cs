@@ -87,7 +87,6 @@ namespace ASCompletion
         private Stack<LookupLocation> lookupLocations;
 
         private TreeNode currentHighlight;
-        private TreeNode nextHighlight;
         private ToolStrip toolStrip;
         private ToolStripSpringTextBox findProcTxt;
         private ToolStripDropDownButton sortDropDown;
@@ -98,7 +97,6 @@ namespace ASCompletion
         private ToolStripMenuItem sortedSmartItem;
         private ToolStripMenuItem sortedGroupItem;
         private ToolStripButton clearButton;
-        private Timer highlightTimer;
 
         #region initialization
         public PluginUI(PluginMain plugin)
@@ -108,10 +106,6 @@ namespace ASCompletion
             InitializeControls();
             InitializeTexts();
             ResumeLayout();
-
-            highlightTimer = new Timer();
-            highlightTimer.Interval = 200;
-            highlightTimer.Tick += new EventHandler(highlightTimer_Tick);
         }
 
         private void InitializeControls()
@@ -322,8 +316,8 @@ namespace ASCompletion
             this.sortDropDown.Name = "sortDropDown";
             this.sortDropDown.Size = new System.Drawing.Size(13, 22);
             this.sortDropDown.Text = "";
-            this.sortDropDown.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.sortDropDown_DropDownItemClicked);
-            this.sortDropDown.DropDownOpening += new System.EventHandler(this.sortDropDown_DropDownOpening);
+            this.sortDropDown.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SortDropDown_DropDownItemClicked);
+            this.sortDropDown.DropDownOpening += new System.EventHandler(this.SortDropDown_DropDownOpening);
             this.sortDropDown.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             // 
             // noneItem
@@ -369,6 +363,7 @@ namespace ASCompletion
             this.findProcTxt.Leave += new System.EventHandler(this.FindProcTxtLeave);
             this.findProcTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FindProcTxtKeyDown);
             this.findProcTxt.Enter += new System.EventHandler(this.FindProcTxtEnter);
+            this.findProcTxt.Click += new System.EventHandler(this.FindProcTxtEnter);
             this.findProcTxt.TextChanged += new System.EventHandler(this.FindProcTxtChanged);
             // 
             // clearButton
@@ -499,22 +494,12 @@ namespace ASCompletion
         private void SetHighlight(TreeNode node)
         {
             if (node == currentHighlight) return;
-            nextHighlight = node;
-            highlightTimer.Stop();
-            highlightTimer.Start();
-        }
-
-        private void highlightTimer_Tick(object sender, EventArgs e)
-        {
-            highlightTimer.Stop();
-
-            outlineTree.BeginUpdate();
             if (currentHighlight != null)
             {
                 //currentHighlight.BackColor = System.Drawing.SystemColors.Window;
                 currentHighlight.ForeColor = System.Drawing.SystemColors.WindowText;
             }
-            outlineTree.SelectedNode = currentHighlight = nextHighlight;
+            outlineTree.SelectedNode = currentHighlight = node;
             if (currentHighlight != null)
             {
                 if (outlineTree.State != null && currentHighlight.TreeView != null)
@@ -523,7 +508,6 @@ namespace ASCompletion
                 //currentHighlight.BackColor = System.Drawing.Color.LightGray;
                 currentHighlight.ForeColor = System.Drawing.Color.Blue;
             }
-            outlineTree.EndUpdate();
         }
 
         /// <summary>
@@ -593,11 +577,15 @@ namespace ASCompletion
 
         private void RefreshView(FileModel aFile)
         {
-            findProcTxt.Clear();
-            FindProcTxtLeave(null, null);
-
             //TraceManager.Add("Outline refresh...");
             outlineTree.BeginStatefulUpdate();
+
+            if (findProcTxt.Text != searchInvitation)
+            {
+                findProcTxt.Clear();
+                FindProcTxtLeave(null, null);
+            }
+
             try
             {
                 currentHighlight = null;
@@ -693,9 +681,6 @@ namespace ASCompletion
 
         private void UpdateTree(FileModel aFile)
         {
-            findProcTxt.Clear();
-            FindProcTxtLeave(null, null);
-
             try
             {
                 if (aFile == FileModel.Ignore)
@@ -733,9 +718,6 @@ namespace ASCompletion
             {
                 ErrorManager.ShowError(/*ex.Message,*/ ex);
             }
-
-            if (currentHighlight != nextHighlight)
-                highlightTimer_Tick(null, EventArgs.Empty);
         }
 
         private void UpdateMembers(System.Collections.IEnumerable tree, MemberList members)
@@ -762,7 +744,8 @@ namespace ASCompletion
 
         private void UpdateRegions(TreeNodeCollection tree, FileModel aFile)
         {
-            // Regions and their members are not sorted (on purpose?), so we'll use plain indexes
+            // Regions and their members are not sorted (on purpose?), so we could use plain indexes,
+            // however, it seems initial parsing rarely triggers a race condition
             int endRegion = 0;
             int index = 0;
             MemberModel region = null;
@@ -770,12 +753,13 @@ namespace ASCompletion
             int count = regions.Count;
             for (index = 0; index < count; ++index)
             {
+                var cache = new Dictionary<string, MemberModel>();
                 var regionNode = ((MemberTreeNode) tree[index]);
                 region = regions[index];
+                if (regionNode.Text != region.ToString()) continue;
                 regionNode.UpdateMember(region);
                 if (regionNode.Nodes.Count == 0) continue;
-                regionNode = ((MemberTreeNode) regionNode.FirstNode);
-
+                
                 endRegion = region.LineTo;
                 if (endRegion == 0)
                 {
@@ -787,8 +771,7 @@ namespace ASCompletion
                     if (import.LineFrom >= region.LineFrom &&
                         import.LineTo <= endRegion)
                     {
-                        regionNode.UpdateMember(import);
-                        regionNode = ((MemberTreeNode) regionNode.NextNode);
+                        cache[import.ToString()] = import;
                     }
                 }
 
@@ -797,8 +780,7 @@ namespace ASCompletion
                     if (fileMember.LineFrom >= region.LineFrom &&
                         fileMember.LineTo <= endRegion)
                     {
-                        regionNode.UpdateMember(fileMember);
-                        regionNode = ((MemberTreeNode)regionNode.NextNode);
+                        cache[fileMember.ToString()] = fileMember;
                     }
                 }
 
@@ -811,17 +793,20 @@ namespace ASCompletion
                             if (clsMember.LineFrom >= region.LineFrom &&
                                 clsMember.LineTo <= endRegion)
                             {
-                                regionNode.UpdateMember(clsMember);
-                                regionNode = ((MemberTreeNode)regionNode.NextNode);
+                                cache[clsMember.ToString()] = clsMember;
                             }
                         }
                     }
                     else if (cls.LineFrom >= region.LineFrom &&
                              cls.LineTo <= endRegion)
                     {
-                        regionNode.UpdateMember(cls);
-                        regionNode = ((MemberTreeNode)regionNode.NextNode);
+                        cache[cls.ToString()] = cls;
                     }
+                }
+
+                foreach (TreeNode node in regionNode.Nodes)
+                {
+                    ((MemberTreeNode) node).UpdateMember(cache[node.Text]);
                 }
             }
         }
@@ -1146,7 +1131,6 @@ namespace ASCompletion
         {
             try
             {
-                outlineTree.BeginUpdate();
                 TreeNodeCollection nodes = outlineTree.Nodes;
                 HilightDeclarationInGroup(nodes, text);
                 Win32.Scrolling.scrollToLeft(outlineTree);
@@ -1156,10 +1140,6 @@ namespace ASCompletion
                 // log error and disable search field
                 ErrorManager.ShowError(ex);
                 //findProcTxt.Visible = false;
-            }
-            finally
-            {
-                outlineTree.EndUpdate();
             }
         }
 
@@ -1175,7 +1155,7 @@ namespace ASCompletion
         void FindProcTxtChanged(object sender, System.EventArgs e)
         {
             string text = findProcTxt.Text;
-            if (text == searchInvitation) text = "";
+            if (text == searchInvitation) return;
             HighlightAllMachingDeclaration(text.ToUpper());
             clearButton.Enabled = text.Length > 0;
         }
