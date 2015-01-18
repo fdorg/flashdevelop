@@ -1564,6 +1564,10 @@
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
     <value>指定的语言区域 (例如. en_US) 将被打包在 SWF 文件中.</value>
   </data>
+  <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
+    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
     <value>主类.指定一个类具有一个静态主入口点.</value>
   </data>

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections;
 using System.IO;
+using System.Windows.Forms;
 
 namespace PluginCore.Localization
 {
@@ -77,4 +79,16 @@ namespace ProjectManager.Helpers
             return "project" + Path.GetExtension(path).ToLower();
         }
     }
+}
+
+namespace ProjectManager.Projects.AS3
+{
+    internal class FlexProjectReader : ProjectReader
+    {
+        public FlexProjectReader(string filename)
+            : base(filename, new AS3Project(filename))
+        {
+        }
+    }
+
 }

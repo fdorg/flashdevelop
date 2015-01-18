@@ -1564,6 +1564,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
     <value>Specifies the locale (ie. en_US) that should be packaged in the SWF file.</value>
   </data>
+  <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
+    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
     <value>Specifies the class with a static main entry point.</value>
   </data>

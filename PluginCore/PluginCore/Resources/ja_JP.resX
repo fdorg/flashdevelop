@@ -1565,6 +1565,10 @@
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
     <value>ロケールを指定します( ja_JP、en_US など)。</value>
   </data>
+  <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
+    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
     <value>静的なメインエントリポイントを持つクラスを指定します。</value>
   </data>

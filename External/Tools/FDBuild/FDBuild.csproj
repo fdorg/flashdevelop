@@ -16,6 +16,21 @@
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,6 +79,9 @@
     <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\ConfigHelper.cs">
       <Link>Building\AS3\ConfigHelper.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\FileInspector.cs">
+      <Link>Building\FileInspector.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\JvmConfigHelper.cs">
       <Link>Building\AS3\JvmConfigHelper.cs</Link>
     </Compile>
@@ -100,20 +118,17 @@
     <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\AS3ProjectWriter.cs">
       <Link>Projects\AS3\AS3ProjectWriter.cs</Link>
     </Compile>
-    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\FlexProjectReader.cs">
-      <Link>Projects\AS3\FlexProjectReader.cs</Link>
-    </Compile>
     <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\MxmlcOptions.cs">
       <Link>Projects\AS3\MxmlcOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Plugins\ProjectManager\Projects\AS3\MxmlNamespace.cs">
+      <Link>Projects\AS3\MxmlNamespace.cs</Link>
     </Compile>
     <Compile Include="..\..\Plugins\ProjectManager\Projects\BuildEventVars.cs">
       <Link>Projects\BuildEventVars.cs</Link>
     </Compile>
     <Compile Include="..\..\Plugins\ProjectManager\Projects\CompilerOptions.cs">
       <Link>Projects\CompilerOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Plugins\ProjectManager\Projects\FileInspector.cs">
-      <Link>Projects\FileInspector.cs</Link>
     </Compile>
     <Compile Include="..\..\Plugins\ProjectManager\Projects\Generic\GenericMovieOptions.cs">
       <Link>Projects\Generic\GenericMovieOptions.cs</Link>
@@ -202,6 +217,23 @@
     <Compile Include="Mono\UsageComplementAttribute.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

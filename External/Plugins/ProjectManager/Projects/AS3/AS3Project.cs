@@ -6,6 +6,7 @@ using System.IO;
 using PluginCore.Localization;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using PluginCore.Helpers;
 
 namespace ProjectManager.Projects.AS3
 {

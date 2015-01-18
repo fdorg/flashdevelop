@@ -20,15 +20,15 @@ namespace PluginCore.Helpers
         {
             if (Win32.ShouldUseWin32())
             {
-                InteropSHFileOperation fo = new InteropSHFileOperation();
-                fo.wFunc = InteropSHFileOperation.FO_Func.FO_DELETE;
-                fo.fFlags.FOF_ALLOWUNDO = true;
-                fo.fFlags.FOF_NOCONFIRMATION = true;
-                fo.fFlags.FOF_NOERRORUI = true;
-                fo.fFlags.FOF_SILENT = true;
-                fo.pFrom = path;
-                return fo.Execute();
-            }
+            InteropSHFileOperation fo = new InteropSHFileOperation();
+            fo.wFunc = InteropSHFileOperation.FO_Func.FO_DELETE;
+            fo.fFlags.FOF_ALLOWUNDO = true;
+            fo.fFlags.FOF_NOCONFIRMATION = true;
+            fo.fFlags.FOF_NOERRORUI = true;
+            fo.fFlags.FOF_SILENT = true;
+            fo.pFrom = path;
+            return fo.Execute();
+        }
             else // Delete directly on other platforms
             {
                 if (File.Exists(path))
@@ -56,7 +56,7 @@ namespace PluginCore.Helpers
 
         /// <summary>
         /// Reads the file and returns its contents
-        /// </summary>
+		/// </summary>
         public static String ReadFile(String file, Encoding encoding)
         {
             using (StreamReader sr = new StreamReader(file, encoding))
@@ -409,10 +409,6 @@ namespace PluginCore.Helpers
             return false;
         }
 
-        public static bool IsHaxeExtension(string extension)
-        {
-            return extension == ".hx" || extension == ".hxp";
-        }
     }
 
     /// <summary>

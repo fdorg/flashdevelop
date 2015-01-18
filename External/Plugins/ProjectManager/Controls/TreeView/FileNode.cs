@@ -1,12 +1,8 @@
-using System;
 using System.IO;
 using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using ProjectManager.Helpers;
+using PluginCore.Helpers;
 using ProjectManager.Projects;
-using PluginCore.Utilities;
 
 namespace ProjectManager.Controls.TreeView
 {

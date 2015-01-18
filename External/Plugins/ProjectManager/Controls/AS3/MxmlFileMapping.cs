@@ -1,9 +1,6 @@
-using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using ProjectManager.Projects;
+using PluginCore.Helpers;
 using ProjectManager.Controls.TreeView;
 using System.Text.RegularExpressions;
 
