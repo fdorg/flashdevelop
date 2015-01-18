@@ -20,7 +20,7 @@ Platform
 
 * Microsoft Windows .NET 3.5 application for XP, Vista, 7 and 8
 * Mac OSX/Linux compatible using virtualization software or Wine/CrossOver
-* Includes native (Qt) Mac OSX/Linux helper to improve virtualization
+* Includes native (Qt) Mac OSX/Linux helper to improve OS integration
 
 Building
 --------
