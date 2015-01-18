@@ -83,6 +83,7 @@ namespace ASCompletion
 
         private GeneralSettings settings;
         private string prevChecksum;
+        private string prevLines;
         private Stack<LookupLocation> lookupLocations;
 
         private TreeNode currentHighlight;
@@ -507,7 +508,7 @@ namespace ASCompletion
         {
             highlightTimer.Stop();
 
-            //outlineTree.BeginUpdate();
+            outlineTree.BeginUpdate();
             if (currentHighlight != null)
             {
                 //currentHighlight.BackColor = System.Drawing.SystemColors.Window;
@@ -522,7 +523,7 @@ namespace ASCompletion
                 //currentHighlight.BackColor = System.Drawing.Color.LightGray;
                 currentHighlight.ForeColor = System.Drawing.Color.Blue;
             }
-            //outlineTree.EndUpdate();
+            outlineTree.EndUpdate();
         }
 
         /// <summary>
@@ -535,32 +536,53 @@ namespace ASCompletion
             {
                 // files "checksum"
                 StringBuilder sb = new StringBuilder().Append(aFile.FileName).Append(aFile.Version).Append(aFile.Package);
+                StringBuilder sbl = new StringBuilder();
                 if (aFile != FileModel.Ignore)
                 {
+                    sb.Append(settings.ShowExtends).Append(settings.ShowImplements).Append(settings.ShowImports).Append(
+                        settings.ShowRegions);
                     foreach (MemberModel import in aFile.Imports)
-                        sb.Append(import.Type).Append(import.LineFrom);
+                        sb.Append(import.Type)/*.Append(import.LineFrom) unused*/;
                     foreach (MemberModel member in aFile.Members)
-                        sb.Append(member.Flags.ToString()).Append(member.ToString()).Append(member.LineFrom);
+                    {
+                        sb.Append(member.Flags.ToString()).Append(member.ToString());
+                        sbl.Append(member.LineFrom);
+                    }
                     foreach (ClassModel aClass in aFile.Classes)
                     {
-                        sb.Append(aClass.Flags.ToString()).Append(aClass.FullName).Append(aClass.LineFrom);
+                        if (string.IsNullOrEmpty(aClass.ExtendsType))
+                            aClass.ResolveExtends();
+
+                        sb.Append(aClass.Flags.ToString()).Append(aClass.FullName);
+                        sbl.Append(aClass.LineFrom);
                         sb.Append(aClass.ExtendsType);
                         if (aClass.Implements != null)
                             foreach (string implements in aClass.Implements)
                                 sb.Append(implements);
                         foreach (MemberModel member in aClass.Members)
-                            sb.Append(member.Flags.ToString()).Append(member.ToString()).Append(member.LineFrom);
+                        {
+                            sb.Append(member.Flags.ToString()).Append(member.ToString());
+                            sbl.Append(member.LineFrom);
+                        }
                     }
 
                     foreach (MemberModel region in aFile.Regions) {
-                        sb.Append(region.Name).Append(region.LineFrom);
+                        sb.Append(region.Name);
+                        sbl.Append(region.LineFrom);
                     }
                 }
                 string checksum = sb.ToString();
+                string linesChecksum = sbl.ToString();
                 if (checksum != prevChecksum)
                 {
                     prevChecksum = checksum;
+                    prevLines = linesChecksum;
                     RefreshView(aFile);
+                }
+                else if (linesChecksum != prevLines)
+                {
+                    prevLines = linesChecksum;
+                    UpdateTree(aFile);
                 }
             }
             catch (Exception ex)
@@ -669,6 +691,141 @@ namespace ASCompletion
             }
         }
 
+        private void UpdateTree(FileModel aFile)
+        {
+            findProcTxt.Clear();
+            FindProcTxtLeave(null, null);
+
+            try
+            {
+                if (aFile == FileModel.Ignore)
+                    return;
+
+                var classes = new Dictionary<string, ClassModel>();
+                foreach (var classModel in aFile.Classes)
+                    classes[classModel.Name] = classModel;
+
+                var regionText = TextHelper.GetString("Info.RegionsNode");
+                var otherNodes = new List<TreeNode>();
+
+                ClassModel model;
+                foreach (TreeNode node in outlineTree.Nodes[0].Nodes)
+                {
+                    if (node.Text == regionText && node.ImageIndex == ICON_PACKAGE)
+                    {
+                        UpdateRegions(node.Nodes, aFile);
+                    }
+                    else if (classes.TryGetValue(node.Text, out model) && node.ImageIndex == GetIcon(model.Flags, model.Access))
+                    {
+                        if (node.Nodes.Count > 0) 
+                            UpdateMembers(node.Nodes, model.Members);
+                    }
+                    else
+                    {
+                        otherNodes.Add(node);
+                    }
+                }
+                
+                if (aFile.Members.Count > 0)
+                    UpdateMembers(otherNodes, aFile.Members);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(/*ex.Message,*/ ex);
+            }
+
+            if (currentHighlight != nextHighlight)
+                highlightTimer_Tick(null, EventArgs.Empty);
+        }
+
+        private void UpdateMembers(System.Collections.IEnumerable tree, MemberList members)
+        {
+            var cache = new Dictionary<string, MemberModel>();
+            foreach (var member in members.Items)
+                cache[member.ToString()] = member;
+
+            var nodeStack = new Stack<System.Collections.IEnumerable>();
+            nodeStack.Push(tree);
+            while (nodeStack.Count > 0)
+            {
+                var nodeCollection = nodeStack.Pop();
+                foreach (TreeNode node in nodeCollection)
+                {
+                    var memberNode = node as MemberTreeNode;
+                    if (memberNode != null)
+                        memberNode.UpdateMember(cache[memberNode.Text]);
+                    if (node.Nodes.Count > 0) 
+                        nodeStack.Push(node.Nodes);
+                }
+            }
+        }
+
+        private void UpdateRegions(TreeNodeCollection tree, FileModel aFile)
+        {
+            // Regions and their members are not sorted (on purpose?), so we'll use plain indexes
+            int endRegion = 0;
+            int index = 0;
+            MemberModel region = null;
+            MemberList regions = aFile.Regions;
+            int count = regions.Count;
+            for (index = 0; index < count; ++index)
+            {
+                var regionNode = ((MemberTreeNode) tree[index]);
+                region = regions[index];
+                regionNode.UpdateMember(region);
+                if (regionNode.Nodes.Count == 0) continue;
+                regionNode = ((MemberTreeNode) regionNode.FirstNode);
+
+                endRegion = region.LineTo;
+                if (endRegion == 0)
+                {
+                    endRegion = (index + 1 < count) ? regions[index + 1].LineFrom : int.MaxValue;
+                }
+
+                foreach (MemberModel import in aFile.Imports)
+                {
+                    if (import.LineFrom >= region.LineFrom &&
+                        import.LineTo <= endRegion)
+                    {
+                        regionNode.UpdateMember(import);
+                        regionNode = ((MemberTreeNode) regionNode.NextNode);
+                    }
+                }
+
+                foreach (MemberModel fileMember in aFile.Members)
+                {
+                    if (fileMember.LineFrom >= region.LineFrom &&
+                        fileMember.LineTo <= endRegion)
+                    {
+                        regionNode.UpdateMember(fileMember);
+                        regionNode = ((MemberTreeNode)regionNode.NextNode);
+                    }
+                }
+
+                foreach (ClassModel cls in aFile.Classes)
+                {
+                    if (cls.LineFrom <= region.LineFrom)
+                    {
+                        foreach (MemberModel clsMember in cls.Members)
+                        {
+                            if (clsMember.LineFrom >= region.LineFrom &&
+                                clsMember.LineTo <= endRegion)
+                            {
+                                regionNode.UpdateMember(clsMember);
+                                regionNode = ((MemberTreeNode)regionNode.NextNode);
+                            }
+                        }
+                    }
+                    else if (cls.LineFrom >= region.LineFrom &&
+                             cls.LineTo <= endRegion)
+                    {
+                        regionNode.UpdateMember(cls);
+                        regionNode = ((MemberTreeNode)regionNode.NextNode);
+                    }
+                }
+            }
+        }
+
         private void AddExtend(TreeNodeCollection tree, ClassModel aClass)
         {
             TreeNode folder = new TreeNode(TextHelper.GetString("Info.ExtendsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
@@ -732,15 +889,6 @@ namespace ASCompletion
                 copy.Add(members);
                 copy.Sort(comparer);
                 AddMembers(tree, copy);
-            }
-        }
-
-        private void AddRegions(TreeNodeCollection tree, MemberList members)
-        {
-            foreach (MemberModel member in members)
-            {
-                MemberTreeNode node = new MemberTreeNode(member, ICON_PACKAGE);
-                tree.Add(node);
             }
         }
 
@@ -877,7 +1025,7 @@ namespace ASCompletion
             }
         }
 
-        private void sortDropDown_DropDownOpening(object sender, EventArgs e)
+        private void SortDropDown_DropDownOpening(object sender, EventArgs e)
         {
             noneItem.Checked = settings.SortingMode == OutlineSorting.None;
             sortedItem.Checked = settings.SortingMode == OutlineSorting.Sorted;
@@ -886,7 +1034,7 @@ namespace ASCompletion
             sortedSmartItem.Checked = settings.SortingMode == OutlineSorting.SortedSmart;
         }
 
-        private void sortDropDown_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void SortDropDown_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             ToolStripMenuItem item = e.ClickedItem as ToolStripMenuItem;
             if (item == null || item.Checked) return;
@@ -1140,6 +1288,11 @@ namespace ASCompletion
     {
         public MemberTreeNode(MemberModel member, int imageIndex)
             : base(member.ToString(), imageIndex, imageIndex)
+        {
+            Tag = member.Name + "@" + member.LineFrom;
+        }
+
+        public void UpdateMember(MemberModel member)
         {
             Tag = member.Name + "@" + member.LineFrom;
         }
