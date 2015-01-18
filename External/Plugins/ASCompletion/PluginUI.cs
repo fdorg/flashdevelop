@@ -7,10 +7,7 @@
 
 using System;
 using System.Windows.Forms;
-using System.Collections;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
 using System.Collections.Generic;
 using PluginCore;
 using PluginCore.Managers;
@@ -20,7 +17,6 @@ using ASCompletion.Settings;
 using PluginCore.Localization;
 using System.Drawing;
 using System.Reflection;
-using PluginCore.Controls;
 using PluginCore.Helpers;
 
 namespace ASCompletion
@@ -511,7 +507,7 @@ namespace ASCompletion
         {
             highlightTimer.Stop();
 
-            outlineTree.BeginUpdate();
+            //outlineTree.BeginUpdate();
             if (currentHighlight != null)
             {
                 //currentHighlight.BackColor = System.Drawing.SystemColors.Window;
@@ -526,7 +522,7 @@ namespace ASCompletion
                 //currentHighlight.BackColor = System.Drawing.Color.LightGray;
                 currentHighlight.ForeColor = System.Drawing.Color.Blue;
             }
-            outlineTree.EndUpdate();
+            //outlineTree.EndUpdate();
         }
 
         /// <summary>
@@ -575,7 +571,7 @@ namespace ASCompletion
 
         private void RefreshView(FileModel aFile)
         {
-            findProcTxt.Text = "";
+            findProcTxt.Clear();
             FindProcTxtLeave(null, null);
 
             //TraceManager.Add("Outline refresh...");
@@ -818,21 +814,18 @@ namespace ASCompletion
         {
             TreeNodeCollection nodes = tree;
             MemberTreeNode node = null;
-            MemberModel prevMember = null;
             int img;
             foreach (MemberModel member in members)
             {
                 img = GetIcon(member.Flags, member.Access);
                 node = new MemberTreeNode(member, img);
                 nodes.Add(node);
-                prevMember = member;
             }
         }
 
         static public void AddMembersGrouped(TreeNodeCollection tree, MemberList members)
         {
             FlagType[] typePriority = new FlagType[] { FlagType.Constructor, FlagType.Function, FlagType.Getter | FlagType.Setter, FlagType.Variable, FlagType.Constant };
-            Visibility[] visibilityPriority = new Visibility[] { Visibility.Internal, Visibility.Private, Visibility.Protected, Visibility.Public };
             Dictionary<FlagType, List<MemberModel>> typeGroups = new Dictionary<FlagType, List<MemberModel>>();
 
             FlagType type;
@@ -840,9 +833,6 @@ namespace ASCompletion
             MemberTreeNode node = null;
             foreach (MemberModel member in members)
             {
-                if (node != null && node.Text == member.ToString())
-                    continue;
-
                 // member type
                 if ((member.Flags & FlagType.Constant) > 0)
                     type = FlagType.Constant;
@@ -855,38 +845,33 @@ namespace ASCompletion
                 else type = FlagType.Function;
 
                 // group
-                if (!typeGroups.ContainsKey(type))
+                if (!typeGroups.TryGetValue(type, out groupList))
                 {
                     groupList = new List<MemberModel>();
                     typeGroups.Add(type, groupList);
                 }
-                else groupList = typeGroups[type];
 
                 groupList.Add(member);
             }
 
-            MemberModel prevMember = null;
-            for (int i = 0; i < typePriority.Length; i++)
+            for (int i = 0, count = typePriority.Length; i < count; i++)
             {
-                if (typeGroups.ContainsKey(typePriority[i]))
+                type = typePriority[i];
+                if (typeGroups.TryGetValue(type, out groupList))
                 {
-                    groupList = typeGroups[typePriority[i]];
                     if (groupList.Count == 0)
                         continue;
                     groupList.Sort();
 
-                    TreeNode groupNode = new TreeNode(typePriority[i].ToString(), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
+                    TreeNode groupNode = new TreeNode(type.ToString(), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
                     int img;
-                    node = null;
                     foreach (MemberModel member in groupList)
                     {
-                        if (prevMember != null && prevMember.Name == member.Name)
-                            continue;
                         img = GetIcon(member.Flags, member.Access);
                         node = new MemberTreeNode(member, img);
                         groupNode.Nodes.Add(node);
                     }
-                    if (typePriority[i] != FlagType.Constructor) groupNode.Expand();
+                    if (type != FlagType.Constructor) groupNode.Expand();
                     tree.Add(groupNode);
                 }
             }
