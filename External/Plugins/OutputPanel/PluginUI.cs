@@ -374,7 +374,7 @@ namespace OutputPanel
                         }
                     }
                 }
-                if (state == 1 || state == -1)
+                if (state == 1)
                 {
                     state = GetHighlightState(message);
                 }
@@ -440,6 +440,9 @@ namespace OutputPanel
         {
             foreach (HighlightKeyword entry in this.pluginMain.PluginSettings.Keywords)
             {
+                // do not match on emtpy strings
+                if (entry.Keyword.Length == 0) continue;
+                // simple check if the message contains the string
                 if (message.Contains(entry.Keyword)) return (int) entry.Level;
             }
 
