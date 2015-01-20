@@ -8,7 +8,6 @@ using PluginCore.Localization;
 namespace OutputPanel
 {
     [Serializable]
-    [DefaultProperty("Path")]
     public class HighlightKeyword
     {
         private String m_Keyword;
@@ -86,8 +85,7 @@ namespace OutputPanel
         }
 
         [DisplayName("Highlighted Keywords")]
-        [LocalizedCategory("FlashDebugger.Category.Misc")]
-        [LocalizedDescription("FlashDebugger.Description.HighlightedKeywords")]
+        [LocalizedDescription("OutputPanel.Description.HighlightedKeywords")]
         [Editor(typeof(ArrayEditor), typeof(UITypeEditor))]
         public HighlightKeyword[] Keywords
         {
