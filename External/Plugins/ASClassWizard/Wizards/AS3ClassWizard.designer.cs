@@ -79,36 +79,40 @@ namespace ASClassWizard.Wizards
             // 
             // flowLayoutPanel5
             // 
-            this.flowLayoutPanel5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel5.Controls.Add(this.constructorCheck);
             this.flowLayoutPanel5.Controls.Add(this.superCheck);
             this.flowLayoutPanel5.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel5.Location = new System.Drawing.Point(106, 206);
+            this.flowLayoutPanel5.Location = new System.Drawing.Point(106, 210);
             this.flowLayoutPanel5.Name = "flowLayoutPanel5";
-            this.flowLayoutPanel5.Size = new System.Drawing.Size(268, 54);
-            this.flowLayoutPanel5.TabIndex = 12;
+            this.flowLayoutPanel5.Size = new System.Drawing.Size(267, 50);
+            this.flowLayoutPanel5.TabIndex = 15;
             // 
             // constructorCheck
             // 
             this.constructorCheck.AutoSize = true;
-            this.constructorCheck.Enabled = false;
             this.constructorCheck.Checked = true;
+            this.constructorCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.constructorCheck.Enabled = false;
             this.constructorCheck.Location = new System.Drawing.Point(3, 3);
             this.constructorCheck.Name = "constructorCheck";
             this.constructorCheck.Size = new System.Drawing.Size(127, 17);
-            this.constructorCheck.TabIndex = 9;
+            this.constructorCheck.TabIndex = 0;
             this.constructorCheck.Text = "Generate Constructor";
             this.constructorCheck.UseVisualStyleBackColor = true;
             // 
             // superCheck
             // 
             this.superCheck.AutoSize = true;
-            this.superCheck.Enabled = false;
             this.superCheck.Checked = true;
+            this.superCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.superCheck.Enabled = false;
             this.superCheck.Location = new System.Drawing.Point(3, 26);
             this.superCheck.Name = "superCheck";
             this.superCheck.Size = new System.Drawing.Size(120, 17);
-            this.superCheck.TabIndex = 10;
+            this.superCheck.TabIndex = 1;
             this.superCheck.Text = "Generate Super call";
             this.superCheck.UseVisualStyleBackColor = true;
             // 
@@ -116,81 +120,81 @@ namespace ASClassWizard.Wizards
             // 
             this.flowLayoutPanel4.Controls.Add(this.implementBrowse);
             this.flowLayoutPanel4.Controls.Add(this.implementRemove);
-            this.flowLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill; 
+            this.flowLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel4.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel4.Location = new System.Drawing.Point(377, 140);
-            this.flowLayoutPanel4.Margin = new System.Windows.Forms.Padding(3,0,0,0);
+            this.flowLayoutPanel4.Location = new System.Drawing.Point(379, 144);
+            this.flowLayoutPanel4.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.flowLayoutPanel4.Name = "flowLayoutPanel4";
-            this.flowLayoutPanel4.Size = new System.Drawing.Size(80, 62);
-            this.flowLayoutPanel4.TabIndex = 10;
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(81, 63);
+            this.flowLayoutPanel4.TabIndex = 13;
             // 
             // implementBrowse
             // 
+            this.implementBrowse.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.implementBrowse.Location = new System.Drawing.Point(3, 3);
             this.implementBrowse.Name = "implementBrowse";
             this.implementBrowse.Size = new System.Drawing.Size(74, 23);
-            this.implementBrowse.TabIndex = 8;
+            this.implementBrowse.TabIndex = 0;
             this.implementBrowse.Text = "Browse...";
             this.implementBrowse.UseVisualStyleBackColor = true;
-            this.implementBrowse.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.implementBrowse.Click += new System.EventHandler(this.implementBrowse_Click);
             // 
             // implementRemove
             // 
+            this.implementRemove.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.implementRemove.Enabled = false;
             this.implementRemove.Location = new System.Drawing.Point(3, 32);
             this.implementRemove.Name = "implementRemove";
             this.implementRemove.Size = new System.Drawing.Size(74, 23);
-            this.implementRemove.TabIndex = 8;
+            this.implementRemove.TabIndex = 1;
             this.implementRemove.Text = "Remove";
             this.implementRemove.UseVisualStyleBackColor = true;
-            this.implementRemove.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.implementRemove.Click += new System.EventHandler(this.interfaceRemove_Click);
             // 
             // baseBox
             // 
             this.baseBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.baseBox.Enabled = false;
-            this.baseBox.Location = new System.Drawing.Point(106, 116);
+            this.baseBox.Location = new System.Drawing.Point(106, 119);
             this.baseBox.Name = "baseBox";
-            this.baseBox.Size = new System.Drawing.Size(268, 20);
-            this.baseBox.TabIndex = 7;
+            this.baseBox.Size = new System.Drawing.Size(267, 20);
+            this.baseBox.TabIndex = 9;
             this.baseBox.TextChanged += new System.EventHandler(this.baseBox_TextChanged);
             // 
             // classBox
             // 
             this.classBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.classBox.Location = new System.Drawing.Point(106, 88);
+            this.classBox.Location = new System.Drawing.Point(106, 90);
             this.classBox.Name = "classBox";
-            this.classBox.Size = new System.Drawing.Size(268, 20);
-            this.classBox.TabIndex = 5;
+            this.classBox.Size = new System.Drawing.Size(267, 20);
+            this.classBox.TabIndex = 7;
             this.classBox.Text = "NewClass";
             this.classBox.TextChanged += new System.EventHandler(this.classBox_TextChanged);
             // 
             // packageBox
             // 
             this.packageBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.packageBox.Location = new System.Drawing.Point(106, 4);
+            this.packageBox.Location = new System.Drawing.Point(106, 5);
             this.packageBox.Name = "packageBox";
-            this.packageBox.Size = new System.Drawing.Size(268, 20);
-            this.packageBox.TabIndex = 0;
+            this.packageBox.Size = new System.Drawing.Size(267, 20);
+            this.packageBox.TabIndex = 1;
             this.packageBox.TextChanged += new System.EventHandler(this.packageBox_TextChanged);
             // 
             // classLabel
             // 
             this.classLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.classLabel.AutoSize = true;
-            this.classLabel.Location = new System.Drawing.Point(3, 91);
+            this.classLabel.Location = new System.Drawing.Point(3, 93);
             this.classLabel.Name = "classLabel";
             this.classLabel.Size = new System.Drawing.Size(32, 13);
-            this.classLabel.TabIndex = 1;
+            this.classLabel.TabIndex = 6;
             this.classLabel.Text = "Class";
             // 
             // accessLabel
             // 
             this.accessLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.accessLabel.AutoSize = true;
-            this.accessLabel.Location = new System.Drawing.Point(3, 35);
+            this.accessLabel.Location = new System.Drawing.Point(3, 37);
             this.accessLabel.Name = "accessLabel";
             this.accessLabel.Size = new System.Drawing.Size(42, 13);
             this.accessLabel.TabIndex = 3;
@@ -201,9 +205,9 @@ namespace ASClassWizard.Wizards
             this.flowLayoutPanel2.Controls.Add(this.publicRadio);
             this.flowLayoutPanel2.Controls.Add(this.internalRadio);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(106, 31);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(106, 33);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(268, 22);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(267, 22);
             this.flowLayoutPanel2.TabIndex = 4;
             // 
             // publicRadio
@@ -213,7 +217,7 @@ namespace ASClassWizard.Wizards
             this.publicRadio.Location = new System.Drawing.Point(3, 3);
             this.publicRadio.Name = "publicRadio";
             this.publicRadio.Size = new System.Drawing.Size(53, 17);
-            this.publicRadio.TabIndex = 1;
+            this.publicRadio.TabIndex = 0;
             this.publicRadio.TabStop = true;
             this.publicRadio.Text = "public";
             this.publicRadio.UseVisualStyleBackColor = true;
@@ -224,7 +228,7 @@ namespace ASClassWizard.Wizards
             this.internalRadio.Location = new System.Drawing.Point(62, 3);
             this.internalRadio.Name = "internalRadio";
             this.internalRadio.Size = new System.Drawing.Size(59, 17);
-            this.internalRadio.TabIndex = 2;
+            this.internalRadio.TabIndex = 1;
             this.internalRadio.Text = "internal";
             this.internalRadio.UseVisualStyleBackColor = true;
             // 
@@ -233,9 +237,9 @@ namespace ASClassWizard.Wizards
             this.flowLayoutPanel3.Controls.Add(this.dynamicCheck);
             this.flowLayoutPanel3.Controls.Add(this.finalCheck);
             this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(106, 59);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(106, 61);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(268, 22);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(267, 22);
             this.flowLayoutPanel3.TabIndex = 5;
             // 
             // dynamicCheck
@@ -244,7 +248,7 @@ namespace ASClassWizard.Wizards
             this.dynamicCheck.Location = new System.Drawing.Point(3, 3);
             this.dynamicCheck.Name = "dynamicCheck";
             this.dynamicCheck.Size = new System.Drawing.Size(65, 17);
-            this.dynamicCheck.TabIndex = 3;
+            this.dynamicCheck.TabIndex = 0;
             this.dynamicCheck.Text = "dynamic";
             this.dynamicCheck.UseVisualStyleBackColor = true;
             // 
@@ -254,7 +258,7 @@ namespace ASClassWizard.Wizards
             this.finalCheck.Location = new System.Drawing.Point(74, 3);
             this.finalCheck.Name = "finalCheck";
             this.finalCheck.Size = new System.Drawing.Size(45, 17);
-            this.finalCheck.TabIndex = 4;
+            this.finalCheck.TabIndex = 1;
             this.finalCheck.Text = "final";
             this.finalCheck.UseVisualStyleBackColor = true;
             // 
@@ -262,30 +266,30 @@ namespace ASClassWizard.Wizards
             // 
             this.baseLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.baseLabel.AutoSize = true;
-            this.baseLabel.Location = new System.Drawing.Point(3, 119);
+            this.baseLabel.Location = new System.Drawing.Point(3, 122);
             this.baseLabel.Name = "baseLabel";
             this.baseLabel.Size = new System.Drawing.Size(58, 13);
-            this.baseLabel.TabIndex = 6;
+            this.baseLabel.TabIndex = 8;
             this.baseLabel.Text = "Base class";
             // 
             // generationLabel
             // 
             this.generationLabel.AutoSize = true;
-            this.generationLabel.Location = new System.Drawing.Point(3, 203);
+            this.generationLabel.Location = new System.Drawing.Point(3, 207);
             this.generationLabel.Name = "generationLabel";
             this.generationLabel.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
             this.generationLabel.Size = new System.Drawing.Size(85, 19);
-            this.generationLabel.TabIndex = 11;
+            this.generationLabel.TabIndex = 14;
             this.generationLabel.Text = "Code generation";
             // 
             // packageLabel
             // 
             this.packageLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.packageLabel.AutoSize = true;
-            this.packageLabel.Location = new System.Drawing.Point(3, 7);
+            this.packageLabel.Location = new System.Drawing.Point(3, 8);
             this.packageLabel.Name = "packageLabel";
             this.packageLabel.Size = new System.Drawing.Size(50, 13);
-            this.packageLabel.TabIndex = 13;
+            this.packageLabel.TabIndex = 0;
             this.packageLabel.Text = "Package";
             // 
             // packageBrowse
@@ -294,7 +298,7 @@ namespace ASClassWizard.Wizards
             this.packageBrowse.Location = new System.Drawing.Point(381, 3);
             this.packageBrowse.Name = "packageBrowse";
             this.packageBrowse.Size = new System.Drawing.Size(74, 23);
-            this.packageBrowse.TabIndex = 0;
+            this.packageBrowse.TabIndex = 2;
             this.packageBrowse.Text = "Browse...";
             this.packageBrowse.UseVisualStyleBackColor = true;
             this.packageBrowse.Click += new System.EventHandler(this.packageBrowse_Click);
@@ -302,10 +306,10 @@ namespace ASClassWizard.Wizards
             // baseBrowse
             // 
             this.baseBrowse.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.baseBrowse.Location = new System.Drawing.Point(381, 115);
+            this.baseBrowse.Location = new System.Drawing.Point(381, 117);
             this.baseBrowse.Name = "baseBrowse";
             this.baseBrowse.Size = new System.Drawing.Size(74, 23);
-            this.baseBrowse.TabIndex = 6;
+            this.baseBrowse.TabIndex = 10;
             this.baseBrowse.Text = "Browse...";
             this.baseBrowse.UseVisualStyleBackColor = true;
             this.baseBrowse.Click += new System.EventHandler(this.baseBrowse_Click);
@@ -317,8 +321,8 @@ namespace ASClassWizard.Wizards
             this.errorLabel.ForeColor = System.Drawing.Color.Black;
             this.errorLabel.Location = new System.Drawing.Point(25, 4);
             this.errorLabel.Name = "errorLabel";
-            this.errorLabel.Size = new System.Drawing.Size(34, 13);
-            this.errorLabel.TabIndex = 1;
+            this.errorLabel.Size = new System.Drawing.Size(29, 13);
+            this.errorLabel.TabIndex = 0;
             this.errorLabel.Text = "Error";
             // 
             // errorIcon
@@ -332,17 +336,19 @@ namespace ASClassWizard.Wizards
             // 
             // flowLayoutPanel6
             // 
-            this.flowLayoutPanel6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel6.Controls.Add(this.errorIcon);
             this.flowLayoutPanel6.Controls.Add(this.errorLabel);
             this.flowLayoutPanel6.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel6.Name = "flowLayoutPanel6";
             this.flowLayoutPanel6.Size = new System.Drawing.Size(301, 23);
-            this.flowLayoutPanel6.TabIndex = 1;
+            this.flowLayoutPanel6.TabIndex = 0;
             // 
             // flowLayoutPanel9
             // 
-            this.flowLayoutPanel9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel9.BackColor = System.Drawing.SystemColors.Window;
             this.flowLayoutPanel9.Controls.Add(this.titleLabel);
             this.flowLayoutPanel9.Location = new System.Drawing.Point(12, 12);
@@ -364,20 +370,25 @@ namespace ASClassWizard.Wizards
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.tableLayoutPanel2);
             this.groupBox2.Location = new System.Drawing.Point(10, 53);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(468, 279);
-            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.42382F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.57618F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
             this.tableLayoutPanel2.Controls.Add(this.flowLayoutPanel5, 1, 6);
             this.tableLayoutPanel2.Controls.Add(this.baseBrowse, 2, 4);
             this.tableLayoutPanel2.Controls.Add(this.generationLabel, 0, 6);
@@ -410,59 +421,59 @@ namespace ASClassWizard.Wizards
             // implementLabel
             // 
             this.implementLabel.AutoSize = true;
-            this.implementLabel.Location = new System.Drawing.Point(3, 140);
+            this.implementLabel.Location = new System.Drawing.Point(3, 144);
             this.implementLabel.Name = "implementLabel";
             this.implementLabel.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
             this.implementLabel.Size = new System.Drawing.Size(55, 19);
-            this.implementLabel.TabIndex = 8;
+            this.implementLabel.TabIndex = 11;
             this.implementLabel.Text = "Implement";
             // 
             // implementList
             // 
             this.implementList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.implementList.FormattingEnabled = true;
-            this.implementList.Location = new System.Drawing.Point(106, 143);
+            this.implementList.Location = new System.Drawing.Point(106, 147);
             this.implementList.Name = "implementList";
-            this.implementList.Size = new System.Drawing.Size(268, 56);
-            this.implementList.TabIndex = 7;
+            this.implementList.Size = new System.Drawing.Size(267, 56);
+            this.implementList.TabIndex = 12;
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(this.cancelButton);
             this.flowLayoutPanel1.Controls.Add(this.okButton);
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel6);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 338);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(9, 338);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(466, 29);
-            this.flowLayoutPanel1.TabIndex = 5;
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(469, 29);
+            this.flowLayoutPanel1.TabIndex = 2;
             // 
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(388, 3);
+            this.cancelButton.Location = new System.Drawing.Point(391, 3);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 12;
+            this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // okButton
             // 
+            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.okButton.Enabled = false;
-            this.okButton.Location = new System.Drawing.Point(307, 3);
+            this.okButton.Location = new System.Drawing.Point(310, 3);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 11;
+            this.okButton.TabIndex = 1;
             this.okButton.Text = "Ok";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
             // AS3ClassWizard
-            //
+            // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -471,11 +482,11 @@ namespace ASClassWizard.Wizards
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.flowLayoutPanel9);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Name = "AS3ClassWizard";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Name = "AS3ClassWizard";
             this.Text = "New ActionScript Class";
             this.Load += new System.EventHandler(this.AS3ClassWizard_Load);
             this.flowLayoutPanel5.ResumeLayout(false);

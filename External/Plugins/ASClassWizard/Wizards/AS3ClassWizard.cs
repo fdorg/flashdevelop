@@ -177,18 +177,6 @@ namespace ASClassWizard.Wizards
             this.ValidateClass();
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
-        private void okButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
-
         private void baseBrowse_Click(object sender, EventArgs e)
         {
             ClassBrowser browser = new ClassBrowser();
