@@ -1397,6 +1397,9 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="OutputPanel.Description.WrapOutput" xml:space="preserve">
     <value>Wraps text output.</value>
   </data>
+  <data name="OutputPanel.Description.HighlightedKeywords" xml:space="preserve">
+    <value>A list of keywords whose lines will be highlighted in the output.</value>
+  </data>
   <data name="OutputPanel.Info.Description" xml:space="preserve">
     <value>Adds a output panel for debug messages to FlashDevelop.</value>
   </data>
