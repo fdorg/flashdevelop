@@ -227,28 +227,37 @@ namespace ASClassWizard
             {
                 package = "";
             }
-            AS3ClassWizard dialog = new AS3ClassWizard();
-            bool isHaxe = project.Language == "haxe";
-            dialog.Project = project;
-            dialog.Directory = inDirectory;
-            dialog.StartupClassName = className;
-            if (package != null)
+            using (AS3ClassWizard dialog = new AS3ClassWizard())
             {
-                package = package.Replace(Path.DirectorySeparatorChar, '.');
-                dialog.StartupPackage = package;
-            }
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                string cPackage = dialog.getPackage();
-                string path = Path.Combine(classpath, dialog.getPackage().Replace('.', Path.DirectorySeparatorChar));
-                string newFilePath  = Path.ChangeExtension(Path.Combine(path, dialog.getClassName()), isHaxe ? ".hx" : ".as");
-                if (File.Exists(newFilePath))
+                bool isHaxe = project.Language == "haxe";
+                dialog.Project = project;
+                dialog.Directory = inDirectory;
+                dialog.StartupClassName = className;
+                if (package != null)
                 {
-                    string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                    string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
-                    DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, newFilePath, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                    if (result == DialogResult.Cancel) return;
+                    package = package.Replace(Path.DirectorySeparatorChar, '.');
+                    dialog.StartupPackage = package;
                 }
+                DialogResult conflictResult = DialogResult.OK;
+                string cPackage, path, newFilePath;
+                do
+                {
+                    if (dialog.ShowDialog() != DialogResult.OK) return;
+                    cPackage = dialog.getPackage();
+                    path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
+                    newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.getClassName()),
+                                                              isHaxe ? ".hx" : ".as");
+                    if (File.Exists(newFilePath))
+                    {
+                        string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                        string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
+                        conflictResult = MessageBox.Show(PluginBase.MainForm,
+                            string.Format(message, newFilePath, "\n"), title,
+                            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                        if (conflictResult == DialogResult.No) return;
+                    }
+                } while (conflictResult == DialogResult.Cancel);
+
                 string templatePath = templateFile + ".wizard";
                 this.lastFileFromTemplate = newFilePath;
                 this.constructorArgs = constructorArgs;
@@ -263,7 +272,7 @@ namespace ASClassWizard
                     dialog.isFinal(),
                     dialog.getGenerateInheritedMethods(),
                     dialog.getGenerateConstructor()
-                  );
+                );
 
                 try
                 {
@@ -445,14 +454,13 @@ namespace ASClassWizard
             }
         }
 
-        private String AddImport(List<string> imports, String cname, ClassModel inClass)
+        private void AddImport(List<string> imports, String cname, ClassModel inClass)
         {
             ClassModel aClass = processContext.ResolveType(cname, inClass.InFile);
             if (aClass != null && !aClass.IsVoid() && aClass.InFile.Package != "")
             {
                 imports.Add(aClass.QualifiedName);
             }
-            return "";
         }
 
         #endregion
