@@ -11,7 +11,7 @@ namespace BridgeSettings
     [Serializable]
     class Settings : IBridgeSettings
     {
-        const string DEFAULT_SHARED_DRIVE = "Z:\\";
+        const string DEFAULT_SHARED_DRIVE = "Y:\\";
         const int DEFAULT_PORT_NUM = 8009;
         static private string[] DEFAULT_EXTENSIONS = { ".exe", ".com", ".bat", ".cmd" };
 
