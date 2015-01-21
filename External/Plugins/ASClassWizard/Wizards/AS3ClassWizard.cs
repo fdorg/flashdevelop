@@ -70,11 +70,11 @@ namespace ASClassWizard.Wizards
             set { packageBox.Text = value; }
         }
 
-		public String StartupClassName
-		{
-			set { classBox.Text = value; }
-		}
-		
+        public String StartupClassName
+        {
+            set { classBox.Text = value; }
+        }
+        
         public string Directory
         {
             get { return this.directoryPath; }
@@ -175,18 +175,6 @@ namespace ASClassWizard.Wizards
         {
             this.classBox.Select();
             this.ValidateClass();
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
-        private void okButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
         }
 
         private void baseBrowse_Click(object sender, EventArgs e)
