@@ -32,8 +32,8 @@ using System.Collections.Generic;
 
 namespace ASClassWizard
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "ASClassWizard";
         private String pluginGuid = "a2c159c1-7d21-4483-aeb1-38d9fdc4c7f3";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -47,7 +47,7 @@ namespace ASClassWizard
         private String constructorArgs;
         private List<String> constructorArgTypes;
 
-	    #region Required Properties
+        #region Required Properties
         
         /// <summary>
         /// Api level of the plugin
@@ -61,41 +61,41 @@ namespace ASClassWizard
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -105,24 +105,24 @@ namespace ASClassWizard
         {
             get { return null; }
         }
-		
-		#endregion
-		
-		#region Required Methods
+        
+        #endregion
+        
+        #region Required Methods
 
-		public void Initialize()
-		{
+        public void Initialize()
+        {
             this.AddEventHandlers();
             this.InitLocalization();
         }
-		
-		public void Dispose()
-		{
+        
+        public void Dispose()
+        {
             // Nothing here...
-		}
-		
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             Project project;
             switch (e.Type)
             {
@@ -136,7 +136,7 @@ namespace ASClassWizard
                         {
                             evt.Handled = true;
                             String className = table.ContainsKey("className") ? table["className"] as String : TextHelper.GetString("Wizard.Label.NewClass");
-							DisplayClassWizard(table["inDirectory"] as String, table["templatePath"] as String, className, table["constructorArgs"] as String, table["constructorArgTypes"] as List<String>);
+                            DisplayClassWizard(table["inDirectory"] as String, table["templatePath"] as String, className, table["constructorArgs"] as String, table["constructorArgTypes"] as List<String>);
                         }
                     }
                     break;
@@ -166,14 +166,14 @@ namespace ASClassWizard
                     }
                     break;
             }
-		}
+        }
 
         private bool IsWizardTemplate(string templateFile)
         {
             return templateFile != null && File.Exists(templateFile + ".wizard");
         }
-		
-		#endregion
+        
+        #endregion
 
         #region Custom Methods
 
@@ -231,7 +231,7 @@ namespace ASClassWizard
             bool isHaxe = project.Language == "haxe";
             dialog.Project = project;
             dialog.Directory = inDirectory;
-			dialog.StartupClassName = className;
+            dialog.StartupClassName = className;
             if (package != null)
             {
                 package = package.Replace(Path.DirectorySeparatorChar, '.');
@@ -455,8 +455,8 @@ namespace ASClassWizard
             return "";
         }
 
-		#endregion
+        #endregion
 
-	}
-	
+    }
+    
 }
