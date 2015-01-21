@@ -11,7 +11,6 @@
 class BridgeHandler : public QObject
 {
     Q_OBJECT
-
     QString remotePath;
     QStringList filter;
     bool isSpecial;
@@ -19,7 +18,6 @@ class BridgeHandler : public QObject
     QString localPath;
     QString watchedPath;
     FileSystemWatcherEx *fsw;
-
     void watchPath(QString param);
     QString getSpecialPath();
     QString getRemotePath(QString path);
@@ -30,7 +28,6 @@ public:
     ~BridgeHandler();
     QString watched;
     int useCount;
-
     QString getLocalPath(QString path);
 
 signals:
@@ -43,11 +40,9 @@ private slots:
     void localChanged(QString localPath);
 };
 
-
 class BridgeThread : public QObject
 {
     Q_OBJECT
-
     int socketDescriptor;
     QTcpSocket *client;
     QTimer timer;

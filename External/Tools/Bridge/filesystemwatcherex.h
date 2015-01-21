@@ -6,26 +6,24 @@
 #include <QDateTime>
 #include <QFileSystemWatcher>
 
-class WatchedFile {
+class WatchedFile
+{
 public:
-    WatchedFile(QFileInfo info) {
+    WatchedFile(QFileInfo info)
+    {
         file = info.absoluteFilePath();
         exists = info.exists();
         if (exists) lastModified = info.lastModified();
     }
-
     QString file;
     QDateTime lastModified;
     bool exists;
 };
 
-
 class FileSystemWatcherEx : public QObject
 {
     Q_OBJECT
-
     QStringList subFoldersList(QString folder);
-
     QFileSystemWatcher *fsw;
     QString basePath;
     bool includeSubs;

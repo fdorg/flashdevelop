@@ -1,29 +1,24 @@
 #include <QDebug>
 #include <QDir>
 #include <QSettings>
+#include <QMenu>
 #include <QSystemTrayIcon>
 #include "simplelog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     QString logPath = QDir::homePath() + "/.fdbridge_log";
-    logfile.open(logPath.toAscii().data());
-    qInstallMsgHandler(SimpleLogHandler);
-
+    logfile.open(logPath.toUtf8().data());
+    qInstallMessageHandler(SimpleLogHandler);
     ui->setupUi(this);
-
     setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     showOnStart = false;
-
     initTray();
     initStatusBar();
     initMapping();
     initServer();
-
     if (showOnStart) show();
 }
 
@@ -33,23 +28,19 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 /* TRAY ICON */
 
 void MainWindow::initTray()
 {
     sti = new QSystemTrayIcon(this);
-    QIcon img(":/images/trayicon.png");
+    QIcon img(":/Images/TrayIcon.png");
     sti->setIcon(img);
     sti->setVisible(true);
-
     QMenu *stiMenu = new QMenu(this);
     sti->setContextMenu(stiMenu);
-
     QAction *item = new QAction("Configure", this);
     stiMenu->addAction(item);
     connect(item, SIGNAL(triggered()), this, SLOT(showWindow()));
-
     item = new QAction("Exit", this);
     stiMenu->addAction(item);
     connect(item, SIGNAL(triggered()), this, SLOT(quit()));
@@ -73,7 +64,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->ignore();
 }
 
-
 /* HELPER SERVER */
 
 void MainWindow::initServer()
@@ -82,19 +72,16 @@ void MainWindow::initServer()
     settings.beginGroup("server");
     if (!settings.contains("host")) settings.setValue("host", "127.0.0.1");
     if (!settings.contains("port")) settings.setValue("port", 8009);
-
     server = new BridgeServer();
     if (server->isListening())
     {
         connect(server, SIGNAL(bridgeStatus(int,int)), this, SLOT(bridgeStatus(int,int)));
-        statusLabel->setText( QString("Listening to port %1").arg(settings.value("port").toString()) );
-
+        statusLabel->setText(QString("Listening to port %1").arg(settings.value("port").toString()) );
         QString msg = QString("Is now listening to port %1").arg(settings.value("port").toString());
         sti->showMessage("FlashDevelop Bridge", msg/*, QSystemTrayIcon::NoIcon*/);
     }
-    else statusLabel->setText( QString("Failed to listen to port %1").arg(settings.value("port").toInt()) );
+    else statusLabel->setText(QString("Failed to listen to port %1").arg(settings.value("port").toInt()) );
 }
-
 
 /* STATUS BAR */
 
@@ -113,7 +100,6 @@ void MainWindow::bridgeStatus(int threads, int watchers)
     statusLabel->setText(msg);
 }
 
-
 /* LOCAL REMOTE MAPPING EDITION */
 
 void MainWindow::initMapping()
@@ -125,15 +111,13 @@ void MainWindow::initMapping()
     if (map.length() == 0)
     {
         showOnStart = true;
-        settings.setValue("Z", QDir::homePath() + "/Dev");
+        settings.setValue("Y", QDir::homePath());
         settings.endGroup();
         settings.beginGroup("localRemoteMap");
         map = settings.allKeys();
     }
-
     ui->listMap->setRowCount(map.length());
     ui->listMap->setColumnWidth(0, 100);
-
     int line = 0;
     foreach(QString key, map)
     {
@@ -143,10 +127,8 @@ void MainWindow::initMapping()
         ui->listMap->setItem(line, 1, item);
         line++;
     }
-
     ui->btRemove->setEnabled(false);
     lockSettings = false;
-
     updateSettings(); // validate entries
 }
 
@@ -193,7 +175,7 @@ void MainWindow::on_listMap_itemSelectionChanged()
     ui->btRemove->setEnabled(active);
 }
 
-void MainWindow::on_listMap_cellChanged(int row, int column)
+void MainWindow::on_listMap_cellChanged(int, int)
 {
     updateSettings();
 }
@@ -203,14 +185,11 @@ void MainWindow::updateSettings()
     if (lockSettings) return;
     QSettings settings;
     settings.beginGroup("localRemoteMap");
-
     // clear
     foreach(QString key, settings.allKeys()) settings.remove(key);
-
     // populate from valid lines in grid
     QColor error(QColor::fromRgb(0xff, 0xcc, 0x66));
     QColor valid(ui->listMap->palette().base().color());
-
     int lines = ui->listMap->rowCount();
     QRegExp reRemote("([H-Z]):\\\\");
     for (int i = 0; i < lines; ++i)
@@ -234,7 +213,6 @@ void MainWindow::updateSettings()
                 remoteValid = true;
             }
         }
-
         item = ui->listMap->item(i, 1);
         QString local(item->text());
         bool localValid = false;
@@ -253,9 +231,6 @@ void MainWindow::updateSettings()
                 localValid = true;
             }
         }
-
-        if (remoteValid && localValid)
-            settings.setValue(remote, local);
+        if (remoteValid && localValid) settings.setValue(remote, local);
     }
 }
-

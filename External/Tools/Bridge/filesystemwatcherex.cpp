@@ -2,8 +2,7 @@
 #include <QDir>
 #include "filesystemwatcherex.h"
 
-FileSystemWatcherEx::FileSystemWatcherEx(QObject *parent) :
-    QObject(parent)
+FileSystemWatcherEx::FileSystemWatcherEx(QObject *parent) : QObject(parent)
 {
     basePath = "";
     watchedFile = 0;
@@ -25,7 +24,6 @@ void FileSystemWatcherEx::setPath(QString path, bool includeSubdirectories)
 {
     if (path == "") return;
     QDir dir(path);
-
     if (dir.exists())
     {
         qDebug() << "Watching:" << path;
@@ -43,7 +41,6 @@ void FileSystemWatcherEx::setFile(QString path)
 {
     if (path == "") return;
     QFileInfo file(path);
-
     if (file.exists())
     {
         qDebug() << "Watching:" << path;
@@ -57,17 +54,16 @@ void FileSystemWatcherEx::setFile(QString path)
 }
 
 // Explore folders in depth and return concaneted list of folder paths
+
 QStringList FileSystemWatcherEx::subFoldersList(QString path)
 {
     QDir dir(path);
     dir.setFilter(QDir::Dirs);
-
     QStringList dirList;
     dirList << dir.absolutePath();
-
     QFileInfoList list = dir.entryInfoList();
-
-    for (int i = 0; i < list.size(); ++i) {
+    for (int i = 0; i < list.size(); ++i)
+    {
         QFileInfo fileInfo = list.at(i);
         QString name = fileInfo.fileName();
         if (name[0] == '.' || name[0] == '_') continue;
@@ -78,10 +74,8 @@ QStringList FileSystemWatcherEx::subFoldersList(QString path)
 
 void FileSystemWatcherEx::fileChanged(QString path)
 {
-    if (!watchedFile->file.startsWith(path))
-        return;
+    if (!watchedFile->file.startsWith(path)) return;
     qDebug() << "Changed:" << path;
-
     QFileInfo info(watchedFile->file);
     if (info.exists())
     {
@@ -104,7 +98,6 @@ void FileSystemWatcherEx::fileChanged(QString path)
 void FileSystemWatcherEx::directoryChanged(QString path)
 {
     qDebug() << "Changed:" << path;
-
     QDir dir(path);
     if (dir.exists()) // content changed
     {
@@ -112,7 +105,9 @@ void FileSystemWatcherEx::directoryChanged(QString path)
         {
             QStringList dirs = fsw->directories();
             foreach(QString sub, subFoldersList(path))
+            {
                 if (!dirs.contains(sub)) fsw->addPath(sub);
+            }
         }
         emit fileSystemChanged(path);
     }

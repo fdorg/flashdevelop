@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>179</height>
+    <width>450</width>
+    <height>220</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,10 @@
       <item>
        <widget class="QLabel" name="labelMap">
         <property name="text">
-         <string>Paths mapping</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Path mapping (&lt;a href=&quot;http://www.flashdevelop.org/wikidocs/index.php?title=Bridge&quot; target=&quot;_blank&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;info&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

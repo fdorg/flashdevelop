@@ -8,10 +8,8 @@
 class BridgeServer : public QTcpServer
 {
     Q_OBJECT
-
     QHash<QString, BridgeHandler*> watched;
     int runningThreads;
-
     void releaseHandler(BridgeThread *thread);
     void openDocument(QString path);
     void notifyStatus();
@@ -21,7 +19,7 @@ public:
     BridgeHandler *createWatchHandler(QString path);
 
 protected:
-    void incomingConnection(int socketDescriptor);
+    void incomingConnection(qintptr socketDescriptor);
 
 signals:
     void bridgeStatus(int threads, int watchers);
