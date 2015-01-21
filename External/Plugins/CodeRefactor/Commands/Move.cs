@@ -534,31 +534,45 @@ namespace CodeRefactor.Commands
                 if (actualMatches.Count == 0) continue;
                 int currLine = -1;
                 sci = AssociatedDocumentHelper.LoadDocument(file);
-                for (int i = actualMatches.Count - 1; i >= 0; i--)
-                {
-                    var sm = actualMatches[i];
-                    if (currLine == -1) currLine = sm.Line - 1;
-                    if (sm.LineText.Contains(oldType))
-                    {
-                        sm.Index -= sci.MBSafeTextLength(oldType) - sci.MBSafeTextLength(targetName);
-                        sm.Value = oldType;
-                        RefactoringHelper.SelectMatch(sci, sm);
-                        sm.Column = sm.Index - sm.LineStart;
-                        sci.ReplaceSel(newType);
-                        sm.LineEnd = sci.SelectionEnd;
-                        sm.LineText = sci.GetLine(sm.Line - 1);
-                        sm.Value = newType;
-                    }
-                    else
-                    {
-                        actualMatches.RemoveAt(i);
-                    }
-                }
                 string directory = Path.GetDirectoryName(file);
                 // Let's check if we need to add the import. Check the considerations at the start of the file
                 // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
-                if (directory != Path.GetDirectoryName(currentTarget.NewFilePath) && directory != currentTarget.OwnerPath 
-                    && ASContext.Context.CurrentModel.Imports.Search(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0) == null)
+                bool needsImport = directory != Path.GetDirectoryName(currentTarget.NewFilePath) &&
+                                   directory != currentTarget.OwnerPath &&
+                                   ASContext.Context.CurrentModel.Imports.Search(targetName,
+                                                                                 FlagType.Class & FlagType.Function &
+                                                                                 FlagType.Namespace, 0) == null;
+
+                // Replace matches
+                int typeDiff = sci.MBSafeTextLength(oldType) - sci.MBSafeTextLength(targetName);
+                int newTypeDiff = sci.MBSafeTextLength(newType) - sci.MBSafeTextLength(oldType);
+                int accumulatedDiff = 0;
+                int j = 0;
+                for (int i = 0, count = actualMatches.Count; i < count; i++)
+                {
+                    var sm = actualMatches[j];
+                    if (currLine == -1) currLine = sm.Line - 1;
+                    if (sm.LineText.Contains(oldType))
+                    {
+                        sm.Index -= typeDiff - accumulatedDiff;
+                        sm.Value = oldType;
+                        RefactoringHelper.SelectMatch(sci, sm);
+                        sm.Column -= typeDiff;
+                        sci.ReplaceSel(newType);
+                        sm.LineEnd = sci.SelectionEnd;
+                        sm.LineText = sm.LineText.Replace(oldType, newType);
+                        sm.Length = oldType.Length;
+                        sm.Value = newType;
+                        if (needsImport) sm.Line++;
+                        accumulatedDiff += newTypeDiff;
+                        j++;
+                    }
+                    else
+                    {
+                        actualMatches.RemoveAt(j);
+                    }
+                }
+                if (needsImport)
                 {
                     sci.GotoLine(currLine);
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
