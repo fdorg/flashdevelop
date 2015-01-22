@@ -267,7 +267,7 @@ namespace FlashDebugger
                         {
                             foreach (string cp in project.AbsoluteClasspaths)
                             {
-                                string pathBackSlash = cp.TrimEnd(new[]{Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar});
+                                string pathBackSlash = cp.TrimEnd(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
                                 pathBackSlash = pathBackSlash.IndexOf(Path.AltDirectorySeparatorChar.ToString()) > -1 ?
                                     pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
                                 if (sourceFile.getFullPath().ToString().StartsWith(pathBackSlash))
@@ -278,9 +278,9 @@ namespace FlashDebugger
                             }
                         }
                     }
-                    var listItem = new ListViewItem(new[] {string.Empty, title}, -1)
+                    var listItem = new ListViewItem(new[] { string.Empty, title }, -1)
                         {
-                            Tag = new ListItemData {Frame = item, Index = i++}
+                            Tag = new ListItemData { Frame = item, Index = i++ }
                         };
                     listItem.UseItemStyleForSubItems = false;
                     // TODO: Apply proper theming colour
@@ -288,10 +288,13 @@ namespace FlashDebugger
                     wholeFrameStack.Add(listItem);
                 }
                 FilterResults();
+                toolStripTextBoxFilter.Enabled = lv.Enabled = true;
             }
             else
+            {
                 lv.Items.Clear();
-            toolStripTextBoxFilter.Enabled = lv.Enabled = lv.Items.Count > 0;
+                toolStripTextBoxFilter.Enabled = lv.Enabled = false;
+            }
         }
 
         private void Lv_KeyDown(object sender, KeyEventArgs e)
