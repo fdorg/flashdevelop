@@ -678,7 +678,10 @@ namespace ASCompletion
                 if (aFile.OutlineState.highlight != null)
                 {
                     TreeNode toHighligh = outlineTree.FindClosestPath(outlineTree.State.highlight);
-                    if (toHighligh != null) SetHighlight(toHighligh);
+                    if (toHighligh != null)
+                        SetHighlight(toHighligh);
+                    else
+                        Highlight(ASContext.Context.CurrentClass, ASContext.Context.CurrentMember);
                 }
             }
         }
