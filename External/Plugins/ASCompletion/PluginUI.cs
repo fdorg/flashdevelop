@@ -579,6 +579,8 @@ namespace ASCompletion
         {
             //TraceManager.Add("Outline refresh...");
             outlineTree.BeginStatefulUpdate();
+            if (prevChecksum.StartsWith(aFile.FileName))
+                aFile.OutlineState = outlineTree.State;
 
             try
             {
