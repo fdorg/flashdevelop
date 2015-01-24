@@ -580,16 +580,18 @@ namespace ASCompletion
             //TraceManager.Add("Outline refresh...");
             outlineTree.BeginStatefulUpdate();
 
-            if (findProcTxt.Text != searchInvitation)
-            {
-                findProcTxt.Clear();
-                FindProcTxtLeave(null, null);
-            }
-
             try
             {
                 currentHighlight = null;
                 outlineTree.Nodes.Clear();
+
+                // If text == "" then the field has the focus and it's already empty, no need to dispatch unneeded events
+                if (findProcTxt.Text != searchInvitation && findProcTxt.Text != string.Empty)
+                {
+                    findProcTxt.Clear();
+                    FindProcTxtLeave(null, null);
+                }
+
                 TreeNode root = new TreeNode(System.IO.Path.GetFileName(aFile.FileName), ICON_FILE, ICON_FILE);
                 outlineTree.Nodes.Add(root);
                 if (aFile == FileModel.Ignore)
