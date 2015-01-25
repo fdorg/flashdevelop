@@ -66,7 +66,7 @@ namespace FlashDebugger.Controls
             treeControl.Nodes.Clear();
             foreach (String item in watches)
             {
-                DataNode node = new DataNode(item); // todo, introduce new Node types.
+                DataNode node; // todo, introduce new Node types.
                 try
                 {
                     IASTBuilder builder = new ASTBuilder(false);
@@ -76,7 +76,10 @@ namespace FlashDebugger.Controls
                     node = new DataNode((Variable)obj);
                     node.Tag = item;
                 }
-                catch { }
+                catch
+                {
+                    node = new DataNode(item);
+                }
                 node.Text = item;
                 treeControl.AddNode(node);
             }
