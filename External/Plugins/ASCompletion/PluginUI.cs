@@ -83,7 +83,7 @@ namespace ASCompletion
 
         private GeneralSettings settings;
         private string prevChecksum;
-        private string prevLines;
+        private List<int> prevLines;
         private Stack<LookupLocation> lookupLocations;
 
         private TreeNode currentHighlight;
@@ -520,17 +520,23 @@ namespace ASCompletion
             {
                 // files "checksum"
                 StringBuilder sb = new StringBuilder().Append(aFile.FileName).Append(aFile.Version).Append(aFile.Package);
-                StringBuilder sbl = new StringBuilder();
+                var lines = new List<int>();
+                var names = new List<string>();
                 if (aFile != FileModel.Ignore)
                 {
                     sb.Append(settings.ShowExtends).Append(settings.ShowImplements).Append(settings.ShowImports).Append(
                         settings.ShowRegions);
                     foreach (MemberModel import in aFile.Imports)
-                        sb.Append(import.Type)/*.Append(import.LineFrom) unused*/;
+                    {
+                        sb.Append(import.Type);
+                        lines.Add(import.LineFrom);
+                        names.Add(import.Name);
+                    }
                     foreach (MemberModel member in aFile.Members)
                     {
                         sb.Append(member.Flags.ToString()).Append(member.ToString());
-                        sbl.Append(member.LineFrom);
+                        lines.Add(member.LineFrom);
+                        names.Add(member.Name);
                     }
                     foreach (ClassModel aClass in aFile.Classes)
                     {
@@ -538,35 +544,43 @@ namespace ASCompletion
                             aClass.ResolveExtends();
 
                         sb.Append(aClass.Flags.ToString()).Append(aClass.FullName);
-                        sbl.Append(aClass.LineFrom);
                         sb.Append(aClass.ExtendsType);
                         if (aClass.Implements != null)
                             foreach (string implements in aClass.Implements)
                                 sb.Append(implements);
+                        lines.Add(aClass.LineFrom);
+                        names.Add(aClass.Name);
                         foreach (MemberModel member in aClass.Members)
                         {
                             sb.Append(member.Flags.ToString()).Append(member.ToString());
-                            sbl.Append(member.LineFrom);
+                            lines.Add(member.LineFrom);
+                            names.Add(member.Name);
                         }
                     }
 
                     foreach (MemberModel region in aFile.Regions) {
                         sb.Append(region.Name);
-                        sbl.Append(region.LineFrom);
+                        lines.Add(region.LineFrom);
+                        names.Add(region.Name);
                     }
                 }
+
                 string checksum = sb.ToString();
-                string linesChecksum = sbl.ToString();
                 if (checksum != prevChecksum)
                 {
                     prevChecksum = checksum;
-                    prevLines = linesChecksum;
+                    prevLines = lines;
                     RefreshView(aFile);
                 }
-                else if (linesChecksum != prevLines)
+                else
                 {
-                    prevLines = linesChecksum;
-                    UpdateTree(aFile);
+                    for (int i = 0, count = lines.Count; i < count; i++)
+                    {
+                        if (lines[i] == prevLines[i]) continue;
+                        UpdateTree(aFile, names, lines);
+                        prevLines = lines;
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -686,135 +700,39 @@ namespace ASCompletion
             }
         }
 
-        private void UpdateTree(FileModel aFile)
+        private void UpdateTree(FileModel aFile, List<string> modelNames, List<int> newLines)
         {
             try
             {
                 if (aFile == FileModel.Ignore)
                     return;
 
-                var classes = new Dictionary<string, ClassModel>();
-                foreach (var classModel in aFile.Classes)
-                    classes[classModel.Name] = classModel;
+                var mapping = new Dictionary<string, string>();
 
-                var regionText = TextHelper.GetString("Info.RegionsNode");
-                var otherNodes = new List<TreeNode>();
-
-                ClassModel model;
-                foreach (TreeNode node in outlineTree.Nodes[0].Nodes)
+                for (int i = 0, count = newLines.Count; i < count; i++)
                 {
-                    if (node.Text == regionText && node.ImageIndex == ICON_PACKAGE)
+                    string name = modelNames[i];
+                    mapping[name + "@" + prevLines[i]] = name + "@" + newLines[i];
+                }
+
+                var tree = new Stack<TreeNodeCollection>();
+                tree.Push(outlineTree.Nodes);
+                while (tree.Count > 0)
+                {
+                    var nodes = tree.Pop();
+                    foreach (TreeNode node in nodes)
                     {
-                        UpdateRegions(node.Nodes, aFile);
-                    }
-                    else if (classes.TryGetValue(node.Text, out model) && node.ImageIndex == GetIcon(model.Flags, model.Access))
-                    {
-                        if (node.Nodes.Count > 0) 
-                            UpdateMembers(node.Nodes, model.Members);
-                    }
-                    else
-                    {
-                        otherNodes.Add(node);
+                        var memberNode = node as MemberTreeNode;
+                        string newTag;
+                        if (memberNode != null && mapping.TryGetValue((string)memberNode.Tag, out newTag))
+                            memberNode.Tag = newTag;
+                        if (node.Nodes.Count > 0) tree.Push(node.Nodes);
                     }
                 }
-                
-                if (aFile.Members.Count > 0)
-                    UpdateMembers(otherNodes, aFile.Members);
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowError(/*ex.Message,*/ ex);
-            }
-        }
-
-        private void UpdateMembers(System.Collections.IEnumerable tree, MemberList members)
-        {
-            var cache = new Dictionary<string, MemberModel>();
-            foreach (var member in members.Items)
-                cache[member.ToString()] = member;
-
-            var nodeStack = new Stack<System.Collections.IEnumerable>();
-            nodeStack.Push(tree);
-            while (nodeStack.Count > 0)
-            {
-                var nodeCollection = nodeStack.Pop();
-                foreach (TreeNode node in nodeCollection)
-                {
-                    var memberNode = node as MemberTreeNode;
-                    if (memberNode != null)
-                        memberNode.UpdateMember(cache[memberNode.Text]);
-                    if (node.Nodes.Count > 0) 
-                        nodeStack.Push(node.Nodes);
-                }
-            }
-        }
-
-        private void UpdateRegions(TreeNodeCollection tree, FileModel aFile)
-        {
-            // Regions and their members are not sorted (on purpose?), so we could use plain indexes,
-            // however, it seems initial parsing rarely triggers a race condition
-            int endRegion = 0;
-            int index = 0;
-            MemberModel region = null;
-            MemberList regions = aFile.Regions;
-            int count = regions.Count;
-            for (index = 0; index < count; ++index)
-            {
-                var cache = new Dictionary<string, MemberModel>();
-                var regionNode = ((MemberTreeNode) tree[index]);
-                region = regions[index];
-                if (regionNode.Text != region.ToString()) continue;
-                regionNode.UpdateMember(region);
-                if (regionNode.Nodes.Count == 0) continue;
-                
-                endRegion = region.LineTo;
-                if (endRegion == 0)
-                {
-                    endRegion = (index + 1 < count) ? regions[index + 1].LineFrom : int.MaxValue;
-                }
-
-                foreach (MemberModel import in aFile.Imports)
-                {
-                    if (import.LineFrom >= region.LineFrom &&
-                        import.LineTo <= endRegion)
-                    {
-                        cache[import.ToString()] = import;
-                    }
-                }
-
-                foreach (MemberModel fileMember in aFile.Members)
-                {
-                    if (fileMember.LineFrom >= region.LineFrom &&
-                        fileMember.LineTo <= endRegion)
-                    {
-                        cache[fileMember.ToString()] = fileMember;
-                    }
-                }
-
-                foreach (ClassModel cls in aFile.Classes)
-                {
-                    if (cls.LineFrom <= region.LineFrom)
-                    {
-                        foreach (MemberModel clsMember in cls.Members)
-                        {
-                            if (clsMember.LineFrom >= region.LineFrom &&
-                                clsMember.LineTo <= endRegion)
-                            {
-                                cache[clsMember.ToString()] = clsMember;
-                            }
-                        }
-                    }
-                    else if (cls.LineFrom >= region.LineFrom &&
-                             cls.LineTo <= endRegion)
-                    {
-                        cache[cls.ToString()] = cls;
-                    }
-                }
-
-                foreach (TreeNode node in regionNode.Nodes)
-                {
-                    ((MemberTreeNode) node).UpdateMember(cache[node.Text]);
-                }
             }
         }
 
