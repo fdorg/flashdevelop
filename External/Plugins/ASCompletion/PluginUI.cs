@@ -1197,11 +1197,6 @@ namespace ASCompletion
         {
             Tag = member.Name + "@" + member.LineFrom;
         }
-
-        public void UpdateMember(MemberModel member)
-        {
-            Tag = member.Name + "@" + member.LineFrom;
-        }
     }
     #endregion
 
