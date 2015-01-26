@@ -376,6 +376,11 @@ namespace CodeRefactor.Commands
                     if (!Results.ContainsKey(newFilePath)) Results[newFilePath] = new List<SearchMatch>();
                     Results[newFilePath].AddRange(matches);
                 }
+                else if (sci.ConfigurationLanguage == "haxe")
+                {
+                    // haxe modules don't need to specify a package if it's empty
+                    sci.InsertText(0, packageReplacement + ";\n\n");
+                }
                 //Do we want to open modified files?
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(file);
                 PluginBase.MainForm.CurrentDocument.Save();
