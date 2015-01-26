@@ -5432,4 +5432,20 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
     <comment>Added after 4.6.4</comment>
   </data>
+  <data name="FlashDebugger.Label.Filter" xml:space="preserve">
+    <value>Filter:</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.SetCurrentFrame" xml:space="preserve">
+    <value>Set as current frame</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.GotoSource" xml:space="preserve">
+    <value>Go to source</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
+    <value>Show just my code</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
 </root>

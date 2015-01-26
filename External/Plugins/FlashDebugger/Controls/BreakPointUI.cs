@@ -45,7 +45,6 @@ namespace FlashDebugger
             this.breakPointManager = breakPointManager;
             this.breakPointManager.ChangeBreakPointEvent += breakPointManager_ChangeBreakPointEvent;
             this.breakPointManager.UpdateBreakPointEvent += breakPointManager_UpdateBreakPointEvent;
-            this.Controls.Add(this.dgv);
         }
 
         void breakPointManager_UpdateBreakPointEvent(object sender, UpdateBreakPointArgs e)
@@ -142,7 +141,10 @@ namespace FlashDebugger
             this.dgv.CellMouseUp += new DataGridViewCellMouseEventHandler(dgv_CellMouseUp);
             this.dgv.CellDoubleClick += new DataGridViewCellEventHandler(dgv_CellDoubleClick);
 
+            this.Controls.Add(this.dgv);
+
             InitializeComponent();
+
             tsbRemoveSelected.Image = imageList.Images["DeleteBreakpoint"];
             tsbRemoveFiltered.Image = imageList.Images["DeleteBreakpoints"];
             tsbAlternateFiltered.Image = imageList.Images["ToggleBreakpoints"];
