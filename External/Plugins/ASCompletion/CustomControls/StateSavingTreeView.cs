@@ -63,7 +63,6 @@ namespace System.Windows.Forms
         {
             base.EndUpdate();
             NativeMethods.SendMessage(Handle, NativeMethods.WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);
-            Refresh();
         }
 
         #region Expanded State Saving
