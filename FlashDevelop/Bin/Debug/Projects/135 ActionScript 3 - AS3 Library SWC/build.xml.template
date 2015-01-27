@@ -14,12 +14,14 @@
 
 		<!-- compile SWC -->
 		<compc output="${OUTPUT}">
+			<!-- <load-config filename="${FLEX_HOME}/frameworks/air-config.xml" /> --> <!-- uncomment for AIR -->
 			<sp path-element="src" />
 			<include-sources dir="src" includes="*"  />
 		</compc>
 
 		<!-- generate documentation -->
 		<asdoc output="lib/tempDoc" lenient="true" failonerror="true" keep-xml="true" skip-xsl="true" fork="true">
+			<!-- <load-config filename="${FLEX_HOME}/frameworks/air-config.xml" /> --> <!-- uncomment for AIR -->
 			<sp path-element="src"/>
 			<doc-sources path-element="src" />
 		</asdoc>
