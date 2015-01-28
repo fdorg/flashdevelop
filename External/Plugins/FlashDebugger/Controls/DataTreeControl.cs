@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using Aga.Controls.Tree.NodeControls;
 using PluginCore.Managers;
 using flash.tools.debugger;
+using FlashDebugger.Controls.DataTree;
 using PluginCore.Localization;
 using PluginCore;
 using flash.tools.debugger.expression;
@@ -18,11 +19,12 @@ namespace FlashDebugger.Controls
         public event EventHandler ValueChanged;
 
         private DataTreeModel _model;
-        private static ViewerForm viewerForm = null;
+        private static ViewerForm viewerForm;
         private ContextMenuStrip _contextMenuStrip;
         private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem;
         private List<String> expandedList = new List<String>();
         private bool watchMode;
+        private bool addingNewExpression;
 
         public Collection<Node> Nodes
         {
@@ -55,24 +57,33 @@ namespace FlashDebugger.Controls
         public DataTreeControl(bool watchMode)
         {
             InitializeComponent();
-            this.ValueNodeTextBox.EditEnabled = true;
-            this.ValueNodeTextBox.EditOnClick = true;
-            this.ValueNodeTextBox.ToolTipProvider = this;
-            this.watchMode = watchMode;
+            ValueNodeTextBox.EditEnabled = true;
+            ValueNodeTextBox.EditOnClick = true;
+            ValueNodeTextBox.ToolTipProvider = this;
+
+            if (watchMode)
+            {
+                this.watchMode = true;
+                NameNodeTextBox.EditEnabled = true;
+                NameNodeTextBox.DrawText += NameNodeTextBox_DrawText;
+                NameNodeTextBox.EditorShowing += NameNodeTextBox_EditorShowing;
+                NameNodeTextBox.EditorHided += NameNodeTextBox_EditorHided;
+                NameNodeTextBox.LabelChanged += NameNodeTextBox_LabelChanged;
+            }
+            
             _model = new DataTreeModel();
             _tree.Model = _model;
-            this.Controls.Add(_tree);
+            Controls.Add(_tree);
             _tree.Expanding += TreeExpanding;
             _tree.SelectionChanged += TreeSelectionChanged;
             _tree.LoadOnDemand = true;
             _tree.AutoRowHeight = true;
-            NameNodeTextBox.IsEditEnabledValueNeeded += NameNodeTextBox_IsEditEnabledValueNeeded;
             ValueNodeTextBox.DrawText += ValueNodeTextBox_DrawText;
             ValueNodeTextBox.IsEditEnabledValueNeeded += ValueNodeTextBox_IsEditEnabledValueNeeded;
             ValueNodeTextBox.EditorShowing += ValueNodeTextBox_EditorShowing;
             ValueNodeTextBox.EditorHided += ValueNodeTextBox_EditorHided;
             ValueNodeTextBox.LabelChanged += ValueNodeTextBox_LabelChanged;
-            _tree.NodeMouseDoubleClick += _tree_NodeMouseDoubleClick;
+            _tree.NodeMouseDoubleClick += Tree_NodeMouseDoubleClick;
             _contextMenuStrip = new ContextMenuStrip();
             if (PluginBase.MainForm != null && PluginBase.Settings != null)
             {
@@ -99,16 +110,71 @@ namespace FlashDebugger.Controls
             viewerForm.StartPosition = FormStartPosition.Manual;
         }
 
-        void NameNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
+        void NameNodeTextBox_DrawText(object sender, DrawEventArgs e)
         {
-            e.Value = false;
+            try
+            {
+                if (e.Node.NextNode == null && !addingNewExpression)
+                {
+                    e.Font = new Font(e.Font, FontStyle.Italic);
+                }
+            }
+            catch (Exception) { }
+        }
+
+        void NameNodeTextBox_EditorHided(object sender, EventArgs e)
+        {
+            if (addingNewExpression)
+            {
+                NodeTextBox box = sender as NodeTextBox;
+                var node = box.Parent.CurrentNode.Tag as Node;
+                if (node.Text.Trim() == "") node.Text = "Add new expression";
+                addingNewExpression = false;
+            }
+
+            // We need to update the tree to avoid some draw problems
+            Tree.FullUpdate();
+        }
+
+        void NameNodeTextBox_EditorShowing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            NodeTextBox box = sender as NodeTextBox;
+            var node = box.Parent.CurrentNode.Tag as Node;
+            if (box.Parent.CurrentNode.NextNode == null)
+            {
+                addingNewExpression = true;
+                node.Text = "";
+            }
+            else
+                addingNewExpression = false;
+        }
+
+        void NameNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
+        {
+            NodeTextBox box = sender as NodeTextBox;
+            if (box.Parent.CurrentNode == null) return;
+            DataNode node = box.Parent.CurrentNode.Tag as DataNode;
+
+            if (e.NewLabel.Trim() == "")
+            {
+                node.Text = e.OldLabel != "" ? e.OldLabel : "Add new expression";
+                return;
+            }
+
+            bool newExp;
+            if (node.NextNode == null)
+                newExp = PanelsHelper.watchUI.AddElement(e.NewLabel);
+            else
+                newExp = PanelsHelper.watchUI.ReplaceElement(e.OldLabel, e.NewLabel);
+
+            if (!newExp) node.Text = e.OldLabel;
         }
 
         void ValueNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
             NodeTextBox box = sender as NodeTextBox;
             if (box.Parent.CurrentNode == null) return;
-            DataNode node = box.Parent.CurrentNode.Tag as DataNode;
+            VariableNode node = box.Parent.CurrentNode.Tag as VariableNode;
             node.IsEditing = false;
             try
             {
@@ -136,7 +202,7 @@ namespace FlashDebugger.Controls
         void ValueNodeTextBox_EditorShowing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             NodeTextBox box = sender as NodeTextBox;
-            DataNode node = box.Parent.CurrentNode.Tag as DataNode;
+            VariableNode node = box.Parent.CurrentNode.Tag as VariableNode;
             node.IsEditing = true;
         }
 
@@ -148,7 +214,7 @@ namespace FlashDebugger.Controls
 
         void ValueNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
         {
-            DataNode node = e.Node.Tag as DataNode;
+            VariableNode node = e.Node.Tag as VariableNode;
             if (node == null || node.Variable == null)
             {
                 e.Value = false;
@@ -168,9 +234,9 @@ namespace FlashDebugger.Controls
         {
             try
             {
-                DataNode node = e.Node.Tag as DataNode;
+                VariableNode node = e.Node.Tag as VariableNode;
                 FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
-                if (node.Variable != null && node.Variable.hasValueChanged(flashInterface.Session))
+                if (node != null && node.Variable != null && node.Variable.hasValueChanged(flashInterface.Session))
                 {
                     e.TextColor = Color.Red;
                 }
@@ -222,11 +288,19 @@ namespace FlashDebugger.Controls
                 }
                 DataNode node = Tree.SelectedNode.Tag as DataNode;
                 viewerForm.Exp = node.Text;
-                // use IsEditing to get unfiltered value
-                bool ed = node.IsEditing;
-                node.IsEditing = true;
-                viewerForm.Value = node.Value;
-                node.IsEditing = ed;
+                if (node is ValueNode)
+                {
+                    var vNode = (ValueNode)node;
+                    // use IsEditing to get unfiltered value
+                    bool ed = vNode.IsEditing;
+                    vNode.IsEditing = true;
+                    viewerForm.Value = node.Value;
+                    vNode.IsEditing = ed;
+                }
+                else
+                {
+                    viewerForm.Value = node.Value;
+                }
                 Form mainform = (PluginBase.MainForm as Form);
                 viewerForm.Left = mainform.Left + mainform.Width / 2 - viewerForm.Width / 2;
                 viewerForm.Top = mainform.Top + mainform.Height / 2 - viewerForm.Height / 2;
@@ -260,17 +334,17 @@ namespace FlashDebugger.Controls
         {
             if (e.Node.Index >= 0)
             {
-                DataNode node = e.Node.Tag as DataNode;
-                if (node.Nodes.Count == 0 && node.Variable != null)
+                ValueNode node = e.Node.Tag as ValueNode;
+                if (node != null && node.Nodes.Count == 0 && node.PlayerValue != null)
                 {
                     FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
-                    List<DataNode> nodes = new List<DataNode>();
-                    List<DataNode> inherited = new List<DataNode>();
-                    List<DataNode> statics = new List<DataNode>();
+                    List<VariableNode> nodes = new List<VariableNode>();
+                    List<VariableNode> inherited = new List<VariableNode>();
+                    List<VariableNode> statics = new List<VariableNode>();
                     int tmpLimit = node.ChildrenShowLimit;
-                    foreach (Variable member in node.Variable.getValue().getMembers(flashInterface.Session))
+                    foreach (Variable member in node.PlayerValue.getMembers(flashInterface.Session))
                     {
-                        DataNode memberNode = new DataNode(member);
+                        VariableNode memberNode = new VariableNode(member);
                         
                         if (member.isAttributeSet(VariableAttribute_.IS_STATIC))
                         {
@@ -287,7 +361,7 @@ namespace FlashDebugger.Controls
                     }
                     if (inherited.Count > 0)
                     {
-                        DataNode inheritedNode = new DataNode("[inherited]");
+                        ValueNode inheritedNode = new ValueNode("[inherited]");
                         inherited.Sort();
                         foreach (DataNode item in inherited)
                         {
@@ -297,7 +371,7 @@ namespace FlashDebugger.Controls
                     }
                     if (statics.Count > 0)
                     {
-                        DataNode staticNode = new DataNode("[static]");
+                        DataNode staticNode = new ValueNode("[static]");
                         statics.Sort();
                         foreach (DataNode item in statics)
                         {
@@ -306,12 +380,12 @@ namespace FlashDebugger.Controls
                         node.Nodes.Add(staticNode);
                     }
                     //test children
-                    foreach (String ch in node.Variable.getValue().getClassHierarchy(false))
+                    foreach (String ch in node.PlayerValue.getClassHierarchy(false))
                     {
                         if (ch.Equals("flash.display::DisplayObjectContainer"))
                         {
-                            double numChildren = ((java.lang.Double)node.Variable.getValue().getMemberNamed(flashInterface.Session, "numChildren").getValue().getValueAsObject()).doubleValue();
-                            DataNode childrenNode = new DataNode("[children]");
+                            double numChildren = ((java.lang.Double)node.PlayerValue.getMemberNamed(flashInterface.Session, "numChildren").getValue().getValueAsObject()).doubleValue();
+                            DataNode childrenNode = new ValueNode("[children]");
                             for (int i = 0; i < numChildren; i++)
                             {
                                 try
@@ -322,7 +396,7 @@ namespace FlashDebugger.Controls
                                     var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                                     var obj = exp.evaluate(ctx);
                                     if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", (flash.tools.debugger.concrete.DValue)obj, ((flash.tools.debugger.concrete.DValue)obj).getIsolateId());
-                                    DataNode childNode = new DataNode((Variable)obj);
+                                    DataNode childNode = new VariableNode((Variable)obj);
                                     childNode.Text = "child_" + i;
                                     childrenNode.Nodes.Add(childNode);
                                 }
@@ -332,7 +406,7 @@ namespace FlashDebugger.Controls
                         }
                         else if (ch.Equals("flash.events::EventDispatcher"))
                         {
-                            Variable list = node.Variable.getValue().getMemberNamed(flashInterface.Session, "listeners");
+                            Variable list = node.PlayerValue.getMemberNamed(flashInterface.Session, "listeners");
                             var omg = list.getName();
                             /*
                             double numChildren = ((java.lang.Double)node.Variable.getValue().getMemberNamed(flashInterface.Session, "numChildren").getValue().getValueAsObject()).doubleValue();
@@ -367,7 +441,7 @@ namespace FlashDebugger.Controls
                     }
                     if (tmpLimit == -1)
                     {
-                        DataNode moreNode = new DataNode("...");
+                        DataNode moreNode = new ValueNode("...");
                         node.Nodes.Add(moreNode);
                     }
                     _tree.EndUpdate();
@@ -375,14 +449,14 @@ namespace FlashDebugger.Controls
             }
         }
 
-        void _tree_NodeMouseDoubleClick(object sender, TreeNodeAdvMouseEventArgs e)
+        void Tree_NodeMouseDoubleClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
-            DataNode node = e.Node.Tag as DataNode;
-            if (node.Text == "..." && node.Variable == null)
+            ValueNode node = e.Node.Tag as ValueNode;
+            if (node != null && node.Text == "..." && node.PlayerValue == null)
             {
                 e.Handled = true;
                 _tree.BeginUpdate();
-                (node.Parent as DataNode).ChildrenShowLimit += 500;
+                (node.Parent as ValueNode).ChildrenShowLimit += 500;
                 TreeNodeAdv parent = e.Node.Parent;
                 int ind = e.Node.Index;
                 parent.Collapse(true);
@@ -402,7 +476,7 @@ namespace FlashDebugger.Controls
         private void SaveExpanded(Collection<Node> nodes)
         {
             if (nodes == null) return;
-            foreach (DataNode node in nodes)
+            foreach (Node node in nodes)
             {
                 if (Tree.FindNode(_model.GetPath(node)).IsExpanded)
                 {
@@ -420,7 +494,7 @@ namespace FlashDebugger.Controls
         private void RestoreExpanded(Collection<Node> nodes)
         {
             if (nodes == null) return;
-            foreach (DataNode node in nodes)
+            foreach (Node node in nodes)
             {
                 if (expandedList.Contains(_model.GetFullPath(node)))
                 {
@@ -436,11 +510,18 @@ namespace FlashDebugger.Controls
         public string GetToolTip(TreeNodeAdv node, NodeControl nodeControl)
         {
             DataNode dataNode = node.Tag as DataNode;
-            // use IsEditing to get unfiltered value
-            bool e = dataNode.IsEditing;
-            dataNode.IsEditing = true;
-            string r = dataNode.Value;
-            dataNode.IsEditing = e;
+            string r;
+            if (dataNode is ValueNode)
+            {
+                var vNode = (ValueNode)dataNode;
+                // use IsEditing to get unfiltered value
+                bool e = vNode.IsEditing;
+                vNode.IsEditing = true;
+                r = dataNode.Value;
+                vNode.IsEditing = e;
+            }
+            else
+                r = dataNode.Value;
             if (r.Length > 300) r = r.Substring(0, 300) + "[...]";
             return r;
         }

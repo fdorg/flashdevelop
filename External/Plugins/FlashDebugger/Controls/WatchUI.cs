@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using Aga.Controls.Tree.NodeControls;
+using FlashDebugger.Controls.DataTree;
 using PluginCore;
 using flash.tools.debugger;
 using flash.tools.debugger.expression;
@@ -36,11 +38,12 @@ namespace FlashDebugger.Controls
             this.treeControl.Tree.Columns[1].Width = w - 8;
         }
 
-        public void AddElement(String item)
+        public bool AddElement(String item)
         {
-            if (watches.Contains(item)) return;
+            if (watches.Contains(item)) return false;
             watches.Add(item);
             UpdateElements();
+            return true;
         }
         
         public void RemoveElement(string item)
@@ -51,13 +54,28 @@ namespace FlashDebugger.Controls
 
         public void RemoveElement(int itemN)
         {
-            if (itemN<watches.Count) RemoveElement(watches[itemN]);
+            if (itemN < watches.Count) RemoveElement(watches[itemN]);
+        }
+
+        public bool ReplaceElement(string oldItem, string newItem)
+        {
+            if (watches.Contains(newItem)) return false;
+            int itemN = watches.IndexOf(oldItem);
+            if (itemN == -1)
+                AddElement(newItem);
+            else
+            {
+                watches[itemN] = newItem;
+                UpdateElements();
+            }
+
+            return true;
         }
 
         public void Clear()
         {
             watches.Clear();
-            UpdateElements();
+            treeControl.Nodes.Clear();
         }
 
         public void UpdateElements()
@@ -73,16 +91,24 @@ namespace FlashDebugger.Controls
                     ValueExp exp = builder.parse(new java.io.StringReader(item));
                     var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                     var obj = exp.evaluate(ctx);
-                    node = new DataNode((Variable)obj);
+                    if (obj is Variable)
+                        node = new VariableNode((Variable)obj);
+                    else if (obj is Value)
+                        node = new ValueNode(item, (Value)obj);
+                    else
+                        node = new ScalarNode(item, obj.toString());
                     node.Tag = item;
                 }
                 catch
                 {
-                    node = new DataNode(item);
+                    node = new ValueNode(item);
                 }
                 node.Text = item;
                 treeControl.AddNode(node);
             }
+            
+            treeControl.AddNode(new ValueNode("Add new expression"));
+            ((NodeTextBox)treeControl.Tree.NodeControls[treeControl.Tree.NodeControls.Count - 2]).EditOnClick = true;
             treeControl.Tree.EndUpdate();
             treeControl.Enabled = true;
         }

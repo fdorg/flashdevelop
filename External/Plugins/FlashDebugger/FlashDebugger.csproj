@@ -98,6 +98,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\DataTree\DataNode.cs" />
+    <Compile Include="Controls\DataTree\ScalarNode.cs" />
+    <Compile Include="Controls\DataTree\ValueNode.cs" />
+    <Compile Include="Controls\DataTree\VariableNode.cs" />
     <Compile Include="Controls\ThreadsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
