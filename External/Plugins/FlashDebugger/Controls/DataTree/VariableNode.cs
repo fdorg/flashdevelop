@@ -19,7 +19,7 @@ namespace FlashDebugger.Controls.DataTree
             }
             set
             {
-                if (m_Value == null)
+                if (m_Variable == null)
                     return;
 
                 var flashInterface = PluginMain.debugManager.FlashInterface;
@@ -39,8 +39,16 @@ namespace FlashDebugger.Controls.DataTree
                 if (m_Variable == value) return;
 
                 m_Variable = value;
-                m_Value = m_Variable.getValue();
-                Text = m_Variable.getName();
+                if (m_Variable != null)
+                {
+                    m_Value = m_Variable.getValue();
+                    Text = m_Variable.getName();
+                } 
+                else
+                {
+                    m_Value = null;
+                    Text = "";
+                }
             }
         }
 
