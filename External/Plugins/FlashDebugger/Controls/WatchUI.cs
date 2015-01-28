@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Aga.Controls.Tree.NodeControls;
 using FlashDebugger.Controls.DataTree;
 using PluginCore;
+using PluginCore.Localization;
 using flash.tools.debugger;
 using flash.tools.debugger.expression;
 
@@ -106,8 +107,8 @@ namespace FlashDebugger.Controls
                 node.Text = item;
                 treeControl.AddNode(node);
             }
-            
-            treeControl.AddNode(new ValueNode("Add new expression"));
+
+            treeControl.AddNode(new ValueNode(TextHelper.GetString("Label.AddExpression")));
             ((NodeTextBox)treeControl.Tree.NodeControls[treeControl.Tree.NodeControls.Count - 2]).EditOnClick = true;
             treeControl.Tree.EndUpdate();
             treeControl.Enabled = true;

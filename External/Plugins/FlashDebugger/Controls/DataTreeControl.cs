@@ -128,7 +128,7 @@ namespace FlashDebugger.Controls
             {
                 NodeTextBox box = sender as NodeTextBox;
                 var node = box.Parent.CurrentNode.Tag as Node;
-                if (node.Text.Trim() == "") node.Text = "Add new expression";
+                if (node.Text.Trim() == "") node.Text = TextHelper.GetString("Label.AddExpression");
                 addingNewExpression = false;
             }
 
@@ -157,7 +157,7 @@ namespace FlashDebugger.Controls
 
             if (e.NewLabel.Trim() == "")
             {
-                node.Text = e.OldLabel != "" ? e.OldLabel : "Add new expression";
+                node.Text = e.OldLabel != "" ? e.OldLabel : TextHelper.GetString("Label.AddExpression");
                 return;
             }
 

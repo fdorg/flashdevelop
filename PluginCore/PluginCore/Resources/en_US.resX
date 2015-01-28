@@ -5451,4 +5451,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Show just my code</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
+    <value>Add new expression</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
 </root>

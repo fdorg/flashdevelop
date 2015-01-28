@@ -5444,4 +5444,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Show just my code</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
+    <value>Add new expression</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
 </root>
