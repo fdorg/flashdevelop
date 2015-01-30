@@ -708,6 +708,7 @@ namespace AppMan
         /// </summary>
         private void GenerateBundleLinks()
         {
+            LinkLabel prevLink = this.updateLinkLabel;
             List<String> bundleLinks = new List<String>();
             foreach (DepEntry entry in this.depEntries)
             {
@@ -717,13 +718,15 @@ namespace AppMan
                     {
                         LinkLabel linkLabel = new LinkLabel();
                         linkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-                        linkLabel.Location = new Point(this.updateLinkLabel.Bounds.Right + 5, this.updateLinkLabel.Location.Y);
                         linkLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(this.BundleLinkLabelLinkClicked);
-                        linkLabel.Links[0].LinkData = bundle; 
+                        linkLabel.Location = new Point(prevLink.Bounds.Right + 5, prevLink.Location.Y);
+                        linkLabel.Links[0].LinkData = bundle;
+                        linkLabel.LinkColor = Color.Green;
                         linkLabel.AutoSize = true;
                         linkLabel.Text = bundle;
                         bundleLinks.Add(bundle);
                         this.Controls.Add(linkLabel);
+                        prevLink = linkLabel;
                     }
                 }
             }
