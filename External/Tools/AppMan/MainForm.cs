@@ -40,6 +40,11 @@ namespace AppMan
         private Boolean checkOnly;
 
         /**
+        * Static link label margin constant
+        */
+        public static Int32 LINK_MARGIN = 4;
+
+        /**
         * Static type and state constants
         */ 
         public static String TYPE_LINK = "Link";
@@ -694,6 +699,7 @@ namespace AppMan
                 if (this.appGroups.Count > 1) this.listView.ShowGroups = true;
                 else this.listView.ShowGroups = false;
                 this.UpdateEntryStates();
+                this.UpdateLinkPositions();
                 this.GenerateBundleLinks();
                 this.listView.EndUpdate();
             }
@@ -701,6 +707,18 @@ namespace AppMan
             {
                 DialogHelper.ShowError(ex.ToString());
             }
+        }
+
+        /// <summary>
+        /// Update the link label positions for example if the font is different size.
+        /// </summary>
+        private void UpdateLinkPositions()
+        {
+            this.allLinkLabel.Location = new Point(this.selectLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+            this.noneLinkLabel.Location = new Point(this.allLinkLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+            this.newLinkLabel.Location = new Point(this.noneLinkLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+            this.instLinkLabel.Location = new Point(this.newLinkLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+            this.updateLinkLabel.Location = new Point(this.instLinkLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
         }
 
         /// <summary>
@@ -719,7 +737,7 @@ namespace AppMan
                         LinkLabel linkLabel = new LinkLabel();
                         linkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
                         linkLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(this.BundleLinkLabelLinkClicked);
-                        linkLabel.Location = new Point(prevLink.Bounds.Right + 5, prevLink.Location.Y);
+                        linkLabel.Location = new Point(prevLink.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
                         linkLabel.Links[0].LinkData = bundle;
                         linkLabel.LinkColor = Color.Green;
                         linkLabel.AutoSize = true;

@@ -302,7 +302,7 @@ namespace AppMan
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.listView);
             this.Controls.Add(this.statusStrip);
-            this.MinimumSize = new System.Drawing.Size(494, 340);
+            this.MinimumSize = new System.Drawing.Size(485, 340);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new EventHandler(this.MainFormLoad);
             this.HelpRequested += new HelpEventHandler(this.MainFormHelpRequested);

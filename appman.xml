@@ -69,6 +69,9 @@
 		<Build>1</Build>
 		<Desc>Apache Flex SDK and dependencies installer</Desc>
 		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Flex</Bundle>
+		</Bundles>
 		<Type>Executable</Type>
 		<Info>http://flex.apache.org/index.html</Info>
 		<Urls>
@@ -114,6 +117,7 @@
 			<Bundle>Haxe</Bundle>
 			<Bundle>AS3</Bundle>
 			<Bundle>AIR</Bundle>
+			<Bundle>Flex</Bundle>
 		</Bundles>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
