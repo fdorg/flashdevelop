@@ -581,6 +581,29 @@ namespace AppMan
         }
 
         /// <summary>
+        /// On bundle link click, selects all bundled items.
+        /// </summary>
+        private void BundleLinkLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                if (this.isLoading) return;
+                this.listView.BeginUpdate();
+                foreach (ListViewItem item in this.listView.Items)
+                {
+                    DepEntry entry = item.Tag as DepEntry;
+                    if (Array.IndexOf(entry.Bundles, e.Link.LinkData.ToString()) != -1) item.Checked = true;
+                    else item.Checked = false;
+                }
+                this.listView.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
         /// Disables the item checking when downloading.
         /// </summary>
         private void ListViewItemCheck(Object sender, ItemCheckEventArgs e)
@@ -671,11 +694,38 @@ namespace AppMan
                 if (this.appGroups.Count > 1) this.listView.ShowGroups = true;
                 else this.listView.ShowGroups = false;
                 this.UpdateEntryStates();
+                this.GenerateBundleLinks();
                 this.listView.EndUpdate();
             }
             catch (Exception ex)
             {
                 DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Generates the bundle selection links.
+        /// </summary>
+        private void GenerateBundleLinks()
+        {
+            List<String> bundleLinks = new List<String>();
+            foreach (DepEntry entry in this.depEntries)
+            {
+                foreach (String bundle in entry.Bundles)
+                {
+                    if (!bundleLinks.Contains(bundle))
+                    {
+                        LinkLabel linkLabel = new LinkLabel();
+                        linkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+                        linkLabel.Location = new Point(this.updateLinkLabel.Bounds.Right + 5, this.updateLinkLabel.Location.Y);
+                        linkLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(this.BundleLinkLabelLinkClicked);
+                        linkLabel.Links[0].LinkData = bundle; 
+                        linkLabel.AutoSize = true;
+                        linkLabel.Text = bundle;
+                        bundleLinks.Add(bundle);
+                        this.Controls.Add(linkLabel);
+                    }
+                }
             }
         }
 
@@ -1388,6 +1438,9 @@ namespace AppMan
         [XmlArrayItem("Url")]
         public String[] Urls = new String[0];
 
+        [XmlArrayItem("Bundle")]
+        public String[] Bundles = new String[0];
+
         [XmlIgnore]
         public Dictionary<String, String> Temps;
 
@@ -1396,7 +1449,7 @@ namespace AppMan
             this.Type = MainForm.TYPE_ARCHIVE;
             this.Temps = new Dictionary<String, String>();
         }
-        public DepEntry(String id, String name, String desc, String group, String version, String build, String type, String info, String cmd, String[] urls)
+        public DepEntry(String id, String name, String desc, String group, String version, String build, String type, String info, String cmd, String[] urls, String[] bundles)
         {
             this.Id = id;
             this.Name = name;
@@ -1404,6 +1457,7 @@ namespace AppMan
             this.Group = group;
             this.Build = build;
             this.Version = version;
+            this.Bundles = bundles;
             this.Temps = new Dictionary<String, String>();
             if (!String.IsNullOrEmpty(type)) this.Type = type;
             else this.Type = MainForm.TYPE_ARCHIVE;
