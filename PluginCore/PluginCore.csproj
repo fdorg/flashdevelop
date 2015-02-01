@@ -311,6 +311,9 @@
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PluginCore\Controls\InactiveForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ShellContextMenu.cs" />
     <Compile Include="PluginCore\Controls\SmartForm.cs">

@@ -23,6 +23,7 @@ namespace PluginCore.Controls
         public event UpdateTipHandler OnUpdateSimpleTip;
 
 		// controls
+	    protected InactiveForm host;
 		protected Panel toolTip;
         protected RichTextBox toolTipRTB;
         protected string rawText;
@@ -32,23 +33,25 @@ namespace PluginCore.Controls
 		protected List<String> rtfCacheList;
         protected Point mousePos;
 
+	    protected IWin32Window owner;
+
 		#region Public Properties
 		
 		public bool Visible 
 		{
-			get { return toolTip.Visible; }
+			get { return host.Visible; }
 		}
 
         public Size Size
         {
-            get { return toolTip.Size; }
-            set { toolTip.Size = value; }
+            get { return host.Size; }
+            set { host.Size = value; }
         }
 
 		public Point Location
 		{
-			get { return toolTip.Location;  }
-			set { toolTip.Location = value; }
+			get { return host.Location;  }
+			set { host.Location = value; }
 		}
 
 		public string Text 
@@ -64,16 +67,23 @@ namespace PluginCore.Controls
 		
 		#region Control creation
 		
-		public RichToolTip(IMainForm mainForm)
+		public RichToolTip(IWin32Window owner)
 		{
+            // host
+		    host = new InactiveForm();
+		    host.FormBorderStyle = FormBorderStyle.None;
+            host.ShowInTaskbar = false;
+
+		    this.owner = owner;
+            
 			// panel
 			toolTip = new Panel();
 			toolTip.Location = new System.Drawing.Point(0,0);
             toolTip.BackColor = System.Drawing.SystemColors.Info;
             toolTip.ForeColor = System.Drawing.SystemColors.InfoText;
 			toolTip.BorderStyle = BorderStyle.FixedSingle;
-			toolTip.Visible = false;
-			(mainForm as Form).Controls.Add(toolTip);
+		    toolTip.Dock = DockStyle.Fill;
+			host.Controls.Add(toolTip);
 			// text
 			toolTipRTB = new System.Windows.Forms.RichTextBox();
 			toolTipRTB.Location = new System.Drawing.Point(2,1);
@@ -112,14 +122,15 @@ namespace PluginCore.Controls
 			Size txtSize = WinFormUtils.MeasureRichTextBox(toolTipRTB, false, toolTipRTB.Width, toolTipRTB.Height, false);
 
 			// tooltip larger than the window: wrap
-			int limitLeft = ((Form)PluginBase.MainForm).ClientRectangle.Left + 10;
-			int limitRight = ((Form)PluginBase.MainForm).ClientRectangle.Right - 10;
-			int limitBottom = ((Form)PluginBase.MainForm).ClientRectangle.Bottom - 26;
+		    var screenArea = Screen.FromHandle(owner.Handle).WorkingArea;
+			int limitLeft = screenArea.Left + 10;
+            int limitRight = screenArea.Right - 10;
+            int limitBottom = screenArea.Bottom - 26;
 			//
 			int maxW = availableWidth > 0 ? availableWidth : limitRight - limitLeft;
 			if (maxW > maxWidth && maxWidth > 0)
 				maxW = maxWidth;
-
+            
 			int w = txtSize.Width + 4;
 			if (w > maxW)
 			{
@@ -138,10 +149,10 @@ namespace PluginCore.Controls
 			int h = txtSize.Height + 2;
 			int dh = 1;
 			int dw = 2;
-			if (h > (limitBottom - toolTip.Top))
+			if (h > (limitBottom - host.Top))
 			{
 				w += 15;
-				h = limitBottom - toolTip.Top;
+				h = limitBottom - host.Top;
 				dh = 4;
 				dw = 5;
 
@@ -149,13 +160,13 @@ namespace PluginCore.Controls
 			}
 
 			toolTipRTB.Size = new Size(w, h);
-			toolTip.Size = new Size(w + dw, h + dh);
+			host.Size = new Size(w + dw, h + dh);
 
-			if (toolTip.Left < limitLeft)
-				toolTip.Left = limitLeft;
+			if (host.Left < limitLeft)
+				host.Left = limitLeft;
 
-			if (toolTip.Left + toolTip.Width > limitRight)
-				toolTip.Left = limitRight - toolTip.Width;
+			if (host.Left + host.Width > limitRight)
+				host.Left = limitRight - host.Width;
 
 			if (toolTipRTB.WordWrap != wordWrap)
 				toolTipRTB.WordWrap = wordWrap;
@@ -167,7 +178,7 @@ namespace PluginCore.Controls
 		{
             if (text != Text)
             {
-                toolTip.Visible = false;
+                host.Visible = false;
                 Text = text;
             }
 			ShowAtMouseLocation();
@@ -176,15 +187,15 @@ namespace PluginCore.Controls
 		public void ShowAtMouseLocation()
 		{
             //ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-			mousePos = ((Form)PluginBase.MainForm).PointToClient(Control.MousePosition);
-            toolTip.Left = mousePos.X;// +sci.Left;
-            if (toolTip.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
+			mousePos = Control.MousePosition;
+            host.Left = mousePos.X;// +sci.Left;
+		    var screen = Screen.FromPoint(mousePos);
+            if (host.Right > screen.WorkingArea.Right)
             {
-                toolTip.Left -= (toolTip.Right - ((Form)PluginBase.MainForm).ClientRectangle.Right);
+                host.Left -= (host.Right - screen.WorkingArea.Right);
             }
-            toolTip.Top = mousePos.Y - toolTip.Height - 10;// +sci.Top;
-			toolTip.Show();
-			toolTip.BringToFront();
+            host.Top = mousePos.Y - host.Height - 10;// +sci.Top;
+			host.Show(owner);
 		}
 
         public void UpdateTip(ScintillaControl sci)
@@ -194,17 +205,16 @@ namespace PluginCore.Controls
 		
 		public virtual void Hide()
 		{
-			if (toolTip.Visible)
+			if (host.Visible)
 			{
-				toolTip.Visible = false;
+				host.Visible = false;
                 toolTipRTB.ResetText();
 			}
 		}
 
         public virtual void Show()
 		{
-			toolTip.Visible = true;
-			toolTip.BringToFront();
+			host.Show(owner);
 		}
 
 		public void SetText(String rawText, bool redraw)

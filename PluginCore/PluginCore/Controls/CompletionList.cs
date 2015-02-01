@@ -23,6 +23,7 @@ namespace PluginCore.Controls
 		private static System.Timers.Timer tempo;
         private static System.Timers.Timer tempoTip;
         private static System.Windows.Forms.ListBox completionList;
+	    private static System.Windows.Forms.Form listHost;
 		
 		#region State Properties
 
@@ -73,15 +74,21 @@ namespace PluginCore.Controls
             
 			completionList = new ListBox();
             completionList.Font = new System.Drawing.Font(PluginBase.Settings.DefaultFont, FontStyle.Regular);
-			completionList.Visible = false;
-			completionList.Location = new Point(400,200);
             completionList.ItemHeight = completionList.Font.Height + 2;
-			completionList.Size = new Size(180, 100);
+            completionList.Dock = DockStyle.Fill;
 			completionList.DrawMode = DrawMode.OwnerDrawFixed;
 			completionList.DrawItem += new DrawItemEventHandler(CLDrawListItem);
 			completionList.Click += new EventHandler(CLClick);
 			completionList.DoubleClick += new EventHandler(CLDoubleClick);
-            mainForm.Controls.Add(completionList);
+
+            listHost = new InactiveForm();
+            listHost.StartPosition = FormStartPosition.Manual;
+            listHost.FormBorderStyle = FormBorderStyle.None;
+            listHost.ShowIcon = false;
+            listHost.ShowInTaskbar = false;
+            listHost.Size = new Size(180, 100);
+
+            listHost.Controls.Add(completionList);
 		}
 		
 		#endregion
@@ -159,7 +166,6 @@ namespace PluginCore.Controls
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable) return;
             ScintillaControl sci = doc.SciControl;
-			ListBox cl = completionList;
 			try
 			{
 				if ((itemList == null) || (itemList.Count == 0))
@@ -254,36 +260,36 @@ namespace PluginCore.Controls
             if (!doc.IsEditable) return;
             ScintillaControl sci = doc.SciControl;
             ListBox cl = completionList;
-			if (cl.Items.Count == 0) return;
+            Form host = listHost;
+            if (cl.Items.Count == 0) return;
 
             // measure control
-            if (needResize && widestLabel != null && widestLabel.Length > 0)
+            if (needResize && !string.IsNullOrEmpty(widestLabel))
             {
                 needResize = false;
                 Graphics g = cl.CreateGraphics();
                 SizeF size = g.MeasureString(widestLabel, cl.Font);
-                cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), 400) + ScaleHelper.Scale(10);
+                host.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), 400) + ScaleHelper.Scale(10);
             }
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
-            if (newHeight != cl.Height) cl.Height = newHeight;
+            if (newHeight != host.Height) host.Height = newHeight;
 			// place control
 			Point coord = new Point(sci.PointXFromPosition(startPos), sci.PointYFromPosition(startPos));
-			listUp = UITools.CallTip.CallTipActive || (coord.Y+cl.Height > (sci as Control).Height);
+			listUp = UITools.CallTip.CallTipActive || (coord.Y+host.Height > (sci as Control).Height);
 			coord = sci.PointToScreen(coord);
-			coord = ((Form)PluginBase.MainForm).PointToClient(coord);
-			cl.Left = coord.X-20 + sci.Left;
-			if (listUp) cl.Top = coord.Y-cl.Height;
-            else cl.Top = coord.Y + UITools.Manager.LineHeight(sci);
+			host.Left = coord.X + sci.Left;
+            var screen = Screen.FromHandle(PluginBase.MainForm.Handle);
+			if (listUp) host.Top = coord.Y-host.Height;
+            else host.Top = coord.Y + UITools.Manager.LineHeight(sci);
             // Keep on control area
-            if (cl.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
+            if (host.Right > screen.WorkingArea.Right)
             {
-                cl.Left = ((Form)PluginBase.MainForm).ClientRectangle.Right - cl.Width;
+                host.Left = screen.WorkingArea.Right - host.Width;
             }
-			if (!cl.Visible)
+			if (!host.Visible)
 			{
                 Redraw();
-                cl.Show();
-                cl.BringToFront();
+                host.Show(PluginBase.MainForm);
                 if (UITools.CallTip.CallTipActive) UITools.CallTip.PositionControl(sci);
 			}
 		}
@@ -305,7 +311,7 @@ namespace PluginCore.Controls
 				isActive = false;
 				fullList = false;
                 faded = false;
-				completionList.Visible = false;
+				listHost.Visible = false;
 				if (completionList.Items.Count > 0) completionList.Items.Clear();
 				currentItem = null;
 				allItems = null;
@@ -398,22 +404,23 @@ namespace PluginCore.Controls
 			UITools.Tip.SetText(currentItem.Description ?? "", false);
 			UITools.Tip.Redraw(false);
 
-			int rightWidth = ((Form)PluginBase.MainForm).ClientRectangle.Right - completionList.Right - 10;
-			int leftWidth = completionList.Left;
-
-			Point posTarget = new Point(completionList.Right, completionList.Top);
+            var screen = Screen.FromControl(listHost);
+			int rightWidth = screen.WorkingArea.Right - listHost.Right - 10;
+			int leftWidth = listHost.Left;
+            
+			Point posTarget = new Point(listHost.Right, listHost.Top);
 			int widthTarget = rightWidth;
 			if (rightWidth < 220 && leftWidth > 220)
 			{
 				widthTarget = leftWidth;
-				posTarget = new Point(0, completionList.Top);
+				posTarget = new Point(0, listHost.Top);
 			}
 
 			UITools.Tip.Location = posTarget;
 			UITools.Tip.AutoSize(widthTarget, 500);
 
 			if (widthTarget == leftWidth)
-				UITools.Tip.Location = new Point(completionList.Left - UITools.Tip.Size.Width, posTarget.Y);
+				UITools.Tip.Location = new Point(listHost.Left - UITools.Tip.Size.Width, posTarget.Y);
 
 			UITools.Tip.Show();
 		}
@@ -926,15 +933,15 @@ namespace PluginCore.Controls
 					return true;
 					
 				case Keys.Space:
-                    if (noAutoInsert) CompletionList.Hide();
+                    if (noAutoInsert) Hide();
 					return false;
 
                 case Keys.Up:
                     noAutoInsert = false;
 					// the list was hidden and it should not appear
-					if (!completionList.Visible)
+					if (!listHost.Visible)
 					{
-						CompletionList.Hide();
+						Hide();
 						if (key == Keys.Up) sci.LineUp(); 
 						else sci.CharLeft();
 						return false;
@@ -958,9 +965,9 @@ namespace PluginCore.Controls
                 case Keys.Down:
                     noAutoInsert = false;
 					// the list was hidden and it should not appear
-					if (!completionList.Visible)
+					if (!listHost.Visible)
 					{
-						CompletionList.Hide();
+						Hide();
 						if (key == Keys.Down) sci.LineDown(); 
 						else sci.CharRight();
 						return false;
@@ -984,9 +991,9 @@ namespace PluginCore.Controls
                 case Keys.PageUp:
                     noAutoInsert = false;
 					// the list was hidden and it should not appear
-					if (!completionList.Visible)
+					if (!listHost.Visible)
 					{
-						CompletionList.Hide();
+						Hide();
 						sci.PageUp();
 						return false;
 					}
@@ -1003,9 +1010,9 @@ namespace PluginCore.Controls
                 case Keys.PageDown:
                     noAutoInsert = false;
 					// the list was hidden and it should not appear
-					if (!completionList.Visible)
+					if (!listHost.Visible)
 					{
-						CompletionList.Hide();
+						Hide();
 						sci.PageDown();
 						return false;
 					}
@@ -1056,14 +1063,14 @@ namespace PluginCore.Controls
             if (faded) return;
             faded = true;
             UITools.Tip.Hide();
-            completionList.Visible = false;
+            listHost.Visible = false;
         }
 
         internal static void FadeIn()
         {
             if (!faded) return;
             faded = false;
-            completionList.Visible = true;
+            listHost.Visible = true;
         }
 
         #endregion
