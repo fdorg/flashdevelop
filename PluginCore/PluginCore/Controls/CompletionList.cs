@@ -413,7 +413,7 @@ namespace PluginCore.Controls
 			if (rightWidth < 220 && leftWidth > 220)
 			{
 				widthTarget = leftWidth;
-				posTarget = new Point(0, listHost.Top);
+				posTarget.X = 0;
 			}
 
 			UITools.Tip.Location = posTarget;

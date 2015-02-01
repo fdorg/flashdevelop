@@ -73,6 +73,7 @@ namespace PluginCore.Controls
 		    host = new InactiveForm();
 		    host.FormBorderStyle = FormBorderStyle.None;
             host.ShowInTaskbar = false;
+            host.StartPosition = FormStartPosition.Manual;
 
 		    this.owner = owner;
             
