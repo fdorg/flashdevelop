@@ -72,10 +72,10 @@ namespace PluginCore.Controls
 		}
         public void CallTipShow(ScintillaControl sci, int position, string text, bool redraw)
         {
-            if (toolTip.Visible && position == memberPos && text == currentText)
+            if (host.Visible && position == memberPos && text == currentText)
                 return;
 
-            toolTip.Visible = false;
+            host.Visible = false;
             currentText = text;
 			SetText(text, true);
 
@@ -95,18 +95,17 @@ namespace PluginCore.Controls
         {
             // compute control location
             Point p = new Point(sci.PointXFromPosition(memberPos), sci.PointYFromPosition(memberPos));
-            p = ((Form)PluginBase.MainForm).PointToClient(((Control)sci).PointToScreen(p));
-            toolTip.Left = p.X /*+ sci.Left*/;
+            p = sci.PointToScreen(p);
+            host.Left = p.X /*+ sci.Left*/;
             bool hasListUp = !CompletionList.Active || CompletionList.listUp;
-            if (currentLine > sci.LineFromPosition(memberPos) || !hasListUp) toolTip.Top = p.Y - toolTip.Height /*+ sci.Top*/;
-            else toolTip.Top = p.Y + UITools.Manager.LineHeight(sci) /*+ sci.Top*/;
+            if (currentLine > sci.LineFromPosition(memberPos) || !hasListUp) host.Top = p.Y - host.Height /*+ sci.Top*/;
+            else host.Top = p.Y + UITools.Manager.LineHeight(sci) /*+ sci.Top*/;
             // Keep on control area
-            if (toolTip.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
+            if (host.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
             {
-                toolTip.Left = ((Form)PluginBase.MainForm).ClientRectangle.Right - toolTip.Width;
+                host.Left = ((Form)PluginBase.MainForm).ClientRectangle.Right - host.Width;
             }
-            toolTip.Show();
-            toolTip.BringToFront();
+            host.Show(owner);
         }
 
 		public void CallTipSetHlt(int start, int end)
@@ -238,7 +237,7 @@ namespace PluginCore.Controls
             if (faded) return;
             faded = true;
             //base.Hide();
-            toolTip.Visible = false;
+            host.Visible = false;
         }
 
         internal void FadeIn()
@@ -246,7 +245,7 @@ namespace PluginCore.Controls
             if (!faded) return;
             faded = false;
             //base.Show();
-            toolTip.Visible = true;
+            host.Visible = true;
         }
         #endregion
     }
