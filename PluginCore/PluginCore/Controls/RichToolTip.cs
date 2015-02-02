@@ -196,6 +196,8 @@ namespace PluginCore.Controls
                 host.Left -= (host.Right - screen.WorkingArea.Right);
             }
             host.Top = mousePos.Y - host.Height - 10;// +sci.Top;
+            if (host.Top < 5)
+                host.Top = mousePos.Y + 10;
 			host.Show(owner);
 		}
 
@@ -215,7 +217,8 @@ namespace PluginCore.Controls
 
         public virtual void Show()
 		{
-			host.Show(owner);
+            if (!host.Visible)
+    			host.Show(owner);
 		}
 
 		public void SetText(String rawText, bool redraw)

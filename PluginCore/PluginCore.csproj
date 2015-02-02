@@ -311,6 +311,7 @@
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PluginCore\Controls\CompletionListControl.cs" />
     <Compile Include="PluginCore\Controls\InactiveForm.cs">
       <SubType>Form</SubType>
     </Compile>
