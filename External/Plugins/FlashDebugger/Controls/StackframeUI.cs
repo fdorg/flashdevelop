@@ -430,6 +430,7 @@ namespace FlashDebugger
                 }
                 catch (Exception)
                 {
+                    lv.EndUpdate();
                     return;
                 }
             }
