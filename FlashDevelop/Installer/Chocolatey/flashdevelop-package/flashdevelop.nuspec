@@ -3,15 +3,15 @@
   <metadata>
     <id>flashdevelop</id>
     <title>FlashDevelop</title>
-    <version>4.6.4</version>
+    <version>4.7.0</version>
     <authors>fdorg</authors>
     <owners>fdorg</owners>
     <summary>Open source code editor for Actionscript, Haxe and more.</summary>
     <description>FlashDevelop offers first class support for ActionScript (2 and 3) and Haxe development. Great completion and code generation, projects compilation and debugging, plenty of project templates, SWF/SWC exploration etc. FlashDevelop is also a great web developer IDE with source-control support (svn, git, mercurial), tasks/todo, snippets, XML/HTML completion and zen-coding for HTML.</description>
     <projectUrl>http://flashdevelop.org</projectUrl>
-    <tags>editor,as3,haxe,loom,javascript,html,css</tags>
-    <licenseUrl>http://www.flashdevelop.org/wikidocs/index.php?title=Main_Page</licenseUrl>
+    <tags>editor as3 haxe loom javascript html css</tags>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <iconUrl>https://raw.githubusercontent.com/fdorg/flashdevelop/development/FlashDevelop/Bin/Debug/Docs/fdicon.png</iconUrl>
+    <iconUrl>http://www.flashdevelop.org/logo.png</iconUrl>
   </metadata>
 </package>
