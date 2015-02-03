@@ -441,7 +441,7 @@ namespace FlashDebugger.Controls
                     }
                     if (tmpLimit == -1)
                     {
-                        DataNode moreNode = new ValueNode("...");
+                        DataNode moreNode = new ContinuedDataNode();
                         node.Nodes.Add(moreNode);
                     }
                     _tree.EndUpdate();
@@ -451,8 +451,8 @@ namespace FlashDebugger.Controls
 
         void Tree_NodeMouseDoubleClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
-            ValueNode node = e.Node.Tag as ValueNode;
-            if (node != null && node.Text == "..." && node.PlayerValue == null)
+            DataNode node = e.Node.Tag as ContinuedDataNode;
+            if (node != null)
             {
                 e.Handled = true;
                 _tree.BeginUpdate();
