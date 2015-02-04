@@ -29,7 +29,7 @@ namespace SourceControl
             set { this.enableSVN = value; }
         }
 
-        [DefaultValue("svn")]
+        [DefaultValue("svn.exe")]
         [DisplayName("SVN Path")]
         [LocalizedCategory("SourceControl.Category.SVN")]
         [LocalizedDescription("SourceControl.Description.SVNPath")]
