@@ -48,6 +48,7 @@ namespace FlashDebugger
             Value val;
             if (par0 is Variable) val = ((Variable)par0).getValue();
             else if (par0 is Value) val = (Value)par0;
+            else if (par0 is java.lang.String) val = DValue.forPrimitive(par0, getIsolateId());
             else throw new NotImplementedException();
             return new ExpressionContext(session, frame, val);
         }
