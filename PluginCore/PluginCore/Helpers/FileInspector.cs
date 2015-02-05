@@ -125,7 +125,7 @@ namespace PluginCore.Helpers
         public static bool IsFlexBuilderPackagedProject(string path)
         {
             string ext = Path.GetExtension(path).ToLower();
-            return ext == ".fxp" || ext == ".zip";
+            return ext == ".fxp" || ext == ".zip" || ext == ".fxpl";
         }
 
         public static bool IsFlexBuilderProject(string path)

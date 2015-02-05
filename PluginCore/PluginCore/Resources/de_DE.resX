@@ -2447,7 +2447,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Wählen Sie ein Projekt um es zu importieren</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder Projekt (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Projekt (*.zip;*.fxp)|*.zip;*.fxp</value>
+    <value>Adobe Flash Builder Projekt (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Projekt (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>Suchresultate im Resultatsfenster anzeigen</value>

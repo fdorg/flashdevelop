@@ -2449,7 +2449,7 @@
     <value>选择导入的项目</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder 项目 (.actionScriptProperties)|.actionScriptProperties|打包的 Adobe Flash Builder 项目 (*.zip;*.fxp)|*.zip;*.fxp</value>
+    <value>Adobe Flash Builder 项目 (.actionScriptProperties)|.actionScriptProperties|打包的 Adobe Flash Builder 项目 (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>发送结果到结果面板</value>
