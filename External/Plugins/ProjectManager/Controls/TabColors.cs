@@ -27,7 +27,7 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Updates colors of a all document tabs
         /// </summary>
-        public static void UpdateTabColors(ProjectManagerSettings settings)
+        public static void UpdateTabs(ProjectManagerSettings settings)
         {
             if (PluginBase.CurrentProject == null)
             {
@@ -58,7 +58,7 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Updates color of a document tab
         /// </summary>
-        private static void UpdateTabColor(ITabbedDocument doc, List<String> paths, ProjectManagerSettings settings)
+        static void UpdateTabColor(ITabbedDocument doc, List<String> paths, ProjectManagerSettings settings)
         {
             Boolean isMatch = false;
             foreach (String path in paths)

@@ -437,10 +437,12 @@ namespace ProjectManager
                         Tree.RefreshNode(Tree.NodeMap[path]);
                     }
                     solutionTracking.Update();
+                    if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
                     break;
 
                 case EventType.FileSwitch:
                     solutionTracking.Update();
+                    if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
                     break;
 
                 case EventType.ProcessStart:
@@ -453,7 +455,7 @@ namespace ProjectManager
                     break;
 
                 case EventType.ApplySettings:
-                    TabColors.UpdateTabColors(Settings);
+                    TabColors.UpdateTabs(Settings);
                     break;
 
                 case EventType.Command:
@@ -659,7 +661,7 @@ namespace ProjectManager
                 OpenPanel();
                 pluginUI.Focus();
             }
-            TabColors.UpdateTabColors(Settings);
+            TabColors.UpdateTabs(Settings);
             UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
         }
 
@@ -737,7 +739,7 @@ namespace ProjectManager
                 BroadcastProjectInfo(null);
                 projectActions.UpdateASCompletion(MainForm, null);
             }
-            TabColors.UpdateTabColors(Settings);
+            TabColors.UpdateTabs(Settings);
         }
 
         private void AddExistingProject()
@@ -984,7 +986,7 @@ namespace ProjectManager
 
         void solutionTracking_ActiveProject(Project project)
         {
-            if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
+            
         }
 
         private void BuildComplete(IProject project, bool runOutput)
