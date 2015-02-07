@@ -18,7 +18,12 @@ namespace CodeRefactor.Commands
         private ASResult currentTarget;
         private Boolean outputResults;
         private Boolean ignoreDeclarationSource;
-        
+
+        /// <summary>
+        /// Gets or sets if searching is only performed on user defined classpaths
+        /// </summary>
+        public Boolean OnlySourceFiles { get; set; }
+
         /// <summary>
         /// The current declaration target that references are being found to.
         /// </summary>
@@ -76,7 +81,7 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
-            RefactoringHelper.FindTargetInFiles(currentTarget, new FRProgressReportHandler(this.RunnerProgress), new FRFinishedHandler(this.FindFinished), true);
+            RefactoringHelper.FindTargetInFiles(currentTarget, new FRProgressReportHandler(this.RunnerProgress), new FRFinishedHandler(this.FindFinished), true, OnlySourceFiles);
         }
 
         /// <summary>

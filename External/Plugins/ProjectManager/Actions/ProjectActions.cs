@@ -149,6 +149,17 @@ namespace ProjectManager.Actions
             project.TestMovieBehavior = TestMovieBehavior.Custom;
             project.TestMovieCommand = "Run.bat";
 
+            string path = Path.GetDirectoryName(project.ProjectPath);
+            char s = Path.DirectorySeparatorChar;
+            string descriptor = "src" + s + Path.GetFileNameWithoutExtension(project.OutputPath) + "-app.xml";
+
+            if (!File.Exists(Path.Combine(path, descriptor)))
+            {
+                // Either it's some library project (we'll deal with these later) 
+                // or it's placed in some folder different to the default one (same as above)
+                return;
+            }
+
             // We copy the needed project template files
             bool isFlex = project.CompileTargets.Count > 0 && Path.GetExtension(project.CompileTargets[0]).ToLower() == ".mxml";
             string projectPath;
@@ -171,7 +182,6 @@ namespace ProjectManager.Actions
                 ErrorManager.ShowWarning(info, null);
                 return;
             }
-            string path = Path.GetDirectoryName(project.ProjectPath);
             var creator = new ProjectCreator();
             creator.SetContext(Path.GetFileNameWithoutExtension(project.OutputPath), string.Empty);
             foreach (var file in Directory.GetFiles(projectPath, "*.*", SearchOption.AllDirectories))
@@ -201,8 +211,6 @@ namespace ProjectManager.Actions
             }
 
             // We configure the batch files
-            char s = Path.DirectorySeparatorChar;
-            string descriptor = "src" + s + Path.GetFileNameWithoutExtension(project.OutputPath) + "-app.xml";
             var configurator = new AirConfigurator { ApplicationSetupBatch = Path.Combine(path, "bat" + s + "SetupApplication.bat") };
             configurator.ApplicationSetupParams[AirConfigurator.DescriptorPath] = descriptor;
             configurator.ApplicationSetupParams[AirConfigurator.PackageDir] = Path.GetFileName(Path.GetDirectoryName(project.OutputPath));

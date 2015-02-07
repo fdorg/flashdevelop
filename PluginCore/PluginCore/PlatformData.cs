@@ -265,6 +265,5 @@ namespace PluginCore
         public string Value;
         public XmlNode RawData;
     }
-
 }
 

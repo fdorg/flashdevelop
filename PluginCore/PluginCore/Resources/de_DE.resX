@@ -1581,6 +1581,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
     <value>Gibt die Sprachen der Ressourcen an, welche in die SWF-Datei kompiliert werden sollen. Wenn nichts ausgewählt: "en_US".</value>
   </data>
+  <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
+    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
     <value>Gibt das Dokument an, welches den statischen Haupteinstiegspunkt enthält.</value>
   </data>
@@ -1771,7 +1775,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
     <value>Der ausgewählte Pfad steht in einem Konflikt mit einem bereits existierenden Klassenpfad {0}. Möchten Sie ihn dennoch hinzufüen?</value>
   </data>
   <data name="ProjectManager.Info.Platform" xml:space="preserve">
-    <value>Platform</value>
+    <value>Plattform</value>
   </data>
   <data name="ProjectManager.Info.Popup" xml:space="preserve">
     <value>In Popup ausführen</value>
@@ -1784,6 +1788,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>Projekt-Klassenpfade sind relativ zum Projektverzeichnis.</value>
+  </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Klassenpfade von {0}-Projekten werden von der Ausgabedatei bestimmt.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;Projektverzeichnis&gt;</value>
@@ -2014,6 +2022,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Ausgabedatei:</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Konfigurationsdatei:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Einfügen</value>
@@ -2435,7 +2447,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Wählen Sie ein Projekt um es zu importieren</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder Projekt (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Projekt (*.zip;*.fxp)|*.zip;*.fxp</value>
+    <value>Adobe Flash Builder Projekt (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Projekt (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>Suchresultate im Resultatsfenster anzeigen</value>
@@ -4192,7 +4204,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.NonWindowedPlatforms" xml:space="preserve">
-    <value>Fensterlose Platformen</value>
+    <value>Fensterlose Plattformen</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.Ok" xml:space="preserve">
@@ -4268,7 +4280,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Label.WindowedPlatforms" xml:space="preserve">
-    <value>Platformen mit Fenstern</value>
+    <value>Plattformen mit Fenstern</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Locale.ChineseSimplified" xml:space="preserve">
@@ -5411,5 +5423,33 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
     <value>Track current active document in Project Tree.</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
+    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
+    <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDebugger.Label.Filter" xml:space="preserve">
+    <value>Filter:</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.SetCurrentFrame" xml:space="preserve">
+    <value>Set as current frame</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.GotoSource" xml:space="preserve">
+    <value>Go to source</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
+    <value>Show just my code</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
+    <value>Add new expression</value>
+    <comment>Added after 4.7.1</comment>
   </data>
 </root>

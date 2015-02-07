@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using PluginCore.Helpers;
 
 namespace ProjectManager.Projects.AS2
 {

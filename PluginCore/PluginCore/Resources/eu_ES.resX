@@ -1563,6 +1563,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
     <value>SWF fitxategian sartuko den lokalizazioa (adib: eu_ES) zehazten da.</value>
   </data>
+  <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
+    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
     <value>Sarrera puntu nagusi estatikoa duen klasea zehazten da.</value>
   </data>
@@ -1766,6 +1770,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>Proiektuaren bide-izenak proiektuaren kokapenari erlatiboak dira.</value>
+  </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Classpaths of {0} projects are determined by the Configuration file.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;Proiektuaren direktorioa&gt;</value>
@@ -1999,6 +2007,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>&amp;Irteera fitxategia:</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>&amp;Itsatsi</value>
@@ -2431,7 +2443,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Inportatzeko Proiektua Aukeratu</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flex Builder Proiektua (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Proiektua (*.zip;*.fxp)|*.zip;*.fxp</value>
+    <value>Adobe Flex Builder Proiektua (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Proiektua (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>Emaitzak Emaitza Panelera bidali</value>
@@ -5408,5 +5420,33 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
     <value>Track current active document in Project Tree.</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
+    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
+    <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDebugger.Label.Filter" xml:space="preserve">
+    <value>Filter:</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.SetCurrentFrame" xml:space="preserve">
+    <value>Set as current frame</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.GotoSource" xml:space="preserve">
+    <value>Go to source</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
+    <value>Show just my code</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
+    <value>Add new expression</value>
+    <comment>Added after 4.7.1</comment>
   </data>
 </root>

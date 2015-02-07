@@ -11,7 +11,7 @@ namespace ASCompletion.Model
     /// <summary>
     /// Object representation of an Actionscript class
     /// </summary>
-    [Serializable()]
+    [Serializable]
     public class ClassModel: MemberModel
     {
         static public ClassModel VoidClass;
@@ -47,6 +47,7 @@ namespace ASCompletion.Model
         public string ExtendsType;
         public string IndexType;
         public List<string> Implements;
+        [NonSerialized]
         private WeakReference resolvedExtend;
 
         public string QualifiedName
@@ -128,7 +129,15 @@ namespace ASCompletion.Model
                 resolvedExtend = null;
                 return VoidClass;
             }
-            if (ExtendsType == null || ExtendsType.Length == 0)
+            string objectKey = InFile.Context.Features.objectKey;
+            if (Name == objectKey && !string.IsNullOrEmpty(InFile.Package))
+            {
+                string info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), objectKey, objectKey);
+                PluginCore.Controls.MessageBar.ShowWarning(info);
+                resolvedExtend = null;
+                return VoidClass;
+            }
+            if (string.IsNullOrEmpty(ExtendsType))
             {
                 if (this == VoidClass || (Flags & FlagType.Interface) > 0)
                 {
@@ -149,14 +158,18 @@ namespace ASCompletion.Model
                 // check loops in inheritance
                 if (extensionList != null)
                 {
-                    foreach(ClassModel model in extensionList)
-                    if (model.QualifiedName == extends.QualifiedName)
+                    if (extends.Name != objectKey)
                     {
-                        if (extends.Name == InFile.Context.Features.objectKey) break;
-                        string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
-                        PluginCore.Controls.MessageBar.ShowWarning(info);
-                        resolvedExtend = null;
-                        return VoidClass;
+                        foreach(ClassModel model in extensionList)
+                        {
+                            if (model.QualifiedName == extends.QualifiedName)
+                            {
+                                string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
+                                PluginCore.Controls.MessageBar.ShowWarning(info);
+                                resolvedExtend = null;
+                                return VoidClass;
+                            }
+                        }
                     }
                     extensionList.Add(extends);
                 }
@@ -215,7 +228,6 @@ namespace ASCompletion.Model
             return copy;
         }
 
-        
         #region Completion-dedicated methods
 
         public MemberModel ToMemberModel()

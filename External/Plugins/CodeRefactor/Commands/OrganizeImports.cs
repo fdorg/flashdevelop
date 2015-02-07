@@ -1,16 +1,12 @@
-using System;
-using System.Diagnostics;
-using System.Collections;
-using System.Collections.Generic;
-using ASCompletion.Completion;
-using PluginCore.FRService;
-using CodeRefactor.Provider;
-using PluginCore.Localization;
-using ASCompletion.Model;
 using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.FRService;
 using PluginCore.Utilities;
 using ScintillaNet;
-using PluginCore;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace CodeRefactor.Commands
 {
@@ -32,8 +28,7 @@ namespace CodeRefactor.Commands
             IASContext context = ASContext.Context;
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
             Int32 pos = sci.CurrentPos;
-            List<MemberModel> imports = new List<MemberModel>(context.CurrentModel.Imports.Count);
-            imports.AddRange(context.CurrentModel.Imports.Items);
+            List<MemberModel> imports = new List<MemberModel>(context.CurrentModel.Imports.Items);
             int cppPpStyle = (int)ScintillaNet.Lexers.CPP.PREPROCESSOR;
             for (Int32 i = imports.Count - 1; i >= 0; i--)
             {
@@ -43,8 +38,7 @@ namespace CodeRefactor.Commands
                     imports.RemoveAt(i);
                 }
             }
-            ImportsComparerLine comparerLine = new ImportsComparerLine();
-            imports.Sort(comparerLine);
+            imports.Sort(new ImportsComparerLine());
             if (sci.ConfigurationLanguage == "haxe")
             {
                 if (context.CurrentModel.Classes.Count > 0)
@@ -67,9 +61,9 @@ namespace CodeRefactor.Commands
                 sci.SetSel(sci.PositionFromLine(context.CurrentModel.Classes[1].LineFrom), sci.PositionFromLine(sci.LineCount));
                 privateClassText = sci.SelText;
             }
-            if (imports.Count > 1 || (imports.Count > 0 && this.TruncateImports))
+            sci.BeginUndoAction();
+            try
             {
-                sci.BeginUndoAction();
                 foreach (MemberModel import in imports)
                 {
                     sci.GotoLine(import.LineFrom);
@@ -91,15 +85,17 @@ namespace CodeRefactor.Commands
                 }
                 imports.Reverse();
                 Imports separatedImports = this.SeparateImports(imports, context.CurrentModel.PrivateSectionIndex);
-                this.InsertImports(separatedImports.PackageImports, publicClassText, sci, separatedImports.PackageImportsIndent);
-                if (context.CurrentModel.Classes.Count > 1)
+                if (separatedImports.PackageImports.Count > 0) InsertImports(separatedImports.PackageImports, publicClassText, sci, separatedImports.PackageImportsIndent);
+                if (context.CurrentModel.Classes.Count > 1 && separatedImports.PrivateImports.Count > 0)
                 {
                     this.InsertImports(separatedImports.PrivateImports, privateClassText, sci, separatedImports.PrivateImportsIndent);
                 }
                 sci.SetSel(pos, pos);
+            }
+            finally
+            {
                 sci.EndUndoAction();
             }
-
             context.UpdateCurrentFile(true);
             this.FireOnRefactorComplete();
         }
@@ -150,39 +146,34 @@ namespace CodeRefactor.Commands
         private void InsertImports(List<MemberModel> imports, String searchInText, ScintillaControl sci, Int32 indent)
         {
             String eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
-            if (imports.Count > 1 || (imports.Count > 0 && this.TruncateImports))
+            Int32 line = imports[0].LineFrom - DeletedImportsCompensation;
+            ImportsComparerType comparerType = new ImportsComparerType();
+            imports.Sort(comparerType);
+            sci.GotoLine(line);
+            Int32 curLine = 0;
+            List<String> uniques = this.GetUniqueImports(imports, searchInText);
+            // correct position compensation for private imports
+            DeletedImportsCompensation = imports.Count - uniques.Count;
+            String prevPackage = null;
+            for (Int32 i = 0; i < uniques.Count; i++)
             {
-                Int32 line = imports[0].LineFrom - DeletedImportsCompensation;
-                ImportsComparerType comparerType = new ImportsComparerType();
-                imports.Sort(comparerType);
-                sci.GotoLine(line);
-                Int32 curLine = 0;
-                List<String> uniques = this.GetUniqueImports(imports, searchInText);
-                // correct position compensation for private imports
-                DeletedImportsCompensation = imports.Count - uniques.Count;
-                String prevPackage = null;
-                String currentPackage = null;
-                String importStringToInsert;
-                for (Int32 i = 0; i < uniques.Count; i++)
+                string importStringToInsert = "import " + uniques[i] + ";" + eol;
+                if (this.SeparatePackages)
                 {
-                    importStringToInsert = "import " + uniques[i] + ";" + eol;
-                    if (this.SeparatePackages)
+                    string currentPackage = importStringToInsert.Substring(0, importStringToInsert.LastIndexOf("."));
+                    if (prevPackage != null && prevPackage != currentPackage)
                     {
-                        currentPackage = importStringToInsert.Substring(0, importStringToInsert.LastIndexOf("."));
-                        if (prevPackage != null && prevPackage != currentPackage)
-                        {
-                            sci.NewLine();
-                            sci.GotoLine(++curLine);
-                            sci.SetLineIndentation(sci.CurrentLine - 1, indent);
-                            DeletedImportsCompensation--;
-                        }
-                        prevPackage = currentPackage;
+                        sci.NewLine();
+                        sci.GotoLine(++curLine);
+                        sci.SetLineIndentation(sci.LineFromPosition(sci.CurrentPos) - 1, indent);
+                        DeletedImportsCompensation--;
                     }
-                    curLine = sci.CurrentLine;
-                    sci.InsertText(sci.CurrentPos, importStringToInsert);
-                    sci.SetLineIndentation(curLine, indent);
-                    sci.GotoLine(++curLine);
+                    prevPackage = currentPackage;
                 }
+                curLine = sci.LineFromPosition(sci.CurrentPos);
+                sci.InsertText(sci.CurrentPos, importStringToInsert);
+                sci.SetLineIndentation(curLine, indent);
+                sci.GotoLine(++curLine);
             }
         }
 
@@ -208,14 +199,11 @@ namespace CodeRefactor.Commands
         private Boolean MemberTypeImported(String type, String searchInText)
         {
             if (type == "*") return true;
-            SearchMatch result;
-            String pattern = type;
-            FRSearch search = new FRSearch(pattern);
+            FRSearch search = new FRSearch(type);
             search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
             search.NoCase = false;
             search.WholeWord = true;
-            result = search.Match(searchInText);
-            return result != null;
+            return search.Match(searchInText) != null;
         }
 
         /// <summary>

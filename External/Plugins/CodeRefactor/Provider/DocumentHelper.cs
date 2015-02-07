@@ -82,6 +82,14 @@ namespace CodeRefactor.Provider
         }
 
         /// <summary>
+        /// Gets the collection of files opened when this DocumentHelper was created.
+        /// </summary>
+        public IDictionary<String, ITabbedDocument> InitiallyOpenedFiles
+        {
+            get { return initiallyOpenedFiles; }
+        }
+
+        /// <summary>
         /// Retrieves a list of the currently open documents.
         /// </summary>
         protected IDictionary<String, ITabbedDocument> GetOpenDocuments()

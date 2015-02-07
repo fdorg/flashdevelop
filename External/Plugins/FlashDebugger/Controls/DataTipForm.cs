@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
+using FlashDebugger.Controls.DataTree;
 using flash.tools.debugger;
 using PluginCore;
 
@@ -44,7 +45,7 @@ namespace FlashDebugger.Controls
         public void SetVariable(Variable variable)
         {
             DataTree.Nodes.Clear();
-            DataTree.AddNode(new DataNode(variable));
+            DataTree.AddNode(new VariableNode(variable));
             DoResize();
         }
 

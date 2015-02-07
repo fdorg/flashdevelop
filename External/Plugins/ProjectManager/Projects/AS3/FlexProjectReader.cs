@@ -347,7 +347,7 @@ namespace ProjectManager.Projects.AS3
                     // The path should be the first one by default, but depending of Java versions may be resolved in other ways.
                     // It can be customized as well, in which case it cannot be easily got (we should check FB Java parameters, and then maybe
                     // Eclipse configuration files to get workspaces and their settings if further inspection is needed)
-                    // For the later one in this list some Java versions are not even returning the right path... it's using this registry key:
+                    // For the second one in this list some Java versions are not even returning the right path... it's using this registry key:
                     // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\Desktop
                     // which use is discouraged to use, and other registry key should take precendence, but it's suggested to use the method here
                     string path;

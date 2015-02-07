@@ -4,30 +4,30 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core
+QT += gui
 QT += network
+QT += widgets
 
-TARGET = FlashDevelopBridge
+TARGET = "FlashDevelop Bridge"
 TEMPLATE = app
 
-
-SOURCES += main.cpp\
-        mainwindow.cpp \
+SOURCES += main.cpp \
+    mainwindow.cpp \
     filesystemwatcherex.cpp \
     bridgeserver.cpp \
     bridgethread.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS += mainwindow.h \
     filesystemwatcherex.h \
     bridgeserver.h \
     bridgethread.h \
     simplelog.h
 
-FORMS    += mainwindow.ui
+FORMS += mainwindow.ui
 
-RESOURCES += \
-    res.qrc
+RESOURCES += res.qrc
 
-ICON = images/FDIcon.icns
+ICON = Images/AppIcon.icns
 
-QMAKE_INFO_PLIST = DMG/app.plist
+QMAKE_INFO_PLIST = Deploy/app.plist

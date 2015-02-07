@@ -4,10 +4,12 @@
 #include <QMainWindow>
 #include <QtGui>
 #include <QSystemTrayIcon>
+#include <QLabel>
 #include "bridgeserver.h"
 #include "filesystemwatcherex.h"
 
-namespace Ui {
+namespace Ui
+{
     class MainWindow;
 }
 
@@ -37,10 +39,8 @@ private:
     BridgeServer *server;
     bool lockSettings;
     bool showOnStart;
-
     QLabel *statusLabel;
     QStatusBar *statusBar;
-
     void initTray();
     void initStatusBar();
     void initMapping();

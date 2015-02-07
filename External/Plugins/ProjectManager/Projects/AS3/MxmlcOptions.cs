@@ -55,6 +55,12 @@ namespace ProjectManager.Projects.AS3
         [DefaultValue("")]
         public string Locale { get { return locale; } set { locale = value; } }
 
+        [LocalizedCategory("ProjectManager.Category.Advanced")]
+        [DisplayName("MXML Namespaces")]
+        [LocalizedDescription("ProjectManager.Description.Namespaces")]
+        [DefaultValue(null)]
+        public MxmlNamespace[] Namespaces { get; set; }
+
         bool optimize = false;
         [LocalizedCategory("ProjectManager.Category.CompilerOptions")]
         [DisplayName("Optimize Bytecode")]

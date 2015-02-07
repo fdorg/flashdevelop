@@ -107,10 +107,13 @@ namespace AS2Context
             features.importKey = "import";
             features.typesPreKeys = new string[] { "import", "new", "instanceof", "extends", "implements" };
             features.codeKeywords = new string[] { 
-                "class", "interface", "var", "function", "new", "delete", "instanceof", "return", "break", "continue",
+                "var", "function", "new", "delete", "instanceof", "return", "break", "continue",
                 "if", "else", "for", "in", "while", "do", "switch", "case", "default", "with",
                 "null", "undefined", "true", "false", "try", "catch", "finally", "throw"
             };
+            features.accessKeywords = new string[] { "override", "public", "private", "intrinsic", "static" };
+            features.declKeywords = new string[] { "var", "function" };
+            features.typesKeywords = new string[] { "import", "class", "interface" };
             features.varKey = "var";
             features.functionKey = "function";
             features.getKey = "get";
@@ -795,7 +798,7 @@ namespace AS2Context
                 {
                     string pathname = package.Replace('.', Path.DirectorySeparatorChar);
                     string fullpath = Path.GetDirectoryName(cFile.FileName);
-                    if (!fullpath.ToUpper().EndsWith(pathname.ToUpper()))
+                    if (!fullpath.EndsWith(pathname))
                     {
                         if (settings.FixPackageAutomatically && CurSciControl != null)
                         {
@@ -1018,12 +1021,8 @@ namespace AS2Context
                             {
                                 if (type.IndexType != null) continue;
                                 MemberModel item = type.ToMemberModel();
-                                if (type.Access == Visibility.Private)
-                                {
-                                    item.Type = item.Name;
-                                    item.Access = Visibility.Private;
-                                }
-                                pModel.Imports.Add(item);
+                                if (type.Access != Visibility.Private)
+                                    pModel.Imports.Add(item);
                             }
                             foreach (MemberModel member in model.Members)
                                 pModel.Members.Add(member.Clone() as MemberModel);

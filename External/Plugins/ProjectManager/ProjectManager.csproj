@@ -134,6 +134,7 @@
     <Compile Include="Controls\AS3\MxmlFileMapping.cs" />
     <Compile Include="Projects\AS3\FlexProjectReader.cs" />
     <Compile Include="Projects\AS3\MxmlcOptions.cs" />
+    <Compile Include="Projects\AS3\MxmlNamespace.cs" />
     <Compile Include="Projects\CompilerOptions.cs" />
     <Compile Include="Projects\Generic\GenericMovieOptions.cs" />
     <Compile Include="Projects\Generic\GenericOptions.cs" />
@@ -148,7 +149,6 @@
     <Compile Include="Projects\LibraryAsset.cs" />
     <Compile Include="Projects\MovieOptions.cs" />
     <Compile Include="Projects\BuildEventVars.cs" />
-    <Compile Include="Projects\FileInspector.cs" />
     <Compile Include="Projects\HiddenPathCollection.cs" />
     <Compile Include="Projects\MoreProjectPaths.cs" />
     <Compile Include="Projects\PathCollection.cs" />

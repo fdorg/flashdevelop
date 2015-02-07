@@ -8,7 +8,6 @@ using ASCompletion.Context;
 using System.Windows.Forms;
 using System.Diagnostics;
 using PluginCore.Localization;
-using System.Runtime.Serialization.Formatters.Binary;
 using PluginCore.Utilities;
 using PluginCore.Helpers;
 using System.Text;
@@ -202,7 +201,7 @@ namespace ASCompletion.Model
                         if (File.Exists(cacheFileName))
                         {
                             NotifyProgress(TextHelper.GetString("Info.ParsingCache"), 0, 1);
-                            ASFileParser.ParseCacheFile(pathModel, cacheFileName, context);
+                            pathModel.Deserialize(cacheFileName);
                         }
                         else writeCache = true;
                         if (stopExploration || !pathModel.InUse) return;
@@ -224,17 +223,7 @@ namespace ASCompletion.Model
                         else if (File.Exists(cacheFileName)) File.Delete(cacheFileName);
 
                         if (pathModel.FilesCount > 0)
-                        {
-                            StringBuilder sb = new StringBuilder();
-                            pathModel.ForeachFile((model) =>
-                            {
-                                sb.Append("\n#file-cache ").Append(model.FileName).Append('\n');
-                                sb.Append(model.GenerateIntrinsic(true));
-                                return true;
-                            });
-                            string src = sb.ToString();
-                            FileHelper.WriteFile(cacheFileName, src, Encoding.UTF8);
-                        }
+                            pathModel.Serialize(cacheFileName);
                     }
                     catch { }
                 }
@@ -334,7 +323,7 @@ namespace ASCompletion.Model
             string pluginDir = Path.Combine(PathHelper.DataDir, "ASCompletion");
             string cacheDir = Path.Combine(pluginDir, "FileCache");
             string hashFileName = HashCalculator.CalculateSHA1(path);
-            return Path.Combine(cacheDir, hashFileName + "." + context.Settings.LanguageId.ToLower());
+            return Path.Combine(cacheDir, hashFileName + "." + context.Settings.LanguageId.ToLower() + ".bin");
         }
 
         private void NotifyProgress(string state, int value, int max)

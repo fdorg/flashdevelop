@@ -40,6 +40,11 @@ namespace AppMan
         private Boolean checkOnly;
 
         /**
+        * Static link label margin constant
+        */
+        public static Int32 LINK_MARGIN = 4;
+
+        /**
         * Static type and state constants
         */ 
         public static String TYPE_LINK = "Link";
@@ -581,6 +586,29 @@ namespace AppMan
         }
 
         /// <summary>
+        /// On bundle link click, selects all bundled items.
+        /// </summary>
+        private void BundleLinkLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                if (this.isLoading) return;
+                this.listView.BeginUpdate();
+                foreach (ListViewItem item in this.listView.Items)
+                {
+                    DepEntry entry = item.Tag as DepEntry;
+                    if (Array.IndexOf(entry.Bundles, e.Link.LinkData.ToString()) != -1) item.Checked = true;
+                    else item.Checked = false;
+                }
+                this.listView.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
         /// Disables the item checking when downloading.
         /// </summary>
         private void ListViewItemCheck(Object sender, ItemCheckEventArgs e)
@@ -671,11 +699,54 @@ namespace AppMan
                 if (this.appGroups.Count > 1) this.listView.ShowGroups = true;
                 else this.listView.ShowGroups = false;
                 this.UpdateEntryStates();
+                this.UpdateLinkPositions();
+                this.GenerateBundleLinks();
                 this.listView.EndUpdate();
             }
             catch (Exception ex)
             {
                 DialogHelper.ShowError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Update the link label positions for example if the font is different size.
+        /// </summary>
+        private void UpdateLinkPositions()
+        {
+            this.allLinkLabel.Location = new Point(this.selectLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+            this.noneLinkLabel.Location = new Point(this.allLinkLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+            this.newLinkLabel.Location = new Point(this.noneLinkLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+            this.instLinkLabel.Location = new Point(this.newLinkLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+            this.updateLinkLabel.Location = new Point(this.instLinkLabel.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+        }
+
+        /// <summary>
+        /// Generates the bundle selection links.
+        /// </summary>
+        private void GenerateBundleLinks()
+        {
+            LinkLabel prevLink = this.updateLinkLabel;
+            List<String> bundleLinks = new List<String>();
+            foreach (DepEntry entry in this.depEntries)
+            {
+                foreach (String bundle in entry.Bundles)
+                {
+                    if (!bundleLinks.Contains(bundle))
+                    {
+                        LinkLabel linkLabel = new LinkLabel();
+                        linkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+                        linkLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(this.BundleLinkLabelLinkClicked);
+                        linkLabel.Location = new Point(prevLink.Bounds.Right + LINK_MARGIN, this.allLinkLabel.Location.Y);
+                        linkLabel.Links[0].LinkData = bundle;
+                        linkLabel.LinkColor = Color.Green;
+                        linkLabel.AutoSize = true;
+                        linkLabel.Text = bundle;
+                        bundleLinks.Add(bundle);
+                        this.Controls.Add(linkLabel);
+                        prevLink = linkLabel;
+                    }
+                }
             }
         }
 
@@ -1234,7 +1305,11 @@ namespace AppMan
                             this.entryStates[inst.Id] = state;
                             item.SubItems[3].ForeColor = color;
                             item.SubItems[3].Text = text;
-                            break;
+                            // If we get an exact match, we don't need to compare more...
+                            if (dep.Version == inst.Version && dep.Build == inst.Build)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
@@ -1384,6 +1459,9 @@ namespace AppMan
         [XmlArrayItem("Url")]
         public String[] Urls = new String[0];
 
+        [XmlArrayItem("Bundle")]
+        public String[] Bundles = new String[0];
+
         [XmlIgnore]
         public Dictionary<String, String> Temps;
 
@@ -1392,7 +1470,7 @@ namespace AppMan
             this.Type = MainForm.TYPE_ARCHIVE;
             this.Temps = new Dictionary<String, String>();
         }
-        public DepEntry(String id, String name, String desc, String group, String version, String build, String type, String info, String cmd, String[] urls)
+        public DepEntry(String id, String name, String desc, String group, String version, String build, String type, String info, String cmd, String[] urls, String[] bundles)
         {
             this.Id = id;
             this.Name = name;
@@ -1400,6 +1478,7 @@ namespace AppMan
             this.Group = group;
             this.Build = build;
             this.Version = version;
+            this.Bundles = bundles;
             this.Temps = new Dictionary<String, String>();
             if (!String.IsNullOrEmpty(type)) this.Type = type;
             else this.Type = MainForm.TYPE_ARCHIVE;

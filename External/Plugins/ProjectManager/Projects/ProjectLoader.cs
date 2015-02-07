@@ -1,10 +1,6 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using ProjectManager.Projects.AS2;
-using ProjectManager.Projects.AS3;
-using ProjectManager.Projects.Haxe;
+using PluginCore.Helpers;
 using ProjectManager.Helpers;
 
 namespace ProjectManager.Projects
@@ -15,7 +11,7 @@ namespace ProjectManager.Projects
         {
             string ext = Path.GetExtension(file).ToLower();
 
-            if (FileInspector.IsProject(file))
+            if (ProjectCreator.IsKnownProject(ext) || FileInspector.IsProject(file, ext))
             {
                 Type projectType =
                     ProjectCreator.GetProjectType(ProjectCreator.KeyForProjectPath(file));

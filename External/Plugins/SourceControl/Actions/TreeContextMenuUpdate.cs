@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using ProjectManager.Controls.TreeView;
 using SourceControl.Managers;
@@ -10,7 +9,7 @@ using PluginCore;
 
 namespace SourceControl.Actions
 {
-    class TreeContextMenuUpdate
+    static class TreeContextMenuUpdate
     {
         private static ToolStripMenuItem scItem;
 
@@ -26,7 +25,7 @@ namespace SourceControl.Actions
             scItem.DropDownItems.Clear();
             
             // let a VC provide a completely custom items list
-            foreach (KeyValuePair<ToolStripItem, VCMenutItemProperties> item in menuItems.Items)
+            foreach (KeyValuePair<ToolStripItem, VCMenuItemProperties> item in menuItems.Items)
             {
                 if (item.Value.Show.Invoke(state))
                 {

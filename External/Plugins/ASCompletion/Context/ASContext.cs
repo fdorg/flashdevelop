@@ -985,7 +985,7 @@ namespace ASCompletion.Context
         protected virtual void GetCurrentFileModel(string fileName)
         {
             cFile = GetCachedFileModel(fileName);
-            if (cFile.Context == null || cFile.Context != this || cFile.CachedModel)
+            if (cFile.Context == null || cFile.Context != this)
             {
                 cFile.Context = this;
                 UpdateCurrentFile(false); // does update line & context

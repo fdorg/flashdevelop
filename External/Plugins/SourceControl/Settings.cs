@@ -1,8 +1,5 @@
 using System;
-using System.Text;
-using System.Windows.Forms;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Windows.Forms.Design;
 using PluginCore.Localization;
 using System.Drawing.Design;
@@ -32,7 +29,7 @@ namespace SourceControl
             set { this.enableSVN = value; }
         }
 
-        [DefaultValue("svn")]
+        [DefaultValue("svn.exe")]
         [DisplayName("SVN Path")]
         [LocalizedCategory("SourceControl.Category.SVN")]
         [LocalizedDescription("SourceControl.Description.SVNPath")]

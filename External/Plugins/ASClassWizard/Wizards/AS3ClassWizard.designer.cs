@@ -86,7 +86,7 @@ namespace ASClassWizard.Wizards
             this.flowLayoutPanel5.Location = new System.Drawing.Point(106, 206);
             this.flowLayoutPanel5.Name = "flowLayoutPanel5";
             this.flowLayoutPanel5.Size = new System.Drawing.Size(268, 54);
-            this.flowLayoutPanel5.TabIndex = 12;
+            this.flowLayoutPanel5.TabIndex = 15;
             // 
             // constructorCheck
             // 
@@ -96,7 +96,7 @@ namespace ASClassWizard.Wizards
             this.constructorCheck.Location = new System.Drawing.Point(3, 3);
             this.constructorCheck.Name = "constructorCheck";
             this.constructorCheck.Size = new System.Drawing.Size(127, 17);
-            this.constructorCheck.TabIndex = 9;
+            this.constructorCheck.TabIndex = 0;
             this.constructorCheck.Text = "Generate Constructor";
             this.constructorCheck.UseVisualStyleBackColor = true;
             // 
@@ -108,7 +108,7 @@ namespace ASClassWizard.Wizards
             this.superCheck.Location = new System.Drawing.Point(3, 26);
             this.superCheck.Name = "superCheck";
             this.superCheck.Size = new System.Drawing.Size(120, 17);
-            this.superCheck.TabIndex = 10;
+            this.superCheck.TabIndex = 1;
             this.superCheck.Text = "Generate Super call";
             this.superCheck.UseVisualStyleBackColor = true;
             // 
@@ -122,14 +122,14 @@ namespace ASClassWizard.Wizards
             this.flowLayoutPanel4.Margin = new System.Windows.Forms.Padding(3,0,0,0);
             this.flowLayoutPanel4.Name = "flowLayoutPanel4";
             this.flowLayoutPanel4.Size = new System.Drawing.Size(80, 62);
-            this.flowLayoutPanel4.TabIndex = 10;
+            this.flowLayoutPanel4.TabIndex = 13;
             // 
             // implementBrowse
             // 
             this.implementBrowse.Location = new System.Drawing.Point(3, 3);
             this.implementBrowse.Name = "implementBrowse";
             this.implementBrowse.Size = new System.Drawing.Size(74, 23);
-            this.implementBrowse.TabIndex = 8;
+            this.implementBrowse.TabIndex = 0;
             this.implementBrowse.Text = "Browse...";
             this.implementBrowse.UseVisualStyleBackColor = true;
             this.implementBrowse.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -141,7 +141,7 @@ namespace ASClassWizard.Wizards
             this.implementRemove.Location = new System.Drawing.Point(3, 32);
             this.implementRemove.Name = "implementRemove";
             this.implementRemove.Size = new System.Drawing.Size(74, 23);
-            this.implementRemove.TabIndex = 8;
+            this.implementRemove.TabIndex = 1;
             this.implementRemove.Text = "Remove";
             this.implementRemove.UseVisualStyleBackColor = true;
             this.implementRemove.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -154,7 +154,7 @@ namespace ASClassWizard.Wizards
             this.baseBox.Location = new System.Drawing.Point(106, 116);
             this.baseBox.Name = "baseBox";
             this.baseBox.Size = new System.Drawing.Size(268, 20);
-            this.baseBox.TabIndex = 7;
+            this.baseBox.TabIndex = 9;
             this.baseBox.TextChanged += new System.EventHandler(this.baseBox_TextChanged);
             // 
             // classBox
@@ -163,7 +163,7 @@ namespace ASClassWizard.Wizards
             this.classBox.Location = new System.Drawing.Point(106, 88);
             this.classBox.Name = "classBox";
             this.classBox.Size = new System.Drawing.Size(268, 20);
-            this.classBox.TabIndex = 5;
+            this.classBox.TabIndex = 7;
             this.classBox.Text = "NewClass";
             this.classBox.TextChanged += new System.EventHandler(this.classBox_TextChanged);
             // 
@@ -173,7 +173,7 @@ namespace ASClassWizard.Wizards
             this.packageBox.Location = new System.Drawing.Point(106, 4);
             this.packageBox.Name = "packageBox";
             this.packageBox.Size = new System.Drawing.Size(268, 20);
-            this.packageBox.TabIndex = 0;
+            this.packageBox.TabIndex = 1;
             this.packageBox.TextChanged += new System.EventHandler(this.packageBox_TextChanged);
             // 
             // classLabel
@@ -183,7 +183,7 @@ namespace ASClassWizard.Wizards
             this.classLabel.Location = new System.Drawing.Point(3, 91);
             this.classLabel.Name = "classLabel";
             this.classLabel.Size = new System.Drawing.Size(32, 13);
-            this.classLabel.TabIndex = 1;
+            this.classLabel.TabIndex = 6;
             this.classLabel.Text = "Class";
             // 
             // accessLabel
@@ -213,7 +213,7 @@ namespace ASClassWizard.Wizards
             this.publicRadio.Location = new System.Drawing.Point(3, 3);
             this.publicRadio.Name = "publicRadio";
             this.publicRadio.Size = new System.Drawing.Size(53, 17);
-            this.publicRadio.TabIndex = 1;
+            this.publicRadio.TabIndex = 0;
             this.publicRadio.TabStop = true;
             this.publicRadio.Text = "public";
             this.publicRadio.UseVisualStyleBackColor = true;
@@ -224,7 +224,7 @@ namespace ASClassWizard.Wizards
             this.internalRadio.Location = new System.Drawing.Point(62, 3);
             this.internalRadio.Name = "internalRadio";
             this.internalRadio.Size = new System.Drawing.Size(59, 17);
-            this.internalRadio.TabIndex = 2;
+            this.internalRadio.TabIndex = 1;
             this.internalRadio.Text = "internal";
             this.internalRadio.UseVisualStyleBackColor = true;
             // 
@@ -244,7 +244,7 @@ namespace ASClassWizard.Wizards
             this.dynamicCheck.Location = new System.Drawing.Point(3, 3);
             this.dynamicCheck.Name = "dynamicCheck";
             this.dynamicCheck.Size = new System.Drawing.Size(65, 17);
-            this.dynamicCheck.TabIndex = 3;
+            this.dynamicCheck.TabIndex = 0;
             this.dynamicCheck.Text = "dynamic";
             this.dynamicCheck.UseVisualStyleBackColor = true;
             // 
@@ -254,7 +254,7 @@ namespace ASClassWizard.Wizards
             this.finalCheck.Location = new System.Drawing.Point(74, 3);
             this.finalCheck.Name = "finalCheck";
             this.finalCheck.Size = new System.Drawing.Size(45, 17);
-            this.finalCheck.TabIndex = 4;
+            this.finalCheck.TabIndex = 1;
             this.finalCheck.Text = "final";
             this.finalCheck.UseVisualStyleBackColor = true;
             // 
@@ -265,7 +265,7 @@ namespace ASClassWizard.Wizards
             this.baseLabel.Location = new System.Drawing.Point(3, 119);
             this.baseLabel.Name = "baseLabel";
             this.baseLabel.Size = new System.Drawing.Size(58, 13);
-            this.baseLabel.TabIndex = 6;
+            this.baseLabel.TabIndex = 8;
             this.baseLabel.Text = "Base class";
             // 
             // generationLabel
@@ -275,7 +275,7 @@ namespace ASClassWizard.Wizards
             this.generationLabel.Name = "generationLabel";
             this.generationLabel.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
             this.generationLabel.Size = new System.Drawing.Size(85, 19);
-            this.generationLabel.TabIndex = 11;
+            this.generationLabel.TabIndex = 14;
             this.generationLabel.Text = "Code generation";
             // 
             // packageLabel
@@ -285,7 +285,7 @@ namespace ASClassWizard.Wizards
             this.packageLabel.Location = new System.Drawing.Point(3, 7);
             this.packageLabel.Name = "packageLabel";
             this.packageLabel.Size = new System.Drawing.Size(50, 13);
-            this.packageLabel.TabIndex = 13;
+            this.packageLabel.TabIndex = 0;
             this.packageLabel.Text = "Package";
             // 
             // packageBrowse
@@ -294,7 +294,7 @@ namespace ASClassWizard.Wizards
             this.packageBrowse.Location = new System.Drawing.Point(381, 3);
             this.packageBrowse.Name = "packageBrowse";
             this.packageBrowse.Size = new System.Drawing.Size(74, 23);
-            this.packageBrowse.TabIndex = 0;
+            this.packageBrowse.TabIndex = 2;
             this.packageBrowse.Text = "Browse...";
             this.packageBrowse.UseVisualStyleBackColor = true;
             this.packageBrowse.Click += new System.EventHandler(this.packageBrowse_Click);
@@ -305,7 +305,7 @@ namespace ASClassWizard.Wizards
             this.baseBrowse.Location = new System.Drawing.Point(381, 115);
             this.baseBrowse.Name = "baseBrowse";
             this.baseBrowse.Size = new System.Drawing.Size(74, 23);
-            this.baseBrowse.TabIndex = 6;
+            this.baseBrowse.TabIndex = 10;
             this.baseBrowse.Text = "Browse...";
             this.baseBrowse.UseVisualStyleBackColor = true;
             this.baseBrowse.Click += new System.EventHandler(this.baseBrowse_Click);
@@ -318,7 +318,7 @@ namespace ASClassWizard.Wizards
             this.errorLabel.Location = new System.Drawing.Point(25, 4);
             this.errorLabel.Name = "errorLabel";
             this.errorLabel.Size = new System.Drawing.Size(34, 13);
-            this.errorLabel.TabIndex = 1;
+            this.errorLabel.TabIndex = 0;
             this.errorLabel.Text = "Error";
             // 
             // errorIcon
@@ -337,8 +337,8 @@ namespace ASClassWizard.Wizards
             this.flowLayoutPanel6.Controls.Add(this.errorLabel);
             this.flowLayoutPanel6.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel6.Name = "flowLayoutPanel6";
-            this.flowLayoutPanel6.Size = new System.Drawing.Size(301, 23);
-            this.flowLayoutPanel6.TabIndex = 1;
+            this.flowLayoutPanel6.Size = new System.Drawing.Size(296, 23);
+            this.flowLayoutPanel6.TabIndex = 0;
             // 
             // flowLayoutPanel9
             // 
@@ -364,11 +364,14 @@ namespace ASClassWizard.Wizards
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.tableLayoutPanel2);
             this.groupBox2.Location = new System.Drawing.Point(10, 53);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(468, 279);
-            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
             // tableLayoutPanel2
@@ -414,7 +417,7 @@ namespace ASClassWizard.Wizards
             this.implementLabel.Name = "implementLabel";
             this.implementLabel.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
             this.implementLabel.Size = new System.Drawing.Size(55, 19);
-            this.implementLabel.TabIndex = 8;
+            this.implementLabel.TabIndex = 11;
             this.implementLabel.Text = "Implement";
             // 
             // implementList
@@ -424,11 +427,12 @@ namespace ASClassWizard.Wizards
             this.implementList.Location = new System.Drawing.Point(106, 143);
             this.implementList.Name = "implementList";
             this.implementList.Size = new System.Drawing.Size(268, 56);
-            this.implementList.TabIndex = 7;
+            this.implementList.TabIndex = 12;
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(this.cancelButton);
             this.flowLayoutPanel1.Controls.Add(this.okButton);
@@ -437,7 +441,7 @@ namespace ASClassWizard.Wizards
             this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 338);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(466, 29);
-            this.flowLayoutPanel1.TabIndex = 5;
+            this.flowLayoutPanel1.TabIndex = 2;
             // 
             // cancelButton
             // 
@@ -445,21 +449,20 @@ namespace ASClassWizard.Wizards
             this.cancelButton.Location = new System.Drawing.Point(388, 3);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 12;
+            this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // okButton
             // 
+            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.okButton.Enabled = false;
             this.okButton.Location = new System.Drawing.Point(307, 3);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 11;
+            this.okButton.TabIndex = 1;
             this.okButton.Text = "Ok";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
             // AS3ClassWizard
             //

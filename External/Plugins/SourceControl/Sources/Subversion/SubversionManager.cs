@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using PluginCore;
 using System.Text.RegularExpressions;
 
 namespace SourceControl.Sources.Subversion
@@ -96,7 +91,7 @@ namespace SourceControl.Sources.Subversion
             if (!statusCache.ContainsKey(rootPath))
             {
                 status = new Status(rootPath);
-                status.OnResult += new StatusResult(status_OnResult);
+                status.OnResult += new StatusResult(Status_OnResult);
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];
@@ -104,7 +99,7 @@ namespace SourceControl.Sources.Subversion
             status.Update();
         }
 
-        void status_OnResult(Status status)
+        void Status_OnResult(Status status)
         {
             ignoreDirty = false;
             if (OnChange != null) OnChange(this);

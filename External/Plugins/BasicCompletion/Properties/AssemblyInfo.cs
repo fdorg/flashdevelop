@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("FlashDevelop.org")]
 [assembly: AssemblyProduct("BasicCompletion")]
-[assembly: AssemblyCopyright("FlashDevelop.org 2005-2014")]
+[assembly: AssemblyCopyright("FlashDevelop.org 2005-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

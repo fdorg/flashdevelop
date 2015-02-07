@@ -551,10 +551,10 @@ namespace WeifenLuo.WinFormsUI.Docking
                     {
                         DockPanel.ContentFocusManager.RemoveFromList(Content);
                     }
-                    else if (NativeMethods.ShouldUseWin32())
-                    {
-                        DockPanel.ContentFocusManager.AddToList(Content);
-                    }
+                }
+                else if (NativeMethods.ShouldUseWin32())
+                {
+                    DockPanel.ContentFocusManager.AddToList(Content);
                 }
                 OnDockStateChanged(EventArgs.Empty);
             }

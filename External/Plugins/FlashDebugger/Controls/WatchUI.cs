@@ -5,84 +5,114 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using Aga.Controls.Tree.NodeControls;
+using FlashDebugger.Controls.DataTree;
 using PluginCore;
+using PluginCore.Localization;
 using flash.tools.debugger;
 using flash.tools.debugger.expression;
 
 namespace FlashDebugger.Controls
 {
-	public class WatchUI : DockPanelControl
-	{
-		private DataTreeControl treeControl;
-		private List<String> watches;
+    public class WatchUI : DockPanelControl
+    {
+        private DataTreeControl treeControl;
+        private List<String> watches;
 
-		public WatchUI()
-		{
-			watches = new List<string>();
-			treeControl = new DataTreeControl(true);
-			this.treeControl.Tree.BorderStyle = BorderStyle.None;
-			this.treeControl.Resize += new EventHandler(this.TreeControlResize);
-			this.treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
-			this.treeControl.Dock = DockStyle.Fill;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.treeControl);
-		}
+        public WatchUI()
+        {
+            watches = new List<string>();
+            treeControl = new DataTreeControl(true);
+            this.treeControl.Tree.BorderStyle = BorderStyle.None;
+            this.treeControl.Resize += new EventHandler(this.TreeControlResize);
+            this.treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
+            this.treeControl.Dock = DockStyle.Fill;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.treeControl);
+        }
 
-		private void TreeControlResize(Object sender, EventArgs e)
-		{
-			Int32 w = this.treeControl.Width / 2;
-			this.treeControl.Tree.Columns[0].Width = w;
-			this.treeControl.Tree.Columns[1].Width = w - 8;
-		}
+        private void TreeControlResize(Object sender, EventArgs e)
+        {
+            Int32 w = this.treeControl.Width / 2;
+            this.treeControl.Tree.Columns[0].Width = w;
+            this.treeControl.Tree.Columns[1].Width = w - 8;
+        }
 
-		public void AddElement(String item)
-		{
-			if (watches.Contains(item)) return;
-			watches.Add(item);
-			UpdateElements();
-		}
-		
-		public void RemoveElement(string item)
-		{
-			watches.Remove(item);
-			UpdateElements();
-		}
+        public bool AddElement(String item)
+        {
+            if (watches.Contains(item)) return false;
+            watches.Add(item);
+            UpdateElements();
+            return true;
+        }
+        
+        public void RemoveElement(string item)
+        {
+            watches.Remove(item);
+            UpdateElements();
+        }
 
-		public void RemoveElement(int itemN)
-		{
-			if (itemN<watches.Count) RemoveElement(watches[itemN]);
-		}
+        public void RemoveElement(int itemN)
+        {
+            if (itemN < watches.Count) RemoveElement(watches[itemN]);
+        }
 
-		public void Clear()
-		{
-			watches.Clear();
-			UpdateElements();
-		}
+        public bool ReplaceElement(string oldItem, string newItem)
+        {
+            if (watches.Contains(newItem)) return false;
+            int itemN = watches.IndexOf(oldItem);
+            if (itemN == -1)
+                AddElement(newItem);
+            else
+            {
+                watches[itemN] = newItem;
+                UpdateElements();
+            }
 
-		public void UpdateElements()
-		{
-			treeControl.Tree.BeginUpdate();
-			treeControl.Nodes.Clear();
-			foreach (String item in watches)
-			{
-				DataNode node = new DataNode(item); // todo, introduce new Node types.
-				try
-				{
+            return true;
+        }
+
+        public void Clear()
+        {
+            watches.Clear();
+            treeControl.Nodes.Clear();
+        }
+
+        public void UpdateElements()
+        {
+            treeControl.Tree.BeginUpdate();
+            treeControl.Nodes.Clear();
+            foreach (String item in watches)
+            {
+                DataNode node; // todo, introduce new Node types.
+                try
+                {
                     IASTBuilder builder = new ASTBuilder(false);
                     ValueExp exp = builder.parse(new java.io.StringReader(item));
                     var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                     var obj = exp.evaluate(ctx);
-                    node = new DataNode((Variable)obj);
+                    if (obj is Variable)
+                        node = new VariableNode((Variable)obj);
+                    else if (obj is Value)
+                        node = new ValueNode(item, (Value)obj);
+                    else
+                        node = new ScalarNode(item, obj.toString());
                     node.Tag = item;
-				}
-				catch { }
-				node.Text = item;
-				treeControl.AddNode(node);
-			}
-			treeControl.Tree.EndUpdate();
-			treeControl.Enabled = true;
-		}
+                }
+                catch
+                {
+                    node = new ValueNode(item);
+                }
+                node.Text = item;
+                treeControl.AddNode(node);
+            }
 
-	}
+            treeControl.AddNode(new ValueNode(TextHelper.GetString("Label.AddExpression")));
+            ((NodeTextBox)treeControl.Tree.NodeControls[treeControl.Tree.NodeControls.Count - 2]).EditOnClick = true;
+            treeControl.Tree.EndUpdate();
+            treeControl.Enabled = true;
+        }
+
+    }
 }

@@ -1565,6 +1565,10 @@
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
     <value>ロケールを指定します( ja_JP、en_US など)。</value>
   </data>
+  <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
+    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
     <value>静的なメインエントリポイントを持つクラスを指定します。</value>
   </data>
@@ -1769,6 +1773,10 @@
   </data>
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
     <value>クラスパスはプロジェクトファイルとの相対パスで指定します。</value>
+  </data>
+  <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
+    <value>Classpaths of {0} projects are determined by the Configuration file.</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
     <value>&lt;プロジェクト ディレクトリ&gt;</value>
@@ -2005,6 +2013,10 @@
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
     <value>書き出し先(&amp;O):</value>
+  </data>
+  <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
+    <value>&amp;Configuration file:</value>
+    <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
     <value>貼り付け(&amp;P)</value>
@@ -2437,7 +2449,7 @@ Never - 起動時にスタートページを表示しません。</value>
     <value>プロジェクトに読み込むものを選択</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder プロジェクト (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp)|*.zip;*.fxp</value>
+    <value>Adobe Flash Builder プロジェクト (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>結果パネルに表示</value>
@@ -5473,5 +5485,33 @@ UseData:"</value>
   <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
     <value>Track current active document in Project Tree.</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
+    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
+    <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
+    <comment>Added after 4.6.4</comment>
+  </data>
+  <data name="FlashDebugger.Label.Filter" xml:space="preserve">
+    <value>Filter:</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.SetCurrentFrame" xml:space="preserve">
+    <value>Set as current frame</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.GotoSource" xml:space="preserve">
+    <value>Go to source</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
+    <value>Show just my code</value>
+    <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
+    <value>Add new expression</value>
+    <comment>Added after 4.7.1</comment>
   </data>
 </root>

@@ -22,8 +22,7 @@ namespace LoomContext.Projects
         { 
             get 
             {
-                if (FileInspector.IsFlexBuilderProject(ProjectPath)) return Path.GetFileName(Path.GetDirectoryName(ProjectPath));
-                else return Path.GetFileNameWithoutExtension(ProjectPath); 
+                return Path.GetFileNameWithoutExtension(ProjectPath); 
             } 
         }
 

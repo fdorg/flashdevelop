@@ -1,11 +1,9 @@
 ﻿using System;
-using Aga.Controls.Tree;
 using flash.tools.debugger;
-using PluginCore.Utilities;
 
-namespace FlashDebugger.Controls
+namespace FlashDebugger.Controls.DataTree
 {
-    public class DataNode : Node, IComparable<DataNode>
+    public class ValueNode : DataNode
     {
         private int m_ChildrenShowLimit = 500;
         public int ChildrenShowLimit
@@ -14,34 +12,10 @@ namespace FlashDebugger.Controls
             set { m_ChildrenShowLimit = value; }
         }
 
-        private Variable m_Value;
+        protected Value m_Value;
         private bool m_bEditing = false;
 
-        public int CompareTo(DataNode otherNode)
-        {
-            String thisName = Text;
-            String otherName = otherNode.Text;
-            if (thisName == otherName)
-            {
-                return 0;
-            }
-            if (thisName.Length>0 && thisName[0] == '_')
-            {
-                thisName = thisName.Substring(1);
-            }
-            if (otherName.Length>0 && otherName[0] == '_')
-            {
-                otherName = otherName.Substring(1);
-            }
-            int result = LogicalComparer.Compare(thisName, otherName);
-            if (result != 0)
-            {
-                return result;
-            }
-            return m_Value.getName().length()>0 && m_Value.getName().startsWith("_") ? 1 : -1;
-        }
-
-        public string Value
+        public override string Value
         {
             get
             {
@@ -49,15 +23,15 @@ namespace FlashDebugger.Controls
                 {
                     return string.Empty;
                 }
-                int type = m_Value.getValue().getType();
+                int type = m_Value.getType();
                 string temp = null;
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
-                    return m_Value.getValue().getTypeName();
+                    return m_Value.getTypeName();
                 }
                 else if (type == VariableType_.NUMBER)
                 {
-                    double number = ((java.lang.Double)m_Value.getValue().getValueAsObject()).doubleValue();
+                    double number = ((java.lang.Double)m_Value.getValueAsObject()).doubleValue();
                     if (!Double.IsNaN(number) && (double)(long)number == number)
                     {
                         if (!m_bEditing)
@@ -76,11 +50,11 @@ namespace FlashDebugger.Controls
                 }
                 else if (type == VariableType_.BOOLEAN)
                 {
-                    return m_Value.getValue().getValueAsString().toLowerCase();
+                    return m_Value.getValueAsString().toLowerCase();
                 }
                 else if (type == VariableType_.STRING)
                 {
-                    if (m_Value.getValue().getValueAsObject() != null)
+                    if (m_Value.getValueAsObject() != null)
                     {
                         return "\"" + escape(m_Value.ToString()) + "\"";
                     }
@@ -89,12 +63,12 @@ namespace FlashDebugger.Controls
                 {
                     return "null";
                 }
-                else if (type == VariableType_.FUNCTION)
+                /*else if (type == VariableType_.FUNCTION)
                 {
                     m_Value.ToString();
                     //return "<setter>";
-                }
-                if (temp == null) temp = m_Value.ToString();
+                }*/
+                temp = m_Value.ToString();
                 if (!m_bEditing)
                 {
                     temp = escape(temp);
@@ -103,14 +77,7 @@ namespace FlashDebugger.Controls
             }
             set
             {
-                if (m_Value == null)
-                    return;
-
-                var flashInterface = PluginMain.debugManager.FlashInterface;
-                var b = new flash.tools.debugger.expression.ASTBuilder(false);
-                var exp = b.parse(new java.io.StringReader(this.GetVariablePath() + "=" + value));
-                var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
-                exp.evaluate(ctx);
+                throw new NotSupportedException();
             }
         }
 
@@ -131,7 +98,7 @@ namespace FlashDebugger.Controls
             return text;
         }
 
-        public Variable Variable
+        public Value PlayerValue
         {
             get
             {
@@ -154,7 +121,7 @@ namespace FlashDebugger.Controls
                 {
                     return (this.Nodes.Count == 0);
                 }
-                return m_Value.getValue().getType() != VariableType_.MOVIECLIP && m_Value.getValue().getType() != VariableType_.OBJECT;
+                return m_Value.getType() != VariableType_.MOVIECLIP && m_Value.getType() != VariableType_.OBJECT;
             }
         }
 
@@ -170,44 +137,17 @@ namespace FlashDebugger.Controls
             }
         }
 
-        public DataNode(Variable value) : base(value.getName())
+        public ValueNode(string text)
+            : this(text, null)
+        {
+        }
+
+        public ValueNode(string text, Value value)
+            : base(text)
         {
             m_Value = value;
         }
 
-        public DataNode(string value) : base(value)
-        {
-            m_Value = null;
-        }
-
     }
 
-    internal static class NodeExtensions
-    {
-        public static String GetVariablePath(this Node node)
-        {
-            String ret = string.Empty;
-            if (node.Tag != null && node.Tag is String)
-                return (String)node.Tag; // fix for: live tip value has no parent
-            if (node.Parent != null) ret = node.Parent.GetVariablePath();
-            if (node is DataNode)
-            {
-                DataNode datanode = node as DataNode;
-                if (datanode.Variable != null)
-                {
-                    if (ret == "") return datanode.Variable.getName();
-                    if ((datanode.Variable.getAttributes() & 0x00020000) == 0x00020000) //VariableAttribute_.IS_DYNAMIC
-                    {
-                        ret += "[\"" + datanode.Variable.getName() + "\"]";
-                    }
-                    else
-                    {
-                        ret += "." + datanode.Variable.getName();
-                    }
-                }
-            }
-            return ret;
-        }
-
-    }
 }
