@@ -22,7 +22,7 @@ namespace FlashDebugger.Controls
         private static ViewerForm viewerForm;
         private ContextMenuStrip _contextMenuStrip;
         private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem;
-        private List<String> expandedList = new List<String>();
+        private DataTreeState state;
         private bool watchMode;
         private bool addingNewExpression;
 
@@ -68,7 +68,9 @@ namespace FlashDebugger.Controls
                 NameNodeTextBox.DrawText += NameNodeTextBox_DrawText;
                 NameNodeTextBox.EditorShowing += NameNodeTextBox_EditorShowing;
                 NameNodeTextBox.EditorHided += NameNodeTextBox_EditorHided;
+                NameNodeTextBox.IsEditEnabledValueNeeded += NameNodeTextBox_IsEditEnabledValueNeeded;
                 NameNodeTextBox.LabelChanged += NameNodeTextBox_LabelChanged;
+                _tree.NodeMouseClick += Tree_NameNodeMouseClick;
             }
             
             _model = new DataTreeModel();
@@ -97,13 +99,9 @@ namespace FlashDebugger.Controls
             viewerMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Viewer"), null, new EventHandler(this.ViewerItemClick));
             _contextMenuStrip.Items.AddRange(new ToolStripMenuItem[] { copyMenuItem, viewerMenuItem});
             if (watchMode)
-            {
                 watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Unwatch"), null, new EventHandler(this.WatchItemClick));
-            }
             else
-            {
                 watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Watch"), null, new EventHandler(this.WatchItemClick));
-            }
             _contextMenuStrip.Items.Add(watchMenuItem);
             TreeSelectionChanged(null, null);
             viewerForm = new ViewerForm();
@@ -114,7 +112,7 @@ namespace FlashDebugger.Controls
         {
             try
             {
-                if (e.Node.NextNode == null && !addingNewExpression)
+                if (e.Node.NextNode == null && e.Node.Level == 1 && !addingNewExpression)
                 {
                     e.Font = new Font(e.Font, FontStyle.Italic);
                 }
@@ -149,6 +147,11 @@ namespace FlashDebugger.Controls
                 addingNewExpression = false;
         }
 
+        void NameNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
+        {
+            e.Value = e.Node.Level == 1;
+        }
+
         void NameNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
             NodeTextBox box = sender as NodeTextBox;
@@ -168,6 +171,16 @@ namespace FlashDebugger.Controls
                 newExp = PanelsHelper.watchUI.ReplaceElement(e.OldLabel, e.NewLabel);
 
             if (!newExp) node.Text = e.OldLabel;
+        }
+
+        void Tree_NameNodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
+        {
+            if (e.Node.Level == 1 && e.Control == NameNodeTextBox && !e.Node.CanExpand &&
+                (Tree.SelectedNode == null || Tree.SelectedNode == e.Node))
+            {
+                NameNodeTextBox.BeginEdit();
+                e.Handled = true;
+            }
         }
 
         void ValueNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
@@ -247,7 +260,6 @@ namespace FlashDebugger.Controls
         public DataNode AddNode(DataNode node)
         {
             _model.Root.Nodes.Add(node);
-            RestoreExpanded();
             return node;
         }
 
@@ -261,13 +273,6 @@ namespace FlashDebugger.Controls
         {
             return _model.GetFullPath(node);
         }
-
-        public void Clear()
-        {
-            if (Nodes.Count > 0) SaveExpanded();
-            Nodes.Clear();
-        }
-
 
         private void CopyItemClick(Object sender, System.EventArgs e)
         {
@@ -467,9 +472,11 @@ namespace FlashDebugger.Controls
             }
         }
 
-        public void SaveExpanded()
+        public void SaveState()
         {
-            expandedList.Clear();
+            if (state == null) state = new DataTreeState();
+            state.Selected = _tree.SelectedNode == null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
+            state.Expanded.Clear();
             SaveExpanded(Nodes);
         }
 
@@ -480,15 +487,18 @@ namespace FlashDebugger.Controls
             {
                 if (Tree.FindNode(_model.GetPath(node)).IsExpanded)
                 {
-                    expandedList.Add(_model.GetFullPath(node));
+                    state.Expanded.Add(_model.GetFullPath(node));
                     SaveExpanded(node.Nodes);
                 }
             }
         }
 
-        public void RestoreExpanded()
+        public void RestoreState()
         {
+            if (state == null) return;
             RestoreExpanded(Nodes);
+            if (state.Selected != null)
+                _tree.SelectedNode = _tree.FindNodeByTag(_model.FindNode(state.Selected));
         }
 
         private void RestoreExpanded(Collection<Node> nodes)
@@ -496,7 +506,7 @@ namespace FlashDebugger.Controls
             if (nodes == null) return;
             foreach (Node node in nodes)
             {
-                if (expandedList.Contains(_model.GetFullPath(node)))
+                if (state.Expanded.Contains(_model.GetFullPath(node)))
                 {
                     Tree.FindNode(_model.GetPath(node)).Expand();
                     RestoreExpanded(node.Nodes);
@@ -524,6 +534,18 @@ namespace FlashDebugger.Controls
                 r = dataNode.Value;
             if (r.Length > 300) r = r.Substring(0, 300) + "[...]";
             return r;
+        }
+
+        #endregion
+
+        #region State Class
+
+        private class DataTreeState
+        {
+
+            public HashSet<string> Expanded = new HashSet<String>();
+            public string Selected;
+
         }
 
         #endregion

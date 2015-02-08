@@ -10,9 +10,9 @@ namespace FlashDebugger
 {
     internal class PanelsHelper
     {
-		static public String pluginGuid = "f9d8faf1-31f7-45ca-9c14-2cad27d7a19e";
-        static public DockContent pluginPanel;
-        static public PluginUI pluginUI;
+		static public String localsGuid = "f9d8faf1-31f7-45ca-9c14-2cad27d7a19e";
+        static public DockContent localsPanel;
+        static public LocalsUI localsUI;
 
 		static public String breakPointGuid = "6ee0f809-a3f7-4365-96c7-3bdf89f3aaa4";
         static public DockContent breakPointPanel;
@@ -36,10 +36,10 @@ namespace FlashDebugger
 
         public PanelsHelper(PluginMain pluginMain, Image pluginImage)
         {
-            pluginUI = new PluginUI(pluginMain);
-            pluginUI.Text = TextHelper.GetString("Title.LocalVariables");
-            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, pluginGuid, pluginImage, DockState.DockLeft);
-            pluginPanel.Hide();
+            localsUI = new LocalsUI(pluginMain);
+            localsUI.Text = TextHelper.GetString("Title.LocalVariables");
+            localsPanel = PluginBase.MainForm.CreateDockablePanel(localsUI, localsGuid, pluginImage, DockState.DockLeft);
+            localsPanel.Hide();
             
             stackframeUI = new StackframeUI(pluginMain, MenusHelper.imageList);
             stackframeUI.Text = TextHelper.GetString("Title.StackTrace");

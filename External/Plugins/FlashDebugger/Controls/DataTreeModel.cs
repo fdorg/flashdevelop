@@ -24,19 +24,20 @@ namespace FlashDebugger.Controls
         public Node FindNode(string path)
         {
             if (path == string.Empty) return Root;
-            else return FindNode(Root, path, 0);
+            else return FindNode(Root, path);
         }
 
-        private Node FindNode(Node root, string path, int level)
+        private Node FindNode(Node root, string path)
         {
             foreach (Node node in root.Nodes)
             {
-                if (path == GetFullPath(node)) return node;
-                else
+                string nodePath = GetFullPath(node);
+                if (path == nodePath) return node;
+                if (path.StartsWith(nodePath))
                 {
                     if (node.Nodes.Count > 0)
                     {
-                        Node tmp = FindNode(node, path, level + 1);
+                        Node tmp = FindNode(node, path);
                         if (tmp != null) return tmp;
                     }
                 }

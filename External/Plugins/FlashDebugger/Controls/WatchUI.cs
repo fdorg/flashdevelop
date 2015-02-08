@@ -82,6 +82,7 @@ namespace FlashDebugger.Controls
         public void UpdateElements()
         {
             treeControl.Tree.BeginUpdate();
+            treeControl.SaveState();
             treeControl.Nodes.Clear();
             foreach (String item in watches)
             {
@@ -109,7 +110,7 @@ namespace FlashDebugger.Controls
             }
 
             treeControl.AddNode(new ValueNode(TextHelper.GetString("Label.AddExpression")));
-            ((NodeTextBox)treeControl.Tree.NodeControls[treeControl.Tree.NodeControls.Count - 2]).EditOnClick = true;
+            treeControl.RestoreState();
             treeControl.Tree.EndUpdate();
             treeControl.Enabled = true;
         }

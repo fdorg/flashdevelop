@@ -346,7 +346,7 @@ namespace FlashDebugger
             else if (!PluginMain.settingObject.DisablePanelsAutoshow)
             {
                 PanelsHelper.watchPanel.Show();
-                PanelsHelper.pluginPanel.Show();
+                PanelsHelper.localsPanel.Show();
                 PanelsHelper.threadsPanel.Show();
                 PanelsHelper.immediatePanel.Show();
                 PanelsHelper.breakPointPanel.Show();
@@ -376,13 +376,13 @@ namespace FlashDebugger
             else if (!PluginMain.settingObject.DisablePanelsAutoshow)
             {
                 PanelsHelper.watchPanel.Hide();
-                PanelsHelper.pluginPanel.Hide();
+                PanelsHelper.localsPanel.Hide();
                 PanelsHelper.threadsPanel.Hide();
                 PanelsHelper.immediatePanel.Hide();
                 PanelsHelper.breakPointPanel.Hide();
                 PanelsHelper.stackframePanel.Hide();
             }
-            PanelsHelper.pluginUI.TreeControl.Nodes.Clear();
+            PanelsHelper.localsUI.TreeControl.Nodes.Clear();
             PanelsHelper.stackframeUI.ClearItem();
             PanelsHelper.watchUI.Clear();
             PanelsHelper.threadsUI.ClearItem();
@@ -523,19 +523,21 @@ namespace FlashDebugger
                 Variable thisValue = m_FlashInterface.GetThis(m_CurrentFrame);
                 Variable[] args = m_FlashInterface.GetArgs(m_CurrentFrame);
                 Variable[] locals = m_FlashInterface.GetLocals(m_CurrentFrame);
-                PanelsHelper.pluginUI.Clear();
+                PanelsHelper.localsUI.TreeControl.SaveState();
+                PanelsHelper.localsUI.Clear();
                 if (thisValue != null)
                 {
-                    PanelsHelper.pluginUI.SetData(new Variable[] { thisValue });
+                    PanelsHelper.localsUI.SetData(new Variable[] { thisValue });
                 }
                 if (args != null && args.Length > 0)
                 {
-                    PanelsHelper.pluginUI.SetData(args);
+                    PanelsHelper.localsUI.SetData(args);
                 }
                 if (locals != null && locals.Length > 0)
                 {
-                    PanelsHelper.pluginUI.SetData(locals);
+                    PanelsHelper.localsUI.SetData(locals);
                 }
+                PanelsHelper.localsUI.TreeControl.RestoreState();
                 CurrentLocation = frames[m_CurrentFrame].getLocation();
                 PanelsHelper.watchUI.UpdateElements();
             }
