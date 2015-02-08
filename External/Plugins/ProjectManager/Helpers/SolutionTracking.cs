@@ -11,7 +11,7 @@ namespace ProjectManager.Helpers
 {
     class SolutionTracking
     {
-        public event ActiveProjectHandler ActiveProject;
+        public event SetProjectHandler SetProject;
 
         public bool CurrentDocumentInProject { get; private set; }
 
@@ -81,9 +81,9 @@ namespace ProjectManager.Helpers
 
         void SetCurrentProject(Project project)
         {
-            if (ActiveProject != null) ActiveProject(project);
+            if (SetProject != null) SetProject(project);
         }
     }
 
-    delegate void ActiveProjectHandler(Project project);
+    delegate void SetProjectHandler(Project project);
 }

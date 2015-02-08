@@ -304,7 +304,7 @@ namespace ProjectManager
             runOutput = false;
 
             solutionTracking = new SolutionTracking(pluginUI, Settings);
-            solutionTracking.ActiveProject += solutionTracking_ActiveProject;
+            solutionTracking.SetProject += solutionTracking_SetProject;
         }
 
         private void BuildProjectClick(object sender, EventArgs e)
@@ -984,9 +984,12 @@ namespace ProjectManager
 
         #region Event Handlers
 
-        void solutionTracking_ActiveProject(Project project)
+        void solutionTracking_SetProject(Project project)
         {
-            
+            if (project == null) return;
+            if (project == activeProject) return;
+            SetActiveProject(project);
+            TabColors.UpdateTabs(Settings);
         }
 
         private void BuildComplete(IProject project, bool runOutput)
