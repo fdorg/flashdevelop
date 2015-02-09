@@ -75,9 +75,11 @@ namespace FlashDebugger.Controls
             
             _model = new DataTreeModel();
             _tree.Model = _model;
+            _tree.FullRowSelect = true;
             Controls.Add(_tree);
             _tree.Expanding += TreeExpanding;
             _tree.SelectionChanged += TreeSelectionChanged;
+            _tree.NodeMouseDoubleClick += Tree_NodeMouseDoubleClick;
             _tree.LoadOnDemand = true;
             _tree.AutoRowHeight = true;
             ValueNodeTextBox.DrawText += ValueNodeTextBox_DrawText;
@@ -85,7 +87,6 @@ namespace FlashDebugger.Controls
             ValueNodeTextBox.EditorShowing += ValueNodeTextBox_EditorShowing;
             ValueNodeTextBox.EditorHided += ValueNodeTextBox_EditorHided;
             ValueNodeTextBox.LabelChanged += ValueNodeTextBox_LabelChanged;
-            _tree.NodeMouseDoubleClick += Tree_NodeMouseDoubleClick;
             _contextMenuStrip = new ContextMenuStrip();
             if (PluginBase.MainForm != null && PluginBase.Settings != null)
             {
@@ -478,6 +479,7 @@ namespace FlashDebugger.Controls
             state.Selected = _tree.SelectedNode == null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
             state.Expanded.Clear();
             SaveExpanded(Nodes);
+            SaveScrollState();
         }
 
         private void SaveExpanded(Collection<Node> nodes)
@@ -493,12 +495,26 @@ namespace FlashDebugger.Controls
             }
         }
 
+        private void SaveScrollState()
+        {
+            if (Nodes.Count < 1)
+            {
+                state.TopPath = state.BottomPath = null;
+                return;
+            }
+            var topNode = _tree.FirstVisibleNode;
+            state.TopPath = topNode != null ? _model.GetFullPath(_tree.FirstVisibleNode.Tag as Node) : null;
+            var bottomNode = _tree.LastVisibleNode;
+            state.BottomPath = bottomNode != null ? _model.GetFullPath(bottomNode.Tag as Node) : null;
+        }
+
         public void RestoreState()
         {
             if (state == null) return;
             RestoreExpanded(Nodes);
             if (state.Selected != null)
                 _tree.SelectedNode = _tree.FindNodeByTag(_model.FindNode(state.Selected));
+            RestoreScrollState();
         }
 
         private void RestoreExpanded(Collection<Node> nodes)
@@ -514,6 +530,22 @@ namespace FlashDebugger.Controls
             }
         }
 
+        private void RestoreScrollState()
+        {
+            if (Nodes.Count < 1) return;
+
+            if (state.BottomPath != null)
+            {
+                var bottomNode = Tree.FindNodeByTag(_model.FindNode(state.BottomPath));
+                if (bottomNode != null) Tree.EnsureVisible(bottomNode);
+            }
+
+            if (state.TopPath != null)
+            {
+                var topNode = Tree.FindNodeByTag(_model.FindNode(state.TopPath));
+                if (topNode != null) Tree.EnsureVisible(topNode);
+            }
+        }
 
         #region IToolTipProvider Members
 
@@ -545,7 +577,8 @@ namespace FlashDebugger.Controls
 
             public HashSet<string> Expanded = new HashSet<String>();
             public string Selected;
-
+            public string TopPath;
+            public string BottomPath;
         }
 
         #endregion

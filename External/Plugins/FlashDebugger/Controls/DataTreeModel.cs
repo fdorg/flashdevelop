@@ -31,6 +31,7 @@ namespace FlashDebugger.Controls
         {
             foreach (Node node in root.Nodes)
             {
+                // TODO: We could optimize some more here, we don't need to get the full path
                 string nodePath = GetFullPath(node);
                 if (path == nodePath) return node;
                 if (path.StartsWith(nodePath))
