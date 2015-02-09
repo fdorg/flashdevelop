@@ -390,19 +390,6 @@ namespace ASCompletion
                                     }
                                 }
                             }
-                            else if (command == "ProjectManager.FileActions.DisableWatchers")
-                            {
-                                foreach (PathModel cp in ASContext.Context.Classpath)
-                                    cp.DisableWatcher();
-                            }
-                            else if (command == "ProjectManager.FileActions.EnableWatchers")
-                            {
-                                // classpaths could be invalid now - remove those, BuildClassPath() is too expensive
-                                ASContext.Context.Classpath.RemoveAll(cp => !Directory.Exists(cp.Path));
-
-                                foreach (PathModel cp in ASContext.Context.Classpath)
-                                    cp.EnableWatcher();
-                            }
 
                             // Return requested language SDK list
                             else if (command == "ASCompletion.InstalledSDKs")
@@ -418,6 +405,23 @@ namespace ASCompletion
                             }
                         }
 
+                        else if (command == "ProjectManager.FileActions.DisableWatchers")
+                        {
+                            foreach (PathModel cp in ASContext.Context.Classpath)
+                                cp.DisableWatcher();
+                        }
+                        else if (command == "ProjectManager.FileActions.EnableWatchers")
+                        {
+                            // classpaths could be invalid now - remove those, BuildClassPath() is too expensive
+                            ASContext.Context.Classpath.RemoveAll(cp => !Directory.Exists(cp.Path));
+
+                            foreach (PathModel cp in ASContext.Context.Classpath)
+                                cp.EnableWatcher();
+                        }
+                        else if (command == "ProjectManager.Solution")
+                        {
+                            PathModel.SolutionChanged = true;
+                        }
                         // Create a fake document from a FileModel
                         else if (command == "ProjectManager.OpenVirtualFile")
                         {

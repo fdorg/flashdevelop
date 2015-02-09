@@ -19,7 +19,8 @@ namespace ASCompletion.Model
     /// </summary>
     public class PathModel
     {
-        //static private readonly bool cacheEnabled = false;
+        static public bool SolutionChanged;
+
         static private Dictionary<string, PathModel> pathes = new Dictionary<string, PathModel>();
 
         /// <summary>
@@ -39,6 +40,9 @@ namespace ASCompletion.Model
         /// </summary>
         static public void Compact()
         {
+            if (!SolutionChanged) return;
+            SolutionChanged = false;
+
             lock (pathes)
             {
                 //TimeSpan keep = TimeSpan.FromMinutes(5);
@@ -46,8 +50,7 @@ namespace ASCompletion.Model
                 foreach (string key in pathes.Keys)
                 {
                     PathModel model = pathes[key];
-                    //TimeSpan span = DateTime.Now.Subtract(model.LastAccess);
-                    if (model.InUse/* || span < keep*/) clean.Add(key, model);
+                    if (model.InUse) clean.Add(key, model);
                     else model.Cleanup();
                 }
                 pathes = clean;
@@ -70,7 +73,7 @@ namespace ASCompletion.Model
             if (pathes.ContainsKey(modelName))
             {
                 aPath = pathes[modelName] as PathModel;
-                if (aPath.IsTemporaryPath || !aPath.IsValid || aPath.FilesCount == 0)
+                if (aPath.IsTemporaryPath || !aPath.IsValid || (aPath.FilesCount == 0 && !aPath.IsVirtual))
                 {
                     pathes[modelName] = aPath = new PathModel(path, context);
                 }

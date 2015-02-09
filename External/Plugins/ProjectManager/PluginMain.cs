@@ -47,6 +47,7 @@ namespace ProjectManager
         public const string Menu = "ProjectManager.Menu";
         public const string ToolBar = "ProjectManager.ToolBar";
         public const string Project = "ProjectManager.Project";
+        public const string Solution = "ProjectManager.Solution";
         public const string CleanProject = "ProjectManager.CleanProject";
         public const string TestProject = "ProjectManager.TestingProject";
         public const string BuildProject = "ProjectManager.BuildingProject";
@@ -633,6 +634,7 @@ namespace ProjectManager
             if (this.solution != null) CloseSolution(true);
             this.solution = solution;
             PluginBase.CurrentSolution = solution;
+            EventManager.DispatchEvent(this, new DataEvent(EventType.Command, ProjectManagerEvents.Solution, solution));
 
             // configure
             var prefs = PluginMain.Settings.GetPrefs(solution);
