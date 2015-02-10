@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="Controls\DataTree\ContinuedDataNode.cs" />
     <Compile Include="Controls\DataTree\DataNode.cs" />
+    <Compile Include="Controls\DataTree\ErrorNode.cs" />
     <Compile Include="Controls\DataTree\ScalarNode.cs" />
     <Compile Include="Controls\DataTree\ValueNode.cs" />
     <Compile Include="Controls\DataTree\VariableNode.cs" />

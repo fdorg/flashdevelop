@@ -114,9 +114,10 @@ namespace FlashDebugger.Controls
             try
             {
                 if (e.Node.NextNode == null && e.Node.Level == 1 && !addingNewExpression)
-                {
                     e.Font = new Font(e.Font, FontStyle.Italic);
-                }
+                else if (e.Node.Tag is ErrorNode)
+                    e.TextColor = e.Node.IsSelected ? Color.White : Color.Gray;
+
             }
             catch (Exception) { }
         }
@@ -248,12 +249,15 @@ namespace FlashDebugger.Controls
         {
             try
             {
-                VariableNode node = e.Node.Tag as VariableNode;
-                FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
-                if (node != null && node.Variable != null && node.Variable.hasValueChanged(flashInterface.Session))
+                VariableNode variableNode = e.Node.Tag as VariableNode;
+                if (variableNode != null)
                 {
-                    e.TextColor = Color.Red;
+                    FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
+                    if (variableNode.Variable != null && variableNode.Variable.hasValueChanged(flashInterface.Session))
+                        e.TextColor = Color.Red;
                 }
+                else if (e.Node.Tag is ErrorNode)
+                    e.TextColor = e.Node.IsSelected ? Color.White : Color.Gray;
             }
             catch (NullReferenceException) { }
         }

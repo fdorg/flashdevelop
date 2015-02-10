@@ -102,9 +102,9 @@ namespace FlashDebugger.Controls
                         node = new ScalarNode(item, obj.toString());
                     node.Tag = item;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    node = new ValueNode(item);
+                    node = new ErrorNode(item, ex);
                 }
                 node.Text = item;
                 treeControl.AddNode(node);
