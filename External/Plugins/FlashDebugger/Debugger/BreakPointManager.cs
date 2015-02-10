@@ -321,15 +321,20 @@ namespace FlashDebugger
 			if (m_Project != null)
             {
 				List<BreakPointInfo> bpSaveList = new List<BreakPointInfo>();
-				Uri u1 = new Uri(m_Project.ProjectPath);
                 foreach (BreakPointInfo info in m_BreakPointList)
                 {
 					if (!info.IsDeleted)
 					{
-						Uri u2 = new Uri(u1, info.FileFullPath);
-						info.FileFullPath = u1.MakeRelativeUri(u2).ToString();
-						bpSaveList.Add(info);
-					}
+                        BreakPointInfo infoCopy;
+
+                        if (!Path.IsPathRooted(info.FileFullPath))
+                            infoCopy = info;
+                        else
+                            infoCopy = new BreakPointInfo(m_Project.GetRelativePath(info.FileFullPath),
+                                info.Line, info.Exp, info.IsDeleted, info.IsEnabled);
+
+                        bpSaveList.Add(infoCopy);
+                    }
                 }
                 Util.SerializeXML<List<BreakPointInfo>>.SaveFile(m_SaveFileFullPath, bpSaveList);
             }
@@ -345,8 +350,7 @@ namespace FlashDebugger
 				Uri u1 = new Uri(m_Project.ProjectPath);
                 foreach (BreakPointInfo info in m_BreakPointList)
                 {
-                    Uri u2 = new Uri(u1, info.FileFullPath);
-                    info.FileFullPath = u2.LocalPath;
+                    info.FileFullPath = m_Project.GetAbsolutePath(info.FileFullPath);
 					if (ChangeBreakPointEvent != null)
                     {
                         ChangeBreakPointEvent(this, new BreakPointArgs(info.FileFullPath, info.Line, info.Exp, info.IsDeleted, info.IsEnabled));
