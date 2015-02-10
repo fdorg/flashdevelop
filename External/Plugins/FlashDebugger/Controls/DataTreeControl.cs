@@ -478,19 +478,20 @@ namespace FlashDebugger.Controls
             if (state == null) state = new DataTreeState();
             state.Selected = _tree.SelectedNode == null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
             state.Expanded.Clear();
-            SaveExpanded(Nodes);
+            if (Nodes != null && Nodes.Count > 0)
+                SaveExpanded(Nodes);
             SaveScrollState();
         }
 
         private void SaveExpanded(Collection<Node> nodes)
         {
-            if (nodes == null) return;
             foreach (Node node in nodes)
             {
-                if (Tree.FindNode(_model.GetPath(node)).IsExpanded)
+                if (!node.IsLeaf && Tree.FindNode(_model.GetPath(node)).IsExpanded)
                 {
                     state.Expanded.Add(_model.GetFullPath(node));
-                    SaveExpanded(node.Nodes);
+                    if (node.Nodes.Count > 0)
+                        SaveExpanded(node.Nodes);
                 }
             }
         }
@@ -511,7 +512,8 @@ namespace FlashDebugger.Controls
         public void RestoreState()
         {
             if (state == null) return;
-            RestoreExpanded(Nodes);
+            if (state.Expanded != null && state.Expanded.Count > 0)
+                RestoreExpanded(Nodes);
             if (state.Selected != null)
                 _tree.SelectedNode = _tree.FindNodeByTag(_model.FindNode(state.Selected));
             RestoreScrollState();
@@ -519,13 +521,13 @@ namespace FlashDebugger.Controls
 
         private void RestoreExpanded(Collection<Node> nodes)
         {
-            if (nodes == null) return;
             foreach (Node node in nodes)
             {
                 if (!node.IsLeaf && state.Expanded.Contains(_model.GetFullPath(node)))
                 {
                     Tree.FindNode(_model.GetPath(node)).Expand();
-                    RestoreExpanded(node.Nodes);
+                    if (node.Nodes.Count > 0)
+                        RestoreExpanded(node.Nodes);
                 }
             }
         }
