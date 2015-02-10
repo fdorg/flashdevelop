@@ -70,6 +70,7 @@ namespace FlashDebugger.Controls
                 NameNodeTextBox.EditorHided += NameNodeTextBox_EditorHided;
                 NameNodeTextBox.IsEditEnabledValueNeeded += NameNodeTextBox_IsEditEnabledValueNeeded;
                 NameNodeTextBox.LabelChanged += NameNodeTextBox_LabelChanged;
+                _tree.KeyDown += Tree_KeyDown;
                 _tree.NodeMouseClick += Tree_NameNodeMouseClick;
             }
             
@@ -173,6 +174,16 @@ namespace FlashDebugger.Controls
                 newExp = PanelsHelper.watchUI.ReplaceElement(e.OldLabel, e.NewLabel);
 
             if (!newExp) node.Text = e.OldLabel;
+        }
+
+        void Tree_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                var node = _tree.SelectedNode;
+                if (node != null && node.Level == 1 && node.NextNode != null)
+                    PanelsHelper.watchUI.RemoveElement(Tree.SelectedNode.Index);
+            }
         }
 
         void Tree_NameNodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
@@ -323,7 +334,7 @@ namespace FlashDebugger.Controls
             DataNode node = Tree.SelectedNode.Tag as DataNode;
             if (watchMode)
             {
-                PanelsHelper.watchUI.RemoveElement(Tree.SelectedNode.Row);
+                PanelsHelper.watchUI.RemoveElement(Tree.SelectedNode.Index);
             }
             else
             {
@@ -337,7 +348,7 @@ namespace FlashDebugger.Controls
             {
                 item.Enabled = (Tree.SelectedNode != null);
             }
-            if (watchMode) watchMenuItem.Enabled = (Tree.SelectedNode != null && Tree.SelectedNode.Level == 1);
+            if (watchMode) watchMenuItem.Enabled = (Tree.SelectedNode != null && Tree.SelectedNode.Level == 1 && Tree.SelectedNode.NextNode != null);
         }
 
         void TreeExpanding(Object sender, TreeViewAdvEventArgs e)
