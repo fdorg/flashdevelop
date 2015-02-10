@@ -267,7 +267,7 @@ namespace FlashDebugger
             CurrentButton.Enabled = CurrentMenu.Enabled = RunToCursorButton.Enabled = enabled;
             NextButton.Enabled = NextMenu.Enabled = FinishButton.Enabled = FinishMenu.Enabled = enabled;
             RunToCursorMenu.Enabled = StepButton.Enabled = StepMenu.Enabled = enabled;
-			if (state == DebuggerState.Running)
+            if (state == DebuggerState.Running && !PluginMain.debugManager.FlashInterface.isDebuggerSuspended)
 			{
 				PanelsHelper.localsUI.TreeControl.Nodes.Clear();
 				PanelsHelper.stackframeUI.ClearItem();

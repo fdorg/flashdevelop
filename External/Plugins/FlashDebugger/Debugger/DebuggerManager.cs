@@ -523,7 +523,7 @@ namespace FlashDebugger
                 Variable thisValue = m_FlashInterface.GetThis(m_CurrentFrame);
                 Variable[] args = m_FlashInterface.GetArgs(m_CurrentFrame);
                 Variable[] locals = m_FlashInterface.GetLocals(m_CurrentFrame);
-                PanelsHelper.localsUI.TreeControl.SaveState();
+                if (PanelsHelper.localsUI.TreeControl.Nodes.Count > 0) PanelsHelper.localsUI.TreeControl.SaveState();
                 PanelsHelper.localsUI.Clear();
                 if (thisValue != null)
                 {
