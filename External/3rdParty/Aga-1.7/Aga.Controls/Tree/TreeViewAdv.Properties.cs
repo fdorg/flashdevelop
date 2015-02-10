@@ -130,7 +130,7 @@ namespace Aga.Controls.Tree
 		/// <summary>
 		/// Number of rows fits to the current page
 		/// </summary>
-		public int CurrentPageSize
+		internal int CurrentPageSize
 		{
 			get
 			{
