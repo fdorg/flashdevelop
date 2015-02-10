@@ -159,7 +159,7 @@ namespace FlashDebugger.Controls
             if (box.Parent.CurrentNode == null) return;
             DataNode node = box.Parent.CurrentNode.Tag as DataNode;
 
-            if (e.NewLabel.Trim() == "")
+            if (e.NewLabel.Trim() == "" || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
             {
                 node.Text = e.OldLabel != "" ? e.OldLabel : TextHelper.GetString("Label.AddExpression");
                 return;
@@ -522,7 +522,7 @@ namespace FlashDebugger.Controls
             if (nodes == null) return;
             foreach (Node node in nodes)
             {
-                if (state.Expanded.Contains(_model.GetFullPath(node)))
+                if (!node.IsLeaf && state.Expanded.Contains(_model.GetFullPath(node)))
                 {
                     Tree.FindNode(_model.GetPath(node)).Expand();
                     RestoreExpanded(node.Nodes);

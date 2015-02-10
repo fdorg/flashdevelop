@@ -83,6 +83,7 @@ namespace FlashDebugger.Controls
         {
             treeControl.Tree.BeginUpdate();
             treeControl.SaveState();
+
             treeControl.Nodes.Clear();
             foreach (String item in watches)
             {
