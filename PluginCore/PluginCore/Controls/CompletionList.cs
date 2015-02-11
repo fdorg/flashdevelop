@@ -1,17 +1,15 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using PluginCore.Managers;
-using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace PluginCore.Controls
 {
 
-	public static class CompletionList
+    public delegate void InsertedTextHandler(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item);
+
+    public static class CompletionList
     {
         static public event InsertedTextHandler OnInsert;
         static public event InsertedTextHandler OnCancel;
@@ -26,13 +24,18 @@ namespace PluginCore.Controls
 	    internal static Boolean listUp
 	    {
             get { return completionList.listUp; }
+            set { completionList.listUp = value; }
 	    }
 
         /// <summary>
         /// Set to 0 after calling .Show to keep the completion list active 
         /// when the text was erased completely (using backspace)
         /// </summary>
-        public static Int32 MinWordLength;
+        public static Int32 MinWordLength
+        {
+            get { return completionList.MinWordLength; }
+            set { completionList.MinWordLength = value; }
+        }
 
 		#endregion
 		
@@ -43,12 +46,12 @@ namespace PluginCore.Controls
         /// </summary> 
 		public static void CreateControl(IMainForm mainForm)
         {
-            completionList = new CompletionListControl(mainForm);
-            completionList.OnCancel += OnCancel;
-            completionList.OnInsert += OnInsert;
+            completionList = new CompletionListControl(new ScintillaTarget());
+            completionList.OnCancel += OnCancelHandler;
+            completionList.OnInsert += OnInsertHandler;
         }
-		
-		#endregion
+
+        #endregion
 		
 		#region Public List Properties
 
@@ -99,9 +102,7 @@ namespace PluginCore.Controls
         /// </summary> 
         static public void Show(List<ICompletionListItem> itemList, Boolean autoHide, String select)
 		{
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable) return;
-            completionList.Show(itemList, autoHide);
+            completionList.Show(itemList, autoHide, select);
 		}
 
         /// <summary>
@@ -109,9 +110,6 @@ namespace PluginCore.Controls
         /// </summary>
         static public void Show(List<ICompletionListItem> itemList, bool autoHide)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable) return;
-            ScintillaControl sci = doc.SciControl;
             completionList.Show(itemList, autoHide);
 		}
 
@@ -186,7 +184,7 @@ namespace PluginCore.Controls
         /// </summary> 
         static public bool ReplaceText(ScintillaControl sci, char trigger)
 		{
-            return ReplaceText(sci, "", trigger);
+            return completionList.ReplaceText("", trigger);
 		}
 
         /// <summary>
@@ -194,7 +192,7 @@ namespace PluginCore.Controls
         /// </summary> 
 		static public bool ReplaceText(ScintillaControl sci, String tail, char trigger)
         {
-            return completionList.ReplaceText(sci, tail, trigger);
+            return completionList.ReplaceText(tail, trigger);
         }
 		
 		#endregion
@@ -211,15 +209,27 @@ namespace PluginCore.Controls
 
         static public void OnChar(ScintillaControl sci, int value)
         {
-            completionList.OnChar(sci, value);
+            completionList.OnChar(value);
         }
 
         static public bool HandleKeys(ScintillaControl sci, Keys key)
         {
-            return completionList.HandleKeys(sci, key);
+            return completionList.HandleKeys(key);
         }
 
-		#endregion
+        private static void OnCancelHandler(Control sender, Int32 position, String text, Char trigger, ICompletionListItem item)
+        {
+            if (OnCancel != null)
+                OnCancel((ScintillaControl)sender, position, text, trigger, item);
+        }
+
+        private static void OnInsertHandler(Control sender, Int32 position, String text, Char trigger, ICompletionListItem item)
+        {
+            if (OnInsert != null)
+                OnInsert((ScintillaControl)sender, position, text, trigger, item);
+        }
+
+        #endregion
 
         #region Controls fading on Control key
 
@@ -235,6 +245,88 @@ namespace PluginCore.Controls
 
         #endregion
 
-	}
+        private class ScintillaTarget : ICompletionListTarget
+        {
 
+            public event EventHandler LostFocus;
+            public event ScrollEventHandler Scroll;
+            public event KeyEventHandler KeyDown;
+            public event MouseEventHandler MouseDown;
+
+            public Control Owner
+            {
+                get { return PluginBase.MainForm.CurrentDocument.SciControl; }
+            }
+
+            public string Text
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public string SelectedText
+            {
+                get
+                {
+                    return PluginBase.MainForm.CurrentDocument.SciControl.SelText;
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public int SelectionEnd
+            {
+                get
+                {
+                    return PluginBase.MainForm.CurrentDocument.SciControl.SelectionEnd;
+                }
+                set
+                {
+                    PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart = value;
+                }
+            }
+
+            public int SelectionStart
+            {
+                get
+                {
+                    return PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart;
+                }
+                set
+                {
+                    PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart = value;
+                }
+            }
+
+            public int CurrentPos
+            {
+                get { return PluginBase.MainForm.CurrentDocument.SciControl.CurrentPos; }
+            }
+
+            public int GetLineHeight()
+            {
+                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                return UITools.Manager.LineHeight(sci);
+            }
+
+            public Point GetPositionFromCharIndex(int pos)
+            {
+                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                return new Point(sci.PointXFromPosition(pos), sci.PointYFromPosition(pos));
+            }
+
+            public void SetSelection(int start, int end)
+            {
+                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                sci.SetSel(start, end);
+            }
+
+            public bool IsEditable
+            {
+                get { return PluginBase.MainForm.CurrentDocument.IsEditable && PluginBase.MainForm.CurrentDocument.SciControl != null; }
+            }
+
+        }
+	}
 }

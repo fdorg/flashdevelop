@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
 using PluginCore.Helpers;
 using ScintillaNet;
 
+// TODO: Remove all direct references to ScintillaControl
+// TODO: Extract ToolTip reference
+// TODO: Extract CallTip reference
+
 namespace PluginCore.Controls
 {
-    public delegate void InsertedTextHandler(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item);
+    public delegate void CompletionListInsertedTextHandler(Control sender, int position, string text, char trigger, ICompletionListItem item);
 
     public class CompletionListControl
     {
-        public event InsertedTextHandler OnInsert;
-        public event InsertedTextHandler OnCancel;
+        public event CompletionListInsertedTextHandler OnInsert;
+        public event CompletionListInsertedTextHandler OnCancel;
 
         /// <summary>
         /// Properties of the class 
@@ -47,6 +50,8 @@ namespace PluginCore.Controls
         private  long showTime;
         private  ICompletionListItem defaultItem;
 
+        private  ICompletionListTarget target;
+
         /// <summary>
         /// Set to 0 after calling .Show to keep the completion list active 
         /// when the text was erased completely (using backspace)
@@ -60,14 +65,23 @@ namespace PluginCore.Controls
         /// <summary>
         /// Creates the control 
         /// </summary> 
-        public CompletionListControl(IMainForm mainForm)
+        public CompletionListControl(ICompletionListTarget target)
         {
+            this.target = target;
+
+            listHost = new InactiveForm();
+            listHost.StartPosition = FormStartPosition.Manual;
+            listHost.FormBorderStyle = FormBorderStyle.None;
+            listHost.ShowIcon = false;
+            listHost.ShowInTaskbar = false;
+            listHost.Size = new Size(180, 100);
+
             tempo = new System.Timers.Timer();
-            tempo.SynchronizingObject = (Form)mainForm;
+            tempo.SynchronizingObject = (Form)PluginBase.MainForm;
             tempo.Elapsed += new System.Timers.ElapsedEventHandler(DisplayList);
             tempo.AutoReset = false;
             tempoTip = new System.Timers.Timer();
-            tempoTip.SynchronizingObject = (Form)mainForm;
+            tempoTip.SynchronizingObject = (Form)PluginBase.MainForm;
             tempoTip.Elapsed += new System.Timers.ElapsedEventHandler(UpdateTip);
             tempoTip.AutoReset = false;
             tempoTip.Interval = 800;
@@ -80,13 +94,6 @@ namespace PluginCore.Controls
             completionList.DrawItem += new DrawItemEventHandler(CLDrawListItem);
             completionList.Click += new EventHandler(CLClick);
             completionList.DoubleClick += new EventHandler(CLDoubleClick);
-
-            listHost = new InactiveForm();
-            listHost.StartPosition = FormStartPosition.Manual;
-            listHost.FormBorderStyle = FormBorderStyle.None;
-            listHost.ShowIcon = false;
-            listHost.ShowInTaskbar = false;
-            listHost.Size = new Size(180, 100);
 
             listHost.Controls.Add(completionList);
         }
@@ -163,17 +170,14 @@ namespace PluginCore.Controls
         /// </summary>
         public void Show(List<ICompletionListItem> itemList, bool autoHide)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable) return;
-            ScintillaControl sci = doc.SciControl;
             try
             {
-                if ((itemList == null) || (itemList.Count == 0))
+                if (!target.IsEditable)
                 {
                     if (isActive) Hide();
                     return;
                 }
-                if (sci == null)
+                if ((itemList == null) || (itemList.Count == 0))
                 {
                     if (isActive) Hide();
                     return;
@@ -197,11 +201,11 @@ namespace PluginCore.Controls
             fullList = (word.Length == 0) || !autoHide || !PluginBase.MainForm.Settings.AutoFilterList;
             lastIndex = 0;
             exactMatchInList = false;
-            if (sci.SelectionStart == sci.SelectionEnd)
-                startPos = sci.CurrentPos - word.Length;
+            if (target.SelectionStart == target.SelectionEnd)
+                startPos = target.CurrentPos - word.Length;
             else
-                startPos = sci.SelectionStart;
-            currentPos = sci.SelectionEnd; // sci.CurrentPos;
+                startPos = target.SelectionStart;
+            currentPos = target.SelectionEnd; // sci.CurrentPos;
             defaultItem = null;
             // populate list
             needResize = true;
@@ -213,7 +217,7 @@ namespace PluginCore.Controls
             tempoTip.Enabled = false;
             showTime = DateTime.Now.Ticks;
             disableSmartMatch = noAutoInsert || PluginBase.MainForm.Settings.DisableSmartMatch;
-            UITools.Manager.LockControl(sci);
+            UITools.Manager.LockControl(((ScintillaControl)target.Owner));
             faded = false;
         }
 
@@ -256,9 +260,7 @@ namespace PluginCore.Controls
         /// </summary>
         private void DisplayList(Object sender, System.Timers.ElapsedEventArgs e)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable) return;
-            ScintillaControl sci = doc.SciControl;
+            if (!target.IsEditable) return;
             ListBox cl = completionList;
             Form host = listHost;
             if (cl.Items.Count == 0) return;
@@ -274,13 +276,13 @@ namespace PluginCore.Controls
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
             if (newHeight != host.Height) host.Height = newHeight;
             // place control
-            Point coord = new Point(sci.PointXFromPosition(startPos), sci.PointYFromPosition(startPos));
-            listUp = UITools.CallTip.CallTipActive || (coord.Y + host.Height > (sci as Control).Height);
-            coord = sci.PointToScreen(coord);
-            host.Left = coord.X + sci.Left;
+            Point coord = target.GetPositionFromCharIndex(startPos);
+            listUp = UITools.CallTip.CallTipActive || (coord.Y + host.Height > target.Owner.Height);
+            coord = target.Owner.PointToScreen(coord);
+            host.Left = coord.X + target.Owner.Left;
             var screen = Screen.FromHandle(PluginBase.MainForm.Handle);
             if (listUp) host.Top = coord.Y - host.Height;
-            else host.Top = coord.Y + UITools.Manager.LineHeight(sci);
+            else host.Top = coord.Y + target.GetLineHeight();
             // Keep on screen area
             if (host.Right > screen.WorkingArea.Right)
             {
@@ -289,8 +291,8 @@ namespace PluginCore.Controls
             if (!host.Visible)
             {
                 Redraw();
-                host.Show(PluginBase.MainForm);
-                if (UITools.CallTip.CallTipActive) UITools.CallTip.PositionControl(sci);
+                host.Show(target.Owner);
+                if (UITools.CallTip.CallTipActive) UITools.CallTip.PositionControl(((ScintillaControl)target.Owner));
             }
         }
 
@@ -311,7 +313,7 @@ namespace PluginCore.Controls
                 isActive = false;
                 fullList = false;
                 faded = false;
-                listHost.Visible = false;
+                listHost.Hide();
                 if (completionList.Items.Count > 0) completionList.Items.Clear();
                 currentItem = null;
                 allItems = null;
@@ -330,9 +332,8 @@ namespace PluginCore.Controls
                 Hide();
                 if (OnCancel != null)
                 {
-                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                    if (!doc.IsEditable) return;
-                    OnCancel(doc.SciControl, currentPos, currentWord, trigger, null);
+                    if (!target.IsEditable) return;
+                    OnCancel(target.Owner, currentPos, currentWord, trigger, null);
                 }
             }
         }
@@ -342,16 +343,14 @@ namespace PluginCore.Controls
         /// </summary> 
         public void SelectWordInList(string tail)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable)
+            if (!target.IsEditable)
             {
                 Hide();
                 return;
             }
-            ScintillaControl sci = doc.SciControl;
             currentWord = tail;
             currentPos += tail.Length;
-            sci.SetSel(currentPos, currentPos);
+            target.SetSelection(currentPos, currentPos);
         }
 
         /// <summary>
@@ -430,13 +429,12 @@ namespace PluginCore.Controls
         /// </summary>
         private void CLClick(Object sender, System.EventArgs e)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable)
+            if (!target.IsEditable)
             {
                 Hide();
                 return;
             }
-            doc.SciControl.Focus();
+            target.Owner.Focus();
         }
 
         /// <summary>
@@ -444,15 +442,13 @@ namespace PluginCore.Controls
         /// </summary> 
         private void CLDoubleClick(Object sender, System.EventArgs e)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (!doc.IsEditable)
+            if (!target.IsEditable)
             {
                 Hide();
                 return;
             }
-            ScintillaControl sci = doc.SciControl;
-            sci.Focus();
-            //ReplaceText(sci, '\0');
+            target.Owner.Focus();
+            ReplaceText('\0');
         }
 
         /// <summary>
@@ -612,9 +608,7 @@ namespace PluginCore.Controls
                 // update list
                 if (!tempo.Enabled) DisplayList(null, null);
             }
-            /// <summary>
-            /// NO FILTER
-            /// </summary>
+            // NO FILTER
             else
             {
                 int n = completionList.Items.Count;
@@ -792,22 +786,21 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary> 
-        public bool ReplaceText(ScintillaControl sci, char trigger)
+        public bool ReplaceText(char trigger)
         {
-            return ReplaceText(sci, "", trigger);
+            return ReplaceText("", trigger);
         }
 
         /// <summary>
         /// 
         /// </summary> 
-        public bool ReplaceText(ScintillaControl sci, String tail, char trigger)
+        public bool ReplaceText(string tail, char trigger)
         {
-            sci.BeginUndoAction();
+            String triggers = PluginBase.Settings.InsertionTriggers ?? "";
+            if (triggers.Length > 0 && Regex.Unescape(triggers).IndexOf(trigger) < 0) return false;
+
             try
             {
-                String triggers = PluginBase.Settings.InsertionTriggers ?? "";
-                if (triggers.Length > 0 && Regex.Unescape(triggers).IndexOf(trigger) < 0) return false;
-
                 ICompletionListItem item = null;
                 if (completionList.SelectedIndex >= 0)
                 {
@@ -819,7 +812,6 @@ namespace PluginCore.Controls
                     String replace = item.Value;
                     if (replace != null)
                     {
-                        sci.SetSel(startPos, sci.CurrentPos);
                         if (word != null && tail.Length > 0)
                         {
                             if (replace.StartsWith(word, StringComparison.OrdinalIgnoreCase) && replace.IndexOf(tail) >= word.Length)
@@ -827,9 +819,11 @@ namespace PluginCore.Controls
                                 replace = replace.Substring(0, replace.IndexOf(tail));
                             }
                         }
-                        sci.ReplaceSel(replace);
-                        if (OnInsert != null) OnInsert(sci, startPos, replace, trigger, item);
-                        if (tail.Length > 0) sci.ReplaceSel(tail);
+                        ((ScintillaControl)target.Owner).BeginUndoAction();
+                        ((ScintillaControl)target.Owner).SetSel(startPos, ((ScintillaControl)target.Owner).CurrentPos);
+                        ((ScintillaControl)target.Owner).ReplaceSel(replace);
+                        if (OnInsert != null) OnInsert(target.Owner, startPos, replace, trigger, item);
+                        if (tail.Length > 0) ((ScintillaControl)target.Owner).ReplaceSel(tail);
                     }
                     return true;
                 }
@@ -837,7 +831,7 @@ namespace PluginCore.Controls
             }
             finally
             {
-                sci.EndUndoAction();
+                ((ScintillaControl)target.Owner).EndUndoAction();
             }
         }
 
@@ -856,10 +850,11 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary> 
-        public void OnChar(ScintillaControl sci, int value)
+        public void OnChar(int value)
         {
             char c = (char)value;
-            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            // TODO: Inject these values
+            string characterClass = ScintillaControl.Configuration.GetLanguage(PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage).characterclass.Characters;
             if (characterClass.IndexOf(c) >= 0)
             {
                 word += c;
@@ -871,7 +866,7 @@ namespace PluginCore.Controls
             {
                 Hide('\0');
                 // handle this char
-                UITools.Manager.SendChar(sci, value);
+                UITools.Manager.SendChar((ScintillaControl)target.Owner, value);
             }
             else
             {
@@ -887,27 +882,27 @@ namespace PluginCore.Controls
                 }
                 else if (word.Length > 0 || c == '.' || c == '(' || c == '[' || c == '<' || c == ',' || c == ';')
                 {
-                    ReplaceText(sci, c.ToString(), c);
+                    ReplaceText(c.ToString(), c);
                 }
                 // handle this char
-                UITools.Manager.SendChar(sci, value);
+                UITools.Manager.SendChar((ScintillaControl)target.Owner, value);
             }
         }
 
         /// <summary>
         /// 
         /// </summary> 
-        public bool HandleKeys(ScintillaControl sci, Keys key)
+        public bool HandleKeys(Keys key)
         {
             int index;
             switch (key)
             {
                 case Keys.Back:
-                    if (!UITools.CallTip.CallTipActive) sci.DeleteBack();
+                    if (!UITools.CallTip.CallTipActive) ((ScintillaControl)target.Owner).DeleteBack();
                     if (word.Length > MinWordLength)
                     {
                         word = word.Substring(0, word.Length - 1);
-                        currentPos = sci.CurrentPos;
+                        currentPos = target.CurrentPos;
                         lastIndex = 0;
                         FindWordStartingWith(word);
                     }
@@ -915,7 +910,7 @@ namespace PluginCore.Controls
                     return true;
 
                 case Keys.Enter:
-                    if (noAutoInsert || !ReplaceText(sci, '\n'))
+                    if (noAutoInsert || !ReplaceText('\n'))
                     {
                         Hide();
                         return false;
@@ -923,7 +918,7 @@ namespace PluginCore.Controls
                     return true;
 
                 case Keys.Tab:
-                    if (!ReplaceText(sci, '\t'))
+                    if (!ReplaceText('\t'))
                     {
                         Hide();
                         return false;
@@ -940,8 +935,7 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        if (key == Keys.Up) sci.LineUp();
-                        else sci.CharLeft();
+                        //sci.LineUp();
                         return false;
                     }
                     // go up the list
@@ -966,8 +960,7 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        if (key == Keys.Down) sci.LineDown();
-                        else sci.CharRight();
+                        //sci.LineDown();
                         return false;
                     }
                     // go down the list
@@ -992,7 +985,7 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        sci.PageUp();
+                        //sci.PageUp();
                         return false;
                     }
                     // go up the list
@@ -1011,7 +1004,7 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        sci.PageDown();
+                        //sci.PageDown();
                         return false;
                     }
                     // go down the list
@@ -1028,12 +1021,12 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.Left:
-                    sci.CharLeft();
+                    //sci.CharLeft();
                     Hide();
                     break;
 
                 case Keys.Right:
-                    sci.CharRight();
+                    //sci.CharRight();
                     Hide();
                     break;
 
