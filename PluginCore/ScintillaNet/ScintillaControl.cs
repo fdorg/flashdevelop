@@ -21,8 +21,9 @@ namespace ScintillaNet
 	{
         private bool saveBOM;
         private Encoding encoding;
-		private int directPointer;
-		private IntPtr hwndScintilla;
+		private IntPtr directPointer;
+        private Perform _sciFunction;
+        private IntPtr hwndScintilla;
         private bool hasHighlights = false;
 		private bool ignoreAllKeys = false;
 		private bool isBraceMatching = true;
@@ -42,7 +43,8 @@ namespace ScintillaNet
 		
 		#region Scintilla Main
 
-        public ScintillaControl() : this("SciLexer.dll")
+        public ScintillaControl()
+            : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
         {
             if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
@@ -55,7 +57,15 @@ namespace ScintillaNet
                 {
                     IntPtr lib = LoadLibrary(fullpath);
                     hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
-                    directPointer = (int)SlowPerform(2185, 0, 0);
+                    directPointer = (IntPtr)SlowPerform(2185, 0, 0);
+                    IntPtr sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
+/*                    if (sciFunctionPointer == IntPtr.Zero)
+                        throw new Win32Exception(Resources.Exception_CannotCreateDirectFunction, new Win32Exception(Marshal.GetLastWin32Error()));
+*/
+                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(
+                        sciFunctionPointer,
+                        typeof(Perform));
+
                     directPointer = DirectPointer;
                 }
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
@@ -1549,11 +1559,11 @@ namespace ScintillaNet
 		/// Retrieve a pointer value to use as the first argument when calling
 		/// the function returned by GetDirectFunction.
 		/// </summary>
-		public int DirectPointer
+		public IntPtr DirectPointer
 		{
 			get 
 			{
-				return (int)SPerform(2185, 0, 0);
+				return (IntPtr)SPerform(2185, 0, 0);
 			}
 		}	
 
@@ -5034,6 +5044,9 @@ namespace ScintillaNet
         [DllImport("user32.dll")]
         public static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int width, int height, IntPtr hWndParent, int hMenu, IntPtr hInstance, string lpParam);
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        public static extern IntPtr GetProcAddress(HandleRef hModule, string lpProcName);
+
         [DllImport("user32.dll")]
         public static extern IntPtr SetFocus(IntPtr hwnd);
 
@@ -5055,20 +5068,23 @@ namespace ScintillaNet
         [DllImport("shell32.dll")]
         public static extern void DragAcceptFiles(IntPtr hwnd, int accept);
         
-		[DllImport("scilexer.dll", EntryPoint = "Scintilla_DirectFunction")]
-		public static extern int Perform(int directPointer, UInt32 message, UInt32 wParam, UInt32 lParam);
+        public delegate IntPtr Perform(
+            IntPtr sci,
+            int iMessage,
+            IntPtr wParam,
+            IntPtr lParam);
 
 		public UInt32 SlowPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
 		{
 			return (UInt32)SendMessage((int)hwndScintilla, message, (int)wParam, (int)lParam);
 		}
-		public UInt32 SPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
+		public UInt32 SPerform(int message, UInt32 wParam, UInt32 lParam)
 		{
-            if (Win32.ShouldUseWin32()) return (UInt32)Perform(directPointer, message, wParam, lParam);
+		    if (Win32.ShouldUseWin32()) return (UInt32)_sciFunction(directPointer, message, (IntPtr)wParam, (IntPtr)lParam);
             else return (UInt32)Encoding.ASCII.CodePage;
 		}
 
-        public override bool PreProcessMessage(ref Message m)
+	    public override bool PreProcessMessage(ref Message m)
         {
             switch (m.Msg)
             {
