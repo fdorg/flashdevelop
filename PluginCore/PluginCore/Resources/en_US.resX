@@ -3501,23 +3501,23 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Stack</value>
   </data>
   <data name="FlashDebugger.BreakPoints.RemoveSelected" xml:space="preserve">
-    <value>Remove selected breakpoints</value>
+    <value>Remove Selected Breakpoints</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.RemoveAll" xml:space="preserve">
-    <value>Remove all listed breakpoints</value>
+    <value>Remove All Listed Breakpoints</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ToggleAll" xml:space="preserve">
-    <value>Toggle all listed breakpoints</value>
+    <value>Toggle All Listed Breakpoints</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ExportAll" xml:space="preserve">
-    <value>Export all listed breakpoints</value>
+    <value>Export All Listed Breakpoints</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ImportAll" xml:space="preserve">
-    <value>Import breakpoints from a file</value>
+    <value>Import Breakpoints From File</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterAll" xml:space="preserve">
