@@ -644,13 +644,12 @@ namespace FlashDevelop
             }
             try
             {
-                Int32 count = this.Documents.Length;
-                for (Int32 i = 0; i < count; i++)
+                foreach (ITabbedDocument doc in this.Documents)
                 {
-                    if (this.Documents[i].IsEditable && this.Documents[i].FileName.ToUpper() == file.ToUpper())
+                    if (doc.IsEditable && doc.FileName.ToUpper() == file.ToUpper())
                     {
-                        this.Documents[i].Activate();
-                        return null;
+                        doc.Activate();
+                        return doc as DockContent;
                     }
                 }
             }

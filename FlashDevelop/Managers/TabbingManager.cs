@@ -41,10 +41,11 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void UpdateSequentialIndex(ITabbedDocument document)
         {
-            Int32 count = Globals.MainForm.Documents.Length;
+            ITabbedDocument[] documents = Globals.MainForm.Documents;
+            Int32 count = documents.Length;
             for (Int32 i = 0; i < count; i++)
             {
-                if (document == Globals.MainForm.Documents[i])
+                if (document == documents[i])
                 {
                     SequentialIndex = i;
                     return;
