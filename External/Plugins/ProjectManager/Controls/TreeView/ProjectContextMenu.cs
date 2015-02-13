@@ -357,9 +357,8 @@ namespace ProjectManager.Controls.TreeView
             AddCompileTargetItems(menu, path, true);
 
             bool addLibrary = project.IsLibraryAsset(path);
-            menu.Add(AddLibrary, 1, addLibrary);
-            if (addLibrary) menu.Add(LibraryOptions, 1);
-
+            menu.Add(AddLibrary, 2, addLibrary);
+            if (addLibrary) menu.Add(LibraryOptions, 2);
 
             if (projectTree.SelectedPaths.Length == 1 && project.IsCompilable)
             {
