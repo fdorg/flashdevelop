@@ -70,6 +70,7 @@ namespace FlashDebugger.Controls
                 NameNodeTextBox.EditorHided += NameNodeTextBox_EditorHided;
                 NameNodeTextBox.IsEditEnabledValueNeeded += NameNodeTextBox_IsEditEnabledValueNeeded;
                 NameNodeTextBox.LabelChanged += NameNodeTextBox_LabelChanged;
+                _tree.KeyDown += Tree_KeyDown;
                 _tree.NodeMouseClick += Tree_NameNodeMouseClick;
             }
             
@@ -114,9 +115,10 @@ namespace FlashDebugger.Controls
             try
             {
                 if (e.Node.NextNode == null && e.Node.Level == 1 && !addingNewExpression)
-                {
                     e.Font = new Font(e.Font, FontStyle.Italic);
-                }
+                else if (e.Node.Tag is ErrorNode)
+                    e.TextColor = e.Node.IsSelected ? Color.White : Color.Gray;
+
             }
             catch (Exception) { }
         }
@@ -172,6 +174,16 @@ namespace FlashDebugger.Controls
                 newExp = PanelsHelper.watchUI.ReplaceElement(e.OldLabel, e.NewLabel);
 
             if (!newExp) node.Text = e.OldLabel;
+        }
+
+        void Tree_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                var node = _tree.SelectedNode;
+                if (node != null && node.Level == 1 && node.NextNode != null)
+                    PanelsHelper.watchUI.RemoveElement(Tree.SelectedNode.Index);
+            }
         }
 
         void Tree_NameNodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
@@ -248,12 +260,15 @@ namespace FlashDebugger.Controls
         {
             try
             {
-                VariableNode node = e.Node.Tag as VariableNode;
-                FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
-                if (node != null && node.Variable != null && node.Variable.hasValueChanged(flashInterface.Session))
+                VariableNode variableNode = e.Node.Tag as VariableNode;
+                if (variableNode != null)
                 {
-                    e.TextColor = Color.Red;
+                    FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
+                    if (variableNode.Variable != null && variableNode.Variable.hasValueChanged(flashInterface.Session))
+                        e.TextColor = Color.Red;
                 }
+                else if (e.Node.Tag is ErrorNode)
+                    e.TextColor = e.Node.IsSelected ? Color.White : Color.Gray;
             }
             catch (NullReferenceException) { }
         }
@@ -319,7 +334,7 @@ namespace FlashDebugger.Controls
             DataNode node = Tree.SelectedNode.Tag as DataNode;
             if (watchMode)
             {
-                PanelsHelper.watchUI.RemoveElement(Tree.SelectedNode.Row);
+                PanelsHelper.watchUI.RemoveElement(Tree.SelectedNode.Index);
             }
             else
             {
@@ -333,7 +348,7 @@ namespace FlashDebugger.Controls
             {
                 item.Enabled = (Tree.SelectedNode != null);
             }
-            if (watchMode) watchMenuItem.Enabled = (Tree.SelectedNode != null && Tree.SelectedNode.Level == 1);
+            if (watchMode) watchMenuItem.Enabled = (Tree.SelectedNode != null && Tree.SelectedNode.Level == 1 && Tree.SelectedNode.NextNode != null);
         }
 
         void TreeExpanding(Object sender, TreeViewAdvEventArgs e)

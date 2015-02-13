@@ -33,7 +33,7 @@ namespace FlashDebugger.Controls
             int initialLength = nodePath.Length;
             foreach (Node node in root.Nodes)
             {
-                nodePath = nodePath.Append(node.Text);
+                nodePath.Append(node.Text);
                 if (path == nodePath.ToString()) return node;
                 nodePath.Append(".");
                 if (path.StartsWith(nodePath.ToString()))
