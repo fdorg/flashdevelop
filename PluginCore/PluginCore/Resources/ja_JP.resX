@@ -3548,6 +3548,10 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
     <value>Variable could not be reevaluated</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDebugger.Error.NoSuchVariable" xml:space="preserve">
+    <value>{0} could not be resolved</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
   <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
     <value>Only scalar variables can be modified</value>
     <comment>Added after 4.7.0</comment>
