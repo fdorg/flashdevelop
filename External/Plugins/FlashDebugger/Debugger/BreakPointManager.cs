@@ -298,7 +298,7 @@ namespace FlashDebugger
                 {
                     int oldline = info.Line; 
                     info.Line += linesAdded;
-                    if (ChangeBreakPointEvent != null)
+                    if (UpdateBreakPointEvent != null)
                     {
                         UpdateBreakPointEvent(this, new UpdateBreakPointArgs(info.FileFullPath, oldline+1, info.Line+1));
                     }
