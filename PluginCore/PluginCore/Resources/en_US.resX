@@ -5448,19 +5448,35 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.SetCurrentFrame" xml:space="preserve">
-    <value>Set as current frame</value>
+    <value>Set As Current Frame</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.GotoSource" xml:space="preserve">
-    <value>Go to source</value>
+    <value>Go To Source</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
-    <value>Show just my code</value>
+    <value>Show Just My Code</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
     <value>Add new expression</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchCase" xml:space="preserve">
+    <value>Match Case</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchOpposite" xml:space="preserve">
+    <value>Match Opposite</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.Options" xml:space="preserve">
+    <value>Options</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
+    <value>Regular Expression</value>
     <comment>Added after 4.7.1</comment>
   </data>
 </root>

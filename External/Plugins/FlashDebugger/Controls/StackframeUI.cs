@@ -96,7 +96,7 @@ namespace FlashDebugger
             // 
             this.toolStripItemMatchCase.Name = "toolStripItemMatchCase";
             this.toolStripItemMatchCase.CheckOnClick = true;
-            this.toolStripItemMatchCase.Text = "Match case";
+            this.toolStripItemMatchCase.Text = "Match Case";
             this.toolStripItemNegate.Click += FilterOption_Click;
             // 
             // toolStripItemRegEx
@@ -110,7 +110,7 @@ namespace FlashDebugger
             // 
             this.toolStripItemNegate.Name = "toolStripItemNegate";
             this.toolStripItemNegate.CheckOnClick = true;
-            this.toolStripItemNegate.Text = "Match opposite";
+            this.toolStripItemNegate.Text = "Match Opposite";
             this.toolStripItemNegate.Click += FilterOption_Click;
             // 
             // toolStripDropDownOptions
@@ -191,6 +191,12 @@ namespace FlashDebugger
             menu.Items.AddRange(new ToolStripItem[] {this.copyContextMenuItem, this.copyAllContextMenuItem, new ToolStripSeparator(), 
                 this.setFrameContextMenuItem, this.gotoSourceContextMenuItem, this.justMyCodeContextMenuItem});
             this.lv.ContextMenuStrip = menu;
+
+            this.toolStripItemMatchCase.Text = TextHelper.GetString("Label.MatchCase");
+            this.toolStripItemRegEx.Text = TextHelper.GetString("Label.RegularExpression");
+            this.toolStripItemNegate.Text = TextHelper.GetString("Label.MatchOpposite");
+            this.toolStripDropDownOptions.Text = TextHelper.GetString("Label.Options");
+
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer(false);
             this.toolStripFilters.Renderer = new DockPanelStripRenderer();

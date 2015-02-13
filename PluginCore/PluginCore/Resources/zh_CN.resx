@@ -5466,4 +5466,20 @@
     <value>Add new expression</value>
     <comment>Added after 4.7.1</comment>
   </data>
+  <data name="FlashDebugger.Label.MatchCase" xml:space="preserve">
+    <value>Match Case</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchOpposite" xml:space="preserve">
+    <value>Match Opposite</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.Options" xml:space="preserve">
+    <value>Options</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
+    <value>Regular Expression</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
 </root>
