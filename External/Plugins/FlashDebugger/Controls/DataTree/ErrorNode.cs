@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using PluginCore.Localization;
+using flash.tools.debugger.expression;
 
 namespace FlashDebugger.Controls.DataTree
 {
-    public class ScalarNode : DataNode
+    public class ErrorNode : DataNode
     {
 
-        private string m_Value;
+        private string _value;
         public override string Value
         {
-            get { return m_Value; }
+            get { return _value; }
             set { throw new NotSupportedException(); }
         }
 
@@ -20,10 +19,10 @@ namespace FlashDebugger.Controls.DataTree
             get { return true; }
         }
 
-        public ScalarNode(string text, string value)
+        public ErrorNode(string text, Exception ex)
             : base(text)
         {
-            m_Value = value;
+            _value = ex.Message;
         }
 
     }

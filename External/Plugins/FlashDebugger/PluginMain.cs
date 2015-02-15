@@ -54,7 +54,7 @@ namespace FlashDebugger
         /// </summary>
         public String Guid
 		{
-			get { return PanelsHelper.pluginGuid; }
+			get { return PanelsHelper.localsGuid; }
 		}
 
         /// <summary>

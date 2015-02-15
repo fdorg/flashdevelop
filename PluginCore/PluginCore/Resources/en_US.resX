@@ -3501,23 +3501,23 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Stack</value>
   </data>
   <data name="FlashDebugger.BreakPoints.RemoveSelected" xml:space="preserve">
-    <value>Remove selected breakpoints</value>
+    <value>Remove Selected Breakpoints</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.RemoveAll" xml:space="preserve">
-    <value>Remove all listed breakpoints</value>
+    <value>Remove All Listed Breakpoints</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ToggleAll" xml:space="preserve">
-    <value>Toggle all listed breakpoints</value>
+    <value>Toggle All Listed Breakpoints</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ExportAll" xml:space="preserve">
-    <value>Export all listed breakpoints</value>
+    <value>Export All Listed Breakpoints</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ImportAll" xml:space="preserve">
-    <value>Import breakpoints from a file</value>
+    <value>Import Breakpoints From File</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterAll" xml:space="preserve">
@@ -3547,6 +3547,10 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
     <value>Variable could not be reevaluated</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.NoSuchVariable" xml:space="preserve">
+    <value>{0} could not be resolved</value>
+    <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
     <value>Only scalar variables can be modified</value>
@@ -5444,19 +5448,35 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.SetCurrentFrame" xml:space="preserve">
-    <value>Set as current frame</value>
+    <value>Set As Current Frame</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.GotoSource" xml:space="preserve">
-    <value>Go to source</value>
+    <value>Go To Source</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
-    <value>Show just my code</value>
+    <value>Show Just My Code</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
     <value>Add new expression</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchCase" xml:space="preserve">
+    <value>Match Case</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchOpposite" xml:space="preserve">
+    <value>Match Opposite</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.Options" xml:space="preserve">
+    <value>Options</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
+    <value>Regular Expression</value>
     <comment>Added after 4.7.1</comment>
   </data>
 </root>
