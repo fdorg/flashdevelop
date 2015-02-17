@@ -156,7 +156,7 @@ namespace FlashDevelop.Dialogs
             this.viewCustom.CheckAlign = ContentAlignment.MiddleRight;
             this.viewCustom.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.viewCustom.Location = new System.Drawing.Point(471, 9);
-            this.viewCustom.Click += new System.EventHandler(this.ViewCustomClick);
+            this.viewCustom.CheckedChanged += new System.EventHandler(this.ViewCustomCheckedChanged);
             // 
             // ShortcutDialog
             // 
@@ -369,7 +369,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Filter the list view for custom items
         /// </summary>
-        private void ViewCustomClick(Object sender, EventArgs e)
+        private void ViewCustomCheckedChanged(Object sender, EventArgs e)
         {
             this.FilterTextChanged(null, null);
         }

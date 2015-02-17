@@ -66,7 +66,7 @@ namespace PluginCore.Managers
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
                 /* We need to check for virtual models, another more generic option would be 
-                 *  Path.GetFileName(document.FileName).IndexOfAny(Path.GetInvalidFileNameChars()) == -1
+                 * Path.GetFileName(document.FileName).IndexOfAny(Path.GetInvalidFileNameChars()) == -1
                  * But this one is used in more places */
                 if (document.IsEditable && !document.Text.StartsWith("[model] "))
                 {
@@ -114,13 +114,11 @@ namespace PluginCore.Managers
         /// </summary>
         public static ITabbedDocument FindDocument(String filename)
         {
-            Int32 count = PluginBase.MainForm.Documents.Length;
-            for (Int32 i = 0; i < count; i++)
+            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
-                ITabbedDocument current = PluginBase.MainForm.Documents[i];
-                if (current.IsEditable && current.FileName == filename)
+                if (document.IsEditable && document.FileName == filename)
                 {
-                    return current;
+                    return document;
                 }
             }
             return null;
@@ -131,13 +129,11 @@ namespace PluginCore.Managers
         /// </summary>
         public static ITabbedDocument FindDocument(ScintillaControl sci)
         {
-            Int32 count = PluginBase.MainForm.Documents.Length;
-            for (Int32 i = 0; i < count; i++)
+            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
-                ITabbedDocument current = PluginBase.MainForm.Documents[i];
-                if (current.IsEditable && current.SciControl == sci)
+                if (document.IsEditable && document.SciControl == sci)
                 {
-                    return current;
+                    return document;
                 }
             }
             return null;

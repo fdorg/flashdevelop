@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 using PluginCore.Localization;
+using PluginCore.Helpers;
 
 namespace SourceControl.Actions
 {
@@ -37,11 +38,11 @@ namespace SourceControl.Actions
                 try
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    Skin = new Bitmap(assembly.GetManifestResourceStream("SourceControl.Resources.icons.png"));
+                    Skin = new Bitmap(assembly.GetManifestResourceStream(ScaleHelper.GetScale() > 1.5 ? "SourceControl.Resources.icons32.png" : "SourceControl.Resources.icons.png"));
                 }
                 catch
                 {
-                    Skin = new Bitmap(160, 16);
+                    Skin = ScaleHelper.GetScale() > 1.5 ? new Bitmap(320, 32) : new Bitmap(160, 16);
                 }
             }
             

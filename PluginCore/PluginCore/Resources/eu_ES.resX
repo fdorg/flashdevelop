@@ -2443,7 +2443,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Inportatzeko Proiektua Aukeratu</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flex Builder Proiektua (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Proiektua (*.zip;*.fxp)|*.zip;*.fxp</value>
+    <value>Adobe Flex Builder Proiektua (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Proiektua (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>Emaitzak Emaitza Panelera bidali</value>
@@ -3534,6 +3534,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
   <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
     <value>Variable could not be reevaluated</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.NoSuchVariable" xml:space="preserve">
+    <value>{0} could not be resolved</value>
+    <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
     <value>Only scalar variables can be modified</value>
@@ -5444,5 +5448,25 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
     <value>Show just my code</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
+    <value>Add new expression</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchCase" xml:space="preserve">
+    <value>Match Case</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchOpposite" xml:space="preserve">
+    <value>Match Opposite</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.Options" xml:space="preserve">
+    <value>Options</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
+    <value>Regular Expression</value>
+    <comment>Added after 4.7.1</comment>
   </data>
 </root>

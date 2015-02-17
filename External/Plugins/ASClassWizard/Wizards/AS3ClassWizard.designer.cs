@@ -337,7 +337,7 @@ namespace ASClassWizard.Wizards
             this.flowLayoutPanel6.Controls.Add(this.errorLabel);
             this.flowLayoutPanel6.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel6.Name = "flowLayoutPanel6";
-            this.flowLayoutPanel6.Size = new System.Drawing.Size(301, 23);
+            this.flowLayoutPanel6.Size = new System.Drawing.Size(296, 23);
             this.flowLayoutPanel6.TabIndex = 0;
             // 
             // flowLayoutPanel9

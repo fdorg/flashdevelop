@@ -191,9 +191,9 @@ namespace FlashDebugger
         public void SetBreakPointsToEditor(PluginCore.ITabbedDocument[] documents)
         {
             m_bAccessable = false;
-            for (int i = 0; i < documents.Length; i++)
+            foreach (ITabbedDocument document in documents)
             {
-                ScintillaControl sci = documents[i].SciControl;
+                ScintillaControl sci = document.SciControl;
                 if (sci == null) continue;
                 if (Path.GetExtension(sci.FileName) == ".as" || Path.GetExtension(sci.FileName) == ".mxml")
                 {
@@ -213,10 +213,9 @@ namespace FlashDebugger
         public void SetBreakPointsToEditor(string filefullpath)
         {
             m_bAccessable = false;
-            ITabbedDocument[] documents = PluginBase.MainForm.Documents;
-            for (int i = 0; i < documents.Length; i++)
+            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
-                ScintillaControl sci = documents[i].SciControl;
+                ScintillaControl sci = document.SciControl;
                 if (sci == null) continue;
                 if (sci.FileName.Equals(filefullpath, StringComparison.OrdinalIgnoreCase))
                 {
@@ -299,7 +298,7 @@ namespace FlashDebugger
                 {
                     int oldline = info.Line; 
                     info.Line += linesAdded;
-                    if (ChangeBreakPointEvent != null)
+                    if (UpdateBreakPointEvent != null)
                     {
                         UpdateBreakPointEvent(this, new UpdateBreakPointArgs(info.FileFullPath, oldline+1, info.Line+1));
                     }

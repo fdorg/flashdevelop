@@ -29,7 +29,7 @@ namespace SourceControl
             set { this.enableSVN = value; }
         }
 
-        [DefaultValue("svn")]
+        [DefaultValue("svn.exe")]
         [DisplayName("SVN Path")]
         [LocalizedCategory("SourceControl.Category.SVN")]
         [LocalizedDescription("SourceControl.Description.SVNPath")]
@@ -61,25 +61,25 @@ namespace SourceControl
             set { this.enableGIT = value; }
         }
 
-        [DefaultValue("git")]
+        [DefaultValue("git.exe")]
         [DisplayName("GIT Path")]
         [LocalizedCategory("SourceControl.Category.GIT")]
         [LocalizedDescription("SourceControl.Description.GITPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public String GITPath
         {
-            get { return this.gitPath ?? "git"; }
+            get { return this.gitPath ?? "git.exe"; }
             set { this.gitPath = value; }
         }
 
-        [DefaultValue("TortoiseProc.exe")]
+        [DefaultValue("TortoiseGitProc.exe")]
         [DisplayName("TortoiseGIT Proc Path")]
         [LocalizedCategory("SourceControl.Category.GIT")]
         [LocalizedDescription("SourceControl.Description.TortoiseGITProcPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public String TortoiseGITProcPath
         {
-            get { return this.tortoiseGitProcPath ?? "TortoiseProc.exe"; }
+            get { return this.tortoiseGitProcPath ?? "TortoiseGitProc.exe"; }
             set { this.tortoiseGitProcPath = value; }
         }
 
@@ -93,25 +93,25 @@ namespace SourceControl
             set { this.enableHG = value; }
         }
 
-        [DefaultValue("hg")]
+        [DefaultValue("hg.exe")]
         [DisplayName("HG Path")]
         [LocalizedCategory("SourceControl.Category.HG")]
         [LocalizedDescription("SourceControl.Description.HGPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public String HGPath
         {
-            get { return this.hgPath ?? "hg"; }
+            get { return this.hgPath ?? "hg.exe"; }
             set { this.hgPath = value; }
         }
 
-        [DefaultValue("thgw")]
+        [DefaultValue("thgw.exe")]
         [DisplayName("TortoiseHG Proc Path")]
         [LocalizedCategory("SourceControl.Category.HG")]
         [LocalizedDescription("SourceControl.Description.TortoiseHGProcPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public String TortoiseHGProcPath
         {
-            get { return this.tortoiseHGProcPath ?? "thgw"; }
+            get { return this.tortoiseHGProcPath ?? "thgw.exe"; }
             set { this.tortoiseHGProcPath = value; }
         }
 

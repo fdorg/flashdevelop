@@ -1,1 +1,0 @@
-Install-ChocolateyPackage 'flashdevelop.dev' 'exe' '' 'http://flashdevelop.org/downloads/builds/FlashDevelop-development.exe'

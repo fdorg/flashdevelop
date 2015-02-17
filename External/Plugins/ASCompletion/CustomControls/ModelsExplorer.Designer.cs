@@ -29,7 +29,7 @@ namespace ASCompletion
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.outlineTreeView = new System.Windows.Forms.TreeView();
+            this.outlineTreeView = new System.Windows.Forms.FixedTreeView();
             this.outlineContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exploreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,21 +73,21 @@ namespace ASCompletion
             this.exploreToolStripMenuItem.Name = "exploreToolStripMenuItem";
             this.exploreToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exploreToolStripMenuItem.Text = "Explore";
-            this.exploreToolStripMenuItem.Click += new System.EventHandler(this.exploreToolStripMenuItem_Click);
+            this.exploreToolStripMenuItem.Click += new System.EventHandler(this.ExploreToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editToolStripMenuItem.Text = "Edit";
-            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.EditToolStripMenuItem_Click);
             // 
             // convertToolStripMenuItem
             // 
             this.convertToolStripMenuItem.Name = "convertToolStripMenuItem";
             this.convertToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.convertToolStripMenuItem.Text = "Convert To Intrinsic";
-            this.convertToolStripMenuItem.Click += new System.EventHandler(this.convertToolStripMenuItem_Click);
+            this.convertToolStripMenuItem.Click += new System.EventHandler(this.ConvertToolStripMenuItem_Click);
             // 
             // updateTimer
             // 
@@ -135,7 +135,7 @@ namespace ASCompletion
             this.refreshButton.Size = new System.Drawing.Size(23, 19);
             this.refreshButton.Text = "toolStripButton1";
             this.refreshButton.ToolTipText = "Refresh";
-            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
             // 
             // rebuildButton
             //
@@ -147,7 +147,7 @@ namespace ASCompletion
             this.rebuildButton.Size = new System.Drawing.Size(23, 19);
             this.rebuildButton.Text = "toolStripButton1";
             this.rebuildButton.ToolTipText = "Rebuild";
-            this.rebuildButton.Click += new System.EventHandler(this.rebuildButton_Click);
+            this.rebuildButton.Click += new System.EventHandler(this.RebuildButton_Click);
             // 
             // searchButton
             //
@@ -159,7 +159,7 @@ namespace ASCompletion
             this.searchButton.Size = new System.Drawing.Size(23, 19);
             this.searchButton.Text = "toolStripButton1";
             this.searchButton.ToolTipText = "Search";
-            this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
+            this.searchButton.Click += new System.EventHandler(this.SearchButton_Click);
             // 
             // ModelsExplorer
             // 
@@ -180,7 +180,7 @@ namespace ASCompletion
 
         #endregion
 
-        private System.Windows.Forms.TreeView outlineTreeView;
+        private System.Windows.Forms.FixedTreeView outlineTreeView;
         private System.Windows.Forms.Timer updateTimer;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripLabel filterLabel;

@@ -170,6 +170,27 @@ namespace Aga.Controls.Tree
 			}
 		}
 
+	    public TreeNodeAdv FirstVisibleNode
+	    {
+	        get
+	        {
+	            if (_firstVisibleRow >= 0 && _firstVisibleRow < RowMap.Count)
+	                return RowMap[_firstVisibleRow];
+                return null;
+	        }
+	    }
+
+	    public TreeNodeAdv LastVisibleNode
+	    {
+	        get
+	        {
+	            int lastVisibleRow = _firstVisibleRow + CurrentPageSize - 1;
+	            if (lastVisibleRow >= 0 && lastVisibleRow < RowMap.Count)
+	                return RowMap[lastVisibleRow];
+                return null;
+	        }
+	    }
+
 		private int _offsetX;
 		public int OffsetX
 		{

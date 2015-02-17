@@ -2449,7 +2449,7 @@ Never - 起動時にスタートページを表示しません。</value>
     <value>プロジェクトに読み込むものを選択</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder プロジェクト (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp)|*.zip;*.fxp</value>
+    <value>Adobe Flash Builder プロジェクト (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>結果パネルに表示</value>
@@ -3547,6 +3547,10 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
     <value>Variable could not be reevaluated</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Error.NoSuchVariable" xml:space="preserve">
+    <value>{0} could not be resolved</value>
+    <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
     <value>Only scalar variables can be modified</value>
@@ -5509,5 +5513,25 @@ UseData:"</value>
   <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
     <value>Show just my code</value>
     <comment>Added after 4.7.0</comment>
+  </data>
+  <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
+    <value>Add new expression</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchCase" xml:space="preserve">
+    <value>Match Case</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchOpposite" xml:space="preserve">
+    <value>Match Opposite</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.Options" xml:space="preserve">
+    <value>Options</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
+    <value>Regular Expression</value>
+    <comment>Added after 4.7.1</comment>
   </data>
 </root>
