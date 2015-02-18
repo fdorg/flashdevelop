@@ -105,7 +105,8 @@ namespace PluginCore.Controls
             {
                 host.Left = ((Form)PluginBase.MainForm).ClientRectangle.Right - host.Width;
             }
-            host.Show(owner);
+            if (!host.Visible)
+                host.Show(owner);
         }
 
 		public void CallTipSetHlt(int start, int end)

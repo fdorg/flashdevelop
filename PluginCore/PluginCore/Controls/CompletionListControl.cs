@@ -820,7 +820,7 @@ namespace PluginCore.Controls
                             }
                         }
                         ((ScintillaControl)target.Owner).BeginUndoAction();
-                        ((ScintillaControl)target.Owner).SetSel(startPos, ((ScintillaControl)target.Owner).CurrentPos);
+                        ((ScintillaControl)target.Owner).SetSel(startPos, target.CurrentPos);
                         ((ScintillaControl)target.Owner).ReplaceSel(replace);
                         if (OnInsert != null) OnInsert(target.Owner, startPos, replace, trigger, item);
                         if (tail.Length > 0) ((ScintillaControl)target.Owner).ReplaceSel(tail);
@@ -850,7 +850,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary> 
-        public void OnChar(int value)
+        public bool OnChar(int value)
         {
             char c = (char)value;
             // TODO: Inject these values
@@ -860,13 +860,13 @@ namespace PluginCore.Controls
                 word += c;
                 currentPos++;
                 FindWordStartingWith(word);
-                return;
+                return true;
             }
             else if (noAutoInsert)
             {
                 Hide('\0');
                 // handle this char
-                UITools.Manager.SendChar((ScintillaControl)target.Owner, value);
+                return false;
             }
             else
             {
@@ -885,7 +885,7 @@ namespace PluginCore.Controls
                     ReplaceText(c.ToString(), c);
                 }
                 // handle this char
-                UITools.Manager.SendChar((ScintillaControl)target.Owner, value);
+                return false;
             }
         }
 
@@ -935,7 +935,7 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        //sci.LineUp();
+                        ((ScintillaControl)target.Owner).LineUp();
                         return false;
                     }
                     // go up the list
@@ -960,7 +960,7 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        //sci.LineDown();
+                        ((ScintillaControl)target.Owner).LineDown();
                         return false;
                     }
                     // go down the list
@@ -985,7 +985,7 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        //sci.PageUp();
+                        ((ScintillaControl)target.Owner).PageUp();
                         return false;
                     }
                     // go up the list
@@ -1004,7 +1004,7 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        //sci.PageDown();
+                        ((ScintillaControl)target.Owner).PageDown();
                         return false;
                     }
                     // go down the list
@@ -1021,12 +1021,12 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.Left:
-                    //sci.CharLeft();
+                    ((ScintillaControl)target.Owner).CharLeft();
                     Hide();
                     break;
 
                 case Keys.Right:
-                    //sci.CharRight();
+                    ((ScintillaControl)target.Owner).CharRight();
                     Hide();
                     break;
 

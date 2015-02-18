@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using flash.tools.debugger;
 using flash.tools.debugger.expression;
+using PluginCore.Controls;
 
 namespace FlashDebugger.Controls
 {
@@ -15,33 +14,49 @@ namespace FlashDebugger.Controls
         private List<string> history;
         private int historyPos;
 
+        private CompletionListControl completionList;
+
         public ImmediateUI()
         {
             this.InitializeComponent();
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
+            var completionTarget = new TextBoxTarget(textBox);
+            this.completionList = new CompletionListControl(completionTarget);
+            completionTarget.CompletionList = completionList;
             this.history = new List<string>();
         }
 
         private void textBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Back && this.textBox.GetFirstCharIndexOfCurrentLine() == this.textBox.SelectionStart) e.SuppressKeyPress = true;
-            if (e.KeyCode == Keys.Up && this.historyPos > 0)
+            if (e.KeyCode == Keys.Up)
             {
-                this.historyPos--;
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.Text = this.textBox.Text.Substring(0, this.textBox.GetFirstCharIndexOfCurrentLine()) + this.history[this.historyPos];
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.ScrollToCaret();
+                if (textBox.GetLineFromCharIndex(textBox.SelectionStart) != textBox.Lines.Length - 1 || e.Modifiers > 0)
+                    return;
+                if (this.historyPos > 0)
+                {
+                    this.historyPos--;
+                    this.textBox.Select(this.textBox.Text.Length, 0);
+                    this.textBox.Text = this.textBox.Text.Substring(0, this.textBox.GetFirstCharIndexOfCurrentLine()) + this.history[this.historyPos];
+                    this.textBox.Select(this.textBox.Text.Length, 0);
+                    this.textBox.ScrollToCaret();
+                }
+                e.SuppressKeyPress = true;
             }
-            if (e.KeyCode == Keys.Down && this.historyPos + 1 < this.history.Count)
+            if (e.KeyCode == Keys.Down)
             {
-                this.historyPos++;
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.Text = this.textBox.Text.Substring(0, this.textBox.GetFirstCharIndexOfCurrentLine()) + this.history[this.historyPos];
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.ScrollToCaret();
+                if (textBox.GetLineFromCharIndex(textBox.SelectionStart) != textBox.Lines.Length - 1 || e.Modifiers > 0)
+                    return;
+                if (this.historyPos + 1 < this.history.Count)
+                {
+                    this.historyPos++;
+                    this.textBox.Select(this.textBox.Text.Length, 0);
+                    this.textBox.Text = this.textBox.Text.Substring(0, this.textBox.GetFirstCharIndexOfCurrentLine()) + this.history[this.historyPos];
+                    this.textBox.Select(this.textBox.Text.Length, 0);
+                    this.textBox.ScrollToCaret();
+                }
+                e.SuppressKeyPress = true;
             }
-            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down) e.SuppressKeyPress = true;
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
@@ -100,6 +115,45 @@ namespace FlashDebugger.Controls
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // Ctrl+Space is detected at the form level instead of the editor level, so when we are docked we need to catch it before
+            if ((keyData & Keys.KeyCode) == Keys.Space && (keyData & Keys.Modifiers & Keys.Control) > 0)
+            {
+                var debugger = PluginMain.debugManager.FlashInterface;
+                if (!debugger.isDebuggerStarted || !debugger.isDebuggerSuspended) return true;
+                var location = debugger.GetFrames()[PluginMain.debugManager.CurrentFrame].getLocation();
+                string file = PluginMain.debugManager.GetLocalPath(location.getFile());
+                if (file == null) return true;
+                var info = PluginCore.Helpers.FileHelper.GetEncodingFileInfo(file);
+                if (info.CodePage == -1) return true;
+                using (var sci = new ScintillaNet.ScintillaControl())
+                {
+                    sci.Text = info.Contents;
+                    sci.CodePage = info.CodePage;
+                    sci.Encoding = Encoding.GetEncoding(info.CodePage);
+                    sci.ConfigurationLanguage = PluginCore.PluginBase.CurrentProject.Language;
+
+                    sci.CurrentPos = sci.PositionFromLine(location.getLine());
+
+                    ASCompletion.Completion.ASExpr expr =
+                        ASCompletion.Completion.ASComplete.GetExpressionType(sci, sci.CurrentPos).Context;
+                    var list = new List<PluginCore.ICompletionListItem>();
+                    if (expr.Value != null)
+                    {
+                        ASCompletion.Model.MemberList locals = ASCompletion.Completion.ASComplete.ParseLocalVars(expr);
+                        foreach (ASCompletion.Model.MemberModel local in locals)
+                            list.Add(new ASCompletion.Completion.MemberItem(local));
+                    }
+
+                    completionList.Show(list, false);
+                }
+
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private string processSwfs()
         {
                 StringBuilder ret = new StringBuilder();
@@ -154,6 +208,120 @@ namespace FlashDebugger.Controls
         {
             this.textBox.Paste();
         }
+
+        private class TextBoxTarget : ICompletionListTarget
+        {
+
+            #region ICompletionListTarget Members
+
+            public event EventHandler LostFocus;
+
+            public event ScrollEventHandler Scroll;
+
+            public event KeyEventHandler KeyDown;
+
+            public event MouseEventHandler MouseDown;
+
+            private TextBox _owner;
+            public Control Owner
+            {
+                get { return _owner; }
+            }
+
+            public string Text
+            {
+                get { return _owner.Text; }
+            }
+
+            public string SelectedText
+            {
+                get
+                {
+                    return _owner.SelectedText;
+                }
+                set
+                {
+                    _owner.SelectedText = value;
+                }
+            }
+
+            public int SelectionEnd
+            {
+                get
+                {
+                    return _owner.SelectionStart + _owner.SelectionLength;
+                }
+                set
+                {
+                    _owner.SelectionLength = value - _owner.SelectionStart;
+                }
+            }
+
+            public int SelectionStart
+            {
+                get
+                {
+                    return _owner.SelectionStart;
+                }
+                set
+                {
+                    _owner.SelectionStart = value;
+                }
+            }
+
+            public int CurrentPos
+            {
+                get { return _owner.SelectionStart; }
+            }
+
+            public bool IsEditable
+            {
+                get { return !_owner.ReadOnly; }
+            }
+
+            private CompletionListControl _completionList;
+            public CompletionListControl CompletionList
+            {
+                get { return _completionList; }
+                set
+                {
+                    _completionList = value;
+                }
+            }
+
+            public TextBoxTarget(TextBox owner)
+            {
+                _owner = owner;
+                _owner.KeyDown += Owner_KeyDown;
+            }
+
+            public Point GetPositionFromCharIndex(int pos)
+            {
+                return _owner.GetPositionFromCharIndex(pos);
+            }
+
+            public int GetLineHeight()
+            {
+        		using (Graphics g = _owner.CreateGraphics())
+        		{
+                    SizeF textSize = g.MeasureString("S", _owner.Font);
+                    return (int)Math.Ceiling(textSize.Height);
+                }
+            }
+
+            public void SetSelection(int start, int end)
+            {
+                throw new NotImplementedException();
+            }
+
+            #endregion
+
+            private void Owner_KeyDown(object sender, KeyEventArgs e)
+            {
+                e.SuppressKeyPress = _completionList.HandleKeys(e.KeyData);
+            }
+        }
+
 
     }
 }

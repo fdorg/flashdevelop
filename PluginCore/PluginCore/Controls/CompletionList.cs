@@ -209,7 +209,8 @@ namespace PluginCore.Controls
 
         static public void OnChar(ScintillaControl sci, int value)
         {
-            completionList.OnChar(value);
+            if (!completionList.OnChar(value))
+                UITools.Manager.SendChar(sci, value);
         }
 
         static public bool HandleKeys(ScintillaControl sci, Keys key)
