@@ -123,6 +123,7 @@ namespace CodeFormatter.Utilities
 
         public static void configureASPrinter(ASPrettyPrinter printer, Settings settings, int tabSize)
         {
+            printer.setIndentMultilineComments(settings.Pref_AS_IndentMultilineComments);
             printer.setBlankLinesBeforeFunction(settings.Pref_AS_BlankLinesBeforeFunctions);
             printer.setBlankLinesBeforeClass(settings.Pref_AS_BlankLinesBeforeClasses);
             printer.setBlankLinesBeforeControlStatement(settings.Pref_AS_BlankLinesBeforeControlStatements);

@@ -144,7 +144,8 @@ namespace CodeFormatter.Handlers
 		private int mBraceStyleSetting=BraceStyle_Adobe;
 		private bool mUseGlobalNewlineBeforeBraceSetting=true;
 		private int mAdvancedNewlineBeforeBraceSettings;
-	
+
+        private bool mIndentMultilineComments = true;
 		private bool mUseLineCommentWrapping=false;
 		private bool mUseDocCommentWrapping=false;
 		private bool mUseMLCommentWrapping=false;
@@ -1254,8 +1255,7 @@ namespace CodeFormatter.Handlers
 						if (isKeepRelativeCommentIndent())
 						{
 							//find original indent
-							String lineData="";
-							lineData += t.Text;
+							String lineData=t.Text;
 							int prevLineEnd=mSourceData.LastIndexOf('\n', ((CommonToken)t).StartIndex);
 							if (prevLineEnd<0)
 								prevLineEnd=0;
@@ -1283,17 +1283,26 @@ namespace CodeFormatter.Handlers
 								{
 									if (onLastLine && data.StartsWith("*/")) //if we're on the last line and there's more than one line
 									{
-										indentAmount++;
+                                        if (mIndentMultilineComments) indentAmount += 1;
+                                        else indentAmount += 0;
 									}
 									else
 									{
-										//on a middle line, we have 2 cases.  If the line starts with an asterisk, then attempt to line the
-										//asterisk up with the asterisk on the first line.  Otherwise, indent the text to the right of the open asterisk.
-										String nextLine=data;
-										if (nextLine.Length>0 && nextLine[0]=='*')
-											indentAmount+=1;
-										else
-											indentAmount+=3;
+                                        //on a middle line, we have 2 cases.  If the line starts with an asterisk, then attempt to line the
+                                        //asterisk up with the asterisk on the first line.  Otherwise, indent the text to the right of the open asterisk.
+                                        //String nextLine=data;
+                                        //if (nextLine.Length>0 && nextLine[0]=='*')
+                                        //indentAmount+=1;
+                                        //else
+                                        //indentAmount+=3;
+                                        // FIXED: Multiline comment indent support added
+                                        String nextLine = data;
+                                        if (nextLine.Length > 0 && nextLine[0] == '*')
+                                        {
+                                            if (mIndentMultilineComments) indentAmount += 1;
+                                            else indentAmount += 0;
+                                        }
+                                        else indentAmount += 3;
 									}
 								}
 							}
@@ -3516,6 +3525,16 @@ namespace CodeFormatter.Handlers
 			info.addWrapChar(op, mExpressionWrapData.Count, mOutputBuffer.Length-op.Text.Length, breakType, breakBefore, indentToFirstParm, firstParmLocation, getCurrentIndent(), commaContextType);
 		}
 
+        public bool isIndentMultilineComments()
+        {
+            return mIndentMultilineComments;
+        }
+
+        public void setIndentMultilineComments(bool indentMultilineComments)
+        {
+            mIndentMultilineComments = indentMultilineComments;
+        }
+
 		public int getHangingIndentTabs() {
 			return mHangingIndentTabs;
 		}
@@ -3954,6 +3973,7 @@ namespace CodeFormatter.Handlers
 
 		private List<StatementBraceInfo> mAddBraceStack;
 		private List<StatementBraceInfo> mCompletedBraceInfos;
+
         public void addOpenBrace(IToken nextToken, int braceCode)
 		{
 	//		addBracePart(nextToken, braceCode, "{");

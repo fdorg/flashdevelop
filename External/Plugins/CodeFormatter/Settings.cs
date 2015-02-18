@@ -36,7 +36,7 @@ namespace CodeFormatter
 		private int pref_AS_MaxLineLength = 200;
 		private int pref_AS_SpacesAroundAssignment = 1;
 		private int pref_AS_SpacesAroundSymbolicOperator = 1;
-		private bool pref_AS_KeepSLCommentsOnColumn1 = true;
+		private bool pref_AS_KeepSLCommentsOnColumn1 = false;
 		private bool pref_AS_BreakLinesBeforeComma = false;
         private WrapType pref_AS_WrapExpressionMode = WrapType.None;
         private WrapType pref_AS_WrapMethodDeclMode = WrapType.None;
@@ -66,6 +66,74 @@ namespace CodeFormatter
 		private bool pref_AS_DoAutoFormat = true;
 		private bool pref_AS_AutoFormatStyle = true;
         private bool pref_AS_IndentMultilineComments = true;
+        public int pref_AS_BlankLinesBeforeImportBlock = 0;
+        public int pref_AS_BlankLinesAtFunctionStart = 0;
+        public int pref_AS_BlankLinesAtFunctionEnd = 0;
+        public bool pref_AS_WhileOnNewLine = true;
+        public int pref_AS_Tweak_SpacesAroundEqualsInMetatags = 1;
+        public bool pref_AS_Tweak_UseSpacesAroundEqualsInMetatags = true;
+        public int pref_AS_AdvancedSpacesAfterColonsInDeclarations = 1;
+        public int pref_AS_AdvancedSpacesBeforeColonsInDeclarations = 1;
+        public int pref_AS_AdvancedSpacesAfterColonsInFunctionTypes = 1;
+        public int pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes = 1;
+        public bool pref_AS_UseLineCommentWrapping = false;
+        public bool pref_AS_UseMLCommentWrapping = false;
+        public bool pref_AS_MLCommentReflow = true;
+        public bool pref_AS_DocCommentReflow = true;
+        public bool pref_AS_MLCommentHeaderOnSeparateLine = true;
+        public int pref_AS_MLCommentAsteriskMode = 1;
+        public bool pref_AS_UseDocCommentWrapping = false;
+        public int pref_AS_DocCommentHangingIndentTabs = 0;
+        public bool pref_AS_DocCommentKeepBlankLines = true;
+        public bool pref_AS_MLCommentKeepBlankLines = true;
+        public bool pref_AS_LeaveSingleLineFunctions = true;
+        public bool pref_AS_UnindentExpressionTerminators = false;
+        public bool pref_AS_NoNewCRsBeforeBreak = true;
+        public bool pref_AS_NoNewCRsBeforeContinue = true;
+        public bool pref_AS_NoNewCRsBeforeReturn = true;
+        public bool pref_AS_NoNewCRsBeforeThrow = true;
+        public bool pref_AS_NoNewCRsBeforeExpression = true;
+        public bool pref_AS_KeepRelativeIndentInDocComments = false;
+        public int pref_AS_TabsInHangingIndent = 0;
+        public int pref_AS_AdvancedSpacesInsideParensInOtherPlaces = 0;
+        public int pref_AS_AdvancedSpacesInsideParensInParameterLists = 0;
+        public int pref_AS_AdvancedSpacesInsideParensInArgumentLists = 0;
+        public int pref_AS_SpacesBeforeFormalParameters = 0;
+        public int pref_AS_SpacesBeforeArguments = 0;
+        public bool pref_AS_UseGnuBraceIndent = false;
+        public bool pref_AS_EnsureLoopsHaveBraces = false;
+        public int pref_AS_AddBracesToLoops = 1;
+        public bool pref_AS_EnsureSwitchCasesHaveBraces = false;
+        public int pref_AS_AddBracesToCases = 1;
+        public bool pref_AS_EnsureConditionalsHaveBraces = false;
+        public int pref_AS_AddBracesToConditionals = 1;
+        public bool pref_AS_DontIndentSwitchCases = true;
+        public bool pref_AS_AlignDeclEquals = true;
+        public int pref_AS_AlignDeclMode = 0;
+        public bool pref_AS_KeepSpacesBeforeLineComments = true;
+        public int pref_AS_AlignLineCommentsAtColumn = 0;
+        public bool pref_AS_UseGlobalCRBeforeBrace = false;
+        public int pref_AS_AdvancedCRBeforeBraceSettings = 0;
+        public bool pref_AS_NewlineBeforeBindableFunction = false;
+        public bool pref_AS_NewlineBeforeBindableProperty = false;
+        public bool pref_AS_BreakLinesBeforeArithmetic = false;
+        public bool pref_AS_BreakLinesBeforeLogical = false;
+        public bool pref_AS_BreakLinesBeforeAssignment = false;
+        public bool pref_AS_UseAdvancedWrapping = false;
+        public int pref_AS_AdvancedWrappingElements = 0;
+        public bool pref_AS_AdvancedWrappingEnforceMax = false;
+        public bool pref_AS_AdvancedWrappingAllArgs = false;
+        public bool pref_AS_AdvancedWrappingAllParms = false;
+        public bool pref_AS_AdvancedWrappingFirstArg = false;
+        public bool pref_AS_AdvancedWrappingFirstParm = false;
+        public bool pref_AS_AdvancedWrappingFirstArrayItem = false;
+        public bool pref_AS_AdvancedWrappingFirstObjectItem = false;
+        public bool pref_AS_AdvancedWrappingAllArrayItems = false;
+        public bool pref_AS_AdvancedWrappingAllObjectItems = false;
+        public bool pref_AS_AdvancedWrappingAlignArrayItems = false;
+        public bool pref_AS_AdvancedWrappingAlignObjectItems = false;
+        public int pref_AS_AdvancedWrappingGraceColumns = 1;
+        public bool pref_AS_AdvancedWrappingPreservePhrases = false;
         //
         private string pref_AS_MetaTagsOnSameLineAsTargetFunction = "";
         private string pref_AS_MetaTagsOnSameLineAsTargetProperty = "";
@@ -75,28 +143,47 @@ namespace CodeFormatter
 		private int pref_MXML_SpacesAroundEquals = 0;
 		private bool pref_MXML_SortExtraAttrs = false;
 		private bool pref_MXML_AddNewlineAfterLastAttr = false;
-		private string pref_MXML_SortAttrData = "";
         private SortMode pref_MXML_SortAttrMode = SortMode.UseData;
 		private int pref_MXML_MaxLineLength = 200;
         private WrapMode pref_MXML_AttrWrapMode = WrapMode.CountPerLine;
 		private int pref_MXML_AttrsPerLine = 1;
 		private bool pref_MXML_KeepBlankLines = true;
         private WrapIndent pref_MXML_WrapIndentStyle = WrapIndent.WrapElement;
-		private string pref_MXML_TagsCanFormat = "mx:List,fx:List";
-		private string pref_MXML_TagsCannotFormat = "mx:String,fx:String";
 		private string pref_MXML_TagsWithBlankLinesBefore = "";
 		private int pref_MXML_BlankLinesBeforeTags = 1;
-		private string pref_MXML_AttrGroups = "";
-		private bool pref_MXML_UseAttrsToKeepOnSameLine = false;
-		private int pref_MXML_AttrsToKeepOnSameLine = 4;
+		private bool pref_MXML_UseAttrsToKeepOnSameLine = true;
+		private int pref_MXML_AttrsToKeepOnSameLine = 10;
 		private int pref_MXML_SpacesBeforeEmptyTagEnd = 1;
-		private bool pref_MXML_RequireCDATAForASFormatting = false;
-		private string pref_MXML_TagsWithASContent = "";
+		private bool pref_MXML_RequireCDATAForASFormatting = true;
 		private bool pref_MXML_AutoFormatStyle = true;
 		private bool pref_MXML_DoAutoFormat = true;
+        public int pref_Flex_IndentSize = 4;
+        public int pref_Flex_TabSize = 4;
+        public bool pref_MXML_KeepRelativeIndentInMultilineComments = false;
+        public int pref_MXML_BlankLinesBeforeComments = 1;
+        public int pref_MXML_BlankLinesAfterSpecificParentTags = 1;
+        public int pref_MXML_BlankLinesBetweenSiblingTags = 1;
+        public int pref_MXML_BlankLinesAfterParentTags = 1;
+        public int pref_MXML_BlankLinesBeforeClosingTags = 1;
+        public int pref_MXML_TabsInHangingIndent = 1;
+        public bool pref_MXML_UseSpacesInsideAttributeBraces = true;
+        public bool pref_MXML_UseFormattingOfBoundAttributes = true;
+        public int pref_MXML_SpacesInsideAttributeBraces = 4;
+        public int pref_MXML_ScriptCDataIndentTabs = 4;
+        public int pref_MXML_ScriptIndentTabs = 4;
+        public int pref_MXML_BlankLinesAtCDataStart = 1;
+        public bool pref_MXML_KeepScriptCDataOnSameLine = true;
+        public bool pref_MXML_IndentTagClose = true;
+        public bool pref_MXML_AlwaysUseMaxLineLength = false;
+        public bool pref_MXML_UseTagsDoNotFormatInside = true;
         //
+        private string pref_MXML_TagsCanFormat = "mx:List,fx:List";
+        private string pref_MXML_TagsCannotFormat = "mx:String,fx:String";
+        private string pref_MXML_AttrGroups = "";
+        private string pref_MXML_TagsWithASContent = "";
         private string pref_MXML_TagsDoNotFormatInside = "";
         private string pref_MXML_ParentTagsWithBlankLinesAfter = "";
+        private string pref_MXML_SortAttrData = "";
 
         ////////////////// ActionScript ///////////////////////////////////////
 
@@ -280,7 +367,7 @@ namespace CodeFormatter
 			set { this.pref_AS_SpacesAroundSymbolicOperator = value; }
 		}
 
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Keep Single Line Comments On Column One")]
 		public bool Pref_AS_KeepSLCommentsOnColumn1
@@ -363,7 +450,7 @@ namespace CodeFormatter
 
         [DefaultValue(true)]
         [Category("ActionScript")]
-        [DisplayName("New Line After Bindable")]
+        [DisplayName("Newline After Bindable")]
 		public bool Pref_AS_NewlineAfterBindable
 		{
 			get { return this.pref_AS_NewlineAfterBindable; }
@@ -433,7 +520,7 @@ namespace CodeFormatter
 			set { this.pref_AS_LeaveExtraWhitespaceAroundVarDecls = value; }
 		}
 
-        [DefaultValue(BraceStyle.Inherit)]
+        [DefaultValue(BraceStyle.AfterLine)]
         [Category("ActionScript")]
         [DisplayName("Brace Style")]
         public BraceStyle Pref_AS_BraceStyle
@@ -532,358 +619,634 @@ namespace CodeFormatter
             set { this.pref_AS_IndentMultilineComments = value; }
         }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Blank Lines Before Import Block")]
-        public int Pref_AS_BlankLinesBeforeImportBlock { get; set; }
+        public int Pref_AS_BlankLinesBeforeImportBlock
+        {
+            get { return this.pref_AS_BlankLinesBeforeImportBlock; }
+            set { this.pref_AS_BlankLinesBeforeImportBlock = value; }
+        }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Blank Lines At Function Start")]
-        public int Pref_AS_BlankLinesAtFunctionStart { get; set; }
+        public int Pref_AS_BlankLinesAtFunctionStart
+        {
+            get { return this.pref_AS_BlankLinesAtFunctionStart; }
+            set { this.pref_AS_BlankLinesAtFunctionStart = value; }
+        }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Blank Lines At Function End")]
-        public int Pref_AS_BlankLinesAtFunctionEnd { get; set; }
+        public int Pref_AS_BlankLinesAtFunctionEnd
+        {
+            get { return this.pref_AS_BlankLinesAtFunctionEnd; }
+            set { this.pref_AS_BlankLinesAtFunctionEnd = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("While On New Line")]
-        public bool Pref_AS_WhileOnNewLine { get; set; }
+        public bool Pref_AS_WhileOnNewLine
+        {
+            get { return this.pref_AS_WhileOnNewLine; }
+            set { this.pref_AS_WhileOnNewLine = value; }
+        }
 
-        [DefaultValue(true)]
+        [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Spaces Around Equals In Metatags")]
-        public int Pref_AS_Tweak_SpacesAroundEqualsInMetatags { get; set; }
+        public int Pref_AS_Tweak_SpacesAroundEqualsInMetatags
+        {
+            get { return this.pref_AS_Tweak_SpacesAroundEqualsInMetatags; }
+            set { this.pref_AS_Tweak_SpacesAroundEqualsInMetatags = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Use Spaces Around Equals In Metatags")]
-        public bool Pref_AS_Tweak_UseSpacesAroundEqualsInMetatags { get; set; }
+        public bool Pref_AS_Tweak_UseSpacesAroundEqualsInMetatags
+        {
+            get { return this.pref_AS_Tweak_UseSpacesAroundEqualsInMetatags; }
+            set { this.pref_AS_Tweak_UseSpacesAroundEqualsInMetatags = value; }
+        }
 
         [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Advanced Spaces After Colons In Declarations")]
-        public int Pref_AS_AdvancedSpacesAfterColonsInDeclarations { get; set; }
+        public int Pref_AS_AdvancedSpacesAfterColonsInDeclarations
+        {
+            get { return this.pref_AS_AdvancedSpacesAfterColonsInDeclarations; }
+            set { this.pref_AS_AdvancedSpacesAfterColonsInDeclarations = value; }
+        }
 
         [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Advanced Spaces Before Colons In Declarations")]
-        public int Pref_AS_AdvancedSpacesBeforeColonsInDeclarations { get; set; }
+        public int Pref_AS_AdvancedSpacesBeforeColonsInDeclarations
+        {
+            get { return this.pref_AS_AdvancedSpacesBeforeColonsInDeclarations; }
+            set { this.pref_AS_AdvancedSpacesBeforeColonsInDeclarations = value; }
+        }
 
         [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Advanced Spaces After Colons In Function Types")]
-        public int Pref_AS_AdvancedSpacesAfterColonsInFunctionTypes { get; set; }
+        public int Pref_AS_AdvancedSpacesAfterColonsInFunctionTypes
+        {
+            get { return this.pref_AS_AdvancedSpacesAfterColonsInFunctionTypes; }
+            set { this.pref_AS_AdvancedSpacesAfterColonsInFunctionTypes = value; }
+        }
 
         [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Advanced Spaces Before Colons In Function Types")]
-        public int Pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes { get; set; }
+        public int Pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes
+        {
+            get { return this.pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes; }
+            set { this.pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Use Line Comment Wrapping")]
-        public bool Pref_AS_UseLineCommentWrapping { get; set; }
+        public bool Pref_AS_UseLineCommentWrapping
+        {
+            get { return this.pref_AS_UseLineCommentWrapping; }
+            set { this.pref_AS_UseLineCommentWrapping = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Use Multiline Comment Wrapping")]
-        public bool Pref_AS_UseMLCommentWrapping { get; set; }
+        public bool Pref_AS_UseMLCommentWrapping
+        {
+            get { return this.pref_AS_UseMLCommentWrapping; }
+            set { this.pref_AS_UseMLCommentWrapping = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Multiline Comment Reflow")]
-        public bool Pref_AS_MLCommentReflow { get; set; }
+        public bool Pref_AS_MLCommentReflow
+        {
+            get { return this.pref_AS_MLCommentReflow; }
+            set { this.pref_AS_MLCommentReflow = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Doc Comment Reflow")]
-        public bool Pref_AS_DocCommentReflow { get; set; }
+        public bool Pref_AS_DocCommentReflow
+        {
+            get { return this.pref_AS_DocCommentReflow; }
+            set { this.pref_AS_DocCommentReflow = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Multiline Comment Header On Separate Line")]
-        public bool Pref_AS_MLCommentHeaderOnSeparateLine { get; set; }
+        public bool Pref_AS_MLCommentHeaderOnSeparateLine
+        {
+            get { return this.pref_AS_MLCommentHeaderOnSeparateLine; }
+            set { this.pref_AS_MLCommentHeaderOnSeparateLine = value; }
+        }
 
         [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Multiline Comment Asterisk Mode")]
-        public int Pref_AS_MLCommentAsteriskMode { get; set; }
+        public int Pref_AS_MLCommentAsteriskMode
+        {
+            get { return this.pref_AS_MLCommentAsteriskMode; }
+            set { this.pref_AS_MLCommentAsteriskMode = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Use Doc Comment Wrapping")]
-        public bool Pref_AS_UseDocCommentWrapping { get; set; }
+        public bool Pref_AS_UseDocCommentWrapping
+        {
+            get { return this.pref_AS_UseDocCommentWrapping; }
+            set { this.pref_AS_UseDocCommentWrapping = value; }
+        }
 
         [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Doc Comment Hanging Indent Tabs")]
-        public int Pref_AS_DocCommentHangingIndentTabs { get; set; }
+        public int Pref_AS_DocCommentHangingIndentTabs
+        {
+            get { return this.pref_AS_DocCommentHangingIndentTabs; }
+            set { this.pref_AS_DocCommentHangingIndentTabs = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Doc Comment Keep Blank Lines")]
-        public bool Pref_AS_DocCommentKeepBlankLines { get; set; }
+        public bool Pref_AS_DocCommentKeepBlankLines
+        {
+            get { return this.pref_AS_DocCommentKeepBlankLines; }
+            set { this.pref_AS_DocCommentKeepBlankLines = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Multiline Comment Keep Blank Lines")]
-        public bool Pref_AS_MLCommentKeepBlankLines { get; set; }
+        public bool Pref_AS_MLCommentKeepBlankLines
+        {
+            get { return this.pref_AS_MLCommentKeepBlankLines; }
+            set { this.pref_AS_MLCommentKeepBlankLines = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Leave Single Line Functions")]
-        public bool Pref_AS_LeaveSingleLineFunctions { get; set; }
+        public bool Pref_AS_LeaveSingleLineFunctions
+        {
+            get { return this.pref_AS_LeaveSingleLineFunctions; }
+            set { this.pref_AS_LeaveSingleLineFunctions = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Unindent Expression Terminators")]
-        public bool Pref_AS_UnindentExpressionTerminators { get; set; }
+        public bool Pref_AS_UnindentExpressionTerminators
+        {
+            get { return this.pref_AS_UnindentExpressionTerminators; }
+            set { this.pref_AS_UnindentExpressionTerminators = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("No New CRs Before Break")]
-        public bool Pref_AS_NoNewCRsBeforeBreak { get; set; }
+        public bool Pref_AS_NoNewCRsBeforeBreak
+        {
+            get { return this.pref_AS_NoNewCRsBeforeBreak; }
+            set { this.pref_AS_NoNewCRsBeforeBreak = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("No New CRs Before Continue")]
-        public bool Pref_AS_NoNewCRsBeforeContinue { get; set; }
+        public bool Pref_AS_NoNewCRsBeforeContinue
+        {
+            get { return this.pref_AS_NoNewCRsBeforeContinue; }
+            set { this.pref_AS_NoNewCRsBeforeContinue = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("No New CRs Before Return")]
-        public bool Pref_AS_NoNewCRsBeforeReturn { get; set; }
+        public bool Pref_AS_NoNewCRsBeforeReturn
+        {
+            get { return this.pref_AS_NoNewCRsBeforeReturn; }
+            set { this.pref_AS_NoNewCRsBeforeReturn = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("No New CRs Before Throw")]
-        public bool Pref_AS_NoNewCRsBeforeThrow { get; set; }
+        public bool Pref_AS_NoNewCRsBeforeThrow
+        {
+            get { return this.pref_AS_NoNewCRsBeforeThrow; }
+            set { this.pref_AS_NoNewCRsBeforeThrow = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("No New CRs Before Expression")]
-        public bool Pref_AS_NoNewCRsBeforeExpression { get; set; }
+        public bool Pref_AS_NoNewCRsBeforeExpression
+        {
+            get { return this.pref_AS_NoNewCRsBeforeExpression; }
+            set { this.pref_AS_NoNewCRsBeforeExpression = value; }
+        }
 
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Keep Relative Indent In Doc Comments")]
-        public bool Pref_AS_KeepRelativeIndentInDocComments { get; set; }
+        public bool Pref_AS_KeepRelativeIndentInDocComments
+        {
+            get { return this.pref_AS_KeepRelativeIndentInDocComments; }
+            set { this.pref_AS_KeepRelativeIndentInDocComments = value; }
+        }
 
         [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Tabs In Hanging Indent")]
-        public int Pref_AS_TabsInHangingIndent { get; set; }
+        public int Pref_AS_TabsInHangingIndent
+        {
+            get { return this.pref_AS_TabsInHangingIndent; }
+            set { this.pref_AS_TabsInHangingIndent = value; }
+        }
 
         [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Advanced Spaces Inside Parens In Other Places")]
-        public int Pref_AS_AdvancedSpacesInsideParensInOtherPlaces { get; set; }
+        public int Pref_AS_AdvancedSpacesInsideParensInOtherPlaces
+        {
+            get { return this.pref_AS_AdvancedSpacesInsideParensInOtherPlaces; }
+            set { this.pref_AS_AdvancedSpacesInsideParensInOtherPlaces = value; }
+        }
 
         [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Advanced Spaces Inside Parens In Parameter Lists")]
-        public int Pref_AS_AdvancedSpacesInsideParensInParameterLists { get; set; }
+        public int Pref_AS_AdvancedSpacesInsideParensInParameterLists
+        {
+            get { return this.pref_AS_AdvancedSpacesInsideParensInParameterLists; }
+            set { this.pref_AS_AdvancedSpacesInsideParensInParameterLists = value; }
+        }
 
         [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Advanced Spaces Inside Parens In Argument Lists")]
-        public int Pref_AS_AdvancedSpacesInsideParensInArgumentLists { get; set; }
+        public int Pref_AS_AdvancedSpacesInsideParensInArgumentLists
+        {
+            get { return this.pref_AS_AdvancedSpacesInsideParensInArgumentLists; }
+            set { this.pref_AS_AdvancedSpacesInsideParensInArgumentLists = value; }
+        }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Spaces Before Formal Parameters")]
-        public int Pref_AS_SpacesBeforeFormalParameters { get; set; }
+        public int Pref_AS_SpacesBeforeFormalParameters
+        {
+            get { return this.pref_AS_SpacesBeforeFormalParameters; }
+            set { this.pref_AS_SpacesBeforeFormalParameters = value; }
+        }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Spaces Before Arguments")]
-        public int Pref_AS_SpacesBeforeArguments { get; set; }
+        public int Pref_AS_SpacesBeforeArguments
+        {
+            get { return this.pref_AS_SpacesBeforeArguments; }
+            set { this.pref_AS_SpacesBeforeArguments = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Use Gnu Brace Indent")]
-        public bool Pref_AS_UseGnuBraceIndent { get; set; }
+        public bool Pref_AS_UseGnuBraceIndent
+        {
+            get { return this.pref_AS_UseGnuBraceIndent; }
+            set { this.pref_AS_UseGnuBraceIndent = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Ensure Loops Have Braces")]
-        public bool Pref_AS_EnsureLoopsHaveBraces { get; set; }
+        public bool Pref_AS_EnsureLoopsHaveBraces
+        {
+            get { return this.pref_AS_EnsureLoopsHaveBraces; }
+            set { this.pref_AS_EnsureLoopsHaveBraces = value; }
+        }
 
-        [DefaultValue(false)]
+        [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Add Braces To Loops")]
-        public int Pref_AS_AddBracesToLoops { get; set; }
+        public int Pref_AS_AddBracesToLoops
+        {
+            get { return this.pref_AS_AddBracesToLoops; }
+            set { this.pref_AS_AddBracesToLoops = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Ensure Switch Cases Have Braces")]
-        public bool Pref_AS_EnsureSwitchCasesHaveBraces { get; set; }
+        public bool Pref_AS_EnsureSwitchCasesHaveBraces
+        {
+            get { return this.pref_AS_EnsureSwitchCasesHaveBraces; }
+            set { this.pref_AS_EnsureSwitchCasesHaveBraces = value; }
+        }
 
-        [DefaultValue(false)]
+        [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Add Braces To Cases")]
-        public int Pref_AS_AddBracesToCases { get; set; }
+        public int Pref_AS_AddBracesToCases
+        {
+            get { return this.pref_AS_AddBracesToCases; }
+            set { this.pref_AS_AddBracesToCases = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Ensure Conditionals Have Braces")]
-        public bool Pref_AS_EnsureConditionalsHaveBraces { get; set; }
+        public bool Pref_AS_EnsureConditionalsHaveBraces
+        {
+            get { return this.pref_AS_EnsureConditionalsHaveBraces; }
+            set { this.pref_AS_EnsureConditionalsHaveBraces = value; }
+        }
 
-        [DefaultValue(false)]
+        [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Add Braces To Conditionals")]
-        public int Pref_AS_AddBracesToConditionals { get; set; }
+        public int Pref_AS_AddBracesToConditionals
+        {
+            get { return this.pref_AS_AddBracesToConditionals; }
+            set { this.pref_AS_AddBracesToConditionals = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
-        [DisplayName("Dont Indent Switch Cases")]
-        public bool Pref_AS_DontIndentSwitchCases { get; set; }
+        [DisplayName("Don't Indent Switch Cases")]
+        public bool Pref_AS_DontIndentSwitchCases
+        {
+            get { return this.pref_AS_DontIndentSwitchCases; }
+            set { this.pref_AS_DontIndentSwitchCases = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Align Decl Equals")]
-        public bool Pref_AS_AlignDeclEquals { get; set; }
+        public bool Pref_AS_AlignDeclEquals
+        {
+            get { return this.pref_AS_AlignDeclEquals; }
+            set { this.pref_AS_AlignDeclEquals = value; }
+        }
 
-        [DefaultValue(true)]
+        [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Align Decl Mode")]
-        public int Pref_AS_AlignDeclMode { get; set; }
+        public int Pref_AS_AlignDeclMode
+        {
+            get { return this.pref_AS_AlignDeclMode; }
+            set { this.pref_AS_AlignDeclMode = value; }
+        }
 
         [DefaultValue(true)]
         [Category("ActionScript")]
         [DisplayName("Keep Spaces Before Line Comments")]
-        public bool Pref_AS_KeepSpacesBeforeLineComments { get; set; }
+        public bool Pref_AS_KeepSpacesBeforeLineComments
+        {
+            get { return this.pref_AS_KeepSpacesBeforeLineComments; }
+            set { this.pref_AS_KeepSpacesBeforeLineComments = value; }
+        }
 
         [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Align Line Comments At Column")]
-        public int Pref_AS_AlignLineCommentsAtColumn { get; set; }
+        public int Pref_AS_AlignLineCommentsAtColumn
+        {
+            get { return this.pref_AS_AlignLineCommentsAtColumn; }
+            set { this.pref_AS_AlignLineCommentsAtColumn = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Use Global CR Before Brace")]
-        public bool Pref_AS_UseGlobalCRBeforeBrace { get; set; }
+        public bool Pref_AS_UseGlobalCRBeforeBrace
+        {
+            get { return this.pref_AS_UseGlobalCRBeforeBrace; }
+            set { this.pref_AS_UseGlobalCRBeforeBrace = value; }
+        }
 
-        [DefaultValue(false)]
+        [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Advanced CR Before Brace Settings")]
-        public int Pref_AS_AdvancedCRBeforeBraceSettings { get; set; }
+        public int Pref_AS_AdvancedCRBeforeBraceSettings
+        {
+            get { return this.pref_AS_AdvancedCRBeforeBraceSettings; }
+            set { this.pref_AS_AdvancedCRBeforeBraceSettings = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Newline Before Bindable Function")]
-        public bool Pref_AS_NewlineBeforeBindableFunction { get; set; }
+        public bool Pref_AS_NewlineBeforeBindableFunction
+        {
+            get { return this.pref_AS_NewlineBeforeBindableFunction; }
+            set { this.pref_AS_NewlineBeforeBindableFunction = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Newline Before Bindable Property")]
-        public bool Pref_AS_NewlineBeforeBindableProperty { get; set; }
+        public bool Pref_AS_NewlineBeforeBindableProperty
+        {
+            get { return this.pref_AS_NewlineBeforeBindableProperty; }
+            set { this.pref_AS_NewlineBeforeBindableProperty = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Break Lines Before Arithmetic")]
-        public bool Pref_AS_BreakLinesBeforeArithmetic { get; set; }
+        public bool Pref_AS_BreakLinesBeforeArithmetic
+        {
+            get { return this.pref_AS_BreakLinesBeforeArithmetic; }
+            set { this.pref_AS_BreakLinesBeforeArithmetic = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Break Lines Before Logical")]
-        public bool Pref_AS_BreakLinesBeforeLogical { get; set; }
+        public bool Pref_AS_BreakLinesBeforeLogical
+        {
+            get { return this.pref_AS_BreakLinesBeforeLogical; }
+            set { this.pref_AS_BreakLinesBeforeLogical = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Break Lines Before Assignment")]
-        public bool Pref_AS_BreakLinesBeforeAssignment { get; set; }
+        public bool Pref_AS_BreakLinesBeforeAssignment
+        {
+            get { return this.pref_AS_BreakLinesBeforeAssignment; }
+            set { this.pref_AS_BreakLinesBeforeAssignment = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Use Advanced Wrapping")]
-        public bool Pref_AS_UseAdvancedWrapping { get; set; }
+        public bool Pref_AS_UseAdvancedWrapping
+        {
+            get { return this.pref_AS_UseAdvancedWrapping; }
+            set { this.pref_AS_UseAdvancedWrapping = value; }
+        }
 
         [DefaultValue(0)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping Elements")]
-        public int Pref_AS_AdvancedWrappingElements { get; set; }
+        public int Pref_AS_AdvancedWrappingElements
+        {
+            get { return this.pref_AS_AdvancedWrappingElements; }
+            set { this.pref_AS_AdvancedWrappingElements = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping Enforce Max")]
-        public bool Pref_AS_AdvancedWrappingEnforceMax { get; set; }
+        public bool Pref_AS_AdvancedWrappingEnforceMax
+        {
+            get { return this.pref_AS_AdvancedWrappingEnforceMax; }
+            set { this.pref_AS_AdvancedWrappingEnforceMax = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping All Args")]
-        public bool Pref_AS_AdvancedWrappingAllArgs { get; set; }
+        public bool Pref_AS_AdvancedWrappingAllArgs
+        {
+            get { return this.pref_AS_AdvancedWrappingAllArgs; }
+            set { this.pref_AS_AdvancedWrappingAllArgs = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping All Parms")]
-        public bool Pref_AS_AdvancedWrappingAllParms { get; set; }
+        public bool Pref_AS_AdvancedWrappingAllParms
+        {
+            get { return this.pref_AS_AdvancedWrappingAllParms; }
+            set { this.pref_AS_AdvancedWrappingAllParms = value; }
+        }
+
+        /// <summary>
+        /// ////////////////
+        /// </summary>
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping First Arg")]
-        public bool Pref_AS_AdvancedWrappingFirstArg { get; set; }
+        public bool Pref_AS_AdvancedWrappingFirstArg
+        {
+            get { return this.pref_AS_AdvancedWrappingFirstArg; }
+            set { this.pref_AS_AdvancedWrappingFirstArg = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping First Parm")]
-        public bool Pref_AS_AdvancedWrappingFirstParm { get; set; }
+        public bool Pref_AS_AdvancedWrappingFirstParm
+        {
+            get { return this.pref_AS_AdvancedWrappingFirstParm; }
+            set { this.pref_AS_AdvancedWrappingFirstParm = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping First Array Item")]
-        public bool Pref_AS_AdvancedWrappingFirstArrayItem { get; set; }
+        public bool Pref_AS_AdvancedWrappingFirstArrayItem
+        {
+            get { return this.pref_AS_AdvancedWrappingFirstArrayItem; }
+            set { this.pref_AS_AdvancedWrappingFirstArrayItem = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping First Object Item")]
-        public bool Pref_AS_AdvancedWrappingFirstObjectItem { get; set; }
+        public bool Pref_AS_AdvancedWrappingFirstObjectItem
+        {
+            get { return this.pref_AS_AdvancedWrappingFirstObjectItem; }
+            set { this.pref_AS_AdvancedWrappingFirstObjectItem = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping All Array Items")]
-        public bool Pref_AS_AdvancedWrappingAllArrayItems { get; set; }
+        public bool Pref_AS_AdvancedWrappingAllArrayItems
+        {
+            get { return this.pref_AS_AdvancedWrappingAllArrayItems; }
+            set { this.pref_AS_AdvancedWrappingAllArrayItems = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping All Object Items")]
-        public bool Pref_AS_AdvancedWrappingAllObjectItems { get; set; }
+        public bool Pref_AS_AdvancedWrappingAllObjectItems
+        {
+            get { return this.pref_AS_AdvancedWrappingAllObjectItems; }
+            set { this.pref_AS_AdvancedWrappingAllObjectItems = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping Align Array Items")]
-        public bool Pref_AS_AdvancedWrappingAlignArrayItems { get; set; }
+        public bool Pref_AS_AdvancedWrappingAlignArrayItems
+        {
+            get { return this.pref_AS_AdvancedWrappingAlignArrayItems; }
+            set { this.pref_AS_AdvancedWrappingAlignArrayItems = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping Align Object Items")]
-        public bool Pref_AS_AdvancedWrappingAlignObjectItems { get; set; }
+        public bool Pref_AS_AdvancedWrappingAlignObjectItems
+        {
+            get { return this.pref_AS_AdvancedWrappingAlignObjectItems; }
+            set { this.pref_AS_AdvancedWrappingAlignObjectItems = value; }
+        }
 
-        [DefaultValue(false)]
+        [DefaultValue(1)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping Grace Columns")]
-        public int Pref_AS_AdvancedWrappingGraceColumns { get; set; }
+        public int Pref_AS_AdvancedWrappingGraceColumns
+        {
+            get { return this.pref_AS_AdvancedWrappingGraceColumns; }
+            set { this.pref_AS_AdvancedWrappingGraceColumns = value; }
+        }
 
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping Preserve Phrases")]
-        public bool Pref_AS_AdvancedWrappingPreservePhrases { get; set; }
+        public bool Pref_AS_AdvancedWrappingPreservePhrases
+        {
+            get { return this.pref_AS_AdvancedWrappingPreservePhrases; }
+            set { this.pref_AS_AdvancedWrappingPreservePhrases = value; }
+        }
 
         [Browsable(false)]
         public string Pref_AS_MetaTagsOnSameLineAsTargetFunction 
         {
-            get { return pref_AS_MetaTagsOnSameLineAsTargetFunction; }
-            set { pref_AS_MetaTagsOnSameLineAsTargetFunction = value; } 
+            get { return this.pref_AS_MetaTagsOnSameLineAsTargetFunction; }
+            set { this.pref_AS_MetaTagsOnSameLineAsTargetFunction = value; } 
         }
         
         [Browsable(false)]
         public string Pref_AS_MetaTagsOnSameLineAsTargetProperty
         {
-            get { return pref_AS_MetaTagsOnSameLineAsTargetProperty; }
-            set { pref_AS_MetaTagsOnSameLineAsTargetProperty = value; }
+            get { return this.pref_AS_MetaTagsOnSameLineAsTargetProperty; }
+            set { this.pref_AS_MetaTagsOnSameLineAsTargetProperty = value; }
         }
 
         [Browsable(false)]
@@ -936,15 +1299,6 @@ namespace CodeFormatter
 		{
 			get { return this.pref_MXML_AddNewlineAfterLastAttr; }
 			set { this.pref_MXML_AddNewlineAfterLastAttr = value; }
-		}
-
-        [DefaultValue("")]
-        [Category("MXML")]
-        [DisplayName("Sort Attribute Data")]
-		public string Pref_MXML_SortAttrData
-		{
-			get { return this.pref_MXML_SortAttrData; }
-			set { this.pref_MXML_SortAttrData = value; }
 		}
 
         [DefaultValue(SortMode.UseData)]
@@ -1010,7 +1364,7 @@ namespace CodeFormatter
 			set { this.pref_MXML_BlankLinesBeforeTags = value; }
 		}
 
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         [Category("MXML")]
         [DisplayName("Use Attributes To Keep On Same Line")]
 		public bool Pref_MXML_UseAttrsToKeepOnSameLine
@@ -1019,7 +1373,7 @@ namespace CodeFormatter
 			set { this.pref_MXML_UseAttrsToKeepOnSameLine = value; }
 		}
 
-        [DefaultValue(4)]
+        [DefaultValue(10)]
         [Category("MXML")]
         [DisplayName("Attributes To Keep On Same Line")]
 		public int Pref_MXML_AttrsToKeepOnSameLine
@@ -1037,7 +1391,7 @@ namespace CodeFormatter
 			set { this.pref_MXML_SpacesBeforeEmptyTagEnd = value; }
 		}
 
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         [Category("MXML")]
         [DisplayName("Require CDATA For AS3 Formatting")]
 		public bool Pref_MXML_RequireCDATAForASFormatting
@@ -1073,97 +1427,180 @@ namespace CodeFormatter
         [DefaultValue(4)]
         [Category("MXML")]
         [DisplayName("Indent Size")]
-        public int Pref_Flex_IndentSize { get; set; }
+        public int Pref_Flex_IndentSize
+        {
+            get { return this.pref_Flex_IndentSize; }
+            set { this.pref_Flex_IndentSize = value; }
+        }
 
         [DefaultValue(4)]
         [Category("MXML")]
         [DisplayName("Tab Size")]
-        public int Pref_Flex_TabSize { get; set; }
+        public int Pref_Flex_TabSize
+        {
+            get { return this.pref_Flex_TabSize; }
+            set { this.pref_Flex_TabSize = value; }
+        }
 
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         [Category("MXML")]
         [DisplayName("Keep Relative Indent In Multiline Comments")]
-        public bool Pref_MXML_KeepRelativeIndentInMultilineComments { get; set; }
+        public bool Pref_MXML_KeepRelativeIndentInMultilineComments
+        {
+            get { return this.pref_MXML_KeepRelativeIndentInMultilineComments; }
+            set { this.pref_MXML_KeepRelativeIndentInMultilineComments = value; }
+        }
 
         [DefaultValue(1)]
         [Category("MXML")]
         [DisplayName("Blank Lines Before Comments")]
-        public int Pref_MXML_BlankLinesBeforeComments { get; set; }
+        public int Pref_MXML_BlankLinesBeforeComments
+        {
+            get { return this.pref_MXML_BlankLinesBeforeComments; }
+            set { this.pref_MXML_BlankLinesBeforeComments = value; }
+        }
 
         [DefaultValue(1)]
         [Category("MXML")]
         [DisplayName("Blank Lines After Specific Parent Tags")]
-        public int Pref_MXML_BlankLinesAfterSpecificParentTags { get; set; }
+        public int Pref_MXML_BlankLinesAfterSpecificParentTags
+        {
+            get { return this.pref_MXML_BlankLinesAfterSpecificParentTags; }
+            set { this.pref_MXML_BlankLinesAfterSpecificParentTags = value; }
+        }
 
         [DefaultValue(1)]
         [Category("MXML")]
         [DisplayName("Blank Lines Between Sibling Tags")]
-        public int Pref_MXML_BlankLinesBetweenSiblingTags { get; set; }
+        public int Pref_MXML_BlankLinesBetweenSiblingTags
+        {
+            get { return this.pref_MXML_BlankLinesBetweenSiblingTags; }
+            set { this.pref_MXML_BlankLinesBetweenSiblingTags = value; }
+        }
 
         [DefaultValue(1)]
         [Category("MXML")]
-        [DisplayName("Blank Line sAfter Parent Tags")]
-        public int Pref_MXML_BlankLinesAfterParentTags { get; set; }
+        [DisplayName("Blank Lines After Parent Tags")]
+        public int Pref_MXML_BlankLinesAfterParentTags
+        {
+            get { return this.pref_MXML_BlankLinesAfterParentTags; }
+            set { this.pref_MXML_BlankLinesAfterParentTags = value; }
+        }
 
         [DefaultValue(1)]
         [Category("MXML")]
         [DisplayName("Blank Lines Before Closing Tags")]
-        public int Pref_MXML_BlankLinesBeforeClosingTags { get; set; }
+        public int Pref_MXML_BlankLinesBeforeClosingTags
+        {
+            get { return this.pref_MXML_BlankLinesBeforeClosingTags; }
+            set { this.pref_MXML_BlankLinesBeforeClosingTags = value; }
+        }
 
         [DefaultValue(1)]
         [Category("MXML")]
         [DisplayName("Tabs In Hanging Indent")]
-        public int Pref_MXML_TabsInHangingIndent { get; set; }
+        public int Pref_MXML_TabsInHangingIndent
+        {
+            get { return this.pref_MXML_TabsInHangingIndent; }
+            set { this.pref_MXML_TabsInHangingIndent = value; }
+        }
 
         [DefaultValue(true)]
         [Category("MXML")]
         [DisplayName("Use Spaces Inside Attribute Braces")]
-        public bool Pref_MXML_UseSpacesInsideAttributeBraces { get; set; }
+        public bool Pref_MXML_UseSpacesInsideAttributeBraces
+        {
+            get { return this.pref_MXML_UseSpacesInsideAttributeBraces; }
+            set { this.pref_MXML_UseSpacesInsideAttributeBraces = value; }
+        }
 
         [DefaultValue(true)]
         [Category("MXML")]
         [DisplayName("Use Formatting Of Bound Attributes")]
-        public bool Pref_MXML_UseFormattingOfBoundAttributes { get; set; }
+        public bool Pref_MXML_UseFormattingOfBoundAttributes
+        {
+            get { return this.pref_MXML_UseFormattingOfBoundAttributes; }
+            set { this.pref_MXML_UseFormattingOfBoundAttributes = value; }
+        }
 
         [DefaultValue(4)]
         [Category("MXML")]
         [DisplayName("Spaces Inside Attribute Braces")]
-        public int Pref_MXML_SpacesInsideAttributeBraces { get; set; }
+        public int Pref_MXML_SpacesInsideAttributeBraces
+        {
+            get { return this.pref_MXML_SpacesInsideAttributeBraces; }
+            set { this.pref_MXML_SpacesInsideAttributeBraces = value; }
+        }
 
         [DefaultValue(4)]
         [Category("MXML")]
         [DisplayName("Script CData Indent Tabs")]
-        public int Pref_MXML_ScriptCDataIndentTabs { get; set; }
+        public int Pref_MXML_ScriptCDataIndentTabs
+        {
+            get { return this.pref_MXML_ScriptCDataIndentTabs; }
+            set { this.pref_MXML_ScriptCDataIndentTabs = value; }
+        }
 
         [DefaultValue(4)]
         [Category("MXML")]
         [DisplayName("Script Indent Tabs")]
-        public int Pref_MXML_ScriptIndentTabs { get; set; }
+        public int Pref_MXML_ScriptIndentTabs
+        {
+            get { return this.pref_MXML_ScriptIndentTabs; }
+            set { this.pref_MXML_ScriptIndentTabs = value; }
+        }
 
         [DefaultValue(1)]
         [Category("MXML")]
         [DisplayName("Blank Lines At CData Start")]
-        public int Pref_MXML_BlankLinesAtCDataStart { get; set; }
+        public int Pref_MXML_BlankLinesAtCDataStart
+        {
+            get { return this.pref_MXML_BlankLinesAtCDataStart; }
+            set { this.pref_MXML_BlankLinesAtCDataStart = value; }
+        }
 
         [DefaultValue(true)]
         [Category("MXML")]
         [DisplayName("Keep Script CData On Same Line")]
-        public bool Pref_MXML_KeepScriptCDataOnSameLine { get; set; }
+        public bool Pref_MXML_KeepScriptCDataOnSameLine
+        {
+            get { return this.pref_MXML_KeepScriptCDataOnSameLine; }
+            set { this.pref_MXML_KeepScriptCDataOnSameLine = value; }
+        }
 
         [DefaultValue(true)]
         [Category("MXML")]
         [DisplayName("Indent Tag Close")]
-        public bool Pref_MXML_IndentTagClose { get; set; }
+        public bool Pref_MXML_IndentTagClose
+        {
+            get { return this.pref_MXML_IndentTagClose; }
+            set { this.pref_MXML_IndentTagClose = value; }
+        }
 
         [DefaultValue(false)]
         [Category("MXML")]
         [DisplayName("Always Use Max Line Length")]
-        public bool Pref_MXML_AlwaysUseMaxLineLength { get; set; }
+        public bool Pref_MXML_AlwaysUseMaxLineLength
+        {
+            get { return this.pref_MXML_AlwaysUseMaxLineLength; }
+            set { this.pref_MXML_AlwaysUseMaxLineLength = value; }
+        }
 
         [DefaultValue(true)]
         [Category("MXML")]
         [DisplayName("Use Tags Do Not Format Inside")]
-        public bool Pref_MXML_UseTagsDoNotFormatInside { get; set; }
+        public bool Pref_MXML_UseTagsDoNotFormatInside
+        {
+            get { return this.pref_MXML_UseTagsDoNotFormatInside; }
+            set { this.pref_MXML_UseTagsDoNotFormatInside = value; }
+        }
+
+        [Browsable(false)]
+        public string Pref_MXML_SortAttrData
+        {
+            get { return this.pref_MXML_SortAttrData; }
+            set { this.pref_MXML_SortAttrData = value; }
+        }
 
         [Browsable(false)]
         public string Pref_MXML_ParentTagsWithBlankLinesAfter
