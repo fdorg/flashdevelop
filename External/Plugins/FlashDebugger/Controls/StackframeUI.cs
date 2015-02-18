@@ -39,7 +39,7 @@ namespace FlashDebugger
         private List<ListViewItem> wholeFrameStack;
         private int lastSelected;
 
-        private List<string> userPaths;
+        //private List<string> userPaths;
         private bool justMyCode;
 
         public StackframeUI(PluginMain pluginMain, ImageList imageList)
