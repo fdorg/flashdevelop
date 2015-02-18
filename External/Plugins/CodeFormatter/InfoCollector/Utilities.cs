@@ -1,11 +1,12 @@
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CodeFormatter.InfoCollector
 {
 	public class Utilities
 	{
-		public static String ConvertCarriageReturnsToLineFeeds(String source)
+		public static String convertCarriageReturnsToLineFeeds(String source)
 		{
             // We know the result string will be same length
             StringBuilder buffer = new StringBuilder(source.Length);
@@ -27,6 +28,15 @@ namespace CodeFormatter.InfoCollector
 			}
 			return buffer.ToString();
 		}
+
+        public static bool isJavaIdentifierPart(string s)
+        {
+            const string start = @"(\p{Lu}|\p{Ll}|\p{Lt}|\p{Lm}|\p{Lo}|\p{Nl})";
+            const string extend = @"(\p{Mn}|\p{Mc}|\p{Nd}|\p{Pc}|\p{Cf})";
+            Regex ident = new Regex(string.Format("{0}({0}|{1})*", start, extend));
+            s = s.Normalize();
+            return ident.IsMatch(s);
+        }
 
 	}
 

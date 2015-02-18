@@ -1,4 +1,4 @@
-// $ANTLR 3.1.1 MXMLLexer.g3 2009-08-02 16:01:26
+// $ANTLR 3.1.1 MXMLLexer.g3 2015-02-17 22:19:22
 
    using System.Collections.Generic;
 
@@ -12,43 +12,43 @@ using Stack 		= Antlr.Runtime.Collections.StackList;
 
 /** XML parser by Oliver Zeigermann October 10, 2005; posted to Antlr examples */
 public class MXMLLexer : Lexer {
-    public const int VALUE_int = 35;
-    public const int END_TAG = 27;
-    public const int CDATA = 26;
-    public const int EMPTY_TAG_OPEN = 4;
-    public const int EQ_int = 31;
-    public const int TAG_CLOSE = 17;
-    public const int EMPTY_ELEMENT = 28;
     public const int LETTER = 37;
-    public const int DECL_START = 18;
-    public const int ATTRIBUTE = 19;
-    public const int END_TAG_OPEN = 33;
-    public const int XMLDECL = 5;
-    public const int EOL_HELPER = 39;
-    public const int START_TAG = 23;
+    public const int SYSTEM_tag = 13;
     public const int DECL_STOP = 20;
-    public const int EMPTYTAG_CLOSE = 30;
+    public const int PUBLIC_tag = 15;
+    public const int VALUE_int = 35;
+    public const int EMPTY_TAG_OPEN = 4;
     public const int VALUE = 14;
+    public const int COMMENT = 8;
+    public const int PCDATA = 25;
+    public const int DOCTYPE_tag = 11;
+    public const int EMPTY_ELEMENT = 28;
+    public const int DOCUMENT = 10;
+    public const int DOCTYPE = 6;
+    public const int WS = 9;
     public const int INTERNAL_DTD = 16;
     public const int EOF = -1;
-    public const int DOCTYPE_tag = 11;
+    public const int ATTRIBUTE = 19;
+    public const int EOL = 24;
+    public const int END_TAG = 27;
+    public const int END_TAG_OPEN = 33;
+    public const int COMMENT_int = 34;
+    public const int GENERIC_ID = 12;
+    public const int EOL_HELPER = 39;
+    public const int EQ = 32;
     public const int GENERIC_ID_int = 36;
     public const int TAG_OPEN = 29;
-    public const int PCDATA = 25;
-    public const int EOL = 24;
-    public const int WS = 9;
-    public const int DOCUMENT = 10;
-    public const int GENERIC_ID = 12;
     public const int ELEMENT = 7;
-    public const int PI = 21;
-    public const int DOCTYPE = 6;
-    public const int EQ = 32;
-    public const int COMMENT = 8;
-    public const int OTHERWS = 38;
-    public const int SYSTEM_tag = 13;
+    public const int EMPTYTAG_CLOSE = 30;
     public const int XML = 22;
-    public const int COMMENT_int = 34;
-    public const int PUBLIC_tag = 15;
+    public const int OTHERWS = 38;
+    public const int TAG_CLOSE = 17;
+    public const int XMLDECL = 5;
+    public const int PI = 21;
+    public const int DECL_START = 18;
+    public const int START_TAG = 23;
+    public const int EQ_int = 31;
+    public const int CDATA = 26;
 
        private List<CommonToken> mRawTokens=new List<CommonToken>();
        int lastLine=1;
@@ -2331,7 +2331,7 @@ public class MXMLLexer : Lexer {
     const string DFA14_acceptS =
         "\x10\uffff\x01\x01\x01\x02\x25\uffff";
     const string DFA14_specialS =
-        "\x22\uffff\x01\x00\x01\x01\x0a\uffff\x01\x02\x01\uffff\x01\x03"+
+        "\x22\uffff\x01\x02\x01\x01\x0a\uffff\x01\x03\x01\uffff\x01\x00"+
         "\x06\uffff}>";
     static readonly string[] DFA14_transitionS = {
             "\x01\x01",
@@ -2348,9 +2348,9 @@ public class MXMLLexer : Lexer {
             "\uffff\x1a\x07\x04\uffff\x01\x0b\x01\uffff\x1a\x07",
             "\x01\x02\x01\x03\x02\uffff\x01\x04\x12\uffff\x01\x02\x19\uffff"+
             "\x01\x05\x06\uffff\x1a\x05\x04\uffff\x01\x05\x01\uffff\x1a\x05",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
             "\x01\x0d\x01\x0e\x02\uffff\x01\x0f\x12\uffff\x01\x0d\x0c\uffff"+
             "\x01\x0a\x01\x09\x01\x11\x0a\x08\x01\x0c\x03\uffff\x01\x10\x02"+
             "\uffff\x1a\x07\x04\uffff\x01\x0b\x01\uffff\x1a\x07",
@@ -2360,12 +2360,12 @@ public class MXMLLexer : Lexer {
             "\x01\x0d\x01\x0e\x02\uffff\x01\x0f\x12\uffff\x01\x0d\x0c\uffff"+
             "\x01\x0a\x01\x09\x01\x11\x0a\x08\x01\x0c\x03\uffff\x01\x10\x02"+
             "\uffff\x1a\x07\x04\uffff\x01\x0b\x01\uffff\x1a\x07",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
             "\x01\x0d\x01\x0e\x02\uffff\x01\x0f\x12\uffff\x01\x0d\x0e\uffff"+
             "\x01\x11\x0a\uffff\x01\x1c\x03\uffff\x01\x10\x02\uffff\x1a\x1c"+
             "\x04\uffff\x01\x1c\x01\uffff\x1a\x1c",
@@ -2377,33 +2377,33 @@ public class MXMLLexer : Lexer {
             "\x04\uffff\x01\x1c\x01\uffff\x1a\x1c",
             "",
             "",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0e\uffff"+
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0c\uffff"+
+            "\x01\x15\x01\x14\x01\x11\x0a\x13\x01\x17\x02\uffff\x01\x1b\x01"+
+            "\x10\x02\uffff\x1a\x12\x04\uffff\x01\x16\x01\uffff\x1a\x12",
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0e\uffff"+
             "\x01\x11\x0a\uffff\x01\x1c\x02\uffff\x01\x1b\x01\x10\x02\uffff"+
             "\x1a\x1c\x04\uffff\x01\x1c\x01\uffff\x1a\x1c",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0e\uffff"+
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0e\uffff"+
             "\x01\x11\x0a\uffff\x01\x1c\x02\uffff\x01\x1b\x01\x10\x02\uffff"+
             "\x1a\x1c\x04\uffff\x01\x1c\x01\uffff\x1a\x1c",
-            "\x01\x12\x01\x1e\x02\uffff\x01\x14\x12\uffff\x01\x12\x0e\uffff"+
+            "\x01\x18\x01\x1e\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0e\uffff"+
             "\x01\x11\x0a\uffff\x01\x1c\x02\uffff\x01\x1b\x01\x10\x02\uffff"+
             "\x1a\x1c\x04\uffff\x01\x1c\x01\uffff\x1a\x1c",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0c\uffff"+
-            "\x01\x19\x01\x18\x01\x11\x0a\x17\x01\x1a\x02\uffff\x01\x1b\x01"+
-            "\x10\x02\uffff\x1a\x15\x04\uffff\x01\x16\x01\uffff\x1a\x15",
             "\x01\x1f\x01\x20\x02\uffff\x01\x21\x12\uffff\x01\x1f\x01\uffff"+
             "\x01\x22\x04\uffff\x01\x23",
             "\x01\x2a\x01\x2b\x02\uffff\x01\x2c\x12\uffff\x01\x2a\x0c\uffff"+
@@ -2412,7 +2412,7 @@ public class MXMLLexer : Lexer {
             "\x01\x0d\x01\x0e\x02\uffff\x01\x0f\x12\uffff\x01\x0d\x0e\uffff"+
             "\x01\x11\x0a\uffff\x01\x1c\x03\uffff\x01\x10\x02\uffff\x1a\x1c"+
             "\x04\uffff\x01\x1c\x01\uffff\x1a\x1c",
-            "\x01\x12\x01\x13\x02\uffff\x01\x14\x12\uffff\x01\x12\x0e\uffff"+
+            "\x01\x18\x01\x19\x02\uffff\x01\x1a\x12\uffff\x01\x18\x0e\uffff"+
             "\x01\x11\x0a\uffff\x01\x1c\x02\uffff\x01\x1b\x01\x10\x02\uffff"+
             "\x1a\x1c\x04\uffff\x01\x1c\x01\uffff\x1a\x1c",
             "\x01\x1f\x01\x20\x02\uffff\x01\x21\x12\uffff\x01\x1f\x01\uffff"+
@@ -2512,12 +2512,12 @@ public class MXMLLexer : Lexer {
         switch ( s )
         {
                	case 0 : 
-                   	int LA14_34 = input.LA(1);
+                   	int LA14_48 = input.LA(1);
 
                    	s = -1;
-                   	if ( ((LA14_34 >= '\u0000' && LA14_34 <= '!') || (LA14_34 >= '#' && LA14_34 <= '\uFFFF')) ) { s = 46; }
+                   	if ( (LA14_48 == '\'') ) { s = 49; }
 
-                   	else if ( (LA14_34 == '\"') ) { s = 47; }
+                   	else if ( ((LA14_48 >= '\u0000' && LA14_48 <= '&') || (LA14_48 >= '(' && LA14_48 <= '\uFFFF')) ) { s = 48; }
 
                    	if ( s >= 0 ) return s;
                    	break;
@@ -2532,22 +2532,22 @@ public class MXMLLexer : Lexer {
                    	if ( s >= 0 ) return s;
                    	break;
                	case 2 : 
+                   	int LA14_34 = input.LA(1);
+
+                   	s = -1;
+                   	if ( ((LA14_34 >= '\u0000' && LA14_34 <= '!') || (LA14_34 >= '#' && LA14_34 <= '\uFFFF')) ) { s = 46; }
+
+                   	else if ( (LA14_34 == '\"') ) { s = 47; }
+
+                   	if ( s >= 0 ) return s;
+                   	break;
+               	case 3 : 
                    	int LA14_46 = input.LA(1);
 
                    	s = -1;
                    	if ( (LA14_46 == '\"') ) { s = 47; }
 
                    	else if ( ((LA14_46 >= '\u0000' && LA14_46 <= '!') || (LA14_46 >= '#' && LA14_46 <= '\uFFFF')) ) { s = 46; }
-
-                   	if ( s >= 0 ) return s;
-                   	break;
-               	case 3 : 
-                   	int LA14_48 = input.LA(1);
-
-                   	s = -1;
-                   	if ( (LA14_48 == '\'') ) { s = 49; }
-
-                   	else if ( ((LA14_48 >= '\u0000' && LA14_48 <= '&') || (LA14_48 >= '(' && LA14_48 <= '\uFFFF')) ) { s = 48; }
 
                    	if ( s >= 0 ) return s;
                    	break;
