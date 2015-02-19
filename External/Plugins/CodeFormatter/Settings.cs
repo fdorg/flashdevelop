@@ -13,10 +13,10 @@ namespace CodeFormatter
 	public class Settings
 	{
 		public const char LineSplitter = '\n';
-		private bool pref_Flex_UseTabs = true;
 
 		/////////////// ActionScript /////////////////////////////////////
 
+        private bool pref_Flex_UseTabs = true;
 		private int pref_AS_SpacesBeforeComma = 0;
 		private int pref_AS_SpacesAfterComma = 1;
 		private int pref_AS_SpacesAroundColons = 0;
@@ -160,11 +160,11 @@ namespace CodeFormatter
         public int pref_Flex_IndentSize = 4;
         public int pref_Flex_TabSize = 4;
         public bool pref_MXML_KeepRelativeIndentInMultilineComments = false;
-        public int pref_MXML_BlankLinesBeforeComments = 1;
-        public int pref_MXML_BlankLinesAfterSpecificParentTags = 1;
-        public int pref_MXML_BlankLinesBetweenSiblingTags = 1;
-        public int pref_MXML_BlankLinesAfterParentTags = 1;
-        public int pref_MXML_BlankLinesBeforeClosingTags = 1;
+        public int pref_MXML_BlankLinesBeforeComments = 0;
+        public int pref_MXML_BlankLinesAfterSpecificParentTags = 0;
+        public int pref_MXML_BlankLinesBetweenSiblingTags = 0;
+        public int pref_MXML_BlankLinesAfterParentTags = 0;
+        public int pref_MXML_BlankLinesBeforeClosingTags = 0;
         public int pref_MXML_TabsInHangingIndent = 1;
         public bool pref_MXML_UseSpacesInsideAttributeBraces = true;
         public bool pref_MXML_UseFormattingOfBoundAttributes = true;
@@ -181,7 +181,7 @@ namespace CodeFormatter
         private string pref_MXML_TagsCannotFormat = "mx:String,fx:String";
         private string pref_MXML_AttrGroups = "";
         private string pref_MXML_TagsWithASContent = "";
-        private string pref_MXML_TagsDoNotFormatInside = "";
+        private string pref_MXML_TagsDoNotFormatInside = ".*:Model,.*:XML";
         private string pref_MXML_ParentTagsWithBlankLinesAfter = "";
         private string pref_MXML_SortAttrData = "";
 
@@ -446,15 +446,6 @@ namespace CodeFormatter
 		{
 			get { return this.pref_AS_CollapseSpacesForAdjacentParens; }
 			set { this.pref_AS_CollapseSpacesForAdjacentParens = value; }
-		}
-
-        [DefaultValue(true)]
-        [Category("ActionScript")]
-        [DisplayName("Newline After Bindable")]
-		public bool Pref_AS_NewlineAfterBindable
-		{
-			get { return this.pref_AS_NewlineAfterBindable; }
-			set { this.pref_AS_NewlineAfterBindable = value; }
 		}
 
         [DefaultValue(1)]
@@ -1141,10 +1132,6 @@ namespace CodeFormatter
             set { this.pref_AS_AdvancedWrappingAllParms = value; }
         }
 
-        /// <summary>
-        /// ////////////////
-        /// </summary>
-
         [DefaultValue(false)]
         [Category("ActionScript")]
         [DisplayName("Advanced Wrapping First Arg")]
@@ -1235,18 +1222,29 @@ namespace CodeFormatter
             set { this.pref_AS_AdvancedWrappingPreservePhrases = value; }
         }
 
-        [Browsable(false)]
-        public string Pref_AS_MetaTagsOnSameLineAsTargetFunction 
+        [DefaultValue("")]
+        [Category("ActionScript")]
+        [DisplayName("Meta Tags On Same Line As Target Function")]
+        public string Pref_AS_MetaTagsOnSameLineAsTargetFunction
         {
             get { return this.pref_AS_MetaTagsOnSameLineAsTargetFunction; }
-            set { this.pref_AS_MetaTagsOnSameLineAsTargetFunction = value; } 
+            set { this.pref_AS_MetaTagsOnSameLineAsTargetFunction = value; }
         }
-        
-        [Browsable(false)]
+
+        [DefaultValue("")]
+        [Category("ActionScript")]
+        [DisplayName("Meta Tags On SameLine As Target Property")]
         public string Pref_AS_MetaTagsOnSameLineAsTargetProperty
         {
             get { return this.pref_AS_MetaTagsOnSameLineAsTargetProperty; }
             set { this.pref_AS_MetaTagsOnSameLineAsTargetProperty = value; }
+        }
+
+        [Browsable(false)]
+        public bool Pref_AS_NewlineAfterBindable
+        {
+            get { return this.pref_AS_NewlineAfterBindable; }
+            set { this.pref_AS_NewlineAfterBindable = value; }
         }
 
         [Browsable(false)]
@@ -1264,15 +1262,6 @@ namespace CodeFormatter
 		}
 		
 		////////////////// MXML ///////////////////////////////////////
-        
-        [DefaultValue(true)]
-        [Category("MXML")]
-        [DisplayName("Use Tabs")]
-        public bool Pref_Flex2_UseTabs
-        {
-            get { return this.pref_Flex_UseTabs; }
-            set { this.pref_Flex_UseTabs = value; }
-        }
 
         [DefaultValue(0)]
         [Category("MXML")]
@@ -1451,7 +1440,7 @@ namespace CodeFormatter
             set { this.pref_MXML_KeepRelativeIndentInMultilineComments = value; }
         }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("MXML")]
         [DisplayName("Blank Lines Before Comments")]
         public int Pref_MXML_BlankLinesBeforeComments
@@ -1460,7 +1449,7 @@ namespace CodeFormatter
             set { this.pref_MXML_BlankLinesBeforeComments = value; }
         }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("MXML")]
         [DisplayName("Blank Lines After Specific Parent Tags")]
         public int Pref_MXML_BlankLinesAfterSpecificParentTags
@@ -1469,7 +1458,7 @@ namespace CodeFormatter
             set { this.pref_MXML_BlankLinesAfterSpecificParentTags = value; }
         }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("MXML")]
         [DisplayName("Blank Lines Between Sibling Tags")]
         public int Pref_MXML_BlankLinesBetweenSiblingTags
@@ -1478,7 +1467,7 @@ namespace CodeFormatter
             set { this.pref_MXML_BlankLinesBetweenSiblingTags = value; }
         }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("MXML")]
         [DisplayName("Blank Lines After Parent Tags")]
         public int Pref_MXML_BlankLinesAfterParentTags
@@ -1487,7 +1476,7 @@ namespace CodeFormatter
             set { this.pref_MXML_BlankLinesAfterParentTags = value; }
         }
 
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         [Category("MXML")]
         [DisplayName("Blank Lines Before Closing Tags")]
         public int Pref_MXML_BlankLinesBeforeClosingTags
@@ -1595,35 +1584,45 @@ namespace CodeFormatter
             set { this.pref_MXML_UseTagsDoNotFormatInside = value; }
         }
 
-        [Browsable(false)]
-        public string Pref_MXML_SortAttrData
-        {
-            get { return this.pref_MXML_SortAttrData; }
-            set { this.pref_MXML_SortAttrData = value; }
-        }
-
-        [Browsable(false)]
+        [DefaultValue("")]
+        [Category("MXML")]
+        [DisplayName("Parent Tags With Blank Lines After")]
         public string Pref_MXML_ParentTagsWithBlankLinesAfter
         {
             get { return this.pref_MXML_ParentTagsWithBlankLinesAfter; }
             set { this.pref_MXML_ParentTagsWithBlankLinesAfter = value; }
         }
 
-        [Browsable(false)]
+        [DefaultValue("")]
+        [Category("MXML")]
+        [DisplayName("Tags Do Not Format Inside")]
         public string Pref_MXML_TagsDoNotFormatInside
         {
             get { return this.pref_MXML_TagsDoNotFormatInside; }
             set { this.pref_MXML_TagsDoNotFormatInside = value; }
         }
 
-        [Browsable(false)]
-		public string Pref_MXML_TagsWithASContent
-		{
-			get { return this.pref_MXML_TagsWithASContent; }
-			set { this.pref_MXML_TagsWithASContent = value; }
-		}
+        [DefaultValue("")]
+        [Category("MXML")]
+        [DisplayName("Tags With ActionScript Content")]
+        public string Pref_MXML_TagsWithASContent
+        {
+            get { return this.pref_MXML_TagsWithASContent; }
+            set { this.pref_MXML_TagsWithASContent = value; }
+        }
 
-        [Browsable(false)]
+        [DefaultValue("")]
+        [Category("MXML")]
+        [DisplayName("Attribute Sort Data")]
+        public string Pref_MXML_SortAttrData
+        {
+            get { return this.pref_MXML_SortAttrData; }
+            set { this.pref_MXML_SortAttrData = value; }
+        }
+
+        [DefaultValue("")]
+        [Category("MXML")]
+        [DisplayName("Attribute Groups")]
         public string Pref_MXML_AttrGroups
         {
             get { return this.pref_MXML_AttrGroups; }
@@ -1651,6 +1650,7 @@ namespace CodeFormatter
             Pref_MXML_AttrWrapMode = WrapMode.CountPerLine;	
             Pref_MXML_TagsCanFormat = "mx:List,fx:List";
 			Pref_MXML_TagsCannotFormat = "mx:String,fx:String";
+            Pref_MXML_TagsDoNotFormatInside = ".*:Model,.*:XML";
 			List<String> eventAttrs = GetEvents();
 			StringBuilder asTags = new StringBuilder();
             foreach (String tag in eventAttrs) 
