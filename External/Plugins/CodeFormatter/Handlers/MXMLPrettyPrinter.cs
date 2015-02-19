@@ -1797,7 +1797,7 @@ namespace CodeFormatter.Handlers
                         if (attr.mName.StartsWith("<Wrap="))
                         {
                             inGroup = true;
-                            String dataString = attr.mName.Substring("<Wrap=".Length, attr.mName.Length - 1);
+                            String dataString = attr.mName.Substring("<Wrap=".Length, (attr.mName.Length - 1) - ("<Wrap=".Length));
                             int commaPos = dataString.IndexOf(',');
                             String modeString = dataString;
                             if (commaPos > 0)
@@ -2052,7 +2052,7 @@ namespace CodeFormatter.Handlers
                     //only if we found an end pos do we need to do anything
                     if (endPos >= 0)
                     {
-                        String data = a.mValue.Substring(i + 1, endPos);
+                        String data = a.mValue.Substring(i + 1, endPos - (i + 1));
                         data = AntlrUtilities.asTrim(data);
 
                         //format data string here to handle internal spacing
@@ -2368,7 +2368,7 @@ namespace CodeFormatter.Handlers
         public static String isGroupAttr(String attr)
         {
             if (attr.Length >= 2 && attr.StartsWith(Attr_Group_Marker) && attr.EndsWith(Attr_Group_Marker))
-                return attr.Substring(1, attr.Length - 1);
+                return attr.Substring(1, (attr.Length - 1) - 1);
             return null;
         }
 

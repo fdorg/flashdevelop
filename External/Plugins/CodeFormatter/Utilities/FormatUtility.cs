@@ -164,7 +164,7 @@ namespace CodeFormatter.Utilities
             printer.setMLCommentCollapseLines(settings.Pref_AS_MLCommentReflow);
             printer.setDocCommentCollapseLines(settings.Pref_AS_DocCommentReflow);
             printer.setMLTextOnNewLines(settings.Pref_AS_MLCommentHeaderOnSeparateLine);
-            printer.setMLAsteriskMode(settings.Pref_AS_MLCommentAsteriskMode);
+            printer.setMLAsteriskMode((Int32)settings.Pref_AS_MLCommentAsteriskMode);
             printer.setUseDocCommentWrapping(settings.Pref_AS_UseDocCommentWrapping);
             printer.setDocCommentHangingIndentTabs(settings.Pref_AS_DocCommentHangingIndentTabs);
             printer.setDocCommentKeepBlankLines(settings.Pref_AS_DocCommentKeepBlankLines);
@@ -201,7 +201,7 @@ namespace CodeFormatter.Utilities
             printer.setIndentSwitchCases(!settings.Pref_AS_DontIndentSwitchCases);
             printer.setKeepingExcessDeclWhitespace(settings.Pref_AS_LeaveExtraWhitespaceAroundVarDecls);
             printer.setAlignDeclEquals(settings.Pref_AS_AlignDeclEquals);
-            printer.setAlignDeclMode(settings.Pref_AS_AlignDeclMode);
+            printer.setAlignDeclMode((Int32)settings.Pref_AS_AlignDeclMode);
             printer.setKeepSpacesBeforeLineComments(settings.Pref_AS_KeepSpacesBeforeLineComments);
             printer.setLineCommentColumn(settings.Pref_AS_AlignLineCommentsAtColumn);
             printer.setUseGlobalNewlineBeforeBraceSetting(settings.Pref_AS_UseGlobalCRBeforeBrace);

@@ -81,7 +81,7 @@ namespace CodeFormatter
         public bool pref_AS_MLCommentReflow = true;
         public bool pref_AS_DocCommentReflow = true;
         public bool pref_AS_MLCommentHeaderOnSeparateLine = true;
-        public int pref_AS_MLCommentAsteriskMode = 1;
+        public AsteriskMode pref_AS_MLCommentAsteriskMode = AsteriskMode.AsIs;
         public bool pref_AS_UseDocCommentWrapping = false;
         public int pref_AS_DocCommentHangingIndentTabs = 0;
         public bool pref_AS_DocCommentKeepBlankLines = true;
@@ -109,7 +109,7 @@ namespace CodeFormatter
         public int pref_AS_AddBracesToConditionals = 1;
         public bool pref_AS_DontIndentSwitchCases = true;
         public bool pref_AS_AlignDeclEquals = true;
-        public int pref_AS_AlignDeclMode = 0;
+        public DeclAlignMode pref_AS_AlignDeclMode = DeclAlignMode.Consecutive;
         public bool pref_AS_KeepSpacesBeforeLineComments = true;
         public int pref_AS_AlignLineCommentsAtColumn = 0;
         public bool pref_AS_UseGlobalCRBeforeBrace = false;
@@ -239,7 +239,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Before Colons")]
+        [DisplayName("Spaces Before Colons")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesBeforeColons")]
         public int Pref_AS_AdvancedSpacesBeforeColons
         {
@@ -249,7 +249,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces After Colons")]
+        [DisplayName("Spaces After Colons")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesAfterColons")]
         public int Pref_AS_AdvancedSpacesAfterColons
         {
@@ -589,7 +589,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Array Declaration Brackets")]
+        [DisplayName("Spaces Inside Array Declaration Brackets")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideArrayDeclarationBrackets")]
         public int Pref_AS_AdvancedSpacesInsideArrayDeclBrackets
         {
@@ -599,7 +599,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Array Reference Brackets")]
+        [DisplayName("Spaces Inside Array Reference Brackets")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideArrayReferenceBrackets")]
         public int Pref_AS_AdvancedSpacesInsideArrayRefBrackets
         {
@@ -609,7 +609,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Literal Braces")]
+        [DisplayName("Spaces Inside Literal Braces")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideLiteralBraces")]
         public int Pref_AS_AdvancedSpacesInsideLiteralBraces
         {
@@ -619,7 +619,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Parens")]
+        [DisplayName("Spaces Inside Parens")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideParens")]
         public int Pref_AS_AdvancedSpacesInsideParens
         {
@@ -709,6 +709,7 @@ namespace CodeFormatter
 
         [DefaultValue(true)]
         [Category("ActionScript")]
+        [DisplayName("Use Spaces Around Equals In Metatags")]
         [LocalizedDescription("CodeFormatter.Description.AS.UseSpacesAroundEqualsInMetatags")]
         public bool Pref_AS_Tweak_UseSpacesAroundEqualsInMetatags
         {
@@ -718,7 +719,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces After Colons In Declarations")]
+        [DisplayName("Spaces After Colons In Declarations")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAfterColonsInDeclarations")]
         public int Pref_AS_AdvancedSpacesAfterColonsInDeclarations
         {
@@ -728,7 +729,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Before Colons In Declarations")]
+        [DisplayName("Spaces Before Colons In Declarations")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeColonsInDeclarations")]
         public int Pref_AS_AdvancedSpacesBeforeColonsInDeclarations
         {
@@ -738,7 +739,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces After Colons In Function Types")]
+        [DisplayName("Spaces After Colons In Function Types")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAfterColonsInFunctionTypes")]
         public int Pref_AS_AdvancedSpacesAfterColonsInFunctionTypes
         {
@@ -748,7 +749,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Before Colons In Function Types")]
+        [DisplayName("Spaces Before Colons In Function Types")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeColonsInFunctionTypes")]
         public int Pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes
         {
@@ -806,11 +807,11 @@ namespace CodeFormatter
             set { this.pref_AS_MLCommentHeaderOnSeparateLine = value; }
         }
 
-        [DefaultValue(1)]
+        [DefaultValue(AsteriskMode.AsIs)]
         [Category("ActionScript")]
         [DisplayName("Multiline Comment Asterisk Mode")]
         [LocalizedDescription("CodeFormatter.Description.AS.MLCommentAsteriskMode")]
-        public int Pref_AS_MLCommentAsteriskMode
+        public AsteriskMode Pref_AS_MLCommentAsteriskMode
         {
             get { return this.pref_AS_MLCommentAsteriskMode; }
             set { this.pref_AS_MLCommentAsteriskMode = value; }
@@ -948,7 +949,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Parens In Other Places")]
+        [DisplayName("Spaces Inside Parens In Other Places")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInOtherPlaces")]
         public int Pref_AS_AdvancedSpacesInsideParensInOtherPlaces
         {
@@ -958,7 +959,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Parens In Parameter Lists")]
+        [DisplayName("Spaces Inside Parens In Parameter Lists")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInParameterLists")]
         public int Pref_AS_AdvancedSpacesInsideParensInParameterLists
         {
@@ -968,7 +969,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Parens In Argument Lists")]
+        [DisplayName("Spaces Inside Parens In Argument Lists")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInArgumentLists")]
         public int Pref_AS_AdvancedSpacesInsideParensInArgumentLists
         {
@@ -1086,11 +1087,11 @@ namespace CodeFormatter
             set { this.pref_AS_AlignDeclEquals = value; }
         }
 
-        [DefaultValue(0)]
+        [DefaultValue(DeclAlignMode.Consecutive)]
         [Category("ActionScript")]
         [DisplayName("Align Declaration Mode")]
         [LocalizedDescription("CodeFormatter.Description.AS.AlignDeclMode")]
-        public int Pref_AS_AlignDeclMode
+        public DeclAlignMode Pref_AS_AlignDeclMode
         {
             get { return this.pref_AS_AlignDeclMode; }
             set { this.pref_AS_AlignDeclMode = value; }
@@ -1128,7 +1129,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Newline Before Brace Settings")]
+        [DisplayName("Newline Before Brace Settings")]
         [LocalizedDescription("CodeFormatter.Description.AS.CRBeforeBraceSettings")]
         public int Pref_AS_AdvancedCRBeforeBraceSettings
         {
@@ -1228,7 +1229,7 @@ namespace CodeFormatter
 
         [DefaultValue(false)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Wrapping All Parms")]
+        [DisplayName("Wrap All Parameters")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingAllParms")]
         public bool Pref_AS_AdvancedWrappingAllParms
         {
@@ -2257,6 +2258,20 @@ namespace CodeFormatter
 		}
     }
 
+    public enum AsteriskMode
+    {
+        AsIs = 0,
+        All = 1,
+        None = 2
+    }
+
+    public enum DeclAlignMode
+    {
+        Consecutive = 1,
+        Scope = 2,
+        Global = 3
+    }
+
     public enum SortMode
     {
         None = 0,
@@ -2282,7 +2297,9 @@ namespace CodeFormatter
     {
 		None = 1,
 		DontProcess = 2,
+        FormatNoNewlines = 4,
 		ByColumn = 8,
+        ByColumnOnlyAddNewlines = 16,
 		ByTag = 128
     }
 

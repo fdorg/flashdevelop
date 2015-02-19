@@ -419,7 +419,7 @@ namespace CodeFormatter.Handlers
                                     int nextCR = mOutputBuffer.ToString().IndexOf("\n", startBracePos + 1);
 									if (nextCR>=0)
 									{
-                                        String nextChars = mOutputBuffer.ToString().Substring(startBracePos + 1, nextCR).Trim();
+                                        String nextChars = mOutputBuffer.ToString().Substring(startBracePos + 1, nextCR - (startBracePos + 1)).Trim();
 										if (nextChars.Length==0)
 										{
 											editItems.Add(new DeleteItem(nextCR, 1, -1));
@@ -428,7 +428,7 @@ namespace CodeFormatter.Handlers
                                     nextCR = mOutputBuffer.ToString().IndexOf("\n", endBracePos + 1);
 									if (nextCR>=0)
 									{
-                                        String nextChars = mOutputBuffer.ToString().Substring(endBracePos + 1, nextCR).Trim();
+                                        String nextChars = mOutputBuffer.ToString().Substring(endBracePos + 1, nextCR - (endBracePos + 1)).Trim();
 										if (nextChars.Length==0)
 										{
 											editItems.Add(new DeleteItem(nextCR, 1, -1));
@@ -493,7 +493,9 @@ namespace CodeFormatter.Handlers
 								//add replacemap item, but only if non-whitespace is being deleted
 								//TODO: what if a brace is added and deleted at same location? Will that break the merging code?
 								DeleteItem dItem=(DeleteItem)item;
-                                String removedData = mOutputBuffer.ToString().Substring(dItem.getLocation() + addedChars, dItem.getLocation() + dItem.getLength() + addedChars);
+                                Int32 start = dItem.getLocation() + addedChars;
+                                Int32 end = dItem.getLocation() + dItem.getLength() + addedChars;
+                                String removedData = mOutputBuffer.ToString().Substring(start, end - start);
 								if (dItem.getOriginalDeleteLocation()>=0)
 								{
 									ReplacementRange range=new ReplacementRange(new Point(item.getLocation()+addedChars, item.getLocation()+addedChars), new Point(dItem.getOriginalDeleteLocation(),dItem.getOriginalDeleteLocation()+dItem.getLength()));
@@ -1261,7 +1263,7 @@ namespace CodeFormatter.Handlers
 								prevLineEnd=0;
 							else
 								prevLineEnd++; //move to start of next line
-							lineData.Insert(0, mSourceData.Substring(prevLineEnd, ((CommonToken)t).StartIndex));
+                            lineData.Insert(0, mSourceData.Substring(prevLineEnd, ((CommonToken)t).StartIndex - prevLineEnd));
 							originalIndent=ASPrettyPrinter.findIndent(lineData, getTabSize());
 						}
 					
@@ -2867,7 +2869,7 @@ namespace CodeFormatter.Handlers
 						}
 					
 						//3 if already within max length, then go to next line
-                        if (getColumnLength(0, mOutputBuffer.ToString().Substring(lineStart, lineEnd), 0, lineEnd - lineStart) <= getMaxLineLength())
+                        if (getColumnLength(0, mOutputBuffer.ToString().Substring(lineStart, lineEnd - lineStart), 0, lineEnd - lineStart) <= getMaxLineLength())
 						{
 							lineStart=lineEnd+1; //move to next line
 							continue;
@@ -3720,13 +3722,13 @@ namespace CodeFormatter.Handlers
 			//if the loop control statement itself crosses lines, then we want to add braces
 			if (info.getOutputStatementStartPos()>0 && info.getOutputStatementEndPos()>0)
 			{
-                String statementText = mOutputBuffer.ToString().Substring(info.getOutputStatementStartPos(), info.getOutputStatementEndPos());
+                String statementText = mOutputBuffer.ToString().Substring(info.getOutputStatementStartPos(), info.getOutputStatementEndPos() - info.getOutputStatementStartPos());
 				if (statementText.Trim().IndexOf('\n')>=0)
 					return true;
 			}
 		
 			//if the statement is on more than one line (that is, if there is wrapping involved), return true
-            String statementData = mOutputBuffer.ToString().Substring(info.getStartBracePos(), info.getEndBracePos()).Trim();
+            String statementData = mOutputBuffer.ToString().Substring(info.getStartBracePos(), info.getEndBracePos() - info.getStartBracePos()).Trim();
 			if (info.isBracesCurrentlyExist())
 			{
 				//remove braces from statementData, if at ends
