@@ -3220,18 +3220,12 @@ namespace ScintillaNet
 		/// </summary>
 		unsafe public string GetLine(int line)
 		{
-			try 
-			{
-				int sz = SPerform(2153, line, 0);
-				byte[] buffer = new byte[sz + 1];
-				fixed (byte* b = buffer) SPerform(2153, line, (uint)b);
-                if (buffer[sz - 1] == 10) sz--;
-				return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz);
-			} 
-			catch 
-			{
-				return "";
-			}
+			int sz = SPerform(2153, line, 0);
+			byte[] buffer = new byte[sz + 1];
+			fixed (byte* b = buffer) SPerform(2153, line, (uint)b);
+            if (sz == 0) return ""; // Empty last line
+            if (buffer[sz - 1] == 10) sz--;
+			return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz);
 		}
 
 		/// <summary>

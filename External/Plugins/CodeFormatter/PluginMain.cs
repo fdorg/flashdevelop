@@ -258,8 +258,8 @@ namespace CodeFormatter
                     {
                         case TYPE_AS3PURE:
                             ASPrettyPrinter asPrinter = new ASPrettyPrinter(true, source);
-                            FormatUtility.ConfigureASPrinter(asPrinter, this.settingObject, PluginBase.Settings.TabWidth);
-                            String asResultData = asPrinter.Print(0);
+                            FormatUtility.configureASPrinter(asPrinter, this.settingObject, PluginBase.Settings.TabWidth);
+                            String asResultData = asPrinter.print(0);
                             if (asResultData == null)
                             {
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
@@ -275,8 +275,8 @@ namespace CodeFormatter
                         case TYPE_MXML:
                         case TYPE_XML:
                             MXMLPrettyPrinter mxmlPrinter = new MXMLPrettyPrinter(source);
-                            FormatUtility.ConfigureMXMLPrinter(mxmlPrinter, this.settingObject, PluginBase.Settings.TabWidth);
-                            String mxmlResultData = mxmlPrinter.Print(0);
+                            FormatUtility.configureMXMLPrinter(mxmlPrinter, this.settingObject, PluginBase.Settings.TabWidth);
+                            String mxmlResultData = mxmlPrinter.print(0);
                             if (mxmlResultData == null)
                             {
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);

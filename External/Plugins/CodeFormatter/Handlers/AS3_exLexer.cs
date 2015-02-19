@@ -1,7 +1,11 @@
-// $ANTLR 3.1.1 AS3_ex.g3 2011-12-19 16:18:11
+// $ANTLR 3.1.1 AS3_ex.g3 2015-02-17 22:17:17
 
-  using CodeFormatter.Handlers;
-  using PluginCore.Managers;
+using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using CodeFormatter.InfoCollector;
+using CodeFormatter.Handlers;
+using PluginCore.Managers;
 
 
 using System;
@@ -14,167 +18,166 @@ using IDictionary	= System.Collections.IDictionary;
 using Hashtable 	= System.Collections.Hashtable;
 
 public class AS3_exLexer : Lexer {
-    public const int LOR = 91;
-    public const int SHR = 83;
-    public const int FUNCTION = 19;
-    public const int PACKAGE = 31;
-    public const int INTERNAL = 26;
-    public const int EXPONENT = 139;
-    public const int LT = 67;
-    public const int STAR = 77;
-    public const int BACKSLASH_SEQUENCE = 135;
-    public const int WHILE = 47;
-    public const int MOD = 79;
-    public const int SHL = 82;
-    public const int CONST = 9;
-    public const int MOD_ASSIGN = 98;
-    public const int CASE = 6;
-    public const int NEW = 29;
-    public const int DO = 13;
-    public const int NOT = 88;
-    public const int IDENT_ASCII_START = 143;
-    public const int HEX_NUMBER_LITERAL = 137;
-    public const int EOF = -1;
-    public const int DIV_ASSIGN = 97;
-    public const int BREAK = 5;
-    public const int INC = 80;
-    public const int RPAREN = 62;
-    public const int FINAL = 55;
-    public const int IMPORT = 22;
-    public const int EOL = 124;
-    public const int INCLUDE = 53;
-    public const int XML_AT = 114;
-    public const int RETURN = 35;
-    public const int THIS = 38;
+    public const int UNDERSCORE = 115;
     public const int REGULAR_EXPR_FIRST_CHAR = 133;
-    public const int XML_CDATA = 145;
-    public const int XML_PI = 146;
-    public const int IDENT_NAME_ASCII_START = 141;
-    public const int GET = 50;
     public const int VAR = 45;
-    public const int VOID = 46;
-    public const int EACH = 49;
-    public const int SUPER = 36;
-    public const int EQ = 71;
-    public const int SHU = 84;
-    public const int RBRACK = 64;
-    public const int ADD_ASSIGN = 99;
-    public const int PRIVATE = 32;
-    public const int STATIC = 57;
-    public const int INV = 89;
-    public const int SWITCH = 37;
-    public const int NULL = 30;
-    public const int LAND_ASSIGN = 104;
-    public const int ELSE = 14;
-    public const int NUMBER = 118;
-    public const int DOUBLE_QUOTE_LITERAL = 129;
-    public const int ELLIPSIS = 109;
-    public const int NATIVE = 28;
-    public const int WHITESPACE = 125;
-    public const int UNDERSCORE = 95;
-    public const int LCURLY = 59;
-    public const int DELETE = 12;
-    public const int TRY = 42;
-    public const int NAMESPACE = 52;
-    public const int REGULAR_EXPR_CHAR = 134;
-    public const int TYPEOF = 43;
-    public const int XML_LS_END = 116;
-    public const int QUE = 92;
-    public const int OR = 86;
-    public const int IDENT_PART = 136;
-    public const int GT = 68;
-    public const int USE = 44;
-    public const int DEC_NUMBER = 138;
-    public const int CATCH = 7;
-    public const int FALSE = 16;
-    public const int LAND = 90;
-    public const int XML_E_TEND = 112;
     public const int THROW = 39;
-    public const int DYNAMIC = 54;
-    public const int COMMENT_SINGLELINE = 127;
-    public const int DOLLAR = 96;
-    public const int PROTECTED = 33;
-    public const int DEC = 81;
-    public const int CLASS = 8;
-    public const int LBRACK = 63;
-    public const int REGULAR_EXPR_BODY = 130;
-    public const int GTE = 70;
-    public const int FOR = 18;
-    public const int SHU_ASSIGN = 103;
-    public const int SUB = 76;
-    public const int AND = 85;
-    public const int LTE = 69;
-    public const int AND_ASSIGN = 106;
-    public const int XML_LS_STD = 115;
-    public const int LPAREN = 61;
-    public const int IF = 20;
-    public const int SHR_ASSIGN = 102;
-    public const int AS = 4;
-    public const int ESCAPE_SEQUENCE = 123;
-    public const int UNICODE_ESCAPE = 122;
-    public const int XML_COMMENT = 144;
-    public const int SHL_ASSIGN = 101;
-    public const int IN = 23;
-    public const int DEC_NUMBER_LITERAL = 140;
-    public const int IMPLEMENTS = 21;
-    public const int CONTINUE = 10;
-    public const int COMMA = 66;
-    public const int IS = 27;
-    public const int IDENTIFIER = 142;
-    public const int XML_ELLIPSIS = 110;
-    public const int XOR_ASSIGN = 107;
-    public const int PLUS = 75;
-    public const int DOT = 65;
-    public const int WITH = 48;
-    public const int XOR = 87;
-    public const int TO = 40;
-    public const int ALPHABET = 117;
-    public const int NSAME = 74;
-    public const int DEFAULT = 11;
-    public const int REGULAR_EXPR_FLAG = 131;
-    public const int HEX_DIGIT = 119;
-    public const int SET = 51;
-    public const int INSTANCEOF = 24;
-    public const int XML_TEXT = 147;
-    public const int SEMI = 58;
-    public const int TRUE = 41;
-    public const int SAME = 73;
-    public const int COLON = 93;
-    public const int OR_ASSIGN = 108;
-    public const int NEQ = 72;
-    public const int SINGLE_QUOTE_LITERAL = 128;
-    public const int FINALLY = 17;
-    public const int OVERRIDE = 56;
-    public const int XML_NS_OP = 113;
-    public const int RCURLY = 60;
-    public const int ASSIGN = 94;
-    public const int REGULAR_EXPR_LITERAL = 132;
+    public const int STATIC = 57;
     public const int INTERFACE = 25;
-    public const int DIV = 78;
-    public const int XML_TEND = 111;
-    public const int CR = 120;
-    public const int EXTENDS = 15;
+    public const int AND_ASSIGN = 104;
+    public const int WHITESPACE = 125;
+    public const int BREAK = 5;
+    public const int INTERNAL = 26;
+    public const int XML_LS_STD = 113;
+    public const int DEC_NUMBER_LITERAL = 140;
+    public const int ELSE = 14;
+    public const int INCLUDE = 53;
+    public const int IF = 20;
+    public const int EACH = 49;
+    public const int SUB = 76;
+    public const int IN = 23;
+    public const int LPAREN = 61;
+    public const int DOT = 65;
+    public const int IS = 27;
+    public const int FUNCTION = 19;
+    public const int LOR = 91;
+    public const int CASE = 6;
+    public const int AS = 4;
+    public const int ELLIPSIS = 107;
+    public const int LBRACK = 63;
+    public const int GET = 50;
     public const int PUBLIC = 34;
-    public const int SUB_ASSIGN = 100;
-    public const int COMMENT_MULTILINE = 126;
-    public const int LOR_ASSIGN = 105;
+    public const int UNICODE_ESCAPE = 122;
+    public const int XOR = 87;
+    public const int DOLLAR = 116;
+    public const int SAME = 73;
+    public const int SET = 51;
+    public const int IDENT_NAME_ASCII_START = 141;
+    public const int SUB_ASSIGN = 98;
+    public const int SEMI = 58;
+    public const int ASSIGN = 94;
+    public const int IMPORT = 22;
+    public const int DELETE = 12;
+    public const int CATCH = 7;
+    public const int PROTECTED = 33;
+    public const int RCURLY = 60;
+    public const int COMMA = 66;
+    public const int USE = 44;
+    public const int REGULAR_EXPR_BODY = 130;
+    public const int LCURLY = 59;
+    public const int SHL_ASSIGN = 99;
+    public const int ALPHABET = 117;
+    public const int PRIVATE = 32;
+    public const int DYNAMIC = 54;
+    public const int CR = 120;
+    public const int BACKSLASH_SEQUENCE = 135;
+    public const int CONTINUE = 10;
+    public const int DIV = 78;
+    public const int STAR = 77;
+    public const int DEC_NUMBER = 138;
+    public const int EXPONENT = 139;
     public const int LF = 121;
+    public const int TO = 40;
+    public const int NEQ = 72;
+    public const int XML_NS_OP = 111;
+    public const int NAMESPACE = 52;
+    public const int EXTENDS = 15;
+    public const int INSTANCEOF = 24;
+    public const int NEW = 29;
+    public const int COMMENT_SINGLELINE = 127;
+    public const int LAND_ASSIGN = 102;
+    public const int LT = 67;
+    public const int SHU_ASSIGN = 101;
+    public const int IDENT_ASCII_START = 143;
+    public const int CLASS = 8;
+    public const int DO = 13;
+    public const int FINALLY = 17;
+    public const int ESCAPE_SEQUENCE = 123;
+    public const int COMMENT_MULTILINE = 126;
+    public const int HEX_NUMBER_LITERAL = 137;
+    public const int SHR_ASSIGN = 100;
+    public const int REGULAR_EXPR_CHAR = 134;
+    public const int CONST = 9;
+    public const int PACKAGE = 31;
+    public const int SHL = 82;
+    public const int XML_TEND = 109;
+    public const int OR_ASSIGN = 106;
+    public const int TRY = 42;
+    public const int SHR = 83;
+    public const int QUE = 92;
+    public const int SHU = 84;
+    public const int NUMBER = 118;
+    public const int NULL = 30;
+    public const int REGULAR_EXPR_FLAG = 131;
+    public const int XML_CDATA = 145;
+    public const int FOR = 18;
+    public const int TRUE = 41;
+    public const int FINAL = 55;
+    public const int RPAREN = 62;
+    public const int EQ = 71;
+    public const int IDENT_PART = 136;
+    public const int RBRACK = 64;
+    public const int NOT = 88;
+    public const int AND = 85;
+    public const int THIS = 38;
+    public const int SWITCH = 37;
+    public const int VOID = 46;
+    public const int LTE = 69;
+    public const int PLUS = 75;
+    public const int INC = 80;
+    public const int XML_LS_END = 114;
+    public const int NATIVE = 28;
+    public const int DIV_ASSIGN = 95;
+    public const int NSAME = 74;
+    public const int LAND = 90;
+    public const int XML_PI = 146;
+    public const int XML_TEXT = 147;
+    public const int REGULAR_EXPR_LITERAL = 132;
+    public const int INV = 89;
+    public const int RETURN = 35;
+    public const int SINGLE_QUOTE_LITERAL = 128;
+    public const int XML_E_TEND = 110;
+    public const int HEX_DIGIT = 119;
+    public const int ADD_ASSIGN = 97;
+    public const int IDENTIFIER = 142;
+    public const int EOF = -1;
+    public const int LOR_ASSIGN = 103;
+    public const int SUPER = 36;
+    public const int MOD = 79;
+    public const int DEC = 81;
+    public const int OR = 86;
+    public const int XOR_ASSIGN = 105;
+    public const int EOL = 124;
+    public const int DOUBLE_QUOTE_LITERAL = 129;
+    public const int IMPLEMENTS = 21;
+    public const int COLON = 93;
+    public const int XML_ELLIPSIS = 108;
+    public const int GT = 68;
+    public const int WITH = 48;
+    public const int XML_AT = 112;
+    public const int OVERRIDE = 56;
+    public const int XML_COMMENT = 144;
+    public const int TYPEOF = 43;
+    public const int MOD_ASSIGN = 96;
+    public const int GTE = 70;
+    public const int FALSE = 16;
+    public const int WHILE = 47;
+    public const int DEFAULT = 11;
 
-    	/**  */
-    	private CommonToken lastDefaultCnlToken = null;
-
-    	// override
-    	override public IToken NextToken()
-    	{
-    		CommonToken result = (CommonToken) base.NextToken();
-    		if (result!=null && result.Type != WHITESPACE)
-    		{
-    			lastDefaultCnlToken = result;
-    		}
-
-    		return result;      
-    	}    
-
+        /**  */
+        private IToken lastDefaultCnlToken = null;
+        
+        // override
+        override public IToken NextToken()
+        {
+            IToken result = base.NextToken();
+            if (result!=null && result.Channel != AS3_exParser.CHANNEL_WHITESPACE )
+            {
+                lastDefaultCnlToken = result;
+            }
+            return result;      
+        }
+        
     	override public void Reset()
     	{
     		base.Reset(); // reset all recognizer state variables
@@ -183,106 +186,115 @@ public class AS3_exLexer : Lexer {
     			((ANTLRStringStream)input).Reset();
     		}
     	}
-
+        
 
     	//TODO: fix this so that regular expression embedded within xml text will work
-    	private bool IsRegularExpression(){
-    		if(lastDefaultCnlToken!=null){
-    			switch(lastDefaultCnlToken.Type){
-    			case NULL :
-    			case TRUE :
-    			case FALSE:
-    			case THIS :
-    			case SUPER:
-    			case IDENTIFIER:
-    			case HEX_NUMBER_LITERAL:
-    			case DEC_NUMBER_LITERAL:
-    			case SINGLE_QUOTE_LITERAL:
-    			case DOUBLE_QUOTE_LITERAL:
-    			case RCURLY:
-    			case RBRACK:
-    			case RPAREN:
-    				return false;
-    			default:
-    				break;
-    			}
-    		}
+        private bool isRegularExpression(){
+            if(lastDefaultCnlToken!=null){
+                switch(lastDefaultCnlToken.Type){
+                    case NULL :
+                    case TRUE :
+                    case FALSE:
+                    case THIS :
+                    case SUPER:
+                    case IDENTIFIER:
+                    case HEX_NUMBER_LITERAL:
+                    case DEC_NUMBER_LITERAL:
+                    case SINGLE_QUOTE_LITERAL:
+                    case DOUBLE_QUOTE_LITERAL:
+                    case RCURLY:
+                    case RBRACK:
+                    case RPAREN:
+                    	//this is an attempt to not think something is a regular expression if it happens
+                    	//to be part of a mathematical expression.
+                        return false;
+                    default:
+                        break;
+                }
+            }
 
-    		// System.out.println("start to predict if is a ReglurExpression");
-    		// start to predict if the next is a regular expression
-    		int next = -1;
-    		int index=1;
-    		bool success = false;
-    		if((next=input.LA(index)) != '/'){
-    			success = false;
-    			return success;
-    		}
-    		index++;
-    		// check the first regular character
-    		next=input.LA(index);
-    		if(next == '\r' || next == '\n' || next == '*' || next == '/' || next == '>'){
-    			success = false;
-    			return success;
-    		}else if(next == '\\'){
-    			next=input.LA(index+1);
-    			if(next == '\r' || next == '\n'){
-    				success=false;
-    				return success;
-    			}
-    			// we omit the escape sequence \ u XXXX or \ x XX
-    			index++;
-    		}
-    		index++;
-    		// check the body of regular character
-    		while((next=input.LA(index))!=-1){
-    			//System.out.println("char["+index+"] = ("+(char)next+")");
-    			switch(next){
-    			case '\r':
-    			case '\n':
-    				success = false;
-    				return success;
-    			case '\\':
-    				next=input.LA(index+1);
-    				if(next == '\r' || next == '\n'){
-    					success=false;
-    					return success;
-    				}
-    				// we omit the escape sequence \ u XXXX or \ x XX
-    				index++;
-    				break;
-    			case '/':
-    				success = true;
-    				return success;
-    			}            
-    			index++;
-    		}
-    		return success;
-    	}
-
-    	/**
-    	 * <pre> judge if is a XMLName </pre>
-    	 * @param ch character
-    	 * @return if is a XMLName return true
-    	 */
-    	static bool IsXMLText(int ch){
-    		//System.out.println("isXMLText start");
-    		return (ch!='{'&&ch!='<'&&!(IsUnicodeIdentifierPart(ch)));
-    	}
-
+            //System.out.println("start to predict if is a RegularExpression");
+            // start to predict if the next is a regular expression
+            int next = -1;
+            int index=1;
+            bool success = false;
+            if((next=input.LA(index)) != '/'){
+                success = false;
+                return success;
+            }
+            index++;
+            // check the first regular character
+            next=input.LA(index);
+            if(next == '\r' || next == '\n' || 
+            	next == '*' || //starts a comment
+            	next == '/'  //if no regex content?
+            	//|| next == '>' //I think the idea of failing on /> is to prevent conflicts with other tokens, but I think that is irrelevant since I've made this context sensitive.
+             	){
+                success = false;
+                return success;
+            }else if(next == '\\'){
+                next=input.LA(index+1);
+                if(next == '\r' || next == '\n'){
+                    success=false;
+                    return success;
+                }
+                // we omit the escape sequence \ u XXXX or \ x XX
+                index++;
+            }
+            index++;
+            // check the body of regular character
+            while((next=input.LA(index))!=-1){
+                ////System.out.println("char["+index+"] = ("+(char)next+")");
+                switch(next){
+                    case '\r':
+                    case '\n':
+                        success = false;
+                        return success;
+                    case '\\':
+                        next=input.LA(index+1);
+                        if(next == '\r' || next == '\n'){
+                            success=false;
+                            return success;
+                        }
+                        // we omit the escape sequence \ u XXXX or \ x XX
+                        index++;
+                        break;
+                    case '/':
+                        success = true;
+                        return success;
+                }            
+                index++;
+            }
+            return success;
+        }
+            
+       /**
+        * <pre> judge if is a XMLName </pre>
+        * @param ch character
+        * @return if is a XMLName return true
+        */
+        static bool isXMLText(int ch){
+            //System.out.println("isXMLText start");
+            return (ch!='{'&&ch!='<'&&!(isUnicodeIdentifierPart(ch)));
+        }
+            
     	/*---------------------------UNICODE_INDENTIFER START------------------------------------------*/    
-    	private static bool IsUnicodeIdentifierPart(int ch){
-    		return ch=='$'||ch=='_'||IsUnicodeLetter(ch)||IsUnicodeDigit(ch)||IsUnicodeCombiningMark(ch)||IsUnicodeConnectorPunctuation(ch);
+    	
+    	private static bool isUnicodeIdentifierPart(int ch)
+    	{
+    		return ch=='$'||ch=='_'||isUnicodeLetter(ch)||isUnicodeDigit(ch)||isUnicodeCombiningMark(ch)||isUnicodeConnectorPunctuation(ch);
     	}
 
-    	private void ConsumeIdentifierUnicodeStart() {
+    	private void consumeIdentifierUnicodeStart() 
+    	{
     		int ch = input.LA(1);
-    		if (IsUnicodeLetter(ch) || ch=='$' || ch=='_')
+    		if (isUnicodeLetter(ch) || ch=='$' || ch=='_')
     		{
     			MatchAny();
     			do
     			{
     				ch = input.LA(1);
-    				if (IsUnicodeIdentifierPart(ch))
+    				if (isUnicodeIdentifierPart(ch))
     				{
     					mIDENT_PART();
     				}
@@ -295,7 +307,8 @@ public class AS3_exLexer : Lexer {
     		}
     	}
     	
-    	private static bool IsUnicodeLetter(int ch) {
+    	private static bool isUnicodeLetter(int ch) 
+    	{
     		return (ch >= '\u0041' && ch <= '\u005A')
     				|| (ch >= '\u0061' && ch <= '\u007A') || (ch == '\u00AA')
     				|| (ch == '\u00B5') || (ch == '\u00BA')
@@ -440,7 +453,8 @@ public class AS3_exLexer : Lexer {
     				|| (ch >= '\uFF66' && ch <= '\uFFDC');
     	}
     	
-    	private static bool IsUnicodeCombiningMark(int ch) {
+    	private static bool isUnicodeCombiningMark(int ch) 
+    	{
         		return (ch >= '\u0300' && ch <= '\u036F')
         				|| (ch >= '\u0483' && ch <= '\u0487')
         				|| (ch >= '\u0591' && ch <= '\u05BD') || (ch == '\u05BF')
@@ -535,7 +549,8 @@ public class AS3_exLexer : Lexer {
         				|| (ch >= '\uFE20' && ch <= '\uFE26');
         	}
 
-        	private static bool IsUnicodeDigit(int ch) {
+        	private static bool isUnicodeDigit(int ch) 
+    		{
         		return (ch >= '\u0030' && ch <= '\u0039')
         				|| (ch >= '\u0660' && ch <= '\u0669')
         				|| (ch >= '\u06F0' && ch <= '\u06F9')
@@ -568,14 +583,18 @@ public class AS3_exLexer : Lexer {
         				|| (ch >= '\uFF10' && ch <= '\uFF19');
         	}
 
-        	private static bool IsUnicodeConnectorPunctuation(int ch) {
+        	private static bool isUnicodeConnectorPunctuation(int ch) 
+    		{
         		return (ch == '\u005F') || (ch >= '\u203F' && ch <= '\u2040')
         				|| (ch == '\u2054') || (ch >= '\uFE33' && ch <= '\uFE34')
         				|| (ch >= '\uFE4D' && ch <= '\uFE4F') || (ch == '\uFF3F');
         	}
 
     	/*---------------------------UNICODE_INDENTIFER END------------------------------------------*/
-        
+    	
+        private void debugMethod(String methodName,String text){
+            //System.out.println("recognized as <<"+methodName+">> text=("+text+")");
+        }    
 
 
     // delegates
@@ -606,8 +625,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = AS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:430:4: ( 'as' )
-            // AS3_ex.g3:430:6: 'as'
+            // AS3_ex.g3:449:4: ( 'as' )
+            // AS3_ex.g3:449:6: 'as'
             {
             	Match("as"); if (state.failed) return ;
 
@@ -630,8 +649,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = BREAK;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:431:7: ( 'break' )
-            // AS3_ex.g3:431:9: 'break'
+            // AS3_ex.g3:450:7: ( 'break' )
+            // AS3_ex.g3:450:9: 'break'
             {
             	Match("break"); if (state.failed) return ;
 
@@ -654,8 +673,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = CASE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:432:6: ( 'case' )
-            // AS3_ex.g3:432:8: 'case'
+            // AS3_ex.g3:451:6: ( 'case' )
+            // AS3_ex.g3:451:8: 'case'
             {
             	Match("case"); if (state.failed) return ;
 
@@ -678,8 +697,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = CATCH;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:433:7: ( 'catch' )
-            // AS3_ex.g3:433:9: 'catch'
+            // AS3_ex.g3:452:7: ( 'catch' )
+            // AS3_ex.g3:452:9: 'catch'
             {
             	Match("catch"); if (state.failed) return ;
 
@@ -702,8 +721,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = CLASS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:434:7: ( 'class' )
-            // AS3_ex.g3:434:9: 'class'
+            // AS3_ex.g3:453:7: ( 'class' )
+            // AS3_ex.g3:453:9: 'class'
             {
             	Match("class"); if (state.failed) return ;
 
@@ -726,8 +745,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = CONST;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:435:7: ( 'const' )
-            // AS3_ex.g3:435:9: 'const'
+            // AS3_ex.g3:454:7: ( 'const' )
+            // AS3_ex.g3:454:9: 'const'
             {
             	Match("const"); if (state.failed) return ;
 
@@ -750,8 +769,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = CONTINUE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:436:10: ( 'continue' )
-            // AS3_ex.g3:436:12: 'continue'
+            // AS3_ex.g3:455:10: ( 'continue' )
+            // AS3_ex.g3:455:12: 'continue'
             {
             	Match("continue"); if (state.failed) return ;
 
@@ -774,8 +793,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DEFAULT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:437:9: ( 'default' )
-            // AS3_ex.g3:437:11: 'default'
+            // AS3_ex.g3:456:9: ( 'default' )
+            // AS3_ex.g3:456:11: 'default'
             {
             	Match("default"); if (state.failed) return ;
 
@@ -798,8 +817,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DELETE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:438:8: ( 'delete' )
-            // AS3_ex.g3:438:10: 'delete'
+            // AS3_ex.g3:457:8: ( 'delete' )
+            // AS3_ex.g3:457:10: 'delete'
             {
             	Match("delete"); if (state.failed) return ;
 
@@ -822,8 +841,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DO;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:439:4: ( 'do' )
-            // AS3_ex.g3:439:6: 'do'
+            // AS3_ex.g3:458:4: ( 'do' )
+            // AS3_ex.g3:458:6: 'do'
             {
             	Match("do"); if (state.failed) return ;
 
@@ -846,8 +865,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = ELSE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:440:6: ( 'else' )
-            // AS3_ex.g3:440:8: 'else'
+            // AS3_ex.g3:459:6: ( 'else' )
+            // AS3_ex.g3:459:8: 'else'
             {
             	Match("else"); if (state.failed) return ;
 
@@ -870,8 +889,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = EXTENDS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:441:9: ( 'extends' )
-            // AS3_ex.g3:441:11: 'extends'
+            // AS3_ex.g3:460:9: ( 'extends' )
+            // AS3_ex.g3:460:11: 'extends'
             {
             	Match("extends"); if (state.failed) return ;
 
@@ -894,8 +913,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = FALSE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:442:7: ( 'false' )
-            // AS3_ex.g3:442:9: 'false'
+            // AS3_ex.g3:461:7: ( 'false' )
+            // AS3_ex.g3:461:9: 'false'
             {
             	Match("false"); if (state.failed) return ;
 
@@ -918,8 +937,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = FINALLY;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:443:9: ( 'finally' )
-            // AS3_ex.g3:443:11: 'finally'
+            // AS3_ex.g3:462:9: ( 'finally' )
+            // AS3_ex.g3:462:11: 'finally'
             {
             	Match("finally"); if (state.failed) return ;
 
@@ -942,8 +961,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = FOR;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:444:5: ( 'for' )
-            // AS3_ex.g3:444:7: 'for'
+            // AS3_ex.g3:463:5: ( 'for' )
+            // AS3_ex.g3:463:7: 'for'
             {
             	Match("for"); if (state.failed) return ;
 
@@ -966,8 +985,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = FUNCTION;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:445:10: ( 'function' )
-            // AS3_ex.g3:445:12: 'function'
+            // AS3_ex.g3:464:10: ( 'function' )
+            // AS3_ex.g3:464:12: 'function'
             {
             	Match("function"); if (state.failed) return ;
 
@@ -990,8 +1009,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = IF;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:446:4: ( 'if' )
-            // AS3_ex.g3:446:6: 'if'
+            // AS3_ex.g3:465:4: ( 'if' )
+            // AS3_ex.g3:465:6: 'if'
             {
             	Match("if"); if (state.failed) return ;
 
@@ -1014,8 +1033,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = IMPLEMENTS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:447:12: ( 'implements' )
-            // AS3_ex.g3:447:14: 'implements'
+            // AS3_ex.g3:466:12: ( 'implements' )
+            // AS3_ex.g3:466:14: 'implements'
             {
             	Match("implements"); if (state.failed) return ;
 
@@ -1038,8 +1057,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = IMPORT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:448:8: ( 'import' )
-            // AS3_ex.g3:448:10: 'import'
+            // AS3_ex.g3:467:8: ( 'import' )
+            // AS3_ex.g3:467:10: 'import'
             {
             	Match("import"); if (state.failed) return ;
 
@@ -1062,8 +1081,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = IN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:449:4: ( 'in' )
-            // AS3_ex.g3:449:6: 'in'
+            // AS3_ex.g3:468:4: ( 'in' )
+            // AS3_ex.g3:468:6: 'in'
             {
             	Match("in"); if (state.failed) return ;
 
@@ -1086,8 +1105,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = INSTANCEOF;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:450:12: ( 'instanceof' )
-            // AS3_ex.g3:450:14: 'instanceof'
+            // AS3_ex.g3:469:12: ( 'instanceof' )
+            // AS3_ex.g3:469:14: 'instanceof'
             {
             	Match("instanceof"); if (state.failed) return ;
 
@@ -1110,8 +1129,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = INTERFACE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:451:11: ( 'interface' )
-            // AS3_ex.g3:451:13: 'interface'
+            // AS3_ex.g3:470:11: ( 'interface' )
+            // AS3_ex.g3:470:13: 'interface'
             {
             	Match("interface"); if (state.failed) return ;
 
@@ -1134,8 +1153,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = INTERNAL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:452:10: ( 'internal' )
-            // AS3_ex.g3:452:12: 'internal'
+            // AS3_ex.g3:471:10: ( 'internal' )
+            // AS3_ex.g3:471:12: 'internal'
             {
             	Match("internal"); if (state.failed) return ;
 
@@ -1158,8 +1177,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = IS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:453:4: ( 'is' )
-            // AS3_ex.g3:453:6: 'is'
+            // AS3_ex.g3:472:4: ( 'is' )
+            // AS3_ex.g3:472:6: 'is'
             {
             	Match("is"); if (state.failed) return ;
 
@@ -1182,8 +1201,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = NATIVE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:454:8: ( 'native' )
-            // AS3_ex.g3:454:10: 'native'
+            // AS3_ex.g3:473:8: ( 'native' )
+            // AS3_ex.g3:473:10: 'native'
             {
             	Match("native"); if (state.failed) return ;
 
@@ -1206,8 +1225,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = NEW;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:455:5: ( 'new' )
-            // AS3_ex.g3:455:7: 'new'
+            // AS3_ex.g3:474:5: ( 'new' )
+            // AS3_ex.g3:474:7: 'new'
             {
             	Match("new"); if (state.failed) return ;
 
@@ -1230,8 +1249,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = NULL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:456:6: ( 'null' )
-            // AS3_ex.g3:456:8: 'null'
+            // AS3_ex.g3:475:6: ( 'null' )
+            // AS3_ex.g3:475:8: 'null'
             {
             	Match("null"); if (state.failed) return ;
 
@@ -1254,8 +1273,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = PACKAGE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:457:9: ( 'package' )
-            // AS3_ex.g3:457:11: 'package'
+            // AS3_ex.g3:476:9: ( 'package' )
+            // AS3_ex.g3:476:11: 'package'
             {
             	Match("package"); if (state.failed) return ;
 
@@ -1278,8 +1297,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = PRIVATE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:458:9: ( 'private' )
-            // AS3_ex.g3:458:11: 'private'
+            // AS3_ex.g3:477:9: ( 'private' )
+            // AS3_ex.g3:477:11: 'private'
             {
             	Match("private"); if (state.failed) return ;
 
@@ -1302,8 +1321,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = PROTECTED;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:459:11: ( 'protected' )
-            // AS3_ex.g3:459:13: 'protected'
+            // AS3_ex.g3:478:11: ( 'protected' )
+            // AS3_ex.g3:478:13: 'protected'
             {
             	Match("protected"); if (state.failed) return ;
 
@@ -1326,8 +1345,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = PUBLIC;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:460:8: ( 'public' )
-            // AS3_ex.g3:460:10: 'public'
+            // AS3_ex.g3:479:8: ( 'public' )
+            // AS3_ex.g3:479:10: 'public'
             {
             	Match("public"); if (state.failed) return ;
 
@@ -1350,8 +1369,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = RETURN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:461:8: ( 'return' )
-            // AS3_ex.g3:461:10: 'return'
+            // AS3_ex.g3:480:8: ( 'return' )
+            // AS3_ex.g3:480:10: 'return'
             {
             	Match("return"); if (state.failed) return ;
 
@@ -1374,8 +1393,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SUPER;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:462:7: ( 'super' )
-            // AS3_ex.g3:462:9: 'super'
+            // AS3_ex.g3:481:7: ( 'super' )
+            // AS3_ex.g3:481:9: 'super'
             {
             	Match("super"); if (state.failed) return ;
 
@@ -1398,8 +1417,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SWITCH;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:463:8: ( 'switch' )
-            // AS3_ex.g3:463:10: 'switch'
+            // AS3_ex.g3:482:8: ( 'switch' )
+            // AS3_ex.g3:482:10: 'switch'
             {
             	Match("switch"); if (state.failed) return ;
 
@@ -1422,8 +1441,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = THIS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:464:6: ( 'this' )
-            // AS3_ex.g3:464:8: 'this'
+            // AS3_ex.g3:483:6: ( 'this' )
+            // AS3_ex.g3:483:8: 'this'
             {
             	Match("this"); if (state.failed) return ;
 
@@ -1446,8 +1465,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = THROW;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:465:7: ( 'throw' )
-            // AS3_ex.g3:465:9: 'throw'
+            // AS3_ex.g3:484:7: ( 'throw' )
+            // AS3_ex.g3:484:9: 'throw'
             {
             	Match("throw"); if (state.failed) return ;
 
@@ -1470,8 +1489,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = TO;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:466:4: ( 'to' )
-            // AS3_ex.g3:466:6: 'to'
+            // AS3_ex.g3:485:4: ( 'to' )
+            // AS3_ex.g3:485:6: 'to'
             {
             	Match("to"); if (state.failed) return ;
 
@@ -1494,8 +1513,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = TRUE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:467:6: ( 'true' )
-            // AS3_ex.g3:467:8: 'true'
+            // AS3_ex.g3:486:6: ( 'true' )
+            // AS3_ex.g3:486:8: 'true'
             {
             	Match("true"); if (state.failed) return ;
 
@@ -1518,8 +1537,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = TRY;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:468:5: ( 'try' )
-            // AS3_ex.g3:468:7: 'try'
+            // AS3_ex.g3:487:5: ( 'try' )
+            // AS3_ex.g3:487:7: 'try'
             {
             	Match("try"); if (state.failed) return ;
 
@@ -1542,8 +1561,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = TYPEOF;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:469:8: ( 'typeof' )
-            // AS3_ex.g3:469:10: 'typeof'
+            // AS3_ex.g3:488:8: ( 'typeof' )
+            // AS3_ex.g3:488:10: 'typeof'
             {
             	Match("typeof"); if (state.failed) return ;
 
@@ -1566,8 +1585,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = USE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:470:5: ( 'use' )
-            // AS3_ex.g3:470:7: 'use'
+            // AS3_ex.g3:489:5: ( 'use' )
+            // AS3_ex.g3:489:7: 'use'
             {
             	Match("use"); if (state.failed) return ;
 
@@ -1590,8 +1609,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = VAR;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:471:5: ( 'var' )
-            // AS3_ex.g3:471:7: 'var'
+            // AS3_ex.g3:490:5: ( 'var' )
+            // AS3_ex.g3:490:7: 'var'
             {
             	Match("var"); if (state.failed) return ;
 
@@ -1614,8 +1633,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = VOID;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:472:6: ( 'void' )
-            // AS3_ex.g3:472:8: 'void'
+            // AS3_ex.g3:491:6: ( 'void' )
+            // AS3_ex.g3:491:8: 'void'
             {
             	Match("void"); if (state.failed) return ;
 
@@ -1638,8 +1657,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = WHILE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:473:7: ( 'while' )
-            // AS3_ex.g3:473:9: 'while'
+            // AS3_ex.g3:492:7: ( 'while' )
+            // AS3_ex.g3:492:9: 'while'
             {
             	Match("while"); if (state.failed) return ;
 
@@ -1662,8 +1681,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = WITH;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:474:6: ( 'with' )
-            // AS3_ex.g3:474:8: 'with'
+            // AS3_ex.g3:493:6: ( 'with' )
+            // AS3_ex.g3:493:8: 'with'
             {
             	Match("with"); if (state.failed) return ;
 
@@ -1686,8 +1705,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = EACH;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:475:6: ( 'each' )
-            // AS3_ex.g3:475:8: 'each'
+            // AS3_ex.g3:494:6: ( 'each' )
+            // AS3_ex.g3:494:8: 'each'
             {
             	Match("each"); if (state.failed) return ;
 
@@ -1710,8 +1729,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = GET;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:476:5: ( 'get' )
-            // AS3_ex.g3:476:7: 'get'
+            // AS3_ex.g3:495:5: ( 'get' )
+            // AS3_ex.g3:495:7: 'get'
             {
             	Match("get"); if (state.failed) return ;
 
@@ -1734,8 +1753,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SET;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:477:5: ( 'set' )
-            // AS3_ex.g3:477:7: 'set'
+            // AS3_ex.g3:496:5: ( 'set' )
+            // AS3_ex.g3:496:7: 'set'
             {
             	Match("set"); if (state.failed) return ;
 
@@ -1758,8 +1777,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = NAMESPACE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:478:11: ( 'namespace' )
-            // AS3_ex.g3:478:13: 'namespace'
+            // AS3_ex.g3:497:11: ( 'namespace' )
+            // AS3_ex.g3:497:13: 'namespace'
             {
             	Match("namespace"); if (state.failed) return ;
 
@@ -1782,8 +1801,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = INCLUDE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:479:9: ( 'include' )
-            // AS3_ex.g3:479:11: 'include'
+            // AS3_ex.g3:498:9: ( 'include' )
+            // AS3_ex.g3:498:11: 'include'
             {
             	Match("include"); if (state.failed) return ;
 
@@ -1806,8 +1825,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DYNAMIC;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:480:9: ( 'dynamic' )
-            // AS3_ex.g3:480:11: 'dynamic'
+            // AS3_ex.g3:499:9: ( 'dynamic' )
+            // AS3_ex.g3:499:11: 'dynamic'
             {
             	Match("dynamic"); if (state.failed) return ;
 
@@ -1830,8 +1849,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = FINAL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:481:7: ( 'final' )
-            // AS3_ex.g3:481:9: 'final'
+            // AS3_ex.g3:500:7: ( 'final' )
+            // AS3_ex.g3:500:9: 'final'
             {
             	Match("final"); if (state.failed) return ;
 
@@ -1854,8 +1873,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = OVERRIDE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:482:10: ( 'override' )
-            // AS3_ex.g3:482:12: 'override'
+            // AS3_ex.g3:501:10: ( 'override' )
+            // AS3_ex.g3:501:12: 'override'
             {
             	Match("override"); if (state.failed) return ;
 
@@ -1878,8 +1897,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = STATIC;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:483:8: ( 'static' )
-            // AS3_ex.g3:483:10: 'static'
+            // AS3_ex.g3:502:8: ( 'static' )
+            // AS3_ex.g3:502:10: 'static'
             {
             	Match("static"); if (state.failed) return ;
 
@@ -1902,8 +1921,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SEMI;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:484:6: ( ';' )
-            // AS3_ex.g3:484:8: ';'
+            // AS3_ex.g3:503:6: ( ';' )
+            // AS3_ex.g3:503:8: ';'
             {
             	Match(';'); if (state.failed) return ;
 
@@ -1925,8 +1944,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LCURLY;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:485:8: ( '{' )
-            // AS3_ex.g3:485:10: '{'
+            // AS3_ex.g3:504:8: ( '{' )
+            // AS3_ex.g3:504:10: '{'
             {
             	Match('{'); if (state.failed) return ;
 
@@ -1948,8 +1967,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = RCURLY;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:486:8: ( '}' )
-            // AS3_ex.g3:486:10: '}'
+            // AS3_ex.g3:505:8: ( '}' )
+            // AS3_ex.g3:505:10: '}'
             {
             	Match('}'); if (state.failed) return ;
 
@@ -1971,8 +1990,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LPAREN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:487:8: ( '(' )
-            // AS3_ex.g3:487:10: '('
+            // AS3_ex.g3:506:8: ( '(' )
+            // AS3_ex.g3:506:10: '('
             {
             	Match('('); if (state.failed) return ;
 
@@ -1994,8 +2013,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = RPAREN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:488:8: ( ')' )
-            // AS3_ex.g3:488:10: ')'
+            // AS3_ex.g3:507:8: ( ')' )
+            // AS3_ex.g3:507:10: ')'
             {
             	Match(')'); if (state.failed) return ;
 
@@ -2017,8 +2036,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LBRACK;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:489:8: ( '[' )
-            // AS3_ex.g3:489:10: '['
+            // AS3_ex.g3:508:8: ( '[' )
+            // AS3_ex.g3:508:10: '['
             {
             	Match('['); if (state.failed) return ;
 
@@ -2040,8 +2059,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = RBRACK;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:490:8: ( ']' )
-            // AS3_ex.g3:490:10: ']'
+            // AS3_ex.g3:509:8: ( ']' )
+            // AS3_ex.g3:509:10: ']'
             {
             	Match(']'); if (state.failed) return ;
 
@@ -2063,8 +2082,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DOT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:491:5: ( '.' )
-            // AS3_ex.g3:491:7: '.'
+            // AS3_ex.g3:510:5: ( '.' )
+            // AS3_ex.g3:510:7: '.'
             {
             	Match('.'); if (state.failed) return ;
 
@@ -2086,8 +2105,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = COMMA;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:492:7: ( ',' )
-            // AS3_ex.g3:492:9: ','
+            // AS3_ex.g3:511:7: ( ',' )
+            // AS3_ex.g3:511:9: ','
             {
             	Match(','); if (state.failed) return ;
 
@@ -2109,8 +2128,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:493:4: ( '<' )
-            // AS3_ex.g3:493:6: '<'
+            // AS3_ex.g3:512:4: ( '<' )
+            // AS3_ex.g3:512:6: '<'
             {
             	Match('<'); if (state.failed) return ;
 
@@ -2132,8 +2151,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = GT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:494:4: ( '>' )
-            // AS3_ex.g3:494:6: '>'
+            // AS3_ex.g3:513:4: ( '>' )
+            // AS3_ex.g3:513:6: '>'
             {
             	Match('>'); if (state.failed) return ;
 
@@ -2155,8 +2174,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LTE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:495:5: ( '<=' )
-            // AS3_ex.g3:495:7: '<='
+            // AS3_ex.g3:514:5: ( '<=' )
+            // AS3_ex.g3:514:7: '<='
             {
             	Match("<="); if (state.failed) return ;
 
@@ -2179,8 +2198,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = EQ;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:496:4: ( '==' )
-            // AS3_ex.g3:496:6: '=='
+            // AS3_ex.g3:515:4: ( '==' )
+            // AS3_ex.g3:515:6: '=='
             {
             	Match("=="); if (state.failed) return ;
 
@@ -2203,8 +2222,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = NEQ;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:497:5: ( '!=' )
-            // AS3_ex.g3:497:7: '!='
+            // AS3_ex.g3:516:5: ( '!=' )
+            // AS3_ex.g3:516:7: '!='
             {
             	Match("!="); if (state.failed) return ;
 
@@ -2227,8 +2246,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SAME;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:498:6: ( '===' )
-            // AS3_ex.g3:498:8: '==='
+            // AS3_ex.g3:517:6: ( '===' )
+            // AS3_ex.g3:517:8: '==='
             {
             	Match("==="); if (state.failed) return ;
 
@@ -2251,8 +2270,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = NSAME;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:499:7: ( '!==' )
-            // AS3_ex.g3:499:9: '!=='
+            // AS3_ex.g3:518:7: ( '!==' )
+            // AS3_ex.g3:518:9: '!=='
             {
             	Match("!=="); if (state.failed) return ;
 
@@ -2275,8 +2294,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = PLUS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:500:6: ( '+' )
-            // AS3_ex.g3:500:8: '+'
+            // AS3_ex.g3:519:6: ( '+' )
+            // AS3_ex.g3:519:8: '+'
             {
             	Match('+'); if (state.failed) return ;
 
@@ -2298,8 +2317,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SUB;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:501:5: ( '-' )
-            // AS3_ex.g3:501:7: '-'
+            // AS3_ex.g3:520:5: ( '-' )
+            // AS3_ex.g3:520:7: '-'
             {
             	Match('-'); if (state.failed) return ;
 
@@ -2321,8 +2340,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = STAR;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:502:6: ( '*' )
-            // AS3_ex.g3:502:8: '*'
+            // AS3_ex.g3:521:6: ( '*' )
+            // AS3_ex.g3:521:8: '*'
             {
             	Match('*'); if (state.failed) return ;
 
@@ -2344,8 +2363,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DIV;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:503:5: ( '/' )
-            // AS3_ex.g3:503:7: '/'
+            // AS3_ex.g3:522:5: ( '/' )
+            // AS3_ex.g3:522:7: '/'
             {
             	Match('/'); if (state.failed) return ;
 
@@ -2367,8 +2386,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = MOD;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:504:5: ( '%' )
-            // AS3_ex.g3:504:7: '%'
+            // AS3_ex.g3:523:5: ( '%' )
+            // AS3_ex.g3:523:7: '%'
             {
             	Match('%'); if (state.failed) return ;
 
@@ -2390,8 +2409,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = INC;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:505:5: ( '++' )
-            // AS3_ex.g3:505:7: '++'
+            // AS3_ex.g3:524:5: ( '++' )
+            // AS3_ex.g3:524:7: '++'
             {
             	Match("++"); if (state.failed) return ;
 
@@ -2414,8 +2433,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DEC;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:506:5: ( '--' )
-            // AS3_ex.g3:506:7: '--'
+            // AS3_ex.g3:525:5: ( '--' )
+            // AS3_ex.g3:525:7: '--'
             {
             	Match("--"); if (state.failed) return ;
 
@@ -2438,8 +2457,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SHL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:507:5: ( '<<' )
-            // AS3_ex.g3:507:7: '<<'
+            // AS3_ex.g3:526:5: ( '<<' )
+            // AS3_ex.g3:526:7: '<<'
             {
             	Match("<<"); if (state.failed) return ;
 
@@ -2462,8 +2481,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = AND;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:508:5: ( '&' )
-            // AS3_ex.g3:508:7: '&'
+            // AS3_ex.g3:527:5: ( '&' )
+            // AS3_ex.g3:527:7: '&'
             {
             	Match('&'); if (state.failed) return ;
 
@@ -2485,8 +2504,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = OR;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:509:4: ( '|' )
-            // AS3_ex.g3:509:6: '|'
+            // AS3_ex.g3:528:4: ( '|' )
+            // AS3_ex.g3:528:6: '|'
             {
             	Match('|'); if (state.failed) return ;
 
@@ -2508,8 +2527,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XOR;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:510:5: ( '^' )
-            // AS3_ex.g3:510:7: '^'
+            // AS3_ex.g3:529:5: ( '^' )
+            // AS3_ex.g3:529:7: '^'
             {
             	Match('^'); if (state.failed) return ;
 
@@ -2531,8 +2550,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = NOT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:511:5: ( '!' )
-            // AS3_ex.g3:511:7: '!'
+            // AS3_ex.g3:530:5: ( '!' )
+            // AS3_ex.g3:530:7: '!'
             {
             	Match('!'); if (state.failed) return ;
 
@@ -2554,8 +2573,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = INV;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:512:5: ( '~' )
-            // AS3_ex.g3:512:7: '~'
+            // AS3_ex.g3:531:5: ( '~' )
+            // AS3_ex.g3:531:7: '~'
             {
             	Match('~'); if (state.failed) return ;
 
@@ -2577,8 +2596,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LAND;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:513:6: ( '&&' )
-            // AS3_ex.g3:513:8: '&&'
+            // AS3_ex.g3:532:6: ( '&&' )
+            // AS3_ex.g3:532:8: '&&'
             {
             	Match("&&"); if (state.failed) return ;
 
@@ -2601,8 +2620,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LOR;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:514:5: ( '||' )
-            // AS3_ex.g3:514:7: '||'
+            // AS3_ex.g3:533:5: ( '||' )
+            // AS3_ex.g3:533:7: '||'
             {
             	Match("||"); if (state.failed) return ;
 
@@ -2625,8 +2644,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = QUE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:515:5: ( '?' )
-            // AS3_ex.g3:515:7: '?'
+            // AS3_ex.g3:534:5: ( '?' )
+            // AS3_ex.g3:534:7: '?'
             {
             	Match('?'); if (state.failed) return ;
 
@@ -2648,8 +2667,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = COLON;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:516:7: ( ':' )
-            // AS3_ex.g3:516:9: ':'
+            // AS3_ex.g3:535:7: ( ':' )
+            // AS3_ex.g3:535:9: ':'
             {
             	Match(':'); if (state.failed) return ;
 
@@ -2671,8 +2690,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:517:8: ( '=' )
-            // AS3_ex.g3:517:10: '='
+            // AS3_ex.g3:536:8: ( '=' )
+            // AS3_ex.g3:536:10: '='
             {
             	Match('='); if (state.failed) return ;
 
@@ -2694,8 +2713,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DIV_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:518:12: ( '/=' )
-            // AS3_ex.g3:518:14: '/='
+            // AS3_ex.g3:537:12: ( '/=' )
+            // AS3_ex.g3:537:14: '/='
             {
             	Match("/="); if (state.failed) return ;
 
@@ -2718,8 +2737,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = MOD_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:519:12: ( '%=' )
-            // AS3_ex.g3:519:14: '%='
+            // AS3_ex.g3:538:12: ( '%=' )
+            // AS3_ex.g3:538:14: '%='
             {
             	Match("%="); if (state.failed) return ;
 
@@ -2742,8 +2761,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = ADD_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:520:12: ( '+=' )
-            // AS3_ex.g3:520:14: '+='
+            // AS3_ex.g3:539:12: ( '+=' )
+            // AS3_ex.g3:539:14: '+='
             {
             	Match("+="); if (state.failed) return ;
 
@@ -2766,8 +2785,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SUB_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:521:12: ( '-=' )
-            // AS3_ex.g3:521:14: '-='
+            // AS3_ex.g3:540:12: ( '-=' )
+            // AS3_ex.g3:540:14: '-='
             {
             	Match("-="); if (state.failed) return ;
 
@@ -2790,8 +2809,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SHL_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:522:12: ( '<<=' )
-            // AS3_ex.g3:522:14: '<<='
+            // AS3_ex.g3:541:12: ( '<<=' )
+            // AS3_ex.g3:541:14: '<<='
             {
             	Match("<<="); if (state.failed) return ;
 
@@ -2814,8 +2833,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LAND_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:523:13: ( '&&=' )
-            // AS3_ex.g3:523:15: '&&='
+            // AS3_ex.g3:542:13: ( '&&=' )
+            // AS3_ex.g3:542:15: '&&='
             {
             	Match("&&="); if (state.failed) return ;
 
@@ -2838,8 +2857,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = LOR_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:524:12: ( '||=' )
-            // AS3_ex.g3:524:14: '||='
+            // AS3_ex.g3:543:12: ( '||=' )
+            // AS3_ex.g3:543:14: '||='
             {
             	Match("||="); if (state.failed) return ;
 
@@ -2862,8 +2881,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = AND_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:525:12: ( '&=' )
-            // AS3_ex.g3:525:14: '&='
+            // AS3_ex.g3:544:12: ( '&=' )
+            // AS3_ex.g3:544:14: '&='
             {
             	Match("&="); if (state.failed) return ;
 
@@ -2886,8 +2905,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XOR_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:526:12: ( '^=' )
-            // AS3_ex.g3:526:14: '^='
+            // AS3_ex.g3:545:12: ( '^=' )
+            // AS3_ex.g3:545:14: '^='
             {
             	Match("^="); if (state.failed) return ;
 
@@ -2910,8 +2929,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = OR_ASSIGN;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:527:11: ( '|=' )
-            // AS3_ex.g3:527:13: '|='
+            // AS3_ex.g3:546:11: ( '|=' )
+            // AS3_ex.g3:546:13: '|='
             {
             	Match("|="); if (state.failed) return ;
 
@@ -2934,8 +2953,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = ELLIPSIS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:528:10: ( '...' )
-            // AS3_ex.g3:528:12: '...'
+            // AS3_ex.g3:547:10: ( '...' )
+            // AS3_ex.g3:547:12: '...'
             {
             	Match("..."); if (state.failed) return ;
 
@@ -2958,8 +2977,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_ELLIPSIS;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:529:14: ( '..' )
-            // AS3_ex.g3:529:16: '..'
+            // AS3_ex.g3:548:14: ( '..' )
+            // AS3_ex.g3:548:16: '..'
             {
             	Match(".."); if (state.failed) return ;
 
@@ -2982,8 +3001,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_TEND;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:530:10: ( '/>' )
-            // AS3_ex.g3:530:12: '/>'
+            // AS3_ex.g3:549:10: ( '/>' )
+            // AS3_ex.g3:549:12: '/>'
             {
             	Match("/>"); if (state.failed) return ;
 
@@ -3006,8 +3025,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_E_TEND;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:531:12: ( '</' )
-            // AS3_ex.g3:531:14: '</'
+            // AS3_ex.g3:550:12: ( '</' )
+            // AS3_ex.g3:550:14: '</'
             {
             	Match("</"); if (state.failed) return ;
 
@@ -3030,8 +3049,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_NS_OP;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:532:11: ( '::' )
-            // AS3_ex.g3:532:13: '::'
+            // AS3_ex.g3:551:11: ( '::' )
+            // AS3_ex.g3:551:13: '::'
             {
             	Match("::"); if (state.failed) return ;
 
@@ -3054,8 +3073,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_AT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:533:8: ( '@' )
-            // AS3_ex.g3:533:10: '@'
+            // AS3_ex.g3:552:8: ( '@' )
+            // AS3_ex.g3:552:10: '@'
             {
             	Match('@'); if (state.failed) return ;
 
@@ -3077,8 +3096,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_LS_STD;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:534:12: ( '<>' )
-            // AS3_ex.g3:534:14: '<>'
+            // AS3_ex.g3:553:12: ( '<>' )
+            // AS3_ex.g3:553:14: '<>'
             {
             	Match("<>"); if (state.failed) return ;
 
@@ -3101,8 +3120,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_LS_END;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:535:12: ( '</>' )
-            // AS3_ex.g3:535:14: '</>'
+            // AS3_ex.g3:554:12: ( '</>' )
+            // AS3_ex.g3:554:14: '</>'
             {
             	Match("</>"); if (state.failed) return ;
 
@@ -3123,8 +3142,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1077:22: ( '_' )
-            // AS3_ex.g3:1077:24: '_'
+            // AS3_ex.g3:1370:22: ( '_' )
+            // AS3_ex.g3:1370:24: '_'
             {
             	Match('_'); if (state.failed) return ;
 
@@ -3142,8 +3161,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1079:22: ( '$' )
-            // AS3_ex.g3:1079:24: '$'
+            // AS3_ex.g3:1371:22: ( '$' )
+            // AS3_ex.g3:1371:24: '$'
             {
             	Match('$'); if (state.failed) return ;
 
@@ -3161,7 +3180,7 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1081:30: ( 'a' .. 'z' | 'A' .. 'Z' )
+            // AS3_ex.g3:1373:30: ( 'a' .. 'z' | 'A' .. 'Z' )
             // AS3_ex.g3:
             {
             	if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z') || (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) 
@@ -3191,8 +3210,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1083:30: ( '0' .. '9' )
-            // AS3_ex.g3:1083:35: '0' .. '9'
+            // AS3_ex.g3:1375:30: ( '0' .. '9' )
+            // AS3_ex.g3:1375:35: '0' .. '9'
             {
             	MatchRange('0','9'); if (state.failed) return ;
 
@@ -3210,8 +3229,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1085:30: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
-            // AS3_ex.g3:1085:35: ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' )
+            // AS3_ex.g3:1377:30: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+            // AS3_ex.g3:1377:35: ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' )
             {
             	if ( (input.LA(1) >= '0' && input.LA(1) <= '9') || (input.LA(1) >= 'A' && input.LA(1) <= 'F') || (input.LA(1) >= 'a' && input.LA(1) <= 'f') ) 
             	{
@@ -3240,8 +3259,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1087:30: ( '\\r' )
-            // AS3_ex.g3:1087:35: '\\r'
+            // AS3_ex.g3:1379:30: ( '\\r' )
+            // AS3_ex.g3:1379:35: '\\r'
             {
             	Match('\r'); if (state.failed) return ;
 
@@ -3259,8 +3278,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1089:30: ( '\\n' )
-            // AS3_ex.g3:1089:35: '\\n'
+            // AS3_ex.g3:1381:30: ( '\\n' )
+            // AS3_ex.g3:1381:35: '\\n'
             {
             	Match('\n'); if (state.failed) return ;
 
@@ -3278,8 +3297,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1091:30: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
-            // AS3_ex.g3:1091:35: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+            // AS3_ex.g3:1383:30: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+            // AS3_ex.g3:1383:35: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
             {
             	Match('\\'); if (state.failed) return ;
             	Match('u'); if (state.failed) return ;
@@ -3302,7 +3321,7 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1093:30: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESCAPE )
+            // AS3_ex.g3:1386:30: ( '\\\\' '\\\\' | '\\\\' ~ ( '\\\\' ) )
             int alt1 = 2;
             int LA1_0 = input.LA(1);
 
@@ -3310,11 +3329,11 @@ public class AS3_exLexer : Lexer {
             {
                 int LA1_1 = input.LA(2);
 
-                if ( (LA1_1 == '\"' || LA1_1 == '\'' || LA1_1 == '\\' || LA1_1 == 'b' || LA1_1 == 'f' || LA1_1 == 'n' || LA1_1 == 'r' || LA1_1 == 't') )
+                if ( (LA1_1 == '\\') )
                 {
                     alt1 = 1;
                 }
-                else if ( (LA1_1 == 'u') )
+                else if ( ((LA1_1 >= '\u0000' && LA1_1 <= '[') || (LA1_1 >= ']' && LA1_1 <= '\uFFFF')) )
                 {
                     alt1 = 2;
                 }
@@ -3338,10 +3357,18 @@ public class AS3_exLexer : Lexer {
             switch (alt1) 
             {
                 case 1 :
-                    // AS3_ex.g3:1093:34: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+                    // AS3_ex.g3:1389:31: '\\\\' '\\\\'
                     {
                     	Match('\\'); if (state.failed) return ;
-                    	if ( input.LA(1) == '\"' || input.LA(1) == '\'' || input.LA(1) == '\\' || input.LA(1) == 'b' || input.LA(1) == 'f' || input.LA(1) == 'n' || input.LA(1) == 'r' || input.LA(1) == 't' ) 
+                    	Match('\\'); if (state.failed) return ;
+
+                    }
+                    break;
+                case 2 :
+                    // AS3_ex.g3:1390:32: '\\\\' ~ ( '\\\\' )
+                    {
+                    	Match('\\'); if (state.failed) return ;
+                    	if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '[') || (input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) 
                     	{
                     	    input.Consume();
                     	state.failed = false;
@@ -3353,13 +3380,6 @@ public class AS3_exLexer : Lexer {
                     	    Recover(mse);
                     	    throw mse;}
 
-
-                    }
-                    break;
-                case 2 :
-                    // AS3_ex.g3:1094:38: UNICODE_ESCAPE
-                    {
-                    	mUNICODE_ESCAPE(); if (state.failed) return ;
 
                     }
                     break;
@@ -3379,10 +3399,10 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = EOL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1101:5: ( ( CR LF | CR | LF ) )
-            // AS3_ex.g3:1101:10: ( CR LF | CR | LF )
+            // AS3_ex.g3:1397:5: ( ( CR LF | CR | LF ) )
+            // AS3_ex.g3:1397:10: ( CR LF | CR | LF )
             {
-            	// AS3_ex.g3:1101:10: ( CR LF | CR | LF )
+            	// AS3_ex.g3:1397:10: ( CR LF | CR | LF )
             	int alt2 = 3;
             	int LA2_0 = input.LA(1);
 
@@ -3413,7 +3433,7 @@ public class AS3_exLexer : Lexer {
             	switch (alt2) 
             	{
             	    case 1 :
-            	        // AS3_ex.g3:1101:11: CR LF
+            	        // AS3_ex.g3:1397:11: CR LF
             	        {
             	        	mCR(); if (state.failed) return ;
             	        	mLF(); if (state.failed) return ;
@@ -3421,14 +3441,14 @@ public class AS3_exLexer : Lexer {
             	        }
             	        break;
             	    case 2 :
-            	        // AS3_ex.g3:1101:19: CR
+            	        // AS3_ex.g3:1397:19: CR
             	        {
             	        	mCR(); if (state.failed) return ;
 
             	        }
             	        break;
             	    case 3 :
-            	        // AS3_ex.g3:1101:24: LF
+            	        // AS3_ex.g3:1397:24: LF
             	        {
             	        	mLF(); if (state.failed) return ;
 
@@ -3449,7 +3469,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("EOL",Text);
+                  debugMethod("EOL",Text);
 
             }    }
         finally 
@@ -3465,17 +3485,17 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = WHITESPACE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1108:5: ( ( ( '\\u0020' | '\\u0009' | '\\u000B' | '\\u000C' ) | ( '\\u001C' .. '\\u001F' ) )+ )
-            // AS3_ex.g3:1108:9: ( ( '\\u0020' | '\\u0009' | '\\u000B' | '\\u000C' ) | ( '\\u001C' .. '\\u001F' ) )+
+            // AS3_ex.g3:1404:5: ( ( ( '\\u0020' | '\\u0009' | '\\u000B' | '\\u00A0' | '\\u000C' ) | ( '\\u001C' .. '\\u001F' ) )+ )
+            // AS3_ex.g3:1404:9: ( ( '\\u0020' | '\\u0009' | '\\u000B' | '\\u00A0' | '\\u000C' ) | ( '\\u001C' .. '\\u001F' ) )+
             {
-            	// AS3_ex.g3:1108:9: ( ( '\\u0020' | '\\u0009' | '\\u000B' | '\\u000C' ) | ( '\\u001C' .. '\\u001F' ) )+
+            	// AS3_ex.g3:1404:9: ( ( '\\u0020' | '\\u0009' | '\\u000B' | '\\u00A0' | '\\u000C' ) | ( '\\u001C' .. '\\u001F' ) )+
             	int cnt3 = 0;
             	do 
             	{
             	    int alt3 = 3;
             	    int LA3_0 = input.LA(1);
 
-            	    if ( (LA3_0 == '\t' || (LA3_0 >= '\u000B' && LA3_0 <= '\f') || LA3_0 == ' ') )
+            	    if ( (LA3_0 == '\t' || (LA3_0 >= '\u000B' && LA3_0 <= '\f') || LA3_0 == ' ' || LA3_0 == '\u00A0') )
             	    {
             	        alt3 = 1;
             	    }
@@ -3488,9 +3508,9 @@ public class AS3_exLexer : Lexer {
             	    switch (alt3) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1108:10: ( '\\u0020' | '\\u0009' | '\\u000B' | '\\u000C' )
+            			    // AS3_ex.g3:1404:10: ( '\\u0020' | '\\u0009' | '\\u000B' | '\\u00A0' | '\\u000C' )
             			    {
-            			    	if ( input.LA(1) == '\t' || (input.LA(1) >= '\u000B' && input.LA(1) <= '\f') || input.LA(1) == ' ' ) 
+            			    	if ( input.LA(1) == '\t' || (input.LA(1) >= '\u000B' && input.LA(1) <= '\f') || input.LA(1) == ' ' || input.LA(1) == '\u00A0' ) 
             			    	{
             			    	    input.Consume();
             			    	state.failed = false;
@@ -3506,10 +3526,10 @@ public class AS3_exLexer : Lexer {
             			    }
             			    break;
             			case 2 :
-            			    // AS3_ex.g3:1108:48: ( '\\u001C' .. '\\u001F' )
+            			    // AS3_ex.g3:1404:57: ( '\\u001C' .. '\\u001F' )
             			    {
-            			    	// AS3_ex.g3:1108:48: ( '\\u001C' .. '\\u001F' )
-            			    	// AS3_ex.g3:1108:49: '\\u001C' .. '\\u001F'
+            			    	// AS3_ex.g3:1404:57: ( '\\u001C' .. '\\u001F' )
+            			    	// AS3_ex.g3:1404:58: '\\u001C' .. '\\u001F'
             			    	{
             			    		MatchRange('\u001C','\u001F'); if (state.failed) return ;
 
@@ -3544,7 +3564,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("WHITESPACE",Text);
+                  debugMethod("WHITESPACE",Text);
 
             }    }
         finally 
@@ -3560,12 +3580,12 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = COMMENT_MULTILINE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1115:5: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // AS3_ex.g3:1115:9: '/*' ( options {greedy=false; } : . )* '*/'
+            // AS3_ex.g3:1411:5: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // AS3_ex.g3:1411:9: '/*' ( options {greedy=false; } : . )* '*/'
             {
             	Match("/*"); if (state.failed) return ;
 
-            	// AS3_ex.g3:1115:14: ( options {greedy=false; } : . )*
+            	// AS3_ex.g3:1411:14: ( options {greedy=false; } : . )*
             	do 
             	{
             	    int alt4 = 2;
@@ -3595,7 +3615,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt4) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1115:42: .
+            			    // AS3_ex.g3:1411:42: .
             			    {
             			    	MatchAny(); if (state.failed) return ;
 
@@ -3624,7 +3644,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("COMMENT_MULTILINE",Text);
+                  debugMethod("COMMENT_MULTILINE",Text);
 
             }    }
         finally 
@@ -3640,12 +3660,12 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = COMMENT_SINGLELINE;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1121:5: ( '//' (~ ( CR | LF ) )* ( CR LF | CR | LF ) )
-            // AS3_ex.g3:1121:9: '//' (~ ( CR | LF ) )* ( CR LF | CR | LF )
+            // AS3_ex.g3:1417:5: ( '//' (~ ( CR | LF ) )* ( CR LF | CR | LF ) )
+            // AS3_ex.g3:1417:9: '//' (~ ( CR | LF ) )* ( CR LF | CR | LF )
             {
             	Match("//"); if (state.failed) return ;
 
-            	// AS3_ex.g3:1121:14: (~ ( CR | LF ) )*
+            	// AS3_ex.g3:1417:14: (~ ( CR | LF ) )*
             	do 
             	{
             	    int alt5 = 2;
@@ -3660,7 +3680,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt5) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1121:14: ~ ( CR | LF )
+            			    // AS3_ex.g3:1417:14: ~ ( CR | LF )
             			    {
             			    	if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t') || (input.LA(1) >= '\u000B' && input.LA(1) <= '\f') || (input.LA(1) >= '\u000E' && input.LA(1) <= '\uFFFF') ) 
             			    	{
@@ -3686,7 +3706,7 @@ public class AS3_exLexer : Lexer {
             	loop5:
             		;	// Stops C# compiler whining that label 'loop5' has no statements
 
-            	// AS3_ex.g3:1121:28: ( CR LF | CR | LF )
+            	// AS3_ex.g3:1417:28: ( CR LF | CR | LF )
             	int alt6 = 3;
             	int LA6_0 = input.LA(1);
 
@@ -3717,7 +3737,7 @@ public class AS3_exLexer : Lexer {
             	switch (alt6) 
             	{
             	    case 1 :
-            	        // AS3_ex.g3:1121:29: CR LF
+            	        // AS3_ex.g3:1417:29: CR LF
             	        {
             	        	mCR(); if (state.failed) return ;
             	        	mLF(); if (state.failed) return ;
@@ -3725,14 +3745,14 @@ public class AS3_exLexer : Lexer {
             	        }
             	        break;
             	    case 2 :
-            	        // AS3_ex.g3:1121:37: CR
+            	        // AS3_ex.g3:1417:37: CR
             	        {
             	        	mCR(); if (state.failed) return ;
 
             	        }
             	        break;
             	    case 3 :
-            	        // AS3_ex.g3:1121:42: LF
+            	        // AS3_ex.g3:1417:42: LF
             	        {
             	        	mLF(); if (state.failed) return ;
 
@@ -3753,7 +3773,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("COMMENT_SINGLELINE",Text);
+                  debugMethod("COMMENT_SINGLELINE",Text);
 
             }    }
         finally 
@@ -3769,11 +3789,11 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = SINGLE_QUOTE_LITERAL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1129:5: ( '\\'' ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\\'' ) )* '\\'' )
-            // AS3_ex.g3:1129:9: '\\'' ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\\'' ) )* '\\''
+            // AS3_ex.g3:1425:5: ( '\\'' ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\\'' ) )* '\\'' )
+            // AS3_ex.g3:1425:9: '\\'' ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\\'' ) )* '\\''
             {
             	Match('\''); if (state.failed) return ;
-            	// AS3_ex.g3:1129:14: ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\\'' ) )*
+            	// AS3_ex.g3:1425:14: ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\\'' ) )*
             	do 
             	{
             	    int alt7 = 3;
@@ -3792,14 +3812,14 @@ public class AS3_exLexer : Lexer {
             	    switch (alt7) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1129:16: ESCAPE_SEQUENCE
+            			    // AS3_ex.g3:1425:16: ESCAPE_SEQUENCE
             			    {
             			    	mESCAPE_SEQUENCE(); if (state.failed) return ;
 
             			    }
             			    break;
             			case 2 :
-            			    // AS3_ex.g3:1129:34: ~ ( '\\\\' | '\\'' )
+            			    // AS3_ex.g3:1425:34: ~ ( '\\\\' | '\\'' )
             			    {
             			    	if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '&') || (input.LA(1) >= '(' && input.LA(1) <= '[') || (input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) 
             			    	{
@@ -3834,7 +3854,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("SINGLE_QUOTE_LITERAL",Text);
+                  debugMethod("SINGLE_QUOTE_LITERAL",Text);
 
             }    }
         finally 
@@ -3850,11 +3870,11 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DOUBLE_QUOTE_LITERAL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1134:5: ( '\"' ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\"' ) )* '\"' )
-            // AS3_ex.g3:1134:9: '\"' ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\"' ) )* '\"'
+            // AS3_ex.g3:1430:5: ( '\"' ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\"' ) )* '\"' )
+            // AS3_ex.g3:1430:9: '\"' ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\"' ) )* '\"'
             {
             	Match('\"'); if (state.failed) return ;
-            	// AS3_ex.g3:1134:14: ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\"' ) )*
+            	// AS3_ex.g3:1430:14: ( ESCAPE_SEQUENCE | ~ ( '\\\\' | '\"' ) )*
             	do 
             	{
             	    int alt8 = 3;
@@ -3873,14 +3893,14 @@ public class AS3_exLexer : Lexer {
             	    switch (alt8) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1134:16: ESCAPE_SEQUENCE
+            			    // AS3_ex.g3:1430:16: ESCAPE_SEQUENCE
             			    {
             			    	mESCAPE_SEQUENCE(); if (state.failed) return ;
 
             			    }
             			    break;
             			case 2 :
-            			    // AS3_ex.g3:1134:34: ~ ( '\\\\' | '\"' )
+            			    // AS3_ex.g3:1430:34: ~ ( '\\\\' | '\"' )
             			    {
             			    	if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '!') || (input.LA(1) >= '#' && input.LA(1) <= '[') || (input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) 
             			    	{
@@ -3915,7 +3935,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("DOUBLE_QUOTE_LITERAL",Text);
+                  debugMethod("DOUBLE_QUOTE_LITERAL",Text);
 
             }    }
         finally 
@@ -3931,18 +3951,18 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = REGULAR_EXPR_LITERAL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1144:5: ({...}? => DIV REGULAR_EXPR_BODY DIV ( REGULAR_EXPR_FLAG )* )
-            // AS3_ex.g3:1144:9: {...}? => DIV REGULAR_EXPR_BODY DIV ( REGULAR_EXPR_FLAG )*
+            // AS3_ex.g3:1440:5: ({...}? => DIV REGULAR_EXPR_BODY DIV ( REGULAR_EXPR_FLAG )* )
+            // AS3_ex.g3:1440:9: {...}? => DIV REGULAR_EXPR_BODY DIV ( REGULAR_EXPR_FLAG )*
             {
-            	if ( !((IsRegularExpression())) ) 
+            	if ( !((isRegularExpression())) ) 
             	{
             	    if ( state.backtracking > 0 ) {state.failed = true; return ;}
-            	    throw new FailedPredicateException(input, "REGULAR_EXPR_LITERAL", "IsRegularExpression()");
+            	    throw new FailedPredicateException(input, "REGULAR_EXPR_LITERAL", "isRegularExpression()");
             	}
             	mDIV(); if (state.failed) return ;
             	mREGULAR_EXPR_BODY(); if (state.failed) return ;
             	mDIV(); if (state.failed) return ;
-            	// AS3_ex.g3:1144:63: ( REGULAR_EXPR_FLAG )*
+            	// AS3_ex.g3:1440:63: ( REGULAR_EXPR_FLAG )*
             	do 
             	{
             	    int alt9 = 2;
@@ -3952,7 +3972,7 @@ public class AS3_exLexer : Lexer {
             	    {
             	        alt9 = 1;
             	    }
-            	    else if ( ((IsUnicodeIdentifierPart(input.LA(1)))) )
+            	    else if ( ((isUnicodeIdentifierPart(input.LA(1)))) )
             	    {
             	        alt9 = 1;
             	    }
@@ -3961,7 +3981,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt9) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1144:63: REGULAR_EXPR_FLAG
+            			    // AS3_ex.g3:1440:63: REGULAR_EXPR_FLAG
             			    {
             			    	mREGULAR_EXPR_FLAG(); if (state.failed) return ;
 
@@ -3984,7 +4004,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("REGULAR_EXPR_LITERAL",Text);
+                  debugMethod("REGULAR_EXPR_LITERAL",Text);
 
             }    }
         finally 
@@ -3998,11 +4018,11 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1148:5: ( REGULAR_EXPR_FIRST_CHAR ( REGULAR_EXPR_CHAR )* )
-            // AS3_ex.g3:1148:9: REGULAR_EXPR_FIRST_CHAR ( REGULAR_EXPR_CHAR )*
+            // AS3_ex.g3:1444:5: ( REGULAR_EXPR_FIRST_CHAR ( REGULAR_EXPR_CHAR )* )
+            // AS3_ex.g3:1444:9: REGULAR_EXPR_FIRST_CHAR ( REGULAR_EXPR_CHAR )*
             {
             	mREGULAR_EXPR_FIRST_CHAR(); if (state.failed) return ;
-            	// AS3_ex.g3:1148:33: ( REGULAR_EXPR_CHAR )*
+            	// AS3_ex.g3:1444:33: ( REGULAR_EXPR_CHAR )*
             	do 
             	{
             	    int alt10 = 2;
@@ -4017,7 +4037,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt10) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1148:33: REGULAR_EXPR_CHAR
+            			    // AS3_ex.g3:1444:33: REGULAR_EXPR_CHAR
             			    {
             			    	mREGULAR_EXPR_CHAR(); if (state.failed) return ;
 
@@ -4047,11 +4067,11 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1153:5: (~ ( CR | LF | '*' | '\\\\' | '/' | '>' ) | BACKSLASH_SEQUENCE )
+            // AS3_ex.g3:1449:5: (~ ( CR | LF | '*' | '\\\\' | '/' ) | BACKSLASH_SEQUENCE )
             int alt11 = 2;
             int LA11_0 = input.LA(1);
 
-            if ( ((LA11_0 >= '\u0000' && LA11_0 <= '\t') || (LA11_0 >= '\u000B' && LA11_0 <= '\f') || (LA11_0 >= '\u000E' && LA11_0 <= ')') || (LA11_0 >= '+' && LA11_0 <= '.') || (LA11_0 >= '0' && LA11_0 <= '=') || (LA11_0 >= '?' && LA11_0 <= '[') || (LA11_0 >= ']' && LA11_0 <= '\uFFFF')) )
+            if ( ((LA11_0 >= '\u0000' && LA11_0 <= '\t') || (LA11_0 >= '\u000B' && LA11_0 <= '\f') || (LA11_0 >= '\u000E' && LA11_0 <= ')') || (LA11_0 >= '+' && LA11_0 <= '.') || (LA11_0 >= '0' && LA11_0 <= '[') || (LA11_0 >= ']' && LA11_0 <= '\uFFFF')) )
             {
                 alt11 = 1;
             }
@@ -4070,9 +4090,9 @@ public class AS3_exLexer : Lexer {
             switch (alt11) 
             {
                 case 1 :
-                    // AS3_ex.g3:1153:9: ~ ( CR | LF | '*' | '\\\\' | '/' | '>' )
+                    // AS3_ex.g3:1449:9: ~ ( CR | LF | '*' | '\\\\' | '/' )
                     {
-                    	if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t') || (input.LA(1) >= '\u000B' && input.LA(1) <= '\f') || (input.LA(1) >= '\u000E' && input.LA(1) <= ')') || (input.LA(1) >= '+' && input.LA(1) <= '.') || (input.LA(1) >= '0' && input.LA(1) <= '=') || (input.LA(1) >= '?' && input.LA(1) <= '[') || (input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) 
+                    	if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t') || (input.LA(1) >= '\u000B' && input.LA(1) <= '\f') || (input.LA(1) >= '\u000E' && input.LA(1) <= ')') || (input.LA(1) >= '+' && input.LA(1) <= '.') || (input.LA(1) >= '0' && input.LA(1) <= '[') || (input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) 
                     	{
                     	    input.Consume();
                     	state.failed = false;
@@ -4088,7 +4108,7 @@ public class AS3_exLexer : Lexer {
                     }
                     break;
                 case 2 :
-                    // AS3_ex.g3:1154:9: BACKSLASH_SEQUENCE
+                    // AS3_ex.g3:1450:9: BACKSLASH_SEQUENCE
                     {
                     	mBACKSLASH_SEQUENCE(); if (state.failed) return ;
 
@@ -4108,7 +4128,7 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1158:5: (~ ( CR | LF | '\\\\' | '/' ) | BACKSLASH_SEQUENCE )
+            // AS3_ex.g3:1454:5: (~ ( CR | LF | '\\\\' | '/' ) | BACKSLASH_SEQUENCE )
             int alt12 = 2;
             int LA12_0 = input.LA(1);
 
@@ -4131,7 +4151,7 @@ public class AS3_exLexer : Lexer {
             switch (alt12) 
             {
                 case 1 :
-                    // AS3_ex.g3:1158:9: ~ ( CR | LF | '\\\\' | '/' )
+                    // AS3_ex.g3:1454:9: ~ ( CR | LF | '\\\\' | '/' )
                     {
                     	if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t') || (input.LA(1) >= '\u000B' && input.LA(1) <= '\f') || (input.LA(1) >= '\u000E' && input.LA(1) <= '.') || (input.LA(1) >= '0' && input.LA(1) <= '[') || (input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) 
                     	{
@@ -4149,7 +4169,7 @@ public class AS3_exLexer : Lexer {
                     }
                     break;
                 case 2 :
-                    // AS3_ex.g3:1159:9: BACKSLASH_SEQUENCE
+                    // AS3_ex.g3:1455:9: BACKSLASH_SEQUENCE
                     {
                     	mBACKSLASH_SEQUENCE(); if (state.failed) return ;
 
@@ -4169,8 +4189,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1162:28: ( '\\\\' ~ ( CR | LF ) )
-            // AS3_ex.g3:1162:33: '\\\\' ~ ( CR | LF )
+            // AS3_ex.g3:1458:28: ( '\\\\' ~ ( CR | LF ) )
+            // AS3_ex.g3:1458:33: '\\\\' ~ ( CR | LF )
             {
             	Match('\\'); if (state.failed) return ;
             	if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t') || (input.LA(1) >= '\u000B' && input.LA(1) <= '\f') || (input.LA(1) >= '\u000E' && input.LA(1) <= '\uFFFF') ) 
@@ -4200,8 +4220,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1164:28: ( IDENT_PART )
-            // AS3_ex.g3:1164:33: IDENT_PART
+            // AS3_ex.g3:1460:28: ( IDENT_PART )
+            // AS3_ex.g3:1460:33: IDENT_PART
             {
             	mIDENT_PART(); if (state.failed) return ;
 
@@ -4221,8 +4241,8 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = HEX_NUMBER_LITERAL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1174:5: ( '0' ( 'X' | 'x' ) ( HEX_DIGIT )+ )
-            // AS3_ex.g3:1174:7: '0' ( 'X' | 'x' ) ( HEX_DIGIT )+
+            // AS3_ex.g3:1470:5: ( '0' ( 'X' | 'x' ) ( HEX_DIGIT )+ )
+            // AS3_ex.g3:1470:7: '0' ( 'X' | 'x' ) ( HEX_DIGIT )+
             {
             	Match('0'); if (state.failed) return ;
             	if ( input.LA(1) == 'X' || input.LA(1) == 'x' ) 
@@ -4237,7 +4257,7 @@ public class AS3_exLexer : Lexer {
             	    Recover(mse);
             	    throw mse;}
 
-            	// AS3_ex.g3:1174:21: ( HEX_DIGIT )+
+            	// AS3_ex.g3:1470:21: ( HEX_DIGIT )+
             	int cnt13 = 0;
             	do 
             	{
@@ -4253,7 +4273,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt13) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1174:21: HEX_DIGIT
+            			    // AS3_ex.g3:1470:21: HEX_DIGIT
             			    {
             			    	mHEX_DIGIT(); if (state.failed) return ;
 
@@ -4281,7 +4301,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("HEX_NUMBER_LITERAL",Text);
+                  debugMethod("HEX_NUMBER_LITERAL",Text);
 
             }    }
         finally 
@@ -4295,15 +4315,15 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1176:30: ( ( NUMBER )+ '.' ( NUMBER )* | '.' ( NUMBER )+ | ( NUMBER )+ )
+            // AS3_ex.g3:1472:30: ( ( NUMBER )+ '.' ( NUMBER )* | '.' ( NUMBER )+ | ( NUMBER )+ )
             int alt18 = 3;
             alt18 = dfa18.Predict(input);
             switch (alt18) 
             {
                 case 1 :
-                    // AS3_ex.g3:1176:33: ( NUMBER )+ '.' ( NUMBER )*
+                    // AS3_ex.g3:1472:33: ( NUMBER )+ '.' ( NUMBER )*
                     {
-                    	// AS3_ex.g3:1176:33: ( NUMBER )+
+                    	// AS3_ex.g3:1472:33: ( NUMBER )+
                     	int cnt14 = 0;
                     	do 
                     	{
@@ -4319,7 +4339,7 @@ public class AS3_exLexer : Lexer {
                     	    switch (alt14) 
                     		{
                     			case 1 :
-                    			    // AS3_ex.g3:1176:33: NUMBER
+                    			    // AS3_ex.g3:1472:33: NUMBER
                     			    {
                     			    	mNUMBER(); if (state.failed) return ;
 
@@ -4340,7 +4360,7 @@ public class AS3_exLexer : Lexer {
                     		;	// Stops C# compiler whinging that label 'loop14' has no statements
 
                     	Match('.'); if (state.failed) return ;
-                    	// AS3_ex.g3:1176:45: ( NUMBER )*
+                    	// AS3_ex.g3:1472:45: ( NUMBER )*
                     	do 
                     	{
                     	    int alt15 = 2;
@@ -4355,7 +4375,7 @@ public class AS3_exLexer : Lexer {
                     	    switch (alt15) 
                     		{
                     			case 1 :
-                    			    // AS3_ex.g3:1176:45: NUMBER
+                    			    // AS3_ex.g3:1472:45: NUMBER
                     			    {
                     			    	mNUMBER(); if (state.failed) return ;
 
@@ -4374,10 +4394,10 @@ public class AS3_exLexer : Lexer {
                     }
                     break;
                 case 2 :
-                    // AS3_ex.g3:1176:55: '.' ( NUMBER )+
+                    // AS3_ex.g3:1472:55: '.' ( NUMBER )+
                     {
                     	Match('.'); if (state.failed) return ;
-                    	// AS3_ex.g3:1176:59: ( NUMBER )+
+                    	// AS3_ex.g3:1472:59: ( NUMBER )+
                     	int cnt16 = 0;
                     	do 
                     	{
@@ -4393,7 +4413,7 @@ public class AS3_exLexer : Lexer {
                     	    switch (alt16) 
                     		{
                     			case 1 :
-                    			    // AS3_ex.g3:1176:59: NUMBER
+                    			    // AS3_ex.g3:1472:59: NUMBER
                     			    {
                     			    	mNUMBER(); if (state.failed) return ;
 
@@ -4417,9 +4437,9 @@ public class AS3_exLexer : Lexer {
                     }
                     break;
                 case 3 :
-                    // AS3_ex.g3:1176:69: ( NUMBER )+
+                    // AS3_ex.g3:1472:69: ( NUMBER )+
                     {
-                    	// AS3_ex.g3:1176:69: ( NUMBER )+
+                    	// AS3_ex.g3:1472:69: ( NUMBER )+
                     	int cnt17 = 0;
                     	do 
                     	{
@@ -4435,7 +4455,7 @@ public class AS3_exLexer : Lexer {
                     	    switch (alt17) 
                     		{
                     			case 1 :
-                    			    // AS3_ex.g3:1176:69: NUMBER
+                    			    // AS3_ex.g3:1472:69: NUMBER
                     			    {
                     			    	mNUMBER(); if (state.failed) return ;
 
@@ -4474,11 +4494,11 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = DEC_NUMBER_LITERAL;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1182:5: ( DEC_NUMBER ( EXPONENT )? )
-            // AS3_ex.g3:1182:8: DEC_NUMBER ( EXPONENT )?
+            // AS3_ex.g3:1478:5: ( DEC_NUMBER ( EXPONENT )? )
+            // AS3_ex.g3:1478:8: DEC_NUMBER ( EXPONENT )?
             {
             	mDEC_NUMBER(); if (state.failed) return ;
-            	// AS3_ex.g3:1182:19: ( EXPONENT )?
+            	// AS3_ex.g3:1478:19: ( EXPONENT )?
             	int alt19 = 2;
             	int LA19_0 = input.LA(1);
 
@@ -4489,7 +4509,7 @@ public class AS3_exLexer : Lexer {
             	switch (alt19) 
             	{
             	    case 1 :
-            	        // AS3_ex.g3:1182:19: EXPONENT
+            	        // AS3_ex.g3:1478:19: EXPONENT
             	        {
             	        	mEXPONENT(); if (state.failed) return ;
 
@@ -4506,7 +4526,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("DEC_NUMBER_LITERAL",Text);
+                  debugMethod("DEC_NUMBER_LITERAL",Text);
 
             }    }
         finally 
@@ -4520,8 +4540,8 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1184:30: ( ( 'e' | 'E' ) ( '+' | '-' )? ( NUMBER )+ )
-            // AS3_ex.g3:1184:32: ( 'e' | 'E' ) ( '+' | '-' )? ( NUMBER )+
+            // AS3_ex.g3:1480:30: ( ( 'e' | 'E' ) ( '+' | '-' )? ( NUMBER )+ )
+            // AS3_ex.g3:1480:32: ( 'e' | 'E' ) ( '+' | '-' )? ( NUMBER )+
             {
             	if ( input.LA(1) == 'E' || input.LA(1) == 'e' ) 
             	{
@@ -4535,7 +4555,7 @@ public class AS3_exLexer : Lexer {
             	    Recover(mse);
             	    throw mse;}
 
-            	// AS3_ex.g3:1184:42: ( '+' | '-' )?
+            	// AS3_ex.g3:1480:42: ( '+' | '-' )?
             	int alt20 = 2;
             	int LA20_0 = input.LA(1);
 
@@ -4566,7 +4586,7 @@ public class AS3_exLexer : Lexer {
 
             	}
 
-            	// AS3_ex.g3:1184:53: ( NUMBER )+
+            	// AS3_ex.g3:1480:53: ( NUMBER )+
             	int cnt21 = 0;
             	do 
             	{
@@ -4582,7 +4602,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt21) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1184:53: NUMBER
+            			    // AS3_ex.g3:1480:53: NUMBER
             			    {
             			    	mNUMBER(); if (state.failed) return ;
 
@@ -4619,7 +4639,7 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = IDENTIFIER;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1192:5: ( IDENT_NAME_ASCII_START | ( UNICODE_ESCAPE )+ | )
+            // AS3_ex.g3:1488:5: ( IDENT_NAME_ASCII_START | ( UNICODE_ESCAPE )+ | )
             int alt23 = 3;
             switch ( input.LA(1) ) 
             {
@@ -4693,16 +4713,16 @@ public class AS3_exLexer : Lexer {
             switch (alt23) 
             {
                 case 1 :
-                    // AS3_ex.g3:1192:9: IDENT_NAME_ASCII_START
+                    // AS3_ex.g3:1488:9: IDENT_NAME_ASCII_START
                     {
                     	mIDENT_NAME_ASCII_START(); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // AS3_ex.g3:1193:9: ( UNICODE_ESCAPE )+
+                    // AS3_ex.g3:1489:9: ( UNICODE_ESCAPE )+
                     {
-                    	// AS3_ex.g3:1193:9: ( UNICODE_ESCAPE )+
+                    	// AS3_ex.g3:1489:9: ( UNICODE_ESCAPE )+
                     	int cnt22 = 0;
                     	do 
                     	{
@@ -4718,7 +4738,7 @@ public class AS3_exLexer : Lexer {
                     	    switch (alt22) 
                     		{
                     			case 1 :
-                    			    // AS3_ex.g3:1193:9: UNICODE_ESCAPE
+                    			    // AS3_ex.g3:1489:9: UNICODE_ESCAPE
                     			    {
                     			    	mUNICODE_ESCAPE(); if (state.failed) return ;
 
@@ -4742,11 +4762,11 @@ public class AS3_exLexer : Lexer {
                     }
                     break;
                 case 3 :
-                    // AS3_ex.g3:1194:9: 
+                    // AS3_ex.g3:1490:9: 
                     {
                     	if ( state.backtracking == 0 ) 
                     	{
-                    	  ConsumeIdentifierUnicodeStart();
+                    	  consumeIdentifierUnicodeStart();
                     	}
 
                     }
@@ -4758,7 +4778,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("Identifier",Text);
+                  debugMethod("Identifier",Text);
 
             }    }
         finally 
@@ -4772,11 +4792,11 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1197:35: ( IDENT_ASCII_START ( IDENT_PART )* )
-            // AS3_ex.g3:1197:37: IDENT_ASCII_START ( IDENT_PART )*
+            // AS3_ex.g3:1493:35: ( IDENT_ASCII_START ( IDENT_PART )* )
+            // AS3_ex.g3:1493:37: IDENT_ASCII_START ( IDENT_PART )*
             {
             	mIDENT_ASCII_START(); if (state.failed) return ;
-            	// AS3_ex.g3:1197:55: ( IDENT_PART )*
+            	// AS3_ex.g3:1493:55: ( IDENT_PART )*
             	do 
             	{
             	    int alt24 = 2;
@@ -4786,7 +4806,7 @@ public class AS3_exLexer : Lexer {
             	    {
             	        alt24 = 1;
             	    }
-            	    else if ( ((IsUnicodeIdentifierPart(input.LA(1)))) )
+            	    else if ( ((isUnicodeIdentifierPart(input.LA(1)))) )
             	    {
             	        alt24 = 1;
             	    }
@@ -4795,7 +4815,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt24) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1197:55: IDENT_PART
+            			    // AS3_ex.g3:1493:55: IDENT_PART
             			    {
             			    	mIDENT_PART(); if (state.failed) return ;
 
@@ -4825,7 +4845,7 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1199:35: ( ALPHABET | DOLLAR | UNDERSCORE )
+            // AS3_ex.g3:1495:35: ( ALPHABET | DOLLAR | UNDERSCORE )
             // AS3_ex.g3:
             {
             	if ( input.LA(1) == '$' || (input.LA(1) >= 'A' && input.LA(1) <= 'Z') || input.LA(1) == '_' || (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) 
@@ -4855,7 +4875,7 @@ public class AS3_exLexer : Lexer {
     {
     		try
     		{
-            // AS3_ex.g3:1205:5: ( ( IDENT_ASCII_START )=> IDENT_ASCII_START | NUMBER | {...}?)
+            // AS3_ex.g3:1501:5: ( ( IDENT_ASCII_START )=> IDENT_ASCII_START | NUMBER | {...}?)
             int alt25 = 3;
             int LA25_0 = input.LA(1);
 
@@ -4873,30 +4893,30 @@ public class AS3_exLexer : Lexer {
             switch (alt25) 
             {
                 case 1 :
-                    // AS3_ex.g3:1205:9: ( IDENT_ASCII_START )=> IDENT_ASCII_START
+                    // AS3_ex.g3:1501:9: ( IDENT_ASCII_START )=> IDENT_ASCII_START
                     {
                     	mIDENT_ASCII_START(); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // AS3_ex.g3:1206:9: NUMBER
+                    // AS3_ex.g3:1502:9: NUMBER
                     {
                     	mNUMBER(); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // AS3_ex.g3:1207:9: {...}?
+                    // AS3_ex.g3:1503:9: {...}?
                     {
-                    	if ( !((IsUnicodeIdentifierPart(input.LA(1)))) ) 
+                    	if ( !((isUnicodeIdentifierPart(input.LA(1)))) ) 
                     	{
                     	    if ( state.backtracking > 0 ) {state.failed = true; return ;}
-                    	    throw new FailedPredicateException(input, "IDENT_PART", "IsUnicodeIdentifierPart(input.LA(1))");
+                    	    throw new FailedPredicateException(input, "IDENT_PART", "isUnicodeIdentifierPart(input.LA(1))");
                     	}
                     	if ( state.backtracking == 0 ) 
                     	{
-                    	  MatchAny();
+                    	  /*matchAny();*/
                     	}
 
                     }
@@ -4917,12 +4937,12 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_COMMENT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1214:5: ( '<!--' ( options {greedy=false; } : . )* '-->' )
-            // AS3_ex.g3:1214:9: '<!--' ( options {greedy=false; } : . )* '-->'
+            // AS3_ex.g3:1510:5: ( '<!--' ( options {greedy=false; } : . )* '-->' )
+            // AS3_ex.g3:1510:9: '<!--' ( options {greedy=false; } : . )* '-->'
             {
             	Match("<!--"); if (state.failed) return ;
 
-            	// AS3_ex.g3:1214:16: ( options {greedy=false; } : . )*
+            	// AS3_ex.g3:1510:16: ( options {greedy=false; } : . )*
             	do 
             	{
             	    int alt26 = 2;
@@ -4963,7 +4983,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt26) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1214:44: .
+            			    // AS3_ex.g3:1510:44: .
             			    {
             			    	MatchAny(); if (state.failed) return ;
 
@@ -4988,7 +5008,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("XML_COMMENT",Text);
+                  debugMethod("XML_COMMENT",Text);
 
             }    }
         finally 
@@ -5004,12 +5024,12 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_CDATA;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1220:5: ( '<![CDATA' ( options {greedy=false; } : . )* ']]>' )
-            // AS3_ex.g3:1220:9: '<![CDATA' ( options {greedy=false; } : . )* ']]>'
+            // AS3_ex.g3:1516:5: ( '<![CDATA' ( options {greedy=false; } : . )* ']]>' )
+            // AS3_ex.g3:1516:9: '<![CDATA' ( options {greedy=false; } : . )* ']]>'
             {
             	Match("<![CDATA"); if (state.failed) return ;
 
-            	// AS3_ex.g3:1220:20: ( options {greedy=false; } : . )*
+            	// AS3_ex.g3:1516:20: ( options {greedy=false; } : . )*
             	do 
             	{
             	    int alt27 = 2;
@@ -5050,7 +5070,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt27) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1220:48: .
+            			    // AS3_ex.g3:1516:48: .
             			    {
             			    	MatchAny(); if (state.failed) return ;
 
@@ -5075,7 +5095,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("XML_CDATA",Text);
+                  debugMethod("XML_CDATA",Text);
 
             }    }
         finally 
@@ -5091,12 +5111,12 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_PI;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1226:5: ( '<?' ( options {greedy=false; } : . )* '?>' )
-            // AS3_ex.g3:1226:9: '<?' ( options {greedy=false; } : . )* '?>'
+            // AS3_ex.g3:1522:5: ( '<?' ( options {greedy=false; } : . )* '?>' )
+            // AS3_ex.g3:1522:9: '<?' ( options {greedy=false; } : . )* '?>'
             {
             	Match("<?"); if (state.failed) return ;
 
-            	// AS3_ex.g3:1226:14: ( options {greedy=false; } : . )*
+            	// AS3_ex.g3:1522:14: ( options {greedy=false; } : . )*
             	do 
             	{
             	    int alt28 = 2;
@@ -5126,7 +5146,7 @@ public class AS3_exLexer : Lexer {
             	    switch (alt28) 
             		{
             			case 1 :
-            			    // AS3_ex.g3:1226:42: .
+            			    // AS3_ex.g3:1522:42: .
             			    {
             			    	MatchAny(); if (state.failed) return ;
 
@@ -5151,7 +5171,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("XML_PI",Text);
+                  debugMethod("XML_PI",Text);
 
             }    }
         finally 
@@ -5167,7 +5187,7 @@ public class AS3_exLexer : Lexer {
     		{
             int _type = XML_TEXT;
     	int _channel = DEFAULT_TOKEN_CHANNEL;
-            // AS3_ex.g3:1233:5: ( '\\u0020' .. '\\u003b' | '\\u003d' .. '\\u007a' | '\\u007c' .. '\\u007e' | {...}?)
+            // AS3_ex.g3:1529:5: ( '\\u0020' .. '\\u003b' | '\\u003d' .. '\\u007a' | '\\u007c' .. '\\u007e' | {...}?)
             int alt29 = 4;
             switch ( input.LA(1) ) 
             {
@@ -5283,37 +5303,37 @@ public class AS3_exLexer : Lexer {
             switch (alt29) 
             {
                 case 1 :
-                    // AS3_ex.g3:1233:7: '\\u0020' .. '\\u003b'
+                    // AS3_ex.g3:1529:7: '\\u0020' .. '\\u003b'
                     {
                     	MatchRange(' ',';'); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // AS3_ex.g3:1234:7: '\\u003d' .. '\\u007a'
+                    // AS3_ex.g3:1530:7: '\\u003d' .. '\\u007a'
                     {
                     	MatchRange('=','z'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // AS3_ex.g3:1235:7: '\\u007c' .. '\\u007e'
+                    // AS3_ex.g3:1531:7: '\\u007c' .. '\\u007e'
                     {
                     	MatchRange('|','~'); if (state.failed) return ;
 
                     }
                     break;
                 case 4 :
-                    // AS3_ex.g3:1236:7: {...}?
+                    // AS3_ex.g3:1532:7: {...}?
                     {
-                    	if ( !((IsXMLText(input.LA(1)))) ) 
+                    	if ( !((isXMLText(input.LA(1)))) ) 
                     	{
                     	    if ( state.backtracking > 0 ) {state.failed = true; return ;}
-                    	    throw new FailedPredicateException(input, "XML_TEXT", "IsXMLText(input.LA(1))");
+                    	    throw new FailedPredicateException(input, "XML_TEXT", "isXMLText(input.LA(1))");
                     	}
                     	if ( state.backtracking == 0 ) 
                     	{
-                    	  MatchAny();
+                    	  /*matchAny();*/
                     	}
 
                     }
@@ -5325,7 +5345,7 @@ public class AS3_exLexer : Lexer {
             if ( state.backtracking == 0 ) 
             {
 
-                  // Debug.WriteLine("XMLText",Text);
+                  debugMethod("XMLText",Text);
 
             }    }
         finally 
@@ -6188,8 +6208,8 @@ public class AS3_exLexer : Lexer {
 
     // $ANTLR start "synpred1_AS3_ex"
     public void synpred1_AS3_ex_fragment() {
-        // AS3_ex.g3:1205:9: ( IDENT_ASCII_START )
-        // AS3_ex.g3:1205:10: IDENT_ASCII_START
+        // AS3_ex.g3:1501:9: ( IDENT_ASCII_START )
+        // AS3_ex.g3:1501:10: IDENT_ASCII_START
         {
         	mIDENT_ASCII_START(); if (state.failed) return ;
 
@@ -6273,7 +6293,7 @@ public class AS3_exLexer : Lexer {
 
         override public string Description
         {
-            get { return "1176:10: fragment DEC_NUMBER : ( ( NUMBER )+ '.' ( NUMBER )* | '.' ( NUMBER )+ | ( NUMBER )+ );"; }
+            get { return "1472:10: fragment DEC_NUMBER : ( ( NUMBER )+ '.' ( NUMBER )* | '.' ( NUMBER )+ | ( NUMBER )+ );"; }
         }
 
     }
@@ -6285,29 +6305,29 @@ public class AS3_exLexer : Lexer {
         "\x01\x69\x02\uffff\x01\x36\x03\uffff\x01\u0096\x01\uffff\x05\x38"+
         "\x01\u009e\x08\x38\x01\u00a7\x01\x38\x01\u00ac\x01\u00ad\x0c\x38"+
         "\x01\u00bd\x09\x38\x06\uffff\x01\u00c9\x04\uffff\x01\u00cb\x01\u00cd"+
-        "\x05\uffff\x01\u00d1\x01\uffff\x01\u00d3\x08\uffff\x01\u00d4\x07"+
-        "\uffff\x01\u00d6\x02\uffff\x01\u00d8\x0d\uffff\x07\x38\x01\uffff"+
-        "\x06\x38\x01\u00e7\x01\x38\x01\uffff\x04\x38\x02\uffff\x02\x38\x01"+
-        "\u00f0\x08\x38\x01\u00f9\x03\x38\x01\uffff\x01\x38\x01\u00fe\x01"+
-        "\x38\x01\u0100\x01\u0101\x03\x38\x01\u0105\x01\x38\x11\uffff\x01"+
-        "\x38\x01\u0108\x07\x38\x01\u0110\x01\x38\x01\u0112\x02\x38\x01\uffff"+
-        "\x08\x38\x01\uffff\x01\u011d\x07\x38\x01\uffff\x01\x38\x01\u0126"+
-        "\x01\x38\x01\u0128\x01\uffff\x01\x38\x02\uffff\x01\u012a\x01\x38"+
-        "\x01\u012c\x01\uffff\x01\x38\x01\u012e\x01\uffff\x01\u012f\x01\u0130"+
-        "\x01\u0131\x04\x38\x01\uffff\x01\x38\x01\uffff\x01\u0137\x01\u0139"+
-        "\x08\x38\x01\uffff\x05\x38\x01\u0148\x02\x38\x01\uffff\x01\u014b"+
-        "\x01\uffff\x01\x38\x01\uffff\x01\u014d\x01\uffff\x01\x38\x04\uffff"+
-        "\x02\x38\x01\u0151\x02\x38\x01\uffff\x01\x38\x01\uffff\x02\x38\x01"+
-        "\u0157\x04\x38\x01\u015c\x04\x38\x01\u0161\x01\u0162\x01\uffff\x01"+
-        "\u0163\x01\u0164\x01\uffff\x01\u0165\x01\uffff\x02\x38\x01\u0168"+
-        "\x01\uffff\x01\u0169\x01\u016a\x01\u016b\x02\x38\x01\uffff\x03\x38"+
-        "\x01\u0171\x01\uffff\x01\x38\x01\u0173\x01\u0174\x01\x38\x05\uffff"+
-        "\x01\x38\x01\u0177\x04\uffff\x01\u0178\x03\x38\x01\u017c\x01\uffff"+
-        "\x01\x38\x02\uffff\x01\x38\x01\u017f\x02\uffff\x02\x38\x01\u0182"+
-        "\x01\uffff\x01\u0183\x01\u0184\x01\uffff\x01\u0185\x01\u0186\x05"+
-        "\uffff";
+        "\x05\uffff\x01\u00d1\x01\uffff\x01\u00d3\x08\uffff\x01\u00d4\x01"+
+        "\u00d5\x06\uffff\x01\u00d7\x02\uffff\x01\u00d9\x0d\uffff\x07\x38"+
+        "\x01\uffff\x06\x38\x01\u00e8\x01\x38\x01\uffff\x04\x38\x02\uffff"+
+        "\x02\x38\x01\u00f1\x08\x38\x01\u00fa\x03\x38\x01\uffff\x01\x38\x01"+
+        "\u00ff\x01\x38\x01\u0101\x01\u0102\x03\x38\x01\u0106\x01\x38\x12"+
+        "\uffff\x01\x38\x01\u0109\x07\x38\x01\u0111\x01\x38\x01\u0113\x02"+
+        "\x38\x01\uffff\x08\x38\x01\uffff\x01\u011e\x07\x38\x01\uffff\x01"+
+        "\x38\x01\u0127\x01\x38\x01\u0129\x01\uffff\x01\x38\x02\uffff\x01"+
+        "\u012b\x01\x38\x01\u012d\x01\uffff\x01\x38\x01\u012f\x01\uffff\x01"+
+        "\u0130\x01\u0131\x01\u0132\x04\x38\x01\uffff\x01\x38\x01\uffff\x01"+
+        "\u0138\x01\u013a\x08\x38\x01\uffff\x05\x38\x01\u0149\x02\x38\x01"+
+        "\uffff\x01\u014c\x01\uffff\x01\x38\x01\uffff\x01\u014e\x01\uffff"+
+        "\x01\x38\x04\uffff\x02\x38\x01\u0152\x02\x38\x01\uffff\x01\x38\x01"+
+        "\uffff\x02\x38\x01\u0158\x04\x38\x01\u015d\x04\x38\x01\u0162\x01"+
+        "\u0163\x01\uffff\x01\u0164\x01\u0165\x01\uffff\x01\u0166\x01\uffff"+
+        "\x02\x38\x01\u0169\x01\uffff\x01\u016a\x01\u016b\x01\u016c\x02\x38"+
+        "\x01\uffff\x03\x38\x01\u0172\x01\uffff\x01\x38\x01\u0174\x01\u0175"+
+        "\x01\x38\x05\uffff\x01\x38\x01\u0178\x04\uffff\x01\u0179\x03\x38"+
+        "\x01\u017d\x01\uffff\x01\x38\x02\uffff\x01\x38\x01\u0180\x02\uffff"+
+        "\x02\x38\x01\u0183\x01\uffff\x01\u0184\x01\u0185\x01\uffff\x01\u0186"+
+        "\x01\u0187\x05\uffff";
     const string DFA30_eofS =
-        "\u0187\uffff";
+        "\u0188\uffff";
     const string DFA30_minS =
         "\x01\x09\x01\x73\x01\x72\x01\x61\x01\x65\x02\x61\x01\x66\x02\x61"+
         "\x02\x65\x01\x68\x01\x73\x01\x61\x01\x68\x01\x65\x01\x76\x07\uffff"+
@@ -6320,13 +6340,13 @@ public class AS3_exLexer : Lexer {
         "\x74\x01\x70\x01\x69\x01\x74\x01\x61\x01\x69\x01\x24\x01\x75\x01"+
         "\x70\x01\x65\x01\x72\x02\x69\x02\x74\x01\x65\x06\uffff\x01\x2e\x04"+
         "\uffff\x01\x3d\x01\x3e\x01\uffff\x01\x2d\x03\uffff\x01\x3d\x01\uffff"+
-        "\x01\x3d\x08\uffff\x01\x00\x07\uffff\x01\x3d\x02\uffff\x01\x3d\x0d"+
+        "\x01\x3d\x08\uffff\x02\x00\x06\uffff\x01\x3d\x02\uffff\x01\x3d\x0d"+
         "\uffff\x01\x61\x01\x65\x01\x63\x02\x73\x01\x61\x01\x65\x01\uffff"+
         "\x01\x61\x02\x65\x01\x68\x01\x73\x01\x61\x01\x24\x01\x63\x01\uffff"+
         "\x01\x6c\x01\x74\x01\x65\x01\x6c\x02\uffff\x01\x69\x01\x65\x01\x24"+
         "\x01\x6c\x01\x6b\x01\x76\x01\x74\x01\x6c\x01\x75\x01\x65\x01\x74"+
         "\x01\x24\x01\x74\x01\x73\x01\x6f\x01\uffff\x01\x65\x01\x24\x01\x65"+
-        "\x02\x24\x01\x64\x01\x6c\x01\x68\x01\x24\x01\x72\x11\uffff\x01\x6b"+
+        "\x02\x24\x01\x64\x01\x6c\x01\x68\x01\x24\x01\x72\x12\uffff\x01\x6b"+
         "\x01\x24\x01\x68\x01\x73\x01\x74\x01\x69\x01\x75\x01\x74\x01\x6d"+
         "\x01\x24\x01\x6e\x01\x24\x01\x65\x01\x6c\x01\uffff\x01\x74\x01\x65"+
         "\x01\x72\x01\x61\x01\x72\x01\x75\x01\x76\x01\x73\x01\uffff\x01\x24"+
@@ -6347,35 +6367,35 @@ public class AS3_exLexer : Lexer {
         "\x01\x73\x01\x66\x01\x24\x01\uffff\x02\x24\x01\uffff\x02\x24\x05"+
         "\uffff";
     const string DFA30_maxS =
-        "\x01\x7e\x01\x73\x01\x72\x01\x6f\x01\x79\x01\x78\x01\x75\x01\x73"+
-        "\x02\x75\x01\x65\x01\x77\x01\x79\x01\x73\x01\x6f\x01\x69\x01\x65"+
-        "\x01\x76\x07\uffff\x01\x39\x01\uffff\x01\x3f\x01\uffff\x04\x3d\x01"+
-        "\uffff\x01\uffff\x02\x3d\x01\x7c\x01\x3d\x02\uffff\x01\x3a\x04\uffff"+
-        "\x02\uffff\x01\x78\x02\uffff\x01\x75\x01\x00\x02\uffff\x01\x7a\x01"+
-        "\uffff\x01\x65\x01\x74\x01\x61\x01\x6e\x01\x6c\x01\x7a\x01\x6e\x01"+
-        "\x73\x01\x74\x01\x63\x01\x6c\x01\x6e\x01\x72\x01\x6e\x01\x7a\x01"+
-        "\x70\x02\x7a\x01\x74\x01\x77\x01\x6c\x01\x63\x01\x6f\x01\x62\x01"+
-        "\x74\x01\x70\x01\x69\x01\x74\x01\x61\x01\x72\x01\x7a\x01\x79\x01"+
-        "\x70\x01\x65\x01\x72\x02\x69\x02\x74\x01\x65\x06\uffff\x01\x2e\x04"+
-        "\uffff\x01\x3d\x01\x3e\x01\uffff\x01\x5b\x03\uffff\x01\x3d\x01\uffff"+
-        "\x01\x3d\x08\uffff\x01\uffff\x07\uffff\x01\x3d\x02\uffff\x01\x3d"+
-        "\x0d\uffff\x01\x61\x01\x65\x01\x63\x01\x73\x01\x74\x01\x61\x01\x65"+
-        "\x01\uffff\x01\x61\x02\x65\x01\x68\x01\x73\x01\x61\x01\x7a\x01\x63"+
-        "\x01\uffff\x01\x6f\x01\x74\x01\x65\x01\x6c\x02\uffff\x01\x69\x01"+
-        "\x65\x01\x7a\x01\x6c\x01\x6b\x01\x76\x01\x74\x01\x6c\x01\x75\x01"+
-        "\x65\x01\x74\x01\x7a\x01\x74\x01\x73\x01\x6f\x01\uffff\x01\x65\x01"+
-        "\x7a\x01\x65\x02\x7a\x01\x64\x01\x6c\x01\x68\x01\x7a\x01\x72\x11"+
-        "\uffff\x01\x6b\x01\x7a\x01\x68\x01\x73\x01\x74\x01\x69\x01\x75\x01"+
-        "\x74\x01\x6d\x01\x7a\x01\x6e\x01\x7a\x01\x65\x01\x6c\x01\uffff\x01"+
-        "\x74\x01\x65\x01\x72\x01\x61\x01\x72\x01\x75\x01\x76\x01\x73\x01"+
-        "\uffff\x01\x7a\x02\x61\x01\x65\x01\x69\x02\x72\x01\x63\x01\uffff"+
-        "\x01\x69\x01\x7a\x01\x77\x01\x7a\x01\uffff\x01\x6f\x02\uffff\x01"+
-        "\x7a\x01\x65\x01\x7a\x01\uffff\x01\x72\x01\x7a\x01\uffff\x03\x7a"+
-        "\x01\x6e\x01\x6c\x01\x65\x01\x69\x01\uffff\x01\x64\x01\uffff\x02"+
-        "\x7a\x01\x69\x01\x6d\x01\x74\x02\x6e\x01\x64\x01\x65\x01\x70\x01"+
-        "\uffff\x01\x67\x01\x74\x02\x63\x01\x6e\x01\x7a\x01\x68\x01\x63\x01"+
-        "\uffff\x01\x7a\x01\uffff\x01\x66\x01\uffff\x01\x7a\x01\uffff\x01"+
-        "\x69\x04\uffff\x01\x75\x01\x74\x01\x7a\x01\x63\x01\x73\x01\uffff"+
+        "\x01\u00a0\x01\x73\x01\x72\x01\x6f\x01\x79\x01\x78\x01\x75\x01"+
+        "\x73\x02\x75\x01\x65\x01\x77\x01\x79\x01\x73\x01\x6f\x01\x69\x01"+
+        "\x65\x01\x76\x07\uffff\x01\x39\x01\uffff\x01\x3f\x01\uffff\x04\x3d"+
+        "\x01\uffff\x01\uffff\x02\x3d\x01\x7c\x01\x3d\x02\uffff\x01\x3a\x04"+
+        "\uffff\x02\uffff\x01\x78\x02\uffff\x01\x75\x01\x00\x02\uffff\x01"+
+        "\x7a\x01\uffff\x01\x65\x01\x74\x01\x61\x01\x6e\x01\x6c\x01\x7a\x01"+
+        "\x6e\x01\x73\x01\x74\x01\x63\x01\x6c\x01\x6e\x01\x72\x01\x6e\x01"+
+        "\x7a\x01\x70\x02\x7a\x01\x74\x01\x77\x01\x6c\x01\x63\x01\x6f\x01"+
+        "\x62\x01\x74\x01\x70\x01\x69\x01\x74\x01\x61\x01\x72\x01\x7a\x01"+
+        "\x79\x01\x70\x01\x65\x01\x72\x02\x69\x02\x74\x01\x65\x06\uffff\x01"+
+        "\x2e\x04\uffff\x01\x3d\x01\x3e\x01\uffff\x01\x5b\x03\uffff\x01\x3d"+
+        "\x01\uffff\x01\x3d\x08\uffff\x02\uffff\x06\uffff\x01\x3d\x02\uffff"+
+        "\x01\x3d\x0d\uffff\x01\x61\x01\x65\x01\x63\x01\x73\x01\x74\x01\x61"+
+        "\x01\x65\x01\uffff\x01\x61\x02\x65\x01\x68\x01\x73\x01\x61\x01\x7a"+
+        "\x01\x63\x01\uffff\x01\x6f\x01\x74\x01\x65\x01\x6c\x02\uffff\x01"+
+        "\x69\x01\x65\x01\x7a\x01\x6c\x01\x6b\x01\x76\x01\x74\x01\x6c\x01"+
+        "\x75\x01\x65\x01\x74\x01\x7a\x01\x74\x01\x73\x01\x6f\x01\uffff\x01"+
+        "\x65\x01\x7a\x01\x65\x02\x7a\x01\x64\x01\x6c\x01\x68\x01\x7a\x01"+
+        "\x72\x12\uffff\x01\x6b\x01\x7a\x01\x68\x01\x73\x01\x74\x01\x69\x01"+
+        "\x75\x01\x74\x01\x6d\x01\x7a\x01\x6e\x01\x7a\x01\x65\x01\x6c\x01"+
+        "\uffff\x01\x74\x01\x65\x01\x72\x01\x61\x01\x72\x01\x75\x01\x76\x01"+
+        "\x73\x01\uffff\x01\x7a\x02\x61\x01\x65\x01\x69\x02\x72\x01\x63\x01"+
+        "\uffff\x01\x69\x01\x7a\x01\x77\x01\x7a\x01\uffff\x01\x6f\x02\uffff"+
+        "\x01\x7a\x01\x65\x01\x7a\x01\uffff\x01\x72\x01\x7a\x01\uffff\x03"+
+        "\x7a\x01\x6e\x01\x6c\x01\x65\x01\x69\x01\uffff\x01\x64\x01\uffff"+
+        "\x02\x7a\x01\x69\x01\x6d\x01\x74\x02\x6e\x01\x64\x01\x65\x01\x70"+
+        "\x01\uffff\x01\x67\x01\x74\x02\x63\x01\x6e\x01\x7a\x01\x68\x01\x63"+
+        "\x01\uffff\x01\x7a\x01\uffff\x01\x66\x01\uffff\x01\x7a\x01\uffff"+
+        "\x01\x69\x04\uffff\x01\x75\x01\x74\x01\x7a\x01\x63\x01\x73\x01\uffff"+
         "\x01\x79\x01\uffff\x01\x6f\x01\x65\x01\x7a\x01\x63\x02\x61\x01\x65"+
         "\x01\x7a\x01\x61\x02\x65\x01\x74\x02\x7a\x01\uffff\x02\x7a\x01\uffff"+
         "\x01\x7a\x01\uffff\x01\x64\x01\x65\x01\x7a\x01\uffff\x03\x7a\x02"+
@@ -6392,13 +6412,13 @@ public class AS3_exLexer : Lexer {
         "\x01\x37\x01\x39\x01\x3a\x01\x3b\x01\x3c\x01\x3d\x01\uffff\x01\x3e"+
         "\x01\x73\x01\x3f\x01\x42\x02\uffff\x01\x69\x01\uffff\x01\x77\x01"+
         "\x40\x01\x41\x01\uffff\x01\x58\x01\uffff\x01\x52\x01\x4c\x01\x5b"+
-        "\x01\x47\x01\x4d\x01\x5c\x01\x48\x01\x49\x01\uffff\x01\x65\x01\x6d"+
-        "\x01\x6e\x01\x4a\x01\x71\x01\x5a\x01\x4b\x01\uffff\x01\x60\x01\x4f"+
-        "\x01\uffff\x01\x62\x01\x50\x01\x61\x01\x51\x01\x53\x01\x56\x01\x67"+
-        "\x01\x57\x01\x68\x01\x6f\x01\x70\x01\x72\x01\x01\x07\uffff\x01\x0a"+
-        "\x08\uffff\x01\x11\x04\uffff\x01\x14\x01\x18\x0f\uffff\x01\x25\x0a"+
-        "\uffff\x01\x63\x01\x64\x01\x5d\x01\x4e\x01\x6a\x01\x66\x01\x75\x01"+
-        "\x76\x01\x45\x01\x43\x01\x46\x01\x44\x01\x59\x01\x5e\x01\x54\x01"+
+        "\x01\x47\x01\x4d\x01\x5c\x01\x48\x01\x49\x02\uffff\x01\x6d\x01\x6e"+
+        "\x01\x4a\x01\x71\x01\x5a\x01\x4b\x01\uffff\x01\x60\x01\x4f\x01\uffff"+
+        "\x01\x62\x01\x50\x01\x61\x01\x51\x01\x53\x01\x56\x01\x67\x01\x57"+
+        "\x01\x68\x01\x6f\x01\x70\x01\x72\x01\x01\x07\uffff\x01\x0a\x08\uffff"+
+        "\x01\x11\x04\uffff\x01\x14\x01\x18\x0f\uffff\x01\x25\x0a\uffff\x01"+
+        "\x63\x01\x64\x01\x5d\x01\x4e\x01\x6a\x01\x66\x01\x75\x01\x76\x01"+
+        "\x45\x01\x43\x01\x46\x01\x44\x01\x59\x01\x65\x01\x5e\x01\x54\x01"+
         "\x5f\x01\x55\x0e\uffff\x01\x0f\x08\uffff\x01\x1a\x08\uffff\x01\x30"+
         "\x04\uffff\x01\x27\x01\uffff\x01\x29\x01\x2a\x03\uffff\x01\x2f\x02"+
         "\uffff\x01\x03\x07\uffff\x01\x0b\x01\uffff\x01\x2e\x0a\uffff\x01"+
@@ -6411,8 +6431,8 @@ public class AS3_exLexer : Lexer {
         "\x1d\x02\uffff\x01\x07\x01\x10\x03\uffff\x01\x17\x02\uffff\x01\x35"+
         "\x02\uffff\x01\x16\x01\x31\x01\x1e\x01\x12\x01\x15";
     const string DFA30_specialS =
-        "\x22\uffff\x01\x01\x0b\uffff\x01\x04\x01\x03\x04\uffff\x01\x02"+
-        "\x49\uffff\x01\x00\u0108\uffff}>";
+        "\x22\uffff\x01\x05\x0b\uffff\x01\x00\x01\x01\x04\uffff\x01\x02"+
+        "\x49\uffff\x01\x03\x01\x04\u0108\uffff}>";
     static readonly string[] DFA30_transitionS = {
             "\x01\x2d\x01\x2b\x02\x2d\x01\x2b\x0e\uffff\x04\x2d\x01\x2c"+
             "\x01\x1e\x01\x2f\x01\x36\x01\x32\x01\x23\x01\x24\x01\x2e\x01"+
@@ -6422,7 +6442,7 @@ public class AS3_exLexer : Lexer {
             "\x01\x36\x01\x01\x01\x02\x01\x03\x01\x04\x01\x05\x01\x06\x01"+
             "\x10\x01\x35\x01\x07\x04\x35\x01\x08\x01\x11\x01\x09\x01\x35"+
             "\x01\x0a\x01\x0b\x01\x0c\x01\x0d\x01\x0e\x01\x0f\x03\x35\x01"+
-            "\x13\x01\x25\x01\x14\x01\x27",
+            "\x13\x01\x25\x01\x14\x01\x27\x21\uffff\x01\x2d",
             "\x01\x37",
             "\x01\x39",
             "\x01\x3a\x0a\uffff\x01\x3b\x02\uffff\x01\x3c",
@@ -6560,6 +6580,17 @@ public class AS3_exLexer : Lexer {
             "",
             "",
             "\x0a\u0083\x01\uffff\x02\u0083\x01\uffff\ufff2\u0083",
+            "\x0a\u0083\x01\uffff\x02\u0083\x01\uffff\ufff2\u0083",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\x01\u00d6",
+            "",
+            "",
+            "\x01\u00d8",
             "",
             "",
             "",
@@ -6567,52 +6598,40 @@ public class AS3_exLexer : Lexer {
             "",
             "",
             "",
-            "\x01\u00d5",
-            "",
-            "",
-            "\x01\u00d7",
             "",
             "",
             "",
             "",
             "",
             "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "\x01\u00d9",
             "\x01\u00da",
             "\x01\u00db",
             "\x01\u00dc",
-            "\x01\u00dd\x01\u00de",
-            "\x01\u00df",
+            "\x01\u00dd",
+            "\x01\u00de\x01\u00df",
             "\x01\u00e0",
-            "",
             "\x01\u00e1",
+            "",
             "\x01\u00e2",
             "\x01\u00e3",
             "\x01\u00e4",
             "\x01\u00e5",
             "\x01\u00e6",
+            "\x01\u00e7",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u00e8",
+            "\x01\u00e9",
             "",
-            "\x01\u00e9\x02\uffff\x01\u00ea",
-            "\x01\u00eb",
+            "\x01\u00ea\x02\uffff\x01\u00eb",
             "\x01\u00ec",
             "\x01\u00ed",
-            "",
-            "",
             "\x01\u00ee",
+            "",
+            "",
             "\x01\u00ef",
+            "\x01\u00f0",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u00f1",
             "\x01\u00f2",
             "\x01\u00f3",
             "\x01\u00f4",
@@ -6620,62 +6639,63 @@ public class AS3_exLexer : Lexer {
             "\x01\u00f6",
             "\x01\u00f7",
             "\x01\u00f8",
+            "\x01\u00f9",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u00fa",
             "\x01\u00fb",
             "\x01\u00fc",
-            "",
             "\x01\u00fd",
+            "",
+            "\x01\u00fe",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u00ff",
+            "\x01\u0100",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0102",
             "\x01\u0103",
             "\x01\u0104",
+            "\x01\u0105",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0106",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "\x01\u0107",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\x01\u0108",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0109",
             "\x01\u010a",
             "\x01\u010b",
             "\x01\u010c",
             "\x01\u010d",
             "\x01\u010e",
             "\x01\u010f",
+            "\x01\u0110",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0111",
+            "\x01\u0112",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0113",
             "\x01\u0114",
-            "",
             "\x01\u0115",
+            "",
             "\x01\u0116",
             "\x01\u0117",
             "\x01\u0118",
@@ -6683,34 +6703,35 @@ public class AS3_exLexer : Lexer {
             "\x01\u011a",
             "\x01\u011b",
             "\x01\u011c",
+            "\x01\u011d",
             "",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u011e",
             "\x01\u011f",
             "\x01\u0120",
             "\x01\u0121",
             "\x01\u0122",
             "\x01\u0123",
             "\x01\u0124",
-            "",
             "\x01\u0125",
+            "",
+            "\x01\u0126",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0127",
+            "\x01\u0128",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
-            "\x01\u0129",
+            "\x01\u012a",
             "",
             "",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u012b",
+            "\x01\u012c",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
-            "\x01\u012d",
+            "\x01\u012e",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
@@ -6720,72 +6741,72 @@ public class AS3_exLexer : Lexer {
             "\x38\x01\uffff\x1a\x38",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0132",
             "\x01\u0133",
             "\x01\u0134",
             "\x01\u0135",
-            "",
             "\x01\u0136",
+            "",
+            "\x01\u0137",
             "",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
-            "\x38\x01\uffff\x0b\x38\x01\u0138\x0e\x38",
-            "\x01\u013a",
+            "\x38\x01\uffff\x0b\x38\x01\u0139\x0e\x38",
             "\x01\u013b",
             "\x01\u013c",
             "\x01\u013d",
-            "\x01\u013e\x07\uffff\x01\u013f",
-            "\x01\u0140",
+            "\x01\u013e",
+            "\x01\u013f\x07\uffff\x01\u0140",
             "\x01\u0141",
             "\x01\u0142",
-            "",
             "\x01\u0143",
+            "",
             "\x01\u0144",
             "\x01\u0145",
             "\x01\u0146",
             "\x01\u0147",
+            "\x01\u0148",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0149",
             "\x01\u014a",
+            "\x01\u014b",
             "",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
-            "\x01\u014c",
+            "\x01\u014d",
             "",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "",
-            "\x01\u014e",
-            "",
-            "",
-            "",
             "",
             "\x01\u014f",
+            "",
+            "",
+            "",
+            "",
             "\x01\u0150",
+            "\x01\u0151",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0152",
             "\x01\u0153",
-            "",
             "\x01\u0154",
             "",
             "\x01\u0155",
+            "",
             "\x01\u0156",
+            "\x01\u0157",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0158",
             "\x01\u0159",
             "\x01\u015a",
             "\x01\u015b",
+            "\x01\u015c",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u015d",
             "\x01\u015e",
             "\x01\u015f",
             "\x01\u0160",
+            "\x01\u0161",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
@@ -6799,8 +6820,8 @@ public class AS3_exLexer : Lexer {
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
-            "\x01\u0166",
             "\x01\u0167",
+            "\x01\u0168",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
@@ -6810,27 +6831,27 @@ public class AS3_exLexer : Lexer {
             "\x38\x01\uffff\x1a\x38",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u016c",
             "\x01\u016d",
-            "",
             "\x01\u016e",
+            "",
             "\x01\u016f",
             "\x01\u0170",
+            "\x01\u0171",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
-            "\x01\u0172",
+            "\x01\u0173",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0175",
-            "",
-            "",
-            "",
-            "",
-            "",
             "\x01\u0176",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\x01\u0177",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
@@ -6839,22 +6860,22 @@ public class AS3_exLexer : Lexer {
             "",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "\x01\u0179",
             "\x01\u017a",
             "\x01\u017b",
+            "\x01\u017c",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
-            "",
-            "\x01\u017d",
-            "",
             "",
             "\x01\u017e",
+            "",
+            "",
+            "\x01\u017f",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
             "",
-            "\x01\u0180",
             "\x01\u0181",
+            "\x01\u0182",
             "\x01\x38\x0b\uffff\x0a\x38\x07\uffff\x1a\x38\x04\uffff\x01"+
             "\x38\x01\uffff\x1a\x38",
             "",
@@ -6913,13 +6934,48 @@ public class AS3_exLexer : Lexer {
         switch ( s )
         {
                	case 0 : 
+                   	int LA30_46 = input.LA(1);
+
+                   	s = -1;
+                   	if ( ((LA30_46 >= '\u0000' && LA30_46 <= '\uFFFF')) ) { s = 147; }
+
+                   	else s = 54;
+
+                   	if ( s >= 0 ) return s;
+                   	break;
+               	case 1 : 
+                   	int LA30_47 = input.LA(1);
+
+                   	s = -1;
+                   	if ( ((LA30_47 >= '\u0000' && LA30_47 <= '\uFFFF')) ) { s = 148; }
+
+                   	else s = 54;
+
+                   	if ( s >= 0 ) return s;
+                   	break;
+               	case 2 : 
+                   	int LA30_52 = input.LA(1);
+
+                   	 
+                   	int index30_52 = input.Index();
+                   	input.Rewind();
+                   	s = -1;
+                   	if ( (!(((isXMLText(input.LA(1)))))) ) { s = 56; }
+
+                   	else if ( ((isXMLText(input.LA(1)))) ) { s = 54; }
+
+                   	 
+                   	input.Seek(index30_52);
+                   	if ( s >= 0 ) return s;
+                   	break;
+               	case 3 : 
                    	int LA30_126 = input.LA(1);
 
                    	 
                    	int index30_126 = input.Index();
                    	input.Rewind();
                    	s = -1;
-                   	if ( ((LA30_126 >= '\u0000' && LA30_126 <= '\t') || (LA30_126 >= '\u000B' && LA30_126 <= '\f') || (LA30_126 >= '\u000E' && LA30_126 <= '\uFFFF')) && ((IsRegularExpression())) ) { s = 131; }
+                   	if ( ((LA30_126 >= '\u0000' && LA30_126 <= '\t') || (LA30_126 >= '\u000B' && LA30_126 <= '\f') || (LA30_126 >= '\u000E' && LA30_126 <= '\uFFFF')) && ((isRegularExpression())) ) { s = 131; }
 
                    	else s = 212;
 
@@ -6927,7 +6983,22 @@ public class AS3_exLexer : Lexer {
                    	input.Seek(index30_126);
                    	if ( s >= 0 ) return s;
                    	break;
-               	case 1 : 
+               	case 4 : 
+                   	int LA30_127 = input.LA(1);
+
+                   	 
+                   	int index30_127 = input.Index();
+                   	input.Rewind();
+                   	s = -1;
+                   	if ( ((LA30_127 >= '\u0000' && LA30_127 <= '\t') || (LA30_127 >= '\u000B' && LA30_127 <= '\f') || (LA30_127 >= '\u000E' && LA30_127 <= '\uFFFF')) && ((isRegularExpression())) ) { s = 131; }
+
+                   	else s = 213;
+
+                   	 
+                   	input.Seek(index30_127);
+                   	if ( s >= 0 ) return s;
+                   	break;
+               	case 5 : 
                    	int LA30_34 = input.LA(1);
 
                    	 
@@ -6942,47 +7013,12 @@ public class AS3_exLexer : Lexer {
 
                    	else if ( (LA30_34 == '/') ) { s = 129; }
 
-                   	else if ( ((LA30_34 >= '\u0000' && LA30_34 <= '\t') || (LA30_34 >= '\u000B' && LA30_34 <= '\f') || (LA30_34 >= '\u000E' && LA30_34 <= ')') || (LA30_34 >= '+' && LA30_34 <= '.') || (LA30_34 >= '0' && LA30_34 <= '<') || (LA30_34 >= '?' && LA30_34 <= '\uFFFF')) && ((IsRegularExpression())) ) { s = 131; }
+                   	else if ( ((LA30_34 >= '\u0000' && LA30_34 <= '\t') || (LA30_34 >= '\u000B' && LA30_34 <= '\f') || (LA30_34 >= '\u000E' && LA30_34 <= ')') || (LA30_34 >= '+' && LA30_34 <= '.') || (LA30_34 >= '0' && LA30_34 <= '<') || (LA30_34 >= '?' && LA30_34 <= '\uFFFF')) && ((isRegularExpression())) ) { s = 131; }
 
                    	else s = 130;
 
                    	 
                    	input.Seek(index30_34);
-                   	if ( s >= 0 ) return s;
-                   	break;
-               	case 2 : 
-                   	int LA30_52 = input.LA(1);
-
-                   	 
-                   	int index30_52 = input.Index();
-                   	input.Rewind();
-                   	s = -1;
-                   	if ( (!(((IsXMLText(input.LA(1)))))) ) { s = 56; }
-
-                   	else if ( ((IsXMLText(input.LA(1)))) ) { s = 54; }
-
-                   	 
-                   	input.Seek(index30_52);
-                   	if ( s >= 0 ) return s;
-                   	break;
-               	case 3 : 
-                   	int LA30_47 = input.LA(1);
-
-                   	s = -1;
-                   	if ( ((LA30_47 >= '\u0000' && LA30_47 <= '\uFFFF')) ) { s = 148; }
-
-                   	else s = 54;
-
-                   	if ( s >= 0 ) return s;
-                   	break;
-               	case 4 : 
-                   	int LA30_46 = input.LA(1);
-
-                   	s = -1;
-                   	if ( ((LA30_46 >= '\u0000' && LA30_46 <= '\uFFFF')) ) { s = 147; }
-
-                   	else s = 54;
-
                    	if ( s >= 0 ) return s;
                    	break;
         }
