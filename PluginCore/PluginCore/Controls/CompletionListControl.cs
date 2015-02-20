@@ -15,7 +15,7 @@ namespace PluginCore.Controls
 {
     public delegate void CompletionListInsertedTextHandler(Control sender, int position, string text, char trigger, ICompletionListItem item);
 
-    public class CompletionListControl
+    public class CompletionListControl : IMessageFilter
     {
         public event CompletionListInsertedTextHandler OnInsert;
         public event CompletionListInsertedTextHandler OnCancel;
@@ -230,8 +230,6 @@ namespace PluginCore.Controls
             tempoTip.Enabled = false;
             showTime = DateTime.Now.Ticks;
             disableSmartMatch = noAutoInsert || PluginBase.MainForm.Settings.DisableSmartMatch;
-            //TODO: Check & Remove
-            //UITools.Manager.LockControl(((ScintillaControl)target.Owner));
             faded = false;
         }
 
@@ -308,6 +306,7 @@ namespace PluginCore.Controls
                 if (OnShowing != null) OnShowing(this, EventArgs.Empty);
                 host.Show(target.Owner);
                 if (UITools.CallTip.CallTipActive) UITools.CallTip.PositionControl(((ScintillaControl)target.Owner));
+                Application.AddMessageFilter(this);
             }
         }
 
@@ -324,6 +323,7 @@ namespace PluginCore.Controls
         {
             if (completionList != null && isActive)
             {
+                Application.RemoveMessageFilter(this);
                 tempo.Enabled = false;
                 isActive = false;
                 fullList = false;
@@ -333,8 +333,6 @@ namespace PluginCore.Controls
                 currentItem = null;
                 allItems = null;
                 UITools.Tip.Hide();
-                //TODO: Check & Remove
-                //if (!UITools.CallTip.CallTipActive) UITools.Manager.UnlockControl();
                 if (OnHidden != null) OnHidden(this, EventArgs.Empty);
             }
         }
@@ -915,8 +913,6 @@ namespace PluginCore.Controls
             switch (key)
             {
                 case Keys.Back:
-                    //TODO: Check & Remove
-                    //if (!UITools.CallTip.CallTipActive) ((ScintillaControl)target.Owner).DeleteBack();
                     if (word.Length > MinWordLength)
                     {
                         word = word.Substring(0, word.Length - 1);
@@ -1080,6 +1076,42 @@ namespace PluginCore.Controls
             listHost.Visible = true;
         }
 
+        #endregion
+
+        #region Global Hook
+
+        public bool PreFilterMessage(ref Message m)
+        {
+            if (m.Msg == Win32.WM_MOUSEWHEEL) // capture all MouseWheel events 
+            {
+                if (!UITools.CallTip.CallTipActive || !UITools.CallTip.Focused)
+                {
+                    if (Win32.ShouldUseWin32())
+                    {
+                        Win32.SendMessage(completionList.Handle, m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        return true;
+                    }
+                    else return false;
+                }
+                else return false;
+            }
+            else if (m.Msg == Win32.WM_KEYDOWN)
+            {
+                if ((int)m.WParam == 17) // Ctrl
+                {
+                    if (CompletionList.Active) CompletionList.FadeOut();
+                }
+            }
+            else if (m.Msg == Win32.WM_KEYUP)
+            {
+                if ((int)m.WParam == 17 || (int)m.WParam == 18) // Ctrl / AltGr
+                {
+                    if (CompletionList.Active) CompletionList.FadeIn();
+                }
+            }
+            return false;
+        }
+        
         #endregion
 
     }

@@ -5100,15 +5100,7 @@ namespace ScintillaNet
 
 		protected override void WndProc(ref System.Windows.Forms.Message m)
 		{
-            /*if (m.Msg == WM_COMMAND)
-            {
-                Int32 message = (m.WParam.ToInt32() >> 16) & 0xffff;
-                if (message == (int)Enums.Command.SetFocus || message == (int)Enums.Command.KillFocus)
-                {
-                    if (FocusChanged != null) FocusChanged(this);
-                }
-            }
-            else */if (m.Msg == WM_NOTIFY + WM_REFLECT)
+            if (m.Msg == WM_NOTIFY + WM_REFLECT)
 			{
 				SCNotification scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
                 if (!this.DisableAllSciEvents) 
