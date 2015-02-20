@@ -165,6 +165,7 @@ namespace PluginCore.Controls
 			sci.UpdateUI += new UpdateUIHandler(OnUIRefresh);
 			sci.TextInserted += new TextInsertedHandler(OnTextInserted);
 			sci.TextDeleted += new TextDeletedHandler(OnTextDeleted);
+            sci.KeyDown += OnKeyDown;
 		}
 
         /// <summary>
@@ -326,20 +327,43 @@ namespace PluginCore.Controls
                 SendChar(sci, value);
 				return;
 			}
-            if (lockedSciControl != null && lockedSciControl.IsAlive) sci = (ScintillaControl)lockedSciControl.Target;
-			else
-			{
-                callTip.Hide();
-                CompletionList.Hide();
-                SendChar(sci, value);
-				return;
-			}
+            //if (lockedSciControl != null && lockedSciControl.IsAlive) sci = (ScintillaControl)lockedSciControl.Target;
+            //else
+            //{
+            //    callTip.Hide();
+            //    CompletionList.Hide();
+            //    SendChar(sci, value);
+            //    return;
+            //}
             
             if (callTip.CallTipActive) callTip.OnChar(sci, value);
 			if (CompletionList.Active) CompletionList.OnChar(sci, value);
             else SendChar(sci, value);
 			return;
 		}
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == (Keys.Control | Keys.Space) || e.KeyData == (Keys.Shift | Keys.Control | Keys.Space))
+            {
+                ignoreKeys = true;
+                KeyEvent ke = new KeyEvent(EventType.Keys, e.KeyData);
+                EventManager.DispatchEvent(this, ke);
+                ignoreKeys = false;
+                // if not handled - show snippets
+                if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable
+                    && !PluginBase.MainForm.CurrentDocument.SciControl.IsSelectionRectangle)
+                {
+                    PluginBase.MainForm.CallCommand("InsertSnippet", "null");
+                }
+
+                e.SuppressKeyPress = true;
+            }
+            else if (CompletionList.Active)
+            {
+                e.SuppressKeyPress = CompletionList.HandleKeys((ScintillaControl) sender, e.KeyData);
+            }
+        }
 
         public void SendChar(ScintillaControl sci, int value)
 		{
@@ -354,24 +378,7 @@ namespace PluginCore.Controls
 			// list/tip shortcut dispatching
 			if ((key == (Keys.Control | Keys.Space)) || (key == (Keys.Shift | Keys.Control | Keys.Space)))
 			{
-                /*if (CompletionList.Active || callTip.CallTipActive)
-				{
-					UnlockControl();
-					CompletionList.Hide();
-                    callTip.Hide();
-				}*/
-				// offer to handle the shortcut
-				ignoreKeys = true;
-				KeyEvent ke = new KeyEvent(EventType.Keys, key);
-				EventManager.DispatchEvent(this, ke);
-				ignoreKeys = false;
-				// if not handled - show snippets
-                if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable
-                    && !PluginBase.MainForm.CurrentDocument.SciControl.IsSelectionRectangle)
-                {
-                    PluginBase.MainForm.CallCommand("InsertSnippet", "null");
-                }
-				return true;
+				return false;
 			}
 
             // toggle "long-description" for the hover tooltip

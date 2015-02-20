@@ -1,3 +1,5 @@
+// NOTE: We may well dump this static class, or mark it as deprecated, and create UITools.CompletionList, it would make the code look bit more organized and in line with some other controls
+
 using System;
 using System.Drawing;
 using System.Collections.Generic;

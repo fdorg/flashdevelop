@@ -19,6 +19,8 @@ namespace PluginCore.Controls
     {
         public event CompletionListInsertedTextHandler OnInsert;
         public event CompletionListInsertedTextHandler OnCancel;
+        public event EventHandler OnShowing;
+        public event EventHandler OnHidden;
 
         /// <summary>
         /// Properties of the class 
@@ -67,6 +69,9 @@ namespace PluginCore.Controls
         /// </summary> 
         public CompletionListControl(ICompletionListTarget target)
         {
+            if (target == null)
+                throw new ArgumentNullException("target");
+
             this.target = target;
 
             listHost = new InactiveForm();
@@ -111,7 +116,7 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// 
+        /// Gets if the mouse is currently inside the completion list control
         /// </summary>
         public bool HasMouseIn
         {
@@ -133,6 +138,14 @@ namespace PluginCore.Controls
                 ICompletionListItem selected = completionList.SelectedItem as ICompletionListItem;
                 return (selected == null) ? null : selected.Label;
             }
+        }
+
+        /// <summary>
+        /// Gets the target of the current completion list control
+        /// </summary>
+        public ICompletionListTarget Target
+        {
+            get { return target; }
         }
 
         #endregion
@@ -217,7 +230,8 @@ namespace PluginCore.Controls
             tempoTip.Enabled = false;
             showTime = DateTime.Now.Ticks;
             disableSmartMatch = noAutoInsert || PluginBase.MainForm.Settings.DisableSmartMatch;
-            UITools.Manager.LockControl(((ScintillaControl)target.Owner));
+            //TODO: Check & Remove
+            //UITools.Manager.LockControl(((ScintillaControl)target.Owner));
             faded = false;
         }
 
@@ -291,6 +305,7 @@ namespace PluginCore.Controls
             if (!host.Visible)
             {
                 Redraw();
+                if (OnShowing != null) OnShowing(this, EventArgs.Empty);
                 host.Show(target.Owner);
                 if (UITools.CallTip.CallTipActive) UITools.CallTip.PositionControl(((ScintillaControl)target.Owner));
             }
@@ -318,7 +333,9 @@ namespace PluginCore.Controls
                 currentItem = null;
                 allItems = null;
                 UITools.Tip.Hide();
-                if (!UITools.CallTip.CallTipActive) UITools.Manager.UnlockControl();
+                //TODO: Check & Remove
+                //if (!UITools.CallTip.CallTipActive) UITools.Manager.UnlockControl();
+                if (OnHidden != null) OnHidden(this, EventArgs.Empty);
             }
         }
 
@@ -898,16 +915,17 @@ namespace PluginCore.Controls
             switch (key)
             {
                 case Keys.Back:
-                    if (!UITools.CallTip.CallTipActive) ((ScintillaControl)target.Owner).DeleteBack();
+                    //TODO: Check & Remove
+                    //if (!UITools.CallTip.CallTipActive) ((ScintillaControl)target.Owner).DeleteBack();
                     if (word.Length > MinWordLength)
                     {
                         word = word.Substring(0, word.Length - 1);
-                        currentPos = target.CurrentPos;
+                        currentPos = target.CurrentPos - 1;
                         lastIndex = 0;
                         FindWordStartingWith(word);
                     }
                     else Hide((char)8);
-                    return true;
+                    return false;
 
                 case Keys.Enter:
                     if (noAutoInsert || !ReplaceText('\n'))
@@ -935,7 +953,6 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        ((ScintillaControl)target.Owner).LineUp();
                         return false;
                     }
                     // go up the list
@@ -960,7 +977,6 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        ((ScintillaControl)target.Owner).LineDown();
                         return false;
                     }
                     // go down the list
@@ -985,7 +1001,6 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        ((ScintillaControl)target.Owner).PageUp();
                         return false;
                     }
                     // go up the list
@@ -1004,7 +1019,6 @@ namespace PluginCore.Controls
                     if (!listHost.Visible)
                     {
                         Hide();
-                        ((ScintillaControl)target.Owner).PageDown();
                         return false;
                     }
                     // go down the list
@@ -1021,17 +1035,19 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.Left:
-                    ((ScintillaControl)target.Owner).CharLeft();
                     Hide();
-                    break;
+                    return false;
 
                 case Keys.Right:
-                    ((ScintillaControl)target.Owner).CharRight();
                     Hide();
+                    return false;
+
+                case Keys.Escape:
+                    Hide((char) 27);
                     break;
 
                 default:
-                    Hide();
+                    //Hide();
                     return false;
             }
             return true;
