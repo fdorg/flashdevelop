@@ -1515,7 +1515,7 @@ namespace FlashDevelop
                         Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
                         return true;
                     }
-                    else if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.HandleSci || hWnd == doc.SplitSci2.HandleSci))
+                    else if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.Handle || hWnd == doc.SplitSci2.Handle))
                     {
                         Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
                         return true;

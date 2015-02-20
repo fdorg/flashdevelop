@@ -21,8 +21,7 @@ namespace ScintillaNet
 	{
         private bool saveBOM;
         private Encoding encoding;
-		private int directPointer;
-		private IntPtr hwndScintilla;
+		private IntPtr directPointer;
         private bool hasHighlights = false;
 		private bool ignoreAllKeys = false;
 		private bool isBraceMatching = true;
@@ -33,7 +32,7 @@ namespace ScintillaNet
         private static Dictionary<String, ShortcutOverride> shortcutOverrides = new Dictionary<String, ShortcutOverride>();
         private Enums.IndentView indentView = Enums.IndentView.Real;
 		private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
-		private Hashtable ignoredKeys = new Hashtable();
+		private HashSet<int> ignoredKeys = new HashSet<int>();
         private string configLanguage = String.Empty;
         private string fileName = String.Empty;
         private int lastSelectionLength = 0;
@@ -51,19 +50,25 @@ namespace ScintillaNet
         {
             try
             {
+                // We don't want .NET to use GetWindowText because we manage ('cache') our own text
+                SetStyle(ControlStyles.CacheText, true);
+
+                // Necessary control styles (see TextBoxBase)
+                SetStyle(ControlStyles.StandardClick
+                       | ControlStyles.StandardDoubleClick
+                       | ControlStyles.UseTextForAccessibility
+                       | ControlStyles.UserPaint,
+                       false);
+
                 if (Win32.ShouldUseWin32())
                 {
                     IntPtr lib = LoadLibrary(fullpath);
-                    hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
-                    directPointer = (int)SlowPerform(2185, 0, 0);
-                    directPointer = DirectPointer;
                 }
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
-                Resize += new EventHandler(OnResize);
             }
             catch (Exception ex)
             {
@@ -77,9 +82,16 @@ namespace ScintillaNet
             base.Dispose(disposing);
         }
 
-        public void OnResize(object sender, EventArgs e)
+        protected override CreateParams CreateParams
         {
-            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
+            get
+            {
+                // Per Scintilla documentation, the Window Class name...
+                CreateParams cp = base.CreateParams;
+                cp.ClassName = "Scintilla";
+
+                return cp;
+            }
         }
 
 		#endregion
@@ -131,14 +143,6 @@ namespace ScintillaNet
 		#endregion
 
 		#region Scintilla Properties
-
-        /// <summary>
-        /// Gets the sci handle
-        /// </summary>
-        public IntPtr HandleSci
-        {
-            get { return hwndScintilla; }
-        }
 
         /// <summary>
         /// Current used configuration
@@ -1549,11 +1553,13 @@ namespace ScintillaNet
 		/// Retrieve a pointer value to use as the first argument when calling
 		/// the function returned by GetDirectFunction.
 		/// </summary>
-		public int DirectPointer
+		public IntPtr DirectPointer
 		{
-			get 
+			get
 			{
-				return (int)SPerform(2185, 0, 0);
+			    if (directPointer == IntPtr.Zero)
+			        directPointer = SendMessage(Handle, 2185, 0, 0);
+				return directPointer;
 			}
 		}	
 
@@ -2227,7 +2233,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual void AddIgnoredKeys(Keys keys)
         {
-            ignoredKeys.Add((int)keys, (int)keys);
+            ignoredKeys.Add((int)keys);
         }
 
         /// <summary>
@@ -2251,15 +2257,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual bool ContainsIgnoredKeys(Keys keys)
         {
-            return ignoredKeys.ContainsKey((int)keys);
-        }
-
-        /// <summary>
-		/// Sets the focud to the control
-		/// </summary>
-        public new bool Focus()
-        {
-            return SetFocus(hwndScintilla) != IntPtr.Zero;
+            return ignoredKeys.Contains((int)keys);
         }
 
 		/// <summary>
@@ -4942,6 +4940,8 @@ namespace ScintillaNet
 		#region Scintilla Constants
 
         private const int WM_NOTIFY = 0x004e;
+	    private const int WM_USER = 0x0400;
+        private const int WM_REFLECT = WM_USER + 0x1C00;
         private const int WM_SYSCHAR = 0x106;
         private const int WM_COMMAND = 0x0111;
         private const int WM_KEYDOWN = 0x0100;
@@ -5041,7 +5041,7 @@ namespace ScintillaNet
 		public static extern int GetDeviceCaps(IntPtr hdc, Int32 capindex);
 		
 		[DllImport("user32.dll")]
-		public static extern int SendMessage(int hWnd, uint Msg, int wParam, int lParam);
+		public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
 
 		[DllImport("user32.dll")]
 		public static extern int SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
@@ -5056,15 +5056,11 @@ namespace ScintillaNet
         public static extern void DragAcceptFiles(IntPtr hwnd, int accept);
         
 		[DllImport("scilexer.dll", EntryPoint = "Scintilla_DirectFunction")]
-		public static extern int Perform(int directPointer, UInt32 message, UInt32 wParam, UInt32 lParam);
+		public static extern int Perform(IntPtr directPointer, UInt32 message, UInt32 wParam, UInt32 lParam);
 
-		public UInt32 SlowPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
-		{
-			return (UInt32)SendMessage((int)hwndScintilla, message, (int)wParam, (int)lParam);
-		}
 		public UInt32 SPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
 		{
-            if (Win32.ShouldUseWin32()) return (UInt32)Perform(directPointer, message, wParam, lParam);
+            if (Win32.ShouldUseWin32()) return (UInt32)Perform(DirectPointer, message, wParam, lParam);
             else return (UInt32)Encoding.ASCII.CodePage;
 		}
 
@@ -5075,7 +5071,7 @@ namespace ScintillaNet
                 case WM_KEYDOWN:
                 {
                     Int32 keys = (Int32)Control.ModifierKeys + (Int32)m.WParam;
-                    if (!IsFocus || ignoreAllKeys || ignoredKeys.ContainsKey(keys))
+                    if (!IsFocus || ignoreAllKeys || ignoredKeys.Contains(keys))
                     {
                         if (this.ExecuteShortcut(keys) || base.PreProcessMessage(ref m)) return true;
                     }
@@ -5104,7 +5100,7 @@ namespace ScintillaNet
 
 		protected override void WndProc(ref System.Windows.Forms.Message m)
 		{
-            if (m.Msg == WM_COMMAND)
+            /*if (m.Msg == WM_COMMAND)
             {
                 Int32 message = (m.WParam.ToInt32() >> 16) & 0xffff;
                 if (message == (int)Enums.Command.SetFocus || message == (int)Enums.Command.KillFocus)
@@ -5112,10 +5108,10 @@ namespace ScintillaNet
                     if (FocusChanged != null) FocusChanged(this);
                 }
             }
-            else if (m.Msg == WM_NOTIFY)
+            else */if (m.Msg == WM_NOTIFY + WM_REFLECT)
 			{
 				SCNotification scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
-                if (scn.nmhdr.hwndFrom == hwndScintilla && !this.DisableAllSciEvents) 
+                if (!this.DisableAllSciEvents) 
 				{
 					switch (scn.nmhdr.code)
 					{
