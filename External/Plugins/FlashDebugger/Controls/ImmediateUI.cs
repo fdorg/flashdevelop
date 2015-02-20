@@ -297,7 +297,7 @@ namespace FlashDebugger.Controls
 
             public Point GetPositionFromCharIndex(int pos)
             {
-                return _owner.GetPositionFromCharIndex(pos);
+                return _owner.GetPositionFromCharIndex(pos == _owner.TextLength ? pos - 1 : pos);
             }
 
             public int GetLineHeight()
