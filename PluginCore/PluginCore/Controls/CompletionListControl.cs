@@ -1099,14 +1099,14 @@ namespace PluginCore.Controls
             {
                 if ((int)m.WParam == 17) // Ctrl
                 {
-                    if (CompletionList.Active) CompletionList.FadeOut();
+                    if (Active) FadeOut();
                 }
             }
             else if (m.Msg == Win32.WM_KEYUP)
             {
                 if ((int)m.WParam == 17 || (int)m.WParam == 18) // Ctrl / AltGr
                 {
-                    if (CompletionList.Active) CompletionList.FadeIn();
+                    if (Active) FadeIn();
                 }
             }
             return false;
