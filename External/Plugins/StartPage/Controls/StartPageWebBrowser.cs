@@ -207,6 +207,14 @@ namespace StartPage.Controls
             }
 
             /// <summary>
+            /// Opens appman to install new software
+            /// </summary>
+            public void InstallSoftware()
+            {
+                PluginBase.MainForm.CallCommand("RunProcess", "$(Quote)$(AppDir)\\Tools\\appman\\AppMan.exe$(Quote);-locale=$(Locale)");
+            }
+
+            /// <summary>
             /// Called from webpage to show New Project Dialog
             /// </summary>
             public void NewProject()
