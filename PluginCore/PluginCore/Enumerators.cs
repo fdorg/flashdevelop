@@ -45,6 +45,13 @@ namespace PluginCore
         AppChanges = 34359738368 // NotifyEvent
     }
 
+    public enum UpdateInterval
+    {
+        Never = -1,
+        Monthly = 0,
+        Weekly = 1
+    }
+
     public enum SessionType
     {
         Startup = 0,

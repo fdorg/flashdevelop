@@ -5906,4 +5906,8 @@ UseData:"</value>
     <value>Use tags which do not format inside setting.</value>
     <comment>Added after 4.7.1</comment>
   </data>
+  <data name="FlashDevelop.Description.CheckForUpdates" xml:space="preserve">
+    <value>Sets how often FlashDevelop checks for updates.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
 </root>

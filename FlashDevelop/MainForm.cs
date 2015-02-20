@@ -863,6 +863,41 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Checks for updates in specified schedule
+        /// </summary>
+        public void CheckForUpdates()
+        {
+            try
+            {
+                DateTime last = new DateTime(this.appSettings.LastUpdateCheck);
+                TimeSpan elapsed = DateTime.UtcNow.Subtract(last);
+                switch (this.appSettings.CheckForUpdates)
+                {
+                    case UpdateInterval.Weekly:
+                    {
+                        if (elapsed.TotalDays >= 7)
+                        {
+                            this.appSettings.LastUpdateCheck = DateTime.UtcNow.Ticks;
+                            UpdateDialog.Show(true);
+                        }
+                        break;
+                    }
+                    case UpdateInterval.Monthly:
+                    {
+                        if (elapsed.TotalDays >= 30)
+                        {
+                            this.appSettings.LastUpdateCheck = DateTime.UtcNow.Ticks;
+                            UpdateDialog.Show(true);
+                        }
+                        break;
+                    }
+                    default: break;
+                }
+            }
+            catch { /* NO ERRORS PLEASE */ }
+        }
+
+        /// <summary>
         /// Initializes the window position and size
         /// </summary>
         public void InitializeWindow()
@@ -1157,6 +1192,10 @@ namespace FlashDevelop
             * Initialize window and continue layout
             */
             this.InitializeWindow();
+            /**
+            * Check for updates when needed
+            */
+            this.CheckForUpdates();
         }
 
         /// <summary>
@@ -2987,7 +3026,7 @@ namespace FlashDevelop
         /// </summary>
         public void CheckUpdates(Object sender, System.EventArgs e)
         {
-            UpdateDialog.Show();
+            UpdateDialog.Show(false);
         }
 
         /// <summary>

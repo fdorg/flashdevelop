@@ -717,6 +717,15 @@ namespace FlashDevelop.Settings
 
         #region State
 
+        [DisplayName("Check For Updates")]
+        [LocalizedCategory("FlashDevelop.Category.State")]
+        [LocalizedDescription("FlashDevelop.Description.CheckForUpdates")]
+        public UpdateInterval CheckForUpdates
+        {
+            get { return this.checkForUpdates; }
+            set { this.checkForUpdates = value; }
+        }
+
         [DisplayName("Latest Startup Command")]
         [LocalizedCategory("FlashDevelop.Category.State")]
         [LocalizedDescription("FlashDevelop.Description.LatestCommand")]
@@ -912,6 +921,16 @@ namespace FlashDevelop.Settings
 
         #endregion
 
+        #region Hidden
+
+        [Browsable(false)]
+        public Int64 LastUpdateCheck
+        {
+            get { return this.lastUpdateCheck; }
+            set { this.lastUpdateCheck = value; }
+        }
+
+        #endregion
     }
 
 }
