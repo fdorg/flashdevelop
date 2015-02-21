@@ -364,6 +364,8 @@ namespace ProjectManager
 
         public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
+            if (PluginBase.MainForm.ClosingEntirely) return;
+
             TextEvent te = e as TextEvent;
             DataEvent de = e as DataEvent;
             Project project;
@@ -645,7 +647,7 @@ namespace ProjectManager
             pluginUI.SetSolution(solution);
             menus.SetSolution(solution);
 
-            SetActiveProject(solution.RunProject as Project);
+            SetActiveProject(solution.RunProject as Project, true);
 
             // events
             foreach (Project project in solution.Projects)
@@ -667,14 +669,29 @@ namespace ProjectManager
             UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
         }
 
-        private void ReloadSolution()
+        private void AddProjectToSolution(Project project)
         {
+            if (project == null) return;
+
+            solution.Add(project);
+            // initialize project classpath and references
+            SetActiveProject(project, false);
+            // reselect main project
+            SetActiveProject(solution.MainProject as Project, false);
+
             pluginUI.SetSolution(null);
             pluginUI.SetSolution(solution);
         }
 
-        private void SetActiveProject(Project project)
+        private void SetActiveProject(Project project, bool updateUI)
         {
+            if (project == null)
+            {
+                PluginBase.CurrentProject = null;
+                return;
+            }
+
+            TraceManager.Add("Active project: " + project.Name);
             activeProject = project;
 
             // init
@@ -691,8 +708,11 @@ namespace ProjectManager
             projectActions.UpdateASCompletion(MainForm, project);
 
             // ui
-            pluginUI.SetProject(project);
-            pluginUI.NotifyIssues();
+            if (updateUI)
+            {
+                pluginUI.SetProject(project);
+                pluginUI.NotifyIssues();
+            }
         }
 
         void SetSolution(Solution solution, Boolean stealFocus)
@@ -749,9 +769,7 @@ namespace ProjectManager
             if (solution == null) return;
             var temp = projectActions.OpenProject();
             if (temp == null) return;
-            Project project = temp.MainProject as Project;
-            solution.Add(project);
-            ReloadSolution();
+            AddProjectToSolution(temp.MainProject as Project);
         }
 
         private void AddNewProject()
@@ -990,7 +1008,7 @@ namespace ProjectManager
         {
             if (project == null) return;
             if (project == activeProject) return;
-            SetActiveProject(project);
+            SetActiveProject(project, true);
             TabColors.UpdateTabs(Settings);
         }
 

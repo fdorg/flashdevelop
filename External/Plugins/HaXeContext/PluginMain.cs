@@ -279,13 +279,13 @@ namespace HaXeContext
             {
                 if (path == null || !Directory.Exists(path))
                 {
-                    //ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
+                    //ErrorManager.ShowInfo(String.Format("Path not found in SDK '{0}': {1}", sdk.Name, sdk.Path));
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                ErrorManager.ShowInfo("Invalid path (" + ex.Message + "):\n" + sdk.Path);
+                ErrorManager.ShowInfo(String.Format("Invalid path ({0}) in SDK '{1}': {1}", ex.Message, sdk.Name, sdk.Path));
                 return false;
             }
 

@@ -162,7 +162,7 @@ namespace HaXeContext
                 string hxPath = currentSDK;
                 if (hxPath != null && Path.IsPathRooted(hxPath))
                 {
-                    SetHaxeEnvironment(hxPath);
+                    if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
                     haxelib = Path.Combine(hxPath, haxelib);
                 }
                 
