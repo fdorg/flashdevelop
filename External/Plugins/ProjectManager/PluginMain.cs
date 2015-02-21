@@ -674,6 +674,8 @@ namespace ProjectManager
             if (project == null) return;
 
             solution.Add(project);
+            solution.Save();
+
             // initialize project classpath and references
             SetActiveProject(project, false);
             // reselect main project

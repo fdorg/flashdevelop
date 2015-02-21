@@ -96,5 +96,23 @@ namespace ProjectManager.Projects
             temp.Add(project);
             Projects = temp.ToArray();
         }
+
+        public void Save()
+        {
+            if (MainProject == null) return;
+
+            Project main = MainProject as Project;
+
+            var paths = new List<String>();
+            foreach (Project project in Projects)
+            {
+                var path = main.GetRelativePath(project.ProjectPath);
+                paths.Add(path);
+            }
+            var data = String.Join("|", paths.ToArray());
+
+            main.Storage.Add("Solution", data);
+            main.Save();
+        }
     }
 }
