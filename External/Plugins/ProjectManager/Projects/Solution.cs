@@ -88,6 +88,10 @@ namespace ProjectManager.Projects
 
         internal void Add(Project project)
         {
+            project.TraceEnabled = TraceEnabled;
+            project.TargetBuild = TargetBuild;
+            project.UpdateVars(true);
+
             List<IProject> temp = new List<IProject>(Projects);
             temp.Add(project);
             Projects = temp.ToArray();
