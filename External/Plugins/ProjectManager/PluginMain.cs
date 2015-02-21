@@ -774,7 +774,10 @@ namespace ProjectManager
 
         private void AddNewProject()
         {
-            
+            if (solution == null) return;
+            var temp = projectActions.NewProject();
+            if (temp == null) return;
+            AddProjectToSolution(temp.MainProject as Project);
         }
         
         public void OpenPanel()
