@@ -7,13 +7,13 @@ using PluginCore;
 
 namespace FlashDebugger
 {
-    class PluginUI : DockPanelControl
+    class LocalsUI : DockPanelControl
     {
         private PluginMain pluginMain;
         private DataTreeControl treeControl;
         private static Char[] chTrims = { '.' };
 
-        public PluginUI(PluginMain pluginMain)
+        public LocalsUI(PluginMain pluginMain)
         {
             this.pluginMain = pluginMain;
             this.treeControl = new DataTreeControl();
@@ -40,7 +40,7 @@ namespace FlashDebugger
 
 		public void Clear()
 		{
-			treeControl.Clear();
+			treeControl.Nodes.Clear();
 		}
 
         public void SetData(Variable[] variables)

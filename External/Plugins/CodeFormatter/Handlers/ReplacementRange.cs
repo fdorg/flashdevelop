@@ -1,29 +1,45 @@
-﻿using System;
+using System;
 using System.Drawing;
 
 namespace CodeFormatter.Handlers
 {
-	public class ReplacementRange
-	{
-		Point mRangeInFormattedDoc;
-		Point mRangeInOriginalDoc;
+    public class ReplacementRange
+    {
+        public Point mRangeInFormattedDoc;
+        private Point mRangeInOriginalDoc;
+        private String mAddedText;
+        private String mDeletedText;
 
-		public ReplacementRange(Point rangeInFormattedDoc, Point rangeInOrigDoc)
-		{
-			mRangeInOriginalDoc = rangeInOrigDoc;
-			mRangeInFormattedDoc = rangeInFormattedDoc;
-		}
-
-		public Point GetRangeInFormattedDoc() 
+        public ReplacementRange(Point rangeInFormattedDoc, Point rangeInOrigDoc)
         {
-			return mRangeInFormattedDoc;
-		}
+            mRangeInOriginalDoc = rangeInOrigDoc;
+            mRangeInFormattedDoc = rangeInFormattedDoc;
+            mAddedText = "";
+            mDeletedText = "";
+        }
 
-		public Point GetRangeInOriginalDoc() 
+        public void setChangedText(String added, String removed)
         {
-			return mRangeInOriginalDoc;
-		}
+            if (added != null) mAddedText = added;
+            if (removed != null) mDeletedText = removed;
+        }
+        public Point getRangeInFormattedDoc()
+        {
+            return mRangeInFormattedDoc;
+        }
+        public Point getRangeInOriginalDoc()
+        {
+            return mRangeInOriginalDoc;
+        }
+        public String getAddedText()
+        {
+            return mAddedText;
+        }
+        public String getDeletedText()
+        {
+            return mDeletedText;
+        }
 
-	}
+    }
 
 }

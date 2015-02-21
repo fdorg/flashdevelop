@@ -99,9 +99,13 @@
   <ItemGroup>
     <Compile Include="Controls\DataTree\ContinuedDataNode.cs" />
     <Compile Include="Controls\DataTree\DataNode.cs" />
+    <Compile Include="Controls\DataTree\ErrorNode.cs" />
     <Compile Include="Controls\DataTree\ScalarNode.cs" />
     <Compile Include="Controls\DataTree\ValueNode.cs" />
     <Compile Include="Controls\DataTree\VariableNode.cs" />
+    <Compile Include="Controls\LocalsUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\ThreadsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -147,9 +151,6 @@
     <Compile Include="Helpers\MenusHelper.cs" />
     <Compile Include="Helpers\PanelsHelper.cs" />
     <Compile Include="Helpers\ScintillaHelper.cs" />
-    <Compile Include="PluginUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\Resource.Designer.cs">
@@ -164,9 +165,6 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\BreakPointUI.resx">
-      <DependentUpon>BreakPointUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>

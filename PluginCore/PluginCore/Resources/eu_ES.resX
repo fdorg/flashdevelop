@@ -3535,6 +3535,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Variable could not be reevaluated</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDebugger.Error.NoSuchVariable" xml:space="preserve">
+    <value>{0} could not be resolved</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
   <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
     <value>Only scalar variables can be modified</value>
     <comment>Added after 4.7.0</comment>
@@ -5447,6 +5451,398 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   </data>
   <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
     <value>Add new expression</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchCase" xml:space="preserve">
+    <value>Match Case</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.MatchOpposite" xml:space="preserve">
+    <value>Match Opposite</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.Options" xml:space="preserve">
+    <value>Options</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
+    <value>Regular Expression</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AddBracesToCases" xml:space="preserve">
+    <value>Add missing braces to cases.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AddBracesToConditionals" xml:space="preserve">
+    <value>Add missing braces to conditionals.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AddBracesToLoops" xml:space="preserve">
+    <value>Add missing braces to loops.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingAlignArrayItems" xml:space="preserve">
+    <value>Align array items with advanced wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingAlignObjectItems" xml:space="preserve">
+    <value>Align object items with advanced wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingAllArgs" xml:space="preserve">
+    <value>Use advanced all argument wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingAllArrayItems" xml:space="preserve">
+    <value>Use advanced all array items wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingAllObjectItems" xml:space="preserve">
+    <value>Use advanced all object items wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingAllParms" xml:space="preserve">
+    <value>Use advanced all parameter wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingEnforceMax" xml:space="preserve">
+    <value>Enforce advanced maximum wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstArg" xml:space="preserve">
+    <value>Use advanced first argument wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstArrayItem" xml:space="preserve">
+    <value>Use advanced first array item wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstObjectItem" xml:space="preserve">
+    <value>Use advanced first object item wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstParm" xml:space="preserve">
+    <value>Use advanced first parameter wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingGraceColumns" xml:space="preserve">
+    <value>Amount of grace columns with advanced wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AdvancedWrappingPreservePhrases" xml:space="preserve">
+    <value>Preserve phrases with advanced wrapping.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AlignDeclEquals" xml:space="preserve">
+    <value>Align declaration equal symbols.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AlignDeclMode" xml:space="preserve">
+    <value>Mode of declaration alignment.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.AlignLineCommentsAtColumn" xml:space="preserve">
+    <value>Align line comments at column.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.BlankLinesAtFunctionEnd" xml:space="preserve">
+    <value>Amount of blank lines at function end.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.BlankLinesAtFunctionStart" xml:space="preserve">
+    <value>Amount of blank lines at function start.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.BlankLinesBeforeImportBlock" xml:space="preserve">
+    <value>Amount of blank lines before import block.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.BreakLinesBeforeArithmetic" xml:space="preserve">
+    <value>Break lines before arithmetic operations.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.BreakLinesBeforeAssignment" xml:space="preserve">
+    <value>Break lines before assignment operation.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.BreakLinesBeforeLogical" xml:space="preserve">
+    <value>Break lines before logical operations.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.CRBeforeBraceSettings" xml:space="preserve">
+    <value>Add newline before brace settings.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.DocCommentHangingIndentTabs" xml:space="preserve">
+    <value>Amount of doc comment hanging indent tabs.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.DocCommentKeepBlankLines" xml:space="preserve">
+    <value>Keep the doc comment blank lines.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.DocCommentReflow" xml:space="preserve">
+    <value>Use doc comment reflow.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.DontIndentSwitchCases" xml:space="preserve">
+    <value>Do not indent switch cases.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.EnsureConditionalsHaveBraces" xml:space="preserve">
+    <value>Ensure that conditionals have braces.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.EnsureLoopsHaveBraces" xml:space="preserve">
+    <value>Ensure that loops have braces.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.EnsureSwitchCasesHaveBraces" xml:space="preserve">
+    <value>Ensure that switch cases have braces.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.KeepRelativeIndentInDocComments" xml:space="preserve">
+    <value>Keep relative indent in doc comments.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.KeepSpacesBeforeLineComments" xml:space="preserve">
+    <value>Keep spaces before line comments.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.LeaveSingleLineFunctions" xml:space="preserve">
+    <value>Keep the single line functions intact.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.MetaTagsOnSameLineAsTargetFunction" xml:space="preserve">
+    <value>Metatags to keep on same line as target function.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.MetaTagsOnSameLineAsTargetProperty" xml:space="preserve">
+    <value>Metatags to keep on same line as target property.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.MLCommentAsteriskMode" xml:space="preserve">
+    <value>Multiline comment asterisk render mode.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.MLCommentHeaderOnSeparateLine" xml:space="preserve">
+    <value>Keep multiline comment header on separate line.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.MLCommentKeepBlankLines" xml:space="preserve">
+    <value>Keep the multiline comment blank lines.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.MLCommentReflow" xml:space="preserve">
+    <value>Use multiline comment reflow.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.NewlineBeforeBindableFunction" xml:space="preserve">
+    <value>Add newline before bindable function.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.NewlineBeforeBindableProperty" xml:space="preserve">
+    <value>Add newline before bindable property.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.NoNewCRsBeforeBreak" xml:space="preserve">
+    <value>Do not add new newlines before break.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.NoNewCRsBeforeContinue" xml:space="preserve">
+    <value>Do not add new newlines before continue.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.NoNewCRsBeforeExpression" xml:space="preserve">
+    <value>Do not add new newlines before expression.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.NoNewCRsBeforeReturn" xml:space="preserve">
+    <value>Do not add new newlines before return.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.NoNewCRsBeforeThrow" xml:space="preserve">
+    <value>Do not add new newlines before throw.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesAfterColonsInDeclarations" xml:space="preserve">
+    <value>Amount of spaces after colons in declarations.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesAfterColonsInFunctionTypes" xml:space="preserve">
+    <value>Amount of spaces after colons in function types.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesAroundEqualsInMetatags" xml:space="preserve">
+    <value>Amount of spaces around equals in metatags.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesBeforeArguments" xml:space="preserve">
+    <value>Amount of spaces before arguments.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesBeforeColonsInDeclarations" xml:space="preserve">
+    <value>Amount of spaces before colons in declarations.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesBeforeColonsInFunctionTypes" xml:space="preserve">
+    <value>Amount of spaces before colons in function types.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesBeforeFormalParameters" xml:space="preserve">
+    <value>Amount of spaces before formal parameters.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesInsideParensInArgumentLists" xml:space="preserve">
+    <value>Amount of spaces inside parens in argument lists.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesInsideParensInOtherPlaces" xml:space="preserve">
+    <value>Amount of spaces inside parens in other places.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.SpacesInsideParensInParameterLists" xml:space="preserve">
+    <value>Amount of spaces inside parens in parameter lists.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.TabsInHangingIndent" xml:space="preserve">
+    <value>Amount of tabs in hanging indent.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.UnindentExpressionTerminators" xml:space="preserve">
+    <value>Unindent the expression terminators.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.UseAdvancedWrapping" xml:space="preserve">
+    <value>Use advanced wrapping settings.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.UseDocCommentWrapping" xml:space="preserve">
+    <value>Use doc comment wrapping settings.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.UseGlobalCRBeforeBrace" xml:space="preserve">
+    <value>Use global newline before brace.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.UseGnuBraceIndent" xml:space="preserve">
+    <value>Use GNU style brace indent.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.UseLineCommentWrapping" xml:space="preserve">
+    <value>Use line comment wrapping settings.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.UseMLCommentWrapping" xml:space="preserve">
+    <value>Use multiline comment wrapping settings.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.UseSpacesAroundEqualsInMetatags" xml:space="preserve">
+    <value>Use spaces around equals in metatags setting.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.AS.WhileOnNewLine" xml:space="preserve">
+    <value>Keep while on new line.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.AlwaysUseMaxLineLength" xml:space="preserve">
+    <value>Always use the maximum line length setting.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.AttrGroups" xml:space="preserve">
+    <value>Manual attribute group data.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.BlankLinesAfterParentTags" xml:space="preserve">
+    <value>Amount of blank lines after parent tags.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.BlankLinesAfterSpecificParentTags" xml:space="preserve">
+    <value>Amount of blank lines after specific parent tags.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.BlankLinesAtCDataStart" xml:space="preserve">
+    <value>Amount of blank lines at CData start.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.BlankLinesBeforeClosingTags" xml:space="preserve">
+    <value>Amount of blank lines before closing tags.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.BlankLinesBeforeComments" xml:space="preserve">
+    <value>Amount of blank lines before comments.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.BlankLinesBetweenSiblingTags" xml:space="preserve">
+    <value>Amount of blank lines between sibling tags.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.IndentSize" xml:space="preserve">
+    <value>Size of the indent.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.IndentTagClose" xml:space="preserve">
+    <value>Indent close tags.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.KeepRelativeIndentInMultilineComments" xml:space="preserve">
+    <value>Keep relative indent in multiline comments.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.KeepScriptCDataOnSameLine" xml:space="preserve">
+    <value>Keep script CData on the same line.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.ParentTagsWithBlankLinesAfter" xml:space="preserve">
+    <value>Parent tags that should have blank lines after them.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.ScriptCDataIndentTabs" xml:space="preserve">
+    <value>Amount of script CData indent tabs.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.ScriptIndentTabs" xml:space="preserve">
+    <value>Amount of script indent tabs.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.SortAttrData" xml:space="preserve">
+    <value>Manual attribute sort data.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.SpacesInsideAttributeBraces" xml:space="preserve">
+    <value>Amount of spaces inside attribute braces.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.TabsInHangingIndent" xml:space="preserve">
+    <value>Amount of tabs in hanging indent.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.TabSize" xml:space="preserve">
+    <value>Size of tabs in spaces.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.TagsDoNotFormatInside" xml:space="preserve">
+    <value>Tags that should not format inside them.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.TagsWithASContent" xml:space="preserve">
+    <value>Tags that contain ActionScript content in them.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.UseFormattingOfBoundAttributes" xml:space="preserve">
+    <value>Use formatting of bound attributes settings.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.UseSpacesInsideAttributeBraces" xml:space="preserve">
+    <value>Use spaces inside attribute braces settings.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeFormatter.Description.MXML.UseTagsDoNotFormatInside" xml:space="preserve">
+    <value>Use tags which do not format inside setting.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDevelop.Description.CheckForUpdates" xml:space="preserve">
+    <value>Sets how often FlashDevelop checks for updates.</value>
     <comment>Added after 4.7.1</comment>
   </data>
 </root>

@@ -203,7 +203,7 @@ namespace CodeFormatter
         public Boolean IsSupportedLanguage(String file)
         {
             String lang = ScintillaControl.Configuration.GetLanguageFromFile(file);
-            return (lang == "as2" || lang == "as3" || lang == "jscript" || lang == "html" || lang == "xml");
+            return (lang == "as2" || lang == "as3" || lang == "xml");
         }
 
 		/// <summary>
@@ -234,9 +234,9 @@ namespace CodeFormatter
 
         #endregion
 
-        #region Code Format
+        #region Code Formatting
 
-        private const int TYPE_AS3PURE = 0;
+        private const int TYPE_AS3 = 0;
 		private const int TYPE_MXML = 1;
 		private const int TYPE_XML = 2;
 		private const int TYPE_UNKNOWN = 3;
@@ -256,10 +256,10 @@ namespace CodeFormatter
                 {
                     switch (DocumentType)
                     {
-                        case TYPE_AS3PURE:
+                        case TYPE_AS3:
                             ASPrettyPrinter asPrinter = new ASPrettyPrinter(true, source);
-                            FormatUtility.ConfigureASPrinter(asPrinter, this.settingObject, PluginBase.Settings.TabWidth);
-                            String asResultData = asPrinter.Print(0);
+                            FormatUtility.configureASPrinter(asPrinter, this.settingObject, PluginBase.Settings.TabWidth);
+                            String asResultData = asPrinter.print(0);
                             if (asResultData == null)
                             {
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
@@ -275,8 +275,8 @@ namespace CodeFormatter
                         case TYPE_MXML:
                         case TYPE_XML:
                             MXMLPrettyPrinter mxmlPrinter = new MXMLPrettyPrinter(source);
-                            FormatUtility.ConfigureMXMLPrinter(mxmlPrinter, this.settingObject, PluginBase.Settings.TabWidth);
-                            String mxmlResultData = mxmlPrinter.Print(0);
+                            FormatUtility.configureMXMLPrinter(mxmlPrinter, this.settingObject, PluginBase.Settings.TabWidth);
+                            String mxmlResultData = mxmlPrinter.print(0);
                             if (mxmlResultData == null)
                             {
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
@@ -343,17 +343,18 @@ namespace CodeFormatter
         /// </summary>
 		public Int32 DocumentType
         {
-			get 
+            get 
             {
-				ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
+                var xmls = new List<String> { ".xml" };
+                ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
 				if (!document.IsEditable) return TYPE_UNKNOWN;
-                String ext = Path.GetExtension(document.FileName);
+                String ext = Path.GetExtension(document.FileName).ToLower();
 				if (ASContext.Context.CurrentModel.Context != null && ASContext.Context.CurrentModel.Context.GetType().ToString().Equals("AS3Context.Context")) 
                 {
-                    if (ext.Equals(".as")) return TYPE_AS3PURE;
-                    else if (ext.Equals(".mxml")) return TYPE_MXML;
+                    if (ext == ".as") return TYPE_AS3;
+                    else if (ext == ".mxml") return TYPE_MXML;
 				}
-                if (ext.Equals(".xml")) return TYPE_XML;
+                else if (xmls.Contains(ext)) return TYPE_XML;
 				return TYPE_UNKNOWN;
 			}
 		}

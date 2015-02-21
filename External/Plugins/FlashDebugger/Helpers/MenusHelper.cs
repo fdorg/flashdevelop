@@ -158,7 +158,7 @@ namespace FlashDebugger
 
         public void OpenLocalVariablesPanel(Object sender, System.EventArgs e)
         {
-            PanelsHelper.pluginPanel.Show();
+            PanelsHelper.localsPanel.Show();
         }
 
         public void OpenBreakPointPanel(Object sender, System.EventArgs e)
@@ -267,9 +267,9 @@ namespace FlashDebugger
             CurrentButton.Enabled = CurrentMenu.Enabled = RunToCursorButton.Enabled = enabled;
             NextButton.Enabled = NextMenu.Enabled = FinishButton.Enabled = FinishMenu.Enabled = enabled;
             RunToCursorMenu.Enabled = StepButton.Enabled = StepMenu.Enabled = enabled;
-			if (state == DebuggerState.Running)
+            if (state == DebuggerState.Running && !PluginMain.debugManager.FlashInterface.isDebuggerSuspended)
 			{
-				PanelsHelper.pluginUI.TreeControl.Clear();
+				PanelsHelper.localsUI.TreeControl.Nodes.Clear();
 				PanelsHelper.stackframeUI.ClearItem();
 			}
             enabled = /*(state != DebuggerState.Running) &&*/ GetLanguageIsValid();

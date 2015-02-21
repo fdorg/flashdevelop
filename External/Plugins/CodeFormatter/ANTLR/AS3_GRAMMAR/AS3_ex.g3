@@ -15,7 +15,7 @@ Known Issue that is incompatible with Ecma-357(ECMAScript for XML (E4X) Specific
 November 2008: Ernest Pasour - patched to add 'void' type as a valid function return type.
                              - interleaved helper code into grammar for purposes of supporting format/indent tool.
                              - changed memberExpression, callExpression and several others to use code from another grammar that handles function calls correctly.
-                             - added ability to parse namespaces (double colon) in the code. ex. mOutputArea.mx_internal::GetTextField();
+                             - added ability to parse namespaces (double colon) in the code. ex. mOutputArea.mx_internal::getTextField();
                              - added support for binding declarations. ex. [Exclude(name="horizontalScrollBarStyleName", kind="style")]
                                                                            [IconFile("Accordion.png")] 
                                                                            [RequiresDataBinding(true)]
@@ -31,7 +31,7 @@ November 2008: Ernest Pasour - patched to add 'void' type as a valid function re
                              	-I think this is the change that forced me to add -Xmx512m on the command line to prevent JDK OutOfMemoryError while processing the file.
                              - fixed identifierLiteral to allow keywords that aren't reserved
                              - fixed to allow xml attribute to allow any keyword to be used as an attribute name
-                             - added support for xml attribute expressions ( ex. x.y.(@name=="abc").length()); )
+                             - added support for xml attribute expressions ( ex. x.y.(@name=="abc").Length); )
                              - changed code that handles virtual semicolon to do lookahead for EOL/LineComment/MLComment instead of promoting token from non-hidden to hidden, which causes problems with the parser prediction phase
                              - fixed to allow trailing commas in array specifier, since that seems to be legal
 January 2009				 - fixed to allow type specifier on ellipsis parameter.  Ex. override flash_proxy function callProperty(name:*, ... args:Array):*
@@ -44,8 +44,28 @@ May 2009					 - fixed e4x to handle tagnames/attributes with hyphens/dots/colons
 							 - fixed e4x to allow var layers:XMLList = xmlData..ns::g.(@inkscape::groupmode =="layer");                             
 June 2009                    - added ability to not indent at package level.  This is the way Adobe's example code is done, although the auto indent on carriage return in their editor doesn't agree
                              - added support for methods named "get" and "set".  I didn't think it was legal, but it appears to be.  This makes the grammar a little ambiguous, but it seems to work.
-
-Currently building with Antlr 3.1                              
+August 2009                  - added support for e4x attr names that are variable expressions.  Ex. <foo {attr}="value"/>
+                             - added support for conditional blocks at the member level.  Ex. around a function or variable.  Grammar changes for packageElement and mxmlEmbedded, to support both AS classes and AS code fragments embedded within mxml.
+October 2009                 - added support for using namespace to access members  Ex. mx_internal::functionCall(true);    
+December 2009				 - fixed classBodyElement and interfaceElement to handle conditional blocks around their elements
+                             - reordered labelledStatement, emptyStatement, and expression statement to be at end of statement rule so
+                             	    that all the items with keyword lookahead get processed first.  There were some issues with labelled
+                             	    statements that just started cropping up when I made minor changes.
+                             - fixed findVirtualTokens to kick out early if the current token is one of the handled tokens (;, EOF, }) rather
+                                    than performing the search for a virtual semicolon regardless.
+                             - changed to require a VAR keyword before decl in for initializer.  Grammar was ambiguous before.       
+                             - removed enumeration of particular string escape sequences because the compiler does "the right thing" under the covers.
+                             - changed UNDERSCORE and DOLLAR to fragments because they are legal by themselves as identifiers, but the lexer was treating them as a top level token instead of part of the IDENTIFIER rule
+January 2010                 - added -/+ to numeric literal for bindable arguments.  The parse didn't fail, but the item wasn't treated as a metadata tag.
+July 2010                    - fixed metatags to allow keywords to be used as attributes (ex. [Inspectable(category="Style", default="1")] )
+August 2010                  - fixed Vector to allow array initializer. ex. var v:Vector.<int>=new < int > [1, 2, 3]; 
+September 2010				 - added support for Vector.<*>
+                             - added support for (sharedDataViz.dataKind)::entitySortField
+November 2010                - added support for metatag with scoped identifiers (ex. [MessageHandler(selector=MessageChannel.PNL)])
+							 - added handling for non-breaking space char (00a0), which is apparently legal in actionscript files
+							 - added ability to handle regular expressions containing '>'.  Ex. />abc/g
+March 2011                   - nwo allow metatags that start with @ (ex. @Embed).  Not sure if this is really legal or not.						 							 
+Currently building with Antlr 3.1.1                              
                              
 */
 grammar AS3_ex;
@@ -176,8 +196,6 @@ tokens{
     QUE         = '?' ;
     COLON       = ':' ;
     ASSIGN      = '=' ;
-    UNDERSCORE  = '_';
-    DOLLAR      = '$';
 //    MUL_ASSIGN  = '*=' ;
     DIV_ASSIGN  = '/=' ;
     MOD_ASSIGN  = '%=' ;
@@ -200,33 +218,44 @@ tokens{
     XML_LS_STD  = '<>';
     XML_LS_END  = '</>';
 }
-@header{
-  using System.Collections.Generic;
-  using System.Text.RegularExpressions;
-  
-  using CodeFormatter.Handlers;
+@header
+{
+using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using CodeFormatter.InfoCollector;
+using CodeFormatter.Handlers;
+using PluginCore.Managers;
+
+#pragma warning disable 162
+#pragma warning disable 414
+#pragma warning disable 219
 }
-@lexer::header{
-  using CodeFormatter.Handlers;
-  using PluginCore.Managers;
+@lexer::header
+{
+using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using CodeFormatter.InfoCollector;
+using CodeFormatter.Handlers;
+using PluginCore.Managers;
 }
 @lexer::members
 {
-	/**  */
-	private CommonToken lastDefaultCnlToken = null;
-
-	// override
-	override public IToken NextToken()
-	{
-		CommonToken result = (CommonToken) base.NextToken();
-		if (result!=null && result.Type != WHITESPACE)
-		{
-			lastDefaultCnlToken = result;
-		}
-
-		return result;      
-	}    
-
+    /**  */
+    private IToken lastDefaultCnlToken = null;
+    
+    // override
+    override public IToken NextToken()
+    {
+        IToken result = base.NextToken();
+        if (result!=null && result.Channel != AS3_exParser.CHANNEL_WHITESPACE )
+        {
+            lastDefaultCnlToken = result;
+        }
+        return result;      
+    }
+    
 	override public void Reset()
 	{
 		base.Reset(); // reset all recognizer state variables
@@ -235,106 +264,115 @@ tokens{
 			((ANTLRStringStream)input).Reset();
 		}
 	}
-
+    
 
 	//TODO: fix this so that regular expression embedded within xml text will work
-	private bool IsRegularExpression(){
-		if(lastDefaultCnlToken!=null){
-			switch(lastDefaultCnlToken.Type){
-			case NULL :
-			case TRUE :
-			case FALSE:
-			case THIS :
-			case SUPER:
-			case IDENTIFIER:
-			case HEX_NUMBER_LITERAL:
-			case DEC_NUMBER_LITERAL:
-			case SINGLE_QUOTE_LITERAL:
-			case DOUBLE_QUOTE_LITERAL:
-			case RCURLY:
-			case RBRACK:
-			case RPAREN:
-				return false;
-			default:
-				break;
-			}
-		}
+    private bool isRegularExpression(){
+        if(lastDefaultCnlToken!=null){
+            switch(lastDefaultCnlToken.Type){
+                case NULL :
+                case TRUE :
+                case FALSE:
+                case THIS :
+                case SUPER:
+                case IDENTIFIER:
+                case HEX_NUMBER_LITERAL:
+                case DEC_NUMBER_LITERAL:
+                case SINGLE_QUOTE_LITERAL:
+                case DOUBLE_QUOTE_LITERAL:
+                case RCURLY:
+                case RBRACK:
+                case RPAREN:
+                	//this is an attempt to not think something is a regular expression if it happens
+                	//to be part of a mathematical expression.
+                    return false;
+                default:
+                    break;
+            }
+        }
 
-		// System.out.println("start to predict if is a ReglurExpression");
-		// start to predict if the next is a regular expression
-		int next = -1;
-		int index=1;
-		bool success = false;
-		if((next=input.LA(index)) != '/'){
-			success = false;
-			return success;
-		}
-		index++;
-		// check the first regular character
-		next=input.LA(index);
-		if(next == '\r' || next == '\n' || next == '*' || next == '/' || next == '>'){
-			success = false;
-			return success;
-		}else if(next == '\\'){
-			next=input.LA(index+1);
-			if(next == '\r' || next == '\n'){
-				success=false;
-				return success;
-			}
-			// we omit the escape sequence \ u XXXX or \ x XX
-			index++;
-		}
-		index++;
-		// check the body of regular character
-		while((next=input.LA(index))!=-1){
-			//System.out.println("char["+index+"] = ("+(char)next+")");
-			switch(next){
-			case '\r':
-			case '\n':
-				success = false;
-				return success;
-			case '\\':
-				next=input.LA(index+1);
-				if(next == '\r' || next == '\n'){
-					success=false;
-					return success;
-				}
-				// we omit the escape sequence \ u XXXX or \ x XX
-				index++;
-				break;
-			case '/':
-				success = true;
-				return success;
-			}            
-			index++;
-		}
-		return success;
-	}
-
-	/**
-	 * <pre> judge if is a XMLName </pre>
-	 * @param ch character
-	 * @return if is a XMLName return true
-	 */
-	static bool IsXMLText(int ch){
-		//System.out.println("isXMLText start");
-		return (ch!='{'&&ch!='<'&&!(IsUnicodeIdentifierPart(ch)));
-	}
-
+        //System.out.println("start to predict if is a RegularExpression");
+        // start to predict if the next is a regular expression
+        int next = -1;
+        int index=1;
+        bool success = false;
+        if((next=input.LA(index)) != '/'){
+            success = false;
+            return success;
+        }
+        index++;
+        // check the first regular character
+        next=input.LA(index);
+        if(next == '\r' || next == '\n' || 
+        	next == '*' || //starts a comment
+        	next == '/'  //if no regex content?
+        	//|| next == '>' //I think the idea of failing on /> is to prevent conflicts with other tokens, but I think that is irrelevant since I've made this context sensitive.
+         	){
+            success = false;
+            return success;
+        }else if(next == '\\'){
+            next=input.LA(index+1);
+            if(next == '\r' || next == '\n'){
+                success=false;
+                return success;
+            }
+            // we omit the escape sequence \ u XXXX or \ x XX
+            index++;
+        }
+        index++;
+        // check the body of regular character
+        while((next=input.LA(index))!=-1){
+            ////System.out.println("char["+index+"] = ("+(char)next+")");
+            switch(next){
+                case '\r':
+                case '\n':
+                    success = false;
+                    return success;
+                case '\\':
+                    next=input.LA(index+1);
+                    if(next == '\r' || next == '\n'){
+                        success=false;
+                        return success;
+                    }
+                    // we omit the escape sequence \ u XXXX or \ x XX
+                    index++;
+                    break;
+                case '/':
+                    success = true;
+                    return success;
+            }            
+            index++;
+        }
+        return success;
+    }
+        
+   /**
+    * <pre> judge if is a XMLName </pre>
+    * @param ch character
+    * @return if is a XMLName return true
+    */
+    static bool isXMLText(int ch){
+        //System.out.println("isXMLText start");
+        return (ch!='{'&&ch!='<'&&!(isUnicodeIdentifierPart(ch)));
+    }
+        
 	/*---------------------------UNICODE_INDENTIFER START------------------------------------------*/    
-	private static bool IsUnicodeIdentifierPart(int ch){
-		return ch=='$'||ch=='_'||IsUnicodeLetter(ch)||IsUnicodeDigit(ch)||IsUnicodeCombiningMark(ch)||IsUnicodeConnectorPunctuation(ch);
+	
+	private static bool isUnicodeIdentifierPart(int ch)
+	{
+		return ch=='$'||ch=='_'||isUnicodeLetter(ch)||isUnicodeDigit(ch)||isUnicodeCombiningMark(ch)||isUnicodeConnectorPunctuation(ch);
 	}
 
-	private void ConsumeIdentifierUnicodeStart() {
+	private void consumeIdentifierUnicodeStart() 
+	{
 		int ch = input.LA(1);
-		if (IsUnicodeLetter(ch) || ch=='$' || ch=='_')
+		if (isUnicodeLetter(ch) || ch=='$' || ch=='_')
 		{
 			MatchAny();
 			do
 			{
 				ch = input.LA(1);
-				if (IsUnicodeIdentifierPart(ch))
+				if (isUnicodeIdentifierPart(ch))
 				{
 					mIDENT_PART();
 				}
@@ -347,7 +385,8 @@ tokens{
 		}
 	}
 	
-	private static bool IsUnicodeLetter(int ch) {
+	private static bool isUnicodeLetter(int ch) 
+	{
 		return (ch >= '\u0041' && ch <= '\u005A')
 				|| (ch >= '\u0061' && ch <= '\u007A') || (ch == '\u00AA')
 				|| (ch == '\u00B5') || (ch == '\u00BA')
@@ -492,7 +531,8 @@ tokens{
 				|| (ch >= '\uFF66' && ch <= '\uFFDC');
 	}
 	
-	private static bool IsUnicodeCombiningMark(int ch) {
+	private static bool isUnicodeCombiningMark(int ch) 
+	{
     		return (ch >= '\u0300' && ch <= '\u036F')
     				|| (ch >= '\u0483' && ch <= '\u0487')
     				|| (ch >= '\u0591' && ch <= '\u05BD') || (ch == '\u05BF')
@@ -587,7 +627,8 @@ tokens{
     				|| (ch >= '\uFE20' && ch <= '\uFE26');
     	}
 
-    	private static bool IsUnicodeDigit(int ch) {
+    	private static bool isUnicodeDigit(int ch) 
+		{
     		return (ch >= '\u0030' && ch <= '\u0039')
     				|| (ch >= '\u0660' && ch <= '\u0669')
     				|| (ch >= '\u06F0' && ch <= '\u06F9')
@@ -620,462 +661,713 @@ tokens{
     				|| (ch >= '\uFF10' && ch <= '\uFF19');
     	}
 
-    	private static bool IsUnicodeConnectorPunctuation(int ch) {
+    	private static bool isUnicodeConnectorPunctuation(int ch) 
+		{
     		return (ch == '\u005F') || (ch >= '\u203F' && ch <= '\u2040')
     				|| (ch == '\u2054') || (ch >= '\uFE33' && ch <= '\uFE34')
     				|| (ch >= '\uFE4D' && ch <= '\uFE4F') || (ch == '\uFF3F');
     	}
 
 	/*---------------------------UNICODE_INDENTIFER END------------------------------------------*/
-    
+	
+    private void debugMethod(String methodName,String text){
+        //System.out.println("recognized as <<"+methodName+">> text=("+text+")");
+    }    
+}
+@parser::members{
+   
+   		//options
+private List<Exception> mParseErrors;
+		
+private ASPrettyPrinter mPrinter;
+private CommonTokenStream mRawTokens;
+private int mStatementCount=0;
+
+private List<Int32> mCodeBlockStack=new List<Int32>(); //this is used for tracking which block I'm in so that I can handle the open brace differently depending on context
+private bool mIsFunctionDecl; //flag that tells me whether the function body is associated with an expression or a declaration
+private List<IfElseBlockTracker> mIfElseBlocks=new List<IfElseBlockTracker>();
+private List<bool> mXMLTextContentStack=new List<bool>();
+
+private bool mInFunctionParameterDecl=false; //set during formal parameter list so that I know where variable decls came from
+private bool mInEqualAlignDecl=false; //only set to true for variable statement declarations (not ones in the parameter list, for loops, etc.)
+
+public AS3_exParser(ASPrettyPrinter printer, CommonTokenStream tokenStream) : this(tokenStream, new RecognizerSharedState())
+{
+	mRawTokens=tokenStream;
+    mPrinter=printer;
+    mStatementCount=0;
 }
 
-@parser::members{
+public class IfElseBlockTracker
+{
+	public bool mBlockFlag=false;
+	public bool mBlockFlagSet=false;
+}
 
-	//options
-	private List<Exception> mParseErrors;
+public void addIfElseBlockTracker()
+{
+	mIfElseBlocks.Add(new IfElseBlockTracker());
+}
 
-	private ASPrettyPrinter mPrinter;
-	private CommonTokenStream mRawTokens;
+public void popIfElseBlockTracker()
+{
+	if (mIfElseBlocks.Count>0)
+		mIfElseBlocks.RemoveAt(mIfElseBlocks.Count-1);
+}
 
-	private List<IfElseBlockTracker> mIfElseBlocks=new List<IfElseBlockTracker>();
+public IfElseBlockTracker getCurrentIfElseTracker()
+{
+	if (mIfElseBlocks.Count>0)
+		return mIfElseBlocks[mIfElseBlocks.Count-1];
+		
+	return null;
+}
 
-	public AS3_exParser(ASPrettyPrinter printer, CommonTokenStream tokenStream)
-	      : this(tokenStream, new RecognizerSharedState()) {
-		mRawTokens=tokenStream;
-		mPrinter=printer;
-	}
-
-	public class IfElseBlockTracker
+public void setBlockFlag(bool flag)
+{
+	IfElseBlockTracker tracker=getCurrentIfElseTracker();
+	if (tracker!=null)
 	{
-		public bool mBlockFlag=false;
-		public bool mBlockFlagSet=false;
+		//don't set if already set
+		if (tracker.mBlockFlagSet)
+			return;
+			
+		tracker.mBlockFlag=flag;
+		tracker.mBlockFlagSet=true;
 	}
+}
 
-	public void AddIfElseBlockTracker()
+public void markBlockFlag()
+{
+	IfElseBlockTracker tracker=getCurrentIfElseTracker();
+	if (tracker!=null)
+		tracker.mBlockFlagSet=true;
+}
+
+public void clearBlockFlag()
+{
+	IfElseBlockTracker tracker=getCurrentIfElseTracker();
+	if (tracker!=null)
+		tracker.mBlockFlagSet=false;
+}
+
+public bool isBlockFlag()
+{
+	IfElseBlockTracker tracker=getCurrentIfElseTracker();
+	if (tracker!=null)
+		return tracker.mBlockFlag;
+		
+	return false;
+}
+
+private void popBlockStack()
+{
+	if (mCodeBlockStack.Count>0)
 	{
-		mIfElseBlocks.Add(new IfElseBlockTracker());
+		mCodeBlockStack.RemoveAt(mCodeBlockStack.Count-1);
 	}
+}
 
-	public void PopIfElseBlockTracker()
+private void setXMLTextContentFlag()
+{
+	if (mXMLTextContentStack.Count>0)
 	{
-		if (mIfElseBlocks.Count>0)
-			mIfElseBlocks.RemoveAt(mIfElseBlocks.Count-1);
+		mXMLTextContentStack[mXMLTextContentStack.Count-1] = true;
 	}
+}
 
-	public IfElseBlockTracker GetCurrentIfElseTracker()
+private void pushXMLTextContentFlag()
+{
+	mXMLTextContentStack.Add(false);
+}
+
+private bool popXMLTextContentFlag()
+{
+	if (mXMLTextContentStack.Count>0)
 	{
-		if (mIfElseBlocks.Count>0)
-			return mIfElseBlocks.ToArray()[mIfElseBlocks.Count-1];
-
-		return null;
+		int index=mXMLTextContentStack.Count-1;
+		bool value=mXMLTextContentStack[index];
+		mXMLTextContentStack.RemoveAt(index);
+		return value;
 	}
+	return false;
+}
 
-	public void SetBlockFlag(bool flag)
+private void emitXMLBreak(IToken tok, bool before)
+{
+	WrapOptions options=mPrinter.getXMLWrapOptions();
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS))
 	{
-		IfElseBlockTracker tracker=GetCurrentIfElseTracker();
-		if (tracker!=null)
-		{
-			//don't set if already set
-			if (tracker.mBlockFlagSet)
-				return;
-
-			tracker.mBlockFlag=flag;
-			tracker.mBlockFlagSet=true;
-		}
+		mPrinter.saveWrapChar(tok, ASPrettyPrinter.Break_XML_code, before, false, -1, "");
 	}
+}
 
-	public void MarkBlockFlag()
+public bool foundNextLT()
+{
+   int i=1;
+   while (true)
+   {
+       IToken token=input.LT(i);
+       if (token.Text!=null && token.Text.StartsWith("<"))
+          return (i>1);
+       if (token.Type==EOF)
+          return false;
+       i++;   
+   }
+}
+
+public void changeTokensUpToNextLT()
+{
+   int i=1;
+   while (true)
+   {
+       IToken t=input.LT(i);
+       if (t.Text!=null && t.Text.StartsWith("<"))
+          return;
+       if (t.Type==EOF)
+          return;
+       t.Type = XML_TEXT;          
+          
+       i++;   
+   }
+}
+
+//this is for '.' and other similar characters that might cause a break
+private void wrapEmit(IToken item, int breakType)
+{
+	pushExpressionIndent(); //needs to be matched with a popIndent later
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+	bool breakBefore=options.isBeforeSeparator();
+	if (breakType==ASPrettyPrinter.Break_Assignment_code || breakType==ASPrettyPrinter.Break_Parameter_Assignment_code)
+		breakBefore=options.isBeforeAssignmentOperator();
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && breakBefore)
 	{
-		IfElseBlockTracker tracker=GetCurrentIfElseTracker();
-		if (tracker!=null)
-			tracker.mBlockFlagSet=true;
+		insertMaxColumnCR();
 	}
-
-	public void ClearBlockFlag()
+	emit(item);
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && !breakBefore)
 	{
-		IfElseBlockTracker tracker=GetCurrentIfElseTracker();
-		if (tracker!=null)
-			tracker.mBlockFlagSet=false;
-	}
-
-	public bool IsBlockFlag()
-	{
-		IfElseBlockTracker tracker=GetCurrentIfElseTracker();
-		if (tracker!=null)
-			return tracker.mBlockFlag;
-
-		return false;
-	}
-
-	public bool FoundNextLT()
-	{
-		int i=1;
-		while (true)
-		{
-			CommonToken token= (CommonToken) input.LT(i);
-			if (token.Text!=null && token.Text.StartsWith("<"))
-				return (i>1);
-			if (token.Type==EOF)
-				return false;
-			i++;   
-		}
-	}
-
-	public void ChangeTokensUpToNextLT()
-	{
-		int i=1;
-		while (true)
-		{
-			CommonToken t= (CommonToken) input.LT(i);
-			if (t.Text!=null && t.Text.StartsWith("<"))
-				return;
-			if (t.Type==EOF)
-				return;
-			t.Type = XML_TEXT;          
-
-			i++;   
-		}
-	}
-
-	private void IndentEmit(CommonToken tokenOperator)
-	{
-		PushExpressionIndent();
-		WrapOptions options=mPrinter.GetExpressionWrapOptions();
-		if ((options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && options.BeforeSeparator)
-		{
-			InsertMaxColumnCR();
-		}
-		char firstChar=Convert.ToChar(0);
-		if (tokenOperator.Text.Length>0)
-			firstChar=tokenOperator.Text.ToCharArray()[0];
-		if (firstChar!=Convert.ToChar(0))
-		{
-			if (IsIdentifierPart(firstChar))
-				InsertWS(1); //add 1 space around text operators (ex. 'as', 'instanceof')
-			else
-				InsertWS(mPrinter.GetExpressionSpacesAroundSymbolicOperators()); //add configurable symbolic operator value
-		}	
-		Emit(tokenOperator);
-		if ((options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && !options.BeforeSeparator)
-		{
-			InsertMaxColumnCR();
-		}
-		if (firstChar!=0)
-		{
-			if (IsIdentifierPart(firstChar))
-				InsertWS(1); //add 1 space around text operators (ex. 'as', 'instanceof')
-			else
-				InsertWS(mPrinter.GetExpressionSpacesAroundSymbolicOperators()); //add configurable symbolic operator value
-		}	
+		insertMaxColumnCR();
 	}
 	
-	public static bool IsIdentifierPart(char ch)
-    {
-   		return Char.IsLetterOrDigit(ch) || ch == '_';
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS))
+	{
+		mPrinter.saveWrapChar(item, breakType, (breakType==ASPrettyPrinter.Break_Keyword_code) ? true : breakBefore, false, -1, "");
 	}
+}
 
-	private bool PushFormatType(WrapOptions options, bool lazy)
+//this is for binary operators
+private void indentEmit(IToken operatoR, int breakType)
+{
+	pushExpressionIndent(); //needs to be matched with a popIndent later
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+	bool breakBefore=options.isBeforeSeparator();
+	if (breakType==ASPrettyPrinter.Break_Arithmetic_Ops_code)
+		breakBefore=options.isBeforeArithmeticOperator();
+	else if (breakType==ASPrettyPrinter.Break_Logical_Ops_code || breakType==ASPrettyPrinter.Break_Ternary_code)
+		breakBefore=options.isBeforeLogicalOperator();
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && breakBefore)
 	{
-		if (mPrinter.IsDoFormat())
-		{
-			int formatMode=0;
-			if (options.WrapType==WrapOptions.WRAP_DONT_PROCESS)
-			{
-				formatMode=ASPrettyPrinter.FORMAT_INDENT;
-			}
-			else if (options.WrapType==WrapOptions.WRAP_FORMAT_NO_CRs)
-			{
-				formatMode=ASPrettyPrinter.FORMAT_NOCRs;
-			}
-			else if (options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS)
-			{
-				formatMode=ASPrettyPrinter.FORMAT_OnlyAddCRs;
-			}
-			else
-			{
-				//if we didn't have a restrictive format, we want to make sure we're using the full format
-				formatMode=ASPrettyPrinter.FORMAT_ALL;
-			}
-
-			if (formatMode>0)
-			{		
-				mPrinter.SetFirstTokenBeforeFormatIndent();
-				if (lazy)
-					mPrinter.PushLazyFormat(formatMode);
-				else
-					mPrinter.PushFormatMode(formatMode);
-				return true;
-			}
-
-		} 
-
-		return false;
+		insertMaxColumnCR();
 	}
-
-	private void EmitCRForTag(WrapOptions options)
+	char firstChar=Convert.ToChar(0);
+	if (operatoR.Text.Length>0)
+		firstChar=operatoR.Text[0];
+	if (firstChar!=0)
 	{
-		if (options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS)
-		{
-			InsertMaxColumnCR();
-		}
-		else if (options.WrapType==WrapOptions.WRAP_BY_TAG)
-		{
-			InsertCR(false);
-		}
-
-	}
-
-	private bool EmitCommaWithSpacingAndCRs(WrapOptions options, CommonToken comma, bool pushedIndent)
-	{
-		if ((options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && options.BeforeSeparator)
-		{
-			InsertMaxColumnCR();
-		}
-
-		if (!pushedIndent)
-		{
-			pushedIndent=true;
-			PushExpressionIndent();
-		}
-
-		InsertWS(mPrinter.GetSpacesBeforeComma());
-		Emit(comma); 
-		if ((options.WrapType==WrapOptions.WRAP_BY_COLUMN || options.WrapType==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && !options.BeforeSeparator)
-		{
-			InsertMaxColumnCR();
-		}
-		InsertWS(mPrinter.GetSpacesAfterComma());
-		return pushedIndent;
-	}
-
-	public bool FindVirtualHiddenToken(ParserRuleReturnScope retval)
-	{
-		int index = ((CommonToken) retval.Start).TokenIndex;
-		if(index<0){
-			index = input.Count;
-		}
-		for (int ix = index - 1; ix >= 0; ix--){
-			CommonToken lt = (CommonToken) input.Get(ix);
-			int type = lt.Type;
-			if(lt.Channel == Token.DEFAULT_CHANNEL)
-				break;
-			if (type == EOL || type==COMMENT_SINGLELINE || (type == COMMENT_MULTILINE && Regex.Match(lt.Text,"/.*\r\n|\r|\n").Success))
-			{
-				retval.Start=lt;
-				return true;
-			}
-		}
-		return false;
-
-	}
-
-	/*public void ReportError(RecognitionException e)
-	{
-		if (mParseErrors==null)
-			mParseErrors=new List<Exception>();
-		mParseErrors.add(e);
-		base.ReportError(e);
-	}*/
-
-	private void InsertWS(int amt)
-	{
-		mPrinter.InsertWS(amt);
-	}
-
-	private void InsertLines(int amt)
-	{
-		InsertLines(amt, true);
-	}
-
-	private void InsertVariableDeclAssignmentWhitespace(CommonToken equalToken, bool before)
-	{
-		if (mPrinter.IsDoFormat() && !mPrinter.IsInParameterDecl() && mPrinter.IsKeepingExcessDeclWhitespace())
-		{
-			int spaceCount=0;
-			if (before)
-			{
-				CommonToken testToken= (CommonToken) mRawTokens.Get(equalToken.TokenIndex-1);
-				if (testToken.Channel==CHANNEL_WHITESPACE)
-				{
-					//if the token before the whitespace is a carriage return, we *don't* want to apply this "preserve whitespace" logic
-					CommonToken prevTok= (CommonToken) mRawTokens.Get(equalToken.TokenIndex-2);
-					if (!(prevTok.Channel==CHANNEL_SLCOMMENT || prevTok.Channel==CHANNEL_EOL))
-					{
-						if (testToken.Text.IndexOf('\t')>=0)
-						{
-							spaceCount=mPrinter.GetColumnForIndex(equalToken, 0)-mPrinter.GetColumnForIndex(testToken, 0);
-						}
-						else
-						{
-							spaceCount=testToken.Text.Length;
-						}
-					}
-				}
-			}
-			else
-			{
-				CommonToken testToken= (CommonToken) mRawTokens.Get(equalToken.TokenIndex+1);
-				if (testToken.Channel==CHANNEL_WHITESPACE)
-				{
-					//if the token after the whitespace is a carriage return, we *don't* want to apply this "preserve whitespace" logic
-					//I think we only care about actual EOL here, not sl comment or ml comment, since there is actual text before the CR,
-					//even if it's not 'code' text.
-					CommonToken nextTok= (CommonToken) mRawTokens.Get(equalToken.TokenIndex+2);
-					if (!(nextTok.Channel==CHANNEL_EOL))
-					{
-						if (testToken.Text.IndexOf('\t')>=0)
-						{
-							spaceCount=mPrinter.GetColumnForIndex(testToken, testToken.Text.Length)-mPrinter.GetColumnForIndex(equalToken, equalToken.Text.Length);
-						}
-						else
-						{
-							spaceCount=testToken.Text.Length;
-						}
-					}
-				}
-			}
-
-			if (spaceCount>mPrinter.GetSpacesAroundAssignment())
-			{
-				InsertWS(spaceCount);
-				return;
-			}
-		}
-
-		InsertWS(mPrinter.IsInParameterDecl() ? mPrinter.GetAdvancedSpacesAroundAssignmentInOptionalParameters() : mPrinter.GetSpacesAroundAssignment());
-	}
-
-	//this method is for inserting blank lines before elements, based on the format settings
-	private void InsertLines(int amt, bool inCodeBlock)
-	{
-		//don't add blank lines if not inside a block
-		if (!mPrinter.IsHardIndent())
-			return;
-		//don't add blank lines if the wrapper is a labeled statement indent
-		if (mPrinter.IsLabeledIndent())
-			return;
-
-		//don't add blank lines if we are at start of block
-		if (inCodeBlock)
-		{
-			if (!mPrinter.IsCanAddCRsAtBlockStart() && mPrinter.IsAtBlockStart())
-			{
-				return;
-			}
-		}
-
-		for (int i=0;i<amt;i++)
-		{
-			mPrinter.InsertCR(true);
-		}
-	}
-
-	private void InsertMaxColumnCR()
-	{
-		mPrinter.InsertCRBeyondMaxCol();
-	}
-
-	private void InsertStatementCR()
-	{
-		if (!mPrinter.IsLabeledIndent())
-			InsertCR(false);
-	}
-
-	private void InsertCR(bool doOverride)
-	{
-		mPrinter.InsertCR(doOverride);
-	}
-
-	private void PushLabeledIndent()
-	{
-		PushExpressionIndent(); //push an expression indent so that it won't further indent the nested statement 
-		mPrinter.MakeLabeledIndent();
-	}
-
-	private void PushIndent(bool hardIndent)
-	{
-		mPrinter.PushIndent(hardIndent ? ASPrettyPrinter.BRACE_INDENT : ASPrettyPrinter.STATEMENT_INDENT);
-	}
-
-	private void PushExpressionIndent()
-	{
-		mPrinter.PushIndent(ASPrettyPrinter.EXPRESSION_INDENT);
-	}
-
-	private bool PushLazyParmIndent(bool alreadyPushed, int indentStyle)
-	{
-		if (!alreadyPushed)
-		{
-			if (indentStyle==WrapOptions.WRAP_STYLE_INDENT_TO_WRAP_ELEMENT)
-				mPrinter.PushLazyIndent(ASPrettyPrinter.EXPRESSION_INDENT_NEXTITEM);
-			else
-				PushLazyIndent();
-		}
-		return true;
-	}
-
-	private void PushLazyIndent()
-	{
-		mPrinter.PushLazyIndent(ASPrettyPrinter.EXPRESSION_INDENT);
-	}
-
-	private void PopIndent()
-	{
-		mPrinter.PopIndent();
-	}
-
-	private void LeftCurlyNewlineHandler(bool checkBraceIndent)
-	{
-		if (mPrinter.IsCRBeforeOpenBrace() || (checkBraceIndent && mPrinter.GetIndentType(0)==ASPrettyPrinter.BRACE_INDENT))
-			InsertCR(false);
+		if (Utilities.isJavaIdentifierPart(firstChar.ToString()))
+			insertWS(1); //add 1 space around text operators (ex. 'as', 'instanceof')
 		else
-			InsertWS(1);
-	}
-
-	private void Emit(CommonToken tok)
+			insertWS(mPrinter.getExpressionSpacesAroundSymbolicOperators()); //add configurable symbolic operator value
+	}	
+	emit(operatoR);
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && !breakBefore)
 	{
-		mPrinter.Emit(tok);
+		insertMaxColumnCR();
 	}
-
-
-	/*public List<Exception> getParseErrors()
-	{
-		return mParseErrors;
-	}*/
 	
-
-	public const int CHANNEL_SLCOMMENT=43;
-	public const int CHANNEL_MLCOMMENT=42;
-	public const int CHANNEL_WHITESPACE=41;
-	public const int CHANNEL_EOL=40;
-
-	private bool PromoteWhitespace()
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS))
 	{
-		//find the current lookahead token
-		CommonToken lt = (CommonToken) input.LT(1);
-		int index = lt.TokenIndex;
-		if(index<0){
-			index = input.Count;
+		mPrinter.saveWrapChar(operatoR, breakType, breakBefore, false, -1, "");
+	}
+	
+	if (firstChar!=0)
+	{
+		if (Utilities.isJavaIdentifierPart(firstChar.ToString()))
+			insertWS(1); //add 1 space around text operators (ex. 'as', 'instanceof')
+		else
+			insertWS(mPrinter.getExpressionSpacesAroundSymbolicOperators()); //add configurable symbolic operator value
+	}	
+}
+
+private bool pushWrapInfo(WrapOptions options, bool newLevel)
+{
+	if (mPrinter.isDoFormat())
+	{
+		if (options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN)
+		{
+			mPrinter.createWrapContext(newLevel);
+			return true;
 		}
+	}
+	
+	return false;
+}
+
+private bool pushFormatType(WrapOptions options, bool lazy)
+{
+	if (mPrinter.isDoFormat())
+	{
+		int formatMode=0;
+		if (options.getWrapType()==WrapOptions.WRAP_DONT_PROCESS)
+		{
+			formatMode=ASPrettyPrinter.FORMAT_INDENT;
+		}
+		else if (options.getWrapType()==WrapOptions.WRAP_FORMAT_NO_CRs)
+		{
+			formatMode=ASPrettyPrinter.FORMAT_NOCRs;
+		}
+		else if (options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS)
+		{
+			formatMode=ASPrettyPrinter.FORMAT_OnlyAddCRs;
+		}
+		else
+		{
+			//if we didn't have a restrictive format, we want to make sure we're using the full format
+			formatMode=ASPrettyPrinter.FORMAT_ALL;
+		}
+
+		if (formatMode>0)
+		{
+//		    if (formatMode==mPrinter.getFormatMode())
+//		    	return false; //no need to nest format modes of the same type
+		    	
+			if (lazy)
+				mPrinter.pushLazyFormat(formatMode);
+			else
+				mPrinter.pushFormatMode(formatMode);
+			return true;
+		}
+		
+	} 
+	
+	return false;
+}
+
+private void emitCRForTag(WrapOptions options)
+{
+	if (options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS)
+	{
+		insertMaxColumnCR();
+	}
+	else if (options.getWrapType()==WrapOptions.WRAP_BY_TAG)
+	{
+		insertCR(false);
+	}
+
+}
+
+private bool emitCommaWithSpacingAndCRs(WrapOptions options, IToken comma, bool pushedIndent, int firstParmLocation, String contextType)
+{
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && options.isBeforeSeparator())
+	{
+		insertMaxColumnCR();
+	}
+	
+	if (!pushedIndent)
+	{
+		pushedIndent=true;
+		pushExpressionIndent();
+	}
+	
+    insertWS(mPrinter.getSpacesBeforeComma());
+    emit(comma); 
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS) && !options.isBeforeSeparator())
+	{
+		insertMaxColumnCR();
+	}
+	if ((options.getWrapType()==WrapOptions.WRAP_BY_COLUMN || options.getWrapType()==WrapOptions.WRAP_BY_COLUMN_ONLY_ADD_CRS))
+	{
+		mPrinter.saveWrapChar(comma, ASPrettyPrinter.Break_Commas_code, options.isBeforeSeparator(), options.getIndentStyle()==WrapOptions.WRAP_STYLE_INDENT_TO_WRAP_ELEMENT, firstParmLocation, contextType);
+	}
+	insertWS(mPrinter.getSpacesAfterComma());
+	return pushedIndent;
+}
+
+    public bool findVirtualHiddenToken(ParserRuleReturnScope retval)
+    {
+    		//the point of this method is to look for something that can serve as a semicolon.  So a carriage return
+    		//or a comment containing a carriage return will fit the bill.
+            int index = ((IToken)retval.Start).TokenIndex;
+            if(index<0){
+                index = input.Count;
+            }
+            else
+            {
+            	IToken lt=input.Get(index);
+            	if (lt.Type==EOF || lt.Type==SEMI || lt.Type==RCURLY)
+            		return false;
+            }
+            
+/*            //we are on the next regular channel token after the rule.  So we walk backward to determine if between
+            //the rule and this token is a single line comment, multiline comment, or new line that can serve as the
+            //end token.  If so, then we 'promote' that token by returning it as the 'end' token of the rule (in place
+            //of the semi colon).
+	        for (int ix = index - 1; ix >= 0; ix--){
+	            IToken lt = input.Get(ix);
+	            int type = lt.Type;
+	            if(lt.Channel == Token.DEFAULT_CHANNEL)
+	                break;
+	            if (type == EOL || type==COMMENT_SINGLELINE || (type == COMMENT_MULTILINE && Regex.Matches(lt.Text, "/.*\r\n|\r|\n").Count > 0))
+	            {
+	            	retval.Start=lt;
+	                return true;
+	            }
+	        }*/
+            
+            
+            //the token index is pointing to the next default channel token, which is not what we want.
+            //We want to walk backward to the previous default channel token (first loop), and then walk forward
+            //again looking for EOL/comments (2nd loop)
+            int ix=index-1;
+            for (; ix >= 0; ix--){
+                IToken lt = input.Get(ix);
+                if(lt.Channel == Token.DEFAULT_CHANNEL)
+                    break;
+            }
+            
+            //walk forward again
+            ix++; //to move to next token that's not default channel
+            for (;ix<input.Count;ix++) //now search for the next "statement ender"
+            {
+                IToken lt = input.Get(ix);
+                int type = lt.Type;
+                if (lt.Channel == Token.DEFAULT_CHANNEL)
+                    break;
+                if (type == EOL || type==COMMENT_SINGLELINE || (type == COMMENT_MULTILINE && Regex.Matches(lt.Text, "/.*\r\n|\r|\n").Count > 0))
+                {
+                	retval.Start=lt;
+                    return true;
+                }
+            }
+
+            return false;
+
+    }
+
+public void reportError(RecognitionException e)
+{
+    if (mParseErrors==null)
+    	mParseErrors=new List<Exception>();
+    mParseErrors.Add(e);
+    //base.reportError(e);
+}
+		
+private void insertWS(int amt)
+{
+    mPrinter.insertWS(amt);
+}
+
+private void insertLines(int amt)
+{
+	insertLines(amt, true);
+}
+
+private void insertVariableDeclAssignmentWhitespace(IToken equalToken, bool before)
+{
+	if (mPrinter.isDoFormat() && !mPrinter.isInParameterDecl() && mPrinter.isKeepingExcessDeclWhitespace())
+	{
+		int spaceCount=0;
+		if (before)
+		{
+			IToken testToken=mRawTokens.Get(equalToken.TokenIndex-1);
+			if (testToken.Channel==CHANNEL_WHITESPACE)
+			{
+				//if the token before the whitespace is a carriage return, we *don't* want to apply this "preserve whitespace" logic
+				IToken prevTok=mRawTokens.Get(equalToken.TokenIndex-2);
+				if (!(prevTok.Channel==CHANNEL_SLCOMMENT || prevTok.Channel==CHANNEL_EOL))
+				{
+					if (testToken.Text.IndexOf('\t')>=0)
+					{
+						spaceCount=mPrinter.getColumnForIndex(equalToken, 0)-mPrinter.getColumnForIndex(testToken, 0);
+					}
+					else
+					{
+					    spaceCount=testToken.Text.Length;
+					}
+				}
+			}
+		}
+		else
+		{
+			IToken testToken=mRawTokens.Get(equalToken.TokenIndex+1);
+			if (testToken.Channel==CHANNEL_WHITESPACE)
+			{
+				//if the token after the whitespace is a carriage return, we *don't* want to apply this "preserve whitespace" logic
+				//I think we only care about actual EOL here, not sl comment or ml comment, since there is actual text before the CR,
+				//even if it's not 'code' text.
+				IToken nextTok=mRawTokens.Get(equalToken.TokenIndex+2);
+				if (!(nextTok.Channel==CHANNEL_EOL))
+				{
+					if (testToken.Text.IndexOf('\t')>=0)
+					{
+						spaceCount=mPrinter.getColumnForIndex(testToken, testToken.Text.Length)-mPrinter.getColumnForIndex(equalToken, equalToken.Text.Length);
+					}
+					else
+					{
+					    spaceCount=testToken.Text.Length;
+					}
+				}
+			}
+		}
+		
+		if (spaceCount>mPrinter.getSpacesAroundAssignment())
+		{
+			insertWS(spaceCount);
+			return;
+		}
+	}
+	
+	insertWS(mPrinter.isInParameterDecl() ? mPrinter.getAdvancedSpacesAroundAssignmentInOptionalParameters() : mPrinter.getSpacesAroundAssignment());
+}
+
+//this method is for inserting blank lines before elements, based on the format settings
+private void insertLines(int amt, bool inCodeBlock)
+{
+    //don't add blank lines if not inside a block
+	if (!mPrinter.isHardIndent())
+	    return;
+	//don't add blank lines if the wrapper is a labeled statement indent
+	if (mPrinter.isLabeledIndent())
+		return;
+		
+	//don't add blank lines if we are at start of block
+	if (inCodeBlock)
+	{
+		if (!mPrinter.isCanAddCRsAtBlockStart() && mPrinter.isAtBlockStart())
+		{
+			return;
+		}
+	}
+	
+    for (int i=0;i<amt;i++)
+    {
+        mPrinter.insertCR(true);
+    }
+}
+
+private void insertMaxColumnCR()
+{
+	mPrinter.insertCRBeyondMaxCol();
+}
+
+private void insertStatementCR()
+{
+	if (!mPrinter.isLabeledIndent())
+		insertCR(false);
+}
+
+bool isFirstImport=true;
+bool isFirstClassSeen=false;
+bool isSeenPackage=false;
+private void addBlankLinesBeforeFirstImport()
+{
+	//only add blank lines for before first import in 'package' area.  The assumption is that all the 
+	// imports are together, or this setting doesn't really make sense.
+	int linesToAdd=mPrinter.getBlankLinesBeforeImports();
+	if (isFirstImport && !isFirstClassSeen && isSeenPackage)
+	{
+		isFirstImport=false;
+		for (int i=0;i<linesToAdd;i++)
+		{
+			insertCR(true);
+		}
+	}
+}
+		
+private void insertCR(bool overridE)
+{
+    mPrinter.insertCR(overridE);
+}
+	
+private void pushLabeledIndent()
+{
+	pushExpressionIndent(); //push an expression indent so that it won't further indent the nested statement 
+	mPrinter.makeLabeledIndent();
+}
+	
+private void pushIndent(bool hardIndent)
+{
+	mPrinter.pushIndent(hardIndent ? ASPrettyPrinter.BRACE_INDENT : ASPrettyPrinter.STATEMENT_INDENT);
+}
+
+private void pushExpressionIndent()
+{
+	mPrinter.pushIndent(ASPrettyPrinter.EXPRESSION_INDENT);
+}
+
+private bool pushLazyParmIndent(bool alreadyPushed, int indentStyle)
+{
+	if (!alreadyPushed)
+	{
+		if (!mPrinter.isUseAdvancedWrapping() && indentStyle==WrapOptions.WRAP_STYLE_INDENT_TO_WRAP_ELEMENT)
+			mPrinter.pushLazyIndent(ASPrettyPrinter.EXPRESSION_INDENT_NEXTITEM);
+		else
+			pushLazyIndent();
+	}
+	return true;
+}
+
+private void pushLazyIndent()
+{
+	mPrinter.pushLazyIndent(ASPrettyPrinter.EXPRESSION_INDENT);
+}
+
+private void popIndent()
+{
+    mPrinter.popIndent();
+}
+		
+private void leftCurlyNewlineHandler(bool checkBraceIndent)
+{
+   if (mPrinter.isCRBeforeOpenBrace(mCodeBlockStack) || (checkBraceIndent && mPrinter.getIndentType(0)==ASPrettyPrinter.BRACE_INDENT))
+   {
+       insertCR(false);
+       insertWS(1); //add a space here just in case newlines can't be added
+   }
+   else
+       insertWS(1);
+}
+		
+private void emit(IToken tok)
+{
+    mPrinter.emit(tok);
+}
+		    
+		
+public List<Exception> getParseErrors()
+{
+    return mParseErrors;
+}
+		
+/*        bool isNotReservedWord(String name) {
+        String[] reserveWords = new String[]
+            {
+                "as",
+                "break",
+                "case",
+                "catch",
+                "class",
+                "const",
+                "continue",
+                "default",
+                "delete",
+                "do",
+                "else",
+                "extends",
+                "false",
+                "finally",
+                "for",
+                "function",
+                "if",
+                "implements",
+                "import",
+                "in",
+                "instanceof",
+                "interface",
+                "internal",
+                "is",
+                "native",
+                "new",
+                "null",
+                "package",
+                "private",
+                "protected",
+                "public",
+                "return",
+                "super",
+                "switch",
+                "this",
+                "throw",
+                "to",
+                "true",
+                "try",
+                "typeof",
+                "use",
+                "var",
+                "void",
+                "while",
+                "with"
+            };
+        for (int i = 0; i<reserveWords.Length; i++) {
+            if ( reserveWords[i] == name) {
+                return false;
+            }
+        }
+        return true;
+    }
+    */
+    
+/*    private void promoteEOL(ParserRuleReturnScope rule)
+    {
+        //System.out.println("start promoteEOL <<let HIDDENT IToken EOL be visible>>");
+        IToken lt = input.LT(1);
+        int index = lt.TokenIndex;
+        if(index<0){
+            index = input.Count;
+        }
+        int la = lt.Type;
+        
+        for (int ix = index - 1; ix >= 0; ix--){
+            lt = input.Get(ix);
+            int type = lt.Type;
+            if (type == EOL || (type == COMMENT_MULTILINE && Regex.Matches(lt.Text, "/.*\r\n|\r|\n").Count > 0)){
+                lt.setChannel(Token.DEFAULT_CHANNEL);
+                input.seek(lt.TokenIndex);
+                //System.out.println("promoteEOL : HIDDEN IToken ("+lt+") is set to DEFAULT");
+                if (rule != null){
+                    //System.out.println("promoteEOL :  startToken set as "+lt);
+                    rule.Start = lt;
+                }
+                return;
+            }else if(lt.Channel == Token.DEFAULT_CHANNEL){
+                break;
+            }
+        }
+        //System.out.println("");
+    }
+  */
+    
+    public const int CHANNEL_SLCOMMENT=43;
+    public const int CHANNEL_MLCOMMENT=42;
+    public const int CHANNEL_WHITESPACE=41;
+    public const int CHANNEL_EOL=40;
+    
+    private bool promoteWhitespace()
+    {
+    	//find the current lookahead token
+        IToken lt = input.LT(1);
+        int index = lt.TokenIndex;
+        if(index<0){
+            index = input.Count;
+        }
 
 		//walk backward through tokens to see if the previous token is whitespace.
-		for (int ix = index - 1; ix >= 0; ix--){
-			lt = (CommonToken) input.Get(ix);
-			int channel=lt.Channel;
-			if (channel == CHANNEL_EOL || channel ==  CHANNEL_WHITESPACE){
-				return true;
-			} else if(channel == Token.DEFAULT_CHANNEL){
-				break;
-			}
-		}
-		return false;
-	}
+        for (int ix = index - 1; ix >= 0; ix--){
+            lt = input.Get(ix);
+            int channel=lt.Channel;
+            if (channel == CHANNEL_EOL || channel ==  CHANNEL_WHITESPACE){
+                return true;
+            } else if(channel == Token.DEFAULT_CHANNEL){
+                break;
+            }
+        }
+        return false;
+    }
 }
 // Lexer Helper Rule
 
 fragment UNDERSCORE  : '_';
-
 fragment DOLLAR      : '$';
 
 fragment ALPHABET            :    'a'..'z'|'A'..'Z';
@@ -1090,33 +1382,37 @@ fragment LF                  :    '\n';
 
 fragment UNICODE_ESCAPE      :    '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 
-fragment ESCAPE_SEQUENCE     :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
-                                 |   UNICODE_ESCAPE
+//changed to accept any backslash escape because the compiler seems to be very lenient.
+fragment ESCAPE_SEQUENCE     :   
+							//	'\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+                            //     |   UNICODE_ESCAPE
+                            	 '\\' '\\'
+                            	| '\\' ~('\\')
                                  ;
 // Lexer Ignored Rule
 EOL  
 @after{
-    // Debug.WriteLine("EOL",$text);
+    debugMethod("EOL",$text);
 }                        
     :    (CR LF | CR | LF)        
     { $channel = AS3_exParser.CHANNEL_EOL; };
 
 WHITESPACE
 @after{
-    // Debug.WriteLine("WHITESPACE",$text);
+    debugMethod("WHITESPACE",$text);
 }
-    :   (('\u0020'|'\u0009'|'\u000B'|'\u000C')|('\u001C'..'\u001F'))+              { $channel = AS3_exParser.CHANNEL_WHITESPACE; }
+    :   (('\u0020'|'\u0009'|'\u000B'|'\u00A0'|'\u000C')|('\u001C'..'\u001F'))+              { $channel = AS3_exParser.CHANNEL_WHITESPACE; }
     ;
     
 COMMENT_MULTILINE           
 @after{
-    // Debug.WriteLine("COMMENT_MULTILINE",$text);
+    debugMethod("COMMENT_MULTILINE",$text);
 }
     :   '/*' ( options {greedy=false;} : . )* '*/'         { $channel = AS3_exParser.CHANNEL_MLCOMMENT; };
 
 COMMENT_SINGLELINE
 @after{
-    // Debug.WriteLine("COMMENT_SINGLELINE",$text);
+    debugMethod("COMMENT_SINGLELINE",$text);
 }      
     :   '//' ~( CR | LF )* (CR LF | CR | LF)                          { $channel = AS3_exParser.CHANNEL_SLCOMMENT; };
 
@@ -1124,12 +1420,12 @@ COMMENT_SINGLELINE
 
 SINGLE_QUOTE_LITERAL
 @after{
-    // Debug.WriteLine("SINGLE_QUOTE_LITERAL",$text);
+    debugMethod("SINGLE_QUOTE_LITERAL",$text);
 }          
     :   '\'' ( ESCAPE_SEQUENCE | ~('\\'|'\'') )* '\'';
 DOUBLE_QUOTE_LITERAL         
 @after{
-    // Debug.WriteLine("DOUBLE_QUOTE_LITERAL",$text);
+    debugMethod("DOUBLE_QUOTE_LITERAL",$text);
 } 
     :   '"'  ( ESCAPE_SEQUENCE | ~('\\'|'"') )* '"';
 
@@ -1139,18 +1435,18 @@ DOUBLE_QUOTE_LITERAL
 
 REGULAR_EXPR_LITERAL
 @after{
-    // Debug.WriteLine("REGULAR_EXPR_LITERAL",$text);
+    debugMethod("REGULAR_EXPR_LITERAL",$text);
 }
-    :   {IsRegularExpression()}? => DIV REGULAR_EXPR_BODY DIV REGULAR_EXPR_FLAG*
+    :   {isRegularExpression()}? => DIV REGULAR_EXPR_BODY DIV REGULAR_EXPR_FLAG*
     ;
-
+    
 fragment REGULAR_EXPR_BODY
     :   REGULAR_EXPR_FIRST_CHAR REGULAR_EXPR_CHAR*
     ;   
 
 // add > to the cannot be first char list
 fragment REGULAR_EXPR_FIRST_CHAR
-    :   ~(CR | LF |'*'|'\\'|'/'|'>')
+    :   ~(CR | LF |'*'|'\\'|'/') //|'>')
     |   BACKSLASH_SEQUENCE
     ;
 
@@ -1169,7 +1465,7 @@ fragment REGULAR_EXPR_FLAG :    IDENT_PART ;
 
 HEX_NUMBER_LITERAL           
 @after{
-    // Debug.WriteLine("HEX_NUMBER_LITERAL",$text);
+    debugMethod("HEX_NUMBER_LITERAL",$text);
 } 
     : '0' ('X'|'x') HEX_DIGIT+ ;
 
@@ -1177,7 +1473,7 @@ fragment DEC_NUMBER          :  NUMBER+ '.' NUMBER* | '.' NUMBER+ | NUMBER+ ;
 
 DEC_NUMBER_LITERAL
 @after{
-    // Debug.WriteLine("DEC_NUMBER_LITERAL",$text);
+    debugMethod("DEC_NUMBER_LITERAL",$text);
 } 
     :  DEC_NUMBER EXPONENT? ;
 
@@ -1187,11 +1483,11 @@ fragment EXPONENT            : ('e'|'E') ('+'|'-')? NUMBER+ ;
 
 IDENTIFIER
 @after{
-    // Debug.WriteLine("Identifier",$text);
+    debugMethod("Identifier",$text);
 } 
     :   IDENT_NAME_ASCII_START
     |   UNICODE_ESCAPE+
-    |   {ConsumeIdentifierUnicodeStart();}
+    |   {consumeIdentifierUnicodeStart();}
     ;
        
 fragment IDENT_NAME_ASCII_START   : IDENT_ASCII_START IDENT_PART*;
@@ -1200,66 +1496,66 @@ fragment IDENT_ASCII_START        : ALPHABET | DOLLAR | UNDERSCORE;
     
 fragment IDENT_PART 
 @after{
-    // Debug.WriteLine("IDENT_PART",$text);
+    debugMethod("IDENT_PART",$text);
 } 
     :   (IDENT_ASCII_START) => IDENT_ASCII_START
     |   NUMBER
-    |   {IsUnicodeIdentifierPart(input.LA(1))}? {MatchAny();}
+    |   {isUnicodeIdentifierPart(input.LA(1))}? {/*matchAny();*/}
     ;
     
 XML_COMMENT
 @after{
-    // Debug.WriteLine("XML_COMMENT",$text);
+    debugMethod("XML_COMMENT",$text);
 }                  
     :   '<!--' ( options {greedy=false;} : . )* '-->';
     
 XML_CDATA options {k=8;}
 @after{
-    // Debug.WriteLine("XML_CDATA",$text);
+    debugMethod("XML_CDATA",$text);
 }    
     :   '<![CDATA' ( options {greedy=false;} : . )* ']]>' ;
      
 XML_PI
 @after{
-    // Debug.WriteLine("XML_PI",$text);
+    debugMethod("XML_PI",$text);
 }                      
     :   '<?' ( options {greedy=false;} : . )* '?>'; 
 
 // SourceCharacters but no embedded left-curly { or less-than <    
 XML_TEXT 
 @after{
-    // Debug.WriteLine("XMLText",$text);
+    debugMethod("XMLText",$text);
 }   
     : '\u0020'..'\u003b'
     | '\u003d'..'\u007a'
     | '\u007c'..'\u007e'
-    | {IsXMLText(input.LA(1))}?{MatchAny();}
+    | {isXMLText(input.LA(1))}?{/*matchAny();*/}
     ;
 
     
 // $<Literal
 
-booleanLiteral                     :   T=TRUE {Emit((CommonToken)$T);} | F=FALSE{Emit((CommonToken)$F);} ;
+booleanLiteral                     :   T=TRUE {emit($T);} | F=FALSE{emit($F);} ;
 
-numericLiteral                     :   D=DEC_NUMBER_LITERAL {Emit((CommonToken)$D);} | H=HEX_NUMBER_LITERAL {Emit((CommonToken)$H);};
+numericLiteral                     :   D=DEC_NUMBER_LITERAL {emit($D);} | H=HEX_NUMBER_LITERAL {emit($H);};
 
-stringLiteral                      :   S=SINGLE_QUOTE_LITERAL{Emit((CommonToken)$S);} | D=DOUBLE_QUOTE_LITERAL {Emit((CommonToken)$D);};
+stringLiteral                      :   S=SINGLE_QUOTE_LITERAL{emit($S);} | D=DOUBLE_QUOTE_LITERAL {emit($D);};
 
-regularExpresionLiteral            :   R=REGULAR_EXPR_LITERAL {Emit((CommonToken)$R);};
+regularExpresionLiteral            :   R=REGULAR_EXPR_LITERAL {emit($R);};
 
-identifierLiteral                  :   /*{isNotReservedWord(input.LT(1).Text)}?*/ I=IDENTIFIER{Emit((CommonToken)$I);} | notQuiteReservedWord ; 
+identifierLiteral                  :   /*{isNotReservedWord(input.LT(1).Text)}?*/ I=IDENTIFIER{emit($I);} | notQuiteReservedWord ; 
 
-xmlNameLiteral                     :   (I=IDENTIFIER{Emit((CommonToken)$I);} | allKeywords) ( {!PromoteWhitespace()}?=> (s=SUB {Emit((CommonToken)$s);} | d=DOT {Emit((CommonToken)$d);} | c=COLON {Emit((CommonToken)$c);}) {!PromoteWhitespace()}?=> (I2=IDENTIFIER {Emit((CommonToken)$I2);} | allKeywords))*
+xmlNameLiteral                     :   (I=IDENTIFIER{emit($I);} | allKeywords) ( {!promoteWhitespace()}?=> (s=SUB {emit($s);} | d=DOT {emit($d);} | c=COLON {emit($c);}) {!promoteWhitespace()}?=> (I2=IDENTIFIER {emit($I2);} | allKeywords))*
 									; 
 
-literal                            :   N=NULL {Emit((CommonToken)$N);} | booleanLiteral | numericLiteral | stringLiteral | regularExpresionLiteral;
+literal                            :   N=NULL {emit($N);} | booleanLiteral | numericLiteral | stringLiteral | regularExpresionLiteral;
 // $>
 
 xmlMarkup                          :   xmlComment | xmlCDATA | xmlPI;
-xmlComment                         :   x=XML_COMMENT {Emit((CommonToken)$x);} ;  
-xmlCDATA                           :   x=XML_CDATA {Emit((CommonToken)$x);}; 
-xmlPI                              :   x=XML_PI {Emit((CommonToken)$x);} ; 
-xmlExprEval                        :   L=LCURLY {Emit((CommonToken)$L);PushIndent(true);} expression R=RCURLY{PopIndent();Emit((CommonToken)$R);} ; 
+xmlComment                         :   x=XML_COMMENT {emit($x);} ;  
+xmlCDATA                           :   x=XML_CDATA {emit($x);}; 
+xmlPI                              :   x=XML_PI {emit($x);} ; 
+xmlExprEval                        :   L=LCURLY {emit($L);pushIndent(true);} expression R=RCURLY{popIndent();emit($R);} ; 
 
 
 xmlTextElement
@@ -1332,23 +1628,13 @@ xmlTextElement
     ) 
     {
         lexToken.Type = XML_TEXT; 
-        Emit((CommonToken)$lexToken);
+        emit($lexToken);
     }
     ;
 
 xmlText
-@init{
-    
-}
-@after{
-    // System.out.println("xmlText.text=("+$text+")");
-    // System.out.println("xmlText after start currentIndex = "+input.index()+"size = "+input.size());
-}
     : 
-//    {foundNextLT()}? => {changeTokensUpToNextLT();}
-	{mPrinter.SetE4XTextContent(true);} 
-    (x=XML_TEXT {Emit((CommonToken)$x);} | xmlTextElement)+ //xmlTextElement+
-    {mPrinter.SetE4XTextContent(false);}                                                                        
+    (xmlTextElement)+ 
     ;
 
 // it's a helper rule,should not be a tree.
@@ -1371,11 +1657,11 @@ xmlPrimaryExpression
 xmlPropertyIdentifier
       :   xmlAttributeIdentifier
       |   xmlQualifiedIdentifier
-      |   s=STAR {Emit((CommonToken)$s);}                                    
+      |   s=STAR {emit($s);}                                    
       ;    
 
 xmlAttributeIdentifier
-    :   at=XML_AT {Emit((CommonToken)$at);} 
+    :   at=XML_AT {emit($at);} 
         (
            xmlQualifiedIdentifier
            | xmlPropertySelector
@@ -1385,15 +1671,16 @@ xmlAttributeIdentifier
     
 xmlPropertySelector
     :   xmlNameLiteral 
-    |   s=STAR {Emit((CommonToken)$s);}
+    |   s=STAR {emit($s);}
     ;
 
 xmlQualifiedIdentifier
-    :   xmlPropertySelector  x=XML_NS_OP {Emit((CommonToken)$x);}                 
+    :   xmlPropertySelector  x=XML_NS_OP {wrapEmit($x, ASPrettyPrinter.Break_Other_Connectors_code);}                 
     (
         xmlPropertySelector
         | indexSuffix
     )
+    {popIndent();}
     ;
 
 xmlInitialiser
@@ -1401,28 +1688,41 @@ xmlInitialiser
     |   xmlElement
     ;
     
+//xmlTagEnd
+//	:
+//	(('/' '>')=> t1='/' t2='>'
+ //   { $t1.Line == $t2.Line && 
+ //     $t1.CharPositionInLine + 1 == $t2.CharPositionInLine}?
+  //	    -> XML_TEND) {t1.Text = "/>";}        
+//	;
+    
 xmlElement
 @init
 {
-	WrapOptions options=mPrinter.GetXMLWrapOptions();
+	WrapOptions options=mPrinter.getXMLWrapOptions();
 	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
 }
     :
-    {pushedFormat=PushFormatType(options, false);}
-    {EmitCRForTag(options);}
-    L=LT {Emit((CommonToken)$L);}{PushIndent(true);} xmlTagName xmlAttributes? 
+    {pushedFormat=pushFormatType(options, true);}
+    {pushedWrapInfo=pushWrapInfo(options, true);}
+    {emitCRForTag(options);}
+    L=LT {emit($L);}{emitXMLBreak($L, true);}{pushIndent(true);} xmlTagName xmlAttributes? 
     (
-        x=XML_TEND {Emit((CommonToken)$x);}
-        {EmitCRForTag(options);}
-        {PopIndent();}
+        x=XML_TEND {emit($x);}
+    //	te=xmlTagEnd
+    	//{emit($te.Start);}
+        {emitCRForTag(options);}
+        {popIndent();}
         | 
-        G=GT {Emit((CommonToken)$G);}{EmitCRForTag(options);}xmlElementContent? 
-        x=XML_E_TEND {PopIndent();}{Emit((CommonToken)$x);} 
-        xmlTagName G=GT{Emit((CommonToken)$G);}{EmitCRForTag(options);} 
+        G=GT {emit($G);pushXMLTextContentFlag();} xmlElementContent[false]? 
+        x=XML_E_TEND {popIndent();}{emit($x);}{if (!popXMLTextContentFlag()) emitXMLBreak($x, true);} 
+        xmlTagName G=GT{emit($G);}{emitCRForTag(options);} 
     )
     {
+	    if (pushedWrapInfo) mPrinter.popWrapContext();
 	    if (pushedFormat)
-	    	mPrinter.PopFormatMode();
+	    	mPrinter.popFormatMode();
     }
     ; 
     
@@ -1436,29 +1736,40 @@ xmlTagName
     ; 
 
 xmlAttribute
-    :  {PromoteWhitespace()}? {InsertWS(1);} xmlNameLiteral A=ASSIGN {Emit((CommonToken)$A);} 
+    :  {promoteWhitespace()}? {insertWS(1);} xmlTagName A=ASSIGN {emit($A);} 
     (
         xmlExprEval
         | stringLiteral
     )
     ;
        
-xmlElementContent
-    :  xmlElementContentHelper+
+xmlElementContent[bool crAfterTags]
+    :  xmlElementContentHelper[crAfterTags]+
     ;
 
-xmlElementContentHelper
-    : xmlExprEval 
-    | xmlMarkup 
-    | xmlElement 
-    | {mPrinter.PushFormatMode(ASPrettyPrinter.FORMAT_INDENT);}xmlText{mPrinter.PopFormatMode();}
+xmlElementContentHelper[bool crAfterTags]
+    : xmlExprEval {if (crAfterTags) insertCR(false);setXMLTextContentFlag();}
+    | xmlMarkup {if (crAfterTags) insertCR(false);}
+    | xmlElement {if (crAfterTags) insertCR(false);}
+    | {mPrinter.pushFormatMode(ASPrettyPrinter.FORMAT_INDENT);}xmlText{mPrinter.popFormatMode();} {if (crAfterTags) insertCR(false);setXMLTextContentFlag();}
 	;
 
 xmlListInitialiser
-    :   {InsertCR(false);} x=XML_LS_STD 
-  		{Emit((CommonToken)$x);}{InsertCR(false);}{PushIndent(true);}
-  		xmlElementContent? 
-  		{InsertCR(false);} x=XML_LS_END {PopIndent();}{Emit((CommonToken)$x);}{InsertCR(false);}
+@init
+{
+	WrapOptions options=mPrinter.getXMLWrapOptions();
+	bool pushedFormat=false;
+}
+    :
+		{pushedFormat=pushFormatType(options, true);}    
+        {insertCR(false);} x=XML_LS_STD 
+  		{emit($x);}{insertCR(false);}{pushIndent(true);}
+  		xmlElementContent[true]? 
+  		{insertCR(false);} x=XML_LS_END {popIndent();}{emit($x);}{insertCR(false);}
+	    {
+		    if (pushedFormat)
+		    	mPrinter.popFormatMode();
+	    }
     ;
 
 // semic rule
@@ -1469,7 +1780,7 @@ semic
     int marker = input.Mark();
     // Promote EOL if appropriate
     bool onBrace=false;
-    if ( ((CommonToken) retval.Start).Text!=null && ((CommonToken) retval.Start).Text.Equals("}"))
+    if (((IToken)retval.Start).Text != null && ((IToken)retval.Start).Text == "}")
     {
     	onBrace=true;
 		if (state.backtracking>0)
@@ -1479,7 +1790,7 @@ semic
 		}    	
     }
     	
-    if (FindVirtualHiddenToken(retval))
+    if (findVirtualHiddenToken(retval))
     {
        retval.Stop=retval.Start;
        return retval;
@@ -1487,14 +1798,19 @@ semic
        
  //   promoteEOL(retval);
 }
-    :   S=SEMI{Emit((CommonToken)$S);} 
-    |   E=EOF{Emit((CommonToken)$E);} 
+    :   S=SEMI{emit($S);} 
+    |   E=EOF{emit($E);} 
     |   R=RCURLY { input.Rewind(marker); 
                     if (onBrace)
+                    {
                          retval.Start=input.LT(-1);
+                         retval.Stop=retval.Start;
+                         retval.Tree=null;
+                         return retval;
+                    }
                  }
-//    |   C=COMMENT_MULTILINE {Emit((CommonToken)$C);} // (with EOL in it)
-//    |   {isNextTokenHiddenVirtualSemi(retval)}?  E=EOL {Emit((CommonToken)$E);} 
+//    |   C=COMMENT_MULTILINE {emit($C);} // (with EOL in it)
+//    |   {isNextTokenHiddenVirtualSemi(retval)}?  E=EOL {emit($E);} 
     ;
 
 
@@ -1505,20 +1821,24 @@ fileContents
 // $<Package Declaration
 
 packageDeclaration
-	:   p=PACKAGE {{InsertCR(false);}Emit((CommonToken)$p);PushExpressionIndent();} (type)? {PopIndent();} 
+	:   p=PACKAGE {isSeenPackage=true;{insertCR(false);}emit($p);pushExpressionIndent();} ({insertWS(1);} type)? {popIndent();} 
 	    l=LCURLY 
 	    {
-	       LeftCurlyNewlineHandler(false);
-	       Emit((CommonToken)$l);
-	       if (mPrinter.IsIndentAtPackageLevel())
-	          PushIndent(true);
+	  	   mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_package_code);
+	       leftCurlyNewlineHandler(false);
+	       emit($l);
+	       {mPrinter.addDeclEqualsBlock();}
+	       if (mPrinter.isIndentAtPackageLevel())
+	          pushIndent(true);
+	       mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
 	    } 
 	    packageElement* 
 	    {
-	    	if (mPrinter.IsIndentAtPackageLevel())
-	            PopIndent();
+	    	if (mPrinter.isIndentAtPackageLevel())
+	            popIndent();
 	    } 
-	    r=RCURLY {InsertCR(false);Emit((CommonToken)$r);}
+	    {mPrinter.popDeclEqualsBlock();}
+	    r=RCURLY {insertCR(false);emit($r);popBlockStack();popBlockStack();}
 	;
 			
 //this is for actionscript embedded within mxml.  I believe that the semantics are that the code in
@@ -1526,88 +1846,153 @@ packageDeclaration
 //allowed inside a class should be okay.  However, imports are okay too.
 mxmlEmbedded
 	:
-	    (propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration)* | EOF
+		({insertCR(false);} conditionalCompilerOption 
+			l=LCURLY
+			{ 
+				mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_Conditional_code);
+				leftCurlyNewlineHandler(false);
+	    		emit($l);pushIndent(true);
+	    		mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
+	    	}
+			mxmlEmbedded
+			{popIndent();} r=RCURLY {insertCR(false);emit($r);popBlockStack();popBlockStack();} 
+	     | propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration
+	    )*  
+	    EOF?
 	;
 				
 packageElement
-    :   classOrInterfaceDecl | propertyDeclaration | functionDeclaration | interfaceFunctionDeclaration | statement | directive
+    :
+    	{insertCR(false);} conditionalCompilerOption 
+			l=LCURLY
+			{ 
+				mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_Conditional_code);
+				leftCurlyNewlineHandler(false);
+	    		emit($l);pushIndent(true);
+	    		{mPrinter.addDeclEqualsBlock();}
+	    		mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
+	    	}
+			packageElement*
+			{mPrinter.popDeclEqualsBlock();}
+			{popIndent();} r=RCURLY {insertCR(false);emit($r);popBlockStack();popBlockStack();}	   
+    	| classOrInterfaceDecl | propertyDeclaration | functionDeclaration | interfaceFunctionDeclaration | statement | directive
     ;
 
 importDeclaration
-	:   {InsertCR(false);} i=IMPORT {Emit((CommonToken)$i);} type (D=DOT {Emit((CommonToken)$D);} S=STAR{Emit((CommonToken)$S);} )? semic 
+	:
+	{mPrinter.markDeclEqualsContextChange();}   
+	{insertCR(false);addBlankLinesBeforeFirstImport();} i=IMPORT {emit($i);} type (D=DOT {emit($D);} S=STAR{emit($S);} )? semic 
 	;
 
 classOrInterfaceDecl
-	:   (conditionalDirAndBindingDecls)? {PushLazyIndent();}{InsertCR(false);}{InsertLines(mPrinter.GetBlankLinesBeforeClass(), false);} memberModifiers? (interfaceDeclaration | classDeclaration)
+	:   {mPrinter.setBindingContext(ASPrettyPrinter.BindingContext_Class);} (conditionalDirAndBindingDecls)? {pushLazyIndent();}{insertCR(false);}{insertLines(mPrinter.getBlankLinesBeforeClass(), false);isFirstClassSeen=true;} memberModifiers? (interfaceDeclaration | classDeclaration)
 	;
 	
 directive
-	: {PushLazyIndent();}{InsertCR(false);}(bindingDecl | includeDirective | useNamespaceDirective | importDeclaration | /*namespaceDirective |*/ defaultXMLNamespaceDirective){PopIndent();}
+	:
+	{pushLazyIndent();}{insertCR(false);}(bindingDecl | includeDirective | useNamespaceDirective | importDeclaration | /*namespaceDirective |*/ defaultXMLNamespaceDirective){popIndent();}
 	;
 	
 conditionalDirAndBindingDecls
-	: {InsertCR(false);} 	
-	  {mPrinter.MarkBindablePos(true);}
+	: {insertCR(false);} 	
+	  {mPrinter.markBindablePos(true);}
 	  conditionalCompilerOption 
-      {mPrinter.SetBindableMode();}
-	  ({InsertCR(false);} bindingDecl)*
+      {mPrinter.setBindableMode();}
+	  ({insertCR(false);} bindingDecl)*
 	;
 	
 xmlKeyword
-	: {input.LT(1).Text.ToLower().Equals("xml")}? I=IDENTIFIER {Emit((CommonToken)$I);} 
+	: {input.LT(1).Text.ToLower() == "xml"}? I=IDENTIFIER {emit($I);} 
 	;
 	
 conditionalCompilerOption
 	:
-	identifierLiteral x=XML_NS_OP {Emit((CommonToken)$x);} identifierLiteral
+	identifierLiteral x=XML_NS_OP {emit($x);} identifierLiteral
 	;
 	
 defaultXMLNamespaceDirective
-	: D=DEFAULT {Emit((CommonToken)$D);} xmlKeyword 
+@init
+{
+	bool pushedFormat=false;
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+}
+	:
+	{mPrinter.markDeclEqualsContextChange();}
+	{pushedFormat=pushFormatType(options, true);} 
+	D=DEFAULT {emit($D);} xmlKeyword 
 	//namespace
-	N=NAMESPACE {Emit((CommonToken)$N);} 
-	A=ASSIGN {Emit((CommonToken)$A);} I=IDENTIFIER {Emit((CommonToken)$I);} semic 
+	N=NAMESPACE {emit($N);} 
+	A=ASSIGN {insertWS(mPrinter.getSpacesAroundAssignment());emit($A);insertWS(mPrinter.getSpacesAroundAssignment());} assignmentExpression semic
+	{
+   	    if (pushedFormat)
+   	    {
+   	    	mPrinter.popFormatMode();
+   	    }
+	} 
 	;	
 	
 bindingDecl
-@init{bool bindable=false;}
-	: L=LBRACK  
-		  I=IDENTIFIER 
+@init
+{bool bindable=false;
+ bool pushedIndent=false;
+	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
+ WrapOptions options=mPrinter.getExpressionWrapOptions();
+}
+	:
+    	{pushedFormat=pushFormatType(options, true);
+    	 pushedWrapInfo=pushWrapInfo(options, true);
+    	}
+	   L=LBRACK  
+		  (XA=XML_AT)? I=IDENTIFIER 
 		  	{
-		  		bindable=mPrinter.IsDirectiveForNextElement($I.Text);
+		  		bindable=mPrinter.isDirectiveForNextElement($I.Text);
 		  		if (bindable)
-		  			mPrinter.MarkBindablePos(false); //call this to mark position *before* we send any of the tokens to the printer
-		  		Emit((CommonToken)$L); }
-		  		{Emit((CommonToken)$I);
+		  			mPrinter.markBindablePos(false); //call this to mark position *before* we send any of the tokens to the printer
+		  		emit($L); }
+		  		{if (XA!=null)
+		  		    emit($XA); 
+		  		emit($I);
+		  		mPrinter.setLastBindableTagName($I.Text);
 		  	} 
-		  (L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} 
-		     (bindingDeclArg (C=COMMA {Emit((CommonToken)$C);} bindingDeclArg)*)? 
-		   R=RPAREN{InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);} 
+		(L=LPAREN {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInArgumentLists());}
+		     (bindingDeclArg (C=COMMA {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, -1, ASPrettyPrinter.Break_SubType_Other);} bindingDeclArg)*)? 
+		R=RPAREN{insertWS(mPrinter.getAdvancedSpacesInsideParensInArgumentLists());emit($R);}
 	       )? 
-	   R=RBRACK{Emit((CommonToken)$R);} (s=SEMI {Emit((CommonToken)$s);})?
+	   R=RBRACK{emit($R);} (s=SEMI {emit($s);})?
 	   {
+        	if (pushedWrapInfo)
+        		mPrinter.popWrapContext();
+	        if (pushedIndent)
+    	    	popIndent();
+    	    if (pushedFormat)
+    	    {
+    	    	mPrinter.popFormatMode();
+    	    }
 	   	if (bindable)
 	   	{
-	   		mPrinter.SetBindableMode();
+	   		mPrinter.setBindableMode();
 	   	}
 	   } 
 	;
 	
 includeDirective
-	: I=INCLUDE{Emit((CommonToken)$I);} stringLiteral semic  
+	:
+	{mPrinter.markDeclEqualsContextChange();} 
+	I=INCLUDE{emit($I);} stringLiteral semic  
 	;
 	
 bindingDeclArg
 	:
 	//TODO: figure out what's actually legal here
-//	(I=IDENTIFIER {Emit((CommonToken)$I);} E=ASSIGN {Emit((CommonToken)$E);})? expression  
-//	| I=IDENTIFIER{Emit((CommonToken)$I);} 
-//	| T=TRUE {Emit((CommonToken)$T);} 
-//	| F=FALSE{Emit((CommonToken)$F);}
+//	(I=IDENTIFIER {emit($I);} E=ASSIGN {emit($E);})? expression  
+//	| I=IDENTIFIER{emit($I);} 
+//	| T=TRUE {emit($T);} 
+//	| F=FALSE{emit($F);}
    
-    (I=IDENTIFIER {Emit((CommonToken)$I);} E=ASSIGN {Emit((CommonToken)$E);} )? 
+    (eitherIdentifier E=ASSIGN {insertWS(mPrinter.getAdvancedSpacesAroundAssignmentInMetatags()); emit($E); insertWS(mPrinter.getAdvancedSpacesAroundAssignmentInMetatags());} )? 
 	(
-		stringLiteral | numericLiteral | eitherIdentifier  
+		stringLiteral | (P=PLUS {emit($P);} | S=SUB {emit($S);} )? numericLiteral | (eitherIdentifier (D=DOT {emit($D);} eitherIdentifier)* )  
 	);
 
 // $>
@@ -1615,23 +2000,54 @@ bindingDeclArg
 // $<Class / Interface Body
 
 interfaceDeclaration
-	:   i=INTERFACE {Emit((CommonToken)$i);} type (e=EXTENDS {Emit((CommonToken)$e);} typeList)? {PopIndent();}
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+	:   
+	    i=INTERFACE {emit($i);} type 
+		(e=EXTENDS 
+			{pushedWrapInfo=pushWrapInfo(options, true);} {wrapEmit($e, ASPrettyPrinter.Break_Keyword_code);} 
+			typeList
+			{if (pushedWrapInfo) mPrinter.popWrapContext();}{popIndent();} 
+		)? 
+		{popIndent();}
         interfaceBody
 	;	
 
 interfaceBody
 	:   l=LCURLY 
 	    {
-	    	LeftCurlyNewlineHandler(false);
-	    	Emit((CommonToken)$l);PushIndent(true);
+	    	mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_interface_code);
+	    	leftCurlyNewlineHandler(false);
+	    	emit($l);pushIndent(true);
+	    	{mPrinter.addDeclEqualsBlock();}
+	    	mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
 	    } 
 	    interfaceElement* 
-	    {PopIndent();} 
-	    r=RCURLY {InsertCR(false);Emit((CommonToken)$r);}
+	    {popIndent();} 
+	    {mPrinter.popDeclEqualsBlock();}
+	    r=RCURLY {insertCR(false);emit($r);popBlockStack();popBlockStack();}
 	;	
 
 classDeclaration
-	:   c=CLASS {Emit((CommonToken)$c);} type ( E=EXTENDS {Emit((CommonToken)$E);} type)? ( I=IMPLEMENTS {Emit((CommonToken)$I);} typeList)? {PopIndent();}
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+	:	
+	    c=CLASS {emit($c);} type 
+		( E=EXTENDS 
+			{pushedWrapInfo=pushWrapInfo(options, true);}{wrapEmit($E, ASPrettyPrinter.Break_Keyword_code);}
+			type
+			{if (pushedWrapInfo) mPrinter.popWrapContext();}{popIndent();}
+		)? 
+		( I=IMPLEMENTS 
+			{pushedWrapInfo=pushWrapInfo(options, true);} {wrapEmit($I, ASPrettyPrinter.Break_Keyword_code);} 
+			typeList
+			{if (pushedWrapInfo) mPrinter.popWrapContext();}{popIndent();}
+		)? 
+		{popIndent();}
         classBody 
     ;  
     
@@ -1640,12 +2056,16 @@ classDeclaration
 classBody
 	:   L=LCURLY 
 		{
-			LeftCurlyNewlineHandler(false);
-			Emit((CommonToken)$L);PushIndent(true);
+			mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_class_code);
+			leftCurlyNewlineHandler(false);
+			emit($L);pushIndent(true);
+			{mPrinter.addDeclEqualsBlock();}
+			mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
 		} 
 		classBodyElement* 
-		{PopIndent();} 
-		R=RCURLY{InsertCR(false);Emit((CommonToken)$R);} 
+		{popIndent();} 
+		{mPrinter.popDeclEqualsBlock();}
+		R=RCURLY{insertCR(false);emit($R);popBlockStack();popBlockStack();} 
 	;
 
 // $>
@@ -1653,11 +2073,39 @@ classBody
 // $<Class/Interface Element
 
 classBodyElement
-    :   propertyDeclaration | functionDeclaration | statement | directive //| emptyStatement
+    : (conditionalCompilerOption LCURLY)=>
+  	    	{insertCR(false);} conditionalCompilerOption 
+			l=LCURLY
+			{ 
+				mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_Conditional_code);
+				leftCurlyNewlineHandler(false);
+	    		emit($l);pushIndent(true);
+	    		{mPrinter.addDeclEqualsBlock();}
+	    		mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
+	    	}
+			classBodyElement*
+			{popIndent();}
+			{mPrinter.popDeclEqualsBlock();} 
+			r=RCURLY {insertCR(false);emit($r);popBlockStack();popBlockStack();}	   
+    | propertyDeclaration | functionDeclaration | statement | directive
 	;
 
 interfaceElement
-    :   propertyDeclaration | interfaceFunctionDeclaration | statement| directive //| emptyStatement
+    : (conditionalCompilerOption LCURLY)=>
+   	    	{insertCR(false);} conditionalCompilerOption 
+			l=LCURLY
+			{ 
+				mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_Conditional_code);
+				leftCurlyNewlineHandler(false);
+	    		emit($l);pushIndent(true);
+	    		{mPrinter.addDeclEqualsBlock();}
+	    		mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
+	    	}
+			interfaceElement*
+			{popIndent();}
+			{mPrinter.popDeclEqualsBlock();} 
+			r=RCURLY {insertCR(false);emit($r);popBlockStack();popBlockStack();}	   
+    | propertyDeclaration | interfaceFunctionDeclaration | statement| directive
     ;
 
 // $>
@@ -1667,10 +2115,16 @@ interfaceElement
 // $<InterfaceFunction Declaration
 
 interfaceFunctionDeclaration
-    :    (conditionalDirAndBindingDecls)? {InsertCR(false);} memberModifiers? F=FUNCTION {Emit((CommonToken)$F);}
+@init{
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+	bool pushedWrapInfo=false;
+}
+    :    {mPrinter.setBindingContext(ASPrettyPrinter.BindingContext_Function);} (conditionalDirAndBindingDecls)? {insertCR(false);} memberModifiers? F=FUNCTION {emit($F);}
        // getOrSet? 
-    (S=SET{Emit((CommonToken)$S);} | G=GET{Emit((CommonToken)$G);} )? 
-    (I=IDENTIFIER {Emit((CommonToken)$I);} | notQuiteReservedWord) formalParameterList (C=COLON {InsertWS(mPrinter.GetAdvancedSpacesBeforeColons()); Emit((CommonToken)$C);InsertWS(mPrinter.GetAdvancedSpacesAfterColons());} type)? semic
+    (S=SET{emit($S);} | G=GET{emit($G);} )?
+    {pushedWrapInfo=pushWrapInfo(options, true);} 
+	(I=IDENTIFIER {emit($I);} | notQuiteReservedWord) formalParameterList (C=COLON {insertWS(mPrinter.getAdvancedSpacesBeforeColonsInFunctionTypes()); emit($C);insertWS(mPrinter.getAdvancedSpacesAfterColonsInFunctionTypes());} type)? semic
+    {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
 
 // $>
@@ -1678,7 +2132,7 @@ interfaceFunctionDeclaration
 // $<Property Declaration
 
 propertyDeclaration
-	:    {InsertLines(mPrinter.GetBlankLinesBeforeProperties());} (conditionalDirAndBindingDecls)? {InsertCR(false);}{PushLazyIndent();} memberModifiers? (variableStatement | constantVarStatement | namespaceDirective) {PopIndent();}
+	:    {insertLines(mPrinter.getBlankLinesBeforeProperties());mPrinter.setBindingContext(ASPrettyPrinter.BindingContext_Property);} (conditionalDirAndBindingDecls)? {insertCR(false);}{pushLazyIndent();} memberModifiers? (variableStatement | constantVarStatement | namespaceDirective ) {popIndent();}{mPrinter.adjustLastLineIndent();}
 	;
 
 // $>
@@ -1686,64 +2140,97 @@ propertyDeclaration
 // $<Function Definition (13)
 
 functionDeclaration
-    :    (conditionalDirAndBindingDecls)? {PushLazyIndent();}{InsertCR(false);InsertLines(mPrinter.GetBlankLinesBeforeFunction());} memberModifiers? F=FUNCTION {Emit((CommonToken)$F);} 
-    (funcType=(SET|GET) {Emit((CommonToken)$funcType);})?
-    (I=IDENTIFIER {Emit((CommonToken)$I);} | notQuiteReservedWord) formalParameterList (C=COLON {InsertWS(mPrinter.GetAdvancedSpacesBeforeColons());Emit((CommonToken)$C);InsertWS(mPrinter.GetAdvancedSpacesAfterColons());} type)? {PopIndent();} functionBody 
+@init{
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+	bool pushedWrapInfo=false;
+}
+    :
+    {mPrinter.setBindingContext(ASPrettyPrinter.BindingContext_Function);} (conditionalDirAndBindingDecls)? {pushLazyIndent();}{insertCR(false);insertLines(mPrinter.getBlankLinesBeforeFunction());} memberModifiers? F=FUNCTION {emit($F);}
+    {mPrinter.checkForSingleLineFunctionMode($F);}    
+    (funcType=(SET|GET) {emit($funcType);})?
+    {pushedWrapInfo=pushWrapInfo(options, true);} 
+	(I=IDENTIFIER {emit($I);} | notQuiteReservedWord) formalParameterList (C=COLON {insertWS(mPrinter.getAdvancedSpacesBeforeColonsInFunctionTypes());emit($C);insertWS(mPrinter.getAdvancedSpacesAfterColonsInFunctionTypes());} type)? {popIndent();mIsFunctionDecl=true;}
+    {if (pushedWrapInfo) mPrinter.popWrapContext();}
+    functionBody 
+    {mPrinter.endSingleLineFunctionMode();}    
     ;
 
 functionExpression
 		//pop the indent to remove the lazy indent that is added by the surrounding expression.  Then add an indent
 		//back at the end so that when the surrounding expression pops it will leave the correct number of indents.  Yuck.
-    :   F=FUNCTION {Emit((CommonToken)$F);} (I=IDENTIFIER{Emit((CommonToken)$I);})? formalParameterList (C=COLON {InsertWS(mPrinter.GetAdvancedSpacesBeforeColons());Emit((CommonToken)$C);InsertWS(mPrinter.GetAdvancedSpacesAfterColons());} type)? {PopIndent();} functionBody
-    	{PushExpressionIndent();}
+	:   F=FUNCTION {emit($F);pushIndent(false);} (I=IDENTIFIER{emit($I);})? formalParameterList (C=COLON {insertWS(mPrinter.getAdvancedSpacesBeforeColonsInFunctionTypes());emit($C);insertWS(mPrinter.getAdvancedSpacesAfterColonsInFunctionTypes());} type)? {mIsFunctionDecl=false;} {popIndent();} 
+			{mPrinter.pushFunctionExpressionStatementIndent();}	functionBody {popIndent();} 
     ;
 
 formalParameterList
 @init
 {
-	WrapOptions options=mPrinter.GetMethodDeclWrapOptions();
+	WrapOptions options=mPrinter.getMethodDeclWrapOptions();
 	bool pushedFormat=false;
 	bool pushedIndent=false;
+	bool pushedWrapInfo=false;
+	int firstParm=0;
 }
     :   
 		{
-			pushedFormat=PushFormatType(options, false);
-			mPrinter.SetInParameterDecl(true);
+			mInFunctionParameterDecl=true;
+			pushedFormat=pushFormatType(options, true);
+			mPrinter.setInParameterDecl(true);
+			pushedWrapInfo=pushWrapInfo(options, true);
 		}
-    	L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} 
-        ( ( {pushedIndent=PushLazyParmIndent(pushedIndent, options.IndentStyle);} variableDeclaration 
+		L=LPAREN {insertWS(mPrinter.getSpacesBeforeFormalParameters());}{emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInParameterLists());}
+        ( ( {pushedIndent=pushLazyParmIndent(pushedIndent, options.getIndentStyle());} {mPrinter.captureNextTextPosition();} variableDeclaration {firstParm=mPrinter.getLastCapturePosition();} 
             ( 
                C=COMMA 
-               {pushedIndent=EmitCommaWithSpacingAndCRs(options, (CommonToken) $C, pushedIndent);}
+               {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, firstParm, ASPrettyPrinter.Break_SubType_Parameters);}
                variableDeclaration 
             )* 
-            ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA  {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} formalEllipsisParameter)?
+            ( C=COMMA  {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, firstParm, ASPrettyPrinter.Break_SubType_Parameters);} formalEllipsisParameter)?
            )
-           | {pushedIndent=PushLazyParmIndent(pushedIndent, options.IndentStyle);} formalEllipsisParameter
+           | {pushedIndent=pushLazyParmIndent(pushedIndent, options.getIndentStyle());} formalEllipsisParameter
         )? 
-        R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}
+		R=RPAREN {insertWS(mPrinter.getAdvancedSpacesInsideParensInParameterLists());emit($R);}
         
         {
-        	 mPrinter.SetInParameterDecl(false);
+        	 mPrinter.setInParameterDecl(false);
+        	if (pushedWrapInfo)
+        		mPrinter.popWrapContext();
 	        if (pushedIndent)
-    	    	PopIndent();
+    	    	popIndent();
     	    if (pushedFormat)
-    	    	mPrinter.PopFormatMode();
+    	    {
+    	    	mPrinter.popFormatMode();
+    	    }
+    	    mInFunctionParameterDecl=false;
         } 
     ;
     
 formalEllipsisParameter
-    :   E=ELLIPSIS  {Emit((CommonToken)$E);InsertWS(1);} variableIdentifierDecl
+    :   E=ELLIPSIS  {emit($E);insertWS(1);} variableIdentifierDecl
     ;   
 
 functionBody
+@init
+{
+	bool containsStatements=false;
+}
     :   L=LCURLY 
     	{
-    		LeftCurlyNewlineHandler(false);
-    		Emit((CommonToken)$L);PushIndent(true);
+    		mCodeBlockStack.Add(mIsFunctionDecl ? ASPrettyPrinter.BraceContext_functionDecl_code : ASPrettyPrinter.BraceContext_functionExpression_code);
+    		leftCurlyNewlineHandler(false);
+    		emit($L);pushIndent(true);
+    		{mPrinter.addDeclEqualsBlock();}
+    		mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
+    		insertLines(mPrinter.getBlankLinesToStartFunctions(), false);
     	} 
-    		(statement|functionDeclaration)* {PopIndent();} 
-    	R=RCURLY   {InsertCR(false);Emit((CommonToken)$R);} 
+    		((statement | functionDeclaration) {containsStatements=true;})* {popIndent();}
+    		{if (containsStatements)
+    			insertLines(mPrinter.getBlankLinesToEndFunctions(), false);
+    		 else
+				mPrinter.clearAddedWhitespace();    		 	
+    		}
+    		{mPrinter.popDeclEqualsBlock();} 
+    	R=RCURLY   {insertCR(false);emit($R);popBlockStack();popBlockStack();} 
     ;
 
 // $>
@@ -1755,7 +2242,7 @@ memberModifiers
     ;
 
 //each
-//	: {input.LT(1).Text.Equals("each")}? I=IDENTIFIER{Emit((CommonToken)$I);} 
+//	: {input.LT(1).Text == "each"}? I=IDENTIFIER{emit($I);} 
 //	;
 	
 memberModifier
@@ -1770,7 +2257,7 @@ memberModifier
     |   PUBLIC
     |   STATIC
     |   IDENTIFIER //this is to handle the case of namespaces, which apparently don't have to be before other modifiers
-    ) {Emit((CommonToken)$x);}
+    ) {emit($x);}
     ;
 
 // $>
@@ -1782,27 +2269,37 @@ memberModifier
 
 statement
     :
-    	{SetBlockFlag(true);} blockStatement
-    |   {InsertStatementCR();}directive
-    |   {InsertStatementCR();}namespaceDirective
-    |   {InsertStatementCR();}{PushLazyIndent();} expression semic {PopIndent();}
-    |   {InsertStatementCR();} {PushLazyIndent();}constantVarStatement {PopIndent();}
-    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}tryStatement
-    |   {InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}labelledStatement 
-    |   {MarkBlockFlag();} switchStatement
-    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}withStatement
-    |   {InsertStatementCR();} {PushLazyIndent();} returnStatement {PopIndent();}
-    |   {InsertStatementCR();} {PushLazyIndent();} breakStatement {PopIndent();}
-    |   {InsertStatementCR();} {PushLazyIndent();} continueStatement {PopIndent();}
-    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}forStatement
-    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}forInStatement
-    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}forEachInStatement
-    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}doWhileStatement
-    |   {MarkBlockFlag();InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();}whileStatement
-    |   {InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}ifStatement
-    |   {if (mPrinter.IsEmptyStatementsOnNewLine())InsertStatementCR();}emptyStatement
-    |   {InsertStatementCR();} {PushLazyIndent();} variableStatement {PopIndent();}
-    |   {InsertStatementCR();} {PushLazyIndent();} throwStatement {PopIndent();}
+    	{mStatementCount++;}
+    (	{mPrinter.inOther();}{setBlockFlag(true);} blockStatement
+    |   {insertStatementCR();}directive
+    |   {insertStatementCR();}namespaceDirective
+    |   {insertStatementCR();} {pushLazyIndent();}constantVarStatement {popIndent();}
+    |   {markBlockFlag();insertLines(mPrinter.getBlankLinesBeforeControlStatement());}tryStatement
+    |   {markBlockFlag();} switchStatement
+    |   {markBlockFlag();insertLines(mPrinter.getBlankLinesBeforeControlStatement());}{insertStatementCR();}{mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);} withStatement {popBlockStack();}
+    |   {pushLazyIndent();} returnStatement {popIndent();}
+    |   {pushLazyIndent();} breakStatement {popIndent();}
+    |   {pushLazyIndent();} continueStatement {popIndent();}
+    |   {mPrinter.inLoop();}{markBlockFlag();insertLines(mPrinter.getBlankLinesBeforeControlStatement());}{insertStatementCR();}{mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);} forStatement {popBlockStack();}
+    |   {mPrinter.inLoop();}{markBlockFlag();insertLines(mPrinter.getBlankLinesBeforeControlStatement());}{insertStatementCR();}{mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);} forInStatement {popBlockStack();}
+    |   {mPrinter.inLoop();}{markBlockFlag();insertLines(mPrinter.getBlankLinesBeforeControlStatement());}{insertStatementCR();}{mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);} forEachInStatement {popBlockStack();}
+    |   {mPrinter.inLoop();}{markBlockFlag();insertLines(mPrinter.getBlankLinesBeforeControlStatement());}{insertStatementCR();}{mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);} doWhileStatement {popBlockStack();}
+    |   {mPrinter.inLoop();}{markBlockFlag();insertLines(mPrinter.getBlankLinesBeforeControlStatement());}{insertStatementCR();}{mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);} whileStatement {popBlockStack();}
+    |   {mPrinter.inCondition();}{insertLines(mPrinter.getBlankLinesBeforeControlStatement());} ifStatement
+    |   {insertStatementCR();} {pushLazyIndent();} variableStatement {popIndent();}{mPrinter.adjustLastLineIndent();}
+    |   {pushLazyIndent();} throwStatement {popIndent();}
+    |   {insertLines(mPrinter.getBlankLinesBeforeControlStatement());}{insertStatementCR();}{mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);} labelledStatement {popBlockStack();} 
+    |   {pushLazyIndent();}{mPrinter.markDeclEqualsContextChange();} 
+	    	{
+	    		if (mPrinter.statementNeedsCR(input.LT(1)))
+	    			insertStatementCR();
+		    	else
+		    		insertWS(1);
+	    	} 
+    		expression semic {popIndent();}{mPrinter.adjustLastLineIndent();}
+    |   {if (mPrinter.isEmptyStatementsOnNewLine())insertStatementCR();} emptyStatement
+    )
+    	{mPrinter.inOther();}
     ;
 
 // $>
@@ -1811,34 +2308,70 @@ statement
 // $<Block Statement
 
 blockStatement
-    :   ({InsertCR(false);} conditionalToken=conditionalCompilerOption)? L=LCURLY 
+    :   ({insertCR(false);} conditionalToken=conditionalCompilerOption)? L=LCURLY 
     	{
-    		LeftCurlyNewlineHandler(conditionalToken==null); //if we have a conditional setting, then we want to have the option of keeping the brace on the same line
-    		Emit((CommonToken)$L);}{PushIndent(true);
+    		if (conditionalToken!=null)
+    			mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_Conditional_code);
+    		leftCurlyNewlineHandler(conditionalToken==null); //if we have a conditional setting, then we want to have the option of keeping the brace on the same line
+    		emit($L);}{pushIndent(true);
+    		{mPrinter.addDeclEqualsBlock();}
+    		mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
     	} 
-    	statement* {PopIndent();} 
-    	R=RCURLY {InsertCR(false);Emit((CommonToken)$R);}
+    	statement* {popIndent();} 
+    	{mPrinter.popDeclEqualsBlock();}
+    	R=RCURLY {insertCR(false);emit($R);popBlockStack();if (conditionalToken!=null) popBlockStack();}
     ;
 
 // $>
 
 throwStatement
-	:  T=THROW {Emit((CommonToken)$T);} expression semic
+	: 	{mPrinter.markDeclEqualsContextChange();}
+		T=THROW 
+		{
+			if (mPrinter.statementNeedsCR($T))
+	    		insertStatementCR();
+	    	else
+	    		insertWS(1);
+		}
+		{emit($T);} expression semic
 	;
 
 // $<Constant Var Statement
 
 constantVarStatement
-    :   C=CONST  {Emit((CommonToken)$C);} variableDeclarationList (S=SEMI{Emit((CommonToken)$S);})?                                                                              
+    :
+    {mInEqualAlignDecl=true;}   
+    C=CONST  {emit($C);} variableDeclarationList (S=SEMI{emit($S);})?
+    {mInEqualAlignDecl=false;}
     ; 
 // $>
 
 
 useNamespaceDirective
-	: 
-	U=USE  {Emit((CommonToken)$U);} 
-	N=NAMESPACE  {Emit((CommonToken)$N);} 
-	qualifiedIdentifier (C=COMMA {Emit((CommonToken)$C);} qualifiedIdentifier)* semic
+@init {
+	bool pushedIndent=false;
+	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
+ WrapOptions options=mPrinter.getExpressionWrapOptions();
+}
+	:
+    	{pushedFormat=pushFormatType(options, true);
+    	 pushedWrapInfo=pushWrapInfo(options, true);
+    	}
+    	{mPrinter.markDeclEqualsContextChange();}
+	U=USE  {emit($U);} 
+	N=NAMESPACE  {emit($N);} 
+	qualifiedIdentifier (C=COMMA {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, -1, ASPrettyPrinter.Break_SubType_Other);} qualifiedIdentifier)* semic
+	{
+    	if (pushedWrapInfo)
+    		mPrinter.popWrapContext();
+        if (pushedIndent)
+	    	popIndent();
+	    if (pushedFormat)
+	    {
+	    	mPrinter.popFormatMode();
+	    }
+	}
 	;    
 // $<UseNamespace Statement
 
@@ -1846,8 +2379,9 @@ useNamespaceDirective
 
 namespaceDirective
     :   //(memberModifiers)? //namespace
-    N=NAMESPACE  {Emit((CommonToken)$N);}{PushExpressionIndent();} 
-    qualifiedIdentifier ( A=ASSIGN  {InsertWS(mPrinter.GetSpacesAroundAssignment());Emit((CommonToken)$A);InsertWS(mPrinter.GetSpacesAroundAssignment());} stringLiteral )? semic {PopIndent();}
+    {mPrinter.markDeclEqualsContextChange();}
+    N=NAMESPACE  {emit($N);}{pushExpressionIndent();} 
+    qualifiedIdentifier ( A=ASSIGN  {insertWS(mPrinter.getSpacesAroundAssignment());emit($A);insertWS(mPrinter.getSpacesAroundAssignment());} stringLiteral )? semic {popIndent();}
     ;
 
 // $>
@@ -1856,7 +2390,9 @@ namespaceDirective
 // $<Try Statement(12.14)
 
 tryStatement
-    : {InsertStatementCR();} T=TRY {Emit((CommonToken)$T);} {PushIndent(false);} blockStatement {PopIndent();}
+    : 
+    {mPrinter.markDeclEqualsContextChange();}
+    {insertStatementCR();} T=TRY {emit($T);} {pushIndent(false);mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_try_code);} blockStatement {popIndent();popBlockStack();}
         ( catchClause+ finallyClause
         | catchClause+
         | finallyClause
@@ -1864,11 +2400,11 @@ tryStatement
     ;
 
 catchClause
-    : {if (mPrinter.IsCRBeforeCatch()) InsertCR(false);}{InsertWS(1);} C=CATCH {Emit((CommonToken)$C);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());}{PushIndent(false);} L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} variableIdentifierDecl R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);} blockStatement {PopIndent();}
+	: {if (mPrinter.isCRBeforeCatch()) insertCR(false);}{insertWS(1);} C=CATCH {emit($C);insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());}{pushIndent(false);} L=LPAREN {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInParameterLists());} variableIdentifierDecl R=RPAREN {insertWS(mPrinter.getAdvancedSpacesInsideParensInParameterLists());emit($R);mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_catch_code);} blockStatement {popIndent();popBlockStack();}
     ;
 
 finallyClause
-    : {if (mPrinter.IsCRBeforeCatch()) InsertCR(false);}{InsertWS(1);} F=FINALLY {Emit((CommonToken)$F);}{PushIndent(false);} blockStatement {PopIndent();}
+    : {if (mPrinter.isCRBeforeCatch()) insertCR(false);}{insertWS(1);} F=FINALLY {emit($F);}{pushIndent(false);mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_finally_code);} blockStatement {popIndent();popBlockStack();}
     ;
 
 // $>
@@ -1876,14 +2412,14 @@ finallyClause
 // $<Labelled Statement(12.12)
 
 labelledStatement
-    :  I=IDENTIFIER {Emit((CommonToken)$I);}{PushLabeledIndent();} 
+    :  I=IDENTIFIER {emit($I);}{pushLabeledIndent();} 
     	C=COLON 
     	{
-    		Emit((CommonToken)$C);
-    		InsertWS(mPrinter.GetSpacesAfterLabel());
+    		emit($C);
+    		insertWS(mPrinter.getSpacesAfterLabel());
     	} 
     	statement 
-    	{PopIndent();}
+    	{popIndent();}
     ;
 
 // $>
@@ -1891,14 +2427,28 @@ labelledStatement
 // $<switch Statement(12.11)
 
 switchStatement
-    :  {InsertLines(mPrinter.GetBlankLinesBeforeControlStatement());}{InsertStatementCR();} S=SWITCH {Emit((CommonToken)$S);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());}{PushExpressionIndent();} parExpression {PopIndent();} 
+    :
+    {mPrinter.markDeclEqualsContextChange();}  
+    {insertLines(mPrinter.getBlankLinesBeforeControlStatement());}{insertStatementCR();} 
+     S=SWITCH {emit($S);
+     pushIndent(false);
+     insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());}
+     {pushExpressionIndent();} parExpression {popIndent();} 
     	L=LCURLY 
     	{
-    		LeftCurlyNewlineHandler(false);
-    		Emit((CommonToken)$L);PushIndent(true);
+    		mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);
+    		leftCurlyNewlineHandler(false);
+    		emit($L);
+    		if (mPrinter.isIndentSwitchCases())
+    			pushIndent(true);
+    		else
+    			mPrinter.pushRelativeIndent(ASPrettyPrinter.BRACE_INDENT, -1);
+    		{mPrinter.addDeclEqualsBlock();}
+    		mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_block_code);
     	} 
-    	switchBlockStatementGroup* {PopIndent();} 
-    	R=RCURLY{InsertCR(false);Emit((CommonToken)$R);} 
+    	switchBlockStatementGroup* {popIndent();}
+    	{mPrinter.popDeclEqualsBlock();} 
+    	R=RCURLY{insertCR(false);emit($R);popIndent();popBlockStack();popBlockStack();} 
     ;
     
 ///* The change here (switchLabel -> switchLabel+) technically makes this grammar
@@ -1906,19 +2456,27 @@ switchStatement
  //  appropriate AST, one in which each group, except possibly the last one, has
  //  labels and statements. */
 switchBlockStatementGroup
-    :   {InsertCR(false);} switchLabel {PushIndent(false);} statement* {PopIndent();}{InsertCR(false);} breakStatement?
+@init
+{
+    int statementCount=0;
+}
+    :   {insertCR(false);} switchLabel {pushIndent(false);} 
+    	{mPrinter.addOpenBrace(input, ASPrettyPrinter.BraceAdd_Switch);statementCount=mStatementCount;}
+    	statement* 
+         {mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Switch, mStatementCount-statementCount);}
+    	{popIndent();}{insertCR(false);} breakStatement?
     ;
     
 switchLabel
-    :   C=CASE {Emit((CommonToken)$C);} expression C=COLON 
+    :   C=CASE {emit($C);} {insertWS(1);} expression O=COLON 
     	{
-    	Emit((CommonToken)$C);
-    	InsertWS(mPrinter.GetSpacesAfterLabel());
+    	emit($O);
+    	insertWS(mPrinter.getSpacesAfterLabel());
     	} 
-    |   D=DEFAULT {Emit((CommonToken)$D);} C=COLON
+    |   D=DEFAULT {emit($D);} C=COLON
     		{
-    			Emit((CommonToken)$C);
-    			InsertWS(mPrinter.GetSpacesAfterLabel());
+    			emit($C);
+    			insertWS(mPrinter.getSpacesAfterLabel());
     		} 
     ;
 
@@ -1927,7 +2485,23 @@ switchLabel
 // $<With statement(12.10)
 
 withStatement
-    :   W=WITH  {Emit((CommonToken)$W);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());}{PushExpressionIndent();} L=LPAREN  {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} expression  R=RPAREN  {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}{PopIndent();} {PushIndent(false);} statement {PopIndent();}
+@init
+{
+	int statementStartInOutput=(-1);
+	int statementEndInOutput=(-1);
+    int statementCount=0;
+}
+    :   
+    {mPrinter.markDeclEqualsContextChange();}
+		W=WITH  {emit($W);statementStartInOutput=mPrinter.getCurrentOutputLength();insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());}{pushExpressionIndent();} L=LPAREN  {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());} expression  R=RPAREN  {insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());emit($R);statementEndInOutput=mPrinter.getCurrentOutputLength();}{popIndent();} {pushIndent(false);}
+    	{mPrinter.addOpenBrace(input, ASPrettyPrinter.BraceAdd_Loop);
+      	 mPrinter.captureStatementStart($W, statementStartInOutput);
+    	 mPrinter.captureStatementEnd($R, statementEndInOutput);
+    	 statementCount=mStatementCount;
+    	} 
+    	statement 
+         {mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Loop, mStatementCount-statementCount);}
+    	{popIndent();}
     ;
 
 // $>
@@ -1935,7 +2509,14 @@ withStatement
 // $<Return statment (12.9)
 
 returnStatement
-    :   R=RETURN {Emit((CommonToken)$R);} ( {InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} expression)? semic 
+    :   R=RETURN 
+    	{
+    		if (mPrinter.statementNeedsCR($R))
+	    		insertStatementCR();
+	    	else
+	    		insertWS(1);
+    	}
+    	{emit($R);} ( {insertWS(1);} expression)? semic 
     ;
 
 // $>
@@ -1944,7 +2525,14 @@ returnStatement
 // $<Break statement (12.8)
 
 breakStatement
-    :   B=BREAK    {Emit((CommonToken)$B);} (I=IDENTIFIER{Emit((CommonToken)$I);})? semic
+    :   B=BREAK    
+    	{
+    		if (mPrinter.statementNeedsCR($B))
+    			insertStatementCR();
+	    	else
+	    		insertWS(1);
+    	}
+    	{emit($B);} (I=IDENTIFIER{emit($I);})? semic
     ;
 
 // $>
@@ -1953,7 +2541,14 @@ breakStatement
 // $<Continue statement (12.7)
 
 continueStatement
-    :   C=CONTINUE {Emit((CommonToken)$C);} (I=IDENTIFIER{Emit((CommonToken)$I);})? semic
+    :   C=CONTINUE
+    	{
+    		if (mPrinter.statementNeedsCR($C))
+    			insertStatementCR();
+	    	else
+	    		insertWS(1);
+    	} 
+    	{emit($C);} (I=IDENTIFIER{emit($I);})? semic
     ;
 
 // $>
@@ -1962,36 +2557,84 @@ continueStatement
 // $<For statement 12.6
 
 forStatement
-    :   F=FOR {Emit((CommonToken)$F);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} {PushExpressionIndent();} L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} forControl R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}{PopIndent();}{PushIndent(false);} statement {PopIndent();}
+@init
+{
+	int statementStartInOutput=(-1);
+	int statementEndInOutput=(-1);
+    int statementCount=0;
+}
+    :
+    	{mPrinter.markDeclEqualsContextChange();}
+		F=FOR {emit($F);statementStartInOutput=mPrinter.getCurrentOutputLength();insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());} {pushExpressionIndent();} L=LPAREN {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());} forControl R=RPAREN {insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());emit($R);}{popIndent();}{pushIndent(false);statementEndInOutput=mPrinter.getCurrentOutputLength();}
+    	{mPrinter.addOpenBrace(input, ASPrettyPrinter.BraceAdd_Loop);
+    	 mPrinter.captureStatementStart($F, statementStartInOutput);
+    	 mPrinter.captureStatementEnd($R, statementEndInOutput);
+    	 statementCount=mStatementCount;
+    	} 
+    	statement 
+         {mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Loop, mStatementCount-statementCount);}
+    	{popIndent();}
     ;
     
 forInStatement
-    :   F=FOR {Emit((CommonToken)$F);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} {PushExpressionIndent();} L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} forInControl R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);} {PopIndent();} {PushIndent(false);} statement {PopIndent();}
+@init
+{
+	int statementStartInOutput=(-1);
+	int statementEndInOutput=(-1);
+    int statementCount=0;
+}
+    :
+    	{mPrinter.markDeclEqualsContextChange();}
+		F=FOR {emit($F);statementStartInOutput=mPrinter.getCurrentOutputLength();insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());} {pushExpressionIndent();} L=LPAREN {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());} forInControl R=RPAREN {insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());emit($R);} {popIndent();} {pushIndent(false);statementEndInOutput=mPrinter.getCurrentOutputLength();}
+    	{mPrinter.addOpenBrace(input, ASPrettyPrinter.BraceAdd_Loop);
+    	 mPrinter.captureStatementStart($F, statementStartInOutput);
+    	 mPrinter.captureStatementEnd($R, statementEndInOutput);
+    	 statementCount=mStatementCount;
+    	} 
+    	statement 
+         {mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Loop, mStatementCount-statementCount);}
+    	{popIndent();}
     ;  
     
 forEachInStatement
-    :   F=FOR {Emit((CommonToken)$F);} {PushExpressionIndent();}
+@init
+{
+	int statementStartInOutput=(-1);
+	int statementEndInOutput=(-1);
+    int statementCount=0;
+}
+    :
+    {mPrinter.markDeclEqualsContextChange();}
+       F=FOR {emit($F);statementStartInOutput=mPrinter.getCurrentOutputLength();} {pushExpressionIndent();}
      //   each 
-    E=EACH {Emit((CommonToken)$E);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} 
-    L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} forInControl R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}{PopIndent();}{PushIndent(false);} statement {PopIndent();}     
+    E=EACH {emit($E);insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());} 
+	L=LPAREN {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());} forInControl R=RPAREN {insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());emit($R);statementEndInOutput=mPrinter.getCurrentOutputLength();}{popIndent();}{pushIndent(false);}
+   	{mPrinter.addOpenBrace(input, ASPrettyPrinter.BraceAdd_Loop);
+     mPrinter.captureStatementStart($F, statementStartInOutput);
+     mPrinter.captureStatementEnd($R, statementEndInOutput);
+     statementCount=mStatementCount;
+   	} 
+    statement 
+     {mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Loop, mStatementCount-statementCount);}
+    {popIndent();}     
 	;
 forControl
 options {k=3;} // be efficient for common case: for (ID ID : ID) ...
-    :   forInit? {InsertWS(mPrinter.GetSpacesBeforeComma());} semic  {InsertWS(mPrinter.GetSpacesAfterComma());} expression? {InsertWS(mPrinter.GetSpacesBeforeComma());}semic {InsertWS(mPrinter.GetSpacesAfterComma());} forUpdate?
+    :   forInit? {insertWS(mPrinter.getSpacesBeforeComma());} semic  {insertWS(mPrinter.getSpacesAfterComma());} expression? {insertWS(mPrinter.getSpacesBeforeComma());}semic {insertWS(mPrinter.getSpacesAfterComma());} forUpdate?
     ;
 
 forInControl
 options {k=3;} // be efficient for common case: for (ID ID : ID) ...
-    :   forInDecl I=IN {Emit((CommonToken)$I);} expression
+    :   forInDecl I=IN {insertWS(1);emit($I);} expression
     ;
 
 forInDecl
     :   leftHandSideExpression
-    |   V=VAR {Emit((CommonToken)$V);} variableDeclarationNoIn
+    |   V=VAR {emit($V);} variableDeclarationNoIn
     ;
 
 forInit
-    :   variableDeclarationNoInList
+    :   V=VAR{emit($V);} variableDeclarationNoInList
     |   expressionNoIn
     ;
 
@@ -2005,7 +2648,22 @@ forUpdate
 // $<While statement (12.5)
 
 doWhileStatement
-    :   D=DO {Emit((CommonToken)$D);} {PushIndent(false);} statement {PopIndent();}{InsertWS(1);} {PushExpressionIndent();} W=WHILE {Emit((CommonToken)$W);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());} parExpression semic (S=SEMI{Emit((CommonToken)$S);})? {PopIndent();}
+@init
+{
+	int statementCount=0;
+}
+    :
+    {mPrinter.markDeclEqualsContextChange();}
+       D=DO {emit($D);} {pushIndent(false);} 
+    	{mPrinter.addOpenBrace(input, ASPrettyPrinter.BraceAdd_Loop);statementCount=mStatementCount;} 
+    	statement 
+         {mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Loop, mStatementCount-statementCount);}
+    	{popIndent();}{insertWS(1);}  
+    	{
+          if (mPrinter.isCRBeforeWhile() || !mPrinter.didLastStatementHaveBraces()) //add CR if explictly asked for or if there were no statement braces   
+              insertCR(false);
+    	} 
+    	W=WHILE {emit($W);{pushExpressionIndent();}insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());} parExpression semic (S=SEMI{emit($S);})? {popIndent();}
     ;
 
 // $>
@@ -2013,7 +2671,24 @@ doWhileStatement
 // $<While statement (12.5)
 
 whileStatement
-    :   W=WHILE {Emit((CommonToken)$W);InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());}{PushExpressionIndent();} parExpression {PopIndent();} {PushIndent(false);} statement {PopIndent();}
+@init
+{
+	int statementStartInOutput=(-1);
+	int statementEndInOutput=(-1);
+	int statementCount=0;
+	IToken endToken=null;
+}
+    :
+       {mPrinter.markDeclEqualsContextChange();}
+       W=WHILE {emit($W);statementStartInOutput=mPrinter.getCurrentOutputLength();insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());}{pushExpressionIndent();} parExpression {endToken=input.LT(-1);statementEndInOutput=mPrinter.getCurrentOutputLength();popIndent();} {pushIndent(false);} 
+    	{mPrinter.addOpenBrace(input, ASPrettyPrinter.BraceAdd_Loop);
+    	 mPrinter.captureStatementStart($W, statementStartInOutput);
+    	 mPrinter.captureStatementEnd(endToken, statementEndInOutput);
+    	 statementCount=mStatementCount;
+    	} 
+    	statement 
+         {mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Loop, mStatementCount-statementCount);}
+    	{popIndent();}
     ;
     
 // $>
@@ -2025,51 +2700,74 @@ whileStatement
 ifStatement
 @init 
 {
-   CommonToken tok=null;
+   IToken tok=null;
    bool ifOnSameLine=false;
    bool wasBlock=false;
+   bool needCloseBrace=false;
+   int statementStartInOutput=(-1);
+   int statementEndInOutput=(-1);
+   int statementCount=0;
+   IToken endToken=null;
 }
-    :      
+    :
+    	{mPrinter.markDeclEqualsContextChange();}      
         {
-           tok=mPrinter.GetLastToken(); 
+           tok=mPrinter.getLastToken(); 
            //if the previous token was not an else, then insert a CR.  Also if it is an 'else' but the setting says to put the 'if' on a new line
-           if (!mPrinter.IsKeepElseIfOnSameLine() || (tok==null) || !tok.Text.Equals("else"))
+           if (!mPrinter.isKeepElseIfOnSameLine() || (tok==null) || tok.Text != "else")
            {
-           		InsertStatementCR();
+           		insertStatementCR();
            }
 
-           if (tok!=null && tok.Text.Equals("else"))
+           if (tok!=null && tok.Text == "else")
            {
-           		mPrinter.SetElseIfState();
+           		mPrinter.setElseIfState();
            }
         } 
          I=IF 
          {
-              Emit((CommonToken)$I);
-              ifOnSameLine=mPrinter.GetElseIfNeedToLoseIndent();
+              emit($I);
+              statementStartInOutput=mPrinter.getCurrentOutputLength();
+              ifOnSameLine=mPrinter.getElseIfNeedToLoseIndent();
               if (ifOnSameLine)
-                  PopIndent();
-              InsertWS(mPrinter.GetSpacesBetweenControlKeywordsAndParens());
+                  popIndent();
+              insertWS(mPrinter.getSpacesBetweenControlKeywordsAndParens());
          }
-         {PushExpressionIndent();} 
+         {pushExpressionIndent();} 
          parExpression 
-         {PopIndent();}
-         {PushIndent(false);}
-         {AddIfElseBlockTracker();SetBlockFlag(false);ClearBlockFlag();}
-         statement 
-         {wasBlock=IsBlockFlag();PopIfElseBlockTracker();}
-         {PopIndent();}
+         {endToken=input.LT(-1);statementEndInOutput=mPrinter.getCurrentOutputLength();}
+         {popIndent();}
+         {pushIndent(false);}
+         {addIfElseBlockTracker();setBlockFlag(false);clearBlockFlag();}
+         {mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);}
+		 {mPrinter.addOpenBrace(input, ASPrettyPrinter.BraceAdd_Conditional);
+    	  mPrinter.captureStatementStart($I, statementStartInOutput);
+    	  mPrinter.captureStatementEnd(endToken, statementEndInOutput);
+    	  statementCount=mStatementCount;
+		 }
+         statement
+         {mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Conditional, mStatementCount-statementCount);}
+         {popBlockStack();} 
+         {wasBlock=isBlockFlag();popIfElseBlockTracker();}
+         {popIndent();}
           
          (options {k=1;}:E=ELSE 
 	         {
-	          CommonToken tempTok= (CommonToken) mPrinter.GetLastToken();
-	          if (mPrinter.IsCRBeforeElse() || !wasBlock)//tempTok==null || !tempTok.Text.Equals("}")) 
-	              InsertCR(false);
+	          IToken tempTok=mPrinter.getLastToken();
+	          if (mPrinter.isCRBeforeElse() || !wasBlock)//tempTok==null || tempTok.Text != "}") 
+	              insertCR(false);
 	         }
-	         {InsertWS(1);}
-	         {Emit((CommonToken)$E);} {PushIndent(false);} statement {PopIndent();})?
-			{if (ifOnSameLine)
-            	PushIndent(false);}
+	         {insertWS(1);}
+	         {emit($E);} 
+	         {pushIndent(false);}{mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_controlStatement_code);} 
+	         {needCloseBrace=mPrinter.addOpenBraceForElse((CommonTokenStream)input);statementCount=mStatementCount;}
+	         {mPrinter.inCondition();}
+	         statement 
+	         {if (needCloseBrace)
+	         	mPrinter.addCloseBrace(input.LT(1), ASPrettyPrinter.BraceAdd_Conditional, mStatementCount-statementCount);}
+	         {popBlockStack();}{popIndent();})?
+			 {if (ifOnSameLine)
+            	pushIndent(false);}
 	          
     ;
     
@@ -2079,7 +2777,7 @@ ifStatement
 // $<Empty statement (12.3)
 
 emptyStatement 
-    :     S=SEMI {Emit((CommonToken)$S);} 
+    :     S=SEMI {emit($S);} 
     ;
 
 // $>
@@ -2089,69 +2787,142 @@ emptyStatement
 
 variableStatement
 @init{
-	WrapOptions options=mPrinter.GetExpressionWrapOptions();
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
 	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
+	bool pushedIndent=false;
 }
     :
-    	{pushedFormat=PushFormatType(options, false);}
-        (I=IDENTIFIER {Emit((CommonToken)$I);})? V=VAR {Emit((CommonToken)$V);} variableDeclaration ( {InsertWS(mPrinter.GetSpacesBeforeComma());}C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} variableDeclaration )* semic
-    	{
-	   	    if (pushedFormat)
-	   	    	mPrinter.PopFormatMode();
+    	{pushedFormat=pushFormatType(options, true);
+    	 pushedWrapInfo=pushWrapInfo(options, true);
     	}
-         
+        (I=IDENTIFIER {emit($I);})? V=VAR {emit($V);mInEqualAlignDecl=true;} variableDeclaration {mInEqualAlignDecl=false;} ( C=COMMA {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, -1, ASPrettyPrinter.Break_SubType_Other);} variableDeclaration )* semic
+    	{
+    		if (pushedIndent)
+    			popIndent();
+	   	    if (pushedFormat)
+	   	    {
+	   	    	mPrinter.popFormatMode();
+	   	    }
+	   	    if (pushedWrapInfo)
+	   	    	mPrinter.popWrapContext();
+    	} 
     ;
     
 variableDeclarationList
-    :     variableDeclaration ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} variableDeclaration)*
+@init{
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
+	bool pushedIndent=false;
+}
+    :
+    	{pushedFormat=pushFormatType(options, true);
+    	 pushedWrapInfo=pushWrapInfo(options, true);
+    	}
+         variableDeclaration (  C=COMMA {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, -1, ASPrettyPrinter.Break_SubType_Other);} variableDeclaration)*
+    	{
+    		if (pushedIndent)
+    			popIndent();
+	   	    if (pushedFormat)
+	   	    {
+	   	    	mPrinter.popFormatMode();
+	   	    }
+	   	    if (pushedWrapInfo)
+	   	    	mPrinter.popWrapContext();
+    	}
     ;
     
 variableDeclarationNoInList
-    :    (V=VAR{Emit((CommonToken)$V);} )? variableDeclarationNoIn ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} variableDeclarationNoIn)*
+@init{
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
+	bool pushedIndent=false;
+}
+    :
+    	{pushedFormat=pushFormatType(options, true);
+    	 pushedWrapInfo=pushWrapInfo(options, true);
+    	}
+        variableDeclarationNoIn ( C=COMMA {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, -1, ASPrettyPrinter.Break_SubType_Other);} variableDeclarationNoIn)*
+    	{
+    		if (pushedIndent)
+    			popIndent();
+	   	    if (pushedFormat)
+	   	    {
+	   	    	mPrinter.popFormatMode();
+	   	    }
+	   	    if (pushedWrapInfo)
+	   	    	mPrinter.popWrapContext();
+    	}
     ;
     
 variableDeclaration
+@init {
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+}
     :   variableIdentifierDecl ( A=ASSIGN 
     	{
-    		InsertVariableDeclAssignmentWhitespace((CommonToken) $A, true);
-    		//InsertWS(mPrinter.isInParameterDecl() ? mPrinter.getAdvancedSpacesAroundAssignmentInOptionalParameters() : mPrinter.getSpacesAroundAssignment());
-    		Emit((CommonToken)$A);
-    		InsertVariableDeclAssignmentWhitespace((CommonToken) $A, false);
-    		//InsertWS(mPrinter.isInParameterDecl() ? mPrinter.getAdvancedSpacesAroundAssignmentInOptionalParameters() : mPrinter.getSpacesAroundAssignment());
+    		insertVariableDeclAssignmentWhitespace($A, true);
+    		{if (mInEqualAlignDecl) mPrinter.augmentDeclEqualPosition();}
+    		wrapEmit($A, mInFunctionParameterDecl ? ASPrettyPrinter.Break_Parameter_Assignment_code : ASPrettyPrinter.Break_Assignment_code);
+    		{if (mInEqualAlignDecl) mPrinter.captureDeclEqualPosition();}
+    		insertVariableDeclAssignmentWhitespace($A, false);
     	} 
-    	assignmentExpression )?
+    	assignmentExpression {popIndent();})?
     ;
 
 variableDeclarationNoIn
+@init {
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+}
     :    variableIdentifierDecl ( A=ASSIGN 
          {
-          InsertVariableDeclAssignmentWhitespace((CommonToken) $A, true);
-          //InsertWS(mPrinter.getSpacesAroundAssignment());
-          Emit((CommonToken)$A);
-          InsertVariableDeclAssignmentWhitespace((CommonToken) $A, false);
-          //InsertWS(mPrinter.getSpacesAroundAssignment());
+          insertVariableDeclAssignmentWhitespace($A, true);
+          wrapEmit($A, ASPrettyPrinter.Break_Assignment_code);
+          insertVariableDeclAssignmentWhitespace($A, false);
          } 
-         assignmentExpressionNoIn )?
+         assignmentExpressionNoIn {popIndent();})?
     ;
     
 variableIdentifierDecl
-    :    identifierLiteral ( C=COLON {InsertWS(mPrinter.GetAdvancedSpacesBeforeColons());Emit((CommonToken)$C);InsertWS(mPrinter.GetAdvancedSpacesAfterColons());} type )?
+	:    identifierLiteral ( C=COLON {insertWS(mPrinter.getAdvancedSpacesBeforeColonsInDeclarations());emit($C);insertWS(mPrinter.getAdvancedSpacesAfterColonsInDeclarations());} type )?
     ;
 // $>
     
 // $<Type / Type List
 
-type:   qualifiedName | S=STAR {Emit((CommonToken)$S);} | V=VOID {Emit((CommonToken)$V);} ;
+type:   qualifiedName | S=STAR {emit($S);} | V=VOID {emit($V);} ;
 
 typeList
-    :   type ({InsertWS(mPrinter.GetSpacesBeforeComma());}C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} type)*
+@init{
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
+	bool pushedIndent=false;
+}
+    :
+    	{pushedFormat=pushFormatType(options, true);
+    	 pushedWrapInfo=pushWrapInfo(options, true);
+    	}
+       type (C=COMMA {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, -1, ASPrettyPrinter.Break_SubType_Other);} type)*
+    	{
+    		if (pushedIndent)
+    			popIndent();
+	   	    if (pushedFormat)
+	   	    {
+	   	    	mPrinter.popFormatMode();
+	   	    }
+	   	    if (pushedWrapInfo)
+	   	    	mPrinter.popWrapContext();
+    	}
     ; 
 // $>
      
 standardQualifiedName
 	:
-	typeSpecifier (D=DOT {Emit((CommonToken)$D);} typeSpecifier )*
-//	(I=IDENTIFIER {Emit((CommonToken)$I);} ) (D=DOT {Emit((CommonToken)$D);} (I=IDENTIFIER{Emit((CommonToken)$I);} ) )*
+	typeSpecifier (D=DOT {wrapEmit($D, ASPrettyPrinter.Break_Other_Connectors_code);} typeSpecifier {popIndent();})*
+//	(I=IDENTIFIER {emit($I);} ) (D=DOT {emit($D);} (I=IDENTIFIER{emit($I);} ) )*
 	;
 	
 qualifiedName 
@@ -2160,56 +2931,121 @@ qualifiedName
     ;
     
 typePostfixSyntax:
-	D=DOT {Emit((CommonToken)$D);} L=LT {Emit((CommonToken)$L);} standardQualifiedName (typePostfixSyntax)? G=GT {Emit((CommonToken)$G);}
+	D=DOT
+	{emit($D);} 
+//	{wrapEmit($D, ASPrettyPrinter.Break_Other_Connectors_code);} 
+	L=LT {emit($L);} (standardQualifiedName | st=STAR {emit($st);}) (typePostfixSyntax)? G=GT {emit($G);}
+	//{popIndent();}
 	;
     
 qualifiedIdentifier
-    :   I=IDENTIFIER {Emit((CommonToken)$I);} 
+    :   /*{isNotReservedWord(input.LT(1).Text)}?*/
+    	I=IDENTIFIER {emit($I);} 
     ;
 
 
 // Expression
 
 parExpression
-    : L=LPAREN  {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} {PushExpressionIndent();} expression  R=RPAREN {InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);} {PopIndent();} 
+@init
+{
+	bool pushedWrap=false;
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+}
+    :
+    {pushedWrap=pushWrapInfo(options, true);}
+	L=LPAREN  {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());} {pushExpressionIndent();} expression  R=RPAREN {insertWS(mPrinter.getAdvancedSpacesInsideParensInOtherPlaces());emit($R);} {popIndent();}
+    {if (pushedWrap) mPrinter.popWrapContext();} 
     ;
 
 expression
 @init{
-	WrapOptions options=mPrinter.GetExpressionWrapOptions();
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
 	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
+	bool pushedIndent=false;
 }
     :   
-    	{pushedFormat=PushFormatType(options, true);}
-    	assignmentExpression ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA  {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} assignmentExpression)*
+    	{pushedFormat=pushFormatType(options, true);
+    	 pushedWrapInfo=pushWrapInfo(options, true);
+    	}
+    	assignmentExpression (  C=COMMA  {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, -1, ASPrettyPrinter.Break_SubType_Other);} assignmentExpression)*
     	{
+    		if (pushedIndent)
+    			popIndent();
 	   	    if (pushedFormat)
-	   	    	mPrinter.PopFormatMode();
+	   	    {
+	   	    	mPrinter.popFormatMode();
+	   	    }
+	   	    if (pushedWrapInfo)
+	   	    	mPrinter.popWrapContext();
     	}
     ;
 
 expressionNoIn
-    :   assignmentExpressionNoIn ( {InsertWS(mPrinter.GetSpacesBeforeComma());} C=COMMA  {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} assignmentExpressionNoIn)*
+@init{
+	WrapOptions options=mPrinter.getExpressionWrapOptions();
+	bool pushedFormat=false;
+	bool pushedWrapInfo=false;
+	bool pushedIndent=false;
+}
+    :
+    	{pushedFormat=pushFormatType(options, true);
+    	 pushedWrapInfo=pushWrapInfo(options, true);
+    	}
+       assignmentExpressionNoIn (  C=COMMA  {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, -1, ASPrettyPrinter.Break_SubType_Other);} assignmentExpressionNoIn)*
+    	{
+    		if (pushedIndent)
+    			popIndent();
+	   	    if (pushedFormat)
+	   	    {
+	   	    	mPrinter.popFormatMode();
+	   	    }
+	   	    if (pushedWrapInfo)
+	   	    	mPrinter.popWrapContext();
+    	}
     ;
 
 //11.13 Assignment Operators
 assignmentExpression
-    :   
-      leftHandSideExpression  assignmentOperator  assignmentExpression
-    | conditionalExpression
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :  
+       {pushedWrapInfo=pushWrapInfo(options, true);} 
+      (
+      		(leftHandSideExpression  assignmentOperator)=> leftHandSideExpression  assignmentOperator  assignmentExpression
+    	| conditionalExpression
+       )
+       {if (pushedWrapInfo)
+	   	    mPrinter.popWrapContext();}
     ;
 
 
 assignmentExpressionNoIn
-    :   conditionalExpressionNoIn
-    |   leftHandSideExpression  assignmentOperator  assignmentExpressionNoIn
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :  {pushedWrapInfo=pushWrapInfo(options, true);}
+       (
+    	   (leftHandSideExpression  assignmentOperator) => leftHandSideExpression  assignmentOperator  assignmentExpressionNoIn
+    	|	conditionalExpressionNoIn
+    	)
+       {if (pushedWrapInfo)
+	   	    mPrinter.popWrapContext();}
     ;
 
 assignmentOperator
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+}
 	: op=assignmentOperator_int 
-	  {InsertWS(mPrinter.GetSpacesAroundAssignment());
-	   Emit((CommonToken)$op.start);
-	   InsertWS(mPrinter.GetSpacesAroundAssignment());
+	  {insertWS(mPrinter.getSpacesAroundAssignment());
+	   emit((IToken)op.Start);
+	   mPrinter.saveWrapChar((IToken)op.Start, ASPrettyPrinter.Break_Assignment_code, options.isBeforeAssignmentOperator(), false, -1, "");
+	   insertWS(mPrinter.getSpacesAroundAssignment());
 	  }
 	;
 	     
@@ -2224,6 +3060,12 @@ assignmentOperator_int
     | SHL_ASSIGN
 //    | SHR_ASSIGN
 //    | SHU_ASSIGN 
+/*    | (('<' '<' '=')=> t1='<' t2='<' t3='=' 
+        { $t1.Line == $t2.Line &&
+          $t1.CharPositionInLine + 1 == $t2.CharPositionInLine && 
+          $t2.Line == $t3.Line && 
+          $t2.CharPositionInLine + 1 == $t3.CharPositionInLine }?
+      -> SHL_ASSIGN){ t1.Text = "<<=";} */
     |   (('>' '>' '=')=> t1='>' t2='>' t3='='
         { $t1.Line == $t2.Line && 
           $t1.CharPositionInLine + 1 == $t2.CharPositionInLine && 
@@ -2248,67 +3090,156 @@ assignmentOperator_int
 
 //11.12 Conditional Operator ( ?: )
 conditionalExpression
-    :   logicalORExpression ( Q=QUE  {IndentEmit((CommonToken)$Q);} assignmentExpression  {PopIndent();} C=COLON  {IndentEmit((CommonToken)$C);} assignmentExpression {PopIndent();})?
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        logicalORExpression ( Q=QUE  {indentEmit($Q, ASPrettyPrinter.Break_Ternary_code);} assignmentExpression  {popIndent();} C=COLON  {indentEmit($C, ASPrettyPrinter.Break_Ternary_code);} assignmentExpression {popIndent();})?
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
     
 conditionalExpressionNoIn
-    :   logicalORExpressionNoIn ( Q=QUE {IndentEmit((CommonToken)$Q);} assignmentExpression  {PopIndent();} C=COLON  {IndentEmit((CommonToken)$C);} assignmentExpression {PopIndent();})?
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        logicalORExpressionNoIn ( Q=QUE {indentEmit($Q, ASPrettyPrinter.Break_Ternary_code);} assignmentExpression  {popIndent();} C=COLON  {indentEmit($C, ASPrettyPrinter.Break_Ternary_code);} assignmentExpression {popIndent();})?
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;    
     
 //11.11 Binary Logical Operators
 logicalORExpression
-    :   logicalANDExpression ( L=LOR {IndentEmit((CommonToken)$L);} logicalANDExpression {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        logicalANDExpression ( L=LOR {indentEmit($L, ASPrettyPrinter.Break_Logical_Ops_code);} logicalANDExpression {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ; 
     
 logicalORExpressionNoIn
-    :   logicalANDExpressionNoIn ( L=LOR {IndentEmit((CommonToken)$L);} logicalANDExpressionNoIn {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        logicalANDExpressionNoIn ( L=LOR {indentEmit($L, ASPrettyPrinter.Break_Logical_Ops_code);} logicalANDExpressionNoIn {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;     
     
 logicalANDExpression
-    :   bitwiseORExpression ( L=LAND {IndentEmit((CommonToken)$L);} bitwiseORExpression {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        bitwiseORExpression ( L=LAND {indentEmit($L, ASPrettyPrinter.Break_Logical_Ops_code);} bitwiseORExpression {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
     
 logicalANDExpressionNoIn
-    :   bitwiseORExpressionNoIn ( L=LAND {IndentEmit((CommonToken)$L);} bitwiseORExpressionNoIn {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        bitwiseORExpressionNoIn ( L=LAND {indentEmit($L, ASPrettyPrinter.Break_Logical_Ops_code);} bitwiseORExpressionNoIn {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;    
     
 //11.10 Binary Bitwise Operators
 bitwiseORExpression
-    :   bitwiseXORExpression ( O=OR {IndentEmit((CommonToken)$O);} bitwiseXORExpression {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        bitwiseXORExpression ( O=OR {indentEmit($O, ASPrettyPrinter.Break_Arithmetic_Ops_code);} bitwiseXORExpression {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
     
 bitwiseORExpressionNoIn
-    :   bitwiseXORExpressionNoIn ( O=OR {IndentEmit((CommonToken)$O);} bitwiseXORExpressionNoIn {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        bitwiseXORExpressionNoIn ( O=OR {indentEmit($O, ASPrettyPrinter.Break_Arithmetic_Ops_code);} bitwiseXORExpressionNoIn {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;    
     
 bitwiseXORExpression
-    :   bitwiseANDExpression ( x=XOR {IndentEmit((CommonToken)$x);} bitwiseANDExpression {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        bitwiseANDExpression ( x=XOR {indentEmit($x, ASPrettyPrinter.Break_Arithmetic_Ops_code);} bitwiseANDExpression {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
     
 bitwiseXORExpressionNoIn
-    :   bitwiseANDExpressionNoIn ( x=XOR {IndentEmit((CommonToken)$x);} bitwiseANDExpressionNoIn {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        bitwiseANDExpressionNoIn ( x=XOR {indentEmit($x, ASPrettyPrinter.Break_Arithmetic_Ops_code);} bitwiseANDExpressionNoIn {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;    
 
 bitwiseANDExpression
-    :   equalityExpression ( A=AND {IndentEmit((CommonToken)$A);} equalityExpression {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        equalityExpression ( A=AND {indentEmit($A, ASPrettyPrinter.Break_Arithmetic_Ops_code);} equalityExpression {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
     
 bitwiseANDExpressionNoIn
-    :   equalityExpressionNoIn ( A=AND {IndentEmit((CommonToken)$A);} equalityExpressionNoIn {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        equalityExpressionNoIn ( A=AND {indentEmit($A, ASPrettyPrinter.Break_Arithmetic_Ops_code);} equalityExpressionNoIn {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;    
 
 //11.9 Equality Operators
 equalityExpression
-    :   relationalExpression ( eq=(EQ|NEQ|SAME|NSAME){IndentEmit((CommonToken)$eq);}  relationalExpression {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        relationalExpression ( eq=(EQ|NEQ|SAME|NSAME){indentEmit($eq, ASPrettyPrinter.Break_Arithmetic_Ops_code);}  relationalExpression {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
     
 equalityExpressionNoIn
-    :   relationalExpressionNoIn ( eq=(EQ|NEQ|SAME|NSAME) {IndentEmit((CommonToken)$eq);}  relationalExpressionNoIn {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        relationalExpressionNoIn ( eq=(EQ|NEQ|SAME|NSAME) {indentEmit($eq, ASPrettyPrinter.Break_Arithmetic_Ops_code);}  relationalExpressionNoIn {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;    
 
 //11.8 Relational Operators
 relationalExpression
-    :   shiftExpression 
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        shiftExpression 
     	(
 	    	( g=GT (assign=ASSIGN)? 
 		        {if (assign!=null)
@@ -2316,16 +3247,22 @@ relationalExpression
 		         	g.Text = ">=";
 		         	g.Type = GTE;
 		         }
-		         IndentEmit((CommonToken)$g);
+		         indentEmit($g, ASPrettyPrinter.Break_Arithmetic_Ops_code);
 		        } 
-	          | eq=(IN|LT|LTE|INSTANCEOF|IS|AS) {IndentEmit((CommonToken)$eq);}
+	          | eq=(IN|LT|LTE|INSTANCEOF|IS|AS) {indentEmit($eq, ASPrettyPrinter.Break_Arithmetic_Ops_code);}
 	        )  
-	        shiftExpression {PopIndent();}
+	        shiftExpression {popIndent();}
         )*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
     
 relationalExpressionNoIn
-    :   shiftExpression 
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        shiftExpression 
     	(
 	    	( g=GT (assign=ASSIGN)? 
 		        {if (assign!=null)
@@ -2333,19 +3270,29 @@ relationalExpressionNoIn
 		         	g.Text = ">=";
 		         	g.Type = GTE;
 		         }
-		         IndentEmit((CommonToken)$g);
+		         indentEmit($g, ASPrettyPrinter.Break_Arithmetic_Ops_code);
 		        } 
-	          | eq=(LT|LTE|INSTANCEOF|IS|AS) {IndentEmit((CommonToken)$eq);}
+	          | eq=(LT|LTE|INSTANCEOF|IS|AS) {indentEmit($eq, ASPrettyPrinter.Break_Arithmetic_Ops_code);}
 	        )  
-	        shiftExpression {PopIndent();}
+	        shiftExpression {popIndent();}
         )*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
 
 //11.7 Bitwise Shift Operators
 shiftExpression
-    :   additiveExpression ( 
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        additiveExpression ( 
     		(
     			t1=SHL
+    			/*(('<' '<' )=> t1='<' t2='<' 
+        		{$t1.Line == $t2.Line &&
+          		$t1.CharPositionInLine + 1 == $t2.CharPositionInLine }?
+      			-> SHL) {t1.Text = "<<";}*/
       		|	(('>' '>')=> t1='>' t2='>'
         		{ $t1.Line == $t2.Line && 
           			$t1.CharPositionInLine + 1 == $t2.CharPositionInLine }?
@@ -2357,31 +3304,44 @@ shiftExpression
           			$t2.CharPositionInLine + 1 == $t3.CharPositionInLine }?
       			-> SHU) {t1.Text = ">>>";}
     		) 
-    		{IndentEmit((CommonToken)$t1);} additiveExpression {PopIndent();}
+    		{indentEmit($t1, ASPrettyPrinter.Break_Arithmetic_Ops_code);} additiveExpression {popIndent();}
     	)*
+    	{if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
 
 //11.6 Additive Operators
 additiveExpression
-    :   multiplicativeExpression ( op=(PLUS|SUB){IndentEmit((CommonToken)$op);}  multiplicativeExpression {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        multiplicativeExpression ( op=(PLUS|SUB){indentEmit($op, ASPrettyPrinter.Break_Arithmetic_Ops_code);}  multiplicativeExpression {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
 
 //11.5 Multiplicative Operators
 multiplicativeExpression
-    :   unaryExpression ( op=(STAR|DIV|MOD){IndentEmit((CommonToken)$op);} unaryExpression {PopIndent();})*
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    :   {pushedWrapInfo=pushWrapInfo(options, true);}
+        unaryExpression ( op=(STAR|DIV|MOD){indentEmit($op, ASPrettyPrinter.Break_Arithmetic_Ops_code);} unaryExpression {popIndent();})*
+        {if (pushedWrapInfo) mPrinter.popWrapContext();} 
     ;
 
 //11.4 Unary Operators
 unaryExpression
     :   postfixExpression
-    |  op=(NOT | INV) {Emit((CommonToken)$op);} unaryExpression
+    |  op=(NOT | INV) {emit($op);} unaryExpression
     |   unaryOp postfixExpression
     
     
     ;
 
 unaryOp
-    :   op=(DELETE | VOID | TYPEOF | INC | DEC | PLUS | SUB | INV | NOT) {Emit((CommonToken)$op);}
+    :   op=(DELETE | VOID | TYPEOF | INC | DEC | PLUS | SUB | INV | NOT) {emit($op);}
     ;
 
 
@@ -2391,7 +3351,7 @@ postfixExpression
     ;
     
 postfixOp
-    :   op=(INC | DEC){Emit((CommonToken)$op);}
+    :   op=(INC | DEC){emit($op);}
     ;
 
 //These rules came from a grammar by Patrick Hulsmeijer, posted to the ANTLR examples
@@ -2402,36 +3362,43 @@ memberExpression
 	;
 
 newExpression
-	: N=NEW  {Emit((CommonToken)$N);InsertWS(1);} primaryExpression
+	: N=NEW  {emit($N);insertWS(1);} primaryExpression
 	;
 
 //11.2
 leftHandSideExpression
-    :   memberExpression 
+@init {
+    WrapOptions options=mPrinter.getExpressionWrapOptions();
+    bool pushedWrapInfo=false;
+}
+    : {pushedWrapInfo=pushWrapInfo(options, true);}
+    memberExpression 
     (
       arguments
-      | L=LBRACK {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideArrayReferenceBrackets());} expression R=RBRACK{InsertWS(mPrinter.GetAdvancedSpacesInsideArrayReferenceBrackets());Emit((CommonToken)$R);} 
-//      | D=DOT {Emit((CommonToken)$D);} (I=IDENTIFIER {Emit((CommonToken)$I);} op=XML_NS_OP {Emit((CommonToken)$op);} )? I=IDENTIFIER {Emit((CommonToken)$I);} 
-      | D=DOT {Emit((CommonToken)$D);} (eitherIdentifier op=XML_NS_OP {Emit((CommonToken)$op);} )? eitherIdentifier
-      | E=XML_ELLIPSIS{Emit((CommonToken)$E);} (eitherIdentifier op=XML_NS_OP {Emit((CommonToken)$op);} )? eitherIdentifier
-      | D=DOT {Emit((CommonToken)$D);} parExpression
-      | typePostfixSyntax 
-    )*  // | x=XML_AT {Emit((CommonToken)$x);}
+      | L=LBRACK {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideArrayReferenceBrackets());} expression R=RBRACK{insertWS(mPrinter.getAdvancedSpacesInsideArrayReferenceBrackets());emit($R);} 
+//      | D=DOT {wrapEmit($D, ASPrettyPrinter.Break_Function_Calls_code);} (eitherIdentifier op=XML_NS_OP {wrapEmit($op, ASPrettyPrinter.Break_Other_Connectors_code);} {popIndent();})? eitherIdentifier {popIndent();}
+//      | D=DOT {wrapEmit($D, ASPrettyPrinter.Break_Function_Calls_code);} eitherIdentifier {popIndent();}
+      | E=XML_ELLIPSIS{wrapEmit($E, ASPrettyPrinter.Break_Other_Connectors_code);} eitherIdentifier {popIndent();}
+      | D=DOT ({wrapEmit($D, ASPrettyPrinter.Break_Function_Calls_code);} eitherIdentifier | {wrapEmit($D, ASPrettyPrinter.Break_Other_Connectors_code);} parExpression) {popIndent();}
+      | typePostfixSyntax
+      | op=XML_NS_OP {wrapEmit($op, ASPrettyPrinter.Break_Other_Connectors_code);} expression {popIndent();}
+    )*  // | x=XML_AT {emit($x);}
+    {if (pushedWrapInfo) mPrinter.popWrapContext();}
     ;
     
 eitherIdentifier
-	: I=IDENTIFIER  {Emit((CommonToken)$I);} 
+	: I=IDENTIFIER  {emit($I);} 
 	 | xmlPropertyIdentifier
 	 | allKeywords
 	;
 	
 typeSpecifier:
-	I=IDENTIFIER {Emit((CommonToken)$I);} | notQuiteReservedWord | I=INTERNAL {Emit((CommonToken)$I);} | D=DEFAULT {Emit((CommonToken)$D);}
+	I=IDENTIFIER {emit($I);} | notQuiteReservedWord | I=INTERNAL {emit($I);} | D=DEFAULT {emit($D);}
 	;
 	
 notQuiteReservedWord
 	: 
-	word=(TO | NATIVE | EACH | GET | SET | NAMESPACE | DYNAMIC | FINAL | OVERRIDE | STATIC ) {Emit((CommonToken)$word);}
+	word=(TO | NATIVE | EACH | GET | SET | NAMESPACE | DYNAMIC | FINAL | OVERRIDE | STATIC ) {emit($word);}
 	;
 
 allKeywords
@@ -2493,35 +3460,41 @@ reservedWord
 //    | OVERRIDE
 //    | STATIC)
        ) 
-       {Emit((CommonToken)$word);}      
+       {emit($word);}      
 	;
 	
 arguments
 @init
 {
-	WrapOptions options=mPrinter.GetMethodCallWrapOptions();
+	WrapOptions options=mPrinter.getMethodCallWrapOptions();
 	bool pushedFormat=false;
 	bool pushedIndent=false;
+	bool pushedWrapInfo=false;
+	int firstArgPos=0;
 }
 	: 
-	  {pushedFormat=PushFormatType(options, false);}
-	  L=LPAREN {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideParens());} 
-	  ( {pushedIndent=PushLazyParmIndent(pushedIndent, options.IndentStyle);} assignmentExpression 
+	  {pushedFormat=pushFormatType(options, true);
+	   pushedWrapInfo=pushWrapInfo(options, true);
+	  }
+	L=LPAREN {{insertWS(mPrinter.getSpacesBeforeArguments());} emit($L);insertWS(mPrinter.getAdvancedSpacesInsideParensInArgumentLists());}
+	  ( {pushedIndent=pushLazyParmIndent(pushedIndent, options.getIndentStyle());} {mPrinter.captureNextTextPosition();} assignmentExpression {firstArgPos=mPrinter.getLastCapturePosition();} 
 	        (  
 		        C=COMMA 
-		        {pushedIndent=EmitCommaWithSpacingAndCRs(options, (CommonToken) $C, pushedIndent);}
+		        {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, firstArgPos, ASPrettyPrinter.Break_SubType_Arguments);}
 		        assignmentExpression 
 	        )* 
 	  )? 
-	  R=RPAREN{InsertWS(mPrinter.GetAdvancedSpacesInsideParens());Emit((CommonToken)$R);}
-	  
+	R=RPAREN{insertWS(mPrinter.getAdvancedSpacesInsideParensInArgumentLists());emit($R);}
       {
         if (pushedIndent)
-   	    	PopIndent();
+   	    	popIndent();
    	    if (pushedFormat)
-   	    	mPrinter.PopFormatMode();
+   	    {
+   	    	mPrinter.popFormatMode();
+   	    }
+   	    if (pushedWrapInfo)
+   	    	mPrinter.popWrapContext();
       } 
-	   
 	;
 
 /*suffix helper rule*/ 
@@ -2530,13 +3503,13 @@ suffix
     ;
 /*code like [i] or [1]*/     
 indexSuffix             
-    :    L=LBRACK  {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideArrayReferenceBrackets());} expression  R=RBRACK{InsertWS(mPrinter.GetAdvancedSpacesInsideArrayReferenceBrackets());Emit((CommonToken)$R);} 
+    :    L=LBRACK  {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideArrayReferenceBrackets());} expression  R=RBRACK{insertWS(mPrinter.getAdvancedSpacesInsideArrayReferenceBrackets());emit($R);} 
     ;
     
 propertyReferenceSuffix
-    :    D=DOT  {Emit((CommonToken)$D);} I=IDENTIFIER{Emit((CommonToken)$I);} 
-    |    D=DOT  {Emit((CommonToken)$D);} xmlPropertyIdentifier
-    |    D=DOT       {Emit((CommonToken)$D);} /*it's a xml only reference match*/
+    :    D=DOT  {wrapEmit($D, ASPrettyPrinter.Break_Other_Connectors_code);} I=IDENTIFIER{emit($I);} {popIndent();} 
+    |    D=DOT  {wrapEmit($D, ASPrettyPrinter.Break_Other_Connectors_code);} xmlPropertyIdentifier {popIndent();}
+    |    D=DOT  {wrapEmit($D, ASPrettyPrinter.Break_Other_Connectors_code);} {popIndent();} /*it's a xml only reference match*/
     ;
 
 //11.1 Primary Expression
@@ -2546,32 +3519,60 @@ primaryExpression
     
 /* derived from ECMA-262 basicly. but add super alternative*/
 primaryExpressionHelper
-    :   T=THIS{Emit((CommonToken)$T);} 
-    |   S=SUPER{Emit((CommonToken)$S);} 
+    :   T=THIS{emit($T);} 
+    |   S=SUPER{emit($S);} 
     |   literal  
     |   arrayLiteral // ARRAY_LITERAL
     |   objectLiteral  // OBJECT_LITERAL
-    |   identifierLiteral 
+    |   (identifierLiteral x=XML_NS_OP {emit($x);})? identifierLiteral 
     |   xmlPrimaryExpression
     |   parExpression // PAR_EXPRESSION
-    |   conditionalCompilerOption
-	|   l=LT {Emit((CommonToken)$l);} type g=GT {Emit((CommonToken)$g);} (arrayLiteral)? //Vector initializer with optional array data
+    |   l=LT {emit($l);} type g=GT {emit($g);} (arrayLiteral)? //Vector initializer with optional array data
     ;
 
 //11.1.5 Object Initialiser
 objectLiteral
-    :   L=LCURLY {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideObjectBraces());PushIndent(true);} propertyNameAndValueList? R=RCURLY {PopIndent();InsertWS(mPrinter.GetAdvancedSpacesInsideObjectBraces());Emit((CommonToken)$R);} 
+    :   L=LCURLY {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideObjectBraces());
+    pushIndent(true);
+    } propertyNameAndValueList? R=RCURLY {
+    popIndent();
+    insertWS(mPrinter.getAdvancedSpacesInsideObjectBraces());emit($R);} 
     ;
 
 propertyNameAndValueList
-    :   propertyNameAndValue ({InsertWS(mPrinter.GetSpacesBeforeComma());}C=COMMA {Emit((CommonToken)$C);}{InsertWS(mPrinter.GetSpacesAfterComma());} propertyNameAndValue)*
+@init
+{
+	WrapOptions options=mPrinter.getArrayInitWrapOptions();
+	bool pushedFormat=false;
+	bool pushedIndent=true; //so that we won't push another indent
+	bool pushedWrapInfo=false;
+	int firstItem=(-1);
+}
+    :
+	  {pushedFormat=pushFormatType(options, true);
+	   pushedWrapInfo=pushWrapInfo(options, true);
+	  }
+	   {mPrinter.captureNextTextPosition();}
+       propertyNameAndValue 
+       {firstItem=mPrinter.getLastCapturePosition();}
+       		(C=COMMA {pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, firstItem, ASPrettyPrinter.Break_SubType_Object);} propertyNameAndValue)*
+      {
+//        if (pushedIndent)
+//   	    	popIndent();
+   	    if (pushedFormat)
+   	    {
+   	    	mPrinter.popFormatMode();
+   	    }
+   	    if (pushedWrapInfo)
+   	    	mPrinter.popWrapContext();
+      } 
     ;
 
 propertyNameAndValue
     :   propertyName C=COLON 
     		{
-    		Emit((CommonToken)$C);
-    		InsertWS(mPrinter.GetSpacesAfterLabel());
+    		emit($C);
+    		insertWS(mPrinter.getSpacesAfterLabel());
     		} 
     		assignmentExpression
     ;
@@ -2584,30 +3585,38 @@ propertyName
 
 //11.1.4 Array Initialiser
 arrayLiteral
-    :   L=LBRACK {Emit((CommonToken)$L);InsertWS(mPrinter.GetAdvancedSpacesInsideArrayDeclBrackets());} elementList? R=RBRACK{InsertWS(mPrinter.GetAdvancedSpacesInsideArrayDeclBrackets());Emit((CommonToken)$R);} 
+    :   L=LBRACK {emit($L);insertWS(mPrinter.getAdvancedSpacesInsideArrayDeclBrackets());} elementList? R=RBRACK{insertWS(mPrinter.getAdvancedSpacesInsideArrayDeclBrackets());emit($R);} 
     ;
 
 elementList
 @init
 {
-	WrapOptions options=mPrinter.GetArrayInitWrapOptions();
+	WrapOptions options=mPrinter.getArrayInitWrapOptions();
 	bool pushedFormat=false;
 	bool pushedIndent=false;
+	bool pushedWrapInfo=false;
+	int firstItemPos=0;
 }
     :
-    	{pushedFormat=PushFormatType(options, false);}
-    	{pushedIndent=PushLazyParmIndent(pushedIndent, options.IndentStyle);}
-        assignmentExpression 
+    	{pushedFormat=pushFormatType(options, true);}
+    	{
+		 pushedIndent=pushLazyParmIndent(pushedIndent, options.getIndentStyle());
+    	 pushedWrapInfo=pushWrapInfo(options, true);}
+        {mPrinter.captureNextTextPosition();} assignmentExpression {firstItemPos=mPrinter.getLastCapturePosition();} 
     	(
     		C=COMMA 
-    		{pushedIndent=EmitCommaWithSpacingAndCRs(options,(CommonToken) $C, pushedIndent);}
+    		{pushedIndent=emitCommaWithSpacingAndCRs(options, $C, pushedIndent, firstItemPos, ASPrettyPrinter.Break_SubType_Array);}
     		assignmentExpression
-    	)* (C=COMMA {Emit((CommonToken)$C);})? //allow extra comma on end, because it's apparently tolerated
+    	)* (C=COMMA {emit($C);})? //allow extra comma on end, because it's apparently tolerated
     	
 		{
 			if (pushedIndent)
-				PopIndent();
+				popIndent();
     	    if (pushedFormat)
-    	    	mPrinter.PopFormatMode();
+    	    {
+    	    	mPrinter.popFormatMode();
+    	    }
+    	    if (pushedWrapInfo)
+    	    	mPrinter.popWrapContext();
 		} 
     ;

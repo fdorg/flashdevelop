@@ -644,13 +644,12 @@ namespace FlashDevelop
             }
             try
             {
-                Int32 count = this.Documents.Length;
-                for (Int32 i = 0; i < count; i++)
+                foreach (ITabbedDocument doc in this.Documents)
                 {
-                    if (this.Documents[i].IsEditable && this.Documents[i].FileName.ToUpper() == file.ToUpper())
+                    if (doc.IsEditable && doc.FileName.ToUpper() == file.ToUpper())
                     {
-                        this.Documents[i].Activate();
-                        return null;
+                        doc.Activate();
+                        return doc as DockContent;
                     }
                 }
             }
@@ -861,6 +860,41 @@ namespace FlashDevelop
             this.processRunner.ProcessEnded += ProcessEnded;
             this.processRunner.Output += ProcessOutput;
             this.processRunner.Error += ProcessError;
+        }
+
+        /// <summary>
+        /// Checks for updates in specified schedule
+        /// </summary>
+        public void CheckForUpdates()
+        {
+            try
+            {
+                DateTime last = new DateTime(this.appSettings.LastUpdateCheck);
+                TimeSpan elapsed = DateTime.UtcNow.Subtract(last);
+                switch (this.appSettings.CheckForUpdates)
+                {
+                    case UpdateInterval.Weekly:
+                    {
+                        if (elapsed.TotalDays >= 7)
+                        {
+                            this.appSettings.LastUpdateCheck = DateTime.UtcNow.Ticks;
+                            UpdateDialog.Show(true);
+                        }
+                        break;
+                    }
+                    case UpdateInterval.Monthly:
+                    {
+                        if (elapsed.TotalDays >= 30)
+                        {
+                            this.appSettings.LastUpdateCheck = DateTime.UtcNow.Ticks;
+                            UpdateDialog.Show(true);
+                        }
+                        break;
+                    }
+                    default: break;
+                }
+            }
+            catch { /* NO ERRORS PLEASE */ }
         }
 
         /// <summary>
@@ -1158,6 +1192,10 @@ namespace FlashDevelop
             * Initialize window and continue layout
             */
             this.InitializeWindow();
+            /**
+            * Check for updates when needed
+            */
+            this.CheckForUpdates();
         }
 
         /// <summary>
@@ -2988,7 +3026,7 @@ namespace FlashDevelop
         /// </summary>
         public void CheckUpdates(Object sender, System.EventArgs e)
         {
-            UpdateDialog.Show();
+            UpdateDialog.Show(false);
         }
 
         /// <summary>
