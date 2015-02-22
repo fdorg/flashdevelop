@@ -14,7 +14,7 @@
 ; Installer details
 VIAddVersionKey "CompanyName" "FlashDevelop.org"
 VIAddVersionKey "ProductName" "FlashDevelop Installer"
-VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2014"
+VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2015"
 VIAddVersionKey "FileDescription" "FlashDevelop Installer"
 VIAddVersionKey "ProductVersion" "${VERSION}.0"
 VIAddVersionKey "FileVersion" "${VERSION}.0"
