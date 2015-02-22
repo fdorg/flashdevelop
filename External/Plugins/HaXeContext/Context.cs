@@ -162,7 +162,7 @@ namespace HaXeContext
                 string hxPath = currentSDK;
                 if (hxPath != null && Path.IsPathRooted(hxPath))
                 {
-                    SetHaxeEnvironment(hxPath);
+                    if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
                     haxelib = Path.Combine(hxPath, haxelib);
                 }
                 
@@ -242,6 +242,7 @@ namespace HaXeContext
             features.metadata = new Dictionary<string, string>();
 
             Process process = createHaxeProcess("--help-metas");
+            if (process == null) return;
             process.Start();
 
             String metaList = process.StandardOutput.ReadToEnd();
@@ -249,7 +250,6 @@ namespace HaXeContext
 
             Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?= @:[a-zA-Z]* :)");
             metaList = Regex.Replace(metaList, "\\s+", " ");
-            metaList += "@:fake :";
 
             MatchCollection matches = regex.Matches(metaList);
 
@@ -1129,11 +1129,8 @@ namespace HaXeContext
             // compiler path
             var hxPath = currentSDK ?? ""; 
             var process = Path.Combine(hxPath, "haxe.exe");
-            /*if (!File.Exists(process))
-            {
-                ErrorManager.ShowInfo(String.Format(TextHelper.GetString("Info.HaXeExeError"), "\n"));
+            if (!File.Exists(process))
                 return null;
-            }*/
 
             // Run haxe compiler
             Process proc = new Process();

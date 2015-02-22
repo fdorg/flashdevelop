@@ -15,7 +15,7 @@ namespace HaXeContext
 
         public string GetCompletion(string[] args)
         {
-            if (args == null)
+            if (args == null || haxeProcess == null)
                 return string.Empty;
             haxeProcess.StartInfo.Arguments = String.Join(" ", args);
             haxeProcess.Start();
