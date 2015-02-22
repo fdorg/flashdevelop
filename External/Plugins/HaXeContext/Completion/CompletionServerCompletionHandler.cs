@@ -24,7 +24,6 @@ namespace HaXeContext
         {
             this.haxeProcess = haxeProcess;
             this.port = port;
-            //haxeProcess.Start(); // deferred to first use
             Environment.SetEnvironmentVariable("HAXE_SERVER_PORT", "" + port);
         }
 
@@ -41,9 +40,9 @@ namespace HaXeContext
 
         public string GetCompletion(string[] args)
         {
-            if (!IsRunning()) StartServer();
-            if (args == null)
+            if (args == null || haxeProcess == null)
                 return string.Empty;
+            if (!IsRunning()) StartServer();
             try
             {
                 var client = new TcpClient("127.0.0.1", port);
@@ -70,7 +69,7 @@ namespace HaXeContext
 
         public void StartServer()
         {
-            if (IsRunning()) return;
+            if (haxeProcess == null || IsRunning()) return;
             haxeProcess.Start();
             if (!listening)
             {
@@ -90,7 +89,6 @@ namespace HaXeContext
         void haxeProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null) return;
-            //TraceManager.AddAsync(e.Data);
             if (Regex.IsMatch(e.Data, "Error.*--wait"))
             {
                 if (!failure && FallbackNeeded != null) 
