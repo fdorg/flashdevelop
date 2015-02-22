@@ -647,6 +647,12 @@ namespace ProjectManager
             pluginUI.SetSolution(solution);
             menus.SetSolution(solution);
 
+            if (solution.Projects.Length > 1)
+            {
+                // initialize projects classpath and references
+                foreach (Project project in solution.Projects)
+                    SetActiveProject(project, false);
+            }
             SetActiveProject(solution.RunProject as Project, true);
 
             // events

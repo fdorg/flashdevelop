@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using PluginCore;
 using System.IO;
+using PluginCore.Managers;
 
 namespace ProjectManager.Projects
 {
@@ -69,7 +70,50 @@ namespace ProjectManager.Projects
             SolutionPath = project.ProjectPath;
 
             RunProject = MainProject = project;
-            Projects = new Project[] { project };
+            LoadProjects();
+        }
+
+        void LoadProjects()
+        {
+            Project main = MainProject as Project;
+            string solutionData = null;
+            main.Storage.TryGetValue("Solution", out solutionData);
+            if (solutionData == null)
+            {
+                Projects = new IProject[] { MainProject };
+                return;
+            }
+
+            var projects = new List<IProject>();
+            var solutionPaths = solutionData.Split('|');
+            foreach (string relPath in solutionPaths)
+            {
+                try
+                {
+                    var fullPath = ValidatePath(main, relPath);
+                    if (fullPath == null) continue;
+                    if (fullPath == main.ProjectPath) projects.Add(MainProject);
+                    else projects.Add(ProjectLoader.Load(fullPath));
+                }
+                catch (Exception ex) 
+                {
+                    TraceManager.AddAsync(ex.Message);
+                }
+            }
+            Projects = projects.ToArray();
+        }
+
+        string ValidatePath(Project main, string relPath)
+        {
+            var fullPath = main.GetAbsolutePath(relPath);
+
+            if (String.Equals(fullPath, main.ProjectPath, StringComparison.OrdinalIgnoreCase))
+                return main.ProjectPath;
+
+            if (!File.Exists(fullPath))
+                throw new Exception(String.Format("Project '{0}' in solution '{1}' does not exist.", fullPath, main.ProjectPath));
+
+            return fullPath;
         }
 
         public void UpdateVars()
