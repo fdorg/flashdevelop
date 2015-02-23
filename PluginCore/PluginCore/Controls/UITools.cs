@@ -165,7 +165,6 @@ namespace PluginCore.Controls
 			sci.UpdateUI += new UpdateUIHandler(OnUIRefresh);
 			sci.TextInserted += new TextInsertedHandler(OnTextInserted);
 			sci.TextDeleted += new TextDeletedHandler(OnTextDeleted);
-            sci.KeyDown += OnKeyDown;
 		}
 
         /// <summary>
@@ -246,7 +245,7 @@ namespace PluginCore.Controls
                 {
                     if (Win32.ShouldUseWin32())
                     {
-                        Win32.SendMessage((IntPtr)CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
                         return true;
                     }
                     else return false;
@@ -342,29 +341,6 @@ namespace PluginCore.Controls
 			return;
 		}
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == (Keys.Control | Keys.Space) || e.KeyData == (Keys.Shift | Keys.Control | Keys.Space))
-            {
-                ignoreKeys = true;
-                KeyEvent ke = new KeyEvent(EventType.Keys, e.KeyData);
-                EventManager.DispatchEvent(this, ke);
-                ignoreKeys = false;
-                // if not handled - show snippets
-                if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable
-                    && !PluginBase.MainForm.CurrentDocument.SciControl.IsSelectionRectangle)
-                {
-                    PluginBase.MainForm.CallCommand("InsertSnippet", "null");
-                }
-
-                e.SuppressKeyPress = true;
-            }
-            else if (CompletionList.Active)
-            {
-                e.SuppressKeyPress = CompletionList.HandleKeys((ScintillaControl) sender, e.KeyData);
-            }
-        }
-
         public void SendChar(ScintillaControl sci, int value)
 		{
 			if (OnCharAdded != null) OnCharAdded(sci, value);	
@@ -378,7 +354,19 @@ namespace PluginCore.Controls
 			// list/tip shortcut dispatching
 			if ((key == (Keys.Control | Keys.Space)) || (key == (Keys.Shift | Keys.Control | Keys.Space)))
 			{
-				return false;
+                ignoreKeys = true;
+                KeyEvent ke = new KeyEvent(EventType.Keys, key);
+                EventManager.DispatchEvent(this, ke);
+                ignoreKeys = false;
+                // if not handled - show snippets
+                if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable && PluginBase.MainForm.CurrentDocument.SciControl.ContainsFocus 
+                    && !PluginBase.MainForm.CurrentDocument.SciControl.IsSelectionRectangle)
+                {
+                    PluginBase.MainForm.CallCommand("InsertSnippet", "null");
+                    ke.Handled = true;
+                }
+                
+                return ke.Handled;
 			}
 
             // toggle "long-description" for the hover tooltip

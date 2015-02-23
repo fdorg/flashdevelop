@@ -22,12 +22,12 @@ namespace FlashDebugger.Controls
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             var completionTarget = new TextBoxTarget(textBox);
             this.completionList = new CompletionListControl(completionTarget);
-            completionTarget.CompletionList = completionList;
             this.history = new List<string>();
         }
 
-        private void textBox_KeyDown(object sender, KeyEventArgs e)
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
+            if (completionList.Active) return;
             if (e.KeyCode == Keys.Back && this.textBox.GetFirstCharIndexOfCurrentLine() == this.textBox.SelectionStart) e.SuppressKeyPress = true;
             if (e.KeyCode == Keys.Up)
             {
@@ -61,14 +61,6 @@ namespace FlashDebugger.Controls
             {
                 e.SuppressKeyPress = true;
                 int curLine = this.textBox.GetLineFromCharIndex(this.textBox.SelectionStart);
-                //int curLine = 0;
-                //int tmp = 0;
-                //while (true)
-                //{
-                //    tmp += this.textBox.Lines[curLine].Length + 2; // newline chars
-                //    if (tmp >= this.textBox.SelectionStart) break;
-                //    curLine++;
-                //}
                 string line = "";
                 if (curLine<this.textBox.Lines.Length) line = this.textBox.Lines[curLine];
                 if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.AppendText(Environment.NewLine);
@@ -78,15 +70,15 @@ namespace FlashDebugger.Controls
                     this.historyPos = this.history.Count;
                     if (line == "swfs")
                     {
-                        this.textBox.AppendText(processSwfs());
+                        this.textBox.AppendText(ProcessSwfs());
                     }
                     else if (line.StartsWith("p "))
                     {
-                        this.textBox.AppendText(processExpr(line.Substring(2)));
+                        this.textBox.AppendText(ProcessExpr(line.Substring(2)));
                     }
                     else if (line.StartsWith("g "))
                     {
-                        this.textBox.AppendText(processGlobal(line.Substring(2)));
+                        this.textBox.AppendText(ProcessGlobal(line.Substring(2)));
                     }
                     else
                     {
@@ -109,7 +101,7 @@ namespace FlashDebugger.Controls
                 {
                     this.textBox.AppendText(!string.IsNullOrEmpty(ex.Message) ? ex.GetType().FullName + ": " + ex.Message : ex.ToString());
                 }
-                if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.AppendText(Environment.NewLine);
+                if (this.textBox.Lines.Length > 0) this.textBox.AppendText(Environment.NewLine);
                 this.textBox.Select(this.textBox.Text.Length, 0);
                 this.textBox.ScrollToCaret();
             }
@@ -120,8 +112,14 @@ namespace FlashDebugger.Controls
             // Ctrl+Space is detected at the form level instead of the editor level, so when we are docked we need to catch it before
             if ((keyData & Keys.KeyCode) == Keys.Space && (keyData & Keys.Modifiers & Keys.Control) > 0)
             {
+                int curLine = this.textBox.GetLineFromCharIndex(this.textBox.SelectionStart);
+                string line = (curLine < this.textBox.Lines.Length) ? this.textBox.Lines[curLine] : "";
+
+                if (line == "" || !line.StartsWith("p ")) return true;
+
                 var debugger = PluginMain.debugManager.FlashInterface;
-                if (!debugger.isDebuggerStarted || !debugger.isDebuggerSuspended) return true;
+                if (!debugger.isDebuggerStarted || !debugger.isDebuggerSuspended || PluginMain.debugManager.CurrentFrame >= debugger.GetFrames().Length) 
+                    return true;
                 var location = debugger.GetFrames()[PluginMain.debugManager.CurrentFrame].getLocation();
                 string file = PluginMain.debugManager.GetLocalPath(location.getFile());
                 if (file == null) return true;
@@ -134,7 +132,10 @@ namespace FlashDebugger.Controls
                     sci.Encoding = Encoding.GetEncoding(info.CodePage);
                     sci.ConfigurationLanguage = PluginCore.PluginBase.CurrentProject.Language;
 
-                    sci.CurrentPos = sci.PositionFromLine(location.getLine());
+                    sci.CurrentPos = sci.PositionFromLine(location.getLine() - 1);
+                    string expression = line.Substring(2);
+                    sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+                    sci.ReplaceSel(expression);
 
                     ASCompletion.Completion.ASExpr expr =
                         ASCompletion.Completion.ASComplete.GetExpressionType(sci, sci.CurrentPos).Context;
@@ -145,8 +146,7 @@ namespace FlashDebugger.Controls
                         foreach (ASCompletion.Model.MemberModel local in locals)
                             list.Add(new ASCompletion.Completion.MemberItem(local));
                     }
-
-                    completionList.Show(list, false);
+                    completionList.Show(list, true, line.Substring(line.LastIndexOfAny(new[]{' ', '.'}) + 1));
                 }
 
                 return true;
@@ -154,21 +154,21 @@ namespace FlashDebugger.Controls
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private string processSwfs()
+        private string ProcessSwfs()
         {
-                StringBuilder ret = new StringBuilder();
+            StringBuilder ret = new StringBuilder();
 
-                foreach (SwfInfo info in PluginMain.debugManager.FlashInterface.Session.getSwfs())
-                {
-                    if (info == null) continue;
-                    ret.Append(info.getPath()).Append("\tswfsize ").Append(info.getSwfSize()).Append("\tprocesscomplete ").Append(info.isProcessingComplete())
-                        .Append("\tunloaded ").Append(info.isUnloaded()).Append("\turl ").Append(info.getUrl()).Append("\tsourcecount ")
-                        .Append(info.getSourceCount(PluginMain.debugManager.FlashInterface.Session)).AppendLine();
-                }
-                return ret.ToString();
+            foreach (SwfInfo info in PluginMain.debugManager.FlashInterface.Session.getSwfs())
+            {
+                if (info == null) continue;
+                ret.Append(info.getPath()).Append("\tswfsize ").Append(info.getSwfSize()).Append("\tprocesscomplete ").Append(info.isProcessingComplete())
+                    .Append("\tunloaded ").Append(info.isUnloaded()).Append("\turl ").Append(info.getUrl()).Append("\tsourcecount ")
+                    .Append(info.getSourceCount(PluginMain.debugManager.FlashInterface.Session)).AppendLine();
+            }
+            return ret.ToString();
         }
 
-        private string processExpr(string expr)
+        private string ProcessExpr(string expr)
         {
             IASTBuilder builder = new ASTBuilder(true);
             ValueExp exp = builder.parse(new java.io.StringReader(expr));
@@ -179,7 +179,7 @@ namespace FlashDebugger.Controls
             return obj.toString();
         }
 
-        private string processGlobal(string expr)
+        private string ProcessGlobal(string expr)
         {
             var val = PluginMain.debugManager.FlashInterface.Session.getGlobal(expr);
             //var val = PluginMain.debugManager.FlashInterface.Session.getValue(Convert.ToInt64(expr));
@@ -187,24 +187,24 @@ namespace FlashDebugger.Controls
             return ctx.FormatValue(val);
         }
 
-        private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ClearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.textBox.Clear();
             this.history.Clear();
             this.historyPos = 0;
         }
 
-        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.textBox.Cut();
         }
 
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.textBox.Copy();
         }
 
-        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.textBox.Paste();
         }
@@ -214,13 +214,25 @@ namespace FlashDebugger.Controls
 
             #region ICompletionListTarget Members
 
-            public event EventHandler LostFocus;
+            public event EventHandler LostFocus
+            {
+                add { _owner.LostFocus += value; }
+                remove { _owner.LostFocus -= value; }
+            }
 
             public event ScrollEventHandler Scroll;
 
-            public event KeyEventHandler KeyDown;
+            public event KeyEventHandler KeyDown
+            {
+                add { _owner.KeyDown += value; }
+                remove { _owner.KeyDown -= value; }
+            }
 
-            public event MouseEventHandler MouseDown;
+            public event MouseEventHandler MouseDown
+            {
+                add { _owner.MouseDown += value; }
+                remove { _owner.MouseDown -= value; }
+            }
 
             private TextBox _owner;
             public Control Owner
@@ -279,20 +291,9 @@ namespace FlashDebugger.Controls
                 get { return !_owner.ReadOnly; }
             }
 
-            private CompletionListControl _completionList;
-            public CompletionListControl CompletionList
-            {
-                get { return _completionList; }
-                set
-                {
-                    _completionList = value;
-                }
-            }
-
             public TextBoxTarget(TextBox owner)
             {
                 _owner = owner;
-                _owner.KeyDown += Owner_KeyDown;
             }
 
             public Point GetPositionFromCharIndex(int pos)
@@ -311,15 +312,11 @@ namespace FlashDebugger.Controls
 
             public void SetSelection(int start, int end)
             {
-                throw new NotImplementedException();
+                _owner.SelectionStart = start;
+                _owner.SelectionLength = end - start;
             }
 
             #endregion
-
-            private void Owner_KeyDown(object sender, KeyEventArgs e)
-            {
-                e.SuppressKeyPress = _completionList.HandleKeys(e.KeyData);
-            }
         }
 
 

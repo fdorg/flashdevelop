@@ -253,7 +253,11 @@ namespace PluginCore.Controls
 
             public event EventHandler LostFocus;
             public event ScrollEventHandler Scroll;
-            public event KeyEventHandler KeyDown;
+            public event KeyEventHandler KeyDown
+            {
+                add { Owner.KeyDown += value; }
+                remove { Owner.KeyDown -= value; }
+            }
             public event MouseEventHandler MouseDown;
 
             public Control Owner
@@ -274,7 +278,7 @@ namespace PluginCore.Controls
                 }
                 set
                 {
-                    throw new NotImplementedException();
+                    PluginBase.MainForm.CurrentDocument.SciControl.ReplaceSel(value);
                 }
             }
 
