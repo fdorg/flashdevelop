@@ -21,14 +21,15 @@ namespace PluginCore.Controls
         public event CompletionListInsertedTextHandler OnCancel;
         public event EventHandler OnShowing;
         public event EventHandler OnHidden;
-
+        
         /// <summary>
         /// Properties of the class 
         /// </summary> 
         private System.Timers.Timer tempo;
         private System.Timers.Timer tempoTip;
         private System.Windows.Forms.ListBox completionList;
-        private System.Windows.Forms.Form listHost;
+        private System.Windows.Forms.ToolStripControlHost listContainer;
+        private System.Windows.Forms.ToolStripDropDown listHost;
 
         #region State Properties
 
@@ -74,11 +75,12 @@ namespace PluginCore.Controls
 
             this.target = target;
 
-            listHost = new InactiveForm();
-            listHost.StartPosition = FormStartPosition.Manual;
-            listHost.FormBorderStyle = FormBorderStyle.None;
-            listHost.ShowIcon = false;
-            listHost.ShowInTaskbar = false;
+            listHost = new ToolStripDropDown();
+            listHost.Padding = Padding.Empty;
+            listHost.Margin = Padding.Empty;
+            listHost.AutoClose = false;
+            listHost.DropShadowEnabled = false;
+            listHost.AutoSize = false;
             listHost.Size = new Size(180, 100);
 
             tempo = new System.Timers.Timer();
@@ -91,16 +93,21 @@ namespace PluginCore.Controls
             tempoTip.AutoReset = false;
             tempoTip.Interval = 800;
 
-            completionList = new ListBox();
+            completionList = new ListBoxEx();
             completionList.Font = new System.Drawing.Font(PluginBase.Settings.DefaultFont, FontStyle.Regular);
             completionList.ItemHeight = completionList.Font.Height + 2;
-            completionList.Dock = DockStyle.Fill;
             completionList.DrawMode = DrawMode.OwnerDrawFixed;
             completionList.DrawItem += new DrawItemEventHandler(CLDrawListItem);
             completionList.Click += new EventHandler(CLClick);
             completionList.DoubleClick += new EventHandler(CLDoubleClick);
 
-            listHost.Controls.Add(completionList);
+            listContainer = new ToolStripControlHost(completionList);
+            listContainer.AutoToolTip = false;
+            listContainer.AutoSize = false;
+            listContainer.Margin = Padding.Empty;
+            listContainer.Padding = Padding.Empty;
+            
+            listHost.Items.Add(listContainer);
         }
 
         #endregion
@@ -274,25 +281,29 @@ namespace PluginCore.Controls
         {
             if (!target.IsEditable) return;
             ListBox cl = completionList;
-            Form host = listHost;
+            ToolStripDropDown host = listHost;
             if (cl.Items.Count == 0) return;
 
             // measure control
+            var listSize = new Size();
             if (needResize && !string.IsNullOrEmpty(widestLabel))
             {
                 needResize = false;
                 Graphics g = cl.CreateGraphics();
                 SizeF size = g.MeasureString(widestLabel, cl.Font);
-                host.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), 400) + ScaleHelper.Scale(10);
+                listSize.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), 400) + ScaleHelper.Scale(10);
             }
+            else listSize.Width = cl.Width;
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
-            if (newHeight != host.Height) host.Height = newHeight;
+            listSize.Height = newHeight != cl.Height ? newHeight : cl.Height;
+            cl.Size = listContainer.Size = host.Size = listSize;
             // place control
             Point coord = target.GetPositionFromCharIndex(startPos);
-            listUp = UITools.CallTip.CallTipActive || (coord.Y + host.Height > target.Owner.Height);
             coord = target.Owner.PointToScreen(coord);
             host.Left = coord.X + target.Owner.Left;
-            var screen = Screen.FromHandle(PluginBase.MainForm.Handle);
+            var screen = Screen.FromHandle(target.Owner.Handle);
+            listUp = UITools.CallTip.CallTipActive || (coord.Y + host.Height > target.Owner.Height && coord.Y - host.Height > screen.WorkingArea.Top)
+                || coord.Y + target.GetLineHeight() + host.Height > screen.WorkingArea.Bottom;
             if (listUp) host.Top = coord.Y - host.Height;
             else host.Top = coord.Y + target.GetLineHeight();
             // Keep on screen area
@@ -304,9 +315,9 @@ namespace PluginCore.Controls
             {
                 Redraw();
                 if (OnShowing != null) OnShowing(this, EventArgs.Empty);
-                host.Show(target.Owner);
+                host.Show(host.Bounds.Location);
                 if (UITools.CallTip.CallTipActive) UITools.CallTip.PositionControl(((ScintillaControl)target.Owner));
-                Application.AddMessageFilter(this);
+                AddHandlers();
             }
         }
 
@@ -323,12 +334,12 @@ namespace PluginCore.Controls
         {
             if (completionList != null && isActive)
             {
-                Application.RemoveMessageFilter(this);
+                RemoveHandlers();
                 tempo.Enabled = false;
                 isActive = false;
                 fullList = false;
                 faded = false;
-                listHost.Hide();
+                listHost.Close();
                 if (completionList.Items.Count > 0) completionList.Items.Clear();
                 currentItem = null;
                 allItems = null;
@@ -445,11 +456,7 @@ namespace PluginCore.Controls
         private void CLClick(Object sender, System.EventArgs e)
         {
             if (!target.IsEditable)
-            {
                 Hide();
-                return;
-            }
-            target.Owner.Focus();
         }
 
         /// <summary>
@@ -462,7 +469,6 @@ namespace PluginCore.Controls
                 Hide();
                 return;
             }
-            target.Owner.Focus();
             ReplaceText('\0');
         }
 
@@ -834,11 +840,11 @@ namespace PluginCore.Controls
                                 replace = replace.Substring(0, replace.IndexOf(tail));
                             }
                         }
-                        ((ScintillaControl)target.Owner).BeginUndoAction();
-                        ((ScintillaControl)target.Owner).SetSel(startPos, target.CurrentPos);
-                        ((ScintillaControl)target.Owner).ReplaceSel(replace);
+                        //((ScintillaControl)target.Owner).BeginUndoAction();
+                        target.SetSelection(startPos, target.CurrentPos);
+                        target.SelectedText = replace;
                         if (OnInsert != null) OnInsert(target.Owner, startPos, replace, trigger, item);
-                        if (tail.Length > 0) ((ScintillaControl)target.Owner).ReplaceSel(tail);
+                        if (tail.Length > 0) target.SelectedText = tail;
                     }
                     return true;
                 }
@@ -846,7 +852,7 @@ namespace PluginCore.Controls
             }
             finally
             {
-                ((ScintillaControl)target.Owner).EndUndoAction();
+                //((ScintillaControl)target.Owner).EndUndoAction();
             }
         }
 
@@ -860,6 +866,39 @@ namespace PluginCore.Controls
         public IntPtr GetHandle()
         {
             return completionList.Handle;
+        }
+
+        private void AddHandlers()
+        {
+            Application.AddMessageFilter(this);
+            target.LostFocus += Target_LostFocus;
+            target.MouseDown += Target_LostFocus;
+            target.KeyDown += Target_KeyDown;
+            target.Scroll += Target_Scroll;
+        }
+
+        private void RemoveHandlers()
+        {
+            Application.RemoveMessageFilter(this);
+            target.LostFocus -= Target_LostFocus;
+            target.MouseDown -= Target_LostFocus;
+            target.KeyDown -= Target_KeyDown;
+            target.Scroll -= Target_Scroll;
+        }
+
+        private void Target_LostFocus(object sender, EventArgs e)
+        {
+            if (!listHost.ContainsFocus)
+                Hide();
+        }
+
+        private void Target_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = HandleKeys(e.KeyData);
+        }
+
+        private void Target_Scroll(object sender, ScrollEventArgs e) {
+            
         }
 
         /// <summary>
@@ -1112,6 +1151,33 @@ namespace PluginCore.Controls
             return false;
         }
         
+        #endregion
+
+        #region Unfocusable List
+
+        // If by any chance this is not compatible with CrossOver, or we want some alternative 100% crossplatform compatible, a custom fully managed control that cannot be focused could be developed
+        private class ListBoxEx : ListBox
+        {
+            protected override void DefWndProc(ref Message m)
+            {
+                const int WM_MOUSEACTIVATE = 0x21;
+                const int WM_LBUTTONDOWN = 0x201;
+                const int MA_NOACTIVATE = 0x0003;
+                
+                switch (m.Msg)
+                {
+                    case WM_MOUSEACTIVATE:
+                        m.Result = (IntPtr)MA_NOACTIVATE;
+                        return;
+                    case WM_LBUTTONDOWN:
+                        SelectedIndex = IndexFromPoint((short)(m.LParam.ToInt32() & 0xFFFF), (short)((m.LParam.ToInt32() & 0xFFFF0000) >> 16));
+                        m.Result = IntPtr.Zero;
+                        return;
+                }
+                base.DefWndProc(ref m);
+            }
+        }
+
         #endregion
 
     }
