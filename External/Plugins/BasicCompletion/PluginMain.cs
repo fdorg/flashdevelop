@@ -130,13 +130,15 @@ namespace BasicCompletion
                     Keys keys = (e as KeyEvent).Value;
                     if (this.isSupported && keys == (Keys.Control | Keys.Space))
                     {
-                        String lang = document.SciControl.ConfigurationLanguage;
+                        var sci = document.SciControl;
+                        if (!sci.ContainsFocus) return;
+                        String lang = sci.ConfigurationLanguage;
                         List<ICompletionListItem> items = this.GetCompletionListItems(lang, document.FileName);
                         if (items != null && items.Count > 0)
                         {
                             items.Sort();
-                            Int32 curPos = document.SciControl.CurrentPos - 1;
-                            String curWord = document.SciControl.GetWordLeft(curPos, false);
+                            Int32 curPos = sci.CurrentPos - 1;
+                            String curWord = sci.GetWordLeft(curPos, false);
                             if (curWord == null) curWord = String.Empty;
                             CompletionList.Show(items, false, curWord);
                             e.Handled = true;

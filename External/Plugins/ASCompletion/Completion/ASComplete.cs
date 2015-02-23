@@ -242,7 +242,7 @@ namespace ASCompletion.Completion
             // dot complete
 			if (keys == (Keys.Control | Keys.Space))
 			{
-                if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                if (ASContext.HasContext && ASContext.Context.IsFileValid && Sci.ContainsFocus)
 				{
                     // try to get completion as if we had just typed the previous char
                     if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
@@ -262,7 +262,7 @@ namespace ASCompletion.Completion
                 return false;
             }
 			// show calltip
-			else if (keys == (Keys.Control | Keys.Shift | Keys.Space))
+            else if (keys == (Keys.Control | Keys.Shift | Keys.Space) && Sci.ContainsFocus)
 			{
                 if (ASContext.HasContext && ASContext.Context.IsFileValid)
 				{
@@ -276,7 +276,7 @@ namespace ASCompletion.Completion
             // project types completion
             else if (keys == (Keys.Control | Keys.Alt | Keys.Space))
             {
-                if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
+                if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration && Sci.ContainsFocus)
                 {
                     int position = Sci.CurrentPos-1;
                     string tail = GetWordLeft(Sci, ref position);
