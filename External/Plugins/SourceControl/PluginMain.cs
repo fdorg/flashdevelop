@@ -360,7 +360,7 @@ namespace SourceControl
             if (settingObject.SVNPath == "svn.exe")
             {
                 String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-                String slSvnPath = Path.Combine(programFiles, @"SlikSVN\bin\svn.exe");
+                String slSvnPath = Path.Combine(programFiles, @"SlikSvn\bin\svn.exe");
                 if (File.Exists(slSvnPath)) settingObject.SVNPath = slSvnPath;
             }
             // Try to find svn from TortoiseSVN
