@@ -33,7 +33,7 @@
 		<Id>flexairsdk</Id>
 		<Name>Flex SDK + AIR SDK</Name>
 		<Version>4.6.0+16.0.0</Version>
-		<Build>23201B+272</Build>
+		<Build>23201B+292</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -50,7 +50,7 @@
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
 		<Version>16.0.0</Version>
-		<Build>272</Build>
+		<Build>292</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -82,19 +82,19 @@
 		<Id>closure</Id>
 		<Name>Closure Compiler</Name>
 		<Version>1.0.0</Version>
-		<Build>v20140110</Build>
+		<Build>v20150126</Build>
 		<Desc>Google Closure Compiler for JavaScript</Desc>
 		<Group>Compilers</Group>
 		<Info>https://developers.google.com/closure/compiler/</Info>
 		<Urls>
-			<Url>http://dl.google.com/closure-compiler/compiler-20140110.zip</Url>
+			<Url>http://dl.google.com/closure-compiler/compiler-20150126.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
 		<Version>16.0.0</Version>
-		<Build>272</Build>
+		<Build>273</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -110,7 +110,7 @@
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
 		<Version>16.0.0</Version>
-		<Build>257</Build>
+		<Build>305</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -128,7 +128,7 @@
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
 		<Version>16.0.0</Version>
-		<Build>257</Build>
+		<Build>305</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
@@ -141,7 +141,7 @@
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
 		<Version>16.0.0</Version>
-		<Build>257</Build>
+		<Build>305</Build>
 		<Desc>Debug Flash Player plugin for Internet Explorer</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
@@ -152,8 +152,8 @@
 	</Entry>
 	<Entry>
 		<Id>torgit</Id>
-		<Name>TortoiseGit</Name>
-		<Version>1.8.12</Version>
+		<Name>TortoiseGit (x86)</Name>
+		<Version>1.8.13</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -163,7 +163,23 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.12.0/TortoiseGit-1.8.12.0-32bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.13.0/TortoiseGit-1.8.13.0-32bit.msi</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>torgit</Id>
+		<Name>TortoiseGit (x64)</Name>
+		<Version>1.8.13</Version>
+		<Build>1</Build>
+		<Desc>Git client 64-bit installer</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>Git</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Urls>
+			<Url>http://download.tortoisegit.org/tgit/1.8.13.0/TortoiseGit-1.8.13.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -184,7 +200,7 @@
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
-		<Name>TortoiseSVN</Name>
+		<Name>TortoiseSVN (x86)</Name>
 		<Version>1.8.10</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
@@ -199,8 +215,24 @@
 		</Urls>
 	</Entry>
 	<Entry>
+		<Id>torsvn</Id>
+		<Name>TortoiseSVN (x64)</Name>
+		<Version>1.8.10</Version>
+		<Build>1</Build>
+		<Desc>Subversion client 64-bit installer</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>SVN</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Urls>
+			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.10/Application/TortoiseSVN-1.8.10.26129-x64-svn-1.8.11.msi</Url>
+		</Urls>
+	</Entry>
+	<Entry>
 		<Id>sliksvn</Id>
-		<Name>SlikSVN</Name>
+		<Name>SlikSVN Client</Name>
 		<Version>1.8.11</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
