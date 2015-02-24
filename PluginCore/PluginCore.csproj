@@ -312,7 +312,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\CompletionListControl.cs" />
-    <Compile Include="PluginCore\Controls\ICompletionListTarget.cs" />
+    <Compile Include="PluginCore\Controls\ICompletionListHost.cs" />
     <Compile Include="PluginCore\Controls\InactiveForm.cs">
       <SubType>Form</SubType>
     </Compile>

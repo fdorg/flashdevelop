@@ -99,8 +99,8 @@ namespace PluginCore.Controls
 			try
 			{
 				CompletionList.CreateControl(PluginBase.MainForm);
-                simpleTip = new RichToolTip(PluginBase.MainForm);
-                callTip = new MethodCallTip(PluginBase.MainForm);
+                CompletionList.completionList.Tip = simpleTip = new RichToolTip(PluginBase.MainForm);
+                CompletionList.completionList.CallTip = callTip = new MethodCallTip(PluginBase.MainForm);
             }
 			catch(Exception ex)
 			{
@@ -239,16 +239,14 @@ namespace PluginCore.Controls
 		
 		public bool PreFilterMessage(ref Message m)
 		{
+            if (Tip.Focused || CallTip.Focused) return false;
+
             if (m.Msg == Win32.WM_MOUSEWHEEL) // capture all MouseWheel events 
 			{
-                if (!callTip.CallTipActive || !callTip.Focused)
+                if (Win32.ShouldUseWin32())
                 {
-                    if (Win32.ShouldUseWin32())
-                    {
-                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
-                        return true;
-                    }
-                    else return false;
+                    Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                    return true;
                 }
                 else return false;
 			}
@@ -257,7 +255,7 @@ namespace PluginCore.Controls
                 if ((int)m.WParam == 17) // Ctrl
                 {
                     if (CompletionList.Active) CompletionList.FadeOut();
-                    if (callTip.CallTipActive && !callTip.Focused) callTip.FadeOut();
+                    if (callTip.CallTipActive) callTip.FadeOut();
                 }
             }
             else if (m.Msg == Win32.WM_KEYUP)
@@ -299,11 +297,10 @@ namespace PluginCore.Controls
 			if (sci != null && sci.IsFocus)
 			{
 				int position = sci.CurrentPos;
-				if (CompletionList.Active && CompletionList.CheckPosition(position)) return;
+                if (CompletionList.Active && CompletionList.CheckPosition(position)) return;
                 if (callTip.CallTipActive && callTip.CheckPosition(position)) return;
 			}
             callTip.Hide();
-			CompletionList.Hide();
             simpleTip.Hide();
 		}
 		
@@ -387,7 +384,7 @@ namespace PluginCore.Controls
                 if (key == (Keys.Control | Keys.C) || key == (Keys.Control | Keys.A))
                     return false; // let text copy in tip
 				UnlockControl();
-				CompletionList.Hide((char)27);
+				//CompletionList.Hide((char)27);
                 callTip.Hide();
 				return false;
 			}
@@ -417,7 +414,6 @@ namespace PluginCore.Controls
             // handle special keys
             bool handled = false;
             if (callTip.CallTipActive) handled |= callTip.HandleKeys(sci, key);
-            if (CompletionList.Active) handled |= CompletionList.HandleKeys(sci, key);
             return handled;
 		}
 		

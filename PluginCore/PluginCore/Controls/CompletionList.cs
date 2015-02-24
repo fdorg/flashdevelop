@@ -19,7 +19,7 @@ namespace PluginCore.Controls
 		/// <summary>
         /// Properties of the class 
         /// </summary> 
-        private static CompletionListControl completionList;
+        internal static CompletionListControl completionList;
 		
 		#region State Properties
 
@@ -48,7 +48,7 @@ namespace PluginCore.Controls
         /// </summary> 
 		public static void CreateControl(IMainForm mainForm)
         {
-            completionList = new CompletionListControl(new ScintillaTarget());
+            completionList = new CompletionListControl(new ScintillaHost());
             completionList.OnCancel += OnCancelHandler;
             completionList.OnInsert += OnInsertHandler;
         }
@@ -211,7 +211,7 @@ namespace PluginCore.Controls
 
         static public void OnChar(ScintillaControl sci, int value)
         {
-            if (!completionList.OnChar(value))
+            if (!completionList.OnChar((char)value))
                 UITools.Manager.SendChar(sci, value);
         }
 
@@ -248,67 +248,65 @@ namespace PluginCore.Controls
 
         #endregion
 
-        private class ScintillaTarget : ICompletionListTarget
+        // TODO: Get hold of current Scintilla control through UITools and don't call CurrentDocument.SciControl everytime
+        private class ScintillaHost : ICompletionListHost
         {
 
-            public event EventHandler LostFocus;
-            public event ScrollEventHandler Scroll;
+            public event EventHandler LostFocus
+            {
+                add { Owner.LostFocus += value; }
+                remove { Owner.LostFocus -= value; }
+            }
+
+            public event EventHandler PositionChanged;
+/*            {
+                add { PluginBase.MainForm.CurrentDocument.SciControl. += value; }
+                remove { Owner.LostFocus -= value; }
+            }*/
             public event KeyEventHandler KeyDown
             {
                 add { Owner.KeyDown += value; }
                 remove { Owner.KeyDown -= value; }
             }
-            public event MouseEventHandler MouseDown;
+
+            public event KeyPressEventHandler KeyPress; // Unhandled for this one
+            public event MouseEventHandler MouseDown
+            {
+                add { Owner.MouseDown += value; }
+                remove { Owner.MouseDown -= value; }
+            }
 
             public Control Owner
             {
                 get { return PluginBase.MainForm.CurrentDocument.SciControl; }
             }
 
-            public string Text
-            {
-                get { throw new NotImplementedException(); }
-            }
-
             public string SelectedText
             {
-                get
-                {
-                    return PluginBase.MainForm.CurrentDocument.SciControl.SelText;
-                }
-                set
-                {
-                    PluginBase.MainForm.CurrentDocument.SciControl.ReplaceSel(value);
-                }
+                get { return PluginBase.MainForm.CurrentDocument.SciControl.SelText; }
+                set { PluginBase.MainForm.CurrentDocument.SciControl.ReplaceSel(value); }
             }
 
             public int SelectionEnd
             {
-                get
-                {
-                    return PluginBase.MainForm.CurrentDocument.SciControl.SelectionEnd;
-                }
-                set
-                {
-                    PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart = value;
-                }
+                get { return PluginBase.MainForm.CurrentDocument.SciControl.SelectionEnd; }
+                set { PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart = value; }
             }
 
             public int SelectionStart
             {
-                get
-                {
-                    return PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart;
-                }
-                set
-                {
-                    PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart = value;
-                }
+                get { return PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart; }
+                set { PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart = value; }
             }
 
             public int CurrentPos
             {
                 get { return PluginBase.MainForm.CurrentDocument.SciControl.CurrentPos; }
+            }
+
+            public bool IsEditable
+            {
+                get { return PluginBase.MainForm.CurrentDocument.IsEditable && PluginBase.MainForm.CurrentDocument.SciControl != null; }
             }
 
             public int GetLineHeight()
@@ -329,9 +327,14 @@ namespace PluginCore.Controls
                 sci.SetSel(start, end);
             }
 
-            public bool IsEditable
+            public void BeginUndoAction()
             {
-                get { return PluginBase.MainForm.CurrentDocument.IsEditable && PluginBase.MainForm.CurrentDocument.SciControl != null; }
+                PluginBase.MainForm.CurrentDocument.SciControl.BeginUndoAction();
+            }
+
+            public void EndUndoAction()
+            {
+                PluginBase.MainForm.CurrentDocument.SciControl.EndUndoAction();
             }
 
         }

@@ -36,8 +36,13 @@ namespace PluginCore.Controls
 	    protected IWin32Window owner;
 
 		#region Public Properties
-		
-		public bool Visible 
+
+        public bool Focused
+        {
+            get { return toolTipRTB.Focused; }
+        }
+
+        public bool Visible 
 		{
 			get { return host.Visible; }
 		}
@@ -270,6 +275,11 @@ namespace PluginCore.Controls
 			rtfCache[bbcodeText] = BBCodeUtils.bbCodeToRtf(bbcodeText, toolTipRTB);
 			return rtfCache[bbcodeText];
 		}
+
+        public bool IsMouseInside()
+        {
+            return host.Bounds.Contains(Control.MousePosition);
+        }
 
 		#endregion
 

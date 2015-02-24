@@ -209,7 +209,7 @@ namespace FlashDebugger.Controls
             this.textBox.Paste();
         }
 
-        private class TextBoxTarget : ICompletionListTarget
+        private class TextBoxTarget : ICompletionListHost
         {
 
             #region ICompletionListTarget Members
@@ -220,12 +220,18 @@ namespace FlashDebugger.Controls
                 remove { _owner.LostFocus -= value; }
             }
 
-            public event ScrollEventHandler Scroll;
+            public event EventHandler PositionChanged;
 
             public event KeyEventHandler KeyDown
             {
                 add { _owner.KeyDown += value; }
                 remove { _owner.KeyDown -= value; }
+            }
+
+            public event KeyPressEventHandler KeyPress
+            {
+                add { _owner.KeyPress += value; }
+                remove { _owner.KeyPress -= value; }
             }
 
             public event MouseEventHandler MouseDown
@@ -240,45 +246,22 @@ namespace FlashDebugger.Controls
                 get { return _owner; }
             }
 
-            public string Text
-            {
-                get { return _owner.Text; }
-            }
-
             public string SelectedText
             {
-                get
-                {
-                    return _owner.SelectedText;
-                }
-                set
-                {
-                    _owner.SelectedText = value;
-                }
+                get { return _owner.SelectedText; }
+                set { _owner.SelectedText = value; }
             }
 
             public int SelectionEnd
             {
-                get
-                {
-                    return _owner.SelectionStart + _owner.SelectionLength;
-                }
-                set
-                {
-                    _owner.SelectionLength = value - _owner.SelectionStart;
-                }
+                get { return _owner.SelectionStart + _owner.SelectionLength; }
+                set { _owner.SelectionLength = value - _owner.SelectionStart; }
             }
 
             public int SelectionStart
             {
-                get
-                {
-                    return _owner.SelectionStart;
-                }
-                set
-                {
-                    _owner.SelectionStart = value;
-                }
+                get { return _owner.SelectionStart; }
+                set { _owner.SelectionStart = value; }
             }
 
             public int CurrentPos
@@ -314,6 +297,16 @@ namespace FlashDebugger.Controls
             {
                 _owner.SelectionStart = start;
                 _owner.SelectionLength = end - start;
+            }
+
+            public void BeginUndoAction()
+            {
+                // TODO
+            }
+
+            public void EndUndoAction()
+            {
+                // TODO
             }
 
             #endregion

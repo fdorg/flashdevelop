@@ -8,8 +8,6 @@ using PluginCore.Helpers;
 using ScintillaNet;
 
 // TODO: Remove all direct references to ScintillaControl
-// TODO: Extract ToolTip reference
-// TODO: Extract CallTip reference
 
 namespace PluginCore.Controls
 {
@@ -53,7 +51,9 @@ namespace PluginCore.Controls
         private  long showTime;
         private  ICompletionListItem defaultItem;
 
-        private  ICompletionListTarget target;
+        private  ICompletionListHost host;
+        private  RichToolTip tip;
+        private  MethodCallTip callTip; // Used only by the main completion list so far, would it be better to control this case in another way? like the cl, we'd like to show this everywhere possible
 
         /// <summary>
         /// Set to 0 after calling .Show to keep the completion list active 
@@ -68,12 +68,12 @@ namespace PluginCore.Controls
         /// <summary>
         /// Creates the control 
         /// </summary> 
-        public CompletionListControl(ICompletionListTarget target)
+        public CompletionListControl(ICompletionListHost target)
         {
             if (target == null)
                 throw new ArgumentNullException("target");
 
-            this.target = target;
+            this.host = target;
 
             listHost = new ToolStripDropDown();
             listHost.Padding = Padding.Empty;
@@ -150,9 +150,37 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the target of the current completion list control
         /// </summary>
-        public ICompletionListTarget Target
+        public ICompletionListHost Host
         {
-            get { return target; }
+            get { return host; }
+        }
+
+        /// <summary>
+        /// Gets the help tip associated with the completion list
+        /// </summary>
+        public RichToolTip Tip
+        {
+            get
+            {
+                if (tip == null)
+                    tip = new RichToolTip(host.Owner);
+                return tip;
+            }
+            internal set { tip = value; }
+        }
+
+        /// <summary>
+        /// Gets the method call tip associated with the completion list
+        /// </summary>
+        public MethodCallTip CallTip
+        {
+            get
+            {
+                if (callTip == null)
+                    callTip = new MethodCallTip(PluginBase.MainForm);
+                return callTip;
+            }
+            internal set { callTip = value; }
         }
 
         #endregion
@@ -192,7 +220,7 @@ namespace PluginCore.Controls
         {
             try
             {
-                if (!target.IsEditable)
+                if (!host.IsEditable)
                 {
                     if (isActive) Hide();
                     return;
@@ -221,11 +249,11 @@ namespace PluginCore.Controls
             fullList = (word.Length == 0) || !autoHide || !PluginBase.MainForm.Settings.AutoFilterList;
             lastIndex = 0;
             exactMatchInList = false;
-            if (target.SelectionStart == target.SelectionEnd)
-                startPos = target.CurrentPos - word.Length;
+            if (host.SelectionStart == host.SelectionEnd)
+                startPos = host.CurrentPos - word.Length;
             else
-                startPos = target.SelectionStart;
-            currentPos = target.SelectionEnd; // sci.CurrentPos;
+                startPos = host.SelectionStart;
+            currentPos = host.SelectionEnd; // sci.CurrentPos;
             defaultItem = null;
             // populate list
             needResize = true;
@@ -279,9 +307,8 @@ namespace PluginCore.Controls
         /// </summary>
         private void DisplayList(Object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (!target.IsEditable) return;
+            if (!host.IsEditable) return;
             ListBox cl = completionList;
-            ToolStripDropDown host = listHost;
             if (cl.Items.Count == 0) return;
 
             // measure control
@@ -296,27 +323,15 @@ namespace PluginCore.Controls
             else listSize.Width = cl.Width;
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
             listSize.Height = newHeight != cl.Height ? newHeight : cl.Height;
-            cl.Size = listContainer.Size = host.Size = listSize;
+            cl.Size = listContainer.Size = listHost.Size = listSize;
             // place control
-            Point coord = target.GetPositionFromCharIndex(startPos);
-            coord = target.Owner.PointToScreen(coord);
-            host.Left = coord.X + target.Owner.Left;
-            var screen = Screen.FromHandle(target.Owner.Handle);
-            listUp = UITools.CallTip.CallTipActive || (coord.Y + host.Height > target.Owner.Height && coord.Y - host.Height > screen.WorkingArea.Top)
-                || coord.Y + target.GetLineHeight() + host.Height > screen.WorkingArea.Bottom;
-            if (listUp) host.Top = coord.Y - host.Height;
-            else host.Top = coord.Y + target.GetLineHeight();
-            // Keep on screen area
-            if (host.Right > screen.WorkingArea.Right)
-            {
-                host.Left = screen.WorkingArea.Right - host.Width;
-            }
-            if (!host.Visible)
+            UpdatePosition();
+            if (!listHost.Visible)
             {
                 Redraw();
                 if (OnShowing != null) OnShowing(this, EventArgs.Empty);
-                host.Show(host.Bounds.Location);
-                if (UITools.CallTip.CallTipActive) UITools.CallTip.PositionControl(((ScintillaControl)target.Owner));
+                listHost.Show(listHost.Bounds.Location);
+                if (CallTip.CallTipActive) CallTip.PositionControl(((ScintillaControl)host.Owner));
                 AddHandlers();
             }
         }
@@ -343,7 +358,7 @@ namespace PluginCore.Controls
                 if (completionList.Items.Count > 0) completionList.Items.Clear();
                 currentItem = null;
                 allItems = null;
-                UITools.Tip.Hide();
+                Tip.Hide();
                 if (OnHidden != null) OnHidden(this, EventArgs.Empty);
             }
         }
@@ -358,8 +373,8 @@ namespace PluginCore.Controls
                 Hide();
                 if (OnCancel != null)
                 {
-                    if (!target.IsEditable) return;
-                    OnCancel(target.Owner, currentPos, currentWord, trigger, null);
+                    if (!host.IsEditable) return;
+                    OnCancel(host.Owner, currentPos, currentWord, trigger, null);
                 }
             }
         }
@@ -369,14 +384,14 @@ namespace PluginCore.Controls
         /// </summary> 
         public void SelectWordInList(string tail)
         {
-            if (!target.IsEditable)
+            if (!host.IsEditable)
             {
                 Hide();
                 return;
             }
             currentWord = tail;
             currentPos += tail.Length;
-            target.SetSelection(currentPos, currentPos);
+            host.SetSelection(currentPos, currentPos);
         }
 
         /// <summary>
@@ -410,7 +425,7 @@ namespace PluginCore.Controls
             e.DrawFocusRectangle();
             if ((item != null) && ((e.State & DrawItemState.Selected) > 0))
             {
-                UITools.Tip.Hide();
+                Tip.Hide();
                 currentItem = item;
                 tempoTip.Stop();
                 tempoTip.Start();
@@ -426,8 +441,8 @@ namespace PluginCore.Controls
             if (currentItem == null || faded)
                 return;
 
-            UITools.Tip.SetText(currentItem.Description ?? "", false);
-            UITools.Tip.Redraw(false);
+            Tip.SetText(currentItem.Description ?? "", false);
+            Tip.Redraw(false);
 
             var screen = Screen.FromControl(listHost);
             int rightWidth = screen.WorkingArea.Right - listHost.Right - 10;
@@ -441,13 +456,29 @@ namespace PluginCore.Controls
                 posTarget.X = 0;
             }
 
-            UITools.Tip.Location = posTarget;
-            UITools.Tip.AutoSize(widthTarget, 500);
+            Tip.Location = posTarget;
+            Tip.AutoSize(widthTarget, 500);
 
             if (widthTarget == leftWidth)
-                UITools.Tip.Location = new Point(listHost.Left - UITools.Tip.Size.Width, posTarget.Y);
+                Tip.Location = new Point(listHost.Left - Tip.Size.Width, posTarget.Y);
 
-            UITools.Tip.Show();
+            Tip.Show();
+        }
+
+        private void UpdatePosition()
+        {
+            Point coord = host.GetPositionFromCharIndex(startPos);
+            coord = host.Owner.PointToScreen(coord);
+            listHost.Left = coord.X + host.Owner.Left;
+            var screen = Screen.FromHandle(host.Owner.Handle);
+            listUp = CallTip.CallTipActive || (coord.Y + listHost.Height > screen.WorkingArea.Bottom && coord.Y - listHost.Height > screen.WorkingArea.Top);
+            if (listUp) listHost.Top = coord.Y - listHost.Height;
+            else listHost.Top = coord.Y + host.GetLineHeight();
+            // Keep on screen area
+            if (listHost.Right > screen.WorkingArea.Right)
+            {
+                listHost.Left = screen.WorkingArea.Right - listHost.Width;
+            }
         }
 
         /// <summary>
@@ -455,7 +486,7 @@ namespace PluginCore.Controls
         /// </summary>
         private void CLClick(Object sender, System.EventArgs e)
         {
-            if (!target.IsEditable)
+            if (!host.IsEditable)
                 Hide();
         }
 
@@ -464,7 +495,7 @@ namespace PluginCore.Controls
         /// </summary> 
         private void CLDoubleClick(Object sender, System.EventArgs e)
         {
-            if (!target.IsEditable)
+            if (!host.IsEditable)
             {
                 Hide();
                 return;
@@ -840,11 +871,11 @@ namespace PluginCore.Controls
                                 replace = replace.Substring(0, replace.IndexOf(tail));
                             }
                         }
-                        //((ScintillaControl)target.Owner).BeginUndoAction();
-                        target.SetSelection(startPos, target.CurrentPos);
-                        target.SelectedText = replace;
-                        if (OnInsert != null) OnInsert(target.Owner, startPos, replace, trigger, item);
-                        if (tail.Length > 0) target.SelectedText = tail;
+                        host.BeginUndoAction();
+                        host.SetSelection(startPos, host.CurrentPos);
+                        host.SelectedText = replace;
+                        if (OnInsert != null) OnInsert(host.Owner, startPos, replace, trigger, item);
+                        if (tail.Length > 0) host.SelectedText = tail;
                     }
                     return true;
                 }
@@ -852,7 +883,7 @@ namespace PluginCore.Controls
             }
             finally
             {
-                //((ScintillaControl)target.Owner).EndUndoAction();
+                host.EndUndoAction();
             }
         }
 
@@ -871,24 +902,32 @@ namespace PluginCore.Controls
         private void AddHandlers()
         {
             Application.AddMessageFilter(this);
-            target.LostFocus += Target_LostFocus;
-            target.MouseDown += Target_LostFocus;
-            target.KeyDown += Target_KeyDown;
-            target.Scroll += Target_Scroll;
+            host.LostFocus += Target_LostFocus;
+            host.MouseDown += Target_MouseDown;
+            host.KeyDown += Target_KeyDown;
+            host.KeyPress += Target_KeyPress;
+            host.PositionChanged += Target_PositionChanged;
         }
 
         private void RemoveHandlers()
         {
             Application.RemoveMessageFilter(this);
-            target.LostFocus -= Target_LostFocus;
-            target.MouseDown -= Target_LostFocus;
-            target.KeyDown -= Target_KeyDown;
-            target.Scroll -= Target_Scroll;
+            host.LostFocus -= Target_LostFocus;
+            host.MouseDown -= Target_MouseDown;
+            host.KeyDown -= Target_KeyDown;
+            host.KeyPress -= Target_KeyPress;
+            host.PositionChanged -= Target_PositionChanged;
         }
 
         private void Target_LostFocus(object sender, EventArgs e)
         {
-            if (!listHost.ContainsFocus)
+            if (!listHost.ContainsFocus && !Tip.Focused && !CallTip.Focused)
+                Hide();
+        }
+
+        private void Target_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (host.CurrentPos != currentPos)
                 Hide();
         }
 
@@ -897,17 +936,24 @@ namespace PluginCore.Controls
             e.SuppressKeyPress = HandleKeys(e.KeyData);
         }
 
-        private void Target_Scroll(object sender, ScrollEventArgs e) {
-            
+        private void Target_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar))
+                OnChar(e.KeyChar);
+        }
+
+        private void Target_PositionChanged(object sender, EventArgs e)
+        {
+            UpdatePosition();
+            listHost.Show(listHost.Bounds.Location);
         }
 
         /// <summary>
         /// 
         /// </summary> 
-        public bool OnChar(int value)
+        public bool OnChar(char c)
         {
-            char c = (char)value;
-            // TODO: Inject these values
+            // TODO: Inject these values or get from host
             string characterClass = ScintillaControl.Configuration.GetLanguage(PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage).characterclass.Characters;
             if (characterClass.IndexOf(c) >= 0)
             {
@@ -955,7 +1001,7 @@ namespace PluginCore.Controls
                     if (word.Length > MinWordLength)
                     {
                         word = word.Substring(0, word.Length - 1);
-                        currentPos = target.CurrentPos - 1;
+                        currentPos = host.CurrentPos - 1;
                         lastIndex = 0;
                         FindWordStartingWith(word);
                     }
@@ -1082,7 +1128,6 @@ namespace PluginCore.Controls
                     break;
 
                 default:
-                    //Hide();
                     return false;
             }
             return true;
@@ -1090,7 +1135,7 @@ namespace PluginCore.Controls
 
         private void RefreshTip()
         {
-            UITools.Tip.Hide();
+            Tip.Hide();
             tempoTip.Enabled = false;
         }
 
@@ -1104,15 +1149,15 @@ namespace PluginCore.Controls
         {
             if (faded) return;
             faded = true;
-            UITools.Tip.Hide();
-            listHost.Visible = false;
+            Tip.Hide();
+            listHost.Opacity = 0;
         }
 
         internal void FadeIn()
         {
             if (!faded) return;
             faded = false;
-            listHost.Visible = true;
+            listHost.Opacity = 1;
         }
 
         #endregion
@@ -1121,24 +1166,22 @@ namespace PluginCore.Controls
 
         public bool PreFilterMessage(ref Message m)
         {
+            if (Tip.Focused || CallTip.Focused) return false;
+
             if (m.Msg == Win32.WM_MOUSEWHEEL) // capture all MouseWheel events 
             {
-                if (!UITools.CallTip.CallTipActive || !UITools.CallTip.Focused)
+                if (Win32.ShouldUseWin32())
                 {
-                    if (Win32.ShouldUseWin32())
-                    {
-                        Win32.SendMessage(completionList.Handle, m.Msg, (Int32)m.WParam, (Int32)m.LParam);
-                        return true;
-                    }
-                    else return false;
+                    Win32.SendMessage(completionList.Handle, m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                    return true;
                 }
-                else return false;
             }
             else if (m.Msg == Win32.WM_KEYDOWN)
             {
                 if ((int)m.WParam == 17) // Ctrl
                 {
                     if (Active) FadeOut();
+                    if (CallTip.CallTipActive) CallTip.FadeOut();
                 }
             }
             else if (m.Msg == Win32.WM_KEYUP)
@@ -1146,6 +1189,7 @@ namespace PluginCore.Controls
                 if ((int)m.WParam == 17 || (int)m.WParam == 18) // Ctrl / AltGr
                 {
                     if (Active) FadeIn();
+                    if (CallTip.CallTipActive) CallTip.FadeIn();
                 }
             }
             return false;
