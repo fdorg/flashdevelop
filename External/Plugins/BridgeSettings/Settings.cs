@@ -11,12 +11,13 @@ namespace BridgeSettings
     [Serializable]
     class Settings : IBridgeSettings
     {
-        const string DEFAULT_SHARED_DRIVE = "Y:\\";
         const int DEFAULT_PORT_NUM = 8009;
+        const string DEFAULT_IP = "127.0.0.1";
+        const string DEFAULT_SHARED_DRIVE = "Y:\\";
         static private string[] DEFAULT_EXTENSIONS = { ".exe", ".com", ".bat", ".cmd" };
 
         private bool active = false;
-        private string ip;
+        private string ip = DEFAULT_IP;
         private int port = DEFAULT_PORT_NUM;
         private bool targetRemoteIDE = true;
         private bool useRemoteExplorer = true;
@@ -33,7 +34,7 @@ namespace BridgeSettings
         [DisplayName("Custom Bridge IP"), LocalizedDescription("BridgeSettings.Description.CustomBridgeIP"), DefaultValue("")]
         public string CustomIP
         {
-            get { return ip ?? ""; }
+            get { return ip ?? DEFAULT_IP; }
             set { ip = value; }
         }
 
@@ -65,7 +66,9 @@ namespace BridgeSettings
             set
             {
                 if (Regex.IsMatch(value ?? "", "[H-Z]:\\\\", RegexOptions.IgnoreCase))
+                {
                     sharedDrive = Char.ToUpper(value[0]) + ":\\";
+                }
             }
         }
 
