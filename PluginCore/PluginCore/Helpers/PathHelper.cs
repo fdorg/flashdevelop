@@ -386,9 +386,9 @@ namespace PluginCore.Helpers
             String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
             String toolPath = Path.Combine(programFiles, partialPath);
             if (File.Exists(toolPath)) return toolPath;
-            if (toolPath.Contains(" Files (x86)")) // Is the app in x64 program files?
+            if (programFiles.Contains(" (x86)")) // Is the app in x64 program files?
             {
-                toolPath = Path.Combine(programFiles.Replace(" Files (x86)", " Files"), partialPath);
+                toolPath = Path.Combine(programFiles.Replace(" (x86)", ""), partialPath);
                 if (File.Exists(toolPath)) return toolPath;
             }
             return String.Empty;
