@@ -594,10 +594,20 @@ namespace AppMan
             {
                 if (this.isLoading) return;
                 this.listView.BeginUpdate();
+                Boolean is64bit = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE", EnvironmentVariableTarget.Machine) != "x86";
                 foreach (ListViewItem item in this.listView.Items)
                 {
                     DepEntry entry = item.Tag as DepEntry;
-                    if (Array.IndexOf(entry.Bundles, e.Link.LinkData.ToString()) != -1) item.Checked = true;
+                    if (Array.IndexOf(entry.Bundles, e.Link.LinkData.ToString()) != -1)
+                    {
+                        if (!entry.Name.Contains("(x86)") && !entry.Name.Contains("(x64)")) item.Checked = true;
+                        else
+                        {
+                            if (!is64bit && entry.Name.Contains("(x86)")) item.Checked = true;
+                            else if (is64bit && entry.Name.Contains("(x64)")) item.Checked = true;
+                            else item.Checked = false;
+                        }
+                    }
                     else item.Checked = false;
                 }
                 this.listView.EndUpdate();

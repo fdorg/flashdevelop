@@ -167,7 +167,7 @@
 		</Urls>
 	</Entry>
 	<Entry>
-		<Id>torgit</Id>
+		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
 		<Version>1.8.13</Version>
 		<Build>1</Build>
@@ -215,7 +215,7 @@
 		</Urls>
 	</Entry>
 	<Entry>
-		<Id>torsvn</Id>
+		<Id>torsvn64</Id>
 		<Name>TortoiseSVN (x64)</Name>
 		<Version>1.8.10</Version>
 		<Build>1</Build>
