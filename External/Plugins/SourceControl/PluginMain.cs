@@ -333,16 +333,14 @@ namespace SourceControl
             // Try to find git path from program files
             if (settingObject.GITPath == "git.exe")
             {
-                String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-                String gitPath = Path.Combine(programFiles, @"Git\bin\git.exe");
+                String gitPath = PathHelper.FindFromProgramFiles(@"Git\bin\git.exe");
                 if (File.Exists(gitPath)) settingObject.GITPath = gitPath;
 
             }
             // Try to find TortoiseProc path from program files
             if (settingObject.TortoiseGITProcPath == "TortoiseGitProc.exe")
             {
-                String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-                String torProcPath = Path.Combine(programFiles, @"TortoiseGit\bin\TortoiseGitProc.exe");
+                String torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseGit\bin\TortoiseGitProc.exe");
                 if (File.Exists(torProcPath)) settingObject.TortoiseGITProcPath = torProcPath;
             }
 
@@ -359,22 +357,19 @@ namespace SourceControl
             // Try to find sliksvn path from program files
             if (settingObject.SVNPath == "svn.exe")
             {
-                String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-                String slSvnPath = Path.Combine(programFiles, @"SlikSvn\bin\svn.exe");
+                String slSvnPath = PathHelper.FindFromProgramFiles(@"SlikSvn\bin\svn.exe");
                 if (File.Exists(slSvnPath)) settingObject.SVNPath = slSvnPath;
             }
             // Try to find svn from TortoiseSVN
             if (settingObject.SVNPath == "svn.exe")
             {
-                String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-                String torSvnPath = Path.Combine(programFiles, @"TortoiseSVN\bin\svn.exe");
+                String torSvnPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\svn.exe");
                 if (File.Exists(torSvnPath)) settingObject.SVNPath = torSvnPath;
             }
             // Try to find TortoiseProc path from program files
             if (settingObject.TortoiseSVNProcPath == "TortoiseProc.exe")
             {
-                String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-                String torProcPath = Path.Combine(programFiles, @"TortoiseSVN\bin\TortoiseProc.exe");
+                String torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\TortoiseProc.exe");
                 if (File.Exists(torProcPath)) settingObject.TortoiseSVNProcPath = torProcPath;
             }
 
