@@ -265,7 +265,6 @@ namespace PluginCore.Controls
             tempoTip.Enabled = false;
             showTime = DateTime.Now.Ticks;
             disableSmartMatch = noAutoInsert || PluginBase.MainForm.Settings.DisableSmartMatch;
-            faded = false;
         }
 
         /// <summary>
@@ -330,6 +329,7 @@ namespace PluginCore.Controls
             {
                 Redraw();
                 if (OnShowing != null) OnShowing(this, EventArgs.Empty);
+                listHost.Opacity = 1;
                 listHost.Show(listHost.Bounds.Location);
                 if (CallTip.CallTipActive) CallTip.PositionControl(((ScintillaControl)host.Owner));
                 AddHandlers();
@@ -353,7 +353,6 @@ namespace PluginCore.Controls
                 tempo.Enabled = false;
                 isActive = false;
                 fullList = false;
-                faded = false;
                 listHost.Close();
                 if (completionList.Items.Count > 0) completionList.Items.Clear();
                 currentItem = null;
@@ -438,7 +437,7 @@ namespace PluginCore.Controls
         public void UpdateTip(Object sender, System.Timers.ElapsedEventArgs e)
         {
             tempoTip.Stop();
-            if (currentItem == null || faded)
+            if (currentItem == null || listHost.Opacity != 1)
                 return;
 
             Tip.SetText(currentItem.Description ?? "", false);
@@ -1077,6 +1076,7 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.PageUp:
+                /*case Keys.PageUp | Keys.Control:*/ // Used to navigate through documents
                     noAutoInsert = false;
                     // the list was hidden and it should not appear
                     if (!listHost.Visible)
@@ -1095,6 +1095,7 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.PageDown:
+                /*case Keys.PageDown | Keys.Control:*/ // Used to navigate through documents
                     noAutoInsert = false;
                     // the list was hidden and it should not appear
                     if (!listHost.Visible)
@@ -1116,9 +1117,6 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.Left:
-                    Hide();
-                    return false;
-
                 case Keys.Right:
                     Hide();
                     return false;
@@ -1128,6 +1126,21 @@ namespace PluginCore.Controls
                     break;
 
                 default:
+                    Keys modifiers = key & Keys.Modifiers;
+                    if (modifiers == Keys.Control)
+                    {
+                        key = key & Keys.KeyCode;
+                        if (key > 0 && key != Keys.ControlKey && key != Keys.Down && key != Keys.Up)
+                            Hide();
+                    }
+                    else if (modifiers == Keys.Shift)
+                    {
+                        key = key & Keys.KeyCode;
+                        if (key == Keys.Down || key == Keys.Up || key == Keys.Left || key == Keys.Right ||
+                            key == Keys.PageUp || key == Keys.PageDown || key == Keys.Home || key == Keys.End)
+                            Hide();
+                    }
+
                     return false;
             }
             return true;
@@ -1143,20 +1156,16 @@ namespace PluginCore.Controls
 
         #region Controls fading on Control key
 
-        private bool faded;
-
         internal void FadeOut()
         {
-            if (faded) return;
-            faded = true;
+            if (listHost.Opacity != 1) return;
             Tip.Hide();
             listHost.Opacity = 0;
         }
 
         internal void FadeIn()
         {
-            if (!faded) return;
-            faded = false;
+            if (listHost.Opacity == 1) return;
             listHost.Opacity = 1;
         }
 
