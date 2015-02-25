@@ -232,10 +232,16 @@ namespace HaXeContext
                     case "t":
                         if (member == null) continue;
                         ExtractType(reader, member);
-                        Members.Add(member);
+                        if (!IsOverload(member))
+                            Members.Add(member);
                         break;
                 }
             }
+        }
+
+        bool IsOverload(MemberModel member)
+        {
+            return Members.Count > 0 && Members[Members.Count - 1].FullName == member.FullName;
         }
 
         MemberModel ExtractMember(XmlTextReader reader)
