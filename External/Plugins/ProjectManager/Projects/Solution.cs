@@ -155,7 +155,7 @@ namespace ProjectManager.Projects
             }
             var data = String.Join("|", paths.ToArray());
 
-            main.Storage.Add("Solution", data);
+            main.Storage["Solution"] = data;
             main.Save();
         }
     }

@@ -55,23 +55,27 @@ namespace ProjectManager.Helpers
             var doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable || !File.Exists(doc.FileName)) return;
 
-            var docUri = new Uri(doc.FileName);
-            if (IsProjectOf(PluginBase.CurrentProject as Project, docUri)) return;
+            var fileName = doc.FileName;
+            if (IsProjectOf(PluginBase.CurrentProject as Project, fileName)) return;
 
             foreach (Project project in PluginBase.CurrentSolution.Projects)
             {
-                if (IsProjectOf(project, docUri))
+                if (IsProjectOf(project, fileName))
+                {
                     SetCurrentProject(project);
+                    return;
+                }
             }
         }
 
-        bool IsProjectOf(Project project, Uri docUri)
+        bool IsProjectOf(Project project, String fileName)
         {
             if (project == null) return false;
             try
             {
-                var dir = Path.GetDirectoryName(project.ProjectPath);
-                return new Uri(dir).IsBaseOf(docUri);
+                // TODO this may require some proper path normalization (see ASContext.cs)
+                var dir = Path.GetDirectoryName(project.ProjectPath) + Path.DirectorySeparatorChar;
+                return fileName.StartsWith(dir, StringComparison.OrdinalIgnoreCase);
             }
             catch (Exception)
             {
