@@ -335,7 +335,6 @@ namespace PluginCore.Controls
             if (callTip.CallTipActive) callTip.OnChar(sci, value);
 			if (CompletionList.Active) CompletionList.OnChar(sci, value);
             else SendChar(sci, value);
-			return;
 		}
 
         public void SendChar(ScintillaControl sci, int value)

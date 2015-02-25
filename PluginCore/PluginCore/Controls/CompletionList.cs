@@ -258,11 +258,25 @@ namespace PluginCore.Controls
                 remove { Owner.LostFocus -= value; }
             }
 
-            public event EventHandler PositionChanged;
-/*            {
-                add { PluginBase.MainForm.CurrentDocument.SciControl. += value; }
-                remove { Owner.LostFocus -= value; }
-            }*/
+            private EventHandler positionChanged;
+            public event EventHandler PositionChanged
+            {
+                add
+                {
+                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    sci.Scroll += Scintilla_Scroll;
+                    sci.Zoom += Scintilla_Zoom;
+                    positionChanged += value;
+                }
+                remove
+                {
+                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    sci.Scroll -= Scintilla_Scroll;
+                    sci.Zoom -= Scintilla_Zoom;
+                    positionChanged -= value;
+                }
+            }
+
             public event KeyEventHandler KeyDown
             {
                 add { Owner.KeyDown += value; }
@@ -337,6 +351,17 @@ namespace PluginCore.Controls
                 PluginBase.MainForm.CurrentDocument.SciControl.EndUndoAction();
             }
 
+            private void Scintilla_Scroll(object sender, ScrollEventArgs e)
+            {
+                if (positionChanged != null)
+                    positionChanged(sender, e);
+            }
+
+            private void Scintilla_Zoom(ScintillaControl sci)
+            {
+                if (positionChanged != null)
+                    positionChanged(sci, EventArgs.Empty);
+            }
         }
 	}
 }

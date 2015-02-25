@@ -325,15 +325,6 @@ namespace PluginCore.Controls
             cl.Size = listContainer.Size = listHost.Size = listSize;
             // place control
             UpdatePosition();
-            if (!listHost.Visible)
-            {
-                Redraw();
-                if (OnShowing != null) OnShowing(this, EventArgs.Empty);
-                listHost.Opacity = 1;
-                listHost.Show(listHost.Bounds.Location);
-                if (CallTip.CallTipActive) CallTip.PositionControl(((ScintillaControl)host.Owner));
-                AddHandlers();
-            }
         }
 
         public void Redraw()
@@ -353,12 +344,13 @@ namespace PluginCore.Controls
                 tempo.Enabled = false;
                 isActive = false;
                 fullList = false;
+                bool visible = listHost.Visible;
                 listHost.Close();
                 if (completionList.Items.Count > 0) completionList.Items.Clear();
                 currentItem = null;
                 allItems = null;
                 Tip.Hide();
-                if (OnHidden != null) OnHidden(this, EventArgs.Empty);
+                if (visible && OnHidden != null) OnHidden(this, EventArgs.Empty);
             }
         }
 
@@ -467,17 +459,36 @@ namespace PluginCore.Controls
         private void UpdatePosition()
         {
             Point coord = host.GetPositionFromCharIndex(startPos);
+            // Check for completion list outside of control view
+            if (coord.X < 0 || coord.X > host.Owner.Width || coord.Y < 0 || coord.Y > host.Owner.Height)
+            {
+                Hide();
+                return;
+            }
             coord = host.Owner.PointToScreen(coord);
-            listHost.Left = coord.X + host.Owner.Left;
+            coord.X += host.Owner.Left;
             var screen = Screen.FromHandle(host.Owner.Handle);
             listUp = CallTip.CallTipActive || (coord.Y + listHost.Height > screen.WorkingArea.Bottom && coord.Y - listHost.Height > screen.WorkingArea.Top);
-            if (listUp) listHost.Top = coord.Y - listHost.Height;
-            else listHost.Top = coord.Y + host.GetLineHeight();
+            if (listUp) coord.Y -= listHost.Height;
+            else coord.Y += host.GetLineHeight();
             // Keep on screen area
-            if (listHost.Right > screen.WorkingArea.Right)
+            if (coord.X + listHost.Width > screen.WorkingArea.Right)
             {
-                listHost.Left = screen.WorkingArea.Right - listHost.Width;
+                coord.X = screen.WorkingArea.Right - listHost.Width;
             }
+
+            if (listHost.Visible)
+                listHost.Show(coord);
+            else
+            {
+                Redraw();
+                if (OnShowing != null) OnShowing(this, EventArgs.Empty);
+                listHost.Opacity = 1;
+                listHost.Show(coord);
+                if (CallTip.CallTipActive) CallTip.PositionControl(((ScintillaControl)host.Owner));
+                AddHandlers();
+            }
+
         }
 
         /// <summary>
@@ -944,7 +955,6 @@ namespace PluginCore.Controls
         private void Target_PositionChanged(object sender, EventArgs e)
         {
             UpdatePosition();
-            listHost.Show(listHost.Bounds.Location);
         }
 
         /// <summary>
@@ -1113,6 +1123,30 @@ namespace PluginCore.Controls
                     }
                     break;
 
+                case Keys.Home:
+                    noAutoInsert = false;
+                    // go down the list
+                    if (completionList.SelectedIndex > 0)
+                    {
+                        RefreshTip();
+                        index = 0;
+                        completionList.SelectedIndex = index;
+                    }
+
+                    break;
+
+                case Keys.End:
+                    noAutoInsert = false;
+                    // go down the list
+                    if (completionList.SelectedIndex < completionList.Items.Count - 1)
+                    {
+                        RefreshTip();
+                        index = completionList.Items.Count - 1;
+                        completionList.SelectedIndex = index;
+                    }
+
+                    break;
+
                 case (Keys.Control | Keys.Space):
                     break;
 
@@ -1138,6 +1172,12 @@ namespace PluginCore.Controls
                         key = key & Keys.KeyCode;
                         if (key == Keys.Down || key == Keys.Up || key == Keys.Left || key == Keys.Right ||
                             key == Keys.PageUp || key == Keys.PageDown || key == Keys.Home || key == Keys.End)
+                            Hide();
+                    }
+                    else if (modifiers == (Keys.Shift | Keys.Control))
+                    {
+                        key = key & Keys.KeyCode;
+                        if (key == Keys.Left && key == Keys.Right)
                             Hide();
                     }
 
