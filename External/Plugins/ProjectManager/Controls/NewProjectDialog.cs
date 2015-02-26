@@ -283,13 +283,6 @@ namespace ProjectManager.Controls
 			projectListView.Items.Clear();
             projectListView.TileSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(170, 22));
 
-            // Better for non themed platforms
-            if (!OSFeature.Feature.IsPresent(OSFeature.Themes))
-            {
-                this.projectListView.View = View.SmallIcon;
-                this.projectListView.ShowGroups = false;
-            }
-
 			if (!Directory.Exists(ProjectPaths.ProjectTemplatesDirectory))
 			{
                 string info = TextHelper.GetString("Info.TemplateDirNotFound");

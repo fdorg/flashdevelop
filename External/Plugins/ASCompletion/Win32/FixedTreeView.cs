@@ -105,9 +105,11 @@ namespace System.Windows.Forms
 
         public FixedTreeView()
         {
-            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version.Major < 6)
+            {
                 SetStyle(ControlStyles.UserPaint, true);
+            }
+            else SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
         }
 
         protected override void OnHandleCreated(EventArgs e)
