@@ -370,6 +370,12 @@ namespace FlashDevelop.Settings
             set { this.highlightMatchingWordsMode = value; }
         }
 
+        [DefaultValue(false)]
+        [DisplayName("Use Camel Humps")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.UseCamelHumps")]
+        public Boolean UseCamelHumps { get; set; }
+
         #endregion
 
         #region Locale

@@ -282,8 +282,9 @@ namespace PluginCore.Controls
                 add { Owner.KeyDown += value; }
                 remove { Owner.KeyDown -= value; }
             }
-
+            #pragma warning disable 0067
             public event KeyPressEventHandler KeyPress; // Unhandled for this one
+            #pragma warning restore 0067
             public event MouseEventHandler MouseDown
             {
                 add { Owner.MouseDown += value; }

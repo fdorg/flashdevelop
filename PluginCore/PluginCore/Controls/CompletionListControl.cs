@@ -943,7 +943,7 @@ namespace PluginCore.Controls
 
         private void Target_KeyDown(object sender, KeyEventArgs e)
         {
-            e.SuppressKeyPress = HandleKeys(e.KeyData);
+            e.SuppressKeyPress = e.Handled = HandleKeys(e.KeyData);
         }
 
         private void Target_KeyPress(object sender, KeyPressEventArgs e)

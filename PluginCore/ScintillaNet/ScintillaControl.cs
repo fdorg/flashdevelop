@@ -20,6 +20,7 @@ namespace ScintillaNet
     public class ScintillaControl : Control
     {
         private bool saveBOM;
+        private bool camelHumps;
         private Encoding encoding;
         private IntPtr directPointer;
         private bool hasHighlights = false;
@@ -33,6 +34,7 @@ namespace ScintillaNet
         private Enums.IndentView indentView = Enums.IndentView.Real;
         private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
         private HashSet<int> ignoredKeys = new HashSet<int>();
+        private Dictionary<Keys, Action> keyCommands = new Dictionary<Keys, Action>();
         private string configLanguage = String.Empty;
         private string fileName = String.Empty;
         private int lastSelectionLength = 0;
@@ -65,6 +67,25 @@ namespace ScintillaNet
                 {
                     IntPtr lib = LoadLibrary(fullpath);
                 }
+
+                // Most Windows Forms controls delay-load everything until a handle is created.
+                // That's a major pain so we just explicity create a handle right away.
+                CreateControl();
+
+                // Clear some default shortcuts, we are interested in managing them ourselves
+                // IMHO a better approach would be to call ClearAllCmdKeys and set managed replacements, like current ScintillaNet
+                ClearCmdKey(SCK_DOWN + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_UP + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_LEFT + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_RIGHT + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_LEFT + (SCMOD_CTRL << 16) + (SCMOD_SHIFT << 16));
+                ClearCmdKey(SCK_RIGHT + (SCMOD_CTRL << 16) + (SCMOD_SHIFT << 16));
+                ClearCmdKey(SCK_DELETE + (SCMOD_CTRL << 16));
+
+                keyCommands[Keys.Control | Keys.Down] = LineScrollDown;
+                keyCommands[Keys.Control | Keys.Up] = LineScrollUp;
+                CamelHumps = false;
+
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
@@ -3991,6 +4012,16 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Delete the word part to the right of the caret.
+        /// </summary>
+        public void DelWordPartRight()
+        {
+            SetSel(CurrentPos, CurrentPos);
+            WordPartRightExtend();
+            Clear();
+        }
+
+        /// <summary>
         /// Cut the line containing the caret.
         /// </summary>
         public void LineCut()
@@ -4049,6 +4080,8 @@ namespace ScintillaNet
 
             int newScroll = FirstVisibleLine;
 
+            if (newScroll == oldScroll) return;
+
             // Decrement?
             OnScroll(new ScrollEventArgs(ScrollEventType.SmallIncrement, oldScroll, newScroll, ScrollOrientation.VerticalScroll));
         }
@@ -4063,6 +4096,8 @@ namespace ScintillaNet
             SPerform(2343, 0, 0);
 
             int newScroll = FirstVisibleLine;
+
+            if (newScroll == oldScroll) return;
 
             // Decrement?
             OnScroll(new ScrollEventArgs(ScrollEventType.SmallIncrement, oldScroll, newScroll, ScrollOrientation.VerticalScroll));
@@ -4974,6 +5009,15 @@ namespace ScintillaNet
         public const int MAXDWELLTIME = 10000000;
         private const int PATH_LEN = 1024;
 
+        private const int SCK_DOWN = 300;
+        private const int SCK_UP = 301;
+        private const int SCK_LEFT = 302;
+        private const int SCK_RIGHT = 303;
+        private const int SCK_DELETE = 308;
+        private const int SCMOD_SHIFT = 1;
+        private const int SCMOD_CTRL = 2;
+        private const int SCMOD_ALT = 4;
+
         #endregion
 
         #region Scintilla Shortcuts
@@ -5141,9 +5185,12 @@ namespace ScintillaNet
             }
 
             if (m.Msg == WM_HSCROLL || m.Msg == WM_VSCROLL)
-                set = (ScrollEventType) ((short) ((int) (long) m.WParam & 0xffff));
+                set = (ScrollEventType)((short)((int)(long)m.WParam & 0xffff));
             else
+            {
+                if (oldScroll == newScroll) return;
                 set = oldScroll > newScroll ? ScrollEventType.SmallDecrement : ScrollEventType.SmallIncrement;
+            }
 
             OnScroll(new ScrollEventArgs(set, oldScroll, newScroll, so));
         }
@@ -5361,6 +5408,18 @@ namespace ScintillaNet
         #endregion
 
         #region Automated Features
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            Action keyCommand;
+            if (!e.Handled && keyCommands.TryGetValue(e.KeyData, out keyCommand))
+            {
+                keyCommand();
+                e.SuppressKeyPress = true;
+            }
+        }
 
         /// <summary>
         ///     Raises the <see cref="Scroll"/> event.
@@ -5746,6 +5805,34 @@ namespace ScintillaNet
             {
                 this.saveBOM = value;
                 if (UpdateSync != null) this.UpdateSync(this);
+            }
+        }
+
+        /// <summary>
+        /// Defines the current behaviour for next/previous word-related actions
+        /// </summary>
+        public bool CamelHumps
+        {
+            get { return camelHumps; }
+            set
+            {
+                camelHumps = value;
+                if (!value)
+                {
+                    keyCommands[Keys.Control | Keys.Left] = WordLeft;
+                    keyCommands[Keys.Control | Keys.Right] = WordRight;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Left] = WordLeftExtend;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Right] = WordRightExtend;
+                    keyCommands[Keys.Control | Keys.Delete] = DelWordRight;
+                }
+                else
+                {
+                    keyCommands[Keys.Control | Keys.Left] = WordPartLeft;
+                    keyCommands[Keys.Control | Keys.Right] = WordPartRight;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Left] = WordPartLeftExtend;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Right] = WordPartRightExtend;
+                    keyCommands[Keys.Control | Keys.Delete] = DelWordPartRight;
+                }
             }
         }
 

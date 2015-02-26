@@ -15,14 +15,14 @@ namespace PluginCore
 {
     public interface IPlugin : IEventHandler
     {
-	    #region IPlugin Methods
-		
-	    void Dispose();
-	    void Initialize();
-		
-	    #endregion
-		
-	    #region IPlugin Properties
+        #region IPlugin Methods
+
+        void Dispose();
+        void Initialize();
+
+        #endregion
+
+        #region IPlugin Properties
 
         Int32 Api { get; }
         String Name { get; }
@@ -34,18 +34,18 @@ namespace PluginCore
 
         // List of valid API levels:
         // FlashDevelop 4.0 = 1
-		
-	    #endregion
+
+        #endregion
     }
 
     public interface IEventHandler
-	{
+    {
         #region IEventHandler Methods
 
         void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority);
 
         #endregion
-	}
+    }
 
     public interface ITabbedDocument
     {
@@ -116,7 +116,7 @@ namespace PluginCore
         DockContent OpenEditableDocument(String file);
         DockContent CreateCustomDocument(Control ctrl);
         DockContent CreateEditableDocument(String file, String text, Int32 codepage);
-		DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
+        DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
         Boolean CallCommand(String command, String arguments);
         List<ToolStripItem> FindMenuItems(String name);
         ToolStripItem FindMenuItem(String name);
@@ -272,7 +272,7 @@ namespace PluginCore
         Int32 CaretPeriod { get; set; }
         Int32 CaretWidth { get; set; }
         Int32 ScrollWidth { get; set; }
-        Int32 PrintMarginColumn  { get; set; }
+        Int32 PrintMarginColumn { get; set; }
         Size WindowSize { get; set; }
         FormWindowState WindowState { get; set; }
         Point WindowPosition { get; set; }
@@ -285,7 +285,8 @@ namespace PluginCore
         Boolean DisableSmartMatch { get; set; }
         Boolean SaveUnicodeWithBOM { get; set; }
         String InsertionTriggers { get; set; }
-        
+        Boolean UseCamelHumps { get; set; }
+
         #endregion
     }
 

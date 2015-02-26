@@ -3148,6 +3148,10 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>When words matching the current selection should be highlighted.</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDevelop.Description.UseCamelHumps" xml:space="preserve">
+    <value>If true, Next/Previous Word related actions work on word segments delimited by capitalisation changes or underscores.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
     <value>Baztertutako bideetako zereginak ez dira zereginen zerrendan erakutisko.</value>
   </data>

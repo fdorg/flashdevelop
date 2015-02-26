@@ -3155,6 +3155,10 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Wann Wörter die der momentanen Auswahl entsprechen hervorgehoben werden sollen.</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDevelop.Description.UseCamelHumps" xml:space="preserve">
+    <value>If true, Next/Previous Word related actions work on word segments delimited by capitalisation changes or underscores.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
     <value>Aufgaben in ausgeschlossenen Pfaden werden nicht angezeigt.</value>
   </data>
