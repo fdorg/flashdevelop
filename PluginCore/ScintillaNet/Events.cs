@@ -3,7 +3,6 @@ using ScintillaNet.Enums;
 
 namespace ScintillaNet
 {
-    public delegate void FocusHandler(ScintillaControl sender);
     public delegate void ZoomHandler(ScintillaControl sender);
 	public delegate void PaintedHandler(ScintillaControl sender);
 	public delegate void UpdateUIHandler(ScintillaControl sender);

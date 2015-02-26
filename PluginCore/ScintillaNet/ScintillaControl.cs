@@ -122,7 +122,6 @@ namespace ScintillaNet
 
         public event KeyHandler Key;
         public event ZoomHandler Zoom;
-        public event FocusHandler FocusChanged;
         public event StyleNeededHandler StyleNeeded;
         public event CharAddedHandler CharAdded;
         public event SavePointReachedHandler SavePointReached;
