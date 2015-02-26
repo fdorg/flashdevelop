@@ -335,8 +335,11 @@ namespace ProjectManager
                 FlexCompilerShell.Cleanup();
                 solution.TargetBuild = menus.TargetBuildSelector.Text;
 
-                activeProject.UpdateVars(false);
-                projectActions.UpdateASCompletion(MainForm, activeProject);
+                if (activeProject != null)
+                {
+                    activeProject.UpdateVars(false);
+                    projectActions.UpdateASCompletion(MainForm, activeProject);
+                }
             }
         }
 
