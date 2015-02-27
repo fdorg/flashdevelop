@@ -165,6 +165,7 @@ namespace PluginCore.Controls
 			sci.UpdateUI += new UpdateUIHandler(OnUIRefresh);
 			sci.TextInserted += new TextInsertedHandler(OnTextInserted);
 			sci.TextDeleted += new TextDeletedHandler(OnTextDeleted);
+            sci.GotFocus += OnGotFocus;
 		}
 
         /// <summary>
@@ -318,6 +319,11 @@ namespace PluginCore.Controls
             if (OnTextChanged != null && !DisableEvents) 
                 OnTextChanged(sci, position, -length, linesAdded);
 		}
+
+        private void OnGotFocus(object sender, EventArgs e)
+        {
+            ((CompletionList.ScintillaHost)CompletionList.completionList.Host).SciControl = (ScintillaControl)sender;
+        }
 
         private void OnChar(ScintillaControl sci, int value)
 		{

@@ -1,4 +1,4 @@
-// NOTE: We may well dump this static class, or mark it as deprecated, and create UITools.CompletionList, it would make the code look bit more organized and in line with some other controls
+// NOTE: We may well dump this static class, or mark it as deprecated, and create UITools.CompletionList, it would make the code look bit more organized and in line with other code in there
 
 using System;
 using System.Drawing;
@@ -51,6 +51,8 @@ namespace PluginCore.Controls
             completionList = new CompletionListControl(new ScintillaHost());
             completionList.OnCancel += OnCancelHandler;
             completionList.OnInsert += OnInsertHandler;
+            completionList.OnShowing += OnShowingHandler;
+            completionList.OnHidden += OnHiddenHandler;
         }
 
         #endregion
@@ -211,6 +213,7 @@ namespace PluginCore.Controls
 
         static public void OnChar(ScintillaControl sci, int value)
         {
+            // Note: If we refactor/remove this class, this could be called directly from UITools
             if (!completionList.OnChar((char)value))
                 UITools.Manager.SendChar(sci, value);
         }
@@ -232,6 +235,21 @@ namespace PluginCore.Controls
                 OnInsert((ScintillaControl)sender, position, text, trigger, item);
         }
 
+        private static void OnShowingHandler(object sender, EventArgs e)
+        {
+            ((ScintillaControl)completionList.Host.Owner).UpdateUI += OnUIRefresh;
+        }
+
+        private static void OnHiddenHandler(object sender, EventArgs e)
+        {
+            ((ScintillaControl)completionList.Host.Owner).UpdateUI -= OnUIRefresh;
+        }
+
+        private static void OnUIRefresh(ScintillaControl sci)
+        {
+            if (Active && !CheckPosition(sci.CurrentPos)) Hide();
+        }
+
         #endregion
 
         #region Controls fading on Control key
@@ -248,9 +266,27 @@ namespace PluginCore.Controls
 
         #endregion
 
-        // TODO: Get hold of current Scintilla control through UITools and don't call CurrentDocument.SciControl everytime
-        private class ScintillaHost : ICompletionListHost
+        internal class ScintillaHost : ICompletionListHost
         {
+
+            private WeakReference sci = new WeakReference(null);
+            internal ScintillaControl SciControl
+            {
+                get
+                {
+                    if (sci.Target == null)
+                        return null;
+
+                    if (!sci.IsAlive)
+                        return PluginBase.MainForm.CurrentDocument.SciControl;
+
+                    return (ScintillaControl)sci.Target;
+                }
+                set
+                {
+                    sci.Target = value;
+                }
+            }
 
             public event EventHandler LostFocus
             {
@@ -263,14 +299,14 @@ namespace PluginCore.Controls
             {
                 add
                 {
-                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    var sci = SciControl;
                     sci.Scroll += Scintilla_Scroll;
                     sci.Zoom += Scintilla_Zoom;
                     positionChanged += value;
                 }
                 remove
                 {
-                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    var sci = SciControl;
                     sci.Scroll -= Scintilla_Scroll;
                     sci.Zoom -= Scintilla_Zoom;
                     positionChanged -= value;
@@ -293,63 +329,61 @@ namespace PluginCore.Controls
 
             public Control Owner
             {
-                get { return PluginBase.MainForm.CurrentDocument.SciControl; }
+                get { return SciControl; }
             }
 
             public string SelectedText
             {
-                get { return PluginBase.MainForm.CurrentDocument.SciControl.SelText; }
-                set { PluginBase.MainForm.CurrentDocument.SciControl.ReplaceSel(value); }
+                get { return SciControl.SelText; }
+                set { SciControl.ReplaceSel(value); }
             }
 
             public int SelectionEnd
             {
-                get { return PluginBase.MainForm.CurrentDocument.SciControl.SelectionEnd; }
-                set { PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart = value; }
+                get { return SciControl.SelectionEnd; }
+                set { SciControl.SelectionStart = value; }
             }
 
             public int SelectionStart
             {
-                get { return PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart; }
-                set { PluginBase.MainForm.CurrentDocument.SciControl.SelectionStart = value; }
+                get { return SciControl.SelectionStart; }
+                set { SciControl.SelectionStart = value; }
             }
 
             public int CurrentPos
             {
-                get { return PluginBase.MainForm.CurrentDocument.SciControl.CurrentPos; }
+                get { return SciControl.CurrentPos; }
             }
 
             public bool IsEditable
             {
-                get { return PluginBase.MainForm.CurrentDocument.IsEditable && PluginBase.MainForm.CurrentDocument.SciControl != null; }
+                get { return PluginBase.MainForm.CurrentDocument.IsEditable && SciControl != null; }
             }
 
             public int GetLineHeight()
             {
-                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                return UITools.Manager.LineHeight(sci);
+                return UITools.Manager.LineHeight(SciControl);
             }
 
             public Point GetPositionFromCharIndex(int pos)
             {
-                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                var sci = SciControl;
                 return new Point(sci.PointXFromPosition(pos), sci.PointYFromPosition(pos));
             }
 
             public void SetSelection(int start, int end)
             {
-                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                sci.SetSel(start, end);
+                SciControl.SetSel(start, end);
             }
 
             public void BeginUndoAction()
             {
-                PluginBase.MainForm.CurrentDocument.SciControl.BeginUndoAction();
+                SciControl.BeginUndoAction();
             }
 
             public void EndUndoAction()
             {
-                PluginBase.MainForm.CurrentDocument.SciControl.EndUndoAction();
+                SciControl.EndUndoAction();
             }
 
             private void Scintilla_Scroll(object sender, ScrollEventArgs e)
@@ -363,6 +397,7 @@ namespace PluginCore.Controls
                 if (positionChanged != null)
                     positionChanged(sci, EventArgs.Empty);
             }
+
         }
 	}
 }
