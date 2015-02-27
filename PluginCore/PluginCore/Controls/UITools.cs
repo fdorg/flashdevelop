@@ -191,6 +191,7 @@ namespace PluginCore.Controls
                 if (!bounds.Contains(mousePos)) return;
 
                 // check no panel is over the editor
+                // 2015/02 CompletionList changes: Is this check currently needed? If a panel is over the editor HandleDwellStart doesn't seem to fire
                 DockPanel panel = PluginBase.MainForm.DockPanel;
                 DockContentCollection panels = panel.Contents;
                 foreach (DockContent content in panels)
@@ -229,7 +230,10 @@ namespace PluginCore.Controls
 
         private void HandleDwellEnd(ScintillaControl sci, int position)
         {
-            simpleTip.Hide();
+            // NOTE: simpleTip should only be hidden if a certain movement threshold is exceeded (x <> current word, y <> word + tip pos & height) or HandleDwellStart is fired again
+            // This would allow the user to select the tip text
+            if (!CompletionList.Active)
+                simpleTip.Hide();
             if (OnMouseHoverEnd != null) OnMouseHoverEnd(sci, position);
         }
 
