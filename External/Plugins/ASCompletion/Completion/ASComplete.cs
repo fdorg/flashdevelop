@@ -258,7 +258,7 @@ namespace ASCompletion.Completion
 			}
             else if (keys == Keys.Back)
             {
-                HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
+                if (Sci.ContainsFocus) HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
                 return false;
             }
 			// show calltip
