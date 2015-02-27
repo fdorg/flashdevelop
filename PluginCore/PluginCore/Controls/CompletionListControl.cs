@@ -1235,15 +1235,27 @@ namespace PluginCore.Controls
                 else if ((int) m.WParam == 112) // F1 - since it's by default set as a shortcut we are required to handle it at a lower level
                 {
                     UITools.Manager.ShowDetails = !UITools.Manager.ShowDetails;
+                    bool retVal = false;
                     if (Active)
+                    {
                         UpdateTip(null, null);
+                        retVal = true;
+                    }
                     else
                     {
                         if (Tip.Visible)
+                        {
                             Tip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                            retVal = true;
+                        }
                         if (CallTip.Visible)
+                        {
                             callTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                            retVal = true;
+                        }
                     }
+
+                    return retVal;
                 }
             }
             else if (m.Msg == Win32.WM_KEYUP)
