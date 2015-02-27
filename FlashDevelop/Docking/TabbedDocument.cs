@@ -293,8 +293,8 @@ namespace FlashDevelop.Docking
                 this.editor.MarkerDeleteAll(2);
                 this.IsModified = false;
             };
-            editor.GotFocus += EditorFocusChanged;
-            editor2.GotFocus += EditorFocusChanged;
+            this.editor.GotFocus += EditorFocusChanged;
+            this.editor2.GotFocus += EditorFocusChanged;
             this.editor.UpdateSync += new UpdateSyncHandler(this.EditorUpdateSync);
             this.editor2.UpdateSync += new UpdateSyncHandler(this.EditorUpdateSync);
             this.Controls.Add(this.splitContainer);
@@ -325,8 +325,7 @@ namespace FlashDevelop.Docking
         /// </summary>
         private void EditorFocusChanged(object sender, EventArgs e)
         {
-            var sci = (ScintillaControl)sender;
-            this.lastEditor = sci;
+            this.lastEditor = (ScintillaControl)sender;
             this.editor.DisableAllSciEvents = (sender == editor2);
             this.editor2.DisableAllSciEvents = (sender == editor);
         }
