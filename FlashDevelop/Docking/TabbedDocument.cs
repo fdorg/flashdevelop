@@ -345,13 +345,20 @@ namespace FlashDevelop.Docking
             if (!Globals.MainForm.ClosingEntirely && File.Exists(this.FileName))
             {
                 FileInfo fi = new FileInfo(this.FileName);
-                if (this.fileInfo.LastWriteTime != fi.LastWriteTime)
-                {
-                    this.fileInfo = fi;
-                    return true;
-                }
+                if (this.fileInfo.LastWriteTime != fi.LastWriteTime) return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Updates the file info after user dismisses the change notification
+        /// </summary>
+        public void RefreshFileInfo()
+        {
+            if (!Globals.MainForm.ClosingEntirely && File.Exists(this.FileName))
+            {
+                this.fileInfo = new FileInfo(this.FileName);
+            }
         }
 
         /// <summary>

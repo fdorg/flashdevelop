@@ -58,6 +58,7 @@ namespace FlashDevelop.Managers
                     MessageBoxManager.Cancel = TextHelper.GetString("Label.YesToAll");
                     MessageBoxManager.Register(); // Use custom labels...
                     DialogResult result = MessageBox.Show(Globals.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    casted.RefreshFileInfo(); // User may have waited before responding, save info now
                     if (result == DialogResult.Yes) casted.Reload(false);
                     else if (result == DialogResult.Cancel)
                     {
