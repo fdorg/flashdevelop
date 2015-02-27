@@ -1177,7 +1177,7 @@ namespace PluginCore.Controls
                     else if (modifiers == (Keys.Shift | Keys.Control))
                     {
                         key = key & Keys.KeyCode;
-                        if (key == Keys.Left && key == Keys.Right)
+                        if (key == Keys.Left || key == Keys.Right)
                             Hide();
                     }
 
