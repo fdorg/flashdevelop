@@ -2,7 +2,7 @@
 <mainmenu>
 	<menu label="Label.File" name="FileMenu">
 		<menu label="Label.New" name="NewMenu">
-			<button label="Label.BlankDocument" click="New" shortcut="Control|N" image="559" />
+			<button label="Label.BlankDocument" click="SmartNew" shortcut="Control|N" image="559" />
 			<separator />
 			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" />
 			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" />
