@@ -405,17 +405,8 @@ namespace PluginCore.Controls
 				return false;
 			}
 
-			// toggle "long-description"
-			if (key == Keys.F1)
-			{
-				showDetails = !showDetails;
-                if (callTip.CallTipActive) callTip.UpdateTip(sci);
-				else CompletionList.UpdateTip(null, null);
-				return true;
-			}
-			
 			// switches
-			else if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
+			if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
 			{
 				return false;
 			}

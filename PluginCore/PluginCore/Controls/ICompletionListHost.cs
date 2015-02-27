@@ -4,6 +4,11 @@ using System.Windows.Forms;
 
 namespace PluginCore.Controls
 {
+    /* Possible properties/methods of interest:
+     *      - suppressedKeys: collection of extra key combinations that would be consumed by the completionList
+     *      - OnListShowing/OnListHidden: method to know when the list is going to show or is hidden, better to get a reference to the list and listen for events
+     *      - AfterCompletionCommit/BeforeCompletionCommit
+     */
     public interface ICompletionListHost
     {
 

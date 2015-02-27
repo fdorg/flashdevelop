@@ -1215,10 +1215,9 @@ namespace PluginCore.Controls
 
         public bool PreFilterMessage(ref Message m)
         {
-            if (Tip.Focused || CallTip.Focused) return false;
-
             if (m.Msg == Win32.WM_MOUSEWHEEL) // capture all MouseWheel events 
             {
+                if (Tip.Focused || CallTip.Focused) return false;
                 if (Win32.ShouldUseWin32())
                 {
                     Win32.SendMessage(completionList.Handle, m.Msg, (Int32)m.WParam, (Int32)m.LParam);
@@ -1227,14 +1226,29 @@ namespace PluginCore.Controls
             }
             else if (m.Msg == Win32.WM_KEYDOWN)
             {
+                if (Tip.Focused || CallTip.Focused) return false;
                 if ((int)m.WParam == 17) // Ctrl
                 {
                     if (Active) FadeOut();
                     if (CallTip.CallTipActive) CallTip.FadeOut();
                 }
+                else if ((int) m.WParam == 112) // F1 - since it's by default set as a shortcut we are required to handle it at a lower level
+                {
+                    UITools.Manager.ShowDetails = !UITools.Manager.ShowDetails;
+                    if (Active)
+                        UpdateTip(null, null);
+                    else
+                    {
+                        if (Tip.Visible)
+                            Tip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                        if (CallTip.Visible)
+                            callTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                    }
+                }
             }
             else if (m.Msg == Win32.WM_KEYUP)
             {
+                if (Tip.Focused || CallTip.Focused) return false;
                 if ((int)m.WParam == 17 || (int)m.WParam == 18) // Ctrl / AltGr
                 {
                     if (Active) FadeIn();
