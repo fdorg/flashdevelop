@@ -279,16 +279,27 @@ namespace FlashDebugger.Controls
 						nodes.Add(memberNode);
 					}
 				}
+
+				// inherited vars
 				if (inherited.Count > 0)
 				{
-					DataNode inheritedNode = new DataNode("[inherited]");
+					// list inherited alongside main class members
+					foreach (DataNode item in inherited) {
+						node.Nodes.Add(item);
+					}
+
+					// list inherited in a [inherited] group
+					/*DataNode inheritedNode = new DataNode("[inherited]");
 					inherited.Sort();
 					foreach (DataNode item in inherited)
 					{
 						inheritedNode.Nodes.Add(item);
 					}
-					node.Nodes.Add(inheritedNode);
+					node.Nodes.Add(inheritedNode);*/
+
 				}
+
+				// static vars
 				if (statics.Count > 0)
 				{
 					DataNode staticNode = new DataNode("[static]");
@@ -299,6 +310,7 @@ namespace FlashDebugger.Controls
 					}
 					node.Nodes.Add(staticNode);
 				}
+
 				//test children
 				foreach (String ch in node.Variable.getValue().getClassHierarchy(false))
 				{
