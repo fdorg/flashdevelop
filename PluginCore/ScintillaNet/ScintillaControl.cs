@@ -80,6 +80,7 @@ namespace ScintillaNet
                 ClearCmdKey(SCK_RIGHT + (SCMOD_CTRL << 16));
                 ClearCmdKey(SCK_LEFT + (SCMOD_CTRL << 16) + (SCMOD_SHIFT << 16));
                 ClearCmdKey(SCK_RIGHT + (SCMOD_CTRL << 16) + (SCMOD_SHIFT << 16));
+                ClearCmdKey(SCK_BACK + (SCMOD_CTRL << 16));
                 ClearCmdKey(SCK_DELETE + (SCMOD_CTRL << 16));
 
                 keyCommands[Keys.Control | Keys.Down] = LineScrollDown;
@@ -4011,6 +4012,17 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Delete the word part to the left of the caret.
+        /// </summary>
+        public void DelWordPartLeft()
+        {
+            int currPos = CurrentPos;
+            SetSel(currPos, currPos);
+            WordPartLeftExtend();
+            Clear();
+        }
+
+        /// <summary>
         /// Delete the word part to the right of the caret.
         /// </summary>
         public void DelWordPartRight()
@@ -5009,6 +5021,7 @@ namespace ScintillaNet
         public const int MAXDWELLTIME = 10000000;
         private const int PATH_LEN = 1024;
 
+        private const int SCK_BACK = 8;
         private const int SCK_DOWN = 300;
         private const int SCK_UP = 301;
         private const int SCK_LEFT = 302;
@@ -5826,6 +5839,7 @@ namespace ScintillaNet
                     keyCommands[Keys.Control | Keys.Right] = WordRight;
                     keyCommands[Keys.Control | Keys.Shift | Keys.Left] = WordLeftExtend;
                     keyCommands[Keys.Control | Keys.Shift | Keys.Right] = WordRightExtend;
+                    keyCommands[Keys.Control | Keys.Back] = DelWordLeft;
                     keyCommands[Keys.Control | Keys.Delete] = DelWordRight;
                 }
                 else
@@ -5834,6 +5848,7 @@ namespace ScintillaNet
                     keyCommands[Keys.Control | Keys.Right] = WordPartRight;
                     keyCommands[Keys.Control | Keys.Shift | Keys.Left] = WordPartLeftExtend;
                     keyCommands[Keys.Control | Keys.Shift | Keys.Right] = WordPartRightExtend;
+                    keyCommands[Keys.Control | Keys.Back] = DelWordPartLeft;
                     keyCommands[Keys.Control | Keys.Delete] = DelWordPartRight;
                 }
             }
