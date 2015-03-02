@@ -5,8 +5,10 @@ using System.Text;
 using Aga.Controls.Tree;
 using FlashDebugger.Controls;
 
-namespace FlashDebugger {
-	public class CopyTreeHelper {
+namespace FlashDebugger
+{
+	public class CopyTreeHelper
+	{
 
 		public const int CopyTreeMaxRecursion = 10;
 		public const int CopyTreeMaxChars = 1000000;
@@ -14,7 +16,8 @@ namespace FlashDebugger {
 		private static Dictionary<string, int> CopiedObjects;
 
 
-		public static string GetTreeAsText(TreeNodeAdv treeNode, DataNode dataNode, string levelSep, DataTreeControl control, int levelLimit) {
+		public static string GetTreeAsText(TreeNodeAdv treeNode, DataNode dataNode, string levelSep, DataTreeControl control, int levelLimit)
+		{
 			StringBuilder sb = new StringBuilder();
 
 			// ensure expanded
@@ -27,17 +30,20 @@ namespace FlashDebugger {
 			return sb.ToString() ?? "";
 		}
 
-		private static void GetTreeItemsAsText(IList treeNodes, IList dataNodes, string levelSep, int level, StringBuilder sb, DataTreeControl control, int levelLimit) {
+		private static void GetTreeItemsAsText(IList treeNodes, IList dataNodes, string levelSep, int level, StringBuilder sb, DataTreeControl control, int levelLimit)
+		{
 
 			// per node
 			int len = dataNodes.Count;
-			for (int c = 0; c < len; c++) {
+			for (int c = 0; c < len; c++)
+			{
 				DataNode child = (DataNode)dataNodes[c];
 				TreeNodeAdv childTree = (TreeNodeAdv)treeNodes[c];
 
 
 				// skip if unwanted item
-				if (!IsWantedChild(child)) {
+				if (!IsWantedChild(child))
+				{
 					continue;
 				}
 
@@ -50,7 +56,8 @@ namespace FlashDebugger {
 				sb.Append(child.Text + " : " + child.Value);
 
 				// recurse for children .. but skip if unwanted items
-				if (child.Nodes.Count > 0 && IsWantedParent(child)) {
+				if (child.Nodes.Count > 0 && IsWantedParent(child))
+				{
 
 					// opening brace
 					sb.AppendLine("{");
@@ -58,31 +65,39 @@ namespace FlashDebugger {
 					string childID = child.ID;
 
 					// add error if too many levels of recursion
-					if (level <= levelLimit || levelLimit == 0) {
+					if (level <= levelLimit || levelLimit == 0)
+					{
 
 						// check if encountered before
 						bool isNew = !CopiedObjects.ContainsKey(childID);
-						if (!isNew) {
+						if (!isNew)
+						{
 
 							// error
 							AppendTimes(sb, levelSep, level + 1);
 							sb.AppendLine("[Already listed before]");
 
-						} else if (level > CopyTreeMaxRecursion) {
+						}
+						else if (level > CopyTreeMaxRecursion)
+						{
 
 							// error
 							AppendTimes(sb, levelSep, level + 1);
 							sb.AppendLine("[Recursion too deep, increase CopyTreeMaxRecursion in FlashDebugger settings]");
 
-						} else {
+						}
+						else
+						{
 
 							// add to list
 							CopiedObjects.Add(childID, 1);
 
 							// children
-							try {
+							try
+							{
 								GetTreeItemsAsText(childTree.Children, child.Nodes, levelSep, level + 1, sb, control, levelLimit);
-							} catch (System.Exception ex) { }
+							}
+							catch (System.Exception ex) { }
 
 						}
 					}
@@ -92,13 +107,16 @@ namespace FlashDebugger {
 					AppendTimes(sb, levelSep, level);
 					sb.AppendLine("}");
 
-				} else {
+				}
+				else
+				{
 					sb.AppendLine();
 				}
 
 
 				// stop recursion if too long
-				if (sb.Length > CopyTreeMaxChars) {
+				if (sb.Length > CopyTreeMaxChars)
+				{
 					sb.Append("......");
 					return;
 				}
@@ -107,15 +125,20 @@ namespace FlashDebugger {
 			}
 		}
 
-		private static bool IsWantedParent(DataNode parent) {
-			try {
+		private static bool IsWantedParent(DataNode parent)
+		{
+			try
+			{
 
 				// if is an empty array []
 				// then skip it from opening and closing { } the output
-				if (parent.Nodes.Count == 1 || parent.Nodes.Count == 2) {
-					if (parent.Value.StartsWith("Array")) {
+				if (parent.Nodes.Count == 1 || parent.Nodes.Count == 2)
+				{
+					if (parent.Value.StartsWith("Array"))
+					{
 						DataNode child1 = (DataNode)parent.Nodes[0];
-						if (child1.Text == "[static]" || child1.Text == "length") {
+						if (child1.Text == "[static]" || child1.Text == "length")
+						{
 							return false;
 						}
 					}
@@ -123,37 +146,47 @@ namespace FlashDebugger {
 
 				// catch "cannot cast Aga.TreeNode to DataNode" 
 				// TODO : fix this instead of just catching it
-			} catch (Exception ex) { }
+			}
+			catch (Exception ex) { }
 			return true;
 		}
 
 		private static string[] as3DisabledProps = new string[] { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
 
-		private static bool IsWantedChild(DataNode child) {
-			try {
-				if (child.Parent != null) {
+		private static bool IsWantedChild(DataNode child)
+		{
+			try
+			{
+				if (child.Parent != null)
+				{
 					DataNode parent = ((DataNode)child.Parent);
 
 					// if is an array []
 					// skip [static] and "length" properties
-					if (parent.Value.StartsWith("Array")) {
-						if (child.Text == "[static]" || child.Text == "length") {
+					if (parent.Value.StartsWith("Array"))
+					{
+						if (child.Text == "[static]" || child.Text == "length")
+						{
 							return false;
 						}
 					}
 
 					// if is an AS3 display object,
 					// don't go upward (stage, parent)
-					if (parent.Value.StartsWith("flash.display.") || parent.Value == "Main") {
-						if (Array.IndexOf(as3DisabledProps, child.Text) > -1) {
+					if (parent.Value.StartsWith("flash.display.") || parent.Value == "Main")
+					{
+						if (Array.IndexOf(as3DisabledProps, child.Text) > -1)
+						{
 							return false;
 						}
 					}
 
 					// if is an AS2 display object,
 					// don't go upward (_parent)
-					if (parent.Value == "MovieClip" || parent.Value == "Video") {
-						if (child.Text == "_parent") {
+					if (parent.Value == "MovieClip" || parent.Value == "Video")
+					{
+						if (child.Text == "_parent")
+						{
 							return false;
 						}
 					}
@@ -162,12 +195,15 @@ namespace FlashDebugger {
 
 				// catch "cannot cast Aga.TreeNode to DataNode" 
 				// TODO : fix this instead of just catching it
-			} catch (Exception ex) { }
+			}
+			catch (Exception ex) { }
 			return true;
 		}
 
-		private static void AppendTimes(StringBuilder sb, string append, int times) {
-			for (int t = 0; t < times; t++) {
+		private static void AppendTimes(StringBuilder sb, string append, int times)
+		{
+			for (int t = 0; t < times; t++)
+			{
 				sb.Append(append);
 			}
 		}

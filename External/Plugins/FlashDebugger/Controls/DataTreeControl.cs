@@ -284,7 +284,8 @@ namespace FlashDebugger.Controls
 				if (inherited.Count > 0)
 				{
 					// list inherited alongside main class members
-					foreach (DataNode item in inherited) {
+					foreach (DataNode item in inherited)
+					{
 						node.Nodes.Add(item);
 					}
 
@@ -459,8 +460,10 @@ namespace FlashDebugger.Controls
 		// ADDED
 		#region Copy ID & Tree
 
-		private void CopyItemIDClick(Object sender, System.EventArgs e) {
-			if (Tree.SelectedNode != null) {
+		private void CopyItemIDClick(Object sender, System.EventArgs e)
+		{
+			if (Tree.SelectedNode != null)
+			{
 
 				DataNode node = Tree.SelectedNode.Tag as DataNode;
 				Clipboard.SetText(node.ID);
@@ -468,12 +471,15 @@ namespace FlashDebugger.Controls
 			}
 		}
 
-		private void CopyItemTreeClick(Object sender, System.EventArgs e) {
+		private void CopyItemTreeClick(Object sender, System.EventArgs e)
+		{
 			CopyTreeInternal(0);
 		}
 
-		private void CopyTreeInternal(int levelLimit) {
-			if (Tree.SelectedNode != null) {
+		private void CopyTreeInternal(int levelLimit)
+		{
+			if (Tree.SelectedNode != null)
+			{
 
 				DataNode node = Tree.SelectedNode.Tag as DataNode;
 				Clipboard.SetText(CopyTreeHelper.GetTreeAsText(Tree.SelectedNode, node, "\t", this, levelLimit));
