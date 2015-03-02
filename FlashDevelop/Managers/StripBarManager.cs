@@ -27,6 +27,10 @@ namespace FlashDevelop.Managers
                 ToolStripItem item = Items[i];
                 if (item.Name == name) return item;
             }
+            ShortcutItem item2 = ShortcutManager.GetRegisteredItem(name);
+            if (item2 != null) return item2.Item;
+            ToolStripItem item3 = ShortcutManager.GetSecondaryItem(name);
+            if (item3 != null) return item3;
             return null;
         }
 
@@ -41,6 +45,10 @@ namespace FlashDevelop.Managers
                 ToolStripItem item = Items[i];
                 if (item.Name == name) found.Add(item);
             }
+            ShortcutItem item2 = ShortcutManager.GetRegisteredItem(name);
+            if (item2 != null) found.Add(item2.Item);
+            ToolStripItem item3 = ShortcutManager.GetSecondaryItem(name);
+            if (item3 != null) found.Add(item3);
             return found;
         }
 

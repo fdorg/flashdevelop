@@ -5845,4 +5845,28 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Sets how often FlashDevelop checks for updates.</value>
     <comment>Added after 4.7.1</comment>
   </data>
+  <data name="CodeRefactor.Info.ConsistentEOLs" xml:space="preserve">
+    <value>Consistent EOLs</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.FormatCode" xml:space="preserve">
+    <value>Format Code</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.OpenFiles" xml:space="preserve">
+    <value>Open Files</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.ProjectSources" xml:space="preserve">
+    <value>Project Sources</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Label.BatchProcess" xml:space="preserve">
+    <value>Batch Process...</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Title.BatchProcessDialog" xml:space="preserve">
+    <value>Batch Process</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
 </root>

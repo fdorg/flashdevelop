@@ -10,6 +10,7 @@ namespace CodeRefactor.Controls
     public class RefactorMenu : ToolStripMenuItem
     {
         private SurroundMenu surroundMenu;
+        private ToolStripMenuItem batchMenuItem;
         private ToolStripMenuItem renameMenuItem;
         private ToolStripMenuItem truncateMenuItem;
         private ToolStripMenuItem organizeMenuItem;
@@ -37,6 +38,8 @@ namespace CodeRefactor.Controls
             this.DropDownItems.Add(new ToolStripSeparator());
             this.organizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
             this.truncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
+            this.DropDownItems.Add(new ToolStripSeparator());
+            this.batchMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.BatchProcess"), null) as ToolStripMenuItem;
         }
 
         /// <summary>
@@ -45,6 +48,14 @@ namespace CodeRefactor.Controls
         public SurroundMenu SurroundMenu
         {
             get { return this.surroundMenu; }
+        }
+
+        /// <summary>
+        /// Accessor to the BatchMenuItem
+        /// </summary>
+        public ToolStripMenuItem BatchMenuItem
+        {
+            get { return this.batchMenuItem; }
         }
 
         /// <summary>

@@ -137,6 +137,11 @@ namespace CodeFormatter
                         this.AttachContextMenuItem(contextMenu);
                         this.UpdateMenuItems();
                     }
+                    else if (de.Action == "CodeFormatter.FormatDocument")
+                    {
+                        ITabbedDocument document = (ITabbedDocument)de.Data;
+                        this.DoFormat(document);
+                    }
                     break;
             }
 		}
@@ -242,16 +247,23 @@ namespace CodeFormatter
 		private const int TYPE_UNKNOWN = 3;
 		
 		/// <summary>
-		/// 
+        /// Formats the current document
 		/// </summary>
 		public void Format(Object sender, System.EventArgs e)
 		{
-			ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-			if (doc.IsEditable)
-			{
-				doc.SciControl.BeginUndoAction();
-				Int32 oldPos = CurrentPos;
-				String source = doc.SciControl.Text;
+            this.DoFormat(PluginBase.MainForm.CurrentDocument);
+		}
+
+        /// <summary>
+        /// Formats the specified document
+        /// </summary>
+        private void DoFormat(ITabbedDocument doc)
+        {
+            if (doc.IsEditable)
+            {
+                doc.SciControl.BeginUndoAction();
+                Int32 oldPos = CurrentPos;
+                String source = doc.SciControl.Text;
                 try
                 {
                     switch (DocumentType)
@@ -289,16 +301,16 @@ namespace CodeFormatter
                             }
                             break;
                     }
-                } 
+                }
                 catch (Exception)
                 {
                     TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
                     PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
                 }
-				CurrentPos = oldPos;
-				doc.SciControl.EndUndoAction();
-			}
-		}
+                CurrentPos = oldPos;
+                doc.SciControl.EndUndoAction();
+            }
+        }
 
         /// <summary>
         /// 

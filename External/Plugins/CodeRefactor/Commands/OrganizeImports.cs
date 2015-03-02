@@ -15,6 +15,7 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class OrganizeImports : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
+        public ScintillaControl SciControl;
         public Boolean TruncateImports = false;
         public Boolean SeparatePackages = false;
         private Int32 DeletedImportsCompensation = 0;
@@ -26,7 +27,7 @@ namespace CodeRefactor.Commands
         protected override void ExecutionImplementation()
         {
             IASContext context = ASContext.Context;
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            ScintillaControl sci = SciControl == null ? PluginBase.MainForm.CurrentDocument.SciControl : SciControl;
             Int32 pos = sci.CurrentPos;
             List<MemberModel> imports = new List<MemberModel>(context.CurrentModel.Imports.Items);
             int cppPpStyle = (int)ScintillaNet.Lexers.CPP.PREPROCESSOR;
