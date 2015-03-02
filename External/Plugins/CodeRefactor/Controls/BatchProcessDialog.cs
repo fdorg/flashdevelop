@@ -105,6 +105,8 @@ namespace CodeRefactor.Controls
             // 
             // BatchProcessDialog
             //
+            this.MinimizeBox = false;
+            this.MaximizeBox = false;
             this.AcceptButton = this.processButton;
             this.CancelButton = this.cancelButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
