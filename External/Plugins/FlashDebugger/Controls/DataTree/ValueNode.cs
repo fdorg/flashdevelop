@@ -15,6 +15,26 @@ namespace FlashDebugger.Controls.DataTree
         protected Value m_Value;
         private bool m_bEditing = false;
 
+		public string ID
+		{
+			get
+			{
+				if (m_Value != null)
+				{
+					int type = m_Value.getType();
+					if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
+					{
+						return m_Value.getTypeName().replaceAll("::", ".").replaceAll("@", " - ").ToString();
+					}
+					else if (type == VariableType_.FUNCTION)
+					{
+						return "Function - " + m_Value.ToString();
+					}
+				}
+				return "";
+			}
+		}
+
         public override string Value
         {
             get
@@ -27,7 +47,16 @@ namespace FlashDebugger.Controls.DataTree
                 string temp = null;
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
-                    return m_Value.getTypeName();
+					// return class type without classpath
+					string typeStr = Strings.AfterLast(m_Value.getTypeName().ToString(), "::", true);
+					string shortStr = Strings.Before(typeStr, "@");
+					if (shortStr == "[]")
+					{
+						return "Array";
+					}
+					return typeStr;
+
+                    //return m_Value.getTypeName();
                 }
                 else if (type == VariableType_.NUMBER)
                 {
@@ -63,11 +92,10 @@ namespace FlashDebugger.Controls.DataTree
                 {
                     return "null";
                 }
-                /*else if (type == VariableType_.FUNCTION)
+                else if (type == VariableType_.FUNCTION)
                 {
-                    m_Value.ToString();
-                    //return "<setter>";
-                }*/
+                    return "Function";
+                }
                 temp = m_Value.ToString();
                 if (!m_bEditing)
                 {

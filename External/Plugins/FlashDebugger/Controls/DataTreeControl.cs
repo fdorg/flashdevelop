@@ -21,10 +21,11 @@ namespace FlashDebugger.Controls
         private DataTreeModel _model;
         private static ViewerForm viewerForm;
         private ContextMenuStrip _contextMenuStrip;
-        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem;
+		private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyIDMenuItem, copyTreeMenuItem;
         private DataTreeState state;
         private bool watchMode;
         private bool addingNewExpression;
+		private static bool combineInherited = false;
 
         public Collection<Node> Nodes
         {
@@ -98,8 +99,10 @@ namespace FlashDebugger.Controls
             this.NameTreeColumn.Header = TextHelper.GetString("Label.Name");
             this.ValueTreeColumn.Header = TextHelper.GetString("Label.Value");
             copyMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, new EventHandler(this.CopyItemClick));
+            copyIDMenuItem = new ToolStripMenuItem("Copy ID", null, new EventHandler(this.CopyItemIDClick));
+			copyTreeMenuItem = new ToolStripMenuItem("Copy Tree", null, new EventHandler(this.CopyItemTreeClick));
             viewerMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Viewer"), null, new EventHandler(this.ViewerItemClick));
-            _contextMenuStrip.Items.AddRange(new ToolStripMenuItem[] { copyMenuItem, viewerMenuItem});
+            _contextMenuStrip.Items.AddRange(new ToolStripMenuItem[] { copyMenuItem, copyIDMenuItem, copyTreeMenuItem, viewerMenuItem});
             if (watchMode)
                 watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Unwatch"), null, new EventHandler(this.WatchItemClick));
             else
@@ -355,120 +358,144 @@ namespace FlashDebugger.Controls
         {
             if (e.Node.Index >= 0)
             {
-                ValueNode node = e.Node.Tag as ValueNode;
-                if (node != null && node.Nodes.Count == 0 && node.PlayerValue != null)
-                {
-                    FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
-                    List<VariableNode> nodes = new List<VariableNode>();
-                    List<VariableNode> inherited = new List<VariableNode>();
-                    List<VariableNode> statics = new List<VariableNode>();
-                    int tmpLimit = node.ChildrenShowLimit;
-                    foreach (Variable member in node.PlayerValue.getMembers(flashInterface.Session))
-                    {
-                        VariableNode memberNode = new VariableNode(member);
-                        
-                        if (member.isAttributeSet(VariableAttribute_.IS_STATIC))
-                        {
-                            statics.Add(memberNode);
-                        }
-                        else if (member.getLevel() > 0)
-                        {
-                            inherited.Add(memberNode);
-                        }
-                        else
-                        {
-                            nodes.Add(memberNode);
-                        }
-                    }
-                    if (inherited.Count > 0)
-                    {
-                        ValueNode inheritedNode = new ValueNode("[inherited]");
-                        inherited.Sort();
-                        foreach (DataNode item in inherited)
-                        {
-                            inheritedNode.Nodes.Add(item);
-                        }
-                        node.Nodes.Add(inheritedNode);
-                    }
-                    if (statics.Count > 0)
-                    {
-                        DataNode staticNode = new ValueNode("[static]");
-                        statics.Sort();
-                        foreach (DataNode item in statics)
-                        {
-                            staticNode.Nodes.Add(item);
-                        }
-                        node.Nodes.Add(staticNode);
-                    }
-                    //test children
-                    foreach (String ch in node.PlayerValue.getClassHierarchy(false))
-                    {
-                        if (ch.Equals("flash.display::DisplayObjectContainer"))
-                        {
-                            double numChildren = ((java.lang.Double)node.PlayerValue.getMemberNamed(flashInterface.Session, "numChildren").getValue().getValueAsObject()).doubleValue();
-                            DataNode childrenNode = new ValueNode("[children]");
-                            for (int i = 0; i < numChildren; i++)
-                            {
-                                try
-                                {
-                                    IASTBuilder b = new ASTBuilder(false);
-                                    string cmd = node.GetVariablePath() + ".getChildAt(" + i + ")";
-                                    ValueExp exp = b.parse(new java.io.StringReader(cmd));
-                                    var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
-                                    var obj = exp.evaluate(ctx);
-                                    if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", (flash.tools.debugger.concrete.DValue)obj, ((flash.tools.debugger.concrete.DValue)obj).getIsolateId());
-                                    DataNode childNode = new VariableNode((Variable)obj);
-                                    childNode.Text = "child_" + i;
-                                    childrenNode.Nodes.Add(childNode);
-                                }
-                                catch (Exception) { }
-                            }
-                            node.Nodes.Add(childrenNode);
-                        }
-                        else if (ch.Equals("flash.events::EventDispatcher"))
-                        {
-                            Variable list = node.PlayerValue.getMemberNamed(flashInterface.Session, "listeners");
-                            var omg = list.getName();
-                            /*
-                            double numChildren = ((java.lang.Double)node.Variable.getValue().getMemberNamed(flashInterface.Session, "numChildren").getValue().getValueAsObject()).doubleValue();
-                            DataNode childrenNode = new DataNode("[children]");
-                            for (int i = 0; i < numChildren; i++)
-                            {
-                                try
-                                {
-
-                                    IASTBuilder b = new ASTBuilder(false);
-                                    string cmd = GetVariablePath(node) + ".getChildAt(" + i + ")";
-                                    ValueExp exp = b.parse(new java.io.StringReader(cmd));
-                                    var ctx = new ExpressionContext(flashInterface.Session, flashInterface.Session.getFrames()[PluginMain.debugManager.CurrentFrame]);
-                                    var obj = exp.evaluate(ctx);
-                                    if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("child_" + i, (flash.tools.debugger.concrete.DValue)obj);
-                                    DataNode childNode = new DataNode((Variable)obj);
-                                    childrenNode.Nodes.Add(childNode);
-                                }
-                                catch (Exception) { }
-                            }
-                            node.Nodes.Add(childrenNode);
-                             * */
-                        }
-                    }
-                    //test children
-                    nodes.Sort();
-                    _tree.BeginUpdate();
-                    foreach (DataNode item in nodes)
-                    {
-                        if (0 == tmpLimit--) break;
-                        node.Nodes.Add(item);
-                    }
-                    if (tmpLimit == -1)
-                    {
-                        DataNode moreNode = new ContinuedDataNode();
-                        node.Nodes.Add(moreNode);
-                    }
-                    _tree.EndUpdate();
-                }
+				ListChildItems(e.Node.Tag as ValueNode);
             }
         }
+
+		public void ListChildItems(ValueNode node)
+		{
+
+			if (node != null && node.Nodes.Count == 0 && node.PlayerValue != null)
+			{
+				FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
+				List<VariableNode> nodes = new List<VariableNode>();
+				List<VariableNode> inherited = new List<VariableNode>();
+				List<VariableNode> statics = new List<VariableNode>();
+				int tmpLimit = node.ChildrenShowLimit;
+				foreach (Variable member in node.PlayerValue.getMembers(flashInterface.Session))
+				{
+					VariableNode memberNode = new VariableNode(member);
+
+					if (member.isAttributeSet(VariableAttribute_.IS_STATIC))
+					{
+						statics.Add(memberNode);
+					}
+					else if (member.getLevel() > 0)
+					{
+						inherited.Add(memberNode);
+					}
+					else
+					{
+						nodes.Add(memberNode);
+					}
+				}
+				// inherited vars
+				if (inherited.Count > 0)
+				{
+					if (combineInherited)
+					{
+						// list inherited alongside main class members
+						foreach (DataNode item in inherited)
+						{
+							node.Nodes.Add(item);
+						}
+
+					}
+					else
+					{
+						// list inherited in a [inherited] group
+						ValueNode inheritedNode = new ValueNode("[inherited]");
+						inherited.Sort();
+						foreach (DataNode item in inherited)
+						{
+							inheritedNode.Nodes.Add(item);
+						}
+						node.Nodes.Add(inheritedNode);
+
+					}
+				}
+
+				// static vars
+				if (statics.Count > 0)
+				{
+					DataNode staticNode = new ValueNode("[static]");
+					statics.Sort();
+					foreach (DataNode item in statics)
+					{
+						staticNode.Nodes.Add(item);
+					}
+					node.Nodes.Add(staticNode);
+				}
+				// test children
+				foreach (String ch in node.PlayerValue.getClassHierarchy(false))
+				{
+					if (ch.Equals("flash.display::DisplayObjectContainer"))
+					{
+						double numChildren = ((java.lang.Double)node.PlayerValue.getMemberNamed(flashInterface.Session, "numChildren").getValue().getValueAsObject()).doubleValue();
+						DataNode childrenNode = new ValueNode("[children]");
+						for (int i = 0; i < numChildren; i++)
+						{
+							try
+							{
+								IASTBuilder b = new ASTBuilder(false);
+								string cmd = node.GetVariablePath() + ".getChildAt(" + i + ")";
+								ValueExp exp = b.parse(new java.io.StringReader(cmd));
+								var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
+								var obj = exp.evaluate(ctx);
+								if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", (flash.tools.debugger.concrete.DValue)obj, ((flash.tools.debugger.concrete.DValue)obj).getIsolateId());
+								DataNode childNode = new VariableNode((Variable)obj);
+								childNode.Text = "child_" + i;
+								childrenNode.Nodes.Add(childNode);
+							}
+							catch (Exception) { }
+						}
+						node.Nodes.Add(childrenNode);
+					}
+					else if (ch.Equals("flash.events::EventDispatcher"))
+					{
+						Variable list = node.PlayerValue.getMemberNamed(flashInterface.Session, "listeners");
+						var omg = list.getName();
+						/*
+						double numChildren = ((java.lang.Double)node.Variable.getValue().getMemberNamed(flashInterface.Session, "numChildren").getValue().getValueAsObject()).doubleValue();
+						DataNode childrenNode = new DataNode("[children]");
+						for (int i = 0; i < numChildren; i++)
+						{
+							try
+							{
+
+								IASTBuilder b = new ASTBuilder(false);
+								string cmd = GetVariablePath(node) + ".getChildAt(" + i + ")";
+								ValueExp exp = b.parse(new java.io.StringReader(cmd));
+								var ctx = new ExpressionContext(flashInterface.Session, flashInterface.Session.getFrames()[PluginMain.debugManager.CurrentFrame]);
+								var obj = exp.evaluate(ctx);
+								if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("child_" + i, (flash.tools.debugger.concrete.DValue)obj);
+								DataNode childNode = new DataNode((Variable)obj);
+								childrenNode.Nodes.Add(childNode);
+							}
+							catch (Exception) { }
+						}
+						node.Nodes.Add(childrenNode);
+						 * */
+					}
+				}
+				//test children
+				nodes.Sort();
+
+				// add child items
+				_tree.BeginUpdate();
+				foreach (DataNode item in nodes)
+				{
+					if (0 == tmpLimit--) break;
+					node.Nodes.Add(item);
+				}
+				if (tmpLimit == -1)
+				{
+					DataNode moreNode = new ContinuedDataNode();
+					node.Nodes.Add(moreNode);
+				}
+				_tree.EndUpdate();
+			}
+		}
 
         void Tree_NodeMouseDoubleClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
@@ -563,6 +590,12 @@ namespace FlashDebugger.Controls
                 if (topNode != null) Tree.EnsureVisible(topNode);
             }
         }
+		
+		public static bool CombineInherited
+		{
+			get { return DataTreeControl.combineInherited; }
+			set { DataTreeControl.combineInherited = value; }
+		}
 
         #region IToolTipProvider Members
 
@@ -599,6 +632,40 @@ namespace FlashDebugger.Controls
         }
 
         #endregion
+		
+		
+		#region Copy ID & Tree
+
+		private void CopyItemIDClick(Object sender, System.EventArgs e)
+		{
+			if (Tree.SelectedNode != null)
+			{
+
+				ValueNode node = Tree.SelectedNode.Tag as ValueNode;
+				Clipboard.SetText(node.ID);
+
+			}
+		}
+
+		private void CopyItemTreeClick(Object sender, System.EventArgs e)
+		{
+			CopyTreeInternal(0);
+		}
+
+		private void CopyTreeInternal(int levelLimit)
+		{
+			if (Tree.SelectedNode != null)
+			{
+
+				ValueNode node = Tree.SelectedNode.Tag as ValueNode;
+				Clipboard.SetText(CopyTreeHelper.GetTreeAsText(Tree.SelectedNode, node, "\t", this, levelLimit));
+
+			}
+		}
+
+
+		#endregion
+		
     }
 
 }
