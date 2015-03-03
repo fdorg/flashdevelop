@@ -17,11 +17,10 @@ namespace FlashDebugger.Controls
         private DataTreeModel _model;
         private static ViewerForm viewerForm = null;
         private ContextMenuStrip _contextMenuStrip;
-        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem;
+        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyIDMenuItem, copyTreeMenuItem;
 		private List<String> expandedList = new List<String>();
 		private bool watchMode;
-		private ToolStripMenuItem copyIDMenuItem;
-		private ToolStripMenuItem copyTreeMenuItem;
+		private static bool combineInherited = false;
 
         public Collection<Node> Nodes
         {
@@ -280,25 +279,33 @@ namespace FlashDebugger.Controls
 					}
 				}
 
+
 				// inherited vars
 				if (inherited.Count > 0)
 				{
-					// list inherited alongside main class members
-					foreach (DataNode item in inherited)
+					if (combineInherited)
 					{
-						node.Nodes.Add(item);
-					}
+						// list inherited alongside main class members
+						foreach (DataNode item in inherited)
+						{
+							node.Nodes.Add(item);
+						}
 
-					// list inherited in a [inherited] group
-					/*DataNode inheritedNode = new DataNode("[inherited]");
-					inherited.Sort();
-					foreach (DataNode item in inherited)
+					}
+					else
 					{
-						inheritedNode.Nodes.Add(item);
-					}
-					node.Nodes.Add(inheritedNode);*/
+						// list inherited in a [inherited] group
+						DataNode inheritedNode = new DataNode("[inherited]");
+						inherited.Sort();
+						foreach (DataNode item in inherited)
+						{
+							inheritedNode.Nodes.Add(item);
+						}
+						node.Nodes.Add(inheritedNode);
 
+					}
 				}
+
 
 				// static vars
 				if (statics.Count > 0)
@@ -440,6 +447,12 @@ namespace FlashDebugger.Controls
 		}
 
 
+		public static bool CombineInherited
+		{
+			get { return DataTreeControl.combineInherited; }
+			set { DataTreeControl.combineInherited = value; }
+		}
+
         #region IToolTipProvider Members
 
         public string GetToolTip(TreeNodeAdv node, NodeControl nodeControl)
@@ -456,8 +469,6 @@ namespace FlashDebugger.Controls
 
         #endregion
 		
-		
-		// ADDED
 		#region Copy ID & Tree
 
 		private void CopyItemIDClick(Object sender, System.EventArgs e)
