@@ -374,7 +374,7 @@ namespace OutputPanel
                         }
                     }
                 }
-                if (state == 1)
+                if (state == 1 || state == 0)
                 {
                     state = GetHighlightState(message);
                 }
