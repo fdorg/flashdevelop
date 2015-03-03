@@ -49,19 +49,49 @@ namespace FlashDebugger.Controls
 			return m_Value.getName().length()>0 && m_Value.getName().startsWith("_") ? 1 : -1;
 		}
 
+		public string ID
+		{
+			get
+			{
+				if (m_Value != null)
+				{
+					int type = m_Value.getValue().getType();
+					if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
+					{
+						return m_Value.getValue().getTypeName().replaceAll("::", ".").replaceAll("@", " - ").ToString();
+					}
+					else if (type == VariableType_.FUNCTION)
+					{
+						return "Function - " + m_Value.getValue().ToString();
+					}
+				}
+				return "";
+			}
+		}
+
 		public string Value
-        {
-            get
+		{
+			get
 			{
 				if (m_Value == null)
 				{
 					return string.Empty;
 				}
-                int type = m_Value.getValue().getType();
-                string temp = null;
+				int type = m_Value.getValue().getType();
+				string temp = null;
 				if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
 				{
-                    return m_Value.getValue().getTypeName();
+
+					// return class type without classpath
+					string typeStr = Strings.AfterLast(m_Value.getValue().getTypeName().ToString(), "::", true);
+					string shortStr = Strings.Before(typeStr, "@");
+					if (shortStr == "[]")
+					{
+						return "Array";
+					}
+					return typeStr;
+
+					//return m_Value.getValue().getTypeName();
 				}
 				else if (type == VariableType_.NUMBER)
 				{
@@ -92,13 +122,13 @@ namespace FlashDebugger.Controls
 					{
 						if (!m_bEditing)
 						{
-                            temp = "\"" + escape(m_Value.ToString()) + "\"";
+							temp = "\"" + escape(m_Value.ToString()) + "\"";
 						}
 						else
 						{
-                            temp = m_Value.ToString();
+							temp = m_Value.ToString();
 						}
-                        return temp;
+						return temp;
 					}
 				}
 				else if (type == VariableType_.NULL)
@@ -107,15 +137,16 @@ namespace FlashDebugger.Controls
 				}
 				else if (type == VariableType_.FUNCTION)
 				{
-                    m_Value.ToString();
+					return "Function";
+					//m_Value.ToString();
 					//return "<setter>";
 				}
-                if (temp == null) temp = m_Value.ToString();
-                if (!m_bEditing)
-                {
-                    temp = escape(temp);
-                }
-                return temp;
+				if (temp == null) temp = m_Value.ToString();
+				if (!m_bEditing)
+				{
+					temp = escape(temp);
+				}
+				return temp;
 			}
 			set
 			{
@@ -123,7 +154,7 @@ namespace FlashDebugger.Controls
 				{
 					return;
 				}
-                throw new NotImplementedException();
+				throw new NotImplementedException();
 #if false
 				int type = m_Value.getValue().getType();
 				if (type == VariableType_.NUMBER)
@@ -140,7 +171,7 @@ namespace FlashDebugger.Controls
 				}
 #endif
 			}
-        }
+		}
 
         private string escape(string text)
         {

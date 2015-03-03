@@ -138,8 +138,10 @@
     <Compile Include="Debugger\ExpressionContext.cs" />
     <Compile Include="Debugger\FlashInterface.cs" />
     <Compile Include="Debugger\VariableFacade.cs" />
+    <Compile Include="Helpers\CopyAsTree.cs" />
     <Compile Include="Helpers\MenusHelper.cs" />
     <Compile Include="Helpers\PanelsHelper.cs" />
+    <Compile Include="Helpers\StringsHelper.cs" />
     <Compile Include="Helpers\ScintillaHelper.cs" />
     <Compile Include="PluginUI.cs">
       <SubType>UserControl</SubType>
