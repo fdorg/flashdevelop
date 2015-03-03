@@ -207,9 +207,13 @@ namespace ProjectManager.Actions
                 string playerglobalHome = Environment.ExpandEnvironmentVariables("%PLAYERGLOBAL_HOME%");
                 if (playerglobalHome.StartsWith("%")) setPlayerglobalHomeEnv = true;
                 if (setPlayerglobalHomeEnv)
-                    Environment.SetEnvironmentVariable("PLAYERGLOBAL_HOME", 
-                        Path.Combine(project.CurrentSDK, "frameworks/libs/player"));
+                {
+                    Environment.SetEnvironmentVariable("PLAYERGLOBAL_HOME", Path.Combine(project.CurrentSDK, "frameworks/libs/player"));
+                }
             }
+
+            // Lets expose current sdk
+            Environment.SetEnvironmentVariable("FD_CUR_SDK", project.CurrentSDK ?? "");
 
             // run FDBuild
             fdProcess.StartProcess(fdBuildPath, "\"" + project.ProjectPath + "\"" + arguments,
