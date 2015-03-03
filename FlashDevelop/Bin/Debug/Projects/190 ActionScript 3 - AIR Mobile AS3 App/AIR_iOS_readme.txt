@@ -45,14 +45,14 @@ AIR for iOS instructions
 	Note: if are testing your application for performance, always package for release (see step 7.)
 	
 	6.a. Build/Debug on device
-	- edit 'Run.bat' and change the run target 'goto desktop' by 'goto ios-debug'
+	- edit 'bat\RunApplication.bat' and change the run target 'goto desktop' by 'goto ios-debug'
 	- build as usual (Ctrl+Enter or F5) to package
 	- you'll still have to manually upload & run the app on the device
 	- the application should connect to FlashDevelop interactive debugger as usual
 	
 	6.b. Debug occasionally on device
 	- Debug-build from FlashDevelop (F8)
-	- run 'PackageApp.bat' to package and install a debug version of the application
+	- run 'bat\PackageApplication.bat' to package and install a debug version of the application
 	- start FlashDevelop debugger: Debug > Start Remote Session
 	- start the application on device
 	- the application should connect to FlashDevelop interactive debugger as usual
@@ -64,7 +64,7 @@ AIR for iOS instructions
 	  Note: you can package ad-hoc IPAs using your developer certificate.
 	
 	- Release-build from FlashDevelop (F8)
-	- run 'PackageApp.bat' and select 
+	- run 'bat\PackageApplication.bat' and select 
 	    either iOS/"ad-hoc" for installation on test devices
 	    or iOS/App Store for upload in the iOS App Store.
 

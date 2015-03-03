@@ -3,7 +3,6 @@
 :: Path to Flex SDK
 set FLEX_SDK=%FD_CUR_SDK%
 
-
 :validation
 if not exist "%FLEX_SDK%\bin" goto flexsdk
 goto succeed
@@ -19,4 +18,3 @@ exit
 
 :succeed
 set PATH=%FLEX_SDK%\bin;%PATH%
-

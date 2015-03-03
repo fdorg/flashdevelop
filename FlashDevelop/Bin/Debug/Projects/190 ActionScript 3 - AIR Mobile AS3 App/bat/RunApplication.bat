@@ -27,7 +27,6 @@ adl -screensize %SCREEN_SIZE% "%APP_XML%" "%APP_DIR%"
 if errorlevel 1 goto end
 goto endNoPause
 
-
 :ios-debug
 echo.
 echo Packaging application for debugging on iOS %INTERPRETER%
