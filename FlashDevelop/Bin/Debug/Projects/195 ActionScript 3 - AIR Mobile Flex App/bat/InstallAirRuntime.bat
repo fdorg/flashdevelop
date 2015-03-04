@@ -5,6 +5,7 @@ call SetupSDK.bat
 :: AIR runtime installer
 set AIR_INSTALLER=%FLEX_SDK%\runtimes\air\android\device\runtime.apk
 
+
 :: Install
 adb devices
 echo.

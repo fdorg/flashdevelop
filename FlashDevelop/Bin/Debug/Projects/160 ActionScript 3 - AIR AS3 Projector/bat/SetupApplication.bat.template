@@ -27,6 +27,7 @@ set APP_ID=%APP_ID: =%
 set AIR_PATH=air
 set AIR_NAME=$(PROJECTID)
 
+
 :validation
 %SystemRoot%\System32\find /C "<id>%APP_ID%</id>" "%APP_XML%" > NUL
 if errorlevel 1 goto badid

@@ -73,6 +73,6 @@
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="Custom" />
-    <option testMovieCommand="bat\RunApplication.bat" />
+    <option testMovieCommand="Run.bat" />
   </options>
 </project>

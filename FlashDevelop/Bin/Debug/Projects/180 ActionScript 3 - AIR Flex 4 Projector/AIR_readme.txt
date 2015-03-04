@@ -2,7 +2,7 @@ AIR for desktop instructions
 
 1. Configuration
 
-	- edit 'bat\SetupSDK.bat' for the path to Flex SDK (default variable should be ok)
+	- edit 'bat\SetupSDK.bat' for the path to Flex SDK
 
 
 2. Creating a self-signed certificate:
@@ -17,4 +17,4 @@ AIR for desktop instructions
 
 4. Packaging for release:
 
-	- run 'bat\PackageApplication.bat' to only create the AIR setup
+	- run 'PackageApp.bat' to only create the AIR setup

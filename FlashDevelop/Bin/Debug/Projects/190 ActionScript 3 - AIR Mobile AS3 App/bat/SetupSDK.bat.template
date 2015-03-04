@@ -7,6 +7,7 @@ set AUTO_INSTALL_IOS=yes
 :: Path to Android SDK
 set ANDROID_SDK=$(AppDir)\Tools\android
 
+
 :validation
 if not exist "%FLEX_SDK%\bin" goto flexsdk
 if not exist "%ANDROID_SDK%\platform-tools" goto androidsdk
@@ -33,3 +34,4 @@ exit
 :succeed
 set PATH=%FLEX_SDK%\bin;%PATH%
 set PATH=%PATH%;%ANDROID_SDK%\platform-tools
+
