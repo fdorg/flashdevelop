@@ -5,7 +5,6 @@ if "%PLATFORM%"=="ios" goto ios-config
 if "%PLATFORM%"=="ios-dist" goto ios-dist-config
 goto start
 
-
 :android-config
 set CERT_FILE=%AND_CERT_FILE%
 set SIGNING_OPTIONS=%AND_SIGNING_OPTIONS%
@@ -29,7 +28,6 @@ set ICONS=%IOS_ICONS%
 set DIST_EXT=ipa
 set TYPE=ipa
 goto start
-
 
 :start
 if not exist "%CERT_FILE%" goto certificate
@@ -71,3 +69,4 @@ if %PAUSE_ERRORS%==1 pause
 exit
 
 :end
+
