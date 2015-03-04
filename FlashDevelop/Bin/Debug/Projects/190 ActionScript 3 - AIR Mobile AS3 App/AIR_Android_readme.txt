@@ -2,7 +2,7 @@ AIR for Android instructions
 
 1. Configuration:
 
-	- edit 'bat\SetupSDK.bat' for paths to Flex SDK and Android SDK (defaults should be ok)
+	- edit 'bat\SetupSDK.bat' for paths to Flex SDK and Android SDK (default should be ok)
 	
 	- install your device's USB drivers:
 	    http://developer.android.com/sdk/oem-usb.html
