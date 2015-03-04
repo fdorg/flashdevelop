@@ -1,0 +1,138 @@
+# HG changeset patch
+# User Gama11 <jensfischer95@gmail.com>
+# Date 1414766015 -3600
+#      Fri Oct 31 15:33:35 2014 +0100
+# Node ID c207ae6c51f3fe90455dddc88069ac3923881fb9
+# Parent  168666bf4ac56b2ed5b948152c3a460d2b39d393
+$$ escaping
+
+diff --git a/lexers/LexCPP.cxx b/lexers/LexCPP.cxx
+--- a/lexers/LexCPP.cxx
++++ b/lexers/LexCPP.cxx
+@@ -1028,16 +1028,20 @@
+ 					if (sc.chNext == '\"' || sc.chNext == '\'' || sc.chNext == '\\') {
+ 						sc.Forward();
+ 					}
+-                } else if (options.interpolatedStrings && sc.ch == '$') {
+-                    sc.SetState(SCE_C_DEFAULT|activitySet);
+-                    interpolationType = (sc.chNext == '{') ? 2 : 1;
+-				} else if (sc.ch == '\'') {
++                } else if (sc.ch == '\'') {
+ 					if (sc.chNext == '_') {
+ 						sc.ChangeState(SCE_C_USERLITERAL|activitySet);
+ 					} else {
+ 						sc.ForwardSetState(SCE_C_DEFAULT|activitySet);
+ 					}
+-				}
++                } else if (options.interpolatedStrings && sc.ch == '$') {
++                    if (sc.chNext == '$') {
++                        sc.Forward(); //eat escaped dollar sign
++                    } else {
++                        sc.SetState(SCE_C_DEFAULT | activitySet);
++                        interpolationType = (sc.chNext == '{') ? 2 : 1;
++                    }
++                }
+ 				break;
+ 			case SCE_C_REGEX:
+ 				if (sc.atLineStart) {
+# HG changeset patch
+# User Gama11 <jensfischer95@gmail.com>
+# Date 1414702000 -3600
+#      Thu Oct 30 21:46:40 2014 +0100
+# Node ID d9d7342e56a25e6172b687a735e38ca67ed9ee3d
+# Parent  ae2518f9b3c98898e47b67b1a4dab51f0c01f4d6
+String interpolation
+
+diff --git a/lexers/LexCPP.cxx b/lexers/LexCPP.cxx
+--- a/lexers/LexCPP.cxx
++++ b/lexers/LexCPP.cxx
+@@ -309,6 +309,7 @@
+ 	bool triplequotedStrings;
+ 	bool hashquotedStrings;
+ 	bool backQuotedStrings;
++    bool interpolatedStrings;
+ 	bool escapeSequence;
+ 	bool fold;
+ 	bool foldSyntaxBased;
+@@ -329,6 +330,7 @@
+ 		triplequotedStrings = false;
+ 		hashquotedStrings = false;
+ 		backQuotedStrings = false;
++        interpolatedStrings = false;
+ 		escapeSequence = false;
+ 		fold = false;
+ 		foldSyntaxBased = true;
+@@ -379,6 +381,9 @@
+ 		DefineProperty("lexer.cpp.backquoted.strings", &OptionsCPP::backQuotedStrings,
+ 			"Set to 1 to enable highlighting of back-quoted raw strings .");
+ 
++        DefineProperty("lexer.cpp.interpolated.strings", &OptionsCPP::interpolatedStrings,
++            "Set to 1 to enable String interpolation in single quote strings");
++
+ 		DefineProperty("lexer.cpp.escape.sequence", &OptionsCPP::escapeSequence,
+ 			"Set to 1 to enable highlighting of escape sequences in strings");
+ 
+@@ -426,6 +431,7 @@
+ 
+ class LexerCPP : public ILexerWithSubStyles {
+ 	bool caseSensitive;
++    int interpolationType;
+ 	CharacterSet setWord;
+ 	CharacterSet setNegationOp;
+ 	CharacterSet setArithmethicOp;
+@@ -1001,10 +1007,13 @@
+ 			case SCE_C_CHARACTER:
+ 				if (sc.atLineEnd) {
+ 					sc.ChangeState(SCE_C_STRINGEOL|activitySet);
+-				} else if (sc.ch == '\\') {
++                } else if (sc.ch == '\\') {
+ 					if (sc.chNext == '\"' || sc.chNext == '\'' || sc.chNext == '\\') {
+ 						sc.Forward();
+ 					}
++                } else if (options.interpolatedStrings && sc.ch == '$') {
++                    sc.SetState(SCE_C_DEFAULT|activitySet);
++                    interpolationType = (sc.chNext == '{') ? 2 : 1;
+ 				} else if (sc.ch == '\'') {
+ 					if (sc.chNext == '_') {
+ 						sc.ChangeState(SCE_C_USERLITERAL|activitySet);
+@@ -1082,10 +1091,10 @@
+ 			} else if (options.hashquotedStrings && sc.Match('#', '\"')) {
+ 				sc.SetState(SCE_C_HASHQUOTEDSTRING|activitySet);
+ 				sc.Forward();
+-			} else if (options.backQuotedStrings && sc.Match('`')) {
+-				sc.SetState(SCE_C_STRINGRAW|activitySet);
+-				rawStringTerminator = "`";
+-				sc.Forward();
++            } else if (options.backQuotedStrings && sc.Match('`')) {
++                sc.SetState(SCE_C_STRINGRAW | activitySet);
++                rawStringTerminator = "`";
++                sc.Forward();
+ 			} else if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) {
+ 				if (lastWordWasUUID) {
+ 					sc.SetState(SCE_C_UUID|activitySet);
+@@ -1120,6 +1129,25 @@
+ 				       || !FollowsPostfixOperator(sc, styler))) {
+ 				sc.SetState(SCE_C_REGEX|activitySet);	// JavaScript's RegEx
+ 				inRERange = false;
++            } else if (options.interpolatedStrings && interpolationType == 1) {
++                if (sc.ch == '\'') {
++                    sc.SetState(SCE_C_CHARACTER|activitySet);
++                    sc.Forward();
++                    sc.SetState(SCE_C_DEFAULT|activitySet);
++                    interpolationType = 0;
++                } else if (!isalnum(sc.ch) && sc.ch != '_') {
++                    sc.SetState(SCE_C_CHARACTER|activitySet);
++                    interpolationType = 0;
++                }
++            } else if (options.interpolatedStrings && interpolationType == 2) {
++                if (sc.ch == '}') {
++                    sc.ForwardSetState(SCE_C_CHARACTER|activitySet);
++                    interpolationType = 0;
++                }
++                if (sc.ch == '\'') {
++                    sc.Forward();
++                    sc.SetState(SCE_C_DEFAULT|activitySet);
++                }
+ 			} else if (sc.ch == '\"') {
+ 				if (sc.chPrev == 'R') {
+ 					styler.Flush();
