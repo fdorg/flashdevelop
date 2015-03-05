@@ -627,12 +627,14 @@ namespace AS3Context
     {
         public bool IsFinal = false;
         public bool IsDynamic = false;
+        public bool IsStatic = false;
 
         public string ShortDesc = null;
         public string LongDesc = null;
         public string Returns = null;
         public string Value = null;
         public string ApiType = null;
+        public string DeclType = null;
 
         public List<ASMetaData> Meta;
         public Dictionary<string, string> Params = new Dictionary<string, string>();
@@ -673,7 +675,7 @@ namespace AS3Context
         //	PRIMARY
         //---------------------------
 
-        private void ReadDeclaration()
+        private void ReadDeclaration(string declType)
         {
             if (IsEmptyElement)
                 return;
@@ -682,6 +684,8 @@ namespace AS3Context
                 this.ExcludedASDocs = new List<string>();
 
             ASDocItem doc = new ASDocItem();
+            doc.DeclType = declType;
+
             string id = GetAttribute("id");
 
             if (id != null)
@@ -732,7 +736,9 @@ namespace AS3Context
                         if (!this.ExcludedASDocs.Contains(extraASDoc.Key))
                             doc.LongDesc += "\n@" + extraASDoc.Key + "\t" + extraASDoc.Value;
 
-                if (doc.ShortDesc.Length > 0 || doc.LongDesc.Length > 0)
+                // keep definitions including either documentation or static values
+                if (doc.ShortDesc.Length > 0 || doc.LongDesc.Length > 0
+                    || (doc.IsStatic && doc.Value != null && doc.DeclType == "apiValue"))
                     docs[id] = doc;
             }
         }
@@ -758,7 +764,7 @@ namespace AS3Context
                 case "apiValue":
                 case "apiOperation":
                 case "apiConstructor":
-                    ReadDeclaration();
+                    ReadDeclaration(Name);
                     break;
 
                 case "shortdesc": doc.ShortDesc = ReadValue(); break;
@@ -771,6 +777,8 @@ namespace AS3Context
                 case "adobeApiEvent": ReadEventMeta(doc); break;
 
                 case "apiFinal": doc.IsFinal = true; SkipContents(); break;
+                case "apiStatic": 
+                    doc.IsStatic = true; break;
 
                 case "apiParam": ReadParamDesc(doc); break;
                 case "apiReturn": ReadReturnsDesc(doc); break;
