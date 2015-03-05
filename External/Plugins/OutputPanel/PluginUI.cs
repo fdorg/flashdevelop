@@ -356,6 +356,7 @@ namespace OutputPanel
             Color currentColor = Color.Black;
             int oldSelectionStart = this.textLog.SelectionStart;
             int oldSelectionLength = this.textLog.SelectionLength;
+            List<HighlightMarker> markers = this.pluginMain.PluginSettings.HighlightMarkers;
 			int visibPos = this.textLog.GetCharIndexFromPosition(Point.Empty);
             for (Int32 i = this.logCount; i < newCount; i++)
             {
@@ -363,15 +364,23 @@ namespace OutputPanel
                 state = entry.State;
                 if (entry.Message == null) message = "";
                 else message = entry.Message;
-                // automatic state from message
-                // ie. "2:message" -> state = 2
-                if (state == 1 && message.Length > 2)
+                // Automatic state from message, legacy format, ie. "2:message" -> state = 2
+                if (this.pluginMain.PluginSettings.UseLegacyColoring && state == 1 && message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
                 {
-                    if (message[1] == ':' && Char.IsDigit(message[0]))
+                    if (int.TryParse(message[0].ToString(), out state))
                     {
-                        if (int.TryParse(message[0].ToString(), out state))
+                        message = message.Substring(2);
+                    }
+                }
+                // Automatic state from message: New format with customizable markers
+                if (state == 1 && markers != null && markers.Count > 0)
+                {
+                    foreach (HighlightMarker marker in markers)
+                    {
+                        if (message.Contains(marker.Marker))
                         {
-                            message = message.Substring(2);
+                            state = (int)marker.Level;
+                            break;
                         }
                     }
                 }
@@ -600,7 +609,7 @@ namespace OutputPanel
         }
 
         /// <summary>
-        /// 
+        /// Toggle the scrolling enabled
         /// </summary>
         private void ToggleButtonClick(object sender, EventArgs e)
         {
@@ -611,7 +620,7 @@ namespace OutputPanel
         }
 
         /// <summary>
-        /// 
+        /// Handle the muting of the traces
         /// </summary>
         private void TextLogMouseDown(object sender, MouseEventArgs e)
         {
@@ -619,7 +628,7 @@ namespace OutputPanel
         }
 
         /// <summary>
-        /// 
+        /// Handle the muting of the traces
         /// </summary>
         private void TextLogMouseUp(object sender, MouseEventArgs e)
         {

@@ -5882,4 +5882,20 @@
     <value>Batch Process</value>
     <comment>Added after 4.7.1</comment>
   </data>
+  <data name="OutputPanel.Description.HighlightMarkers" xml:space="preserve">
+    <value>List of markers that highlight the message with the specified log level color.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.Level" xml:space="preserve">
+    <value>The log level that the line should be colored to.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.Marker" xml:space="preserve">
+    <value>Highlight marker that marks the line to be colored.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.UseLegacyColoring" xml:space="preserve">
+    <value>Use legacy coloring state format parsed from the message ('2:message').</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
 </root>

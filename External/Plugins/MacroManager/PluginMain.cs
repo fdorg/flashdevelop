@@ -435,6 +435,14 @@ namespace MacroManager
             set { this.shortcut = value; }
         }
 
+        /// <summary>
+        /// Use shorten name for the macro item
+        /// </summary>
+        public override string ToString()
+        {
+            return "Macro";
+        }
+
     }
 
     #endregion
