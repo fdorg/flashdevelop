@@ -99,9 +99,9 @@ namespace PluginCore.Controls
 			try
 			{
 				CompletionList.CreateControl(PluginBase.MainForm);
-                CompletionList.completionList.Tip = simpleTip = new RichToolTip(PluginBase.MainForm);
-                CompletionList.completionList.CallTip = callTip = new MethodCallTip(PluginBase.MainForm);
-            }
+                simpleTip = CompletionList.completionList.Tip;
+                callTip = CompletionList.completionList.CallTip;
+			}
 			catch(Exception ex)
 			{
 				ErrorManager.ShowError(/*"Error while creating editor controls.",*/ ex);
@@ -111,7 +111,6 @@ namespace PluginCore.Controls
             //
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control); // complete member
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Shift); // complete method
-            PluginBase.MainForm.DockPanel.ActivePaneChanged += new EventHandler(DockPanel_ActivePaneChanged);
             EventManager.AddEventHandler(this, eventMask);
 		}
         #endregion
@@ -120,15 +119,6 @@ namespace PluginCore.Controls
         private Point lastMousePos = new Point(0,0);
 
         #region SciControls & MainForm Events
-
-        private void DockPanel_ActivePaneChanged(object sender, EventArgs e)
-        {
-            if (PluginBase.MainForm.DockPanel.ActivePane != null 
-                && PluginBase.MainForm.DockPanel.ActivePane != PluginBase.MainForm.DockPanel.ActiveDocumentPane)
-            {
-                OnUIRefresh(null);
-            }
-        }
 
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
 		{
@@ -305,6 +295,7 @@ namespace PluginCore.Controls
                 if (CompletionList.Active && CompletionList.CheckPosition(position)) return;
                 if (callTip.CallTipActive && callTip.CheckPosition(position)) return;
 			}
+		    CompletionList.Hide();
             callTip.Hide();
             simpleTip.Hide();
 		}
@@ -322,7 +313,11 @@ namespace PluginCore.Controls
 
         private void OnGotFocus(object sender, EventArgs e)
         {
-            ((CompletionList.ScintillaHost)CompletionList.completionList.Host).SciControl = (ScintillaControl)sender;
+            var sci = (ScintillaControl)sender;
+            ((CompletionList.ScintillaHost)CompletionList.completionList.Host).SciControl = sci;
+            var language = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
+            if (language != null)   // Should we provide some custom string otherwise?
+                CompletionList.completionList.CharacterClass = language.characterclass.Characters;
         }
 
         private void OnChar(ScintillaControl sci, int value)
@@ -342,7 +337,7 @@ namespace PluginCore.Controls
             //    return;
             //}
             
-            if (callTip.CallTipActive) callTip.OnChar(sci, value);
+            if (callTip.CallTipActive) callTip.OnChar(value);
 			if (CompletionList.Active) CompletionList.OnChar(sci, value);
             else SendChar(sci, value);
 		}
@@ -376,45 +371,14 @@ namespace PluginCore.Controls
 			}
 
             // toggle "long-description" for the hover tooltip
-            if (key == Keys.F1 && Tip.Visible && !CompletionList.Active)
+            if (key == Keys.F1 && Tip.Visible && !CompletionList.Active && !CallTip.Visible)
             {
                 showDetails = !showDetails;
-                simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
+                simpleTip.UpdateTip();
                 return true;
             }
 
-			// are we currently displaying something?
-            if (!CompletionList.Active && !callTip.CallTipActive) return false;
-			
-			// hide if pressing Esc or Ctrl+Key combination
-			if (lockedSciControl == null || !lockedSciControl.IsAlive || key == Keys.Escape
-			    || ((Control.ModifierKeys & Keys.Control) != 0 && Control.ModifierKeys != (Keys.Control|Keys.Alt)) )
-			{
-                if (key == (Keys.Control | Keys.C) || key == (Keys.Control | Keys.A))
-                    return false; // let text copy in tip
-				UnlockControl();
-				//CompletionList.Hide((char)27);
-                callTip.Hide();
-				return false;
-			}
-			ScintillaControl sci = (ScintillaControl)lockedSciControl.Target;
-			// chars
-			string ks = key.ToString();
-            if (ks.Length == 1 || (ks.EndsWith(", Shift") && ks.IndexOf(',') == 1) || ks.StartsWith("NumPad"))
-			{
-				return false;
-			}
-
-			// switches
-			if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
-			{
-				return false;
-			}
-
-            // handle special keys
-            bool handled = false;
-            if (callTip.CallTipActive) handled |= callTip.HandleKeys(sci, key);
-            return handled;
+            return false;
 		}
 		
 		

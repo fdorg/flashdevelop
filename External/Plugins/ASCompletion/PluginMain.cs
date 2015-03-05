@@ -900,16 +900,16 @@ namespace ASCompletion
             ASContext.OnTextChanged(sender, position, length, linesAdded);
         }
 
-		private void OnUpdateCallTip(ScintillaNet.ScintillaControl sci, int position)
+		private void OnUpdateCallTip(Control sci, int position)
 		{
-            if (ASComplete.HasCalltip())
-                ASComplete.HandleFunctionCompletion(sci, false, true);
-        }
+		    if (!ASComplete.HandleFunctionCompletion((ScintillaNet.ScintillaControl) sci, false, true))
+		        UITools.CallTip.Hide();
+		}
 
-        private void OnUpdateSimpleTip(ScintillaNet.ScintillaControl sci, Point mousePosition)
+        private void OnUpdateSimpleTip(Control sci, Point mousePosition)
         {
             if (UITools.Tip.Visible)
-                OnMouseHover(sci, lastHoverPosition);
+                OnMouseHover((ScintillaNet.ScintillaControl)sci, lastHoverPosition);
         }
 
         void timerPosition_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

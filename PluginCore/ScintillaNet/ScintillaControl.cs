@@ -162,6 +162,7 @@ namespace ScintillaNet
         public event UpdateSyncHandler UpdateSync;
         public event SelectionChangedHandler SelectionChanged;
         public event ScrollEventHandler Scroll;
+        public event KeyEventHandler KeyPosted; //Hacky event for MethodCallTip, although with some rather valid use cases
 
         #endregion
 
@@ -5211,6 +5212,14 @@ namespace ScintillaNet
             OnScroll(new ScrollEventArgs(set, oldScroll, newScroll, so));
         }
 
+        protected override void DefWndProc(ref Message m)
+        {
+            base.DefWndProc(ref m);
+
+            if (m.Msg == WM_KEYDOWN || m.Msg == WM_SYSKEYDOWN)  // If we're worried about performance/GC, we can store latest OnKeyDown e
+                OnKeyPosted(new KeyEventArgs((Keys)((int)m.WParam) | ModifierKeys));
+        }
+
         protected override void WndProc(ref System.Windows.Forms.Message m)
         {
             switch (m.Msg)
@@ -5433,8 +5442,15 @@ namespace ScintillaNet
             if (!e.Handled && keyCommands.TryGetValue(e.KeyData, out keyCommand))
             {
                 keyCommand();
+                OnKeyPosted(e);
                 e.SuppressKeyPress = true;
             }
+        }
+
+        protected virtual void OnKeyPosted(KeyEventArgs e)
+        {
+            if (KeyPosted != null)
+                KeyPosted(this, e);
         }
 
         /// <summary>

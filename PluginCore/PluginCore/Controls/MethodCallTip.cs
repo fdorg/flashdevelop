@@ -3,14 +3,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using ScintillaNet;
 
 namespace PluginCore.Controls
 {
     
     public class MethodCallTip: RichToolTip
     {
-        public delegate void UpdateCallTipHandler(ScintillaControl sender, int position);
+        public delegate void UpdateCallTipHandler(Control sender, int position);
 
         // events
         public event UpdateCallTipHandler OnUpdateCallTip;
@@ -30,11 +29,14 @@ namespace PluginCore.Controls
         protected int memberPos;
         protected int startPos;
 		protected int currentPos;
-		protected int deltaPos;
         protected int currentLine;
 
-        public MethodCallTip(IMainForm mainForm): base(mainForm)
+        protected CompletionListControl completionList;
+
+        public MethodCallTip(CompletionListControl owner): base(owner.Host)
         {
+            completionList = owner;
+            host.VisibleChanged += Host_VisibleChanged;
         }
 
         public bool CallTipActive
@@ -47,9 +49,7 @@ namespace PluginCore.Controls
 			if (isActive)
 			{
 				isActive = false;
-                UITools.Manager.UnlockControl(); // unlock keys
 			}
-            faded = false;
             currentText = null;
             currentHLStart = -1;
             currentHLEnd = -1;
@@ -61,14 +61,19 @@ namespace PluginCore.Controls
             return position == currentPos;
         }
 
-		public void CallTipShow(ScintillaControl sci, int position, string text)
+		public void CallTipShow(int position, string text)
 		{
-			CallTipShow(sci, position, text, true);
+			CallTipShow(position, text, true);
 		}
-        public void CallTipShow(ScintillaControl sci, int position, string text, bool redraw)
+        public void CallTipShow(int position, string text, bool redraw)
         {
             if (host.Visible && position == memberPos && text == currentText)
+            {
+                if (owner.GetLineFromCharIndex(owner.CurrentPos) != currentLine)
+                    PositionControl();
+
                 return;
+            }
 
             host.Visible = false;
             currentText = text;
@@ -76,32 +81,39 @@ namespace PluginCore.Controls
 
             memberPos = position;
             startPos = memberPos + toolTipRTB.Text.IndexOf('(');
-            currentPos = sci.CurrentPos;
-			deltaPos = startPos - currentPos + 1;
-            currentLine = sci.CurrentLine;
-            PositionControl(sci);
+            PositionControl();
+            Show();
             // state
             isActive = true;
-            faded = false;
-            UITools.Manager.LockControl(sci);
         }
 
-        public void PositionControl(ScintillaControl sci)
+        public void PositionControl()
         {
+            currentPos = owner.CurrentPos;
+            currentLine = owner.GetLineFromCharIndex(currentPos);
             // compute control location
-            Point p = new Point(sci.PointXFromPosition(memberPos), sci.PointYFromPosition(memberPos));
-            p = sci.PointToScreen(p);
-            host.Left = p.X /*+ sci.Left*/;
-            bool hasListUp = !CompletionList.Active || CompletionList.listUp;
-            if (currentLine > sci.LineFromPosition(memberPos) || !hasListUp) host.Top = p.Y - host.Height /*+ sci.Top*/;
-            else host.Top = p.Y + UITools.Manager.LineHeight(sci) /*+ sci.Top*/;
-            // Keep on control area
-            if (host.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
+            Point p = owner.GetPositionFromCharIndex(memberPos);
+            p.Y = owner.GetPositionFromCharIndex(currentPos).Y;
+            if (p.Y < 0 || p.Y > owner.Owner.Height || p.X < 0 || p.X > owner.Owner.Width)
             {
-                host.Left = ((Form)PluginBase.MainForm).ClientRectangle.Right - host.Width;
+                Hide();
+                return;
             }
-            if (!host.Visible)
-                host.Show(owner);
+            p = owner.Owner.PointToScreen(p);
+            host.Left = p.X /*+ sci.Left*/;
+            bool hasListUp = !completionList.Active || completionList.listUp;
+            if (!hasListUp) host.Top = p.Y - host.Height /*+ sci.Top*/;
+            else host.Top = p.Y + owner.GetLineHeight();
+            // Keep on screen area
+            var screen = Screen.FromControl(owner.Owner);
+            if (host.Right > screen.WorkingArea.Right)
+            {
+                host.Left = screen.WorkingArea.Right - host.Width;
+            }
+            if (host.Left < 0)
+            {
+                host.Left = 0;
+            }
         }
 
 		public void CallTipSetHlt(int start, int end)
@@ -110,8 +122,12 @@ namespace PluginCore.Controls
 		}
         public void CallTipSetHlt(int start, int end, bool forceRedraw)
         {
-			if (currentHLStart == start && currentHLEnd == end)
-				return;
+            if (currentHLStart == start && currentHLEnd == end)
+            {
+                if (owner.GetLineFromCharIndex(owner.CurrentPos) != currentLine)
+                    PositionControl();
+                return;
+            }
 
             currentHLStart = start;
             currentHLEnd = end;
@@ -139,109 +155,174 @@ namespace PluginCore.Controls
 			}
         }
 
+        private void Host_VisibleChanged(object sender, EventArgs e)
+        {
+            if (host.Visible)
+            {
+                owner.KeyDown += Target_KeyDown;
+                owner.KeyPosted += Target_KeyPosted;
+                owner.KeyPress += Target_KeyPress;
+                owner.PositionChanged += Target_PositionChanged;
+                owner.LostFocus += Target_LostFocus;
+                owner.MouseDown += Target_MouseDown;
+
+                if (!completionList.Active)
+                    Application.AddMessageFilter(completionList);
+            }
+            else
+            {
+                owner.KeyDown -= Target_KeyDown;
+                owner.KeyPosted -= Target_KeyPosted;
+                owner.KeyPress -= Target_KeyPress;
+                owner.PositionChanged -= Target_PositionChanged;
+                owner.LostFocus -= Target_LostFocus;
+                owner.MouseDown -= Target_MouseDown;
+
+                if (!completionList.Active)
+                    Application.RemoveMessageFilter(completionList);
+            }
+        }
+
+        private void Target_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Handled)
+                e.SuppressKeyPress = e.Handled = HandleKeys(e.KeyData);
+        }
+
+        private void Target_KeyPosted(object sender, KeyEventArgs e)
+        {
+            HandlePostedKeys(e.KeyData);
+        }
+
+        private void Target_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar))
+                OnChar(e.KeyChar);
+        }
+
+        private void Target_PositionChanged(object sender, EventArgs e)
+        {
+            PositionControl();
+        }
+
+        private void Target_LostFocus(object sender, EventArgs e)
+        {
+            if (!Focused && !completionList.Tip.Focused)
+                Hide();
+        }
+
+        private void Target_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (owner.CurrentPos != currentPos)
+                Hide();
+        }
+
         #region Keys handling
 
-        public void OnChar(ScintillaControl sci, int value)
+        public void OnChar(int value)
         {
             currentPos++;
-            UpdateTip(sci);
+            UpdateTip();
         }
 
-        public new void UpdateTip(ScintillaControl sci)
+        public override void UpdateTip()
         {
-            if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
+            if (CallTipActive && OnUpdateCallTip != null) OnUpdateCallTip(owner.Owner, currentPos);
         }
 
-        public bool HandleKeys(ScintillaControl sci, Keys key)
+        public bool HandleKeys(Keys key)
         {
             switch (key)
             {
-                case Keys.Multiply:
-                case Keys.Subtract:
-                case Keys.Divide:
-                case Keys.Decimal:
-                case Keys.Add:
-                    return false;
+                case Keys.PageDown:
+                case Keys.PageUp:
+                    if (!completionList.Active)
+                        Hide();
+                    break;
 
-                case Keys.Up:
-                    if (!CompletionList.Active) sci.LineUp();
-                    return false;
-                case Keys.Down:
-                    if (!CompletionList.Active) sci.LineDown();
-                    return false;
                 case Keys.Up | Keys.Shift:
-                    sci.LineUpExtend();
-                    return false;
                 case Keys.Down | Keys.Shift:
-                    sci.LineDownExtend();
-                    return false;
-                case Keys.Left | Keys.Shift:
-                    sci.CharLeftExtend();
-                    return false;
-                case Keys.Right | Keys.Shift:
-                    sci.CharRightExtend();
-                    return false;
+                case Keys.PageDown | Keys.Shift:
+                case Keys.PageUp | Keys.Shift:
+                    Hide();
+                    break;
 
-                case Keys.Right:
-                    if (!CompletionList.Active)
-                    {
-                        sci.CharRight();
-                        currentPos = sci.CurrentPos;
-                        if (sci.CurrentLine != currentLine) Hide();
-                        else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
-                    }
+                case Keys.Escape:
+                    Hide();
                     return true;
+            }
+
+            return false;
+        }
+
+        private void HandlePostedKeys(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.Right:
+                case Keys.Right | Keys.Shift:
+                case Keys.Right | Keys.Control:
+                    currentPos = owner.CurrentPos;
+                    if (OnUpdateCallTip != null) OnUpdateCallTip(owner.Owner, currentPos);
+                    break;
 
                 case Keys.Left:
-                    if (!CompletionList.Active)
-                    {
-                        sci.CharLeft();
-                        currentPos = sci.CurrentPos;
-                        if (currentPos < startPos) Hide();
-                        else
-                        {
-                            if (sci.CurrentLine != currentLine) Hide();
-                            else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
-                        }
-                    }
-                    return true;
+                case Keys.Left | Keys.Shift:
+                case Keys.Left | Keys.Control:
+                    currentPos = owner.CurrentPos;
+                    if (currentPos < startPos) Hide();
+                    if (OnUpdateCallTip != null) OnUpdateCallTip(owner.Owner, currentPos);
+                    break;
+
+                case Keys.Up:
+                case Keys.Down:
+                    currentPos = owner.CurrentPos;
+                    if (!completionList.Active)
+                        if (OnUpdateCallTip != null) OnUpdateCallTip(owner.Owner, currentPos);
+                    break;
+
+                case Keys.PageDown:
+                case Keys.PageUp:
+                    if (!completionList.Active)
+                        Hide();
+                    break;
+
+                case Keys.Up | Keys.Shift:
+                case Keys.Down | Keys.Shift:
+                case Keys.PageDown | Keys.Shift:
+                case Keys.PageUp | Keys.Shift:
+                    Hide();
+                    break;
 
                 case Keys.Back:
-                    sci.DeleteBack();
-                    currentPos = sci.CurrentPos;
-					if (currentPos + deltaPos < startPos) Hide();
-                    else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
-                    return true;
+                case Keys.Back | Keys.Control:
+                case Keys.Delete:
+                case Keys.Delete | Keys.Control:
+                    currentPos = owner.CurrentPos;
+                    if (currentPos < startPos) Hide();
+                    if (OnUpdateCallTip != null) OnUpdateCallTip.BeginInvoke(owner.Owner, currentPos, null, null);
+                    break;
 
-                case Keys.Tab:
-                case Keys.Space:
-                    return false;
-
-                default:
-                    if (!CompletionList.Active) Hide();
-                    return false;
+                case Keys.Escape:
+                    Hide();
+                    break;
             }
         }
 
         #endregion
 
         #region Controls fading on Control key
-        private static bool faded;
 
         internal void FadeOut()
         {
-            if (faded) return;
-            faded = true;
-            //base.Hide();
-            host.Visible = false;
+            if (host.Opacity != 1) return;
+            host.Opacity = 0;
         }
 
         internal void FadeIn()
         {
-            if (!faded) return;
-            faded = false;
-            //base.Show();
-            host.Visible = true;
+            if (host.Opacity == 1) return;
+            host.Opacity = 1;
         }
         #endregion
     }

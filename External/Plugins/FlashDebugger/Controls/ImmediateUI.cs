@@ -228,6 +228,8 @@ namespace FlashDebugger.Controls
                 remove { _owner.KeyDown -= value; }
             }
 
+            public event KeyEventHandler KeyPosted;
+
             public event KeyPressEventHandler KeyPress
             {
                 add { _owner.KeyPress += value; }
@@ -277,6 +279,11 @@ namespace FlashDebugger.Controls
             public TextBoxTarget(TextBox owner)
             {
                 _owner = owner;
+            }
+
+            public int GetLineFromCharIndex(int pos)
+            {
+                return _owner.GetLineFromCharIndex(pos);
             }
 
             public Point GetPositionFromCharIndex(int pos)

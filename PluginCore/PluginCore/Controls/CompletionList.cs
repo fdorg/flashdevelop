@@ -51,8 +51,6 @@ namespace PluginCore.Controls
             completionList = new CompletionListControl(new ScintillaHost());
             completionList.OnCancel += OnCancelHandler;
             completionList.OnInsert += OnInsertHandler;
-            completionList.OnShowing += OnShowingHandler;
-            completionList.OnHidden += OnHiddenHandler;
         }
 
         #endregion
@@ -235,21 +233,6 @@ namespace PluginCore.Controls
                 OnInsert((ScintillaControl)sender, position, text, trigger, item);
         }
 
-        private static void OnShowingHandler(object sender, EventArgs e)
-        {
-            ((ScintillaControl)completionList.Host.Owner).UpdateUI += OnUIRefresh;
-        }
-
-        private static void OnHiddenHandler(object sender, EventArgs e)
-        {
-            ((ScintillaControl)completionList.Host.Owner).UpdateUI -= OnUIRefresh;
-        }
-
-        private static void OnUIRefresh(ScintillaControl sci)
-        {
-            if (Active && !CheckPosition(sci.CurrentPos)) Hide();
-        }
-
         #endregion
 
         #region Controls fading on Control key
@@ -266,8 +249,12 @@ namespace PluginCore.Controls
 
         #endregion
 
+        #region Default Completion List Host
+
         internal class ScintillaHost : ICompletionListHost
         {
+
+            private List<Control> controlHierarchy = new List<Control>();
 
             private WeakReference sci = new WeakReference(null);
             internal ScintillaControl SciControl
@@ -276,7 +263,7 @@ namespace PluginCore.Controls
                 {
                     if (sci.Target == null)
                         return null;
-
+                    
                     if (!sci.IsAlive)
                         return PluginBase.MainForm.CurrentDocument.SciControl;
 
@@ -284,7 +271,10 @@ namespace PluginCore.Controls
                 }
                 set
                 {
+                    if (sci.Target == value) return;
+ 
                     sci.Target = value;
+                    ClearControlHierarchy();
                 }
             }
 
@@ -299,17 +289,26 @@ namespace PluginCore.Controls
             {
                 add
                 {
-                    var sci = SciControl;
-                    sci.Scroll += Scintilla_Scroll;
-                    sci.Zoom += Scintilla_Zoom;
+                    if (positionChanged == null || positionChanged.GetInvocationList().Length == 0)
+                    {
+                        var sci = SciControl;
+                        sci.Scroll += Scintilla_Scroll;
+                        sci.Zoom += Scintilla_Zoom;
+
+                        BuildControlHierarchy(sci);
+                    }
                     positionChanged += value;
                 }
                 remove
                 {
-                    var sci = SciControl;
-                    sci.Scroll -= Scintilla_Scroll;
-                    sci.Zoom -= Scintilla_Zoom;
                     positionChanged -= value;
+                    if (positionChanged == null || positionChanged.GetInvocationList().Length < 1)
+                    {
+                        var sci = SciControl;
+                        sci.Scroll -= Scintilla_Scroll;
+                        sci.Zoom -= Scintilla_Zoom;
+                        ClearControlHierarchy();
+                    }
                 }
             }
 
@@ -318,9 +317,17 @@ namespace PluginCore.Controls
                 add { Owner.KeyDown += value; }
                 remove { Owner.KeyDown -= value; }
             }
+
+            public event KeyEventHandler KeyPosted
+            {
+                add { SciControl.KeyPosted += value; }
+                remove { SciControl.KeyPosted -= value; }
+            }
+
             #pragma warning disable 0067
-            public event KeyPressEventHandler KeyPress; // Unhandled for this one
+            public event KeyPressEventHandler KeyPress; // Unhandled for this one, although we could
             #pragma warning restore 0067
+
             public event MouseEventHandler MouseDown
             {
                 add { Owner.MouseDown += value; }
@@ -365,6 +372,11 @@ namespace PluginCore.Controls
                 return UITools.Manager.LineHeight(SciControl);
             }
 
+            public int GetLineFromCharIndex(int pos)
+            {
+                return SciControl.LineFromPosition(pos);
+            }
+
             public Point GetPositionFromCharIndex(int pos)
             {
                 var sci = SciControl;
@@ -386,6 +398,41 @@ namespace PluginCore.Controls
                 SciControl.EndUndoAction();
             }
 
+            private void BuildControlHierarchy(Control current)
+            {
+                while (current != null)
+                {
+                    current.LocationChanged += Control_LocationChanged;
+                    current.ParentChanged += Control_ParentChanged;
+                    controlHierarchy.Add(current);
+                    current = current.Parent;
+                }
+            }
+
+            private void ClearControlHierarchy()
+            {
+                foreach (var control in controlHierarchy)
+                {
+                    control.LocationChanged -= Control_LocationChanged;
+                    control.ParentChanged -= Control_ParentChanged;
+                }
+                controlHierarchy.Clear();
+            }
+
+            private void Control_LocationChanged(object sender, EventArgs e)
+            {
+                if (positionChanged != null)
+                    positionChanged(sender, e);
+            }
+
+            private void Control_ParentChanged(object sender, EventArgs e)
+            {
+                ClearControlHierarchy();
+                BuildControlHierarchy(SciControl);
+                if (positionChanged != null)
+                    positionChanged(sender, e);
+            }
+
             private void Scintilla_Scroll(object sender, ScrollEventArgs e)
             {
                 if (positionChanged != null)
@@ -399,5 +446,7 @@ namespace PluginCore.Controls
             }
 
         }
-	}
+        
+        #endregion
+    }
 }

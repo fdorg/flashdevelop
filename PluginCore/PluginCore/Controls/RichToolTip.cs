@@ -17,7 +17,7 @@ namespace PluginCore.Controls
 	/// </summary>
 	public class RichToolTip
 	{
-        public delegate void UpdateTipHandler(ScintillaControl sender, Point mousePosition);
+        public delegate void UpdateTipHandler(Control sender, Point mousePosition);
 
         // events
         public event UpdateTipHandler OnUpdateSimpleTip;
@@ -33,7 +33,7 @@ namespace PluginCore.Controls
 		protected List<String> rtfCacheList;
         protected Point mousePos;
 
-	    protected IWin32Window owner;
+	    protected ICompletionListHost owner;    // We could just use Control here, or pass a reference on each related call, as Control may be a problem with default implementation
 
 		#region Public Properties
 
@@ -72,13 +72,15 @@ namespace PluginCore.Controls
 		
 		#region Control creation
 		
-		public RichToolTip(IWin32Window owner)
+		public RichToolTip(ICompletionListHost owner)
 		{
             // host
 		    host = new InactiveForm();
 		    host.FormBorderStyle = FormBorderStyle.None;
             host.ShowInTaskbar = false;
             host.StartPosition = FormStartPosition.Manual;
+            host.KeyPreview = true;
+            host.KeyDown += Host_KeyDown;
 
 		    this.owner = owner;
             
@@ -110,10 +112,20 @@ namespace PluginCore.Controls
 		}
 		
 		#endregion
-		
-		#region Tip Methods
 
-		public bool AutoSize()
+        #region Event Handlers
+
+        protected virtual void Host_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Escape)
+                Hide();
+        }
+
+        #endregion
+
+        #region Tip Methods
+
+        public bool AutoSize()
 		{
 			return AutoSize(0);
 		}
@@ -128,7 +140,7 @@ namespace PluginCore.Controls
 			Size txtSize = WinFormUtils.MeasureRichTextBox(toolTipRTB, false, toolTipRTB.Width, toolTipRTB.Height, false);
 
 			// tooltip larger than the window: wrap
-		    var screenArea = Screen.FromHandle(owner.Handle).WorkingArea;
+		    var screenArea = Screen.FromControl(owner.Owner).WorkingArea;
 			int limitLeft = screenArea.Left + 10;
             int limitRight = screenArea.Right - 10;
             int limitBottom = screenArea.Bottom - 26;
@@ -203,12 +215,12 @@ namespace PluginCore.Controls
             host.Top = mousePos.Y - host.Height - 10;// +sci.Top;
             if (host.Top < 5)
                 host.Top = mousePos.Y + 10;
-			host.Show(owner);
+		    Show();
 		}
 
-        public void UpdateTip(ScintillaControl sci)
+        public virtual void UpdateTip()
         {
-            if (OnUpdateSimpleTip != null) OnUpdateSimpleTip(sci, mousePos);
+            if (OnUpdateSimpleTip != null) OnUpdateSimpleTip(owner.Owner, mousePos);
         }
 		
 		public virtual void Hide()
@@ -223,7 +235,7 @@ namespace PluginCore.Controls
         public virtual void Show()
 		{
             if (!host.Visible)
-    			host.Show(owner);
+    			host.Show(owner.Owner);
 		}
 
 		public void SetText(String rawText, bool redraw)

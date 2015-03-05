@@ -5,9 +5,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
 using PluginCore.Helpers;
-using ScintillaNet;
-
-// TODO: Remove all direct references to ScintillaControl
 
 namespace PluginCore.Controls
 {
@@ -54,12 +51,6 @@ namespace PluginCore.Controls
         private  ICompletionListHost host;
         private  RichToolTip tip;
         private  MethodCallTip callTip; // Used only by the main completion list so far, would it be better to control this case in another way? like the cl, we'd like to show this everywhere possible
-
-        /// <summary>
-        /// Set to 0 after calling .Show to keep the completion list active 
-        /// when the text was erased completely (using backspace)
-        /// </summary>
-        public int MinWordLength;
 
         #endregion
 
@@ -108,6 +99,8 @@ namespace PluginCore.Controls
             listContainer.Padding = Padding.Empty;
             
             listHost.Items.Add(listContainer);
+
+            CharacterClass = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         }
 
         #endregion
@@ -148,6 +141,17 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
+        /// Set to 0 after calling .Show to keep the completion list active 
+        /// when the text was erased completely (using backspace)
+        /// </summary>
+        public int MinWordLength { get; set; }
+
+        /// <summary>
+        /// Defines the characters allowed as part of a variable name
+        /// </summary>
+        public string CharacterClass { get; set; }
+
+        /// <summary>
         /// Gets the target of the current completion list control
         /// </summary>
         public ICompletionListHost Host
@@ -163,10 +167,11 @@ namespace PluginCore.Controls
             get
             {
                 if (tip == null)
-                    tip = new RichToolTip(host.Owner);
+                    tip = new RichToolTip(host);
                 return tip;
             }
-            internal set { tip = value; }
+            // Allow injection of our own implementations
+            set { tip = value; }
         }
 
         /// <summary>
@@ -177,10 +182,11 @@ namespace PluginCore.Controls
             get
             {
                 if (callTip == null)
-                    callTip = new MethodCallTip(PluginBase.MainForm);
+                    callTip = new MethodCallTip(this);
                 return callTip;
             }
-            internal set { callTip = value; }
+            // Allow injection of our own implementations
+            set { callTip = value; }
         }
 
         #endregion
@@ -468,7 +474,7 @@ namespace PluginCore.Controls
             coord = host.Owner.PointToScreen(coord);
             coord.X += host.Owner.Left;
             var screen = Screen.FromHandle(host.Owner.Handle);
-            listUp = CallTip.CallTipActive || (coord.Y + listHost.Height > screen.WorkingArea.Bottom && coord.Y - listHost.Height > screen.WorkingArea.Top);
+            listUp = CallTip.CallTipActive || (coord.Y - listHost.Height > screen.WorkingArea.Top && coord.Y + host.GetLineHeight() + listHost.Height > screen.WorkingArea.Bottom);
             if (listUp) coord.Y -= listHost.Height;
             else coord.Y += host.GetLineHeight();
             // Keep on screen area
@@ -485,7 +491,7 @@ namespace PluginCore.Controls
                 if (OnShowing != null) OnShowing(this, EventArgs.Empty);
                 listHost.Opacity = 1;
                 listHost.Show(coord);
-                if (CallTip.CallTipActive) CallTip.PositionControl(((ScintillaControl)host.Owner));
+                if (CallTip.CallTipActive) CallTip.PositionControl();
                 AddHandlers();
             }
 
@@ -911,7 +917,8 @@ namespace PluginCore.Controls
 
         private void AddHandlers()
         {
-            Application.AddMessageFilter(this);
+            if (!CallTip.CallTipActive)
+                Application.AddMessageFilter(this);
             host.LostFocus += Target_LostFocus;
             host.MouseDown += Target_MouseDown;
             host.KeyDown += Target_KeyDown;
@@ -921,7 +928,8 @@ namespace PluginCore.Controls
 
         private void RemoveHandlers()
         {
-            Application.RemoveMessageFilter(this);
+            if (!CallTip.CallTipActive)
+                Application.RemoveMessageFilter(this);
             host.LostFocus -= Target_LostFocus;
             host.MouseDown -= Target_MouseDown;
             host.KeyDown -= Target_KeyDown;
@@ -943,7 +951,8 @@ namespace PluginCore.Controls
 
         private void Target_KeyDown(object sender, KeyEventArgs e)
         {
-            e.SuppressKeyPress = e.Handled = HandleKeys(e.KeyData);
+            if (!e.Handled)
+                e.SuppressKeyPress = e.Handled = HandleKeys(e.KeyData);
         }
 
         private void Target_KeyPress(object sender, KeyPressEventArgs e)
@@ -962,9 +971,7 @@ namespace PluginCore.Controls
         /// </summary> 
         public bool OnChar(char c)
         {
-            // TODO: Inject these values or get from host
-            string characterClass = ScintillaControl.Configuration.GetLanguage(PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage).characterclass.Characters;
-            if (characterClass.IndexOf(c) >= 0)
+            if (CharacterClass.IndexOf(c) >= 0)
             {
                 word += c;
                 currentPos++;
@@ -1226,9 +1233,9 @@ namespace PluginCore.Controls
             }
             else if (m.Msg == Win32.WM_KEYDOWN)
             {
-                if (Tip.Focused || CallTip.Focused) return false;
                 if ((int)m.WParam == 17) // Ctrl
                 {
+                    if (Tip.Focused || CallTip.Focused) return false;
                     if (Active) FadeOut();
                     if (CallTip.CallTipActive) CallTip.FadeOut();
                 }
@@ -1236,23 +1243,20 @@ namespace PluginCore.Controls
                 {
                     UITools.Manager.ShowDetails = !UITools.Manager.ShowDetails;
                     bool retVal = false;
+                    if (CallTip.Visible)
+                    {
+                        callTip.UpdateTip();
+                        retVal = true;
+                    }
                     if (Active)
                     {
                         UpdateTip(null, null);
                         retVal = true;
                     }
-                    else
+                    else if (Tip.Visible)
                     {
-                        if (Tip.Visible)
-                        {
-                            Tip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
-                            retVal = true;
-                        }
-                        if (CallTip.Visible)
-                        {
-                            callTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
-                            retVal = true;
-                        }
+                        Tip.UpdateTip();
+                        retVal = true;
                     }
 
                     return retVal;

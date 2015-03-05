@@ -1332,7 +1332,7 @@ namespace ASCompletion.Completion
 				prevParam = paramName;
                 calltipDetails = UITools.Manager.ShowDetails;
 				string text = calltipDef + ASDocumentation.GetTipDetails(calltipMember, paramName);
-                UITools.CallTip.CallTipShow(Sci, calltipPos - calltipOffset, text, forceRedraw);
+                UITools.CallTip.CallTipShow(calltipPos - calltipOffset, text, forceRedraw);
 			}
 
 			// highlight
