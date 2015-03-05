@@ -14,6 +14,7 @@ namespace PluginCore.Controls
 
         event EventHandler LostFocus;
         event EventHandler PositionChanged;
+        event EventHandler SizeChanged;
         event KeyEventHandler KeyDown;
         // Hacky event... needed for MethodCallTip where we need to get the new state after the key has been sent
         // A better approach, and the way some IDEs work, would require MethodCallTip to be more "active" having more knowledge about the written function data, as well as a timer for some operations

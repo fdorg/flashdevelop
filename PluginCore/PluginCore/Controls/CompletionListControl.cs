@@ -924,6 +924,7 @@ namespace PluginCore.Controls
             host.KeyDown += Target_KeyDown;
             host.KeyPress += Target_KeyPress;
             host.PositionChanged += Target_PositionChanged;
+            host.SizeChanged += Target_SizeChanged;
         }
 
         private void RemoveHandlers()
@@ -935,6 +936,7 @@ namespace PluginCore.Controls
             host.KeyDown -= Target_KeyDown;
             host.KeyPress -= Target_KeyPress;
             host.PositionChanged -= Target_PositionChanged;
+            host.SizeChanged -= Target_SizeChanged;
         }
 
         private void Target_LostFocus(object sender, EventArgs e)
@@ -964,6 +966,14 @@ namespace PluginCore.Controls
         private void Target_PositionChanged(object sender, EventArgs e)
         {
             UpdatePosition();
+        }
+
+        private void Target_SizeChanged(object sender, EventArgs e)
+        {
+            Point coord = host.GetPositionFromCharIndex(startPos);
+            // Check for completion list outside of control view
+            if (coord.X < 0 || coord.X > host.Owner.Width || coord.Y < 0 || coord.Y > host.Owner.Height)
+                Hide();
         }
 
         /// <summary>

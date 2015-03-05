@@ -163,6 +163,7 @@ namespace PluginCore.Controls
                 owner.KeyPosted += Target_KeyPosted;
                 owner.KeyPress += Target_KeyPress;
                 owner.PositionChanged += Target_PositionChanged;
+                owner.SizeChanged += Target_SizeChanged;
                 owner.LostFocus += Target_LostFocus;
                 owner.MouseDown += Target_MouseDown;
 
@@ -175,6 +176,7 @@ namespace PluginCore.Controls
                 owner.KeyPosted -= Target_KeyPosted;
                 owner.KeyPress -= Target_KeyPress;
                 owner.PositionChanged -= Target_PositionChanged;
+                owner.SizeChanged -= Target_SizeChanged;
                 owner.LostFocus -= Target_LostFocus;
                 owner.MouseDown -= Target_MouseDown;
 
@@ -203,6 +205,14 @@ namespace PluginCore.Controls
         private void Target_PositionChanged(object sender, EventArgs e)
         {
             PositionControl();
+        }
+
+        private void Target_SizeChanged(object sender, EventArgs e)
+        {
+            Point p = owner.GetPositionFromCharIndex(memberPos);
+            p.Y = owner.GetPositionFromCharIndex(currentPos).Y;
+            if (p.Y < 0 || p.Y > owner.Owner.Height || p.X < 0 || p.X > owner.Owner.Width)
+                Hide();
         }
 
         private void Target_LostFocus(object sender, EventArgs e)

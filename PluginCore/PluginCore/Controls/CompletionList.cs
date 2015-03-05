@@ -312,6 +312,12 @@ namespace PluginCore.Controls
                 }
             }
 
+            public event EventHandler SizeChanged
+            {
+                add { Owner.SizeChanged += value; }
+                remove { Owner.SizeChanged -= value; }
+            }
+
             public event KeyEventHandler KeyDown
             {
                 add { Owner.KeyDown += value; }

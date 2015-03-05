@@ -222,6 +222,12 @@ namespace FlashDebugger.Controls
 
             public event EventHandler PositionChanged;
 
+            public event EventHandler SizeChanged
+            {
+                add { Owner.SizeChanged += value; }
+                remove { Owner.SizeChanged -= value; }
+            }
+
             public event KeyEventHandler KeyDown
             {
                 add { _owner.KeyDown += value; }
