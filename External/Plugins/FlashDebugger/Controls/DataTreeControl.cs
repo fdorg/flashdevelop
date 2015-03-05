@@ -675,12 +675,13 @@ namespace FlashDebugger.Controls
 
         #region Settings
 
-		public int CopyTreeMaxChars
+		public static int CopyTreeMaxChars
 		{
 			get { return CopyTreeHelper._CopyTreeMaxChars; }
 			set { CopyTreeHelper._CopyTreeMaxChars = value; }
 		}
-        public int CopyTreeMaxRecursion
+		
+		public static int CopyTreeMaxRecursion
         {
 			get { return CopyTreeHelper._CopyTreeMaxRecursion; }
 			set { CopyTreeHelper._CopyTreeMaxRecursion = value; }
