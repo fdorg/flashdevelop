@@ -21,11 +21,12 @@ namespace FlashDebugger.Controls
         private DataTreeModel _model;
         private static ViewerForm viewerForm;
         private ContextMenuStrip _contextMenuStrip;
-		private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyIDMenuItem, copyTreeMenuItem;
+		private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyValueMenuItem, copyIDMenuItem, copyTreeMenuItem;
         private DataTreeState state;
         private bool watchMode;
         private bool addingNewExpression;
-		private static bool combineInherited = false;
+		private static bool m_combineInherited = false;
+		private static bool m_showStaticInObjects = true;
 
         public Collection<Node> Nodes
         {
@@ -99,10 +100,11 @@ namespace FlashDebugger.Controls
             this.NameTreeColumn.Header = TextHelper.GetString("Label.Name");
             this.ValueTreeColumn.Header = TextHelper.GetString("Label.Value");
             copyMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, new EventHandler(this.CopyItemClick));
-            copyIDMenuItem = new ToolStripMenuItem("Copy ID", null, new EventHandler(this.CopyItemIDClick));
+			copyValueMenuItem = new ToolStripMenuItem("Copy Value", null, new EventHandler(this.CopyItemValueClick));
+			copyIDMenuItem = new ToolStripMenuItem("Copy ID", null, new EventHandler(this.CopyItemIDClick));
 			copyTreeMenuItem = new ToolStripMenuItem("Copy Tree", null, new EventHandler(this.CopyItemTreeClick));
             viewerMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Viewer"), null, new EventHandler(this.ViewerItemClick));
-            _contextMenuStrip.Items.AddRange(new ToolStripMenuItem[] { copyMenuItem, copyIDMenuItem, copyTreeMenuItem, viewerMenuItem});
+			_contextMenuStrip.Items.AddRange(new ToolStripMenuItem[] { copyMenuItem, copyIDMenuItem, copyValueMenuItem, copyTreeMenuItem, viewerMenuItem });
             if (watchMode)
                 watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Unwatch"), null, new EventHandler(this.WatchItemClick));
             else
@@ -389,10 +391,11 @@ namespace FlashDebugger.Controls
 						nodes.Add(memberNode);
 					}
 				}
+
 				// inherited vars
 				if (inherited.Count > 0)
 				{
-					if (combineInherited)
+					if (m_combineInherited)
 					{
 						// list inherited alongside main class members
 						foreach (DataNode item in inherited)
@@ -416,7 +419,7 @@ namespace FlashDebugger.Controls
 				}
 
 				// static vars
-				if (statics.Count > 0)
+				if (m_showStaticInObjects && statics.Count > 0)
 				{
 					DataNode staticNode = new ValueNode("[static]");
 					statics.Sort();
@@ -426,6 +429,7 @@ namespace FlashDebugger.Controls
 					}
 					node.Nodes.Add(staticNode);
 				}
+
 				// test children
 				foreach (String ch in node.PlayerValue.getClassHierarchy(false))
 				{
@@ -590,12 +594,6 @@ namespace FlashDebugger.Controls
                 if (topNode != null) Tree.EnsureVisible(topNode);
             }
         }
-		
-		public static bool CombineInherited
-		{
-			get { return DataTreeControl.combineInherited; }
-			set { DataTreeControl.combineInherited = value; }
-		}
 
         #region IToolTipProvider Members
 
@@ -633,8 +631,18 @@ namespace FlashDebugger.Controls
 
         #endregion
 		
-		
-		#region Copy ID & Tree
+		#region Copy Value, ID, Tree
+
+		private void CopyItemValueClick(Object sender, System.EventArgs e)
+		{
+			if (Tree.SelectedNode != null)
+			{
+
+				ValueNode node = Tree.SelectedNode.Tag as ValueNode;
+				Clipboard.SetText(node.Value);
+
+			}
+		}
 
 		private void CopyItemIDClick(Object sender, System.EventArgs e)
 		{
@@ -662,9 +670,47 @@ namespace FlashDebugger.Controls
 
 			}
 		}
-
-
+		
 		#endregion
+
+        #region Settings
+
+		public int CopyTreeMaxChars
+		{
+			get { return CopyTreeHelper._CopyTreeMaxChars; }
+			set { CopyTreeHelper._CopyTreeMaxChars = value; }
+		}
+        public int CopyTreeMaxRecursion
+        {
+			get { return CopyTreeHelper._CopyTreeMaxRecursion; }
+			set { CopyTreeHelper._CopyTreeMaxRecursion = value; }
+        }
+		
+		public static bool CombineInherited
+		{
+			get { return DataTreeControl.m_combineInherited; }
+			set { DataTreeControl.m_combineInherited = value; }
+		}
+
+		public static bool ShowStaticInObjects
+		{
+			get { return DataTreeControl.m_showStaticInObjects; }
+			set { DataTreeControl.m_showStaticInObjects = value; }
+		}
+		
+		public static bool ShowFullClasspaths
+		{
+			get { return ValueNode.m_ShowFullClasspaths; }
+			set { ValueNode.m_ShowFullClasspaths = value; }
+		}
+
+		public static bool ShowObjectIDs
+		{
+			get { return ValueNode.m_ShowObjectIDs; }
+			set { ValueNode.m_ShowObjectIDs = value; }
+		}
+
+        #endregion
 		
     }
 

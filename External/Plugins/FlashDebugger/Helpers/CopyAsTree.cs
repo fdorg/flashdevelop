@@ -11,8 +11,9 @@ namespace FlashDebugger
 	public class CopyTreeHelper
 	{
 
-		public const int CopyTreeMaxRecursion = 10;
-		public const int CopyTreeMaxChars = 1000000;
+		public static int _CopyTreeMaxRecursion = 10;
+		public static int _CopyTreeMaxChars = 1000000;
+
 
 		private static Dictionary<string, int> CopiedObjects;
 
@@ -27,6 +28,9 @@ namespace FlashDebugger
 			// add children nodes
 			CopiedObjects = new Dictionary<string, int>();
 			GetTreeItemsAsText(new List<ValueNode> { dataNode }, levelSep, 0, sb, control, levelLimit);
+
+			// free CopiedObjects
+			CopiedObjects = null;
 
 			return sb.ToString() ?? "";
 		}
@@ -53,7 +57,14 @@ namespace FlashDebugger
 
 				// add node
 				AppendTimes(sb, levelSep, level);
-				sb.Append(child.Text + " : " + child.Value);
+				if (child.IsPrimitive)
+				{
+					sb.Append(child.Text + " : " + child.Value + " ");
+				}
+				else
+				{
+					sb.Append(child.Text + " : " + child.ClassPath + " ");
+				}
 
 				// recurse for children .. but skip if unwanted items
 				if (child.Nodes.Count > 0 && IsWantedParent(child))
@@ -78,7 +89,7 @@ namespace FlashDebugger
 							sb.AppendLine("[Already listed before]");
 
 						}
-						else if (level > CopyTreeMaxRecursion)
+						else if (level > _CopyTreeMaxRecursion)
 						{
 
 							// error
@@ -115,7 +126,7 @@ namespace FlashDebugger
 
 
 				// stop recursion if too long
-				if (sb.Length > CopyTreeMaxChars)
+				if (sb.Length > _CopyTreeMaxChars)
 				{
 					sb.Append("......");
 					return;
@@ -134,7 +145,8 @@ namespace FlashDebugger
 				// then skip it from opening and closing { } the output
 				if (parent.Nodes.Count == 1 || parent.Nodes.Count == 2)
 				{
-					if (parent.Value.StartsWith("Array"))
+					ValueNode pNode = parent as ValueNode;
+					if (pNode != null && pNode.ClassPath == "Array")
 					{
 						DataNode child1 = (DataNode)parent.Nodes[0];
 						if (child1.Text == "[static]" || child1.Text == "length")
@@ -157,38 +169,49 @@ namespace FlashDebugger
 		{
 			try
 			{
+
+				// skip if static
+				if (child.Text == "[static]")
+				{
+					return false;
+				}
+
 				if (child.Parent != null)
 				{
-					DataNode parent = ((DataNode)child.Parent);
-
-					// if is an array []
-					// skip [static] and "length" properties
-					if (parent.Value.StartsWith("Array"))
+					ValueNode parent = (child.Parent as ValueNode);
+					if (parent != null)
 					{
-						if (child.Text == "[static]" || child.Text == "length")
-						{
-							return false;
-						}
-					}
 
-					// if is an AS3 display object,
-					// don't go upward (stage, parent)
-					if (parent.Value.StartsWith("flash.display.") || parent.Value == "Main")
-					{
-						if (Array.IndexOf(as3DisabledProps, child.Text) > -1)
+						// if is an array []
+						// skip [static] and "length" properties
+						if (parent.ClassPath == "Array")
 						{
-							return false;
+							if (child.Text == "[static]" || child.Text == "length")
+							{
+								return false;
+							}
 						}
-					}
 
-					// if is an AS2 display object,
-					// don't go upward (_parent)
-					if (parent.Value == "MovieClip" || parent.Value == "Video")
-					{
-						if (child.Text == "_parent")
+						// if is an AS3 display object,
+						// don't go upward (stage, parent)
+						if (parent.ClassPath.StartsWith("flash.display.") || parent.ClassPath == "Main")
 						{
-							return false;
+							if (Array.IndexOf(as3DisabledProps, child.Text) > -1)
+							{
+								return false;
+							}
 						}
+
+						// if is an AS2 display object,
+						// don't go upward (_parent)
+						if (parent.ClassPath == "MovieClip" || parent.ClassPath == "Video")
+						{
+							if (child.Text == "_parent")
+							{
+								return false;
+							}
+						}
+
 					}
 
 				}
