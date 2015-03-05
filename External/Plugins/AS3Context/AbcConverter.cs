@@ -738,7 +738,7 @@ namespace AS3Context
 
                 // keep definitions including either documentation or static values
                 if (doc.ShortDesc.Length > 0 || doc.LongDesc.Length > 0
-                    || (doc.IsStatic && doc.DeclType == "apiValue"))
+                    || (doc.IsStatic && doc.Value != null && doc.DeclType == "apiValue"))
                     docs[id] = doc;
             }
         }
