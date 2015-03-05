@@ -93,39 +93,6 @@ namespace FlashDevelop
 
         #endregion
 
-        #region Flicker Prevention
-
-        // See: http://www.angryhacker.com/blog/archive/2010/07/21/how-to-get-rid-of-flicker-on-windows-forms-applications.aspx
-
-        private Int32 originalStyle = -1;
-        private Boolean enableBuffering = true;
-
-        /// <summary>
-        /// Reduce artifacts on FlashDevelop start
-        /// </summary>
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                if (originalStyle == -1) originalStyle = base.CreateParams.ExStyle;
-                CreateParams cp = base.CreateParams;
-                if (enableBuffering) cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
-                else cp.ExStyle = originalStyle;
-                return cp;
-            }
-        }
-
-        /// <summary>
-        /// Turn off buffering after form show
-        /// </summary>
-        private void TurnOffBuffering()
-        {
-            this.enableBuffering = false;
-            this.MaximizeBox = true;
-        }
-
-        #endregion
-
         #region Private Properties
 
         /* AppMan */
@@ -907,9 +874,6 @@ namespace FlashDevelop
             if (position.X < -4) position.X = 0;
             if (position.Y < -25) position.Y = 0;
             this.Location = position;
-            // Continue/perform layout!
-            this.ResumeLayout(false);
-            this.PerformLayout();
         }
 
         /// <summary>
@@ -1101,7 +1065,8 @@ namespace FlashDevelop
         /// </summary>
         private void OnMainFormShow(Object sender, System.EventArgs e)
         {
-            this.TurnOffBuffering();
+			// Resume layout!
+			this.ResumeLayout(true);
             if (RecoveryDialog.ShouldShowDialog()) RecoveryDialog.Show();
         }
 
