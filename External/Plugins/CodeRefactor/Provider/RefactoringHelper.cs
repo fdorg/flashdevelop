@@ -365,6 +365,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static Boolean IsProjectRelatedFile(IProject project, String file)
         {
+            if (project == null) return false;
             IASContext context = ASContext.GetLanguageContext(project.Language);
             if (context == null) return false;
             foreach (PathModel pathModel in context.Classpath)
