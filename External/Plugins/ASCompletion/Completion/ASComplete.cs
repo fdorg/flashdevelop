@@ -19,6 +19,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using ScintillaNet;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ASCompletion.Completion
 {
@@ -601,10 +602,8 @@ namespace ASCompletion.Completion
         static public void OpenVirtualFile(FileModel model)
         {
             string ext = Path.GetExtension(model.FileName);
-            if (ext == "") ext = model.Context.GetExplorerMask()[0];
-            string dummyFile = Path.Combine(
-                Path.GetDirectoryName(model.FileName),
-                "[model] " + Path.GetFileNameWithoutExtension(model.FileName) + ext);
+            if (ext == "") ext = model.Context.GetExplorerMask()[0].Replace("*", "");
+            string dummyFile = Path.Combine(Path.GetDirectoryName(model.FileName), "[model] " + Path.GetFileNameWithoutExtension(model.FileName) + ext);
             foreach (ITabbedDocument doc in ASContext.MainForm.Documents)
             {
                 if (doc.FileName == dummyFile)
@@ -617,7 +616,12 @@ namespace ASCompletion.Completion
             model.Members.Sort();
             foreach (ClassModel aClass in model.Classes) aClass.Members.Sort();
             string src = "//\n// " + model.FileName + "\n//\n" + model.GenerateIntrinsic(false);
-            ASContext.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage);
+            ITabbedDocument temp = ASContext.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) as ITabbedDocument;
+            if (temp != null && temp.IsEditable) 
+            {
+                // The model document will be read only
+                temp.SciControl.IsReadOnly = true;
+            }
         }
 
         static public void LocateMember(string keyword, string name, int line)
