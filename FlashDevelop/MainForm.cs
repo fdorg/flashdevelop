@@ -2707,12 +2707,10 @@ namespace FlashDevelop
         {
             ToolStripItem button = (ToolStripItem)sender;
             String file = ((ItemData)button.Tag).Tag;
-
             ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
             {
                 OpenEditableDocument(file);
             });
-
             this.frInDocDialog.Show();
         }
 

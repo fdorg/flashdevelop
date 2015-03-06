@@ -5350,7 +5350,6 @@ namespace ScintillaNet
             else highlightDelay.Stop();
             highlightDelay.Start();
         }
-
         void highlightDelay_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             highlightDelay.Stop();
@@ -5364,18 +5363,36 @@ namespace ScintillaNet
         {
             if (TextLength == 0 || TextLength > 64 * 1024) return;
             Language language = Configuration.GetLanguage(ConfigurationLanguage);
-            Int32 color = language.editorstyle.HighlightBackColor;
+            Int32 color = language.editorstyle.SelectionBackgroundColor;
             String word = GetWordFromPosition(CurrentPos);
             if (String.IsNullOrEmpty(word)) return;
+            if (this.PositionIsOnComment(CurrentPos))
+            {
+                this.RemoveHighlights(1);
+                return;
+            }
             String pattern = word.Trim();
             FRSearch search = new FRSearch(pattern);
             search.WholeWord = true; 
-            search.NoCase = false;
+            search.NoCase = true;
             search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
-            RemoveHighlights();
+            RemoveHighlights(1);
             List<SearchMatch> test = search.Matches(Text);
-            AddHighlights(test, color);
+            AddHighlights(1, test, color);
             hasHighlights = true;
+        }
+
+        /// <summary>
+        /// Cancel highlights if not using aggressive highlighting
+        /// </summary>
+        private void OnCancelHighlight(ScintillaControl sci)
+        {
+            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0
+                && PluginBase.MainForm.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
+            {
+                sci.RemoveHighlights(1);
+                sci.hasHighlights = false;
+            }
         }
 
         /// <summary>
@@ -5393,19 +5410,6 @@ namespace ScintillaNet
                     int bracePosEnd = BraceMatch(position);
                     if (bracePosEnd != -1) SetSel(bracePosStart, bracePosEnd + 1);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Cancel highlights if not using aggressive highlighting
-        /// </summary>
-        private void OnCancelHighlight(ScintillaControl sci)
-        {
-            if (sci.isHiliteSelected && sci.hasHighlights && sci.SelText.Length == 0 
-                && PluginBase.MainForm.Settings.HighlightMatchingWordsMode != Enums.HighlightMatchingWordsMode.SelectionOrPosition)
-            {
-                sci.RemoveHighlights();
-                sci.hasHighlights = false;
             }
         }
 
@@ -6367,38 +6371,98 @@ namespace ScintillaNet
 		}
 
         /// <summary>
+        /// Adds the specified highlight to the control
+        /// </summary>
+        public void AddHighlight(Int32 indicator, Int32 indicStyle, Int32 highlightColor, Int32 start, Int32 length)
+        {
+            ITabbedDocument doc = DocumentManager.FindDocument(this);
+            if (doc == null) return;
+            Int32 es = this.EndStyled;
+            Int32 mask = (1 << this.StyleBits) - 1;
+            // Define indics in both controls...
+            doc.SplitSci1.SetIndicStyle(indicator, indicStyle);
+            doc.SplitSci1.SetIndicFore(indicator, highlightColor);
+            doc.SplitSci2.SetIndicStyle(indicator, indicStyle);
+            doc.SplitSci2.SetIndicFore(indicator, highlightColor);
+            this.CurrentIndicator = indicator;
+            this.IndicatorValue = 1;
+            this.IndicatorFillRange(start, length);
+            this.StartStyling(es, mask);
+        }
+        public void AddHighlight(Int32 indicStyle, Int32 highlightColor, Int32 start, Int32 length)
+        {
+            this.AddHighlight(0, indicStyle, highlightColor, start, length);
+        }
+        public void AddHighlight(Int32 highlightColor, Int32 start, Int32 length)
+        {
+            Int32 indicStyle = (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox;
+            this.AddHighlight(0, indicStyle, highlightColor, start, length);
+        }
+
+        /// <summary>
         /// Adds the specified highlights to the control
         /// </summary>
-        public void AddHighlights(List<SearchMatch> matches, Int32 highlightColor)
+        public void AddHighlights(Int32 indicator, Int32 indicStyle, List<SearchMatch> matches, Int32 highlightColor)
         {
             ITabbedDocument doc = DocumentManager.FindDocument(this);
             if (matches == null || doc == null) return;
             foreach (SearchMatch match in matches)
             {
+                Int32 es = this.EndStyled;
+                Int32 mask = (1 << this.StyleBits) - 1;
                 Int32 start = this.MBSafePosition(match.Index);
-                Int32 end = start + this.MBSafeTextLength(match.Value);
-                Int32 line = this.LineFromPosition(start);
-                Int32 position = start; Int32 mask = 1 << this.StyleBits;
                 // Define indics in both controls...
-                doc.SplitSci1.SetIndicStyle(0, (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox);
-                doc.SplitSci1.SetIndicFore(0, highlightColor);
-                doc.SplitSci2.SetIndicStyle(0, (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox);
-                doc.SplitSci2.SetIndicFore(0, highlightColor);
-                this.StartStyling(position, mask);
-                this.SetStyling(end - start, mask);
-                this.StartStyling(this.EndStyled, mask - 1);
+                doc.SplitSci1.SetIndicStyle(indicator, (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox);
+                doc.SplitSci1.SetIndicFore(indicator, highlightColor);
+                doc.SplitSci2.SetIndicStyle(indicator, (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox);
+                doc.SplitSci2.SetIndicFore(indicator, highlightColor);
+                this.CurrentIndicator = indicator;
+                this.IndicatorValue = 1;
+                this.IndicatorFillRange(start, this.MBSafeTextLength(match.Value));
+                this.StartStyling(es, mask);
             }
+        }
+        public void AddHighlights(Int32 indicator, List<SearchMatch> matches, Int32 highlightColor)
+        {
+            Int32 indicStyle = (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox;
+            this.AddHighlights(indicator, indicStyle, matches, highlightColor);
+        }
+        public void AddHighlights(List<SearchMatch> matches, Int32 highlightColor)
+        {
+            Int32 indicStyle = (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox;
+            this.AddHighlights(0, indicStyle, matches, highlightColor);
         }
 
         /// <summary>
-        /// Removes the highlights from the control
+        /// Removes the specific highlight from the control
         /// </summary>
+        public void RemoveHighlight(Int32 indicator, Int32 start, Int32 lenght)
+        {
+            Int32 es = this.EndStyled;
+            Int32 mask = (1 << this.StyleBits) - 1;
+            this.CurrentIndicator = indicator;
+            this.IndicatorClearRange(start, lenght);
+            this.StartStyling(es, mask);
+        }
+        public void RemoveHighlight(Int32 start, Int32 lenght)
+        {
+            this.RemoveHighlight(0, start, lenght);
+        }
+
+        /// <summary>
+        /// Removes the specified highlights from the control
+        /// </summary>
+        public void RemoveHighlights(Int32 indicator)
+        {
+            Int32 es = this.EndStyled;
+            Int32 mask = (1 << this.StyleBits) - 1;
+            this.CurrentIndicator = indicator;
+            this.IndicatorClearRange(0, this.Length);
+            this.StartStyling(es, mask);
+        }
         public void RemoveHighlights()
         {
-            Int32 mask = (1 << this.StyleBits);
-            this.StartStyling(0, mask);
-            this.SetStyling(this.TextLength, 0);
-            this.StartStyling(this.EndStyled, mask - 1);
+            this.RemoveHighlights(0);
         }
 
         /// <summary>

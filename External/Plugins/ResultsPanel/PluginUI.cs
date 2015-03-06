@@ -830,8 +830,9 @@ namespace ResultsPanel
                     if (!document.IsEditable) continue;
 					ScintillaControl sci = document.SciControl;
                     Language language = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
-                    Int32 indic = (item.ImageIndex == 0) ? (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox : (Int32)ScintillaNet.Enums.IndicatorStyle.Squiggle;
+                    Int32 style = (item.ImageIndex == 0) ? (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox : (Int32)ScintillaNet.Enums.IndicatorStyle.Squiggle;
                     Int32 fore = (item.ImageIndex == 0) ? language.editorstyle.HighlightBackColor : 0x000000ff;
+                    Int32 indic = (item.ImageIndex == 0) ? 0 : 2;
                     if (fname == document.FileName)
 					{
                         Int32 end;
@@ -852,16 +853,7 @@ namespace ResultsPanel
                         if ((start >= 0) && (end > start) && (end < sci.TextLength))
 						{
                             Int32 position = sci.PositionFromLine(line) + start;
-                            Int32 es = sci.EndStyled;
-                            Int32 mask = 1 << sci.StyleBits;
-                            // Define indics in both controls...
-                            document.SplitSci1.SetIndicStyle(0, indic);
-                            document.SplitSci1.SetIndicFore(0, fore);
-                            document.SplitSci2.SetIndicStyle(0, indic);
-                            document.SplitSci2.SetIndicFore(0, fore);
-							sci.StartStyling(position, mask);
-							sci.SetStyling(end - start, mask);
-							sci.StartStyling(es, mask - 1);
+                            sci.AddHighlight(indic, style, fore, position, end - start);
 						}
 						break;
 					}
@@ -885,13 +877,10 @@ namespace ResultsPanel
                     fname = (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/','\\');
 					if (fname == document.FileName && !cleared.Contains(fname))
 					{
-						cleared.Add(fname);
-						Int32 es = sci.EndStyled;
-                        Int32 mask = (1 << sci.StyleBits);
-						sci.StartStyling(0, mask);
-						sci.SetStyling(sci.TextLength, 0);
-						sci.StartStyling(es, mask - 1);
-						break;
+                        Int32 indic = (item.ImageIndex == 0) ? 0 : 2;
+                        sci.RemoveHighlights(indic);
+                        cleared.Add(fname);
+                        break;
 					}
 				}
 			}
