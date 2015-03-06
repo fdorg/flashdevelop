@@ -25,9 +25,9 @@ Platform
 Building
 --------
 
-* Open in Visual Studio 2013 or C# Express 2013 (free),
+* Open in Visual Studio 2013 (Community version is free),
 * Click the solution and select "Release|x86" from "Active config" in Properties panel,
-* Build PluginCore project first, then FlashDevelop and then the entire solution.
+* Build the entire solution, the built binary will run in standalone mode
 
 Contribute
 --------
