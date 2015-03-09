@@ -745,10 +745,11 @@ namespace FlashDevelop
                     File.Delete(appman);
                     this.refreshConfig = true;
                 }
-                // Apply appman path to PATH
+                // Apply FD dir and appman dir to PATH
                 String amPath = Path.Combine(PathHelper.ToolDir, "AppMan");
                 String oldPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
-                Environment.SetEnvironmentVariable("PATH", oldPath + ";" + amPath, EnvironmentVariableTarget.Process);
+                String newPath = oldPath + ";" + amPath + ";" + PathHelper.AppDir;
+                Environment.SetEnvironmentVariable("PATH", newPath, EnvironmentVariableTarget.Process);
                 // Watch for appman update notifications
                 this.amWatcher = new FileSystemWatcher(PathHelper.BaseDir, ".appman");
                 this.amWatcher.Changed += new FileSystemEventHandler(this.AppManUpdate);
