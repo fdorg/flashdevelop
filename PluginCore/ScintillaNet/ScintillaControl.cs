@@ -5142,6 +5142,35 @@ namespace ScintillaNet
             else return (UInt32)Encoding.ASCII.CodePage;
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            Action keyCommand;
+            if (!e.Handled && keyCommands.TryGetValue(e.KeyData, out keyCommand))
+            {
+                keyCommand();
+                OnKeyPosted(e);
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        protected virtual void OnKeyPosted(KeyEventArgs e)
+        {
+            if (KeyPosted != null)
+                KeyPosted(this, e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="Scroll"/> event.
+        /// </summary>
+        /// <param name="e">An <see cref="ScrollEventArgs"/> that contains the event data.</param>
+        protected virtual void OnScroll(ScrollEventArgs e)
+        {
+            if (Scroll != null)
+                Scroll(this, e);
+        }
+
         public override bool PreProcessMessage(ref Message m)
         {
             switch (m.Msg)
@@ -5433,35 +5462,6 @@ namespace ScintillaNet
         #endregion
 
         #region Automated Features
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-
-            Action keyCommand;
-            if (!e.Handled && keyCommands.TryGetValue(e.KeyData, out keyCommand))
-            {
-                keyCommand();
-                OnKeyPosted(e);
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        protected virtual void OnKeyPosted(KeyEventArgs e)
-        {
-            if (KeyPosted != null)
-                KeyPosted(this, e);
-        }
-
-        /// <summary>
-        ///     Raises the <see cref="Scroll"/> event.
-        /// </summary>
-        /// <param name="e">An <see cref="ScrollEventArgs"/> that contains the event data.</param>
-        protected virtual void OnScroll(ScrollEventArgs e)
-        {
-            if (Scroll != null)
-                Scroll(this, e);
-        }
 
         /// <summary>
         /// Support for selection highlighting and selection changed event
@@ -5860,12 +5860,12 @@ namespace ScintillaNet
                 }
                 else
                 {
-                    keyCommands[Keys.Control | Keys.Left] = WordPartLeft;
-                    keyCommands[Keys.Control | Keys.Right] = WordPartRight;
-                    keyCommands[Keys.Control | Keys.Shift | Keys.Left] = WordPartLeftExtend;
-                    keyCommands[Keys.Control | Keys.Shift | Keys.Right] = WordPartRightExtend;
-                    keyCommands[Keys.Control | Keys.Back] = DelWordPartLeft;
-                    keyCommands[Keys.Control | Keys.Delete] = DelWordPartRight;
+                    keyCommands[Keys.Control | Keys.Left] = WordPartLeftEx;
+                    keyCommands[Keys.Control | Keys.Right] = WordPartRightEx;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Left] = WordPartLeftExtendEx;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Right] = WordPartRightExtendEx;
+                    keyCommands[Keys.Control | Keys.Back] = DelWordPartLeftEx;
+                    keyCommands[Keys.Control | Keys.Delete] = DelWordPartRightEx;
                 }
             }
         }
@@ -6968,6 +6968,318 @@ namespace ScintillaNet
                 position--;
             }
             return word;
+        }
+
+        /// <summary>
+        /// Delete the word part to the left of the caret. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void DelWordPartLeftEx()
+        {
+            int currPos = CurrentPos;
+            SetSel(currPos, currPos);
+            WordPartLeftExtendEx();
+            Clear();
+        }
+
+        /// <summary>
+        /// Delete the word part to the right of the caret. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void DelWordPartRightEx()
+        {
+            int currPos = CurrentPos;
+            SetSel(currPos, currPos);
+            WordPartRightExtendEx();
+            Clear();
+        }
+
+        /// <summary>
+        /// Move to the previous change in capitalisation. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void WordPartLeftEx()
+        {
+            int pos = GetCustomWordPartLeft() + 1;
+            SetSel(pos, pos);
+            CharLeft(); // Hack to force caret visible, is there a better way for this?
+        }
+
+        /// <summary>
+        /// Move to the change next in capitalisation. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void WordPartRightEx()
+        {
+            int pos = GetCustomWordPartRight() - 1;
+            SetSel(pos, pos);
+            CharRight(); // Hack to force caret visible, is there a better way for this?
+        }
+
+        /// <summary>
+        /// Move to the previous change in capitalisation extending selection
+        /// to new caret position. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void WordPartLeftExtendEx()
+        {
+            int pos = GetCustomWordPartLeft();
+            int selStart = SelectionStart;
+            int selEnd = SelectionEnd;
+            if (CurrentPos > selStart) selEnd = selStart;
+            SetSel(selEnd, pos);
+        }
+
+        /// <summary>
+        /// Move to the next change in capitalisation extending selection
+        /// to new caret position. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void WordPartRightExtendEx()
+        {
+            int pos = GetCustomWordPartRight();
+            int selStart = SelectionStart;
+            int selEnd = SelectionEnd;
+            if (CurrentPos < selEnd) selStart = selEnd;
+            SetSel(selStart, pos);
+        }
+        
+        private int GetCustomWordPartLeft()
+        {
+            /* This is a more or less direct translation of default Scintilla implementation with the following differences:
+             *     - Sadly, Scintilla doesn't support multi byte characters in the WORDPART* function, this solves it.
+             *     - This implementation is a bit more complex, as checks for some more types of characters, making browsing a bit more fluent.
+             *     - Line jumps are treated differently, the default implementation just skips all lines, this one behaves like normal WORD* functions, with stops in between if there are whitespaces.
+             *     - Since we cannot use the CharAt function we have to get the properly encoded text, but since getting the whole text may use way more resources than needed, we go line per line, and
+             *       this makes code a bit more difficult to read.
+             */
+            int pos = CurrentPos;
+            if (pos == 0) return 0;
+
+            int line = LineFromPosition(pos - 1);
+            int linePos = pos - PositionFromLine(line);
+            int i, count = 0;
+            char startChar = '\0';
+
+            do
+            {
+                int sz = (int) SPerform(2153, (uint) line, 0);
+                byte[] buffer = new byte[sz + 1];
+                unsafe
+                {
+                    fixed (byte* b = buffer) SPerform(2153, (uint) line, (uint) b);
+                }
+                string lineText = Encoding.GetEncoding(CodePage).GetString(buffer, 0, linePos == 0 ? sz : linePos);
+
+                i = lineText.Length - 1;
+                if (count == 0)
+                    startChar = lineText[i];
+                if (count == 0 && char.GetUnicodeCategory(startChar) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                {
+                    while (i > 0 && char.GetUnicodeCategory(lineText[i]) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                    {
+                        --i;
+                    }
+                }
+                if (i > 0)
+                {
+                    if (count == 0)
+                    {
+                        startChar = lineText[i];
+                        --i;
+                    }
+                    if (char.IsLower(startChar))
+                    {
+                        while (i > 0 && char.IsLower(lineText[i]))
+                            --i;
+                        if (!char.IsUpper(lineText[i]) && !char.IsLower(lineText[i]))
+                            ++i;
+                    }
+                    else if (char.IsUpper(startChar))
+                    {
+                        while (i > 0 && char.IsUpper(lineText[i]))
+                            --i;
+                        if (!char.IsUpper(lineText[i]))
+                            ++i;
+                    }
+                    else if (char.IsLetter(startChar))
+                    {
+                        while (i > 0 && char.IsLetter(lineText[i]))
+                            --i;
+                        if (!char.IsLetter(lineText[i]))
+                            ++i;
+                    }
+                    else if (char.IsDigit(startChar))
+                    {
+                        while (i > 0 && char.IsDigit(lineText[i]))
+                            --i;
+                        if (!char.IsDigit(lineText[i]))
+                            ++i;
+                    }
+                    else if (char.IsPunctuation(startChar) || char.IsSymbol(startChar))
+                    {
+                        char c;
+                        while (i > 0 && (char.IsPunctuation((c = lineText[i])) || char.IsSymbol(c)))
+                            --i;
+                        c = lineText[i];
+                        if (!char.IsPunctuation(c) && !char.IsSymbol(c))
+                            ++i;
+                    }
+                    else if (startChar == '\n' || startChar == '\r')
+                    {
+                        char c;
+                        while (i > 0 && ((c = lineText[i]) == '\n' || c == '\r'))
+                            --i;
+                        c = lineText[i];
+                        if (c != '\n' && c != '\r')
+                            ++i;
+                    }
+                    else if (char.IsWhiteSpace(startChar))
+                    {
+                        char c;
+                        while (i > 0 && (c = lineText[i]) != '\n' && c != '\r' &&
+                               char.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.ConnectorPunctuation &&
+                               (char.IsPunctuation(c) || char.IsWhiteSpace(c)))
+                            --i;
+
+                        if (i == 0)
+                            startChar = '\n';
+                        else if (!char.IsWhiteSpace(lineText[i]))
+                            ++i;
+                    }
+                    else if (!IsAscii(startChar))
+                    {
+                        while (i > 0 && !IsAscii(lineText[i]))
+                            --i;
+                        if (IsAscii(lineText[i]))
+                            ++i;
+                    }
+                    else
+                    {
+                        ++i;
+                    }
+                }
+                else if (line > 0 && char.IsWhiteSpace(startChar))
+                    startChar = '\n';
+                    
+                count += Encoding.GetEncoding(CodePage).GetByteCount(lineText.ToCharArray(), i, lineText.Length - i);
+                linePos = 0;
+                line--;
+            } while (i == 0 && line >= 0);
+
+            return pos - count;
+        }
+
+        private int GetCustomWordPartRight()
+        {
+            /* This is a more or less direct translation of default Scintilla implementation with the following differences:
+             *     - Sadly, Scintilla doesn't support multi byte characters in the WORDPART* function, this solves it.
+             *     - This implementation is a bit more complex, as checks for some more types of characters, making browsing a bit more fluent.
+             *     - Line jumps are treated differently, the default implementation just skips all lines, this one behaves like normal WORD* functions, with stops in between if there are whitespaces.
+             *     - Since we cannot use the CharAt function we have to get the properly encoded text, but since getting the whole text may use way more resources than needed, we go line per line, and
+             *       this makes code a bit more difficult to read.
+             */
+            int pos = CurrentPos;
+            if (pos == TextLength) return pos;
+            int lineCount = LineCount;
+            int line = LineFromPosition(pos);
+            int linePos = pos - PositionFromLine(line);
+            int length, i, count = 0;
+            char startChar = '\0';
+
+            do
+            {
+                int sz = (int) SPerform(2153, (uint) line, 0);
+                byte[] buffer = new byte[sz + 1];
+                unsafe
+                {
+                    fixed (byte* b = buffer) SPerform(2153, (uint) line, (uint) b);
+                }
+                string lineText = Encoding.GetEncoding(CodePage).GetString(buffer, linePos, sz - linePos);
+
+                length = lineText.Length;
+                i = 0;
+
+                if (count == 0)
+                {
+                    startChar = lineText[i];
+                    if (char.GetUnicodeCategory(startChar) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                    {
+                        while (i < length && char.GetUnicodeCategory(lineText[i]) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                            ++i;
+                        startChar = lineText[i];
+                    }
+                }
+                if (char.IsLower(startChar))
+                {
+                    while (i < length && char.IsLower(lineText[i]))
+                        ++i;
+                    // We may be interested in not running this loop if startChar was the same
+                    while (i < length && char.GetUnicodeCategory(lineText[i]) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                        ++i;
+                }
+                else if (char.IsUpper(startChar))
+                {
+                    if (i < length - 1 && char.IsLower(lineText[i + 1]))
+                    {
+                        ++i;
+                        while (i < length && char.IsLower(lineText[i]))
+                            ++i;
+                    }
+                    else
+                    {
+                        while (i < length && char.IsUpper(lineText[i]))
+                            ++i;
+                    }
+                    if (i < length && char.IsLower(lineText[i]) && char.IsUpper(lineText[i - 1]))
+                        --i;
+                }   
+                else if (char.IsLetter(startChar))
+                {
+                    while (i < length && char.IsLetter(lineText[i]))
+                        ++i;
+                }
+                else if (char.IsDigit(startChar))
+                {
+                    while (i < length && char.IsDigit(lineText[i]))
+                        ++i;
+                }
+                else if (char.IsPunctuation(startChar) || char.IsSymbol(startChar))
+                {
+                    char c;
+                    while (i < length && (char.IsPunctuation((c = lineText[i])) || char.IsSymbol(c)))
+                        ++i;
+                }
+                else if (startChar == '\n' || startChar == '\r')
+                {
+                    char c;
+                    while (i < length && ((c = lineText[i]) == '\r' || c == '\n'))
+                        ++i;
+                    while (i < length && char.IsWhiteSpace((c = lineText[i])) && c != '\r' && c != '\n')
+                        ++i;
+                }
+                else if (char.IsWhiteSpace(startChar))
+                {
+                    if (count == 0) ++i;
+                    char c;
+                    while (i < length && (c = lineText[i]) != '\r' && c != '\n' && char.IsWhiteSpace(c))
+                        ++i;
+                }
+                else if (!IsAscii(startChar))
+                {
+                    while (i < length && !IsAscii(lineText[i]))
+                        ++i;
+                }
+                else
+                {
+                    ++i;
+                    count += Encoding.GetEncoding(CodePage).GetByteCount(lineText.ToCharArray(), 0, i);
+                    break;
+                }
+                count += Encoding.GetEncoding(CodePage).GetByteCount(lineText.ToCharArray(), 0, i);
+                line++;
+                linePos = 0;
+            } while (i == length && line < lineCount);
+            return pos + count;
+        }
+
+        private static bool IsAscii(char c)
+        {
+            return c < 0x80;
         }
 
         #endregion
