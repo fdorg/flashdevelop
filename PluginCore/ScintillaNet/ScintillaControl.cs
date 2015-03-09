@@ -6674,8 +6674,7 @@ namespace ScintillaNet
         public int GetStartLine(int line)
         {
             string str = GetLine(line);
-            char marker;
-            marker = (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css") ? '>' : ')';
+            char marker = (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css") ? '>' : ')';
             int pos = str.LastIndexOf(marker);
             if (pos >= 0)
             {
