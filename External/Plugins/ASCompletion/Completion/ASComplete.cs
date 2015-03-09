@@ -3162,10 +3162,8 @@ namespace ASCompletion.Completion
                 minPos = Sci.PositionFromLine(expression.ContextMember.LineFrom);
                 StringBuilder sbBody = new StringBuilder();
                 for (int i = expression.ContextMember.LineFrom; i <= expression.ContextMember.LineTo; i++)
-                    sbBody.Append(Sci.GetLine(i)).Append('\n');
+                    sbBody.Append(Sci.GetLine(i));
                 body = sbBody.ToString();
-                //int tokPos = body.IndexOf(expression.ContextMember.Name);
-                //if (tokPos >= 0) minPos += tokPos + expression.ContextMember.Name.Length;
 
                 var hasBody = FlagType.Function | FlagType.Constructor;
                 if (!haXe) hasBody |= FlagType.Getter | FlagType.Setter;

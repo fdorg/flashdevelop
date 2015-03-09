@@ -271,8 +271,9 @@ namespace ASCompletion.Completion
 
                 // "assign var to statement" suggestion
                 int curLine = Sci.CurrentLine;
-                string ln = Sci.GetLine(curLine);
-                if (ln.Trim().Length > 0 && ln.TrimEnd().Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine) && ln.IndexOf("=") == -1)
+                string ln = Sci.GetLine(curLine).TrimEnd();
+                if (ln.Length > 0 && ln.IndexOf("=") == -1 
+                    && ln.Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine)) // cursor at end of line
                 {
                     ShowAssignStatementToVarList(found);
                     return;
@@ -4362,8 +4363,7 @@ namespace ASCompletion.Completion
             sci.LineScroll(0, firstLine - sci.FirstVisibleLine + 1);
 
             ASContext.Context.RefreshContextCache(fullPath);
-            if (sci.EOLMode == 2) return sci.GetLine(line).Length + nl.Length;
-            else return sci.GetLine(line).Length + nl.Length - 1;
+            return sci.GetLine(line).Length;
         }
         #endregion
 
