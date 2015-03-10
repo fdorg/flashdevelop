@@ -1036,7 +1036,7 @@ namespace ASCompletion.Completion
         private static void ReformatLine(ScintillaControl Sci, int position)
         {
             int line = Sci.LineFromPosition(position);
-            string txt = Sci.GetLine(line);
+            string txt = Sci.GetLine(line).TrimEnd(new char[] { '\r', '\n' });
             int curPos = Sci.CurrentPos;
             int startPos = Sci.PositionFromLine(line);
             int offset = Sci.MBSafeLengthFromBytes(txt, position - startPos);
