@@ -3214,7 +3214,6 @@ namespace ScintillaNet
 			byte[] buffer = new byte[sz + 1];
 			fixed (byte* b = buffer) SPerform(2153, (uint)line, (uint)b);
             if (sz == 0) return ""; // Empty last line
-            if (buffer[sz - 1] == 10) sz--;
 			return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz);
 		}
 
@@ -6675,8 +6674,7 @@ namespace ScintillaNet
         public int GetStartLine(int line)
         {
             string str = GetLine(line);
-            char marker;
-            marker = (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css") ? '>' : ')';
+            char marker = (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css") ? '>' : ')';
             int pos = str.LastIndexOf(marker);
             if (pos >= 0)
             {

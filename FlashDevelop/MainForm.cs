@@ -3381,8 +3381,7 @@ namespace FlashDevelop
         public void SortLines(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 position = sci.CurrentPos;
-            Int32 curLine = sci.LineFromPosition(position);
+            Int32 curLine = sci.LineFromPosition(sci.SelectionStart);
             Int32 endLine = sci.LineFromPosition(sci.SelectionEnd);
             List<String> lines = new List<String>();
             for (Int32 line = curLine; line < endLine + 1; ++line)
@@ -3391,14 +3390,12 @@ namespace FlashDevelop
             }
             lines.Sort(CompareLines);
             StringBuilder result = new StringBuilder();
-            string end = lines[lines.Count - 1];
-            foreach (String s in lines )
+            foreach (String s in lines)
             {
                 result.Append(s);
-                if (s != end) result.Append("\n");
             }
             Int32 selStart = sci.PositionFromLine(curLine);
-            Int32 selEnd = sci.PositionFromLine(endLine) + sci.GetLine(endLine).Length;
+            Int32 selEnd = sci.PositionFromLine(endLine) + sci.MBSafeTextLength(sci.GetLine(endLine));
             sci.SetSel(selStart, selEnd);
             sci.ReplaceSel(result.ToString());
         }
@@ -3409,8 +3406,7 @@ namespace FlashDevelop
         public void SortLineGroups(Object sender, System.EventArgs e)
         {
             ScintillaControl sci = Globals.SciControl;
-            Int32 position = sci.CurrentPos;
-            Int32 curLine = sci.LineFromPosition(position);
+            Int32 curLine = sci.LineFromPosition(sci.SelectionStart);
             Int32 endLine = sci.LineFromPosition(sci.SelectionEnd);
             List<List<String>> lineLists = new List<List<String>>();
             List<String> curList = new List<String>();
@@ -3418,9 +3414,10 @@ namespace FlashDevelop
             for (Int32 line = curLine; line < endLine + 1; ++line)
             {
                 String lineText = sci.GetLine(line);
-                if (CompareLines(lineText, "\r") == 0)
+                if (lineText.Trim() == "")
                 {
                     curList.Sort(CompareLines);
+                    curList.Add(lineText);
                     curList = new List<String>();
                     lineLists.Add(curList);
                     continue;
@@ -3429,17 +3426,15 @@ namespace FlashDevelop
             }
             curList.Sort(CompareLines);
             StringBuilder result = new StringBuilder();
-            List<String> end = lineLists[lineLists.Count - 1];
             foreach (List<String> l in lineLists)
             {
                 foreach (String s in l)
                 {
                     result.Append(s);
                 }
-                if (l != end) result.Append("\r");
             }
             Int32 selStart = sci.PositionFromLine(curLine);
-            Int32 selEnd = sci.PositionFromLine(endLine) + sci.GetLine(endLine).Length;
+            Int32 selEnd = sci.PositionFromLine(endLine) + sci.MBSafeTextLength(sci.GetLine(endLine));
             sci.SetSel(selStart, selEnd);
             sci.ReplaceSel(result.ToString());
         }
