@@ -1458,7 +1458,7 @@ namespace ProjectManager.Controls
         private bool IsExternalConfiguration()
         {
             string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
-            PlatformVersion version = langPlatform.GetVersion(selectedVersion);
+            PlatformVersion version = langPlatform != null ? langPlatform.GetVersion(selectedVersion) : null;
             return version != null && version.Commands != null && version.Commands.ContainsKey("display");
         }
 
