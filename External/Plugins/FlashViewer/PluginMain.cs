@@ -167,6 +167,7 @@ namespace FlashViewer
                 Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
                 this.settingObject = (Settings)obj;
             }
+            String oldPath = this.settingObject.PlayerPath;
             // Recheck after installer update if auto config is not disabled
             if (!this.settingObject.DisableAutoConfig && PluginBase.MainForm.RefreshConfig)
             {
@@ -175,11 +176,11 @@ namespace FlashViewer
             // Try to find player path from AppMan archive
             if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
             {
-                string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
+                String appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
                 if (Directory.Exists(appManDir))
                 {
-                    string[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
-                    foreach (string exeFile in exeFiles)
+                    String[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
+                    foreach (String exeFile in exeFiles)
                     {
                         this.settingObject.PlayerPath = exeFile;
                     }
@@ -220,7 +221,7 @@ namespace FlashViewer
                 else if (File.Exists(playerPath10)) this.settingObject.PlayerPath = playerPath10;
             }
             // Try to find player path from: FlexSDK
-            if (!this.settingObject.DisableAutoConfig && String.IsNullOrEmpty(this.settingObject.PlayerPath))
+            if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
             {
                 String compiler = PluginBase.MainForm.ProcessArgString("$(CompilerPath)");
                 String playerPath10 = Path.Combine(compiler, @"runtimes\player\10\win\FlashPlayer.exe");
@@ -230,10 +231,11 @@ namespace FlashViewer
                 else if (File.Exists(playerPath101)) this.settingObject.PlayerPath = playerPath101;
                 else if (File.Exists(playerPath10)) this.settingObject.PlayerPath = playerPath10;
             }
-            // After detection, if the path is incorrect clear it
+            // After detection, if the path is incorrect, keep old valid path or clear it
             if (this.settingObject.PlayerPath == null || !File.Exists(this.settingObject.PlayerPath))
             {
-                this.settingObject.PlayerPath = String.Empty;
+                if (!String.IsNullOrEmpty(oldPath) && File.Exists(oldPath)) this.settingObject.PlayerPath = oldPath;
+                else this.settingObject.PlayerPath = String.Empty;
             }
         }
 
