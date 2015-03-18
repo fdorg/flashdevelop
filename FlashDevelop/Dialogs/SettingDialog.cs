@@ -469,6 +469,15 @@ namespace FlashDevelop.Dialogs
             return ok;
         }
 
+        private Boolean PropertyMatches(PropertyInfo prop, String text)
+        {
+            LocalizedDescriptionAttribute lda = null;
+            var atts = prop.GetCustomAttributes(typeof(LocalizedDescriptionAttribute), true);
+            if (atts.Length > 0) lda = atts[0] as LocalizedDescriptionAttribute;
+            return prop.Name.ToLower().Contains(text.ToLower()) ||
+                   lda != null && lda.Description.ToLower().Contains(text.ToLower());
+        }
+
         /// <summary>
         /// Checks if the property matches in any property infos
         /// </summary>
