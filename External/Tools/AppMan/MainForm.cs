@@ -185,6 +185,10 @@ namespace AppMan
             {
                 Settings settings = new Settings();
                 String file = Path.Combine(PathHelper.GetExeDirectory(), "Config.xml");
+                #if FLASHDEVELOP
+                // Use the customized config file if present next to normal config file...
+                if (File.Exists(file.Replace(".xml", ".local.xml"))) file = file.Replace(".xml", ".local.xml");
+                #endif
                 if (File.Exists(file))
                 {
                     settings = ObjectSerializer.Deserialize(file, settings) as Settings;
