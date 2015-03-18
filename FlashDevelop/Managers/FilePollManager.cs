@@ -44,11 +44,16 @@ namespace FlashDevelop.Managers
             TabbedDocument casted = document as TabbedDocument;
             if (casted.IsEditable && casted.CheckFileChange())
             {
-                if (Globals.Settings.AutoReloadModifiedFiles) casted.Reload(false);
+                if (Globals.Settings.AutoReloadModifiedFiles)
+                {
+                    casted.RefreshFileInfo();
+                    casted.Reload(false);
+                }
                 else
                 {
                     if (YesToAll)
                     {
+                        casted.RefreshFileInfo();
                         casted.Reload(false);
                         return;
                     }
