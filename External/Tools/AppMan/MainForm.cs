@@ -191,35 +191,10 @@ namespace AppMan
                     PathHelper.APPS_DIR = ArgProcessor.ProcessArguments(settings.Archive);
                     PathHelper.CONFIG_ADR = ArgProcessor.ProcessArguments(settings.Config);
                     PathHelper.HELP_ADR = ArgProcessor.ProcessArguments(settings.Help);
+                    PathHelper.LOG_DIR = ArgProcessor.ProcessArguments(settings.Logs);
                     if (!this.localeOverride) this.localeId = settings.Locale;
                     this.notifyPaths = settings.Paths;
                 }
-                #if FLASHDEVELOP
-                else /* Defaults for FlashDevelop */
-                {
-                    PathHelper.HELP_ADR = "http://www.flashdevelop.org/wikidocs/";
-                    PathHelper.CONFIG_ADR = "http://www.flashdevelop.org/appman.xml";    
-                    String local = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\.local");
-                    local = Path.GetFullPath(local); /* Fix weird path */
-                    if (!File.Exists(local))
-                    {
-                        String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        String fdUserPath = Path.Combine(userAppDir, "FlashDevelop");
-                        String appManDataDir = Path.Combine(fdUserPath, @"Data\AppMan");
-                        this.notifyPaths = new String[1] { fdUserPath };
-                        PathHelper.APPS_DIR = Path.Combine(fdUserPath, "Apps");
-                        PathHelper.LOG_DIR = appManDataDir;
-                    }
-                    else
-                    {
-                        String fdPath = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\");
-                        fdPath = Path.GetFullPath(fdPath); /* Fix weird path */
-                        PathHelper.APPS_DIR = Path.Combine(fdPath, "Apps");
-                        PathHelper.LOG_DIR = Path.Combine(fdPath, @"Data\AppMan");
-                        this.notifyPaths = new String[1] { fdPath };
-                    }
-                }
-                #endif
                 if (!Directory.Exists(PathHelper.LOG_DIR))
                 {
                     Directory.CreateDirectory(PathHelper.LOG_DIR);
@@ -1509,6 +1484,7 @@ namespace AppMan
     public class Settings
     {
         public String Help = "";
+        public String Logs = "";
         public String Config = "";
         public String Archive = "";
         public String Locale = "en_US";
@@ -1517,8 +1493,9 @@ namespace AppMan
         public String[] Paths = new String[0];
 
         public Settings() {}
-        public Settings(String config, String archive, String[] paths, String locale, String help)
+        public Settings(String config, String archive, String[] paths, String locale, String help, String logs)
         {
+            this.Logs = logs;
             this.Paths = paths;
             this.Config = config;
             this.Archive = archive;
