@@ -29,13 +29,9 @@ namespace CodeFormatter.InfoCollector
 			return buffer.ToString();
 		}
 
-        public static bool isJavaIdentifierPart(string s)
+        public static bool isJavaIdentifierPart(char ch)
         {
-            const string start = @"(\p{Lu}|\p{Ll}|\p{Lt}|\p{Lm}|\p{Lo}|\p{Nl})";
-            const string extend = @"(\p{Mn}|\p{Mc}|\p{Nd}|\p{Pc}|\p{Cf})";
-            Regex ident = new Regex(string.Format("{0}({0}|{1})*", start, extend));
-            s = s.Normalize();
-            return ident.IsMatch(s);
+            return Char.IsLetterOrDigit(ch) || ch == '_';
         }
 
 	}

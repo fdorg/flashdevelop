@@ -560,7 +560,7 @@ public class AS3_exParser : Parser
     		firstChar=operatoR.Text[0];
     	if (firstChar!=0)
     	{
-    		if (Utilities.isJavaIdentifierPart(firstChar.ToString()))
+    		if (Utilities.isJavaIdentifierPart(firstChar))
     			insertWS(1); //add 1 space around text operators (ex. 'as', 'instanceof')
     		else
     			insertWS(mPrinter.getExpressionSpacesAroundSymbolicOperators()); //add configurable symbolic operator value
@@ -578,7 +578,7 @@ public class AS3_exParser : Parser
     	
     	if (firstChar!=0)
     	{
-    		if (Utilities.isJavaIdentifierPart(firstChar.ToString()))
+    		if (Utilities.isJavaIdentifierPart(firstChar))
     			insertWS(1); //add 1 space around text operators (ex. 'as', 'instanceof')
     		else
     			insertWS(mPrinter.getExpressionSpacesAroundSymbolicOperators()); //add configurable symbolic operator value

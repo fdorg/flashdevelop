@@ -1426,11 +1426,11 @@ namespace CodeFormatter.Handlers
 		
 				if( getFormatMode() != FORMAT_INDENT )
 				{
-                    if (mOutputBuffer.Length > 0 && InfoCollector.Utilities.isJavaIdentifierPart(mOutputBuffer[mOutputBuffer.Length - 1].ToString()))
+                    if (mOutputBuffer.Length > 0 && InfoCollector.Utilities.isJavaIdentifierPart(mOutputBuffer[mOutputBuffer.Length - 1]))
 				{
 					//if the start of the token is a java identifier char (any letter or number or '_')  
 					//or if the token doesn't start with whitespace, but isn't an operator either ('+=' is an operator, so we wouldn't add space, but we would add space for a string literal) 
-                    if ((tok.Text.Length > 0 && InfoCollector.Utilities.isJavaIdentifierPart(tok.Text[0].ToString())) || isSymbolTokenThatShouldHaveSpaceBeforeIt(tok.Type))
+                    if ((tok.Text.Length > 0 && InfoCollector.Utilities.isJavaIdentifierPart(tok.Text[0])) || isSymbolTokenThatShouldHaveSpaceBeforeIt(tok.Type))
 					{
 						mOutputBuffer.Append(' ');
 					}
@@ -2752,7 +2752,7 @@ namespace CodeFormatter.Handlers
 				for (int i=0;i<data.Length;i++)
 				{
 					char ch=data[i];
-					if (InfoCollector.Utilities.isJavaIdentifierPart(ch.ToString()))
+					if (InfoCollector.Utilities.isJavaIdentifierPart(ch))
 						return; //if any chars/numbers, then definitely keep indent
 					if (ch!=')' && ch!='}' && ch!=';' && ch!=']')
 						return; //only certain characters legal on last line as part of a 'terminator' sequence

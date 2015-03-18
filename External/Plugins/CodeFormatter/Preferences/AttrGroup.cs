@@ -212,7 +212,7 @@ namespace CodeFormatter.Preferences
 			for (int i=0;i<str.Length;i++)
 			{
 				char c=str[i];
-				if (InfoCollector.Utilities.isJavaIdentifierPart(c.ToString()))continue;			
+				if (InfoCollector.Utilities.isJavaIdentifierPart(c)) continue;			
 				if (c==':' || c=='_' || c=='-') continue;		
 				return true;
 			}
