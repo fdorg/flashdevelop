@@ -169,7 +169,7 @@ namespace FlashDevelop.Dialogs
             {
                 Int32 line = Convert.ToInt32(this.lineTextBox.Text) - 1;
                 Globals.SciControl.EnsureVisible(line);
-                Globals.SciControl.GotoLine(line);
+                Globals.SciControl.GotoLineIndent(line);
                 this.Close();
             }
             catch

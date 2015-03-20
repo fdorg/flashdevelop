@@ -5613,6 +5613,15 @@ namespace ScintillaNet
 
         #region Misc Custom Stuff
 
+        /// <summary>
+        /// Set caret to line to indent position and ensure it is visible.
+        /// </summary>
+        public void GotoLineIndent(int line)
+        {
+            int pos = this.LineIndentPosition(line);
+            this.GotoPos(pos);
+        }
+
 		/// <summary>
 		/// Render the contents for printing
 		/// </summary>

@@ -324,7 +324,7 @@ namespace BookmarkPanel
                 if (document != null && document.IsEditable)
                 {
                     document.Activate();
-                    document.SciControl.GotoLine(line);
+                    document.SciControl.GotoLineIndent(line);
                 }
             }
         }
