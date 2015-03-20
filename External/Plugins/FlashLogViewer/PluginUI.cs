@@ -398,7 +398,15 @@ namespace FlashLogViewer
                 lastPosition = s.BaseStream.Length;
                 s.Close();
             }
-            if (forceScroll) this.logTextBox.ScrollToCaret();
+            if (forceScroll)
+            {
+                try
+                {
+                    this.logTextBox.Select(this.logTextBox.TextLength, 0);
+                    this.logTextBox.ScrollToCaret();
+                }
+                catch { /* WineMod: not supported */ }
+            }
         }
 
         /// <summary>

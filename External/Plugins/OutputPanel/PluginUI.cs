@@ -449,7 +449,11 @@ namespace OutputPanel
             {
                 this.DisplayOutput();
             }
-            try { this.textLog.ScrollToCaret(); }
+            try 
+            {
+                this.textLog.Select(this.textLog.TextLength, 0);
+                this.textLog.ScrollToCaret(); 
+            }
             catch { /* WineMod: not supported */ }
         }
 
