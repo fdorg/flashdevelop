@@ -1597,7 +1597,7 @@ namespace ProjectManager
         private void TreeSyncToCurrentFile()
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (doc != null && doc.IsEditable && !doc.IsUntitled)
+            if (activeProject != null && doc != null && doc.IsEditable && !doc.IsUntitled)
             {
                 Tree.Select(doc.FileName);
                 Tree.SelectedNode.EnsureVisible();
