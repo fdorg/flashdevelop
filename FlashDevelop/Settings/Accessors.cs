@@ -684,7 +684,7 @@ namespace FlashDevelop.Settings
         }
 
         [DefaultValue(false)]
-        [DisplayName("Strip Trailing Spaces")]
+        [DisplayName("Trim Trailing Whitespace")]
         [LocalizedCategory("FlashDevelop.Category.Formatting")]
         [LocalizedDescription("FlashDevelop.Description.StripTrailingSpaces")]
         public Boolean StripTrailingSpaces
