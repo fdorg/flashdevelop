@@ -139,6 +139,7 @@ namespace CodeRefactor
                     break;
 
                 case EventType.Command:
+                    if (settingObject.DisableMoveRefactoring) return;
                     DataEvent de = (DataEvent)e;
                     string[] args;
                     string oldPath;

@@ -5901,4 +5901,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Use legacy coloring state format parsed from the message ('2:message').</value>
     <comment>Added after 4.7.1</comment>
   </data>
+  <data name="CodeRefactor.Description.DisableMoveRefactoring" xml:space="preserve">
+    <value>Disables the move refactoring of files and folders.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
 </root>
