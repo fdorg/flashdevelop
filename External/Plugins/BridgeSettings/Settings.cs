@@ -31,7 +31,7 @@ namespace BridgeSettings
             set { active = value; }
         }
 
-        [DisplayName("Custom Bridge IP"), LocalizedDescription("BridgeSettings.Description.CustomBridgeIP"), DefaultValue("")]
+        [DisplayName("Custom Bridge IP"), LocalizedDescription("BridgeSettings.Description.CustomBridgeIP"), DefaultValue(DEFAULT_IP)]
         public string CustomIP
         {
             get { return ip ?? DEFAULT_IP; }
