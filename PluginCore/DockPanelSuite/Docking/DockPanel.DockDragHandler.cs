@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using PluginCore.DockPanelSuite;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -818,6 +819,10 @@ namespace WeifenLuo.WinFormsUI.Docking
                     DockPanel panel = Outline.DockTo as DockPanel;
                     panel.UpdateDockWindowZOrder(Outline.Dock, Outline.FlagFullEdge);
                     DragSource.DockTo(panel, Outline.Dock);
+                }
+                if (DragSource is DockContentHandler && ((DockContentHandler)DragSource).Content is ITabbedDocument)
+                {
+                    ((DockContentHandler)DragSource).Content.DockHandler.Activate();
                 }
             }
         }
