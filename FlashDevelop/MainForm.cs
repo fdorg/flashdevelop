@@ -1479,7 +1479,16 @@ namespace FlashDevelop
             String[] files = Regex.Split(data.Substring(1, data.Length - 2), "\" \"");
             foreach (String file in files)
             {
-                if (File.Exists(file)) this.OpenEditableDocument(file);
+                if (File.Exists(file))
+                {
+                    DockContent doc = this.OpenEditableDocument(file);
+                    DockContent drop = DocumentManager.FindDocument(sci) as DockContent;
+                    if (drop != null && drop.Pane != null)
+                    {
+                        doc.DockTo(drop.Pane, DockStyle.Fill, -1);
+                        doc.Activate();
+                    }
+                }
             }
         }
 
