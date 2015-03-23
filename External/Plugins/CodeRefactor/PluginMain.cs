@@ -317,9 +317,9 @@ namespace CodeRefactor
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
-                    bool isRenameable = (result.Member != null && result.Member.InFile != null && File.Exists(result.Member.InFile.FileName) && !RefactoringHelper.IsUnderSDKPath(result.Member.InFile.FileName))
-                        || (result.Type != null && result.Type.InFile != null && File.Exists(result.Type.InFile.FileName) && !RefactoringHelper.IsUnderSDKPath(result.Type.InFile.FileName))
-                        || (result.InFile != null && File.Exists(result.InFile.FileName) && !RefactoringHelper.IsUnderSDKPath(result.InFile.FileName))
+                    bool isRenameable = (result.Member != null && RefactoringHelper.ModelFileExists(result.Member.InFile) && !RefactoringHelper.IsUnderSDKPath(result.Member.InFile))
+                        || (result.Type != null && RefactoringHelper.ModelFileExists(result.Type.InFile) && !RefactoringHelper.IsUnderSDKPath(result.Type.InFile))
+                        || (RefactoringHelper.ModelFileExists(result.InFile) && !RefactoringHelper.IsUnderSDKPath(result.InFile))
                         || result.IsPackage;
                     this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;
                     this.refactorMainMenu.RenameMenuItem.Enabled = isRenameable;

@@ -65,8 +65,21 @@ namespace CodeRefactor.Provider
         }
 
         /// <summary>
+        /// Checks if the model is not null and file exists
+        /// </summary>
+        public static Boolean ModelFileExists(FileModel model)
+        {
+            if (model != null && File.Exists(model.FileName)) return true;
+            else return false;
+        }
+
+        /// <summary>
         /// Checks if the file is under the current SDK
         /// </summary>
+        public static Boolean IsUnderSDKPath(FileModel model)
+        {
+            return IsUnderSDKPath(model.FileName);
+        }
         public static Boolean IsUnderSDKPath(String file)
         {
             InstalledSDK sdk = PluginBase.CurrentSDK;
