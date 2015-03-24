@@ -390,7 +390,9 @@ namespace CodeRefactor.Commands
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
                 currentTargetResult = RefactoringHelper.GetRefactorTargetFromFile(oldFileModel.FileName, AssociatedDocumentHelper);
                 if (currentTargetResult != null)
-                    RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true);
+                {
+                    RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true, true);
+                }
                 else
                 {
                     currentTargetIndex++;

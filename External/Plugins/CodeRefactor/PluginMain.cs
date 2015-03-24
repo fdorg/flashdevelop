@@ -295,17 +295,6 @@ namespace CodeRefactor
         }
 
         /// <summary>
-        /// Gets if the language is valid for refactoring
-        /// </summary>
-        private Boolean GetLanguageIsValid()
-        {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return false;
-            string lang = document.SciControl.ConfigurationLanguage;
-            return lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"; // TODO: look for /Snippets/Generators
-        }
-
-        /// <summary>
         /// Cursor position changed and word at this position was resolved
         /// </summary>
         private void OnResolvedContextChanged(ResolvedContext resolved)
@@ -322,15 +311,15 @@ namespace CodeRefactor
             {
                 this.refactorMainMenu.DelegateMenuItem.Enabled = false;
                 this.refactorContextMenu.DelegateMenuItem.Enabled = false;
-                bool langIsValid = GetLanguageIsValid();
+                bool langIsValid = RefactoringHelper.GetLanguageIsValid();
                 ResolvedContext resolved = ASComplete.CurrentResolvedContext;
                 bool isValid = langIsValid && resolved != null && resolved.Position >= 0;
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
-                    bool isRenameable = (result.Member != null && result.Member.InFile != null && File.Exists(result.Member.InFile.FileName))
-                        || (result.Type != null && result.Type.InFile != null && File.Exists(result.Type.InFile.FileName))
-                        || (result.InFile != null && File.Exists(result.InFile.FileName))
+                    bool isRenameable = (result.Member != null && RefactoringHelper.ModelFileExists(result.Member.InFile) && !RefactoringHelper.IsUnderSDKPath(result.Member.InFile))
+                        || (result.Type != null && RefactoringHelper.ModelFileExists(result.Type.InFile) && !RefactoringHelper.IsUnderSDKPath(result.Type.InFile))
+                        || (RefactoringHelper.ModelFileExists(result.InFile) && !RefactoringHelper.IsUnderSDKPath(result.InFile))
                         || result.IsPackage;
                     this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;
                     this.refactorMainMenu.RenameMenuItem.Enabled = isRenameable;
@@ -397,7 +386,7 @@ namespace CodeRefactor
         private void GenerateSurroundMenuItems()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable && this.GetLanguageIsValid())
+            if (document != null && document.IsEditable && RefactoringHelper.GetLanguageIsValid())
             {
                 this.surroundContextMenu.GenerateSnippets(document.SciControl);
                 foreach (ToolStripMenuItem item in this.surroundContextMenu.DropDownItems)
