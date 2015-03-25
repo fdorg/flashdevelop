@@ -28,16 +28,22 @@ namespace AppMan.Utilities
         }
 
         /// <summary>
-        /// Deserializes the specified object from a xml file.
+        /// Deserializes the specified object from a xml file. Optionally includes out commented extras.
         /// </summary>
         public static Object Deserialize(String file, Object obj)
+        {
+            return Deserialize(file, obj, false);
+        }
+        public static Object Deserialize(String file, Object obj, Boolean extras)
         {
             try
             {
                 using (TextReader reader = new StreamReader(file, Encoding.UTF8, false))
                 {
+                    String xmlData = reader.ReadToEnd();
+                    if (extras) xmlData = xmlData.Replace("<!--EXTRAS", "").Replace("EXTRAS-->", "");
                     XmlSerializer serializer = new XmlSerializer(obj.GetType());
-                    return serializer.Deserialize(reader);
+                    return serializer.Deserialize(new StringReader(xmlData));
                 }
             }
             catch (Exception ex)

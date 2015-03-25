@@ -2729,7 +2729,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Export Syntax Files</value>
   </data>
   <data name="FlashDevelop.Info.ZipExtractDone" xml:space="preserve">
-    <value>The zip file was extracted succesfully.</value>
+    <value>The zip file was extracted successfully.</value>
   </data>
   <data name="FlashDevelop.Info.CaretFore" xml:space="preserve">
     <value>Caret fore:</value>
@@ -5188,7 +5188,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
-    <value>The zip file was removed succesfully.</value>
+    <value>The zip file was removed successfully.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">

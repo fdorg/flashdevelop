@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.ComponentModel;
@@ -836,8 +837,11 @@ namespace AppMan
                 if (file.ToLower().EndsWith(".fdz"))
                 {
                     String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\FlashDevelop.exe");
-                    Process.Start(Path.GetFullPath(fd), file + " -silent -reuse");
-                    return;
+                    if (File.Exists(fd))
+                    {
+                        Process.Start(Path.GetFullPath(fd), file + " -silent -reuse");
+                        return;
+                    }
                 }
                 #endif
                 Process.Start(file);
@@ -907,7 +911,7 @@ namespace AppMan
                 else
                 {
                     this.entriesFile = PathHelper.CONFIG_ADR;
-                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries);
+                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries, true);
                     this.statusLabel.Text = this.localeData.ItemListOpened;
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
@@ -935,7 +939,7 @@ namespace AppMan
                 if (e.Error == null && fileExists && fileIsValid)
                 {
                     this.statusLabel.Text = this.localeData.DownloadedItemList;
-                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries);
+                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries, true);
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
                 }
@@ -1053,9 +1057,31 @@ namespace AppMan
                 }
                 else if (e.Error == null)
                 {
-                    String idPath = Path.Combine(PathHelper.APPS_DIR, this.curEntry.Id);
-                    String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
-                    this.ExtractFile(this.tempFile, vnPath);
+                    // Verify checksum of the file if specified
+                    if (!String.IsNullOrEmpty(this.curEntry.Checksum) && !this.VerifyFile(this.curEntry.Checksum, this.tempFile))
+                    {
+                        String message = this.localeData.ChecksumVerifyError + this.curFile + ".\n";
+                        if (this.downloadQueue.Count > 0) message += this.localeData.ContinueWithNextItem;
+                        DialogHelper.ShowError(message); // Show message first...
+                        if (this.downloadQueue.Count > 0) this.DownloadNextFromQueue();
+                        else
+                        {
+                            this.isLoading = false;
+                            this.progressBar.Value = 0;
+                            this.cancelButton.Enabled = false;
+                            this.statusLabel.Text = this.localeData.AllItemsCompleted;
+                            this.NoneLinkLabelLinkClicked(null, null);
+                            this.TryDeleteEntryDir(this.curEntry);
+                            this.TryDeleteOldTempFiles();
+                            this.UpdateButtonLabels();
+                        }
+                    }
+                    else
+                    {
+                        String idPath = Path.Combine(PathHelper.APPS_DIR, this.curEntry.Id);
+                        String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
+                        this.ExtractFile(this.tempFile, vnPath);
+                    }
                 }
                 else
                 {
@@ -1192,7 +1218,8 @@ namespace AppMan
                         {
                             String vnPath = Path.Combine(idPath, this.curEntry.Version.ToLower());
                             String fileName = Path.GetFileName(this.curEntry.Urls[0]);
-                            this.RunExecutableProcess(Path.Combine(vnPath, fileName));
+                            String filePath = Path.Combine(vnPath, fileName);
+                            this.RunExecutableProcess(filePath);
                         }
                         #endif
                         Thread.Sleep(100); // Wait for files...
@@ -1341,6 +1368,29 @@ namespace AppMan
         }
 
         /// <summary>
+        /// Verifies the checksum (MD5 in hex) of the file.
+        /// </summary>
+        private Boolean VerifyFile(String checksum, String file)
+        {
+            try 
+            {
+                using (MD5 md5 = MD5.Create())
+                {
+                    using (Stream stream = File.OpenRead(file))
+                    {
+                        String hex = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "");
+                        return hex.ToLower() == checksum.ToLower();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Executes the next setup command from queue.
         /// </summary>
         private void RunEntrySetup(String path, DepEntry entry)
@@ -1440,6 +1490,7 @@ namespace AppMan
         public String Desc = "";
         public String Group = "";
         public String Version = "";
+        public String Checksum = "";
         public String Build = "";
         public String Type = "";
         public String Info = "";
@@ -1459,7 +1510,7 @@ namespace AppMan
             this.Type = MainForm.TYPE_ARCHIVE;
             this.Temps = new Dictionary<String, String>();
         }
-        public DepEntry(String id, String name, String desc, String group, String version, String build, String type, String info, String cmd, String[] urls, String[] bundles)
+        public DepEntry(String id, String name, String desc, String group, String version, String build, String type, String info, String cmd, String[] urls, String[] bundles, String checksum)
         {
             this.Id = id;
             this.Name = name;
@@ -1468,6 +1519,7 @@ namespace AppMan
             this.Build = build;
             this.Version = version;
             this.Bundles = bundles;
+            this.Checksum = checksum;
             this.Temps = new Dictionary<String, String>();
             if (!String.IsNullOrEmpty(type)) this.Type = type;
             else this.Type = MainForm.TYPE_ARCHIVE;
@@ -1533,6 +1585,7 @@ namespace AppMan
         public String ItemListDownloadFailed = "Item list could not be downloaded.";
         public String DeleteSelectedConfirm = "Are you sure to delete all versions of the selected items?";
         public String ContinueWithNextItem = "Trying to continue with the next item.";
+        public String ChecksumVerifyError = "The specified checksum did not match the file: ";
         public String DownloadingError = "Error while downloading file: ";
         public String ExtractingError = "Error while extracting file: ";
         public String DeleteDirError = "Error while deleting directory: ";

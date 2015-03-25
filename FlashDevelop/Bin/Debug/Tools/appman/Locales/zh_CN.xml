@@ -26,6 +26,7 @@
 	<DownloadingError>下载内容出错: </DownloadingError>
 	<ExtractingError>抽取文件内容出错: </ExtractingError>
 	<DeleteDirError>Error while deleting directory: </DeleteDirError>
+	<ChecksumVerifyError>The checksum did not match the file: </ChecksumVerifyError>
 	<!-- Labels -->
 	<SelectLabel>选择:</SelectLabel>
 	<ExploreLabel>浏览...</ExploreLabel>

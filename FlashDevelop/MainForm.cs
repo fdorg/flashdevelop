@@ -2879,6 +2879,10 @@ namespace FlashDevelop
                                 fdpath += ".new";
                                 requiresRestart = true;
                             }
+                            else if (ext == ".dll" || ext == ".fdb" || ext == ".fdl")
+                            {
+                                requiresRestart = true;
+                            }
                             zipLog += "Extract: " + fdpath + "\r\n";
                             String dirPath = Path.GetDirectoryName(fdpath);
                             if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
@@ -2899,14 +2903,16 @@ namespace FlashDevelop
                         }
                     }
                     String finish = TextHelper.GetString("Info.ZipExtractDone");
+                    String restart = TextHelper.GetString("Info.RequiresRestart");
                     if (requiresRestart)
                     {
-                        zipLog += "Restart required.\r\n";
-                        finish += "\n" + TextHelper.GetString("Info.RequiresRestart");
+						zipLog += "Restart required.\r\n";
+                        if (!silentInstall) finish += "\n" + restart;
+						else TraceManager.AddAsync(finish + "\r\n" + restart);
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
-                    ErrorManager.ShowInfo(finish);
+                    if (!silentInstall) ErrorManager.ShowInfo(finish);
                 }
             }
             catch (Exception ex)
@@ -2982,14 +2988,16 @@ namespace FlashDevelop
                         }
                     }
                     String finish = TextHelper.GetString("Info.ZipRemoveDone");
+                    String restart = TextHelper.GetString("Info.RequiresRestart");
                     if (requiresRestart)
                     {
-                        zipLog += "Restart required.\r\n";
-                        finish += "\n" + TextHelper.GetString("Info.RequiresRestart");
+						zipLog += "Restart required.\r\n";                        
+						if (!silentRemove) finish += "\n" + restart;
+						else TraceManager.AddAsync(finish + "\r\n" + restart);
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
-                    ErrorManager.ShowInfo(finish);
+                    if (!silentRemove) ErrorManager.ShowInfo(finish);
                 }
             }
             catch (Exception ex)
