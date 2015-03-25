@@ -1401,7 +1401,7 @@ namespace AppMan
                 {
                     if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                     String data = ArgProcessor.ProcessArguments(entry.Cmd);
-                    for (var i = 0; i < entry.Urls.Length; i++)
+                    for (Int32 i = 0; i < entry.Urls.Length; i++)
                     {
                         String url = entry.Urls[i];
                         if (entry.Temps.ContainsKey(url))
@@ -1456,7 +1456,7 @@ namespace AppMan
         public Double GetScale()
         {
             if (curScale != Double.MinValue) return curScale;
-            using (var g = Graphics.FromHwnd(this.Handle))
+            using (Graphics g = Graphics.FromHwnd(this.Handle))
             {
                 curScale = g.DpiX / 96f;
             }
