@@ -606,6 +606,8 @@ namespace ASCompletion
             }
             else
             {
+                folderBrowserDialog.ShowNewFolderButton = true;
+                folderBrowserDialog.UseDescriptionForTitle = true;
                 folderBrowserDialog.Description = TextHelper.GetString("Title.SelectIntrinsicTargetFolder");
                 if (PluginBase.CurrentProject != null)
                     folderBrowserDialog.SelectedPath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);

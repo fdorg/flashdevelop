@@ -37,7 +37,7 @@ namespace FileExplorer
         private System.Windows.Forms.ColumnHeader sizeHeader;
         private System.Windows.Forms.ColumnHeader typeHeader;
         private System.Windows.Forms.ColumnHeader modifiedHeader;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private Ookii.Dialogs.VistaFolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.ListViewItem highlightedItem;
         private System.Windows.Forms.ImageList imageList;
         private System.Boolean updateInProgress;
@@ -75,7 +75,7 @@ namespace FileExplorer
             this.fileView = new System.Windows.Forms.ListView();
             this.fileHeader = new System.Windows.Forms.ColumnHeader();
             this.sizeHeader = new System.Windows.Forms.ColumnHeader();
-            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.folderBrowserDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.selectedPath = new System.Windows.Forms.ToolStripSpringComboBox();
             this.syncronizeButton = new System.Windows.Forms.ToolStripButton();
@@ -306,6 +306,7 @@ namespace FileExplorer
         {
             this.fileHeader.Text = TextHelper.GetString("Header.Files");
             this.modifiedHeader.Text = TextHelper.GetString("Header.Modified");
+            this.folderBrowserDialog.UseDescriptionForTitle = true;
             this.folderBrowserDialog.Description = TextHelper.GetString("Info.BrowseDescription");
             this.syncronizeButton.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
             this.browseButton.ToolTipText = TextHelper.GetString("ToolTip.Browse");
