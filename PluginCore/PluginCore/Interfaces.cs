@@ -266,6 +266,7 @@ namespace PluginCore
         ScintillaNet.Enums.VirtualSpaceMode VirtualSpaceMode { get; set; }
         ScintillaNet.Enums.IndentView IndentView { get; set; }
         ScintillaNet.Enums.HighlightMatchingWordsMode HighlightMatchingWordsMode { get; set; }
+        Int32 HighlightMatchingWordsDelay { get; set; }
         CodePage DefaultCodePage { get; set; }
         Int32 TabWidth { get; set; }
         Int32 IndentSize { get; set; }

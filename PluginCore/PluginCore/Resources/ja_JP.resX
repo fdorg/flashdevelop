@@ -5954,4 +5954,8 @@ UseData:"</value>
     <value>Disables the move refactoring of files and folders.</value>
     <comment>Added after 4.7.2</comment>
   </data>
+  <data name="HighlightMatchingWordsDelay" xml:space="preserve">
+    <value>The delay in milliseconds after the word match highlight should be shown.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
 </root>

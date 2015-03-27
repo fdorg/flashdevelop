@@ -5342,7 +5342,7 @@ namespace ScintillaNet
         {
             if (highlightDelay == null)
             {
-                highlightDelay = new System.Timers.Timer(1200);
+                highlightDelay = new System.Timers.Timer(PluginBase.MainForm.Settings.HighlightMatchingWordsDelay);
                 highlightDelay.Elapsed += highlightDelay_Elapsed;
                 highlightDelay.SynchronizingObject = this as Control;
             }
