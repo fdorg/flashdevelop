@@ -255,7 +255,22 @@
 		<Group>Extensions</Group>
 		<Info>http://www.flashdevelop.org/wikidocs/</Info>
 		<Urls>
-			<Url>http://flashdevelop.googlecode.com/svn/trunk/FD4/External/Extensions/AS2Templates/AS2Templates-1.01.fdz</Url>
+			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Extensions/AS2Templates/AS2Templates-1.01.fdz</Url>
 		</Urls>
 	</Entry>
+	<!--EXTRAS
+	<Entry>
+		<Id>colorbox</Id>
+		<Name>ColorBox</Name>
+		<Version>0.1.5</Version>
+		<Build>1</Build>
+		<Checksum>2670333813fc6334b52dded8168b6f21</Checksum>
+		<Desc>Lets you display the color you specified and change it.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=10339</Info>
+		<Urls>
+			<Url>https://bitbucket.org/Gr33z00/colorbox/downloads/fd4_colorbox_v0.1.5.fdz</Url>
+		</Urls>
+	</Entry>
+	EXTRAS-->
 </Entries>
