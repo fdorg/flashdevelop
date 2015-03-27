@@ -260,7 +260,7 @@ namespace FlashDebugger
 
         private void InitializeComponent()
         {
-            this.tsActions = new System.Windows.Forms.ToolStrip();
+            this.tsActions = new PluginCore.Controls.ToolStripEx();
             this.tsbRemoveSelected = new System.Windows.Forms.ToolStripButton();
             this.tsbRemoveFiltered = new System.Windows.Forms.ToolStripButton();
             this.tsbAlternateFiltered = new System.Windows.Forms.ToolStripButton();

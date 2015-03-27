@@ -62,6 +62,28 @@ namespace System.Windows.Forms
             else renderer = new ToolStripProfessionalRenderer();
         }
 
+        protected override void InitializeItem(ToolStripItem item)
+        {
+            if (item is ToolStripButton)
+            {
+                base.InitializeItem(item);
+                Double scale = ScaleHelper.GetScale();
+                if (scale >= 1.5)
+                {
+                    item.Padding = new Padding(4, 2, 4, 2);
+                }
+                else if (scale >= 1.2)
+                {
+                    item.Padding = new Padding(2, 1, 2, 1);
+                }
+                else if (renderer is ToolStripSystemRenderer && Win32.IsRunningOnWindows())
+                {
+                    item.Padding = new Padding(2, 2, 2, 2);
+                }
+            }
+            else base.InitializeItem(item);
+        }
+
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
         {
             if (e.ToolStrip is StatusStrip) return;
@@ -250,13 +272,6 @@ namespace System.Windows.Forms
 
         protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
         {
-            // Ensure padding on buttons if in high dpi mode
-            if (e.Graphics.DpiX >= 192) e.Item.Padding = new Padding(4, 2, 4, 2);
-            else if (e.Graphics.DpiX >= 120) e.Item.Padding = new Padding(2, 1, 2, 1);
-            else if (renderer is ToolStripSystemRenderer && Win32.IsRunningOnWindows())
-            {
-                e.Item.Padding = new Padding(2, 2, 2, 2);
-            }
             if (renderer is ToolStripProfessionalRenderer)
             {
                 Boolean isOver = false;
@@ -278,6 +293,7 @@ namespace System.Windows.Forms
                     Rectangle rect4 = new Rectangle(rect3.Left + 1, rect3.Top + 1, rect3.Width - 2, rect3.Height - 2);
                     e.Graphics.DrawRectangle(new Pen(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border), rect3);
                     e.Graphics.DrawRectangle(new Pen(back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back), rect4);
+                    e.Item.Invalidate();
                 }
                 if (e.Item.Pressed)
                 {
