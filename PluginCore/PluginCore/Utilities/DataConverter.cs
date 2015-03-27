@@ -122,6 +122,14 @@ namespace PluginCore.Utilities
             return TO_COLORREF(color.ToArgb() & 0x00ffffff);
         }
 
+        /// <summary>
+        /// Alias for ColorToBGR to not break the API.
+        /// </summary>
+        public static Int32 ColorToInt32(Color color)
+        {
+            return ColorToBGR(color);
+        }
+
     }
 
 }
