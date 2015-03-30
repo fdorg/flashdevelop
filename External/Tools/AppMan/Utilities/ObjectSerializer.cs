@@ -28,20 +28,24 @@ namespace AppMan.Utilities
         }
 
         /// <summary>
-        /// Deserializes the specified object from a xml file. Optionally includes out commented extras.
+        /// Deserializes the specified object from a xml file. Optionally exposes commented groups.
         /// </summary>
         public static Object Deserialize(String file, Object obj)
         {
-            return Deserialize(file, obj, false);
+            return Deserialize(file, obj, String.Empty);
         }
-        public static Object Deserialize(String file, Object obj, Boolean extras)
+        public static Object Deserialize(String file, Object obj, String groups)
         {
             try
             {
                 using (TextReader reader = new StreamReader(file, Encoding.UTF8, false))
                 {
                     String xmlData = reader.ReadToEnd();
-                    if (extras) xmlData = xmlData.Replace("<!--EXTRAS", "").Replace("EXTRAS-->", "");
+                    String[] exGroups = groups.Split(new char[] { ',' });
+                    foreach (String group in exGroups)
+                    {
+                        xmlData = xmlData.Replace("<!--" + group, "").Replace(group + "-->", "");
+                    }
                     XmlSerializer serializer = new XmlSerializer(obj.GetType());
                     return serializer.Deserialize(new StringReader(xmlData));
                 }

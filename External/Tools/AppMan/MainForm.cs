@@ -46,6 +46,11 @@ namespace AppMan
         public static Int32 LINK_MARGIN = 4;
 
         /**
+        * Static constant for exposed config groups (separated with ,)
+        */
+        public static String EXPOSED_GROUPS = "FD5";
+
+        /**
         * Static type and state constants
         */ 
         public static String TYPE_LINK = "Link";
@@ -911,7 +916,7 @@ namespace AppMan
                 else
                 {
                     this.entriesFile = PathHelper.CONFIG_ADR;
-                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries, true);
+                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries, MainForm.EXPOSED_GROUPS);
                     this.statusLabel.Text = this.localeData.ItemListOpened;
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
@@ -939,7 +944,7 @@ namespace AppMan
                 if (e.Error == null && fileExists && fileIsValid)
                 {
                     this.statusLabel.Text = this.localeData.DownloadedItemList;
-                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries, true);
+                    Object data = ObjectSerializer.Deserialize(this.entriesFile, this.depEntries, MainForm.EXPOSED_GROUPS);
                     this.depEntries = data as DepEntries;
                     this.PopulateListView();
                 }

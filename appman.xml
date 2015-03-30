@@ -258,7 +258,7 @@
 			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Extensions/AS2Templates/AS2Templates-1.01.fdz</Url>
 		</Urls>
 	</Entry>
-	<!--EXTRAS
+	<!--FD5
 	<Entry>
 		<Id>colorbox</Id>
 		<Name>ColorBox</Name>
@@ -337,5 +337,5 @@
 			<Url>https://github.com/JoeRobich/fd-trackopenfile/releases/download/v0.2/TrackOpenFile_0.2.fdz</Url>
 		</Urls>
 	</Entry>
-	EXTRAS-->
+	FD5-->
 </Entries>
