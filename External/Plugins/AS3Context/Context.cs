@@ -356,7 +356,7 @@ namespace AS3Context
 
             // add library
             AddPath(PathHelper.LibraryDir + S + "AS3" + S + "classes");
-			// add user pathes from settings
+            // add user pathes from settings
             if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());

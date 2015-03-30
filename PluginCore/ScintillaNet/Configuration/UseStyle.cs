@@ -10,8 +10,8 @@ namespace ScintillaNet.Configuration
         [XmlAttributeAttribute("class")]
         public string cls;
 
-		[XmlAttributeAttribute()]
-		public int key;
+        [XmlAttributeAttribute()]
+        public int key;
 
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {

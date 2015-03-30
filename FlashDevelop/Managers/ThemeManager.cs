@@ -24,9 +24,9 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static String GetThemeValue(String id)
         {
-	        String result;
-	        if (valueMap.TryGetValue(id, out result)) return result;
-	        else return null;
+            String result;
+            if (valueMap.TryGetValue(id, out result)) return result;
+            else return null;
         }
 
         /// <summary>

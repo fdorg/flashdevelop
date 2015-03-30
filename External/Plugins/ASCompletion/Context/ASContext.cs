@@ -35,33 +35,33 @@ namespace ASCompletion.Context
         protected bool started;
         protected ContextSetupInfos contextSetup;
         protected List<PathModel> classPath;
-		protected FileModel cFile;
+        protected FileModel cFile;
         protected int cLine;
         protected MemberModel cMember;
-		protected ClassModel cClass;
+        protected ClassModel cClass;
         protected bool inPrivateSection;
-		protected FileModel topLevel;
-		protected string lastClassWarning;
+        protected FileModel topLevel;
+        protected string lastClassWarning;
         protected CompletionCache completionCache;
         protected Timer cacheRefreshTimer;
-		// path normalization
-		static protected bool doPathNormalization;
-		static protected string dirSeparator;
-		static protected char dirSeparatorChar;
-		static protected string dirAltSeparator;
-		static protected char dirAltSeparatorChar;
-		// settings
+        // path normalization
+        static protected bool doPathNormalization;
+        static protected string dirSeparator;
+        static protected char dirSeparatorChar;
+        static protected string dirAltSeparator;
+        static protected char dirAltSeparatorChar;
+        // settings
         protected IContextSettings settings;
         protected ContextFeatures features;
         protected string temporaryPath;
         protected string platform;
         protected int majorVersion;
         protected int minorVersion;
-		// Checking / Quick Build
-		protected bool runAfterBuild;
-		protected string outputFile;
-		protected string outputFileDetails;
-		protected bool trustFileWanted;
+        // Checking / Quick Build
+        protected bool runAfterBuild;
+        protected string outputFile;
+        protected string outputFileDetails;
+        protected bool trustFileWanted;
 
         public ASContext()
         {
@@ -76,7 +76,7 @@ namespace ASCompletion.Context
         #region static properties
 
         static public IMainForm MainForm
-		{
+        {
             get { return PluginBase.MainForm; }
         }
 
@@ -105,9 +105,9 @@ namespace ASCompletion.Context
         }
 
         //static private int setCount = 0;
-		static public IASContext Context
-		{
-			get { return context; }
+        static public IASContext Context
+        {
+            get { return context; }
             set
             {
                 if (value == null) context = defaultContext;
@@ -126,7 +126,7 @@ namespace ASCompletion.Context
                     item.Enabled = isValid;
                 }
             }
-		}
+        }
 
         static public bool HasContext
         {
@@ -175,19 +175,19 @@ namespace ASCompletion.Context
             }
         }
 
-		public virtual ClassModel CurrentClass
-		{
-			get
+        public virtual ClassModel CurrentClass
+        {
+            get
             {
                 if (cFile.OutOfDate) UpdateCurrentFile(true);
-				return (cClass != null) ? cClass : ClassModel.VoidClass;
-			}
+                return (cClass != null) ? cClass : ClassModel.VoidClass;
+            }
             set { cClass = value; }
-		}
+        }
 
         public virtual string CurrentFile
-		{
-			get
+        {
+            get
             {
                 if (cFile == null) cFile = FileModel.Ignore;
                 return cFile.FileName;
@@ -256,14 +256,14 @@ namespace ASCompletion.Context
             get { return false; }
         }
 
-		/// <summary>
-		/// Language built-in elements
-		/// </summary>
-		public FileModel TopLevel
-		{
-			get { return topLevel; }
+        /// <summary>
+        /// Language built-in elements
+        /// </summary>
+        public FileModel TopLevel
+        {
+            get { return topLevel; }
             set { topLevel = value; }
-		}
+        }
 
         /// <summary>
         /// Current active classpath
@@ -273,36 +273,36 @@ namespace ASCompletion.Context
             get { return classPath; }
             set { classPath = value; }
         }
-		#endregion
+        #endregion
 
-		#region all contexts management
-		/// <summary>
-		/// Init completion engine context
-		/// </summary>
-		/// <param name="mainForm">Reference to MainForm</param>
+        #region all contexts management
+        /// <summary>
+        /// Init completion engine context
+        /// </summary>
+        /// <param name="mainForm">Reference to MainForm</param>
         static internal void GlobalInit(PluginMain pluginMain)
-		{
-			dirSeparatorChar = System.IO.Path.DirectorySeparatorChar;
-			dirSeparator = dirSeparatorChar.ToString();
-			dirAltSeparatorChar = System.IO.Path.AltDirectorySeparatorChar;
-			dirAltSeparator = dirAltSeparatorChar.ToString();
-			doPathNormalization = (dirSeparator != dirAltSeparator);
+        {
+            dirSeparatorChar = System.IO.Path.DirectorySeparatorChar;
+            dirSeparator = dirSeparatorChar.ToString();
+            dirAltSeparatorChar = System.IO.Path.AltDirectorySeparatorChar;
+            dirAltSeparator = dirAltSeparatorChar.ToString();
+            doPathNormalization = (dirSeparator != dirAltSeparator);
 
-			// language contexts
-			ASContext.plugin = pluginMain;
+            // language contexts
+            ASContext.plugin = pluginMain;
             validContexts = new List<IASContext>();
             context = null;
-			try
-			{
-				context = defaultContext = new ASContext();
-			}
-			catch(Exception ex)
-			{
+            try
+            {
+                context = defaultContext = new ASContext();
+            }
+            catch(Exception ex)
+            {
                 ErrorManager.ShowError(ex);
-			}
-		}
+            }
+        }
 
-		/// <summary>
+        /// <summary>
         /// Adds a language context
         /// </summary>
         /// <param name="contextReference">Language context</param>
@@ -547,61 +547,61 @@ namespace ASCompletion.Context
         }
 
         /// <summary>
-		/// Add additional classpathes
-		/// </summary>
+        /// Add additional classpathes
+        /// </summary>
         public virtual void Setup(ContextSetupInfos setup)
-		{
+        {
             contextSetup = setup;
-			BuildClassPath();
-		}
+            BuildClassPath();
+        }
 
-		/// <summary>
-		/// Add a path to the classpath
-		/// </summary>
-		/// <param name="path">Path to add</param>
+        /// <summary>
+        /// Add a path to the classpath
+        /// </summary>
+        /// <param name="path">Path to add</param>
         protected virtual PathModel AddPath(string path)
-		{
-			try
-			{
-				if (string.IsNullOrEmpty(path)) return null;
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(path)) return null;
                 if (Directory.Exists(path)) path = NormalizePath(path);
                 else if (File.Exists(path)) path = NormalizeFilename(path);
                 else return null;
-			}
-			catch (Exception ex)
-			{
-				ErrorManager.ShowError(ex);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
                 return null;
-			}
-			
-			// avoid duplicated pathes
-			string upath = path.ToUpper().TrimEnd(new char[] { '\\', '/' });
-			foreach(PathModel apath in classPath)
-			{
-				if (apath.Path.ToUpper() == upath)
-					return apath;
-			}
-			// add new path
-			PathModel aPath = PathModel.GetModel(path, this);
+            }
+            
+            // avoid duplicated pathes
+            string upath = path.ToUpper().TrimEnd(new char[] { '\\', '/' });
+            foreach(PathModel apath in classPath)
+            {
+                if (apath.Path.ToUpper() == upath)
+                    return apath;
+            }
+            // add new path
+            PathModel aPath = PathModel.GetModel(path, this);
             if (aPath != null)
             {
                 classPath.Add(aPath);
                 ExplorePath(aPath);
             }
-			return aPath;
-		}
+            return aPath;
+        }
 
         protected virtual PathModel AddPath(PathModel path)
-		{
-			// avoid duplicated pathes
-			string upath = path.Path.ToUpper();
-			foreach(PathModel apath in classPath)
-			{
-				if (!apath.IsTemporaryPath && apath.Path.ToUpper() == upath)
-						return apath;
-			}
-			// add new path
-			classPath.Add(path);
+        {
+            // avoid duplicated pathes
+            string upath = path.Path.ToUpper();
+            foreach(PathModel apath in classPath)
+            {
+                if (!apath.IsTemporaryPath && apath.Path.ToUpper() == upath)
+                        return apath;
+            }
+            // add new path
+            classPath.Add(path);
             return path;
         }
 
@@ -640,8 +640,8 @@ namespace ASCompletion.Context
                 // restore metadatas
                 ExploreVirtualPath(path);
             }
-			return false;
-		}
+            return false;
+        }
 
         void ExplorationProgress(string state, int value, int max)
         {
@@ -682,34 +682,34 @@ namespace ASCompletion.Context
         }
 
         /// <summary>
-		/// Add the current class' base path to classpath
-		/// </summary>
-		/// <param name="path">Path to add</param>
-		public virtual bool SetTemporaryPath(string path)
-		{
-			if (temporaryPath == path)
-				return false;
-			if (temporaryPath != null)
-			{
+        /// Add the current class' base path to classpath
+        /// </summary>
+        /// <param name="path">Path to add</param>
+        public virtual bool SetTemporaryPath(string path)
+        {
+            if (temporaryPath == path)
+                return false;
+            if (temporaryPath != null)
+            {
                 while (classPath.Count > 0 && (classPath[0] as PathModel).IsTemporaryPath)
                 {
                     classPath[0].InUse = false;
                     classPath.RemoveAt(0);
                 }
-				temporaryPath = null;
-			}
-			if (path != null && Directory.Exists(path))
-			{
-				// avoid duplicated pathes
+                temporaryPath = null;
+            }
+            if (path != null && Directory.Exists(path))
+            {
+                // avoid duplicated pathes
                 path = NormalizePath(path);
-				foreach (PathModel apath in classPath)
-				if (path.StartsWith(apath.Path, StringComparison.OrdinalIgnoreCase))
-				{
-					temporaryPath = null;
-					return false;
-				}
-				// add path
-				temporaryPath = path;
+                foreach (PathModel apath in classPath)
+                if (path.StartsWith(apath.Path, StringComparison.OrdinalIgnoreCase))
+                {
+                    temporaryPath = null;
+                    return false;
+                }
+                // add path
+                temporaryPath = path;
                 PathModel tempModel = PathModel.GetModel(temporaryPath, this);
                 if (!tempModel.WasExplored)
                 {
@@ -719,9 +719,9 @@ namespace ASCompletion.Context
                 tempModel.InUse = true;
                 classPath.Insert(0, tempModel);
                 return true;
-			}
+            }
             return false;
-		}
+        }
 
         /// <summary>
         /// Classpathes & classes cache initialisation
@@ -749,7 +749,7 @@ namespace ASCompletion.Context
 
         #endregion
 
-		#region model caching
+        #region model caching
         /// <summary>
         /// Track text modifications
         /// </summary>
@@ -787,23 +787,23 @@ namespace ASCompletion.Context
             }
         }
 
-		/// <summary>
-		/// Set current model out-of-date to force re-parse of the code when needed
-		/// </summary>
-		public virtual void SetOutOfDate()
-		{
+        /// <summary>
+        /// Set current model out-of-date to force re-parse of the code when needed
+        /// </summary>
+        public virtual void SetOutOfDate()
+        {
             if (cFile != FileModel.Ignore) cFile.OutOfDate = true;
-		}
+        }
         /// <summary>
         /// Flag the model as up to date
         /// <returns>Model state before reseting the flag</returns>
         /// </summary>
         public virtual bool UnsetOutOfDate()
-		{
+        {
             bool state = cFile.OutOfDate;
-			if (cFile != FileModel.Ignore) cFile.OutOfDate = false;
+            if (cFile != FileModel.Ignore) cFile.OutOfDate = false;
             return state;
-		}
+        }
 
         /// <summary>
         /// Retrieve a file model from the classpath cache
@@ -1109,9 +1109,9 @@ namespace ASCompletion.Context
         }
 
 
-		#endregion
+        #endregion
 
-		#region language elements resolution
+        #region language elements resolution
 
         /// <summary>
         /// Default types/member visibility
@@ -1173,15 +1173,15 @@ namespace ASCompletion.Context
         }
 
         /// <summary>
-		/// Return imported classes list (not null)
-		/// </summary>
-		/// <param name="package">Package to explore</param>
-		/// <param name="inFile">Current file</param>
+        /// Return imported classes list (not null)
+        /// </summary>
+        /// <param name="package">Package to explore</param>
+        /// <param name="inFile">Current file</param>
         public virtual MemberList ResolveImports(FileModel inFile)
-		{
-			// to be implemented
+        {
+            // to be implemented
             return new MemberList();
-		}
+        }
 
         /// <summary>
         /// Check if a type is already in the file's imports
@@ -1195,16 +1195,16 @@ namespace ASCompletion.Context
         }
 
         /// <summary>
-		/// Retrieves a class model from its name
-		/// </summary>
-		/// <param name="cname">Class (short or full) name</param>
-		/// <param name="inClass">Current file</param>
-		/// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-		public virtual ClassModel ResolveType(string cname, FileModel inFile)
-		{
-			// to be implemented
-			return null;
-		}
+        /// Retrieves a class model from its name
+        /// </summary>
+        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="inClass">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
+        public virtual ClassModel ResolveType(string cname, FileModel inFile)
+        {
+            // to be implemented
+            return null;
+        }
 
         /// <summary>
         /// Retrieves a package content
@@ -1343,26 +1343,26 @@ namespace ASCompletion.Context
             // to be implemented
         }
 
-		/// <summary>
-		/// Browse to the first package folder in the classpath
-		/// </summary>
-		/// <param name="package">Package to show in the Files Panel</param>
-		/// <returns>A folder was found and displayed</returns>
-		public bool BrowseTo(string package)
-		{
-			package = package.Replace('.',dirSeparatorChar);
+        /// <summary>
+        /// Browse to the first package folder in the classpath
+        /// </summary>
+        /// <param name="package">Package to show in the Files Panel</param>
+        /// <returns>A folder was found and displayed</returns>
+        public bool BrowseTo(string package)
+        {
+            package = package.Replace('.',dirSeparatorChar);
             foreach (PathModel aPath in classPath)
-			{
+            {
                 string path = Path.Combine(aPath.Path, package);
-				if (System.IO.Directory.Exists(path))
-				{
+                if (System.IO.Directory.Exists(path))
+                {
                     DataEvent de = new DataEvent(EventType.Command, "FileExplorer.BrowseTo", path);
-					EventManager.DispatchEvent(this, de);
-					return de.Handled;
-				}
-			}
-			return false;
-		}
+                    EventManager.DispatchEvent(this, de);
+                    return de.Handled;
+                }
+            }
+            return false;
+        }
 
         /// <summary>
         /// Retrieve the context's default compiler path
@@ -1381,130 +1381,130 @@ namespace ASCompletion.Context
             // to be implemented
         }
 
-		/// <summary>
-		/// Run the command-line compiler in the current files's context
-		/// </summary>
-		/// <param name="append">Additional compiler switches</param>
-		public virtual void RunCMD(string append)
-		{
-			// to be implemented
-		}
+        /// <summary>
+        /// Run the command-line compiler in the current files's context
+        /// </summary>
+        /// <param name="append">Additional compiler switches</param>
+        public virtual void RunCMD(string append)
+        {
+            // to be implemented
+        }
 
         /// <summary>
-		/// Calls compiler with default/automatic parameters (ie. quick build)
-		/// </summary>
-		public virtual bool BuildCMD(bool failSilently)
-		{
-			// to be implemented
-			return false;
-		}
+        /// Calls compiler with default/automatic parameters (ie. quick build)
+        /// </summary>
+        public virtual bool BuildCMD(bool failSilently)
+        {
+            // to be implemented
+            return false;
+        }
 
-		/// <summary>
+        /// <summary>
         /// End of the CMD execution - if a SWF has been built, play it
-		/// </summary>
-		/// <param name="result">Execution result</param>
-		public virtual void OnProcessEnd(string result)
-		{
+        /// </summary>
+        /// <param name="result">Execution result</param>
+        public virtual void OnProcessEnd(string result)
+        {
             if (Settings != null && GetStatusText() == Settings.CheckSyntaxRunning)
-			{
-				SetStatusText(Settings.CheckSyntaxDone);
-			}
+            {
+                SetStatusText(Settings.CheckSyntaxDone);
+            }
 
-			if (outputFile == null) return;
-			string swf = outputFile;
-			outputFile = null;
+            if (outputFile == null) return;
+            string swf = outputFile;
+            outputFile = null;
 
-			// on error, don't play
-			if (!result.EndsWith("(0)"))
-				return;
+            // on error, don't play
+            if (!result.EndsWith("(0)"))
+                return;
 
-			// remove quotes
-			if (swf.StartsWith("\"")) swf = swf.Substring(1, swf.Length-2);
+            // remove quotes
+            if (swf.StartsWith("\"")) swf = swf.Substring(1, swf.Length-2);
 
-			// allow network access to the SWF
-			if (trustFileWanted)
-			{
-				System.IO.FileInfo info = new System.IO.FileInfo(swf);
-				string path = info.Directory.FullName;
-				string trustFile = "FlashDevelop.cfg";
-				Commands.CreateTrustFile.Run(trustFile, path);
-			}
+            // allow network access to the SWF
+            if (trustFileWanted)
+            {
+                System.IO.FileInfo info = new System.IO.FileInfo(swf);
+                string path = info.Directory.FullName;
+                string trustFile = "FlashDevelop.cfg";
+                Commands.CreateTrustFile.Run(trustFile, path);
+            }
 
-			// stop here if the user doesn't want to automatically play the SWF
-			if (!runAfterBuild) return;
+            // stop here if the user doesn't want to automatically play the SWF
+            if (!runAfterBuild) return;
 
-			// other plugin may handle the SWF playing
-			DataEvent dePlay = new DataEvent(EventType.Command, "PlaySWF", swf + outputFileDetails);
-			EventManager.DispatchEvent(this, dePlay);
-			if (dePlay.Handled) return;
+            // other plugin may handle the SWF playing
+            DataEvent dePlay = new DataEvent(EventType.Command, "PlaySWF", swf + outputFileDetails);
+            EventManager.DispatchEvent(this, dePlay);
+            if (dePlay.Handled) return;
 
-			try
-			{
-				// change current directory
-				//string currentPath = System.IO.Directory.GetCurrentDirectory();
+            try
+            {
+                // change current directory
+                //string currentPath = System.IO.Directory.GetCurrentDirectory();
                 //System.IO.Directory.SetCurrentDirectory(CurrentClass.BasePath);
-				// run
-				System.Diagnostics.Process.Start(swf);
-				// restaure current directory
+                // run
+                System.Diagnostics.Process.Start(swf);
+                // restaure current directory
                 //if (System.IO.Directory.GetCurrentDirectory() == CurrentClass.BasePath)
                 //System.IO.Directory.SetCurrentDirectory(currentPath);
-			}
-			catch (Exception ex)
-			{
-				ErrorManager.ShowError(ex);
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+        }
 
-		/// <summary>
-		/// Generate an instrinsic class
-		/// </summary>
-		/// <param name="files">Semicolon-separated source & destination files</param>
-		public void MakeIntrinsic(string files)
-		{
-			string src = null;
-			string dest = null;
-			if (!string.IsNullOrEmpty(files))
-			{
-				string[] list = files.Split(';');
-				if (list.Length == 1) dest = list[0];
-				else {
-					src = list[0];
-					dest = list[1];
-				}
-			}
-			FileModel aFile;
+        /// <summary>
+        /// Generate an instrinsic class
+        /// </summary>
+        /// <param name="files">Semicolon-separated source & destination files</param>
+        public void MakeIntrinsic(string files)
+        {
+            string src = null;
+            string dest = null;
+            if (!string.IsNullOrEmpty(files))
+            {
+                string[] list = files.Split(';');
+                if (list.Length == 1) dest = list[0];
+                else {
+                    src = list[0];
+                    dest = list[1];
+                }
+            }
+            FileModel aFile;
             if (src == null) aFile = cFile;
             else aFile = ASFileParser.ParseFile(CreateFileModel(src));
-			if (aFile.Version == 0) return;
-			//
-			string code = aFile.GenerateIntrinsic(false);
+            if (aFile.Version == 0) return;
+            //
+            string code = aFile.GenerateIntrinsic(false);
 
-			// no destination, replace text
-			if (dest == null)
-			{
-				MainForm.CallCommand("New", null);
+            // no destination, replace text
+            if (dest == null)
+            {
+                MainForm.CallCommand("New", null);
                 ScintillaNet.ScintillaControl sci = CurSciControl;
                 if (sci != null)
                 {
                     sci.CurrentPos = 0;
                     sci.Text = code;
                 }
-				return;
-			}
+                return;
+            }
 
-			// write destination
-			try
-			{
+            // write destination
+            try
+            {
                 File.WriteAllText(dest, code, Encoding.UTF8);
-			}
-			catch (Exception ex)
-			{
-				ErrorManager.ShowError(ex);
-			}
-		}
-		#endregion
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+        }
+        #endregion
 
-		#region common tool methods
+        #region common tool methods
         static public void SetStatusText(string text)
         {
             MainForm.StatusStrip.Items[0].Text = "  " + text;

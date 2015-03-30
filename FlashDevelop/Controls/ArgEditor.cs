@@ -8,13 +8,13 @@ using System.Windows.Forms;
 
 namespace FlashDevelop.Controls
 {
-	public class ArgEditor : UserControl
-	{
+    public class ArgEditor : UserControl
+    {
         private System.Windows.Forms.Label argLabel;
         private System.Windows.Forms.ComboBox argValues;
 
-		public ArgEditor(String args, String[] values)
-		{
+        public ArgEditor(String args, String[] values)
+        {
             this.InitializeComponent();
             this.argLabel.Text = args;
             this.Font = PluginCore.PluginBase.Settings.DefaultFont;
@@ -77,25 +77,25 @@ namespace FlashDevelop.Controls
         /// 
         /// </summary>
         protected override void OnGotFocus(EventArgs e)
-		{
-			base.OnGotFocus(e);
+        {
+            base.OnGotFocus(e);
             this.argValues.Focus();
-		}
+        }
 
         /// <summary>
         /// 
         /// </summary>
-		public String Argument
-		{
+        public String Argument
+        {
             get { return this.argLabel.Text; }
             set { this.argLabel.Text = value; }
-		}
+        }
 
         /// <summary>
         /// 
         /// </summary>
-		public String Value
-		{
+        public String Value
+        {
             get { return this.argValues.Text; }
             set { this.argValues.Text = value; }
         }

@@ -14,10 +14,10 @@ using PluginCore;
 
 namespace FlashDebugger
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "FlashDebugger";
-		private String pluginHelp = "http://www.flashdevelop.org/community/";
+        private String pluginHelp = "http://www.flashdevelop.org/community/";
         private String pluginDesc = "Hosts the ActionScript 3 debugger in FlashDevelop.";
         private String pluginAuth = "FlashDevelop Team";
         private PanelsHelper panelsHelpers;
@@ -25,13 +25,13 @@ namespace FlashDebugger
         private String settingFilename;
         private Image pluginImage;
 
-		static internal Settings settingObject;
+        static internal Settings settingObject;
         static internal LiveDataTip liveDataTip;
         static internal DebuggerManager debugManager;
-		static internal BreakPointManager breakPointManager;
+        static internal BreakPointManager breakPointManager;
         static internal Boolean disableDebugger = false;
 
-	    #region Required Properties
+        #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
@@ -45,41 +45,41 @@ namespace FlashDebugger
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return PanelsHelper.localsGuid; }
-		}
+        {
+            get { return PanelsHelper.localsGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -89,16 +89,16 @@ namespace FlashDebugger
         {
             get { return settingObject; }
         }
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             InitBasics();
             LoadSettings();
             AddEventHandlers();
@@ -106,22 +106,22 @@ namespace FlashDebugger
             CreateMenuItems();
             CreatePluginPanel();
         }
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             SaveSettings();
             breakPointManager.Save();
-			debugManager.Cleanup();
-		}
+            debugManager.Cleanup();
+        }
 
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             if (debugManager == null) return;
             switch (e.Type)
             {
@@ -134,7 +134,7 @@ namespace FlashDebugger
                 case EventType.UIStarted:
                     menusHelper.AddToolStripItems();
                     menusHelper.UpdateMenuState(this, DebuggerState.Initializing);
-					debugManager.RestoreOldLayout();
+                    debugManager.RestoreOldLayout();
                     break;
                 
                 case EventType.UIClosing:
@@ -173,10 +173,10 @@ namespace FlashDebugger
                         {
                             disableDebugger = false;
                             PanelsHelper.breakPointUI.Clear();
-							if (breakPointManager.Project != null && breakPointManager.Project != project)
-							{
-								breakPointManager.Save();
-							}
+                            if (breakPointManager.Project != null && breakPointManager.Project != project)
+                            {
+                                breakPointManager.Save();
+                            }
                             breakPointManager.Project = project;
                             breakPointManager.Load();
                             breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
@@ -226,8 +226,8 @@ namespace FlashDebugger
                     break;
             }
         }
-		
-		#endregion
+        
+        #endregion
 
         #region Custom Methods
 
@@ -237,10 +237,10 @@ namespace FlashDebugger
         private void InitBasics()
         {
             String dataPath = Path.Combine(PathHelper.DataDir, "FlashDebugger");
-			if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-			this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
+            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginImage = PluginBase.MainForm.FindImage("54|23|5|4");
-			breakPointManager = new BreakPointManager();
+            breakPointManager = new BreakPointManager();
             debugManager = new DebuggerManager();
             liveDataTip = new LiveDataTip();
         }
@@ -305,8 +305,8 @@ namespace FlashDebugger
             ObjectSerializer.Serialize(this.settingFilename, settingObject);
         }
 
-		#endregion
+        #endregion
 
-	}
+    }
 
 }

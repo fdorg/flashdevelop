@@ -20,39 +20,39 @@ using Ookii.Dialogs;
 
 namespace ProjectManager.Controls
 {
-	public class PropertiesDialog : SmartForm
-	{
-		#region Form Designer
+    public class PropertiesDialog : SmartForm
+    {
+        #region Form Designer
 
-		private System.Windows.Forms.Button btnOK;
-		private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.TabPage movieTab;
-		private System.Windows.Forms.TextBox outputSwfBox;
-		private System.Windows.Forms.Label exportinLabel;
-		private System.Windows.Forms.Label pxLabel;
-		private System.Windows.Forms.Label fpsLabel;
+        private System.Windows.Forms.TextBox outputSwfBox;
+        private System.Windows.Forms.Label exportinLabel;
+        private System.Windows.Forms.Label pxLabel;
+        private System.Windows.Forms.Label fpsLabel;
         private System.Windows.Forms.Label bgcolorLabel;
-		private System.Windows.Forms.Label framerateLabel;
-		private System.Windows.Forms.Label dimensionsLabel;
+        private System.Windows.Forms.Label framerateLabel;
+        private System.Windows.Forms.Label dimensionsLabel;
         private System.Windows.Forms.Label xLabel;
-		private System.Windows.Forms.ColorDialog colorDialog;
+        private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.Button outputBrowseButton;
-		private System.Windows.Forms.GroupBox generalGroupBox;
-		private System.Windows.Forms.GroupBox playGroupBox;
+        private System.Windows.Forms.GroupBox generalGroupBox;
+        private System.Windows.Forms.GroupBox playGroupBox;
         private System.Windows.Forms.TabPage classpathsTab;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnGlobalClasspaths;
         private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.TabPage buildTab;
-		private System.Windows.Forms.GroupBox groupBox4;
-		private System.Windows.Forms.TextBox preBuildBox;
-		private System.Windows.Forms.Button preBuilderButton;
-		private System.Windows.Forms.GroupBox groupBox5;
-		private System.Windows.Forms.Button postBuilderButton;
-		private System.Windows.Forms.TextBox postBuildBox;
-		private System.Windows.Forms.ToolTip agressiveTip;
+        private System.Windows.Forms.TabPage buildTab;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.TextBox preBuildBox;
+        private System.Windows.Forms.Button preBuilderButton;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Button postBuilderButton;
+        private System.Windows.Forms.TextBox postBuildBox;
+        private System.Windows.Forms.ToolTip agressiveTip;
         private System.Windows.Forms.CheckBox alwaysExecuteCheckBox;
         private System.Windows.Forms.ComboBox testMovieCombo;
         private System.Windows.Forms.TabPage compilerTab;
@@ -82,32 +82,32 @@ namespace ProjectManager.Controls
         protected System.Windows.Forms.TextBox widthTextBox;
         private ClasspathControl classpathControl;
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Windows Form Designer Generated Code
+        #region Windows Form Designer Generated Code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -793,13 +793,13 @@ namespace ProjectManager.Controls
             this.sdkTabPage.ResumeLayout(false);
             this.sdkTabPage.PerformLayout();
             this.ResumeLayout(false);
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#endregion
+        #endregion
 
-		private Project project;
+        private Project project;
         private CompilerOptions optionsCopy;
         private Boolean propertiesChanged;
         private Boolean platformChanged;
@@ -809,7 +809,7 @@ namespace ProjectManager.Controls
         private Boolean isPropertyGridReadOnly;
         private LanguagePlatform langPlatform;
 
-		public event EventHandler OpenGlobalClasspaths;
+        public event EventHandler OpenGlobalClasspaths;
 
         public PropertiesDialog() 
         {
@@ -856,7 +856,7 @@ namespace ProjectManager.Controls
             protected set { classpathsChanged = value; }
         }
 
-		public bool AssetsChanged
+        public bool AssetsChanged
         {
             get { return assetsChanged; }
             protected set { assetsChanged = value; }
@@ -914,7 +914,7 @@ namespace ProjectManager.Controls
         #endregion
 
         protected virtual void BuildDisplay()
-		{
+        {
             this.Text = " " + project.Name + " (" + project.Language.ToUpper() + ") " + TextHelper.GetString("Info.Properties");
 
             langPlatform = GetLanguagePlatform(project.MovieOptions.Platform);
@@ -933,8 +933,8 @@ namespace ProjectManager.Controls
                 tabControl.TabPages.Remove(classpathsTab);
             }
 
-			btnApply.Enabled = false;
-		}
+            btnApply.Enabled = false;
+        }
 
         private void InitOptionsTab()
         {
@@ -1138,30 +1138,30 @@ namespace ProjectManager.Controls
             else return (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), (testMovieCombo.SelectedItem as ComboItem).Value.ToString());
         }
 
-		protected void Modified()
-		{
-			btnApply.Enabled = true;
-		}
+        protected void Modified()
+        {
+            btnApply.Enabled = true;
+        }
 
-		protected virtual bool Apply()
-		{
-			MovieOptions options = project.MovieOptions;
+        protected virtual bool Apply()
+        {
+            MovieOptions options = project.MovieOptions;
 
-			try
-			{
+            try
+            {
                 project.OutputType = GetOutput();
                 if (OuputValid(outputSwfBox.Text)) project.OutputPath = outputSwfBox.Text;
-				project.Classpaths.Clear();
-				project.Classpaths.AddRange(classpathControl.Classpaths);
-				options.Width = int.Parse(widthTextBox.Text);
-				options.Height = int.Parse(heightTextBox.Text);
-				options.BackgroundColor = Color.FromArgb(255, colorLabel.BackColor);
-				options.Fps = int.Parse(fpsTextBox.Text);
+                project.Classpaths.Clear();
+                project.Classpaths.AddRange(classpathControl.Classpaths);
+                options.Width = int.Parse(widthTextBox.Text);
+                options.Height = int.Parse(heightTextBox.Text);
+                options.BackgroundColor = Color.FromArgb(255, colorLabel.BackColor);
+                options.Fps = int.Parse(fpsTextBox.Text);
                 options.Platform = GetPlatform();
                 options.Version = versionCombo.Text;
-				project.PreBuildEvent = preBuildBox.Text;
-				project.PostBuildEvent = postBuildBox.Text;
-				project.AlwaysRunPostBuild = alwaysExecuteCheckBox.Checked;
+                project.PreBuildEvent = preBuildBox.Text;
+                project.PostBuildEvent = postBuildBox.Text;
+                project.AlwaysRunPostBuild = alwaysExecuteCheckBox.Checked;
                 project.TestMovieBehavior = GetTestMovie();
 
                 if (sdkChanged)
@@ -1173,18 +1173,18 @@ namespace ProjectManager.Controls
                         project.PreferredSDK = sdk != null ? sdk.ToPreferredSDK() : null;
                     }
                 }
-			}
-			catch (Exception exception)
-			{
+            }
+            catch (Exception exception)
+            {
                 ErrorManager.ShowError(exception);
-				return false;
-			}
+                return false;
+            }
             // copy compiler option values
             project.CompilerOptions = optionsCopy;
-			btnApply.Enabled = false;
-			propertiesChanged = true;
-			return true;
-		}
+            btnApply.Enabled = false;
+            propertiesChanged = true;
+            return true;
+        }
 
         private bool OuputValid(string path)
         {
@@ -1199,33 +1199,33 @@ namespace ProjectManager.Controls
             }
         }
 
-		private void btnOK_Click(object sender, EventArgs e)
-		{
-			if (btnApply.Enabled) if (!Apply()) return;
-			this.Close();
-		}
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            if (btnApply.Enabled) if (!Apply()) return;
+            this.Close();
+        }
 
-		private void btnCancel_Click(object sender, EventArgs e)
-		{
-			this.Close();
-		}
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
 
-		private void btnApply_Click(object sender, EventArgs e)
-		{
-			Apply();
-		}
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            Apply();
+        }
 
-		private void outputSwfBox_TextChanged(object sender, EventArgs e)
-		{
-			classpathsChanged = true;
-			Modified();
-		}
+        private void outputSwfBox_TextChanged(object sender, EventArgs e)
+        {
+            classpathsChanged = true;
+            Modified();
+        }
 
-		private void widthTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
+        private void widthTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
 
-		private void heightTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
+        private void heightTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
 
-		private void colorTextBox_TextChanged(object sender, EventArgs e) 
+        private void colorTextBox_TextChanged(object sender, EventArgs e) 
         {
             string rgb = colorTextBox.Text;
             if (rgb.Length == 0) rgb = "#000000";
@@ -1239,22 +1239,22 @@ namespace ProjectManager.Controls
             catch { colorLabel.BackColor = Color.Black; }
             Modified(); 
         }
-		private void fpsTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
+        private void fpsTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
 
-		private void preBuildBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        private void preBuildBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
 
-		private void postBuildBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
+        private void postBuildBox_TextChanged(object sender, System.EventArgs e) { Modified(); }
 
-		private void alwaysExecuteCheckBox_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
+        private void alwaysExecuteCheckBox_CheckedChanged(object sender, System.EventArgs e) { Modified(); }
 
-		private void testMovieCombo_SelectedIndexChanged(object sender, System.EventArgs e) 
+        private void testMovieCombo_SelectedIndexChanged(object sender, System.EventArgs e) 
         { 
             Modified();
             editCommandButton.Visible = testMovieCombo.Text.IndexOf("..") > 0;
         }
 
-		private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-		{ 
+        private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        { 
             Modified();
         }
 
@@ -1289,7 +1289,7 @@ namespace ProjectManager.Controls
                 }
         }
 
-		private void versionCombo_SelectedIndexChanged(object sender, EventArgs e)
+        private void versionCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             platformChanged = true;
             Modified();
@@ -1301,44 +1301,44 @@ namespace ProjectManager.Controls
             Modified();
         }
 
-		private void colorLabel_Click(object sender, EventArgs e)
-		{
-			if (this.colorDialog.ShowDialog() == DialogResult.OK)
-			{
-				this.colorLabel.BackColor = this.colorDialog.Color;
-				this.colorTextBox.Text = this.ToHtml(this.colorLabel.BackColor);
-				Modified();
-			}
-		}
+        private void colorLabel_Click(object sender, EventArgs e)
+        {
+            if (this.colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                this.colorLabel.BackColor = this.colorDialog.Color;
+                this.colorTextBox.Text = this.ToHtml(this.colorLabel.BackColor);
+                Modified();
+            }
+        }
 
-		private string ToHtml(Color c)
-		{
-			return string.Format("#{0:X6}", (c.R << 16) + (c.G << 8) + c.B);
-		}
+        private string ToHtml(Color c)
+        {
+            return string.Format("#{0:X6}", (c.R << 16) + (c.G << 8) + c.B);
+        }
 
-		private void btnGlobalClasspaths_Click(object sender, EventArgs e)
-		{
-			if (OpenGlobalClasspaths != null) OpenGlobalClasspaths(this,new EventArgs());
-		}
+        private void btnGlobalClasspaths_Click(object sender, EventArgs e)
+        {
+            if (OpenGlobalClasspaths != null) OpenGlobalClasspaths(this,new EventArgs());
+        }
 
-		private void outputBrowseButton_Click(object sender, EventArgs e)
-		{
-			SaveFileDialog dialog = new SaveFileDialog();
+        private void outputBrowseButton_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
-			dialog.OverwritePrompt = false;
-			dialog.InitialDirectory = project.Directory;
-			// try pre-setting the current output path
-			try
-			{
-				string path = project.GetAbsolutePath(outputSwfBox.Text);
-				if (File.Exists(path)) dialog.FileName = path;
-			}
-			catch { }
+            dialog.OverwritePrompt = false;
+            dialog.InitialDirectory = project.Directory;
+            // try pre-setting the current output path
+            try
+            {
+                string path = project.GetAbsolutePath(outputSwfBox.Text);
+                if (File.Exists(path)) dialog.FileName = path;
+            }
+            catch { }
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 outputSwfBox.Text = project.GetRelativePath(dialog.FileName);
             }
-		}
+        }
 
         private void editCommandButton_Click(object sender, System.EventArgs e)
         {
@@ -1363,23 +1363,23 @@ namespace ProjectManager.Controls
             }
         }
 
-		private void preBuilderButton_Click(object sender, System.EventArgs e)
-		{
-			using (BuildEventDialog dialog = new BuildEventDialog(project))
-			{
-				dialog.CommandLine = preBuildBox.Text;
-				if (dialog.ShowDialog(this) == DialogResult.OK) preBuildBox.Text = dialog.CommandLine;
-			}
-		}
+        private void preBuilderButton_Click(object sender, System.EventArgs e)
+        {
+            using (BuildEventDialog dialog = new BuildEventDialog(project))
+            {
+                dialog.CommandLine = preBuildBox.Text;
+                if (dialog.ShowDialog(this) == DialogResult.OK) preBuildBox.Text = dialog.CommandLine;
+            }
+        }
 
-		private void postBuilderButton_Click(object sender, System.EventArgs e)
-		{
-			using (BuildEventDialog dialog = new BuildEventDialog(project))
-			{
-				dialog.CommandLine = postBuildBox.Text;
-				if (dialog.ShowDialog(this) == DialogResult.OK) postBuildBox.Text = dialog.CommandLine;
-			}
-		}
+        private void postBuilderButton_Click(object sender, System.EventArgs e)
+        {
+            using (BuildEventDialog dialog = new BuildEventDialog(project))
+            {
+                dialog.CommandLine = postBuildBox.Text;
+                if (dialog.ShowDialog(this) == DialogResult.OK) postBuildBox.Text = dialog.CommandLine;
+            }
+        }
 
         private void outputCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1478,7 +1478,7 @@ namespace ProjectManager.Controls
             return null;
         }
 
-	}
+    }
 
     class ComboItem
     {
@@ -1494,7 +1494,7 @@ namespace ProjectManager.Controls
 
         public override string ToString()
         {
- 	         return Label;
+             return Label;
         }
     }
 }

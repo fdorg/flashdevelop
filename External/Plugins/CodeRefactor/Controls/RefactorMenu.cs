@@ -26,7 +26,7 @@ namespace CodeRefactor.Controls
             this.renameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename"), empty) as ToolStripMenuItem;
             this.extractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
             this.extractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
-			this.delegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
+            this.delegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
             if (createSurroundMenu)
             {
                 this.surroundMenu = new SurroundMenu();

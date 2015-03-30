@@ -13,8 +13,8 @@ using PluginCore;
 
 namespace TaskListPanel
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "TaskListPanel";
         private String pluginGuid = "40feac2b-a68a-498e-ad78-52a8268efa45";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -26,7 +26,7 @@ namespace TaskListPanel
         private PluginUI pluginUI;
         private Image pluginImage;
 
-	    #region Required Properties
+        #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
@@ -40,41 +40,41 @@ namespace TaskListPanel
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -83,37 +83,37 @@ namespace TaskListPanel
         {
             get { return this.settingObject; }
         }
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
             this.CreateMenuItem();
             this.CreatePluginPanel();
         }
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             this.SaveSettings();
             this.pluginUI.Terminate();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             switch (e.Type)
             {
                 case EventType.UIStarted:
@@ -132,9 +132,9 @@ namespace TaskListPanel
                     }
                     break;
             }
-		}
-		
-		#endregion
+        }
+        
+        #endregion
 
         #region Custom Methods
 
@@ -209,8 +209,8 @@ namespace TaskListPanel
             this.pluginPanel.Show();
         }
 
-		#endregion
+        #endregion
 
-	}
-	
+    }
+    
 }

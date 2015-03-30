@@ -17,8 +17,8 @@ using System.Collections;
 
 namespace FlashViewer
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "FlashViewer";
         private String pluginGuid = "cba5ca4c-db80-43c2-9219-a15ee4d76aac";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -29,7 +29,7 @@ namespace FlashViewer
         private Settings settingObject;
         private Icon playerIcon;
 
-	    #region Required Properties
+        #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
@@ -43,41 +43,41 @@ namespace FlashViewer
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -87,34 +87,34 @@ namespace FlashViewer
         {
             get { return this.settingObject; }
         }
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
         }
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             this.SaveSettings();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             switch (e.Type)
             {
                 case EventType.Command : 
@@ -125,9 +125,9 @@ namespace FlashViewer
                     this.HandleFileOpening(((TextEvent)e));
                     break;
             }
-		}
-		
-		#endregion
+        }
+        
+        #endregion
 
         #region Custom Methods
        
@@ -473,8 +473,8 @@ namespace FlashViewer
             }
         }
 
-		#endregion
+        #endregion
 
-	}
-	
+    }
+    
 }

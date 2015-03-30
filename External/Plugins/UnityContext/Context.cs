@@ -18,11 +18,11 @@ using PluginCore.Helpers;
 
 namespace UnityContext
 {
-	/// <summary>
-	/// Unity context
-	/// </summary>
-	public class Context: AS2Context.Context
-	{
+    /// <summary>
+    /// Unity context
+    /// </summary>
+    public class Context: AS2Context.Context
+    {
         #region regular_expressions_definitions
         static readonly protected Regex re_genericType =
             new Regex("(?<gen>[^<]+)\\.<(?<type>.+)>$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -45,7 +45,7 @@ namespace UnityContext
         {
         }
 
-		public Context(UnitySettings initSettings)
+        public Context(UnitySettings initSettings)
         {
             unitysettings = initSettings;
 
@@ -121,14 +121,14 @@ namespace UnityContext
 
             settings = initSettings;
             //BuildClassPath(); // defered to first use
-		}
-		#endregion
-		
-		#region classpath management
-		/// <summary>
-		/// Classpathes & classes cache initialisation
-		/// </summary>
-		public override void BuildClassPath()
+        }
+        #endregion
+        
+        #region classpath management
+        /// <summary>
+        /// Classpathes & classes cache initialisation
+        /// </summary>
+        public override void BuildClassPath()
         {
             ReleaseClasspath();
             started = true;
@@ -141,16 +141,16 @@ namespace UnityContext
                 contextSetup.Version = unitysettings.DefaultVersion;
             }
 
-			// external version definition
+            // external version definition
             platform = contextSetup.Platform;
             majorVersion = 0;
             minorVersion = 0;
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
-			
+            
             //
-			// Class pathes
+            // Class pathes
             //
-			classPath = new List<PathModel>();
+            classPath = new List<PathModel>();
             
             // SDK
             string sdkPath = PluginBase.CurrentProject != null
@@ -158,30 +158,30 @@ namespace UnityContext
                     : PathHelper.ResolvePath(unitysettings.GetDefaultSDK().Path);
             //TODO?
 
-			// add external pathes
-			List<PathModel> initCP = classPath;
-			classPath = new List<PathModel>();
-			if (contextSetup.Classpath != null)
-			{
+            // add external pathes
+            List<PathModel> initCP = classPath;
+            classPath = new List<PathModel>();
+            if (contextSetup.Classpath != null)
+            {
                 foreach (string cpath in contextSetup.Classpath) 
                     AddPath(cpath.Trim());
-			}
+            }
 
             // add library
             AddPath(Path.Combine(PathHelper.LibraryDir, "UNITYSCRIPT/Classes"));
 
-			// add user pathes from settings
+            // add user pathes from settings
             if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
-			{
-				foreach(string cpath in settings.UserClasspath) AddPath(cpath.Trim());
-			}
-			// add initial pathes
-			foreach(PathModel mpath in initCP) AddPath(mpath);
+            {
+                foreach(string cpath in settings.UserClasspath) AddPath(cpath.Trim());
+            }
+            // add initial pathes
+            foreach(PathModel mpath in initCP) AddPath(mpath);
 
             // parse top-level elements
             InitTopLevelElements();
             if (cFile != null) UpdateTopLevelElements();
-			
+            
             // add current temporaty path
             if (temporaryPath != null)
             {
@@ -190,7 +190,7 @@ namespace UnityContext
                 SetTemporaryPath(tempPath);
             }
             FinalizeClasspath();
-		}
+        }
         #endregion
 
         #region class resolution
@@ -420,33 +420,33 @@ namespace UnityContext
             return aClass;
         }
 
-		/// <summary>
-		/// Update Flash intrinsic known vars
-		/// </summary>
-		protected override void UpdateTopLevelElements()
-		{
-		    MemberModel special;
+        /// <summary>
+        /// Update Flash intrinsic known vars
+        /// </summary>
+        protected override void UpdateTopLevelElements()
+        {
+            MemberModel special;
             special = topLevel.Members.Search("this", 0, 0);
-		    if (special != null)
-		    {
+            if (special != null)
+            {
                 if (!cClass.IsVoid()) special.Type = cClass.QualifiedName;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : docType;
-		    }
+            }
             special = topLevel.Members.Search("super", 0, 0);
-		    if (special != null) 
-		    {
+            if (special != null) 
+            {
                 cClass.ResolveExtends();
                 ClassModel extends = cClass.Extends;
-			    if (!extends.IsVoid()) special.Type = extends.QualifiedName;
+                if (!extends.IsVoid()) special.Type = extends.QualifiedName;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : features.objectKey;
-		    }
-		}
-		
-		/// <summary>
-		/// Prepare JS intrinsic known vars/methods/classes
-		/// </summary>
-		protected override void InitTopLevelElements()
-		{
+            }
+        }
+        
+        /// <summary>
+        /// Prepare JS intrinsic known vars/methods/classes
+        /// </summary>
+        protected override void InitTopLevelElements()
+        {
             string filename = "toplevel.js";
             topLevel = new FileModel(filename);
 
@@ -462,21 +462,21 @@ namespace UnityContext
             if (File.Exists(filename))
             {
             }
-			// not found
-			else
-			{
+            // not found
+            else
+            {
                 //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
-			}
+            }
             if (topLevel.Members.Search("this", 0, 0) == null)
                 topLevel.Members.Add(new MemberModel("this", "", FlagType.Variable, Visibility.Public));
             if (topLevel.Members.Search("super", 0, 0) == null)
                 topLevel.Members.Add(new MemberModel("super", "", FlagType.Variable, Visibility.Public));
             if (topLevel.Members.Search(features.voidKey, 0, 0) == null)
                 topLevel.Members.Add(new MemberModel(features.voidKey, "", FlagType.Class | FlagType.Intrinsic, Visibility.Public));
-			topLevel.Members.Sort();
+            topLevel.Members.Sort();
             foreach (MemberModel member in topLevel.Members)
                 member.Flags |= FlagType.Intrinsic;
-		}
+        }
 
         /// <summary>
         /// Return the full project classes list
@@ -513,9 +513,9 @@ namespace UnityContext
             completionCache.AllTypes = fullList;
             return fullList;
         }
-		#endregion
-		
-		#region command line compiler
+        #endregion
+        
+        #region command line compiler
 
         override public bool CanBuild
         {
@@ -543,12 +543,12 @@ namespace UnityContext
             }
         }
 
-		/// <summary>
-		/// Run MTASC compiler in the current class's base folder with current classpath
-		/// </summary>
-		/// <param name="append">Additional comiler switches</param>
-		public override void RunCMD(string append)
-		{
+        /// <summary>
+        /// Run MTASC compiler in the current class's base folder with current classpath
+        /// </summary>
+        /// <param name="append">Additional comiler switches</param>
+        public override void RunCMD(string append)
+        {
             /*if (unitysettings == null)
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.FeatureMissing"));
@@ -556,7 +556,7 @@ namespace UnityContext
             }
 
             if (!IsFileValid || !File.Exists(CurrentFile))
-				return;
+                return;
             if (CurrentModel.Version != 2)
             {
                 MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidClass"));
@@ -568,53 +568,53 @@ namespace UnityContext
                     : PathHelper.ResolvePath(unitysettings.GetDefaultSDK().Path);
 
             if (!Directory.Exists(mtascPath) && !File.Exists(mtascPath))
-			{
+            {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidMtascPath"));
-				return;
-			}
-			
-			SetStatusText(settings.CheckSyntaxRunning);
-			
-			try 
-			{
-				// save modified files if needed
-				if (outputFile != null) MainForm.CallCommand("SaveAllModified", null);
-				else MainForm.CallCommand("SaveAllModified", ".as");
-				
-				// prepare command
+                return;
+            }
+            
+            SetStatusText(settings.CheckSyntaxRunning);
+            
+            try 
+            {
+                // save modified files if needed
+                if (outputFile != null) MainForm.CallCommand("SaveAllModified", null);
+                else MainForm.CallCommand("SaveAllModified", ".as");
+                
+                // prepare command
                 string command = mtascPath;
                 if (Path.GetExtension(command) == "") command = Path.Combine(command, "mtasc.exe");
                 else mtascPath = Path.GetDirectoryName(mtascPath);
 
                 command += ";\"" + CurrentFile + "\"";
-				if (append == null || append.IndexOf("-swf-version") < 0)
+                if (append == null || append.IndexOf("-swf-version") < 0)
                     command += " -version "+majorVersion;
-				// classpathes
-				foreach(PathModel aPath in classPath)
+                // classpathes
+                foreach(PathModel aPath in classPath)
                 if (aPath.Path != temporaryPath
                     && !aPath.Path.StartsWith(mtascPath, StringComparison.OrdinalIgnoreCase))
                     command += " -cp \"" + aPath.Path.TrimEnd('\\') + "\"";
-				
-				// run
+                
+                // run
                 string filePath = NormalizePath(cFile.BasePath);
                 if (PluginBase.CurrentProject != null)
                     filePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath); 
                 string workDir = MainForm.WorkingDirectory;
                 MainForm.WorkingDirectory = filePath;
-				MainForm.CallCommand("RunProcessCaptured", command+" "+append);
+                MainForm.CallCommand("RunProcessCaptured", command+" "+append);
                 MainForm.WorkingDirectory = workDir;
-			}
-			catch (Exception ex)
-			{
+            }
+            catch (Exception ex)
+            {
                 ErrorManager.ShowError(ex);
-			}*/
-		}
-		
-		/// <summary>
-		/// Calls RunCMD with additional parameters taken from the classes @mtasc doc tag
-		/// </summary>
-		public override bool BuildCMD(bool failSilently)
-		{
+            }*/
+        }
+        
+        /// <summary>
+        /// Calls RunCMD with additional parameters taken from the classes @mtasc doc tag
+        /// </summary>
+        public override bool BuildCMD(bool failSilently)
+        {
             return false;
             /*
             if (unitysettings == null)
@@ -625,23 +625,23 @@ namespace UnityContext
 
             if (!File.Exists(CurrentFile)) 
                 return false;
-			// check if @mtasc is defined
-			Match mCmd = null;
+            // check if @mtasc is defined
+            Match mCmd = null;
             ClassModel cClass = cFile.GetPublicClass();
             if (IsFileValid && cClass.Comments != null)
                 mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
-			
-			if (CurrentModel.Version != 2 || mCmd == null || !mCmd.Success) 
-			{
-				if (!failSilently)
-				{
-					MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidForQuickBuild"));
-				}
-				return false;
-			}
-			
-			// build command
-			string command = mCmd.Groups["params"].Value.Trim();
+            
+            if (CurrentModel.Version != 2 || mCmd == null || !mCmd.Success) 
+            {
+                if (!failSilently)
+                {
+                    MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidForQuickBuild"));
+                }
+                return false;
+            }
+            
+            // build command
+            string command = mCmd.Groups["params"].Value.Trim();
             try
             {
                 command = Regex.Replace(command, "[\\r\\n]\\s*\\*", "", RegexOptions.Singleline);
@@ -743,11 +743,11 @@ namespace UnityContext
                 ErrorManager.ShowError(ex);
                 return false;
             }
-			
-			// run
-			RunCMD(command);
-			return true;*/
+            
+            // run
+            RunCMD(command);
+            return true;*/
         }
         #endregion
-	}
+    }
 }

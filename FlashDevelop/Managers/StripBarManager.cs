@@ -58,7 +58,7 @@ namespace FlashDevelop.Managers
         public static ToolStrip GetToolStrip(String file)
         {
             ToolStripEx toolStrip = new ToolStripEx();            
-			toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             XmlNode rootNode = XmlHelper.LoadXmlDocument(file);
             foreach (XmlNode subNode in rootNode.ChildNodes)
             {

@@ -12,12 +12,12 @@ using System.Collections.Generic;
 
 namespace ASCompletion.Context
 {
-	public interface IASContext
+    public interface IASContext
     {
         #region Types resolution
         /// <summary>
-		/// Configure completion for the current project
-		/// </summary>
+        /// Configure completion for the current project
+        /// </summary>
         void Setup(ContextSetupInfos setup);
 
         /// <summary>
@@ -40,20 +40,20 @@ namespace ASCompletion.Context
         /// <returns></returns>
         ASResult GetDeclarationAtLine(int line);
 
-		/// <summary>
+        /// <summary>
         /// Top-level elements lookup
         /// </summary>
         /// <param name="token">Element to search</param>
         /// <param name="result">Response structure</param>
         void ResolveTopLevelElement(string token, ASResult result);
 
-		/// <summary>
-		/// Retrieves a class model from its name
-		/// </summary>
-		/// <param name="cname">Class (short or full) name</param>
-		/// <param name="inClass">Current file</param>
-		/// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-		ClassModel ResolveType(string cname, FileModel inFile);
+        /// <summary>
+        /// Retrieves a class model from its name
+        /// </summary>
+        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="inClass">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
+        ClassModel ResolveType(string cname, FileModel inFile);
 
         /// <summary>
         /// Update model if needed and warn user if it has problems
@@ -141,7 +141,7 @@ namespace ASCompletion.Context
         /// <returns></returns>
         MemberList GetTopLevelElements();
 
-		/// <summary>
+        /// <summary>
         /// Return the visible elements (types, package-level declarations) visible from the current file
         /// </summary>
         /// <returns></returns>
@@ -161,11 +161,11 @@ namespace ASCompletion.Context
         /// <returns>Package folders and types</returns>
         FileModel ResolvePackage(string name, bool onlyUserDefined);
 
-		/// <summary>
+        /// <summary>
         /// Return imported classes list (not null)
-		/// </summary>
-		/// <param name="package">Package to explore</param>
-		/// <param name="inFile">Current file</param>
+        /// </summary>
+        /// <param name="package">Package to explore</param>
+        /// <param name="inFile">Current file</param>
         MemberList ResolveImports(FileModel inFile);
 
         /// <summary>
@@ -197,14 +197,14 @@ namespace ASCompletion.Context
         void TrackTextChange(ScintillaNet.ScintillaControl sender, int position, int length, int linesAdded);
 
         /// <summary>
-		/// Set current model out-of-date to force re-parse of the code when needed
-		/// </summary>
-		void SetOutOfDate();
+        /// Set current model out-of-date to force re-parse of the code when needed
+        /// </summary>
+        void SetOutOfDate();
 
-		/// <summary>
-		/// Flag the model as up to date
+        /// <summary>
+        /// Flag the model as up to date
         /// <returns>Model state before reseting the flag</returns>
-		/// </summary>
+        /// </summary>
         bool UnsetOutOfDate();
         #endregion
 
@@ -230,16 +230,16 @@ namespace ASCompletion.Context
         void RemoveClassCompilerCache();
 
         /// <summary>
-		/// Generate an instrinsic class
-		/// </summary>
-		/// <param name="files">Semicolon-separated source & destination files</param>
+        /// Generate an instrinsic class
+        /// </summary>
+        /// <param name="files">Semicolon-separated source & destination files</param>
         void MakeIntrinsic(string files);
 
         /// <summary>
-		/// Browse to the first package folder in the classpath
-		/// </summary>
-		/// <param name="package">Package to show in the Files Panel</param>
-		/// <returns>A folder was found and displayed</returns>
+        /// Browse to the first package folder in the classpath
+        /// </summary>
+        /// <param name="package">Package to show in the Files Panel</param>
+        /// <returns>A folder was found and displayed</returns>
         bool BrowseTo(string package);
 
         /// <summary>
@@ -249,14 +249,14 @@ namespace ASCompletion.Context
         void RunCMD(string append);
 
         /// <summary>
-		/// Calls compiler with default/automatic parameters (ie. quick build)
-		/// </summary>
+        /// Calls compiler with default/automatic parameters (ie. quick build)
+        /// </summary>
         bool BuildCMD(bool failSilently);
 
         /// <summary>
-		/// End of the CMD execution
-		/// </summary>
-		/// <param name="result">Execution result</param>
+        /// End of the CMD execution
+        /// </summary>
+        /// <param name="result">Execution result</param>
         void OnProcessEnd(string result);
 
         /// <summary>

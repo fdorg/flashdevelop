@@ -18,33 +18,33 @@ namespace ScintillaNet.Configuration
 
         protected virtual byte[] LoadFile(string filename, ConfigFile parent)
         {
-			System.IO.Stream res;
-			byte[] buf;
-			res = OpenFile(filename, parent);
-			if (res != null)
-			{
-				buf = new byte[res.Length];
-				res.Read(buf ,0 ,buf.Length);
-				return buf;
-			}
-			return null;
-		}
+            System.IO.Stream res;
+            byte[] buf;
+            res = OpenFile(filename, parent);
+            if (res != null)
+            {
+                buf = new byte[res.Length];
+                res.Read(buf ,0 ,buf.Length);
+                return buf;
+            }
+            return null;
+        }
 
         protected virtual Stream OpenFile(string filename, ConfigFile parent)
         {
-			Stream res;
+            Stream res;
             filename = filename.Replace("$(AppDir)", PathHelper.AppDir);
             filename = filename.Replace("$(UserAppDir)", PathHelper.UserAppDir);
             filename = filename.Replace("$(BaseDir)", PathHelper.BaseDir);
             if (File.Exists(filename)) res = new FileStream(filename, FileMode.Open, FileAccess.Read);
-			else res = _assembly.GetManifestResourceStream(String.Format( "{0}.{1}" , _assembly.GetName().Name, filename.Replace("\\" , "." )));
-			if (res == null && parent != null && parent.filename != null)
-			{
-				int p = parent.filename.LastIndexOf('\\');
-				if (p > 0) return OpenFile(String.Format( "{0}\\{1}", parent.filename.Substring(0, p), filename), null);
-			}
-			return res;
-		}
+            else res = _assembly.GetManifestResourceStream(String.Format( "{0}.{1}" , _assembly.GetName().Name, filename.Replace("\\" , "." )));
+            if (res == null && parent != null && parent.filename != null)
+            {
+                int p = parent.filename.LastIndexOf('\\');
+                if (p > 0) return OpenFile(String.Format( "{0}\\{1}", parent.filename.Substring(0, p), filename), null);
+            }
+            return res;
+        }
 
         protected object Deserialize(TextReader reader, Type aType)
         {

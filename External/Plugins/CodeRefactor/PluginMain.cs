@@ -20,8 +20,8 @@ using System.Windows.Forms;
 
 namespace CodeRefactor
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         public const string REG_IDENTIFIER = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
         private String pluginName = "CodeRefactor";
         private String pluginGuid = "5c0d3740-a6f2-11de-8a39-0800200c9a66";
@@ -50,41 +50,41 @@ namespace CodeRefactor
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -94,34 +94,34 @@ namespace CodeRefactor
         {
             get { return this.settingObject; }
         }
-		
-		#endregion
+        
+        #endregion
 
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitBasics();
             this.LoadSettings();
             this.CreateMenuItems();
         }
 
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             this.SaveSettings();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             switch (e.Type)
             {
                 case EventType.FileSwitch:
@@ -175,7 +175,7 @@ namespace CodeRefactor
                     }
                     break;
             }
-		}
+        }
 
         /// <summary>
         /// Checks if the file is valid for rename file command
@@ -511,7 +511,7 @@ namespace CodeRefactor
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Invoked when the user selects the "Delegate Method" command
         /// </summary>
         private void DelegateMethodsClicked(Object sender, EventArgs e)
@@ -656,7 +656,7 @@ namespace CodeRefactor
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
-		#endregion
+        #endregion
 
     }
 }

@@ -14,7 +14,7 @@ namespace ScintillaNet.Configuration
     {
         public Lexer lexer;
         
-    	[XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string name;
         
         [XmlElementAttribute(ElementName="line-comment")]
@@ -28,12 +28,12 @@ namespace ScintillaNet.Configuration
         
         [XmlElementAttribute(ElementName="file-extensions")]
         public string fileextensions;
-		
-		[XmlElementAttribute(ElementName="character-class")]
-		public CharacterClass characterclass;
+        
+        [XmlElementAttribute(ElementName="character-class")]
+        public CharacterClass characterclass;
 
-		[XmlElementAttribute(ElementName="editor-style")]
-		public EditorStyle editorstyle;
+        [XmlElementAttribute(ElementName="editor-style")]
+        public EditorStyle editorstyle;
 
         [XmlArrayAttribute("use-keywords")]
         [XmlArrayItemAttribute("keyword")]
@@ -45,26 +45,26 @@ namespace ScintillaNet.Configuration
 
         public UseStyle GetUseStyle(int style)
         {
-			foreach (UseStyle us in this.usestyles)
-			{
-				if (us.key == style)
-				{
-					return us;
-				}
-			}
-			return null;
+            foreach (UseStyle us in this.usestyles)
+            {
+                if (us.key == style)
+                {
+                    return us;
+                }
+            }
+            return null;
         }
         
         public UseKeyword GetUseKeyword(int key)
         {
-			foreach (UseKeyword uk in this.usekeywords)
-			{
-				if (uk.key == key)
-				{
-					return uk;
-				}
-			}
-			return null;
+            foreach (UseKeyword uk in this.usekeywords)
+            {
+                if (uk.key == key)
+                {
+                    return uk;
+                }
+            }
+            return null;
         }
         
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
@@ -84,7 +84,7 @@ namespace ScintillaNet.Configuration
             if (lexer != null) lexer.init(utility, _parent);
             if (characterclass == null) characterclass = new CharacterClass();
             characterclass.init(utility, _parent);
-			if (editorstyle != null) editorstyle.init(utility, _parent);
+            if (editorstyle != null) editorstyle.init(utility, _parent);
         }
 
         public void AddExtension(string extension)

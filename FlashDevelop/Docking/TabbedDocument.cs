@@ -20,7 +20,7 @@ using PluginCore;
 namespace FlashDevelop.Docking
 {
     public class TabbedDocument : DockContent, ITabbedDocument
-	{
+    {
         private Timer focusTimer;
         private Timer backupTimer;
         private String previousText;
@@ -34,7 +34,7 @@ namespace FlashDevelop.Docking
         private FileInfo fileInfo;
 
         public TabbedDocument()
-		{
+        {
             this.focusTimer = new Timer();
             this.focusTimer.Interval = 100;
             this.bookmarks = new List<Int32>();
@@ -47,7 +47,7 @@ namespace FlashDevelop.Docking
             this.BackColor = Color.White;
             this.useCustomIcon = false;
             this.StartBackupTiming();
-		}
+        }
 
         /// <summary>
         /// Disables the automatic update of the icon
@@ -554,5 +554,5 @@ namespace FlashDevelop.Docking
         }
 
     }
-	
+    
 }

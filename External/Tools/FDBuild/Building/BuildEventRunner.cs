@@ -5,20 +5,20 @@ using ProjectManager.Projects;
 
 namespace ProjectManager.Building
 {
-	/// <summary>
-	/// Processed pre and post-build steps, filling in project variables
-	/// </summary>
-	public class BuildEventRunner
-	{
-		Project project;
-		BuildEventVars vars;
+    /// <summary>
+    /// Processed pre and post-build steps, filling in project variables
+    /// </summary>
+    public class BuildEventRunner
+    {
+        Project project;
+        BuildEventVars vars;
 
-		public BuildEventRunner(Project project, string compilerPath)
-		{
-			this.project = project;
+        public BuildEventRunner(Project project, string compilerPath)
+        {
+            this.project = project;
             project.CurrentSDK = compilerPath;
-			this.vars = new BuildEventVars(project);
-		}
+            this.vars = new BuildEventVars(project);
+        }
 
         //parse line into command/argument pair
         private string[] tokenize(string line)
@@ -103,5 +103,5 @@ namespace ProjectManager.Building
                 }
             }
         }
-	}
+    }
 }

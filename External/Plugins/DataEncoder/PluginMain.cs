@@ -14,8 +14,8 @@ using PluginCore;
 
 namespace DataEncoder
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "DataEncoder";
         private String pluginGuid = "ca182923-bcdc-46bf-905c-aaa0bf64eebd";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -24,7 +24,7 @@ namespace DataEncoder
         private List<TypeData> objectTypes = new List<TypeData>();
         private String oldFileName = String.Empty;
 
-	    #region Required Properties
+        #region Required Properties
         
         /// <summary>
         /// Api level of the plugin
@@ -38,41 +38,41 @@ namespace DataEncoder
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -82,33 +82,33 @@ namespace DataEncoder
         {
             get { return null; }
         }
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.AddEventHandlers();
             this.pluginDesc = TextHelper.GetString("Info.Description");
         }
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             // Nothing here..
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             switch (e.Type)
             {
                 case EventType.FileEncode :
@@ -164,9 +164,9 @@ namespace DataEncoder
                     }
                     break;
             }
-		}
-		
-		#endregion
+        }
+        
+        #endregion
 
         #region Custom Methods
 
@@ -280,9 +280,9 @@ namespace DataEncoder
             return null;
         }
 
-		#endregion
+        #endregion
 
-	}
+    }
 
     #region Structures
 

@@ -18,19 +18,19 @@ using PluginCore;
 
 namespace CodeFormatter
 {
-	public class PluginMain : IPlugin
-	{
-		private String pluginName = "CodeFormatter";
+    public class PluginMain : IPlugin
+    {
+        private String pluginName = "CodeFormatter";
         private String pluginGuid = "f7f1e15b-282a-4e55-ba58-5f2c02765247";
-		private String pluginDesc = "Adds an MXML and ActionScript code formatter to FlashDevelop.";
+        private String pluginDesc = "Adds an MXML and ActionScript code formatter to FlashDevelop.";
         private String pluginHelp = "www.flashdevelop.org/community/";
-		private String pluginAuth = "FlashDevelop Team";
+        private String pluginAuth = "FlashDevelop Team";
         private ToolStripMenuItem contextMenuItem;
         private ToolStripMenuItem mainMenuItem;
-		private String settingFilename;
-		private Settings settingObject;
+        private String settingFilename;
+        private Settings settingObject;
 
-		#region Required Properties
+        #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
@@ -40,84 +40,84 @@ namespace CodeFormatter
             get { return 1; }
         }
 
-		/// <summary>
-		/// Name of the plugin
-		/// </summary>
-		public String Name
-		{
-			get { return this.pluginName; }
-		}
+        /// <summary>
+        /// Name of the plugin
+        /// </summary>
+        public String Name
+        {
+            get { return this.pluginName; }
+        }
 
-		/// <summary>
-		/// GUID of the plugin
-		/// </summary>
-		public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        /// <summary>
+        /// GUID of the plugin
+        /// </summary>
+        public String Guid
+        {
+            get { return this.pluginGuid; }
+        }
 
-		/// <summary>
-		/// Author of the plugin
-		/// </summary>
-		public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        /// <summary>
+        /// Author of the plugin
+        /// </summary>
+        public String Author
+        {
+            get { return this.pluginAuth; }
+        }
 
-		/// <summary>
-		/// Description of the plugin
-		/// </summary>
-		public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        /// <summary>
+        /// Description of the plugin
+        /// </summary>
+        public String Description
+        {
+            get { return this.pluginDesc; }
+        }
 
-		/// <summary>
-		/// Web address for help
-		/// </summary>
-		public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        /// <summary>
+        /// Web address for help
+        /// </summary>
+        public String Help
+        {
+            get { return this.pluginHelp; }
+        }
 
-		/// <summary>
-		/// Object that contains the settings
-		/// </summary>
-		[Browsable(false)]
-		public Object Settings
-		{
-			get { return this.settingObject; }
-		}
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        /// <summary>
+        /// Object that contains the settings
+        /// </summary>
+        [Browsable(false)]
+        public Object Settings
+        {
+            get { return this.settingObject; }
+        }
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitBasics();
             this.CreateMainMenuItem();
             this.CreateContextMenuItem();
-			this.LoadSettings();
-		}
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
-			this.SaveSettings();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
-			switch (e.Type)
+            this.LoadSettings();
+        }
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
+            this.SaveSettings();
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
+            switch (e.Type)
             {
                 case EventType.FileSwitch:
                     this.UpdateMenuItems();
@@ -144,24 +144,24 @@ namespace CodeFormatter
                     }
                     break;
             }
-		}
-		
-		#endregion
+        }
+        
+        #endregion
 
-		#region Custom Methods
-		
-		/// <summary>
-		/// Initializes important variables
-		/// </summary>
-		public void InitBasics()
-		{
+        #region Custom Methods
+        
+        /// <summary>
+        /// Initializes important variables
+        /// </summary>
+        public void InitBasics()
+        {
             EventManager.AddEventHandler(this, EventType.Command);
             EventManager.AddEventHandler(this, EventType.FileSwitch);
             String dataPath = Path.Combine(PathHelper.DataDir, "CodeFormatter");
-			if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-			this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
+            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginDesc = TextHelper.GetString("Info.Description");
-		}
+        }
 
         /// <summary>
         /// Update the menu items if they are available
@@ -174,11 +174,11 @@ namespace CodeFormatter
             this.mainMenuItem.Enabled = this.contextMenuItem.Enabled = isValid;
         }
 
-		/// <summary>
-		/// Creates a menu item for the plugin
-		/// </summary>
-		public void CreateMainMenuItem()
-		{
+        /// <summary>
+        /// Creates a menu item for the plugin
+        /// </summary>
+        public void CreateMainMenuItem()
+        {
             String label = TextHelper.GetString("Label.CodeFormatter");
             this.mainMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.Control | Keys.Shift | Keys.D2);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", this.mainMenuItem);
@@ -211,30 +211,30 @@ namespace CodeFormatter
             return (lang == "as2" || lang == "as3" || lang == "xml");
         }
 
-		/// <summary>
-		/// Loads the plugin settings
-		/// </summary>
-		public void LoadSettings()
-		{
-			this.settingObject = new Settings();
-			if (!File.Exists(this.settingFilename)) 
+        /// <summary>
+        /// Loads the plugin settings
+        /// </summary>
+        public void LoadSettings()
+        {
+            this.settingObject = new Settings();
+            if (!File.Exists(this.settingFilename)) 
             {
-				this.settingObject.InitializeDefaultPreferences();
-				this.SaveSettings();
-			}
-			else
-			{
-				Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-				this.settingObject = (Settings)obj;
-			}
-		}
+                this.settingObject.InitializeDefaultPreferences();
+                this.SaveSettings();
+            }
+            else
+            {
+                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
+                this.settingObject = (Settings)obj;
+            }
+        }
 
-		/// <summary>
-		/// Saves the plugin settings
-		/// </summary>
-		public void SaveSettings()
-		{
-			ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
+        /// <summary>
+        /// Saves the plugin settings
+        /// </summary>
+        public void SaveSettings()
+        {
+            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
         #endregion
@@ -242,17 +242,17 @@ namespace CodeFormatter
         #region Code Formatting
 
         private const int TYPE_AS3 = 0;
-		private const int TYPE_MXML = 1;
-		private const int TYPE_XML = 2;
-		private const int TYPE_UNKNOWN = 3;
-		
-		/// <summary>
+        private const int TYPE_MXML = 1;
+        private const int TYPE_XML = 2;
+        private const int TYPE_UNKNOWN = 3;
+        
+        /// <summary>
         /// Formats the current document
-		/// </summary>
-		public void Format(Object sender, System.EventArgs e)
-		{
+        /// </summary>
+        public void Format(Object sender, System.EventArgs e)
+        {
             this.DoFormat(PluginBase.MainForm.CurrentDocument);
-		}
+        }
 
         /// <summary>
         /// Formats the specified document
@@ -315,61 +315,61 @@ namespace CodeFormatter
         /// <summary>
         /// 
         /// </summary>
-		public int CurrentPos
-		{
-			get
-			{
-				ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+        public int CurrentPos
+        {
+            get
+            {
+                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
                 String compressedText = CompressText(sci.Text.Substring(0, sci.MBSafeCharPosition(sci.CurrentPos)));
-				return compressedText.Length;
-			}
-			set 
+                return compressedText.Length;
+            }
+            set 
             {
                 Boolean found = false;
                 ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
                 String documentText = sci.Text;
                 Int32 low = 0; Int32 midpoint = 0;
                 Int32 high = documentText.Length - 1;
-				while (low < high)
-				{
-					midpoint = (low + high) / 2;
-                    String compressedText = CompressText(documentText.Substring(0, midpoint));
-					if (value == compressedText.Length)
-					{
-						found = true;
-						sci.SetSel(midpoint, midpoint);
-						break;
-					}
-					else if (value < compressedText.Length) high = midpoint - 1;
-					else low = midpoint + 1;
-				}
-				if (!found) 
+                while (low < high)
                 {
-					sci.SetSel(documentText.Length, documentText.Length);
-				}
-			}
-		}
+                    midpoint = (low + high) / 2;
+                    String compressedText = CompressText(documentText.Substring(0, midpoint));
+                    if (value == compressedText.Length)
+                    {
+                        found = true;
+                        sci.SetSel(midpoint, midpoint);
+                        break;
+                    }
+                    else if (value < compressedText.Length) high = midpoint - 1;
+                    else low = midpoint + 1;
+                }
+                if (!found) 
+                {
+                    sci.SetSel(documentText.Length, documentText.Length);
+                }
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary>
-		public Int32 DocumentType
+        public Int32 DocumentType
         {
             get 
             {
                 var xmls = new List<String> { ".xml" };
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-				if (!document.IsEditable) return TYPE_UNKNOWN;
+                if (!document.IsEditable) return TYPE_UNKNOWN;
                 String ext = Path.GetExtension(document.FileName).ToLower();
-				if (ASContext.Context.CurrentModel.Context != null && ASContext.Context.CurrentModel.Context.GetType().ToString().Equals("AS3Context.Context")) 
+                if (ASContext.Context.CurrentModel.Context != null && ASContext.Context.CurrentModel.Context.GetType().ToString().Equals("AS3Context.Context")) 
                 {
                     if (ext == ".as") return TYPE_AS3;
                     else if (ext == ".mxml") return TYPE_MXML;
-				}
+                }
                 else if (xmls.Contains(ext)) return TYPE_XML;
-				return TYPE_UNKNOWN;
-			}
-		}
+                return TYPE_UNKNOWN;
+            }
+        }
 
         /// <summary>
         /// 
@@ -391,8 +391,8 @@ namespace CodeFormatter
             return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r');
         }
 
-		#endregion
+        #endregion
 
-	}
-	
+    }
+    
 }

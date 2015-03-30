@@ -56,7 +56,7 @@ namespace PluginCore.Helpers
 
         /// <summary>
         /// Reads the file and returns its contents
-		/// </summary>
+        /// </summary>
         public static String ReadFile(String file, Encoding encoding)
         {
             using (StreamReader sr = new StreamReader(file, encoding))

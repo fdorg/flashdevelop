@@ -558,8 +558,8 @@ namespace FlashDevelop
         }
 
         /// <summary>
-		/// Creates a new empty document
-		/// </summary>
+        /// Creates a new empty document
+        /// </summary>
         public DockContent CreateEditableDocument(String file, String text, Int32 codepage)
         {
             try
@@ -583,8 +583,8 @@ namespace FlashDevelop
         }
 
         /// <summary>
-		/// Creates a floating panel for the plugin
-		/// </summary>
+        /// Creates a floating panel for the plugin
+        /// </summary>
         public DockContent CreateDockablePanel(Control ctrl, String guid, Image image, DockState defaultDockState)
         {
             try
@@ -1076,8 +1076,8 @@ namespace FlashDevelop
         #region Event Handlers
 
         /// <summary>
-		/// Checks the file changes and activates
-		/// </summary>
+        /// Checks the file changes and activates
+        /// </summary>
         private void OnMainFormActivate(Object sender, System.EventArgs e)
         {
             if (this.CurrentDocument == null) return;
@@ -1971,8 +1971,8 @@ namespace FlashDevelop
         }
 
         /// <summary>
-		/// Closes all open documents with an option: exceptCurrent
-		/// </summary>
+        /// Closes all open documents with an option: exceptCurrent
+        /// </summary>
         public void CloseAllDocuments(Boolean exceptCurrent)
         {
             Int32 closeIndex = 0;
@@ -2105,8 +2105,8 @@ namespace FlashDevelop
         #region Click Handlers
 
         /// <summary>
-		/// Creates a new blank document
-		/// </summary>
+        /// Creates a new blank document
+        /// </summary>
         public void New(Object sender, EventArgs e)
         {
             String fileName = DocumentManager.GetNewDocumentName(null);
@@ -2906,9 +2906,9 @@ namespace FlashDevelop
                     String restart = TextHelper.GetString("Info.RequiresRestart");
                     if (requiresRestart)
                     {
-						zipLog += "Restart required.\r\n";
+                        zipLog += "Restart required.\r\n";
                         if (!silentInstall) finish += "\n" + restart;
-						else TraceManager.AddAsync(finish + "\r\n" + restart);
+                        else TraceManager.AddAsync(finish + "\r\n" + restart);
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
@@ -2991,9 +2991,9 @@ namespace FlashDevelop
                     String restart = TextHelper.GetString("Info.RequiresRestart");
                     if (requiresRestart)
                     {
-						zipLog += "Restart required.\r\n";                        
-						if (!silentRemove) finish += "\n" + restart;
-						else TraceManager.AddAsync(finish + "\r\n" + restart);
+                        zipLog += "Restart required.\r\n";                        
+                        if (!silentRemove) finish += "\n" + restart;
+                        else TraceManager.AddAsync(finish + "\r\n" + restart);
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);

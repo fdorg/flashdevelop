@@ -672,7 +672,7 @@ namespace AS3Context
 
 
         //---------------------------
-        //	PRIMARY
+        //  PRIMARY
         //---------------------------
 
         private void ReadDeclaration(string declType)
@@ -793,7 +793,7 @@ namespace AS3Context
 
 
         //---------------------------
-        //	COMMONS
+        //  COMMONS
         //---------------------------
 
         private void SkipContents()
@@ -862,7 +862,7 @@ namespace AS3Context
 
 
         //---------------------------
-        //	apiClassifierDetail
+        //  apiClassifierDetail
         //---------------------------
 
         private void ReadApiClassifierDetail(ASDocItem doc)
@@ -920,28 +920,28 @@ namespace AS3Context
 
 
         //---------------------------
-        //	prolog
+        //  prolog
         //---------------------------
 
         /// <summary>
         /// ---
         /// Example:
         /// <prolog>
-        ///		<asMetadata>
-        ///			<apiVersion>
-        ///				<apiLanguage version="3.0" />
-        ///				<apiPlatform description="" name="Flash" version="10" />
-        ///				<apiPlatform description="" name="AIR" version="1.5" />
-        ///				<apiTool description="" name="Flex" version="3" />
-        ///			</apiVersion>
-        ///		</asMetadata>
-        ///		<asCustoms>
-        ///			<customAsDoc>
-        ///				<type c="String" />
-        ///			</customAsDoc>
-        ///		</asCustoms>
-        ///	</prolog>
-        ///	---
+        ///     <asMetadata>
+        ///         <apiVersion>
+        ///             <apiLanguage version="3.0" />
+        ///             <apiPlatform description="" name="Flash" version="10" />
+        ///             <apiPlatform description="" name="AIR" version="1.5" />
+        ///             <apiTool description="" name="Flex" version="3" />
+        ///         </apiVersion>
+        ///     </asMetadata>
+        ///     <asCustoms>
+        ///         <customAsDoc>
+        ///             <type c="String" />
+        ///         </customAsDoc>
+        ///     </asCustoms>
+        /// </prolog>
+        /// ---
         /// </summary>
         /// <param name="doc"></param>
         private void ReadProlog(ASDocItem doc)
@@ -1074,7 +1074,7 @@ namespace AS3Context
 
 
         //---------------------------
-        //	apiType
+        //  apiType
         //---------------------------
 
         private void ReadApiType(ASDocItem doc)
@@ -1094,7 +1094,7 @@ namespace AS3Context
 
 
         //---------------------------
-        //	apiOperationDetail
+        //  apiOperationDetail
         //---------------------------
 
         private void ReadParamDesc(ASDocItem doc)
@@ -1170,7 +1170,7 @@ namespace AS3Context
 
 
         //---------------------------
-        //	apiException
+        //  apiException
         //---------------------------
 
         private void ReadApiException(ASDocItem doc)
@@ -1208,7 +1208,7 @@ namespace AS3Context
 
 
         //---------------------------
-        //	Meta tags
+        //  Meta tags
         //---------------------------
 
         private void ReadExcludeMeta(ASDocItem doc)

@@ -12,19 +12,19 @@ namespace PluginCore.Controls
 {
     public delegate void InsertedTextHandler(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item);
 
-	public class CompletionList
+    public class CompletionList
     {
         static public event InsertedTextHandler OnInsert;
         static public event InsertedTextHandler OnCancel;
 
-		/// <summary>
+        /// <summary>
         /// Properties of the class 
         /// </summary> 
-		private static System.Timers.Timer tempo;
+        private static System.Timers.Timer tempo;
         private static System.Timers.Timer tempoTip;
         private static System.Windows.Forms.ListBox completionList;
-		
-		#region State Properties
+        
+        #region State Properties
 
         private static bool disableSmartMatch;
         private static ICompletionListItem currentItem;
@@ -34,12 +34,12 @@ namespace PluginCore.Controls
         private static Boolean autoHideList;
         private static Boolean noAutoInsert;
         private static Boolean isActive;
-		internal static Boolean listUp;
+        internal static Boolean listUp;
         private static Boolean fullList;
         private static Int32 startPos;
         private static Int32 currentPos;
         private static Int32 lastIndex;
-		private static String currentWord;
+        private static String currentWord;
         private static String word;
         private static Boolean needResize;
         private static String widestLabel;
@@ -52,49 +52,49 @@ namespace PluginCore.Controls
         /// </summary>
         public static Int32 MinWordLength;
 
-		#endregion
-		
-		#region Control Creation
-		
+        #endregion
+        
+        #region Control Creation
+        
         /// <summary>
         /// Creates the control 
         /// </summary> 
-		public static void CreateControl(IMainForm mainForm)
-		{
-			tempo = new System.Timers.Timer();
-			tempo.SynchronizingObject = (Form)mainForm;
-			tempo.Elapsed += new System.Timers.ElapsedEventHandler(DisplayList);
-			tempo.AutoReset = false;
+        public static void CreateControl(IMainForm mainForm)
+        {
+            tempo = new System.Timers.Timer();
+            tempo.SynchronizingObject = (Form)mainForm;
+            tempo.Elapsed += new System.Timers.ElapsedEventHandler(DisplayList);
+            tempo.AutoReset = false;
             tempoTip = new System.Timers.Timer();
             tempoTip.SynchronizingObject = (Form)mainForm;
             tempoTip.Elapsed += new System.Timers.ElapsedEventHandler(UpdateTip);
             tempoTip.AutoReset = false;
             tempoTip.Interval = 800;
             
-			completionList = new ListBox();
+            completionList = new ListBox();
             completionList.Font = new System.Drawing.Font(PluginBase.Settings.DefaultFont, FontStyle.Regular);
-			completionList.Visible = false;
-			completionList.Location = new Point(400,200);
+            completionList.Visible = false;
+            completionList.Location = new Point(400,200);
             completionList.ItemHeight = completionList.Font.Height + 2;
-			completionList.Size = new Size(180, 100);
-			completionList.DrawMode = DrawMode.OwnerDrawFixed;
-			completionList.DrawItem += new DrawItemEventHandler(CLDrawListItem);
-			completionList.Click += new EventHandler(CLClick);
-			completionList.DoubleClick += new EventHandler(CLDoubleClick);
+            completionList.Size = new Size(180, 100);
+            completionList.DrawMode = DrawMode.OwnerDrawFixed;
+            completionList.DrawItem += new DrawItemEventHandler(CLDrawListItem);
+            completionList.Click += new EventHandler(CLClick);
+            completionList.DoubleClick += new EventHandler(CLDoubleClick);
             mainForm.Controls.Add(completionList);
-		}
-		
-		#endregion
-		
-		#region Public List Properties
+        }
+        
+        #endregion
+        
+        #region Public List Properties
 
         /// <summary>
         /// Is the control active? 
         /// </summary> 
-		public static Boolean Active
-		{
-			get { return isActive; }
-		}
+        public static Boolean Active
+        {
+            get { return isActive; }
+        }
 
         /// <summary>
         /// 
@@ -120,24 +120,24 @@ namespace PluginCore.Controls
                 return (selected == null) ? null : selected.Label;
             }
         }
-		
-		#endregion
-		
-		#region CompletionList Methods
-		
+        
+        #endregion
+        
+        #region CompletionList Methods
+        
         /// <summary>
         /// Checks if the position is valid
         /// </summary> 
-		public static Boolean CheckPosition(Int32 position)
-		{
-			return position == currentPos;
-		}
+        public static Boolean CheckPosition(Int32 position)
+        {
+            return position == currentPos;
+        }
 
         /// <summary>
         /// Shows the completion list
         /// </summary> 
         static public void Show(List<ICompletionListItem> itemList, Boolean autoHide, String select)
-		{
+        {
             if (!string.IsNullOrEmpty(select))
             {
                 int maxLen = 0;
@@ -148,49 +148,49 @@ namespace PluginCore.Controls
                 currentWord = select;
             }
             else currentWord = null;
-			Show(itemList, autoHide);
-		}
+            Show(itemList, autoHide);
+        }
 
         /// <summary>
         /// Shows the completion list
         /// </summary>
         static public void Show(List<ICompletionListItem> itemList, bool autoHide)
-		{
+        {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable) return;
             ScintillaControl sci = doc.SciControl;
-			ListBox cl = completionList;
-			try
-			{
-				if ((itemList == null) || (itemList.Count == 0))
-				{
-					if (isActive) Hide();
-					return;
-				}
-				if (sci == null) 
-				{
-					if (isActive) Hide();
-					return;
-				}
-			}
-			catch (Exception ex)
-			{
-				ErrorManager.ShowError(ex);
-			}
-			// state
-			allItems = itemList;
+            ListBox cl = completionList;
+            try
+            {
+                if ((itemList == null) || (itemList.Count == 0))
+                {
+                    if (isActive) Hide();
+                    return;
+                }
+                if (sci == null) 
+                {
+                    if (isActive) Hide();
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+            // state
+            allItems = itemList;
             autoHideList = autoHide;
             noAutoInsert = false;
-			word = "";
-			if (currentWord != null)
-			{
-				word = currentWord;
-				currentWord = null;
-			}
+            word = "";
+            if (currentWord != null)
+            {
+                word = currentWord;
+                currentWord = null;
+            }
             MinWordLength = 1;
             fullList = (word.Length == 0) || !autoHide || !PluginBase.MainForm.Settings.AutoFilterList;
-			lastIndex = 0;
-			exactMatchInList = false;
+            lastIndex = 0;
+            exactMatchInList = false;
             if (sci.SelectionStart == sci.SelectionEnd)
                 startPos = sci.CurrentPos - word.Length;
             else 
@@ -201,15 +201,15 @@ namespace PluginCore.Controls
             needResize = true;
             tempo.Enabled = autoHide && (PluginBase.MainForm.Settings.DisplayDelay > 0);
             if (tempo.Enabled) tempo.Interval = PluginBase.MainForm.Settings.DisplayDelay;
-			FindWordStartingWith(word);
-			// state
+            FindWordStartingWith(word);
+            // state
             isActive = true;
             tempoTip.Enabled = false;
             showTime = DateTime.Now.Ticks;
             disableSmartMatch = noAutoInsert || PluginBase.MainForm.Settings.DisableSmartMatch;
             UITools.Manager.LockControl(sci);
             faded = false;
-		}
+        }
 
         /// <summary>
         /// Set default selected item in completion list
@@ -249,12 +249,12 @@ namespace PluginCore.Controls
         /// 
         /// </summary>
         static private void DisplayList(Object sender, System.Timers.ElapsedEventArgs e)
-		{
+        {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable) return;
             ScintillaControl sci = doc.SciControl;
             ListBox cl = completionList;
-			if (cl.Items.Count == 0) return;
+            if (cl.Items.Count == 0) return;
 
             // measure control
             if (needResize && widestLabel != null && widestLabel.Length > 0)
@@ -266,27 +266,27 @@ namespace PluginCore.Controls
             }
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
             if (newHeight != cl.Height) cl.Height = newHeight;
-			// place control
-			Point coord = new Point(sci.PointXFromPosition(startPos), sci.PointYFromPosition(startPos));
-			listUp = UITools.CallTip.CallTipActive || (coord.Y+cl.Height > (sci as Control).Height);
-			coord = sci.PointToScreen(coord);
-			coord = ((Form)PluginBase.MainForm).PointToClient(coord);
-			cl.Left = coord.X-20 + sci.Left;
-			if (listUp) cl.Top = coord.Y-cl.Height;
+            // place control
+            Point coord = new Point(sci.PointXFromPosition(startPos), sci.PointYFromPosition(startPos));
+            listUp = UITools.CallTip.CallTipActive || (coord.Y+cl.Height > (sci as Control).Height);
+            coord = sci.PointToScreen(coord);
+            coord = ((Form)PluginBase.MainForm).PointToClient(coord);
+            cl.Left = coord.X-20 + sci.Left;
+            if (listUp) cl.Top = coord.Y-cl.Height;
             else cl.Top = coord.Y + UITools.Manager.LineHeight(sci);
             // Keep on control area
             if (cl.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
             {
                 cl.Left = ((Form)PluginBase.MainForm).ClientRectangle.Right - cl.Width;
             }
-			if (!cl.Visible)
-			{
+            if (!cl.Visible)
+            {
                 Redraw();
                 cl.Show();
                 cl.BringToFront();
                 if (UITools.CallTip.CallTipActive) UITools.CallTip.PositionControl(sci);
-			}
-		}
+            }
+        }
 
         static public void Redraw()
         {
@@ -296,27 +296,27 @@ namespace PluginCore.Controls
 
         /// <summary>
         /// Hide completion list
-        /// </summary> 	
-		static public void Hide()
-		{
-			if (completionList != null && isActive) 
-			{
-				tempo.Enabled = false;
-				isActive = false;
-				fullList = false;
+        /// </summary>  
+        static public void Hide()
+        {
+            if (completionList != null && isActive) 
+            {
+                tempo.Enabled = false;
+                isActive = false;
+                fullList = false;
                 faded = false;
-				completionList.Visible = false;
-				if (completionList.Items.Count > 0) completionList.Items.Clear();
-				currentItem = null;
-				allItems = null;
+                completionList.Visible = false;
+                if (completionList.Items.Count > 0) completionList.Items.Clear();
+                currentItem = null;
+                allItems = null;
                 UITools.Tip.Hide();
                 if (!UITools.CallTip.CallTipActive) UITools.Manager.UnlockControl();
-			}
-		}
+            }
+        }
 
         /// <summary>
         /// Cancel completion list with event
-        /// </summary> 	
+        /// </summary>  
         static public void Hide(char trigger)
         {
             if (completionList != null && isActive)
@@ -334,8 +334,8 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary> 
-		static public void SelectWordInList(String tail)
-		{
+        static public void SelectWordInList(String tail)
+        {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable)
             {
@@ -343,25 +343,25 @@ namespace PluginCore.Controls
                 return;
             }
             ScintillaControl sci = doc.SciControl;
-			currentWord = tail;
-			currentPos += tail.Length;
-			sci.SetSel(currentPos, currentPos);
-		}
+            currentWord = tail;
+            currentPos += tail.Length;
+            sci.SetSel(currentPos, currentPos);
+        }
 
         /// <summary>
         /// 
         /// </summary>
         static private void CLDrawListItem(Object sender, System.Windows.Forms.DrawItemEventArgs e)
-		{
+        {
             ICompletionListItem item = completionList.Items[e.Index] as ICompletionListItem;
-			e.DrawBackground();
+            e.DrawBackground();
             Color fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor");
             bool selected = (e.State & DrawItemState.Selected) > 0;
-			Brush textBrush = (selected) ? SystemBrushes.HighlightText : fore == Color.Empty ? SystemBrushes.WindowText : new SolidBrush(fore);
+            Brush textBrush = (selected) ? SystemBrushes.HighlightText : fore == Color.Empty ? SystemBrushes.WindowText : new SolidBrush(fore);
             Brush packageBrush = Brushes.Gray;
-			Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
-			if (item != null)
-			{
+            Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
+            if (item != null)
+            {
                 Graphics g = e.Graphics;
                 float newHeight = e.Bounds.Height - 2;
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -375,69 +375,69 @@ namespace PluginCore.Controls
                     if (left < tbounds.Right) g.DrawString(item.Label.Substring(p + 1), e.Font, textBrush, left, tbounds.Top, StringFormat.GenericDefault);
                 }
                 else g.DrawString(item.Label, e.Font, textBrush, tbounds, StringFormat.GenericDefault);
-			}
-			e.DrawFocusRectangle();
-			if ((item != null) && ((e.State & DrawItemState.Selected) > 0))
-			{
+            }
+            e.DrawFocusRectangle();
+            if ((item != null) && ((e.State & DrawItemState.Selected) > 0))
+            {
                 UITools.Tip.Hide();
-				currentItem = item;
+                currentItem = item;
                 tempoTip.Stop();
                 tempoTip.Start();
-			}
-		}
+            }
+        }
 
         /// <summary>
         /// Display item information in tooltip
         /// </summary> 
         static public void UpdateTip(Object sender, System.Timers.ElapsedEventArgs e)
-		{
-			tempoTip.Stop();
-			if (currentItem == null || faded)
-				return;
+        {
+            tempoTip.Stop();
+            if (currentItem == null || faded)
+                return;
 
-			UITools.Tip.SetText(currentItem.Description ?? "", false);
-			UITools.Tip.Redraw(false);
+            UITools.Tip.SetText(currentItem.Description ?? "", false);
+            UITools.Tip.Redraw(false);
 
-			int rightWidth = ((Form)PluginBase.MainForm).ClientRectangle.Right - completionList.Right - 10;
-			int leftWidth = completionList.Left;
+            int rightWidth = ((Form)PluginBase.MainForm).ClientRectangle.Right - completionList.Right - 10;
+            int leftWidth = completionList.Left;
 
-			Point posTarget = new Point(completionList.Right, completionList.Top);
-			int widthTarget = rightWidth;
-			if (rightWidth < 220 && leftWidth > 220)
-			{
-				widthTarget = leftWidth;
-				posTarget = new Point(0, completionList.Top);
-			}
+            Point posTarget = new Point(completionList.Right, completionList.Top);
+            int widthTarget = rightWidth;
+            if (rightWidth < 220 && leftWidth > 220)
+            {
+                widthTarget = leftWidth;
+                posTarget = new Point(0, completionList.Top);
+            }
 
-			UITools.Tip.Location = posTarget;
-			UITools.Tip.AutoSize(widthTarget, 500);
+            UITools.Tip.Location = posTarget;
+            UITools.Tip.AutoSize(widthTarget, 500);
 
-			if (widthTarget == leftWidth)
-				UITools.Tip.Location = new Point(completionList.Left - UITools.Tip.Size.Width, posTarget.Y);
+            if (widthTarget == leftWidth)
+                UITools.Tip.Location = new Point(completionList.Left - UITools.Tip.Size.Width, posTarget.Y);
 
-			UITools.Tip.Show();
-		}
+            UITools.Tip.Show();
+        }
 
         /// <summary>
         /// 
         /// </summary>
         static private void CLClick(Object sender, System.EventArgs e)
-		{
-			ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+        {
+            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable)
             {
                 Hide();
                 return;
             }
             doc.SciControl.Focus();
-		}
+        }
 
         /// <summary>
         /// 
         /// </summary> 
-		static private void CLDoubleClick(Object sender, System.EventArgs e)
-		{
-			ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+        static private void CLDoubleClick(Object sender, System.EventArgs e)
+        {
+            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable)
             {
                 Hide();
@@ -446,65 +446,65 @@ namespace PluginCore.Controls
             ScintillaControl sci = doc.SciControl;
             sci.Focus();
             ReplaceText(sci, '\0');
-		}
+        }
 
         /// <summary>
         /// Filter the completion list with the letter typed
         /// </summary> 
-		static public void FindWordStartingWith(String word)
-		{
+        static public void FindWordStartingWith(String word)
+        {
             if (word == null) word = "";
-			Int32 len = word.Length;
+            Int32 len = word.Length;
             Int32 maxLen = 0;
             Int32 lastScore = 0;
-			/// <summary>
-			/// FILTER ITEMS
-			/// </summary>
+            /// <summary>
+            /// FILTER ITEMS
+            /// </summary>
             if (PluginBase.MainForm.Settings.AutoFilterList || fullList)
-			{
+            {
                 List<ICompletionListItem> found;
-				if (len == 0) 
-				{
+                if (len == 0) 
+                {
                     found = allItems;
-					lastIndex = 0;
-					exactMatchInList = false;
+                    lastIndex = 0;
+                    exactMatchInList = false;
                     smartMatchInList = true;
-				}
-				else
-				{
+                }
+                else
+                {
                     List<ItemMatch> temp = new List<ItemMatch>(allItems.Count);
-					Int32 n = allItems.Count;
+                    Int32 n = allItems.Count;
                     Int32 i = 0;
                     Int32 score;
                     lastScore = 99;
-					ICompletionListItem item;
+                    ICompletionListItem item;
                     exactMatchInList = false;
                     smartMatchInList = false;
-					while (i < n)
-					{
-						item = allItems[i];
-						// compare item's label with the searched word
+                    while (i < n)
+                    {
+                        item = allItems[i];
+                        // compare item's label with the searched word
                         score = SmartMatch(item.Label, word, len);
-						if (score > 0)
-						{
-							// first match found
-							if (!smartMatchInList || score < lastScore)
-							{
+                        if (score > 0)
+                        {
+                            // first match found
+                            if (!smartMatchInList || score < lastScore)
+                            {
                                 lastScore = score;
-								lastIndex = temp.Count;
+                                lastIndex = temp.Count;
                                 smartMatchInList = true;
-								exactMatchInList = score < 5 && word == CompletionList.word;
-							}
-							temp.Add(new ItemMatch(score, item));
+                                exactMatchInList = score < 5 && word == CompletionList.word;
+                            }
+                            temp.Add(new ItemMatch(score, item));
                             if (item.Label.Length > maxLen)
                             {
                                 widestLabel = item.Label;
                                 maxLen = widestLabel.Length;
                             }
-						}
+                        }
                         else if (fullList) temp.Add(new ItemMatch(0, item));
-						i++;
-					}
+                        i++;
+                    }
                     // filter
                     found = new List<ICompletionListItem>(temp.Count);
                     for (int j = 0; j < temp.Count; j++)
@@ -512,10 +512,10 @@ namespace PluginCore.Controls
                         if (j == lastIndex) lastIndex = found.Count;
                         if (temp[j].Score - lastScore < 3) found.Add(temp[j].Item);
                     }
-				}
-				// no match?
-				if (!smartMatchInList)
-				{
+                }
+                // no match?
+                if (!smartMatchInList)
+                {
                     if (autoHideList && PluginBase.MainForm.Settings.EnableAutoHide && (len == 0 || len > 255))
                     {
                         Hide('\0');
@@ -532,16 +532,16 @@ namespace PluginCore.Controls
                             Hide('\0');
                         }
                     }
-					return;
-				}
-				fullList = false;
-				// reset timer
-				if (tempo.Enabled)
-				{
-					tempo.Enabled = false;
-					tempo.Enabled = true;
-				}
-				// is update needed?
+                    return;
+                }
+                fullList = false;
+                // reset timer
+                if (tempo.Enabled)
+                {
+                    tempo.Enabled = false;
+                    tempo.Enabled = true;
+                }
+                // is update needed?
                 if (completionList.Items.Count == found.Count)
                 {
                     int n = completionList.Items.Count;
@@ -569,19 +569,19 @@ namespace PluginCore.Controls
                     }
                 }
                 // update
-				try
-				{
-					completionList.BeginUpdate();
-					completionList.Items.Clear();
-					foreach (ICompletionListItem item in found) 
-					{
-						completionList.Items.Add(item);
+                try
+                {
+                    completionList.BeginUpdate();
+                    completionList.Items.Clear();
+                    foreach (ICompletionListItem item in found) 
+                    {
+                        completionList.Items.Add(item);
                         if (item.Label.Length > maxLen)
                         {
                             widestLabel = item.Label;
                             maxLen = widestLabel.Length;
                         }
-					}
+                    }
                     Int32 topIndex = lastIndex;
                     if (defaultItem != null)
                     {
@@ -593,44 +593,44 @@ namespace PluginCore.Controls
                     // select first item
                     completionList.TopIndex = topIndex;
                     completionList.SelectedIndex = lastIndex;
-				}
-				catch (Exception ex)
-				{
-					Hide('\0');
-					ErrorManager.ShowError(/*"Completion list populate error.", */ ex);
-					return;
-				}
-				finally
-				{
-					completionList.EndUpdate();
-				}
-				// update list
-				if (!tempo.Enabled) DisplayList(null, null);
-			}
-			/// <summary>
-			/// NO FILTER
-			/// </summary>
-			else
-			{
-				int n = completionList.Items.Count;
-				ICompletionListItem item;
-				while (lastIndex < n)
-				{
-					item = completionList.Items[lastIndex] as ICompletionListItem;
-					if (String.Compare(item.Label, 0, word, 0, len, true) == 0)
-					{
-						completionList.SelectedIndex = lastIndex;
-						completionList.TopIndex = lastIndex;
-						exactMatchInList = true;
-						return;
-					}
-					lastIndex++;
-				}
-				// no match
+                }
+                catch (Exception ex)
+                {
+                    Hide('\0');
+                    ErrorManager.ShowError(/*"Completion list populate error.", */ ex);
+                    return;
+                }
+                finally
+                {
+                    completionList.EndUpdate();
+                }
+                // update list
+                if (!tempo.Enabled) DisplayList(null, null);
+            }
+            /// <summary>
+            /// NO FILTER
+            /// </summary>
+            else
+            {
+                int n = completionList.Items.Count;
+                ICompletionListItem item;
+                while (lastIndex < n)
+                {
+                    item = completionList.Items[lastIndex] as ICompletionListItem;
+                    if (String.Compare(item.Label, 0, word, 0, len, true) == 0)
+                    {
+                        completionList.SelectedIndex = lastIndex;
+                        completionList.TopIndex = lastIndex;
+                        exactMatchInList = true;
+                        return;
+                    }
+                    lastIndex++;
+                }
+                // no match
                 if (autoHideList && PluginBase.MainForm.Settings.EnableAutoHide) Hide('\0');
-				else exactMatchInList = false;
-			}
-		}
+                else exactMatchInList = false;
+            }
+        }
 
         private static int TestDefaultItem(Int32 index, String word, Int32 len)
         {
@@ -788,15 +788,15 @@ namespace PluginCore.Controls
         /// 
         /// </summary> 
         static public bool ReplaceText(ScintillaControl sci, char trigger)
-		{
+        {
             return ReplaceText(sci, "", trigger);
-		}
+        }
 
         /// <summary>
         /// 
         /// </summary> 
-		static public bool ReplaceText(ScintillaControl sci, String tail, char trigger)
-		{
+        static public bool ReplaceText(ScintillaControl sci, String tail, char trigger)
+        {
             sci.BeginUndoAction();
             try
             {
@@ -835,33 +835,33 @@ namespace PluginCore.Controls
                 sci.EndUndoAction();
             }
         }
-		
-		#endregion
-		
-		#region Event Handling
-		
+        
+        #endregion
+        
+        #region Event Handling
+        
         /// <summary>
         /// 
         /// </summary> 
-		static public IntPtr GetHandle()
-		{
-			return completionList.Handle;
-		}
+        static public IntPtr GetHandle()
+        {
+            return completionList.Handle;
+        }
 
         /// <summary>
         /// 
         /// </summary> 
-		static public void OnChar(ScintillaControl sci, int value)
-		{
+        static public void OnChar(ScintillaControl sci, int value)
+        {
             char c = (char)value;
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-			if (characterClass.IndexOf(c) >= 0)
-			{
-				word += c;
-				currentPos++;
+            if (characterClass.IndexOf(c) >= 0)
+            {
+                word += c;
+                currentPos++;
                 FindWordStartingWith(word);
-				return;
-			}
+                return;
+            }
             else if (noAutoInsert)
             {
                 CompletionList.Hide('\0');
@@ -869,7 +869,7 @@ namespace PluginCore.Controls
                 UITools.Manager.SendChar(sci, value);
             }
             else
-			{
+            {
                 // check for fast typing
                 long millis = (DateTime.Now.Ticks - showTime) / 10000;
                 if (!exactMatchInList && (word.Length > 0 || (millis < 400 && defaultItem == null)))
@@ -884,32 +884,32 @@ namespace PluginCore.Controls
                 {
                     ReplaceText(sci, c.ToString(), c);
                 }
-				// handle this char
+                // handle this char
                 UITools.Manager.SendChar(sci, value);
-			}
-		}
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary> 
-		static public bool HandleKeys(ScintillaControl sci, Keys key)
-		{
-			int index;
-			switch (key)
-			{
-				case Keys.Back:
-					if (!UITools.CallTip.CallTipActive) sci.DeleteBack();
+        static public bool HandleKeys(ScintillaControl sci, Keys key)
+        {
+            int index;
+            switch (key)
+            {
+                case Keys.Back:
+                    if (!UITools.CallTip.CallTipActive) sci.DeleteBack();
                     if (word.Length > MinWordLength)
-					{
-						word = word.Substring(0, word.Length-1);
-						currentPos = sci.CurrentPos;
-						lastIndex = 0;
+                    {
+                        word = word.Substring(0, word.Length-1);
+                        currentPos = sci.CurrentPos;
+                        lastIndex = 0;
                         FindWordStartingWith(word);
-					}
-					else CompletionList.Hide((char)8);
-					return true;
-					
-				case Keys.Enter:
+                    }
+                    else CompletionList.Hide((char)8);
+                    return true;
+                    
+                case Keys.Enter:
                     if (noAutoInsert || !ReplaceText(sci, '\n'))
                     {
                         CompletionList.Hide();
@@ -923,105 +923,105 @@ namespace PluginCore.Controls
                         CompletionList.Hide();
                         return false;
                     }
-					return true;
-					
-				case Keys.Space:
+                    return true;
+                    
+                case Keys.Space:
                     if (noAutoInsert) CompletionList.Hide();
-					return false;
+                    return false;
 
                 case Keys.Up:
                     noAutoInsert = false;
-					// the list was hidden and it should not appear
-					if (!completionList.Visible)
-					{
-						CompletionList.Hide();
-						if (key == Keys.Up) sci.LineUp(); 
-						else sci.CharLeft();
-						return false;
-					}
-					// go up the list
-					if (completionList.SelectedIndex > 0)
+                    // the list was hidden and it should not appear
+                    if (!completionList.Visible)
+                    {
+                        CompletionList.Hide();
+                        if (key == Keys.Up) sci.LineUp(); 
+                        else sci.CharLeft();
+                        return false;
+                    }
+                    // go up the list
+                    if (completionList.SelectedIndex > 0)
                     {
                         RefreshTip();
-						index = completionList.SelectedIndex-1;
-						completionList.SelectedIndex = index;
-					}
-					// wrap
+                        index = completionList.SelectedIndex-1;
+                        completionList.SelectedIndex = index;
+                    }
+                    // wrap
                     else if (PluginBase.MainForm.Settings.WrapList)
                     {
                         RefreshTip();
-						index = completionList.Items.Count-1;
-						completionList.SelectedIndex = index;
-					}
-					break;
+                        index = completionList.Items.Count-1;
+                        completionList.SelectedIndex = index;
+                    }
+                    break;
 
                 case Keys.Down:
                     noAutoInsert = false;
-					// the list was hidden and it should not appear
-					if (!completionList.Visible)
-					{
-						CompletionList.Hide();
-						if (key == Keys.Down) sci.LineDown(); 
-						else sci.CharRight();
-						return false;
-					}
-					// go down the list
-					if (completionList.SelectedIndex < completionList.Items.Count-1)
+                    // the list was hidden and it should not appear
+                    if (!completionList.Visible)
+                    {
+                        CompletionList.Hide();
+                        if (key == Keys.Down) sci.LineDown(); 
+                        else sci.CharRight();
+                        return false;
+                    }
+                    // go down the list
+                    if (completionList.SelectedIndex < completionList.Items.Count-1)
                     {
                         RefreshTip();
-						index = completionList.SelectedIndex+1;
-						completionList.SelectedIndex = index;
-					}
-					// wrap
+                        index = completionList.SelectedIndex+1;
+                        completionList.SelectedIndex = index;
+                    }
+                    // wrap
                     else if (PluginBase.MainForm.Settings.WrapList)
                     {
                         RefreshTip();
-						index = 0;
-						completionList.SelectedIndex = index;
-					}
-					break;
+                        index = 0;
+                        completionList.SelectedIndex = index;
+                    }
+                    break;
 
                 case Keys.PageUp:
                     noAutoInsert = false;
-					// the list was hidden and it should not appear
-					if (!completionList.Visible)
-					{
-						CompletionList.Hide();
-						sci.PageUp();
-						return false;
-					}
-					// go up the list
-					if (completionList.SelectedIndex > 0)
-					{
+                    // the list was hidden and it should not appear
+                    if (!completionList.Visible)
+                    {
+                        CompletionList.Hide();
+                        sci.PageUp();
+                        return false;
+                    }
+                    // go up the list
+                    if (completionList.SelectedIndex > 0)
+                    {
                         RefreshTip();
-						index = completionList.SelectedIndex-completionList.Height/completionList.ItemHeight;
-						if (index < 0) index = 0;
-						completionList.SelectedIndex = index;
-					}
-					break;
+                        index = completionList.SelectedIndex-completionList.Height/completionList.ItemHeight;
+                        if (index < 0) index = 0;
+                        completionList.SelectedIndex = index;
+                    }
+                    break;
 
                 case Keys.PageDown:
                     noAutoInsert = false;
-					// the list was hidden and it should not appear
-					if (!completionList.Visible)
-					{
-						CompletionList.Hide();
-						sci.PageDown();
-						return false;
-					}
-					// go down the list
-					if (completionList.SelectedIndex < completionList.Items.Count-1)
+                    // the list was hidden and it should not appear
+                    if (!completionList.Visible)
+                    {
+                        CompletionList.Hide();
+                        sci.PageDown();
+                        return false;
+                    }
+                    // go down the list
+                    if (completionList.SelectedIndex < completionList.Items.Count-1)
                     {
                         RefreshTip();
-						index = completionList.SelectedIndex+completionList.Height/completionList.ItemHeight;
-						if (index > completionList.Items.Count-1) index = completionList.Items.Count-1;
-						completionList.SelectedIndex = index;
+                        index = completionList.SelectedIndex+completionList.Height/completionList.ItemHeight;
+                        if (index > completionList.Items.Count-1) index = completionList.Items.Count-1;
+                        completionList.SelectedIndex = index;
                     }
-					break;
-				
-				case (Keys.Control | Keys.Space):
-					break;
-				
+                    break;
+                
+                case (Keys.Control | Keys.Space):
+                    break;
+                
                 case Keys.Left:
                     sci.CharLeft();
                     CompletionList.Hide();
@@ -1032,20 +1032,20 @@ namespace PluginCore.Controls
                     CompletionList.Hide();
                     break;
 
-				default:
-					CompletionList.Hide();
-					return false;
-			}
-			return true;
-		}
+                default:
+                    CompletionList.Hide();
+                    return false;
+            }
+            return true;
+        }
 
         private static void RefreshTip()
         {
             UITools.Tip.Hide();
             tempoTip.Enabled = false;
         }
-		
-		#endregion
+        
+        #endregion
 
         #region Controls fading on Control key
 
@@ -1068,7 +1068,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-	}
+    }
 
     struct ItemMatch
     {

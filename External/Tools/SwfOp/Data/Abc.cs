@@ -64,15 +64,15 @@ namespace SwfOp.Data
 
     public enum Attribute: byte
     {
-    	Final = 0x01, // 1=final, 0=virtual
-	    Override = 0x02, // 1=override, 0=new
+        Final = 0x01, // 1=final, 0=virtual
+        Override = 0x02, // 1=override, 0=new
         Metadata = 0x04, // 1=has metadata, 0=no metadata
-	    Public = 0x08 // 1=add public namespace
+        Public = 0x08 // 1=add public namespace
     }
 
     public enum ClassFlag: byte
     {
-	    Sealed = 0x01,
+        Sealed = 0x01,
         Final = 0x02,
         Interface = 0x04
     }
@@ -143,7 +143,7 @@ namespace SwfOp.Data
         callinterface = 0x4D,
         callsupervoid = 0x4E,
         callpropvoid = 0x4F,
-	    applytype = 0x53,
+        applytype = 0x53,
         newobject = 0x55,
         newarray = 0x56,
         newactivation = 0x57,
@@ -286,7 +286,7 @@ namespace SwfOp.Data
     }
 
     public class SlotInfo : MemberInfo
-	{
+    {
         public QName type;
         public object value;
 
@@ -500,7 +500,7 @@ namespace SwfOp.Data
         internal long methodBodiesPosition;
         internal bool methodBodiesParsed;
 
-		internal Namespace publicNs = new Namespace("");
+        internal Namespace publicNs = new Namespace("");
         internal Namespace anyNs = new Namespace("*");
         #endregion
 
@@ -520,11 +520,11 @@ namespace SwfOp.Data
             const_values[11] = true;
             const_values[12] = null;
            
-			parseMethodInfos(br);
-			parseMetadataInfos(br);
-			parseInstanceInfos(br);
-			parseClassInfos(br);
-			parseScriptInfos(br);
+            parseMethodInfos(br);
+            parseMetadataInfos(br);
+            parseInstanceInfos(br);
+            parseClassInfos(br);
+            parseScriptInfos(br);
 
             // store read position for optional parseMethodBodies() call
             methodBodiesPosition = br.BaseStream.Position;
@@ -563,73 +563,73 @@ namespace SwfOp.Data
 
         #region constants pool
         private void parseCpool(BinaryReader br)
-		{
-			long start = br.BaseStream.Position;
+        {
+            long start = br.BaseStream.Position;
             int n;
 
-			// ints
-			n = readU32(br);
+            // ints
+            n = readU32(br);
             ints = new int[n];
             if (n > 0) ints[0] = 0;
-			for (int i=1; i < n; i++)
-				ints[i] = readU32(br);
+            for (int i=1; i < n; i++)
+                ints[i] = readU32(br);
 
-			// uints
-			n = readU32(br);
+            // uints
+            n = readU32(br);
             uints = new uint[n];
             if (n > 0) uints[0] = 0;
-			for (int i=1; i < n; i++)
-				uints[i] = (uint)readU32(br);
+            for (int i=1; i < n; i++)
+                uints[i] = (uint)readU32(br);
 
-			// doubles
-			n = readU32(br);
+            // doubles
+            n = readU32(br);
             doubles = new double[n];
             if (n > 0) doubles[0] = double.NaN;
-			for (int i=1; i < n; i++)
-				doubles[i] = br.ReadDouble();
+            for (int i=1; i < n; i++)
+                doubles[i] = br.ReadDouble();
 
-			// sb.append("Cpool numbers size "+(data.position-start)+" "+int(100*(data.position-start)/data.length)+" %")
+            // sb.append("Cpool numbers size "+(data.position-start)+" "+int(100*(data.position-start)/data.length)+" %")
             //Console.WriteLine("Cpool numbers size " + (br.BaseStream.Position - start) + " " + (int)(100 * (br.BaseStream.Position - start) / br.BaseStream.Length) + " %");
-			start = br.BaseStream.Position;
+            start = br.BaseStream.Position;
 
-			// strings
-			n = readU32(br);
+            // strings
+            n = readU32(br);
             strings = new string[n];
             if (n > 0) strings[0] = "";
             for (int i = 1; i < n; i++)
                 strings[i] = readUTFBytes(br); //br.ReadString()
 
-			// sb.append("Cpool strings count "+ n +" size "+(data.position-start)+" "+int(100*(data.position-start)/data.length)+" %")
+            // sb.append("Cpool strings count "+ n +" size "+(data.position-start)+" "+int(100*(data.position-start)/data.length)+" %")
             //Console.WriteLine("Cpool strings count " + n + " size " + (br.BaseStream.Position - start) + " " + (int)(100 * (br.BaseStream.Position - start) / br.BaseStream.Length) + " %");
-			start = br.BaseStream.Position;
+            start = br.BaseStream.Position;
 
-			// namespaces
-			n = readU32(br);
+            // namespaces
+            n = readU32(br);
             namespaces = new Namespace[n];
             if (n > 0) namespaces[0] = publicNs;
-			for (int i=1; i < n; i++)
-			switch ((ConstantKind)br.ReadSByte())
-			{
-				case ConstantKind.Namespace:
-				case ConstantKind.PackageNs:
-				case ConstantKind.PackageInternalNs:
-				case ConstantKind.ProtectedNs:
-				case ConstantKind.StaticProtectedNs:
-				case ConstantKind.StaticProtectedNs2:
-					namespaces[i] = new Namespace((string)strings[readU32(br)]);
-					// todo mark kind of namespace.
-					break;
-				case ConstantKind.PrivateNs:
-					readU32(br);
-					namespaces[i] = new Namespace(null, "private");
-					break;
-			}
+            for (int i=1; i < n; i++)
+            switch ((ConstantKind)br.ReadSByte())
+            {
+                case ConstantKind.Namespace:
+                case ConstantKind.PackageNs:
+                case ConstantKind.PackageInternalNs:
+                case ConstantKind.ProtectedNs:
+                case ConstantKind.StaticProtectedNs:
+                case ConstantKind.StaticProtectedNs2:
+                    namespaces[i] = new Namespace((string)strings[readU32(br)]);
+                    // todo mark kind of namespace.
+                    break;
+                case ConstantKind.PrivateNs:
+                    readU32(br);
+                    namespaces[i] = new Namespace(null, "private");
+                    break;
+            }
 
-			//Console.WriteLine("Cpool namespaces count "+ n +" size "+(br.BaseStream.Position-start)+" "+(int)(100*(br.BaseStream.Position-start)/br.BaseStream.Length)+" %");
+            //Console.WriteLine("Cpool namespaces count "+ n +" size "+(br.BaseStream.Position-start)+" "+(int)(100*(br.BaseStream.Position-start)/br.BaseStream.Length)+" %");
             start = br.BaseStream.Position;
             
-			// namespace sets
-			n = readU32(br);
+            // namespace sets
+            n = readU32(br);
             nssets = new Namespace[n][];
             if (n > 0) nssets[0] = null;
             for (int i = 1; i < n; i++)
@@ -641,15 +641,15 @@ namespace SwfOp.Data
                     nsset[j] = (Namespace)namespaces[readU32(br)];
             }
 
-			//Console.WriteLine("Cpool nssets count "+ n +" size "+(br.BaseStream.Position-start)+" "+(int)(100*(br.BaseStream.Position-start)/br.BaseStream.Length)+" %");
+            //Console.WriteLine("Cpool nssets count "+ n +" size "+(br.BaseStream.Position-start)+" "+(int)(100*(br.BaseStream.Position-start)/br.BaseStream.Length)+" %");
             start = br.BaseStream.Position;
 
-			// multinames
-			n = readU32(br);
+            // multinames
+            n = readU32(br);
             names = new QName[n];
             if (n > 0) names[0] = null;
-			namespaces[0] = anyNs;
-			strings[0] = "*";
+            namespaces[0] = anyNs;
+            strings[0] = "*";
             for (int i = 1; i < n; i++)
             {
                 switch ((ConstantKind)br.ReadSByte())
@@ -706,8 +706,8 @@ namespace SwfOp.Data
 
             //Console.WriteLine("Cpool names count " + n + " size " + (br.BaseStream.Position - start) + " " + (int)(100 * (br.BaseStream.Position - start) / br.BaseStream.Length) + " %");
 
-			namespaces[0] = publicNs;
-			strings[0] = "*";
+            namespaces[0] = publicNs;
+            strings[0] = "*";
         }
         #endregion
 
@@ -716,20 +716,20 @@ namespace SwfOp.Data
         private void parseMethodInfos(BinaryReader br)
         {
             long start = br.BaseStream.Position;
-			names[0] = new QName(publicNs,"*");
-			int method_count = readU32(br);
-			methods = new MethodInfo[method_count];
+            names[0] = new QName(publicNs,"*");
+            int method_count = readU32(br);
+            methods = new MethodInfo[method_count];
 
-			for (int i=0; i < method_count; i++)
-			{
-				MethodInfo m = new MethodInfo();
+            for (int i=0; i < method_count; i++)
+            {
+                MethodInfo m = new MethodInfo();
                 methods[i] = m;
-				int param_count = readU32(br);
-				m.returnType = (QName)names[readU32(br)];
+                int param_count = readU32(br);
+                m.returnType = (QName)names[readU32(br)];
                 m.paramTypes = new QName[param_count];
-				for (int j=0; j < param_count; j++)
+                for (int j=0; j < param_count; j++)
                     m.paramTypes[j] = (QName)names[readU32(br)];
-				m.debugName = (string)strings[readU32(br)];
+                m.debugName = (string)strings[readU32(br)];
                 m.flags = (MethodFlags)br.ReadSByte();
 
                 if ((m.flags & MethodFlags.NeedRest) > 0)
@@ -739,47 +739,47 @@ namespace SwfOp.Data
                     temp.CopyTo(m.paramTypes, 0);
                     m.paramTypes[param_count] = new QName("Array");
                 }
-				if ((m.flags & MethodFlags.HasOptional) > 0)
-				{
-					// has_optional
-					int optional_count = readU32(br);
+                if ((m.flags & MethodFlags.HasOptional) > 0)
+                {
+                    // has_optional
+                    int optional_count = readU32(br);
                     if ((m.flags & MethodFlags.NeedRest) > 0)
                     {
                         m.optionalValues = new object[optional_count + 1];
                         m.optionalValues[optional_count] = null;
                     }
                     else m.optionalValues = new object[optional_count];
-					for(int k = 0; k < optional_count; k++)
-					{
-						int index = readU32(br);    // optional value index
-						ConstantKind kind = (ConstantKind)br.ReadSByte(); // kind byte for each default value
-						if (index == 0)
-						{
-							// kind is ignored, default value is based on type
-							m.optionalValues[k] = null;
-						}
-						else m.optionalValues[k] = getDefaultValue(kind, index);
-					}
-				}
-				if ((m.flags & MethodFlags.HasParamNames) > 0)
-				{
-					// has_paramnames
+                    for(int k = 0; k < optional_count; k++)
+                    {
+                        int index = readU32(br);    // optional value index
+                        ConstantKind kind = (ConstantKind)br.ReadSByte(); // kind byte for each default value
+                        if (index == 0)
+                        {
+                            // kind is ignored, default value is based on type
+                            m.optionalValues[k] = null;
+                        }
+                        else m.optionalValues[k] = getDefaultValue(kind, index);
+                    }
+                }
+                if ((m.flags & MethodFlags.HasParamNames) > 0)
+                {
+                    // has_paramnames
                     if ((m.flags & MethodFlags.NeedRest) > 0)
                     {
                         m.paramNames = new string[param_count + 1];
                         m.paramNames[param_count] = "...rest";
                     }
                     else m.paramNames = new string[param_count];
-					for(int k = 0; k < param_count; k++)//++k)
+                    for(int k = 0; k < param_count; k++)//++k)
                     {
                         int index = readU32(br);
                         if (index < strings.Length && strings[index] != null)
                             m.paramNames[k] = (string)strings[index];
                     }
                 }
-			}
-			//Console.WriteLine("MethodInfo count " +method_count+ " size "+(br.BaseStream.Position-start)+" "+(int)(100*(br.BaseStream.Position-start)/br.BaseStream.Length)+" %");
-		}
+            }
+            //Console.WriteLine("MethodInfo count " +method_count+ " size "+(br.BaseStream.Position-start)+" "+(int)(100*(br.BaseStream.Position-start)/br.BaseStream.Length)+" %");
+        }
 
         private object getDefaultValue(ConstantKind kind, int index)
         {
@@ -806,43 +806,43 @@ namespace SwfOp.Data
         }
 
         private void parseMetadataInfos(BinaryReader br)
-		{
-			int count = readU32(br);
-			metadata = new MetaData[count];
+        {
+            int count = readU32(br);
+            metadata = new MetaData[count];
 
-			for (int i=0; i < count; i++)
-	        {
-				// MetadataInfo
-				MetaData m = new MetaData();
+            for (int i=0; i < count; i++)
+            {
+                // MetadataInfo
+                MetaData m = new MetaData();
                 metadata[i] = m;
-				m.name = (string)strings[readU32(br)];
+                m.name = (string)strings[readU32(br)];
 
-	            int values_count = readU32(br);
-	            string[] names = new string[values_count];
-	            for(int q = 0; q < values_count; ++q)
-					names[q] = (string)strings[readU32(br)]; // name
+                int values_count = readU32(br);
+                string[] names = new string[values_count];
+                for(int q = 0; q < values_count; ++q)
+                    names[q] = (string)strings[readU32(br)]; // name
                 for (int q = 0; q < values_count; ++q)
                     m.Add(names[q], (string)strings[readU32(br)]); // value
-			}
-		}
+            }
+        }
         
         private void parseInstanceInfos(BinaryReader br)
-		{
-			long start = br.BaseStream.Position;
-			int count = readU32(br);
-			instances = new Traits[count];
+        {
+            long start = br.BaseStream.Position;
+            int count = readU32(br);
+            instances = new Traits[count];
 
-			for (int i=0; i < count; i++)
-	        {
-	        	Traits t = new Traits();
+            for (int i=0; i < count; i++)
+            {
+                Traits t = new Traits();
                 instances[i] = t;
-	        	t.name = (QName)names[readU32(br)];
+                t.name = (QName)names[readU32(br)];
                 t.baseName = (QName)names[readU32(br)];
-	        	t.flags = (TraitMember)br.ReadByte();
+                t.flags = (TraitMember)br.ReadByte();
                 if ((t.flags & TraitMember.HasProtectedNS) > 0)
-					t.protectedNs = (Namespace)namespaces[readU32(br)];
+                    t.protectedNs = (Namespace)namespaces[readU32(br)];
 
-	        	int interface_count = readU32(br);
+                int interface_count = readU32(br);
                 t.interfaces = new QName[interface_count];
                 for (int j = 0; j < interface_count; j++)
                 {
@@ -850,104 +850,104 @@ namespace SwfOp.Data
                     t.interfaces[j] = (QName)names[index];
                 }
 
-	        	MethodInfo m = t.init = (MethodInfo)methods[readU32(br)];
-	        	m.name = t.name;
-	        	m.kind = TraitMember.Method;
-	        	m.id = -1;
+                MethodInfo m = t.init = (MethodInfo)methods[readU32(br)];
+                m.name = t.name;
+                m.kind = TraitMember.Method;
+                m.id = -1;
 
-	        	parseTraits(br, t);
-	        }
+                parseTraits(br, t);
+            }
             //Console.WriteLine("InstanceInfo size " + (br.BaseStream.Position - start) + " " + (int)(100 * (br.BaseStream.Position - start) / br.BaseStream.Length) + " %");
-		}
+        }
 
         private void parseTraits(BinaryReader br, Traits t)
-		{
-			int namecount = readU32(br);
-			for (int i=0; i < namecount; i++)
-			{
+        {
+            int namecount = readU32(br);
+            for (int i=0; i < namecount; i++)
+            {
                 QName name = (QName)names[readU32(br)];
                 byte tag = br.ReadByte();
-				TraitMember kind = (TraitMember)((byte)tag & 0xf);
-				MemberInfo member = null;
-				switch (kind) 
+                TraitMember kind = (TraitMember)((byte)tag & 0xf);
+                MemberInfo member = null;
+                switch (kind) 
                 {
-				    case TraitMember.Slot:
-				    case TraitMember.Const:
-				    case TraitMember.Class:
-					    SlotInfo slot = new SlotInfo();
+                    case TraitMember.Slot:
+                    case TraitMember.Const:
+                    case TraitMember.Class:
+                        SlotInfo slot = new SlotInfo();
                         member = slot as MemberInfo;
-					    slot.id = readU32(br);
+                        slot.id = readU32(br);
                         t.slots.Add(slot);
-					    //t.slots[slot.id] = slot
-					    if (kind == TraitMember.Slot || kind == TraitMember.Const)
-					    {
+                        //t.slots[slot.id] = slot
+                        if (kind == TraitMember.Slot || kind == TraitMember.Const)
+                        {
                             slot.type = (QName)names[readU32(br)];
-						    int index = readU32(br);
-						    if (index > 0)
-							    slot.value = getDefaultValue((ConstantKind)br.ReadByte(), index);
-					    }
-					    else // (kind == TraitMember.Class)
-					    {
+                            int index = readU32(br);
+                            if (index > 0)
+                                slot.value = getDefaultValue((ConstantKind)br.ReadByte(), index);
+                        }
+                        else // (kind == TraitMember.Class)
+                        {
                             slot.value = classes[readU32(br)];
-					    }
-					    break;
-				    case TraitMember.Method:
-				    case TraitMember.Getter:
-				    case TraitMember.Setter:
-					    int disp_id = readU32(br);
+                        }
+                        break;
+                    case TraitMember.Method:
+                    case TraitMember.Getter:
+                    case TraitMember.Setter:
+                        int disp_id = readU32(br);
                         MethodInfo method = methods[readU32(br)];
                         member = method as MemberInfo;
-					    //t.methods[disp_id] = method;
+                        //t.methods[disp_id] = method;
                         t.methods.Add(method);
-					    method.id = disp_id;
+                        method.id = disp_id;
                         //Console.WriteLine("\t" + kind + " " + name + " " + disp_id + " " + method);
-					    break;
-			    }
+                        break;
+                }
 
-			    if (member == null)
-				    Console.WriteLine("-- Error trait kind "+kind+"\n");
-			    member.kind = kind;
-			    member.name = name;
+                if (member == null)
+                    Console.WriteLine("-- Error trait kind "+kind+"\n");
+                member.kind = kind;
+                member.name = name;
                 //t.members[i] = member;
                 t.members.Add(member);
-			    t.names[name] = member;
+                t.names[name] = member;
 
                 Attribute attr = (Attribute)(tag >> 4);
                 if ((attr & Attribute.Metadata) > 0)
                 {
-				    member.metadata = new List<MetaData>();
+                    member.metadata = new List<MetaData>();
                     int mdCount = readU32(br);
-				    for(int j=0; j < mdCount; ++j)
-					    member.metadata.Add((MetaData)metadata[readU32(br)]);
-				}
-			}
-		}
+                    for(int j=0; j < mdCount; ++j)
+                        member.metadata.Add((MetaData)metadata[readU32(br)]);
+                }
+            }
+        }
 
         private void parseClassInfos(BinaryReader br)
-		{
-			long start = br.BaseStream.Position;
-			int count = instances.Length;
+        {
+            long start = br.BaseStream.Position;
+            int count = instances.Length;
             classes = new Traits[count];
-			for (int i=0; i < count; i++)
-	        {
-	        	Traits t = new Traits();
+            for (int i=0; i < count; i++)
+            {
+                Traits t = new Traits();
                 classes[i] = t; 
-	        	t.init = (MethodInfo)methods[readU32(br)];
-	        	t.baseName = new QName("Class");
-	        	t.itraits = instances[i];
-	        	t.name = new QName(t.itraits.name.localName + "$");
-	        	t.init.name = new QName(t.itraits.name.localName + "$cinit");
-	        	t.init.kind = TraitMember.Method;
+                t.init = (MethodInfo)methods[readU32(br)];
+                t.baseName = new QName("Class");
+                t.itraits = instances[i];
+                t.name = new QName(t.itraits.name.localName + "$");
+                t.init.name = new QName(t.itraits.name.localName + "$cinit");
+                t.init.kind = TraitMember.Method;
 
-	        	parseTraits(br, t);
-			}
+                parseTraits(br, t);
+            }
             //Console.WriteLine("ClassInfo size " + (br.BaseStream.Position - start) + " " + (int)(100 * (br.BaseStream.Position - start) / br.BaseStream.Length) + "%");
-		}
+        }
 
         private void parseScriptInfos(BinaryReader br)
-		{
-			long start = br.BaseStream.Position;
-			int count = readU32(br);
+        {
+            long start = br.BaseStream.Position;
+            int count = readU32(br);
             scripts = new Traits[count];
             for (int i = 0; i < count; i++)
             {
@@ -962,7 +962,7 @@ namespace SwfOp.Data
                 parseTraits(br, t);
             }
             //Console.WriteLine("ScriptInfo size " + (br.BaseStream.Position - start) + " " + (int)(100 * (br.BaseStream.Position - start) / br.BaseStream.Length) + " %");
-		}
+        }
 
         /// <summary>
         /// Call this method to extract the methods information & bytecode

@@ -15,8 +15,8 @@ using PluginCore;
 
 namespace FlashConnect
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "FlashConnect";
         private String pluginGuid = "425ae753-fdc2-4fdf-8277-c47c39c2e26b";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -24,7 +24,7 @@ namespace FlashConnect
         private String pluginAuth = "FlashDevelop Team";
         private String settingFilename;
         private Settings settingObject;
-		private XmlSocket xmlSocket;
+        private XmlSocket xmlSocket;
 
         #region Required Properties
 
@@ -90,8 +90,8 @@ namespace FlashConnect
         #region Required Methods
 
         /// <summary>
-		/// Initializes the plugin
-		/// </summary>
+        /// Initializes the plugin
+        /// </summary>
         public void Initialize()
         {
             this.InitBasics();
@@ -116,8 +116,8 @@ namespace FlashConnect
         }
 
         #endregion
-		
-		#region Custom Methods
+        
+        #region Custom Methods
         
         // Response messages and errors
         private readonly Byte[] RESULT_INVALID = Encoding.Default.GetBytes("<flashconnect status=\"1\"/>\0");
@@ -146,12 +146,12 @@ namespace FlashConnect
                 this.xmlSocket.XmlReceived += new XmlReceivedEventHandler(this.HandleXml);
             }
         }
-		
-		/// <summary>
-		/// Handles the incoming xml message
-		/// </summary>
-		public void HandleXml(Object sender, XmlReceivedEventArgs e)
-		{
+        
+        /// <summary>
+        /// Handles the incoming xml message
+        /// </summary>
+        public void HandleXml(Object sender, XmlReceivedEventArgs e)
+        {
             if (PluginBase.MainForm.MenuStrip.InvokeRequired) PluginBase.MainForm.MenuStrip.BeginInvoke((MethodInvoker)delegate
             {
                 try
@@ -191,7 +191,7 @@ namespace FlashConnect
                     ErrorManager.ShowError(ex);
                 }
             });
-		}
+        }
 
         /// <summary>
         /// Handles the call message
@@ -213,64 +213,64 @@ namespace FlashConnect
             }
         }
 
-		/// <summary>
-		/// Handles the trace message
-		/// </summary>
-		public void HandleTraceMsg(XmlNode msgNode, Socket client)
-		{
-			try 
-			{
+        /// <summary>
+        /// Handles the trace message
+        /// </summary>
+        public void HandleTraceMsg(XmlNode msgNode, Socket client)
+        {
+            try 
+            {
                 String message = HttpUtility.UrlDecode(XmlHelper.GetValue(msgNode));
                 Int32 state = Convert.ToInt32(XmlHelper.GetAttribute(msgNode, "state"));
-				TraceManager.Add(message, state);
-			} 
-			catch
-			{
-				client.Send(RESULT_INVALID);
-			}
-		}
-		
-		/// <summary>
-		/// Handles the notify message
-		/// </summary>
-		public void HandleNotifyMsg(XmlNode msgNode, Socket client)
-		{
+                TraceManager.Add(message, state);
+            } 
+            catch
+            {
+                client.Send(RESULT_INVALID);
+            }
+        }
+        
+        /// <summary>
+        /// Handles the notify message
+        /// </summary>
+        public void HandleNotifyMsg(XmlNode msgNode, Socket client)
+        {
             String message;
             String guid;
             IPlugin plugin;
-			try 
-			{
+            try 
+            {
                 message = HttpUtility.UrlDecode(XmlHelper.GetValue(msgNode));
-				guid = XmlHelper.GetAttribute(msgNode, "guid");
-				plugin = PluginBase.MainForm.FindPlugin(guid);
-				if (plugin != null)
-				{
+                guid = XmlHelper.GetAttribute(msgNode, "guid");
+                plugin = PluginBase.MainForm.FindPlugin(guid);
+                if (plugin != null)
+                {
                     DataEvent de = new DataEvent(EventType.Command, "FlashConnect", message);
                     plugin.HandleEvent(client, de, HandlingPriority.High);
-				}
-				else client.Send(RESULT_NOTFOUND);
-			} 
-			catch
-			{
-				client.Send(RESULT_INVALID);
-			}
-		}
-		
-		/// <summary>
-		/// Handles the return message
-		/// </summary>
-		public void HandleReturnMsg(XmlNode msgNode, Socket client)
-		{
-			try 
-			{
-				Byte[] data = Encoding.ASCII.GetBytes(msgNode.InnerXml + "\0");
-				client.Send(data);
-			} 
-			catch
-			{
-				client.Send(RESULT_INVALID);
-			}
-		}
+                }
+                else client.Send(RESULT_NOTFOUND);
+            } 
+            catch
+            {
+                client.Send(RESULT_INVALID);
+            }
+        }
+        
+        /// <summary>
+        /// Handles the return message
+        /// </summary>
+        public void HandleReturnMsg(XmlNode msgNode, Socket client)
+        {
+            try 
+            {
+                Byte[] data = Encoding.ASCII.GetBytes(msgNode.InnerXml + "\0");
+                client.Send(data);
+            } 
+            catch
+            {
+                client.Send(RESULT_INVALID);
+            }
+        }
 
         /// <summary>
         /// Loads the plugin settings
@@ -299,8 +299,8 @@ namespace FlashConnect
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
-		#endregion
-	
-	}
-	
+        #endregion
+    
+    }
+    
 }

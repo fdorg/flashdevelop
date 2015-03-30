@@ -17,7 +17,7 @@ using PluginCore;
 
 namespace FileExplorer
 {
-	public class PluginUI : DockPanelControl
+    public class PluginUI : DockPanelControl
     {
         private System.Windows.Forms.ListView fileView;
         private System.Windows.Forms.ToolStrip toolStrip;
@@ -49,25 +49,25 @@ namespace FileExplorer
         private FileSystemWatcher watcher;
         private PluginMain pluginMain;
         
-		public PluginUI(PluginMain pluginMain)
-		{
+        public PluginUI(PluginMain pluginMain)
+        {
             this.pluginMain = pluginMain;
             this.listViewSorter = new ListViewSorter();
-			this.InitializeComponent();
+            this.InitializeComponent();
             this.InitializeGraphics();
             this.InitializeContextMenu();
             this.InitializeLayout();
             this.InitializeTexts();
-		}
-		
-		#region Windows Forms Designer Generated Code
+        }
+        
+        #region Windows Forms Designer Generated Code
 
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() 
+        /// <summary>
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent() 
         {
             this.watcher = new System.IO.FileSystemWatcher();
             this.modifiedHeader = new System.Windows.Forms.ColumnHeader();
@@ -199,9 +199,9 @@ namespace FileExplorer
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-		#endregion
+        #endregion
 
         #region Methods And Event Handlers
 
@@ -288,7 +288,7 @@ namespace FileExplorer
 
         /// <summary>
         /// Initializes the external graphics
-		/// </summary>
+        /// </summary>
         private void InitializeGraphics()
         {
             this.imageList = new ImageList();
@@ -330,8 +330,8 @@ namespace FileExplorer
         }
 
         /// <summary>
-		/// Browses to the selected path
-		/// </summary>
+        /// Browses to the selected path
+        /// </summary>
         public void BrowseTo(String path)
         {
             this.PopulateFileView(path);
@@ -1125,9 +1125,9 @@ namespace FileExplorer
         #region Icon Management
 
         /// <summary>
-		/// Ask the shell to feed us the appropriate icon for the given file, but
-		/// first try looking in our cache to see if we've already loaded it.
-		/// </summary>
+        /// Ask the shell to feed us the appropriate icon for the given file, but
+        /// first try looking in our cache to see if we've already loaded it.
+        /// </summary>
         private int ExtractIconIfNecessary(String path)
         {
             Icon icon; Image image;

@@ -12,46 +12,46 @@ using LayoutManager.Controls;
 namespace FlashDebugger
 {
     public delegate void PathChangedEventHandler(String path);
-	
-	[Serializable]
-	[DefaultProperty("Path")]
-	public class Folder
-	{
-		private String m_Value;
+    
+    [Serializable]
+    [DefaultProperty("Path")]
+    public class Folder
+    {
+        private String m_Value;
 
-		public Folder()
-		{
-			m_Value = "";
-		}
+        public Folder()
+        {
+            m_Value = "";
+        }
 
-		public Folder(String value)
-		{
-			m_Value = value;
-		}
+        public Folder(String value)
+        {
+            m_Value = value;
+        }
 
-		public override String ToString()
-		{
-			return m_Value;
-		}
+        public override String ToString()
+        {
+            return m_Value;
+        }
 
-		[Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
-		public String Path
-		{
-			get { return m_Value; }
-			set { m_Value = value; }
-		}
-	}
+        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        public String Path
+        {
+            get { return m_Value; }
+            set { m_Value = value; }
+        }
+    }
 
     [Serializable]
     public class Settings
     {
-		private Folder[] m_SourcePaths = new Folder[] {};
+        private Folder[] m_SourcePaths = new Folder[] {};
         private Boolean m_SaveBreakPoints = true;
         private Boolean m_DisablePanelsAutoshow = false;
         private Boolean m_VerboseOutput = false;
         private Boolean m_StartDebuggerOnTestMovie = true;
         private Boolean m_BreakOnThrow = false;
-		private String m_SwitchToLayout = null;
+        private String m_SwitchToLayout = null;
 
         [field: NonSerialized]
         public event EventHandler BreakOnThrowChanged;
@@ -59,11 +59,11 @@ namespace FlashDebugger
         [DisplayName("Save Breakpoints")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
         [LocalizedDescription("FlashDebugger.Description.SaveBreakPoints")]
-		[DefaultValue(true)]
-		public bool SaveBreakPoints
-		{
-			get { return m_SaveBreakPoints; }
-			set { m_SaveBreakPoints = value; }
+        [DefaultValue(true)]
+        public bool SaveBreakPoints
+        {
+            get { return m_SaveBreakPoints; }
+            set { m_SaveBreakPoints = value; }
         }
 
         [DisplayName("Disable Panel Auto Show")]
@@ -76,18 +76,18 @@ namespace FlashDebugger
             set { m_DisablePanelsAutoshow = value; }
         }
 
-		[DisplayName("Switch To Layout On Debugger Start")]
-		[LocalizedCategory("FlashDebugger.Category.Misc")]
-		[LocalizedDescription("FlashDebugger.Description.SwitchToLayout")]
-		[DefaultValue(null)]
-		[Editor(typeof(LayoutSelectorEditor), typeof(UITypeEditor))]
-		public String SwitchToLayout
-		{
-			get { return m_SwitchToLayout; }
-			set { m_SwitchToLayout = value; }
-		}
+        [DisplayName("Switch To Layout On Debugger Start")]
+        [LocalizedCategory("FlashDebugger.Category.Misc")]
+        [LocalizedDescription("FlashDebugger.Description.SwitchToLayout")]
+        [DefaultValue(null)]
+        [Editor(typeof(LayoutSelectorEditor), typeof(UITypeEditor))]
+        public String SwitchToLayout
+        {
+            get { return m_SwitchToLayout; }
+            set { m_SwitchToLayout = value; }
+        }
 
-		[DisplayName("Verbose Output")]
+        [DisplayName("Verbose Output")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
         [LocalizedDescription("FlashDebugger.Description.VerboseOutput")]
         [DefaultValue(false)]
@@ -100,19 +100,19 @@ namespace FlashDebugger
         [DisplayName("Source Paths")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
         [LocalizedDescription("FlashDebugger.Description.SourcePaths")]
-		[Editor(typeof(ArrayEditor), typeof(UITypeEditor))]
-		public Folder[] SourcePaths
-		{
-			get
-			{
-				if (m_SourcePaths == null || m_SourcePaths.Length == 0)
-				{
+        [Editor(typeof(ArrayEditor), typeof(UITypeEditor))]
+        public Folder[] SourcePaths
+        {
+            get
+            {
+                if (m_SourcePaths == null || m_SourcePaths.Length == 0)
+                {
                     m_SourcePaths = new Folder[] {};
-				}
-				return m_SourcePaths;
-			}
-			set { m_SourcePaths = value; }
-		}
+                }
+                return m_SourcePaths;
+            }
+            set { m_SourcePaths = value; }
+        }
 
         [DisplayName("Start Debugger On Test Movie")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
