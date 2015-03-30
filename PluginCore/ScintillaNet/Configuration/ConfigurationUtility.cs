@@ -48,10 +48,8 @@ namespace ScintillaNet.Configuration
 
         protected object Deserialize(TextReader reader, Type aType)
         {
-            object local = null;
-            XmlSerializer xmlSerializer = null;
-            xmlSerializer = new XmlSerializer(aType);
-            local = xmlSerializer.Deserialize(reader);
+            XmlSerializer xmlSerializer = new XmlSerializer(aType);
+            object local = xmlSerializer.Deserialize(reader);
             reader.Close();
             return local;
         }
@@ -121,12 +119,12 @@ namespace ScintillaNet.Configuration
 
         public virtual object LoadConfiguration(Type configType)
         {
-            return LoadConfiguration( configType, "ScintillaNET.xml", null);
+            return LoadConfiguration(configType, "ScintillaNET.xml", null);
         }
 
         public virtual object LoadConfiguration(Type configType, string filename)
         {
-            return LoadConfiguration( configType, filename, null);
+            return LoadConfiguration(configType, filename, null);
         }
 
         public virtual object LoadConfiguration(string[] files)

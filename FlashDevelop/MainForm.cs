@@ -3386,6 +3386,17 @@ namespace FlashDevelop
                 ScintillaControl sci = Globals.SciControl;
                 ToolStripItem button = (ToolStripItem)sender;
                 ScintillaManager.ChangeSyntax(((ItemData)button.Tag).Tag, sci);
+
+                string extension = sci.GetFileExtension();
+                if (extension != null)
+                {
+                    string title = TextHelper.GetString("Title.RememberExtensionDialog"); 
+                    string message = TextHelper.GetString("Info.RememberExtensionDialog"); 
+                    if (MessageBox.Show(message, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        sci.SaveExtensionToSyntaxConfig(extension);
+                    }
+                }
             }
             catch (Exception ex)
             {

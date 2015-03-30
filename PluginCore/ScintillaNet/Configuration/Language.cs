@@ -1,6 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime;
+using System.Xml;
 using System.Xml.Serialization;
+using PluginCore.Helpers;
 
 namespace ScintillaNet.Configuration
 {
@@ -81,7 +86,48 @@ namespace ScintillaNet.Configuration
             characterclass.init(utility, _parent);
 			if (editorstyle != null) editorstyle.init(utility, _parent);
         }
-        
+
+        public void AddExtension(string extension)
+        {
+            if (!HasExtension(extension))
+            {
+                if (String.IsNullOrEmpty(fileextensions))
+                    fileextensions = extension;
+                else
+                    fileextensions += "," + extension;
+            }
+        }
+
+        public bool RemoveExtension(string extension)
+        {
+            var extensions = new List<string>(fileextensions.Split(','));
+            bool anyRemoved = extensions.RemoveAll(s => s == extension) > 0;
+            fileextensions = String.Join(",", extensions.ToArray());
+            return anyRemoved;
+        }
+
+        public bool HasExtension(string extension)
+        {
+            return fileextensions.Split(',').Contains(extension);
+        }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        public void SaveExtensions()
+        {
+            string langPath = Path.Combine(PathHelper.SettingDir, "Languages");
+            string filePath = Path.Combine(langPath, name + ".xml");
+            var doc = new XmlDocument();
+            doc.Load(filePath);
+            XmlNode node = doc.SelectSingleNode("/Scintilla/languages/language/file-extensions");
+            if (node != null)
+                node.InnerText = fileextensions;
+            doc.Save(filePath);
+        }
+
     }
     
 }
