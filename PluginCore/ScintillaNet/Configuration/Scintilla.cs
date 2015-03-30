@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime;
 using System.Xml.Serialization;
 
@@ -89,7 +90,7 @@ namespace ScintillaNet.Configuration
 							}
 						}
 					}
-					// Other wise just check here.
+					// Otherwise just check here.
 					for (int i = languages.Length-1; i>-1; i--)
 					{
 						if (!result.ContainsKey(languages[i].name)) result.Add(languages[i].name, languages[i]);
@@ -188,24 +189,28 @@ namespace ScintillaNet.Configuration
 
         public Language GetLanguage(string languageName)
         {
-			Language result = null;
-			if (MasterScintilla == this)
-			{
-				// Check the children first (from the end)
-				for (int i = includedFiles.Length-1; i>-1; i--)
-				{
-					Scintilla child = (Scintilla)(includedFiles[i]);
-					result = child.GetLanguage(languageName);
-					if (result != null) return result;
-				}
-			}
-			// Other wise just check here.
-			for (int i = languages.Length-1; i>-1; i--)
-			{
-				if (languages[i].name.Equals(languageName)) result = languages[i];
-			}
-			return result;	
-		}
+            return GetLanguages().Find(language => language.name == languageName);
+        }
+
+        public List<Language> GetLanguages()
+        {
+            var allLanguages = new List<Language>();
+            if (MasterScintilla == this)
+            {
+                // Check the children first (from the end)
+                for (int i = includedFiles.Length - 1; i > -1; i--)
+                {
+                    Scintilla child = (Scintilla)(includedFiles[i]);
+                    allLanguages.AddRange(child.GetLanguages());
+                }
+            }
+            // Other wise just check here.
+            for (int i = languages.Length - 1; i > -1; i--)
+            {
+                allLanguages.Add(languages[i]);
+            }
+            return allLanguages;
+        }
 
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {

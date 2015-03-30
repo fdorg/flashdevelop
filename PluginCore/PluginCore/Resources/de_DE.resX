@@ -2330,6 +2330,14 @@ Never - Startseite wird nie angezeigt.</value>
   <data name="FlashDevelop.Title.SaveFileDialog" xml:space="preserve">
     <value>Datei speichern</value>
   </data>
+  <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
+    <value>Endung merken</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
+    <value>Diese Syntax immer für Dateien mit dieser Endung benutzen?</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
   <data name="ProjectManager.Title.OpenProjectDialog" xml:space="preserve">
     <value>Öffne Projekt</value>
   </data>

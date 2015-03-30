@@ -16,7 +16,7 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (cls != null && cls.Length > 0) inheritstyle = cls;
+            if (!string.IsNullOrEmpty(cls)) inheritstyle = cls;
         }
         
     }

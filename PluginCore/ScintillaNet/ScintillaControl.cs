@@ -1,17 +1,14 @@
 using System;
-using System.Reflection;
 using System.Collections;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using ScintillaNet.Configuration;
 using System.Drawing.Printing;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
-using PluginCore.Controls;
-using System.Drawing;
+using System.IO;
 using System.Text;
 using PluginCore;
 
@@ -181,15 +178,48 @@ namespace ScintillaNet
             }
             set
             {
-                if (value == null || value.Equals("")) return;
+                if (string.IsNullOrEmpty(value)) return;
                 this.SetLanguage(value);
-                
             }
         }
 
         /// <summary>
-        /// 
+        /// The file extension without the dot or null if there is none
         /// </summary>
+	    public string GetFileExtension()
+	    {
+            string extension = Path.GetExtension(FileName);
+            if (extension != null)
+                extension = extension.Substring(1); // remove dot
+	        return extension;
+	    }
+
+	    public void SaveExtensionToSyntaxConfig(string extension)
+	    {
+	        List<Language> languages = sciConfiguration.GetLanguages();
+	        foreach (Language language in languages)
+	        {
+	            if (language.name == configLanguage)
+	            {
+	                language.AddExtension(extension);
+                    language.SaveExtensions();
+	            }
+                // remove this extension from other syntax files to avoid conflicts
+	            else if (language.HasExtension(extension))
+	            {
+	                language.RemoveExtension(extension);
+                    language.SaveExtensions();
+	            }
+	        }
+
+            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+            {
+                ScintillaControl sci = document.SciControl;
+                if (sci.GetFileExtension() == extension)
+                    sci.ConfigurationLanguage = ConfigurationLanguage;
+            }
+	    }
+
         private void SetLanguage(String value)
         {
             Language lang = sciConfiguration.GetLanguage(value);

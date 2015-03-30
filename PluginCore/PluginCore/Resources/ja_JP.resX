@@ -2333,6 +2333,14 @@ Never - 起動時にスタートページを表示しません。</value>
   <data name="FlashDevelop.Title.SaveFileDialog" xml:space="preserve">
     <value>ファイルの保存</value>
   </data>
+  <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
+    <value>Remember extension</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
+    <value>Always use this syntax for files with this extension?</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
   <data name="ProjectManager.Title.OpenProjectDialog" xml:space="preserve">
     <value>プロジェクトを開く</value>
   </data>
