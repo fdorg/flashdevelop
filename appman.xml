@@ -258,7 +258,7 @@
 			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Extensions/AS2Templates/AS2Templates-1.01.fdz</Url>
 		</Urls>
 	</Entry>
-	<!--EXTRAS
+	<!--FD5
 	<Entry>
 		<Id>colorbox</Id>
 		<Name>ColorBox</Name>
@@ -272,5 +272,70 @@
 			<Url>https://bitbucket.org/Gr33z00/colorbox/downloads/fd4_colorbox_v0.1.5.fdz</Url>
 		</Urls>
 	</Entry>
-	EXTRAS-->
+	<Entry>
+		<Id>navigationbar</Id>
+		<Name>NavigationBar</Name>
+		<Version>2.4</Version>
+		<Build>1</Build>
+		<Checksum>6cc6d6eab05c57a6b38163477ad654c6</Checksum>
+		<Desc>Adds a bar that provides dropdowns for classes, members, and optionally imports.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9376</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-navigationbar/releases/download/v2.4/NavigationBar_2.4.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>editorminimap</Id>
+		<Name>EditorMiniMap</Name>
+		<Version>1.4</Version>
+		<Build>1</Build>
+		<Checksum>5cbbb78c3bdcd4c213af0f022f132cae</Checksum>
+		<Desc>Renders a miniature version of the open file in a bar to the side of the editor.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9397</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-editorminimap/releases/download/v1.4/EditorMiniMap_1.4.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>customizetoolbar</Id>
+		<Name>CustomizeToolbar</Name>
+		<Version>1.1</Version>
+		<Build>1</Build>
+		<Checksum>fee828a77ed0a7326766596ce948b034</Checksum>
+		<Desc>Adds a context menu to the toolbar that gives the user dialog for changing order and visibility of toolbar buttons.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9482</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-customizetoolbar/releases/download/v1.1/CustomizeToolbar_1.1.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>quicklaunch</Id>
+		<Name>QuickLaunch</Name>
+		<Version>0.10</Version>
+		<Build>1</Build>
+		<Checksum>615102096400876ae23907640c15edd4</Checksum>
+		<Desc>Adds a quick launch box that provides easy access to commands, files, classes, and more.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9443</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-quicklaunch/releases/download/v0.10/QuickLaunch_0.10.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>trackopenfile</Id>
+		<Name>TrackOpenFile</Name>
+		<Version>0.2</Version>
+		<Build>1</Build>
+		<Checksum>51af3d3485eadc4ff0c9dc25c5209ea7</Checksum>
+		<Desc>Adds a Setting under the TrackOpenFile extension that will keep the Project Manager tree synced with the open file.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=10820</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-trackopenfile/releases/download/v0.2/TrackOpenFile_0.2.fdz</Url>
+		</Urls>
+	</Entry>
+	FD5-->
 </Entries>
