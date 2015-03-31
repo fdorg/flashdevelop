@@ -1482,7 +1482,7 @@ namespace FlashDevelop
                 if (File.Exists(file))
                 {
                     DockContent doc = this.OpenEditableDocument(file);
-                    if (Control.ModifierKeys == Keys.Control) return;
+                    if (doc == null || Control.ModifierKeys == Keys.Control) return;
                     DockContent drop = DocumentManager.FindDocument(sci) as DockContent;
                     if (drop != null && drop.Pane != null)
                     {
