@@ -3737,8 +3737,8 @@
     <value>错误行:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Locate Active Document</value>
-    <comment>Modified after 4.7.0</comment>
+    <value>Track Active Document</value>
+    <comment>Modified after 4.7.2</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>

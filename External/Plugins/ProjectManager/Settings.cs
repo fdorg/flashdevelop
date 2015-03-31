@@ -1,14 +1,8 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.Windows.Forms;
-using System.Windows.Forms.Design;
-using System.Xml.Serialization;
 using ProjectManager.Projects;
 using PluginCore.Localization;
 using PluginCore.Managers;
