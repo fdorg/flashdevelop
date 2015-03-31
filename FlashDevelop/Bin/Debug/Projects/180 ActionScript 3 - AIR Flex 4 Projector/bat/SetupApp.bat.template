@@ -1,3 +1,6 @@
+:: Set working dir
+cd %~dp0 & cd ..
+
 :user_configuration
 
 :: About AIR application packaging
@@ -35,7 +38,7 @@ goto end
 :badid
 echo.
 echo ERROR: 
-echo   Application ID in 'bat\SetupApplication.bat' (APP_ID) 
+echo   Application ID in 'bat\SetupApp.bat' (APP_ID) 
 echo   does NOT match Application descriptor '%APP_XML%' (id)
 echo.
 if %PAUSE_ERRORS%==1 pause

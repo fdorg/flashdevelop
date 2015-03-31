@@ -1,4 +1,8 @@
 @echo off
+
+:: Set working dir
+cd %~dp0 & cd ..
+
 if not exist %CERT_FILE% goto certificate
 
 :: AIR output
@@ -26,7 +30,6 @@ exit
 echo AIR setup creation FAILED.
 echo.
 echo Troubleshooting: 
-echo - did you build your project in FlashDevelop?
 echo - verify AIR SDK target version in %APP_XML%
 echo.
 if %PAUSE_ERRORS%==1 pause
