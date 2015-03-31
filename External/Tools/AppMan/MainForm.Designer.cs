@@ -19,6 +19,7 @@ namespace AppMan
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ColumnHeader versionHeader;
         private System.Windows.Forms.ColumnHeader statusHeader;
+        private System.Windows.Forms.ColumnHeader infoHeader;
         private System.Windows.Forms.ColumnHeader nameHeader;
         private System.Windows.Forms.ColumnHeader descHeader;
         private System.Windows.Forms.ColumnHeader typeHeader;
@@ -37,6 +38,7 @@ namespace AppMan
         private void InitializeComponent()
         {
             this.listView = new System.Windows.Forms.ListView();
+            this.infoHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.versionHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.descHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -69,6 +71,7 @@ namespace AppMan
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.nameHeader,
             this.versionHeader,
+            this.infoHeader,
             this.descHeader,
             this.statusHeader,
             this.typeHeader});
@@ -80,27 +83,37 @@ namespace AppMan
             this.listView.Location = new System.Drawing.Point(13, 48);
             this.listView.Name = "listView";
             this.listView.ShowItemToolTips = true;
-            this.listView.Size = new System.Drawing.Size(730, 420);
+            this.listView.Size = new System.Drawing.Size(760, 420);
             this.listView.TabIndex = 4;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ListViewItemCheck);
             this.listView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.ListViewItemChecked);
+            this.listView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.ListViewDrawSubItem);
+            this.listView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.ListViewDrawColumnHeader);
+            this.listView.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.ListViewDrawItem);
+            this.listView.Click += new System.EventHandler(this.ListViewClick);
+            this.listView.OwnerDraw = true;
             // 
             // nameHeader
             // 
             this.nameHeader.Text = "Name";
             this.nameHeader.Width = 160;
             // 
+            // infoHeader
+            // 
+            this.infoHeader.Text = "!";
+            this.infoHeader.Width = 24;
+            // 
             // versionHeader
             // 
             this.versionHeader.Text = "Version";
-            this.versionHeader.Width = 100;
+            this.versionHeader.Width = 90;
             // 
             // descHeader
             // 
             this.descHeader.Text = "Description";
-            this.descHeader.Width = 303;
+            this.descHeader.Width = 319;
             // 
             // statusHeader
             // 
@@ -135,7 +148,7 @@ namespace AppMan
             // 
             this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.deleteButton.Enabled = false;
-            this.deleteButton.Location = new System.Drawing.Point(598, 511);
+            this.deleteButton.Location = new System.Drawing.Point(628, 511);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(146, 27);
             this.deleteButton.TabIndex = 11;
@@ -147,7 +160,7 @@ namespace AppMan
             // 
             this.installButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.installButton.Enabled = false;
-            this.installButton.Location = new System.Drawing.Point(598, 477);
+            this.installButton.Location = new System.Drawing.Point(628, 477);
             this.installButton.Name = "installButton";
             this.installButton.Size = new System.Drawing.Size(146, 27);
             this.installButton.TabIndex = 10;
@@ -172,7 +185,7 @@ namespace AppMan
             this.pathTextBox.Location = new System.Drawing.Point(86, 15);
             this.pathTextBox.Name = "pathTextBox";
             this.pathTextBox.ReadOnly = true;
-            this.pathTextBox.Size = new System.Drawing.Size(555, 23);
+            this.pathTextBox.Size = new System.Drawing.Size(585, 23);
             this.pathTextBox.TabIndex = 2;
             // 
             // progressBar
@@ -181,7 +194,7 @@ namespace AppMan
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(13, 513);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(578, 23);
+            this.progressBar.Size = new System.Drawing.Size(608, 23);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 12;
             // 
@@ -246,7 +259,7 @@ namespace AppMan
             // exploreButton
             // 
             this.exploreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.exploreButton.Location = new System.Drawing.Point(649, 13);
+            this.exploreButton.Location = new System.Drawing.Point(679, 13);
             this.exploreButton.Name = "exploreButton";
             this.exploreButton.Size = new System.Drawing.Size(95, 27);
             this.exploreButton.TabIndex = 3;
@@ -270,7 +283,7 @@ namespace AppMan
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.Enabled = false;
-            this.cancelButton.Location = new System.Drawing.Point(557, 477);
+            this.cancelButton.Location = new System.Drawing.Point(587, 477);
             this.cancelButton.Name = "taskButton";
             this.cancelButton.Size = new System.Drawing.Size(34, 32);
             this.cancelButton.TabIndex = 15;
@@ -286,7 +299,7 @@ namespace AppMan
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(757, 572);
+            this.ClientSize = new System.Drawing.Size(787, 572);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.updateLinkLabel);
             this.Controls.Add(this.exploreButton);
