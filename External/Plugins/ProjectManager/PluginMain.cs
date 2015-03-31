@@ -237,7 +237,7 @@ namespace ProjectManager
             pluginUI.ImportProject += delegate { ImportProject(); };
             pluginUI.Rename += fileActions.Rename;
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
-            pluginUI.TreeBar.Synchronize.Click += delegate { TreeSyncToCurrentFile(); };
+            pluginUI.TreeBar.Synchronize.Click += delegate { ToggleTrackActiveDocument(); };
             pluginUI.TreeBar.SynchronizeMain.Click += delegate { TreeSyncToMainFile(); };
             pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(); };
             pluginUI.TreeBar.RefreshSelected.Click += delegate { TreeRefreshSelectedNode(); };
@@ -573,7 +573,7 @@ namespace ProjectManager
             }
             else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectTree.LocateActiveFile"))
             {
-                TreeSyncToCurrentFile();
+                ToggleTrackActiveDocument();
             }
 
             // Handle tree-level simple shortcuts like copy/paste/del
@@ -1592,6 +1592,16 @@ namespace ProjectManager
                 Tree.Select(activeProject.GetAbsolutePath(activeProject.CompileTargets[0]));
                 Tree.SelectedNode.EnsureVisible();
             }
+        }
+
+        private void ToggleTrackActiveDocument()
+        {
+            bool newValue = !pluginUI.TreeBar.Synchronize.Checked;
+            pluginUI.TreeBar.Synchronize.Checked = newValue;
+            Settings.TrackActiveDocument = newValue;
+
+            if (newValue)
+                TreeSyncToCurrentFile();
         }
 
         private void TreeSyncToCurrentFile()

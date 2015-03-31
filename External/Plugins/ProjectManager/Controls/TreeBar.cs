@@ -1,13 +1,9 @@
-using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Windows.Forms;
 using PluginCore.Localization;
-using ProjectManager.Controls.TreeView;
-using System.Drawing.Drawing2D;
 using System.Drawing;
 using PluginCore.Helpers;
 using PluginCore;
+using ProjectManager.Controls.TreeView;
 
 namespace ProjectManager.Controls
 {
