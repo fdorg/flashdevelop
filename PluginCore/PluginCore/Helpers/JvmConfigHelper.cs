@@ -38,10 +38,18 @@ namespace PluginCore.Helpers
 
             args = ExpandArguments(args, config, 0);
 
+            // add language if not specified
             if (args.IndexOf("-Duser.language") < 0)
             {
                 args += " -Duser.language=en -Duser.region=US";
             }
+
+            // flex needs old Java 6 sort
+            if (args.IndexOf("-Djava.util.Arrays.useLegacyMergeSort") < 0)
+            {
+                args += " -Djava.util.Arrays.useLegacyMergeSort=true";
+            }
+
             config["java.args"] = args;
             return config;
         }
