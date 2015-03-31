@@ -324,18 +324,5 @@
 			<Url>https://github.com/JoeRobich/fd-quicklaunch/releases/download/v0.10/QuickLaunch_0.10.fdz</Url>
 		</Urls>
 	</Entry>
-	<Entry>
-		<Id>trackopenfile</Id>
-		<Name>TrackOpenFile</Name>
-		<Version>0.2</Version>
-		<Build>1</Build>
-		<Checksum>51af3d3485eadc4ff0c9dc25c5209ea7</Checksum>
-		<Desc>Adds a Setting under the TrackOpenFile extension that will keep the Project Manager tree synced with the open file.</Desc>
-		<Group>Plugins</Group>
-		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=10820</Info>
-		<Urls>
-			<Url>https://github.com/JoeRobich/fd-trackopenfile/releases/download/v0.2/TrackOpenFile_0.2.fdz</Url>
-		</Urls>
-	</Entry>
 	FD5-->
 </Entries>
