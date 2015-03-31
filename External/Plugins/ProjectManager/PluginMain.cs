@@ -1596,7 +1596,7 @@ namespace ProjectManager
 
         private void ToggleTrackActiveDocument()
         {
-            bool newValue = !pluginUI.TreeBar.Synchronize.Checked;
+            bool newValue = !Settings.TrackActiveDocument;
             pluginUI.TreeBar.Synchronize.Checked = newValue;
             Settings.TrackActiveDocument = newValue;
 

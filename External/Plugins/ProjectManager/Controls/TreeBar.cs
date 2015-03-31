@@ -48,6 +48,7 @@ namespace ProjectManager.Controls
             Synchronize = new ToolStripButton(Icons.SyncToFile.Img);
             Synchronize.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
             Synchronize.Padding = new Padding(0);
+            Synchronize.Checked = PluginMain.Settings.TrackActiveDocument;
             PluginBase.MainForm.RegisterShortcutItem("ProjectTree.LocateActiveFile", Keys.Shift | Keys.Alt | Keys.L);
 
             SynchronizeMain = new ToolStripButton(Icons.ActionScriptCompile.Img);
