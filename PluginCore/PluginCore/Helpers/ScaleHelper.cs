@@ -92,7 +92,7 @@ namespace PluginCore.Helpers
 
         /// <summary>
         /// Resizes the image based on the display scale. Uses default quality settings.
-        /// Necessary to not break the DockPanel bitmaps and Scintilla Marker Images.
+        /// Necessary to not break Scintilla Marker Images.
         /// </summary>
         public static Bitmap Stretch(Bitmap image)
         {

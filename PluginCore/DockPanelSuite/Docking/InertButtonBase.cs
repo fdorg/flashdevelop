@@ -75,15 +75,16 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             using (ImageAttributes imageAttributes = new ImageAttributes())
             {
-                ColorMap[] colorMap = new ColorMap[2];
-                colorMap[0] = new ColorMap();
-                colorMap[0].OldColor = Color.FromArgb(0, 0, 0);
-                colorMap[0].NewColor = ForeColor;
-                colorMap[1] = new ColorMap();
-                colorMap[1].OldColor = Image.GetPixel(0, 0);
-                colorMap[1].NewColor = Color.Transparent;
-
-                imageAttributes.SetRemapTable(colorMap);
+                ColorMatrix invertMatrix = new ColorMatrix(
+                    new float[][]
+                   {
+                      new float[] {-1, 0, 0, 0, 0},
+                      new float[] {0, -1, 0, 0, 0},
+                      new float[] {0, 0, -1, 0, 0},
+                      new float[] {0, 0, 0, 1, 0},
+                      new float[] {1, 1, 1, 0, 1}
+                   });
+                imageAttributes.SetColorMatrix(invertMatrix);
 
                 e.Graphics.DrawImage(
                    Image,
