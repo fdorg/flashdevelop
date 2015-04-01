@@ -1,4 +1,5 @@
 using System;
+using PluginCore.Helpers;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
