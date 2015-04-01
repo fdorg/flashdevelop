@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
-using PluginCore.PluginCore.Utilities;
 
 namespace ScintillaNet
 {
@@ -20,12 +19,8 @@ namespace ScintillaNet
             StringBuilder sb = new StringBuilder();
             ArrayList colors = new ArrayList();
             ArrayList chars  = new ArrayList();
-
-            OctreeQuantizer quantizer = new OctreeQuantizer(50, 8, ColorTranslator.FromHtml(tColor));
-            Bitmap reducedBmp = quantizer.Quantize(bmp);
-
-            int width = reducedBmp.Width;
-            int height = reducedBmp.Height;
+            int width = bmp.Width;
+            int height = bmp.Height;
             int index;
             sb.Append("/* XPM */static char * xmp_data[] = {\"").Append(width).Append(" ").Append(height).Append(" ? 1\"");
             int colorsIndex = sb.Length;
@@ -36,7 +31,7 @@ namespace ScintillaNet
                 sb.Append(",\"");
                 for (int x = 0; x<width; x++)
                 {
-                    col = ColorTranslator.ToHtml(reducedBmp.GetPixel(x,y));
+                    col = ColorTranslator.ToHtml(bmp.GetPixel(x,y));
                     index = colors.IndexOf(col);
                     if (index < 0)
                     {
