@@ -27,7 +27,7 @@ namespace FlashDevelop.Managers
 
         static ScintillaManager()
         {
-            Bitmap bookmark = new Bitmap(ResourceHelper.GetStream("BookmarkIcon.bmp"));
+            Bitmap bookmark = ScaleHelper.Stretch(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.bmp")));
             XpmBookmark = ScintillaNet.XPM.ConvertToXPM(bookmark, "#00FF00");
             LoadConfiguration();
         }
