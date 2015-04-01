@@ -117,6 +117,8 @@ namespace AppMan
                 this.statusHeader.Width = this.ScaleValue(70);
                 this.typeHeader.Width = this.ScaleValue(75);
                 this.infoHeader.Width = this.ScaleValue(30);
+                Int32 width = Convert.ToInt32(this.Width * 1.06);
+                this.Size = new Size(width, this.Height);
             }
         }
 
@@ -648,8 +650,9 @@ namespace AppMan
             }
             if (!e.Item.Selected) e.DrawBackground();
             else e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+            Int32 posOffsetX = (e.Bounds.Width - e.Bounds.Height) / 2;
             e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            e.Graphics.DrawImage(InfoImage, new Rectangle(e.Bounds.X + 1, e.Bounds.Y + 1, e.Bounds.Height - 2, e.Bounds.Height - 2));
+            e.Graphics.DrawImage(InfoImage, new Rectangle(e.Bounds.X + posOffsetX, e.Bounds.Y + 1, e.Bounds.Height - 2, e.Bounds.Height - 2));
         }
         private void ListViewDrawItem(Object sender, DrawListViewItemEventArgs e)
         {
@@ -1346,12 +1349,12 @@ namespace AppMan
                 foreach (ListViewItem item in this.listView.Items)
                 {
                     DepEntry dep = item.Tag as DepEntry;
+                    item.UseItemStyleForSubItems = false;
                     item.SubItems[4].ForeColor = SystemColors.ControlText;
                     item.SubItems[4].Text = this.GetLocaleState(STATE_NEW);
                     this.entryStates[dep.Id] = STATE_NEW;
                     foreach (DepEntry inst in this.instEntries)
                     {
-                        item.UseItemStyleForSubItems = false;
                         if (dep.Id == inst.Id)
                         {
                             Color color = Color.Green;

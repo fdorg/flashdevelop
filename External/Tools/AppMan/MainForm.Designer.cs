@@ -102,7 +102,7 @@ namespace AppMan
             // 
             // infoHeader
             // 
-            this.infoHeader.Text = "!";
+            this.infoHeader.Text = " !";
             this.infoHeader.Width = 24;
             // 
             // versionHeader

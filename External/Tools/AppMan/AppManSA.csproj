@@ -36,7 +36,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;FLASHDEVELOP;WIN32</DefineConstants>
+    <DefineConstants>DEBUG;FLASHDEVELOP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
