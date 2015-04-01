@@ -7,6 +7,7 @@ using PluginCore;
 using ScintillaNet.Configuration;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using System.Drawing;
 
 namespace FlashDebugger
 {
@@ -46,9 +47,9 @@ namespace FlashDebugger
             mask |= GetMarkerMask(markerBPNotAvailable);
             mask |= GetMarkerMask(markerCurrentLine);
             sci.SetMarginMaskN(0, mask);
-            var enabledImage = ScaleHelper.Stretch(Properties.Resource.Enabled);
-            var disabledImage = ScaleHelper.Stretch(Properties.Resource.Disabled);
-            var curlineImage = ScaleHelper.Stretch(Properties.Resource.CurLine);
+            var enabledImage = ScaleHelper.Scale(Properties.Resource.Enabled);
+            var disabledImage = ScaleHelper.Scale(Properties.Resource.Disabled);
+            var curlineImage = ScaleHelper.Scale(Properties.Resource.CurLine);
             sci.MarkerDefinePixmap(markerBPEnabled, ScintillaNet.XPM.ConvertToXPM(enabledImage, "#00FF00"));
             sci.MarkerDefinePixmap(markerBPDisabled, ScintillaNet.XPM.ConvertToXPM(disabledImage, "#00FF00"));
             sci.MarkerDefinePixmap(markerCurrentLine, ScintillaNet.XPM.ConvertToXPM(curlineImage, "#00FF00"));
