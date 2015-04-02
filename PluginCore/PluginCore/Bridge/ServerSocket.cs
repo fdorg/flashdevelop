@@ -32,7 +32,7 @@ namespace PluginCore.Bridge
             }
             catch (Exception ex)
             {
-                ErrorManager.AddToLog("Invalid IP adress: " + address, ex);
+                ErrorManager.AddToLog("Invalid IP address: " + address, ex);
             }
             portNum = port;
         }
@@ -100,7 +100,7 @@ namespace PluginCore.Bridge
             }
             catch (Exception ex)
             {
-                ErrorManager.AddToLog("Failed to connect bridge socket: " + ipAddress + ":" + portNum, ex);
+                ErrorManager.AddToLog("Failed to connect to: " + ipAddress + ":" + portNum, ex);
                 bridgeNotFound = true;
                 return false;
             }

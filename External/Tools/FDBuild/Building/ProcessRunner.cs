@@ -12,8 +12,8 @@ namespace ProjectManager.Building
     {
         public static bool Run(string fileName, string arguments, bool ignoreExitCode, bool mergeErrors)
         {
-            //if (!File.Exists(fileName))
-            //  throw new FileNotFoundException("The program '"+fileName+"' was not found.",fileName);
+            // CrossOver native call
+            Boolean isNative = fileName == "FDEXE.sh";
 
             Process process = new Process();
             process.StartInfo.UseShellExecute = false;
@@ -26,10 +26,10 @@ namespace ProjectManager.Building
             process.StartInfo.Arguments = Environment.ExpandEnvironmentVariables(arguments);
             process.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
             process.Start();
-
+            
             // capture output in a separate thread
             LineFilter stdoutFilter = new LineFilter(process.StandardOutput, Console.Out, false);
-            LineFilter stderrFilter = new LineFilter(process.StandardError, Console.Error, mergeErrors);
+            LineFilter stderrFilter = new LineFilter(process.StandardError, isNative ? Console.Out : Console.Error, mergeErrors);
 
             Thread outThread = new Thread(new ThreadStart(stdoutFilter.Filter));
             Thread errThread = new Thread(new ThreadStart(stderrFilter.Filter));
@@ -37,8 +37,10 @@ namespace ProjectManager.Building
             outThread.Start();
             errThread.Start();
 
-            process.WaitForExit();
+            // Call is redirected, process is lost, will finish when done.
+            if (isNative) return stderrFilter.Lines == 0;
 
+            process.WaitForExit();
             outThread.Join(1000);
             errThread.Join(1000);
             

@@ -213,12 +213,9 @@ namespace FileExplorer
         /// </summary>
         private void FindHere(string[] paths)
         {
-            if (paths == null)
-                return;
-
-            List<string> pathsList = new List<string>(paths);
+            if (paths == null) return;
+            List<String> pathsList = new List<String>(paths);
             pathsList.RemoveAll(p => !Directory.Exists(p));
-
             if (pathsList.Count > 0)
             {
                 String path = String.Join(";", pathsList.ToArray());

@@ -3891,12 +3891,6 @@ namespace FlashDevelop
         {
             try
             {
-                /*if (this.processRunner.IsRunning)
-                {
-                    String message = TextHelper.GetString("Info.ProcessAlreadyRunning");
-                    TraceManager.Add(message, (Int32)TraceType.Error);
-                    return;
-                }*/
                 ToolStripItem button = (ToolStripItem)sender;
                 String args = this.ProcessArgString(((ItemData)button.Tag).Tag);
                 Int32 position = args.IndexOf(';'); // Position of the arguments
