@@ -382,7 +382,9 @@ namespace ASCompletion.Context
             if (!shouldIgnore)
             {
                 string lang = doc.SciControl.ConfigurationLanguage.ToLower();
-                if (lang == "xml") lang = Path.GetExtension(filename).Substring(1).ToLower();
+                string ext = Path.GetExtension(filename);
+                if (!string.IsNullOrEmpty(ext) && lang == "xml")
+                    lang = ext.Substring(1).ToLower();
                 foreach (RegisteredContext reg in allContexts)
                 {
                     if (reg.Language == lang)

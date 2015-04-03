@@ -3,6 +3,7 @@ using PluginCore.Localization;
 using System.Drawing;
 using PluginCore.Helpers;
 using PluginCore;
+using PluginCore.Controls;
 using ProjectManager.Controls.TreeView;
 
 namespace ProjectManager.Controls
@@ -10,7 +11,7 @@ namespace ProjectManager.Controls
     /// <summary>
     /// Tree view top toolbar
     /// </summary>
-    public class TreeBar : ToolStrip
+    public class TreeBar : ToolStripEx
     {
         public ToolStripButton ShowHidden;
         public ToolStripButton RefreshSelected;

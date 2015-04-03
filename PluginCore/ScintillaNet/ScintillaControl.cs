@@ -184,12 +184,12 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// The file extension without the dot or null if there is none
+        /// The file extension without the dot or an empty string if there is none
         /// </summary>
         public string GetFileExtension()
         {
             string extension = Path.GetExtension(FileName);
-            if (extension != null)
+            if (!string.IsNullOrEmpty(extension))
                 extension = extension.Substring(1); // remove dot
             return extension;
         }
@@ -2299,6 +2299,24 @@ namespace ScintillaNet
         public void SelectionDuplicate()
         {
             SPerform(2469, 0, 0);
+        }
+
+        /// <summary>
+        /// Calls SelectionDuplicate and moves the selection
+        /// to a convenient position afterwards.
+        /// </summary>
+        public void SmartSelectionDuplicate()
+        {
+            bool wholeLine = SelectionStart == SelectionEnd;
+            int selectionLength = SelectionEnd - SelectionStart;
+            SelectionDuplicate();
+            if (wholeLine)
+                LineDown();
+            else
+            {
+                SelectionStart += selectionLength;
+                SelectionEnd += selectionLength;
+            }
         }
         
         /// <summary>
