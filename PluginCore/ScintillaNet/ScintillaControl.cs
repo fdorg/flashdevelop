@@ -184,12 +184,12 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// The file extension without the dot or null if there is none
+        /// The file extension without the dot or an empty string if there is none
         /// </summary>
         public string GetFileExtension()
         {
             string extension = Path.GetExtension(FileName);
-            if (extension != null)
+            if (!string.IsNullOrEmpty(extension))
                 extension = extension.Substring(1); // remove dot
             return extension;
         }
