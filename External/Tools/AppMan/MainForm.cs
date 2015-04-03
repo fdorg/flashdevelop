@@ -628,12 +628,28 @@ namespace AppMan
         /// </summary>
         private void ListViewClick(Object sender, EventArgs e)
         {
-            ListViewHitTestInfo hitTest = listView.HitTest(listView.PointToClient(Control.MousePosition));
-            int columnIndex = hitTest.Item.SubItems.IndexOf(hitTest.SubItem);
+            Point point = this.listView.PointToClient(Control.MousePosition);
+            ListViewHitTestInfo hitTest = this.listView.HitTest(point);
+            Int32 columnIndex = hitTest.Item.SubItems.IndexOf(hitTest.SubItem);
             if (columnIndex == 2)
             {
                 DepEntry entry = hitTest.Item.Tag as DepEntry;
                 this.RunExecutableProcess(entry.Info);
+            }
+        }
+
+        /// <summary>
+        /// Change cursor when hovering info sub item.
+        /// </summary>
+        private void ListViewMouseMove(Object sender, MouseEventArgs e)
+        {
+            Point point = this.listView.PointToClient(Control.MousePosition);
+            ListViewHitTestInfo hitTest = this.listView.HitTest(point);
+            if (hitTest.Item != null)
+            {
+                Int32 columnIndex = hitTest.Item.SubItems.IndexOf(hitTest.SubItem);
+                if (columnIndex == 2) this.Cursor = Cursors.Hand;
+                else this.Cursor = Cursors.Default;
             }
         }
 
@@ -643,20 +659,29 @@ namespace AppMan
         private Image InfoImage = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("AppMan.Resources.Information.png"));
         private void ListViewDrawSubItem(Object sender, DrawListViewSubItemEventArgs e)
         {
-            if (e.Header != this.infoHeader)
+            if (e.Header == this.infoHeader)
             {
-                e.DrawDefault = true;
-                return;
+                if (!e.Item.Selected && (e.ItemState & ListViewItemStates.Selected) == 0)
+                {
+                    e.DrawBackground();
+                }
+                else if (e.Item.Selected)
+                {
+                    e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                }
+                Int32 posOffsetX = (e.Bounds.Width - e.Bounds.Height) / 2;
+                e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                e.Graphics.DrawImage(InfoImage, new Rectangle(e.Bounds.X + posOffsetX, e.Bounds.Y + 1, e.Bounds.Height - 2, e.Bounds.Height - 2));
             }
-            if (!e.Item.Selected) e.DrawBackground();
-            else e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
-            Int32 posOffsetX = (e.Bounds.Width - e.Bounds.Height) / 2;
-            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            e.Graphics.DrawImage(InfoImage, new Rectangle(e.Bounds.X + posOffsetX, e.Bounds.Y + 1, e.Bounds.Height - 2, e.Bounds.Height - 2));
+            else e.DrawDefault = true;
         }
         private void ListViewDrawItem(Object sender, DrawListViewItemEventArgs e)
         {
-            e.DrawDefault = true;
+            if ((e.State & ListViewItemStates.Selected) != 0)
+            {
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+            }
+            else e.DrawDefault = true; 
         }
         private void ListViewDrawColumnHeader(Object sender, DrawListViewColumnHeaderEventArgs e)
         {
@@ -728,7 +753,7 @@ namespace AppMan
                     ListViewItem item = new ListViewItem(entry.Name);
                     item.Tag = entry; /* Store for later */
                     item.SubItems.Add(entry.Version);
-                    item.SubItems.Add(localeData.ShowInfoLabel);
+                    item.SubItems.Add(entry.Info);
                     item.SubItems.Add(entry.Desc);
                     item.SubItems.Add(this.GetLocaleState(STATE_NEW));
                     item.SubItems.Add(this.GetLocaleType(entry.Type));
