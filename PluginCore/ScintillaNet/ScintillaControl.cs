@@ -2298,9 +2298,18 @@ namespace ScintillaNet
         /// </summary>
         public void SelectionDuplicate()
         {
+            SPerform(2469, 0, 0);
+        }
+
+        /// <summary>
+        /// Calls SelectionDuplicate and moves the selection
+        /// to a convenient position afterwards.
+        /// </summary>
+        public void SmartSelectionDuplicate()
+        {
             bool wholeLine = SelectionStart == SelectionEnd;
             int selectionLength = SelectionEnd - SelectionStart;
-            SPerform(2469, 0, 0);
+            SelectionDuplicate();
             if (wholeLine)
                 LineDown();
             else
