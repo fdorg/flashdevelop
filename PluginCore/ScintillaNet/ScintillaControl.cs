@@ -2300,6 +2300,24 @@ namespace ScintillaNet
         {
             SPerform(2469, 0, 0);
         }
+
+        /// <summary>
+        /// Calls SelectionDuplicate and moves the selection
+        /// to a convenient position afterwards.
+        /// </summary>
+        public void SmartSelectionDuplicate()
+        {
+            bool wholeLine = SelectionStart == SelectionEnd;
+            int selectionLength = SelectionEnd - SelectionStart;
+            SelectionDuplicate();
+            if (wholeLine)
+                LineDown();
+            else
+            {
+                SelectionStart += selectionLength;
+                SelectionEnd += selectionLength;
+            }
+        }
         
         /// <summary>
         /// Can the caret preferred x position only be changed by explicit movement commands?
