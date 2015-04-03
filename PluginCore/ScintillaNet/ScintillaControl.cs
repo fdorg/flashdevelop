@@ -2298,7 +2298,16 @@ namespace ScintillaNet
         /// </summary>
         public void SelectionDuplicate()
         {
+            bool wholeLine = SelectionStart == SelectionEnd;
+            int selectionLength = SelectionEnd - SelectionStart;
             SPerform(2469, 0, 0);
+            if (wholeLine)
+                LineDown();
+            else
+            {
+                SelectionStart += selectionLength;
+                SelectionEnd += selectionLength;
+            }
         }
         
         /// <summary>
