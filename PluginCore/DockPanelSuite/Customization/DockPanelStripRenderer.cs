@@ -465,7 +465,11 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer) 
             {
-                Color text = PluginBase.MainForm.GetThemeColor("ToolStripItem.TextColor");
+                Color text;
+                if (e.ToolStrip is StatusStrip)
+                    text = PluginBase.MainForm.GetThemeColor("StatusStrip.ForeColor");
+                else
+                    text = PluginBase.MainForm.GetThemeColor("ToolStripItem.TextColor");
                 if (text != Color.Empty) e.TextColor = text;
             }
             renderer.DrawItemText(e);
