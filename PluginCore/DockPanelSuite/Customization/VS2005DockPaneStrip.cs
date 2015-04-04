@@ -85,9 +85,9 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             protected override void OnRefreshChanges()
             {
-                if (VS2005DockPaneStrip.ColorDocumentActiveText != ForeColor)
+                if (VS2005DockPaneStrip.ImageColor != ForeColor)
                 {
-                    ForeColor = VS2005DockPaneStrip.ColorDocumentActiveText;
+                    ForeColor = VS2005DockPaneStrip.ImageColor;
                     Invalidate();
                 }
             }
@@ -422,7 +422,17 @@ namespace WeifenLuo.WinFormsUI.Docking
             get { return ScaleHelper.Scale(_DocumentTextGapRight); }
         }
 
-        private static Pen PenToolWindowTabBorder
+        private static Pen PenToolWindowTabActiveBorder
+        {
+            get
+            {
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveBorderColor");
+                if (color != Color.Empty) return new Pen(color);
+                else return SystemPens.ControlDark;
+            }
+        }
+
+        private static Pen PenToolWindowTabInactiveBorder
         {
             get 
             {
@@ -493,7 +503,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get 
             {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ForeColor");
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveForeColor");
                 if (color != Color.Empty) return color;
                 else return SystemColors.ControlText; 
             }
@@ -503,7 +513,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get 
             {
-                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.TabForeColor");
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabActiveForeColor");
                 if (color != Color.Empty) return color;
                 else return SystemColors.ControlText; 
             }
@@ -526,6 +536,16 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.TabForeColor");
                 if (color != Color.Empty) return color;
                 else return SystemColors.ControlText; 
+            }
+        }
+
+        private static Color ImageColor
+        {
+            get
+            {
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ImageColor");
+                if (color != Color.Empty) return color;
+                else return SystemColors.ControlText;
             }
         }
 
@@ -1023,7 +1043,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             Rectangle rectTabStrip = TabStripRectangle;
 
-            g.DrawLine(PenToolWindowTabBorder, rectTabStrip.Left, rectTabStrip.Top,
+            g.DrawLine(PenToolWindowTabActiveBorder, rectTabStrip.Left, rectTabStrip.Top,
                 rectTabStrip.Right, rectTabStrip.Top);
 
             for (int i=0; i<Tabs.Count; i++)
@@ -1183,12 +1203,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (DockPane.ActiveContent == tab.Content)
             {
                 g.FillPath(BrushToolWindowActiveBackground, path);
-                g.DrawPath(PenToolWindowTabBorder, path);
+                g.DrawPath(PenToolWindowTabActiveBorder, path);
 
                 // NICK: eliminate line between tab and content
-                RectangleF r = path.GetBounds();
-                using (Pen pen = new Pen(Color.FromArgb(240, 239, 243)))
-                    g.DrawLine(pen, r.Left + 1, r.Top, r.Right - 1, r.Top);
+                //RectangleF r = path.GetBounds();
+                //using (Pen pen = new Pen(BackColor))
+                //   g.DrawLine(pen, r.Left + 1, r.Top, r.Right - 1, r.Top);
 
                 TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, Font, rectText, ColorToolWindowActiveText, ToolWindowTextFormat);
             }
