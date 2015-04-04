@@ -24,10 +24,18 @@ DockPanel.ShowAutoHideContentOn=Hover
 #ToolStripItem.ArrowColor=#ff0000
 #ToolStripItem.TextColor=#0000ff
 
+VS2005DockPaneCaption.ActiveForeColor=#333333
+VS2005DockPaneCaption.ActiveImageColor=#333333
+VS2005DockPaneCaption.ImageColor=#333333
 #VS2005DockPaneCaption.BorderColor=#ff0000
+
 #VS2005DockPaneStrip.DocTabActiveBorder=#ff0000
+VS2005DockPaneStrip.DocTabActiveForeColor=#000000
 #VS2005DockPaneStrip.DocTabInactiveBorder=#0000ff
+#VS2005DockPaneStrip.ToolActiveBorderColor=#ff0000
 #VS2005DockPaneStrip.ToolBorderColor=#ff0000
+VS2005DockPaneStrip.ToolActiveForeColor=#333333
+VS2005DockPaneStrip.ImageColor=#000000
 
 #ToolStripMenu.TitleBackColor=#ff00ff
 #ToolStripMenu.TitleBorderColor=#0000ff
