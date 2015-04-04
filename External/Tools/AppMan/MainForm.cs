@@ -77,6 +77,33 @@ namespace AppMan
             if (!Win32.IsRunningOnMono) Application.AddMessageFilter(this);
         }
 
+        #region Instancing
+
+        /// <summary>
+        /// Handle the instance message
+        /// </summary>
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == Win32.WM_SHOWME) this.RestoreWindow();
+            base.WndProc(ref m);
+        }
+
+        /// <summary>
+        /// Restore the window of the first instance
+        /// </summary>
+        private void RestoreWindow()
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                this.WindowState = FormWindowState.Normal;
+            }
+            Boolean top = this.TopMost;
+            this.TopMost = true;
+            this.TopMost = top;
+        }
+
+        #endregion
+
         #region Initialization
 
         /// <summary>
