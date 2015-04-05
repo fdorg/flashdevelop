@@ -35,6 +35,7 @@ VS2005DockPaneStrip.DocTabInactiveBorder=#6D767C
 VS2005DockPaneStrip.ToolActiveBorderColor=#6D767C
 VS2005DockPaneStrip.ToolBorderColor=#6D767C
 VS2005DockPaneStrip.ToolActiveForeColor=#3A4345
+VS2005DockPaneStrip.ToolSeparatorColor=#F0EFF3
 VS2005DockPaneStrip.ImageColor=#3A4345
 
 ToolStripMenu.TitleBackColor=#D2D5D3

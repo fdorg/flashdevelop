@@ -350,12 +350,12 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                Color color;
-                if (DockPane.IsActivated)
-                    color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ActiveForeColor");
-                else
+                Color color = Color.Empty;
+                if (DockPane.IsActivated) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ActiveForeColor");
+                if (!DockPane.IsActivated || color == Color.Empty)
+                {
                     color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ForeColor");
-
+                }
                 if (color != Color.Empty) return color;
                 else return DockPane.IsActivated ? ActiveTextColor : InactiveTextColor;
             }
@@ -365,14 +365,11 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                Color color;
-                if (DockPane.IsActivated)
-                    color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ActiveImageColor");
-                else
-                    color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ImageColor");
-
+                Color color = Color.Empty;
+                if (DockPane.IsActivated) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ActiveImageColor");
+                else color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ImageColor");
                 if (color != Color.Empty) return color;
-                else return DockPane.IsActivated ? ActiveTextColor : InactiveTextColor;
+                else return TextColor;
             }
         }
 

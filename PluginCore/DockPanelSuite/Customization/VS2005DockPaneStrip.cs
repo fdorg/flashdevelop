@@ -504,6 +504,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get 
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveForeColor");
+                if (color == Color.Empty) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ForeColor");
                 if (color != Color.Empty) return color;
                 else return SystemColors.ControlText; 
             }
@@ -514,6 +515,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get 
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabActiveForeColor");
+                if (color == Color.Empty) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.TabForeColor");
                 if (color != Color.Empty) return color;
                 else return SystemColors.ControlText; 
             }
@@ -545,7 +547,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ImageColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlText;
+                else return ColorDocumentActiveText;
             }
         }
 
@@ -1206,9 +1208,10 @@ namespace WeifenLuo.WinFormsUI.Docking
                 g.DrawPath(PenToolWindowTabActiveBorder, path);
 
                 // NICK: eliminate line between tab and content
-                //RectangleF r = path.GetBounds();
-                //using (Pen pen = new Pen(BackColor))
-                //   g.DrawLine(pen, r.Left + 1, r.Top, r.Right - 1, r.Top);
+                RectangleF r = path.GetBounds();
+                Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolSeparatorColor");
+                if (color == Color.Empty) color = Color.FromArgb(240, 239, 243);
+                using (Pen pen = new Pen(color)) g.DrawLine(pen, r.Left + 1, r.Top, r.Right - 1, r.Top);
 
                 TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, Font, rectText, ColorToolWindowActiveText, ToolWindowTextFormat);
             }
