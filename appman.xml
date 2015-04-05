@@ -275,14 +275,14 @@
 	<Entry>
 		<Id>navigationbar</Id>
 		<Name>NavigationBar</Name>
-		<Version>2.4</Version>
+		<Version>2.5</Version>
 		<Build>1</Build>
-		<Checksum>6cc6d6eab05c57a6b38163477ad654c6</Checksum>
+		<Checksum>a98f36b6b051b1d22b34af63b49a2db1</Checksum>
 		<Desc>Adds a bar that provides dropdowns for classes, members, and optionally imports.</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9376</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-navigationbar/releases/download/v2.4/NavigationBar_2.4.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-navigationbar/releases/download/v2.5/NavigationBar_2.5.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
