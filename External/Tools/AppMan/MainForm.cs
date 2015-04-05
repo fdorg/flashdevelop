@@ -1045,6 +1045,7 @@ namespace AppMan
                     this.PopulateListView();
                 }
                 else this.statusLabel.Text = this.localeData.ItemListDownloadFailed;
+                TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.NoProgress);
                 this.progressBar.Value = 0;
             }
             catch (Exception ex)
@@ -1105,6 +1106,7 @@ namespace AppMan
                         this.isLoading = false;
                         this.progressBar.Value = 0;
                         this.cancelButton.Enabled = false;
+                        TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.NoProgress);
                         this.statusLabel.Text = this.localeData.AllItemsCompleted;
                         this.NoneLinkLabelLinkClicked(null, null);
                         this.UpdateButtonLabels();
@@ -1138,6 +1140,7 @@ namespace AppMan
         private void DownloadProgressChanged(Object sender, DownloadProgressChangedEventArgs e)
         {
             this.progressBar.Value = e.ProgressPercentage;
+            TaskbarProgress.SetValue(this.Handle, e.ProgressPercentage, 100);
         }
 
         /// <summary>
@@ -1152,6 +1155,7 @@ namespace AppMan
                     this.isLoading = false;
                     this.cancelButton.Enabled = false;
                     this.statusLabel.Text = this.localeData.ItemListDownloadCancelled;
+                    TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.NoProgress);
                     this.TryDeleteOldTempFiles();
                     this.progressBar.Value = 0;
                     this.UpdateButtonLabels();
@@ -1170,6 +1174,7 @@ namespace AppMan
                             this.isLoading = false;
                             this.progressBar.Value = 0;
                             this.cancelButton.Enabled = false;
+                            TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.NoProgress);
                             this.statusLabel.Text = this.localeData.AllItemsCompleted;
                             this.NoneLinkLabelLinkClicked(null, null);
                             this.TryDeleteEntryDir(this.curEntry);
@@ -1195,6 +1200,7 @@ namespace AppMan
                         this.isLoading = false;
                         this.progressBar.Value = 0;
                         this.cancelButton.Enabled = false;
+                        TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.NoProgress);
                         this.statusLabel.Text = this.localeData.AllItemsCompleted;
                         this.NoneLinkLabelLinkClicked(null, null);
                         this.TryDeleteEntryDir(this.curEntry);
@@ -1221,6 +1227,7 @@ namespace AppMan
                 this.bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.WorkerDoCompleted);
                 this.bgWorker.RunWorkerAsync(new BgArg(file, path));
                 this.statusLabel.Text = this.localeData.ExtractingFile + this.curFile;
+                TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.Indeterminate);
                 this.progressBar.Style = ProgressBarStyle.Marquee;
             }
             catch
@@ -1234,6 +1241,7 @@ namespace AppMan
                     this.isLoading = false;
                     this.progressBar.Value = 0;
                     this.cancelButton.Enabled = false;
+                    TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.NoProgress);
                     this.statusLabel.Text = this.localeData.AllItemsCompleted;
                     this.NoneLinkLabelLinkClicked(null, null);
                     this.TryDeleteEntryDir(this.curEntry);
@@ -1272,6 +1280,7 @@ namespace AppMan
                     this.isLoading = false;
                     this.progressBar.Value = 0;
                     this.cancelButton.Enabled = false;
+                    TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.NoProgress);
                     this.statusLabel.Text = this.localeData.AllItemsCompleted;
                     this.NoneLinkLabelLinkClicked(null, null);
                     this.TryDeleteEntryDir(this.curEntry);
@@ -1288,7 +1297,9 @@ namespace AppMan
         {
             try
             {
+                
                 this.progressBar.Style = ProgressBarStyle.Continuous;
+                TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.Normal);
                 if (this.fileQueue.Count > 0)
                 {
                     this.curFile = this.fileQueue.Dequeue();
@@ -1335,6 +1346,7 @@ namespace AppMan
                         this.isLoading = false;
                         this.progressBar.Value = 0;
                         this.cancelButton.Enabled = false;
+                        TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.NoProgress);
                         this.statusLabel.Text = this.localeData.AllItemsCompleted;
                         this.NoneLinkLabelLinkClicked(null, null);
                         this.UpdateButtonLabels();
