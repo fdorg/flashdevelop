@@ -36,7 +36,6 @@ namespace AppMan
         private LocaleData localeData;
         private Boolean localeOverride;
         private String[] notifyPaths;
-        private Boolean shouldNotify;
         private Boolean haveUpdates;
         private Boolean checkOnly;
 
@@ -65,7 +64,6 @@ namespace AppMan
             this.CheckArgs(args);
             this.isLoading = false;
             this.haveUpdates = false;
-            this.shouldNotify = false;
             this.InitializeSettings();
             this.InitializeLocalization();
             this.InitializeComponent();
@@ -351,11 +349,11 @@ namespace AppMan
         /// <summary>
         /// Save notification files to the notify paths.
         /// </summary>
-        private void MainFormClosed(Object sender, FormClosedEventArgs e)
+        private void NotifyPaths()
         {
             try
             {
-                if (!this.shouldNotify || this.notifyPaths == null) return;
+                if (this.notifyPaths == null) return;
                 foreach (String nPath in this.notifyPaths)
                 {
                     try
@@ -442,7 +440,6 @@ namespace AppMan
         {
             try
             {
-                this.shouldNotify = true;
                 String title = this.localeData.ConfirmTitle;
                 String message = this.localeData.DeleteSelectedConfirm;
                 if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -469,6 +466,7 @@ namespace AppMan
                             this.TryDeleteEntryDir(entry);
                         }
                     }
+                    this.NotifyPaths();
                 }
             }
             catch (Exception ex)
@@ -938,9 +936,12 @@ namespace AppMan
                 if (file.ToLower().EndsWith(".fdz"))
                 {
                     String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\FlashDevelop.exe");
+                    Boolean wait = Process.GetProcessesByName("FlashDevelop").Length == 0;
                     if (File.Exists(fd))
                     {
                         Process.Start(Path.GetFullPath(fd), file + " -silent -reuse");
+                        // If FD was not running, give it a little time to start...
+                        if (wait) Thread.Sleep(500);
                         return;
                     }
                 }
@@ -1336,8 +1337,8 @@ namespace AppMan
                         #endif
                         Thread.Sleep(100); // Wait for files...
                         this.LoadInstalledEntries();
-                        this.shouldNotify = true;
                         this.UpdateEntryStates();
+                        this.NotifyPaths();
                     }
                     else this.RunExecutableProcess(this.tempFile);
                     if (this.downloadQueue.Count > 0) this.DownloadNextFromQueue();

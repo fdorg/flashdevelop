@@ -321,7 +321,6 @@ namespace AppMan
             this.Load += new EventHandler(this.MainFormLoad);
             this.HelpRequested += new HelpEventHandler(this.MainFormHelpRequested);
             this.HelpButtonClicked += new CancelEventHandler(this.MainFormHelpButtonClicked);
-            this.FormClosed += new FormClosedEventHandler(this.MainFormClosed);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
