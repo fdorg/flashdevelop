@@ -276,6 +276,7 @@ namespace FlashDebugger
             // tsActions
             // 
             this.tsActions.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.tsActions.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.tsActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbRemoveSelected,
             this.tsbRemoveFiltered,
@@ -344,14 +345,14 @@ namespace FlashDebugger
             // tstxtFilter
             // 
             this.tstxtFilter.Name = "tstxtFilter";
-            this.tstxtFilter.Size = new System.Drawing.Size(90, 23);
+            this.tstxtFilter.Size = new System.Drawing.Size(ScaleHelper.Scale(90), 23);
             this.tstxtFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TstxtFilter_KeyDown);
             // 
             // tscbFilterColumns
             // 
             this.tscbFilterColumns.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.tscbFilterColumns.Name = "tscbFilterColumns";
-            this.tscbFilterColumns.Size = new System.Drawing.Size(116, 23);
+            this.tscbFilterColumns.Size = new System.Drawing.Size(ScaleHelper.Scale(116), 23);
             // 
             // BreakPointUI
             // 
