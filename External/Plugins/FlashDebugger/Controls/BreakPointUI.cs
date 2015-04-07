@@ -74,6 +74,7 @@ namespace FlashDebugger
             {
                 imageList = new ImageList();
                 imageList.ColorDepth = ColorDepth.Depth32Bit;
+                imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
                 imageList.Images.Add("DeleteBreakpoint", PluginBase.MainForm.FindImage("548|27|5|5"));
                 imageList.Images.Add("DeleteBreakpoints", PluginBase.MainForm.FindImage("549|27|5|5"));
                 imageList.Images.Add("ToggleBreakpoints", PluginBase.MainForm.FindImage("136|23|5|5"));
