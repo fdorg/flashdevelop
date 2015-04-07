@@ -645,5 +645,10 @@ namespace ASCompletion.Model
                 return false;
             }
         }
+
+        public override string ToString()
+        {
+            return basePath;
+        }
     }
 }

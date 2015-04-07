@@ -180,7 +180,7 @@ namespace HaXeContext
                 string path = "";
                 do { 
                     path = p.StandardOutput.ReadLine();
-                    if (path != null && path.Length > 0 && !path.StartsWith("-") && Directory.Exists(path))
+                    if (!string.IsNullOrEmpty(path) && !path.StartsWith("-") && Directory.Exists(path))
                     {
                         path = NormalizePath(path).TrimEnd(Path.DirectorySeparatorChar);
                         paths.Add(path);
@@ -308,10 +308,10 @@ namespace HaXeContext
             HaxeTarget = lang;
 
             //
-            // Class pathes
+            // Class paths
             //
             classPath = new List<PathModel>();
-            // haXe std
+            // haxe std
             string hxPath = PluginBase.CurrentProject is HaxeProject
                     ? PluginBase.CurrentProject.CurrentSDK
                     : PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
@@ -378,8 +378,8 @@ namespace HaXeContext
                         string path = proj.GetAbsolutePath(asset.Path);
                         if (File.Exists(path)) AddPath(path);
                     }
-                foreach( string p in proj.CompilerOptions.Additional )
-                    if( p.IndexOf("-swf-lib ") == 0 ) {
+                foreach (string p in proj.CompilerOptions.Additional)
+                    if (p.IndexOf("-swf-lib ") == 0) {
                         string path = proj.GetAbsolutePath(p.Substring(9));
                         if (File.Exists(path)) AddPath(path);
                     }
@@ -388,6 +388,8 @@ namespace HaXeContext
             // add haxe libraries
             if (proj != null)
             {
+                proj.UpdateVars(false);
+
                 foreach (string param in proj.BuildHXML(new string[0], "", false))
                     if (!string.IsNullOrEmpty(param) && param.IndexOf("-lib ") == 0)
                     {
