@@ -208,6 +208,8 @@ namespace HaXeContext
         public override void UserRefreshRequest()
         {
             haxelibsCache.Clear();
+            HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
+            if (proj != null) proj.UpdateVars(false);
         }
 
         /// <summary>
