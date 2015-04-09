@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Imaging;
 using PluginCore.DockPanelSuite;
+using PluginCore.PluginCore.Utilities;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -73,27 +74,16 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            using (ImageAttributes imageAttributes = new ImageAttributes())
-            {
-                ColorMap[] colorMap = new ColorMap[2];
-                colorMap[0] = new ColorMap();
-                colorMap[0].OldColor = Color.FromArgb(0, 0, 0);
-                colorMap[0].NewColor = ForeColor;
-                colorMap[1] = new ColorMap();
-                colorMap[1].OldColor = Image.GetPixel(0, 0);
-                colorMap[1].NewColor = Color.Transparent;
+            var quantizer = new RecolorQuantizer(ForeColor);
+            var recoloredImage = quantizer.Quantize(Image);
 
-                imageAttributes.SetRemapTable(colorMap);
-
-                e.Graphics.DrawImage(
-                   Image,
-                   new Rectangle(0, 0, Image.Width, Image.Height),
-                   0, 0,
-                   Image.Width,
-                   Image.Height,
-                   GraphicsUnit.Pixel,
-                   imageAttributes);
-            }
+            e.Graphics.DrawImage(
+                recoloredImage,
+                new Rectangle(0, 0, Image.Width, Image.Height),
+                0, 0,
+                Image.Width,
+                Image.Height,
+                GraphicsUnit.Pixel);
 
             base.OnPaint(e);
         }

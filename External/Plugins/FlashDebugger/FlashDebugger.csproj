@@ -172,12 +172,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Icons\Breakpoints\CurLine.bmp" />
-    <None Include="Icons\Breakpoints\Disabled.bmp" />
-    <None Include="Icons\Breakpoints\Enabled.bmp" />
     <Content Include="fbd.j4n.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Icons\Breakpoints\CurLine.png" />
+    <Content Include="Icons\Breakpoints\Disabled.png" />
+    <Content Include="Icons\Breakpoints\Enabled.png" />
     <Content Include="Icons\Continue.png" />
     <Content Include="Icons\Current.png" />
     <None Include="Icons\DeleteBreakpoints.png" />
