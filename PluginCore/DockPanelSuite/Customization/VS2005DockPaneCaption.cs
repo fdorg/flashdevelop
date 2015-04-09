@@ -57,8 +57,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         private static int _ButtonGapTop = 3;
         private static int _ButtonGapBottom = 3;
         private static int _ButtonGapBetween = 1;
-        private static int _ButtonGapLeft = 1;
-        private static int _ButtonGapRight = 1;
+        private static int _ButtonGapLeft = 3;
+        private static int _ButtonGapRight = 3;
 
         private ToolTip m_toolTip;
 
