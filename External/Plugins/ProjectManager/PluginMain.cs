@@ -404,7 +404,7 @@ namespace ProjectManager
 
                 case EventType.FileOpening:
                     // if this is a project file, we can handle it ourselves
-                    if (FileInspector.IsProject(te.Value))
+                    if (FileInspector.IsProject(te.Value) || ProjectCreator.IsKnownProject(Path.GetExtension(te.Value).ToLower()))
                     {
                         te.Handled = true;
                         OpenProjectSilent(te.Value);
