@@ -17,7 +17,7 @@ if errorlevel 1 goto failed
 echo.
 echo Certificate created: %AND_CERT_FILE% with password "%AND_CERT_PASS%"
 echo.
-if "%AND_CERT_PASS%" == "fd" echo (note: you did not change the default password)
+if "%AND_CERT_PASS%" == "fd" echo Note: You did not change the default password
 echo.
 echo HINTS: 
 echo - you only need to generate this certificate once,
