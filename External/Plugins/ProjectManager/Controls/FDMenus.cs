@@ -121,6 +121,12 @@ namespace ProjectManager.Controls
             ProjectChanged(project);
         }
 
+        public void CloseProject()
+        {
+            TargetBuildSelector.Text = "";
+            EnableTargetBuildSelector(false);
+        }
+
         public void ProjectChanged(Project project)
         {
             TargetBuildSelector.Items.Clear();
@@ -130,20 +136,14 @@ namespace ProjectManager.Controls
                 string target = project.TargetBuild ?? project.MovieOptions.TargetBuildTypes[0];
                 if (target != "" && !TargetBuildSelector.Items.Contains(target)) TargetBuildSelector.Items.Insert(0, target);
                 TargetBuildSelector.Text = target;
-                EnableTargetBuildSelector(true);
             }
-            else if (project.OutputType == OutputType.CustomBuild)
+            else
             {
                 string target = project.TargetBuild ?? "";
                 if (target != "") TargetBuildSelector.Items.Insert(0, target);
                 TargetBuildSelector.Text = target;
-                EnableTargetBuildSelector(true);
             }
-            else
-            {
-                TargetBuildSelector.Text = "";
-                EnableTargetBuildSelector(false);
-            }
+            EnableTargetBuildSelector(true);
         }
 
         

@@ -694,8 +694,12 @@ namespace ProjectManager
             prefs.ExpandedPaths = Tree.ExpandedPaths;
             prefs.DebugMode = project.TraceEnabled;
             prefs.TargetBuild = project.TargetBuild;
-            
-            if (!PluginBase.MainForm.ClosingEntirely) SaveProjectSession();
+
+            if (!PluginBase.MainForm.ClosingEntirely)
+            {
+                SaveProjectSession();
+                menus.CloseProject();
+            }
 
             activeProject = null;
             if (projectResources != null)
