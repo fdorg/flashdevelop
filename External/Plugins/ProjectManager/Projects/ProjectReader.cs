@@ -3,6 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using System.Xml;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ProjectManager.Projects
@@ -175,20 +176,27 @@ namespace ProjectManager.Projects
                 MoveToFirstAttribute();
                 switch (Name)
                 {
-                    case "showHiddenPaths": project.ShowHiddenPaths = BoolValue; break;
-                    case "testMovie":
-
-                        // Be tolerant of unknown strings (older .fdp projects might have these)
-                        List<string> acceptableValues 
-                            = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
-
-                        if (acceptableValues.Contains(Value))
-                            project.TestMovieBehavior
-                                = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
-                        else
-                            project.TestMovieBehavior = TestMovieBehavior.NewTab;
+                    case "showHiddenPaths": project.ShowHiddenPaths = BoolValue; 
                         break;
-                    case "testMovieCommand": project.TestMovieCommand = Value; break;
+
+                    case "testMovie":
+                        // Be tolerant of unknown strings (older .fdp projects might have these)
+                        List<string> acceptableValues  = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
+                        if (acceptableValues.Contains(Value)) project.TestMovieBehavior = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
+                        else project.TestMovieBehavior = TestMovieBehavior.NewTab;
+                        break;
+
+                    case "defaultBuildTargets":
+                        if (!String.IsNullOrEmpty(Value.Trim()) && Value.IndexOf(",") > -1)
+                        {
+                            String[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<String>();
+                            project.MovieOptions.DefaultBuildTargets = cleaned;
+                        }
+                        break;
+
+                    case "testMovieCommand": project.TestMovieCommand = Value;
+                        break;
+                    
                 }
                 Read();
             }

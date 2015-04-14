@@ -116,6 +116,10 @@ namespace ProjectManager.Projects
             WriteOption("showHiddenPaths",project.ShowHiddenPaths);
             WriteOption("testMovie",project.TestMovieBehavior);
             WriteOption("testMovieCommand", project.TestMovieCommand ?? "");
+            if (project.MovieOptions.DefaultBuildTargets != null && project.MovieOptions.DefaultBuildTargets.Length > 0)
+            {
+                WriteOption("defaultBuildTargets", String.Join(",", project.MovieOptions.DefaultBuildTargets));
+            }
             WriteEndElement();
         }
 
