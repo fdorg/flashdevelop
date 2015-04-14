@@ -189,8 +189,8 @@ namespace ProjectManager.Projects
                     case "defaultBuildTargets":
                         if (!String.IsNullOrEmpty(Value.Trim()) && Value.IndexOf(",") > -1)
                         {
-                            String trimmed = new String(Value.Where(c => !Char.IsWhiteSpace(c)).ToArray());
-                            project.MovieOptions.DefaultBuildTargets = trimmed.Split(',');
+                            String[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<String>();
+                            project.MovieOptions.DefaultBuildTargets = cleaned;
                         }
                         break;
 
