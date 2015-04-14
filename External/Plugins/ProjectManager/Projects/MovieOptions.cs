@@ -17,6 +17,7 @@ namespace ProjectManager.Projects
         public string Platform;
         public string Background;
         public string[] TargetBuildTypes;
+        public string[] DefaultBuildTargets;
 
         public MovieOptions()
         {

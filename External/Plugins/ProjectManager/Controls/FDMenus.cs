@@ -137,6 +137,11 @@ namespace ProjectManager.Controls
                 if (target != "" && !TargetBuildSelector.Items.Contains(target)) TargetBuildSelector.Items.Insert(0, target);
                 TargetBuildSelector.Text = target;
             }
+            else if (project.MovieOptions.DefaultBuildTargets != null && project.MovieOptions.DefaultBuildTargets.Length > 0)
+            {
+                TargetBuildSelector.Items.AddRange(project.MovieOptions.DefaultBuildTargets);
+                TargetBuildSelector.Text = project.MovieOptions.DefaultBuildTargets[0];
+            }
             else
             {
                 string target = project.TargetBuild ?? "";

@@ -175,20 +175,26 @@ namespace ProjectManager.Projects
                 MoveToFirstAttribute();
                 switch (Name)
                 {
-                    case "showHiddenPaths": project.ShowHiddenPaths = BoolValue; break;
-                    case "testMovie":
-
-                        // Be tolerant of unknown strings (older .fdp projects might have these)
-                        List<string> acceptableValues 
-                            = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
-
-                        if (acceptableValues.Contains(Value))
-                            project.TestMovieBehavior
-                                = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
-                        else
-                            project.TestMovieBehavior = TestMovieBehavior.NewTab;
+                    case "showHiddenPaths": project.ShowHiddenPaths = BoolValue; 
                         break;
-                    case "testMovieCommand": project.TestMovieCommand = Value; break;
+
+                    case "testMovie":
+                        // Be tolerant of unknown strings (older .fdp projects might have these)
+                        List<string> acceptableValues  = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
+                        if (acceptableValues.Contains(Value)) project.TestMovieBehavior = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
+                        else project.TestMovieBehavior = TestMovieBehavior.NewTab;
+                        break;
+
+                    case "defaultBuildTargets":
+                        if (!String.IsNullOrEmpty(Value.Trim()) && Value.IndexOf(",") > -1)
+                        {
+                            project.MovieOptions.DefaultBuildTargets = Value.Trim().Split(',');
+                        }
+                        break;
+
+                    case "testMovieCommand": project.TestMovieCommand = Value;
+                        break;
+                    
                 }
                 Read();
             }
