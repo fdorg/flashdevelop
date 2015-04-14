@@ -370,6 +370,21 @@ namespace FlashDevelop.Settings
             set { this.highlightMatchingWordsMode = value; }
         }
 
+        [DefaultValue(1200)]
+        [DisplayName("Highlight Matching Words Delay")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsDelay")]
+        public Int32 HighlightMatchingWordsDelay
+        {
+            get 
+            {
+                // Make sure this is not an invalid value
+                if (this.highlightMatchingWordsDelay <= 0) this.highlightMatchingWordsDelay = 1200;
+                return this.highlightMatchingWordsDelay;
+            }
+            set { this.highlightMatchingWordsDelay = value; }
+        }
+
         #endregion
 
         #region Locale
@@ -684,7 +699,7 @@ namespace FlashDevelop.Settings
         }
 
         [DefaultValue(false)]
-        [DisplayName("Strip Trailing Spaces")]
+        [DisplayName("Trim Trailing Whitespace")]
         [LocalizedCategory("FlashDevelop.Category.Formatting")]
         [LocalizedDescription("FlashDevelop.Description.StripTrailingSpaces")]
         public Boolean StripTrailingSpaces

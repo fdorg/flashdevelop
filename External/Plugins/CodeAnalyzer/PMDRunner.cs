@@ -14,7 +14,7 @@ using PluginCore;
 
 namespace CodeAnalyzer
 {
-	public class PMDRunner
+    public class PMDRunner
     {
         private String errorLog;
         private String watchedFile;
@@ -26,19 +26,19 @@ namespace CodeAnalyzer
         /// Runs the pmd analyzer process
         /// </summary>
         public static void Analyze(String pmdPath, String projectPath, String sourcePath, String pmdRuleset)
-		{
-			try
-			{
+        {
+            try
+            {
                 PMDRunner pr = new PMDRunner();
                 String objDir = Path.Combine(projectPath, "obj");
                 if (!Directory.Exists(objDir)) Directory.CreateDirectory(objDir);
                 pr.RunPMD(pmdPath, objDir, sourcePath, pmdRuleset);
                 pr.WatchFile(objDir);
-			}
-			catch (Exception ex)
-			{
-				ErrorManager.ShowError(ex);
-			}
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
         }
 
         /// <summary>
@@ -80,9 +80,9 @@ namespace CodeAnalyzer
         /// <summary>
         /// Watched the spcified file for creation
         /// </summary>
-		private void WatchFile(String projectPath)
-		{
-			this.pmdWatcher = new FileSystemWatcher();
+        private void WatchFile(String projectPath)
+        {
+            this.pmdWatcher = new FileSystemWatcher();
             this.pmdWatcher.EnableRaisingEvents = false;
             this.pmdWatcher.Filter = "pmd.xml";
             this.pmdWatcher.Created += new FileSystemEventHandler(this.onCreateFile);
@@ -100,25 +100,25 @@ namespace CodeAnalyzer
             }
             this.pmdWatcher.Path = projectPath;
             this.pmdWatcher.EnableRaisingEvents = true;
-		}
+        }
 
         /// <summary>
         /// Stops the timer after file creation
         /// </summary>
-		private void onCreateFile(Object source, FileSystemEventArgs e)
-		{
+        private void onCreateFile(Object source, FileSystemEventArgs e)
+        {
             if (e.Name.ToLower() == "pmd.xml")
-			{
+            {
                 this.pmdWatcher.EnableRaisingEvents = false;
                 this.deleteTimer.Enabled = true;
-			}
-		}
+            }
+        }
 
         /// <summary>
         /// Deletes the generated file after read
         /// </summary>
         private void onTimedDelete(Object sender, ElapsedEventArgs e)
-		{
+        {
             Form mainForm = PluginBase.MainForm as Form;
             if (mainForm.InvokeRequired)
             {
@@ -169,7 +169,7 @@ namespace CodeAnalyzer
             {
                 ErrorManager.ShowError(ex);
             }
-		}
+        }
 
         /// <summary>
         /// Sets the status text
@@ -180,6 +180,6 @@ namespace CodeAnalyzer
             PluginBase.MainForm.StatusStrip.Items[0].Text = status;
         }
 
-	}
+    }
 
 }

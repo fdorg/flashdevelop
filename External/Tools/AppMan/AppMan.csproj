@@ -74,6 +74,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ArgProcessor.cs" />
     <Compile Include="Utilities\PathHelper.cs" />
+    <Compile Include="Utilities\TaskbarProgress.cs" />
     <Compile Include="Win32.cs" />
     <Compile Include="ZipLib\BZip2\BZip2.cs" />
     <Compile Include="ZipLib\BZip2\BZip2Constants.cs" />
@@ -162,6 +163,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Information.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

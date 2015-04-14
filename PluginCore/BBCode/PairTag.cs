@@ -4,37 +4,37 @@ using System.Text;
 
 namespace PluginCore.BBCode
 {
-	public class PairTag : IPairTag
-	{
-		public PairTag(IPairTagMatch openerMatch, IPairTagMatch closerMatch)
-		{
-			_openerMatch = openerMatch;
-			_closerMatch = closerMatch;
-		}
+    public class PairTag : IPairTag
+    {
+        public PairTag(IPairTagMatch openerMatch, IPairTagMatch closerMatch)
+        {
+            _openerMatch = openerMatch;
+            _closerMatch = closerMatch;
+        }
 
 
-		private IPairTagMatch _openerMatch;
-		private IPairTagMatch _closerMatch;
+        private IPairTagMatch _openerMatch;
+        private IPairTagMatch _closerMatch;
 
 
-		public IPairTagMatch openerMatch
-		{
-			get { return _openerMatch; }
-		}
-		public IPairTagMatch closerMatch
-		{
-			get { return _closerMatch; }
-		}
+        public IPairTagMatch openerMatch
+        {
+            get { return _openerMatch; }
+        }
+        public IPairTagMatch closerMatch
+        {
+            get { return _closerMatch; }
+        }
 
 
-		override public String ToString()
-		{
-			return "[pairTag"
-				   + " openerMatch='" + (_openerMatch == null ? "null" : _openerMatch.ToString()) + "'"
-				   + " closerMatch='" + (_closerMatch == null ? "null" : _closerMatch.ToString()) + "'"
-				   + "]";
-		}
-	}
+        override public String ToString()
+        {
+            return "[pairTag"
+                   + " openerMatch='" + (_openerMatch == null ? "null" : _openerMatch.ToString()) + "'"
+                   + " closerMatch='" + (_closerMatch == null ? "null" : _closerMatch.ToString()) + "'"
+                   + "]";
+        }
+    }
 
 
     public class VoidCloserTagMatch : IPairTagMatch

@@ -13,8 +13,8 @@ using PluginCore.Localization;
 
 namespace FlashDevelop.Dialogs
 {
-	public class ArgReplaceDialog : Form
-	{
+    public class ArgReplaceDialog : Form
+    {
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Panel bottomPanel;
         private System.Windows.Forms.Button cancelButton;
@@ -24,7 +24,7 @@ namespace FlashDevelop.Dialogs
         public System.String text;
 
         public ArgReplaceDialog(String text, Regex regex)
-		{
+        {
             this.text = text;
             this.regex = regex;
             this.InitializeComponent();
@@ -150,38 +150,38 @@ namespace FlashDevelop.Dialogs
         /// Create arg editor controls to edit arguments
         /// </summary>
         private void InitializeInterface()
-		{
+        {
             String value;
             String argument;
             ArgEditor argEditor;
             Match match = this.regex.Match(this.text);
-			while (match.Success)
-			{
+            while (match.Success)
+            {
                 argument = match.Groups[1].Value;
                 if (!argsPanel.Controls.ContainsKey(argument))
-				{
-					value = "";
-					if (match.Groups.Count == 3) value = match.Groups[2].Value;
+                {
+                    value = "";
+                    if (match.Groups.Count == 3) value = match.Groups[2].Value;
                     argEditor = new ArgEditor(argument, value.Split(",".ToCharArray()));
                     argEditor.Name = argument;
                     argsPanel.Controls.Add(argEditor);
-				}
-				match = match.NextMatch();
-			}
-		}
+                }
+                match = match.NextMatch();
+            }
+        }
 
         /// <summary>
         /// Build argDictionary for arg/value lookup
         /// </summary>
-		private void BuildDictionary()
-		{
-			ArgEditor argEditor;
-			foreach (Control control in this.argsPanel.Controls)
-			{
+        private void BuildDictionary()
+        {
+            ArgEditor argEditor;
+            foreach (Control control in this.argsPanel.Controls)
+            {
                 argEditor = control as ArgEditor;
-				argDictionary.Add(argEditor.Argument, argEditor.Value);
-			}
-		}
+                argDictionary.Add(argEditor.Argument, argEditor.Value);
+            }
+        }
 
         /// <summary>
         /// Accept dialog...
@@ -195,19 +195,19 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Cancel dialog...
         /// </summary>
-		private void CancelButtonClick(Object sender, EventArgs e)
-		{
+        private void CancelButtonClick(Object sender, EventArgs e)
+        {
             this.text = null;
             this.Close();
-		}
+        }
 
         /// <summary>
         /// Select first arg editor when form recieves focus
         /// </summary>
-		private void OnDialogActivated(Object sender, EventArgs e)
-		{
+        private void OnDialogActivated(Object sender, EventArgs e)
+        {
             this.argsPanel.Controls[0].Focus();
-		}
+        }
 
         #endregion
 

@@ -237,7 +237,7 @@ namespace ProjectManager
             pluginUI.ImportProject += delegate { ImportProject(); };
             pluginUI.Rename += fileActions.Rename;
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
-            pluginUI.TreeBar.Synchronize.Click += delegate { TreeSyncToCurrentFile(); };
+            pluginUI.TreeBar.Synchronize.Click += delegate { ToggleTrackActiveDocument(); };
             pluginUI.TreeBar.SynchronizeMain.Click += delegate { TreeSyncToMainFile(); };
             pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(); };
             pluginUI.TreeBar.RefreshSelected.Click += delegate { TreeRefreshSelectedNode(); };
@@ -404,7 +404,7 @@ namespace ProjectManager
 
                 case EventType.FileOpening:
                     // if this is a project file, we can handle it ourselves
-                    if (FileInspector.IsProject(te.Value))
+                    if (FileInspector.IsProject(te.Value) || ProjectCreator.IsKnownProject(Path.GetExtension(te.Value).ToLower()))
                     {
                         te.Handled = true;
                         OpenProjectSilent(te.Value);
@@ -573,7 +573,7 @@ namespace ProjectManager
             }
             else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectTree.LocateActiveFile"))
             {
-                TreeSyncToCurrentFile();
+                ToggleTrackActiveDocument();
             }
 
             // Handle tree-level simple shortcuts like copy/paste/del
@@ -694,8 +694,12 @@ namespace ProjectManager
             prefs.ExpandedPaths = Tree.ExpandedPaths;
             prefs.DebugMode = project.TraceEnabled;
             prefs.TargetBuild = project.TargetBuild;
-            
-            if (!PluginBase.MainForm.ClosingEntirely) SaveProjectSession();
+
+            if (!PluginBase.MainForm.ClosingEntirely)
+            {
+                SaveProjectSession();
+                menus.CloseProject();
+            }
 
             activeProject = null;
             if (projectResources != null)
@@ -1594,10 +1598,20 @@ namespace ProjectManager
             }
         }
 
+        private void ToggleTrackActiveDocument()
+        {
+            bool newValue = !Settings.TrackActiveDocument;
+            pluginUI.TreeBar.Synchronize.Checked = newValue;
+            Settings.TrackActiveDocument = newValue;
+
+            if (newValue)
+                TreeSyncToCurrentFile();
+        }
+
         private void TreeSyncToCurrentFile()
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (doc != null && doc.IsEditable && !doc.IsUntitled)
+            if (activeProject != null && doc != null && doc.IsEditable && !doc.IsUntitled)
             {
                 Tree.Select(doc.FileName);
                 Tree.SelectedNode.EnsureVisible();

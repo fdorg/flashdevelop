@@ -1,7 +1,11 @@
 @echo off
+
+:: Set working dir
+cd %~dp0 & cd ..
+
 set PAUSE_ERRORS=1
 call bat\SetupSDK.bat
-call bat\SetupApplication.bat
+call bat\SetupApp.bat
 
 :target
 goto desktop
@@ -21,12 +25,11 @@ set SCREEN_SIZE=NexusOne
 echo.
 echo Starting AIR Debug Launcher with screen size '%SCREEN_SIZE%'
 echo.
-echo (hint: edit 'Run.bat' to test on device or change screen size)
+echo (hint: edit 'bat\RunApp.bat' to test on device or change screen size)
 echo.
 adl -screensize %SCREEN_SIZE% "%APP_XML%" "%APP_DIR%"
 if errorlevel 1 goto end
 goto endNoPause
-
 
 :ios-debug
 echo.
@@ -106,3 +109,4 @@ echo Installing the app on the device failed
 pause
 
 :endNoPause
+

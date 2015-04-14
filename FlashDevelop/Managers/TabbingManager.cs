@@ -17,7 +17,7 @@ namespace FlashDevelop.Managers
         static TabbingManager()
         {
             TabTimer = new Timer();
-			TabTimer.Interval = 100;
+            TabTimer.Interval = 100;
             TabTimer.Tick += new EventHandler(OnTabTimer);
             TabHistory = new List<ITabbedDocument>();
             SequentialIndex = 0;

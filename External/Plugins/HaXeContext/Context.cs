@@ -208,6 +208,8 @@ namespace HaXeContext
         public override void UserRefreshRequest()
         {
             haxelibsCache.Clear();
+            HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
+            if (proj != null) proj.UpdateVars(false);
         }
 
         /// <summary>
@@ -864,11 +866,11 @@ namespace HaXeContext
         }
 
         /// <summary>
-		/// Retrieves a class model from its name
-		/// </summary>
-		/// <param name="cname">Class (short or full) name</param>
-		/// <param name="inClass">Current file</param>
-		/// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
+        /// Retrieves a class model from its name
+        /// </summary>
+        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="inClass">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // unknown type

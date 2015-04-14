@@ -5,7 +5,7 @@ using System.Windows.Forms;
 namespace PluginCore.Managers
 {
     public class TraceManager
-	{
+    {
         private static Boolean synchronizing;
         private static Int32 MAX_QUEUE = 1000;
         private static List<TraceItem> traceLog;
@@ -31,8 +31,8 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-		/// Adds a new entry to the log
-		/// </summary>
+        /// Adds a new entry to the log
+        /// </summary>
         public static void Add(String message, Int32 state)
         {
             Add(new TraceItem(message, state));
@@ -133,7 +133,7 @@ namespace PluginCore.Managers
             get { return traceLog.AsReadOnly(); }
         }
 
-	}
+    }
 
     public class TraceItem
     {

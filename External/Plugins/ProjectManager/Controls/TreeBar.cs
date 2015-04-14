@@ -1,20 +1,17 @@
-using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Windows.Forms;
 using PluginCore.Localization;
-using ProjectManager.Controls.TreeView;
-using System.Drawing.Drawing2D;
 using System.Drawing;
 using PluginCore.Helpers;
 using PluginCore;
+using PluginCore.Controls;
+using ProjectManager.Controls.TreeView;
 
 namespace ProjectManager.Controls
 {
     /// <summary>
     /// Tree view top toolbar
     /// </summary>
-    public class TreeBar : ToolStrip
+    public class TreeBar : ToolStripEx
     {
         public ToolStripButton ShowHidden;
         public ToolStripButton RefreshSelected;
@@ -52,6 +49,7 @@ namespace ProjectManager.Controls
             Synchronize = new ToolStripButton(Icons.SyncToFile.Img);
             Synchronize.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
             Synchronize.Padding = new Padding(0);
+            Synchronize.Checked = PluginMain.Settings.TrackActiveDocument;
             PluginBase.MainForm.RegisterShortcutItem("ProjectTree.LocateActiveFile", Keys.Shift | Keys.Alt | Keys.L);
 
             SynchronizeMain = new ToolStripButton(Icons.ActionScriptCompile.Img);

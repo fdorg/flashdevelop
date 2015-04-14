@@ -1,8 +1,10 @@
+:: Set working dir
+cd %~dp0 & cd ..
+
 :user_configuration
 
 :: Path to Flex SDK
 set FLEX_SDK=$(FlexSDK)
-
 
 :validation
 if not exist "%FLEX_SDK%\bin" goto flexsdk
@@ -19,4 +21,3 @@ exit
 
 :succeed
 set PATH=%FLEX_SDK%\bin;%PATH%
-

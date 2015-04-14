@@ -12,32 +12,32 @@ using PluginCore.Controls;
 
 namespace ProjectManager.Controls
 {
-	public class BuildEventDialog : SmartForm
-	{
-		Project project;
-		BuildEventVars vars;
+    public class BuildEventDialog : SmartForm
+    {
+        Project project;
+        BuildEventVars vars;
 
-		#region Windows Form Designer
+        #region Windows Form Designer
 
-		private System.Windows.Forms.StatusBar statusBar;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.ListView listView;
-		private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Button okButton;
-		private System.Windows.Forms.Splitter splitter1;
-		private System.Windows.Forms.ColumnHeader nameColumn;
-		private System.Windows.Forms.ColumnHeader valueColumn;
-		private System.Windows.Forms.TextBox textBox;
-		private System.Windows.Forms.ToolTip toolTip;
-		private System.ComponentModel.IContainer components;
-		private System.Windows.Forms.Button insertButton;
+        private System.Windows.Forms.StatusBar statusBar;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ListView listView;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.ColumnHeader nameColumn;
+        private System.Windows.Forms.ColumnHeader valueColumn;
+        private System.Windows.Forms.TextBox textBox;
+        private System.Windows.Forms.ToolTip toolTip;
+        private System.ComponentModel.IContainer components;
+        private System.Windows.Forms.Button insertButton;
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             this.statusBar = new System.Windows.Forms.StatusBar();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -181,20 +181,20 @@ namespace ProjectManager.Controls
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
-		}
-		#endregion
+        }
+        #endregion
 
-		public BuildEventDialog(Project project)
-		{
+        public BuildEventDialog(Project project)
+        {
             InitializeComponent();
             InitializeLocalization();
             this.FormGuid = "ada69d37-2ec0-4484-b113-72bfeab2f239";
             this.Font = PluginCore.PluginBase.Settings.DefaultFont;
 
-			this.project = project;
+            this.project = project;
             this.vars = new BuildEventVars(project);
-			foreach (BuildEventInfo info in vars.GetVars()) Add(info);
-		}
+            foreach (BuildEventInfo info in vars.GetVars()) Add(info);
+        }
 
         public void InitializeLocalization()
         {
@@ -206,71 +206,71 @@ namespace ProjectManager.Controls
             this.Text = " " + TextHelper.GetString("Title.CommandLineBuilder");
         }
 
-		public string CommandLine
-		{
-			get { return textBox.Text; }
-			set { textBox.Text = value; }
-		}
+        public string CommandLine
+        {
+            get { return textBox.Text; }
+            set { textBox.Text = value; }
+        }
 
-		private void Add(BuildEventInfo info)
-		{
-			ListViewItem item = new ListViewItem(info.Name);
-			item.SubItems.Add(info.Value);
-			item.Tag = info;
-			listView.Items.Add(item);
-		}
+        private void Add(BuildEventInfo info)
+        {
+            ListViewItem item = new ListViewItem(info.Name);
+            item.SubItems.Add(info.Value);
+            item.Tag = info;
+            listView.Items.Add(item);
+        }
 
-		private void textBox_TextChanged(object sender, System.EventArgs e)
-		{
-			okButton.Enabled = true;
-		}
+        private void textBox_TextChanged(object sender, System.EventArgs e)
+        {
+            okButton.Enabled = true;
+        }
 
-		private void listView_DoubleClick(object sender, System.EventArgs e)
-		{
-			if (listView.SelectedItems.Count > 0)
-				DoInsert();
-		}
+        private void listView_DoubleClick(object sender, System.EventArgs e)
+        {
+            if (listView.SelectedItems.Count > 0)
+                DoInsert();
+        }
 
-		private void insertButton_Click(object sender, System.EventArgs e)
-		{
-			DoInsert();
-		}
+        private void insertButton_Click(object sender, System.EventArgs e)
+        {
+            DoInsert();
+        }
 
-		private void DoInsert()
-		{
-			BuildEventInfo info = listView.SelectedItems[0].Tag as BuildEventInfo;
-			
-			textBox.Focus();
-			SendKeys.Send(info.SendKeysName);
-		}
+        private void DoInsert()
+        {
+            BuildEventInfo info = listView.SelectedItems[0].Tag as BuildEventInfo;
+            
+            textBox.Focus();
+            SendKeys.Send(info.SendKeysName);
+        }
 
-		private void listView_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			insertButton.Enabled = (listView.SelectedItems.Count > 0);
-		}
+        private void listView_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            insertButton.Enabled = (listView.SelectedItems.Count > 0);
+        }
 
-		protected override void OnResize(EventArgs e)
-		{
-			base.OnResize(e);
-			valueColumn.Width = listView.Width - 10 - nameColumn.Width;
-		}
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            valueColumn.Width = listView.Width - 10 - nameColumn.Width;
+        }
 
-		private void listView_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			ListViewItem item = listView.GetItemAt(e.X,e.Y);
-			
-			if (item != null && e.X >= nameColumn.Width)
-			{
-				BuildEventInfo info = item.Tag as BuildEventInfo;
-				Graphics g = listView.CreateGraphics();
-				if (g.MeasureString(info.Value,listView.Font).Width > valueColumn.Width)
-				{
-					toolTip.SetToolTip(listView,info.Value);
-					return;
-				}
-			}
+        private void listView_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            ListViewItem item = listView.GetItemAt(e.X,e.Y);
+            
+            if (item != null && e.X >= nameColumn.Width)
+            {
+                BuildEventInfo info = item.Tag as BuildEventInfo;
+                Graphics g = listView.CreateGraphics();
+                if (g.MeasureString(info.Value,listView.Font).Width > valueColumn.Width)
+                {
+                    toolTip.SetToolTip(listView,info.Value);
+                    return;
+                }
+            }
 
-			toolTip.SetToolTip(listView,"");
-		}
-	}
+            toolTip.SetToolTip(listView,"");
+        }
+    }
 }

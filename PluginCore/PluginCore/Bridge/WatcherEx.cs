@@ -44,6 +44,26 @@ namespace PluginCore.Bridge
             }
         }
 
+        #region Tracing
+
+        static bool errorDone = false;
+        public void TraceError()
+        {
+            if (errorDone) return;
+            else errorDone = true;
+            TraceManager.AddAsync("Unable to connect to FlashDevelop Bridge.");
+        }
+
+        static bool okDone = false;
+        public void TraceOk()
+        {
+            if (okDone) return;
+            else okDone = true;
+            TraceManager.AddAsync("Connected successfully to FlashDevelop Bridge.");
+        }
+
+        #endregion
+
         #region FSW emulation
 
         public event FileSystemEventHandler Created;
@@ -63,17 +83,17 @@ namespace PluginCore.Bridge
                     bridge = new BridgeClient();
                     if (!bridge.Connected)
                     {
-                        TraceManager.AddAsync("Unable to connect to FlashDevelop Mac Bridge");
                         enabled = false;
                         bridge = null;
+                        TraceError();
                     }
                     else
                     {
                         if (Directory.Exists(path) && !path.EndsWith("\\")) path += "\\";
-                        TraceManager.AddAsync("Connected: " + path + " " + filter);
                         bridge.DataReceived += new DataReceivedEventHandler(bridge_DataReceived);
                         if (filter == null) bridge.Send("watch:" + path);
                         else bridge.Send("watch:" + Path.Combine(path, filter));
+                        TraceOk();
                     }
                 }
                 else if (bridge != null)
@@ -94,14 +114,12 @@ namespace PluginCore.Bridge
 
         void bridge_DataReceived(object sender, DataReceivedEventArgs e)
         {
-            TraceManager.AddAsync("changed: " + e.Text);
             string fullPath = e.Text;
             if (!fullPath.EndsWith("\\")) fullPath += '\\';
             if (fullPath.Length < 3) return;
             string folder = Path.GetDirectoryName(fullPath);
             string name = Path.GetFileName(fullPath);
-            if (Changed != null) 
-                Changed(this, new FileSystemEventArgs(WatcherChangeTypes.Changed, folder, name));
+            if (Changed != null) Changed(this, new FileSystemEventArgs(WatcherChangeTypes.Changed, folder, name));
         }
 
         #endregion
@@ -154,4 +172,5 @@ namespace PluginCore.Bridge
         #endregion
 
     }
+
 }

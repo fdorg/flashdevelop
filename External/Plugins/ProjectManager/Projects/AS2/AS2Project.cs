@@ -80,24 +80,24 @@ namespace ProjectManager.Projects.AS2
 
         #region Load/Save
 
-		public static AS2Project Load(string path)
-		{
-			AS2ProjectReader reader = new AS2ProjectReader(path);
+        public static AS2Project Load(string path)
+        {
+            AS2ProjectReader reader = new AS2ProjectReader(path);
 
-			try
-			{
-				return reader.ReadProject();
-			}
-			catch (System.Xml.XmlException exception)
-			{
-				string format = string.Format("Error in XML Document line {0}, position {1}.",
-					exception.LineNumber,exception.LinePosition);
-				throw new Exception(format,exception);
-			}
-			finally { reader.Close(); }
-		}
+            try
+            {
+                return reader.ReadProject();
+            }
+            catch (System.Xml.XmlException exception)
+            {
+                string format = string.Format("Error in XML Document line {0}, position {1}.",
+                    exception.LineNumber,exception.LinePosition);
+                throw new Exception(format,exception);
+            }
+            finally { reader.Close(); }
+        }
 
-		public override void Save()
+        public override void Save()
         {
             SaveAs(ProjectPath);
         }
@@ -108,7 +108,7 @@ namespace ProjectManager.Projects.AS2
             try
             {
                 AS2ProjectWriter writer = new AS2ProjectWriter(this, fileName);
-				writer.WriteProject();
+                writer.WriteProject();
                 writer.Flush();
                 writer.Close();
             }
@@ -116,8 +116,8 @@ namespace ProjectManager.Projects.AS2
             {
                 MessageBox.Show(ex.Message, "IO Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-		}
+        }
 
-		#endregion
+        #endregion
     }
 }

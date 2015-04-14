@@ -2332,6 +2332,14 @@
   <data name="FlashDevelop.Title.SaveFileDialog" xml:space="preserve">
     <value>保存文件</value>
   </data>
+  <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
+    <value>Remember extension</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
+    <value>Always use this syntax for files with this extension?</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
   <data name="ProjectManager.Title.OpenProjectDialog" xml:space="preserve">
     <value>打开项目</value>
   </data>
@@ -3729,8 +3737,8 @@
     <value>错误行:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Locate Active Document</value>
-    <comment>Modified after 4.7.0</comment>
+    <value>Track Active Document</value>
+    <comment>Modified after 4.7.2</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>
@@ -5857,5 +5865,53 @@
   <data name="FlashDevelop.Description.CheckForUpdates" xml:space="preserve">
     <value>Sets how often FlashDevelop checks for updates.</value>
     <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.ConsistentEOLs" xml:space="preserve">
+    <value>Consistent EOLs</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.FormatCode" xml:space="preserve">
+    <value>Format Code</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.OpenFiles" xml:space="preserve">
+    <value>Open Files</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.ProjectSources" xml:space="preserve">
+    <value>Project Sources</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Label.BatchProcess" xml:space="preserve">
+    <value>Batch Process...</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Title.BatchProcessDialog" xml:space="preserve">
+    <value>Batch Process</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.HighlightMarkers" xml:space="preserve">
+    <value>List of markers that highlight the message with the specified log level color.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.Level" xml:space="preserve">
+    <value>The log level that the line should be colored to.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.Marker" xml:space="preserve">
+    <value>Highlight marker that marks the line to be colored.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.UseLegacyColoring" xml:space="preserve">
+    <value>Use legacy coloring state format parsed from the message ('2:message').</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Description.DisableMoveRefactoring" xml:space="preserve">
+    <value>Disables the move refactoring of files and folders.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="HighlightMatchingWordsDelay" xml:space="preserve">
+    <value>The delay in milliseconds after the word match highlight should be shown.</value>
+    <comment>Added after 4.7.2</comment>
   </data>
 </root>

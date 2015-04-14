@@ -31,7 +31,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.TextBox snippetNameTextBox;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Collections.Generic.Dictionary<String, String[]> snippets;
-        private System.Windows.Forms.FolderBrowserDialog browseDialog;
+        private Ookii.Dialogs.VistaFolderBrowserDialog browseDialog;
         private System.Windows.Forms.ColumnHeader columnHeader;
         private System.Windows.Forms.ComboBox insertComboBox;
         private System.Windows.Forms.Button deleteButton;
@@ -74,7 +74,7 @@ namespace FlashDevelop.Dialogs
             this.saveButton = new System.Windows.Forms.Button();
             this.insertLabel = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.browseDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.browseDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();
             this.languageDropDown = new System.Windows.Forms.ComboBox();
             this.closeButton = new System.Windows.Forms.Button();
             this.insertComboBox = new System.Windows.Forms.ComboBox();

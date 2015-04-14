@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Collections.Generic;
@@ -12,9 +11,17 @@ namespace AppMan
     public class Win32
     {
         /// <summary>
-        /// Tells if we are running on Mono runtime
+        /// Public static props
         /// </summary>
-        public static Boolean IsRunningOnMono = Type.GetType("Mono.Runtime") != null;
+        public static Boolean IsRunningOnMono;
+        public static Int32 HWND_BROADCAST = 0xffff;
+        public static Int32 WM_SHOWME;
+
+        static Win32()
+        {
+            IsRunningOnMono = Type.GetType("Mono.Runtime") != null;
+            if (IsRunningOnMono) WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
+        }
 
         #region Externs
 
@@ -25,10 +32,16 @@ namespace AppMan
         public static extern IntPtr SendMessage(IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp);
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern uint GetFullPathName(string lpFileName, uint nBufferLength, StringBuilder lpBuffer, IntPtr mustBeNull);
+        internal static extern UInt32 GetFullPathName(String lpFileName, UInt32 nBufferLength, StringBuilder lpBuffer, IntPtr mustBeNull);
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern SafeFileHandle CreateFile(string lpFileName, EFileAccess dwDesiredAccess, uint dwShareMode, IntPtr lpSecurityAttributes, uint dwCreationDisposition, uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+        internal static extern SafeFileHandle CreateFile(String lpFileName, EFileAccess dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile);
+        
+        [DllImport("user32.dll")]
+        public static extern Boolean PostMessage(IntPtr hwnd, Int32 msg, IntPtr wparam, IntPtr lparam);
+
+        [DllImport("user32.dll")]
+        public static extern Int32 RegisterWindowMessage(String message);
 
         #endregion
 

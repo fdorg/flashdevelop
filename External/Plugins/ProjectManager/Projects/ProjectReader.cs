@@ -3,26 +3,27 @@ using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using System.Xml;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ProjectManager.Projects
 {
-	public class ProjectReader : XmlTextReader
-	{
-		Project project;
+    public class ProjectReader : XmlTextReader
+    {
+        Project project;
         protected int version;
 
-		public ProjectReader(string filename, Project project) : base(filename)
-		{
+        public ProjectReader(string filename, Project project) : base(filename)
+        {
             this.project = project;
-			WhitespaceHandling = WhitespaceHandling.None;
-		}
+            WhitespaceHandling = WhitespaceHandling.None;
+        }
 
         protected Project Project { get { return project; } }
 
-		public virtual Project ReadProject()
-		{
-			MoveToContent();
+        public virtual Project ReadProject()
+        {
+            MoveToContent();
             ProcessRootNode();
 
             while (Read())
@@ -30,8 +31,8 @@ namespace ProjectManager.Projects
 
             Close();
             PostProcess();
-			return project;
-		}
+            return project;
+        }
 
         protected virtual void PostProcess()
         {
@@ -124,97 +125,104 @@ namespace ProjectManager.Projects
             ReadEndElement();
         }
 
-		public void ReadClasspaths()
-		{
-			ReadStartElement("classpaths");
-			ReadPaths("class",project.Classpaths);
-			ReadEndElement();
-		}
+        public void ReadClasspaths()
+        {
+            ReadStartElement("classpaths");
+            ReadPaths("class",project.Classpaths);
+            ReadEndElement();
+        }
 
-		public void ReadCompileTargets()
-		{
-			ReadStartElement("compileTargets");
-			ReadPaths("compile",project.CompileTargets);
-			ReadEndElement();
-		}
+        public void ReadCompileTargets()
+        {
+            ReadStartElement("compileTargets");
+            ReadPaths("compile",project.CompileTargets);
+            ReadEndElement();
+        }
 
-		public void ReadHiddenPaths()
-		{
-			ReadStartElement("hiddenPaths");
-			ReadPaths("hidden",project.HiddenPaths);
-			ReadEndElement();
-		}
+        public void ReadHiddenPaths()
+        {
+            ReadStartElement("hiddenPaths");
+            ReadPaths("hidden",project.HiddenPaths);
+            ReadEndElement();
+        }
 
-		public void ReadPreBuildCommand()
-		{
-			if (!IsEmptyElement)
-			{
-				ReadStartElement("preBuildCommand");
-				project.PreBuildEvent = ReadString().Trim();
-				ReadEndElement();
-			}
-		}
+        public void ReadPreBuildCommand()
+        {
+            if (!IsEmptyElement)
+            {
+                ReadStartElement("preBuildCommand");
+                project.PreBuildEvent = ReadString().Trim();
+                ReadEndElement();
+            }
+        }
 
-		public void ReadPostBuildCommand()
-		{
-			project.AlwaysRunPostBuild = Convert.ToBoolean(GetAttribute("alwaysRun"));
+        public void ReadPostBuildCommand()
+        {
+            project.AlwaysRunPostBuild = Convert.ToBoolean(GetAttribute("alwaysRun"));
 
-			if (!IsEmptyElement)
-			{
-				ReadStartElement("postBuildCommand");
-				project.PostBuildEvent = ReadString().Trim();
-				ReadEndElement();
-			}
-		}
+            if (!IsEmptyElement)
+            {
+                ReadStartElement("postBuildCommand");
+                project.PostBuildEvent = ReadString().Trim();
+                ReadEndElement();
+            }
+        }
 
-		public void ReadProjectOptions()
-		{
-			ReadStartElement("options");
-			while (Name == "option")
-			{
-				MoveToFirstAttribute();
-				switch (Name)
-				{
-					case "showHiddenPaths": project.ShowHiddenPaths = BoolValue; break;
-					case "testMovie":
+        public void ReadProjectOptions()
+        {
+            ReadStartElement("options");
+            while (Name == "option")
+            {
+                MoveToFirstAttribute();
+                switch (Name)
+                {
+                    case "showHiddenPaths": project.ShowHiddenPaths = BoolValue; 
+                        break;
 
+                    case "testMovie":
                         // Be tolerant of unknown strings (older .fdp projects might have these)
-                        List<string> acceptableValues 
-                            = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
+                        List<string> acceptableValues  = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
+                        if (acceptableValues.Contains(Value)) project.TestMovieBehavior = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
+                        else project.TestMovieBehavior = TestMovieBehavior.NewTab;
+                        break;
 
-                        if (acceptableValues.Contains(Value))
-                            project.TestMovieBehavior
-                                = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
-                        else
-                            project.TestMovieBehavior = TestMovieBehavior.NewTab;
-						break;
-                    case "testMovieCommand": project.TestMovieCommand = Value; break;
-				}
-				Read();
-			}
-			ReadEndElement();
-		}
+                    case "defaultBuildTargets":
+                        if (!String.IsNullOrEmpty(Value.Trim()) && Value.IndexOf(",") > -1)
+                        {
+                            String[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<String>();
+                            project.MovieOptions.DefaultBuildTargets = cleaned;
+                        }
+                        break;
 
-		public bool BoolValue { get { return Convert.ToBoolean(Value); } }
-		public int IntValue { get { return Convert.ToInt32(Value); } }
+                    case "testMovieCommand": project.TestMovieCommand = Value;
+                        break;
+                    
+                }
+                Read();
+            }
+            ReadEndElement();
+        }
 
-		public void ReadPaths(string pathNodeName, IAddPaths paths)
-		{
-			while (Name == pathNodeName)
-			{
-				paths.Add(OSPath(GetAttribute("path")));
-				Read();
-			}
-		}
+        public bool BoolValue { get { return Convert.ToBoolean(Value); } }
+        public int IntValue { get { return Convert.ToInt32(Value); } }
 
-		protected string OSPath(string path)
-		{
+        public void ReadPaths(string pathNodeName, IAddPaths paths)
+        {
+            while (Name == pathNodeName)
+            {
+                paths.Add(OSPath(GetAttribute("path")));
+                Read();
+            }
+        }
+
+        protected string OSPath(string path)
+        {
             if (path != null)
             {
                 path = path.Replace('/', System.IO.Path.DirectorySeparatorChar);
                 path = path.Replace('\\', System.IO.Path.DirectorySeparatorChar);
             }
             return path;
-		}
-	}
+        }
+    }
 }

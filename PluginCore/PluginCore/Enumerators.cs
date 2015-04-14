@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 namespace PluginCore
 {
@@ -101,6 +102,7 @@ namespace PluginCore
         EightBits = 0,
         BigEndian = 1201,
         LittleEndian = 1200,
+        [Browsable(false)]
         UTF32 = 65005,
         UTF8 = 65001,
         UTF7 = 65000

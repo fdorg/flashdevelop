@@ -26,6 +26,7 @@
 	<DownloadingError>Error while downloading file: </DownloadingError>
 	<ExtractingError>Error while extracting file: </ExtractingError>
 	<DeleteDirError>Error while deleting directory: </DeleteDirError>
+	<ChecksumVerifyError>The checksum did not match the file: </ChecksumVerifyError>
 	<!-- Labels -->
 	<SelectLabel>Select:</SelectLabel>
 	<ExploreLabel>Explore...</ExploreLabel>

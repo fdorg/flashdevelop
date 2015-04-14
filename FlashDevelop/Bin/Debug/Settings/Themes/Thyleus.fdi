@@ -24,10 +24,19 @@ ToolStripSeparator.ForeColor=#9D9895
 ToolStripItem.ArrowColor=#474443
 ToolStripItem.TextColor=#363330
 
-VS2005DockPaneStrip.DocTabActiveBorder=#696463
-VS2005DockPaneStrip.DocTabInactiveBorder=#696463
-VS2005DockPaneStrip.ToolBorderColor=#696463
+VS2005DockPaneCaption.ActiveForeColor=#D1D1D1
+VS2005DockPaneCaption.ActiveImageColor=#D1D1D1
+VS2005DockPaneCaption.ImageColor=#D1D1D1
 VS2005DockPaneCaption.BorderColor=#696463
+
+VS2005DockPaneStrip.DocTabActiveBorder=#696463
+VS2005DockPaneStrip.DocTabActiveForeColor=#222222
+VS2005DockPaneStrip.DocTabInactiveBorder=#696463
+VS2005DockPaneStrip.ToolActiveBorderColor=#696463
+VS2005DockPaneStrip.ToolBorderColor=#696463
+VS2005DockPaneStrip.ToolActiveForeColor=#222222
+VS2005DockPaneStrip.ToolSeparatorColor=#F0EFF3
+VS2005DockPaneStrip.ImageColor=#222222
 
 ToolStripMenu.TitleBackColor=#CBC8C5
 ToolStripMenu.TitleBorderColor=#696463

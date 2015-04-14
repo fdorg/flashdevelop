@@ -2,7 +2,7 @@ AIR for Android instructions
 
 1. Configuration:
 
-	- edit 'bat\SetupSDK.bat' for paths to Flex SDK and Android SDK (default should be ok)
+	- edit 'bat\SetupSDK.bat' for paths to Flex SDK and Android SDK (defaults should be ok)
 	
 	- install your device's USB drivers:
 	    http://developer.android.com/sdk/oem-usb.html
@@ -31,12 +31,12 @@ AIR for Android instructions
 6. Running/debugging the application on the device:
 
 	6.a. Build/Debug directly on device
-	- edit 'Run.bat' and change the run target 'goto desktop' by 'goto android-debug'
+	- edit 'bat\RunApp.bat' and change the run target 'goto desktop' by 'goto android-debug'
 	- build & run as usual (Ctrl+Enter or F5) to package, install & run the application on your device
 	
 	6.b. Debug occasionally on device
 	- Debug-build from FlashDevelop (F8)
-	- run 'PackageApp.bat' to package and install a debug version of the application
+	- run 'bat\PackageApp.bat' to package and install a debug version of the application
 	- start FlashDevelop debugger: Debug > Start Remote Session
 	- start the application on device
 	- the application should connect to FlashDevelop interactive debugger as usual
@@ -45,4 +45,4 @@ AIR for Android instructions
 7. Packaging for release:
 
 	- Release-build from FlashDevelop (F8)
-	- run 'PackageApp.bat' and select Android/normal target
+	- run 'bat\PackageApp.bat' and select Android/normal target

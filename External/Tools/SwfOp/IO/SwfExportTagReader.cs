@@ -14,31 +14,31 @@ using System.Collections;
 
 namespace SwfOp.IO
 {
-	/// <summary>
-	/// Specialized SWF parser to extract some specific tags
-	/// </summary>
-	public class SwfExportTagReader: SwfReader
-	{
-		public SwfExportTagReader(Stream stream): base(stream) 
-		{ 
-		}
-		
-		override protected BaseTag ReadTag() 
-		{
-			long posBefore = br.BaseStream.Position;
-			RecordHeader rh = ReadRecordHeader();
-			int offset = (int)(br.BaseStream.Position-posBefore);		
-			br.BaseStream.Position = posBefore;
+    /// <summary>
+    /// Specialized SWF parser to extract some specific tags
+    /// </summary>
+    public class SwfExportTagReader: SwfReader
+    {
+        public SwfExportTagReader(Stream stream): base(stream) 
+        { 
+        }
+        
+        override protected BaseTag ReadTag() 
+        {
+            long posBefore = br.BaseStream.Position;
+            RecordHeader rh = ReadRecordHeader();
+            int offset = (int)(br.BaseStream.Position-posBefore);       
+            br.BaseStream.Position = posBefore;
 
             TagCodeEnum tag = (TagCodeEnum)rh.TagCode;
             //if (tag != TagCodeEnum.End) Console.WriteLine("Tag: " + (TagCodeEnum)rh.TagCode);
             switch (tag)
             {
-				//-- Parse sub-clips
-				case TagCodeEnum.DefineSprite: 
+                //-- Parse sub-clips
+                case TagCodeEnum.DefineSprite: 
                     return ReadDefineSpriteTag();
-									
-				case TagCodeEnum.ExportAssets:
+                                    
+                case TagCodeEnum.ExportAssets:
                 case TagCodeEnum.SymbolClass:
                     return ReadExportTag(offset);
 
@@ -47,7 +47,7 @@ namespace SwfOp.IO
 
                 case TagCodeEnum.DoABC:
                     return new AbcTag(br.ReadBytes(rh.TagLength + offset), offset, false);
-				
+                
                 case TagCodeEnum.FrameLabel:
                     return ReadFrameTag(offset);
 
@@ -71,7 +71,7 @@ namespace SwfOp.IO
                     br.BaseStream.Position = posBefore;
                     return new BaseTag(br.ReadBytes(rh.TagLength + offset), rh.TagCode);*/
                     
-				default:
+                default:
                     // Dump tag
                     /*br.BaseStream.Position += offset;
                     byte b;
@@ -84,9 +84,9 @@ namespace SwfOp.IO
                     Console.WriteLine();
                     br.BaseStream.Position = posBefore;*/
                     return new BaseTag(br.ReadBytes(rh.TagLength+offset), rh.TagCode);
-			}
-				
-		}
+            }
+                
+        }
 
         BaseTag ReadMetaDataTag(int offset)
         {
@@ -101,5 +101,5 @@ namespace SwfOp.IO
             string name = ReadString();
             return new FrameTag(name);
         }
-	}
+    }
 }

@@ -13,27 +13,27 @@ using PluginCore;
 namespace FlashDevelop.Dialogs
 {
     public class AboutDialog : Form
-	{
+    {
         private System.Windows.Forms.Label copyLabel;
         private System.Windows.Forms.LinkLabel versionLabel;
         private System.Windows.Forms.PictureBox imageBox;
 
-		public AboutDialog()
-		{
+        public AboutDialog()
+        {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();
-		}
+        }
 
-		#region Windows Forms Designer Generated Code
+        #region Windows Forms Designer Generated Code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-		public void InitializeComponent() 
+        public void InitializeComponent() 
         {
             this.imageBox = new System.Windows.Forms.PictureBox();
             this.copyLabel = new System.Windows.Forms.Label();
@@ -100,11 +100,11 @@ namespace FlashDevelop.Dialogs
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#region Methods And Event Handlers
+        #region Methods And Event Handlers
 
         /// <summary>
         /// Attaches the image to the imagebox
@@ -135,7 +135,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When user clicks the link, open the Github commit in the browser.
         /// </summary>
-		private void VersionLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        private void VersionLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
         {
             string target = e.Link.LinkData as String;
             if (target != null) System.Diagnostics.Process.Start(target);
@@ -152,13 +152,13 @@ namespace FlashDevelop.Dialogs
             }
         }
 
-		/// <summary>
-		/// Closes the about dialog
-		/// </summary>
+        /// <summary>
+        /// Closes the about dialog
+        /// </summary>
         private void DialogCloseClick(Object sender, EventArgs e)
-		{
-			this.Close();
-		}
+        {
+            this.Close();
+        }
 
         /// <summary>
         /// Shows the about dialog
@@ -169,8 +169,8 @@ namespace FlashDevelop.Dialogs
             aboutDialog.ShowDialog();
         }
 
-		#endregion
+        #endregion
 
-	}
-	
+    }
+    
 }

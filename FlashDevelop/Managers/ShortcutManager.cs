@@ -66,6 +66,28 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
+        /// Gets the specified registered shortcut item
+        /// </summary>
+        public static ToolStripItem GetSecondaryItem(String id)
+        {
+            foreach (ToolStripItem item in SecondaryItems)
+            {
+                String temp = String.Empty;
+                String[] ids = ((ItemData)item.Tag).Id.Split(';');
+                if (ids.Length == 2 && String.IsNullOrEmpty(ids[1]))
+                {
+                    temp = StripBarManager.GetMenuItemId(item);
+                }
+                else if (ids.Length == 2) temp = ids[1];
+                if (!String.IsNullOrEmpty(temp) && temp == id)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Updates the list of all shortcuts
         /// </summary>
         public static void UpdateAllShortcuts()

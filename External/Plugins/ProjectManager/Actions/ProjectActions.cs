@@ -208,7 +208,7 @@ namespace ProjectManager.Actions
             }
 
             // We configure the batch files
-            var configurator = new AirConfigurator { ApplicationSetupBatch = Path.Combine(path, "bat" + s + "SetupApplication.bat") };
+            var configurator = new AirConfigurator { ApplicationSetupBatch = Path.Combine(path, "bat" + s + "SetupApp.bat") };
             configurator.ApplicationSetupParams[AirConfigurator.DescriptorPath] = descriptor;
             configurator.ApplicationSetupParams[AirConfigurator.PackageDir] = Path.GetFileName(Path.GetDirectoryName(project.OutputPath));
             configurator.SetUp();

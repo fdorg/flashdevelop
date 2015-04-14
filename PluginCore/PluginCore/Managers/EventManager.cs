@@ -129,9 +129,9 @@ namespace PluginCore.Managers
         /// Dispatches an event to the registered event handlers
         /// </summary>
         public static void DispatchEvent(Object sender, NotifyEvent e)
-		{
-			try 
-			{
+        {
+            try 
+            {
                 List<EventObject>[] objectList = GetObjectListCollection();
                 for (Int32 i = 0; i < objectList.Length; i++)
                 {
@@ -140,18 +140,18 @@ namespace PluginCore.Managers
                     {
                         EventObject obj = subObjects[j];
                         if ((obj.Mask & e.Type) > 0)
-					    {
+                        {
                             obj.Handler.HandleEvent(sender, e, obj.Priority);
-						    if (e.Handled) return;
-					    }
+                            if (e.Handled) return;
+                        }
                     }
                 }
-			}
-			catch (Exception ex)
-			{
+            }
+            catch (Exception ex)
+            {
                 ErrorManager.ShowError(ex);
-			}
-		}
+            }
+        }
 
         class EventObject
         {

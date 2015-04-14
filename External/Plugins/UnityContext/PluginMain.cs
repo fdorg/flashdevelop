@@ -87,8 +87,8 @@ namespace UnityContext
         #region Required Methods
 
         /// <summary>
-		/// Initializes the plugin
-		/// </summary>
+        /// Initializes the plugin
+        /// </summary>
         public void Initialize()
         {
             this.InitBasics();

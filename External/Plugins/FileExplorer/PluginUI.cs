@@ -17,7 +17,7 @@ using PluginCore;
 
 namespace FileExplorer
 {
-	public class PluginUI : DockPanelControl
+    public class PluginUI : DockPanelControl
     {
         private System.Windows.Forms.ListView fileView;
         private System.Windows.Forms.ToolStrip toolStrip;
@@ -37,7 +37,7 @@ namespace FileExplorer
         private System.Windows.Forms.ColumnHeader sizeHeader;
         private System.Windows.Forms.ColumnHeader typeHeader;
         private System.Windows.Forms.ColumnHeader modifiedHeader;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private Ookii.Dialogs.VistaFolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.ListViewItem highlightedItem;
         private System.Windows.Forms.ImageList imageList;
         private System.Boolean updateInProgress;
@@ -49,25 +49,25 @@ namespace FileExplorer
         private FileSystemWatcher watcher;
         private PluginMain pluginMain;
         
-		public PluginUI(PluginMain pluginMain)
-		{
+        public PluginUI(PluginMain pluginMain)
+        {
             this.pluginMain = pluginMain;
             this.listViewSorter = new ListViewSorter();
-			this.InitializeComponent();
+            this.InitializeComponent();
             this.InitializeGraphics();
             this.InitializeContextMenu();
             this.InitializeLayout();
             this.InitializeTexts();
-		}
-		
-		#region Windows Forms Designer Generated Code
+        }
+        
+        #region Windows Forms Designer Generated Code
 
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() 
+        /// <summary>
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent() 
         {
             this.watcher = new System.IO.FileSystemWatcher();
             this.modifiedHeader = new System.Windows.Forms.ColumnHeader();
@@ -75,7 +75,7 @@ namespace FileExplorer
             this.fileView = new System.Windows.Forms.ListView();
             this.fileHeader = new System.Windows.Forms.ColumnHeader();
             this.sizeHeader = new System.Windows.Forms.ColumnHeader();
-            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.folderBrowserDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.selectedPath = new System.Windows.Forms.ToolStripSpringComboBox();
             this.syncronizeButton = new System.Windows.Forms.ToolStripButton();
@@ -199,9 +199,9 @@ namespace FileExplorer
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-		#endregion
+        #endregion
 
         #region Methods And Event Handlers
 
@@ -288,7 +288,7 @@ namespace FileExplorer
 
         /// <summary>
         /// Initializes the external graphics
-		/// </summary>
+        /// </summary>
         private void InitializeGraphics()
         {
             this.imageList = new ImageList();
@@ -306,6 +306,7 @@ namespace FileExplorer
         {
             this.fileHeader.Text = TextHelper.GetString("Header.Files");
             this.modifiedHeader.Text = TextHelper.GetString("Header.Modified");
+            this.folderBrowserDialog.UseDescriptionForTitle = true;
             this.folderBrowserDialog.Description = TextHelper.GetString("Info.BrowseDescription");
             this.syncronizeButton.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
             this.browseButton.ToolTipText = TextHelper.GetString("ToolTip.Browse");
@@ -329,8 +330,8 @@ namespace FileExplorer
         }
 
         /// <summary>
-		/// Browses to the selected path
-		/// </summary>
+        /// Browses to the selected path
+        /// </summary>
         public void BrowseTo(String path)
         {
             this.PopulateFileView(path);
@@ -1124,9 +1125,9 @@ namespace FileExplorer
         #region Icon Management
 
         /// <summary>
-		/// Ask the shell to feed us the appropriate icon for the given file, but
-		/// first try looking in our cache to see if we've already loaded it.
-		/// </summary>
+        /// Ask the shell to feed us the appropriate icon for the given file, but
+        /// first try looking in our cache to see if we've already loaded it.
+        /// </summary>
         private int ExtractIconIfNecessary(String path)
         {
             Icon icon; Image image;

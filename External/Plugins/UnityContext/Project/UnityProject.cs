@@ -21,24 +21,24 @@ namespace UnityContext
 
         #region Load/Save
 
-		public static UnityProject Load(string path)
-		{
+        public static UnityProject Load(string path)
+        {
             UnityProjectReader reader = new UnityProjectReader(path);
 
-			try
-			{
-				return reader.ReadProject();
-			}
-			catch (System.Xml.XmlException exception)
-			{
-				string format = string.Format("Error in XML Document line {0}, position {1}.",
-					exception.LineNumber,exception.LinePosition);
-				throw new Exception(format,exception);
-			}
-			finally { reader.Close(); }
-		}
+            try
+            {
+                return reader.ReadProject();
+            }
+            catch (System.Xml.XmlException exception)
+            {
+                string format = string.Format("Error in XML Document line {0}, position {1}.",
+                    exception.LineNumber,exception.LinePosition);
+                throw new Exception(format,exception);
+            }
+            finally { reader.Close(); }
+        }
 
-		public override void Save()
+        public override void Save()
         {
             SaveAs(ProjectPath);
         }
@@ -49,7 +49,7 @@ namespace UnityContext
             try
             {
                 UnityProjectWriter writer = new UnityProjectWriter(this, fileName);
-				writer.WriteProject();
+                writer.WriteProject();
                 writer.Flush();
                 writer.Close();
             }
@@ -57,8 +57,8 @@ namespace UnityContext
             {
                 MessageBox.Show(ex.Message, "IO Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-		}
+        }
 
-		#endregion
+        #endregion
     }
 }

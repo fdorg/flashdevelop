@@ -95,50 +95,50 @@ namespace CodeFormatter.InfoCollector
 
         public static int getLastTreePosition(ParserRuleReturnScope tree)
         {
-    	    if (tree.Tree==null)
-    	    {
-    		    if (tree.Stop!=null && tree.Stop is CommonToken)
-    		    {
-    			    return ((CommonToken)tree.Stop).StopIndex+1; //this is necessary for implicit semicolon cases.  You will get an extra CR here
-    		    }
-			    return -1;
-    	    }
-    	    return getLastTreePosition((CommonTree)tree.Tree);
+            if (tree.Tree==null)
+            {
+                if (tree.Stop!=null && tree.Stop is CommonToken)
+                {
+                    return ((CommonToken)tree.Stop).StopIndex+1; //this is necessary for implicit semicolon cases.  You will get an extra CR here
+                }
+                return -1;
+            }
+            return getLastTreePosition((CommonTree)tree.Tree);
         }
 
         //    public static List<String> getTreeListText(ParserRuleReturnScope tree, String delimiter)
         //    {
-        //    	String allText=getTreeText(tree);
-        //    	String[] items=allText.split(delimiter);
-        //    	List<String> results=new ArrayList<String>();
-        //    	for (String item:items)
-        //    	{
-        //    		if (item.length()>0)
-        //    		{
-        //    			results.add(item);
-        //    		}
-        //    	}
-        //    	
-        //    	return results;
+        //      String allText=getTreeText(tree);
+        //      String[] items=allText.split(delimiter);
+        //      List<String> results=new ArrayList<String>();
+        //      for (String item:items)
+        //      {
+        //          if (item.length()>0)
+        //          {
+        //              results.add(item);
+        //          }
+        //      }
+        //      
+        //      return results;
         //    }
 
         private static String getCommonTreeText(CommonTree tree)
         {
-    	    if (tree==null)
-    		    return "";
-    	    IList children=tree.Children;
-    	    if (children==null)
-    	    {
-    		    return tree.Token.Text;
-    	    }
-    	    String buffer="";
-    	    foreach (Object obj in children)
-    	    {
-    		    if (obj is CommonTree)
-    		    {
-    			    buffer += getCommonTreeText((CommonTree)obj);
-    		    }
-    	    }
+            if (tree==null)
+                return "";
+            IList children=tree.Children;
+            if (children==null)
+            {
+                return tree.Token.Text;
+            }
+            String buffer="";
+            foreach (Object obj in children)
+            {
+                if (obj is CommonTree)
+                {
+                    buffer += getCommonTreeText((CommonTree)obj);
+                }
+            }
             return buffer;
         }
 
@@ -147,58 +147,58 @@ namespace CodeFormatter.InfoCollector
             return getCommonTreeText((CommonTree)tree.Tree);
         }
 
-        //	public static ASDocComment findPreviousComment(ParserRuleReturnScope t, CommonTokenStream rawTokens) {
-        //		
-        //		return findPreviousComment(getFirstTreeToken((CommonTree)t.getTree()), rawTokens);
-        //	}
+        //  public static ASDocComment findPreviousComment(ParserRuleReturnScope t, CommonTokenStream rawTokens) {
+        //      
+        //      return findPreviousComment(getFirstTreeToken((CommonTree)t.getTree()), rawTokens);
+        //  }
         //
-        //	public static ASDocComment findPreviousComment(Token tok, CommonTokenStream rawTokens)
-        //	{
-        //		int currentTokenIndex=((CommonToken)tok).getTokenIndex()-1;
-        ////		List<Token> hiddenTokens=new ArrayList<Token>();
-        //		
-        //		//collect all of the hidden tokens since the last non-whitespace token
-        //		while (currentTokenIndex>=0)
-        //		{
-        //			Token t=rawTokens.get(currentTokenIndex);
-        //			if (t.getChannel()==Token.DEFAULT_CHANNEL)
-        //				break; 
-        //			
-        //			if (t.getType()==ASCollectorLexer.COMMENT_MULTILINE && t.getText().startsWith("/**"))
-        //			{
-        //				return new ASDocComment(t);
-        //			}
-        ////			hiddenTokens.add(t);
-        //			currentTokenIndex--;
-        //		}
-        ////		Collections.reverse(hiddenTokens);
-        //		return null;
-        //	}
+        //  public static ASDocComment findPreviousComment(Token tok, CommonTokenStream rawTokens)
+        //  {
+        //      int currentTokenIndex=((CommonToken)tok).getTokenIndex()-1;
+        ////        List<Token> hiddenTokens=new ArrayList<Token>();
+        //      
+        //      //collect all of the hidden tokens since the last non-whitespace token
+        //      while (currentTokenIndex>=0)
+        //      {
+        //          Token t=rawTokens.get(currentTokenIndex);
+        //          if (t.getChannel()==Token.DEFAULT_CHANNEL)
+        //              break; 
+        //          
+        //          if (t.getType()==ASCollectorLexer.COMMENT_MULTILINE && t.getText().startsWith("/**"))
+        //          {
+        //              return new ASDocComment(t);
+        //          }
+        ////            hiddenTokens.add(t);
+        //          currentTokenIndex--;
+        //      }
+        ////        Collections.reverse(hiddenTokens);
+        //      return null;
+        //  }
 
         /*public static ASDocComment findCommentReverse(List<IToken> hiddenTokens)
-	    {
-		    int currentTokenIndex=hiddenTokens.Count-1;
-		
-		    //collect all of the hidden tokens since the last non-whitespace token
-		    loop: while (currentTokenIndex>=0)
-		    {
-			    IToken t=hiddenTokens[currentTokenIndex];
-			    switch (t.Channel)
-			    {
-			    case CHANNEL_MLCOMMENT:
-				    if (t.Text.StartsWith("/**"))
-					    return new ASDocComment(t);
+        {
+            int currentTokenIndex=hiddenTokens.Count-1;
+        
+            //collect all of the hidden tokens since the last non-whitespace token
+            loop: while (currentTokenIndex>=0)
+            {
+                IToken t=hiddenTokens[currentTokenIndex];
+                switch (t.Channel)
+                {
+                case CHANNEL_MLCOMMENT:
+                    if (t.Text.StartsWith("/**"))
+                        return new ASDocComment(t);
                     break loop;
-			    case CHANNEL_WHITESPACE:
-			    case CHANNEL_EOL:
-				    currentTokenIndex--;
-				    break;
-			    default:
-				    break loop;
-			    }
-		    }
-		    return null;
-	    }*/
+                case CHANNEL_WHITESPACE:
+                case CHANNEL_EOL:
+                    currentTokenIndex--;
+                    break;
+                default:
+                    break loop;
+                }
+            }
+            return null;
+        }*/
 
         public static List<IToken> getPostHiddenTokens(IToken tok, CommonTokenStream rawTokens)
         {
@@ -237,23 +237,23 @@ namespace CodeFormatter.InfoCollector
         }
 
         public static List<IToken> getPostHiddenTokens(ParserRuleReturnScope tree, CommonTokenStream rawTokens)
-	    {
-		    if (tree.Tree==null)
-		    {
-			    //I think this only happens with implied semicolons
-			    if (tree.Start is CommonToken && tree.Start!=null)
-			    {
-				    //I think we should always be on at least token 1.  
-				    IToken currentTok=rawTokens.Get(((CommonToken)tree.Start).TokenIndex);
-				    //I go back one token if I am on a non-default channel token so that I can search forward for hidden tokens.
-				    if (currentTok.Channel!=Token.DEFAULT_CHANNEL)
-					    currentTok=rawTokens.Get(((CommonToken)tree.Start).TokenIndex-1);
-				    return getPostHiddenTokens(currentTok, rawTokens);
-			    }
-			    return null;
-		    }
-		    return getPostHiddenTokens(getLastTreeToken((CommonTree)tree.Tree), rawTokens);
-	    }
+        {
+            if (tree.Tree==null)
+            {
+                //I think this only happens with implied semicolons
+                if (tree.Start is CommonToken && tree.Start!=null)
+                {
+                    //I think we should always be on at least token 1.  
+                    IToken currentTok=rawTokens.Get(((CommonToken)tree.Start).TokenIndex);
+                    //I go back one token if I am on a non-default channel token so that I can search forward for hidden tokens.
+                    if (currentTok.Channel!=Token.DEFAULT_CHANNEL)
+                        currentTok=rawTokens.Get(((CommonToken)tree.Start).TokenIndex-1);
+                    return getPostHiddenTokens(currentTok, rawTokens);
+                }
+                return null;
+            }
+            return getPostHiddenTokens(getLastTreeToken((CommonTree)tree.Tree), rawTokens);
+        }
 
 
         public static List<IToken> getHiddenTokens(IToken tok, CommonTokenStream rawTokens, bool crossLineBoundaries, bool filterNone)
@@ -275,8 +275,8 @@ namespace CodeFormatter.InfoCollector
                     if (!crossLineBoundaries)
                         break;
                     tokensSinceLastCR = 0;
-                    //				if (t.getChannel()==ASCollectorParser.CHANNEL_SLCOMMENT)
-                    //					tokensSinceLastCR++;
+                    //              if (t.getChannel()==ASCollectorParser.CHANNEL_SLCOMMENT)
+                    //                  tokensSinceLastCR++;
                     seenCR = true;
                 }
                 else
@@ -323,17 +323,17 @@ namespace CodeFormatter.InfoCollector
             }
 
             //leave leading whitespace associated with the element
-            //		//now, strip off the leading whitespace
-            //		while (results.size()>0)
-            //		{
-            //			Token t=results.get(0);
-            //			if (t.getChannel()==ASCollectorParser.CHANNEL_EOL || t.getChannel()==ASCollectorParser.CHANNEL_WHITESPACE)
-            //			{
-            //				results.remove(0);
-            //				continue;
-            //			}
-            //			break;
-            //		}
+            //      //now, strip off the leading whitespace
+            //      while (results.size()>0)
+            //      {
+            //          Token t=results.get(0);
+            //          if (t.getChannel()==ASCollectorParser.CHANNEL_EOL || t.getChannel()==ASCollectorParser.CHANNEL_WHITESPACE)
+            //          {
+            //              results.remove(0);
+            //              continue;
+            //          }
+            //          break;
+            //      }
             return results;
         }
 

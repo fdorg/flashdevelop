@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using PluginCore.DockPanelSuite;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -20,7 +21,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private interface IHitTest
                 {
                     DockStyle HitTest(Point pt);
-                    DockStyle Status { get;	set;	}
+                    DockStyle Status { get; set;    }
                 }
                 #endregion
 
@@ -164,13 +165,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                     private static Bitmap _bitmapPaneDiamondHotSpot = ScaleHelper.Scale(Resources.DockIndicator_PaneDiamond_Hotspot);
                     private static Bitmap _bitmapPaneDiamondHotSpotIndex = Resources.DockIndicator_PaneDiamond_HotspotIndex;
                     private static HotSpotIndex[] _hotSpots = new HotSpotIndex[]
-			{
-				new HotSpotIndex(1, 0, DockStyle.Top),
-				new HotSpotIndex(0, 1, DockStyle.Left),
-				new HotSpotIndex(1, 1, DockStyle.Fill),
-				new HotSpotIndex(2, 1, DockStyle.Right),
-				new HotSpotIndex(1, 2, DockStyle.Bottom)
-			};
+            {
+                new HotSpotIndex(1, 0, DockStyle.Top),
+                new HotSpotIndex(0, 1, DockStyle.Left),
+                new HotSpotIndex(1, 1, DockStyle.Fill),
+                new HotSpotIndex(2, 1, DockStyle.Right),
+                new HotSpotIndex(1, 2, DockStyle.Bottom)
+            };
                     private static GraphicsPath _displayingGraphicsPath = DrawHelper.CalculateGraphicsPathFromBitmap(_bitmapPaneDiamond);
 
                     public PaneIndicator()
@@ -237,13 +238,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_dragHandler = dragHandler;
                     Controls.AddRange(new Control[] {
-			            PaneDiamond,
-			            PanelLeft,
-			            PanelRight,
-			            PanelTop,
-			            PanelBottom,
-			            PanelFill
-			            });
+                        PaneDiamond,
+                        PanelLeft,
+                        PanelRight,
+                        PanelTop,
+                        PanelBottom,
+                        PanelFill
+                        });
                     Region = new Region(Rectangle.Empty);
                 }
 
@@ -440,11 +441,11 @@ namespace WeifenLuo.WinFormsUI.Docking
                         using (GraphicsPath graphicsPath = PaneIndicator.DisplayingGraphicsPath.Clone() as GraphicsPath)
                         {
                             Point[] pts = new Point[]
-						{
-							new Point(PaneDiamond.Left, PaneDiamond.Top),
-							new Point(PaneDiamond.Right, PaneDiamond.Top),
-							new Point(PaneDiamond.Left, PaneDiamond.Bottom)
-						};
+                        {
+                            new Point(PaneDiamond.Left, PaneDiamond.Top),
+                            new Point(PaneDiamond.Right, PaneDiamond.Top),
+                            new Point(PaneDiamond.Left, PaneDiamond.Bottom)
+                        };
                             using (Matrix matrix = new Matrix(PaneDiamond.ClientRectangle, pts))
                             {
                                 graphicsPath.Transform(matrix);
@@ -818,6 +819,10 @@ namespace WeifenLuo.WinFormsUI.Docking
                     DockPanel panel = Outline.DockTo as DockPanel;
                     panel.UpdateDockWindowZOrder(Outline.Dock, Outline.FlagFullEdge);
                     DragSource.DockTo(panel, Outline.Dock);
+                }
+                if (DragSource is DockContentHandler && ((DockContentHandler)DragSource).Content is ITabbedDocument)
+                {
+                    ((DockContentHandler)DragSource).Content.DockHandler.Activate();
                 }
             }
         }

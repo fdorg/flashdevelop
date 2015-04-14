@@ -9,13 +9,13 @@ namespace ScintillaNet.Configuration
     {
         [XmlAttributeAttribute("key")]
         public int key;
-		
-		[XmlAttributeAttribute("name")]
-		public string name;
+        
+        [XmlAttributeAttribute("name")]
+        public string name;
 
-		[XmlAttributeAttribute("style-bits")]
-		public int stylebits;
-		
-	}
+        [XmlAttributeAttribute("style-bits")]
+        public int stylebits;
+        
+    }
     
 }

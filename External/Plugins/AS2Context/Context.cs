@@ -18,11 +18,11 @@ using PluginCore.Helpers;
 
 namespace AS2Context
 {
-	/// <summary>
-	/// Actionscript2 context
-	/// </summary>
-	public class Context: ASContext
-	{
+    /// <summary>
+    /// Actionscript2 context
+    /// </summary>
+    public class Context: ASContext
+    {
         #region regular_expressions_definitions
         static readonly protected Regex re_CMD_BuildCommand =
             new Regex("@mtasc[\\s]+(?<params>.*)", RegexOptions.Compiled | RegexOptions.Multiline);
@@ -58,7 +58,7 @@ namespace AS2Context
         {
         }
 
-		public Context(AS2Settings initSettings)
+        public Context(AS2Settings initSettings)
         {
             as2settings = initSettings;
 
@@ -130,14 +130,14 @@ namespace AS2Context
 
             settings = initSettings;
             //BuildClassPath(); // defered to first use
-		}
-		#endregion
-		
-		#region classpath management
-		/// <summary>
-		/// Classpathes & classes cache initialisation
-		/// </summary>
-		public override void BuildClassPath()
+        }
+        #endregion
+        
+        #region classpath management
+        /// <summary>
+        /// Classpathes & classes cache initialisation
+        /// </summary>
+        public override void BuildClassPath()
         {
             ReleaseClasspath();
             started = true;
@@ -150,16 +150,16 @@ namespace AS2Context
                 contextSetup.Version = as2settings.DefaultFlashVersion + ".0";
             }
 
-			// external version definition
+            // external version definition
             platform = contextSetup.Platform;
             majorVersion = as2settings.DefaultFlashVersion;
             minorVersion = 0;
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
-			
+            
             //
-			// Class pathes
+            // Class pathes
             //
-			classPath = new List<PathModel>();
+            classPath = new List<PathModel>();
             
             // MTASC
             string mtascPath = PluginBase.CurrentProject != null
@@ -170,9 +170,9 @@ namespace AS2Context
             string path;
             if ((as2settings.UseMtascIntrinsic || String.IsNullOrEmpty(as2settings.MMClassPath))
                 && !String.IsNullOrEmpty(mtascPath) && System.IO.Directory.Exists(mtascPath))
-			{
-				try 
-				{
+            {
+                try 
+                {
                     if (majorVersion == 9)
                     {
                         path = Path.Combine(mtascPath, "std9");
@@ -186,10 +186,10 @@ namespace AS2Context
                     }
                     path = Path.Combine(mtascPath, "std");
                     if (System.IO.Directory.Exists(path)) AddPath(path);
-				}
-				catch {}
-			}
-			// Macromedia/Adobe
+                }
+                catch {}
+            }
+            // Macromedia/Adobe
             if (!String.IsNullOrEmpty(as2settings.MMClassPath) && System.IO.Directory.Exists(as2settings.MMClassPath))
             {
                 if (classPath.Count == 0)
@@ -214,29 +214,29 @@ namespace AS2Context
                 }
             }
 
-			// add external pathes
-			List<PathModel> initCP = classPath;
-			classPath = new List<PathModel>();
-			if (contextSetup.Classpath != null)
-			{
+            // add external pathes
+            List<PathModel> initCP = classPath;
+            classPath = new List<PathModel>();
+            if (contextSetup.Classpath != null)
+            {
                 foreach (string cpath in contextSetup.Classpath) 
                     AddPath(cpath.Trim());
-			}
+            }
 
             // add library
             AddPath(Path.Combine(PathHelper.LibraryDir, "AS2/classes"));
-			// add user pathes from settings
+            // add user pathes from settings
             if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
-			{
-				foreach(string cpath in settings.UserClasspath) AddPath(cpath.Trim());
-			}
-			// add initial pathes
-			foreach(PathModel mpath in initCP) AddPath(mpath);
+            {
+                foreach(string cpath in settings.UserClasspath) AddPath(cpath.Trim());
+            }
+            // add initial pathes
+            foreach(PathModel mpath in initCP) AddPath(mpath);
 
             // parse top-level elements
             InitTopLevelElements();
             if (cFile != null) UpdateTopLevelElements();
-			
+            
             // add current temporaty path
             if (temporaryPath != null)
             {
@@ -245,58 +245,58 @@ namespace AS2Context
                 SetTemporaryPath(tempPath);
             }
             FinalizeClasspath();
-		}
-		
-		/// <summary>
-		/// Delete current class's ASO file
-		/// </summary>
-		public override void RemoveClassCompilerCache()
-		{
+        }
+        
+        /// <summary>
+        /// Delete current class's ASO file
+        /// </summary>
+        public override void RemoveClassCompilerCache()
+        {
             if (as2settings == null) return;
 
             ClassModel pClass = cFile.GetPublicClass();
             if (as2settings.MMClassPath == null || pClass.IsVoid())
-				return;
+                return;
             string package = (cFile.Package.Length > 0) ? cFile.Package + "." : "";
             string packagePath = dirSeparator + package.Replace('.', dirSeparatorChar);
             string file = Path.Combine(as2settings.MMClassPath, "aso") + packagePath + package + pClass.Name + ".aso";
-			try
-			{
-				if (File.Exists(file)) File.Delete(file);
-			}
-			catch {}
-		}
+            try
+            {
+                if (File.Exists(file)) File.Delete(file);
+            }
+            catch {}
+        }
         #endregion
 
         #region class resolution
-		
-		public override ClassModel CurrentClass 
-		{
-			get 
+        
+        public override ClassModel CurrentClass 
+        {
+            get 
             {
                 if (cFile == FileModel.Ignore)
                 {
                     return ClassModel.VoidClass;
                 }
-				if (cClass == null)
-				{
-					cClass = ClassModel.VoidClass;
-					cFile.OutOfDate = true;
-				}
-				// update class
-				if (cFile.OutOfDate)
-				{
-					if (cFile.FileName.Length > 0)
-					{
-						string prevClassName = cClass.Name;
-						UpdateCurrentFile(true);
-					}
-					// update "this" and "super" special vars
-					UpdateTopLevelElements();
-				}
-				return cClass;
-			}
-		}
+                if (cClass == null)
+                {
+                    cClass = ClassModel.VoidClass;
+                    cFile.OutOfDate = true;
+                }
+                // update class
+                if (cFile.OutOfDate)
+                {
+                    if (cFile.FileName.Length > 0)
+                    {
+                        string prevClassName = cClass.Name;
+                        UpdateCurrentFile(true);
+                    }
+                    // update "this" and "super" special vars
+                    UpdateTopLevelElements();
+                }
+                return cClass;
+            }
+        }
 
         /// <summary>
         /// Evaluates the visibility of one given type from another.
@@ -471,14 +471,14 @@ namespace AS2Context
             return false;
         }
 
-		/// <summary>
-		/// Retrieves a class model from its name
-		/// </summary>
-		/// <param name="cname">Class (short or full) name</param>
-		/// <param name="inClass">Current file</param>
-		/// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
+        /// <summary>
+        /// Retrieves a class model from its name
+        /// </summary>
+        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="inClass">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
-		{
+        {
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null) 
                 return ClassModel.VoidClass;
@@ -649,7 +649,7 @@ namespace AS2Context
         /// <returns></returns>
         public override ClassModel GetModel(string package, string cname, string inPackage)
         {
-			if (!settings.LazyClasspathExploration)
+            if (!settings.LazyClasspathExploration)
             {
                 bool testSamePackage = package.Length == 0 && features.hasPackages;
                 bool testModule = package.Length > 0 && features.hasModules;
@@ -689,7 +689,7 @@ namespace AS2Context
                 }
             }
             return ClassModel.VoidClass;
-		}
+        }
 
         private ClassModel LookupClass(string package, string cname, string inPackage, bool testSamePackage, bool testModule, PathModel aPath)
         {
@@ -898,33 +898,33 @@ namespace AS2Context
         }
 
 
-		/// <summary>
-		/// Update Flash intrinsic known vars
-		/// </summary>
-		protected override void UpdateTopLevelElements()
-		{
-		    MemberModel special;
+        /// <summary>
+        /// Update Flash intrinsic known vars
+        /// </summary>
+        protected override void UpdateTopLevelElements()
+        {
+            MemberModel special;
             special = topLevel.Members.Search("this", 0, 0);
-		    if (special != null)
-		    {
+            if (special != null)
+            {
                 if (!cClass.IsVoid()) special.Type = cClass.QualifiedName;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : docType;
-		    }
+            }
             special = topLevel.Members.Search("super", 0, 0);
-		    if (special != null) 
-		    {
+            if (special != null) 
+            {
                 cClass.ResolveExtends();
                 ClassModel extends = cClass.Extends;
-			    if (!extends.IsVoid()) special.Type = extends.QualifiedName;
+                if (!extends.IsVoid()) special.Type = extends.QualifiedName;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : features.objectKey;
-		    }
-		}
-		
-		/// <summary>
-		/// Prepare AS2 intrinsic known vars/methods/classes
-		/// </summary>
-		protected override void InitTopLevelElements()
-		{
+            }
+        }
+        
+        /// <summary>
+        /// Prepare AS2 intrinsic known vars/methods/classes
+        /// </summary>
+        protected override void InitTopLevelElements()
+        {
             string filename = "toplevel.as";
             topLevel = new FileModel(filename);
 
@@ -948,14 +948,14 @@ namespace AS2Context
                     topLevel.Classes = new List<ClassModel>();
                 }
             }
-			// not found
-			else
-			{
+            // not found
+            else
+            {
                 //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
-			}
+            }
 
             if (topLevel.Members.Search("_root", 0, 0) == null)
-			    topLevel.Members.Add(new MemberModel("_root", docType, FlagType.Variable, Visibility.Public));
+                topLevel.Members.Add(new MemberModel("_root", docType, FlagType.Variable, Visibility.Public));
             if (topLevel.Members.Search("_global", 0, 0) == null)
                 topLevel.Members.Add(new MemberModel("_global", features.objectKey, FlagType.Variable, Visibility.Public));
             if (topLevel.Members.Search("this", 0, 0) == null)
@@ -964,10 +964,10 @@ namespace AS2Context
                 topLevel.Members.Add(new MemberModel("super", "", FlagType.Variable, Visibility.Public));
             if (topLevel.Members.Search(features.voidKey, 0, 0) == null)
                 topLevel.Members.Add(new MemberModel(features.voidKey, "", FlagType.Class | FlagType.Intrinsic, Visibility.Public));
-			topLevel.Members.Sort();
+            topLevel.Members.Sort();
             foreach (MemberModel member in topLevel.Members)
                 member.Flags |= FlagType.Intrinsic;
-		}
+        }
 
         /// <summary>
         /// Retrieves a package content
@@ -976,7 +976,7 @@ namespace AS2Context
         /// <param name="lazyMode">Force file system exploration</param>
         /// <returns>Package folders and types</returns>
         public override FileModel ResolvePackage(string name, bool lazyMode)
-		{
+        {
             if (name == null) name = "";
             else if (!re_package.IsMatch(name)) return null;
 
@@ -1044,14 +1044,14 @@ namespace AS2Context
                 }
             }
 
-			// result
+            // result
             if (pModel.Imports.Count > 0 || pModel.Members.Count > 0)
-			{
+            {
                 pModel.Imports.Sort();
-				return pModel;
-			}
-			else return null;
-		}
+                return pModel;
+            }
+            else return null;
+        }
 
         private void PopulateClassesEntries(string package, string path, MemberList memberList)
         {
@@ -1121,7 +1121,7 @@ namespace AS2Context
         /// </summary>
         /// <returns></returns>
         public override MemberList GetVisibleExternalElements()
-		{
+        {
             if (!IsFileValid) return new MemberList();
 
             if (completionCache.IsDirty)
@@ -1243,9 +1243,9 @@ namespace AS2Context
             completionCache.AllTypes = fullList;
             return fullList;
         }
-		#endregion
-		
-		#region command line compiler
+        #endregion
+        
+        #region command line compiler
 
         override public bool CanBuild
         {
@@ -1275,12 +1275,12 @@ namespace AS2Context
             RunCMD(as2settings.MtascCheckParameters);
         }
 
-		/// <summary>
-		/// Run MTASC compiler in the current class's base folder with current classpath
-		/// </summary>
-		/// <param name="append">Additional comiler switches</param>
-		public override void RunCMD(string append)
-		{
+        /// <summary>
+        /// Run MTASC compiler in the current class's base folder with current classpath
+        /// </summary>
+        /// <param name="append">Additional comiler switches</param>
+        public override void RunCMD(string append)
+        {
             if (as2settings == null)
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.FeatureMissing"));
@@ -1288,7 +1288,7 @@ namespace AS2Context
             }
 
             if (!IsFileValid || !File.Exists(CurrentFile))
-				return;
+                return;
             if (CurrentModel.Version != 2)
             {
                 MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidClass"));
@@ -1300,53 +1300,53 @@ namespace AS2Context
                     : PathHelper.ResolvePath(as2settings.GetDefaultSDK().Path);
 
             if (!Directory.Exists(mtascPath) && !File.Exists(mtascPath))
-			{
+            {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidMtascPath"));
-				return;
-			}
-			
-			SetStatusText(settings.CheckSyntaxRunning);
-			
-			try 
-			{
-				// save modified files if needed
-				if (outputFile != null) MainForm.CallCommand("SaveAllModified", null);
-				else MainForm.CallCommand("SaveAllModified", ".as");
-				
-				// prepare command
+                return;
+            }
+            
+            SetStatusText(settings.CheckSyntaxRunning);
+            
+            try 
+            {
+                // save modified files if needed
+                if (outputFile != null) MainForm.CallCommand("SaveAllModified", null);
+                else MainForm.CallCommand("SaveAllModified", ".as");
+                
+                // prepare command
                 string command = mtascPath;
                 if (Path.GetExtension(command) == "") command = Path.Combine(command, "mtasc.exe");
                 else mtascPath = Path.GetDirectoryName(mtascPath);
 
                 command += ";\"" + CurrentFile + "\"";
-				if (append == null || append.IndexOf("-swf-version") < 0)
+                if (append == null || append.IndexOf("-swf-version") < 0)
                     command += " -version "+majorVersion;
-				// classpathes
-				foreach(PathModel aPath in classPath)
+                // classpathes
+                foreach(PathModel aPath in classPath)
                 if (aPath.Path != temporaryPath
                     && !aPath.Path.StartsWith(mtascPath, StringComparison.OrdinalIgnoreCase))
                     command += " -cp \"" + aPath.Path.TrimEnd('\\') + "\"";
-				
-				// run
+                
+                // run
                 string filePath = NormalizePath(cFile.BasePath);
                 if (PluginBase.CurrentProject != null)
                     filePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath); 
                 string workDir = MainForm.WorkingDirectory;
                 MainForm.WorkingDirectory = filePath;
-				MainForm.CallCommand("RunProcessCaptured", command+" "+append);
+                MainForm.CallCommand("RunProcessCaptured", command+" "+append);
                 MainForm.WorkingDirectory = workDir;
-			}
-			catch (Exception ex)
-			{
+            }
+            catch (Exception ex)
+            {
                 ErrorManager.ShowError(ex);
-			}
-		}
-		
-		/// <summary>
-		/// Calls RunCMD with additional parameters taken from the classes @mtasc doc tag
-		/// </summary>
-		public override bool BuildCMD(bool failSilently)
-		{
+            }
+        }
+        
+        /// <summary>
+        /// Calls RunCMD with additional parameters taken from the classes @mtasc doc tag
+        /// </summary>
+        public override bool BuildCMD(bool failSilently)
+        {
             if (as2settings == null)
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.FeatureMissing"));
@@ -1355,23 +1355,23 @@ namespace AS2Context
 
             if (!File.Exists(CurrentFile)) 
                 return false;
-			// check if @mtasc is defined
-			Match mCmd = null;
+            // check if @mtasc is defined
+            Match mCmd = null;
             ClassModel cClass = cFile.GetPublicClass();
             if (IsFileValid && cClass.Comments != null)
                 mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
-			
-			if (CurrentModel.Version != 2 || mCmd == null || !mCmd.Success) 
-			{
-				if (!failSilently)
-				{
-					MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidForQuickBuild"));
-				}
-				return false;
-			}
-			
-			// build command
-			string command = mCmd.Groups["params"].Value.Trim();
+            
+            if (CurrentModel.Version != 2 || mCmd == null || !mCmd.Success) 
+            {
+                if (!failSilently)
+                {
+                    MessageBar.ShowWarning(TextHelper.GetString("Info.InvalidForQuickBuild"));
+                }
+                return false;
+            }
+            
+            // build command
+            string command = mCmd.Groups["params"].Value.Trim();
             try
             {
                 command = Regex.Replace(command, "[\\r\\n]\\s*\\*", "", RegexOptions.Singleline);
@@ -1473,11 +1473,11 @@ namespace AS2Context
                 ErrorManager.ShowError(ex);
                 return false;
             }
-			
-			// run
-			RunCMD(command);
-			return true;
-		}
+            
+            // run
+            RunCMD(command);
+            return true;
+        }
         #endregion
-	}
+    }
 }

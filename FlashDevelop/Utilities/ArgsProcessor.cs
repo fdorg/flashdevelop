@@ -16,8 +16,8 @@ using Ookii.Dialogs;
 
 namespace FlashDevelop.Utilities
 {
-	public class ArgsProcessor
-	{
+    public class ArgsProcessor
+    {
         /// <summary>
         /// Regexes for tab and var replacing
         /// </summary>
@@ -44,11 +44,11 @@ namespace FlashDevelop.Utilities
 
         /// <summary>
         /// Gets the FlashDevelop root directory
-		/// </summary>
+        /// </summary>
         public static String GetAppDir()
-		{
-			return PathHelper.AppDir;
-		}
+        {
+            return PathHelper.AppDir;
+        }
 
         /// <summary>
         /// Gets the users FlashDevelop directory
@@ -74,16 +74,16 @@ namespace FlashDevelop.Utilities
             return PathHelper.TemplateDir;
         }
 
-		/// <summary>
-		/// Gets the selected text
-		/// </summary>
+        /// <summary>
+        /// Gets the selected text
+        /// </summary>
         public static String GetSelText()
-		{
+        {
             if (!Globals.CurrentDocument.IsEditable) return String.Empty;
             if (Globals.SciControl.SelText.Length > 0) return Globals.SciControl.SelText;
             else if (PrevSelText.Length > 0) return PrevSelText;
             else return String.Empty;
-		}
+        }
 
         /// <summary>
         /// Gets the current word
@@ -97,29 +97,29 @@ namespace FlashDevelop.Utilities
             else return String.Empty;
         }
 
-		/// <summary>
-		/// Gets the current file
-		/// </summary>
+        /// <summary>
+        /// Gets the current file
+        /// </summary>
         public static String GetCurFile()
-		{
+        {
             if (!Globals.CurrentDocument.IsEditable) return String.Empty;
             else return Globals.CurrentDocument.FileName;
-		}
+        }
 
-		/// <summary>
-		/// Gets the current file's path or last active path
-		/// </summary>
+        /// <summary>
+        /// Gets the current file's path or last active path
+        /// </summary>
         public static String GetCurDir()
-		{
+        {
             if (!Globals.CurrentDocument.IsEditable) return Globals.MainForm.WorkingDirectory;
             else return Path.GetDirectoryName(GetCurFile());
-		}
-		
-		/// <summary>
-		/// Gets the name of the current file
-		/// </summary>
+        }
+        
+        /// <summary>
+        /// Gets the name of the current file
+        /// </summary>
         public static String GetCurFilename()
-		{
+        {
             if (!Globals.CurrentDocument.IsEditable) return String.Empty;
             else return Path.GetFileName(GetCurFile());
         }
@@ -140,93 +140,93 @@ namespace FlashDevelop.Utilities
         {
             return DateTime.Now.ToString("g");
         }
-		
-		/// <summary>
-		/// Gets the desktop path
-		/// </summary>
+        
+        /// <summary>
+        /// Gets the desktop path
+        /// </summary>
         public static String GetDesktopDir()
-		{
-			return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-		}
-		
-		/// <summary>
-		/// Gets the system path
-		/// </summary>
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        }
+        
+        /// <summary>
+        /// Gets the system path
+        /// </summary>
         public static String GetSystemDir()
-		{
-			return Environment.GetFolderPath(Environment.SpecialFolder.System);
-		}
-		
-		/// <summary>
-		/// Gets the program files path
-		/// </summary>
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.System);
+        }
+        
+        /// <summary>
+        /// Gets the program files path
+        /// </summary>
         public static String GetProgramsDir()
-		{
-			return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-		}
-		
-		/// <summary>
-		/// Gets the users personal files path
-		/// </summary>
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+        }
+        
+        /// <summary>
+        /// Gets the users personal files path
+        /// </summary>
         public static String GetPersonalDir()
-		{
-			return Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-		}
-		
-		/// <summary>
-		/// Gets the working directory
-		/// </summary>
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+        }
+        
+        /// <summary>
+        /// Gets the working directory
+        /// </summary>
         public static String GetWorkingDir()
-		{
+        {
             return Globals.MainForm.WorkingDirectory;
-		}
-		
-		/// <summary>
-		/// Gets the user selected file for opening
-		/// </summary>
+        }
+        
+        /// <summary>
+        /// Gets the user selected file for opening
+        /// </summary>
         public static String GetOpenFile()
-		{
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.InitialDirectory = GetCurDir();
-			ofd.Multiselect = false;
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = GetCurDir();
+            ofd.Multiselect = false;
             if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
             else return String.Empty;
-		}
-		
-		/// <summary>
-		/// Gets the user selected file for saving
-		/// </summary>
+        }
+        
+        /// <summary>
+        /// Gets the user selected file for saving
+        /// </summary>
         public static String GetSaveFile()
-		{
-			SaveFileDialog sfd = new SaveFileDialog();
-			sfd.InitialDirectory = GetCurDir();
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = GetCurDir();
             if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
             else return String.Empty;
-		}
-		
-		/// <summary>
-		/// Gets the user selected folder
-		/// </summary>
+        }
+        
+        /// <summary>
+        /// Gets the user selected folder
+        /// </summary>
         public static String GetOpenDir()
-		{
+        {
             VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
             fbd.RootFolder = Environment.SpecialFolder.MyComputer;
             if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
             else return String.Empty;
-		}
-		
-		/// <summary>
-		/// Gets the clipboard text
-		/// </summary>
+        }
+        
+        /// <summary>
+        /// Gets the clipboard text
+        /// </summary>
         public static String GetClipboard()
-		{
-			IDataObject cbdata = Clipboard.GetDataObject();
-			if (cbdata.GetDataPresent("System.String", true)) 
-			{
-				return cbdata.GetData("System.String", true).ToString();
-			}
+        {
+            IDataObject cbdata = Clipboard.GetDataObject();
+            if (cbdata.GetDataPresent("System.String", true)) 
+            {
+                return cbdata.GetData("System.String", true).ToString();
+            }
             else return String.Empty;
-		}
+        }
 
         /// <summary>
         /// Gets the comment block indent
@@ -318,11 +318,11 @@ namespace FlashDevelop.Utilities
             return Globals.Settings.LocaleVersion.ToString();
         }
 
-		/// <summary>
-		/// Processes the argument String variables
-		/// </summary>
-		public static String ProcessString(String args, Boolean dispatch)
-		{
+        /// <summary>
+        /// Processes the argument String variables
+        /// </summary>
+        public static String ProcessString(String args, Boolean dispatch)
+        {
             try
             {
                 String result = args;
@@ -343,7 +343,7 @@ namespace FlashDevelop.Utilities
                 ErrorManager.ShowError(ex);
                 return String.Empty;
             }
-		}
+        }
 
         /// <summary>
         /// Match evaluator for tabs
@@ -414,7 +414,7 @@ namespace FlashDevelop.Utilities
                 args = reSpecialArgs.Replace(args, new MatchEvaluator(ReplaceSpecialArgs));
             }
             if (reUserArgs.IsMatch(args)) // User arguments
-			{
+            {
                 ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs);
                 userArgs = rvd.Dictionary; // Save dictionary temporarily...
                 if (rvd.ShowDialog() == DialogResult.OK)
@@ -422,7 +422,7 @@ namespace FlashDevelop.Utilities
                     args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceUserArgs));
                 }
                 else args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceWithEmpty));
-			}
+            }
             return args;
         }
 
@@ -472,6 +472,6 @@ namespace FlashDevelop.Utilities
             return match.Value;
         }
 
-	}
-	
+    }
+    
 }

@@ -7,8 +7,8 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.Localization;
 using PluginCore.Utilities;
-using PluginCore;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace MacroManager
 {

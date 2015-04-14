@@ -7,31 +7,31 @@ using System.Collections.Generic;
 
 namespace ProjectManager.Projects
 {
-	public class BuildEventInfo
-	{
-		public string Name;
-		public string Value;
+    public class BuildEventInfo
+    {
+        public string Name;
+        public string Value;
 
-		public BuildEventInfo(string name, string value)
-		{
-			this.Name = name;
-			this.Value = value;
-		}
+        public BuildEventInfo(string name, string value)
+        {
+            this.Name = name;
+            this.Value = value;
+        }
 
-		// SendKeys requires brackets around certain characters which have meaning
-		public string SendKeysName { get { return "${(}"+Name+"{)}"; } }
-		public string FormattedName { get { return "$("+Name+")"; } }
-	}
+        // SendKeys requires brackets around certain characters which have meaning
+        public string SendKeysName { get { return "${(}"+Name+"{)}"; } }
+        public string FormattedName { get { return "$("+Name+")"; } }
+    }
 
-	public class BuildEventVars
-	{
-		Project project;
+    public class BuildEventVars
+    {
+        Project project;
         List<BuildEventInfo> additional = new List<BuildEventInfo>();
 
-		public BuildEventVars(Project project)
-		{
-			this.project = project;
-		}
+        public BuildEventVars(Project project)
+        {
+            this.project = project;
+        }
 
         public void AddVar(string name, string value)
         {
@@ -65,17 +65,17 @@ namespace ProjectManager.Projects
             return infos.ToArray();
         }
 
-		public string FDBuildDir { get { return Path.GetDirectoryName(FDBuild); } }
-		public string ToolsDir { get { return Path.GetDirectoryName(FDBuildDir); } }
+        public string FDBuildDir { get { return Path.GetDirectoryName(FDBuild); } }
+        public string ToolsDir { get { return Path.GetDirectoryName(FDBuildDir); } }
 
-		public string FDBuild
-		{
-			get
-			{
-				string url = Assembly.GetEntryAssembly().GetName().CodeBase;
-				Uri uri = new Uri(url);
-				
-				// special behavior if we're running in flashdevelop.exe
+        public string FDBuild
+        {
+            get
+            {
+                string url = Assembly.GetEntryAssembly().GetName().CodeBase;
+                Uri uri = new Uri(url);
+                
+                // special behavior if we're running in flashdevelop.exe
                 if (Path.GetFileName(uri.LocalPath).ToLower() == "flashdevelop.exe")
                 {
                     string startupDir = Path.GetDirectoryName(uri.LocalPath);
@@ -90,7 +90,7 @@ namespace ProjectManager.Projects
                     return Path.Combine(fdbuildDir, "fdbuild.exe");
                 }
                 else return uri.LocalPath;
-			}
-		}
-	}
+            }
+        }
+    }
 }

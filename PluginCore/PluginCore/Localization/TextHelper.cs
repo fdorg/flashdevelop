@@ -20,7 +20,7 @@ namespace PluginCore.Localization
         /// Gets the specified localized string
         /// </summary>
         public static String GetString(String key)
-		{
+        {
             String result; String prefix;
             if (PluginBase.MainForm == null || PluginBase.MainForm.Settings == null) return key;
             LocaleVersion localeSetting = PluginBase.MainForm.Settings.LocaleVersion;
@@ -39,7 +39,7 @@ namespace PluginCore.Localization
                 result = String.Empty;
             }
             return result;
-		}
+        }
 
     }
 

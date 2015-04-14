@@ -356,7 +356,7 @@ namespace AS3Context
 
             // add library
             AddPath(PathHelper.LibraryDir + S + "AS3" + S + "classes");
-			// add user pathes from settings
+            // add user pathes from settings
             if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
@@ -646,16 +646,20 @@ namespace AS3Context
             FlexShells.Instance.CheckAS3(CurrentFile, sdk, src);
         }
 
+        private void AddSquiggles(ScintillaNet.ScintillaControl sci, int line, int start, int end)
+        {
+            if (sci == null) return;
+            fileWithSquiggles = CurrentFile;
+            int position = sci.PositionFromLine(line) + start;
+            sci.AddHighlight(2, (int)ScintillaNet.Enums.IndicatorStyle.Squiggle, 0x000000ff, position, end - start);
+        }
+
         private void ClearSquiggles(ScintillaNet.ScintillaControl sci)
         {
             if (sci == null) return;
             try
             {
-                int es = sci.EndStyled;
-                int mask = (1 << sci.StyleBits);
-                sci.StartStyling(0, mask);
-                sci.SetStyling(sci.TextLength, 0);
-                sci.StartStyling(es, mask - 1);
+                sci.RemoveHighlights(2);
             }
             finally
             {
@@ -698,19 +702,6 @@ namespace AS3Context
             return sci.MBSafeTextLength(text.Substring(0, length));
         }
 
-        private void AddSquiggles(ScintillaNet.ScintillaControl sci, int line, int start, int end)
-        {
-            if (sci == null) return;
-            fileWithSquiggles = CurrentFile;
-            int position = sci.PositionFromLine(line) + start;
-            int es = sci.EndStyled;
-            int mask = 1 << sci.StyleBits;
-            sci.SetIndicStyle(0, (int)ScintillaNet.Enums.IndicatorStyle.Squiggle);
-            sci.SetIndicFore(0, 0x000000ff);
-            sci.StartStyling(position, mask);
-            sci.SetStyling(end - start, mask);
-            sci.StartStyling(es, mask - 1);
-        }
         #endregion
 
         #region class resolution

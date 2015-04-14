@@ -12,42 +12,42 @@ using PluginCore;
 
 namespace ProjectManager.Controls
 {
-	public class ClasspathDialog : SmartForm
-	{
-		#region Form Designer
+    public class ClasspathDialog : SmartForm
+    {
+        #region Form Designer
 
-		private ClasspathControl classpathControl;
-		private Button btnCancel;
-		private Button btnOK;
-		private Label label2;
-		private GroupBox groupBox1;
+        private ClasspathControl classpathControl;
+        private Button btnCancel;
+        private Button btnOK;
+        private Label label2;
+        private GroupBox groupBox1;
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.classpathControl = new ProjectManager.Controls.ClasspathControl();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
@@ -134,23 +134,23 @@ namespace ProjectManager.Controls
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#endregion
+        #endregion
 
         ProjectManagerSettings settings;
         bool pathChanged;
 
-		public ClasspathDialog(ProjectManagerSettings settings)
-		{
+        public ClasspathDialog(ProjectManagerSettings settings)
+        {
             this.settings = settings;
             InitializeComponent();
             InitializeLocalization();
             this.Font = PluginBase.Settings.DefaultFont;
             this.FormGuid = "695815f3-0c88-418e-aa88-c86a5dfec7ef";
-		}
+        }
 
         public string Language
         {
@@ -173,11 +173,11 @@ namespace ProjectManager.Controls
             this.Text = " " + TextHelper.GetString("Title.GlobalClasspaths");
         }
 
-		public string[] Classpaths
-		{
-			get { return classpathControl.Classpaths; }
-			set { classpathControl.Classpaths = value; }
-		}
+        public string[] Classpaths
+        {
+            get { return classpathControl.Classpaths; }
+            set { classpathControl.Classpaths = value; }
+        }
 
         private void classpathControl_Changed(object sender, EventArgs e)
         {
@@ -203,17 +203,17 @@ namespace ProjectManager.Controls
             }
         }
 
-		private void btnOK_Click(object sender, EventArgs e)
-		{
+        private void btnOK_Click(object sender, EventArgs e)
+        {
             SaveClasspath();
-			this.DialogResult = DialogResult.OK;
-			this.Close();
-		}
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
 
-		private void btnCancel_Click(object sender, EventArgs e)
-		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Close();
-		}
-	}
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+    }
 }

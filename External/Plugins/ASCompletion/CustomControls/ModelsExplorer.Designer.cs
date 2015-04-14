@@ -41,7 +41,7 @@ namespace ASCompletion
             this.refreshButton = new System.Windows.Forms.ToolStripButton();
             this.rebuildButton = new System.Windows.Forms.ToolStripButton();
             this.searchButton = new System.Windows.Forms.ToolStripButton();
-            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.folderBrowserDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.outlineContextMenuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -192,7 +192,7 @@ namespace ASCompletion
         private System.Windows.Forms.ToolStripMenuItem exploreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem convertToolStripMenuItem;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private Ookii.Dialogs.VistaFolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
