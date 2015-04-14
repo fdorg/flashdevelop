@@ -3,6 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using System.Xml;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ProjectManager.Projects
@@ -188,7 +189,8 @@ namespace ProjectManager.Projects
                     case "defaultBuildTargets":
                         if (!String.IsNullOrEmpty(Value.Trim()) && Value.IndexOf(",") > -1)
                         {
-                            project.MovieOptions.DefaultBuildTargets = Value.Trim().Split(',');
+                            String trimmed = new String(Value.Where(c => !Char.IsWhiteSpace(c)).ToArray());
+                            project.MovieOptions.DefaultBuildTargets = trimmed.Split(',');
                         }
                         break;
 
