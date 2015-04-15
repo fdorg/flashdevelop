@@ -11,15 +11,15 @@ namespace FlashDebugger.Controls.DataTree
             get { return m_ChildrenShowLimit; }
             set { m_ChildrenShowLimit = value; }
         }
-		public static bool m_ShowFullClasspaths = true;
-		public static bool m_ShowObjectIDs = true;
+        public static bool m_ShowFullClasspaths = true;
+        public static bool m_ShowObjectIDs = true;
 
         protected Value m_Value;
         private bool m_bEditing = false;
 
-		/// <summary>
-		/// Get the display value based on user's preferences
-		/// </summary>
+        /// <summary>
+        /// Get the display value based on user's preferences
+        /// </summary>
         public override string Value
         {
             get
@@ -32,41 +32,41 @@ namespace FlashDebugger.Controls.DataTree
                 string temp = null;
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
-					string typeStr = "";
-					if (m_ShowFullClasspaths)
-					{
-						// return class type with classpath
-						typeStr = m_Value.getTypeName().replaceAll("::", ".").ToString();
-						
-					}else
-					{
-						// return class type without classpath
-						typeStr = Strings.AfterLast(m_Value.getTypeName().ToString(), "::", true);
-					}
-					
-					// show / hide IDs
-					if (m_ShowObjectIDs)
-					{
-						typeStr = typeStr.Replace("@", " @");
-					}else
-					{
-						typeStr = Strings.Before(typeStr, "@");
-					}
+                    string typeStr = "";
+                    if (m_ShowFullClasspaths)
+                    {
+                        // return class type with classpath
+                        typeStr = m_Value.getTypeName().replaceAll("::", ".").ToString();
+                    }
+                    else
+                    {
+                        // return class type without classpath
+                        typeStr = Strings.AfterLast(m_Value.getTypeName().ToString(), "::", true);
+                    }
+                    
+                    // show / hide IDs
+                    if (m_ShowObjectIDs)
+                    {
+                        typeStr = typeStr.Replace("@", " @");
+                    }
+                    else
+                    {
+                        typeStr = Strings.Before(typeStr, "@");
+                    }
 
-					// rename array
-					if (typeStr.StartsWith("[]"))
-					{
-						typeStr = typeStr.Replace("[]", "Array");
-					}
+                    // rename array
+                    if (typeStr.StartsWith("[]"))
+                    {
+                        typeStr = typeStr.Replace("[]", "Array");
+                    }
 
-					// rename vector
-					else if (typeStr.StartsWith("__AS3__.vec.Vector.<"))
-					{
-						typeStr = typeStr.Replace("__AS3__.vec.Vector.<", "Vector.<");
-					}
+                    // rename vector
+                    else if (typeStr.StartsWith("__AS3__.vec.Vector.<"))
+                    {
+                        typeStr = typeStr.Replace("__AS3__.vec.Vector.<", "Vector.<");
+                    }
 
-					return typeStr;
-					
+                    return typeStr;
                 }
                 else if (type == VariableType_.NUMBER)
                 {
@@ -95,7 +95,7 @@ namespace FlashDebugger.Controls.DataTree
                 {
                     if (m_Value.getValueAsObject() != null)
                     {
-                        return "\"" + escape(m_Value.ToString()) + "\"";
+                        return "\"" + Escape(m_Value.ToString()) + "\"";
                     }
                 }
                 else if (type == VariableType_.NULL)
@@ -109,7 +109,7 @@ namespace FlashDebugger.Controls.DataTree
                 temp = m_Value.ToString();
                 if (!m_bEditing)
                 {
-                    temp = escape(temp);
+                    temp = Escape(temp);
                 }
                 return temp;
             }
@@ -119,111 +119,98 @@ namespace FlashDebugger.Controls.DataTree
             }
         }
 
-		/// <summary>
-		/// Get the full classpath of the value, eg: "flash.display.MovieClip"
-		/// </summary>
-		public string ClassPath
-		{
-			get
-			{
-
-				//return m_Value.getClassHierarchy(false).replaceAll("::", ".");
-
-				if (m_Value == null)
-				{
-					return null;
-				}
-				int type = m_Value.getType();
-				if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
-				{
-					string typeStr = Strings.Before(m_Value.getTypeName().replaceAll("::", "."), "@");
-
-					if (typeStr == "[]")
-					{
-						return "Array";
-					}
-					return typeStr;
-
-				}
-				else if (type == VariableType_.NUMBER)
-				{
-					return "Number";
-				}
-				else if (type == VariableType_.BOOLEAN)
-				{
-					return "Boolean";
-				}
-				else if (type == VariableType_.STRING)
-				{
-					return "String";
-				}
-				else if (type == VariableType_.NULL)
-				{
-					return "null";
-				}
-				else if (type == VariableType_.FUNCTION)
-				{
-					return "Function";
-				}
-				return null;
-			}
-			set
-			{
-				throw new NotSupportedException();
-			}
-
-		}
-
-		/// <summary>
-		/// Get the object ID with the class name
-		/// </summary>
-		public string ID
-		{
-			get
-			{
-				if (m_Value != null)
-				{
-					int type = m_Value.getType();
-					if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
-					{
-						return m_Value.getTypeName().replaceAll("::", ".").replaceAll("@", " - ").ToString();
-					}
-					else if (type == VariableType_.FUNCTION)
-					{
-						return "Function - " + m_Value.ToString();
-					}
-				}
-				return "";
-			}
-		}
-
-		/// <summary>
-		/// Check if the value is a primitive type (int, Number, String, Boolean)
-		/// </summary>
-		public bool IsPrimitive
+        /// <summary>
+        /// Get the full classpath of the value, eg: "flash.display.MovieClip"
+        /// </summary>
+        public string ClassPath
         {
             get
             {
-				if (m_Value == null)
+
+                //return m_Value.getClassHierarchy(false).replaceAll("::", ".");
+
+                if (m_Value == null)
+                {
+                    return null;
+                }
+                int type = m_Value.getType();
+                if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
+                {
+                    string typeStr = Strings.Before(m_Value.getTypeName().replaceAll("::", "."), "@");
+
+                    if (typeStr == "[]")
+                    {
+                        return "Array";
+                    }
+                    return typeStr;
+
+                }
+                else if (type == VariableType_.NUMBER)
+                {
+                    return "Number";
+                }
+                else if (type == VariableType_.BOOLEAN)
+                {
+                    return "Boolean";
+                }
+                else if (type == VariableType_.STRING)
+                {
+                    return "String";
+                }
+                else if (type == VariableType_.NULL)
+                {
+                    return "null";
+                }
+                else if (type == VariableType_.FUNCTION)
+                {
+                    return "Function";
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Get the object ID with the class name
+        /// </summary>
+        public string Id
+        {
+            get
+            {
+                if (m_Value != null)
+                {
+                    int type = m_Value.getType();
+                    if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
+                    {
+                        return m_Value.getTypeName().replaceAll("::", ".").replaceAll("@", " - ").ToString();
+                    }
+                    else if (type == VariableType_.FUNCTION)
+                    {
+                        return "Function - " + m_Value.ToString();
+                    }
+                }
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// Check if the value is a primitive type (int, Number, String, Boolean)
+        /// </summary>
+        public bool IsPrimitive
+        {
+            get
+            {
+                if (m_Value == null)
                 {
                     return false;
                 }
                 int type = m_Value.getType();
-                if (type == VariableType_.NUMBER || type == VariableType_.BOOLEAN ||
-					type == VariableType_.STRING || type == VariableType_.NULL)
-                {
-                    return true;
-                }
-                return false;
-            }
-            set
-            {
-                throw new NotSupportedException();
+                return type == VariableType_.NUMBER || type == VariableType_.BOOLEAN ||
+                       type == VariableType_.STRING || type == VariableType_.NULL;
             }
         }
 
-		
-        private string escape(string text)
+        
+        private string Escape(string text)
         {
             text = text.Replace("\\", "\\\\");
             text = text.Replace("\"", "\\\"");
