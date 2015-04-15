@@ -5900,7 +5900,7 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Disables the move refactoring of files and folders.</value>
     <comment>Added after 4.7.2</comment>
   </data>
-  <data name="HighlightMatchingWordsDelay" xml:space="preserve">
+  <data name="FlashDevelop.Description.HighlightMatchingWordsDelay" xml:space="preserve">
     <value>The delay in milliseconds after the word match highlight should be shown.</value>
     <comment>Added after 4.7.2</comment>
   </data>
