@@ -13,8 +13,20 @@ namespace ProjectManager.Projects
                 throw new ArgumentException("The path is already relative.");
 
             char slash = Path.DirectorySeparatorChar;
-            string[] a = baseDirectory.Trim(slash).Split(slash);
-            string[] b = path.Trim(slash).Split(slash);
+            path = path.TrimEnd(slash);
+            baseDirectory = baseDirectory.TrimEnd(slash);
+
+            // trivial cases
+            if (path == baseDirectory) 
+                return "";
+            if (path[1] == ':' && path[0] != baseDirectory[0]) // drive
+                return path; 
+            if (path.Length > baseDirectory.Length && path.StartsWith(baseDirectory + slash))
+                return path.Substring(baseDirectory.Length + 1);
+
+            // resolve relative path
+            string[] a = baseDirectory.Split(slash);
+            string[] b = path.Split(slash);
 
             ArrayList relPath = new ArrayList();
             int i = 0;
@@ -25,6 +37,10 @@ namespace ProjectManager.Projects
                 if (string.Compare(a[i],b[i],true) != 0)
                     break;
             }
+
+            // only common drive letter, consider not relative
+            if (i <= 1)
+                return path; 
 
             // at this point, i is the index of the first diverging element of the two paths
             int backtracks = a.Length - i;
