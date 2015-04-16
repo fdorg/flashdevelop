@@ -282,6 +282,14 @@ namespace ProjectManager.Controls
 
             projectListView.Items.Clear();
             projectListView.TileSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(170, 22));
+            projectListView.ShowGroups = PluginBase.Settings.UseListViewGrouping;
+
+            if (Win32.isRunningOnWine())
+            {
+                projectListView.View = View.SmallIcon;
+                projectListView.GridLines = !projectListView.ShowGroups;
+                columnHeader1.Width = -2;
+            }
 
             if (!Directory.Exists(ProjectPaths.ProjectTemplatesDirectory))
             {
