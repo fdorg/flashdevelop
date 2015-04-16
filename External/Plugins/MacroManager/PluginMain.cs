@@ -117,10 +117,24 @@ namespace MacroManager
             if (e.Type == EventType.UIStarted)
             {
                 String initScript = Path.Combine(PathHelper.BaseDir, "InitScript.cs");
+                String autoImport = Path.Combine(PathHelper.BaseDir, "InitMacros.fdm");
                 if (File.Exists(initScript))
                 {
                     String command = "Internal;" + initScript;
                     PluginBase.MainForm.CallCommand("ExecuteScript", command);
+                }
+                if (File.Exists(autoImport))
+                {
+                    List<Macro> macros = new List<Macro>();
+                    Object macrosObject = ObjectSerializer.Deserialize(autoImport, macros, false);
+                    macros = (List<Macro>)macrosObject;
+                    this.settingObject.UserMacros.AddRange(macros);
+                    try { File.Delete(autoImport); }
+                    catch (Exception ex)
+                    {
+                        ErrorManager.ShowError("Could not delete import file: " + autoImport, ex);
+                    }
+                    this.RefreshMacroMenuItems();
                 }
                 this.RunAutoRunMacros();
             }
