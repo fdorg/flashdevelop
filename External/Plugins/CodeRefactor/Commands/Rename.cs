@@ -242,7 +242,7 @@ namespace CodeRefactor.Commands
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
                 // re-open the document and replace all the text
-                var sci = AssociatedDocumentHelper.LoadDocument(entry.Key);
+                var sci = AssociatedDocumentHelper.LoadDocument(entry.Key).SciControl;
                 // replace matches in the current file with the new name
                 RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName);
                 //Uncomment if we want to keep modified files

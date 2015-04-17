@@ -107,7 +107,8 @@ namespace CodeRefactor.Provider
         {
             String fileName = Path.GetFileNameWithoutExtension(path);
             Int32 line = 0;
-            ScintillaControl sci = associatedDocumentHelper.LoadDocument(path);
+            var doc = associatedDocumentHelper.LoadDocument(path);
+            ScintillaControl sci = doc != null ? doc.SciControl : null;
             if (sci == null) return null; // Should not happen...
             List<ClassModel> classes = ASContext.Context.CurrentModel.Classes;
             if (classes.Count > 0)

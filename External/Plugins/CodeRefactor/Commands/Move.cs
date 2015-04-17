@@ -358,7 +358,7 @@ namespace CodeRefactor.Commands
                 oldType = oldType.Trim('.');
                 MessageBar.Locked = true;
                 string newFilePath = currentTarget.NewFilePath;
-                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath);
+                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath).SciControl;
                 List<SearchMatch> matches = search.Matches(sci.Text);
                 string packageReplacement = "package";
                 if (currentTarget.NewPackage != "")
@@ -514,14 +514,14 @@ namespace CodeRefactor.Commands
                     // we have to open/reopen the entry's file
                     // there are issues with evaluating the declaration targets with non-open, non-current files
                     // we have to do it each time as the process of checking the declaration source can change the currently open file!
-                    sci = AssociatedDocumentHelper.LoadDocument(file);
+                    sci = AssociatedDocumentHelper.LoadDocument(file).SciControl;
                     // if the search result does point to the member source, store it
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, currentTargetResult, this.AssociatedDocumentHelper))
                         actualMatches.Add(match);
                 }
                 if (actualMatches.Count == 0) continue;
                 int currLine = -1;
-                sci = AssociatedDocumentHelper.LoadDocument(file);
+                sci = AssociatedDocumentHelper.LoadDocument(file).SciControl;
                 string directory = Path.GetDirectoryName(file);
                 // Let's check if we need to add the import. Check the considerations at the start of the file
                 // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
