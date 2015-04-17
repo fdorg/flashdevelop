@@ -16,9 +16,9 @@ namespace FlashDebugger
         /// <param name="returnAll">If search term not found, return entire string? (true) or return "" (false)</param>
         /// <param name="forward">Search forward from startAt, or backward from it</param>
         /// <returns>Substring before the specified search term</returns>
-        public static string Before(string text, string find, int startAt = 0, bool returnAll = false, bool forward = true)
+        public static string Before(this string text, string find, int startAt = 0, bool returnAll = false, bool forward = true)
         {
-            if (text == null) { return returnAll ? text : ""; }
+            if (text == null) return returnAll ? null : "";
             int idx;
             if (forward)
             {
@@ -28,9 +28,8 @@ namespace FlashDebugger
             {
                 idx = text.LastIndexOf(find, text.Length - startAt, StringComparison.Ordinal);
             }
-            if (idx == -1) { return returnAll ? text : ""; }
+            if (idx == -1) return returnAll ? text : "";
             return text.Substring(0, idx);
-
         }
 
         /// <summary>
@@ -42,9 +41,9 @@ namespace FlashDebugger
         /// <param name="returnAll">If search term not found, return entire string? (true) or return "" (false)</param>
         /// <param name="forward">Search forward from startAt, or backward from it</param>
         /// <returns>Substring after the specified search term</returns>
-        public static string After(string text, string find, int startAt = 0, bool returnAll = false, bool forward = true)
+        public static string After(this string text, string find, int startAt = 0, bool returnAll = false, bool forward = true)
         {
-            if (text == null) { return returnAll ? text : ""; }
+            if (text == null) return returnAll ? null : "";
             int idx;
             if (!forward)
             {
@@ -54,7 +53,7 @@ namespace FlashDebugger
             {
                 idx = text.IndexOf(find, startAt, StringComparison.Ordinal);
             }
-            if (idx == -1) { return returnAll ? text : ""; }
+            if (idx == -1) return returnAll ? text : "";
             idx += find.Length;
             return text.Substring(idx);
         }
@@ -66,7 +65,7 @@ namespace FlashDebugger
         /// <param name="find">Search term</param>
         /// <param name="returnAll">If search term not found, return entire string? (true) or return "" (false)</param>
         /// <returns>Substring after the last instance of search term</returns>
-        public static string AfterLast(string text, string find, bool returnAll = false)
+        public static string AfterLast(this string text, string find, bool returnAll = false)
         {
             int idx = text.LastIndexOf(find, StringComparison.Ordinal);
             if (idx == -1)

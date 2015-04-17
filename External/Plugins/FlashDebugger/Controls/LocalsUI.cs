@@ -50,7 +50,11 @@ namespace FlashDebugger
             {
                 foreach (Variable item in variables)
                 {
-                    treeControl.AddNode(new VariableNode(item));
+                    treeControl.AddNode(new VariableNode(item)
+                                            {
+                                                HideClassId = treeControl.HideObjectIds, 
+                                                HideFullClasspath = treeControl.HideFullClasspaths
+                                            });
                 }
             }
             finally

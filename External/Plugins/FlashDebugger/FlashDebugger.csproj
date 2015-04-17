@@ -148,7 +148,8 @@
     <Compile Include="Debugger\ExpressionContext.cs" />
     <Compile Include="Debugger\FlashInterface.cs" />
     <Compile Include="Debugger\VariableFacade.cs" />
-    <Compile Include="Helpers\CopyAsTree.cs" />
+    <Compile Include="Helpers\DefaultDataTreeExporter.cs" />
+    <Compile Include="Helpers\IDataTreeExporter.cs" />
     <Compile Include="Helpers\MenusHelper.cs" />
     <Compile Include="Helpers\PanelsHelper.cs" />
     <Compile Include="Helpers\StringsHelper.cs" />

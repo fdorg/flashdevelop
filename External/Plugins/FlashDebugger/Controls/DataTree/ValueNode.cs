@@ -11,8 +11,9 @@ namespace FlashDebugger.Controls.DataTree
             get { return m_ChildrenShowLimit; }
             set { m_ChildrenShowLimit = value; }
         }
-        public static bool m_ShowFullClasspaths = true;
-        public static bool m_ShowObjectIDs = true;
+
+        public bool HideFullClasspath { get; set; }
+        public bool HideClassId { get; set; }
 
         protected Value m_Value;
         private bool m_bEditing = false;
@@ -33,26 +34,19 @@ namespace FlashDebugger.Controls.DataTree
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
                     string typeStr = "";
-                    if (m_ShowFullClasspaths)
+                    if (HideFullClasspath)
+                    {
+                        // return class type without classpath
+                        typeStr = m_Value.getTypeName().ToString().AfterLast("::", true);
+                    }
+                    else
                     {
                         // return class type with classpath
                         typeStr = m_Value.getTypeName().replaceAll("::", ".").ToString();
                     }
-                    else
-                    {
-                        // return class type without classpath
-                        typeStr = Strings.AfterLast(m_Value.getTypeName().ToString(), "::", true);
-                    }
                     
                     // show / hide IDs
-                    if (m_ShowObjectIDs)
-                    {
-                        typeStr = typeStr.Replace("@", " @");
-                    }
-                    else
-                    {
-                        typeStr = Strings.Before(typeStr, "@");
-                    }
+                    typeStr = HideClassId ? typeStr.Before("@") : typeStr.Replace("@", " @");
 
                     // rename array
                     if (typeStr.StartsWith("[]"))
@@ -127,8 +121,6 @@ namespace FlashDebugger.Controls.DataTree
             get
             {
 
-                //return m_Value.getClassHierarchy(false).replaceAll("::", ".");
-
                 if (m_Value == null)
                 {
                     return null;
@@ -136,7 +128,7 @@ namespace FlashDebugger.Controls.DataTree
                 int type = m_Value.getType();
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
-                    string typeStr = Strings.Before(m_Value.getTypeName().replaceAll("::", "."), "@");
+                    string typeStr = m_Value.getTypeName().replaceAll("::", ".").ToString().Before("@");
 
                     if (typeStr == "[]")
                     {

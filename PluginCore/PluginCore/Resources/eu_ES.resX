@@ -5901,4 +5901,40 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>The delay in milliseconds after the word match highlight should be shown.</value>
     <comment>Added after 4.7.2</comment>
   </data>
+  <data name="FlashDebugger.Category.DataTree" xml:space="preserve">
+    <value>Data Tree</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CombineInherited" xml:space="preserve">
+    <value>Display inherited members as direct descendants of the displayed object.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideStaticMembers" xml:space="preserve">
+    <value>Hide static members of the displayed object.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideFullClasspaths" xml:space="preserve">
+    <value>Show only the class name of the displayed objects.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideClassIds" xml:space="preserve">
+    <value>Hide the ID of the displayed objects.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CopyTreeMaxRecursion" xml:space="preserve">
+    <value>The maximum node depth to reach when copying an object tree to the clipboard.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CopyTreeMaxSize" xml:space="preserve">
+    <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
+    <value>[Recursion too deep, increase Copy Tree Max Level in FlashDebugger settings]</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
+    <value>[Object {0} already listed before]</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
 </root>

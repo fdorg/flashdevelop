@@ -1,20 +1,22 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Aga.Controls.Tree;
 using FlashDebugger.Controls;
 using FlashDebugger.Controls.DataTree;
+using PluginCore.Localization;
 
-namespace FlashDebugger
+namespace FlashDebugger.Helpers
 {
-    public class CopyTreeHelper
+    public class DefaultDataTreeExporter : IDataTreeExporter
     {
+        private readonly static string[] as3DisabledProps = new[] { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
 
-        public static int _CopyTreeMaxRecursion = 10;
-        public static int _CopyTreeMaxChars = 1000000;
+        public int CopyTreeMaxRecursion { get; set; }
 
-        public static string GetTreeAsText(TreeNodeAdv treeNode, ValueNode dataNode, string levelSep, DataTreeControl control, int levelLimit)
+        public int CopyTreeMaxChars { get; set; }
+
+        public string GetTreeAsText(ValueNode dataNode, string levelSep, DataTreeControl control, int levelLimit)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -24,10 +26,10 @@ namespace FlashDebugger
             // add children nodes
             GetTreeItemsAsText(new List<Node> { dataNode }, new HashSet<string>(), levelSep, 0, sb, control, levelLimit);
 
-            return sb.ToString() ?? "";
+            return sb.ToString();
         }
 
-        private static void GetTreeItemsAsText(IList<Node> dataNodes, HashSet<string> visited, string levelSep, int level, StringBuilder sb, DataTreeControl control, int levelLimit)
+        private void GetTreeItemsAsText(IList<Node> dataNodes, HashSet<string> visited, string levelSep, int level, StringBuilder sb, DataTreeControl control, int levelLimit)
         {
             // per node
             int len = dataNodes.Count;
@@ -35,19 +37,28 @@ namespace FlashDebugger
             {
                 ValueNode child = (ValueNode)dataNodes[c];
 
-
                 // skip if unwanted item
                 if (!IsWantedChild(child))
                 {
                     continue;
                 }
 
-
                 // ensure expanded
-                control.ListChildItems(child);
+                if (!child.IsLeaf)
+                {
+                    control.ListChildItems(child);
+                }
 
                 // add node
                 AppendTimes(sb, levelSep, level);
+
+                // stop recursion if too long
+                if (sb.Length > CopyTreeMaxChars)
+                {
+                    sb.AppendLine("......");
+                    return;
+                }
+
                 if (child.IsPrimitive)
                 {
                     sb.Append(child.Text + " : " + child.Value + " ");
@@ -74,23 +85,18 @@ namespace FlashDebugger
                         bool isNew = childId == "" || !visited.Contains(childId);
                         if (!isNew)
                         {
-
                             // error
                             AppendTimes(sb, levelSep, level + 1);
-                            sb.AppendLine("[Already listed before]");
-
+                            sb.AppendLine(String.Format(TextHelper.GetString("TreeExporter.DuplicatedObject"), child.Value));
                         }
-                        else if (level > _CopyTreeMaxRecursion)
+                        else if (level > CopyTreeMaxRecursion)
                         {
-
                             // error
                             AppendTimes(sb, levelSep, level + 1);
-                            sb.AppendLine("[Recursion too deep, increase CopyTreeMaxRecursion in FlashDebugger settings]");
-
+                            sb.AppendLine(TextHelper.GetString("TreeExporter.MaxDepthReached"));
                         }
                         else
                         {
-
                             // add to list
                             if (childId != "")
                                 visited.Add(childId);
@@ -100,27 +106,17 @@ namespace FlashDebugger
                             {
                                 GetTreeItemsAsText(child.Nodes, visited, levelSep, level + 1, sb, control, levelLimit);
                             }
-                            catch (System.Exception ex) { }
-
+                            catch (Exception) { }
                         }
                     }
-
 
                     // closing brace
                     AppendTimes(sb, levelSep, level);
                     sb.AppendLine("}");
-
                 }
                 else
                 {
                     sb.AppendLine();
-                }
-
-                // stop recursion if too long
-                if (sb.Length > _CopyTreeMaxChars)
-                {
-                    sb.Append("......");
-                    return;
                 }
 
             }
@@ -149,11 +145,9 @@ namespace FlashDebugger
                 // catch "cannot cast Aga.TreeNode to DataNode" 
                 // TODO : fix this instead of just catching it
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
             return true;
         }
-
-        private static string[] as3DisabledProps = new string[] { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
 
         private static bool IsWantedChild(DataNode child)
         {
@@ -209,7 +203,7 @@ namespace FlashDebugger
                 // catch "cannot cast Aga.TreeNode to DataNode" 
                 // TODO : fix this instead of just catching it
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
             return true;
         }
 
@@ -220,6 +214,5 @@ namespace FlashDebugger
                 sb.Append(append);
             }
         }
-
     }
 }

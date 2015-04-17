@@ -25,34 +25,96 @@ namespace FlashDebugger.Controls
         private DataTreeState state;
         private bool watchMode;
         private bool addingNewExpression;
-        private static bool m_combineInherited = false;
-        private static bool m_showStaticInObjects = true;
+        private int _copyTreeMaxChars;
+        private int _copyTreeMaxRecursion;
+        private bool _combineInherited;
+        private bool _hideStaticInObjects;
+        private bool _hideFullClasspaths;
+        private bool _hideObjectIds;
 
         public Collection<Node> Nodes
         {
-            get
-            {
-                return _model.Root.Nodes;
-            }
+            get { return _model.Root.Nodes; }
         }
 
         public TreeViewAdv Tree
         {
-            get
-            {
-                return _tree;
-            }
+            get { return _tree; }
         }
 
         public ViewerForm Viewer
         {
-            get
+            get { return viewerForm; }
+        }
+
+        public int CopyTreeMaxChars
+        {
+            get { return _copyTreeMaxChars; }
+            set
             {
-                return viewerForm;
+                if (_copyTreeMaxChars == value) return;
+                _copyTreeMaxChars = value;
+                Tree.FullUpdate();
             }
         }
 
-        public DataTreeControl():this(false)
+        public int CopyTreeMaxRecursion
+        {
+            get { return _copyTreeMaxRecursion; }
+            set
+            {
+                if (_copyTreeMaxRecursion == value) return;
+                _copyTreeMaxRecursion = value;
+                Tree.FullUpdate();
+            }
+        }
+
+        public bool CombineInherited
+        {
+            get { return _combineInherited; }
+            set
+            {
+                if (_combineInherited == value) return;
+                _combineInherited = value;
+                Tree.FullUpdate();
+            }
+        }
+
+        public bool HideStaticInObjects
+        {
+            get { return _hideStaticInObjects; }
+            set
+            {
+                if (_hideStaticInObjects == value) return;
+                _hideStaticInObjects = value;
+                Tree.FullUpdate();
+            }
+        }
+
+        public bool HideFullClasspaths
+        {
+            get { return _hideFullClasspaths; }
+            set
+            {
+                if (_hideFullClasspaths == value) return;
+                _hideFullClasspaths = value;
+                Tree.FullUpdate();
+            }
+        }
+
+        public bool HideObjectIds
+        {
+            get { return _hideObjectIds; }
+            set
+            {
+                if (_hideObjectIds == value) return;
+                _hideObjectIds = value;
+                Tree.FullUpdate();
+            }
+        }
+
+        public DataTreeControl()
+            : this(false)
         {
         }
 
@@ -376,7 +438,11 @@ namespace FlashDebugger.Controls
                 int tmpLimit = node.ChildrenShowLimit;
                 foreach (Variable member in node.PlayerValue.getMembers(flashInterface.Session))
                 {
-                    VariableNode memberNode = new VariableNode(member);
+                    VariableNode memberNode = new VariableNode(member)
+                                                  {
+                                                      HideClassId = HideObjectIds,
+                                                      HideFullClasspath = HideFullClasspaths
+                                                  };
 
                     if (member.isAttributeSet(VariableAttribute_.IS_STATIC))
                     {
@@ -395,7 +461,7 @@ namespace FlashDebugger.Controls
                 // inherited vars
                 if (inherited.Count > 0)
                 {
-                    if (m_combineInherited)
+                    if (_combineInherited)
                     {
                         // list inherited alongside main class members
                         foreach (DataNode item in inherited)
@@ -419,7 +485,7 @@ namespace FlashDebugger.Controls
                 }
 
                 // static vars
-                if (m_showStaticInObjects && statics.Count > 0)
+                if (!_hideStaticInObjects && statics.Count > 0)
                 {
                     DataNode staticNode = new ValueNode("[static]");
                     statics.Sort();
@@ -447,7 +513,11 @@ namespace FlashDebugger.Controls
                                 var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                                 var obj = exp.evaluate(ctx);
                                 if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", (flash.tools.debugger.concrete.DValue)obj, ((flash.tools.debugger.concrete.DValue)obj).getIsolateId());
-                                DataNode childNode = new VariableNode((Variable)obj);
+                                DataNode childNode = new VariableNode((Variable) obj)
+                                                         {
+                                                             HideClassId = HideObjectIds,
+                                                             HideFullClasspath = HideFullClasspaths
+                                                         };
                                 childNode.Text = "child_" + i;
                                 childrenNode.Nodes.Add(childNode);
                             }
@@ -661,49 +731,9 @@ namespace FlashDebugger.Controls
         private void CopyTreeInternal(int levelLimit)
         {
             ValueNode node = Tree.SelectedNode.Tag as ValueNode;
-            Clipboard.SetText(CopyTreeHelper.GetTreeAsText(Tree.SelectedNode, node, "\t", this, levelLimit));
+            Clipboard.SetText(new Helpers.DefaultDataTreeExporter() {CopyTreeMaxChars = PluginMain.settingObject.CopyTreeMaxChars, CopyTreeMaxRecursion = PluginMain.settingObject.CopyTreeMaxRecursion}.GetTreeAsText(node, "\t", this, levelLimit));
         }
         
-        #endregion
-
-        #region Settings
-
-        public static int CopyTreeMaxChars
-        {
-            get { return CopyTreeHelper._CopyTreeMaxChars; }
-            set { CopyTreeHelper._CopyTreeMaxChars = value; }
-        }
-        
-        public static int CopyTreeMaxRecursion
-        {
-            get { return CopyTreeHelper._CopyTreeMaxRecursion; }
-            set { CopyTreeHelper._CopyTreeMaxRecursion = value; }
-        }
-        
-        public static bool CombineInherited
-        {
-            get { return DataTreeControl.m_combineInherited; }
-            set { DataTreeControl.m_combineInherited = value; }
-        }
-
-        public static bool ShowStaticInObjects
-        {
-            get { return DataTreeControl.m_showStaticInObjects; }
-            set { DataTreeControl.m_showStaticInObjects = value; }
-        }
-        
-        public static bool ShowFullClasspaths
-        {
-            get { return ValueNode.m_ShowFullClasspaths; }
-            set { ValueNode.m_ShowFullClasspaths = value; }
-        }
-
-        public static bool ShowObjectIDs
-        {
-            get { return ValueNode.m_ShowObjectIDs; }
-            set { ValueNode.m_ShowObjectIDs = value; }
-        }
-
         #endregion
         
     }
