@@ -358,7 +358,8 @@ namespace CodeRefactor.Commands
                 oldType = oldType.Trim('.');
                 MessageBar.Locked = true;
                 string newFilePath = currentTarget.NewFilePath;
-                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath).SciControl;
+                var doc = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath);
+                ScintillaControl sci = doc.SciControl;
                 List<SearchMatch> matches = search.Matches(sci.Text);
                 string packageReplacement = "package";
                 if (currentTarget.NewPackage != "")
@@ -383,7 +384,7 @@ namespace CodeRefactor.Commands
                 }
                 //Do we want to open modified files?
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(file);
-                PluginBase.MainForm.CurrentDocument.Save();
+                doc.Save();
                 MessageBar.Locked = false;
                 UserInterfaceManager.ProgressDialog.Show();
                 UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
@@ -507,6 +508,7 @@ namespace CodeRefactor.Commands
                     entry.Key == currentTarget.NewFilePath) continue;
                 string file = entry.Key;
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + file + "\"");
+                ITabbedDocument doc;
                 ScintillaControl sci;
                 var actualMatches = new List<SearchMatch>();
                 foreach (SearchMatch match in entry.Value)
@@ -521,7 +523,8 @@ namespace CodeRefactor.Commands
                 }
                 if (actualMatches.Count == 0) continue;
                 int currLine = -1;
-                sci = AssociatedDocumentHelper.LoadDocument(file).SciControl;
+                doc = AssociatedDocumentHelper.LoadDocument(file);
+                sci = doc.SciControl;
                 string directory = Path.GetDirectoryName(file);
                 // Let's check if we need to add the import. Check the considerations at the start of the file
                 // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
@@ -579,7 +582,7 @@ namespace CodeRefactor.Commands
                 Results[file].AddRange(actualMatches);
                 //Do we want to open modified files?
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(file);
-                PluginBase.MainForm.CurrentDocument.Save();
+                doc.Save();
             }
 
             currentTargetIndex++;
