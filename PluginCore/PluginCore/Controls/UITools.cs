@@ -46,6 +46,11 @@ namespace PluginCore.Controls
             get { return manager.callTip; }
         }
 
+        static public CompletionListControl CompletionList
+        {
+            get { return Controls.CompletionList.completionList; }
+        }
+
         static public void Init()
 		{
             if (manager == null)
@@ -98,9 +103,9 @@ namespace PluginCore.Controls
 			//
 			try
 			{
-				CompletionList.CreateControl(PluginBase.MainForm);
-                simpleTip = CompletionList.completionList.Tip;
-                callTip = CompletionList.completionList.CallTip;
+				Controls.CompletionList.CreateControl(PluginBase.MainForm);
+                simpleTip = CompletionList.Tip;
+                callTip = CompletionList.CallTip;
 			}
 			catch(Exception ex)
 			{
@@ -314,10 +319,10 @@ namespace PluginCore.Controls
         private void OnGotFocus(object sender, EventArgs e)
         {
             var sci = (ScintillaControl)sender;
-            ((CompletionList.ScintillaHost)CompletionList.completionList.Host).SciControl = sci;
+            ((CompletionList.ScintillaHost)CompletionList.Host).SciControl = sci;
             var language = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
             if (language != null)   // Should we provide some custom string otherwise?
-                CompletionList.completionList.CharacterClass = language.characterclass.Characters;
+                CompletionList.CharacterClass = language.characterclass.Characters;
         }
 
         private void OnChar(ScintillaControl sci, int value)
@@ -338,7 +343,7 @@ namespace PluginCore.Controls
             //}
             
             if (callTip.CallTipActive) callTip.OnChar(value);
-			if (CompletionList.Active) CompletionList.OnChar(sci, value);
+			if (CompletionList.Active) Controls.CompletionList.OnChar(sci, value);
             else SendChar(sci, value);
 		}
 

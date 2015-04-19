@@ -1,7 +1,5 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace PluginCore.Controls
@@ -14,11 +12,10 @@ namespace PluginCore.Controls
         // events
         public event UpdateCallTipHandler OnUpdateCallTip;
 
-
-		public static string HLTextStyleBeg = "[B]";
-		public static string HLTextStyleEnd = "[/B]";
-		public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
-		public static string HLBgStyleEnd = "[/BGCOLOR]";
+        public static string HLTextStyleBeg = "[B]";
+        public static string HLTextStyleEnd = "[/B]";
+        public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
+        public static string HLBgStyleEnd = "[/BGCOLOR]";
 
 
         // state
@@ -28,7 +25,7 @@ namespace PluginCore.Controls
         protected bool isActive;
         protected int memberPos;
         protected int startPos;
-		protected int currentPos;
+        protected int currentPos;
         protected int currentLine;
 
         protected CompletionListControl completionList;
@@ -44,12 +41,24 @@ namespace PluginCore.Controls
             get { return isActive; }
         }
 
+        public int CurrentHLStart
+        {
+            get { return currentHLStart; }
+        }
+
+        public int CurrentHLEnd
+        {
+            get { return currentHLEnd; }
+        }
+        
+        public int MemberPosition
+        {
+            get { return memberPos; }
+        }
+
         public override void Hide()
         {
-			if (isActive)
-			{
-				isActive = false;
-			}
+            isActive = false;
             currentText = null;
             currentHLStart = -1;
             currentHLEnd = -1;
@@ -61,10 +70,10 @@ namespace PluginCore.Controls
             return position == currentPos;
         }
 
-		public void CallTipShow(int position, string text)
-		{
-			CallTipShow(position, text, true);
-		}
+        public void CallTipShow(int position, string text)
+        {
+            CallTipShow(position, text, true);
+        }
         public void CallTipShow(int position, string text, bool redraw)
         {
             if (host.Visible && position == memberPos && text == currentText)
@@ -77,7 +86,8 @@ namespace PluginCore.Controls
 
             host.Visible = false;
             currentText = text;
-			SetText(text, true);
+            currentHLEnd = currentHLStart = -1;
+            SetText(text, true);
 
             memberPos = position;
             startPos = memberPos + toolTipRTB.Text.IndexOf('(');
@@ -116,10 +126,10 @@ namespace PluginCore.Controls
             }
         }
 
-		public void CallTipSetHlt(int start, int end)
-		{
-			CallTipSetHlt(start, end, true);
-		}
+        public void CallTipSetHlt(int start, int end)
+        {
+            CallTipSetHlt(start, end, true);
+        }
         public void CallTipSetHlt(int start, int end, bool forceRedraw)
         {
             if (currentHLStart == start && currentHLEnd == end)
@@ -131,28 +141,28 @@ namespace PluginCore.Controls
 
             currentHLStart = start;
             currentHLEnd = end;
-			if (start != end)
-			{
-				string savedRawText = rawText;
+            if (start != end)
+            {
+                string savedRawText = rawText;
 
-				try
-				{
-					rawText = rawText.Substring(0, start)
-							+ HLBgStyleBeg + HLTextStyleBeg
-							+ rawText.Substring(start, end - start)
-							+ HLTextStyleEnd + HLBgStyleEnd
-							+ rawText.Substring(end);
+                try
+                {
+                    rawText = rawText.Substring(0, start)
+                            + HLBgStyleBeg + HLTextStyleBeg
+                            + rawText.Substring(start, end - start)
+                            + HLTextStyleEnd + HLBgStyleEnd
+                            + rawText.Substring(end);
 
-					Redraw();
-				}
-				catch { }
+                    Redraw();
+                }
+                catch { }
 
-				rawText = savedRawText;
-			}
-			else
-			{
-				Redraw();
-			}
+                rawText = savedRawText;
+            }
+            else
+            {
+                Redraw();
+            }
         }
 
         private void Host_VisibleChanged(object sender, EventArgs e)
@@ -280,8 +290,8 @@ namespace PluginCore.Controls
                 case Keys.Left | Keys.Shift:
                 case Keys.Left | Keys.Control:
                     currentPos = owner.CurrentPos;
-                    if (currentPos < startPos) Hide();
                     if (OnUpdateCallTip != null) OnUpdateCallTip(owner.Owner, currentPos);
+                    else if (currentPos < startPos) Hide();
                     break;
 
                 case Keys.Up:
@@ -309,8 +319,8 @@ namespace PluginCore.Controls
                 case Keys.Delete:
                 case Keys.Delete | Keys.Control:
                     currentPos = owner.CurrentPos;
-                    if (currentPos < startPos) Hide();
                     if (OnUpdateCallTip != null) OnUpdateCallTip.BeginInvoke(owner.Owner, currentPos, null, null);
+                    else if (currentPos < startPos) Hide();
                     break;
 
                 case Keys.Escape:

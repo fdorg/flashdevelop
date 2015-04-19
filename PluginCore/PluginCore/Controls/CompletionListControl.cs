@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -14,9 +15,9 @@ namespace PluginCore.Controls
     {
         public event CompletionListInsertedTextHandler OnInsert;
         public event CompletionListInsertedTextHandler OnCancel;
-        public event EventHandler OnShowing;
+        public event CancelEventHandler OnShowing;
         public event EventHandler OnHidden;
-        
+
         /// <summary>
         /// Properties of the class 
         /// </summary> 
@@ -25,6 +26,7 @@ namespace PluginCore.Controls
         private System.Windows.Forms.ListBox completionList;
         private System.Windows.Forms.ToolStripControlHost listContainer;
         private System.Windows.Forms.ToolStripDropDown listHost;
+        private CompletionListWindow completionListWindow;
 
         #region State Properties
 
@@ -50,7 +52,7 @@ namespace PluginCore.Controls
 
         private  ICompletionListHost host;
         private  RichToolTip tip;
-        private  MethodCallTip callTip; // Used only by the main completion list so far, would it be better to control this case in another way? like the cl, we'd like to show this everywhere possible
+        private  MethodCallTip callTip;
 
         #endregion
 
@@ -356,6 +358,7 @@ namespace PluginCore.Controls
                 currentItem = null;
                 allItems = null;
                 Tip.Hide();
+                tempoTip.Enabled = false;
                 if (visible && OnHidden != null) OnHidden(this, EventArgs.Empty);
             }
         }
@@ -442,7 +445,7 @@ namespace PluginCore.Controls
             Tip.Redraw(false);
 
             var screen = Screen.FromControl(listHost);
-            int rightWidth = screen.WorkingArea.Right - listHost.Right - 10;
+            int rightWidth = screen.WorkingArea.Right - listHost.Right - 1;
             int leftWidth = listHost.Left;
 
             Point posTarget = new Point(listHost.Right, listHost.Top);
@@ -450,16 +453,15 @@ namespace PluginCore.Controls
             if (rightWidth < 220 && leftWidth > 220)
             {
                 widthTarget = leftWidth;
-                posTarget.X = 0;
+                posTarget.X = listHost.Left - Tip.Size.Width;
             }
 
             Tip.Location = posTarget;
+            Tip.Show();
             Tip.AutoSize(widthTarget, 500);
 
             if (widthTarget == leftWidth)
                 Tip.Location = new Point(listHost.Left - Tip.Size.Width, posTarget.Y);
-
-            Tip.Show();
         }
 
         private void UpdatePosition()
@@ -472,7 +474,6 @@ namespace PluginCore.Controls
                 return;
             }
             coord = host.Owner.PointToScreen(coord);
-            coord.X += host.Owner.Left;
             var screen = Screen.FromHandle(host.Owner.Handle);
             listUp = CallTip.CallTipActive || (coord.Y - listHost.Height > screen.WorkingArea.Top && coord.Y + host.GetLineHeight() + listHost.Height > screen.WorkingArea.Bottom);
             if (listUp) coord.Y -= listHost.Height;
@@ -484,11 +485,23 @@ namespace PluginCore.Controls
             }
 
             if (listHost.Visible)
+            {
                 listHost.Show(coord);
+                if (Tip.Visible) UpdateTip(null, null);
+            }
             else
             {
                 Redraw();
-                if (OnShowing != null) OnShowing(this, EventArgs.Empty);
+                if (OnShowing != null)
+                {
+                    var cancelArgs = new CancelEventArgs();
+                    OnShowing(this, cancelArgs);
+                    if (cancelArgs.Cancel)
+                    {
+                        Hide();
+                        return;
+                    }
+                }
                 listHost.Opacity = 1;
                 listHost.Show(coord);
                 if (CallTip.CallTipActive) CallTip.PositionControl();
@@ -925,6 +938,8 @@ namespace PluginCore.Controls
             host.KeyPress += Target_KeyPress;
             host.PositionChanged += Target_PositionChanged;
             host.SizeChanged += Target_SizeChanged;
+
+            completionListWindow = new CompletionListWindow(this);
         }
 
         private void RemoveHandlers()
@@ -937,11 +952,15 @@ namespace PluginCore.Controls
             host.KeyPress -= Target_KeyPress;
             host.PositionChanged -= Target_PositionChanged;
             host.SizeChanged -= Target_SizeChanged;
+
+            if (completionListWindow != null)
+                completionListWindow.ReleaseHandle();
+            completionListWindow = null;
         }
 
         private void Target_LostFocus(object sender, EventArgs e)
         {
-            if (!listHost.ContainsFocus && !Tip.Focused && !CallTip.Focused)
+            if (!listHost.ContainsFocus && !Tip.Focused && !CallTip.Focused && !host.Owner.ContainsFocus)
                 Hide();
         }
 
@@ -959,8 +978,17 @@ namespace PluginCore.Controls
 
         private void Target_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar))
+            if (!char.IsControl(e.KeyChar) && !e.Handled)
+            {
+                // Hacky... the current implementation relies on the OnChar Scintilla event, which happens after the KeyPress event
+                // We either create an OnChar event in ICompletionListHost and implement it, or change the current behaviour
+                e.Handled = true;
+                host.SelectedText = new string(e.KeyChar, 1);
+                int pos = host.CurrentPos + 1;
+                host.SetSelection(pos, pos);
+
                 OnChar(e.KeyChar);
+            }
         }
 
         private void Target_PositionChanged(object sender, EventArgs e)
@@ -1103,7 +1131,8 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.PageUp:
-                /*case Keys.PageUp | Keys.Control:*/ // Used to navigate through documents
+                    /*case Keys.PageUp | Keys.Control:*/
+                    // Used to navigate through documents
                     noAutoInsert = false;
                     // the list was hidden and it should not appear
                     if (!listHost.Visible)
@@ -1122,7 +1151,8 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.PageDown:
-                /*case Keys.PageDown | Keys.Control:*/ // Used to navigate through documents
+                    /*case Keys.PageDown | Keys.Control:*/
+                    // Used to navigate through documents
                     noAutoInsert = false;
                     // the list was hidden and it should not appear
                     if (!listHost.Visible)
@@ -1141,6 +1171,10 @@ namespace PluginCore.Controls
                     break;
 
                 case Keys.Home:
+                case Keys.End:
+                    Hide();
+                    return false;
+                /* These could be interesting with some shortcut or condition...
                     noAutoInsert = false;
                     // go down the list
                     if (completionList.SelectedIndex > 0)
@@ -1162,7 +1196,7 @@ namespace PluginCore.Controls
                         completionList.SelectedIndex = index;
                     }
 
-                    break;
+                    break;*/
 
                 case (Keys.Control | Keys.Space):
                     break;
@@ -1283,7 +1317,27 @@ namespace PluginCore.Controls
             }
             return false;
         }
-        
+
+        private class CompletionListWindow : NativeWindow
+        {
+            private const int WM_ACTIVATEAPP = 0x1C;
+
+            private CompletionListControl owner;
+
+            public CompletionListWindow(CompletionListControl owner)
+            {
+                this.owner = owner;
+                AssignHandle(owner.listHost.Handle);
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                if (m.Msg == WM_ACTIVATEAPP && m.WParam == IntPtr.Zero)
+                    owner.Hide();
+                base.WndProc(ref m);
+            }
+        }
+
         #endregion
 
         #region Unfocusable List
@@ -1295,8 +1349,9 @@ namespace PluginCore.Controls
             {
                 const int WM_MOUSEACTIVATE = 0x21;
                 const int WM_LBUTTONDOWN = 0x201;
+                const int WM_LBUTTONDBLCLK = 0x203;
                 const int MA_NOACTIVATE = 0x0003;
-                
+
                 switch (m.Msg)
                 {
                     case WM_MOUSEACTIVATE:
@@ -1304,6 +1359,9 @@ namespace PluginCore.Controls
                         return;
                     case WM_LBUTTONDOWN:
                         SelectedIndex = IndexFromPoint((short)(m.LParam.ToInt32() & 0xFFFF), (short)((m.LParam.ToInt32() & 0xFFFF0000) >> 16));
+                        m.Result = IntPtr.Zero;
+                        return;
+                    case WM_LBUTTONDBLCLK:
                         m.Result = IntPtr.Zero;
                         return;
                 }

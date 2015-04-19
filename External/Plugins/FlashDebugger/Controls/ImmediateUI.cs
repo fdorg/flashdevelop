@@ -3,25 +3,30 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using ASCompletion.Completion;
+using ASCompletion.Helpers;
+using ASCompletion.Model;
 using flash.tools.debugger;
 using flash.tools.debugger.expression;
 using PluginCore.Controls;
+using PluginCore;
 
 namespace FlashDebugger.Controls
 {
-    public partial class ImmediateUI : DockPanelControl
+    public partial class ImmediateUI : DockPanelControl, ASCompletionListBackend.IBackendFileGetter
     {
         private List<string> history;
         private int historyPos;
 
         private CompletionListControl completionList;
+        private ASCompletionListBackend completionBackend;
 
         public ImmediateUI()
         {
             this.InitializeComponent();
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
-            var completionTarget = new TextBoxTarget(textBox);
-            this.completionList = new CompletionListControl(completionTarget);
+            this.completionList = new CompletionListControl(new TextBoxTarget(textBox));
+            this.completionBackend = new ASCompletionListBackend(completionList, this);
             this.history = new List<string>();
         }
 
@@ -62,11 +67,12 @@ namespace FlashDebugger.Controls
                 e.SuppressKeyPress = true;
                 int curLine = this.textBox.GetLineFromCharIndex(this.textBox.SelectionStart);
                 string line = "";
-                if (curLine<this.textBox.Lines.Length) line = this.textBox.Lines[curLine];
+                if (curLine < this.textBox.Lines.Length) line = this.textBox.Lines[curLine];
                 if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.AppendText(Environment.NewLine);
                 try
                 {
-                    this.history.Add(line);
+                    if (history.Count == 0 || history[history.Count - 1] != line)
+                        this.history.Add(line);
                     this.historyPos = this.history.Count;
                     if (line == "swfs")
                     {
@@ -110,46 +116,91 @@ namespace FlashDebugger.Controls
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             // Ctrl+Space is detected at the form level instead of the editor level, so when we are docked we need to catch it before
-            if ((keyData & Keys.KeyCode) == Keys.Space && (keyData & Keys.Modifiers & Keys.Control) > 0)
+            if (keyData == (Keys.Control | Keys.Space) || keyData == (Keys.Control | Keys.Shift | Keys.Space))
             {
                 int curLine = this.textBox.GetLineFromCharIndex(this.textBox.SelectionStart);
                 string line = (curLine < this.textBox.Lines.Length) ? this.textBox.Lines[curLine] : "";
 
-                if (line == "" || !line.StartsWith("p ")) return true;
+                if (curLine != textBox.Lines.Length - 1 || !line.StartsWith("p ") && !line.StartsWith("g "))
+                    return false;
 
-                var debugger = PluginMain.debugManager.FlashInterface;
-                if (!debugger.isDebuggerStarted || !debugger.isDebuggerSuspended || PluginMain.debugManager.CurrentFrame >= debugger.GetFrames().Length) 
-                    return true;
-                var location = debugger.GetFrames()[PluginMain.debugManager.CurrentFrame].getLocation();
-                string file = PluginMain.debugManager.GetLocalPath(location.getFile());
-                if (file == null) return true;
-                var info = PluginCore.Helpers.FileHelper.GetEncodingFileInfo(file);
-                if (info.CodePage == -1) return true;
-                using (var sci = new ScintillaNet.ScintillaControl())
+                int lineLength = textBox.SelectionStart - textBox.GetFirstCharIndexFromLine(textBox.Lines.Length - 1) - 2;
+                if (lineLength < 0)
+                    return false;
+
+                ASCompletionListBackend.BackendFileInfo file;
+                if (!((ASCompletionListBackend.IBackendFileGetter)this).GetFileInfo(out file))
+                    return false;
+
+                if (line.StartsWith("g "))
                 {
-                    sci.Text = info.Contents;
-                    sci.CodePage = info.CodePage;
-                    sci.Encoding = Encoding.GetEncoding(info.CodePage);
-                    sci.ConfigurationLanguage = PluginCore.PluginBase.CurrentProject.Language;
+                    string expression = line.Substring(2, lineLength).TrimStart();
+                    if (expression.IndexOfAny(".,_();:[]{}=-+*\'\"\\/|<>?! ".ToCharArray()) > -1)
+                        return false;
 
-                    sci.CurrentPos = sci.PositionFromLine(location.getLine() - 1);
-                    string expression = line.Substring(2);
-                    sci.SetSel(sci.CurrentPos, sci.CurrentPos);
-                    sci.ReplaceSel(expression);
+                    var fileModel = ASFileParser.ParseFile(new FileModel(file.File));
 
-                    ASCompletion.Completion.ASExpr expr =
-                        ASCompletion.Completion.ASComplete.GetExpressionType(sci, sci.CurrentPos).Context;
-                    var list = new List<PluginCore.ICompletionListItem>();
-                    if (expr.Value != null)
+                    var members = new MemberList();
+
+                    // We could use Context.GetTopLevelElements, but neither AS2 or super are supported...
+                    members.Add(new MemberModel("this", "", FlagType.Variable | FlagType.Intrinsic, Visibility.Public));
+
+                    // root types & packages
+                    var newContext = ASCompletion.Context.ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                    FileModel baseElements = newContext.ResolvePackage(null, false);
+                    if (baseElements != null)
                     {
-                        ASCompletion.Model.MemberList locals = ASCompletion.Completion.ASComplete.ParseLocalVars(expr);
-                        foreach (ASCompletion.Model.MemberModel local in locals)
-                            list.Add(new ASCompletion.Completion.MemberItem(local));
+                        foreach (var m in baseElements.Members.Items)
+                        {
+                            members.Add(m);
+                        }
+                        foreach (var m in baseElements.Imports.Items)
+                        {
+                            if (m.Flags == FlagType.Package) continue;
+                            members.Add(m);
+                        }
                     }
-                    completionList.Show(list, true, line.Substring(line.LastIndexOfAny(new[]{' ', '.'}) + 1));
+
+                    for (int i = fileModel.Classes.Count - 1; i >= 0; i--)
+                    {
+                        var c = fileModel.Classes[i];
+                        if (c.LineFrom <= file.Line && c.LineTo >= file.Line)
+                        {
+                            foreach (var m in c.Members.Items)
+                            {
+                                if (m.Access != Visibility.Public || (m.Flags & FlagType.Variable) == 0) continue;
+                                members.Add(m);
+                            }
+
+                            break;
+                        }
+                    }
+
+                    members.Sort();
+
+                    var language = ScintillaNet.ScintillaControl.Configuration.GetLanguage(PluginBase.CurrentProject.Language);
+                    if (language != null)   // Should we provide some custom string otherwise?
+                        completionList.CharacterClass = language.characterclass.Characters;
+
+                    members.Sort();
+                    var items = new List<ICompletionListItem>();
+                    foreach (var m in members.Items) items.Add(new MemberItem(m));
+                    completionList.Show(items, true, expression);
+
+                    return true;
                 }
 
-                return true;
+                if (completionBackend.SetCompletionBackend(file, line.Substring(2, lineLength)))
+                {
+                    if (keyData == (Keys.Control | Keys.Space))
+                        completionBackend.ShowAutoCompletioList();
+                    else
+                        completionBackend.ShowFunctionDetails();
+
+                    return true;
+                }
+
+                return false;
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
@@ -209,7 +260,147 @@ namespace FlashDebugger.Controls
             this.textBox.Paste();
         }
 
-        private class TextBoxTarget : ICompletionListHost
+        #region ASCompletionListBackend.BackendFileInfo Methods
+
+        PluginCore.Helpers.EncodingFileInfo ASCompletionListBackend.IBackendFileGetter.GetFileContent(ASCompletionListBackend.BackendFileInfo file)
+        {
+            var debugger = PluginMain.debugManager.FlashInterface;
+            if (!debugger.isDebuggerStarted || !debugger.isDebuggerSuspended || PluginMain.debugManager.CurrentFrame >= debugger.GetFrames().Length)
+                return null;
+            var location = debugger.GetFrames()[PluginMain.debugManager.CurrentFrame].getLocation();
+
+            // Could somebody want to pass a file pointing to a file different to the one being debugged? highly unlikely
+
+            var sourceFile = location.getFile();
+            var sourceFileText = new StringBuilder();
+            if (sourceFile != null)
+            {
+                for (int i = 1, count = sourceFile.getLineCount(); i <= count; i++)
+                {
+                    sourceFileText.Append(sourceFile.getLine(i).ToString()).Append(PluginCore.Utilities.LineEndDetector.GetNewLineMarker((int)PluginBase.Settings.EOLMode));
+                }
+            }
+
+            if (sourceFileText.Length == 0)
+            {
+                if (file.File != null && System.IO.File.Exists(file.File) &&
+                    file.File == PluginMain.debugManager.GetLocalPath(sourceFile))
+                {
+                    // Notify the user of this case?
+                    //MessageBox.Show("Source code no available, but potential matching file found on disk, do you want to use it?");
+                    return PluginCore.Helpers.FileHelper.GetEncodingFileInfo(file.File);
+                }
+
+                return null;
+            }
+
+            // Maybe we should convert from UTF-16 to UTF-8? no problems so far
+            return new PluginCore.Helpers.EncodingFileInfo { CodePage = Encoding.UTF8.CodePage, Contents = sourceFileText.ToString() };
+        }
+
+        bool ASCompletionListBackend.IBackendFileGetter.GetFileInfo(out ASCompletionListBackend.BackendFileInfo file)
+        {
+            file = default(ASCompletionListBackend.BackendFileInfo);
+            var debugger = PluginMain.debugManager.FlashInterface;
+            if (!debugger.isDebuggerStarted || !debugger.isDebuggerSuspended || PluginMain.debugManager.CurrentFrame >= debugger.GetFrames().Length)
+                return false;
+            var location = debugger.GetFrames()[PluginMain.debugManager.CurrentFrame].getLocation();
+            file.File = PluginMain.debugManager.GetLocalPath(location.getFile());
+            if (file.File == null)
+                return false;
+
+            file.Line = location.getLine() - 1;
+
+            return true;
+        }
+
+        string ASCompletionListBackend.IBackendFileGetter.GetExpression()
+        {
+            int curLine = this.textBox.GetLineFromCharIndex(this.textBox.SelectionStart);
+            string line = (curLine < this.textBox.Lines.Length) ? this.textBox.Lines[curLine] : "";
+
+            if (curLine != textBox.Lines.Length - 1 || !line.StartsWith("p "))
+                return null;
+
+            int lineLength = textBox.SelectionStart - textBox.GetFirstCharIndexFromLine(textBox.Lines.Length - 1) - 2;
+            if (lineLength < 0)
+                return null;
+
+            return line.Substring(2, lineLength);
+        }
+
+        #endregion
+        
+        public class TextBoxEx : TextBox
+        {
+            private const int WM_SYSKEYDOWN = 0x0104;
+
+            public event KeyEventHandler KeyPosted; //Hacky event for MethodCallTip, although with some rather valid use cases
+            public event ScrollEventHandler Scroll;
+
+            protected override void DefWndProc(ref Message m)
+            {
+                base.DefWndProc(ref m);
+
+                if (m.Msg == Win32.WM_KEYDOWN || m.Msg == WM_SYSKEYDOWN)  // If we're worried about performance/GC, we can store latest OnKeyDown e
+                    OnKeyPosted(new KeyEventArgs((Keys)((int)m.WParam) | ModifierKeys));
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                switch (m.Msg)
+                {
+                    case Win32.WM_HSCROLL:
+                    case Win32.WM_VSCROLL:
+                    case Win32.WM_MOUSEWHEEL:
+                        WmScroll(ref m);
+                        break;
+                    default:
+                        base.WndProc(ref m);
+                        break;
+                }
+
+            }
+
+            /// <summary>
+            ///     Raises the <see cref="Scroll"/> event.
+            /// </summary>
+            /// <param name="e">An <see cref="ScrollEventArgs"/> that contains the event data.</param>
+            protected virtual void OnScroll(ScrollEventArgs e)
+            {
+                if (Scroll != null)
+                    Scroll(this, e);
+            }
+
+            protected virtual void OnKeyPosted(KeyEventArgs e)
+            {
+                if (KeyPosted != null)
+                    KeyPosted(this, e);
+            }
+
+            private void WmScroll(ref Message m)
+            {
+                ScrollOrientation so;
+                ScrollEventType set = (ScrollEventType)((short)((int)(long)m.WParam & 0xffff));
+
+                // We're not interested in the actual scroll change right now
+                if (m.Msg == Win32.WM_HSCROLL)
+                {
+                    so = ScrollOrientation.HorizontalScroll;
+                    base.WndProc(ref m);
+                }
+                else
+                {
+                    so = ScrollOrientation.VerticalScroll;
+                    base.WndProc(ref m);
+                }
+
+                OnScroll(new ScrollEventArgs(set, 0, 0, so));
+            }
+
+        }
+
+        public class TextBoxTarget : ICompletionListHost
         {
 
             #region ICompletionListTarget Members
@@ -220,7 +411,28 @@ namespace FlashDebugger.Controls
                 remove { _owner.LostFocus -= value; }
             }
 
-            public event EventHandler PositionChanged;
+            private EventHandler positionChanged;
+            public event EventHandler PositionChanged
+            {
+                add
+                {
+                    if (positionChanged == null || positionChanged.GetInvocationList().Length == 0)
+                    {
+                        _owner.Scroll += Owner_Scroll;
+                        BuildControlHierarchy(_owner);
+                    }
+                    positionChanged += value;
+                }
+                remove
+                {
+                    positionChanged -= value;
+                    if (positionChanged == null || positionChanged.GetInvocationList().Length < 1)
+                    {
+                        _owner.Scroll -= Owner_Scroll;
+                        ClearControlHierarchy();
+                    }
+                }
+            }
 
             public event EventHandler SizeChanged
             {
@@ -234,7 +446,11 @@ namespace FlashDebugger.Controls
                 remove { _owner.KeyDown -= value; }
             }
 
-            public event KeyEventHandler KeyPosted;
+            public event KeyEventHandler KeyPosted
+            {
+                add { _owner.KeyPosted += value; }
+                remove { _owner.KeyPosted -= value; }
+            }
 
             public event KeyPressEventHandler KeyPress
             {
@@ -248,7 +464,7 @@ namespace FlashDebugger.Controls
                 remove { _owner.MouseDown -= value; }
             }
 
-            private TextBox _owner;
+            private TextBoxEx _owner;
             public Control Owner
             {
                 get { return _owner; }
@@ -282,7 +498,7 @@ namespace FlashDebugger.Controls
                 get { return !_owner.ReadOnly; }
             }
 
-            public TextBoxTarget(TextBox owner)
+            public TextBoxTarget(TextBoxEx owner)
             {
                 _owner = owner;
             }
@@ -299,8 +515,8 @@ namespace FlashDebugger.Controls
 
             public int GetLineHeight()
             {
-        		using (Graphics g = _owner.CreateGraphics())
-        		{
+                using (Graphics g = _owner.CreateGraphics())
+                {
                     SizeF textSize = g.MeasureString("S", _owner.Font);
                     return (int)Math.Ceiling(textSize.Height);
                 }
@@ -323,8 +539,51 @@ namespace FlashDebugger.Controls
             }
 
             #endregion
-        }
 
+            private List<Control> controlHierarchy = new List<Control>();
+
+            private void BuildControlHierarchy(Control current)
+            {
+                while (current != null)
+                {
+                    current.LocationChanged += Control_LocationChanged;
+                    current.ParentChanged += Control_ParentChanged;
+                    controlHierarchy.Add(current);
+                    current = current.Parent;
+                }
+            }
+
+            private void ClearControlHierarchy()
+            {
+                foreach (var control in controlHierarchy)
+                {
+                    control.LocationChanged -= Control_LocationChanged;
+                    control.ParentChanged -= Control_ParentChanged;
+                }
+                controlHierarchy.Clear();
+            }
+
+            private void Control_LocationChanged(object sender, EventArgs e)
+            {
+                if (positionChanged != null)
+                    positionChanged(sender, e);
+            }
+
+            private void Control_ParentChanged(object sender, EventArgs e)
+            {
+                ClearControlHierarchy();
+                BuildControlHierarchy(_owner);
+                if (positionChanged != null)
+                    positionChanged(sender, e);
+            }
+
+            private void Owner_Scroll(object sender, ScrollEventArgs e)
+            {
+                if (positionChanged != null)
+                    positionChanged(sender, e);
+            }
+
+        }
 
     }
 }
