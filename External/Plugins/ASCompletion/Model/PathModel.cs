@@ -463,25 +463,25 @@ namespace ASCompletion.Model
             if (!Directory.Exists(path)) return;
             explored.Add(path);
 
-            // convert classes
             try
             {
+                // convert classes
                 foreach (string mask in masks)
                 {
                     string[] files = Directory.GetFiles(path, mask);
                     if (files != null)
                         foreach (string file in files) foundFiles.Add(file);
                 }
+
+                // explore subfolders
+                string[] dirs = Directory.GetDirectories(path);
+                foreach (string dir in dirs)
+                {
+                    if (!explored.Contains(dir) && (File.GetAttributes(dir) & FileAttributes.Hidden) == 0)
+                        ExploreFolder(dir, masks, explored, foundFiles);
+                }
             }
             catch { }
-
-            // explore subfolders
-            string[] dirs = Directory.GetDirectories(path);
-            foreach (string dir in dirs)
-            {
-                if (!explored.Contains(dir) && (File.GetAttributes(dir) & FileAttributes.Hidden) == 0)
-                    ExploreFolder(dir, masks, explored, foundFiles);
-            }
         }
         #endregion
 
