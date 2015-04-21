@@ -297,7 +297,7 @@ namespace ASCompletion.Model
             // event/style metadatas
             ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab);
 
-            // members			
+            // members          
             string decl;
             foreach (MemberModel member in Members)
             {

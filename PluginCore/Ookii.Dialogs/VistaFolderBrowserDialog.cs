@@ -123,7 +123,7 @@ namespace Ookii.Dialogs
                     _rootFolder = value;
             }
         }
-	
+    
         /// <summary>
         /// Gets or sets the path selected by the user.
         /// </summary>
@@ -199,7 +199,7 @@ namespace Ookii.Dialogs
                     _showNewFolderButton = value;
             }
         }
-	
+    
 
         /// <summary>
         /// Gets or sets a value that indicates whether to use the value of the <see cref="Description" /> property
@@ -212,7 +212,7 @@ namespace Ookii.Dialogs
         {
             get { return _useDescriptionForTitle; }
             set { _useDescriptionForTitle = value; }
-        }	
+        }   
 
         #endregion
 

@@ -23,55 +23,55 @@ namespace FlashDebugger.Controls
     partial class DataTipForm
     {
         /// <summary> 
-		/// Required designer variable.
-		/// </summary>
+        /// Required designer variable.
+        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
             base.Dispose(disposing);
-		}
+        }
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
+        /// <summary> 
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
         private void InitializeComponent()
         {
-			this.dataTreeControl = new FlashDebugger.Controls.DataTreeControl();
-			this.SuspendLayout();
-			// 
-			// dataTreeControl
-			// 
-			this.dataTreeControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dataTreeControl.Location = new System.Drawing.Point(4, 4);
-			this.dataTreeControl.Name = "dataTreeControl";
-			this.dataTreeControl.Size = new System.Drawing.Size(182, 180);
-			this.dataTreeControl.TabIndex = 0;
-			// 
-			// DataTipForm
-			// 
-			this.ClientSize = new System.Drawing.Size(190, 188);
-			this.ControlBox = false;
-			this.Controls.Add(this.dataTreeControl);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "DataTipForm";
-			this.Padding = new System.Windows.Forms.Padding(4);
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.ResumeLayout(false);
+            this.dataTreeControl = new FlashDebugger.Controls.DataTreeControl();
+            this.SuspendLayout();
+            // 
+            // dataTreeControl
+            // 
+            this.dataTreeControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataTreeControl.Location = new System.Drawing.Point(4, 4);
+            this.dataTreeControl.Name = "dataTreeControl";
+            this.dataTreeControl.Size = new System.Drawing.Size(182, 180);
+            this.dataTreeControl.TabIndex = 0;
+            // 
+            // DataTipForm
+            // 
+            this.ClientSize = new System.Drawing.Size(190, 188);
+            this.ControlBox = false;
+            this.Controls.Add(this.dataTreeControl);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "DataTipForm";
+            this.Padding = new System.Windows.Forms.Padding(4);
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.ResumeLayout(false);
 
         }
 

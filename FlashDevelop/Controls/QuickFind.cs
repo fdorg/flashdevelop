@@ -14,10 +14,10 @@ using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using ScintillaNet.Configuration;
 using ScintillaNet;
 using PluginCore;
-using PluginCore.Helpers;
 
 namespace FlashDevelop.Controls
 {
@@ -382,10 +382,8 @@ namespace FlashDevelop.Controls
             if (e.KeyChar == (Char)Keys.Return && this.findTextBox.Text.Trim() != "")
             {
                 e.Handled = true;
-                if ((ModifierKeys & Keys.Shift) == Keys.Shift)
-                    FindPrev(findTextBox.Text, false);
-                else
-                    FindNext(findTextBox.Text, false);
+                if ((ModifierKeys & Keys.Shift) == Keys.Shift) FindPrev(findTextBox.Text, false);
+                else FindNext(findTextBox.Text, false);
             }
         }
 
@@ -422,12 +420,12 @@ namespace FlashDevelop.Controls
                 List<SearchMatch> matches = this.GetResults(sci, this.findTextBox.Text);
                 if (matches != null && matches.Count != 0)
                 {
-                    this.RemoveHighlights(sci);
+                    sci.RemoveHighlights();
                     if (this.highlightTimer.Enabled) this.highlightTimer.Stop();
                     if (this.highlightCheckBox.Checked) this.AddHighlights(sci, matches);
                 }
             }
-            else this.RemoveHighlights(sci);
+            else sci.RemoveHighlights();
         }
 
         /// <summary>
@@ -547,7 +545,7 @@ namespace FlashDevelop.Controls
         private void MoreButtonClick(Object sender, EventArgs e)
         {
             this.CloseButtonClick(null, null);
-            PluginBase.MainForm.CallCommand("FindAndReplaceFrom", this.findTextBox.Text);
+            PluginBase.MainForm.CallCommand("FindAndReplace", null);
         }
 
         /// <summary>
@@ -557,23 +555,7 @@ namespace FlashDevelop.Controls
         {
             ITabbedDocument doc = DocumentManager.FindDocument(sci);
             Language language = MainForm.Instance.SciConfig.GetLanguage(sci.ConfigurationLanguage);
-            foreach (SearchMatch match in matches)
-            {
-                Int32 start = sci.MBSafePosition(match.Index);
-                Int32 end = start + sci.MBSafeTextLength(match.Value);
-                Int32 line = sci.LineFromPosition(start);
-                Int32 position = start;
-                Int32 es = sci.EndStyled;
-                Int32 mask = 1 << sci.StyleBits;
-                // Define indics in both controls...
-                doc.SplitSci1.SetIndicStyle(0, (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox);
-                doc.SplitSci1.SetIndicFore(0, language.editorstyle.HighlightBackColor);
-                doc.SplitSci2.SetIndicStyle(0, (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox);
-                doc.SplitSci2.SetIndicFore(0, language.editorstyle.HighlightBackColor);
-                sci.StartStyling(position, mask);
-                sci.SetStyling(end - start, mask);
-                sci.StartStyling(es, mask - 1);
-            }
+            sci.AddHighlights(matches, language.editorstyle.HighlightBackColor);
         }
 
         /// <summary>
@@ -581,7 +563,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void RefreshHighlights(ScintillaControl sci, List<SearchMatch> matches)
         {
-            this.RemoveHighlights(sci);
+            sci.RemoveHighlights();
             if (this.highlightTimer.Enabled) this.highlightTimer.Stop();
             Hashtable table = new Hashtable();
             table["sci"] = sci;
@@ -590,19 +572,6 @@ namespace FlashDevelop.Controls
             this.highlightTimer.Start();
         }
 
-        /// <summary>
-        /// Removes the highlights from the correct sci control
-        /// </summary>
-        private void RemoveHighlights(ScintillaControl sci)
-        {
-            Int32 es = sci.EndStyled;
-            Int32 mask = (1 << sci.StyleBits);
-            sci.StartStyling(0, mask);
-            sci.SetStyling(sci.TextLength, 0);
-            sci.StartStyling(es, mask - 1);
-        }
-
-        /// <summary>
         /// Gets search results for a sci control
         /// </summary>
         private List<SearchMatch> GetResults(ScintillaControl sci, String text)

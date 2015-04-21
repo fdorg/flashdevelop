@@ -15,8 +15,8 @@ namespace SwfOp.Data.Tags
         }
 
         /// <summary>
-		/// see <see cref="SwfOp.Data.Tags.BaseTag">base class</see>
-		/// </summary>
+        /// see <see cref="SwfOp.Data.Tags.BaseTag">base class</see>
+        /// </summary>
         public override void UpdateData(byte version)
         {
             throw new NotImplementedException();

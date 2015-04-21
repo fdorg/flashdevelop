@@ -17,8 +17,8 @@ using PluginCore;
 
 namespace ResultsPanel
 {
-	public class PluginUI : DockPanelControl
-	{
+    public class PluginUI : DockPanelControl
+    {
         private ListView entriesView;
         private ColumnHeader entryFile;
         private ColumnHeader entryDesc;
@@ -32,12 +32,12 @@ namespace ResultsPanel
         private ToolStripMenuItem copyEntryContextMenuItem;
         private ToolStripMenuItem clearIgnoredEntriesContextMenuItem;
         private IDictionary<String, Boolean> ignoredEntries;
-		private List<ListViewItem> allListViewItems = new List<ListViewItem>();
-		private ToolStripButton toolStripButtonError;
-		private ToolStripButton toolStripButtonWarning;
-		private ToolStripSpringTextBox toolStripTextBoxFilter;
+        private List<ListViewItem> allListViewItems = new List<ListViewItem>();
+        private ToolStripButton toolStripButtonError;
+        private ToolStripButton toolStripButtonWarning;
+        private ToolStripSpringTextBox toolStripTextBoxFilter;
         private ToolStripButton toolStripButtonInfo;
-		private ToolStripLabel toolStripLabelFilter;
+        private ToolStripLabel toolStripLabelFilter;
         private ToolStripButton clearFilterButton;
         private ToolStrip toolStripFilters;
         private Int32 errorCount = 0;
@@ -46,9 +46,9 @@ namespace ResultsPanel
         private PluginMain pluginMain;
         private Int32 logCount;
         private Timer autoShow;
-		 
+         
         public PluginUI(PluginMain pluginMain)
-		{
+        {
             this.pluginMain = pluginMain;
             this.autoShow = new Timer();
             this.autoShow.Interval = 300;
@@ -61,32 +61,32 @@ namespace ResultsPanel
             this.InitializeTexts();
             this.InitializeLayout();
             this.ApplySettings();
-		}
-		
-		#region Windows Forms Designer Generated Code
-		
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() 
+        }
+        
+        #region Windows Forms Designer Generated Code
+        
+        /// <summary>
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent() 
         {
-			this.entriesView = new System.Windows.Forms.ListView();
-			this.entryType = new System.Windows.Forms.ColumnHeader();
-			this.entryLine = new System.Windows.Forms.ColumnHeader();
-			this.entryDesc = new System.Windows.Forms.ColumnHeader();
-			this.entryFile = new System.Windows.Forms.ColumnHeader();
-			this.entryPath = new System.Windows.Forms.ColumnHeader();
-			this.toolStripFilters = new PluginCore.Controls.ToolStripEx();
+            this.entriesView = new System.Windows.Forms.ListView();
+            this.entryType = new System.Windows.Forms.ColumnHeader();
+            this.entryLine = new System.Windows.Forms.ColumnHeader();
+            this.entryDesc = new System.Windows.Forms.ColumnHeader();
+            this.entryFile = new System.Windows.Forms.ColumnHeader();
+            this.entryPath = new System.Windows.Forms.ColumnHeader();
+            this.toolStripFilters = new PluginCore.Controls.ToolStripEx();
             this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonError = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonWarning = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonInfo = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonError = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonWarning = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonInfo = new System.Windows.Forms.ToolStripButton();
             this.toolStripTextBoxFilter = new System.Windows.Forms.ToolStripSpringTextBox();
-			this.toolStripLabelFilter = new System.Windows.Forms.ToolStripLabel();
-			this.toolStripFilters.SuspendLayout();
-			this.SuspendLayout();
+            this.toolStripLabelFilter = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripFilters.SuspendLayout();
+            this.SuspendLayout();
             // 
             // clearFilterButton
             //
@@ -98,51 +98,51 @@ namespace ResultsPanel
             this.clearFilterButton.Size = new System.Drawing.Size(23, 26);
             this.clearFilterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButtonClick);
-			// 
-			// entriesView
-			// 
+            // 
+            // entriesView
+            // 
             this.entriesView.Dock = DockStyle.Fill;
-			this.entriesView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.entriesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.entryType, this.entryLine, this.entryDesc, this.entryFile, this.entryPath });
-			this.entriesView.FullRowSelect = true;
-			this.entriesView.GridLines = true;
-			this.entriesView.Location = new System.Drawing.Point(0, 28);
-			this.entriesView.Name = "entriesView";
-			this.entriesView.ShowItemToolTips = true;
-			this.entriesView.Size = new System.Drawing.Size(710, 218);
-			this.entriesView.TabIndex = 1;
-			this.entriesView.UseCompatibleStateImageBehavior = false;
-			this.entriesView.View = System.Windows.Forms.View.Details;
-			this.entriesView.DoubleClick += new System.EventHandler(this.EntriesViewDoubleClick);
-			this.entriesView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EntriesViewKeyDown);
-			// 
-			// entryType
-			// 
-			this.entryType.Text = "!";
-			this.entryType.Width = 23;
-			// 
-			// entryLine
-			// 
-			this.entryLine.Text = "Line";
-			this.entryLine.Width = 55;
-			// 
-			// entryDesc
-			// 
-			this.entryDesc.Text = "Description";
-			this.entryDesc.Width = 350;
-			// 
-			// entryFile
-			// 
-			this.entryFile.Text = "File";
-			this.entryFile.Width = 150;
-			// 
-			// entryPath
-			// 
-			this.entryPath.Text = "Path";
-			this.entryPath.Width = 400;
-			// 
-			// toolStripFilters
-			// 
+            this.entriesView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.entriesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.entryType, this.entryLine, this.entryDesc, this.entryFile, this.entryPath });
+            this.entriesView.FullRowSelect = true;
+            this.entriesView.GridLines = true;
+            this.entriesView.Location = new System.Drawing.Point(0, 28);
+            this.entriesView.Name = "entriesView";
+            this.entriesView.ShowItemToolTips = true;
+            this.entriesView.Size = new System.Drawing.Size(710, 218);
+            this.entriesView.TabIndex = 1;
+            this.entriesView.UseCompatibleStateImageBehavior = false;
+            this.entriesView.View = System.Windows.Forms.View.Details;
+            this.entriesView.DoubleClick += new System.EventHandler(this.EntriesViewDoubleClick);
+            this.entriesView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EntriesViewKeyDown);
+            // 
+            // entryType
+            // 
+            this.entryType.Text = "!";
+            this.entryType.Width = 23;
+            // 
+            // entryLine
+            // 
+            this.entryLine.Text = "Line";
+            this.entryLine.Width = 55;
+            // 
+            // entryDesc
+            // 
+            this.entryDesc.Text = "Description";
+            this.entryDesc.Width = 350;
+            // 
+            // entryFile
+            // 
+            this.entryFile.Text = "File";
+            this.entryFile.Width = 150;
+            // 
+            // entryPath
+            // 
+            this.entryPath.Text = "Path";
+            this.entryPath.Width = 400;
+            // 
+            // toolStripFilters
+            // 
             this.toolStripFilters.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.toolStripFilters.CanOverflow = false;
             this.toolStripFilters.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
@@ -163,74 +163,74 @@ namespace ResultsPanel
             this.toolStripFilters.Size = new System.Drawing.Size(710, 25);
             this.toolStripFilters.TabIndex = 0;
             this.toolStripFilters.Text = "toolStripFilters";
-			// 
-			// toolStripButtonError
-			// 
-			this.toolStripButtonError.Checked = true;
-			this.toolStripButtonError.CheckOnClick = true;
+            // 
+            // toolStripButtonError
+            // 
+            this.toolStripButtonError.Checked = true;
+            this.toolStripButtonError.CheckOnClick = true;
             this.toolStripButtonError.Margin = new System.Windows.Forms.Padding(1, 1, 0, 1);
-			this.toolStripButtonError.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.toolStripButtonError.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonError.Name = "toolStripButtonError";
-			this.toolStripButtonError.Size = new System.Drawing.Size(36, 22);
-			this.toolStripButtonError.Text = "Error";
+            this.toolStripButtonError.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolStripButtonError.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonError.Name = "toolStripButtonError";
+            this.toolStripButtonError.Size = new System.Drawing.Size(36, 22);
+            this.toolStripButtonError.Text = "Error";
             this.toolStripButtonError.CheckedChanged += new System.EventHandler(this.ToolStripButtonErrorCheckedChanged);
-			// 
-			// toolStripButtonWarning
-			// 
-			this.toolStripButtonWarning.Checked = true;
-			this.toolStripButtonWarning.CheckOnClick = true;
+            // 
+            // toolStripButtonWarning
+            // 
+            this.toolStripButtonWarning.Checked = true;
+            this.toolStripButtonWarning.CheckOnClick = true;
             this.toolStripButtonWarning.Margin = new System.Windows.Forms.Padding(1, 1, 0, 1);
-			this.toolStripButtonWarning.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.toolStripButtonWarning.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonWarning.Name = "toolStripButtonWarning";
-			this.toolStripButtonWarning.Size = new System.Drawing.Size(56, 22);
-			this.toolStripButtonWarning.Text = "Warning";
+            this.toolStripButtonWarning.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolStripButtonWarning.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonWarning.Name = "toolStripButtonWarning";
+            this.toolStripButtonWarning.Size = new System.Drawing.Size(56, 22);
+            this.toolStripButtonWarning.Text = "Warning";
             this.toolStripButtonWarning.CheckedChanged += new System.EventHandler(this.ToolStripButtonErrorCheckedChanged);
-			// 
-			// toolStripButtonInfo
-			// 
-			this.toolStripButtonInfo.Checked = true;
-			this.toolStripButtonInfo.CheckOnClick = true;
+            // 
+            // toolStripButtonInfo
+            // 
+            this.toolStripButtonInfo.Checked = true;
+            this.toolStripButtonInfo.CheckOnClick = true;
             this.toolStripButtonInfo.Margin = new System.Windows.Forms.Padding(1, 1, 0, 1);
-			this.toolStripButtonInfo.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.toolStripButtonInfo.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonInfo.Name = "toolStripButtonInfo";
-			this.toolStripButtonInfo.Size = new System.Drawing.Size(74, 22);
-			this.toolStripButtonInfo.Text = "Information";
+            this.toolStripButtonInfo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolStripButtonInfo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonInfo.Name = "toolStripButtonInfo";
+            this.toolStripButtonInfo.Size = new System.Drawing.Size(74, 22);
+            this.toolStripButtonInfo.Text = "Information";
             this.toolStripButtonInfo.CheckedChanged += new System.EventHandler(this.ToolStripButtonErrorCheckedChanged);
-			// 
-			// toolStripTextBoxFilter
-			//
-			this.toolStripTextBoxFilter.Name = "toolStripTextBoxFilter";
-			this.toolStripTextBoxFilter.Size = new System.Drawing.Size(100, 25);
+            // 
+            // toolStripTextBoxFilter
+            //
+            this.toolStripTextBoxFilter.Name = "toolStripTextBoxFilter";
+            this.toolStripTextBoxFilter.Size = new System.Drawing.Size(100, 25);
             this.toolStripTextBoxFilter.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.toolStripTextBoxFilter.TextChanged += new System.EventHandler(this.ToolStripButtonErrorCheckedChanged);
-			// 
-			// toolStripLabelFilter
-			//
+            // 
+            // toolStripLabelFilter
+            //
             this.toolStripLabelFilter.Margin = new System.Windows.Forms.Padding(2, 1, 0, 1);
-			this.toolStripLabelFilter.Name = "toolStripLabelFilter";
-			this.toolStripLabelFilter.Size = new System.Drawing.Size(36, 22);
-			this.toolStripLabelFilter.Text = "Filter:";
-			// 
-			// PluginUI
-			//
+            this.toolStripLabelFilter.Name = "toolStripLabelFilter";
+            this.toolStripLabelFilter.Size = new System.Drawing.Size(36, 22);
+            this.toolStripLabelFilter.Text = "Filter:";
+            // 
+            // PluginUI
+            //
             this.Name = "PluginUI";
             this.Resize += this.PluginUIResize;
-			this.Controls.Add(this.entriesView);
+            this.Controls.Add(this.entriesView);
             this.Controls.Add(this.toolStripFilters);
-			this.Size = new System.Drawing.Size(712, 246);
-			this.toolStripFilters.ResumeLayout(false);
-			this.toolStripFilters.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            this.Size = new System.Drawing.Size(712, 246);
+            this.toolStripFilters.ResumeLayout(false);
+            this.toolStripFilters.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
-		}
+        }
 
-		#endregion
-		
-		#region Methods And Event Handlers
+        #endregion
+        
+        #region Methods And Event Handlers
 
         /// <summary>
         /// Accessor for settings
@@ -429,14 +429,14 @@ namespace ResultsPanel
         /// <summary>
         /// If the user presses Enter, dispatch double click
         /// </summary> 
-		private void EntriesViewKeyDown(Object sender, System.Windows.Forms.KeyEventArgs e)
-		{
-			if (e.KeyCode == Keys.Enter)
-			{
-				this.EntriesViewDoubleClick(null, null);
-				e.Handled = true;
-			}
-		}
+        private void EntriesViewKeyDown(Object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.EntriesViewDoubleClick(null, null);
+                e.Handled = true;
+            }
+        }
 
         /// <summary>
         /// Update the buttons when the panel resizes
@@ -457,19 +457,19 @@ namespace ResultsPanel
         /// Opens the file and goes to the match
         /// </summary>
         private void EntriesViewDoubleClick(Object sender, System.EventArgs e)
-		{
-			if (this.entriesView.SelectedItems.Count < 1) return;
-			ListViewItem item = this.entriesView.SelectedItems[0];
-			if (item == null) return; 
+        {
+            if (this.entriesView.SelectedItems.Count < 1) return;
+            ListViewItem item = this.entriesView.SelectedItems[0];
+            if (item == null) return; 
             Match match = (Match)item.Tag;
-			String file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
-			file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            String file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
+            file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             file = PathHelper.GetLongPathName(file);
             if (File.Exists(file)) 
-			{
+            {
                 PluginBase.MainForm.OpenEditableDocument(file, false);
                 ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-				if (!PluginBase.MainForm.CurrentDocument.IsEditable) return;
+                if (!PluginBase.MainForm.CurrentDocument.IsEditable) return;
                 Int32 line = Convert.ToInt32(item.SubItems[1].Text) - 1;
                 String description = item.SubItems[2].Text;
                 Match mcaret = this.errorCharacters.Match(description);
@@ -519,8 +519,8 @@ namespace ResultsPanel
                     Int32 position = sci.PositionFromLine(line);
                     this.SetSelAndFocus(sci, line, position, position);
                 }
-			}
-		}
+            }
+        }
 
         /// <summary>
         /// Convert multibyte column to byte length
@@ -536,7 +536,7 @@ namespace ResultsPanel
         /// Goes to the match and ensures that correct fold is opened
         /// </summary>
         private void SetSelAndFocus(ScintillaControl sci, Int32 line, Int32 startPosition, Int32 endPosition)
-		{
+        {
             sci.SetSel(startPosition, endPosition);
             sci.EnsureVisible(line);
         }
@@ -679,7 +679,7 @@ namespace ResultsPanel
                             item.SubItems.Add(fileInfo.Name);
                             item.SubItems.Add(fileInfo.Directory.ToString());
                             if (newResult < 0) newResult = this.entriesView.Items.Count;
-							if (icon == 0) this.messageCount++;
+                            if (icon == 0) this.messageCount++;
                             else if (icon == 1) this.errorCount++;
                             else if (icon == 2) this.warningCount++;
                             allListViewItems.Add(item);
@@ -704,8 +704,8 @@ namespace ResultsPanel
         /// <summary>
         /// Filters the results...
         /// </summary>
-		private void FilterResults(bool locked)
-		{
+        private void FilterResults(bool locked)
+        {
             if (!locked) this.entriesView.BeginUpdate();
             String filterText = this.toolStripTextBoxFilter.Text.ToLower();
             Boolean matchInfo = this.toolStripButtonInfo.Checked;
@@ -738,7 +738,7 @@ namespace ResultsPanel
                 else this.entriesView.EnsureVisible(0);
             }
             if (!locked) this.entriesView.EndUpdate();
-		}
+        }
 
         /// <summary>
         /// Updates the filter buttons
@@ -775,42 +775,42 @@ namespace ResultsPanel
                     break;
                 }
             }
-			if (found)
-			{
+            if (found)
+            {
                 if (gp.Items.Contains(item) == false)
                 {
                     gp.Items.Add(item);
                 }
-			}
-			else
-			{
-				gp = new ListViewGroup();
-				gp.Tag = path;
-				gp.Header = gpname;
-				this.entriesView.Groups.Add(gp);
-				gp.Items.Add(item);
-			}			
+            }
+            else
+            {
+                gp = new ListViewGroup();
+                gp.Tag = path;
+                gp.Header = gpname;
+                this.entriesView.Groups.Add(gp);
+                gp.Items.Add(item);
+            }           
         }
 
-		/// <summary>
-		/// Squiggle open file
-		/// </summary>
-		public void AddSquiggles(String filename)
-		{
-			String fname;
-			if (this.entriesView.Items.Count > 0)
-			foreach(ListViewItem item in this.entriesView.Items)
-			{
-				fname = (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/','\\');
-				if (fname == filename) AddSquiggle(item);
-			}
-		}
-		
-		/// <summary>
-		/// Squiggle one result
-		/// </summary>
-		private void AddSquiggle(ListViewItem item)
-		{
+        /// <summary>
+        /// Squiggle open file
+        /// </summary>
+        public void AddSquiggles(String filename)
+        {
+            String fname;
+            if (this.entriesView.Items.Count > 0)
+            foreach(ListViewItem item in this.entriesView.Items)
+            {
+                fname = (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/','\\');
+                if (fname == filename) AddSquiggle(item);
+            }
+        }
+        
+        /// <summary>
+        /// Squiggle one result
+        /// </summary>
+        private void AddSquiggle(ListViewItem item)
+        {
             bool fixIndexes = true;
             Match match = errorCharacters.Match(item.SubItems[2].Text);
             if (match.Success)
@@ -821,19 +821,20 @@ namespace ResultsPanel
             else match = errorCharacter.Match(item.SubItems[2].Text);
             if (!match.Success) match = errorCharacters2.Match(item.SubItems[2].Text);
             if (match.Success)
-			{
-				String fname = (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/','\\').Trim();
+            {
+                String fname = (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/','\\').Trim();
                 Int32 line = Convert.ToInt32(item.SubItems[1].Text) - 1;
                 ITabbedDocument[] documents = PluginBase.MainForm.Documents;
                 foreach (ITabbedDocument document in documents)
-				{
+                {
                     if (!document.IsEditable) continue;
-					ScintillaControl sci = document.SciControl;
+                    ScintillaControl sci = document.SciControl;
                     Language language = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
-                    Int32 indic = (item.ImageIndex == 0) ? (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox : (Int32)ScintillaNet.Enums.IndicatorStyle.Squiggle;
+                    Int32 style = (item.ImageIndex == 0) ? (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox : (Int32)ScintillaNet.Enums.IndicatorStyle.Squiggle;
                     Int32 fore = (item.ImageIndex == 0) ? language.editorstyle.HighlightBackColor : 0x000000ff;
+                    Int32 indic = (item.ImageIndex == 0) ? 0 : 2;
                     if (fname == document.FileName)
-					{
+                    {
                         Int32 end;
                         Int32 start = Convert.ToInt32(match.Groups["start"].Value);
                         // start column is (probably) a multibyte length
@@ -850,54 +851,42 @@ namespace ResultsPanel
                             end = start--;
                         }
                         if ((start >= 0) && (end > start) && (end < sci.TextLength))
-						{
+                        {
                             Int32 position = sci.PositionFromLine(line) + start;
-                            Int32 es = sci.EndStyled;
-                            Int32 mask = 1 << sci.StyleBits;
-                            // Define indics in both controls...
-                            document.SplitSci1.SetIndicStyle(0, indic);
-                            document.SplitSci1.SetIndicFore(0, fore);
-                            document.SplitSci2.SetIndicStyle(0, indic);
-                            document.SplitSci2.SetIndicFore(0, fore);
-							sci.StartStyling(position, mask);
-							sci.SetStyling(end - start, mask);
-							sci.StartStyling(es, mask - 1);
-						}
-						break;
-					}
-				}
-			}
-		}
-		
-		/// <summary> 
-		/// Clear all squiggles
-		/// </summary>
-		private void ClearSquiggles()
-		{
+                            sci.AddHighlight(indic, style, fore, position, end - start);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        
+        /// <summary> 
+        /// Clear all squiggles
+        /// </summary>
+        private void ClearSquiggles()
+        {
             String fname; ScintillaControl sci;
             ArrayList cleared = new ArrayList();
             ITabbedDocument[] documents = PluginBase.MainForm.Documents;
             foreach (ITabbedDocument document in documents)
-			{
-				foreach (ListViewItem item in this.entriesView.Items)
-				{
+            {
+                foreach (ListViewItem item in this.entriesView.Items)
+                {
                     sci = document.SciControl;
                     fname = (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/','\\');
-					if (fname == document.FileName && !cleared.Contains(fname))
-					{
-						cleared.Add(fname);
-						Int32 es = sci.EndStyled;
-                        Int32 mask = (1 << sci.StyleBits);
-						sci.StartStyling(0, mask);
-						sci.SetStyling(sci.TextLength, 0);
-						sci.StartStyling(es, mask - 1);
-						break;
-					}
-				}
-			}
-		}
-		
-		#endregion
+                    if (fname == document.FileName && !cleared.Contains(fname))
+                    {
+                        Int32 indic = (item.ImageIndex == 0) ? 0 : 2;
+                        sci.RemoveHighlights(indic);
+                        cleared.Add(fname);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        #endregion
 
         #region Regular Expressions
 
@@ -907,9 +896,9 @@ namespace ResultsPanel
         private Regex badCharacters = new Regex("[" + Regex.Escape(new String(System.IO.Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
 
         /**
-		* Match standard file entry -- filename:line:description
-		* i.e. C:/path/to/src/com/Class.as:15: description
-		*/
+        * Match standard file entry -- filename:line:description
+        * i.e. C:/path/to/src/com/Class.as:15: description
+        */
         private Regex fileEntry = new Regex("^(?<filename>([_A-Za-z]:)?[^:*?]+):(?<line>[0-9]+):(?<description>.*)$", RegexOptions.Compiled);
 
         /**
@@ -977,5 +966,5 @@ namespace ResultsPanel
         #endregion
 
     }
-	
+    
 }

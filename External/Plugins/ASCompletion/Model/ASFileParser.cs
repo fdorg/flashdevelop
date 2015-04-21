@@ -353,9 +353,9 @@ namespace ASCompletion.Model
         /// Contributor: i.o.
         /// Description: Extracts from plain string a type classifier and type comment
         /// Example:
-        ///		typeDefinition: "Array/*String*/" or "Array[spaces]/*String*/" or "/*String*/Array"
-        ///		typeClassifier: "Array"
-        ///		typeComment: "String"
+        ///     typeDefinition: "Array/*String*/" or "Array[spaces]/*String*/" or "/*String*/Array"
+        ///     typeClassifier: "Array"
+        ///     typeComment: "String"
         /// </summary>
         public static bool ParseTypeDefinition(string typeDefinition, out string typeClassifier, out string typeComment)
         {
@@ -1637,7 +1637,7 @@ namespace ASCompletion.Model
             if (model.HasFiltering && model.Context != null)
                 model.Context.FilterSource(model);
 
-            //	Debug.WriteLine("out model: " + model.GenerateIntrinsic(false));
+            //  Debug.WriteLine("out model: " + model.GenerateIntrinsic(false));
         }
 
         private bool LookupRegex(ref string ba, ref int i)

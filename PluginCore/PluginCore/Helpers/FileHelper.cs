@@ -20,15 +20,15 @@ namespace PluginCore.Helpers
         {
             if (Win32.ShouldUseWin32())
             {
-            InteropSHFileOperation fo = new InteropSHFileOperation();
-            fo.wFunc = InteropSHFileOperation.FO_Func.FO_DELETE;
-            fo.fFlags.FOF_ALLOWUNDO = true;
-            fo.fFlags.FOF_NOCONFIRMATION = true;
-            fo.fFlags.FOF_NOERRORUI = true;
-            fo.fFlags.FOF_SILENT = true;
-            fo.pFrom = path;
-            return fo.Execute();
-        }
+                InteropSHFileOperation fo = new InteropSHFileOperation();
+                fo.wFunc = InteropSHFileOperation.FO_Func.FO_DELETE;
+                fo.fFlags.FOF_ALLOWUNDO = true;
+                fo.fFlags.FOF_NOCONFIRMATION = true;
+                fo.fFlags.FOF_NOERRORUI = true;
+                fo.fFlags.FOF_SILENT = true;
+                fo.pFrom = path;
+                return fo.Execute();
+            }
             else // Delete directly on other platforms
             {
                 if (File.Exists(path))
@@ -56,7 +56,7 @@ namespace PluginCore.Helpers
 
         /// <summary>
         /// Reads the file and returns its contents
-		/// </summary>
+        /// </summary>
         public static String ReadFile(String file, Encoding encoding)
         {
             using (StreamReader sr = new StreamReader(file, encoding))
@@ -167,6 +167,109 @@ namespace PluginCore.Helpers
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Moves a file, overwrites the file at the new location if there is one already.
+        /// </summary>
+        public static void ForceMove(String oldPath, String newPath)
+        {
+            if (File.Exists(newPath)) File.Delete(newPath);
+            File.Move(oldPath, newPath);
+        }
+
+        /// <summary>
+        /// Moves a folder, overwriting the files at the new location if there are matches.
+        /// </summary>
+        public static void CopyDirectory(String oldPath, String newPath, Boolean overwrite)
+        {
+            Stack<String> stack = new Stack<String>();
+            stack.Push(String.Empty);
+            String sep = Path.DirectorySeparatorChar.ToString();
+            String alt = Path.AltDirectorySeparatorChar.ToString();
+            Int32 length = oldPath.EndsWith(sep) || oldPath.EndsWith(alt) ? oldPath.Length : oldPath.Length + 1;
+            while (stack.Count > 0)
+            {
+                String subPath = stack.Pop();
+                String sourcePath = Path.Combine(oldPath, subPath);
+                String targetPath = Path.Combine(newPath, subPath);
+                if (!Directory.Exists(targetPath)) Directory.CreateDirectory(targetPath);
+                foreach (String file in Directory.GetFiles(sourcePath, "*.*"))
+                {
+                    File.Copy(file, Path.Combine(targetPath, Path.GetFileName(file)), overwrite);
+                }
+                foreach (String folder in Directory.GetDirectories(sourcePath))
+                {
+                    stack.Push(folder.Substring(length));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Moves a folder, overwriting the files at the new location if there are matches.
+        /// </summary>
+        public static void ForceMoveDirectory(String oldPath, String newPath)
+        {
+            Stack<String> stack = new Stack<String>();
+            stack.Push(String.Empty);
+            String sep = Path.DirectorySeparatorChar.ToString();
+            String alt = Path.AltDirectorySeparatorChar.ToString();
+            Int32 length = oldPath.EndsWith(sep) || oldPath.EndsWith(alt) ? oldPath.Length : oldPath.Length + 1;
+            while (stack.Count > 0)
+            {
+                String subPath = stack.Pop();
+                String sourcePath = Path.Combine(oldPath, subPath);
+                String targetPath = Path.Combine(newPath, subPath);
+                if (!Directory.Exists(targetPath)) Directory.CreateDirectory(targetPath);
+                foreach (String file in Directory.GetFiles(sourcePath, "*.*"))
+                {
+                    ForceMove(file, Path.Combine(targetPath, Path.GetFileName(file)));
+                }
+                foreach (String folder in Directory.GetDirectories(sourcePath))
+                {
+                    stack.Push(folder.Substring(length));
+                }
+            }
+            Directory.Delete(oldPath, true);
+        }
+
+        /// <summary>
+        /// If the path already exists, the user is asked to confirm
+        /// </summary>
+        public static Boolean ConfirmOverwrite(String path)
+        {
+            String name = Path.GetFileName(path);
+            if (Directory.Exists(path))
+            {
+                String title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                String message = TextHelper.GetString("Info.FolderAlreadyContainsFolder");
+                DialogResult result = MessageBox.Show(PluginBase.MainForm, String.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                return result == DialogResult.Yes;
+            }
+            else if (File.Exists(path))
+            {
+                String title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                String message = TextHelper.GetString("Info.FolderAlreadyContainsFile");
+                DialogResult result = MessageBox.Show(PluginBase.MainForm, String.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                return result == DialogResult.Yes;
+            }
+            else return true;
+        }
+
+        /// <summary>
+        /// Checks if a file name matches a search filter mask, eg: filename.jpg matches f*.jpg
+        /// </summary>
+        /// <param name="fileName">The name of the file to check</param>
+        /// <param name="filterMask">The search filter to apply. You can use multiple masks by using ;</param>
+        public static Boolean FileMatchesSearchFilter(String fileName, String filterMask)
+        {
+            foreach (String mask in filterMask.Split(';'))
+            {
+                String convertedMask = "^" + Regex.Escape(mask).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+                Regex regexMask = new Regex(convertedMask, RegexOptions.IgnoreCase);
+                if (regexMask.IsMatch(fileName)) return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -293,122 +396,6 @@ namespace PluginCore.Helpers
             }
             return info;
         }
-
-        /// <summary>
-        /// Moves a file, overwrites the file at the new location if there is one already.
-        /// </summary>
-        public static void ForceMove(String oldPath, String newPath)
-        {
-            if (File.Exists(newPath))
-            {
-                File.Delete(newPath);
-            }
-            File.Move(oldPath, newPath);
-        }
-
-        /// <summary>
-        /// Moves a folder, overwriting the files at the new location if there are matches.
-        /// </summary>
-        public static void CopyDirectory(String oldPath, String newPath, Boolean overwrite)
-        {
-            var stack = new Stack<String>();
-            stack.Push(string.Empty);
-
-            int length = oldPath.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
-                         oldPath.EndsWith(Path.AltDirectorySeparatorChar.ToString())
-                             ? oldPath.Length : oldPath.Length + 1;
-            while (stack.Count > 0)
-            {
-                var subPath = stack.Pop();
-                var sourcePath = Path.Combine(oldPath, subPath);
-                var targetPath = Path.Combine(newPath, subPath);
-                if (!Directory.Exists(targetPath))
-                    Directory.CreateDirectory(targetPath);
-
-                foreach (var file in Directory.GetFiles(sourcePath, "*.*"))
-                    File.Copy(file, Path.Combine(targetPath, Path.GetFileName(file)), overwrite);
-
-                foreach (var folder in Directory.GetDirectories(sourcePath))
-                    stack.Push(folder.Substring(length));
-            }
-        }
-
-        /// <summary>
-        /// Moves a folder, overwriting the files at the new location if there are matches.
-        /// </summary>
-        public static void ForceMoveDirectory(String oldPath, String newPath)
-        {
-            var stack = new Stack<String>();
-            stack.Push(string.Empty);
-
-            int length = oldPath.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
-                         oldPath.EndsWith(Path.AltDirectorySeparatorChar.ToString())
-                             ? oldPath.Length : oldPath.Length + 1;
-            while (stack.Count > 0)
-            {
-                var subPath = stack.Pop();
-                var sourcePath = Path.Combine(oldPath, subPath);
-                var targetPath = Path.Combine(newPath, subPath);
-                if (!Directory.Exists(targetPath))
-                    Directory.CreateDirectory(targetPath);
-
-                foreach (var file in Directory.GetFiles(sourcePath, "*.*"))
-                    ForceMove(file, Path.Combine(targetPath, Path.GetFileName(file)));
-
-                foreach (var folder in Directory.GetDirectories(sourcePath))
-                    stack.Push(folder.Substring(length));
-            }
-
-            Directory.Delete(oldPath, true);
-        }
-
-        /// <summary>
-        /// If the path already exists, the user is asked to confirm
-        /// </summary>
-        public static bool ConfirmOverwrite(string path)
-        {
-            string name = Path.GetFileName(path);
-
-            if (Directory.Exists(path))
-            {
-                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.FolderAlreadyContainsFolder");
-
-                DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"),
-                    title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                return result == DialogResult.Yes;
-            }
-            else if (File.Exists(path))
-            {
-                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.FolderAlreadyContainsFile");
-
-                DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"),
-                    title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                return result == DialogResult.Yes;
-            }
-            else return true;
-        }
-
-        /// <summary>
-        /// Checks if a file name matches a search filter mask, eg: filename.jpg matches f*.jpg
-        /// </summary>
-        /// <param name="fileName">The name of the file to check</param>
-        /// <param name="filterMask">The search filter to apply. You can use multiple masks by using ;</param>
-        public static bool FileMatchesSearchFilter(string fileName, string filterMask)
-        {
-            foreach (string mask in filterMask.Split(';'))
-            {
-                String convertedMask = "^" + Regex.Escape(mask).Replace("\\*", ".*").Replace("\\?", ".") + "$";
-                Regex regexMask = new Regex(convertedMask, RegexOptions.IgnoreCase);
-                if (regexMask.IsMatch(fileName)) return true;
-            }
-
-            return false;
-        }
-
     }
 
     /// <summary>

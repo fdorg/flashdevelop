@@ -108,7 +108,16 @@ namespace FlashViewer.Controls
             {
                 if (e.command == "trace")
                 {
-                    TraceManager.Add(e.args, 1);
+                    Int32 state = 1;
+                    String message = e.args;
+                    if (message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                    {
+                        if (int.TryParse(message[0].ToString(), out state))
+                        {
+                            message = message.Substring(2);
+                        }
+                    }
+                    TraceManager.Add(message, state);
                 }
             }
             catch (Exception ex)
@@ -117,6 +126,9 @@ namespace FlashViewer.Controls
             }
         }
 
+        /// <summary>
+        /// Handles the FlashCall event
+        /// </summary>
         private void FlashMovieFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
         {
             try
@@ -124,7 +136,6 @@ namespace FlashViewer.Controls
                 XmlTextReader reader = new XmlTextReader(new StringReader(e.request));
                 reader.WhitespaceHandling = WhitespaceHandling.Significant;
                 reader.MoveToContent();
-
                 if (reader.Name == "invoke" && reader.GetAttribute("name") == "trace")
                 {
                     reader.Read();
@@ -134,7 +145,16 @@ namespace FlashViewer.Controls
                         if (reader.Name == "string")
                         {
                             reader.Read();
-                            TraceManager.Add(reader.Value, 1);
+                            Int32 state = 1;
+                            String message = reader.Value;
+                            if (message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                            {
+                                if (int.TryParse(message[0].ToString(), out state))
+                                {
+                                    message = message.Substring(2);
+                                }
+                            }
+                            TraceManager.Add(message, state);
                         }
                     }
                 }

@@ -17,8 +17,8 @@ using System.Collections;
 
 namespace FlashViewer
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "FlashViewer";
         private String pluginGuid = "cba5ca4c-db80-43c2-9219-a15ee4d76aac";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -29,7 +29,7 @@ namespace FlashViewer
         private Settings settingObject;
         private Icon playerIcon;
 
-	    #region Required Properties
+        #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
@@ -43,41 +43,41 @@ namespace FlashViewer
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -87,34 +87,34 @@ namespace FlashViewer
         {
             get { return this.settingObject; }
         }
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
         }
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             this.SaveSettings();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             switch (e.Type)
             {
                 case EventType.Command : 
@@ -125,9 +125,9 @@ namespace FlashViewer
                     this.HandleFileOpening(((TextEvent)e));
                     break;
             }
-		}
-		
-		#endregion
+        }
+        
+        #endregion
 
         #region Custom Methods
        
@@ -167,6 +167,7 @@ namespace FlashViewer
                 Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
                 this.settingObject = (Settings)obj;
             }
+            String oldPath = this.settingObject.PlayerPath;
             // Recheck after installer update if auto config is not disabled
             if (!this.settingObject.DisableAutoConfig && PluginBase.MainForm.RefreshConfig)
             {
@@ -175,11 +176,11 @@ namespace FlashViewer
             // Try to find player path from AppMan archive
             if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
             {
-                string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
+                String appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
                 if (Directory.Exists(appManDir))
                 {
-                    string[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
-                    foreach (string exeFile in exeFiles)
+                    String[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
+                    foreach (String exeFile in exeFiles)
                     {
                         this.settingObject.PlayerPath = exeFile;
                     }
@@ -220,7 +221,7 @@ namespace FlashViewer
                 else if (File.Exists(playerPath10)) this.settingObject.PlayerPath = playerPath10;
             }
             // Try to find player path from: FlexSDK
-            if (!this.settingObject.DisableAutoConfig && String.IsNullOrEmpty(this.settingObject.PlayerPath))
+            if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
             {
                 String compiler = PluginBase.MainForm.ProcessArgString("$(CompilerPath)");
                 String playerPath10 = Path.Combine(compiler, @"runtimes\player\10\win\FlashPlayer.exe");
@@ -230,10 +231,11 @@ namespace FlashViewer
                 else if (File.Exists(playerPath101)) this.settingObject.PlayerPath = playerPath101;
                 else if (File.Exists(playerPath10)) this.settingObject.PlayerPath = playerPath10;
             }
-            // After detection, if the path is incorrect clear it
+            // After detection, if the path is incorrect, keep old valid path or clear it
             if (this.settingObject.PlayerPath == null || !File.Exists(this.settingObject.PlayerPath))
             {
-                this.settingObject.PlayerPath = String.Empty;
+                if (!String.IsNullOrEmpty(oldPath) && File.Exists(oldPath)) this.settingObject.PlayerPath = oldPath;
+                else this.settingObject.PlayerPath = String.Empty;
             }
         }
 
@@ -471,8 +473,8 @@ namespace FlashViewer
             }
         }
 
-		#endregion
+        #endregion
 
-	}
-	
+    }
+    
 }

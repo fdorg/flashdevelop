@@ -14,7 +14,7 @@
 ; Installer details
 VIAddVersionKey "CompanyName" "FlashDevelop.org"
 VIAddVersionKey "ProductName" "FlashDevelop Installer"
-VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2014"
+VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2015"
 VIAddVersionKey "FileDescription" "FlashDevelop Installer"
 VIAddVersionKey "ProductVersion" "${VERSION}.0"
 VIAddVersionKey "FileVersion" "${VERSION}.0"
@@ -174,16 +174,10 @@ Function GetNeedsReset
 	Call GetFDVersion
 	Pop $1
 	Push $2
-	${VersionCompare} $1 "4.0.0" $3
+	${VersionCompare} $1 "5.0.0" $3
 	${If} $1 == "not_found"
 	StrCpy $2 "do_reset"
 	${ElseIf} $3 == 2
-	StrCpy $2 "do_reset"
-	${ElseIf} $1 == "4.0.0-Beta"
-	StrCpy $2 "do_reset"
-	${ElseIf} $1 == "4.0.0-Beta2"
-	StrCpy $2 "do_reset"
-	${ElseIf} $1 == "4.0.0-Beta3"
 	StrCpy $2 "do_reset"
 	${Else}
 	StrCpy $2 "is_ok"

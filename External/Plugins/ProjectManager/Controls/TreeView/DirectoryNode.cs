@@ -24,37 +24,37 @@ namespace ProjectManager.Controls.TreeView
     }
 
     public class DirectoryNode : GenericNode
-	{
+    {
         static public event DirectoryNodeRefresh OnDirectoryNodeRefresh;
         static public event DirectoryNodeMapping OnDirectoryNodeMapping;
 
-		bool dirty;
+        bool dirty;
         DirectoryNode insideClasspath;
         DirectoryNode insideLibrarypath;
 
         public DirectoryNode InsideClasspath { get { return insideClasspath; } }
         public DirectoryNode InsideLibrarypath { get { return insideLibrarypath; } }
 
-		public DirectoryNode(string directory) : base(directory)
-		{
-			isDraggable = true;
-			isDropTarget = true;
-			isRenamable = true;
-		}
+        public DirectoryNode(string directory) : base(directory)
+        {
+            isDraggable = true;
+            isDropTarget = true;
+            isRenamable = true;
+        }
 
-		public override void Dispose()
-		{
-			base.Dispose();
-			// dispose children
-			foreach (GenericNode node in Nodes)
+        public override void Dispose()
+        {
+            base.Dispose();
+            // dispose children
+            foreach (GenericNode node in Nodes)
                 node.Dispose();
-		}
+        }
 
-		public override void Refresh(bool recursive)
-		{
-			if (IsInvalid) return;
+        public override void Refresh(bool recursive)
+        {
+            if (IsInvalid) return;
 
-			base.Refresh(recursive);
+            base.Refresh(recursive);
 
             // item icon
             if (Parent is DirectoryNode)
@@ -100,31 +100,31 @@ namespace ProjectManager.Controls.TreeView
             if (textColor != Color.Empty) ForeColorRequest = textColor;
             else ForeColorRequest = SystemColors.ControlText;
 
-			// make the plus/minus sign correct
+            // make the plus/minus sign correct
             // TODO: Check if this works ok!
             bool empty = !Directory.Exists(BackingPath) || FolderHelper.IsDirectoryEmpty(BackingPath);
 
-			if (!empty)
-			{
-				// we want the plus sign because we have *something* in here
-				if (Nodes.Count == 0)
-					Nodes.Add(new PlaceholderNode(Path.Combine(BackingPath, "placeholder")));
+            if (!empty)
+            {
+                // we want the plus sign because we have *something* in here
+                if (Nodes.Count == 0)
+                    Nodes.Add(new PlaceholderNode(Path.Combine(BackingPath, "placeholder")));
 
-				// we're already expanded, so refresh our children
-				if (IsExpanded || Path.GetDirectoryName(Tree.PathToSelect) == BackingPath)
-					PopulateChildNodes(recursive);
-				else
-					dirty = true; // refresh on demand
-			}
-			else
-			{
-				// we just became empty!
-				if (Nodes.Count > 0)
-					PopulateChildNodes(recursive);
-			}
+                // we're already expanded, so refresh our children
+                if (IsExpanded || Path.GetDirectoryName(Tree.PathToSelect) == BackingPath)
+                    PopulateChildNodes(recursive);
+                else
+                    dirty = true; // refresh on demand
+            }
+            else
+            {
+                // we just became empty!
+                if (Nodes.Count > 0)
+                    PopulateChildNodes(recursive);
+            }
 
             NotifyRefresh();
-		}
+        }
 
         virtual protected void NotifyRefresh()
         {
@@ -132,27 +132,27 @@ namespace ProjectManager.Controls.TreeView
             if (OnDirectoryNodeRefresh != null) OnDirectoryNodeRefresh(this);
         }
 
-		/// <summary>
-		/// Signal this node that it is about to expand.
-		/// </summary>
-		public override void BeforeExpand()
-		{
-			if (dirty) PopulateChildNodes(false);
-		}
+        /// <summary>
+        /// Signal this node that it is about to expand.
+        /// </summary>
+        public override void BeforeExpand()
+        {
+            if (dirty) PopulateChildNodes(false);
+        }
 
-		private void PopulateChildNodes(bool recursive)
-		{
+        private void PopulateChildNodes(bool recursive)
+        {
             dirty = false;
 
-			// nuke the placeholder
-			if (Nodes.Count == 1 && Nodes[0] is PlaceholderNode)
-				Nodes.RemoveAt(0);
+            // nuke the placeholder
+            if (Nodes.Count == 1 && Nodes[0] is PlaceholderNode)
+                Nodes.RemoveAt(0);
 
-			// do a nice stateful update against the filesystem
+            // do a nice stateful update against the filesystem
             GenericNodeList nodesToDie = new GenericNodeList();
-			
-			// don't remove project output node if it exists - it's annoying when it
-			// disappears during a build
+            
+            // don't remove project output node if it exists - it's annoying when it
+            // disappears during a build
             foreach (GenericNode node in Nodes)
             {
                 if (node is ProjectOutputNode)
@@ -175,24 +175,24 @@ namespace ProjectManager.Controls.TreeView
                 PopulateFiles(nodesToDie, recursive);
             }
 
-			foreach (GenericNode node in nodesToDie)
-			{
+            foreach (GenericNode node in nodesToDie)
+            {
                 node.Dispose();
-				Nodes.Remove(node);
-			}
-		}
+                Nodes.Remove(node);
+            }
+        }
 
         private void PopulateDirectories(GenericNodeList nodesToDie, bool recursive)
-		{
-			foreach (string directory in Directory.GetDirectories(BackingPath))
-			{
-				if (IsDirectoryExcluded(directory))
-					continue;
+        {
+            foreach (string directory in Directory.GetDirectories(BackingPath))
+            {
+                if (IsDirectoryExcluded(directory))
+                    continue;
 
                 DirectoryNode node;
-				if (Tree.NodeMap.ContainsKey(directory))
-				{
-					node = Tree.NodeMap[directory] as DirectoryNode;
+                if (Tree.NodeMap.ContainsKey(directory))
+                {
+                    node = Tree.NodeMap[directory] as DirectoryNode;
                     if (node != null) // ASClassWizard injects SimpleDirectoryNode != DirectoryNode
                     {
                         if (recursive) node.Refresh(recursive);
@@ -204,38 +204,38 @@ namespace ProjectManager.Controls.TreeView
                         TreeNode fake = Tree.NodeMap[directory];
                         if (fake.Parent != null) fake.Parent.Nodes.Remove(fake);
                     }
-				}
+                }
 
-				node = new DirectoryNode(directory);
-				InsertNode(Nodes, node);
-				node.Refresh(recursive);
-				nodesToDie.Remove(node);
-			}
-		}
+                node = new DirectoryNode(directory);
+                InsertNode(Nodes, node);
+                node.Refresh(recursive);
+                nodesToDie.Remove(node);
+            }
+        }
 
         private void PopulateFiles(GenericNodeList nodesToDie, bool recursive)
-		{
+        {
             string[] files = Directory.GetFiles(BackingPath);
 
-			foreach (string file in files)
-			{
-				if (IsFileExcluded(file))
-					continue;
+            foreach (string file in files)
+            {
+                if (IsFileExcluded(file))
+                    continue;
 
-				if (Tree.NodeMap.ContainsKey(file))
-				{
+                if (Tree.NodeMap.ContainsKey(file))
+                {
                     GenericNode node = Tree.NodeMap[file];
-					node.Refresh(recursive);
-					nodesToDie.Remove(node);
-				}
-				else
-				{
-					FileNode node = FileNode.Create(file, project);
-					InsertNode(Nodes, node);
-					node.Refresh(recursive);
-					nodesToDie.Remove(node);
-				}
-			}
+                    node.Refresh(recursive);
+                    nodesToDie.Remove(node);
+                }
+                else
+                {
+                    FileNode node = FileNode.Create(file, project);
+                    InsertNode(Nodes, node);
+                    node.Refresh(recursive);
+                    nodesToDie.Remove(node);
+                }
+            }
 
             FileMapping mapping = GetFileMapping(files);
             if (mapping == null) return;
@@ -253,7 +253,7 @@ namespace ProjectManager.Controls.TreeView
                 else
                     EnsureParentedBy(node, this);
             }
-		}
+        }
 
         private void EnsureParentedBy(GenericNode child, GenericNode parent)
         {
@@ -280,61 +280,61 @@ namespace ProjectManager.Controls.TreeView
             return request.Mapping.Count > 0 ? request.Mapping : null;
         }
 
-		/// <summary>
-		/// Inserts a node in the correct location (sorting alphabetically by
-		/// directories first, then files).
-		/// </summary>
-		/// <param name="node"></param>
-		private static void InsertNode(TreeNodeCollection nodes, GenericNode node)
-		{
-			bool inserted = false;
+        /// <summary>
+        /// Inserts a node in the correct location (sorting alphabetically by
+        /// directories first, then files).
+        /// </summary>
+        /// <param name="node"></param>
+        private static void InsertNode(TreeNodeCollection nodes, GenericNode node)
+        {
+            bool inserted = false;
 
-			for (int i=0; i<nodes.Count; i++)
-			{
+            for (int i=0; i<nodes.Count; i++)
+            {
                 GenericNode existingNode = nodes[i] as GenericNode;
 
-				if (node is FileNode && existingNode is DirectoryNode)
-					continue;
+                if (node is FileNode && existingNode is DirectoryNode)
+                    continue;
 
-				if ((node is DirectoryNode && existingNode is FileNode)
+                if ((node is DirectoryNode && existingNode is FileNode)
                     || string.Compare(existingNode.Text, node.Text, true) > 0)
-				{
-					nodes.Insert(i,node);
-					inserted = true;
-					break;
-				}
-			}
+                {
+                    nodes.Insert(i,node);
+                    inserted = true;
+                    break;
+                }
+            }
 
-			if (!inserted)
-				nodes.Add(node); // append to the end of the list
+            if (!inserted)
+                nodes.Add(node); // append to the end of the list
 
-			// is the tree looking to have this node selected?
-			if (Tree.PathToSelect == node.BackingPath)
-			{
-				// use SelectedNode so multiselect treeview can handle painting
-				Tree.SelectedNodes = new ArrayList(new object[]{node});
-			}
-		}
+            // is the tree looking to have this node selected?
+            if (Tree.PathToSelect == node.BackingPath)
+            {
+                // use SelectedNode so multiselect treeview can handle painting
+                Tree.SelectedNodes = new ArrayList(new object[]{node});
+            }
+        }
 
-		bool IsDirectoryExcluded(string path)
-		{
+        bool IsDirectoryExcluded(string path)
+        {
             if (project == null) return false;
 
-			string dirName = Path.GetFileName(path);
-			foreach (string excludedDir in PluginMain.Settings.ExcludedDirectories)
-				if (dirName.Equals(excludedDir, StringComparison.OrdinalIgnoreCase))
-					return true;
+            string dirName = Path.GetFileName(path);
+            foreach (string excludedDir in PluginMain.Settings.ExcludedDirectories)
+                if (dirName.Equals(excludedDir, StringComparison.OrdinalIgnoreCase))
+                    return true;
 
             return !project.ShowHiddenPaths && project.IsPathHidden(path);
-		}
+        }
 
-		bool IsFileExcluded(string path)
-		{
+        bool IsFileExcluded(string path)
+        {
             if (project == null) return false;
 
             if (path == project.ProjectPath) return true;
 
             return !project.ShowHiddenPaths && (project.IsPathHidden(path) || path.IndexOf("\\.") >= 0 || ProjectTreeView.IsFileTypeHidden(path));
-		}
-	}
+        }
+    }
 }

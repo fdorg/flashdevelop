@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("AppMan")]
 [assembly: AssemblyProduct("AppMan")]
 [assembly: AssemblyDescription("Tool for managing apps.")]
-[assembly: AssemblyCopyright("FlashDevelop.org 2005-2014")]
+[assembly: AssemblyCopyright("FlashDevelop.org 2005-2015")]
 [assembly: AssemblyCompany("FlashDevelop.org")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyTrademark("")]

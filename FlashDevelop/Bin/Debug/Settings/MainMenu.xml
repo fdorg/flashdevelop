@@ -2,7 +2,7 @@
 <mainmenu>
 	<menu label="Label.File" name="FileMenu">
 		<menu label="Label.New" name="NewMenu">
-			<button label="Label.BlankDocument" click="New" shortcut="Control|N" image="559" />
+			<button label="Label.BlankDocument" click="SmartNew" shortcut="Control|N" image="559" />
 			<separator />
 			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" />
 			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" />
@@ -85,7 +85,7 @@
 		<button label="Label.MoveLineUp" click="ScintillaCommand" tag="MoveLineUp" shortcut="Control|Alt|Up" flags="Enable:IsEditable" />
 		<button label="Label.MoveLineDown" click="ScintillaCommand" tag="MoveLineDown" shortcut="Control|Alt|Down" flags="Enable:IsEditable" />
 		<button label="Label.TransposeLines" click="ScintillaCommand" tag="LineTranspose" shortcut="Control|T" flags="Enable:IsEditable" />
-		<button label="Label.DuplicateSelection" click="ScintillaCommand" tag="SelectionDuplicate" shortcut="Control|D" flags="Enable:IsEditable" />
+		<button label="Label.DuplicateSelection" click="ScintillaCommand" tag="SmartSelectionDuplicate" shortcut="Control|D" flags="Enable:IsEditable" />
 		<button label="Label.SortLineGroups" click="SortLineGroups" flags="Enable:IsEditable|Enable:HasSelection" />
 		<button label="Label.SortLines" click="SortLines" flags="Enable:IsEditable|Enable:HasSelection" />
 		<separator />

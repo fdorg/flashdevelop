@@ -16,18 +16,18 @@ namespace PluginCore.Controls
         static public event InsertedTextHandler OnInsert;
         static public event InsertedTextHandler OnCancel;
 
-		/// <summary>
+        /// <summary>
         /// Properties of the class 
         /// </summary> 
         internal static CompletionListControl completionList;
-		
-		#region State Properties
+        
+        #region State Properties
 
-	    internal static Boolean listUp
-	    {
+        internal static Boolean listUp
+        {
             get { return completionList.listUp; }
             set { completionList.listUp = value; }
-	    }
+        }
 
         /// <summary>
         /// Set to 0 after calling .Show to keep the completion list active 
@@ -39,14 +39,14 @@ namespace PluginCore.Controls
             set { completionList.MinWordLength = value; }
         }
 
-		#endregion
-		
-		#region Control Creation
-		
+        #endregion
+        
+        #region Control Creation
+        
         /// <summary>
         /// Creates the control 
         /// </summary> 
-		public static void CreateControl(IMainForm mainForm)
+        public static void CreateControl(IMainForm mainForm)
         {
             completionList = new CompletionListControl(new ScintillaHost());
             completionList.OnCancel += OnCancelHandler;
@@ -54,16 +54,16 @@ namespace PluginCore.Controls
         }
 
         #endregion
-		
-		#region Public List Properties
+        
+        #region Public List Properties
 
         /// <summary>
         /// Is the control active? 
         /// </summary> 
-		public static Boolean Active
-		{
-			get { return completionList.Active; }
-		}
+        public static Boolean Active
+        {
+            get { return completionList.Active; }
+        }
 
         /// <summary>
         /// 
@@ -86,26 +86,26 @@ namespace PluginCore.Controls
                 return completionList.SelectedLabel;
             }
         }
-		
-		#endregion
-		
-		#region CompletionList Methods
-		
+        
+        #endregion
+        
+        #region CompletionList Methods
+        
         /// <summary>
         /// Checks if the position is valid
         /// </summary> 
-		public static Boolean CheckPosition(Int32 position)
-		{
-			return completionList.CheckPosition(position);
-		}
+        public static Boolean CheckPosition(Int32 position)
+        {
+            return completionList.CheckPosition(position);
+        }
 
         /// <summary>
         /// Shows the completion list
         /// </summary> 
         static public void Show(List<ICompletionListItem> itemList, Boolean autoHide, String select)
-		{
+        {
             completionList.Show(itemList, autoHide, select);
-		}
+        }
 
         /// <summary>
         /// Shows the completion list
@@ -113,7 +113,7 @@ namespace PluginCore.Controls
         static public void Show(List<ICompletionListItem> itemList, bool autoHide)
         {
             completionList.Show(itemList, autoHide);
-		}
+        }
 
         /// <summary>
         /// Set default selected item in completion list
@@ -139,14 +139,14 @@ namespace PluginCore.Controls
         /// <summary>
         /// Hide completion list
         /// </summary> 	
-		static public void Hide()
+        static public void Hide()
         {
             completionList.Hide();
         }
 
         /// <summary>
         /// Cancel completion list with event
-        /// </summary> 	
+        /// </summary>  
         static public void Hide(char trigger)
         {
             completionList.Hide(trigger);
@@ -155,10 +155,10 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary> 
-		static public void SelectWordInList(String tail)
+        static public void SelectWordInList(String tail)
         {
             completionList.SelectWordInList(tail);
-		}
+        }
 
         /// <summary>
         /// Display item information in tooltip
@@ -176,7 +176,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Filter the completion list with the letter typed
         /// </summary> 
-		static public void FindWordStartingWith(String word)
+        static public void FindWordStartingWith(String word)
         {
             completionList.FindWordStartingWith(word);
         }
@@ -185,29 +185,29 @@ namespace PluginCore.Controls
         /// 
         /// </summary> 
         static public bool ReplaceText(ScintillaControl sci, char trigger)
-		{
+        {
             return completionList.ReplaceText("", trigger);
-		}
+        }
 
         /// <summary>
         /// 
         /// </summary> 
-		static public bool ReplaceText(ScintillaControl sci, String tail, char trigger)
+        static public bool ReplaceText(ScintillaControl sci, String tail, char trigger)
         {
             return completionList.ReplaceText(tail, trigger);
         }
-		
-		#endregion
-		
-		#region Event Handling
-		
+        
+        #endregion
+        
+        #region Event Handling
+        
         /// <summary>
         /// 
         /// </summary> 
-		static public IntPtr GetHandle()
-		{
-			return completionList.GetHandle();
-		}
+        static public IntPtr GetHandle()
+        {
+            return completionList.GetHandle();
+        }
 
         static public void OnChar(ScintillaControl sci, int value)
         {

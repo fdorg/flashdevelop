@@ -558,7 +558,7 @@ namespace XMLCompletion
                             {
                                 CompletionList.Show(xmlBlocks, true);
                             }
-                        }						
+                        }                       
                     }
                     break;
             }

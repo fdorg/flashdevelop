@@ -8,7 +8,7 @@ AIR for iOS instructions
 
 4. Run/debug the application on the desktop as usual (F5 or Ctrl+Enter)
 
-5. Configure for iOS packaging in 'bat\SetupApplication.bat':
+5. Configure for iOS packaging in 'bat\SetupApp.bat':
 	
 	Take a deep breath, pay the Apple tax and read extra carefully this tutorial:
 	- http://www.codeandvisual.com/2011/exporting-for-iphone-using-air-27-and-flashdevelop-part-three-generating-developer-certificates-provisioning-profiles-and-p12-files/
@@ -24,7 +24,7 @@ AIR for iOS instructions
 	- save a copy of your .p12 and .mobileprovision certificates in the 'cert\' folder in your FlashDevelop project. 
 		(make sure to keep an extra copy of these 2 files in a safe place)
 	
-	Finally edit 'bat\SetupApplication.bat' and complete the following lines:
+	Finally edit 'bat\SetupApp.bat' and complete the following lines:
 	
 	- IOS_DEV_CERT_FILE: path to your iOS developer 'p12' key ('cert\' folder, if you have followed the instructions above)
 	- IOS_DEV_CERT_PASS: developer certificate's password
@@ -45,14 +45,14 @@ AIR for iOS instructions
 	Note: if are testing your application for performance, always package for release (see step 7.)
 	
 	6.a. Build/Debug on device
-	- edit 'Run.bat' and change the run target 'goto desktop' by 'goto ios-debug'
+	- edit 'bat\RunApp.bat' and change the run target 'goto desktop' by 'goto ios-debug'
 	- build as usual (Ctrl+Enter or F5) to package
 	- you'll still have to manually upload & run the app on the device
 	- the application should connect to FlashDevelop interactive debugger as usual
 	
 	6.b. Debug occasionally on device
 	- Debug-build from FlashDevelop (F8)
-	- run 'PackageApp.bat' to package and install a debug version of the application
+	- run 'bat\PackageApp.bat' to package and install a debug version of the application
 	- start FlashDevelop debugger: Debug > Start Remote Session
 	- start the application on device
 	- the application should connect to FlashDevelop interactive debugger as usual
@@ -60,11 +60,11 @@ AIR for iOS instructions
 
 7. Packaging for release:
 
-	- edit 'bat\SetupApplication.bat' to add the path to your "distribution" certificate (IOS_DIST_CERT_FILE)
+	- edit 'bat\SetupApp.bat' to add the path to your "distribution" certificate (IOS_DIST_CERT_FILE)
 	  Note: you can package ad-hoc IPAs using your developer certificate.
 	
 	- Release-build from FlashDevelop (F8)
-	- run 'PackageApp.bat' and select 
+	- run 'bat\PackageApp.bat' and select 
 	    either iOS/"ad-hoc" for installation on test devices
 	    or iOS/App Store for upload in the iOS App Store.
 

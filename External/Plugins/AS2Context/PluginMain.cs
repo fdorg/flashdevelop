@@ -87,8 +87,8 @@ namespace AS2Context
         #region Required Methods
 
         /// <summary>
-		/// Initializes the plugin
-		/// </summary>
+        /// Initializes the plugin
+        /// </summary>
         public void Initialize()
         {
             this.InitBasics();
@@ -278,10 +278,10 @@ namespace AS2Context
         static readonly private string[] MACROMEDIA_VERSIONS = {
             "\\Adobe\\Flash CS5\\",
             "\\Adobe\\Flash CS4\\",
-			"\\Adobe\\Flash CS3\\",
-			"\\Macromedia\\Flash 8\\", 
-			"\\Macromedia\\Flash MX 2004\\"
-		};
+            "\\Adobe\\Flash CS3\\",
+            "\\Macromedia\\Flash 8\\", 
+            "\\Macromedia\\Flash MX 2004\\"
+        };
 
         /// <summary>
         /// Explore the possible locations for the Macromedia Flash IDE classpath

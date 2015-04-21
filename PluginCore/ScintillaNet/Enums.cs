@@ -15,49 +15,49 @@ namespace ScintillaNet.Enums
         BadAlloc = 2
     }
 
-	public enum Command
-	{
-		Change = 768,
-		SetFocus = 512,
-		KillFocus = 256
-	}
-	
-	public enum StartMsg
-	{
-		Initial = 2000,
-		Optional = 3000,
-		Lexer = 4000
-	}
-	
-	public enum MarkerSymbol
+    public enum Command
+    {
+        Change = 768,
+        SetFocus = 512,
+        KillFocus = 256
+    }
+    
+    public enum StartMsg
+    {
+        Initial = 2000,
+        Optional = 3000,
+        Lexer = 4000
+    }
+    
+    public enum MarkerSymbol
     {    
-		Circle = 0,
-		Roundrect = 1,
-		Arrow = 2,
-		SmallRect = 3,
-		ShortArrow = 4,
-		Empty = 5,
-		ArrowDown = 6,
-		Minus = 7,
-		Plus = 8,
-		VLine = 9,
-		LCorner = 10,
-		TCorner = 11,
-		BoxPlus = 12,
-		BoxPlusConnected = 13,
-		BoxMinus = 14,
-		BoxMinusConnected = 15,
-		LCornerCurve = 16,
-		TCornerCurve = 17,
-		CirclePlus = 18,
-		CirclePlusConnected = 19,
-		CircleMinus = 20,
-		CircleMinusConnected = 21,
-		Background = 22,
-		DotDotDot = 23,
-		Arrows = 24,
-		Pixmap = 25,
-		Fullrect = 26,
+        Circle = 0,
+        Roundrect = 1,
+        Arrow = 2,
+        SmallRect = 3,
+        ShortArrow = 4,
+        Empty = 5,
+        ArrowDown = 6,
+        Minus = 7,
+        Plus = 8,
+        VLine = 9,
+        LCorner = 10,
+        TCorner = 11,
+        BoxPlus = 12,
+        BoxPlusConnected = 13,
+        BoxMinus = 14,
+        BoxMinusConnected = 15,
+        LCornerCurve = 16,
+        TCornerCurve = 17,
+        CirclePlus = 18,
+        CirclePlusConnected = 19,
+        CircleMinus = 20,
+        CircleMinusConnected = 21,
+        Background = 22,
+        DotDotDot = 23,
+        Arrows = 24,
+        Pixmap = 25,
+        Fullrect = 26,
         Leftrect = 27,
         Available = 28,
         Character = 10000
@@ -84,20 +84,20 @@ namespace ScintillaNet.Enums
         Rtext = 5
     }
     
-	public enum WhiteSpace
+    public enum WhiteSpace
     {    
         Invisible = 0,
         VisibleAlways = 1,
         VisibleAfterIndent = 2
     }
    
-	public enum EndOfLine
+    public enum EndOfLine
     {    
         CRLF = 0,
         CR = 1,
         LF = 2
     }
-	
+    
     public enum StylesCommon
     {    
         Default = 32,
@@ -113,27 +113,27 @@ namespace ScintillaNet.Enums
     
     public enum CharacterSet
     {    
-		Ansi = 0,
-		Default = 1,
-		Baltic = 186,
-		ChineseBig5 = 136,
-		EastEurope = 238,
-		GB2312 = 134,
-		Greek = 161,
-		Hangul = 129,
-		MAC = 77,
-		OEM = 255,
-		Russian = 204,
-		Cyrillic = 1251,
-		ShiftJIS = 128,
-		Symbol = 2,
-		Turkish = 162,
-		Johab = 130,
-		Hebrew = 177,
-		Arabic = 178,
-		Vietnamese = 163,
-		Thai = 222,
-		Latin9 = 1000
+        Ansi = 0,
+        Default = 1,
+        Baltic = 186,
+        ChineseBig5 = 136,
+        EastEurope = 238,
+        GB2312 = 134,
+        Greek = 161,
+        Hangul = 129,
+        MAC = 77,
+        OEM = 255,
+        Russian = 204,
+        Cyrillic = 1251,
+        ShiftJIS = 128,
+        Symbol = 2,
+        Turkish = 162,
+        Johab = 130,
+        Hebrew = 177,
+        Arabic = 178,
+        Vietnamese = 163,
+        Thai = 222,
+        Latin9 = 1000
     }
     
     public enum CaseVisible
@@ -145,20 +145,20 @@ namespace ScintillaNet.Enums
 
     public enum IndicatorStyle
     {    
-		Plain = 0,
-		Squiggle = 1,
-		TT = 2,
-		Diagonal = 3,
-		Strike = 4,
-		Hidden = 5,
-		Box = 6,
+        Plain = 0,
+        Squiggle = 1,
+        TT = 2,
+        Diagonal = 3,
+        Strike = 4,
+        Hidden = 5,
+        Box = 6,
         RoundBox = 7,
         Container = 8,
-		Max = 31,
-		Mask0 = 0x20,
-		Mask1 = 0x40,
-		Mask2 = 0x80,
-		MaskS = 0xE0
+        Max = 31,
+        Mask0 = 0x20,
+        Mask1 = 0x40,
+        Mask2 = 0x80,
+        MaskS = 0xE0
     }
 
     public enum IndentView
@@ -203,10 +203,10 @@ namespace ScintillaNet.Enums
     
     public enum FoldLevel
     {    
-		Base = 0x400,
-		WhiteFlag = 0x1000,
-		HeaderFlag = 0x2000,
-		NumberMask = 0x0FFF
+        Base = 0x400,
+        WhiteFlag = 0x1000,
+        HeaderFlag = 0x2000,
+        NumberMask = 0x0FFF
     }
     
     public enum FoldFlag
@@ -222,7 +222,7 @@ namespace ScintillaNet.Enums
     {    
         None = 0,
         Word = 1,
-		Char = 2
+        Char = 2
     }
 
     public enum WrapIndent
@@ -284,8 +284,8 @@ namespace ScintillaNet.Enums
 
     public enum VisiblePolicy
     {
-    	Slop = 0x01,
-		Strict = 0x04
+        Slop = 0x01,
+        Strict = 0x04
     }
     
     public enum SelectionMode
@@ -305,19 +305,19 @@ namespace ScintillaNet.Enums
 
     public enum ModificationFlags
     {    
-		InsertText = 0x1,
-		DeleteText = 0x2,
-		ChangeStyle = 0x4,
-		ChangeFold = 0x8,
-		UserPerformed = 0x10,
-		UndoPerformed = 0x20,
-		RedoPerformed = 0x40,
-		MultiStepUndoRedo = 0x80,
-		LastStepInUndoRedo = 0x100,
-		ChangeMarker = 0x200,
-		BeforeInsert = 0x400,
-		BeforeDelete = 0x800,
-		MultiLineUndoRedo = 0x1000,
+        InsertText = 0x1,
+        DeleteText = 0x2,
+        ChangeStyle = 0x4,
+        ChangeFold = 0x8,
+        UserPerformed = 0x10,
+        UndoPerformed = 0x20,
+        RedoPerformed = 0x40,
+        MultiStepUndoRedo = 0x80,
+        LastStepInUndoRedo = 0x100,
+        ChangeMarker = 0x200,
+        BeforeInsert = 0x400,
+        BeforeDelete = 0x800,
+        MultiLineUndoRedo = 0x1000,
         StartAction = 0x2000,
         ChangeIndicator = 0x4000,
         ChangeLinestate = 0x8000,
@@ -329,23 +329,23 @@ namespace ScintillaNet.Enums
     
     public enum Keys
     {    
-		Down = 300,
-		Up = 301,
-		Left = 302,
-		Right = 303,
-		Home = 304,
-		End = 305,
-		Prior = 306,
-		Next = 307,
-		Delete = 308,
-		Insert = 309,
-		Escape = 7,
-		Back = 8,
-		Tab = 9,
-		Return = 13,
-		Add = 310,
-		Subtract = 311,
-		Divide = 312,
+        Down = 300,
+        Up = 301,
+        Left = 302,
+        Right = 303,
+        Home = 304,
+        End = 305,
+        Prior = 306,
+        Next = 307,
+        Delete = 308,
+        Insert = 309,
+        Escape = 7,
+        Back = 8,
+        Tab = 9,
+        Return = 13,
+        Add = 310,
+        Subtract = 311,
+        Divide = 312,
         Win = 313,
         RWin = 314,
         Menu = 315
@@ -353,41 +353,41 @@ namespace ScintillaNet.Enums
     
     public enum ModifierKey
     {    
-		Norm = 0,
-		Shift = 1,
-		Ctrl = 2,
-		Alt = 4
+        Norm = 0,
+        Shift = 1,
+        Ctrl = 2,
+        Alt = 4
     }
     
-	public enum ScintillaEvents
-	{    
-		StyleNeeded = 2000,
-		CharAdded = 2001,
-		SavePointReached = 2002,
-		SavePointLeft = 2003,
-		ModifyAttemptRO = 2004,
-		Key = 2005,
-		DoubleClick = 2006,
-		UpdateUI = 2007,
-		Modified = 2008,
-		MacroRecord = 2009,
-		MarginClick = 2010,
-		NeedShown = 2011,
-		Painted = 2013,
-		UserListSelection = 2014,
-		URIDropped = 2015,
-		DwellStart = 2016,
-		DwellEnd = 2017,
-		Zoom = 2018,
-		HotspotClick = 2019,
-		HotspotDoubleClick = 2020,
-		CalltipClick = 2021,
-		AutoCSelection = 2022,
+    public enum ScintillaEvents
+    {    
+        StyleNeeded = 2000,
+        CharAdded = 2001,
+        SavePointReached = 2002,
+        SavePointLeft = 2003,
+        ModifyAttemptRO = 2004,
+        Key = 2005,
+        DoubleClick = 2006,
+        UpdateUI = 2007,
+        Modified = 2008,
+        MacroRecord = 2009,
+        MarginClick = 2010,
+        NeedShown = 2011,
+        Painted = 2013,
+        UserListSelection = 2014,
+        URIDropped = 2015,
+        DwellStart = 2016,
+        DwellEnd = 2017,
+        Zoom = 2018,
+        HotspotClick = 2019,
+        HotspotDoubleClick = 2020,
+        CalltipClick = 2021,
+        AutoCSelection = 2022,
         IndicatorClick = 2023,
         IndicatorRelease = 2024,
         AutoCCancelled = 2025,
         AutoCCharDeleted = 2026
-	}
+    }
 
     public enum VirtualSpaceMode
     {
@@ -397,82 +397,82 @@ namespace ScintillaNet.Enums
         Both = 3
     }
 
-	public enum Lexer
+    public enum Lexer
     {    
-		CONTAINER = 0,
-		NULL = 1,
-		PYTHON = 2,
-		CPP = 3,
-		HTML = 4,
-		XML = 5,
-		PERL = 6,
-		SQL = 7,
-		VB = 8,
-		PROPERTIES = 9,
-		ERRORLIST = 10,
-		MAKEFILE = 11,
-		BATCH = 12,
-		XCODE = 13,
-		LATEX = 14,
-		LUA = 15,
-		DIFF = 16,
-		CONF = 17,
-		PASCAL = 18,
-		AVE = 19,
-		ADA = 20,
-		LISP = 21,
-		RUBY = 22,
-		EIFFEL = 23,
-		EIFFELKW = 24,
-		TCL = 25,
-		NNCRONTAB = 26,
-		BULLANT = 27,
-		VBSCRIPT = 28,
-		BAAN = 31,
-		MATLAB = 32,
-		SCRIPTOL = 33,
-		ASM = 34,
-		CPPNOCASE = 35,
-		FORTRAN = 36,
-		F77 = 37,
-		CSS = 38,
-		POV = 39,
-		LOUT = 40,
-		ESCRIPT = 41,
-		PS = 42,
-		NSIS = 43,
-		MMIXAL = 44,
-		CLW = 45,
-		CLWNOCASE = 46,
-		LOT = 47,
-		YAML = 48,
-		TEX = 49,
-		METAPOST = 50,
-		POWERBASIC = 51,
-		FORTH = 52,
-		ERLANG = 53,
-		OCTAVE = 54,
-		MSSQL = 55,
-		VERILOG = 56,
-		KIX = 57,
-		GUI4CLI = 58,
-		SPECMAN = 59,
-		AU3 = 60,
-		APDL = 61,
-		BASH = 62,
-		ASN1 = 63,
-		VHDL = 64,
-		CAML = 65,
-		BLITZBASIC = 66,
-		PUREBASIC = 67,
-		HASKELL = 68,
-		PHPSCRIPT = 69,
-		TADS3 = 70,
-		REBOL = 71,
-		SMALLTALK = 72,
-		FLAGSHIP = 73,
-		CSOUND = 74,
-		FREEBASIC = 75,
+        CONTAINER = 0,
+        NULL = 1,
+        PYTHON = 2,
+        CPP = 3,
+        HTML = 4,
+        XML = 5,
+        PERL = 6,
+        SQL = 7,
+        VB = 8,
+        PROPERTIES = 9,
+        ERRORLIST = 10,
+        MAKEFILE = 11,
+        BATCH = 12,
+        XCODE = 13,
+        LATEX = 14,
+        LUA = 15,
+        DIFF = 16,
+        CONF = 17,
+        PASCAL = 18,
+        AVE = 19,
+        ADA = 20,
+        LISP = 21,
+        RUBY = 22,
+        EIFFEL = 23,
+        EIFFELKW = 24,
+        TCL = 25,
+        NNCRONTAB = 26,
+        BULLANT = 27,
+        VBSCRIPT = 28,
+        BAAN = 31,
+        MATLAB = 32,
+        SCRIPTOL = 33,
+        ASM = 34,
+        CPPNOCASE = 35,
+        FORTRAN = 36,
+        F77 = 37,
+        CSS = 38,
+        POV = 39,
+        LOUT = 40,
+        ESCRIPT = 41,
+        PS = 42,
+        NSIS = 43,
+        MMIXAL = 44,
+        CLW = 45,
+        CLWNOCASE = 46,
+        LOT = 47,
+        YAML = 48,
+        TEX = 49,
+        METAPOST = 50,
+        POWERBASIC = 51,
+        FORTH = 52,
+        ERLANG = 53,
+        OCTAVE = 54,
+        MSSQL = 55,
+        VERILOG = 56,
+        KIX = 57,
+        GUI4CLI = 58,
+        SPECMAN = 59,
+        AU3 = 60,
+        APDL = 61,
+        BASH = 62,
+        ASN1 = 63,
+        VHDL = 64,
+        CAML = 65,
+        BLITZBASIC = 66,
+        PUREBASIC = 67,
+        HASKELL = 68,
+        PHPSCRIPT = 69,
+        TADS3 = 70,
+        REBOL = 71,
+        SMALLTALK = 72,
+        FLAGSHIP = 73,
+        CSOUND = 74,
+        FREEBASIC = 75,
         INNOSETUP = 76,
         OPAL = 77,
         SPICE = 78,

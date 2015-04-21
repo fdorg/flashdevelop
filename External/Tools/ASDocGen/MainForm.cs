@@ -801,6 +801,36 @@ namespace ASDocGen
                     }
                 }
             }
+            appManDir = Path.Combine(userAppDir, @"FlashDevelop\Apps\flexairsdk");
+            if (Directory.Exists(appManDir))
+            {
+                String[] versionDirs = Directory.GetDirectories(appManDir);
+                foreach (string versionDir in versionDirs)
+                {
+                    if (Directory.Exists(versionDir))
+                    {
+                        asdocPath = Path.Combine(versionDir, @"bin\asdoc.exe");
+                        asdocPath2 = Path.Combine(versionDir, @"bin\asdoc.bat");
+                        if (File.Exists(asdocPath)) return Path.GetDirectoryName(asdocPath);
+                        if (File.Exists(asdocPath2)) return Path.GetDirectoryName(asdocPath2);
+                    }
+                }
+            }
+            appManDir = Path.Combine(userAppDir, @"FlashDevelop\Apps\ascsdk");
+            if (Directory.Exists(appManDir))
+            {
+                String[] versionDirs = Directory.GetDirectories(appManDir);
+                foreach (string versionDir in versionDirs)
+                {
+                    if (Directory.Exists(versionDir))
+                    {
+                        asdocPath = Path.Combine(versionDir, @"bin\asdoc.exe");
+                        asdocPath2 = Path.Combine(versionDir, @"bin\asdoc.bat");
+                        if (File.Exists(asdocPath)) return Path.GetDirectoryName(asdocPath);
+                        if (File.Exists(asdocPath2)) return Path.GetDirectoryName(asdocPath2);
+                    }
+                }
+            }
             asdocPath = Path.Combine(parentDir, @"flexsdk\bin\asdoc.exe");
             asdocPath2 = Path.Combine(parentDir, @"flexsdk\bin\asdoc.bat");
             if (File.Exists(asdocPath)) return Path.GetDirectoryName(asdocPath);

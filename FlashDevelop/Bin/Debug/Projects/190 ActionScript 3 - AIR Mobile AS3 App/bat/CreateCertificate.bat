@@ -1,8 +1,11 @@
 @echo off
-cd..
+
+:: Set working dir
+cd %~dp0 & cd ..
+
 set PAUSE_ERRORS=1
 call bat\SetupSDK.bat
-call bat\SetupApplication.bat
+call bat\SetupApp.bat
 
 :: Generate
 echo.
@@ -14,7 +17,7 @@ if errorlevel 1 goto failed
 echo.
 echo Certificate created: %AND_CERT_FILE% with password "%AND_CERT_PASS%"
 echo.
-if "%AND_CERT_PASS%" == "fd" echo (note: you did not change the default password)
+if "%AND_CERT_PASS%" == "fd" echo Note: you did not change the default password
 echo.
 echo HINTS: 
 echo - you only need to generate this certificate once,

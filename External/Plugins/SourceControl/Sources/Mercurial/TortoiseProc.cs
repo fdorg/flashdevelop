@@ -31,7 +31,7 @@ namespace SourceControl.Sources.Mercurial
         {
             string cmd = PluginMain.SCSettings.TortoiseHGProcPath;
             if (cmd != null && File.Exists(cmd)) return cmd;
-            if (String.IsNullOrEmpty(cmd)) cmd = "hgtk";
+            if (String.IsNullOrEmpty(cmd)) cmd = "thgw.exe";
             return ResolveTortoiseProcPath(cmd);
         }
 

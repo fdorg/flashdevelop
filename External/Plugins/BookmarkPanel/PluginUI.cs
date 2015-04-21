@@ -18,7 +18,7 @@ using PluginCore.Helpers;
 
 namespace BookmarkPanel
 {
-	public class PluginUI : DockPanelControl
+    public class PluginUI : DockPanelControl
     {
         private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.ToolStrip toolStrip;
@@ -35,8 +35,8 @@ namespace BookmarkPanel
         private TimeoutManager timeoutManager;
         private PluginMain pluginMain;
         
-		public PluginUI(PluginMain pluginMain)
-		{
+        public PluginUI(PluginMain pluginMain)
+        {
             this.InitializeComponent();
             this.pluginMain = pluginMain;
             this.InitializeTimers();
@@ -44,16 +44,16 @@ namespace BookmarkPanel
             this.InitializeLayout();
             this.InitializeTexts();
             this.UpdateSettings();
-		}
+        }
 
         #region Windows Forms Designer Generated Code
 
         /// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() 
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent() 
         {
             this.listView = new System.Windows.Forms.ListView();
             this.columnLine = new System.Windows.Forms.ColumnHeader();
@@ -183,9 +183,9 @@ namespace BookmarkPanel
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-		#endregion
+        #endregion
 
         #region Methods And Event Handlers
         
@@ -324,7 +324,7 @@ namespace BookmarkPanel
                 if (document != null && document.IsEditable)
                 {
                     document.Activate();
-                    document.SciControl.GotoLine(line);
+                    document.SciControl.GotoLineIndent(line);
                 }
             }
         }
@@ -634,22 +634,22 @@ namespace BookmarkPanel
 
     public class TimeoutManager
     {
-		/// <summary>
-		/// Method to call on timeout
-		/// </summary>
-		public delegate void TimeoutDelegate(String tag);
+        /// <summary>
+        /// Method to call on timeout
+        /// </summary>
+        public delegate void TimeoutDelegate(String tag);
 
         /// <summary>
         /// Sets the specified timeout
         /// </summary>
         public void SetTimeout(TimeoutDelegate timeoutHandler, String tag)
-		{
-			this.SetTimeout(timeoutHandler, tag, 200);
-		}
+        {
+            this.SetTimeout(timeoutHandler, tag, 200);
+        }
 
-		/// <summary>
-		/// Waits for timeout and calls method
-		/// </summary>
+        /// <summary>
+        /// Waits for timeout and calls method
+        /// </summary>
         public void SetTimeout(TimeoutDelegate timeoutHandler, String tag, Int32 timeout)
         {
             TagTimer timer = new TagTimer();
@@ -671,10 +671,10 @@ namespace BookmarkPanel
             timer.TimeoutHandler(timer.Tag as String);
         }
 
-	    private class TagTimer : System.Windows.Forms.Timer
-	    {
+        private class TagTimer : System.Windows.Forms.Timer
+        {
             public TimeoutDelegate TimeoutHandler;
-	    }
+        }
 
     }
 

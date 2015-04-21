@@ -8,6 +8,7 @@ namespace CodeRefactor
     public class Settings
     {
         private Boolean separatePackages = false;
+        private Boolean disableMoveRefactoring = false;
 
         [DisplayName("Separate Packages")]
         [LocalizedDescription("CodeRefactor.Description.SeparatePackages"), DefaultValue(false)]
@@ -15,6 +16,14 @@ namespace CodeRefactor
         {
             get { return this.separatePackages; }
             set { this.separatePackages = value; }
+        }
+
+        [DisplayName("Disable Move Refactoring")]
+        [LocalizedDescription("CodeRefactor.Description.DisableMoveRefactoring"), DefaultValue(false)]
+        public Boolean DisableMoveRefactoring
+        {
+            get { return this.disableMoveRefactoring; }
+            set { this.disableMoveRefactoring = value; }
         }
 
     }

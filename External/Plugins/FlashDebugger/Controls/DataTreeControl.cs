@@ -314,9 +314,9 @@ namespace FlashDebugger.Controls
             {
                 DataNode node = Tree.SelectedNode.Tag as DataNode;
                 Clipboard.SetText(string.Format("{0} = {1}",node.Text, node.Value));
-            }  
             }
         }
+
         private void ViewerItemClick(Object sender, System.EventArgs e)
         {
             if (Tree.SelectedNode != null)

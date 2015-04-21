@@ -9,30 +9,30 @@ using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-	public class GoToDialog : Form
-	{
+    public class GoToDialog : Form
+    {
         private System.Windows.Forms.Button lineButton;
-		private System.Windows.Forms.Button closeButton;
-		private System.Windows.Forms.Button positionButton;
-		private System.Windows.Forms.TextBox lineTextBox;
+        private System.Windows.Forms.Button closeButton;
+        private System.Windows.Forms.Button positionButton;
+        private System.Windows.Forms.TextBox lineTextBox;
         private System.Windows.Forms.Label valueLabel;
 
         public GoToDialog()
-		{
+        {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             ScaleHelper.AdjustForHighDPI(this);
-		}
-		
-		#region Windows Forms Designer Generated Code
+        }
+        
+        #region Windows Forms Designer Generated Code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-		private void InitializeComponent() 
+        private void InitializeComponent() 
         {
             this.lineTextBox = new System.Windows.Forms.TextBox();
             this.positionButton = new System.Windows.Forms.Button();
@@ -111,10 +111,10 @@ namespace FlashDevelop.Dialogs
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
-		#endregion
-		
-		#region Methods And Event Handlers
+        }
+        #endregion
+        
+        #region Methods And Event Handlers
 
         /// <summary>
         /// Applies the localized texts to the form
@@ -129,35 +129,35 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-		/// Selects the textfield's text
-		/// </summary>
+        /// Selects the textfield's text
+        /// </summary>
         private void SelectLineTextBox()
         {
             this.lineTextBox.Select();
             this.lineTextBox.SelectAll();
         }
 
-		/// <summary>
-		/// Some event handling when showing the form
-		/// </summary>
+        /// <summary>
+        /// Some event handling when showing the form
+        /// </summary>
         private void VisibleChange(Object sender, System.EventArgs e)
-		{
-			if (this.Visible)
-			{
+        {
+            if (this.Visible)
+            {
                 this.SelectLineTextBox();
                 this.CenterToParent();
-			}
-		}
-		
-		/// <summary>
-		/// Hides only the dialog when user closes it
-		/// </summary>
+            }
+        }
+        
+        /// <summary>
+        /// Hides only the dialog when user closes it
+        /// </summary>
         private void DialogClosing(Object sender, System.ComponentModel.CancelEventArgs e)
-		{
+        {
             e.Cancel = true;
             Globals.CurrentDocument.Activate();
             this.Hide();
-		}
+        }
 
         /// <summary>
         /// Moves the cursor to the specified line
@@ -169,7 +169,7 @@ namespace FlashDevelop.Dialogs
             {
                 Int32 line = Convert.ToInt32(this.lineTextBox.Text) - 1;
                 Globals.SciControl.EnsureVisible(line);
-                Globals.SciControl.GotoLine(line);
+                Globals.SciControl.GotoLineIndent(line);
                 this.Close();
             }
             catch
@@ -208,8 +208,8 @@ namespace FlashDevelop.Dialogs
             this.Close();
         }
 
-		#endregion
-		
-	}
-	
+        #endregion
+        
+    }
+    
 }

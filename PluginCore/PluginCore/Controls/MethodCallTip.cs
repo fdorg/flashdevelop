@@ -17,7 +17,6 @@ namespace PluginCore.Controls
         public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
         public static string HLBgStyleEnd = "[/BGCOLOR]";
 
-
         // state
         protected string currentText;
         protected int currentHLStart;

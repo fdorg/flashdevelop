@@ -4,11 +4,11 @@ using System.Text;
 
 namespace PluginCore.BBCode
 {
-	public interface IPairTag
-	{
-		IPairTagMatch openerMatch { get; }
-		IPairTagMatch closerMatch { get; }
-	}
+    public interface IPairTag
+    {
+        IPairTagMatch openerMatch { get; }
+        IPairTagMatch closerMatch { get; }
+    }
 
     public interface IPairTagMatch
     {
@@ -31,8 +31,8 @@ namespace PluginCore.BBCode
     {
         /**
          * Tag handler. Extracting raw params to final data.
-         * @param	tag
-         * @return	true if tag has been handled.
+         * @param   tag
+         * @return  true if tag has been handled.
          */
         Boolean handleTag(IPairTagMatch tag);
         Boolean isHandleable(IPairTagMatch tag);

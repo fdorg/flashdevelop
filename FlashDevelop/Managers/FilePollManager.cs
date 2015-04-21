@@ -44,11 +44,16 @@ namespace FlashDevelop.Managers
             TabbedDocument casted = document as TabbedDocument;
             if (casted.IsEditable && casted.CheckFileChange())
             {
-                if (Globals.Settings.AutoReloadModifiedFiles) casted.Reload(false);
+                if (Globals.Settings.AutoReloadModifiedFiles)
+                {
+                    casted.RefreshFileInfo();
+                    casted.Reload(false);
+                }
                 else
                 {
                     if (YesToAll)
                     {
+                        casted.RefreshFileInfo();
                         casted.Reload(false);
                         return;
                     }
@@ -58,6 +63,7 @@ namespace FlashDevelop.Managers
                     MessageBoxManager.Cancel = TextHelper.GetString("Label.YesToAll");
                     MessageBoxManager.Register(); // Use custom labels...
                     DialogResult result = MessageBox.Show(Globals.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    casted.RefreshFileInfo(); // User may have waited before responding, save info now
                     if (result == DialogResult.Yes) casted.Reload(false);
                     else if (result == DialogResult.Cancel)
                     {

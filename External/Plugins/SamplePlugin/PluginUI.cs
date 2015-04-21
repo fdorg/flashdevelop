@@ -6,16 +6,16 @@ using PluginCore;
 
 namespace SamplePlugin
 {
-	public class PluginUI : UserControl
+    public class PluginUI : UserControl
     {
         private RichTextBox richTextBox;
-		private PluginMain pluginMain;
+        private PluginMain pluginMain;
         
-		public PluginUI(PluginMain pluginMain)
-		{
-			this.InitializeComponent();
-			this.pluginMain = pluginMain;
-		}
+        public PluginUI(PluginMain pluginMain)
+        {
+            this.InitializeComponent();
+            this.pluginMain = pluginMain;
+        }
 
         /// <summary>
         /// Accessor to the RichTextBox
@@ -24,15 +24,15 @@ namespace SamplePlugin
         {
             get { return this.richTextBox; }
         }
-		
-		#region Windows Forms Designer Generated Code
+        
+        #region Windows Forms Designer Generated Code
 
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() 
+        /// <summary>
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent() 
         {
             this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
@@ -54,10 +54,10 @@ namespace SamplePlugin
             this.Size = new System.Drawing.Size(280, 352);
             this.ResumeLayout(false);
 
-		}
+        }
 
-		#endregion
-				
- 	}
+        #endregion
+                
+    }
 
 }

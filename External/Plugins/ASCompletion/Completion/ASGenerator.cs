@@ -271,8 +271,9 @@ namespace ASCompletion.Completion
 
                 // "assign var to statement" suggestion
                 int curLine = Sci.CurrentLine;
-                string ln = Sci.GetLine(curLine);
-                if (ln.Trim().Length > 0 && ln.TrimEnd().Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine) && ln.IndexOf("=") == -1)
+                string ln = Sci.GetLine(curLine).TrimEnd();
+                if (ln.Length > 0 && ln.IndexOf("=") == -1 
+                    && ln.Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine)) // cursor at end of line
                 {
                     ShowAssignStatementToVarList(found);
                     return;
@@ -3368,11 +3369,11 @@ namespace ASCompletion.Completion
             string kind = features.varKey;
 
             if ((member.Flags & FlagType.Getter) > 0)
-				kind = features.getKey;
+                kind = features.getKey;
             else if ((member.Flags & FlagType.Setter) > 0)
-				kind = features.setKey;
-			else if (member.Flags == FlagType.Function)
-				kind = features.functionKey;
+                kind = features.setKey;
+            else if (member.Flags == FlagType.Function)
+                kind = features.functionKey;
 
             Regex reMember = new Regex(String.Format(@"{0}\s+({1})[\s:]", kind, member.Name));
 
@@ -3764,7 +3765,7 @@ namespace ASCompletion.Completion
                 return String.Format("{0}function get {1}", modifiers, member.ToDeclarationString());
             else if ((ft & FlagType.Setter) > 0)
                 return String.Format("{0}function set {1}", modifiers, member.ToDeclarationString());
-			else if (ft == FlagType.Function)
+            else if (ft == FlagType.Function)
                 return String.Format("{0}function {1}", modifiers, member.ToDeclarationString());
             else if (((ft & FlagType.Constant) > 0) && ASContext.Context.Settings.LanguageId != "AS2")
                 return String.Format("{0}const {1}", modifiers, member.ToDeclarationString());
@@ -4362,8 +4363,7 @@ namespace ASCompletion.Completion
             sci.LineScroll(0, firstLine - sci.FirstVisibleLine + 1);
 
             ASContext.Context.RefreshContextCache(fullPath);
-            if (sci.EOLMode == 2) return sci.GetLine(line).Length + nl.Length;
-            else return sci.GetLine(line).Length + nl.Length - 1;
+            return sci.GetLine(line).Length;
         }
         #endregion
 

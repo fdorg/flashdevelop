@@ -7,7 +7,7 @@
 		<button label="Label.MoveLineUp" click="ScintillaCommand" tag="MoveLineUp" />
 		<button label="Label.MoveLineDown" click="ScintillaCommand" tag="MoveLineDown" />
 		<button label="Label.TransposeLines" click="ScintillaCommand" tag="LineTranspose" />
-		<button label="Label.DuplicateSelection" click="ScintillaCommand" tag="SelectionDuplicate" />
+		<button label="Label.DuplicateSelection" click="ScintillaCommand" tag="SmartSelectionDuplicate" />
 		<button label="Label.SortLineGroups" click="SortLineGroups" flags="Enable:Enable:HasSelection" />
 		<button label="Label.SortLines" click="SortLines" flags="Enable:Enable:HasSelection" />
 		<separator />

@@ -211,7 +211,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\BookmarkIcon.bmp" />
     <EmbeddedResource Include="Resources\FlashDevelopIcon.ico" />
     <EmbeddedResource Include="Resources\QuickFindClose.png" />
     <EmbeddedResource Include="Resources\QuickFindNext.png" />
@@ -253,6 +252,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\BookmarkIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

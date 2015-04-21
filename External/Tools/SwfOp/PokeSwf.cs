@@ -17,31 +17,31 @@ using System.Text;
 
 namespace SwfOp
 {
-	/// <summary>
-	/// C:\as3\projets\MonProjet\deploy\App.swf
+    /// <summary>
+    /// C:\as3\projets\MonProjet\deploy\App.swf
     /// C:\as3\projets\MonProjet\App2.swf
     /// C:\flex_sdk_2\frameworks\libs\framework.swc
     /// C:\flex_sdk_2\frameworks\libs\playerglobal.swc
     /// C:\as3\library\ImageProcessing.swc
     /// C:\as3\corelib\bin\corelib.swc
-	/// </summary>
-	public class PokeSwf
-	{
+    /// </summary>
+    public class PokeSwf
+    {
         static string operation;
 
-		public static void Main(string[] args)
-		{
-			if (args.Length < 1)
-			{
-				Console.WriteLine("SwfOp <file.swf>: list all library symbols of the SWF");
+        public static void Main(string[] args)
+        {
+            if (args.Length < 1)
+            {
+                Console.WriteLine("SwfOp <file.swf>: list all library symbols of the SWF");
                 return;
-			}
+            }
             string filename = args[args.Length-1];
             operation = (args.Length > 1) ? args[0] : "-list";
-			
-			// read SWF
-			try
-			{
+            
+            // read SWF
+            try
+            {
                 Stream filestream = File.OpenRead(filename);
 
                 // SWC file: extract 'library.swf' file
@@ -72,17 +72,17 @@ namespace SwfOp
                 }
                 // regular SWF
                 else ExploreSWF(new BufferedStream(filestream));
-			}
-			catch(FileNotFoundException)
-			{
-				Console.WriteLine("-- SwfOp Error: File not found");
-			}
-			catch(Exception ex)
-			{
-				Console.WriteLine("-- SwfOp Error: "+ex.Message);
-			}
+            }
+            catch(FileNotFoundException)
+            {
+                Console.WriteLine("-- SwfOp Error: File not found");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("-- SwfOp Error: "+ex.Message);
+            }
             Console.ReadLine();
-		}
+        }
 
         private static byte[] UnzipFile(ZipFile zfile, ZipEntry entry)
         {
@@ -93,9 +93,9 @@ namespace SwfOp
                 throw new Exception("Corrupted archive");
             return data;
         }
-		
-		static void ExploreSWF(Stream stream)
-		{
+        
+        static void ExploreSWF(Stream stream)
+        {
             if (stream == null) return;
             SwfReader reader = new SwfReader(stream);
             //SwfExportTagReader reader = new SwfExportTagReader(stream);
@@ -139,7 +139,7 @@ namespace SwfOp
             {
                 Console.WriteLine("-- Swf error: " + ex.Message);
             }
-		}
+        }
 
         private static BaseTag FindObject(Swf swf, ushort id)
         {
@@ -152,5 +152,5 @@ namespace SwfOp
             }
             return null;
         }
-	}
+    }
 }

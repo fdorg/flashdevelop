@@ -12,11 +12,11 @@ using PluginCore.Bridge;
 
 namespace ProjectManager.Controls.TreeView
 {
-	/// <summary>
-	/// Represents a node that watches for changes to its children using a FileSystemWatcher.
-	/// </summary>
+    /// <summary>
+    /// Represents a node that watches for changes to its children using a FileSystemWatcher.
+    /// </summary>
     public class WatcherNode : DirectoryNode
-	{
+    {
         System.Timers.Timer updateTimer;
         WatcherEx watcher;
         List<String> changedPaths;
@@ -24,9 +24,9 @@ namespace ProjectManager.Controls.TreeView
         String[] excludedDirs;
         Boolean updateNeeded;
 
-		public WatcherNode(string directory) : base(directory)
-		{
-			isRefreshable = true;
+        public WatcherNode(string directory) : base(directory)
+        {
+            isRefreshable = true;
             changedPaths = new List<String>();
             excludedDirs = PluginMain.Settings.ExcludedDirectories.Clone() as String[];
             excludedFiles = PluginMain.Settings.ExcludedFileTypes.Clone() as String[];
@@ -36,7 +36,7 @@ namespace ProjectManager.Controls.TreeView
             updateTimer.Interval = 500;
             updateTimer.Elapsed += updateTimer_Tick;
             setWatcher();
-		}
+        }
 
         private void setWatcher()
         {
@@ -64,27 +64,27 @@ namespace ProjectManager.Controls.TreeView
             if (watcher == null) setWatcher();
             base.Refresh(recursive);
         }
-		
-		public override void Dispose()
-		{
-			base.Dispose();
-			if (updateTimer != null)
-			{
-				updateTimer.Stop();
-				updateTimer.Dispose();
-			}
-			if (watcher != null)
-			{
-				watcher.EnableRaisingEvents = false;
-				watcher.Dispose();
-			}
-		}
+        
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (updateTimer != null)
+            {
+                updateTimer.Stop();
+                updateTimer.Dispose();
+            }
+            if (watcher != null)
+            {
+                watcher.EnableRaisingEvents = false;
+                watcher.Dispose();
+            }
+        }
 
-		public void UpdateLater()
-		{
-			updateNeeded = true;
-			updateTimer.Enabled = true;
-		}
+        public void UpdateLater()
+        {
+            updateNeeded = true;
+            updateTimer.Enabled = true;
+        }
 
         private void AppendPath(FileSystemEventArgs e)
         {
@@ -126,46 +126,46 @@ namespace ProjectManager.Controls.TreeView
             AppendPath(e);
             Changed();
         }
-		private void watcher_Created(object sender, FileSystemEventArgs e) 
+        private void watcher_Created(object sender, FileSystemEventArgs e) 
         {
             AppendPath(e);
             Changed(); 
         }
-		private void watcher_Deleted(object sender, FileSystemEventArgs e) 
+        private void watcher_Deleted(object sender, FileSystemEventArgs e) 
         {
             AppendPath(e);
             Changed(); 
         }
-		private void watcher_Renamed(object sender, RenamedEventArgs e) 
+        private void watcher_Renamed(object sender, RenamedEventArgs e) 
         {
             AppendPath(e);
             Changed();
         }
 
-		private void Changed()
-		{
+        private void Changed()
+        {
             // have we been deleted already?
             if (!Directory.Exists(BackingPath)) return;
-			updateNeeded = true;
+            updateNeeded = true;
             updateTimer.Enabled = false; // reset timer
             updateTimer.Enabled = true;
-		}
+        }
 
-		private void Update()
-		{
-			if (!updateNeeded) return;
+        private void Update()
+        {
+            if (!updateNeeded) return;
             updateTimer.Enabled = false;
-			try
-			{
-				Tree.BeginUpdate();
+            try
+            {
+                Tree.BeginUpdate();
                 String[] paths = this.changedPaths.ToArray();
                 this.changedPaths.Clear();
                 Tree.RefreshTree(paths);
-			}
-			catch {}
-			finally
-			{
-				Tree.EndUpdate();
+            }
+            catch {}
+            finally
+            {
+                Tree.EndUpdate();
                 updateNeeded = false;
                 excludedDirs = PluginMain.Settings.ExcludedDirectories.Clone() as String[];
                 excludedFiles = PluginMain.Settings.ExcludedFileTypes.Clone() as String[];
@@ -183,14 +183,14 @@ namespace ProjectManager.Controls.TreeView
                     node.BeginEdit();
                 }
             }
-		}
+        }
 
-		void updateTimer_Tick(object sender, EventArgs e)
-		{
-			updateTimer.Enabled = false;
-			Update();
-		}
+        void updateTimer_Tick(object sender, EventArgs e)
+        {
+            updateTimer.Enabled = false;
+            Update();
+        }
 
-	}
+    }
 
 }

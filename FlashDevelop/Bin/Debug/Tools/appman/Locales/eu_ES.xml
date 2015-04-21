@@ -26,6 +26,7 @@
 	<DownloadingError>Fitxategia deskargatzean errorea: </DownloadingError>
 	<ExtractingError>Fitxategia erauztean errorea: </ExtractingError>
 	<DeleteDirError>Error while deleting directory: </DeleteDirError>
+	<ChecksumVerifyError>The checksum did not match the file: </ChecksumVerifyError>
 	<!-- Labels -->
 	<SelectLabel>Aukeratu:</SelectLabel>
 	<ExploreLabel>Arakatu...</ExploreLabel>

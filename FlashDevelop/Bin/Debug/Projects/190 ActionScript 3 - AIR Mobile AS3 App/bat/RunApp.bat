@@ -1,7 +1,11 @@
 @echo off
+
+:: Set working dir
+cd %~dp0 & cd ..
+
 set PAUSE_ERRORS=1
 call bat\SetupSDK.bat
-call bat\SetupApplication.bat
+call bat\SetupApp.bat
 
 :target
 goto desktop
@@ -26,7 +30,6 @@ echo.
 adl -screensize %SCREEN_SIZE% "%APP_XML%" "%APP_DIR%"
 if errorlevel 1 goto end
 goto endNoPause
-
 
 :ios-debug
 echo.
@@ -106,3 +109,4 @@ echo Installing the app on the device failed
 pause
 
 :endNoPause
+

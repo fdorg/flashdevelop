@@ -7,11 +7,11 @@ namespace ScintillaNet.Configuration
     [SerializableAttribute()]
     public class UseKeyword : ConfigItem
     {
-		[XmlAttributeAttribute()]
-		public int key;
+        [XmlAttributeAttribute()]
+        public int key;
 
-		[XmlAttributeAttribute("name")]
-		public int name;
+        [XmlAttributeAttribute("name")]
+        public int name;
 
         [XmlAttributeAttribute("class")]
         public string cls;

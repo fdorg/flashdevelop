@@ -8,246 +8,246 @@ using System.Windows.Forms;
 
 namespace FlashDevelop.Controls
 {
-	/// <summary>
-	/// This class overrides the standard PropertyGrid provided by Microsoft.
-	/// It also allows to hide (or filter) the properties of the SelectedObject displayed by the PropertyGrid.
-	/// </summary>
-	public class FilteredGrid : PropertyGrid
-	{
-		/// <summary>
+    /// <summary>
+    /// This class overrides the standard PropertyGrid provided by Microsoft.
+    /// It also allows to hide (or filter) the properties of the SelectedObject displayed by the PropertyGrid.
+    /// </summary>
+    public class FilteredGrid : PropertyGrid
+    {
+        /// <summary>
         /// Contain a reference to the collection of properties to show in the parent PropertyGrid.
         /// </summary>
-		List<PropertyDescriptor> m_PropertyDescriptors = new List<PropertyDescriptor>();
+        List<PropertyDescriptor> m_PropertyDescriptors = new List<PropertyDescriptor>();
 
-		/// <summary>
+        /// <summary>
         /// Contain a reference to the array of properties to display in the PropertyGrid.
         /// </summary>
-		private AttributeCollection m_HiddenAttributes = null, m_BrowsableAttributes = null;
+        private AttributeCollection m_HiddenAttributes = null, m_BrowsableAttributes = null;
 
-		/// <summary>
+        /// <summary>
         /// Contain references to the arrays of properties or categories to hide.
         /// </summary>
-		private string[] m_BrowsableProperties = null, m_HiddenProperties = null;
+        private string[] m_BrowsableProperties = null, m_HiddenProperties = null;
 
-		/// <summary>
+        /// <summary>
         /// Contain a reference to the wrapper that contains the object to be displayed into the PropertyGrid.
         /// </summary>
-		private ObjectWrapper m_Wrapper = null;
+        private ObjectWrapper m_Wrapper = null;
 
-		/// <summary>
+        /// <summary>
         /// Public constructor.
         /// </summary>
-		public FilteredGrid() 
+        public FilteredGrid() 
         {
-			base.SelectedObject = m_Wrapper;
-		}
+            base.SelectedObject = m_Wrapper;
+        }
 
         /// <summary>
         /// 
         /// </summary>
-		public new AttributeCollection BrowsableAttributes 
+        public new AttributeCollection BrowsableAttributes 
         {
-			get { return m_BrowsableAttributes; }
-			set 
+            get { return m_BrowsableAttributes; }
+            set 
             {
-				if (m_BrowsableAttributes != value) 
+                if (m_BrowsableAttributes != value) 
                 {
-					m_HiddenAttributes = null;
-					m_BrowsableAttributes = value;
-					RefreshProperties();
-				}
-			}
-		}
+                    m_HiddenAttributes = null;
+                    m_BrowsableAttributes = value;
+                    RefreshProperties();
+                }
+            }
+        }
 
-		/// <summary>
+        /// <summary>
         /// Get or set the categories to hide.
         /// </summary>
-		public AttributeCollection HiddenAttributes 
+        public AttributeCollection HiddenAttributes 
         {
-			get { return m_HiddenAttributes; }
-			set 
+            get { return m_HiddenAttributes; }
+            set 
             {
-				if (value != m_HiddenAttributes) 
+                if (value != m_HiddenAttributes) 
                 {
-					m_HiddenAttributes = value;
-					m_BrowsableAttributes = null;
-					RefreshProperties();
-				}
-			}
-		}
+                    m_HiddenAttributes = value;
+                    m_BrowsableAttributes = null;
+                    RefreshProperties();
+                }
+            }
+        }
 
-		/// <summary>
+        /// <summary>
         /// Get or set the properties to show.
         /// </summary>
-		public string[] BrowsableProperties 
+        public string[] BrowsableProperties 
         {
-			get { return m_BrowsableProperties; }
-			set 
+            get { return m_BrowsableProperties; }
+            set 
             {
-				if (value != m_BrowsableProperties) 
+                if (value != m_BrowsableProperties) 
                 {
-					m_BrowsableProperties = value;
-					RefreshProperties();
-				}
-			}
-		}
+                    m_BrowsableProperties = value;
+                    RefreshProperties();
+                }
+            }
+        }
 
-		/// <summary>
+        /// <summary>
         /// Get or set the properties to hide.
         /// </summary>
-		public string[] HiddenProperties 
+        public string[] HiddenProperties 
         {
-			get { return m_HiddenProperties; }
-			set 
+            get { return m_HiddenProperties; }
+            set 
             {
-				if (value != m_HiddenProperties) 
+                if (value != m_HiddenProperties) 
                 {
-					m_HiddenProperties = value;
-					RefreshProperties();
-				} 
-			}
-		}
+                    m_HiddenProperties = value;
+                    RefreshProperties();
+                } 
+            }
+        }
 
-		/// <summary>
+        /// <summary>
         /// Overwrite the PropertyGrid.SelectedObject property.
         /// </summary>
-		public new object SelectedObject 
+        public new object SelectedObject 
         {
-			get { return m_Wrapper != null ? ((ObjectWrapper)base.SelectedObject).SelectedObject : null; }
-			set 
+            get { return m_Wrapper != null ? ((ObjectWrapper)base.SelectedObject).SelectedObject : null; }
+            set 
             {
                 if (value != null)
                 {
-				    if (m_Wrapper == null) 
+                    if (m_Wrapper == null) 
                     {
-					    m_Wrapper = new ObjectWrapper(value);
-					    RefreshProperties();
-				    }
-				    else if (m_Wrapper.SelectedObject != value) 
+                        m_Wrapper = new ObjectWrapper(value);
+                        RefreshProperties();
+                    }
+                    else if (m_Wrapper.SelectedObject != value) 
                     {
                         bool needrefresh;
                         needrefresh = (value.GetType() != m_Wrapper.SelectedObject.GetType());
                         m_Wrapper.SelectedObject = value;
                         if (needrefresh) RefreshProperties();
-				    }
-				    // Set the list of properties to the wrapper.
-				    m_Wrapper.PropertyDescriptors = m_PropertyDescriptors;
-				    // Link the wrapper to the parent PropertyGrid.
-				    base.SelectedObject = m_Wrapper;
+                    }
+                    // Set the list of properties to the wrapper.
+                    m_Wrapper.PropertyDescriptors = m_PropertyDescriptors;
+                    // Link the wrapper to the parent PropertyGrid.
+                    base.SelectedObject = m_Wrapper;
                 }
                 else
                 {
                     m_Wrapper = null;
                     base.SelectedObject = null;
                 }
-			}
-		}
+            }
+        }
 
-		/// <summary>
+        /// <summary>
         /// Called when the browsable properties have changed.
         /// </summary>
-		private void OnBrowsablePropertiesChanged() 
+        private void OnBrowsablePropertiesChanged() 
         {
-			if(m_Wrapper == null) return;
-		}
+            if(m_Wrapper == null) return;
+        }
 
-		/// <summary>
+        /// <summary>
         /// Build the list of the properties to be displayed in the PropertyGrid, following the filters defined the Browsable and Hidden properties.
         /// </summary>
-		private void RefreshProperties() 
+        private void RefreshProperties() 
         {
-			if (m_Wrapper == null) return;
-			// Clear the list of properties to be displayed.
-			m_PropertyDescriptors.Clear();
-			// Check whether the list is filtered 
-			if (m_BrowsableAttributes != null && m_BrowsableAttributes.Count > 0) 
+            if (m_Wrapper == null) return;
+            // Clear the list of properties to be displayed.
+            m_PropertyDescriptors.Clear();
+            // Check whether the list is filtered 
+            if (m_BrowsableAttributes != null && m_BrowsableAttributes.Count > 0) 
             {
-				// Add to the list the attributes that need to be displayed.
-				foreach(Attribute attribute in m_BrowsableAttributes) ShowAttribute(attribute);
-			} 
+                // Add to the list the attributes that need to be displayed.
+                foreach(Attribute attribute in m_BrowsableAttributes) ShowAttribute(attribute);
+            } 
             else 
             {
-				// Fill the collection with all the properties.
-				PropertyDescriptorCollection originalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject);
-				foreach(PropertyDescriptor propertydescriptor in originalpropertydescriptors) m_PropertyDescriptors.Add(propertydescriptor);
-				// Remove from the list the attributes that mustn't be displayed.
-				if(m_HiddenAttributes != null) foreach(Attribute attribute in m_HiddenAttributes) HideAttribute(attribute);
-			}
-			// Get all the properties of the SelectedObject
-			PropertyDescriptorCollection allproperties = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject);
-			// Hide if necessary, some properties
-			if (m_HiddenProperties != null && m_HiddenProperties.Length > 0) 
+                // Fill the collection with all the properties.
+                PropertyDescriptorCollection originalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject);
+                foreach(PropertyDescriptor propertydescriptor in originalpropertydescriptors) m_PropertyDescriptors.Add(propertydescriptor);
+                // Remove from the list the attributes that mustn't be displayed.
+                if(m_HiddenAttributes != null) foreach(Attribute attribute in m_HiddenAttributes) HideAttribute(attribute);
+            }
+            // Get all the properties of the SelectedObject
+            PropertyDescriptorCollection allproperties = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject);
+            // Hide if necessary, some properties
+            if (m_HiddenProperties != null && m_HiddenProperties.Length > 0) 
             {
-				// Remove from the list the properties that mustn't be displayed.
-				foreach(string propertyname in m_HiddenProperties) 
+                // Remove from the list the properties that mustn't be displayed.
+                foreach(string propertyname in m_HiddenProperties) 
                 {
-					try 
+                    try 
                     {
-						PropertyDescriptor property = allproperties[propertyname];
-						// Remove from the list the property
-						HideProperty(property);
-					} 
+                        PropertyDescriptor property = allproperties[propertyname];
+                        // Remove from the list the property
+                        HideProperty(property);
+                    } 
                     catch(Exception ex) 
                     {
-						throw new ArgumentException(ex.Message);
-					}
-				}
-			}
-			if (m_BrowsableProperties != null && m_BrowsableProperties.Length > 0) 
+                        throw new ArgumentException(ex.Message);
+                    }
+                }
+            }
+            if (m_BrowsableProperties != null && m_BrowsableProperties.Length > 0) 
             {
                 // Clear properties to filter the list from scratch BY IAP
                 m_PropertyDescriptors.Clear();
-				foreach(string propertyname in m_BrowsableProperties) 
+                foreach(string propertyname in m_BrowsableProperties) 
                 {
-					try 
+                    try 
                     {
-						ShowProperty(allproperties[propertyname]);
-					} 
+                        ShowProperty(allproperties[propertyname]);
+                    } 
                     catch (Exception)
                     {
-						throw new ArgumentException("Property not found.", propertyname);
-					}
-				}
-			}
-		}
+                        throw new ArgumentException("Property not found.", propertyname);
+                    }
+                }
+            }
+        }
 
-		/// <summary>
+        /// <summary>
         /// Allows to hide a set of properties to the parent PropertyGrid.
         /// </summary>
-		private void HideAttribute(Attribute attribute) 
+        private void HideAttribute(Attribute attribute) 
         {
-			PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject, new Attribute[] { attribute });
-			if(filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
-			foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) HideProperty(propertydescriptor);
-		}
+            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject, new Attribute[] { attribute });
+            if(filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
+            foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) HideProperty(propertydescriptor);
+        }
 
-		/// <summary>
+        /// <summary>
         /// Add all the properties that match an attribute to the list of properties to be displayed in the PropertyGrid.
         /// </summary>
-		private void ShowAttribute(Attribute attribute) 
+        private void ShowAttribute(Attribute attribute) 
         {
-			PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject,new Attribute[] { attribute });
-			if (filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
-			foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) ShowProperty(propertydescriptor);
-		}
+            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject,new Attribute[] { attribute });
+            if (filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
+            foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) ShowProperty(propertydescriptor);
+        }
 
-		/// <summary>
+        /// <summary>
         /// Add a property to the list of properties to be displayed in the PropertyGrid.
         /// </summary>
-		private void ShowProperty(PropertyDescriptor property) 
+        private void ShowProperty(PropertyDescriptor property) 
         {
-			if (!m_PropertyDescriptors.Contains(property)) m_PropertyDescriptors.Add(property);
-		}
+            if (!m_PropertyDescriptors.Contains(property)) m_PropertyDescriptors.Add(property);
+        }
 
-		/// <summary>
+        /// <summary>
         /// Allows to hide a property to the parent PropertyGrid.
         /// </summary>
-		private void HideProperty(PropertyDescriptor property) 
+        private void HideProperty(PropertyDescriptor property) 
         {
-			if (m_PropertyDescriptors.Contains(property)) m_PropertyDescriptors.Remove(property);
-		}
+            if (m_PropertyDescriptors.Contains(property)) m_PropertyDescriptors.Remove(property);
+        }
 
-	}
+    }
 
     #region Internal Classes
 

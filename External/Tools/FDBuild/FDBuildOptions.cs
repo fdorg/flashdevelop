@@ -5,31 +5,31 @@ using System.IO;
 
 namespace FDBuild
 {
-	public class FDBuildOptions : Options
-	{
-		ArrayList extraClasspaths;
+    public class FDBuildOptions : Options
+    {
+        ArrayList extraClasspaths;
         string language;
-		public string ProjectFile;
+        public string ProjectFile;
 
-		public FDBuildOptions(string[] args)
-		{
-			NoTrace = false;
-			ProjectFile = "";
-			extraClasspaths = new ArrayList();
-			ProcessArgs(args);
-		}
+        public FDBuildOptions(string[] args)
+        {
+            NoTrace = false;
+            ProjectFile = "";
+            extraClasspaths = new ArrayList();
+            ProcessArgs(args);
+        }
 
-		[ArgumentProcessor]
-		public void SetProject(string file) 
-		{
-			ProjectFile = file;
-		}
+        [ArgumentProcessor]
+        public void SetProject(string file) 
+        {
+            ProjectFile = file;
+        }
 
-		[Option(99, "Add extra classpath", "cp")]
-		public string ExtraClasspath
-		{
-			set { if (!extraClasspaths.Contains(value)) extraClasspaths.Add(value); }
-		}
+        [Option(99, "Add extra classpath", "cp")]
+        public string ExtraClasspath
+        {
+            set { if (!extraClasspaths.Contains(value)) extraClasspaths.Add(value); }
+        }
 
         [Option("Set library base directory", "library")]
         public string LibraryDir;
@@ -56,7 +56,7 @@ namespace FDBuild
         public bool NoPostBuild = false;
 
         [Option("Pause the console after building", "pause")]
-		public bool PauseAtEnd = false;
+        public bool PauseAtEnd = false;
 
         [Option("Connect to FlashDevelop's remoting services using the specified IPC name (optional)", "ipc")]
         public string IpcName = null;
@@ -74,9 +74,9 @@ namespace FDBuild
             }
         }
 
-		public string[] ExtraClasspaths
-		{
-			get { return extraClasspaths.ToArray(typeof(string)) as string[]; }
-		}
-	}
+        public string[] ExtraClasspaths
+        {
+            get { return extraClasspaths.ToArray(typeof(string)) as string[]; }
+        }
+    }
 }
