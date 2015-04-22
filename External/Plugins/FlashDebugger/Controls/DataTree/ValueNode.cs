@@ -37,12 +37,16 @@ namespace FlashDebugger.Controls.DataTree
                     if (HideFullClasspath)
                     {
                         // return class type without classpath
-                        typeStr = m_Value.getTypeName().ToString().AfterLast("::", true);
+                        string typeName = m_Value.getTypeName().ToString();
+                        if (typeName.StartsWith("__AS3__.vec::Vector.<") || typeName.StartsWith("Vector.<"))
+                            typeStr = "Vector.<" + typeName.AfterLast("::", true);
+                        else
+                            typeStr = typeName.After("::", 0, true).Replace("::", ".");
                     }
                     else
                     {
                         // return class type with classpath
-                        typeStr = m_Value.getTypeName().replaceAll("::", ".").ToString();
+                        typeStr = m_Value.getTypeName().ToString().Replace("::", ".");
                     }
                     
                     // show / hide IDs
