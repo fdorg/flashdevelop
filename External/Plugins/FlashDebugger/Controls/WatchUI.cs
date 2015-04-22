@@ -103,9 +103,17 @@ namespace FlashDebugger.Controls
                 var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                 var obj = exp.evaluate(ctx);
                 if (obj is Variable)
-                    node = new VariableNode((Variable)obj);
+                    node = new VariableNode((Variable)obj)
+                               {
+                                   HideClassId = PluginMain.settingObject.HideClassIds,
+                                   HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
+                               };
                 else if (obj is Value)
-                    node = new ValueNode(item, (Value)obj);
+                    node = new ValueNode(item, (Value) obj)
+                               {
+                                   HideClassId = PluginMain.settingObject.HideClassIds,
+                                   HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
+                               };
                 else
                     node = new ScalarNode(item, obj.toString());
                 node.Tag = item;

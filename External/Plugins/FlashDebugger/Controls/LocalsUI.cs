@@ -52,8 +52,8 @@ namespace FlashDebugger
                 {
                     treeControl.AddNode(new VariableNode(item)
                                             {
-                                                HideClassId = treeControl.HideObjectIds, 
-                                                HideFullClasspath = treeControl.HideFullClasspaths
+                                                HideClassId = PluginMain.settingObject.HideClassIds,
+                                                HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
                                             });
                 }
             }

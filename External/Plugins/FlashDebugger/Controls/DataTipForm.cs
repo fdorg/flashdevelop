@@ -47,8 +47,8 @@ namespace FlashDebugger.Controls
             DataTree.Nodes.Clear();
             DataTree.AddNode(new VariableNode(variable)
                                  {
-                                     HideClassId = DataTree.HideObjectIds,
-                                     HideFullClasspath = DataTree.HideFullClasspaths
+                                     HideClassId = PluginMain.settingObject.HideClassIds,
+                                     HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
                                  });
             DoResize();
         }

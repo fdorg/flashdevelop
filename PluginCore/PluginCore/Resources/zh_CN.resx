@@ -5942,6 +5942,18 @@
     <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
     <comment>Added after 4.7.2</comment>
   </data>
+  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
+    <value>Copy Value</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
+    <value>Copy ID</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Label.CopyTree" xml:space="preserve">
+    <value>Copy Tree</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
   <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
     <value>[Recursion too deep, increase Copy Tree Max Level in FlashDebugger settings]</value>
     <comment>Added after 4.7.2</comment>

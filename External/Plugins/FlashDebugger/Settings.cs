@@ -191,7 +191,7 @@ namespace FlashDebugger
         [LocalizedCategory("FlashDebugger.Category.DataTree")]
         [LocalizedDescription("FlashDebugger.Description.HideFullClasspaths")]
         [DefaultValue(false)]
-        public bool ShowFullClasspaths
+        public bool HideFullClasspaths
         {
             get { return m_HideFullClassPaths; }
             set

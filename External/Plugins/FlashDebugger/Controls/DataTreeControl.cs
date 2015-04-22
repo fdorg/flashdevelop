@@ -21,16 +21,10 @@ namespace FlashDebugger.Controls
         private DataTreeModel _model;
         private static ViewerForm viewerForm;
         private ContextMenuStrip _contextMenuStrip;
-        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyValueMenuItem, copyIdMenuItem, copyTreeMenuItem;
+        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyValueMenuItem, copyIdMenuItem;
         private DataTreeState state;
         private bool watchMode;
         private bool addingNewExpression;
-        private int _copyTreeMaxChars;
-        private int _copyTreeMaxRecursion;
-        private bool _combineInherited;
-        private bool _hideStaticInObjects;
-        private bool _hideFullClasspaths;
-        private bool _hideObjectIds;
 
         public Collection<Node> Nodes
         {
@@ -45,72 +39,6 @@ namespace FlashDebugger.Controls
         public ViewerForm Viewer
         {
             get { return viewerForm; }
-        }
-
-        public int CopyTreeMaxChars
-        {
-            get { return _copyTreeMaxChars; }
-            set
-            {
-                if (_copyTreeMaxChars == value) return;
-                _copyTreeMaxChars = value;
-                Tree.FullUpdate();
-            }
-        }
-
-        public int CopyTreeMaxRecursion
-        {
-            get { return _copyTreeMaxRecursion; }
-            set
-            {
-                if (_copyTreeMaxRecursion == value) return;
-                _copyTreeMaxRecursion = value;
-                Tree.FullUpdate();
-            }
-        }
-
-        public bool CombineInherited
-        {
-            get { return _combineInherited; }
-            set
-            {
-                if (_combineInherited == value) return;
-                _combineInherited = value;
-                Tree.FullUpdate();
-            }
-        }
-
-        public bool HideStaticInObjects
-        {
-            get { return _hideStaticInObjects; }
-            set
-            {
-                if (_hideStaticInObjects == value) return;
-                _hideStaticInObjects = value;
-                Tree.FullUpdate();
-            }
-        }
-
-        public bool HideFullClasspaths
-        {
-            get { return _hideFullClasspaths; }
-            set
-            {
-                if (_hideFullClasspaths == value) return;
-                _hideFullClasspaths = value;
-                Tree.FullUpdate();
-            }
-        }
-
-        public bool HideObjectIds
-        {
-            get { return _hideObjectIds; }
-            set
-            {
-                if (_hideObjectIds == value) return;
-                _hideObjectIds = value;
-                Tree.FullUpdate();
-            }
         }
 
         public DataTreeControl()
@@ -161,14 +89,12 @@ namespace FlashDebugger.Controls
             NameTreeColumn.Header = TextHelper.GetString("Label.Name");
             ValueTreeColumn.Header = TextHelper.GetString("Label.Value");
             copyMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, CopyItemClick);
-            copyValueMenuItem = new ToolStripMenuItem("Copy Value", null, CopyItemValueClick);
-            copyIdMenuItem = new ToolStripMenuItem("Copy ID", null, CopyItemIdClick);
-            copyTreeMenuItem = new ToolStripMenuItem("Copy Tree", null, CopyItemTreeClick);
+            copyValueMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyValue"), null, CopyItemValueClick);
+            copyIdMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyID"), null, CopyItemIdClick);
             viewerMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Viewer"), null, ViewerItemClick);
             _contextMenuStrip.Items.AddRange(new ToolStripItem[]
                                                  {
-                                                     copyMenuItem, copyIdMenuItem, copyValueMenuItem, copyTreeMenuItem,
-                                                     viewerMenuItem
+                                                     copyMenuItem, copyIdMenuItem, copyValueMenuItem, viewerMenuItem
                                                  });
             if (watchMode)
                 watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Unwatch"), null, WatchItemClick);
@@ -178,6 +104,10 @@ namespace FlashDebugger.Controls
             _contextMenuStrip.Opening += ContextMenuStrip_Opening;
             viewerForm = new ViewerForm();
             viewerForm.StartPosition = FormStartPosition.Manual;
+
+            // LiveDataTip is created before the settings object. We don't need for it anyway
+            if (PluginMain.settingObject != null)
+                PluginMain.settingObject.DataTreeDisplayChanged += DataTreeDisplayChanged;
         }
 
         void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -190,7 +120,51 @@ namespace FlashDebugger.Controls
             if (watchMode) watchMenuItem.Enabled = (enabled && Tree.SelectedNode.Level == 1 && Tree.SelectedNode.NextNode != null);
 
             bool isValueNode = enabled && (Tree.SelectedNode.Tag as ValueNode) != null;
-            copyValueMenuItem.Visible = copyIdMenuItem.Visible = copyTreeMenuItem.Visible = isValueNode;
+            copyValueMenuItem.Visible = copyIdMenuItem.Visible = isValueNode;
+
+            while (_contextMenuStrip.Items[_contextMenuStrip.Items.Count - 2] != copyValueMenuItem)
+                _contextMenuStrip.Items.RemoveAt(_contextMenuStrip.Items.Count - 2);
+
+            if (isValueNode)
+            {
+                foreach (var entry in Helpers.DataTreeExporterFactory.Exporters)
+                {
+                    var exporterItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyTree"), null, CopyItemTreeClick);
+                    if (entry.Key != "")
+                        exporterItem.Text += " - " + entry.Key;
+                    exporterItem.Tag = entry.Key;
+                    _contextMenuStrip.Items.Insert(_contextMenuStrip.Items.Count - 1, exporterItem);
+                }
+            }
+        }
+
+        void DataTreeDisplayChanged(object sender, EventArgs e)
+        {
+            SaveState();
+
+            foreach (var node in _model.Root.Nodes)
+            {
+                var valueNode = node as ValueNode;
+                if (valueNode != null)
+                {
+                    if (node.Nodes != null && node.Nodes.Count > 0)
+                    {
+                        // Needed because of static and inherited members.
+                        // If we add a different event or check against a previous value we could avoid removing and reevaluating members.
+                        // At any rate, performance shouldn't be a concern here.
+                        node.Nodes.Clear();
+                        ListChildItems(valueNode);
+                    }
+
+                    valueNode.HideClassId = PluginMain.settingObject.HideClassIds;
+                    valueNode.HideFullClasspath = PluginMain.settingObject.HideFullClasspaths;
+                }
+
+            }
+
+            _tree.FullUpdate();
+
+            RestoreState();
         }
 
         void NameNodeTextBox_DrawText(object sender, DrawEventArgs e)
@@ -440,8 +414,8 @@ namespace FlashDebugger.Controls
                 {
                     VariableNode memberNode = new VariableNode(member)
                                                   {
-                                                      HideClassId = HideObjectIds,
-                                                      HideFullClasspath = HideFullClasspaths
+                                                      HideClassId = PluginMain.settingObject.HideClassIds,
+                                                      HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
                                                   };
 
                     if (member.isAttributeSet(VariableAttribute_.IS_STATIC))
@@ -461,7 +435,7 @@ namespace FlashDebugger.Controls
                 // inherited vars
                 if (inherited.Count > 0)
                 {
-                    if (_combineInherited)
+                    if (PluginMain.settingObject.CombineInherited)
                     {
                         // list inherited alongside main class members
                         foreach (DataNode item in inherited)
@@ -485,7 +459,7 @@ namespace FlashDebugger.Controls
                 }
 
                 // static vars
-                if (!_hideStaticInObjects && statics.Count > 0)
+                if (!PluginMain.settingObject.HideStaticMembers && statics.Count > 0)
                 {
                     DataNode staticNode = new ValueNode("[static]");
                     statics.Sort();
@@ -515,8 +489,8 @@ namespace FlashDebugger.Controls
                                 if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", (flash.tools.debugger.concrete.DValue)obj, ((flash.tools.debugger.concrete.DValue)obj).getIsolateId());
                                 DataNode childNode = new VariableNode((Variable) obj)
                                                          {
-                                                             HideClassId = HideObjectIds,
-                                                             HideFullClasspath = HideFullClasspaths
+                                                             HideClassId = PluginMain.settingObject.HideClassIds,
+                                                             HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
                                                          };
                                 childNode.Text = "child_" + i;
                                 childrenNode.Nodes.Add(childNode);
@@ -554,7 +528,7 @@ namespace FlashDebugger.Controls
                 }
                 //test children
                 nodes.Sort();
-
+                
                 // add child items
                 _tree.BeginUpdate();
                 foreach (DataNode item in nodes)
@@ -725,13 +699,17 @@ namespace FlashDebugger.Controls
 
         private void CopyItemTreeClick(Object sender, System.EventArgs e)
         {
-            CopyTreeInternal(0);
+            string exporterKey = (string) ((ToolStripItem) sender).Tag;
+            CopyTreeInternal(exporterKey, 0);
         }
 
-        private void CopyTreeInternal(int levelLimit)
+        private void CopyTreeInternal(string exporterKey, int levelLimit)
         {
-            ValueNode node = Tree.SelectedNode.Tag as ValueNode;
-            Clipboard.SetText(new Helpers.DefaultDataTreeExporter() {CopyTreeMaxChars = PluginMain.settingObject.CopyTreeMaxChars, CopyTreeMaxRecursion = PluginMain.settingObject.CopyTreeMaxRecursion}.GetTreeAsText(node, "\t", this, levelLimit));
+            var node = Tree.SelectedNode.Tag as ValueNode;
+            var exporter = Helpers.DataTreeExporterFactory.Exporters[exporterKey];
+            exporter.CopyTreeMaxChars = PluginMain.settingObject.CopyTreeMaxChars;
+            exporter.CopyTreeMaxRecursion = PluginMain.settingObject.CopyTreeMaxRecursion;
+            Clipboard.SetText(exporter.GetTreeAsText(node, "\t", this, levelLimit));
         }
         
         #endregion
