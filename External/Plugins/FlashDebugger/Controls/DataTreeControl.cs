@@ -24,7 +24,7 @@ namespace FlashDebugger.Controls
         private DataTreeModel _model;
         private static ViewerForm viewerForm;
         private ContextMenuStrip _contextMenuStrip;
-        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem;
+        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyValueMenuItem, copyIdMenuItem;
         private DataTreeState state;
         private bool watchMode;
         private bool addingNewExpression;
@@ -35,27 +35,18 @@ namespace FlashDebugger.Controls
 
         public Collection<Node> Nodes
         {
-            get
-            {
-                return _model.Root.Nodes;
+            get { return _model.Root.Nodes; }
             }
-        }
 
         public TreeViewAdv Tree
         {
-            get
-            {
-                return _tree;
+            get { return _tree; }
             }
-        }
 
         public ViewerForm Viewer
         {
-            get
-            {
-                return viewerForm;
+            get { return viewerForm; }
             }
-        }
 
         public DataTreeControl()
             : this(false)
@@ -88,7 +79,6 @@ namespace FlashDebugger.Controls
             _tree.FullRowSelect = true;
             Controls.Add(_tree);
             _tree.Expanding += TreeExpanding;
-            _tree.SelectionChanged += Tree_SelectionChanged;
             _tree.NodeMouseDoubleClick += Tree_NodeMouseDoubleClick;
             _tree.LoadOnDemand = true;
             _tree.AutoRowHeight = true;
@@ -104,19 +94,85 @@ namespace FlashDebugger.Controls
                 _contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             }
             _tree.ContextMenuStrip = _contextMenuStrip;
-            this.NameTreeColumn.Header = TextHelper.GetString("Label.Name");
-            this.ValueTreeColumn.Header = TextHelper.GetString("Label.Value");
-            copyMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, new EventHandler(this.CopyItemClick));
-            viewerMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Viewer"), null, new EventHandler(this.ViewerItemClick));
-            _contextMenuStrip.Items.AddRange(new ToolStripMenuItem[] { copyMenuItem, viewerMenuItem });
+            NameTreeColumn.Header = TextHelper.GetString("Label.Name");
+            ValueTreeColumn.Header = TextHelper.GetString("Label.Value");
+            copyMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, CopyItemClick);
+            copyValueMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyValue"), null, CopyItemValueClick);
+            copyIdMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyID"), null, CopyItemIdClick);
+            viewerMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Viewer"), null, ViewerItemClick);
+            _contextMenuStrip.Items.AddRange(new ToolStripItem[]
+                                                 {
+                                                     copyMenuItem, copyIdMenuItem, copyValueMenuItem, viewerMenuItem
+                                                 });
             if (watchMode)
-                watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Unwatch"), null, new EventHandler(this.WatchItemClick));
+                watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Unwatch"), null, WatchItemClick);
             else
-                watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Watch"), null, new EventHandler(this.WatchItemClick));
+                watchMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Watch"), null, WatchItemClick);
             _contextMenuStrip.Items.Add(watchMenuItem);
-            Tree_SelectionChanged(null, null);
+            _contextMenuStrip.Opening += ContextMenuStrip_Opening;
             viewerForm = new ViewerForm();
             viewerForm.StartPosition = FormStartPosition.Manual;
+
+            // LiveDataTip is created before the settings object. We don't need for it anyway
+            if (PluginMain.settingObject != null)
+                PluginMain.settingObject.DataTreeDisplayChanged += DataTreeDisplayChanged;
+        }
+
+        void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            bool enabled = Tree.SelectedNode != null;
+            foreach (ToolStripMenuItem item in _contextMenuStrip.Items)
+            {
+                item.Enabled = enabled;
+            }
+            if (watchMode) watchMenuItem.Enabled = (enabled && Tree.SelectedNode.Level == 1 && Tree.SelectedNode.NextNode != null);
+
+            bool isValueNode = enabled && (Tree.SelectedNode.Tag as ValueNode) != null;
+            copyValueMenuItem.Visible = copyIdMenuItem.Visible = isValueNode;
+
+            while (_contextMenuStrip.Items[_contextMenuStrip.Items.Count - 2] != copyValueMenuItem)
+                _contextMenuStrip.Items.RemoveAt(_contextMenuStrip.Items.Count - 2);
+
+            if (isValueNode)
+            {
+                foreach (var entry in Helpers.DataTreeExporterFactory.Exporters)
+                {
+                    var exporterItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyTree"), null, CopyItemTreeClick);
+                    if (entry.Key != "")
+                        exporterItem.Text += " - " + entry.Key;
+                    exporterItem.Tag = entry.Key;
+                    _contextMenuStrip.Items.Insert(_contextMenuStrip.Items.Count - 1, exporterItem);
+                }
+            }
+        }
+
+        void DataTreeDisplayChanged(object sender, EventArgs e)
+        {
+            SaveState();
+
+            foreach (var node in _model.Root.Nodes)
+            {
+                var valueNode = node as ValueNode;
+                if (valueNode != null)
+                {
+                    if (node.Nodes != null && node.Nodes.Count > 0)
+                    {
+                        // Needed because of static and inherited members.
+                        // If we add a different event or check against a previous value we could avoid removing and reevaluating members.
+                        // At any rate, performance shouldn't be a concern here.
+                        node.Nodes.Clear();
+                        ListChildItems(valueNode);
+                    }
+
+                    valueNode.HideClassId = PluginMain.settingObject.HideClassIds;
+                    valueNode.HideFullClasspath = PluginMain.settingObject.HideFullClasspaths;
+                }
+
+            }
+
+            _tree.FullUpdate();
+
+            RestoreState();
         }
 
         void NameNodeTextBox_DrawText(object sender, DrawEventArgs e)
@@ -310,17 +366,12 @@ namespace FlashDebugger.Controls
 
         private void CopyItemClick(Object sender, System.EventArgs e)
         {
-            if (Tree.SelectedNode != null)
-            {
                 DataNode node = Tree.SelectedNode.Tag as DataNode;
                 Clipboard.SetText(string.Format("{0} = {1}",node.Text, node.Value));
-            }
         }
 
         private void ViewerItemClick(Object sender, System.EventArgs e)
         {
-            if (Tree.SelectedNode != null)
-            {
                 if (viewerForm == null)
                 {
                     viewerForm = new ViewerForm();
@@ -346,10 +397,9 @@ namespace FlashDebugger.Controls
                 viewerForm.Top = mainform.Top + mainform.Height / 2 - viewerForm.Height / 2;
                 viewerForm.ShowDialog();
             }
-        }
+
         private void WatchItemClick(Object sender, EventArgs e)
         {
-            if (Tree.SelectedNode == null) return;
             DataNode node = Tree.SelectedNode.Tag as DataNode;
             if (watchMode)
             {
@@ -361,20 +411,16 @@ namespace FlashDebugger.Controls
             }
         }
 
-        void Tree_SelectionChanged(Object sender, EventArgs e)
-        {
-            foreach (ToolStripMenuItem item in _contextMenuStrip.Items)
-            {
-                item.Enabled = (Tree.SelectedNode != null);
-            }
-            if (watchMode) watchMenuItem.Enabled = (Tree.SelectedNode != null && Tree.SelectedNode.Level == 1 && Tree.SelectedNode.NextNode != null);
-        }
-
         void TreeExpanding(Object sender, TreeViewAdvEventArgs e)
         {
             if (e.Node.Index >= 0)
             {
-                ValueNode node = e.Node.Tag as ValueNode;
+                ListChildItems(e.Node.Tag as ValueNode);
+            }
+        }
+
+        public void ListChildItems(ValueNode node)
+        {
                 if (node != null && node.Nodes.Count == 0 && node.PlayerValue != null)
                 {
                     FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
@@ -384,7 +430,11 @@ namespace FlashDebugger.Controls
                     int tmpLimit = node.ChildrenShowLimit;
                     foreach (Variable member in node.PlayerValue.getMembers(flashInterface.Session))
                     {
-                        VariableNode memberNode = new VariableNode(member);
+                    VariableNode memberNode = new VariableNode(member)
+                                                  {
+                                                      HideClassId = PluginMain.settingObject.HideClassIds,
+                                                      HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
+                                                  };
                         
                         if (member.isAttributeSet(VariableAttribute_.IS_STATIC))
                         {
@@ -399,8 +449,22 @@ namespace FlashDebugger.Controls
                             nodes.Add(memberNode);
                         }
                     }
+
+                // inherited vars
                     if (inherited.Count > 0)
                     {
+                    if (PluginMain.settingObject.CombineInherited)
+                    {
+                        // list inherited alongside main class members
+                        foreach (DataNode item in inherited)
+                        {
+                            node.Nodes.Add(item);
+                        }
+
+                    }
+                    else
+                    {
+                        // list inherited in a [inherited] group
                         ValueNode inheritedNode = new ValueNode("[inherited]");
                         inherited.Sort();
                         foreach (DataNode item in inherited)
@@ -408,8 +472,12 @@ namespace FlashDebugger.Controls
                             inheritedNode.Nodes.Add(item);
                         }
                         node.Nodes.Add(inheritedNode);
+
                     }
-                    if (statics.Count > 0)
+                }
+
+                // static vars
+                if (!PluginMain.settingObject.HideStaticMembers && statics.Count > 0)
                     {
                         DataNode staticNode = new ValueNode("[static]");
                         statics.Sort();
@@ -419,6 +487,7 @@ namespace FlashDebugger.Controls
                         }
                         node.Nodes.Add(staticNode);
                     }
+
                     //test children
                     foreach (String ch in node.PlayerValue.getClassHierarchy(false))
                     {
@@ -436,7 +505,11 @@ namespace FlashDebugger.Controls
                                     var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                                     var obj = exp.evaluate(ctx);
                                     if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", (flash.tools.debugger.concrete.DValue)obj, ((flash.tools.debugger.concrete.DValue)obj).getIsolateId());
-                                    DataNode childNode = new VariableNode((Variable)obj);
+                                DataNode childNode = new VariableNode((Variable) obj)
+                                                         {
+                                                             HideClassId = PluginMain.settingObject.HideClassIds,
+                                                             HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
+                                                         };
                                     childNode.Text = "child_" + i;
                                     childrenNode.Nodes.Add(childNode);
                                 }
@@ -473,6 +546,8 @@ namespace FlashDebugger.Controls
                     }
                     //test children
                     nodes.Sort();
+                
+                // add child items
                     _tree.BeginUpdate();
                     foreach (DataNode item in nodes)
                     {
@@ -487,7 +562,6 @@ namespace FlashDebugger.Controls
                     _tree.EndUpdate();
                 }
             }
-        }
 
         void Tree_NodeMouseDoubleClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
@@ -698,6 +772,46 @@ namespace FlashDebugger.Controls
         }
 
         #endregion
+        
+        #region Copy Value, ID, Tree
+
+        private void CopyItemValueClick(Object sender, System.EventArgs e)
+        {
+            ValueNode node = Tree.SelectedNode.Tag as ValueNode;
+            string value = node.Value;
+            if (!string.IsNullOrEmpty(value))
+                Clipboard.SetText(value);
+            else
+                Clipboard.Clear();
+    }
+
+        private void CopyItemIdClick(Object sender, System.EventArgs e)
+        {
+            ValueNode node = Tree.SelectedNode.Tag as ValueNode;
+            string id = node.Id;
+            if (!string.IsNullOrEmpty(id))
+                Clipboard.SetText(node.Id);
+            else
+                Clipboard.Clear();
+}
+
+        private void CopyItemTreeClick(Object sender, System.EventArgs e)
+        {
+            string exporterKey = (string) ((ToolStripItem) sender).Tag;
+            CopyTreeInternal(exporterKey, 0);
+        }
+
+        private void CopyTreeInternal(string exporterKey, int levelLimit)
+        {
+            var node = Tree.SelectedNode.Tag as ValueNode;
+            var exporter = Helpers.DataTreeExporterFactory.Exporters[exporterKey];
+            exporter.CopyTreeMaxChars = PluginMain.settingObject.CopyTreeMaxChars;
+            exporter.CopyTreeMaxRecursion = PluginMain.settingObject.CopyTreeMaxRecursion;
+            Clipboard.SetText(exporter.GetTreeAsText(node, "\t", this, levelLimit));
+        }
+        
+        #endregion
+        
     }
 
 }

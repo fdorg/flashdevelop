@@ -126,8 +126,8 @@ namespace CodeRefactor.Commands
                     if (fileEntries.Value.Count > 0 && System.IO.File.Exists(fileEntries.Key))
                     {
                         SearchMatch entry = fileEntries.Value[0];
-                        PluginBase.MainForm.OpenEditableDocument(fileEntries.Key, false);
-                        RefactoringHelper.SelectMatch(PluginBase.MainForm.CurrentDocument.SciControl, entry);
+                        var doc = (ITabbedDocument)PluginBase.MainForm.OpenEditableDocument(fileEntries.Key, false);
+                        RefactoringHelper.SelectMatch(doc.SciControl, entry);
                         break;
                     }
                 }
@@ -158,7 +158,7 @@ namespace CodeRefactor.Commands
                     // we have to open/reopen the entry's file
                     // there are issues with evaluating the declaration targets with non-open, non-current files
                     // we have to do it each time as the process of checking the declaration source can change the currently open file!
-                    ScintillaControl sci = this.AssociatedDocumentHelper.LoadDocument(currentFileName);
+                    ScintillaControl sci = this.AssociatedDocumentHelper.LoadDocument(currentFileName).SciControl;
                     // if the search result does point to the member source, store it
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, this.AssociatedDocumentHelper))
                     {

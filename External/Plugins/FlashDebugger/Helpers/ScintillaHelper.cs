@@ -332,9 +332,9 @@ namespace FlashDebugger
 
         static public ScintillaControl ActivateDocument(string filefullpath, int line, Boolean bSelectLine)
         {
-            PluginBase.MainForm.OpenEditableDocument(filefullpath, false);
-            if (PluginBase.MainForm.CurrentDocument.FileName != filefullpath) return null;
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var doc = PluginBase.MainForm.OpenEditableDocument(filefullpath, false) as ITabbedDocument;
+            if (doc == null || doc.FileName != filefullpath) return null;
+            ScintillaControl sci = doc.SciControl;
             if (line >= 0)
             {
                 sci.EnsureVisible(line);

@@ -324,5 +324,83 @@
 			<Url>https://github.com/JoeRobich/fd-quicklaunch/releases/download/v0.10/QuickLaunch_0.10.fdz</Url>
 		</Urls>
 	</Entry>
+	<Entry>
+		<Id>vsbluefulltheme</Id>
+		<Name>VsBlue Full Theme</Name>
+		<Version>1.1</Version>
+		<Build>1</Build>
+		<Checksum>1674D26C4F7D6C2D3155B5FB5A171D5C</Checksum>
+		<Desc>Adds a blue ui theme and a light syntax theme inspired by Visual Studio.</Desc>
+		<Group>Themes</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsBlueFullTheme.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>vslightfulltheme</Id>
+		<Name>VsLight Full Theme</Name>
+		<Version>1.1</Version>
+		<Build>1</Build>
+		<Checksum>F1733EF0399C8E97B32A70EC5A0974F7</Checksum>
+		<Desc>Adds a light ui theme and a light syntax theme inspired by Visual Studio.</Desc>
+		<Group>Themes</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsLightFullTheme.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>vsdarkfulltheme</Id>
+		<Name>VsDark Full Theme</Name>
+		<Version>1.1</Version>
+		<Build>1</Build>
+		<Checksum>3CD468AAD9CCB35ED09084BA67E2208D</Checksum>
+		<Desc>Adds a dark ui theme and a dark syntax theme inspired by Visual Studio.</Desc>
+		<Group>Themes</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsDarkFullTheme.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>vslightsyntaxtheme</Id>
+		<Name>VsLight Syntax Theme</Name>
+		<Version>1.1</Version>
+		<Build>1</Build>
+		<Checksum>6784694F006FAE421067B612B51A6A49</Checksum>
+		<Desc>Adds a light syntax theme inspired by Visual Studio.</Desc>
+		<Group>Themes</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsLightSyntaxTheme.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>vsdarksyntaxtheme</Id>
+		<Name>VsDark Syntax Theme</Name>
+		<Version>1.1</Version>
+		<Build>1</Build>
+		<Checksum>8F804F49F3098016E21025B2230D3E56</Checksum>
+		<Desc>Adds a dark syntax theme inspired by Visual Studio.</Desc>
+		<Group>Themes</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsDarkSyntaxTheme.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>vinksyntaxtheme</Id>
+		<Name>Vink Syntax Theme</Name>
+		<Version>1.4</Version>
+		<Build>1</Build>
+		<Checksum>CF7E1CAACCBB2886D3B029934A0F360B</Checksum>
+		<Desc>Adds a dark syntax theme inspired by the WekeRoad Ink variant of Vibrant Ink.</Desc>
+		<Group>Themes</Group>
+		<Info>https://github.com/JoeRobich/fd-vink</Info>
+		<Urls>
+			<Url>https://github.com/JoeRobich/fd-vink/releases/download/v1.4/VinkSyntaxTheme.fdz</Url>
+		</Urls>
+	</Entry>
 	FD5-->
 </Entries>

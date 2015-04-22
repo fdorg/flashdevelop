@@ -242,12 +242,13 @@ namespace CodeRefactor.Commands
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
                 // re-open the document and replace all the text
-                var sci = AssociatedDocumentHelper.LoadDocument(entry.Key);
+                var doc = AssociatedDocumentHelper.LoadDocument(entry.Key);
+                var sci = doc.SciControl;
                 // replace matches in the current file with the new name
                 RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName);
                 //Uncomment if we want to keep modified files
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
-                PluginBase.MainForm.CurrentDocument.Save();
+                doc.Save();
             }
             if (newFileName != null) RenameFile(eventArgs.Results);
             this.Results = eventArgs.Results;

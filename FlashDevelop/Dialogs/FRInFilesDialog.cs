@@ -631,10 +631,10 @@ namespace FlashDevelop.Dialogs
             if (File.Exists(data.Key))
             {
                 Globals.MainForm.Activate();
-                Globals.MainForm.OpenEditableDocument(data.Key, false);
-                if (Globals.CurrentDocument.IsEditable)
+                var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
+                if (doc != null && doc.IsEditable)
                 {
-                    ScintillaControl sci = Globals.CurrentDocument.SciControl;
+                    ScintillaControl sci = doc.SciControl;
                     if (this.resultsView.Columns.Count == 4)
                     {
                         Int32 column = sci.MBSafeTextLength(data.Value.LineText.Substring(0, data.Value.Column));
