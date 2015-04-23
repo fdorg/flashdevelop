@@ -6,6 +6,9 @@ cd %~dp0 & cd ..
 :: Static path to Flex SDK
 set FLEX_SDK=$(FlexSDK)
 
+:: Static path to Mac/Linux Flex SDK
+set UNIX_FLEX_SDK=/Users/UserName/FlexSDK
+
 :: Use FD supplied SDK path if executed from FD
 if exist "%FD_CUR_SDK%" set FLEX_SDK=%FD_CUR_SDK%
 
