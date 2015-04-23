@@ -217,7 +217,7 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_EditorCreated(object sender, ControlEventArgs e)
         {
-            var controlHost = new ImmediateUI.TextBoxTarget((ImmediateUI.TextBoxEx)e.Control);
+            var controlHost = new TextBoxTarget((TextBoxEx)e.Control);
             completionList = new CompletionListControl(controlHost);
             // We need this because TreeViewAdv handles the control LostFocus event itself and the resulting behaviour doesn't seeem very nice
             completionList.Tip.Selectable = completionList.CallTip.Selectable = false;
@@ -687,7 +687,7 @@ namespace FlashDebugger.Controls
             // Ctrl+Space is detected at the form level instead of the editor level, so when we are docked we need to catch it before
             if (keyData == (Keys.Control | Keys.Space) || keyData == (Keys.Control | Keys.Shift | Keys.Space))
             {
-                var box = Tree.CurrentEditor as ImmediateUI.TextBoxEx;
+                var box = Tree.CurrentEditor as TextBoxEx;
                 if (box != null)
                 {
                     if (keyData == (Keys.Control | Keys.Space))
@@ -726,7 +726,7 @@ namespace FlashDebugger.Controls
                     file.File == PluginMain.debugManager.GetLocalPath(sourceFile))
                 {
                     // Notify the user of this case?
-                    //MessageBox.Show("Source code no available, but potential matching file found on disk, do you want to use it?");
+                    //MessageBox.Show("Source code not available, but potential matching file found on disk, do you want to use it?");
                     return PluginCore.Helpers.FileHelper.GetEncodingFileInfo(file.File);
                 }
 
@@ -745,7 +745,7 @@ namespace FlashDebugger.Controls
                 return false;
             var location = debugger.GetFrames()[PluginMain.debugManager.CurrentFrame].getLocation();
             file.File = PluginMain.debugManager.GetLocalPath(location.getFile());
-            if (file.File == null)
+            if (file.File == null && (location.getFile() == null || location.getFile().getLineCount() == 0))
                 return false;
 
             file.Line = location.getLine() - 1;
@@ -755,7 +755,7 @@ namespace FlashDebugger.Controls
 
         string ASCompletionListBackend.IBackendFileGetter.GetExpression()
         {
-            return Tree.CurrentEditor.Text.Substring(0, ((ImmediateUI.TextBoxEx)Tree.CurrentEditor).SelectionStart);
+            return Tree.CurrentEditor.Text.Substring(0, ((TextBoxEx)Tree.CurrentEditor).SelectionStart);
         }
 
         #endregion

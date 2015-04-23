@@ -97,6 +97,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\DataGridViewTextBoxExColumn.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\DataTree\ContinuedDataNode.cs" />
     <Compile Include="Controls\DataTree\DataNode.cs" />
     <Compile Include="Controls\DataTree\ErrorNode.cs" />
