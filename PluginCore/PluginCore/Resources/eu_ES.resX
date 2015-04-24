@@ -359,6 +359,14 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="DataEncoder.Info.CantSaveFile" xml:space="preserve">
     <value>Ezin izan da fitxategia gorde, xml-a ez delako balizkoa.</value>
   </data>
+  <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
+    <value>Luzapena gogoratu</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
+    <value>Beti erabili nahi duzu sintaxi hau luzapen hau duten fitxategiekin?</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
   <data name="DataEncoder.Info.Description" xml:space="preserve">
     <value>Fitxategi datu espezifikoak eraldatzen ditu FlashDevelop-en egoki ikusteko.</value>
   </data>
@@ -5884,5 +5892,61 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   <data name="OutputPanel.Description.UseLegacyColoring" xml:space="preserve">
     <value>Use legacy coloring state format parsed from the message ('2:message').</value>
     <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Description.DisableMoveRefactoring" xml:space="preserve">
+    <value>Disables the move refactoring of files and folders.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsDelay" xml:space="preserve">
+    <value>Hitzen nabarmentzea erakusteko atzerapena milisegundutan.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Category.DataTree" xml:space="preserve">
+    <value>Datu zuhaitza</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CombineInherited" xml:space="preserve">
+    <value>Heredatutako kideak erakutsitako objektuen ondorengo zuzen moduan erakutsi.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideStaticMembers" xml:space="preserve">
+    <value>Bistaratutako objektuen kide estatikoak ezkutatu.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideFullClasspaths" xml:space="preserve">
+    <value>Bistaratutako objektuen klase izena bakarrik erakutsi.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideClassIds" xml:space="preserve">
+    <value>Bistaratutako objektuen ID-ñak eskutatu.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CopyTreeMaxRecursion" xml:space="preserve">
+    <value>Objektu zuhaitz bat arbelera kopiatzean kontutan hartu beharreko nodo-sakonera maximoa..</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CopyTreeMaxSize" xml:space="preserve">
+    <value>Objektu zuhaitz batek arbelra kopiatzean izan dezakeen karaktere kopuru maximoa, gutxi gora-behera.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
+    <value>Balioa kopiatu</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
+    <value>ID-a kopiatu</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Label.CopyTree" xml:space="preserve">
+    <value>Zuhaitza kopiatu</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
+    <value>[Errekursio sakonegia, FlashDebugger ezarpenetan Zuhaitz Kopia Maila Max balioa handitu]</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
+    <value>[{0} objektua lehendik zerrendatua]</value>
+    <comment>Added after 4.7.2</comment>
   </data>
 </root>
