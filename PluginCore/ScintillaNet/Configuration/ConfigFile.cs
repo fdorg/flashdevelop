@@ -54,31 +54,31 @@ namespace ScintillaNet.Configuration
 
         public virtual void CollectScintillaNodes(ArrayList list)
         {
-			if (_parent == this)
-			{
-				if (list != null) return;
-				list = new System.Collections.ArrayList();
-				if (ChildScintilla != null) ChildScintilla.CollectScintillaNodes(list);
-			}
-			else if (list == null) return;
-			ConfigFile cf;
-			if (includedFiles != null)
-			{
-				for (int i = 0 ; i<includedFiles.Length; i++)
-				{
-					cf = includedFiles[i];
-					if (cf == null) continue;
-					if (cf.ChildScintilla != null) list.Add(cf.ChildScintilla);
-					if( cf.ChildScintilla != null ) cf.ChildScintilla.CollectScintillaNodes(list);
-					if( cf.includedFiles != null && cf.includedFiles.Length > 0) cf.CollectScintillaNodes(list);
-				}
-			}
-			if (_parent == this)
-			{
-				ChildScintilla.includedFiles = new ConfigFile[list.Count];
-				list.CopyTo(ChildScintilla.includedFiles);
-			}
-		}
+            if (_parent == this)
+            {
+                if (list != null) return;
+                list = new System.Collections.ArrayList();
+                if (ChildScintilla != null) ChildScintilla.CollectScintillaNodes(list);
+            }
+            else if (list == null) return;
+            ConfigFile cf;
+            if (includedFiles != null)
+            {
+                for (int i = 0 ; i<includedFiles.Length; i++)
+                {
+                    cf = includedFiles[i];
+                    if (cf == null) continue;
+                    if (cf.ChildScintilla != null) list.Add(cf.ChildScintilla);
+                    if( cf.ChildScintilla != null ) cf.ChildScintilla.CollectScintillaNodes(list);
+                    if( cf.includedFiles != null && cf.includedFiles.Length > 0) cf.CollectScintillaNodes(list);
+                }
+            }
+            if (_parent == this)
+            {
+                ChildScintilla.includedFiles = new ConfigFile[list.Count];
+                list.CopyTo(ChildScintilla.includedFiles);
+            }
+        }
         
     }
 

@@ -15,14 +15,14 @@ namespace PluginCore
 {
     public interface IPlugin : IEventHandler
     {
-	    #region IPlugin Methods
-		
-	    void Dispose();
-	    void Initialize();
-		
-	    #endregion
-		
-	    #region IPlugin Properties
+        #region IPlugin Methods
+        
+        void Dispose();
+        void Initialize();
+        
+        #endregion
+        
+        #region IPlugin Properties
 
         Int32 Api { get; }
         String Name { get; }
@@ -34,18 +34,18 @@ namespace PluginCore
 
         // List of valid API levels:
         // FlashDevelop 4.0 = 1
-		
-	    #endregion
+        
+        #endregion
     }
 
     public interface IEventHandler
-	{
+    {
         #region IEventHandler Methods
 
         void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority);
 
         #endregion
-	}
+    }
 
     public interface ITabbedDocument
     {
@@ -116,7 +116,7 @@ namespace PluginCore
         DockContent OpenEditableDocument(String file);
         DockContent CreateCustomDocument(Control ctrl);
         DockContent CreateEditableDocument(String file, String text, Int32 codepage);
-		DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
+        DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
         Boolean CallCommand(String command, String arguments);
         List<ToolStripItem> FindMenuItems(String name);
         ToolStripItem FindMenuItem(String name);
@@ -266,6 +266,7 @@ namespace PluginCore
         ScintillaNet.Enums.VirtualSpaceMode VirtualSpaceMode { get; set; }
         ScintillaNet.Enums.IndentView IndentView { get; set; }
         ScintillaNet.Enums.HighlightMatchingWordsMode HighlightMatchingWordsMode { get; set; }
+        Int32 HighlightMatchingWordsDelay { get; set; }
         CodePage DefaultCodePage { get; set; }
         Int32 TabWidth { get; set; }
         Int32 IndentSize { get; set; }

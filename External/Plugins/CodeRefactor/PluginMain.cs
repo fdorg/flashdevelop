@@ -20,8 +20,8 @@ using System.Windows.Forms;
 
 namespace CodeRefactor
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         public const string REG_IDENTIFIER = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
         private String pluginName = "CodeRefactor";
         private String pluginGuid = "5c0d3740-a6f2-11de-8a39-0800200c9a66";
@@ -50,41 +50,41 @@ namespace CodeRefactor
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -94,34 +94,34 @@ namespace CodeRefactor
         {
             get { return this.settingObject; }
         }
-		
-		#endregion
+        
+        #endregion
 
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitBasics();
             this.LoadSettings();
             this.CreateMenuItems();
         }
 
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             this.SaveSettings();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             switch (e.Type)
             {
                 case EventType.FileSwitch:
@@ -139,6 +139,7 @@ namespace CodeRefactor
                     break;
 
                 case EventType.Command:
+                    if (settingObject.DisableMoveRefactoring) return;
                     DataEvent de = (DataEvent)e;
                     string[] args;
                     string oldPath;
@@ -174,7 +175,7 @@ namespace CodeRefactor
                     }
                     break;
             }
-		}
+        }
 
         /// <summary>
         /// Checks if the file is valid for rename file command
@@ -244,6 +245,7 @@ namespace CodeRefactor
             this.refactorMainMenu.DelegateMenuItem.Click += this.DelegateMethodsClicked;
             this.refactorMainMenu.ExtractLocalVariableMenuItem.Click += this.ExtractLocalVariableClicked;
             this.refactorMainMenu.CodeGeneratorMenuItem.Click += this.CodeGeneratorMenuItemClicked;
+            this.refactorMainMenu.BatchMenuItem.Click += this.BatchMenuItemClicked;
             this.refactorContextMenu = new RefactorMenu(false);
             this.refactorContextMenu.RenameMenuItem.Click += this.RenameClicked;
             this.refactorContextMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
@@ -252,6 +254,7 @@ namespace CodeRefactor
             this.refactorContextMenu.ExtractMethodMenuItem.Click += this.ExtractMethodClicked;
             this.refactorContextMenu.ExtractLocalVariableMenuItem.Click += this.ExtractLocalVariableClicked;
             this.refactorContextMenu.CodeGeneratorMenuItem.Click += this.CodeGeneratorMenuItemClicked;
+            this.refactorContextMenu.BatchMenuItem.Click += this.BatchMenuItemClicked;
             ContextMenuStrip editorMenu = PluginBase.MainForm.EditorMenu;
             this.surroundContextMenu = new SurroundMenu();
             editorMenu.Items.Insert(3, this.refactorContextMenu);
@@ -280,6 +283,7 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.OrganizeImports", this.refactorMainMenu.OrganizeMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.TruncateImports", this.refactorMainMenu.TruncateMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeGenerator", this.refactorMainMenu.CodeGeneratorMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.BatchProcess", this.refactorMainMenu.BatchMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Rename", this.refactorContextMenu.RenameMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractMethod", this.refactorContextMenu.ExtractMethodMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractLocalVariable", this.refactorContextMenu.ExtractLocalVariableMenuItem);
@@ -287,17 +291,7 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.OrganizeImports", this.refactorContextMenu.OrganizeMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.TruncateImports", this.refactorContextMenu.TruncateMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeGenerator", this.refactorContextMenu.CodeGeneratorMenuItem);
-        }
-
-        /// <summary>
-        /// Gets if the language is valid for refactoring
-        /// </summary>
-        private Boolean GetLanguageIsValid()
-        {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return false;
-            string lang = document.SciControl.ConfigurationLanguage;
-            return lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"; // TODO: look for /Snippets/Generators
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.BatchProcess", this.refactorContextMenu.BatchMenuItem);
         }
 
         /// <summary>
@@ -317,15 +311,15 @@ namespace CodeRefactor
             {
                 this.refactorMainMenu.DelegateMenuItem.Enabled = false;
                 this.refactorContextMenu.DelegateMenuItem.Enabled = false;
-                bool langIsValid = GetLanguageIsValid();
+                bool langIsValid = RefactoringHelper.GetLanguageIsValid();
                 ResolvedContext resolved = ASComplete.CurrentResolvedContext;
                 bool isValid = langIsValid && resolved != null && resolved.Position >= 0;
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
-                    bool isRenameable = (result.Member != null && result.Member.InFile != null && File.Exists(result.Member.InFile.FileName))
-                        || (result.Type != null && result.Type.InFile != null && File.Exists(result.Type.InFile.FileName))
-                        || (result.InFile != null && File.Exists(result.InFile.FileName))
+                    bool isRenameable = (result.Member != null && RefactoringHelper.ModelFileExists(result.Member.InFile) && !RefactoringHelper.IsUnderSDKPath(result.Member.InFile))
+                        || (result.Type != null && RefactoringHelper.ModelFileExists(result.Type.InFile) && !RefactoringHelper.IsUnderSDKPath(result.Type.InFile))
+                        || (RefactoringHelper.ModelFileExists(result.InFile) && !RefactoringHelper.IsUnderSDKPath(result.InFile))
                         || result.IsPackage;
                     this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;
                     this.refactorMainMenu.RenameMenuItem.Enabled = isRenameable;
@@ -392,7 +386,7 @@ namespace CodeRefactor
         private void GenerateSurroundMenuItems()
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable && this.GetLanguageIsValid())
+            if (document != null && document.IsEditable && RefactoringHelper.GetLanguageIsValid())
             {
                 this.surroundContextMenu.GenerateSnippets(document.SciControl);
                 foreach (ToolStripMenuItem item in this.surroundContextMenu.DropDownItems)
@@ -517,7 +511,7 @@ namespace CodeRefactor
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Invoked when the user selects the "Delegate Method" command
         /// </summary>
         private void DelegateMethodsClicked(Object sender, EventArgs e)
@@ -623,6 +617,15 @@ namespace CodeRefactor
         }
 
         /// <summary>
+        /// Invokes the batch processing dialog
+        /// </summary>
+        private void BatchMenuItemClicked(Object sender, EventArgs e)
+        {
+            BatchProcessDialog bpd = new BatchProcessDialog();
+            bpd.ShowDialog();
+        }
+
+        /// <summary>
         /// Invokes the ASCompletion contextual generator
         /// </summary>
         private void CodeGeneratorMenuItemClicked(Object sender, EventArgs e)
@@ -653,7 +656,7 @@ namespace CodeRefactor
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
-		#endregion
+        #endregion
 
     }
 }

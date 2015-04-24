@@ -12,8 +12,8 @@ using PluginCore;
 
 namespace MacroManager
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "MacroManager";
         private String pluginGuid = "071817e0-0ee6-11de-8c30-0800200c9a66";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -26,7 +26,7 @@ namespace MacroManager
         private String settingFilename;
         private Settings settingObject;
 
-	    #region Required Properties
+        #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
@@ -40,41 +40,41 @@ namespace MacroManager
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -84,49 +84,63 @@ namespace MacroManager
         {
             get { return this.settingObject; }
         }
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitBasics();
             this.LoadSettings();
             this.CreateMainMenuItems();
             this.RefreshMacroToolBarItems();
             this.RefreshMacroMenuItems();
         }
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             this.SaveSettings();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             if (e.Type == EventType.UIStarted)
             {
                 String initScript = Path.Combine(PathHelper.BaseDir, "InitScript.cs");
+                String autoImport = Path.Combine(PathHelper.BaseDir, "InitMacros.fdm");
                 if (File.Exists(initScript))
                 {
                     String command = "Internal;" + initScript;
                     PluginBase.MainForm.CallCommand("ExecuteScript", command);
                 }
+                if (File.Exists(autoImport))
+                {
+                    List<Macro> macros = new List<Macro>();
+                    Object macrosObject = ObjectSerializer.Deserialize(autoImport, macros, false);
+                    macros = (List<Macro>)macrosObject;
+                    this.settingObject.UserMacros.AddRange(macros);
+                    try { File.Delete(autoImport); }
+                    catch (Exception ex)
+                    {
+                        ErrorManager.ShowError("Could not delete import file: " + autoImport, ex);
+                    }
+                    this.RefreshMacroMenuItems();
+                }
                 this.RunAutoRunMacros();
             }
-		}
-		
-		#endregion
+        }
+        
+        #endregion
 
         #region Custom Methods
         
@@ -338,7 +352,7 @@ namespace MacroManager
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
-		#endregion
+        #endregion
 
     }
         
@@ -435,8 +449,16 @@ namespace MacroManager
             set { this.shortcut = value; }
         }
 
+        /// <summary>
+        /// Use shorten name for the macro item
+        /// </summary>
+        public override string ToString()
+        {
+            return "Macro";
+        }
+
     }
 
     #endregion
-	
+    
 }

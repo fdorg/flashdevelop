@@ -84,10 +84,10 @@ namespace AirProperties.Controls
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
-            CheckBoxes = false;			// Disable default CheckBox functionality if it's been enabled
+            CheckBoxes = false;         // Disable default CheckBox functionality if it's been enabled
 
             // Give every node an initial 'unchecked' image
-            IgnoreClickAction++;	// we're making changes to the tree, ignore any other change requests
+            IgnoreClickAction++;    // we're making changes to the tree, ignore any other change requests
             UpdateChildState(this.Nodes, (int)CheckedState.UnChecked, false, true);
             IgnoreClickAction--;
         }
@@ -104,7 +104,7 @@ namespace AirProperties.Controls
                 return;
             }
 
-            IgnoreClickAction++;	// we're making changes to the tree, ignore any other change requests
+            IgnoreClickAction++;    // we're making changes to the tree, ignore any other change requests
 
             // the checked state has already been changed, we just need to update the state index
 
@@ -130,7 +130,7 @@ namespace AirProperties.Controls
             // So if current node is ticked, child nodes will also be ticked
             base.OnAfterExpand(e);
 
-            IgnoreClickAction++;	// we're making changes to the tree, ignore any other change requests
+            IgnoreClickAction++;    // we're making changes to the tree, ignore any other change requests
             UpdateChildState(e.Node.Nodes, e.Node.StateImageIndex, e.Node.Checked, true);
             IgnoreClickAction--;
         }
@@ -145,7 +145,7 @@ namespace AirProperties.Controls
                 if (!ChangeUninitialisedNodesOnly || tnChild.StateImageIndex == -1)
                 {
                     tnChild.StateImageIndex = StateImageIndex;
-                    tnChild.Checked = Checked;	// override 'checked' state of child with that of parent
+                    tnChild.Checked = Checked;  // override 'checked' state of child with that of parent
 
                     if (tnChild.Nodes.Count > 0)
                     {

@@ -14,8 +14,8 @@ using PluginCore;
 
 namespace SourceControl
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "SourceControl";
         private String pluginGuid = "42ac7fab-421b-1f38-a985-5735468ac489";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -25,7 +25,7 @@ namespace SourceControl
         private String settingFilename;
         private Boolean ready;
 
-	    #region Required Properties
+        #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
@@ -39,41 +39,41 @@ namespace SourceControl
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -83,35 +83,35 @@ namespace SourceControl
         {
             get { return settingObject; }
         }
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
         }
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             ProjectWatcher.Dispose();
             this.SaveSettings();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             switch (e.Type)
             {
                 case EventType.UIStarted:
@@ -282,9 +282,9 @@ namespace SourceControl
                     }
                     break;
             }
-		}
-		
-		#endregion
+        }
+        
+        #endregion
 
         #region Custom Methods
         
@@ -327,19 +327,54 @@ namespace SourceControl
                 Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
                 settingObject = (Settings)obj;
             }
+
+            #region Detect Git
+
+            // Try to find git path from program files
+            if (settingObject.GITPath == "git.exe")
+            {
+                String gitPath = PathHelper.FindFromProgramFiles(@"Git\bin\git.exe");
+                if (File.Exists(gitPath)) settingObject.GITPath = gitPath;
+
+            }
+            // Try to find TortoiseProc path from program files
+            if (settingObject.TortoiseGITProcPath == "TortoiseGitProc.exe")
+            {
+                String torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseGit\bin\TortoiseGitProc.exe");
+                if (File.Exists(torProcPath)) settingObject.TortoiseGITProcPath = torProcPath;
+            }
+
+            #endregion
+
+            #region Detect SVN
+
             // Try to find svn path from: Tools/sliksvn/
             if (settingObject.SVNPath == "svn.exe")
             {
                 String svnCmdPath = @"Tools\sliksvn\bin\svn.exe";
                 if (PathHelper.ResolvePath(svnCmdPath) != null) settingObject.SVNPath = svnCmdPath;
             }
+            // Try to find sliksvn path from program files
+            if (settingObject.SVNPath == "svn.exe")
+            {
+                String slSvnPath = PathHelper.FindFromProgramFiles(@"SlikSvn\bin\svn.exe");
+                if (File.Exists(slSvnPath)) settingObject.SVNPath = slSvnPath;
+            }
+            // Try to find svn from TortoiseSVN
+            if (settingObject.SVNPath == "svn.exe")
+            {
+                String torSvnPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\svn.exe");
+                if (File.Exists(torSvnPath)) settingObject.SVNPath = torSvnPath;
+            }
             // Try to find TortoiseProc path from program files
             if (settingObject.TortoiseSVNProcPath == "TortoiseProc.exe")
             {
-                String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-                String torProcPath = Path.Combine(programFiles, @"TortoiseSVN\bin\TortoiseProc.exe");
+                String torProcPath = PathHelper.FindFromProgramFiles(@"TortoiseSVN\bin\TortoiseProc.exe");
                 if (File.Exists(torProcPath)) settingObject.TortoiseSVNProcPath = torProcPath;
             }
+
+            #endregion
+
             CheckPathExists(settingObject.SVNPath, "TortoiseSVN (svn)");
             CheckPathExists(settingObject.TortoiseSVNProcPath, "TortoiseSVN (Proc)");
             CheckPathExists(settingObject.GITPath, "TortoiseGit (git)");
@@ -370,8 +405,8 @@ namespace SourceControl
             ObjectSerializer.Serialize(this.settingFilename, settingObject);
         }
 
-		#endregion
+        #endregion
 
-	}
-	
+    }
+    
 }

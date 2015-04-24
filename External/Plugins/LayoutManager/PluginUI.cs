@@ -15,7 +15,7 @@ using PluginCore;
 
 namespace LayoutManager
 {
-	public class PluginUI : DockPanelControl
+    public class PluginUI : DockPanelControl
     {
         private ToolStrip toolStrip;
         private ListView layoutsListView;
@@ -32,23 +32,23 @@ namespace LayoutManager
         private PluginMain pluginMain;
         private ImageList imageList;
         
-		public PluginUI(PluginMain pluginMain)
-		{
-			this.pluginMain = pluginMain;
+        public PluginUI(PluginMain pluginMain)
+        {
+            this.pluginMain = pluginMain;
             this.InitializeComponent();
             this.InitializeContextMenu();
             this.InitializeGraphics();
             this.InitializeTexts();
-		}
-		
-		#region Windows Forms Designer Generated Code
+        }
+        
+        #region Windows Forms Designer Generated Code
 
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() 
+        /// <summary>
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent() 
         {
             this.layoutsListView = new System.Windows.Forms.ListView();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
@@ -148,9 +148,9 @@ namespace LayoutManager
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-		#endregion
+        #endregion
 
         #region Methods And Event Handlers
 

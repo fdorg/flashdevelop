@@ -6,33 +6,34 @@ using System.Collections.Generic;
 
 namespace ProjectManager.Projects
 {
-	public abstract class MovieOptions
-	{
+    public abstract class MovieOptions
+    {
         public string Language;
-		public int Fps;
-		public int Width;
-		public int Height;
-		public int MajorVersion;
+        public int Fps;
+        public int Width;
+        public int Height;
+        public int MajorVersion;
         public int MinorVersion;
         public string Platform;
         public string Background;
         public string[] TargetBuildTypes;
+        public string[] DefaultBuildTargets;
 
-		public MovieOptions()
-		{
+        public MovieOptions()
+        {
             Platform = "Custom";
             Language = "unknown";
-			Fps = 30;
-			Width = 800;
-			Height = 600;
-			Background = "#FFFFFF";
-		}
+            Fps = 30;
+            Width = 800;
+            Height = 600;
+            Background = "#FFFFFF";
+        }
 
-		public Color BackgroundColor
-		{
-			get { return ColorTranslator.FromHtml(Background); }
-			set { Background = string.Format("#{0:X6}", (value.R << 16) + (value.G << 8) + value.B); }
-		}
+        public Color BackgroundColor
+        {
+            get { return ColorTranslator.FromHtml(Background); }
+            set { Background = string.Format("#{0:X6}", (value.R << 16) + (value.G << 8) + value.B); }
+        }
 
         public int BackgroundColorInt
         {
@@ -140,5 +141,5 @@ namespace ProjectManager.Projects
             return false;
         }
 
-	}
+    }
 }

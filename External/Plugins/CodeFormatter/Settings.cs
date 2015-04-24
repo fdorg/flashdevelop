@@ -9,62 +9,62 @@ using PluginCore.Localization;
 
 namespace CodeFormatter
 {
-	[Serializable]
-	public class Settings
-	{
-		public const char LineSplitter = '\n';
+    [Serializable]
+    public class Settings
+    {
+        public const char LineSplitter = '\n';
 
-		/////////////// ActionScript /////////////////////////////////////
+        /////////////// ActionScript /////////////////////////////////////
 
         private bool pref_Flex_UseTabs = true;
-		private int pref_AS_SpacesBeforeComma = 0;
-		private int pref_AS_SpacesAfterComma = 1;
-		private int pref_AS_SpacesAroundColons = 0;
-		private bool pref_AS_UseGlobalSpacesAroundColons = true;
-		private int pref_AS_AdvancedSpacesBeforeColons = 0;
-		private int pref_AS_AdvancedSpacesAfterColons = 0;
-		private int pref_AS_BlankLinesBeforeFunctions = 1;
-		private int pref_AS_BlankLinesBeforeClasses = 1;
-		private int pref_AS_BlankLinesBeforeProperties = 0;
-		private int pref_AS_BlankLinesBeforeControlStatements = 0;
-		private bool pref_AS_KeepBlankLines = false;
-		private int pref_AS_BlankLinesToKeep = 1;
-		private bool pref_AS_OpenBraceOnNewLine = true;
-		private bool pref_AS_ElseOnNewLine = true;
-		private bool pref_AS_CatchOnNewLine = true;
-		private bool pref_AS_ElseIfOnSameLine = true;
-		private int pref_AS_MaxLineLength = 200;
-		private int pref_AS_SpacesAroundAssignment = 1;
-		private int pref_AS_SpacesAroundSymbolicOperator = 1;
-		private bool pref_AS_KeepSLCommentsOnColumn1 = false;
-		private bool pref_AS_BreakLinesBeforeComma = false;
+        private int pref_AS_SpacesBeforeComma = 0;
+        private int pref_AS_SpacesAfterComma = 1;
+        private int pref_AS_SpacesAroundColons = 0;
+        private bool pref_AS_UseGlobalSpacesAroundColons = true;
+        private int pref_AS_AdvancedSpacesBeforeColons = 0;
+        private int pref_AS_AdvancedSpacesAfterColons = 0;
+        private int pref_AS_BlankLinesBeforeFunctions = 1;
+        private int pref_AS_BlankLinesBeforeClasses = 1;
+        private int pref_AS_BlankLinesBeforeProperties = 0;
+        private int pref_AS_BlankLinesBeforeControlStatements = 0;
+        private bool pref_AS_KeepBlankLines = false;
+        private int pref_AS_BlankLinesToKeep = 1;
+        private bool pref_AS_OpenBraceOnNewLine = true;
+        private bool pref_AS_ElseOnNewLine = true;
+        private bool pref_AS_CatchOnNewLine = true;
+        private bool pref_AS_ElseIfOnSameLine = true;
+        private int pref_AS_MaxLineLength = 200;
+        private int pref_AS_SpacesAroundAssignment = 1;
+        private int pref_AS_SpacesAroundSymbolicOperator = 1;
+        private bool pref_AS_KeepSLCommentsOnColumn1 = false;
+        private bool pref_AS_BreakLinesBeforeComma = false;
         private WrapType pref_AS_WrapExpressionMode = WrapType.None;
         private WrapType pref_AS_WrapMethodDeclMode = WrapType.None;
         private WrapType pref_AS_WrapMethodCallMode = WrapType.None;
         private WrapType pref_AS_WrapArrayDeclMode = WrapType.None;
         private WrapType pref_AS_WrapXMLMode = WrapType.DontProcess;
         private WrapIndent pref_AS_WrapIndentStyle = WrapIndent.Normal;
-		private bool pref_AS_CollapseSpacesForAdjacentParens = true;
-		private bool pref_AS_NewlineAfterBindable = true;
-		private int pref_AS_SpacesAfterLabel = 1;
-		private bool pref_AS_TrimTrailingWhitespace = false;
-		private bool pref_AS_PutEmptyStatementsOnNewLine = true;
-		private int pref_AS_SpacesBeforeOpenControlParen = 1;
-		private bool pref_AS_AlwaysGenerateIndent = true;
-		private bool pref_AS_DontIndentPackageItems = false;
-		private bool pref_AS_LeaveExtraWhitespaceAroundVarDecls = false;
+        private bool pref_AS_CollapseSpacesForAdjacentParens = true;
+        private bool pref_AS_NewlineAfterBindable = true;
+        private int pref_AS_SpacesAfterLabel = 1;
+        private bool pref_AS_TrimTrailingWhitespace = false;
+        private bool pref_AS_PutEmptyStatementsOnNewLine = true;
+        private int pref_AS_SpacesBeforeOpenControlParen = 1;
+        private bool pref_AS_AlwaysGenerateIndent = true;
+        private bool pref_AS_DontIndentPackageItems = false;
+        private bool pref_AS_LeaveExtraWhitespaceAroundVarDecls = false;
         private BraceStyle pref_AS_BraceStyle = BraceStyle.AfterLine;
-		private bool pref_AS_UseBraceStyle = true;
-		private int pref_AS_SpacesInsideParens = 0;
-		private bool pref_AS_UseGlobalSpacesInsideParens = true;
-		private int pref_AS_AdvancedSpacesInsideArrayDeclBrackets = 1;
-		private int pref_AS_AdvancedSpacesInsideArrayRefBrackets = 0;
-		private int pref_AS_AdvancedSpacesInsideLiteralBraces = 1;
-		private int pref_AS_AdvancedSpacesInsideParens = 0;
-		private bool pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters = false;
-		private int pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters = 0;
-		private bool pref_AS_DoAutoFormat = true;
-		private bool pref_AS_AutoFormatStyle = true;
+        private bool pref_AS_UseBraceStyle = true;
+        private int pref_AS_SpacesInsideParens = 0;
+        private bool pref_AS_UseGlobalSpacesInsideParens = true;
+        private int pref_AS_AdvancedSpacesInsideArrayDeclBrackets = 1;
+        private int pref_AS_AdvancedSpacesInsideArrayRefBrackets = 0;
+        private int pref_AS_AdvancedSpacesInsideLiteralBraces = 1;
+        private int pref_AS_AdvancedSpacesInsideParens = 0;
+        private bool pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters = false;
+        private int pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters = 0;
+        private bool pref_AS_DoAutoFormat = true;
+        private bool pref_AS_AutoFormatStyle = true;
         private bool pref_AS_IndentMultilineComments = true;
         public int pref_AS_BlankLinesBeforeImportBlock = 0;
         public int pref_AS_BlankLinesAtFunctionStart = 0;
@@ -81,7 +81,7 @@ namespace CodeFormatter
         public bool pref_AS_MLCommentReflow = true;
         public bool pref_AS_DocCommentReflow = true;
         public bool pref_AS_MLCommentHeaderOnSeparateLine = true;
-        public int pref_AS_MLCommentAsteriskMode = 1;
+        public AsteriskMode pref_AS_MLCommentAsteriskMode = AsteriskMode.AsIs;
         public bool pref_AS_UseDocCommentWrapping = false;
         public int pref_AS_DocCommentHangingIndentTabs = 0;
         public bool pref_AS_DocCommentKeepBlankLines = true;
@@ -109,7 +109,7 @@ namespace CodeFormatter
         public int pref_AS_AddBracesToConditionals = 1;
         public bool pref_AS_DontIndentSwitchCases = true;
         public bool pref_AS_AlignDeclEquals = true;
-        public int pref_AS_AlignDeclMode = 0;
+        public DeclAlignMode pref_AS_AlignDeclMode = DeclAlignMode.Consecutive;
         public bool pref_AS_KeepSpacesBeforeLineComments = true;
         public int pref_AS_AlignLineCommentsAtColumn = 0;
         public bool pref_AS_UseGlobalCRBeforeBrace = false;
@@ -137,26 +137,26 @@ namespace CodeFormatter
         //
         private string pref_AS_MetaTagsOnSameLineAsTargetFunction = "";
         private string pref_AS_MetaTagsOnSameLineAsTargetProperty = "";
-		
-		////////////////// MXML ///////////////////////////////////////
+        
+        ////////////////// MXML ///////////////////////////////////////
 
-		private int pref_MXML_SpacesAroundEquals = 0;
-		private bool pref_MXML_SortExtraAttrs = false;
-		private bool pref_MXML_AddNewlineAfterLastAttr = false;
+        private int pref_MXML_SpacesAroundEquals = 0;
+        private bool pref_MXML_SortExtraAttrs = false;
+        private bool pref_MXML_AddNewlineAfterLastAttr = false;
         private SortMode pref_MXML_SortAttrMode = SortMode.UseData;
-		private int pref_MXML_MaxLineLength = 200;
+        private int pref_MXML_MaxLineLength = 200;
         private WrapMode pref_MXML_AttrWrapMode = WrapMode.CountPerLine;
-		private int pref_MXML_AttrsPerLine = 1;
-		private bool pref_MXML_KeepBlankLines = true;
+        private int pref_MXML_AttrsPerLine = 1;
+        private bool pref_MXML_KeepBlankLines = true;
         private WrapIndent pref_MXML_WrapIndentStyle = WrapIndent.WrapElement;
-		private string pref_MXML_TagsWithBlankLinesBefore = "";
-		private int pref_MXML_BlankLinesBeforeTags = 1;
-		private bool pref_MXML_UseAttrsToKeepOnSameLine = true;
-		private int pref_MXML_AttrsToKeepOnSameLine = 10;
-		private int pref_MXML_SpacesBeforeEmptyTagEnd = 1;
-		private bool pref_MXML_RequireCDATAForASFormatting = true;
-		private bool pref_MXML_AutoFormatStyle = true;
-		private bool pref_MXML_DoAutoFormat = true;
+        private string pref_MXML_TagsWithBlankLinesBefore = "";
+        private int pref_MXML_BlankLinesBeforeTags = 1;
+        private bool pref_MXML_UseAttrsToKeepOnSameLine = true;
+        private int pref_MXML_AttrsToKeepOnSameLine = 10;
+        private int pref_MXML_SpacesBeforeEmptyTagEnd = 1;
+        private bool pref_MXML_RequireCDATAForASFormatting = true;
+        private bool pref_MXML_AutoFormatStyle = true;
+        private bool pref_MXML_DoAutoFormat = true;
         public int pref_Flex_IndentSize = 4;
         public int pref_Flex_TabSize = 4;
         public bool pref_MXML_KeepRelativeIndentInMultilineComments = false;
@@ -239,7 +239,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Before Colons")]
+        [DisplayName("Spaces Before Colons")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesBeforeColons")]
         public int Pref_AS_AdvancedSpacesBeforeColons
         {
@@ -249,7 +249,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces After Colons")]
+        [DisplayName("Spaces After Colons")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesAfterColons")]
         public int Pref_AS_AdvancedSpacesAfterColons
         {
@@ -589,7 +589,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Array Declaration Brackets")]
+        [DisplayName("Spaces Inside Array Declaration Brackets")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideArrayDeclarationBrackets")]
         public int Pref_AS_AdvancedSpacesInsideArrayDeclBrackets
         {
@@ -599,7 +599,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Array Reference Brackets")]
+        [DisplayName("Spaces Inside Array Reference Brackets")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideArrayReferenceBrackets")]
         public int Pref_AS_AdvancedSpacesInsideArrayRefBrackets
         {
@@ -609,7 +609,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Literal Braces")]
+        [DisplayName("Spaces Inside Literal Braces")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideLiteralBraces")]
         public int Pref_AS_AdvancedSpacesInsideLiteralBraces
         {
@@ -619,7 +619,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Parens")]
+        [DisplayName("Spaces Inside Parens")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideParens")]
         public int Pref_AS_AdvancedSpacesInsideParens
         {
@@ -709,6 +709,7 @@ namespace CodeFormatter
 
         [DefaultValue(true)]
         [Category("ActionScript")]
+        [DisplayName("Use Spaces Around Equals In Metatags")]
         [LocalizedDescription("CodeFormatter.Description.AS.UseSpacesAroundEqualsInMetatags")]
         public bool Pref_AS_Tweak_UseSpacesAroundEqualsInMetatags
         {
@@ -718,7 +719,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces After Colons In Declarations")]
+        [DisplayName("Spaces After Colons In Declarations")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAfterColonsInDeclarations")]
         public int Pref_AS_AdvancedSpacesAfterColonsInDeclarations
         {
@@ -728,7 +729,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Before Colons In Declarations")]
+        [DisplayName("Spaces Before Colons In Declarations")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeColonsInDeclarations")]
         public int Pref_AS_AdvancedSpacesBeforeColonsInDeclarations
         {
@@ -738,7 +739,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces After Colons In Function Types")]
+        [DisplayName("Spaces After Colons In Function Types")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAfterColonsInFunctionTypes")]
         public int Pref_AS_AdvancedSpacesAfterColonsInFunctionTypes
         {
@@ -748,7 +749,7 @@ namespace CodeFormatter
 
         [DefaultValue(1)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Before Colons In Function Types")]
+        [DisplayName("Spaces Before Colons In Function Types")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeColonsInFunctionTypes")]
         public int Pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes
         {
@@ -806,11 +807,11 @@ namespace CodeFormatter
             set { this.pref_AS_MLCommentHeaderOnSeparateLine = value; }
         }
 
-        [DefaultValue(1)]
+        [DefaultValue(AsteriskMode.AsIs)]
         [Category("ActionScript")]
         [DisplayName("Multiline Comment Asterisk Mode")]
         [LocalizedDescription("CodeFormatter.Description.AS.MLCommentAsteriskMode")]
-        public int Pref_AS_MLCommentAsteriskMode
+        public AsteriskMode Pref_AS_MLCommentAsteriskMode
         {
             get { return this.pref_AS_MLCommentAsteriskMode; }
             set { this.pref_AS_MLCommentAsteriskMode = value; }
@@ -948,7 +949,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Parens In Other Places")]
+        [DisplayName("Spaces Inside Parens In Other Places")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInOtherPlaces")]
         public int Pref_AS_AdvancedSpacesInsideParensInOtherPlaces
         {
@@ -958,7 +959,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Parens In Parameter Lists")]
+        [DisplayName("Spaces Inside Parens In Parameter Lists")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInParameterLists")]
         public int Pref_AS_AdvancedSpacesInsideParensInParameterLists
         {
@@ -968,7 +969,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Spaces Inside Parens In Argument Lists")]
+        [DisplayName("Spaces Inside Parens In Argument Lists")]
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInArgumentLists")]
         public int Pref_AS_AdvancedSpacesInsideParensInArgumentLists
         {
@@ -1086,11 +1087,11 @@ namespace CodeFormatter
             set { this.pref_AS_AlignDeclEquals = value; }
         }
 
-        [DefaultValue(0)]
+        [DefaultValue(DeclAlignMode.Consecutive)]
         [Category("ActionScript")]
         [DisplayName("Align Declaration Mode")]
         [LocalizedDescription("CodeFormatter.Description.AS.AlignDeclMode")]
-        public int Pref_AS_AlignDeclMode
+        public DeclAlignMode Pref_AS_AlignDeclMode
         {
             get { return this.pref_AS_AlignDeclMode; }
             set { this.pref_AS_AlignDeclMode = value; }
@@ -1128,7 +1129,7 @@ namespace CodeFormatter
 
         [DefaultValue(0)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Newline Before Brace Settings")]
+        [DisplayName("Newline Before Brace Settings")]
         [LocalizedDescription("CodeFormatter.Description.AS.CRBeforeBraceSettings")]
         public int Pref_AS_AdvancedCRBeforeBraceSettings
         {
@@ -1228,7 +1229,7 @@ namespace CodeFormatter
 
         [DefaultValue(false)]
         [Category("ActionScript")]
-        [DisplayName("Advanced Wrapping All Parms")]
+        [DisplayName("Wrap All Parameters")]
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingAllParms")]
         public bool Pref_AS_AdvancedWrappingAllParms
         {
@@ -1364,20 +1365,20 @@ namespace CodeFormatter
         }
 
         [Browsable(false)]
-		public bool Pref_AS_DoAutoFormat
-		{
-			get { return this.pref_AS_DoAutoFormat; }
-			set { this.pref_AS_DoAutoFormat = value; }
-		}
+        public bool Pref_AS_DoAutoFormat
+        {
+            get { return this.pref_AS_DoAutoFormat; }
+            set { this.pref_AS_DoAutoFormat = value; }
+        }
 
         [Browsable(false)]
-		public bool Pref_AS_AutoFormatStyle
-		{
-			get { return this.pref_AS_AutoFormatStyle; }
-			set { this.pref_AS_AutoFormatStyle = value; }
-		}
-		
-		////////////////// MXML ///////////////////////////////////////
+        public bool Pref_AS_AutoFormatStyle
+        {
+            get { return this.pref_AS_AutoFormatStyle; }
+            set { this.pref_AS_AutoFormatStyle = value; }
+        }
+        
+        ////////////////// MXML ///////////////////////////////////////
 
         [DefaultValue(0)]
         [Category("MXML")]
@@ -1787,474 +1788,488 @@ namespace CodeFormatter
         }
 
         [Browsable(false)]
-		public bool Pref_MXML_AutoFormatStyle
-		{
-			get { return this.pref_MXML_AutoFormatStyle; }
-			set { this.pref_MXML_AutoFormatStyle = value; }
-		}
+        public bool Pref_MXML_AutoFormatStyle
+        {
+            get { return this.pref_MXML_AutoFormatStyle; }
+            set { this.pref_MXML_AutoFormatStyle = value; }
+        }
 
         [Browsable(false)]
-		public bool Pref_MXML_DoAutoFormat
-		{
-			get { return this.pref_MXML_DoAutoFormat; }
-			set { this.pref_MXML_DoAutoFormat = value; }
-		}
-		
-		public void InitializeDefaultPreferences()
-		{		
-			Pref_MXML_SortAttrData = "";
-			Pref_MXML_SortAttrMode = SortMode.UseData;
-            Pref_MXML_AttrWrapMode = WrapMode.CountPerLine;	
+        public bool Pref_MXML_DoAutoFormat
+        {
+            get { return this.pref_MXML_DoAutoFormat; }
+            set { this.pref_MXML_DoAutoFormat = value; }
+        }
+        
+        public void InitializeDefaultPreferences()
+        {       
+            Pref_MXML_SortAttrData = "";
+            Pref_MXML_SortAttrMode = SortMode.UseData;
+            Pref_MXML_AttrWrapMode = WrapMode.CountPerLine; 
             Pref_MXML_TagsCanFormat = "mx:List,fx:List";
-			Pref_MXML_TagsCannotFormat = "mx:String,fx:String";
+            Pref_MXML_TagsCannotFormat = "mx:String,fx:String";
             Pref_MXML_TagsDoNotFormatInside = ".*:Model,.*:XML";
-			List<String> eventAttrs = GetEvents();
-			StringBuilder asTags = new StringBuilder();
+            List<String> eventAttrs = GetEvents();
+            StringBuilder asTags = new StringBuilder();
             foreach (String tag in eventAttrs) 
             {
-				asTags.Append(".*:");
-				asTags.Append(tag);
-				asTags.Append(',');
-			}
-			asTags.Append(".*:Script");
-			Pref_MXML_TagsWithASContent = asTags.ToString();
-			List<AttrGroup> defaultGroups = CreateDefaultGroups();
-			StringBuilder buffer = new StringBuilder();
-			foreach (AttrGroup attrGroup in defaultGroups) 
+                asTags.Append(".*:");
+                asTags.Append(tag);
+                asTags.Append(',');
+            }
+            asTags.Append(".*:Script");
+            Pref_MXML_TagsWithASContent = asTags.ToString();
+            List<AttrGroup> defaultGroups = CreateDefaultGroups();
+            StringBuilder buffer = new StringBuilder();
+            foreach (AttrGroup attrGroup in defaultGroups) 
             {
-				buffer.Append(attrGroup.save());
-				buffer.Append(LineSplitter);
-			}
-			Pref_MXML_AttrGroups = buffer.ToString();
-		}
-		
-		private List<AttrGroup> CreateDefaultGroups()
-		{
-			List<AttrGroup> groups = new List<AttrGroup>();
-			List<String> attrs = new List<String>();
-			attrs.Add("allowDisjointSelection");
-			attrs.Add("allowMultipleSelection");
-			attrs.Add("allowThumbOverlap");
-			attrs.Add("allowTrackClick");
-			attrs.Add("autoLayout");
-			attrs.Add("autoRepeat");
-			attrs.Add("automationName");
-			attrs.Add("cachePolicy");
-			attrs.Add("class");
-			attrs.Add("clipContent");
-			attrs.Add("condenseWhite");
-			attrs.Add("conversion");
-			attrs.Add("creationIndex");
-			attrs.Add("creationPolicy");
-			attrs.Add("currentState");
-			attrs.Add("data");
-			attrs.Add("dataDescriptor");
-			attrs.Add("dataProvider");
-			attrs.Add("dataTipFormatFunction");
-			attrs.Add("dayNames");
-			attrs.Add("defaultButton");
-			attrs.Add("direction");
-			attrs.Add("disabledDays");
-			attrs.Add("disabledRanges");
-			attrs.Add("displayedMonth");
-			attrs.Add("displayedYear");
-			attrs.Add("doubleClickEnabled");
-			attrs.Add("emphasized");
-			attrs.Add("enabled");
-			attrs.Add("explicitHeight");
-			attrs.Add("explicitMaxHeight");
-			attrs.Add("explicitMaxWidth");
-			attrs.Add("explicitMinHeight");
-			attrs.Add("explicitMinWidth");
-			attrs.Add("explicitWidth");
-			attrs.Add("firstDayOfWeek");
-			attrs.Add("focusEnabled");
-			attrs.Add("fontContext");
-			attrs.Add("height");
-			attrs.Add("horizontalLineScrollSize");
-			attrs.Add("horizontalPageScrollSize");
-			attrs.Add("horizontalScrollBar");
-			attrs.Add("horizontalScrollPolicy");
-			attrs.Add("horizontalScrollPosition");
-			attrs.Add("htmlText");
-			attrs.Add("icon");
-			attrs.Add("iconField");
-			attrs.Add("id");
-			attrs.Add("imeMode");
-			attrs.Add("includeInLayout");
-			attrs.Add("indeterminate");
-			attrs.Add("label");
-			attrs.Add("labelField");
-			attrs.Add("labelFunction");
-			attrs.Add("labelPlacement");
-			attrs.Add("labels");
-			attrs.Add("layout");
-			attrs.Add("lineScrollSize");
-			attrs.Add("listData");
-			attrs.Add("liveDragging");
-			attrs.Add("maxChars");
-			attrs.Add("maxHeight");
-			attrs.Add("maxScrollPosition");
-			attrs.Add("maxWidth");
-			attrs.Add("maxYear");
-			attrs.Add("maximum");
-			attrs.Add("measuredHeight");
-			attrs.Add("measuredMinHeight");
-			attrs.Add("measuredMinWidth");
-			attrs.Add("measuredWidth");
-			attrs.Add("menuBarItemRenderer");
-			attrs.Add("menuBarItems");
-			attrs.Add("menus");
-			attrs.Add("minHeight");
-			attrs.Add("minScrollPosition");
-			attrs.Add("minWidth");
-			attrs.Add("minYear");
-			attrs.Add("minimum");
-			attrs.Add("mode");
-			attrs.Add("monthNames");
-			attrs.Add("monthSymbol");
-			attrs.Add("mouseFocusEnabled");
-			attrs.Add("pageScrollSize");
-			attrs.Add("pageSize");
-			attrs.Add("percentHeight");
-			attrs.Add("percentWidth");
-			attrs.Add("scaleX");
-			attrs.Add("scaleY");
-			attrs.Add("scrollPosition");
-			attrs.Add("selectable");
-			attrs.Add("selectableRange");
-			attrs.Add("selected");
-			attrs.Add("selectedDate");
-			attrs.Add("selectedField");
-			attrs.Add("selectedIndex");
-			attrs.Add("selectedRanges");
-			attrs.Add("showDataTip");
-			attrs.Add("showRoot");
-			attrs.Add("showToday");
-			attrs.Add("sliderDataTipClass");
-			attrs.Add("sliderThumbClass");
-			attrs.Add("snapInterval");
-			attrs.Add("source");
-			attrs.Add("states");
-			attrs.Add("stepSize");
-			attrs.Add("stickyHighlighting");
-			attrs.Add("styleName");
-			attrs.Add("text");
-			attrs.Add("text");
-			attrs.Add("thumbCount");
-			attrs.Add("tickInterval");
-			attrs.Add("tickValues");
-			attrs.Add("toggle");
-			attrs.Add("toolTip");
-			attrs.Add("transitions");
-			attrs.Add("truncateToFit");
-			attrs.Add("validationSubField");
-			attrs.Add("value");
-			attrs.Add("value");
-			attrs.Add("verticalLineScrollSize");
-			attrs.Add("verticalPageScrollSize");
-			attrs.Add("verticalScrollBar");
-			attrs.Add("verticalScrollPolicy");
-			attrs.Add("verticalScrollPosition");
-			attrs.Add("width");
-			attrs.Add("x");
-			attrs.Add("y");
-			attrs.Add("yearNavigationEnabled");
-			attrs.Add("yearSymbol");
-			groups.Add(new AttrGroup("properties", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
-			attrs = GetEvents();
-			groups.Add(new AttrGroup("events", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
-			attrs = new List<String>();
-			attrs.Add("backgroundAlpha");
-			attrs.Add("backgroundAttachment");
-			attrs.Add("backgroundColor");
-			attrs.Add("backgroundDisabledColor");
-			attrs.Add("backgroundImage");
-			attrs.Add("backgroundSize");
-			attrs.Add("backgroundSkin");
-			attrs.Add("barColor");
-			attrs.Add("barSkin");
-			attrs.Add("borderColor");
-			attrs.Add("borderSides");
-			attrs.Add("borderSkin");
-			attrs.Add("borderStyle");
-			attrs.Add("borderThickness");
-			attrs.Add("bottom");
-			attrs.Add("color");
-			attrs.Add("cornerRadius");
-			attrs.Add("dataTipOffset");
-			attrs.Add("dataTipPrecision");
-			attrs.Add("dataTipStyleName");
-			attrs.Add("disabledColor");
-			attrs.Add("disabledIcon");
-			attrs.Add("disabledIconColor");
-			attrs.Add("disabledSkin");
-			attrs.Add("disbledOverlayAlpha");
-			attrs.Add("downArrowDisabledSkin");
-			attrs.Add("downArrowDownSkin");
-			attrs.Add("downArrowOverSkin");
-			attrs.Add("downArrowUpSkin");
-			attrs.Add("downIcon");
-			attrs.Add("downSkin");
-			attrs.Add("dropShadowColor");
-			attrs.Add("dropShadowEnabled");
-			attrs.Add("errorColor");
-			attrs.Add("fillAlphas");
-			attrs.Add("fillColors");
-			attrs.Add("focusAlpha");
-			attrs.Add("focusBlendMode");
-			attrs.Add("focusRoundedCorners");
-			attrs.Add("focusSkin");
-			attrs.Add("focusThickness");
-			attrs.Add("fontAntiAliasType");
-			attrs.Add("fontFamily");
-			attrs.Add("fontGridFitType");
-			attrs.Add("fontSharpness");
-			attrs.Add("fontSize");
-			attrs.Add("fontStyle");
-			attrs.Add("fontThickness");
-			attrs.Add("fontWeight");
-			attrs.Add("fontfamily");
-			attrs.Add("headerColors");
-			attrs.Add("headerStyleName");
-			attrs.Add("highlightAlphas");
-			attrs.Add("horizontalAlign");
-			attrs.Add("horizontalCenter");
-			attrs.Add("horizontalGap");
-			attrs.Add("horizontalScrollBarStyleName");
-			attrs.Add("icon");
-			attrs.Add("iconColor");
-			attrs.Add("indeterminateMoveInterval");
-			attrs.Add("indeterminateSkin");
-			attrs.Add("itemDownSkin");
-			attrs.Add("itemOverSkin");
-			attrs.Add("itemUpSkin");
-			attrs.Add("kerning");
-			attrs.Add("labelOffset");
-			attrs.Add("labelStyleName");
-			attrs.Add("labelWidth");
-			attrs.Add("leading");
-			attrs.Add("left");
-			attrs.Add("letterSpacing");
-			attrs.Add("maskSkin");
-			attrs.Add("menuStyleName");
-			attrs.Add("nextMonthDisabledSkin");
-			attrs.Add("nextMonthDownSkin");
-			attrs.Add("nextMonthOverSkin");
-			attrs.Add("nextMonthSkin");
-			attrs.Add("nextMonthUpSkin");
-			attrs.Add("nextYearDisabledSkin");
-			attrs.Add("nextYearDownSkin");
-			attrs.Add("nextYearOverSkin");
-			attrs.Add("nextYearSkin");
-			attrs.Add("nextYearUpSkin");
-			attrs.Add("overIcon");
-			attrs.Add("overSkin");
-			attrs.Add("paddingBottom");
-			attrs.Add("paddingLeft");
-			attrs.Add("paddingRight");
-			attrs.Add("paddingTop");
-			attrs.Add("prevMonthDisabledSkin");
-			attrs.Add("prevMonthDownSkin");
-			attrs.Add("prevMonthOverSkin");
-			attrs.Add("prevMonthSkin ");
-			attrs.Add("prevMonthUpSkin");
-			attrs.Add("prevYearDisabledSkin");
-			attrs.Add("prevYearDownSkin");
-			attrs.Add("prevYearOverSkin");
-			attrs.Add("prevYearSkin ");
-			attrs.Add("prevYearUpSkin");
-			attrs.Add("repeatDelay");
-			attrs.Add("repeatInterval");
-			attrs.Add("right");
-			attrs.Add("rollOverColor");
-			attrs.Add("rollOverIndicatorSkin");
-			attrs.Add("selectedDisabledIcon");
-			attrs.Add("selectedDisabledSkin");
-			attrs.Add("selectedDownIcon");
-			attrs.Add("selectedDownSkin");
-			attrs.Add("selectedOverIcon");
-			attrs.Add("selectedOverSkin");
-			attrs.Add("selectedUpIcon");
-			attrs.Add("selectedUpSkin");
-			attrs.Add("selectionColor");
-			attrs.Add("selectionIndicatorSkin");
-			attrs.Add("shadowColor");
-			attrs.Add("shadowDirection");
-			attrs.Add("shadowDistance");
-			attrs.Add("showTrackHighlight");
-			attrs.Add("skin");
-			attrs.Add("slideDuration");
-			attrs.Add("slideEasingFunction");
-			attrs.Add("strokeColor");
-			attrs.Add("strokeWidth");
-			attrs.Add("textAlign");
-			attrs.Add("textDecoration");
-			attrs.Add("textIndent");
-			attrs.Add("textRollOverColor");
-			attrs.Add("textSelectedColor");
-			attrs.Add("themeColor");
-			attrs.Add("thumbDisabledSkin");
-			attrs.Add("thumbDownSkin");
-			attrs.Add("thumbIcon");
-			attrs.Add("thumbOffset");
-			attrs.Add("thumbOverSkin");
-			attrs.Add("thumbUpSkin");
-			attrs.Add("tickColor");
-			attrs.Add("tickLength");
-			attrs.Add("tickOffset");
-			attrs.Add("tickThickness");
-			attrs.Add("todayColor");
-			attrs.Add("todayIndicatorSkin");
-			attrs.Add("todayStyleName");
-			attrs.Add("top");
-			attrs.Add("tracHighlightSkin");
-			attrs.Add("trackColors");
-			attrs.Add("trackHeight");
-			attrs.Add("trackMargin");
-			attrs.Add("trackSkin");
-			attrs.Add("upArrowDisabledSkin");
-			attrs.Add("upArrowDownSkin");
-			attrs.Add("upArrowOverSkin");
-			attrs.Add("upArrowUpSkin");
-			attrs.Add("upIcon");
-			attrs.Add("upSkin");
-			attrs.Add("verticalAlign");
-			attrs.Add("verticalCenter");
-			attrs.Add("verticalGap");
-			attrs.Add("verticalScrollBarStyleName");
-			attrs.Add("weekDayStyleName");
+                buffer.Append(attrGroup.save());
+                buffer.Append(LineSplitter);
+            }
+            Pref_MXML_AttrGroups = buffer.ToString();
+        }
+        
+        private List<AttrGroup> CreateDefaultGroups()
+        {
+            List<AttrGroup> groups = new List<AttrGroup>();
+            List<String> attrs = new List<String>();
+            attrs.Add("allowDisjointSelection");
+            attrs.Add("allowMultipleSelection");
+            attrs.Add("allowThumbOverlap");
+            attrs.Add("allowTrackClick");
+            attrs.Add("autoLayout");
+            attrs.Add("autoRepeat");
+            attrs.Add("automationName");
+            attrs.Add("cachePolicy");
+            attrs.Add("class");
+            attrs.Add("clipContent");
+            attrs.Add("condenseWhite");
+            attrs.Add("conversion");
+            attrs.Add("creationIndex");
+            attrs.Add("creationPolicy");
+            attrs.Add("currentState");
+            attrs.Add("data");
+            attrs.Add("dataDescriptor");
+            attrs.Add("dataProvider");
+            attrs.Add("dataTipFormatFunction");
+            attrs.Add("dayNames");
+            attrs.Add("defaultButton");
+            attrs.Add("direction");
+            attrs.Add("disabledDays");
+            attrs.Add("disabledRanges");
+            attrs.Add("displayedMonth");
+            attrs.Add("displayedYear");
+            attrs.Add("doubleClickEnabled");
+            attrs.Add("emphasized");
+            attrs.Add("enabled");
+            attrs.Add("explicitHeight");
+            attrs.Add("explicitMaxHeight");
+            attrs.Add("explicitMaxWidth");
+            attrs.Add("explicitMinHeight");
+            attrs.Add("explicitMinWidth");
+            attrs.Add("explicitWidth");
+            attrs.Add("firstDayOfWeek");
+            attrs.Add("focusEnabled");
+            attrs.Add("fontContext");
+            attrs.Add("height");
+            attrs.Add("horizontalLineScrollSize");
+            attrs.Add("horizontalPageScrollSize");
+            attrs.Add("horizontalScrollBar");
+            attrs.Add("horizontalScrollPolicy");
+            attrs.Add("horizontalScrollPosition");
+            attrs.Add("htmlText");
+            attrs.Add("icon");
+            attrs.Add("iconField");
+            attrs.Add("id");
+            attrs.Add("imeMode");
+            attrs.Add("includeInLayout");
+            attrs.Add("indeterminate");
+            attrs.Add("label");
+            attrs.Add("labelField");
+            attrs.Add("labelFunction");
+            attrs.Add("labelPlacement");
+            attrs.Add("labels");
+            attrs.Add("layout");
+            attrs.Add("lineScrollSize");
+            attrs.Add("listData");
+            attrs.Add("liveDragging");
+            attrs.Add("maxChars");
+            attrs.Add("maxHeight");
+            attrs.Add("maxScrollPosition");
+            attrs.Add("maxWidth");
+            attrs.Add("maxYear");
+            attrs.Add("maximum");
+            attrs.Add("measuredHeight");
+            attrs.Add("measuredMinHeight");
+            attrs.Add("measuredMinWidth");
+            attrs.Add("measuredWidth");
+            attrs.Add("menuBarItemRenderer");
+            attrs.Add("menuBarItems");
+            attrs.Add("menus");
+            attrs.Add("minHeight");
+            attrs.Add("minScrollPosition");
+            attrs.Add("minWidth");
+            attrs.Add("minYear");
+            attrs.Add("minimum");
+            attrs.Add("mode");
+            attrs.Add("monthNames");
+            attrs.Add("monthSymbol");
+            attrs.Add("mouseFocusEnabled");
+            attrs.Add("pageScrollSize");
+            attrs.Add("pageSize");
+            attrs.Add("percentHeight");
+            attrs.Add("percentWidth");
+            attrs.Add("scaleX");
+            attrs.Add("scaleY");
+            attrs.Add("scrollPosition");
+            attrs.Add("selectable");
+            attrs.Add("selectableRange");
+            attrs.Add("selected");
+            attrs.Add("selectedDate");
+            attrs.Add("selectedField");
+            attrs.Add("selectedIndex");
+            attrs.Add("selectedRanges");
+            attrs.Add("showDataTip");
+            attrs.Add("showRoot");
+            attrs.Add("showToday");
+            attrs.Add("sliderDataTipClass");
+            attrs.Add("sliderThumbClass");
+            attrs.Add("snapInterval");
+            attrs.Add("source");
+            attrs.Add("states");
+            attrs.Add("stepSize");
+            attrs.Add("stickyHighlighting");
+            attrs.Add("styleName");
+            attrs.Add("text");
+            attrs.Add("text");
+            attrs.Add("thumbCount");
+            attrs.Add("tickInterval");
+            attrs.Add("tickValues");
+            attrs.Add("toggle");
+            attrs.Add("toolTip");
+            attrs.Add("transitions");
+            attrs.Add("truncateToFit");
+            attrs.Add("validationSubField");
+            attrs.Add("value");
+            attrs.Add("value");
+            attrs.Add("verticalLineScrollSize");
+            attrs.Add("verticalPageScrollSize");
+            attrs.Add("verticalScrollBar");
+            attrs.Add("verticalScrollPolicy");
+            attrs.Add("verticalScrollPosition");
+            attrs.Add("width");
+            attrs.Add("x");
+            attrs.Add("y");
+            attrs.Add("yearNavigationEnabled");
+            attrs.Add("yearSymbol");
+            groups.Add(new AttrGroup("properties", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
+            attrs = GetEvents();
+            groups.Add(new AttrGroup("events", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
+            attrs = new List<String>();
+            attrs.Add("backgroundAlpha");
+            attrs.Add("backgroundAttachment");
+            attrs.Add("backgroundColor");
+            attrs.Add("backgroundDisabledColor");
+            attrs.Add("backgroundImage");
+            attrs.Add("backgroundSize");
+            attrs.Add("backgroundSkin");
+            attrs.Add("barColor");
+            attrs.Add("barSkin");
+            attrs.Add("borderColor");
+            attrs.Add("borderSides");
+            attrs.Add("borderSkin");
+            attrs.Add("borderStyle");
+            attrs.Add("borderThickness");
+            attrs.Add("bottom");
+            attrs.Add("color");
+            attrs.Add("cornerRadius");
+            attrs.Add("dataTipOffset");
+            attrs.Add("dataTipPrecision");
+            attrs.Add("dataTipStyleName");
+            attrs.Add("disabledColor");
+            attrs.Add("disabledIcon");
+            attrs.Add("disabledIconColor");
+            attrs.Add("disabledSkin");
+            attrs.Add("disbledOverlayAlpha");
+            attrs.Add("downArrowDisabledSkin");
+            attrs.Add("downArrowDownSkin");
+            attrs.Add("downArrowOverSkin");
+            attrs.Add("downArrowUpSkin");
+            attrs.Add("downIcon");
+            attrs.Add("downSkin");
+            attrs.Add("dropShadowColor");
+            attrs.Add("dropShadowEnabled");
+            attrs.Add("errorColor");
+            attrs.Add("fillAlphas");
+            attrs.Add("fillColors");
+            attrs.Add("focusAlpha");
+            attrs.Add("focusBlendMode");
+            attrs.Add("focusRoundedCorners");
+            attrs.Add("focusSkin");
+            attrs.Add("focusThickness");
+            attrs.Add("fontAntiAliasType");
+            attrs.Add("fontFamily");
+            attrs.Add("fontGridFitType");
+            attrs.Add("fontSharpness");
+            attrs.Add("fontSize");
+            attrs.Add("fontStyle");
+            attrs.Add("fontThickness");
+            attrs.Add("fontWeight");
+            attrs.Add("fontfamily");
+            attrs.Add("headerColors");
+            attrs.Add("headerStyleName");
+            attrs.Add("highlightAlphas");
+            attrs.Add("horizontalAlign");
+            attrs.Add("horizontalCenter");
+            attrs.Add("horizontalGap");
+            attrs.Add("horizontalScrollBarStyleName");
+            attrs.Add("icon");
+            attrs.Add("iconColor");
+            attrs.Add("indeterminateMoveInterval");
+            attrs.Add("indeterminateSkin");
+            attrs.Add("itemDownSkin");
+            attrs.Add("itemOverSkin");
+            attrs.Add("itemUpSkin");
+            attrs.Add("kerning");
+            attrs.Add("labelOffset");
+            attrs.Add("labelStyleName");
+            attrs.Add("labelWidth");
+            attrs.Add("leading");
+            attrs.Add("left");
+            attrs.Add("letterSpacing");
+            attrs.Add("maskSkin");
+            attrs.Add("menuStyleName");
+            attrs.Add("nextMonthDisabledSkin");
+            attrs.Add("nextMonthDownSkin");
+            attrs.Add("nextMonthOverSkin");
+            attrs.Add("nextMonthSkin");
+            attrs.Add("nextMonthUpSkin");
+            attrs.Add("nextYearDisabledSkin");
+            attrs.Add("nextYearDownSkin");
+            attrs.Add("nextYearOverSkin");
+            attrs.Add("nextYearSkin");
+            attrs.Add("nextYearUpSkin");
+            attrs.Add("overIcon");
+            attrs.Add("overSkin");
+            attrs.Add("paddingBottom");
+            attrs.Add("paddingLeft");
+            attrs.Add("paddingRight");
+            attrs.Add("paddingTop");
+            attrs.Add("prevMonthDisabledSkin");
+            attrs.Add("prevMonthDownSkin");
+            attrs.Add("prevMonthOverSkin");
+            attrs.Add("prevMonthSkin ");
+            attrs.Add("prevMonthUpSkin");
+            attrs.Add("prevYearDisabledSkin");
+            attrs.Add("prevYearDownSkin");
+            attrs.Add("prevYearOverSkin");
+            attrs.Add("prevYearSkin ");
+            attrs.Add("prevYearUpSkin");
+            attrs.Add("repeatDelay");
+            attrs.Add("repeatInterval");
+            attrs.Add("right");
+            attrs.Add("rollOverColor");
+            attrs.Add("rollOverIndicatorSkin");
+            attrs.Add("selectedDisabledIcon");
+            attrs.Add("selectedDisabledSkin");
+            attrs.Add("selectedDownIcon");
+            attrs.Add("selectedDownSkin");
+            attrs.Add("selectedOverIcon");
+            attrs.Add("selectedOverSkin");
+            attrs.Add("selectedUpIcon");
+            attrs.Add("selectedUpSkin");
+            attrs.Add("selectionColor");
+            attrs.Add("selectionIndicatorSkin");
+            attrs.Add("shadowColor");
+            attrs.Add("shadowDirection");
+            attrs.Add("shadowDistance");
+            attrs.Add("showTrackHighlight");
+            attrs.Add("skin");
+            attrs.Add("slideDuration");
+            attrs.Add("slideEasingFunction");
+            attrs.Add("strokeColor");
+            attrs.Add("strokeWidth");
+            attrs.Add("textAlign");
+            attrs.Add("textDecoration");
+            attrs.Add("textIndent");
+            attrs.Add("textRollOverColor");
+            attrs.Add("textSelectedColor");
+            attrs.Add("themeColor");
+            attrs.Add("thumbDisabledSkin");
+            attrs.Add("thumbDownSkin");
+            attrs.Add("thumbIcon");
+            attrs.Add("thumbOffset");
+            attrs.Add("thumbOverSkin");
+            attrs.Add("thumbUpSkin");
+            attrs.Add("tickColor");
+            attrs.Add("tickLength");
+            attrs.Add("tickOffset");
+            attrs.Add("tickThickness");
+            attrs.Add("todayColor");
+            attrs.Add("todayIndicatorSkin");
+            attrs.Add("todayStyleName");
+            attrs.Add("top");
+            attrs.Add("tracHighlightSkin");
+            attrs.Add("trackColors");
+            attrs.Add("trackHeight");
+            attrs.Add("trackMargin");
+            attrs.Add("trackSkin");
+            attrs.Add("upArrowDisabledSkin");
+            attrs.Add("upArrowDownSkin");
+            attrs.Add("upArrowOverSkin");
+            attrs.Add("upArrowUpSkin");
+            attrs.Add("upIcon");
+            attrs.Add("upSkin");
+            attrs.Add("verticalAlign");
+            attrs.Add("verticalCenter");
+            attrs.Add("verticalGap");
+            attrs.Add("verticalScrollBarStyleName");
+            attrs.Add("weekDayStyleName");
             groups.Add(new AttrGroup("styles", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
-			attrs = new List<String>();
-			attrs.Add("addedEffect");
-			attrs.Add("completeEffect");
-			attrs.Add("creationCompleteEffect");
-			attrs.Add("focusInEffect");
-			attrs.Add("focusOutEffect");
-			attrs.Add("hideEffect");
-			attrs.Add("mouseDownEffect");
-			attrs.Add("mouseUpEffect");
-			attrs.Add("moveEffect");
-			attrs.Add("removedEffect");
-			attrs.Add("resizeEffect");
-			attrs.Add("rollOutEffect");
-			attrs.Add("rollOverEffect");
-			attrs.Add("showEffect");
+            attrs = new List<String>();
+            attrs.Add("addedEffect");
+            attrs.Add("completeEffect");
+            attrs.Add("creationCompleteEffect");
+            attrs.Add("focusInEffect");
+            attrs.Add("focusOutEffect");
+            attrs.Add("hideEffect");
+            attrs.Add("mouseDownEffect");
+            attrs.Add("mouseUpEffect");
+            attrs.Add("moveEffect");
+            attrs.Add("removedEffect");
+            attrs.Add("resizeEffect");
+            attrs.Add("rollOutEffect");
+            attrs.Add("rollOverEffect");
+            attrs.Add("showEffect");
             groups.Add(new AttrGroup("effects", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
-			return groups;
-		}
+            return groups;
+        }
 
-		public static List<String> GetEvents()
-		{
-			List<String> attrs = new List<String>();
-			attrs.Add("add");
-			attrs.Add("added");
-			attrs.Add("activate");
-			attrs.Add("addedToStage");
-			attrs.Add("buttonDown");
-			attrs.Add("change");
-			attrs.Add("childAdd");
-			attrs.Add("childIndexChange");
-			attrs.Add("childRemove");
-			attrs.Add("clickHandler");
-			attrs.Add("clear");
-			attrs.Add("click");
-			attrs.Add("complete");
-			attrs.Add("contextMenu");
-			attrs.Add("copy");
-			attrs.Add("creationComplete");
-			attrs.Add("currentStateChange");
-			attrs.Add("currentStateChanging");
-			attrs.Add("cut");
-			attrs.Add("dataChange");
-			attrs.Add("deactivate");
-			attrs.Add("doubleClick");
-			attrs.Add("dragComplete");
-			attrs.Add("dragDrop");
-			attrs.Add("dragEnter");
-			attrs.Add("dragExit");
-			attrs.Add("dragOver");
-			attrs.Add("dragStart");
-			attrs.Add("effectEnd");
-			attrs.Add("effectStart");
-			attrs.Add("enterFrame");
-			attrs.Add("enterState");
-			attrs.Add("exitFrame");
-			attrs.Add("exitState");
-			attrs.Add("focusIn");
-			attrs.Add("focusOut");
-			attrs.Add("frameConstructed");
-			attrs.Add("hide");
-			attrs.Add("httpStatus");
-			attrs.Add("init");
-			attrs.Add("initialize");
-			attrs.Add("invalid");
-			attrs.Add("ioError");
-			attrs.Add("itemClick");
-			attrs.Add("itemRollOut");
-			attrs.Add("itemRollOver");
-			attrs.Add("keyDown");
-			attrs.Add("keyFocusChange");
-			attrs.Add("keyUp");
-			attrs.Add("menuHide");
-			attrs.Add("menuShow");
-			attrs.Add("middleClick");
-			attrs.Add("middleMouseDown");
-			attrs.Add("middleMouseUp");
-			attrs.Add("mouseDown");
-			attrs.Add("mouseUp");
-			attrs.Add("mouseOver");
-			attrs.Add("mouseMove");
-			attrs.Add("mouseOut");
-			attrs.Add("mouseFocusChange");
-			attrs.Add("mouseWheel");
-			attrs.Add("mouseDownOutside");
-			attrs.Add("mouseWheelOutside");
-			attrs.Add("move");
-			attrs.Add("nativeDragComplete");
-			attrs.Add("nativeDragDrop");
-			attrs.Add("nativeDragEnter");
-			attrs.Add("nativeDragExit");
-			attrs.Add("nativeDragOver");
-			attrs.Add("nativeDragStart");
-			attrs.Add("nativeDragUpdate");
-			attrs.Add("open");
-			attrs.Add("paste");
-			attrs.Add("preinitialize");
-			attrs.Add("progress");
-			attrs.Add("record");
-			attrs.Add("remove");
-			attrs.Add("removed");
-			attrs.Add("removedFromStage");
-			attrs.Add("render");
-			attrs.Add("resize");
-			attrs.Add("rightClick");
-			attrs.Add("rightMouseDown");
-			attrs.Add("rightMouseUp");
-			attrs.Add("rollOut");
-			attrs.Add("rollOver");
-			attrs.Add("scroll");
-			attrs.Add("securityError");
-			attrs.Add("selectAll");
-			attrs.Add("show");
-			attrs.Add("tabChildrenChange");
-			attrs.Add("tabEnabledChange");
-			attrs.Add("tabIndexChange");
-			attrs.Add("thumbDrag");
-			attrs.Add("thumbPress");
-			attrs.Add("thumbRelease");
-			attrs.Add("toolTipCreate");
-			attrs.Add("toolTipEnd");
-			attrs.Add("toolTipHide");
-			attrs.Add("toolTipShow");
-			attrs.Add("toolTipShown");
-			attrs.Add("toolTipStart");
-			attrs.Add("updateComplete");
-			attrs.Add("unload");
-			attrs.Add("valid");
-			attrs.Add("valueCommit");
-			return attrs;
-		}
+        public static List<String> GetEvents()
+        {
+            List<String> attrs = new List<String>();
+            attrs.Add("add");
+            attrs.Add("added");
+            attrs.Add("activate");
+            attrs.Add("addedToStage");
+            attrs.Add("buttonDown");
+            attrs.Add("change");
+            attrs.Add("childAdd");
+            attrs.Add("childIndexChange");
+            attrs.Add("childRemove");
+            attrs.Add("clickHandler");
+            attrs.Add("clear");
+            attrs.Add("click");
+            attrs.Add("complete");
+            attrs.Add("contextMenu");
+            attrs.Add("copy");
+            attrs.Add("creationComplete");
+            attrs.Add("currentStateChange");
+            attrs.Add("currentStateChanging");
+            attrs.Add("cut");
+            attrs.Add("dataChange");
+            attrs.Add("deactivate");
+            attrs.Add("doubleClick");
+            attrs.Add("dragComplete");
+            attrs.Add("dragDrop");
+            attrs.Add("dragEnter");
+            attrs.Add("dragExit");
+            attrs.Add("dragOver");
+            attrs.Add("dragStart");
+            attrs.Add("effectEnd");
+            attrs.Add("effectStart");
+            attrs.Add("enterFrame");
+            attrs.Add("enterState");
+            attrs.Add("exitFrame");
+            attrs.Add("exitState");
+            attrs.Add("focusIn");
+            attrs.Add("focusOut");
+            attrs.Add("frameConstructed");
+            attrs.Add("hide");
+            attrs.Add("httpStatus");
+            attrs.Add("init");
+            attrs.Add("initialize");
+            attrs.Add("invalid");
+            attrs.Add("ioError");
+            attrs.Add("itemClick");
+            attrs.Add("itemRollOut");
+            attrs.Add("itemRollOver");
+            attrs.Add("keyDown");
+            attrs.Add("keyFocusChange");
+            attrs.Add("keyUp");
+            attrs.Add("menuHide");
+            attrs.Add("menuShow");
+            attrs.Add("middleClick");
+            attrs.Add("middleMouseDown");
+            attrs.Add("middleMouseUp");
+            attrs.Add("mouseDown");
+            attrs.Add("mouseUp");
+            attrs.Add("mouseOver");
+            attrs.Add("mouseMove");
+            attrs.Add("mouseOut");
+            attrs.Add("mouseFocusChange");
+            attrs.Add("mouseWheel");
+            attrs.Add("mouseDownOutside");
+            attrs.Add("mouseWheelOutside");
+            attrs.Add("move");
+            attrs.Add("nativeDragComplete");
+            attrs.Add("nativeDragDrop");
+            attrs.Add("nativeDragEnter");
+            attrs.Add("nativeDragExit");
+            attrs.Add("nativeDragOver");
+            attrs.Add("nativeDragStart");
+            attrs.Add("nativeDragUpdate");
+            attrs.Add("open");
+            attrs.Add("paste");
+            attrs.Add("preinitialize");
+            attrs.Add("progress");
+            attrs.Add("record");
+            attrs.Add("remove");
+            attrs.Add("removed");
+            attrs.Add("removedFromStage");
+            attrs.Add("render");
+            attrs.Add("resize");
+            attrs.Add("rightClick");
+            attrs.Add("rightMouseDown");
+            attrs.Add("rightMouseUp");
+            attrs.Add("rollOut");
+            attrs.Add("rollOver");
+            attrs.Add("scroll");
+            attrs.Add("securityError");
+            attrs.Add("selectAll");
+            attrs.Add("show");
+            attrs.Add("tabChildrenChange");
+            attrs.Add("tabEnabledChange");
+            attrs.Add("tabIndexChange");
+            attrs.Add("thumbDrag");
+            attrs.Add("thumbPress");
+            attrs.Add("thumbRelease");
+            attrs.Add("toolTipCreate");
+            attrs.Add("toolTipEnd");
+            attrs.Add("toolTipHide");
+            attrs.Add("toolTipShow");
+            attrs.Add("toolTipShown");
+            attrs.Add("toolTipStart");
+            attrs.Add("updateComplete");
+            attrs.Add("unload");
+            attrs.Add("valid");
+            attrs.Add("valueCommit");
+            return attrs;
+        }
+    }
+
+    public enum AsteriskMode
+    {
+        AsIs = 0,
+        All = 1,
+        None = 2
+    }
+
+    public enum DeclAlignMode
+    {
+        Consecutive = 1,
+        Scope = 2,
+        Global = 3
     }
 
     public enum SortMode
@@ -2265,7 +2280,7 @@ namespace CodeFormatter
 
     public enum WrapMode 
     {
-		LineLength = 51,
+        LineLength = 51,
         CountPerLine = 52,
         Default = 54,
         None = 53
@@ -2280,16 +2295,18 @@ namespace CodeFormatter
 
     public enum WrapType
     {
-		None = 1,
-		DontProcess = 2,
-		ByColumn = 8,
-		ByTag = 128
+        None = 1,
+        DontProcess = 2,
+        FormatNoNewlines = 4,
+        ByColumn = 8,
+        ByColumnOnlyAddNewlines = 16,
+        ByTag = 128
     }
 
     public enum WrapIndent 
     {
         Normal = 1000,
-		WrapElement = 1001
+        WrapElement = 1001
     }
 
 }

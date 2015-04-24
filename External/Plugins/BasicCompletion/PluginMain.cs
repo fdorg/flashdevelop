@@ -17,8 +17,8 @@ using PluginCore;
 
 namespace BasicCompletion
 {
-	public class PluginMain : IPlugin
-	{
+    public class PluginMain : IPlugin
+    {
         private String pluginName = "BasicCompletion";
         private String pluginGuid = "c5564dec-5288-4bbb-b286-a5678536698b";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -34,7 +34,7 @@ namespace BasicCompletion
         private Settings settingObject;
         private String[] projKeywords;
 
-	    #region Required Properties
+        #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
@@ -48,41 +48,41 @@ namespace BasicCompletion
         /// Name of the plugin
         /// </summary> 
         public String Name
-		{
-			get { return this.pluginName; }
-		}
+        {
+            get { return this.pluginName; }
+        }
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
         public String Guid
-		{
-			get { return this.pluginGuid; }
-		}
+        {
+            get { return this.pluginGuid; }
+        }
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
         public String Author
-		{
-			get { return this.pluginAuth; }
-		}
+        {
+            get { return this.pluginAuth; }
+        }
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
         public String Description
-		{
-			get { return this.pluginDesc; }
-		}
+        {
+            get { return this.pluginDesc; }
+        }
 
         /// <summary>
         /// Web address for help
         /// </summary> 
         public String Help
-		{
-			get { return this.pluginHelp; }
-		}
+        {
+            get { return this.pluginHelp; }
+        }
 
         /// <summary>
         /// Object that contains the settings
@@ -92,35 +92,35 @@ namespace BasicCompletion
         {
             get { return this.settingObject; }
         }
-		
-		#endregion
-		
-		#region Required Methods
-		
-		/// <summary>
-		/// Initializes the plugin
-		/// </summary>
-		public void Initialize()
-		{
+        
+        #endregion
+        
+        #region Required Methods
+        
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
+        public void Initialize()
+        {
             this.InitTimer();
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
         }
-		
-		/// <summary>
-		/// Disposes the plugin
-		/// </summary>
-		public void Dispose()
-		{
+        
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
+        public void Dispose()
+        {
             this.SaveSettings();
-		}
-		
-		/// <summary>
-		/// Handles the incoming events
-		/// </summary>
-		public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        }
+        
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document == null || !document.IsEditable) return;
             switch (e.Type)
@@ -203,13 +203,13 @@ namespace BasicCompletion
                     break;
                 }
             }
-		}
+        }
 
         /// <summary>
         /// Handles the completion and config for a file
         /// </summary>
-	    private void HandleFile(ITabbedDocument document)
-	    {
+        private void HandleFile(ITabbedDocument document)
+        {
             if (this.isSupported)
             {
                 String language = document.SciControl.ConfigurationLanguage;
@@ -226,9 +226,9 @@ namespace BasicCompletion
             {
                 this.updateTable.Remove(document.FileName);
             }
-	    }
+        }
 
-	    #endregion
+        #endregion
 
         #region Custom Methods
 
@@ -459,9 +459,9 @@ namespace BasicCompletion
             }
         }
 
-		#endregion
+        #endregion
 
-	}
+    }
 
     #region Extra Classes
 

@@ -3,6 +3,7 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace PluginCore
 {
@@ -25,6 +26,14 @@ namespace PluginCore
         public static Boolean IsRunningOnWindows()
         {
             return shouldUseWin32;
+        }
+
+        /// <summary>
+        ///  Checks if we are running on Wine
+        /// </summary>
+        public static Boolean isRunningOnWine()
+        {
+            return Registry.LocalMachine.OpenSubKey(@"Software\Wine\") != null;
         }
 
         /// <summary>

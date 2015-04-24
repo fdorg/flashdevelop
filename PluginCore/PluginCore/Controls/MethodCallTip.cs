@@ -16,10 +16,10 @@ namespace PluginCore.Controls
         public event UpdateCallTipHandler OnUpdateCallTip;
 
 
-		public static string HLTextStyleBeg = "[B]";
-		public static string HLTextStyleEnd = "[/B]";
-		public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
-		public static string HLBgStyleEnd = "[/BGCOLOR]";
+        public static string HLTextStyleBeg = "[B]";
+        public static string HLTextStyleEnd = "[/B]";
+        public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
+        public static string HLBgStyleEnd = "[/BGCOLOR]";
 
 
         // state
@@ -29,8 +29,8 @@ namespace PluginCore.Controls
         protected bool isActive;
         protected int memberPos;
         protected int startPos;
-		protected int currentPos;
-		protected int deltaPos;
+        protected int currentPos;
+        protected int deltaPos;
         protected int currentLine;
 
         public MethodCallTip(IMainForm mainForm): base(mainForm)
@@ -49,11 +49,11 @@ namespace PluginCore.Controls
 
         public override void Hide()
         {
-			if (isActive)
-			{
-				isActive = false;
+            if (isActive)
+            {
+                isActive = false;
                 UITools.Manager.UnlockControl(); // unlock keys
-			}
+            }
             faded = false;
             currentText = null;
             currentHLStart = -1;
@@ -66,10 +66,10 @@ namespace PluginCore.Controls
             return position == currentPos;
         }
 
-		public void CallTipShow(ScintillaControl sci, int position, string text)
-		{
-			CallTipShow(sci, position, text, true);
-		}
+        public void CallTipShow(ScintillaControl sci, int position, string text)
+        {
+            CallTipShow(sci, position, text, true);
+        }
         public void CallTipShow(ScintillaControl sci, int position, string text, bool redraw)
         {
             if (toolTip.Visible && position == memberPos && text == currentText)
@@ -77,12 +77,12 @@ namespace PluginCore.Controls
 
             toolTip.Visible = false;
             currentText = text;
-			SetText(text, true);
+            SetText(text, true);
 
             memberPos = position;
             startPos = memberPos + toolTipRTB.Text.IndexOf('(');
             currentPos = sci.CurrentPos;
-			deltaPos = startPos - currentPos + 1;
+            deltaPos = startPos - currentPos + 1;
             currentLine = sci.CurrentLine;
             PositionControl(sci);
             // state
@@ -109,39 +109,39 @@ namespace PluginCore.Controls
             toolTip.BringToFront();
         }
 
-		public void CallTipSetHlt(int start, int end)
-		{
-			CallTipSetHlt(start, end, true);
-		}
+        public void CallTipSetHlt(int start, int end)
+        {
+            CallTipSetHlt(start, end, true);
+        }
         public void CallTipSetHlt(int start, int end, bool forceRedraw)
         {
-			if (currentHLStart == start && currentHLEnd == end)
-				return;
+            if (currentHLStart == start && currentHLEnd == end)
+                return;
 
             currentHLStart = start;
             currentHLEnd = end;
-			if (start != end)
-			{
-				string savedRawText = rawText;
+            if (start != end)
+            {
+                string savedRawText = rawText;
 
-				try
-				{
-					rawText = rawText.Substring(0, start)
-							+ HLBgStyleBeg + HLTextStyleBeg
-							+ rawText.Substring(start, end - start)
-							+ HLTextStyleEnd + HLBgStyleEnd
-							+ rawText.Substring(end);
+                try
+                {
+                    rawText = rawText.Substring(0, start)
+                            + HLBgStyleBeg + HLTextStyleBeg
+                            + rawText.Substring(start, end - start)
+                            + HLTextStyleEnd + HLBgStyleEnd
+                            + rawText.Substring(end);
 
-					Redraw();
-				}
-				catch { }
+                    Redraw();
+                }
+                catch { }
 
-				rawText = savedRawText;
-			}
-			else
-			{
-				Redraw();
-			}
+                rawText = savedRawText;
+            }
+            else
+            {
+                Redraw();
+            }
         }
 
         #region Keys handling
@@ -214,7 +214,7 @@ namespace PluginCore.Controls
                 case Keys.Back:
                     sci.DeleteBack();
                     currentPos = sci.CurrentPos;
-					if (currentPos + deltaPos < startPos) Hide();
+                    if (currentPos + deltaPos < startPos) Hide();
                     else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
                     return true;
 

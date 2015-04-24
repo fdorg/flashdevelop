@@ -27,7 +27,7 @@ namespace FlashDevelop.Managers
 
         static ScintillaManager()
         {
-            Bitmap bookmark = new Bitmap(ResourceHelper.GetStream("BookmarkIcon.bmp"));
+            Bitmap bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
             XpmBookmark = ScintillaNet.XPM.ConvertToXPM(bookmark, "#00FF00");
             LoadConfiguration();
         }
@@ -234,21 +234,21 @@ namespace FlashDevelop.Managers
                 * Set correct line number margin width
                 */
                 Boolean viewLineNumbers = Globals.Settings.ViewLineNumbers;
-                if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleHelper.Scale(36));
+                if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleArea(sci, 36));
                 else sci.SetMarginWidthN(1, 0);
                 /**
                 * Set correct bookmark margin width
                 */
                 Boolean viewBookmarks = Globals.Settings.ViewBookmarks;
-                if (viewBookmarks) sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
+                if (viewBookmarks) sci.SetMarginWidthN(0, ScaleArea(sci, 14));
                 else sci.SetMarginWidthN(0, 0);
                 /**
                 * Set correct folding margin width
                 */
                 Boolean useFolding = Globals.Settings.UseFolding;
                 if (!useFolding && !viewBookmarks && !viewLineNumbers) sci.SetMarginWidthN(2, 0);
-                else if (useFolding) sci.SetMarginWidthN(2, ScaleHelper.Scale(15));
-                else sci.SetMarginWidthN(2, ScaleHelper.Scale(2));
+                else if (useFolding) sci.SetMarginWidthN(2, ScaleArea(sci, 15));
+                else sci.SetMarginWidthN(2, ScaleArea(sci, 2));
                 /**
                 * Adjust the print margin
                 */
@@ -277,6 +277,24 @@ namespace FlashDevelop.Managers
             {
                 ErrorManager.ShowError(ex);
             }
+        }
+
+        /// <summary>
+        /// Scale the control area based on font size and DPI
+        /// </summary>
+        private static Int32 ScaleArea(ScintillaControl sci, Int32 size)
+        {
+            Int32 value = ScaleHelper.Scale(size);
+            Language lang = SciConfig.GetLanguage(sci.ConfigurationLanguage);
+            if (lang != null && lang.usestyles != null && lang.usestyles.Length > 0)
+            {
+                // Only larger fonts need scaling...
+                if (lang.usestyles[0].FontSize < 11) return value;
+                Double multi = lang.usestyles[0].FontSize / 9f;
+                Double adjusted = Convert.ToDouble(value) * (multi < 1 ? 1 : multi);
+                value = Convert.ToInt32(Math.Floor(adjusted));
+            }
+            return value;
         }
 
         /// <summary>

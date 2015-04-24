@@ -1,4 +1,4 @@
-catch (err:Error)$(CSLB){
+catch (err:Dynamic)$(CSLB){
 	$(EntryPoint)
 }
 

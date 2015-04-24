@@ -59,7 +59,7 @@ namespace PluginCore.Bridge
                 PluginBase.MainForm.StatusStrip.Items[0].Text = "  Opening document in host system...";
                 remoteClient.Send("open:" + shared);
             }
-            else TraceManager.AddAsync("Unable to connect to host bridge.");
+            else TraceManager.AddAsync("Unable to connect to FlashDevelop Bridge.");
         }
 
         /// <summary>

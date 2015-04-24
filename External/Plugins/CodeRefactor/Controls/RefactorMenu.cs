@@ -10,6 +10,7 @@ namespace CodeRefactor.Controls
     public class RefactorMenu : ToolStripMenuItem
     {
         private SurroundMenu surroundMenu;
+        private ToolStripMenuItem batchMenuItem;
         private ToolStripMenuItem renameMenuItem;
         private ToolStripMenuItem truncateMenuItem;
         private ToolStripMenuItem organizeMenuItem;
@@ -25,7 +26,7 @@ namespace CodeRefactor.Controls
             this.renameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename"), empty) as ToolStripMenuItem;
             this.extractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
             this.extractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
-			this.delegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
+            this.delegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
             if (createSurroundMenu)
             {
                 this.surroundMenu = new SurroundMenu();
@@ -37,6 +38,8 @@ namespace CodeRefactor.Controls
             this.DropDownItems.Add(new ToolStripSeparator());
             this.organizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
             this.truncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
+            this.DropDownItems.Add(new ToolStripSeparator());
+            this.batchMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.BatchProcess"), null) as ToolStripMenuItem;
         }
 
         /// <summary>
@@ -45,6 +48,14 @@ namespace CodeRefactor.Controls
         public SurroundMenu SurroundMenu
         {
             get { return this.surroundMenu; }
+        }
+
+        /// <summary>
+        /// Accessor to the BatchMenuItem
+        /// </summary>
+        public ToolStripMenuItem BatchMenuItem
+        {
+            get { return this.batchMenuItem; }
         }
 
         /// <summary>

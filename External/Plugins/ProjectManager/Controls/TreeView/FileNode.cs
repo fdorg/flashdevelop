@@ -9,27 +9,27 @@ namespace ProjectManager.Controls.TreeView
     public delegate FileNode FileNodeFactory(string filePath);
     public delegate void FileNodeRefresh(FileNode node);
 
-	/// <summary>
-	/// Represents a file on disk.
-	/// </summary>
-	public class FileNode : GenericNode
-	{
+    /// <summary>
+    /// Represents a file on disk.
+    /// </summary>
+    public class FileNode : GenericNode
+    {
         static public readonly Dictionary<string, FileNodeFactory> FileAssociations 
             = new Dictionary<string, FileNodeFactory>();
 
         static public event FileNodeRefresh OnFileNodeRefresh;
 
-		protected FileNode(string filePath) : base(filePath)
-		{
-			isDraggable = true;
-			isRenamable = true;
-		}
+        protected FileNode(string filePath) : base(filePath)
+        {
+            isDraggable = true;
+            isRenamable = true;
+        }
 
-		/// <summary>
-		/// Creates the correct type of FileNode based on the file name.
-		/// </summary>
-		public static FileNode Create(string filePath, Project project)
-		{
+        /// <summary>
+        /// Creates the correct type of FileNode based on the file name.
+        /// </summary>
+        public static FileNode Create(string filePath, Project project)
+        {
             if (project != null) 
             {
                 if (project.IsOutput(filePath))
@@ -46,11 +46,11 @@ namespace ProjectManager.Controls.TreeView
                 return FileAssociations[ext](filePath);
             else
                 return new FileNode(filePath);
-		}
+        }
 
-		public override void Refresh(bool recursive)
-		{
-			base.Refresh(recursive);
+        public override void Refresh(bool recursive)
+        {
+            base.Refresh(recursive);
 
             string path = BackingPath;
             string ext = Path.GetExtension(path).ToLower();
@@ -67,9 +67,9 @@ namespace ProjectManager.Controls.TreeView
                 ImageIndex = Icons.Classpath.Index;
             else
                 ImageIndex = Icons.GetImageForFile(path).Index;
-			SelectedImageIndex = ImageIndex;
+            SelectedImageIndex = ImageIndex;
 
-			Text = Path.GetFileName(path);
+            Text = Path.GetFileName(path);
 
             string colorId = "ProjectTreeView.ForeColor";
             if (project.IsLibraryAsset(path))
@@ -97,23 +97,23 @@ namespace ProjectManager.Controls.TreeView
 
             // hook for plugins
             if (OnFileNodeRefresh != null) OnFileNodeRefresh(this);
-		}
-	}
+        }
+    }
 
-	/// <summary>
-	/// A special FileNode that represents the project output file.  It won't disappear
-	/// from the treeview while you're building.
-	/// </summary>
-	public class ProjectOutputNode : SwfFileNode
-	{
-		public ProjectOutputNode(string filePath) : base(filePath) {}
+    /// <summary>
+    /// A special FileNode that represents the project output file.  It won't disappear
+    /// from the treeview while you're building.
+    /// </summary>
+    public class ProjectOutputNode : SwfFileNode
+    {
+        public ProjectOutputNode(string filePath) : base(filePath) {}
 
-		public override void Refresh(bool recursive)
-		{
-			base.Refresh(recursive);
+        public override void Refresh(bool recursive)
+        {
+            base.Refresh(recursive);
 
-			if (!FileExists)
-				ImageIndex = SelectedImageIndex = Icons.SwfFileHidden.Index;
-		}
-	}
+            if (!FileExists)
+                ImageIndex = SelectedImageIndex = Icons.SwfFileHidden.Index;
+        }
+    }
 }

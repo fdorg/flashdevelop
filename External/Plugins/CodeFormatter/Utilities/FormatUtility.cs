@@ -9,21 +9,21 @@ namespace CodeFormatter.Utilities
     public class FormatUtility
     {
         public static void configureMXMLPrinter(MXMLPrettyPrinter printer, Settings settings, int tabSize)
-	    {
+        {
             printer.setAttrSortMode((Int32)settings.Pref_MXML_SortAttrMode);
             printer.setIndentAmount(settings.Pref_Flex_IndentSize);
-		    printer.setUseTabs(settings.Pref_Flex_UseTabs);
+            printer.setUseTabs(settings.Pref_Flex_UseTabs);
             printer.setTabSize(settings.Pref_Flex_TabSize);
-		    printer.setTabSize(tabSize);
-		    printer.setIndentAmount(tabSize);
+            printer.setTabSize(tabSize);
+            printer.setIndentAmount(tabSize);
             //printer.setManualAttrSortData(settings.Pref_MXML_SortAttrData.Split('\n'));
-		    printer.setSortOtherAttrs(settings.Pref_MXML_SortExtraAttrs);
-		    printer.setSpacesAroundEquals(settings.Pref_MXML_SpacesAroundEquals);
-		    printer.setSpacesBeforeEmptyTagEnd(settings.Pref_MXML_SpacesBeforeEmptyTagEnd);
-		    printer.setKeepBlankLines(settings.Pref_MXML_KeepBlankLines);
+            printer.setSortOtherAttrs(settings.Pref_MXML_SortExtraAttrs);
+            printer.setSpacesAroundEquals(settings.Pref_MXML_SpacesAroundEquals);
+            printer.setSpacesBeforeEmptyTagEnd(settings.Pref_MXML_SpacesBeforeEmptyTagEnd);
+            printer.setKeepBlankLines(settings.Pref_MXML_KeepBlankLines);
             printer.setKeepRelativeCommentIndent(settings.Pref_MXML_KeepRelativeIndentInMultilineComments);
             printer.setBlankLinesBeforeComments(settings.Pref_MXML_BlankLinesBeforeComments);
-		    printer.setBlankLinesBeforeTags(settings.Pref_MXML_BlankLinesBeforeTags);
+            printer.setBlankLinesBeforeTags(settings.Pref_MXML_BlankLinesBeforeTags);
             printer.setBlankLinesAfterSpecificParentTags(settings.Pref_MXML_BlankLinesAfterSpecificParentTags);
             printer.setSpacesBetweenSiblingTags(settings.Pref_MXML_BlankLinesBetweenSiblingTags);
             printer.setSpacesAfterParentTags(settings.Pref_MXML_BlankLinesAfterParentTags);
@@ -38,88 +38,88 @@ namespace CodeFormatter.Utilities
             printer.setBlankLinesAtCDataStart(settings.Pref_MXML_BlankLinesAtCDataStart);
             printer.setBlankLinesAtCDataEnd(settings.Pref_MXML_BlankLinesAtCDataStart); //TODO: change pref constant if I split them on the pref page
             printer.setKeepCDataOnSameLine(settings.Pref_MXML_KeepScriptCDataOnSameLine);
-		    printer.setMaxLineLength(settings.Pref_MXML_MaxLineLength);
+            printer.setMaxLineLength(settings.Pref_MXML_MaxLineLength);
             printer.setWrapMode((Int32)settings.Pref_MXML_AttrWrapMode);
-		    printer.setAttrsPerLine(settings.Pref_MXML_AttrsPerLine);
-		    printer.setAddNewlineAfterLastAttr(settings.Pref_MXML_AddNewlineAfterLastAttr);
+            printer.setAttrsPerLine(settings.Pref_MXML_AttrsPerLine);
+            printer.setAddNewlineAfterLastAttr(settings.Pref_MXML_AddNewlineAfterLastAttr);
             printer.setIndentCloseTag(settings.Pref_MXML_IndentTagClose);
-		    printer.setUseAttrsToKeepOnSameLine(settings.Pref_MXML_UseAttrsToKeepOnSameLine);
-		    printer.setRequireCDATAForASContent(settings.Pref_MXML_RequireCDATAForASFormatting);
-		    printer.setAttrsToKeepOnSameLine(settings.Pref_MXML_AttrsToKeepOnSameLine);
+            printer.setUseAttrsToKeepOnSameLine(settings.Pref_MXML_UseAttrsToKeepOnSameLine);
+            printer.setRequireCDATAForASContent(settings.Pref_MXML_RequireCDATAForASFormatting);
+            printer.setAttrsToKeepOnSameLine(settings.Pref_MXML_AttrsToKeepOnSameLine);
             printer.setObeyMaxLineLength(settings.Pref_MXML_AlwaysUseMaxLineLength);
-		    String[] tags=settings.Pref_MXML_TagsCannotFormat.Split(',');
-		    List<String> tagSet=new List<String>();
-		    foreach (String tag in tags) 
+            String[] tags=settings.Pref_MXML_TagsCannotFormat.Split(',');
+            List<String> tagSet=new List<String>();
+            foreach (String tag in tags) 
             {
-			    if (tag.Length>0)
-			    {
-				    tagSet.Add(tag);
-			    }
-		    }
-		    printer.setTagsThatCannotBeFormatted(tagSet);		
-		    tags=settings.Pref_MXML_TagsCanFormat.Split(',');
-		    tagSet=new List<String>();
-		    foreach (String tag in tags) 
+                if (tag.Length>0)
+                {
+                    tagSet.Add(tag);
+                }
+            }
+            printer.setTagsThatCannotBeFormatted(tagSet);       
+            tags=settings.Pref_MXML_TagsCanFormat.Split(',');
+            tagSet=new List<String>();
+            foreach (String tag in tags) 
             {
-			    if (tag.Length>0)
-			    {
-				    tagSet.Add(tag);
-			    }
-		    }
-		    printer.setTagsThatCanBeFormatted(tagSet);
+                if (tag.Length>0)
+                {
+                    tagSet.Add(tag);
+                }
+            }
+            printer.setTagsThatCanBeFormatted(tagSet);
             tags = settings.Pref_MXML_TagsWithBlankLinesBefore.Split(',');
-		    tagSet=new List<String>();
-		    foreach (String tag in tags)
+            tagSet=new List<String>();
+            foreach (String tag in tags)
             {
-			    if (tag.Length>0)
-			    {
-				    tagSet.Add(tag);
-			    }
-		    }
-		    printer.setTagsWithBlankLinesBeforeThem(tagSet);
+                if (tag.Length>0)
+                {
+                    tagSet.Add(tag);
+                }
+            }
+            printer.setTagsWithBlankLinesBeforeThem(tagSet);
             tags = settings.Pref_MXML_ParentTagsWithBlankLinesAfter.Split(',');
-		    tagSet=new List<String>();
-		    foreach (String tag in tags) 
+            tagSet=new List<String>();
+            foreach (String tag in tags) 
             {
-			    if (tag.Length>0)
-			    {
-				    tagSet.Add(tag);
-			    }
-		    }
-		    printer.setParentTagsWithBlankLinesAfterThem(tagSet);
+                if (tag.Length>0)
+                {
+                    tagSet.Add(tag);
+                }
+            }
+            printer.setParentTagsWithBlankLinesAfterThem(tagSet);
             tags = settings.Pref_MXML_TagsWithASContent.Split(',');
-		    tagSet=new List<String>();
-		    foreach (String tag in tags) 
+            tagSet=new List<String>();
+            foreach (String tag in tags) 
             {
-			    if (tag.Length>0)
-			    {
-				    tagSet.Add(tag);
-			    }
-		    }
-		    printer.setASScriptTags(tagSet);
-		    List<AttrGroup> attrGroups=new List<AttrGroup>();
-		    String groupData=settings.Pref_MXML_AttrGroups;
+                if (tag.Length>0)
+                {
+                    tagSet.Add(tag);
+                }
+            }
+            printer.setASScriptTags(tagSet);
+            List<AttrGroup> attrGroups=new List<AttrGroup>();
+            String groupData=settings.Pref_MXML_AttrGroups;
             String[] groups = groupData.Split(Settings.LineSplitter);
-		    foreach (String g in groups) 
+            foreach (String g in groups) 
             {
-			    AttrGroup group=AttrGroup.load(g);
-			    if (group!=null) attrGroups.Add(group);
-		    }
-		    printer.setAttrGroups(attrGroups);		
+                AttrGroup group=AttrGroup.load(g);
+                if (group!=null) attrGroups.Add(group);
+            }
+            printer.setAttrGroups(attrGroups);      
             printer.setUsePrivateTags(settings.Pref_MXML_UseTagsDoNotFormatInside);
             tags = settings.Pref_MXML_TagsDoNotFormatInside.Split(',');
-		    List<String> tagList=new List<String>();
-		    foreach (String tag in tags) 
+            List<String> tagList=new List<String>();
+            foreach (String tag in tags) 
             {
-			    if (tag.Length>0)
-			    {
-				    tagList.Add(tag);
-			    }
-		    }
-		    printer.setPrivateTags(tagList);
-		    configureASPrinter(printer.getASPrinter(), settings, tabSize);
+                if (tag.Length>0)
+                {
+                    tagList.Add(tag);
+                }
+            }
+            printer.setPrivateTags(tagList);
+            configureASPrinter(printer.getASPrinter(), settings, tabSize);
             printer.getASPrinter().setBlankLinesBeforeImports(0); //special case: we only want blank lines before imports in .as files
-	    }
+        }
 
         public static void configureASPrinter(ASPrettyPrinter printer, Settings settings, int tabSize)
         {
@@ -164,7 +164,7 @@ namespace CodeFormatter.Utilities
             printer.setMLCommentCollapseLines(settings.Pref_AS_MLCommentReflow);
             printer.setDocCommentCollapseLines(settings.Pref_AS_DocCommentReflow);
             printer.setMLTextOnNewLines(settings.Pref_AS_MLCommentHeaderOnSeparateLine);
-            printer.setMLAsteriskMode(settings.Pref_AS_MLCommentAsteriskMode);
+            printer.setMLAsteriskMode((Int32)settings.Pref_AS_MLCommentAsteriskMode);
             printer.setUseDocCommentWrapping(settings.Pref_AS_UseDocCommentWrapping);
             printer.setDocCommentHangingIndentTabs(settings.Pref_AS_DocCommentHangingIndentTabs);
             printer.setDocCommentKeepBlankLines(settings.Pref_AS_DocCommentKeepBlankLines);
@@ -201,7 +201,7 @@ namespace CodeFormatter.Utilities
             printer.setIndentSwitchCases(!settings.Pref_AS_DontIndentSwitchCases);
             printer.setKeepingExcessDeclWhitespace(settings.Pref_AS_LeaveExtraWhitespaceAroundVarDecls);
             printer.setAlignDeclEquals(settings.Pref_AS_AlignDeclEquals);
-            printer.setAlignDeclMode(settings.Pref_AS_AlignDeclMode);
+            printer.setAlignDeclMode((Int32)settings.Pref_AS_AlignDeclMode);
             printer.setKeepSpacesBeforeLineComments(settings.Pref_AS_KeepSpacesBeforeLineComments);
             printer.setLineCommentColumn(settings.Pref_AS_AlignLineCommentsAtColumn);
             printer.setUseGlobalNewlineBeforeBraceSetting(settings.Pref_AS_UseGlobalCRBeforeBrace);

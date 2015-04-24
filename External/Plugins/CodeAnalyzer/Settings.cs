@@ -14,23 +14,23 @@ using PluginCore;
 
 namespace CodeAnalyzer
 {
-	[Serializable]
-	public class Settings
-	{
+    [Serializable]
+    public class Settings
+    {
         private String pmdRuleset = String.Empty;
         
         /// <summary>
         /// Get and sets the ruleset file
         /// </summary>
-		[DisplayName("Default Ruleset File")]
+        [DisplayName("Default Ruleset File")]
         [LocalizedDescription("CodeAnalyzer.Description.PMDRuleset"), DefaultValue("")]
-		[Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public String PMDRuleset
-		{
-			get { return pmdRuleset; }
+        {
+            get { return pmdRuleset; }
             set { pmdRuleset = value; }
-		}
+        }
 
-	}
+    }
 
 }

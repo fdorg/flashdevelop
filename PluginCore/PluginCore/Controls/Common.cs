@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.ComponentModel.Design;
 
 namespace System.Windows.Forms
 {
@@ -161,6 +162,29 @@ namespace System.Windows.Forms
             Size size = base.GetPreferredSize(constrainingSize);
             size.Width = width;
             return size;
+        }
+
+    }
+    public class DescriptiveCollectionEditor : CollectionEditor
+    {
+        public DescriptiveCollectionEditor(Type type) : base(type) {}
+        protected override CollectionForm CreateCollectionForm()
+        {
+            CollectionForm form = base.CreateCollectionForm();
+            form.Shown += delegate
+            {
+                ShowDescription(form);
+            };
+            return form;
+        }
+        static void ShowDescription(Control control)
+        {
+            PropertyGrid grid = control as PropertyGrid;
+            if (grid != null) grid.HelpVisible = true;
+            foreach (Control child in control.Controls)
+            {
+                ShowDescription(child);
+            }
         }
 
     }

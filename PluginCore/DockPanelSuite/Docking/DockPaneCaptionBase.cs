@@ -6,32 +6,32 @@ using System.Security.Permissions;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
-	public abstract class DockPaneCaptionBase : Control
-	{
+    public abstract class DockPaneCaptionBase : Control
+    {
         // NICK: same modification as DockPaneStripBase
         Point startLocation = Point.Empty;
 
-		protected internal DockPaneCaptionBase(DockPane pane)
-		{
-			m_dockPane = pane;
+        protected internal DockPaneCaptionBase(DockPane pane)
+        {
+            m_dockPane = pane;
 
-			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-			SetStyle(ControlStyles.ResizeRedraw, true);
-			SetStyle(ControlStyles.UserPaint, true);
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.Selectable, false);
-		}
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.ResizeRedraw, true);
+            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.Selectable, false);
+        }
 
-		private DockPane m_dockPane;
-		protected DockPane DockPane
-		{
-			get	{	return m_dockPane;	}
-		}
+        private DockPane m_dockPane;
+        protected DockPane DockPane
+        {
+            get {   return m_dockPane;  }
+        }
 
-		protected DockPane.AppearanceStyle Appearance
-		{
-			get	{	return DockPane.Appearance;	}
-		}
+        protected DockPane.AppearanceStyle Appearance
+        {
+            get {   return DockPane.Appearance; }
+        }
 
         protected bool HasTabPageContextMenu
         {
@@ -92,20 +92,20 @@ namespace WeifenLuo.WinFormsUI.Docking
             base.WndProc(ref m);
         }
 
-		internal void RefreshChanges()
-		{
+        internal void RefreshChanges()
+        {
             if (IsDisposed) return;
             OnRefreshChanges();
-		}
+        }
 
         protected virtual void OnRightToLeftLayoutChanged()
         {
         }
 
-		protected virtual void OnRefreshChanges()
-		{
-		}
+        protected virtual void OnRefreshChanges()
+        {
+        }
 
-		protected internal abstract int MeasureHeight();
-	}
+        protected internal abstract int MeasureHeight();
+    }
 }

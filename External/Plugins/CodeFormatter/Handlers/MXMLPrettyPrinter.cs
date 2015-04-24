@@ -37,7 +37,7 @@ namespace CodeFormatter.Handlers
 
         public const String Attr_Group_Marker = "%";
         public const String Attr_Grouping_Splitter = ",";
-	    public const String Attr_Group_Other="Special_Group--Other Attributes";
+        public const String Attr_Group_Other="Special_Group--Other Attributes";
 
         public const String NewLineFlag = "\\n";
 
@@ -425,7 +425,7 @@ namespace CodeFormatter.Handlers
                         }
 
                         tokenIndex = processPostTagText(tokens, tokenIndex, buffer, 1);
-                        //					insertCR(buffer, false);
+                        //                  insertCR(buffer, false);
                         break;
                     case MXMLLexer.DECL_START:
                         tokenIndex = printTag(tokens, tokenIndex, buffer, MXMLLexer.DECL_STOP);
@@ -471,12 +471,12 @@ namespace CodeFormatter.Handlers
                         if (mTagStack.Count > 0)
                             mTagStack.RemoveAt(mTagStack.Count - 1);
                         tokenIndex = processPostTagText(tokens, tokenIndex, buffer, 1);
-                        //					insertCR(buffer, false);
+                        //                  insertCR(buffer, false);
                         break;
                     case MXMLLexer.EMPTY_TAG_OPEN:
                         tokenIndex = printTag(tokens, tokenIndex, buffer, MXMLLexer.EMPTYTAG_CLOSE);
                         tokenIndex = processPostTagText(tokens, tokenIndex, buffer, 1);
-                        //					insertCR(buffer, false);
+                        //                  insertCR(buffer, false);
                         break;
                     case MXMLLexer.CDATA:
                         if (AntlrUtilities.asTrim(token.Text).Length > 0)
@@ -709,7 +709,7 @@ namespace CodeFormatter.Handlers
                     int lineCount = 0;
                     if (mDoFormat && mSelectedRange != null && (mOutputRange == null || mOutputRange.Y < 0))
                     {
-                        //								String[] lines=splitTextOnLineBreaks(text);
+                        //                              String[] lines=splitTextOnLineBreaks(text);
                         lineCount = countLines(text);
                         int startLine = token.Line;
                         int endLine = startLine + lineCount - 1; //lines.length-1;
@@ -779,7 +779,7 @@ namespace CodeFormatter.Handlers
                     int oldLength = 0;
                     int leadingWhitespaceCount = 0;
                     int codeStartIndent = mCurrentIndent;
-                    //			if (startIndex>=0)
+                    //          if (startIndex>=0)
                     codeStartIndent += mIndentAmount * mScriptIndentTabs;
                     String resultData = trimmedResult;
                     if (!mRearrangeOnly)
@@ -828,20 +828,20 @@ namespace CodeFormatter.Handlers
                             //grab replace maps too, and update positions if necessary. Whitespace also might be 
                             //adjusted at the start of the block.  So this code needs to be done where the main
                             //replace block code is done, AND more adjustments need to be made.
-                            //					Map<Integer, ReplacementRange> asRanges=mASPrinter.getReplaceMap();
-                            //					if (asRanges!=null)
-                            //					{
-                            //						if (mReplaceMap==null)
-                            //							mReplaceMap=new HashMap<Integer, ReplacementRange>();
-                            //						CommonToken ct=(CommonToken)token;
-                            //						for (Map.Entry<Integer, ReplacementRange> entry : asRanges.entrySet()) {
-                            //							entry.getValue().mRangeInOriginalDoc.x+=ct.StartIndex);
-                            //							entry.getValue().mRangeInOriginalDoc.y+=ct.StartIndex);
-                            //							entry.getValue().mRangeInFormattedDoc.x+=buffer.Length;
-                            //							entry.getValue().mRangeInFormattedDoc.y+=buffer.Length;
-                            //							mReplaceMap.put(entry.getKey()+ct.StartIndex), entry.getValue());
-                            //						}
-                            //					}
+                            //                  Map<Integer, ReplacementRange> asRanges=mASPrinter.getReplaceMap();
+                            //                  if (asRanges!=null)
+                            //                  {
+                            //                      if (mReplaceMap==null)
+                            //                          mReplaceMap=new HashMap<Integer, ReplacementRange>();
+                            //                      CommonToken ct=(CommonToken)token;
+                            //                      for (Map.Entry<Integer, ReplacementRange> entry : asRanges.entrySet()) {
+                            //                          entry.getValue().mRangeInOriginalDoc.x+=ct.StartIndex);
+                            //                          entry.getValue().mRangeInOriginalDoc.y+=ct.StartIndex);
+                            //                          entry.getValue().mRangeInFormattedDoc.x+=buffer.Length;
+                            //                          entry.getValue().mRangeInFormattedDoc.y+=buffer.Length;
+                            //                          mReplaceMap.put(entry.getKey()+ct.StartIndex), entry.getValue());
+                            //                      }
+                            //                  }
                         }
                     }
 
@@ -864,7 +864,7 @@ namespace CodeFormatter.Handlers
                         }
                     }
                     int saveIndent = mCurrentIndent;
-                    //			if (startIndex>=0)
+                    //          if (startIndex>=0)
                     mCurrentIndent = codeStartIndent; //+=mIndentAmount;
                     addIndentIfAtStartOfLine(buffer, true);
                     mCurrentIndent = saveIndent;
@@ -931,7 +931,7 @@ namespace CodeFormatter.Handlers
                                 {
                                     //if it stops part way through the block; we need to finish output/replace boundaries here
                                     mOutputRange.Y = oldLength + Math.Min(trimmedResult.Length, outputRange.Y - leadingWhitespaceCount); //outputRange.y-leadingWhitespaceCount;//-trailingWhitespaceCount;
-                                    //											mReplaceRange.y=token.getLine()+replaceLines.y-1; //adjust for leading CRs and existing whitespace
+                                    //                                          mReplaceRange.y=token.getLine()+replaceLines.y-1; //adjust for leading CRs and existing whitespace
                                     mReplaceRange.Y = ((CommonToken)token).StartIndex + cdataOffset + replaceRange.Y;
                                 }
                             }
@@ -939,7 +939,7 @@ namespace CodeFormatter.Handlers
                             {
                                 //it stops part way through the block; we need to finish output/replace boundaries here
                                 mOutputRange.Y = oldLength + Math.Min(trimmedResult.Length, outputRange.Y - leadingWhitespaceCount);
-                                //										mReplaceRange.y=token.getLine()+replaceLines.y-1; //adjust for leading CRs and existing whitespace
+                                //                                      mReplaceRange.y=token.getLine()+replaceLines.y-1; //adjust for leading CRs and existing whitespace
                                 mReplaceRange.Y = ((CommonToken)token).StartIndex + cdataOffset + replaceRange.Y; //-leadingWhitespaceCount;
                             }
                         }
@@ -1214,7 +1214,7 @@ namespace CodeFormatter.Handlers
             //we have special handling if the tag is a start tag (either regular open or an empty tag)
             bool isOpenTag = (startToken.Type == MXMLLexer.EMPTY_TAG_OPEN || startToken.Type == MXMLLexer.TAG_OPEN);
             bool hasSeenFirstChild = false;
-            //		if (isOpenTag)
+            //      if (isOpenTag)
             {
                 //This is part of blank lines between sibling tags.
                 //if this is an open tag, then see if we have already seen the first child of the parent tag.
@@ -1279,7 +1279,7 @@ namespace CodeFormatter.Handlers
             List<Attr> attrs = null;
             if (mDoFormat && stopType != MXMLLexer.DECL_STOP)
                 attrs = new List<Attr>();
-            //		bool seenTagName=false;
+            //      bool seenTagName=false;
             String tagName = null;
             String currentAttrName = null;
             CommonToken endToken = null;
@@ -1332,10 +1332,10 @@ namespace CodeFormatter.Handlers
                                 currentAttrName = token.Text;
                             }
 
-                            //					if (seenTagName)
-                            //						buffer += ' ');
-                            //					buffer += token.Text));
-                            //					seenTagName=true;
+                            //                  if (seenTagName)
+                            //                      buffer += ' ');
+                            //                  buffer += token.Text));
+                            //                  seenTagName=true;
                             break;
                         case MXMLLexer.VALUE:
                             if (attrs != null)
@@ -1753,7 +1753,7 @@ namespace CodeFormatter.Handlers
                     {
                         //attempt to pre-calculate the width so that I can reverse the disableWrapping mode if the
                         //line is too long
-                        //					bool seenFirstAttr=false;
+                        //                  bool seenFirstAttr=false;
                         int currentLineLength = ASPrettyPrinter.determineLastLineLength(buffer, getTabSize());
                         foreach (Attr attr in attrs)
                         {
@@ -1792,12 +1792,12 @@ namespace CodeFormatter.Handlers
                         if (disableWrapping)
                             continue;
 
-                        //					wrapMode=(j<lastNewLine) ? MXML_ATTR_WRAP_NONE : getWrapMode();
+                        //                  wrapMode=(j<lastNewLine) ? MXML_ATTR_WRAP_NONE : getWrapMode();
                         wrapMode = getWrapMode(); //set back to default until I determine otherwise
                         if (attr.mName.StartsWith("<Wrap="))
                         {
                             inGroup = true;
-                            String dataString = attr.mName.Substring("<Wrap=".Length, attr.mName.Length - 1);
+                            String dataString = attr.mName.Substring("<Wrap=".Length, (attr.mName.Length - 1) - ("<Wrap=".Length));
                             int commaPos = dataString.IndexOf(',');
                             String modeString = dataString;
                             if (commaPos > 0)
@@ -1889,7 +1889,7 @@ namespace CodeFormatter.Handlers
 
                         if (justWrapped) //don't add another carriage return if one was added via wrapping
                         {
-                            //						wrappedLastIteration=false;
+                            //                      wrappedLastIteration=false;
                             continue;
                         }
 
@@ -1899,7 +1899,7 @@ namespace CodeFormatter.Handlers
                         continue;
                     }
 
-                    //				wrappedLastIteration=false;
+                    //              wrappedLastIteration=false;
 
                     if (buffer.Length > 0 && !ASFormatter.isOnlyWhitespaceOnLastLine(buffer))
                     {
@@ -1974,7 +1974,7 @@ namespace CodeFormatter.Handlers
             if (wrapMode == MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT)
                 wrapMode = getWrapMode();
             Attr wrapAttr = new Attr();
-            //	wrapAttr.mName="<Wrap="+wrapMode+">";
+            //  wrapAttr.mName="<Wrap="+wrapMode+">";
             wrapAttr.mName = "<Wrap=" + wrapMode;
             if (group.getWrapMode() == MXMLPrettyPrinter.MXML_ATTR_WRAP_COUNT_PER_LINE)
             {
@@ -1990,24 +1990,24 @@ namespace CodeFormatter.Handlers
             newAttrOrder.InsertRange(insertLocation >= 0 ? insertLocation : newAttrOrder.Count, newItems);
         }
 
-        //	private void findOtherAttrs(List<Attr> codeAttrs, Map<String, Set<String>> hashedGroupAttrs, Collection<String> outputAttrs) 
-        //	{
-        //		mainLoop: for (Attr attr : codeAttrs) {
-        //			for (String groupName : hashedGroupAttrs.keySet()) {
-        //				AttrGroup group=mAttrGroups.get(groupName);
-        //				if (group==null)
-        //					continue;
-        //				for (String groupAttrSpec : group.getAttrs()) {
-        //					bool isRegex=AttrGroup.isRegexString(groupAttrSpec);
-        //					if (matchesSpec(attr.mName, groupAttrSpec, isRegex, group.isIncludeStates()))
-        //					{
-        //						outputAttrs.add(attr.mName);
-        //						continue mainLoop;
-        //					}
-        //				}
-        //			}
-        //		}
-        //	}
+        //  private void findOtherAttrs(List<Attr> codeAttrs, Map<String, Set<String>> hashedGroupAttrs, Collection<String> outputAttrs) 
+        //  {
+        //      mainLoop: for (Attr attr : codeAttrs) {
+        //          for (String groupName : hashedGroupAttrs.keySet()) {
+        //              AttrGroup group=mAttrGroups.get(groupName);
+        //              if (group==null)
+        //                  continue;
+        //              for (String groupAttrSpec : group.getAttrs()) {
+        //                  bool isRegex=AttrGroup.isRegexString(groupAttrSpec);
+        //                  if (matchesSpec(attr.mName, groupAttrSpec, isRegex, group.isIncludeStates()))
+        //                  {
+        //                      outputAttrs.add(attr.mName);
+        //                      continue mainLoop;
+        //                  }
+        //              }
+        //          }
+        //      }
+        //  }
 
         private void fixupBindingExpressions(Attr a)
         {
@@ -2052,7 +2052,7 @@ namespace CodeFormatter.Handlers
                     //only if we found an end pos do we need to do anything
                     if (endPos >= 0)
                     {
-                        String data = a.mValue.Substring(i + 1, endPos);
+                        String data = a.mValue.Substring(i + 1, endPos - (i + 1));
                         data = AntlrUtilities.asTrim(data);
 
                         //format data string here to handle internal spacing
@@ -2368,7 +2368,7 @@ namespace CodeFormatter.Handlers
         public static String isGroupAttr(String attr)
         {
             if (attr.Length >= 2 && attr.StartsWith(Attr_Group_Marker) && attr.EndsWith(Attr_Group_Marker))
-                return attr.Substring(1, attr.Length - 1);
+                return attr.Substring(1, (attr.Length - 1) - 1);
             return null;
         }
 

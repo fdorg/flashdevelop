@@ -21,7 +21,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static String GetNewDocumentName(String extension)
         {
-            if (extension == null || extension.Trim() == String.Empty)
+            if (String.IsNullOrEmpty(extension))
             {
                 String setting = PluginBase.MainForm.Settings.DefaultFileExtension;
                 if (setting.Trim() != String.Empty) extension = setting;

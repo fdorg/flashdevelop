@@ -15,48 +15,48 @@ using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-	public class FRInDocDialog : Form
+    public class FRInDocDialog : Form
     {
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Label findLabel;
         private System.Windows.Forms.Label lookLabel;
         private System.Windows.Forms.Label replaceLabel;
         private System.Windows.Forms.CheckBox useRegexCheckBox;
-		private System.Windows.Forms.CheckBox escapedCheckBox;
+        private System.Windows.Forms.CheckBox escapedCheckBox;
         private System.Windows.Forms.CheckBox matchCaseCheckBox;
         private System.Windows.Forms.CheckBox wholeWordCheckBox;
         private System.Windows.Forms.GroupBox optionsGroupBox;
         private System.Windows.Forms.PictureBox infoPictureBox;
         private System.Windows.Forms.ComboBox replaceComboBox;
         private System.Windows.Forms.ComboBox lookComboBox;
-		private System.Windows.Forms.ComboBox findComboBox;
+        private System.Windows.Forms.ComboBox findComboBox;
         private System.Windows.Forms.Button replaceAllButton;
         private System.Windows.Forms.Button bookmarkAllButton;
         private System.Windows.Forms.Button findPrevButton;
-		private System.Windows.Forms.Button findNextButton;
+        private System.Windows.Forms.Button findNextButton;
         private System.Windows.Forms.Button replaceButton;
         private System.Windows.Forms.Button closeButton;
         private System.Boolean lookupIsDirty = false;
         private SearchMatch currentMatch = null;
 
         public FRInDocDialog()
-		{
+        {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
             this.InitializeComponent();
             this.InitializeProperties();
             this.ApplyLocalizedTexts();
             ScaleHelper.AdjustForHighDPI(this);
-		}
-		
-		#region Windows Forms Designer Generated Code
+        }
+        
+        #region Windows Forms Designer Generated Code
 
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() 
+        /// <summary>
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent() 
         {
             this.replaceButton = new System.Windows.Forms.Button();
             this.findNextButton = new System.Windows.Forms.Button();
@@ -324,11 +324,11 @@ namespace FlashDevelop.Dialogs
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
-		
-		#endregion
-		
-		#region Methods And Event Handlers
+        }
+        
+        #endregion
+        
+        #region Methods And Event Handlers
         
         /// <summary>
         /// Inits the default properties
@@ -403,25 +403,25 @@ namespace FlashDevelop.Dialogs
             Globals.MainForm.SetFindText(this, this.findComboBox.Text);
         }
 
-		/// <summary>
-		/// If there is a word selected, insert it to the find box
-		/// </summary>
+        /// <summary>
+        /// If there is a word selected, insert it to the find box
+        /// </summary>
         private void UpdateFindText()
-		{
-			ScintillaControl sci = Globals.SciControl;
+        {
+            ScintillaControl sci = Globals.SciControl;
             if (this.useRegexCheckBox.Checked) return;
-			if (sci != null && sci.SelText.Length > 0 && !this.lookupIsDirty)
-			{
+            if (sci != null && sci.SelText.Length > 0 && !this.lookupIsDirty)
+            {
                 this.findComboBox.Text = sci.SelText;
                 this.lookupIsDirty = false;
-			}
-		}
-		
-		/// <summary>
-		/// Finds the next result based on direction
-		/// </summary>
-		public void FindNext(Boolean forward, Boolean update, Boolean simple)
-		{
+            }
+        }
+        
+        /// <summary>
+        /// Finds the next result based on direction
+        /// </summary>
+        public void FindNext(Boolean forward, Boolean update, Boolean simple)
+        {
             this.currentMatch = null;
             if (update) this.UpdateFindText();
             if (Globals.SciControl == null) return;
@@ -454,7 +454,7 @@ namespace FlashDevelop.Dialogs
                 }
             }
             this.SelectText();
-		}
+        }
         public void FindNext(Boolean forward, Boolean update)
         {
             this.FindNext(forward, update, false);
@@ -464,21 +464,21 @@ namespace FlashDevelop.Dialogs
             this.FindNext(forward, true);
         }
 
-		/// <summary>
-		/// Finds the next result specified by user input
-		/// </summary>
+        /// <summary>
+        /// Finds the next result specified by user input
+        /// </summary>
         private void FindNextButtonClick(Object sender, System.EventArgs e)
         {
             this.FindNext(true, false);
-		}
-		
-		/// <summary>
-		/// Finds the previous result specified by user input
-		/// </summary>
+        }
+        
+        /// <summary>
+        /// Finds the previous result specified by user input
+        /// </summary>
         private void FindPrevButtonClick(Object sender, System.EventArgs e)
-		{
+        {
             this.FindNext(false, false);
-		}
+        }
 
         /// <summary>
         /// Bookmarks all results
@@ -724,8 +724,8 @@ namespace FlashDevelop.Dialogs
             this.UpdateFindText();
         }
 
-		#endregion
-		
-	}
-	
+        #endregion
+        
+    }
+    
 }

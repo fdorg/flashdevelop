@@ -326,7 +326,7 @@ namespace ASCompletion
                         int line = theClass.LineFrom;
                         ScintillaNet.ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
                         if (sci != null && !theClass.IsVoid() && line > 0 && line < sci.LineCount)
-                            sci.GotoLine(line);
+                            sci.GotoLineIndent(line);
                     }
                 }
             }
@@ -345,7 +345,7 @@ namespace ASCompletion
                     int line = member.LineFrom;
                     ScintillaNet.ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
                     if (sci != null && line > 0 && line < sci.LineCount)
-                        sci.GotoLine(line);
+                        sci.GotoLineIndent(line);
                 }
             }
         }
@@ -606,6 +606,8 @@ namespace ASCompletion
             }
             else
             {
+                folderBrowserDialog.ShowNewFolderButton = true;
+                folderBrowserDialog.UseDescriptionForTitle = true;
                 folderBrowserDialog.Description = TextHelper.GetString("Title.SelectIntrinsicTargetFolder");
                 if (PluginBase.CurrentProject != null)
                     folderBrowserDialog.SelectedPath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);

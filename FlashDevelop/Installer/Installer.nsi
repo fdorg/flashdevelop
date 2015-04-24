@@ -14,7 +14,7 @@
 ; Installer details
 VIAddVersionKey "CompanyName" "FlashDevelop.org"
 VIAddVersionKey "ProductName" "FlashDevelop Installer"
-VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2014"
+VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2015"
 VIAddVersionKey "FileDescription" "FlashDevelop Installer"
 VIAddVersionKey "ProductVersion" "${VERSION}.0"
 VIAddVersionKey "FileVersion" "${VERSION}.0"
@@ -95,6 +95,17 @@ InstType "un.Full"
 
 ; Functions
 
+Function GetIsWine
+	
+	Push $0
+	ClearErrors
+	EnumRegKey $0 HKLM "SOFTWARE\Wine" 0
+	IfErrors 0 +2
+	StrCpy $0 "not_found"
+	Exch $0
+	
+FunctionEnd
+
 Function GetDotNETVersion
 	
 	Push $0
@@ -174,16 +185,10 @@ Function GetNeedsReset
 	Call GetFDVersion
 	Pop $1
 	Push $2
-	${VersionCompare} $1 "4.0.0" $3
+	${VersionCompare} $1 "5.0.0" $3
 	${If} $1 == "not_found"
 	StrCpy $2 "do_reset"
 	${ElseIf} $3 == 2
-	StrCpy $2 "do_reset"
-	${ElseIf} $1 == "4.0.0-Beta"
-	StrCpy $2 "do_reset"
-	${ElseIf} $1 == "4.0.0-Beta2"
-	StrCpy $2 "do_reset"
-	${ElseIf} $1 == "4.0.0-Beta3"
 	StrCpy $2 "do_reset"
 	${Else}
 	StrCpy $2 "is_ok"
@@ -236,6 +241,16 @@ Section "FlashDevelop" Main
 
 	; Remove PluginCore from plugins...
 	Delete "$INSTDIR\Plugins\PluginCore.dll"
+	
+	; Patch CrossOver/Wine files
+	SetOverwrite on
+	SetOutPath "$INSTDIR"
+	Call GetIsWine
+	Pop $0
+	${If} $0 != "not_found"
+	SetOutPath "$INSTDIR"
+	File /r /x .svn /x .empty /x *.db "CrossOver\*.*"
+	${EndIf}
 	
 	; Write update flag file...
 	Call NotifyInstall

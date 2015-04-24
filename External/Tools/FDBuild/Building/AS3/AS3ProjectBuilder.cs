@@ -31,7 +31,7 @@ namespace ProjectManager.Building.AS3
             : base(project, compilerPath)
         {
             this.project = project;
-			
+            
             DetectFlexSdk(compilerPath);
 
             bool mxmlcExists = File.Exists(mxmlcPath);
@@ -62,7 +62,7 @@ namespace ProjectManager.Building.AS3
         {
             flexsdkPath = ResolveFlexSdk(flexsdkPath);
             if (Path.GetFileName(flexsdkPath) == "bin")
-				flexsdkPath = Path.GetDirectoryName(flexsdkPath);
+                flexsdkPath = Path.GetDirectoryName(flexsdkPath);
 
             sdkPath = flexsdkPath;
             string libPath = Path.Combine(flexsdkPath, "lib");

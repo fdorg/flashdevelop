@@ -358,7 +358,8 @@ namespace CodeRefactor.Commands
                 oldType = oldType.Trim('.');
                 MessageBar.Locked = true;
                 string newFilePath = currentTarget.NewFilePath;
-                ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath);
+                var doc = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath);
+                ScintillaControl sci = doc.SciControl;
                 List<SearchMatch> matches = search.Matches(sci.Text);
                 string packageReplacement = "package";
                 if (currentTarget.NewPackage != "")
@@ -383,14 +384,16 @@ namespace CodeRefactor.Commands
                 }
                 //Do we want to open modified files?
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(file);
-                PluginBase.MainForm.CurrentDocument.Save();
+                doc.Save();
                 MessageBar.Locked = false;
                 UserInterfaceManager.ProgressDialog.Show();
                 UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
                 currentTargetResult = RefactoringHelper.GetRefactorTargetFromFile(oldFileModel.FileName, AssociatedDocumentHelper);
                 if (currentTargetResult != null)
-                    RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true);
+                {
+                    RefactoringHelper.FindTargetInFiles(currentTargetResult, UserInterfaceManager.ProgressDialog.UpdateProgress, FindFinished, true, true, true);
+                }
                 else
                 {
                     currentTargetIndex++;
@@ -505,6 +508,7 @@ namespace CodeRefactor.Commands
                     entry.Key == currentTarget.NewFilePath) continue;
                 string file = entry.Key;
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + file + "\"");
+                ITabbedDocument doc;
                 ScintillaControl sci;
                 var actualMatches = new List<SearchMatch>();
                 foreach (SearchMatch match in entry.Value)
@@ -512,14 +516,15 @@ namespace CodeRefactor.Commands
                     // we have to open/reopen the entry's file
                     // there are issues with evaluating the declaration targets with non-open, non-current files
                     // we have to do it each time as the process of checking the declaration source can change the currently open file!
-                    sci = AssociatedDocumentHelper.LoadDocument(file);
+                    sci = AssociatedDocumentHelper.LoadDocument(file).SciControl;
                     // if the search result does point to the member source, store it
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, currentTargetResult, this.AssociatedDocumentHelper))
                         actualMatches.Add(match);
                 }
                 if (actualMatches.Count == 0) continue;
                 int currLine = -1;
-                sci = AssociatedDocumentHelper.LoadDocument(file);
+                doc = AssociatedDocumentHelper.LoadDocument(file);
+                sci = doc.SciControl;
                 string directory = Path.GetDirectoryName(file);
                 // Let's check if we need to add the import. Check the considerations at the start of the file
                 // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
@@ -577,7 +582,7 @@ namespace CodeRefactor.Commands
                 Results[file].AddRange(actualMatches);
                 //Do we want to open modified files?
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(file);
-                PluginBase.MainForm.CurrentDocument.Save();
+                doc.Save();
             }
 
             currentTargetIndex++;

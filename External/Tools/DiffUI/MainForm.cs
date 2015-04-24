@@ -21,9 +21,9 @@ namespace DiffUI
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.ListView sourceListView;
         private System.Windows.Forms.ListView destinationListView;
-		private System.Windows.Forms.ColumnHeader sourceLineHeader;
-		private System.Windows.Forms.ColumnHeader sourceTextHeader;
-		private System.Windows.Forms.ColumnHeader destinationLineHeader;
+        private System.Windows.Forms.ColumnHeader sourceLineHeader;
+        private System.Windows.Forms.ColumnHeader sourceTextHeader;
+        private System.Windows.Forms.ColumnHeader destinationLineHeader;
         private System.Windows.Forms.ColumnHeader destinationTextHeader;
         private System.Windows.Forms.SplitContainer viewSplitContainer;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
@@ -41,14 +41,14 @@ namespace DiffUI
             this.InitializeComponent();
         }
 
-		#region Windows Form Designer Generated Code
+        #region Windows Form Designer Generated Code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.sourceListView = new System.Windows.Forms.ListView();
             this.sourceLineHeader = new System.Windows.Forms.ColumnHeader();
             this.sourceTextHeader = new System.Windows.Forms.ColumnHeader();
@@ -293,9 +293,9 @@ namespace DiffUI
             this.controlPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
-		}
+        }
 
-		#endregion
+        #endregion
 
         #region Methods And Event Handlers
 
@@ -375,27 +375,27 @@ namespace DiffUI
         /// Changes the selected index of the other list view.
         /// </summary>
         private void SourceSelectedIndexChanged(Object sender, System.EventArgs e)
-		{
-			if (this.sourceListView.SelectedItems.Count > 0)
-			{
+        {
+            if (this.sourceListView.SelectedItems.Count > 0)
+            {
                 ListViewItem lvi = this.destinationListView.Items[this.sourceListView.SelectedItems[0].Index];
                 lvi.Selected = true;
-				lvi.EnsureVisible();
-			}
-		}
+                lvi.EnsureVisible();
+            }
+        }
 
         /// <summary>
         ///  Changes the selected index of the other list view.
         /// </summary>
         private void DestinationSelectedIndexChanged(Object sender, System.EventArgs e)
-		{
+        {
             if (this.destinationListView.SelectedItems.Count > 0)
-			{
+            {
                 ListViewItem lvi = this.sourceListView.Items[this.destinationListView.SelectedItems[0].Index];
-				lvi.Selected = true;
-				lvi.EnsureVisible();
-			}
-		}
+                lvi.Selected = true;
+                lvi.EnsureVisible();
+            }
+        }
 
         /// <summary>
         /// Selects the source file.

@@ -206,7 +206,8 @@ namespace SourceControl.Managers
             Int32 curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
             using (Graphics destination = Graphics.FromImage(composed))
             {
-                destination.DrawImage(iconSkin, new Rectangle(0, 0, composed.Width, composed.Height),
+                destination.DrawImage(iconSkin, 
+                    new Rectangle(0, 0, composed.Width, composed.Height), 
                     new Rectangle((int)status * curSize, 0, curSize, curSize), GraphicsUnit.Pixel);
             }
             int index = tree.ImageList.Images.Count;

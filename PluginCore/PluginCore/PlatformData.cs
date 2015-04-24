@@ -20,9 +20,9 @@ namespace PluginCore
 
         public static string ResolveFlashPlayerVersion(string lang, string platformName, string version)
         {
-            if (!SupportedLanguages.ContainsKey(lang)) return "14.0";
+            if (!SupportedLanguages.ContainsKey(lang)) return "17.0";
             var platforms = SupportedLanguages[lang.ToLower()].Platforms;
-            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM)) return "14.0";
+            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM)) return "17.0";
             var flashPlatform = platforms[FLASHPLAYER_PLATFORM];
             if (platforms.ContainsKey(platformName))
             {
@@ -40,9 +40,9 @@ namespace PluginCore
 
         public static string ResolveSwfVersion(string lang, string platformName, string version)
         {
-            if (!SupportedLanguages.ContainsKey(lang)) return "25";
+            if (!SupportedLanguages.ContainsKey(lang)) return "28";
             var platforms = SupportedLanguages[lang.ToLower()].Platforms;
-            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM) || !platforms.ContainsKey(platformName)) return "25";
+            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM) || !platforms.ContainsKey(platformName)) return "28";
             var platform = platforms[platformName];
             foreach (var platformVersion in platform.Versions)
                 if (platformVersion.Value == version)

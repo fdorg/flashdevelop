@@ -45,7 +45,11 @@ namespace FlashDebugger.Controls
         public void SetVariable(Variable variable)
         {
             DataTree.Nodes.Clear();
-            DataTree.AddNode(new VariableNode(variable));
+            DataTree.AddNode(new VariableNode(variable)
+                                 {
+                                     HideClassId = PluginMain.settingObject.HideClassIds,
+                                     HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
+                                 });
             DoResize();
         }
 
@@ -95,10 +99,10 @@ namespace FlashDebugger.Controls
             Win32.HitTest ht = DoHitTest(e.X, e.Y);
             if (Win32.ShouldUseWin32()) 
             { 
-			    Win32.ReleaseCapture();
-			    Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, (int)(screenPoint.Y << 16 | screenPoint.X));
+                Win32.ReleaseCapture();
+                Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, (int)(screenPoint.Y << 16 | screenPoint.X));
             }
-		}
+        }
 
         private Win32.HitTest DoHitTest(int X, int Y)
         {

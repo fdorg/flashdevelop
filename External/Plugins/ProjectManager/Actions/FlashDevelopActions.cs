@@ -12,25 +12,25 @@ using PluginCore.Localization;
 
 namespace ProjectManager.Actions
 {
-	public class FlashDevelopActions
-	{
+    public class FlashDevelopActions
+    {
         static private bool nameAsked;
         private IMainForm mainForm;
 
-		public FlashDevelopActions(IMainForm mainForm)
-		{
-			this.mainForm = mainForm;
-		}
-		
-		public Encoding GetDefaultEncoding()
-		{
+        public FlashDevelopActions(IMainForm mainForm)
+        {
+            this.mainForm = mainForm;
+        }
+        
+        public Encoding GetDefaultEncoding()
+        {
             return Encoding.GetEncoding((Int32)mainForm.Settings.DefaultCodePage);
-		}
+        }
 
-		public string GetDefaultEOLMarker()
-		{
+        public string GetDefaultEOLMarker()
+        {
             return LineEndDetector.GetNewLineMarker((Int32)mainForm.Settings.EOLMode);
-		}
+        }
 
         public static void CheckAuthorName()
         {

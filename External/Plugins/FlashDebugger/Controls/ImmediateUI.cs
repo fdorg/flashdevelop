@@ -30,16 +30,24 @@ namespace FlashDebugger.Controls
                 this.historyPos--;
                 this.textBox.Select(this.textBox.Text.Length, 0);
                 this.textBox.Text = this.textBox.Text.Substring(0, this.textBox.GetFirstCharIndexOfCurrentLine()) + this.history[this.historyPos];
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.ScrollToCaret();
+                try
+                {
+                    this.textBox.Select(this.textBox.TextLength, 0);
+                    this.textBox.ScrollToCaret();
+                }
+                catch { /* WineMod: not supported */ }
             }
             if (e.KeyCode == Keys.Down && this.historyPos + 1 < this.history.Count)
             {
                 this.historyPos++;
                 this.textBox.Select(this.textBox.Text.Length, 0);
                 this.textBox.Text = this.textBox.Text.Substring(0, this.textBox.GetFirstCharIndexOfCurrentLine()) + this.history[this.historyPos];
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.ScrollToCaret();
+                try
+                {
+                    this.textBox.Select(this.textBox.TextLength, 0);
+                    this.textBox.ScrollToCaret();
+                }
+                catch { /* WineMod: not supported */ }
             }
             if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down) e.SuppressKeyPress = true;
             if (e.KeyCode == Keys.Enter)
@@ -95,8 +103,12 @@ namespace FlashDebugger.Controls
                     this.textBox.AppendText(!string.IsNullOrEmpty(ex.Message) ? ex.GetType().FullName + ": " + ex.Message : ex.ToString());
                 }
                 if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.AppendText(Environment.NewLine);
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.ScrollToCaret();
+                try
+                {
+                    this.textBox.Select(this.textBox.TextLength, 0);
+                    this.textBox.ScrollToCaret();
+                }
+                catch { /* WineMod: not supported */ }
             }
         }
 

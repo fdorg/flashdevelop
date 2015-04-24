@@ -38,10 +38,10 @@ namespace FlashDebugger
             get { return this.treeControl; }
         }
 
-		public void Clear()
-		{
-			treeControl.Nodes.Clear();
-		}
+        public void Clear()
+        {
+            treeControl.Nodes.Clear();
+        }
 
         public void SetData(Variable[] variables)
         {
@@ -50,14 +50,18 @@ namespace FlashDebugger
             {
                 foreach (Variable item in variables)
                 {
-					treeControl.AddNode(new VariableNode(item));
+                    treeControl.AddNode(new VariableNode(item)
+                                            {
+                                                HideClassId = PluginMain.settingObject.HideClassIds,
+                                                HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
+                                            });
                 }
             }
             finally
             {
                 treeControl.Tree.EndUpdate();
             }
-			treeControl.Enabled = true;
+            treeControl.Enabled = true;
         }
 
     }

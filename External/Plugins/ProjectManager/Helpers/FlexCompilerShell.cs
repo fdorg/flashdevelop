@@ -27,7 +27,7 @@ namespace ProjectManager.Helpers
         // error handling
         static Thread errorThread;
         static List<string> errorList;
-		static List<string> warningList;
+        static List<string> warningList;
         static volatile bool foundErrors;
 
         // incremental compilation
@@ -37,7 +37,7 @@ namespace ProjectManager.Helpers
         string Initialize( string jvmarg, string projectPath, string javaExe )
         {
             errorList = new List<string>();
-			warningList = new List<string>();
+            warningList = new List<string>();
 
             if (jvmarg == null)
             {
@@ -54,7 +54,7 @@ namespace ProjectManager.Helpers
             process.StartInfo.StandardOutputEncoding = Encoding.Default;
             process.StartInfo.StandardErrorEncoding = Encoding.Default;
             process.StartInfo.CreateNoWindow = true;
-			process.StartInfo.FileName = javaExe;
+            process.StartInfo.FileName = javaExe;
             process.StartInfo.Arguments = jvmarg;
             process.StartInfo.WorkingDirectory = workingDir;
 
@@ -187,10 +187,10 @@ namespace ProjectManager.Helpers
             {
                 string line = process.StandardError.ReadLine().TrimEnd();
                 lock (errorList)
-				lock (warningList)
+                lock (warningList)
                 {
-					if (line.Length > 0)
-					{
+                    if (line.Length > 0)
+                    {
                         if (skipWarning)
                         {
                             if (line.Contains("Warning") || line.Contains("Error")) skipWarning = false;
@@ -200,17 +200,17 @@ namespace ProjectManager.Helpers
                                 continue;
                             }
                         }
-						if (line.Contains("Warning:"))
-						{
-							warningList.Add(line);
+                        if (line.Contains("Warning:"))
+                        {
+                            warningList.Add(line);
                             if (reWarning.IsMatch(line)) skipWarning = true;
-						}
-						else
-						{
-							errorList.Add(line);
-							foundErrors = true;
-						}
-					}
+                        }
+                        else
+                        {
+                            errorList.Add(line);
+                            foundErrors = true;
+                        }
+                    }
                 }
             }
         }

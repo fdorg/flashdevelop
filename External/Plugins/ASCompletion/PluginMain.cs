@@ -23,13 +23,13 @@ using ASCompletion.Helpers;
 
 namespace ASCompletion
 {
-	public class PluginMain: IPlugin
-	{
-		private string pluginName = "ASCompletion";
-		private string pluginGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4e";
+    public class PluginMain: IPlugin
+    {
+        private string pluginName = "ASCompletion";
+        private string pluginGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4e";
         private string pluginAuth = "FlashDevelop Team";
-		private string pluginHelp = "www.flashdevelop.org/community/";
-		private string pluginDesc = "Code completion engine for FlashDevelop.";
+        private string pluginHelp = "www.flashdevelop.org/community/";
+        private string pluginDesc = "Code completion engine for FlashDevelop.";
 
         private string dataPath;
         private string settingsFile;
@@ -72,44 +72,44 @@ namespace ASCompletion
         }
 
         public string Name
-		{
-			get { return pluginName; }
-		}
+        {
+            get { return pluginName; }
+        }
 
-		public string Guid
-		{
-			get { return pluginGuid; }
-		}
+        public string Guid
+        {
+            get { return pluginGuid; }
+        }
 
-		public string Author
-		{
-			get { return pluginAuth; }
-		}
+        public string Author
+        {
+            get { return pluginAuth; }
+        }
 
-		public string Description
-		{
-			get { return pluginDesc; }
-		}
+        public string Description
+        {
+            get { return pluginDesc; }
+        }
 
-		public string Help
-		{
-			get { return pluginHelp; }
-		}
+        public string Help
+        {
+            get { return pluginHelp; }
+        }
 
         [Browsable(false)]
         public Object Settings
         {
             get { return settingObject; }
         }
-		#endregion
+        #endregion
 
-		#region Plugin Properties
+        #region Plugin Properties
 
-		[Browsable(false)]
-		public PluginUI Panel
-		{
-			get { return pluginUI; }
-		}
+        [Browsable(false)]
+        public PluginUI Panel
+        {
+            get { return pluginUI; }
+        }
 
         [Browsable(false)]
         public string DataPath
@@ -122,40 +122,40 @@ namespace ASCompletion
         #region Required Methods
 
         /**
-		* Initializes the plugin
-		*/
-		public void Initialize()
-		{
-			try
-			{
+        * Initializes the plugin
+        */
+        public void Initialize()
+        {
+            try
+            {
                 InitSettings();
                 CreatePanel();
                 CreateMenuItems();
                 AddEventHandlers();
                 ASContext.GlobalInit(this);
                 ModelsExplorer.CreatePanel();
-			}
-			catch(Exception ex)
-			{
-				ErrorManager.ShowError(/*"Failed to initialize the completion engine.\n"+ex.Message,*/ ex);
-			}
-		}
+            }
+            catch(Exception ex)
+            {
+                ErrorManager.ShowError(/*"Failed to initialize the completion engine.\n"+ex.Message,*/ ex);
+            }
+        }
 
         /**
-		* Disposes the plugin
-		*/
-		public void Dispose()
-		{
+        * Disposes the plugin
+        */
+        public void Dispose()
+        {
             timerPosition.Enabled = false;
             PathExplorer.StopBackgroundExploration();
             SaveSettings();
-		}
+        }
 
-		/**
-		* Handles the incoming events
-		*/
+        /**
+        * Handles the incoming events
+        */
         public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
-		{
+        {
             try
             {
                 // ignore all events when leaving
@@ -545,9 +545,9 @@ namespace ASCompletion
             {
                 ErrorManager.ShowError(ex);
             }
-		}
+        }
 
-		#endregion
+        #endregion
 
         #region Custom Properties
 
@@ -577,7 +577,7 @@ namespace ASCompletion
 
         #endregion
 
-		#region Initialization
+        #region Initialization
 
         private void InitSettings()
         {
@@ -795,65 +795,65 @@ namespace ASCompletion
         }
 
         /// <summary>
-		/// Opens the plugin panel again if closed
+        /// Opens the plugin panel again if closed
         /// </summary>
-		public void OpenPanel(object sender, System.EventArgs e)
-		{
-			pluginPanel.Show();
-		}
+        public void OpenPanel(object sender, System.EventArgs e)
+        {
+            pluginPanel.Show();
+        }
 
-		/// <summary>
-		/// Menu item command: Check ActionScript
-		/// </summary>
-		public void CheckSyntax(object sender, System.EventArgs e)
-		{
+        /// <summary>
+        /// Menu item command: Check ActionScript
+        /// </summary>
+        public void CheckSyntax(object sender, System.EventArgs e)
+        {
             if (!checking && !PluginBase.MainForm.SavingMultiple)
             {
                 checking = true;
                 ASContext.Context.CheckSyntax();
                 checking = false;
             }
-		}
+        }
 
-		/// <summary>
-		/// Menu item command: Quick Build
-		/// </summary>
-		public void QuickBuild(object sender, System.EventArgs e)
-		{
-			ASContext.Context.BuildCMD(false);
-		}
+        /// <summary>
+        /// Menu item command: Quick Build
+        /// </summary>
+        public void QuickBuild(object sender, System.EventArgs e)
+        {
+            ASContext.Context.BuildCMD(false);
+        }
 
-		/// <summary>
-		/// Menu item command: Convert To Intrinsic
-		/// </summary>
-		public void MakeIntrinsic(object sender, System.EventArgs e)
-		{
-			if (PluginBase.MainForm.CurrentDocument.IsEditable)
-				ASContext.Context.MakeIntrinsic(null);
-		}
+        /// <summary>
+        /// Menu item command: Convert To Intrinsic
+        /// </summary>
+        public void MakeIntrinsic(object sender, System.EventArgs e)
+        {
+            if (PluginBase.MainForm.CurrentDocument.IsEditable)
+                ASContext.Context.MakeIntrinsic(null);
+        }
 
-		/// <summary>
-		/// Menu item command: Goto Declaration
-		/// </summary>
-		public void GotoDeclaration(object sender, System.EventArgs e)
-		{
-			ASComplete.DeclarationLookup(ASContext.CurSciControl);
-		}
+        /// <summary>
+        /// Menu item command: Goto Declaration
+        /// </summary>
+        public void GotoDeclaration(object sender, System.EventArgs e)
+        {
+            ASComplete.DeclarationLookup(ASContext.CurSciControl);
+        }
 
-		/// <summary>
-		/// Menu item command: Back From Declaration
-		/// </summary>
-		public void BackDeclaration(object sender, System.EventArgs e)
-		{
-			pluginUI.RestoreLastLookupPosition();
-		}
+        /// <summary>
+        /// Menu item command: Back From Declaration
+        /// </summary>
+        public void BackDeclaration(object sender, System.EventArgs e)
+        {
+            pluginUI.RestoreLastLookupPosition();
+        }
 
-		/// <summary>
-		/// Sets the IsEnabled value of all the CommandBarItems
-		/// </summary>
-		/// <param name="enabled">Is the item enabled?</param>
-		private void SetItemsEnabled(bool enabled, bool canBuild)
-		{
+        /// <summary>
+        /// Sets the IsEnabled value of all the CommandBarItems
+        /// </summary>
+        /// <param name="enabled">Is the item enabled?</param>
+        private void SetItemsEnabled(bool enabled, bool canBuild)
+        {
             foreach (ToolStripItem item in menuItems) item.Enabled = enabled;
             quickBuildItem.Enabled = canBuild;
         }
@@ -863,37 +863,37 @@ namespace ASCompletion
         #region Event handlers
 
         /// <summary>
-		/// Display completion list or calltip info
-		/// </summary>
-		private void OnChar(ScintillaNet.ScintillaControl Sci, int Value)
-		{
-			if (Sci.Lexer == 3 || Sci.Lexer == 4)
-				ASComplete.OnChar(Sci, Value, true);
-		}
+        /// Display completion list or calltip info
+        /// </summary>
+        private void OnChar(ScintillaNet.ScintillaControl Sci, int Value)
+        {
+            if (Sci.Lexer == 3 || Sci.Lexer == 4)
+                ASComplete.OnChar(Sci, Value, true);
+        }
 
-		private void OnMouseHover(ScintillaNet.ScintillaControl sci, int position)
-		{
-			if (!ASContext.Context.IsFileValid)
-				return;
+        private void OnMouseHover(ScintillaNet.ScintillaControl sci, int position)
+        {
+            if (!ASContext.Context.IsFileValid)
+                return;
 
             lastHoverPosition = position;
 
-			// get word at mouse position
-			int style = sci.BaseStyleAt(position);
-			if (!ASComplete.IsTextStyle(style))
-				return;
-			position = sci.WordEndPosition(position, true);
-			ASResult result = ASComplete.GetExpressionType(sci, position);
+            // get word at mouse position
+            int style = sci.BaseStyleAt(position);
+            if (!ASComplete.IsTextStyle(style))
+                return;
+            position = sci.WordEndPosition(position, true);
+            ASResult result = ASComplete.GetExpressionType(sci, position);
 
-			// set tooltip
-			if (!result.IsNull())
-			{
-				string text = ASComplete.GetToolTipText(result);
-				if (text == null) return;
-				// show tooltip
-				UITools.Tip.ShowAtMouseLocation(text);
-			}
-		}
+            // set tooltip
+            if (!result.IsNull())
+            {
+                string text = ASComplete.GetToolTipText(result);
+                if (text == null) return;
+                // show tooltip
+                UITools.Tip.ShowAtMouseLocation(text);
+            }
+        }
 
         private void OnTextChanged(ScintillaNet.ScintillaControl sender, int position, int length, int linesAdded)
         {
@@ -901,8 +901,8 @@ namespace ASCompletion
             ASContext.OnTextChanged(sender, position, length, linesAdded);
         }
 
-		private void OnUpdateCallTip(ScintillaNet.ScintillaControl sci, int position)
-		{
+        private void OnUpdateCallTip(ScintillaNet.ScintillaControl sci, int position)
+        {
             if (ASComplete.HasCalltip())
                 ASComplete.HandleFunctionCompletion(sci, false, true);
         }

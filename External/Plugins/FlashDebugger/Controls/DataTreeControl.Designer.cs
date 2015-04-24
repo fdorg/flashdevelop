@@ -78,33 +78,33 @@ namespace FlashDebugger.Controls
             this._tree.Text = "treeViewAdv1";
             this._tree.UseColumns = true;
             // 
-			// NameTreeColumn
+            // NameTreeColumn
             // 
-			this.NameTreeColumn.Header = "Name";
-			this.NameTreeColumn.SortOrder = System.Windows.Forms.SortOrder.None;
-			this.NameTreeColumn.TooltipText = null;
-			this.NameTreeColumn.Width = 100;
+            this.NameTreeColumn.Header = "Name";
+            this.NameTreeColumn.SortOrder = System.Windows.Forms.SortOrder.None;
+            this.NameTreeColumn.TooltipText = null;
+            this.NameTreeColumn.Width = 100;
             // 
             // ValueTreeColumn
             // 
-			this.ValueTreeColumn.Header = "Value";
-			this.ValueTreeColumn.SortOrder = System.Windows.Forms.SortOrder.None;
-			this.ValueTreeColumn.TooltipText = null;
-			this.ValueTreeColumn.Width = 100;
+            this.ValueTreeColumn.Header = "Value";
+            this.ValueTreeColumn.SortOrder = System.Windows.Forms.SortOrder.None;
+            this.ValueTreeColumn.TooltipText = null;
+            this.ValueTreeColumn.Width = 100;
             // 
             // NameNodeTextBox
             // 
-			this.NameNodeTextBox.DataPropertyName = "Text";
-			this.NameNodeTextBox.IncrementalSearchEnabled = true;
-			this.NameNodeTextBox.LeftMargin = 3;
-			this.NameNodeTextBox.ParentColumn = this.NameTreeColumn;
+            this.NameNodeTextBox.DataPropertyName = "Text";
+            this.NameNodeTextBox.IncrementalSearchEnabled = true;
+            this.NameNodeTextBox.LeftMargin = 3;
+            this.NameNodeTextBox.ParentColumn = this.NameTreeColumn;
             // 
             // ValueNodeTextBox
             // 
-			this.ValueNodeTextBox.DataPropertyName = "Value";
-			this.ValueNodeTextBox.IncrementalSearchEnabled = true;
-			this.ValueNodeTextBox.LeftMargin = 3;
-			this.ValueNodeTextBox.ParentColumn = this.ValueTreeColumn;
+            this.ValueNodeTextBox.DataPropertyName = "Value";
+            this.ValueNodeTextBox.IncrementalSearchEnabled = true;
+            this.ValueNodeTextBox.LeftMargin = 3;
+            this.ValueNodeTextBox.ParentColumn = this.ValueTreeColumn;
             // 
             // DataTreeControl
             // 

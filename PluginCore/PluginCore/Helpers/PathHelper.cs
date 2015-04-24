@@ -378,6 +378,23 @@ namespace PluginCore.Helpers
         }
 
         /// <summary>
+        /// Finds an app from 32-bit or 64-bit program files directories
+        /// </summary>
+        public static String FindFromProgramFiles(String partialPath)
+        {
+            // This return always x86, FlashDevelop is x86
+            String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
+            String toolPath = Path.Combine(programFiles, partialPath);
+            if (File.Exists(toolPath)) return toolPath;
+            if (programFiles.Contains(" (x86)")) // Is the app in x64 program files?
+            {
+                toolPath = Path.Combine(programFiles.Replace(" (x86)", ""), partialPath);
+                if (File.Exists(toolPath)) return toolPath;
+            }
+            return String.Empty;
+        }
+
+        /// <summary>
         /// Gets the 32-bit Java install path
         /// </summary>
         public static String GetJavaInstallPath()

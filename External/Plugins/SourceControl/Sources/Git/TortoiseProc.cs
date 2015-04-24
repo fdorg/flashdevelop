@@ -29,7 +29,7 @@ namespace SourceControl.Sources.Git
         {
             string cmd = PluginMain.SCSettings.TortoiseGITProcPath;
             if (cmd != null && File.Exists(cmd)) return cmd;
-            if (String.IsNullOrEmpty(cmd)) cmd = "TortoiseProc.exe";
+            if (String.IsNullOrEmpty(cmd)) cmd = "TortoiseGitProc.exe";
             return ResolveTortoiseProcPath(cmd);
         }
 

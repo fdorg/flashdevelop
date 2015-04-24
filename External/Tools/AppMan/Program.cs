@@ -28,8 +28,12 @@ namespace AppMan
             }
             else if (Array.IndexOf(args, "-minimized") == -1)
             {
-                MessageBox.Show("AppMan is already running.");
+                if (Win32.IsRunningOnMono) MessageBox.Show("AppMan is already running.");
+                else Win32.PostMessage((IntPtr)Win32.HWND_BROADCAST, Win32.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
             }
         }
+
     }
+
 }
+

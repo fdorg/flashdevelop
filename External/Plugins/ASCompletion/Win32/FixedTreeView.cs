@@ -77,7 +77,7 @@ namespace System.Windows.Forms
                 string text = currentNode.Text;
                 if ((prev == text) && (px == e.X) && (py == e.Y))
                     return;
-				
+                
                 // text dimensions
                 int offset = 25 - Win32.Scrolling.GetScrollPos(this.Handle, Win32.Scrolling.SB_HORZ);
                 while (currentNode.Parent != null)
@@ -105,9 +105,11 @@ namespace System.Windows.Forms
 
         public FixedTreeView()
         {
-            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version.Major < 6)
+            {
                 SetStyle(ControlStyles.UserPaint, true);
+            }
+            else SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
         }
 
         protected override void OnHandleCreated(EventArgs e)

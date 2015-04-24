@@ -2336,6 +2336,14 @@ Never - the start page will not show based on startup.</value>
   <data name="FlashDevelop.Title.SaveFileDialog" xml:space="preserve">
     <value>Save File</value>
   </data>
+  <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
+    <value>Remember extension</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
+    <value>Always use this syntax for files with this extension?</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
   <data name="ProjectManager.Title.OpenProjectDialog" xml:space="preserve">
     <value>Open Project</value>
   </data>
@@ -2729,7 +2737,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Export Syntax Files</value>
   </data>
   <data name="FlashDevelop.Info.ZipExtractDone" xml:space="preserve">
-    <value>The zip file was extracted succesfully.</value>
+    <value>The zip file was extracted successfully.</value>
   </data>
   <data name="FlashDevelop.Info.CaretFore" xml:space="preserve">
     <value>Caret fore:</value>
@@ -3734,8 +3742,8 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Error line:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Locate Active Document</value>
-    <comment>Modified after 4.7.0</comment>
+    <value>Track Active Document</value>
+    <comment>Modified after 4.7.2</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>
@@ -3803,13 +3811,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Enable SVN integration with projects.</value>
   </data>
   <data name="SourceControl.Description.GITPath" xml:space="preserve">
-    <value>Path to GIT command line tool. Example: 'git' if the tool is already installed in the environment path.</value>
+    <value>Path to GIT command line tool. Example: 'git.exe' if the tool is already installed in the environment path.</value>
+    <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.SVNPath" xml:space="preserve">
     <value>PathPath to SVN command line tool. Example: 'svn.exe' if the tool is already installed in the environment path.</value>
+    <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.TortoiseGITProcPath" xml:space="preserve">
-    <value>Path to TortoiseGit's TortoiseProc tool. Example: 'TortoiseProc.exe'.</value>
+    <value>Path to TortoiseGit's TortoiseProc tool. Example: 'TortoiseGitProc.exe'.</value>
+    <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.TortoiseSVNProcPath" xml:space="preserve">
     <value>Path to TortoiseSVN's TortoiseProc tool. Example: 'TortoiseProc.exe'.</value>
@@ -4412,13 +4423,16 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="SourceControl.Description.EnableHG" xml:space="preserve">
-    <value>Enable Mercurial (Hg) integration in FlashDevelop</value>
+    <value>Enable Mercurial (HG) integration in FlashDevelop</value>
+    <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.HGPath" xml:space="preserve">
-    <value>Path to Mercurial command line tool. Example: 'hg' if the tool is already installed in the environment path.</value>
+    <value>Path to Mercurial command line tool. Example: 'hg.exe' if the tool is already installed in the environment path.</value>
+    <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.TortoiseHGProcPath" xml:space="preserve">
-    <value>Path to TortoiseHG's TortoiseProc tool. Example 'hgtk'.</value>
+    <value>Path to TortoiseHG's TortoiseProc tool. Example 'thgw.exe'.</value>
+    <comment>Modified after 4.7.1</comment>
   </data>
   <data name="FlashDevelop.Description.CustomShortcuts" xml:space="preserve">
     <value>List of user defined override shortcuts.</value>
@@ -5182,7 +5196,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
-    <value>The zip file was removed succesfully.</value>
+    <value>The zip file was removed successfully.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
@@ -5850,5 +5864,105 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   <data name="CodeFormatter.Description.MXML.UseTagsDoNotFormatInside" xml:space="preserve">
     <value>Use tags which do not format inside setting.</value>
     <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="FlashDevelop.Description.CheckForUpdates" xml:space="preserve">
+    <value>Sets how often FlashDevelop checks for updates.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.ConsistentEOLs" xml:space="preserve">
+    <value>Consistent EOLs</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.FormatCode" xml:space="preserve">
+    <value>Format Code</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.OpenFiles" xml:space="preserve">
+    <value>Open Files</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.ProjectSources" xml:space="preserve">
+    <value>Project Sources</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Label.BatchProcess" xml:space="preserve">
+    <value>Batch Process...</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Title.BatchProcessDialog" xml:space="preserve">
+    <value>Batch Process</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.HighlightMarkers" xml:space="preserve">
+    <value>List of markers that highlight the message with the specified log level color.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.Level" xml:space="preserve">
+    <value>The log level that the line should be colored to.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.Marker" xml:space="preserve">
+    <value>Highlight marker that marks the line to be colored.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="OutputPanel.Description.UseLegacyColoring" xml:space="preserve">
+    <value>Use legacy coloring state format parsed from the message ('2:message').</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
+  <data name="CodeRefactor.Description.DisableMoveRefactoring" xml:space="preserve">
+    <value>Disables the move refactoring of files and folders.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsDelay" xml:space="preserve">
+    <value>The delay in milliseconds after the word match highlight should be shown.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Category.DataTree" xml:space="preserve">
+    <value>Data Tree</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CombineInherited" xml:space="preserve">
+    <value>Display inherited members as direct descendants of the displayed object.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideStaticMembers" xml:space="preserve">
+    <value>Hide static members of the displayed object.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideFullClasspaths" xml:space="preserve">
+    <value>Show only the class name of the displayed objects.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.HideClassIds" xml:space="preserve">
+    <value>Hide the ID of the displayed objects.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CopyTreeMaxRecursion" xml:space="preserve">
+    <value>The maximum node depth to reach when copying an object tree to the clipboard.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Description.CopyTreeMaxSize" xml:space="preserve">
+    <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
+    <value>Copy Value</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
+    <value>Copy ID</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.Label.CopyTree" xml:space="preserve">
+    <value>Copy Tree</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
+    <value>[Recursion too deep, increase Copy Tree Max Level in FlashDebugger settings]</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
+    <value>[Object {0} already listed before]</value>
+    <comment>Added after 4.7.2</comment>
   </data>
 </root>

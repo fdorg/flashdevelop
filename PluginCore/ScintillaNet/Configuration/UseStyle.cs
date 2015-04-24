@@ -10,13 +10,13 @@ namespace ScintillaNet.Configuration
         [XmlAttributeAttribute("class")]
         public string cls;
 
-		[XmlAttributeAttribute()]
-		public int key;
+        [XmlAttributeAttribute()]
+        public int key;
 
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (cls != null && cls.Length > 0) inheritstyle = cls;
+            if (!string.IsNullOrEmpty(cls)) inheritstyle = cls;
         }
         
     }

@@ -130,11 +130,11 @@ namespace CodeRefactor.Provider
         /// If the document was not already previously opened, this will flag 
         /// it as a temporary file.
         /// </summary>
-        public ScintillaControl LoadDocument(String fileName)
+        public ITabbedDocument LoadDocument(String fileName)
         {
             ITabbedDocument newDocument = (ITabbedDocument)PluginBase.MainForm.OpenEditableDocument(fileName);
             this.RegisterLoadedDocument(newDocument);
-            return ASContext.CurSciControl;
+            return newDocument;
         }
 
         /// <summary>

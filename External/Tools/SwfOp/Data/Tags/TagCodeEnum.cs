@@ -1,40 +1,40 @@
 /*
-	swfOP is an open source library for manipulation and examination of
-	Macromedia Flash (SWF) ActionScript bytecode.
-	Copyright (C) 2004 Florian Krüsch.
-	see Licence.cs for LGPL full text!
+    swfOP is an open source library for manipulation and examination of
+    Macromedia Flash (SWF) ActionScript bytecode.
+    Copyright (C) 2004 Florian Krüsch.
+    see Licence.cs for LGPL full text!
 
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
 
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 namespace SwfOp.Data.Tags {
 
-	// action tags:
-	// 12: DoAction
-	// 26: PlaceObject2
-	// 39: DefineSprite
-	// 59: InitAction
+    // action tags:
+    // 12: DoAction
+    // 26: PlaceObject2
+    // 39: DefineSprite
+    // 59: InitAction
 
-	// button tags, not implemented
-	//  7: DefineButton
-	// 34: DefineButton2
+    // button tags, not implemented
+    //  7: DefineButton
+    // 34: DefineButton2
 
-	/// <summary>
-	/// enumeration of tag codes of tags containing bytecode
-	/// </summary>
-	public enum TagCodeEnum {
+    /// <summary>
+    /// enumeration of tag codes of tags containing bytecode
+    /// </summary>
+    public enum TagCodeEnum {
         End = 00,
         ShowFrame = 01,
         DefineShape = 02,
@@ -120,5 +120,5 @@ namespace SwfOp.Data.Tags {
         DefineSceneAndFrameData = 86,
         DefineBinaryData = 87,
         DefineFontName = 88
-	}
+    }
 }

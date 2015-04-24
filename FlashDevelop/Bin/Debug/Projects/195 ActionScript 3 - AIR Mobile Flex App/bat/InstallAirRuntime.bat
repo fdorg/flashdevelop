@@ -1,10 +1,13 @@
 @echo off
+
+:: Set working dir
+cd %~dp0 & cd ..
+
 set PAUSE_ERRORS=1
-call SetupSDK.bat
+call bat\SetupSDK.bat
 
 :: AIR runtime installer
 set AIR_INSTALLER=%FLEX_SDK%\runtimes\air\android\device\runtime.apk
-
 
 :: Install
 adb devices
@@ -20,7 +23,7 @@ goto end
 :failed
 echo Troubleshooting:
 echo - one, and only one, Android device should be connected
-echo - verify 'SetupSDK.bat'
+echo - verify 'bat\SetupSDK.bat'
 echo.
 goto end
 

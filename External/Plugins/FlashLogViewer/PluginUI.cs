@@ -16,7 +16,7 @@ using PluginCore;
 
 namespace FlashLogViewer
 {
-	public class PluginUI : DockPanelControl
+    public class PluginUI : DockPanelControl
     {
         private Form popupForm;
         private Boolean tracking;
@@ -41,26 +41,26 @@ namespace FlashLogViewer
         private Regex reError;
         private long lastPosition;
         
-		public PluginUI(PluginMain pluginMain)
-		{
+        public PluginUI(PluginMain pluginMain)
+        {
             this.Font = PluginBase.Settings.DefaultFont;
             this.pluginMain = pluginMain;
             this.InitializeSettings();
-			this.InitializeComponent();
+            this.InitializeComponent();
             this.InitializeContextMenu();
             this.InitializeGraphics();
             this.InitializeControls();
             this.UpdateMainRegexes();
-		}
+        }
 
-		#region Windows Forms Designer Generated Code
+        #region Windows Forms Designer Generated Code
 
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() 
+        /// <summary>
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent() 
         {
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.toggleButton = new System.Windows.Forms.ToolStripButton();
@@ -179,9 +179,9 @@ namespace FlashLogViewer
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-		#endregion
+        #endregion
 
         #region Methods And Event Handlers
         
@@ -398,7 +398,15 @@ namespace FlashLogViewer
                 lastPosition = s.BaseStream.Length;
                 s.Close();
             }
-            if (forceScroll) this.logTextBox.ScrollToCaret();
+            if (forceScroll)
+            {
+                try
+                {
+                    this.logTextBox.Select(this.logTextBox.TextLength, 0);
+                    this.logTextBox.ScrollToCaret();
+                }
+                catch { /* WineMod: not supported */ }
+            }
         }
 
         /// <summary>

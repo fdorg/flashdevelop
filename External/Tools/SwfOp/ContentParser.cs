@@ -129,7 +129,7 @@ namespace SwfOp
 
             Header = swf.Header;
 
-			// list tags
+            // list tags
             currentFrame = 0;
             DeclEntry frame = new DeclEntry("Frame 0");
             Frames.Add(frame);
