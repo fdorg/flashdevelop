@@ -3729,8 +3729,8 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Errore lerroa:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Dokumentu aktiboa kokatu</value>
-    <comment>Modified after 4.7.0</comment>
+    <value>Dokumentu aktiboa jarraitu</value>
+    <comment>Modified after 4.7.2</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Klase-dokumentua kokatu</value>
