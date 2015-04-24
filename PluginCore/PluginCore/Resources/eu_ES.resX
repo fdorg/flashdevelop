@@ -359,14 +359,6 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="DataEncoder.Info.CantSaveFile" xml:space="preserve">
     <value>Ezin izan da fitxategia gorde, xml-a ez delako balizkoa.</value>
   </data>
-  <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
-    <value>Luzapena gogoratu</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
-  <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
-    <value>Beti erabili nahi duzu sintaxi hau luzapen hau duten fitxategiekin?</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
   <data name="DataEncoder.Info.Description" xml:space="preserve">
     <value>Fitxategi datu espezifikoak eraldatzen ditu FlashDevelop-en egoki ikusteko.</value>
   </data>
@@ -2334,6 +2326,14 @@ Inoiz - abiatzean ez da hasiera orria erakutsiko.</value>
   </data>
   <data name="FlashDevelop.Title.SaveFileDialog" xml:space="preserve">
     <value>Fitxategia gorde</value>
+  </data>
+  <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
+    <value>Luzapena gogoratu</value>
+    <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
+    <value>Beti erabili nahi duzu sintaxi hau luzapen hau duten fitxategiekin?</value>
+    <comment>Added after 4.7.2</comment>
   </data>
   <data name="ProjectManager.Title.OpenProjectDialog" xml:space="preserve">
     <value>Proiektua ireki</value>
