@@ -204,7 +204,7 @@ namespace FlashDebugger.Controls
                 if (completionBackend.SetCompletionBackend(file, line.Substring(2, lineLength)))
                 {
                     if (keyData == (Keys.Control | Keys.Space))
-                        completionBackend.ShowAutoCompletioList();
+                        completionBackend.ShowAutoCompletionList();
                     else
                         completionBackend.ShowFunctionDetails();
 

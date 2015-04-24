@@ -618,7 +618,7 @@ namespace FlashDebugger
                 if (box != null && completionBackend != null)
                 {
                     if (keyData == (Keys.Control | Keys.Space))
-                        completionBackend.ShowAutoCompletioList();
+                        completionBackend.ShowAutoCompletionList();
                     else
                         completionBackend.ShowFunctionDetails();
 

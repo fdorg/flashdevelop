@@ -43,7 +43,7 @@ namespace HaXeContext
             AutoHide = autoHide;
             handler = completionHandler;
             Status = HaxeCompleteStatus.NONE;
-            FileName = PluginBase.MainForm.CurrentDocument.FileName;
+            FileName = sci.FileName;
         }
 
         /* EXECUTION */

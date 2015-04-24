@@ -80,12 +80,23 @@ namespace ASCompletion.Context
             get { return PluginBase.MainForm; }
         }
 
+        private static WeakReference curSciControl;
         static public ScintillaNet.ScintillaControl CurSciControl
         {
             get 
             {
+                if (curSciControl != null && curSciControl.IsAlive)
+                    return (ScintillaNet.ScintillaControl) curSciControl.Target;
+
                 ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
                 return doc != null ? doc.SciControl : null; 
+            }
+            internal set
+            {
+                // Used for ASCompletionBackend.
+                // Maybe another option would be to inherit HaxeContext and modify the DotContextResolved call. One question
+                // would be where to place ASCompletionBackend.
+                curSciControl = value != null ? new WeakReference(value) : null;
             }
         }
 
