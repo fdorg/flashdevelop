@@ -115,6 +115,12 @@ namespace PluginCore.Bridge
         void bridge_DataReceived(object sender, DataReceivedEventArgs e)
         {
             string fullPath = e.Text;
+            if (fullPath.StartsWith("BRIDGE:"))
+            {
+                // Lets expose bridge location...
+                Environment.SetEnvironmentVariable("BRIDGE", fullPath.Replace("BRIDGE:", ""));
+                return;
+            }
             if (!fullPath.EndsWith("\\")) fullPath += '\\';
             if (fullPath.Length < 3) return;
             string folder = Path.GetDirectoryName(fullPath);
