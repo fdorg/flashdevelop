@@ -16,6 +16,7 @@ BridgeThread::BridgeThread(int descriptor, QObject *parent) : QObject(parent)
     }
     connect(client, SIGNAL(disconnected()), this, SLOT(client_disconnected()));
     connect(client, SIGNAL(readyRead()), this, SLOT(client_readyRead()));
+    connect(client, SIGNAL(connected()), this, SLOT(client_connected()));
     timer.setSingleShot(true);
     connect(&timer, SIGNAL(timeout()), this, SLOT(timer_elapsed()));
 }
@@ -26,6 +27,15 @@ BridgeThread::~BridgeThread()
     disconnect(client, SIGNAL(disconnected()), this, SLOT(client_disconnected()));
     disconnect(client, SIGNAL(readyRead()), this, SLOT(client_readyRead()));
     delete client;
+}
+
+void BridgeThread::client_connected()
+{
+    qDebug() << "Notify FDEXE.sh path...";
+    QString path = QCoreApplication::applicationDirPath();
+    client->write(path.toUtf8());
+    client->write(EOL);
+    client->flush();
 }
 
 void BridgeThread::timer_elapsed()
