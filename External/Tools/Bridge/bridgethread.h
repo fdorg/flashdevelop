@@ -53,6 +53,7 @@ public:
     BridgeThread(int descriptor, QObject *parent);
     ~BridgeThread();
     BridgeHandler *handler;
+    static bool pathNotified;
 
 signals:
     void disconnected();
@@ -62,7 +63,6 @@ public slots:
     void sendMessage(QString message);
 
 private slots:
-    void client_connected();
     void client_disconnected();
     void client_readyRead();
     void timer_elapsed();
