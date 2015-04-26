@@ -69,6 +69,9 @@
     <Optimize>true</Optimize>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Aga, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -234,7 +237,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 und x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -266,5 +269,13 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>"$(SolutionDir)\SetVersion.bat" "$(SolutionDir)"</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PreBuildEvent>"$(SolutionDir)\SetVersion.bat" "$(SolutionDir)" &amp;&amp; ^
+IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)x86$(TargetExt)"</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PostBuildEvent>IF EXIST "$(TargetPath)" move /Y "$(TargetPath)" "$(TargetDir)$(TargetName)x64$(TargetExt)"&amp;&amp; ^
+IF EXIST "$(TargetDir)$(TargetName)x86$(TargetExt)" move /Y "$(TargetDir)$(TargetName)x86$(TargetExt)" "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
