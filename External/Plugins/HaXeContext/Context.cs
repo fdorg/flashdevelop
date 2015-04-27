@@ -177,13 +177,22 @@ namespace HaXeContext
                 p.WaitForExit();
 
                 List<string> paths = new List<string>();
-                string path = "";
+                string line = "";
                 do { 
-                    path = p.StandardOutput.ReadLine();
-                    if (path != null && path.Length > 0 && !path.StartsWith("-") && Directory.Exists(path))
+                    line = p.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line)) continue;
+                    if (line.IndexOf("not installed") > 0)
                     {
-                        path = NormalizePath(path).TrimEnd(Path.DirectorySeparatorChar);
-                        paths.Add(path);
+                        TraceManager.Add(line, 3);
+                    }
+                    else if (!line.StartsWith("-"))
+                    {
+                        try
+                        {
+                            if (Directory.Exists(line))
+                                paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
+                        }
+                        catch (Exception) { }
                     }
                 }
                 while (!p.StandardOutput.EndOfStream);
