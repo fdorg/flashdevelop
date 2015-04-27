@@ -29,7 +29,7 @@ echo (hint: edit 'bat\RunApp.bat' to test on device or change screen size)
 echo.
 
 :: Native exec tool
-set FDEXE=%BRIDGE%/FDEXE.sh
+set FDEXE=%FDBRIDGE%/FDEXE.sh
 
 if [%1] == [unix_adl] (
 	echo Running Mac/Linux ADL...

@@ -12,7 +12,7 @@ echo Starting AIR Debug Launcher...
 echo.
 
 :: Native exec tool
-set FDEXE=%BRIDGE%/FDEXE.sh
+set FDEXE=%FDBRIDGE%/FDEXE.sh
 
 :: Run webserver if needed, and wait the server to start and prefix out file
 if [%USE_SERVER%] == [true] (

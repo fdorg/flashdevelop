@@ -118,7 +118,7 @@ namespace PluginCore.Bridge
             if (fullPath.StartsWith("BRIDGE:"))
             {
                 // Lets expose bridge location...
-                Environment.SetEnvironmentVariable("BRIDGE", fullPath.Replace("BRIDGE:", ""));
+                Environment.SetEnvironmentVariable("FDBRIDGE", fullPath.Replace("BRIDGE:", ""));
                 return;
             }
             if (!fullPath.EndsWith("\\")) fullPath += '\\';
