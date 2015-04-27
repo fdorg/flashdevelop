@@ -405,11 +405,6 @@ namespace ProjectManager.Projects.Haxe
             {
                 var platform = MovieOptions.PlatformSupport;
                 MovieOptions.TargetBuildTypes = platform.Targets;
-                if (platform.LastVersion.Commands != null)
-                {
-                    OutputType = Projects.OutputType.CustomBuild;
-                    TestMovieBehavior = TestMovieBehavior.Custom;
-                }
             }
             else MovieOptions.TargetBuildTypes = null;
 

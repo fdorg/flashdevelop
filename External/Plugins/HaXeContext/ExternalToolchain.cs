@@ -190,7 +190,7 @@ namespace HaXeContext
             if (project is HaxeProject)
             {
                 hxproj = project as HaxeProject;
-                hxproj.ProjectUpdating += new ProjectUpdatingHandler(hxproj_ProjectUpdating);
+                hxproj.ProjectUpdating += hxproj_ProjectUpdating;
                 hxproj_ProjectUpdating(hxproj);
             }
         }
@@ -306,18 +306,22 @@ namespace HaXeContext
                     var msg = String.Format("No external 'build' command found for platform '{0}'", hxproj.MovieOptions.Platform);
                     TraceManager.Add(msg, -3);
                 }
-                else
+                else if (string.IsNullOrEmpty(hxproj.PreBuildEvent))
                 {
                     if (toolchain == "haxelib") hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" " + args;
                     else if (toolchain == "cmd") hxproj.PreBuildEvent = "cmd " + args;
                     else hxproj.PreBuildEvent = "\"" + exe + "\" " + args;
                 }
 
-                hxproj.OutputType = OutputType.CustomBuild;
-                if (hxproj.TestMovieBehavior == TestMovieBehavior.Default)
+                var run = GetCommand(hxproj, "run");
+                if (run != null)
                 {
-                    hxproj.TestMovieBehavior = TestMovieBehavior.Custom;
-                    hxproj.TestMovieCommand = "";
+                    hxproj.OutputType = OutputType.CustomBuild;
+                    if (hxproj.TestMovieBehavior == TestMovieBehavior.Default)
+                    {
+                        hxproj.TestMovieBehavior = TestMovieBehavior.Custom;
+                        hxproj.TestMovieCommand = "";
+                    }
                 }
                 hxproj.Save();
             }
