@@ -2,7 +2,6 @@
 $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-
 class $(EntryPoint) $(CSLB){
 	
 }
