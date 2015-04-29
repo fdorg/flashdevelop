@@ -143,12 +143,11 @@ namespace ProjectManager.Actions
             project.OutputPath = project.FixDebugReleasePath(project.OutputPath);
             project.TraceEnabled = trace;
 
-            project.TestMovieBehavior = TestMovieBehavior.Custom;
-            project.TestMovieCommand = "Run.bat";
-
             string path = Path.GetDirectoryName(project.ProjectPath);
-            char s = Path.DirectorySeparatorChar;
-            string descriptor = "src" + s + Path.GetFileNameWithoutExtension(project.OutputPath) + "-app.xml";
+            string descriptor = "src\\" + Path.GetFileNameWithoutExtension(project.OutputPath) + "-app.xml";
+
+            project.TestMovieBehavior = TestMovieBehavior.Custom;
+            project.TestMovieCommand = "bat\\RunApp.bat";
 
             if (!File.Exists(Path.Combine(path, descriptor)))
             {
@@ -208,7 +207,7 @@ namespace ProjectManager.Actions
             }
 
             // We configure the batch files
-            var configurator = new AirConfigurator { ApplicationSetupBatch = Path.Combine(path, "bat" + s + "SetupApp.bat") };
+            var configurator = new AirConfigurator { ApplicationSetupBatch = Path.Combine(path, "bat\\SetupApp.bat") };
             configurator.ApplicationSetupParams[AirConfigurator.DescriptorPath] = descriptor;
             configurator.ApplicationSetupParams[AirConfigurator.PackageDir] = Path.GetFileName(Path.GetDirectoryName(project.OutputPath));
             configurator.SetUp();
