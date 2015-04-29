@@ -149,6 +149,12 @@ namespace ProjectManager.Actions
             project.TestMovieBehavior = TestMovieBehavior.Custom;
             project.TestMovieCommand = "bat\\RunApp.bat";
 
+            // CrossOver template related mod
+            if (Win32.isRunningOnWine())
+            {
+                project.TestMovieCommand += " $(TargetBuild)";
+            }
+
             if (!File.Exists(Path.Combine(path, descriptor)))
             {
                 // Either it's some library project (we'll deal with these later) 
