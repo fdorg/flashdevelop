@@ -701,10 +701,9 @@ namespace ASCompletion.Model
                         // end of string
                         else if (isInString)
                         {
-                            if (c1 == '\\') { i++; continue; }
-                            else if (c1 == 10 || c1 == 13) inString = 0;
-                            else if ((inString == 1) && (c1 == '"')) inString = 0;
-                            else if ((inString == 2) && (c1 == '\'')) inString = 0;
+                            if (c1 == 10 || c1 == 13) { if (!haXe) inString = 0; }
+                            else if (c1 == '"') { if (inString == 1 && ba[i - 2] != '\\') inString = 0; }
+                            else if (c1 == '\'') { if (inString == 2 && ba[i - 2] != '\\') inString = 0; }
 
                             // extract "include" declarations
                             if (inString == 0 && length == 7 && context == 0)
