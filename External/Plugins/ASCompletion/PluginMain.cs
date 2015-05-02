@@ -906,7 +906,8 @@ namespace ASCompletion
             if (ASComplete.HasCalltip())
             {
                 int pos = sci.CurrentPos - 1;
-                if (sci.CharAt(pos) == ',' && sci.BaseStyleAt(pos) == 0)
+                char c = (char)sci.CharAt(pos);
+                if ((c == ',' || c == '(') && sci.BaseStyleAt(pos) == 0)
                     sci.Colourise(0, -1);
                 ASComplete.HandleFunctionCompletion(sci, false, true);
             }
