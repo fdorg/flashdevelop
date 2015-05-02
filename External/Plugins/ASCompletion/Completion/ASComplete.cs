@@ -1344,31 +1344,89 @@ namespace ASCompletion.Completion
             else UITools.CallTip.CallTipSetHlt(start + 1, end, true);
         }
 
-        static string[] featStart = new string[] { "/*", "{", "<", "[", "(" };
-        static string[] featEnd = new string[] { "*/", "}", ">", "]", ")" };
-
         static private int FindNearSymbolInFunctDef(string defBody, string symbol, int startAt)
         {
-            int end = -1;
-            int featBeg;
-            while (true)
+            string featEnd = null;
+
+            for (int i = startAt, count = defBody.Length; i < count; i++)
             {
-                end = defBody.IndexOf(symbol, startAt);
-                if (end < 0) break;
-                bool cont = false;
-                for (int i = 0; i < featStart.Length; i++)
+                char c = defBody[i];
+
+                if (featEnd == null)
                 {
-                    featBeg = defBody.IndexOf(featStart[i], startAt);
-                    if (featBeg >= 0 && featBeg < end)
+                    switch (c)
                     {
-                        startAt = Math.Max(featBeg + 1, defBody.IndexOf(featEnd[i], featBeg));
-                        cont = true;
-                        break;
+                        case '/':
+                            if (i < count - 1 && defBody[i + 1] == '*')
+                            {
+                                i++;
+                                featEnd = "*/";
+                            }
+                            break;
+                        case '{':
+                            featEnd = "}";
+                            break;
+                        case '<':
+                            featEnd = ">";
+                            break;
+                        case '[':
+                            featEnd = "]";
+                            break;
+                        case '(':
+                            featEnd = ")";
+                            break;
+                        case '\'':
+                            featEnd = "'";
+                            break;
+                        case '"':
+                            featEnd = "\"";
+                            break;
+                        default:
+                            int ci = i;
+                            int j;
+                            int sl = symbol.Length;
+                            for (j = 0; j < sl && ci < count; j++)
+                            {
+                                if (defBody[ci++] != symbol[j])
+                                    break;
+                            }
+
+                            if (j == sl)
+                                return i;
+
+                            break;
                     }
                 }
-                if (!cont) break;
+                else if (c == featEnd[0])
+                {
+                    if (featEnd == "\"" || featEnd == "'")
+                    {
+                        if (defBody[i - 1] == '\\')
+                            continue;
+
+                    }
+                    else
+                    {
+                        int ci = i + 1;
+                        int j;
+                        int fl = featEnd.Length;
+                        for (j = 1; j < fl && ci < count; j++)
+                        {
+                            if (defBody[ci++] != featEnd[j])
+                                break;
+                        }
+
+                        if (j != fl)
+                            continue;
+
+                        i = ci - 1;
+                    }
+
+                    featEnd = null;
+                }
             }
-            return end;
+
+            return -1;
         }
 
         /// <summary>
