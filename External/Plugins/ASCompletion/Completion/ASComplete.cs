@@ -1401,9 +1401,14 @@ namespace ASCompletion.Completion
                 {
                     if (featEnd == "\"" || featEnd == "'")
                     {
-                        if (defBody[i - 1] == '\\')
-                            continue;
+                        // Are we on an escaped ' or ""?
+                        int escNo = 0;
+                        int l = i - 1;
+                        while (l > -1 && defBody[l--] == '\\')
+                            escNo++;
 
+                        if (escNo % 2 != 0)
+                            continue;
                     }
                     else
                     {
