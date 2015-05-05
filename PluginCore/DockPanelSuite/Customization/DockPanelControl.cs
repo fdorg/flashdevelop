@@ -57,7 +57,7 @@ namespace System.Windows.Forms
                     }
                 }
             }
-            return false;
+            return base.ProcessDialogKey(keyData);
         }
 
         /// <summary>

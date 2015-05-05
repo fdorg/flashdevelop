@@ -630,11 +630,9 @@ namespace FlashDevelop.Dialogs
         {
             if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
             {
-                FindNext(false, false);
-
+                this.FindNext(false, false);
                 return true;
             }
-
             return base.ProcessDialogKey(keyData);
         }
 

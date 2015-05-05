@@ -1152,7 +1152,7 @@ namespace ASCompletion
                 }
                 return true;
             }
-            return false;
+            return base.ProcessDialogKey(keyData);
         }
 
         /// <summary>
