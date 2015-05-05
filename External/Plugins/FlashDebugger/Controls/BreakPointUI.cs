@@ -81,7 +81,7 @@ namespace FlashDebugger
                 imageList.Images.Add("ExportBreakpoints", PluginBase.MainForm.FindImage("549|22|4|4"));
                 imageList.Images.Add("ImportBreakpoints", PluginBase.MainForm.FindImage("549|8|4|4"));
             }
-
+            this.AutoKeyHandling = true;
             this.dgv = new DataGridView();
             this.dgv.Dock = DockStyle.Fill;
             this.dgv.BorderStyle = BorderStyle.None;

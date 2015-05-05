@@ -33,6 +33,7 @@ namespace ProjectManager
         {
             this.menus = menus;
             this.plugin = plugin;
+            this.AutoKeyHandling = true;
             this.Text = TextHelper.GetString("Title.PluginPanel");
             
             #region Build TreeView and Toolbar

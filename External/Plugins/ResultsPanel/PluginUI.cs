@@ -49,6 +49,7 @@ namespace ResultsPanel
          
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             this.autoShow = new Timer();
             this.autoShow.Interval = 300;

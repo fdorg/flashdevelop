@@ -34,6 +34,7 @@ namespace LayoutManager
         
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             this.InitializeComponent();
             this.InitializeContextMenu();

@@ -43,6 +43,7 @@ namespace FlashLogViewer
         
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.Font = PluginBase.Settings.DefaultFont;
             this.pluginMain = pluginMain;
             this.InitializeSettings();

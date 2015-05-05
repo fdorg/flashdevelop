@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Managers;
+using PluginCore;
 
 namespace System.Windows.Forms
 {
@@ -17,10 +19,11 @@ namespace System.Windows.Forms
         Bottom = 1 << 4
     }
 
-    public class DockPanelControl : UserControl
+    public class DockPanelControl : UserControl, IEventHandler
     {
-        DockBorders borders;
         Pen borderPen;
+        DockBorders borders;
+        Boolean autoKeyHandling = false;
 
         public DockPanelControl()
         {
@@ -37,6 +40,33 @@ namespace System.Windows.Forms
             {
                 borders = value;
                 this.Padding = new Padding((borders & DockBorders.Left) > 0 ? 1 : 0, (borders & DockBorders.Top) > 0 ? 1 : 0, (borders & DockBorders.Right) > 0 ? 1 : 0, (borders & DockBorders.Bottom) > 0 ? 1 : 0);
+            }
+        }
+
+        public Boolean AutoKeyHandling
+        {
+            get { return this.autoKeyHandling; }
+            set
+            {
+                this.autoKeyHandling = value;
+                if (value) EventManager.AddEventHandler(this, EventType.Keys);
+            }
+        }
+
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (this.AutoKeyHandling && this.ContainsFocus && e.Type == EventType.Keys)
+            {
+                Keys keys = (e as KeyEvent).Value;
+                if (keys == Keys.Escape)
+                {
+                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+                    if (doc != null && doc.IsEditable) 
+                    {
+                        doc.SciControl.Focus();
+                        e.Handled = true;
+                    }
+                }
             }
         }
 

@@ -171,7 +171,6 @@ namespace ASCompletion
             outlineTree.HotTracking = true;
             outlineTree.TabIndex = 1;
             outlineTree.NodeClicked += new FixedTreeView.NodeClickedHandler(ClassTreeSelect);
-            outlineTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FindProcTxtKeyDown);
             outlineTree.AfterSelect += new TreeViewEventHandler(outlineTree_AfterSelect);
             outlineTree.ShowNodeToolTips = true;
             Controls.Add(outlineTree);
@@ -362,7 +361,6 @@ namespace ASCompletion
             this.findProcTxt.Size = new System.Drawing.Size(100, 25);
             this.findProcTxt.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.findProcTxt.Leave += new System.EventHandler(this.FindProcTxtLeave);
-            this.findProcTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FindProcTxtKeyDown);
             this.findProcTxt.Enter += new System.EventHandler(this.FindProcTxtEnter);
             this.findProcTxt.Click += new System.EventHandler(this.FindProcTxtEnter);
             this.findProcTxt.TextChanged += new System.EventHandler(this.FindProcTxtChanged);
@@ -1114,26 +1112,22 @@ namespace ASCompletion
             FindProcTxtLeave(null, null);
             outlineTree.Focus();
             if (PluginBase.MainForm.CurrentDocument.IsEditable)
+            {
                 PluginBase.MainForm.CurrentDocument.SciControl.Focus();
+            }
         }
 
-        /// <summary>
-        /// Go to the matched declaration on Enter - clear field on Escape
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void FindProcTxtKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        protected override Boolean ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (keyData == Keys.Enter)
             {
                 if (outlineTree.Focused)
                 {
-                    e.Handled = true;
                     ClassTreeSelect(outlineTree, outlineTree.SelectedNode);
+                    return true;
                 }
                 else
                 {
-                    e.Handled = true;
                     if (findProcTxt.Text != searchInvitation)
                     {
                         TreeNode node = FindMatch(outlineTree.Nodes);
@@ -1144,14 +1138,21 @@ namespace ASCompletion
                         }
                         findProcTxt.Text = "";
                     }
+                    return true;
                 }
             }
-            else if (e.KeyCode == Keys.Escape)
+            else if (keyData == Keys.Escape)
             {
                 findProcTxt.Text = "";
                 FindProcTxtLeave(null, null);
                 outlineTree.Focus();
+                if (PluginBase.MainForm.CurrentDocument.IsEditable)
+                {
+                    PluginBase.MainForm.CurrentDocument.SciControl.Focus();
+                }
+                return true;
             }
+            return false;
         }
 
         /// <summary>

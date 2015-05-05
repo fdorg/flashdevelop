@@ -51,6 +51,7 @@ namespace FileExplorer
         
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             this.listViewSorter = new ListViewSorter();
             this.InitializeComponent();

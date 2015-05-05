@@ -65,6 +65,7 @@ namespace TaskListPanel
             this.listView.ListViewItemSorter = this.columnSorter;
             Settings settings = (Settings)pluginMain.Settings;
             this.filesCache = new Dictionary<String, DateTime>();
+            EventManager.AddEventHandler(this, EventType.Keys); // Listen Esc
             try
             {
                 if (settings.GroupValues.Length > 0)
@@ -522,7 +523,7 @@ namespace TaskListPanel
             this.parseTimer.Stop();
             this.RefreshEnabled = true;
             this.toolStripLabel.Text = "";
-            if (this.firstExecutionCompleted == false)
+            if (!this.firstExecutionCompleted)
             {
                 EventManager.AddEventHandler(this, EventType.FileSwitch | EventType.FileSave);
             }
@@ -787,7 +788,7 @@ namespace TaskListPanel
         /// <summary>
         /// Handles the internal events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public new void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
         {
             if (!this.isEnabled) return;
             ITabbedDocument document;
@@ -812,6 +813,18 @@ namespace TaskListPanel
                 case EventType.FileSave:
                     document = PluginBase.MainForm.CurrentDocument;
                     if (document.IsEditable) RefreshCurrentFile(document.SciControl);
+                    break;
+                case EventType.Keys:
+                    Keys keys = (e as KeyEvent).Value;
+                    if (this.ContainsFocus && keys == Keys.Escape)
+                    {
+                        ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+                        if (doc != null && doc.IsEditable)
+                        {
+                            doc.SciControl.Focus();
+                            e.Handled = true;
+                        }
+                    }
                     break;
             }
         }

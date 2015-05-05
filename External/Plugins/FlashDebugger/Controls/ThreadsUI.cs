@@ -16,6 +16,7 @@ namespace FlashDebugger
 
         public ThreadsUI(PluginMain pluginMain, ImageList imageList)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
 
             lv = new ListView();
