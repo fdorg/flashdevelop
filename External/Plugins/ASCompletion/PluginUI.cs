@@ -1117,7 +1117,7 @@ namespace ASCompletion
             }
         }
 
-        protected override Boolean ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override Boolean ProcessDialogKey(Keys keyData)
         {
             if (keyData == Keys.Enter)
             {
