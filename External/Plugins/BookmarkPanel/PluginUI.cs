@@ -37,6 +37,7 @@ namespace BookmarkPanel
         
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.InitializeComponent();
             this.pluginMain = pluginMain;
             this.InitializeTimers();

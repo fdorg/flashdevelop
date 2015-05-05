@@ -44,6 +44,7 @@ namespace FlashDebugger
 
         public StackframeUI(PluginMain pluginMain, ImageList imageList)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             wholeFrameStack = new List<ListViewItem>();
 

@@ -626,15 +626,16 @@ namespace FlashDevelop.Dialogs
             this.CenterToParent();
         }
 
-        protected override bool ProcessDialogKey(Keys keyData)
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override Boolean ProcessDialogKey(Keys keyData)
         {
             if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
             {
-                FindNext(false, false);
-
+                this.FindNext(false, false);
                 return true;
             }
-
             return base.ProcessDialogKey(keyData);
         }
 

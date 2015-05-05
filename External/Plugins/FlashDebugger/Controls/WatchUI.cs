@@ -16,6 +16,7 @@ namespace FlashDebugger.Controls
 
         public WatchUI()
         {
+            this.AutoKeyHandling = true;
             watches = new List<string>();
             treeControl = new DataTreeControl(true);
             this.treeControl.Tree.BorderStyle = BorderStyle.None;

@@ -75,6 +75,7 @@ namespace AS3Context.Controls
         public ProfilerUI()
         {
             instance = this;
+            AutoKeyHandling = true;
 
             InitializeComponent();
             objectRefsGrid = new ObjectRefsGrid();
