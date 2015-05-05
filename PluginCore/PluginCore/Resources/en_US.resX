@@ -5965,4 +5965,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>[Object {0} already listed before]</value>
     <comment>Added after 4.7.2</comment>
   </data>
+  <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
+    <value>Choose a package folder:</value>
+  </data>
 </root>
