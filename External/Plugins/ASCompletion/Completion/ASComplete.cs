@@ -1297,11 +1297,11 @@ namespace ASCompletion.Completion
             // measure highlighting
             int start = calltipDef.IndexOf('(');
             while ((start >= 0) && (paramIndex-- > 0))
-                start = FindNearSymbolInFunctDef(calltipDef, ",", start + 1);
+                start = FindNearSymbolInFunctDef(calltipDef, ',', start + 1);
 
-            int end = FindNearSymbolInFunctDef(calltipDef, ",", start + 1);
+            int end = FindNearSymbolInFunctDef(calltipDef, ',', start + 1);
             if (end < 0)
-                end = FindNearSymbolInFunctDef(calltipDef, ")", start + 1);
+                end = FindNearSymbolInFunctDef(calltipDef, ')', start + 1);
 
             // get parameter name
             string paramName = "";
@@ -1344,31 +1344,84 @@ namespace ASCompletion.Completion
             else UITools.CallTip.CallTipSetHlt(start + 1, end, true);
         }
 
-        static string[] featStart = new string[] { "/*", "{", "<", "[", "(" };
-        static string[] featEnd = new string[] { "*/", "}", ">", "]", ")" };
-
-        static private int FindNearSymbolInFunctDef(string defBody, string symbol, int startAt)
+        static private int FindNearSymbolInFunctDef(string defBody, char symbol, int startAt)
         {
-            int end = -1;
-            int featBeg;
-            while (true)
+            string featEnd = null;
+
+            for (int i = startAt, count = defBody.Length; i < count; i++)
             {
-                end = defBody.IndexOf(symbol, startAt);
-                if (end < 0) break;
-                bool cont = false;
-                for (int i = 0; i < featStart.Length; i++)
+                char c = defBody[i];
+
+                if (featEnd == null)
                 {
-                    featBeg = defBody.IndexOf(featStart[i], startAt);
-                    if (featBeg >= 0 && featBeg < end)
+                    switch (c)
                     {
-                        startAt = Math.Max(featBeg + 1, defBody.IndexOf(featEnd[i], featBeg));
-                        cont = true;
-                        break;
+                        case '/':
+                            if (i < count - 1 && defBody[i + 1] == '*')
+                            {
+                                i++;
+                                featEnd = "*/";
+                            }
+                            break;
+                        case '{':
+                            featEnd = "}";
+                            break;
+                        case '<':
+                            featEnd = ">";
+                            break;
+                        case '[':
+                            featEnd = "]";
+                            break;
+                        case '(':
+                            featEnd = ")";
+                            break;
+                        case '\'':
+                            featEnd = "'";
+                            break;
+                        case '"':
+                            featEnd = "\"";
+                            break;
+                        default:
+                            if (c == symbol)
+                                return i;
+                            break;
                     }
                 }
-                if (!cont) break;
+                else if (c == featEnd[0])
+                {
+                    if (featEnd == "\"" || featEnd == "'")
+                    {
+                        // Are we on an escaped ' or ""?
+                        int escNo = 0;
+                        int l = i - 1;
+                        while (l > -1 && defBody[l--] == '\\')
+                            escNo++;
+
+                        if (escNo % 2 != 0)
+                            continue;
+                    }
+                    else
+                    {
+                        int ci = i + 1;
+                        int j;
+                        int fl = featEnd.Length;
+                        for (j = 1; j < fl && ci < count; j++)
+                        {
+                            if (defBody[ci++] != featEnd[j])
+                                break;
+                        }
+
+                        if (j != fl)
+                            continue;
+
+                        i = ci - 1;
+                    }
+
+                    featEnd = null;
+                }
             }
-            return end;
+
+            return -1;
         }
 
         /// <summary>
