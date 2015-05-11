@@ -355,7 +355,36 @@ namespace PluginCore.FRService
             }
         }
 
-        public string SourceFile { get; set; }
+        private bool hasRegexLiterals;
+        private bool isHaxeFile;
+        private string sourceFile;
+        public string SourceFile
+        {
+            get { return sourceFile; } 
+            set
+            {
+                if (sourceFile == value) return;
+                
+                sourceFile = value;
+
+                if (sourceFile == null)
+                {
+                    hasRegexLiterals = false;
+                    isHaxeFile = false;
+                    return;
+                }
+
+                string ext = System.IO.Path.GetExtension(SourceFile).ToLowerInvariant();
+
+                isHaxeFile = Helpers.FileInspector.IsHaxeFile(SourceFile, ext);
+
+                // Haxe, ActionScript, JavaScript and LoomScript support Regex literals
+                hasRegexLiterals = Helpers.FileInspector.IsActionScript(SourceFile, ext) || isHaxeFile ||
+                                   Helpers.FileInspector.IsMxml(SourceFile, ext) ||
+                                   Helpers.FileInspector.IsHtml(SourceFile, ext) || ext == ".js" || ext == ".ls" ||
+                                   ext == ".ts";
+            }
+        }
 
         #endregion
 
@@ -614,15 +643,7 @@ namespace PluginCore.FRService
 
         private bool LookupRegex(string ba, ref int i)
         {
-            if (SourceFile == null)
-                return false;
-
-            string ext = System.IO.Path.GetExtension(SourceFile).ToLowerInvariant();
-
-            // Haxe, ActionScript, and JavaScript support Regex literals
-            if (!Helpers.FileInspector.IsActionScript(SourceFile, ext) &&
-                !Helpers.FileInspector.IsHaxeFile(SourceFile, ext) && !Helpers.FileInspector.IsMxml(SourceFile, ext) &&
-                !Helpers.FileInspector.IsHtml(SourceFile, ext) && ext != ".js")
+            if (!hasRegexLiterals)
                 return false;
 
             int len = ba.Length;
@@ -630,7 +651,7 @@ namespace PluginCore.FRService
             char c;
             // regex in valid context
 
-            if (!Helpers.FileInspector.IsHaxeFile(SourceFile, ext))
+            if (!isHaxeFile)
                 i0 = i - 2;
             else
             {
