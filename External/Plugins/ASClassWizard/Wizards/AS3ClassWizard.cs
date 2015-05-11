@@ -179,20 +179,22 @@ namespace ASClassWizard.Wizards
 
         private void baseBrowse_Click(object sender, EventArgs e)
         {
-            ClassBrowser browser = new ClassBrowser();
-            IASContext context   = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-            try
+            using (ClassBrowser browser = new ClassBrowser())
             {
-                browser.ClassList = context.GetAllProjectClasses();
+                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                try
+                {
+                    browser.ClassList = context.GetAllProjectClasses();
+                }
+                catch { }
+                browser.ExcludeFlag = FlagType.Interface;
+                browser.IncludeFlag = FlagType.Class;
+                if (browser.ShowDialog(this) == DialogResult.OK)
+                {
+                    this.baseBox.Text = browser.SelectedClass;
+                }
+                this.okButton.Focus();
             }
-            catch { }
-            browser.ExcludeFlag  = FlagType.Interface;
-            browser.IncludeFlag  = FlagType.Class;
-            if (browser.ShowDialog(this) == DialogResult.OK)
-            {
-                this.baseBox.Text = browser.SelectedClass;
-            }
-            this.okButton.Focus();
         }
 
         /// <summary>
@@ -202,35 +204,37 @@ namespace ASClassWizard.Wizards
         /// <param name="e"></param>
         private void implementBrowse_Click(object sender, EventArgs e)
         {
-            ClassBrowser browser = new ClassBrowser();
-            MemberList known = null;
-            browser.IncludeFlag = FlagType.Interface;
-            IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-            try
+            using (ClassBrowser browser = new ClassBrowser())
             {
-                known = context.GetAllProjectClasses();
-                known.Merge(ASContext.Context.GetVisibleExternalElements());
-            }
-            catch (Exception error)
-            {
-                Debug.WriteLine(error.StackTrace);
-            }
-            browser.ClassList = known;
-            if (browser.ShowDialog(this) == DialogResult.OK)
-            {
-                if (browser.SelectedClass != null)
+                MemberList known = null;
+                browser.IncludeFlag = FlagType.Interface;
+                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                try
                 {
-                    foreach (string item in this.implementList.Items)
-                    {
-                        if (item == browser.SelectedClass) return;
-                    }
-                    this.implementList.Items.Add(browser.SelectedClass);
+                    known = context.GetAllProjectClasses();
+                    known.Merge(ASContext.Context.GetVisibleExternalElements());
                 }
+                catch (Exception error)
+                {
+                    Debug.WriteLine(error.StackTrace);
+                }
+                browser.ClassList = known;
+                if (browser.ShowDialog(this) == DialogResult.OK)
+                {
+                    if (browser.SelectedClass != null)
+                    {
+                        foreach (string item in this.implementList.Items)
+                        {
+                            if (item == browser.SelectedClass) return;
+                        }
+                        this.implementList.Items.Add(browser.SelectedClass);
+                    }
+                }
+                this.implementRemove.Enabled = this.implementList.Items.Count > 0;
+                this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
+                this.superCheck.Enabled = this.implementList.Items.Count > 0;
+                ValidateClass();
             }
-            this.implementRemove.Enabled = this.implementList.Items.Count > 0;
-            this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
-            this.superCheck.Enabled = this.implementList.Items.Count > 0;
-            ValidateClass();
         }
 
         /// <summary>

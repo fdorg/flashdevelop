@@ -63,7 +63,6 @@ namespace ASClassWizard.Wizards
             this.okButton.TabIndex = 2;
             this.okButton.Text = "&Ok";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
             // itemList
             // 
