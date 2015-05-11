@@ -167,21 +167,8 @@ namespace ASClassWizard.Wizards
         private void cancelButton_Click(object sender, EventArgs e)
         {
             this.itemList.SelectedItem = null;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
         }
 
-
-        /// <summary>
-        /// Ok button click
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void okButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
 
         private void itemList_DoubleClick( object sender, EventArgs e )
         {
