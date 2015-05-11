@@ -1297,11 +1297,11 @@ namespace ASCompletion.Completion
             // measure highlighting
             int start = calltipDef.IndexOf('(');
             while ((start >= 0) && (paramIndex-- > 0))
-                start = FindNearSymbolInFunctDef(calltipDef, ",", start + 1);
+                start = FindNearSymbolInFunctDef(calltipDef, ',', start + 1);
 
-            int end = FindNearSymbolInFunctDef(calltipDef, ",", start + 1);
+            int end = FindNearSymbolInFunctDef(calltipDef, ',', start + 1);
             if (end < 0)
-                end = FindNearSymbolInFunctDef(calltipDef, ")", start + 1);
+                end = FindNearSymbolInFunctDef(calltipDef, ')', start + 1);
 
             // get parameter name
             string paramName = "";
@@ -1344,7 +1344,7 @@ namespace ASCompletion.Completion
             else UITools.CallTip.CallTipSetHlt(start + 1, end, true);
         }
 
-        static private int FindNearSymbolInFunctDef(string defBody, string symbol, int startAt)
+        static private int FindNearSymbolInFunctDef(string defBody, char symbol, int startAt)
         {
             string featEnd = null;
 
@@ -1382,18 +1382,8 @@ namespace ASCompletion.Completion
                             featEnd = "\"";
                             break;
                         default:
-                            int ci = i;
-                            int j;
-                            int sl = symbol.Length;
-                            for (j = 0; j < sl && ci < count; j++)
-                            {
-                                if (defBody[ci++] != symbol[j])
-                                    break;
-                            }
-
-                            if (j == sl)
+                            if (c == symbol)
                                 return i;
-
                             break;
                     }
                 }
