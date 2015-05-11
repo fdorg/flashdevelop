@@ -660,6 +660,7 @@ namespace FlashDevelop.Dialogs
                 FRSearch search = new FRSearch(pattern);
                 search.NoCase = !this.matchCaseCheckBox.Checked;
                 search.Filter = SearchFilter.None;
+                search.SourceFile = sci.FileName;
                 if (!simple)
                 {
                     search.IsRegex = this.useRegexCheckBox.Checked;

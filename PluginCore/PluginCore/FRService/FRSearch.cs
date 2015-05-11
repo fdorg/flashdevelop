@@ -354,6 +354,9 @@ namespace PluginCore.FRService
                 copyFullLineContext = value;
             }
         }
+
+        public string SourceFile { get; set; }
+
         #endregion
 
         #region Public Search Methods
@@ -611,8 +614,15 @@ namespace PluginCore.FRService
 
         private bool LookupRegex(string ba, ref int i)
         {
-            if (PluginBase.CurrentProject == null || 
-                  (PluginBase.CurrentProject.Language != "as3" && PluginBase.CurrentProject.Language != "haxe"))
+            if (SourceFile == null)
+                return false;
+
+            string ext = System.IO.Path.GetExtension(SourceFile).ToLowerInvariant();
+
+            // Haxe, ActionScript, and JavaScript support Regex literals
+            if (!Helpers.FileInspector.IsActionScript(SourceFile, ext) &&
+                !Helpers.FileInspector.IsHaxeFile(SourceFile, ext) && !Helpers.FileInspector.IsMxml(SourceFile, ext) &&
+                !Helpers.FileInspector.IsHtml(SourceFile, ext) && ext != ".js")
                 return false;
 
             int len = ba.Length;
@@ -620,7 +630,7 @@ namespace PluginCore.FRService
             char c;
             // regex in valid context
 
-            if (PluginBase.CurrentProject.Language == "haxe")
+            if (!Helpers.FileInspector.IsHaxeFile(SourceFile, ext))
                 i0 = i - 2;
             else
             {
@@ -643,6 +653,15 @@ namespace PluginCore.FRService
                 if (c == '\\') { i0++; continue; } // escape next
                 if (c == '/') break; // end of regex
                 if ("\r\n".IndexOf(c) >= 0) return false;
+            }
+            while (i0 < len)
+            {
+                c = ba[i0++];
+                if (!char.IsLetter(c))
+                {
+                    i0--;
+                    break;
+                }
             }
             i = i0; // ok, skip this regex
             return true;

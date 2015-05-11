@@ -1671,6 +1671,15 @@ namespace ASCompletion.Model
                 if (c == '/') break; // end of regex
                 if ("\r\n".IndexOf(c) >= 0) return false;
             }
+            while (i0 < len)
+            {
+                c = ba[i0++];
+                if (!char.IsLetter(c))
+                {
+                    i--;
+                    break;
+                }
+            }
             i = i0; // ok, skip this regex
             return true;
         }

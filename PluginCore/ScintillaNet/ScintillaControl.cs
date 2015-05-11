@@ -5423,6 +5423,7 @@ namespace ScintillaNet
             search.WholeWord = true; 
             search.NoCase = true;
             search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
+            search.SourceFile = FileName;
             RemoveHighlights(1);
             List<SearchMatch> test = search.Matches(Text);
             AddHighlights(1, test, color);
