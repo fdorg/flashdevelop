@@ -581,6 +581,7 @@ namespace FlashDevelop.Controls
             search.Filter = SearchFilter.None;
             search.NoCase = !this.matchCaseCheckBox.Checked;
             search.WholeWord = this.wholeWordCheckBox.Checked;
+            search.SourceFile = sci.FileName;
             return search.Matches(sci.Text);
         }
 

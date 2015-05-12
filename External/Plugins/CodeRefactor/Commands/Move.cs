@@ -360,6 +360,7 @@ namespace CodeRefactor.Commands
                 string newFilePath = currentTarget.NewFilePath;
                 var doc = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath);
                 ScintillaControl sci = doc.SciControl;
+                search.SourceFile = sci.FileName;
                 List<SearchMatch> matches = search.Matches(sci.Text);
                 string packageReplacement = "package";
                 if (currentTarget.NewPackage != "")

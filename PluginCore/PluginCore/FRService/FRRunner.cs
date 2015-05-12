@@ -61,6 +61,7 @@ namespace PluginCore.FRService
                 foreach (String file in files)
                 {
                     String src = configuration.GetSource(file);
+                    search.SourceFile = file;
                     List<SearchMatch> matches = search.Matches(src);
                     FRSearch.ExtractResultsLineText(matches, src);
                     results[file] = matches;
@@ -94,6 +95,7 @@ namespace PluginCore.FRService
                 foreach (String file in files)
                 {
                     src = configuration.GetSource(file);
+                    search.SourceFile = file;
                     results[file] = matches = search.Matches(src);
                     foreach (SearchMatch match in matches)
                     {
@@ -237,6 +239,7 @@ namespace PluginCore.FRService
                         {
                             // work
                             src = configuration.GetSource(file);
+                            search.SourceFile = file;
                             results[file] = matches = search.Matches(src);
 
                             if (matches.Count > 0)

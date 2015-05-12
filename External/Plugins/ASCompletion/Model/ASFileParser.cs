@@ -935,7 +935,7 @@ namespace ASCompletion.Model
                 {
                     if (c1 == '/')
                     {
-                        LookupRegex(ref ba, ref i);
+                        LookupRegex(ba, ref i);
                     }
                     else if (c1 == '}')
                     {
@@ -1021,7 +1021,7 @@ namespace ASCompletion.Model
                     else if (c1 == '/')
                     {
                         int i0 = i;
-                        if (LookupRegex(ref ba, ref i) && valueLength < VALUE_BUFFER - 3)
+                        if (LookupRegex(ba, ref i) && valueLength < VALUE_BUFFER - 3)
                         {
                             valueBuffer[valueLength++] = '/';
                             for (; i0 < i; i0++)
@@ -1619,7 +1619,7 @@ namespace ASCompletion.Model
                         // literal regex
                         else if (c1 == '/' && version == 3)
                         {
-                            if (LookupRegex(ref ba, ref i))
+                            if (LookupRegex(ba, ref i))
                                 continue;
                         }
                 }
@@ -1648,16 +1648,26 @@ namespace ASCompletion.Model
             //  Debug.WriteLine("out model: " + model.GenerateIntrinsic(false));
         }
 
-        private bool LookupRegex(ref string ba, ref int i)
+        private bool LookupRegex(string ba, ref int i)
         {
             int len = ba.Length;
-            int i0 = i - 2;
+            int i0;
             char c;
             // regex in valid context
+
+            if (!haXe)
+                i0 = i - 2;
+            else
+            {
+                if (ba[i - 2] != '~')
+                    return false;
+                i0 = i - 3;
+            }
+
             while (i0 > 0)
             {
                 c = ba[i0--];
-                if ("=(,[{;".IndexOf(c) >= 0) break; // ok
+                if ("=(,[{;:".IndexOf(c) >= 0) break; // ok
                 if (" \t".IndexOf(c) >= 0) continue;
                 return false; // anything else isn't expected before a regex
             }
@@ -1668,6 +1678,15 @@ namespace ASCompletion.Model
                 if (c == '\\') { i0++; continue; } // escape next
                 if (c == '/') break; // end of regex
                 if ("\r\n".IndexOf(c) >= 0) return false;
+            }
+            while (i0 < len)
+            {
+                c = ba[i0++];
+                if (!char.IsLetter(c))
+                {
+                    i--;
+                    break;
+                }
             }
             i = i0; // ok, skip this regex
             return true;

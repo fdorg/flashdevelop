@@ -406,6 +406,7 @@ namespace BookmarkPanel
                 search.NoCase = true;
                 search.IsRegex = true;
                 search.Filter = SearchFilter.None;
+                search.SourceFile = sci.FileName;
                 return search.Matches(sci.Text);
             }
             return null;
