@@ -379,7 +379,7 @@ namespace PluginCore.FRService
                 isHaxeFile = Helpers.FileInspector.IsHaxeFile(SourceFile, ext);
 
                 // Haxe, ActionScript, JavaScript and LoomScript support Regex literals
-                hasRegexLiterals = Helpers.FileInspector.IsActionScript(SourceFile, ext) || isHaxeFile ||
+                hasRegexLiterals = isHaxeFile || Helpers.FileInspector.IsActionScript(SourceFile, ext) ||
                                    Helpers.FileInspector.IsMxml(SourceFile, ext) ||
                                    Helpers.FileInspector.IsHtml(SourceFile, ext) || ext == ".js" || ext == ".ls" ||
                                    ext == ".ts";
