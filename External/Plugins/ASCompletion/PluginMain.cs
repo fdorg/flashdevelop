@@ -338,14 +338,15 @@ namespace ASCompletion
                                 e.Handled = true;
                                 IASContext context = ASContext.GetLanguageContext(cmdData);
                                 if (context == null) return;
-                                string filter = "";
+                                string filter = "SDK";
                                 string name = "";
                                 switch (cmdData.ToUpper())
                                 {
-                                    case "AS2": name = "AS2Context"; filter = "SDK"; break;
-                                    case "AS3": name = "AS3Context"; filter = "SDK"; break;
-                                    case "HAXE": name = "HaxeContext"; filter = "SDK"; break;
-                                    default: name = cmdData.ToUpper() + "Context"; break;
+                                    case "AS2": name = "AS2Context"; break;
+                                    case "AS3": name = "AS3Context"; break;
+                                    default: 
+                                        name = cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context";
+                                        break;
                                 }
                                 PluginBase.MainForm.ShowSettingsDialog(name, filter);
                             }
