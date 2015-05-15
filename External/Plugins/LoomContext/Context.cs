@@ -226,10 +226,10 @@ namespace LoomContext
                     lock (path)
                     {
                         path.WasExplored = true;
-                        // PARSE LOOMLIB
-                        LibParser.Parse(path, this);
                         // do not monitor
                         path.ReleaseWatcher(); 
+                        // PARSE LOOMLIB
+                        LibParser.Parse(path, this);
                     }
                 }
             }
