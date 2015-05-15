@@ -300,14 +300,20 @@ namespace HaXeContext
 
             if (lang == null)
             {
-                lang = "cpp";
-
-                if (contextSetup.TargetBuild == null || contextSetup.TargetBuild.StartsWith("flash"))
-                    lang = "";
-                else if (contextSetup.TargetBuild.StartsWith("html5"))
-                    lang = "js";
-                else if (contextSetup.TargetBuild.IndexOf("neko") >= 0)
-                    lang = "neko";
+                if (contextSetup.Platform == "hxml")
+                {
+                    lang = contextSetup.TargetBuild ?? "";
+                }
+                else // assume game-related toolchain
+                {
+                    lang = "cpp";
+                    if (contextSetup.TargetBuild == null || contextSetup.TargetBuild.StartsWith("flash"))
+                        lang = "";
+                    else if (contextSetup.TargetBuild.StartsWith("html5"))
+                        lang = "js";
+                    else if (contextSetup.TargetBuild.IndexOf("neko") >= 0)
+                        lang = "neko";
+                }
             }
             else if (lang == "swf")
             {

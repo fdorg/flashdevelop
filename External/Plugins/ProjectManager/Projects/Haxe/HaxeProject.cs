@@ -356,6 +356,7 @@ namespace ProjectManager.Projects.Haxe
             List<string> cps = new List<string>();
             List<string> add = new List<string>();
             string target = PlatformData.JAVASCRIPT_PLATFORM;
+            string haxeTarget = "js";
             string output = "";
             if (raw != null)
             foreach(string line in raw)
@@ -373,7 +374,11 @@ namespace ProjectManager.Projects.Haxe
                         case "lib": libs.Add(value); break;
                         case "main": CompilerOptions.MainClass = value; break;
                         case "swf":
-                        case "swf9": target = PlatformData.FLASHPLAYER_PLATFORM; output = value; break;
+                        case "swf9": 
+                            target = PlatformData.FLASHPLAYER_PLATFORM;
+                            haxeTarget = "flash";
+                            output = value; 
+                            break;
                         case "swf-header":
                             var header = value.Split(':');
                             int.TryParse(header[0], out MovieOptions.Width);
@@ -388,6 +393,7 @@ namespace ProjectManager.Projects.Haxe
                             if (targetPlatform != null)
                             {
                                 target = targetPlatform.Name;
+                                haxeTarget = targetPlatform.HaxeTarget;
                                 output = value;
                             }
                             else add.Add(line); break;
@@ -405,6 +411,9 @@ namespace ProjectManager.Projects.Haxe
             {
                 var platform = MovieOptions.PlatformSupport;
                 MovieOptions.TargetBuildTypes = platform.Targets;
+
+                if (platform.Name == "hxml" && string.IsNullOrEmpty(TargetBuild))
+                    TargetBuild = haxeTarget ?? "";
             }
             else MovieOptions.TargetBuildTypes = null;
 
