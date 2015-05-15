@@ -48,7 +48,7 @@ namespace TaskListPanel
         private ColumnHeader columnName;
         private ColumnHeader columnPath;
         private BackgroundWorker bgWork;
-        private ListView listView;
+        private ListViewEx listView;
 
         // Regex
         static private Regex reClean = new Regex(@"(\*)?\*/.*", RegexOptions.Compiled);
@@ -99,7 +99,7 @@ namespace TaskListPanel
         /// </summary>
         private void InitializeComponent()
         {
-            this.listView = new System.Windows.Forms.ListView();
+            this.listView = new System.Windows.Forms.ListViewEx();
             this.columnIcon = new System.Windows.Forms.ColumnHeader();
             this.columnPos = new System.Windows.Forms.ColumnHeader();
             this.columnType = new System.Windows.Forms.ColumnHeader();

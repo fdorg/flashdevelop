@@ -162,10 +162,7 @@ namespace FlashDebugger
                         }
                         return;
                     }
-
-                    if (!buildevnt.Action.StartsWith("ProjectManager")) 
-                        return;
-
+                    if (!buildevnt.Action.StartsWith("ProjectManager"))  return;
                     if (buildevnt.Action == ProjectManager.ProjectManagerEvents.Project)
                     {
                         IProject project = PluginBase.CurrentProject;
@@ -192,9 +189,7 @@ namespace FlashDebugger
                         }
                     }
                     else if (disableDebugger) return;
-
-                    if (buildevnt.Action == ProjectManager.ProjectManagerCommands.HotBuild
-                        || buildevnt.Action == ProjectManager.ProjectManagerCommands.BuildProject)
+                    if (buildevnt.Action == ProjectManager.ProjectManagerCommands.HotBuild || buildevnt.Action == ProjectManager.ProjectManagerCommands.BuildProject)
                     {
                         if (debugManager.FlashInterface.isDebuggerStarted)
                         {
@@ -205,7 +200,6 @@ namespace FlashDebugger
                             debugManager.Stop_Click(null, null);
                         }
                     }
-
                     if (buildevnt.Action == ProjectManager.ProjectManagerEvents.TestProject)
                     {
                         if (debugManager.FlashInterface.isDebuggerStarted)
@@ -218,7 +212,6 @@ namespace FlashDebugger
                             }
                         }
                     }
-                    
                     if (buildevnt.Action == ProjectManager.ProjectManagerEvents.TestProject)
                     {
                         menusHelper.UpdateMenuState(this, DebuggerState.Initializing);

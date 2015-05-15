@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 using System.ComponentModel.Design;
+using System.Windows.Forms;
+using System.Reflection;
+using PluginCore;
+using PluginCore.Helpers;
 
 namespace System.Windows.Forms
 {
@@ -32,28 +36,22 @@ namespace System.Windows.Forms
             {
                 return DefaultSize;
             }
-
             // Declare a variable to store the total available width as 
             // it is calculated, starting with the display width of the 
             // owning ToolStrip.
             Int32 width = Owner.DisplayRectangle.Width;
-
             // Subtract the width of the overflow button if it is displayed. 
             if (Owner.OverflowButton.Visible)
             {
-                width = width - Owner.OverflowButton.Width -
-                    Owner.OverflowButton.Margin.Horizontal;
+                width = width - Owner.OverflowButton.Width - Owner.OverflowButton.Margin.Horizontal;
             }
-
             // Declare a variable to maintain a count of ToolStripSpringComboBox 
             // items currently displayed in the owning ToolStrip. 
             Int32 springBoxCount = 0;
-
             foreach (ToolStripItem item in Owner.Items)
             {
                 // Ignore items on the overflow menu.
                 if (item.IsOnOverflow) continue;
-
                 if (item is ToolStripSpringComboBox)
                 {
                     // For ToolStripSpringComboBox items, increment the count and 
@@ -68,15 +66,12 @@ namespace System.Windows.Forms
                     width = width - item.Width - item.Margin.Horizontal;
                 }
             }
-
             // If there are multiple ToolStripSpringComboBox items in the owning
             // ToolStrip, divide the total available width between them. 
             if (springBoxCount > 1) width /= springBoxCount;
-
             // If the available width is less than the default width, use the
             // default width, forcing one or more items onto the overflow menu.
             if (width < DefaultSize.Width) width = DefaultSize.Width;
-
             // Retrieve the preferred size from the base class, but change the
             // width to the calculated width. 
             Size size = base.GetPreferredSize(constrainingSize);
@@ -85,6 +80,7 @@ namespace System.Windows.Forms
         }
 
     }
+
     public class ToolStripSpringTextBox : ToolStripTextBox
     {
         public ToolStripSpringTextBox()
@@ -112,28 +108,22 @@ namespace System.Windows.Forms
             {
                 return DefaultSize;
             }
-
             // Declare a variable to store the total available width as 
             // it is calculated, starting with the display width of the 
             // owning ToolStrip.
             Int32 width = Owner.DisplayRectangle.Width;
-
             // Subtract the width of the overflow button if it is displayed. 
             if (Owner.OverflowButton.Visible)
             {
-                width = width - Owner.OverflowButton.Width -
-                    Owner.OverflowButton.Margin.Horizontal;
+                width = width - Owner.OverflowButton.Width - Owner.OverflowButton.Margin.Horizontal;
             }
-
             // Declare a variable to maintain a count of ToolStripSpringTextBox 
             // items currently displayed in the owning ToolStrip. 
             Int32 springBoxCount = 0;
-
             foreach (ToolStripItem item in Owner.Items)
             {
                 // Ignore items on the overflow menu.
                 if (item.IsOnOverflow) continue;
-
                 if (item is ToolStripSpringTextBox)
                 {
                     // For ToolStripSpringTextBox items, increment the count and 
@@ -148,15 +138,12 @@ namespace System.Windows.Forms
                     width = width - item.Width - item.Margin.Horizontal;
                 }
             }
-
             // If there are multiple ToolStripSpringTextBox items in the owning
             // ToolStrip, divide the total available width between them. 
             if (springBoxCount > 1) width /= springBoxCount;
-
             // If the available width is less than the default width, use the
             // default width, forcing one or more items onto the overflow menu.
             if (width < DefaultSize.Width) width = DefaultSize.Width;
-
             // Retrieve the preferred size from the base class, but change the
             // width to the calculated width. 
             Size size = base.GetPreferredSize(constrainingSize);
@@ -165,6 +152,45 @@ namespace System.Windows.Forms
         }
 
     }
+
+    public class ListViewEx : ListView
+    {
+        public ListViewEx()
+        {
+            this.OwnerDraw = true;
+            this.DrawColumnHeader += this.OnDrawColumnHeader;
+            this.DrawSubItem += this.OnDrawSubItem;
+            this.DrawItem += this.OnDrawItem;
+        }
+
+        private void OnDrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            e.DrawDefault = true;
+        }
+
+        private void OnDrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = true;
+        }
+
+        private void OnDrawColumnHeader(Object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
+            Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
+            Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
+            if (back != Color.Empty && border != Color.Empty && text != Color.Empty)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(back), e.Bounds.X, 0, e.Bounds.Width, e.Bounds.Height);
+                e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
+                e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 6, 3, e.Bounds.X + e.Bounds.Width - 6, e.Bounds.Height - 6);
+                var textRect = new Rectangle(e.Bounds.X, e.Bounds.Y + 4, e.Bounds.Width, e.Bounds.Height);
+                TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, Color.Black);
+            }
+            else e.DrawDefault = true;
+        }
+
+    }
+
     public class DescriptiveCollectionEditor : CollectionEditor
     {
         public DescriptiveCollectionEditor(Type type) : base(type) {}

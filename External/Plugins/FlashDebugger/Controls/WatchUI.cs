@@ -46,8 +46,7 @@ namespace FlashDebugger.Controls
         
         public void RemoveElement(string item)
         {
-            if (watches.Remove(item))
-                UpdateElements();
+            if (watches.Remove(item)) UpdateElements();
         }
 
         public void RemoveElement(int itemN)
@@ -60,14 +59,12 @@ namespace FlashDebugger.Controls
         {
             if (watches.Contains(newItem)) return false;
             int itemN = watches.IndexOf(oldItem);
-            if (itemN == -1)
-                AddElement(newItem);
+            if (itemN == -1) AddElement(newItem);
             else
             {
                 watches[itemN] = newItem;
                 treeControl.Nodes[itemN] = GetExpressionNode(newItem);
             }
-
             return true;
         }
 
@@ -81,13 +78,11 @@ namespace FlashDebugger.Controls
         {
             treeControl.Tree.BeginUpdate();
             treeControl.SaveState();
-
             treeControl.Nodes.Clear();
             foreach (string item in watches)
             {
                 treeControl.AddNode(GetExpressionNode(item));
             }
-
             treeControl.AddNode(new ValueNode(TextHelper.GetString("Label.AddExpression")));
             treeControl.RestoreState();
             treeControl.Tree.EndUpdate();
@@ -104,19 +99,22 @@ namespace FlashDebugger.Controls
                 var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                 var obj = exp.evaluate(ctx);
                 if (obj is Variable)
+                {
                     node = new VariableNode((Variable)obj)
-                               {
-                                   HideClassId = PluginMain.settingObject.HideClassIds,
-                                   HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
-                               };
+                    {
+                        HideClassId = PluginMain.settingObject.HideClassIds,
+                        HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
+                    };
+                }
                 else if (obj is Value)
-                    node = new ValueNode(item, (Value) obj)
-                               {
-                                   HideClassId = PluginMain.settingObject.HideClassIds,
-                                   HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
-                               };
-                else
-                    node = new ScalarNode(item, obj.toString());
+                {
+                    node = new ValueNode(item, (Value)obj)
+                    {
+                        HideClassId = PluginMain.settingObject.HideClassIds,
+                        HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
+                    };
+                }
+                else node = new ScalarNode(item, obj.toString());
                 node.Tag = item;
             }
             catch (Exception ex)
@@ -124,9 +122,9 @@ namespace FlashDebugger.Controls
                 node = new ErrorNode(item, ex);
             }
             node.Text = item;
-
             return node;
         }
 
     }
+
 }

@@ -19,7 +19,7 @@ namespace FileExplorer
 {
     public class PluginUI : DockPanelControl
     {
-        private System.Windows.Forms.ListView fileView;
+        private System.Windows.Forms.ListViewEx fileView;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ContextMenuStrip menu;
         private System.Windows.Forms.ToolStripMenuItem runButton;
@@ -73,7 +73,7 @@ namespace FileExplorer
             this.watcher = new System.IO.FileSystemWatcher();
             this.modifiedHeader = new System.Windows.Forms.ColumnHeader();
             this.typeHeader = new System.Windows.Forms.ColumnHeader();
-            this.fileView = new System.Windows.Forms.ListView();
+            this.fileView = new System.Windows.Forms.ListViewEx();
             this.fileHeader = new System.Windows.Forms.ColumnHeader();
             this.sizeHeader = new System.Windows.Forms.ColumnHeader();
             this.folderBrowserDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();

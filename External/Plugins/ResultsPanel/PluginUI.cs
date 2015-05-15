@@ -19,7 +19,7 @@ namespace ResultsPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private ListView entriesView;
+        private ListViewEx entriesView;
         private ColumnHeader entryFile;
         private ColumnHeader entryDesc;
         private ColumnHeader entryLine;
@@ -73,7 +73,7 @@ namespace ResultsPanel
         /// </summary>
         private void InitializeComponent() 
         {
-            this.entriesView = new System.Windows.Forms.ListView();
+            this.entriesView = new System.Windows.Forms.ListViewEx();
             this.entryType = new System.Windows.Forms.ColumnHeader();
             this.entryLine = new System.Windows.Forms.ColumnHeader();
             this.entryDesc = new System.Windows.Forms.ColumnHeader();
@@ -360,8 +360,7 @@ namespace ResultsPanel
         /// </summary>
         public bool CopyTextShortcut()
         {
-            if (!ContainsFocus || !entriesView.Focused)
-                return false;
+            if (!ContainsFocus || !entriesView.Focused) return false;
             CopyTextClick(null, null);
             return true;
         }

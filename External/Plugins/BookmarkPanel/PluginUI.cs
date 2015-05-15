@@ -20,7 +20,7 @@ namespace BookmarkPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private System.Windows.Forms.ListView listView;
+        private System.Windows.Forms.ListViewEx listView;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ColumnHeader columnLine;
         private System.Windows.Forms.ColumnHeader columnText;
@@ -56,7 +56,7 @@ namespace BookmarkPanel
         /// </summary>
         private void InitializeComponent() 
         {
-            this.listView = new System.Windows.Forms.ListView();
+            this.listView = new System.Windows.Forms.ListViewEx();
             this.columnLine = new System.Windows.Forms.ColumnHeader();
             this.columnText = new System.Windows.Forms.ColumnHeader();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
@@ -221,7 +221,6 @@ namespace BookmarkPanel
             this.searchButton.ToolTipText = TextHelper.GetString("ToolTip.SearchBookmarks");
             this.contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             this.statusLabel.Font = PluginBase.Settings.DefaultFont;
-            this.columnText.Width = -2; // Extend last column
         }
 
         /// <summary>
@@ -268,9 +267,11 @@ namespace BookmarkPanel
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             this.contextMenuStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
-
             foreach (ColumnHeader column in listView.Columns)
+            {
                 column.Width = ScaleHelper.Scale(column.Width);
+            }
+            this.columnText.Width = -2; // Extend last column
         }
 
         /// <summary>

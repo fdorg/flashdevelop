@@ -47,6 +47,7 @@ namespace System.Windows.Forms
 
     public class DockPanelStripRenderer : ToolStripRenderer
     {
+        private ToolStrip toolStrip;
         private Boolean drawBottomBorder;
         private ProfessionalColorTable colorTable;
         static ToolStripRenderer renderer;
@@ -59,7 +60,14 @@ namespace System.Windows.Forms
             this.colorTable = new ProfessionalColorTable();
             UiRenderMode renderMode = PluginBase.MainForm.Settings.RenderMode;
             if (renderMode == UiRenderMode.System) renderer = new ToolStripSystemRenderer();
-            else renderer = new ToolStripProfessionalRenderer();
+            else renderer = new ToolStripProfessionalRenderer(this.colorTable);
+        }
+
+        protected override void Initialize(ToolStrip toolStrip)
+        {
+            this.toolStrip = toolStrip;
+            this.toolStrip.Paint += this.OnToolStripPaint;
+            base.Initialize(toolStrip);
         }
 
         protected override void InitializeItem(ToolStripItem item)
@@ -82,6 +90,34 @@ namespace System.Windows.Forms
                 }
             }
             else base.InitializeItem(item);
+        }
+
+        private void OnToolStripPaint(Object sender, PaintEventArgs e)
+        {
+            Color tback = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
+            Color tborder = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
+            Color cborder = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
+            foreach (ToolStripItem item in this.toolStrip.Items)
+            {
+                if (item is ToolStripTextBox && tborder != Color.Empty && tback != Color.Empty)
+                {
+                    var textBox = item as ToolStripTextBox;
+                    var size = textBox.TextBox.Size;
+                    var location = textBox.TextBox.Location;
+                    textBox.Margin = new Padding(2, 1, 2, 1);
+                    textBox.BorderStyle = BorderStyle.None;
+                    e.Graphics.FillRectangle(new SolidBrush(tback), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                    e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                }
+                else if (item is ToolStripComboBox && cborder != Color.Empty)
+                {
+                    var comboBox = item as ToolStripComboBox;
+                    var size = comboBox.ComboBox.Size;
+                    var location = comboBox.ComboBox.Location;
+                    if (comboBox.FlatStyle != FlatStyle.Flat) comboBox.FlatStyle = FlatStyle.Flat;
+                    e.Graphics.DrawRectangle(new Pen(cborder), location.X - 1, location.Y - 1, size.Width + 1, size.Height + 1);
+                }
+            }
         }
 
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
@@ -277,6 +313,7 @@ namespace System.Windows.Forms
                 Boolean isOver = false;
                 Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
                 Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
+                Color active = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
                 if (e.Item is ToolStripButton)
                 {
                     ToolStripButton button = e.Item as ToolStripButton;
@@ -300,7 +337,7 @@ namespace System.Windows.Forms
                     LinearGradientBrush b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                     e.Graphics.FillRectangle(b, rect);
                     Rectangle rect2 = new Rectangle(rect.Left - 1, rect.Top - 1, rect.Width + 1, rect.Height + 1);
-                    e.Graphics.DrawRectangle(new Pen(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border), rect2);
+                    e.Graphics.DrawRectangle(new Pen(active == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : active), rect2);
                 }
             }
             else renderer.DrawButtonBackground(e);

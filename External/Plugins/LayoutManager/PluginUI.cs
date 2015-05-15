@@ -18,7 +18,7 @@ namespace LayoutManager
     public class PluginUI : DockPanelControl
     {
         private ToolStrip toolStrip;
-        private ListView layoutsListView;
+        private ListViewEx layoutsListView;
         private ListViewItem infoListViewItem;
         private ToolStripMenuItem menuLoadButton;
         private ToolStripMenuItem menuSaveButton;
@@ -51,7 +51,7 @@ namespace LayoutManager
         /// </summary>
         private void InitializeComponent() 
         {
-            this.layoutsListView = new System.Windows.Forms.ListView();
+            this.layoutsListView = new System.Windows.Forms.ListViewEx();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.loadStripButton = new System.Windows.Forms.ToolStripButton();
             this.deleteStripButton = new System.Windows.Forms.ToolStripButton();
