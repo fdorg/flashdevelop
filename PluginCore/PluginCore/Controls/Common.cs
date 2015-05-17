@@ -184,7 +184,7 @@ namespace System.Windows.Forms
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 6, 3, e.Bounds.X + e.Bounds.Width - 6, e.Bounds.Height - 6);
                 var textRect = new Rectangle(e.Bounds.X, e.Bounds.Y + 4, e.Bounds.Width, e.Bounds.Height);
-                TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, Color.Black);
+                TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text);
             }
             else e.DrawDefault = true;
         }
