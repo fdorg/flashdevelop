@@ -265,6 +265,14 @@ namespace OutputPanel
         }
 
         /// <summary>
+        /// Update colors on start after theme engine
+        /// </summary>
+        public void UpdateAfterTheme()
+        {
+            this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
+        }
+
+        /// <summary>
         /// Clears the output
         /// </summary>
         public void ClearOutput(Object sender, System.EventArgs e)

@@ -142,6 +142,10 @@ namespace OutputPanel
                 case EventType.ApplySettings:
                     this.pluginUI.ApplyWrapText();
                     break;
+
+                case EventType.UIStarted:
+                    this.pluginUI.UpdateAfterTheme();
+                    break;
             }
         }
         
@@ -188,7 +192,7 @@ namespace OutputPanel
         /// </summary>
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys;
+            EventType eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted;
             EventManager.AddEventHandler(this, eventMask);
         }
 

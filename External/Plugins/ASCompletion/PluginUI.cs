@@ -1117,6 +1117,12 @@ namespace ASCompletion
             }
         }
 
+        // Update colors on start after theme engine
+        public void UpdateAfterTheme()
+        {
+            findProcTxt.ForeColor = System.Drawing.SystemColors.GrayText;
+        }
+
         protected override Boolean ProcessDialogKey(Keys keyData)
         {
             if (keyData == Keys.Enter)
@@ -1174,7 +1180,9 @@ namespace ASCompletion
             }
             return null;
         }
+
         #endregion
+
     }
 
     #region Custom structures

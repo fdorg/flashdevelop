@@ -170,6 +170,7 @@ namespace ASCompletion
                     PathExplorer.OnUIStarted();
                     // associate context to initial document
                     e = new NotifyEvent(EventType.SyntaxChange);
+                    this.pluginUI.UpdateAfterTheme();
                 }
 
                 // editor ready?
