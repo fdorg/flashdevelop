@@ -156,7 +156,7 @@ namespace FlashLogViewer
             // 
             // logTextBox
             // 
-            this.logTextBox.BackColor = System.Drawing.Color.White;
+            this.logTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.logTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.logTextBox.DetectUrls = false;
             this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;

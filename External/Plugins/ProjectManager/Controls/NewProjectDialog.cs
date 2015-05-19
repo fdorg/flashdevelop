@@ -575,12 +575,12 @@ namespace ProjectManager.Controls
             if (!Regex.IsMatch(PackageName, "^[_a-zA-Z]([_a-zA-Z0-9])*([\\.][_a-zA-Z]([_a-zA-Z0-9])*)*$") && packageTextBox.Text.Length > 0)
             {
                 okButton.Enabled = false;
-                packageTextBox.BackColor = System.Drawing.Color.Pink;
+                packageTextBox.BackColor = System.Drawing.Color.Salmon;
             }
             else
             {
                 okButton.Enabled = true;
-                packageTextBox.BackColor = System.Drawing.Color.White;
+                packageTextBox.BackColor = System.Drawing.SystemColors.Window;
             }
         }
 

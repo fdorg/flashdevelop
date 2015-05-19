@@ -264,6 +264,7 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
+                Color text = PluginBase.MainForm.GetThemeColor("ToolStripItem.ForeColor");
                 Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
                 Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
                 if (e.Item.Enabled)
@@ -288,7 +289,7 @@ namespace System.Windows.Forms
                         e.Graphics.FillRectangle(b, rect);
                         DockDrawHelper.DrawRoundedRectangle(e.Graphics, rect.Left - 1, rect.Top - 1, rect.Width, rect.Height + 1, 3, border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border);
                         DockDrawHelper.DrawRoundedRectangle(e.Graphics, rect2.Left - 1, rect2.Top - 1, rect2.Width, rect2.Height + 1, 3, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back);
-                        e.Item.ForeColor = Color.Black;
+                        e.Item.ForeColor = text;
                     }
                     if (((ToolStripMenuItem)e.Item).DropDown.Visible && !e.Item.IsOnDropDown)
                     {

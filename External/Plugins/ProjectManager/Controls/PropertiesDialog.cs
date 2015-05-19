@@ -405,7 +405,7 @@ namespace ProjectManager.Controls
             // 
             // colorLabel
             // 
-            this.colorLabel.BackColor = System.Drawing.Color.White;
+            this.colorLabel.BackColor = System.Drawing.SystemColors.Window;
             this.colorLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.colorLabel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.colorLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -1236,7 +1236,7 @@ namespace ProjectManager.Controls
             {
                 colorLabel.BackColor = ColorTranslator.FromHtml(rgb);
             }
-            catch { colorLabel.BackColor = Color.Black; }
+            catch { colorLabel.BackColor = SystemColors.WindowText; }
             Modified(); 
         }
         private void fpsTextBox_TextChanged(object sender, EventArgs e) { Modified(); }
