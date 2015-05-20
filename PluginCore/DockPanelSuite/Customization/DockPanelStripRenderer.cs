@@ -72,9 +72,9 @@ namespace System.Windows.Forms
 
         protected override void InitializeItem(ToolStripItem item)
         {
+            base.InitializeItem(item);
             if (item is ToolStripButton)
             {
-                base.InitializeItem(item);
                 Double scale = ScaleHelper.GetScale();
                 if (scale >= 1.5)
                 {
@@ -89,11 +89,11 @@ namespace System.Windows.Forms
                     item.Padding = new Padding(2, 2, 2, 2);
                 }
             }
-            else base.InitializeItem(item);
         }
 
         private void OnToolStripPaint(Object sender, PaintEventArgs e)
         {
+            Font font = PluginBase.MainForm.Settings.DefaultFont;
             Color tback = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
             Color tborder = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
             Color cborder = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
@@ -115,6 +115,10 @@ namespace System.Windows.Forms
                     var size = comboBox.ComboBox.Size;
                     var location = comboBox.ComboBox.Location;
                     if (comboBox.FlatStyle != FlatStyle.Flat) comboBox.FlatStyle = FlatStyle.Flat;
+                    if (font.Size > 8.25f && comboBox.Font.Size != font.Size - 0.5f)
+                    {
+                        comboBox.Font = new Font(font.FontFamily, font.Size - 0.5f);
+                    }
                     e.Graphics.DrawRectangle(new Pen(cborder), location.X - 1, location.Y - 1, size.Width + 1, size.Height + 1);
                 }
             }

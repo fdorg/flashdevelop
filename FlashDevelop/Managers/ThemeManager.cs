@@ -133,6 +133,9 @@ namespace FlashDevelop.Managers
                 String full = type.Name;
                 String name = full.EndsWith("Ex") ? full.Remove(full.Length - 2) : full;
                 PropertyInfo ground = type.GetProperty("BackgroundColor");
+                PropertyInfo alink = type.GetProperty("ActiveLinkColor");
+                PropertyInfo dlink = type.GetProperty("DisabledLinkColor");
+                PropertyInfo link = type.GetProperty("LinkColor");
                 PropertyInfo back = type.GetProperty("BackColor");
                 PropertyInfo fore = type.GetProperty("ForeColor");
                 if (back != null)
@@ -160,6 +163,33 @@ namespace FlashDevelop.Managers
                     if (color != Color.Empty)
                     {
                         ground.SetValue(obj, color, null);
+                    }
+                }
+                if (alink != null)
+                {
+                    String key = name + ".ActiveLinkColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        alink.SetValue(obj, color, null);
+                    }
+                }
+                if (dlink != null)
+                {
+                    String key = name + ".DisabledLinkColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        dlink.SetValue(obj, color, null);
+                    }
+                }
+                if (link != null)
+                {
+                    String key = name + ".LinkColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        link.SetValue(obj, color, null);
                     }
                 }
             }
