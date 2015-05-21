@@ -4,14 +4,14 @@
 ImageManager.ImageSet=Dark
 
 # Default, Large
-VS2005DockPaneStrip.TabSize=Default
+VS2005DockPaneStrip.TabSize=Large
 
 # Default, Block, Rect
-VS2005DockPaneStrip.TabStyle=Block
+VS2005DockPaneStrip.TabStyle=Rect
 
 # Default, Underlined
-VS2005AutoHideStrip.TabStyle=Default
-VS2005AutoHideStrip.TabUnderlineColor=#ff0000
+VS2005AutoHideStrip.TabStyle=Underlined
+VS2005AutoHideStrip.TabUnderlineColor=#7B7675
 
 # Default (Hover), Click
 DockPanel.ShowAutoHideContentOn=Hover
@@ -40,13 +40,13 @@ VS2005DockPaneCaption.ActiveImageColor=#D1D1D1
 VS2005DockPaneCaption.ImageColor=#D1D1D1
 VS2005DockPaneCaption.BorderColor=#7B7675
 
-VS2005DockPaneStrip.DocTabActiveBorder=#979291
+VS2005DockPaneStrip.DocTabActiveBorder=#ABA8A5
 VS2005DockPaneStrip.DocTabActiveForeColor=#333333
-VS2005DockPaneStrip.DocTabInactiveBorder=#979291
+VS2005DockPaneStrip.DocTabInactiveBorder=#ABA8A5
 VS2005DockPaneStrip.ToolActiveBorderColor=#7B7675
 VS2005DockPaneStrip.ToolBorderColor=#7B7675
 VS2005DockPaneStrip.ToolActiveForeColor=#333333
-VS2005DockPaneStrip.ToolSeparatorColor=#F0EFF3
+VS2005DockPaneStrip.ToolSeparatorColor=#BBBBB0
 VS2005DockPaneStrip.ImageColor=#333333
 
 ToolStripMenu.TitleBackColor=#CBC8C5
@@ -165,12 +165,12 @@ VS2005DockPaneStrip.ForeColor=#333333
 VS2005DockPaneStrip.TabForeColor=#333333
 VS2005DockPaneStrip.DocBackColor=#ABA8A5
 VS2005DockPaneStrip.ToolBackColor=#94918D
-VS2005DockPaneStrip.ToolActiveBackColor=#F0EDEC
-VS2005DockPaneStrip.DocActiveBackColor=#E2E2E2
-VS2005DockPaneStrip.DocInactiveBackColor=#C8C4C1
-VS2005DockPaneStrip.TabSeparatorColor=#C0B092
-VS2005DockPaneStrip.TabStripColor=#C0B092
+VS2005DockPaneStrip.ToolActiveBackColor=#E9E9E9
+VS2005DockPaneStrip.DocActiveBackColor=#F5F5F5
+VS2005DockPaneStrip.DocInactiveBackColor=#D5D2D0
+VS2005DockPaneStrip.TabSeparatorColor=#FBB54A
+VS2005DockPaneStrip.TabStripColor=#F0AC62
 
 VS2005AutoHideStrip.ForeColor=#333333
 VS2005AutoHideStrip.BackColor=#94918D
-VS2005AutoHideStrip.BorderColor=#7B7675
+VS2005AutoHideStrip.BorderColor=#94918D

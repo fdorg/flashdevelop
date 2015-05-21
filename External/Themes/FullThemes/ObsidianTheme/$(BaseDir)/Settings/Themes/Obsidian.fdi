@@ -50,10 +50,10 @@ VS2005DockPaneStrip.ToolSeparatorColor=#CCCCCC
 VS2005DockPaneStrip.ImageColor=#3A4345
 
 ToolStripMenu.TitleBackColor=#D2D5D3
-ToolStripMenu.TitleBorderColor=#75828A
+ToolStripMenu.TitleBorderColor=#5C676D
 ToolStripMenu.SeparatorColor=#A7A7A7
 ToolStripMenu.DropDownBackColor=#D2D5D3
-ToolStripMenu.DropDownBorderColor=#75828A
+ToolStripMenu.DropDownBorderColor=#5C676D
 ToolStripMenu.MarginBorderColor=#A7A7A7
 ToolStripMenu.MarginBackColor=#B2B2B2
 ToolStripMenu.BorderColor=#5C676D
