@@ -127,9 +127,20 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void ThemeControl(Object obj)
         {
+            ThemeControl(obj, obj.GetType());
+        }
+
+        /// <summary>
+        /// Applies theme colors to the control based on type.
+        /// </summary>
+        private static void ThemeControl(Object obj, Type type)
+        {
             try
             {
-                Type type = obj.GetType();
+                // Apply colors of base type before applying colors for this type
+                if (type.BaseType != null)
+                    ThemeControl(obj, type.BaseType);
+
                 String full = type.Name;
                 String name = full.EndsWith("Ex") ? full.Remove(full.Length - 2) : full;
                 PropertyInfo ground = type.GetProperty("BackgroundColor");
