@@ -18,7 +18,6 @@ namespace CodeRefactor.Controls
         public SurroundMenu()
         {
             this.Text = TextHelper.GetString("Label.SurroundWith");
-            this.image = PluginBase.MainForm.FindImage("559"); // empty
         }
         
         /// <summary>

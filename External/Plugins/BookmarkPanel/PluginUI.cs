@@ -271,7 +271,6 @@ namespace BookmarkPanel
             {
                 column.Width = ScaleHelper.Scale(column.Width);
             }
-            this.columnText.Width = -2; // Extend last column
         }
 
         /// <summary>

@@ -66,6 +66,7 @@ namespace System.Windows.Forms
         protected override void Initialize(ToolStrip toolStrip)
         {
             this.toolStrip = toolStrip;
+            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.toolStrip.Paint += this.OnToolStripPaint;
             base.Initialize(toolStrip);
         }
@@ -73,6 +74,11 @@ namespace System.Windows.Forms
         protected override void InitializeItem(ToolStripItem item)
         {
             base.InitializeItem(item);
+            // Set default blank image to look ok in high dpi
+            if (item.Image == null && item.IsOnDropDown)
+            {
+                item.Image = PluginBase.MainForm.FindImage("559");
+            }
             if (item is ToolStripButton)
             {
                 Double scale = ScaleHelper.GetScale();
@@ -206,7 +212,7 @@ namespace System.Windows.Forms
                 {
                     Pen pen2 = new Pen(sepFore);
                     Int32 middle = e.Item.ContentRectangle.Top + e.Item.ContentRectangle.Height / 2;
-                    e.Graphics.DrawLine(pen2, 32, middle, e.Item.ContentRectangle.Right - 6, middle);
+                    e.Graphics.DrawLine(pen2, ScaleHelper.Scale(16) + 16, middle, e.Item.ContentRectangle.Right - 6, middle);
                     pen2.Dispose();
                 }
                 else renderer.DrawSeparator(e);

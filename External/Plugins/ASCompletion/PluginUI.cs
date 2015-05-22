@@ -186,7 +186,6 @@ namespace ASCompletion
 
         private void InitializeTexts()
         {
-            this.noneItem.Image = PluginBase.MainForm.FindImage("559");
             this.noneItem.Text = TextHelper.GetString("Outline.SortNone");
             this.sortedItem.Text = TextHelper.GetString("Outline.SortDefault");
             this.sortedByKindItem.Text = TextHelper.GetString("Outline.SortedByKind");

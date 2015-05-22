@@ -305,7 +305,6 @@ namespace ResultsPanel
             this.toolStripButtonWarning.Text = "0 " + TextHelper.GetString("Filters.Warnings");
             this.toolStripButtonInfo.Text = "0 " + TextHelper.GetString("Filters.Informations");
             this.toolStripLabelFilter.Text = TextHelper.GetString("Filters.Filter");
-            this.entryPath.Width = -2; // Extend last column
         }
 
         /// <summary>
@@ -696,7 +695,6 @@ namespace ResultsPanel
                 {
                     this.AddSquiggle(this.entriesView.Items[i]);
                 }
-                this.entryPath.Width = -2; // Extend last column
             }
             this.entriesView.EndUpdate();
         }

@@ -240,7 +240,6 @@ namespace TaskListPanel
             this.columnText.Text = TextHelper.GetString("Column.Description");
             this.columnName.Text = TextHelper.GetString("Column.File");
             this.columnPath.Text = TextHelper.GetString("Column.Path");
-            this.columnPath.Width = -2; // Extend last column
         }
 
         /// <summary>
@@ -564,7 +563,6 @@ namespace TaskListPanel
                     this.listView.Items.Add(item);
                     this.AddToGroup(item, path);
                 }
-                this.columnPath.Width = -2; // Extend last column
             }
         }
 
@@ -606,7 +604,6 @@ namespace TaskListPanel
                     this.listView.Items.Add(item);
                     this.AddToGroup(item, path);
                 }
-                this.columnPath.Width = -2; // Extend last column
             }
         }
 

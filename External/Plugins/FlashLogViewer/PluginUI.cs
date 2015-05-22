@@ -134,7 +134,7 @@ namespace FlashLogViewer
             this.logComboBox.Enabled = false;
             this.logComboBox.Items.AddRange(new Object[] { TextHelper.GetString("Label.FlashLog"), TextHelper.GetString("Label.PolicyLog") });
             this.logComboBox.Name = "logComboBox";
-            this.logComboBox.Size = new System.Drawing.Size(90, 28);
+            this.logComboBox.Size = new System.Drawing.Size(120, 28);
             this.logComboBox.SelectedIndex = 0;
             this.logComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.logComboBox.SelectedIndexChanged += new System.EventHandler(this.LogComboBoxIndexChanged);

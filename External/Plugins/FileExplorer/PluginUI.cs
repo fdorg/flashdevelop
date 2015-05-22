@@ -313,7 +313,6 @@ namespace FileExplorer
             this.browseButton.ToolTipText = TextHelper.GetString("ToolTip.Browse");
             this.typeHeader.Text = TextHelper.GetString("Header.Type");
             this.sizeHeader.Text = TextHelper.GetString("Header.Size");
-            this.modifiedHeader.Width = -2; // Extend last column
         }
 
         /// <summary>
@@ -484,7 +483,6 @@ namespace FileExplorer
                 this.selectedPath.Enabled = true;
                 this.browseButton.Enabled = true;
                 this.updateInProgress = false;
-                this.modifiedHeader.Width = -2; // Extend last column
                 this.fileView.EndUpdate();
             }
         }
