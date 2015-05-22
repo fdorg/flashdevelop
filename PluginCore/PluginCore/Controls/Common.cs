@@ -155,12 +155,19 @@ namespace System.Windows.Forms
 
     public class ListViewEx : ListView
     {
+        private Timer expandDelay;
+
         public ListViewEx()
         {
             this.OwnerDraw = true;
             this.DrawColumnHeader += this.OnDrawColumnHeader;
             this.DrawSubItem += this.OnDrawSubItem;
             this.DrawItem += this.OnDrawItem;
+            this.expandDelay = new Timer();
+            this.expandDelay.Interval = 10;
+            this.expandDelay.Tick += this.ExpandDelayTick;
+            this.expandDelay.Enabled = true;
+            this.expandDelay.Start();
         }
 
         private void OnDrawSubItem(object sender, DrawListViewSubItemEventArgs e)
@@ -183,10 +190,31 @@ namespace System.Windows.Forms
                 e.Graphics.FillRectangle(new SolidBrush(back), e.Bounds.X, 0, e.Bounds.Width, e.Bounds.Height);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 6, 3, e.Bounds.X + e.Bounds.Width - 6, e.Bounds.Height - 6);
-                var textRect = new Rectangle(e.Bounds.X, e.Bounds.Y + 4, e.Bounds.Width, e.Bounds.Height);
+                var textRect = new Rectangle(e.Bounds.X, e.Bounds.Y + 3, e.Bounds.Width, e.Bounds.Height);
                 TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text);
             }
             else e.DrawDefault = true;
+        }
+
+        private void ExpandDelayTick(object sender, EventArgs e)
+        {
+            this.expandDelay.Enabled = false;
+            if (this.View == View.Details && this.Columns.Count > 0)
+            {
+                this.Columns[this.Columns.Count - 1].Width = -2;
+            }
+        }
+
+        protected override void WndProc(ref Message message)
+        {
+            switch (message.Msg)
+            {
+                case 0xf: // WM_PAINT
+                    // Delay column expand...
+                    this.expandDelay.Enabled = true;
+                    break;
+            }
+            base.WndProc(ref message);
         }
 
     }
@@ -194,6 +222,7 @@ namespace System.Windows.Forms
     public class DescriptiveCollectionEditor : CollectionEditor
     {
         public DescriptiveCollectionEditor(Type type) : base(type) {}
+        
         protected override CollectionForm CreateCollectionForm()
         {
             CollectionForm form = base.CreateCollectionForm();
@@ -203,7 +232,8 @@ namespace System.Windows.Forms
             };
             return form;
         }
-        static void ShowDescription(Control control)
+
+        private static void ShowDescription(Control control)
         {
             PropertyGrid grid = control as PropertyGrid;
             if (grid != null) grid.HelpVisible = true;
