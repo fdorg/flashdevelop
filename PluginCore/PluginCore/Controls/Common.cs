@@ -153,6 +153,35 @@ namespace System.Windows.Forms
 
     }
 
+    public class DataGridViewEx : DataGridView
+    {
+        public DataGridViewEx()
+        {
+            this.CellPainting += this.OnDataGridViewCellPainting;
+        }
+
+        private void OnDataGridViewCellPainting(Object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex == -1)
+            {
+                Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
+                Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
+                Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
+                if (back != Color.Empty && border != Color.Empty)
+                {
+                    this.EnableHeadersVisualStyles = false;
+                    this.Columns[0].HeaderCell.Style.BackColor = text;
+                    e.Graphics.FillRectangle(new SolidBrush(back), e.CellBounds);
+                    e.Graphics.DrawLine(new Pen(border), e.CellBounds.X, e.CellBounds.Height - 1, e.CellBounds.X + e.CellBounds.Width, e.CellBounds.Height - 1);
+                    e.Graphics.DrawLine(new Pen(border), e.CellBounds.X + e.CellBounds.Width - 1, 3, e.CellBounds.X + e.CellBounds.Width - 1, e.CellBounds.Height - 6);
+                    e.PaintContent(e.ClipBounds);
+                    e.Handled = true;
+                }
+            }
+        }
+
+    }
+
     public class ListViewEx : ListView
     {
         private Timer expandDelay;
@@ -189,8 +218,8 @@ namespace System.Windows.Forms
             {
                 e.Graphics.FillRectangle(new SolidBrush(back), e.Bounds.X, 0, e.Bounds.Width, e.Bounds.Height);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
-                e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 6, 3, e.Bounds.X + e.Bounds.Width - 6, e.Bounds.Height - 6);
-                var textRect = new Rectangle(e.Bounds.X, e.Bounds.Y + 3, e.Bounds.Width, e.Bounds.Height);
+                e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 1, 3, e.Bounds.X + e.Bounds.Width - 1, e.Bounds.Height - 6);
+                var textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 4, e.Bounds.Width, e.Bounds.Height);
                 TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text);
             }
             else e.DrawDefault = true;

@@ -77,12 +77,12 @@ namespace FlashDebugger
                 imageList.Images.Add("ImportBreakpoints", PluginBase.MainForm.FindImage("549|8|4|4"));
             }
             this.AutoKeyHandling = true;
-            this.dgv = new DataGridView();
+            this.dgv = new DataGridViewEx();
             this.dgv.Dock = DockStyle.Fill;
             this.dgv.BorderStyle = BorderStyle.None;
             this.dgv.BackgroundColor = SystemColors.Window;
             this.dgv.Font = PluginBase.Settings.DefaultFont;
-            this.dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             this.dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             this.dgv.CellBorderStyle = DataGridViewCellBorderStyle.Single;
@@ -112,12 +112,14 @@ namespace FlashDebugger
             this.ColumnBreakPointExp.HeaderText = TextHelper.GetString("Label.Exp");
             this.ColumnBreakPointExp.Name = "Exp";
             this.dgv.AllowUserToAddRows = false;
-            this.dgv.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgv.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] 
+            {
                 this.ColumnBreakPointEnable,
                 this.ColumnBreakPointFilePath,
                 this.ColumnBreakPointFileName,
                 this.ColumnBreakPointLine,
-                this.ColumnBreakPointExp});
+                this.ColumnBreakPointExp
+            });
             foreach (DataGridViewColumn column in dgv.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);
