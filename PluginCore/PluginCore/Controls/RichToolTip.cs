@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using ScintillaNet;
 using PluginCore.BBCode;
+using PluginCore.Managers;
 
 
 namespace PluginCore.Controls
@@ -15,7 +16,7 @@ namespace PluginCore.Controls
     /// <summary>
     /// RichTextBox-based tooltip
     /// </summary>
-    public class RichToolTip
+    public class RichToolTip : IEventHandler
     {
         public delegate void UpdateTipHandler(ScintillaControl sender, Point mousePosition);
 
@@ -66,6 +67,7 @@ namespace PluginCore.Controls
         
         public RichToolTip(IMainForm mainForm)
         {
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
             // panel
             toolTip = new Panel();
             toolTip.Location = new System.Drawing.Point(0,0);
@@ -92,7 +94,21 @@ namespace PluginCore.Controls
             rtfCache = new Dictionary<String, String>();
             rtfCacheList = new List<String>();
         }
-        
+
+
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme)
+            {
+                Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
+                Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
+                toolTip.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
+                toolTip.ForeColor = fore == Color.Empty ? System.Drawing.SystemColors.InfoText : fore;
+                toolTipRTB.ForeColor = fore == Color.Empty ? System.Drawing.SystemColors.InfoText : fore;
+                toolTipRTB.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
+            }
+        }
+
         #endregion
         
         #region Tip Methods
