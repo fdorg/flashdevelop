@@ -9,6 +9,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using System.Collections;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace FlashDevelop.Managers
 {
@@ -115,6 +116,11 @@ namespace FlashDevelop.Managers
                     }
                 }
                 ThemeControl(obj);
+                if (obj is MainForm)
+                {
+                    NotifyEvent ne = new NotifyEvent(EventType.ApplyTheme);
+                    EventManager.DispatchEvent(Globals.MainForm, ne);
+                }
             }
             catch (Exception ex)
             {
