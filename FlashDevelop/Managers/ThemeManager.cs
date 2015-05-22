@@ -127,11 +127,21 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void ThemeControl(Object obj)
         {
+            ThemeControl(obj, obj.GetType());
+        }
+
+        /// <summary>
+        /// Applies theme colors to the control based on type.
+        /// </summary>
+        private static void ThemeControl(Object obj, Type type)
+        {
             try
             {
-                Type type = obj.GetType();
-                String full = type.Name;
-                String name = full.EndsWith("Ex") ? full.Remove(full.Length - 2) : full;
+                // Apply colors of base type before applying for this type
+                Boolean useIn = GetThemeValue("ThemeManager.UseInheritance") == "True";
+                if (useIn && type.BaseType != null) ThemeControl(obj, type.BaseType);
+                // Handle type with full name, with or without suffix 'Ex'
+                String name = type.Name.EndsWith("Ex") ? type.Name.Remove(type.Name.Length - 2) : type.Name;
                 PropertyInfo ground = type.GetProperty("BackgroundColor");
                 PropertyInfo alink = type.GetProperty("ActiveLinkColor");
                 PropertyInfo dlink = type.GetProperty("DisabledLinkColor");
