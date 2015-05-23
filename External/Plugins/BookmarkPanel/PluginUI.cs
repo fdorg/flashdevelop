@@ -257,6 +257,7 @@ namespace BookmarkPanel
         /// </summary>
         private void InitializeLayout()
         {
+            this.searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.toolStrip.Font = PluginBase.Settings.DefaultFont;
             this.toolStrip.Renderer = new DockPanelStripRenderer();
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
@@ -266,7 +267,6 @@ namespace BookmarkPanel
             this.contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             this.contextMenuStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             foreach (ColumnHeader column in listView.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);

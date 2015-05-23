@@ -321,9 +321,9 @@ namespace FileExplorer
         /// </summary>
         private void InitializeLayout()
         {
+            this.selectedPath.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.toolStrip.Renderer = new DockPanelStripRenderer();
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.selectedPath.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             foreach (ColumnHeader column in fileView.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);

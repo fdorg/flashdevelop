@@ -118,7 +118,7 @@ namespace System.Windows.Forms
                 Font font = PluginBase.MainForm.Settings.DefaultFont;
                 ToolStripComboBox comboBox = item as ToolStripComboBox;
                 Color border = GetThemeColor("ToolStripComboBoxControl.BorderColor");
-                if (border != Color.Empty) // Are we theming?
+                if (border != Color.Empty && comboBox.FlatStyle == FlatStyle.Popup) // Are we theming, default flat style?
                 {
                     comboBox.FlatStyle = FlatStyle.Flat;
                     if (font.Size > 8.25f && comboBox.Font.Size != font.Size - 0.5f)
