@@ -180,8 +180,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void InitializeInterface()
         {
-            this.toolStrip.Renderer = new DockPanelStripRenderer(true);
             this.addressComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
+            this.toolStrip.Renderer = new DockPanelStripRenderer(true);
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             if (ScaleHelper.GetScale() >= 1.5)
             {
