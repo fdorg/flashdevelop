@@ -1033,11 +1033,13 @@ namespace ASCompletion
             if (hilight)
             {
                 node.EnsureVisible();
-                node.BackColor = System.Drawing.Color.LightSkyBlue;
+                node.ForeColor = SystemColors.HighlightText;
+                node.BackColor = SystemColors.Highlight;
             }
             else
             {
-                node.BackColor = SystemColors.Window;
+                node.ForeColor = OutlineTree.ForeColor;
+                node.BackColor = OutlineTree.BackColor;
             }
         }
 

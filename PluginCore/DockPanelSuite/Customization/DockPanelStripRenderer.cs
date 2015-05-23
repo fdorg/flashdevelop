@@ -47,20 +47,28 @@ namespace System.Windows.Forms
 
     public class DockPanelStripRenderer : ToolStripRenderer
     {
+        private Boolean useTheme;
         private ToolStrip toolStrip;
         private Boolean drawBottomBorder;
         private ProfessionalColorTable colorTable;
-        static ToolStripRenderer renderer;
+        private static ToolStripRenderer renderer;
 
-        public DockPanelStripRenderer() : this(true) { }
-
-        public DockPanelStripRenderer(Boolean drawBottomBorder)
+        public DockPanelStripRenderer() : this(true) {}
+        public DockPanelStripRenderer(Boolean drawBottomBorder) : this(drawBottomBorder, true) {}
+        public DockPanelStripRenderer(Boolean drawBottomBorder, Boolean useTheme)
         {
+            this.useTheme = useTheme;
             this.drawBottomBorder = drawBottomBorder;
             this.colorTable = new ProfessionalColorTable();
             UiRenderMode renderMode = PluginBase.MainForm.Settings.RenderMode;
             if (renderMode == UiRenderMode.System) renderer = new ToolStripSystemRenderer();
             else renderer = new ToolStripProfessionalRenderer(this.colorTable);
+        }
+
+        private Color GetThemeColor(String id)
+        {
+            if (!useTheme) return Color.Empty;
+            return PluginBase.MainForm.GetThemeColor(id);
         }
 
         protected override void Initialize(ToolStrip toolStrip)
@@ -95,24 +103,45 @@ namespace System.Windows.Forms
                     item.Padding = new Padding(2, 2, 2, 2);
                 }
             }
+            else if (item is ToolStripTextBox)
+            {
+                var textBox = item as ToolStripTextBox;
+                Color border = GetThemeColor("ToolStripTextBoxControl.BorderColor");
+                if (border != Color.Empty) // Are we theming?
+                {
+                    textBox.Margin = new Padding(2, 1, 2, 1);
+                    textBox.BorderStyle = BorderStyle.None;
+                }
+            }
+            else if (item is ToolStripComboBox)
+            {
+                Font font = PluginBase.MainForm.Settings.DefaultFont;
+                ToolStripComboBox comboBox = item as ToolStripComboBox;
+                Color border = GetThemeColor("ToolStripComboBoxControl.BorderColor");
+                if (border != Color.Empty) // Are we theming?
+                {
+                    comboBox.FlatStyle = FlatStyle.Flat;
+                    if (font.Size > 8.25f && comboBox.Font.Size != font.Size - 0.5f)
+                    {
+                        comboBox.Font = new Font(font.FontFamily, font.Size - 0.5f);
+                    }
+                }
+            }
         }
 
         private void OnToolStripPaint(Object sender, PaintEventArgs e)
         {
             Font font = PluginBase.MainForm.Settings.DefaultFont;
-            Color tback = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
-            Color tborder = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
-            Color cborder = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
+            Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
+            Color cborder = GetThemeColor("ToolStripComboBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
             {
-                if (item is ToolStripTextBox && tborder != Color.Empty && tback != Color.Empty)
+                if (item is ToolStripTextBox && tborder != Color.Empty)
                 {
                     var textBox = item as ToolStripTextBox;
                     var size = textBox.TextBox.Size;
                     var location = textBox.TextBox.Location;
-                    textBox.Margin = new Padding(2, 1, 2, 1);
-                    textBox.BorderStyle = BorderStyle.None;
-                    e.Graphics.FillRectangle(new SolidBrush(tback), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                    e.Graphics.FillRectangle(new SolidBrush(item.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
                     e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
                 }
                 else if (item is ToolStripComboBox && cborder != Color.Empty)
@@ -120,11 +149,6 @@ namespace System.Windows.Forms
                     var comboBox = item as ToolStripComboBox;
                     var size = comboBox.ComboBox.Size;
                     var location = comboBox.ComboBox.Location;
-                    if (comboBox.FlatStyle != FlatStyle.Flat) comboBox.FlatStyle = FlatStyle.Flat;
-                    if (font.Size > 8.25f && comboBox.Font.Size != font.Size - 0.5f)
-                    {
-                        comboBox.Font = new Font(font.FontFamily, font.Size - 0.5f);
-                    }
                     e.Graphics.DrawRectangle(new Pen(cborder), location.X - 1, location.Y - 1, size.Width + 1, size.Height + 1);
                 }
             }
@@ -135,7 +159,7 @@ namespace System.Windows.Forms
             if (e.ToolStrip is StatusStrip) return;
             else if (e.ToolStrip is ToolStripDropDownMenu)
             {
-                Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.BackColor");
+                Color back2 = GetThemeColor("ToolStripMenu.BackColor");
                 if (back2 != Color.Empty)
                 {
                     e.Graphics.FillRectangle(new SolidBrush(back2), e.AffectedBounds.Top, e.AffectedBounds.Left, e.AffectedBounds.Width, e.AffectedBounds.Height);
@@ -150,14 +174,14 @@ namespace System.Windows.Forms
         {
             if (e.ToolStrip is StatusStrip)
             {
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
+                Color back = GetThemeColor("ToolStrip.3dDarkColor");
                 e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlDark : new Pen(back), 0, 0, e.ToolStrip.Width, 0);
-                Color fore = PluginBase.MainForm.GetThemeColor("ToolStrip.3dLightColor");
+                Color fore = GetThemeColor("ToolStrip.3dLightColor");
                 e.Graphics.DrawLine(fore == Color.Empty ? SystemPens.ButtonHighlight : new Pen(fore), 1, 1, e.ToolStrip.Width, 1);
             }
             else if (e.ToolStrip is ToolStripDropDownMenu)
             {
-                Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.BorderColor");
+                Color back2 = GetThemeColor("ToolStripMenu.BorderColor");
                 if (renderer is ToolStripProfessionalRenderer && back2 != Color.Empty)
                 {
                     e.Graphics.DrawRectangle(new Pen(back2), e.AffectedBounds.Top, e.AffectedBounds.Left, e.AffectedBounds.Width - 1, e.AffectedBounds.Height - 1);
@@ -165,14 +189,14 @@ namespace System.Windows.Forms
                 else renderer.DrawToolStripBorder(e);
                 if (renderer is ToolStripProfessionalRenderer && e.ConnectedArea.Width > 0)
                 {
-                    Color back = PluginBase.MainForm.GetThemeColor("ToolStripMenu.SeparatorColor");
+                    Color back = GetThemeColor("ToolStripMenu.SeparatorColor");
                     e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlLight : new Pen(back), e.ConnectedArea.Left, e.ConnectedArea.Top, e.ConnectedArea.Right - 1, e.ConnectedArea.Top);
                 }
             }
             else if (this.drawBottomBorder)
             {
                 Rectangle r = e.AffectedBounds;
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStrip.BorderColor");
+                Color back = GetThemeColor("ToolStrip.BorderColor");
                 e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlDark : new Pen(back), r.Left, r.Bottom - 1, r.Right, r.Bottom - 1);
             }
         }
@@ -191,8 +215,8 @@ namespace System.Windows.Forms
             }
             else if (e.Item is ToolStripSeparator && e.Vertical)
             {
-                Color light = PluginBase.MainForm.GetThemeColor("ToolStrip.3dLightColor");
-                Color dark = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
+                Color light = GetThemeColor("ToolStrip.3dLightColor");
+                Color dark = GetThemeColor("ToolStrip.3dDarkColor");
                 if (dark != Color.Empty && light != Color.Empty)
                 {
                     Pen pen = new Pen(dark);
@@ -207,7 +231,7 @@ namespace System.Windows.Forms
             }
             else
             {
-                Color sepFore = PluginBase.MainForm.GetThemeColor("ToolStripSeparator.ForeColor");
+                Color sepFore = GetThemeColor("ToolStripSeparator.ForeColor");
                 if (sepFore != Color.Empty)
                 {
                     Pen pen2 = new Pen(sepFore);
@@ -224,7 +248,7 @@ namespace System.Windows.Forms
             if (renderer is ToolStripProfessionalRenderer)
             {
                 if (e.GripStyle == ToolStripGripStyle.Hidden) return;
-                Color fore = PluginBase.MainForm.GetThemeColor("ToolStrip.3dLightColor");
+                Color fore = GetThemeColor("ToolStrip.3dLightColor");
                 using (Brush lightBrush = new SolidBrush(fore == Color.Empty ? this.colorTable.GripLight : fore))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left, e.GripBounds.Top + 6, 2, 2);
@@ -234,7 +258,7 @@ namespace System.Windows.Forms
                         r.Offset(0, 4);
                     }
                 }
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
+                Color back = GetThemeColor("ToolStrip.3dDarkColor");
                 using (Brush darkBrush = new SolidBrush(back == Color.Empty ? this.colorTable.GripDark : back))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 5, 2, 2);
@@ -274,9 +298,9 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
-                Color text = PluginBase.MainForm.GetThemeColor("ToolStripItem.ForeColor");
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
-                Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
+                Color text = GetThemeColor("ToolStripItem.ForeColor");
+                Color back = GetThemeColor("ToolStripItem.BackColor");
+                Color border = GetThemeColor("ToolStripItem.BorderColor");
                 if (e.Item.Enabled)
                 {
                     if (!e.Item.IsOnDropDown && e.Item.Selected)
@@ -303,8 +327,8 @@ namespace System.Windows.Forms
                     }
                     if (((ToolStripMenuItem)e.Item).DropDown.Visible && !e.Item.IsOnDropDown)
                     {
-                        Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.TitleBackColor");
-                        Color border2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.TitleBorderColor");
+                        Color back2 = GetThemeColor("ToolStripMenu.TitleBackColor");
+                        Color border2 = GetThemeColor("ToolStripMenu.TitleBorderColor");
                         if (back2 != Color.Empty && border2 != Color.Empty)
                         {
                             e.Graphics.FillRectangle(new SolidBrush(back2), new Rectangle(0, 0, e.Item.Width, e.Item.Height));
@@ -322,9 +346,9 @@ namespace System.Windows.Forms
             if (renderer is ToolStripProfessionalRenderer)
             {
                 Boolean isOver = false;
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
-                Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
-                Color active = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
+                Color back = GetThemeColor("ToolStripItem.BackColor");
+                Color border = GetThemeColor("ToolStripItem.BorderColor");
+                Color active = GetThemeColor("ToolStripMenu.DropDownBorderColor");
                 if (e.Item is ToolStripButton)
                 {
                     ToolStripButton button = e.Item as ToolStripButton;
@@ -358,8 +382,8 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
-                Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
+                Color back = GetThemeColor("ToolStripItem.BackColor");
+                Color border = GetThemeColor("ToolStripItem.BorderColor");
                 if (e.Item.Selected)
                 {
                     Rectangle rectBorder = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
@@ -373,8 +397,8 @@ namespace System.Windows.Forms
                 }
                 if (e.Item.Pressed)
                 {
-                    Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBackColor");
-                    Color border2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
+                    Color back2 = GetThemeColor("ToolStripMenu.DropDownBackColor");
+                    Color border2 = GetThemeColor("ToolStripMenu.DropDownBorderColor");
                     if (back2 != Color.Empty && border2 != Color.Empty)
                     {
                         e.Graphics.FillRectangle(new SolidBrush(back2), new Rectangle(0, 0, e.Item.Width, e.Item.Height));
@@ -390,8 +414,8 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
-                Color back2 = PluginBase.MainForm.GetThemeColor("ToolStripMenu.MarginBackColor");
-                Color border = PluginBase.MainForm.GetThemeColor("ToolStripMenu.MarginBorderColor");
+                Color back2 = GetThemeColor("ToolStripMenu.MarginBackColor");
+                Color border = GetThemeColor("ToolStripMenu.MarginBorderColor");
                 Rectangle rect = new Rectangle(e.AffectedBounds.Width, 0, 1, e.AffectedBounds.Height);
                 Rectangle rect2 = new Rectangle(0, 0, e.AffectedBounds.Width, e.AffectedBounds.Height);
                 e.Graphics.FillRectangle(new LinearGradientBrush(rect2, back2 == Color.Empty ? this.colorTable.ImageMarginGradientBegin : back2, back2 == Color.Empty ? this.colorTable.ImageMarginGradientEnd : back2, 0.2f), rect2);
@@ -404,8 +428,8 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStripItem.BackColor");
-                Color border = PluginBase.MainForm.GetThemeColor("ToolStripItem.BorderColor");
+                Color back = GetThemeColor("ToolStripItem.BackColor");
+                Color border = GetThemeColor("ToolStripItem.BorderColor");
                 Rectangle borderRect = new Rectangle(4, 2, ScaleHelper.Scale(18), ScaleHelper.Scale(18));
                 Rectangle backRect = new Rectangle(5, 3, borderRect.Width - 2, borderRect.Height - 2);
                 SolidBrush borderBrush = new SolidBrush(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border);
@@ -420,8 +444,8 @@ namespace System.Windows.Forms
 
         protected override void OnRenderStatusStripSizingGrip(ToolStripRenderEventArgs e)
         {
-            Color dark = PluginBase.MainForm.GetThemeColor("ToolStrip.3dDarkColor");
-            Color light = PluginBase.MainForm.GetThemeColor("ToolStrip.3dLightColor");
+            Color dark = GetThemeColor("ToolStrip.3dDarkColor");
+            Color light = GetThemeColor("ToolStrip.3dLightColor");
             if (dark != Color.Empty && light != Color.Empty)
             {
                 using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
@@ -460,7 +484,7 @@ namespace System.Windows.Forms
         {
             Graphics g = e.Graphics;
             Rectangle dropDownRect = e.ArrowRectangle;
-            Color color = PluginBase.MainForm.GetThemeColor("ToolStripItem.ArrowColor");
+            Color color = GetThemeColor("ToolStripItem.ArrowColor");
             if (color != Color.Empty) e.ArrowColor = color;
             else e.ArrowColor = SystemColors.MenuText;
             using (Brush brush = new SolidBrush(e.ArrowColor))
@@ -514,8 +538,8 @@ namespace System.Windows.Forms
             if (renderer is ToolStripProfessionalRenderer) 
             {
                 Color text = Color.Empty;
-                if (e.ToolStrip is StatusStrip) text = PluginBase.MainForm.GetThemeColor("StatusStrip.ForeColor");
-                else text = PluginBase.MainForm.GetThemeColor("ToolStripItem.TextColor");
+                if (e.ToolStrip is StatusStrip) text = GetThemeColor("StatusStrip.ForeColor");
+                else text = GetThemeColor("ToolStripItem.TextColor");
                 if (text != Color.Empty) e.TextColor = text;
             }
             renderer.DrawItemText(e);

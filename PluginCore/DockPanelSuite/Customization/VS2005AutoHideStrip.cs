@@ -349,10 +349,15 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Int32 spacing = ScaleHelper.Scale(4);
                 Brush brush = tabUlColor != Color.Empty ? new SolidBrush(tabUlColor) : SystemBrushes.Highlight;
-                if (dockState == DockState.DockLeftAutoHide || dockState == DockState.DockRightAutoHide)
+                if (dockState == DockState.DockRightAutoHide)
                 {
-                    g.FillRectangle(brush, new Rectangle(rectTabOrigin.X + spacing, rectTabOrigin.Y, rectTabOrigin.Width - (spacing * 2), spacing));
+                    g.FillRectangle(brush, new Rectangle(rectTabOrigin.Left + spacing, rectTabOrigin.Y, rectTabOrigin.Width - (spacing * 2), spacing));
                     rectTabOrigin.Y += spacing;
+                }
+                else if (dockState == DockState.DockTopAutoHide)
+                {
+                    g.FillRectangle(brush, new Rectangle(rectTabOrigin.X + spacing, rectTabOrigin.Bottom - (spacing / 3), rectTabOrigin.Width - (spacing * 2), rectTabOrigin.Bottom));
+                    rectTabOrigin.Y -= (spacing / 3);
                 }
                 else
                 {

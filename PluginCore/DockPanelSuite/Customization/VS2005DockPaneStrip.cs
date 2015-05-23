@@ -117,7 +117,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private const int _DocumentButtonGapBetween = 0;
         private const int _DocumentButtonGapRight = 0;
         private const int _DocumentTabGapTop = 2;
-        private const int _DocumentTabGapLeft = 2;
+        private const int _DocumentTabGapLeft = 0;
         private const int _DocumentTabGapRight = 3;
         private const int _DocumentIconGapBottom = 2;
         private const int _DocumentIconGapLeft = 8;
@@ -1113,7 +1113,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 curveSize = 1;
             }
-            
 
             GraphicsPath.Reset();
             Rectangle rect = GetTabRectangle(Tabs.IndexOf(tab));
@@ -1121,6 +1120,12 @@ namespace WeifenLuo.WinFormsUI.Docking
                 rect = DrawHelper.RtlTransform(this, rect);
             if (toScreen)
                 rect = RectangleToScreen(rect);
+
+            if (tabStyle == "Rect")
+            {
+                GraphicsPath.AddRectangle(rect);
+                return GraphicsPath;
+            }
 
             // Draws the full angle piece for active content (or first tab)
             if (tab.Content == DockPane.ActiveContent || full || Tabs.IndexOf(tab) == FirstDisplayingTab)

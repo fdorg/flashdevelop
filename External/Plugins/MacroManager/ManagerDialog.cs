@@ -204,7 +204,7 @@ namespace MacroManager
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
             contextMenu.Font = PluginBase.Settings.DefaultFont;
-            contextMenu.Renderer = new DockPanelStripRenderer(false);
+            contextMenu.Renderer = new DockPanelStripRenderer(false, false);
             contextMenu.Opening += new CancelEventHandler(this.ContextMenuOpening);
             contextMenu.Items.Add(TextHelper.GetString("Label.ImportMacros"), null, this.ImportMacros);
             this.exportItem = new ToolStripMenuItem(TextHelper.GetString("Label.ExportMacros"), null, this.ExportMacros);

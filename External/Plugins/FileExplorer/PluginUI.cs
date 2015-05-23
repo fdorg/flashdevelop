@@ -118,6 +118,7 @@ namespace FileExplorer
             this.fileView.Name = "fileView";
             this.fileView.Size = new System.Drawing.Size(278, 327);
             this.fileView.TabIndex = 5;
+            this.fileView.FullRowSelect = true;
             this.fileView.UseCompatibleStateImageBehavior = false;
             this.fileView.View = System.Windows.Forms.View.Details;
             this.fileView.ItemActivate += new System.EventHandler(this.FileViewItemActivate);
