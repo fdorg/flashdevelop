@@ -35,7 +35,7 @@ namespace FlashDebugger
         private ToolStripButton tsbExportFiltered;
         private ToolStripButton tsbImport;
         private ToolStripTextBox tstxtFilter;
-        private ToolStripComboBox tscbFilterColumns;
+        private ToolStripComboBoxEx tscbFilterColumns;
         private Color defaultColor;
 
         public BreakPointUI(PluginMain pluginMain, BreakPointManager breakPointManager)
@@ -250,7 +250,7 @@ namespace FlashDebugger
             this.tsbExportFiltered = new System.Windows.Forms.ToolStripButton();
             this.tsbImport = new System.Windows.Forms.ToolStripButton();
             this.tstxtFilter = new System.Windows.Forms.ToolStripTextBox();
-            this.tscbFilterColumns = new System.Windows.Forms.ToolStripComboBox();
+            this.tscbFilterColumns = new System.Windows.Forms.ToolStripComboBoxEx();
             this.tsActions.SuspendLayout();
             this.SuspendLayout();
             // 

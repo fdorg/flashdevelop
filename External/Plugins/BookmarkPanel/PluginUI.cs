@@ -144,7 +144,7 @@ namespace BookmarkPanel
             // 
             // searchBox
             //
-            this.searchBox.MaxLength = 200;
+            this.searchBox.FlatCombo.MaxLength = 200;
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(200, 22);
             this.searchBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);

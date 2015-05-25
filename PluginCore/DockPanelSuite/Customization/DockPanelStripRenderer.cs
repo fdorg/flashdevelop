@@ -113,19 +113,11 @@ namespace System.Windows.Forms
                     textBox.BorderStyle = BorderStyle.None;
                 }
             }
-            else if (item is ToolStripComboBox)
+            else if (item is ToolStripComboBoxEx)
             {
-                Font font = PluginBase.MainForm.Settings.DefaultFont;
-                ToolStripComboBox comboBox = item as ToolStripComboBox;
-                Color border = GetThemeColor("ToolStripComboBoxControl.BorderColor");
-                if (border != Color.Empty && comboBox.FlatStyle == FlatStyle.Popup) // Are we theming, default flat style?
-                {
-                    comboBox.FlatStyle = FlatStyle.Flat;
-                    if (font.Size > 8.25f && comboBox.Font.Size != font.Size - 0.5f)
-                    {
-                        comboBox.Font = new Font(font.FontFamily, font.Size - 0.5f);
-                    }
-                }
+                var comboBox = item as ToolStripComboBoxEx;
+                comboBox.Margin = new Padding(2, 0, 2, 0);
+                comboBox.FlatCombo.UseTheme = useTheme;
             }
         }
 
@@ -133,7 +125,6 @@ namespace System.Windows.Forms
         {
             Font font = PluginBase.MainForm.Settings.DefaultFont;
             Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
-            Color cborder = GetThemeColor("ToolStripComboBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
             {
                 if (item is ToolStripTextBox && tborder != Color.Empty)
@@ -143,13 +134,6 @@ namespace System.Windows.Forms
                     var location = textBox.TextBox.Location;
                     e.Graphics.FillRectangle(new SolidBrush(item.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
                     e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
-                }
-                else if (item is ToolStripComboBox && cborder != Color.Empty)
-                {
-                    var comboBox = item as ToolStripComboBox;
-                    var size = comboBox.ComboBox.Size;
-                    var location = comboBox.ComboBox.Location;
-                    e.Graphics.DrawRectangle(new Pen(cborder), location.X - 1, location.Y - 1, size.Width + 1, size.Height + 1);
                 }
             }
         }

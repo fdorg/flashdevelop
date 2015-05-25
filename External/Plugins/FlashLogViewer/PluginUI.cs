@@ -30,7 +30,7 @@ namespace FlashLogViewer
         private ToolStripButton clearFilterButton;
         private ToolStripSeparator toolStripSeparator;
         private ToolStripSpringComboBox filterComboBox;
-        private ToolStripComboBox logComboBox;
+        private ToolStripComboBoxEx logComboBox;
         private DateTime policyLogWrited;
         private DateTime flashLogWrited;
         private PluginMain pluginMain;
@@ -69,7 +69,7 @@ namespace FlashLogViewer
             this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.viewLabel = new System.Windows.Forms.ToolStripLabel();
-            this.logComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.logComboBox = new System.Windows.Forms.ToolStripComboBoxEx();
             this.filterLabel = new System.Windows.Forms.ToolStripLabel();
             this.filterComboBox = new System.Windows.Forms.ToolStripSpringComboBox();
             this.logTextBox = new System.Windows.Forms.RichTextBox();
@@ -137,7 +137,7 @@ namespace FlashLogViewer
             this.logComboBox.Size = new System.Drawing.Size(120, 28);
             this.logComboBox.SelectedIndex = 0;
             this.logComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.logComboBox.SelectedIndexChanged += new System.EventHandler(this.LogComboBoxIndexChanged);
+            this.logComboBox.FlatCombo.SelectedIndexChanged += new System.EventHandler(this.LogComboBoxIndexChanged);
             // 
             // filterLabel
             // 

@@ -9,7 +9,7 @@ using PluginCore.Helpers;
 
 namespace System.Windows.Forms
 {
-    public class ToolStripSpringComboBox : ToolStripComboBox
+    public class ToolStripSpringComboBox : ToolStripComboBoxEx
     {
         public ToolStripSpringComboBox()
         {
@@ -185,6 +185,7 @@ namespace System.Windows.Forms
     public class ListViewEx : ListView
     {
         private Timer expandDelay;
+        public Boolean UseTheme = true;
 
         public ListViewEx()
         {
@@ -214,13 +215,13 @@ namespace System.Windows.Forms
             Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
             Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
             Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
-            if (back != Color.Empty && border != Color.Empty && text != Color.Empty)
+            if (UseTheme && back != Color.Empty && border != Color.Empty && text != Color.Empty)
             {
                 e.Graphics.FillRectangle(new SolidBrush(back), e.Bounds.X, 0, e.Bounds.Width, e.Bounds.Height);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 1, 3, e.Bounds.X + e.Bounds.Width - 1, e.Bounds.Height - 6);
-                var textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 4, e.Bounds.Width, e.Bounds.Height);
-                TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text);
+                var textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + (e.Bounds.Height / 2), e.Bounds.Width, e.Bounds.Height);
+                TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text, TextFormatFlags.VerticalCenter);
             }
             else e.DrawDefault = true;
         }
@@ -244,6 +245,150 @@ namespace System.Windows.Forms
                     break;
             }
             base.WndProc(ref message);
+        }
+
+    }
+    public class ToolStripComboBoxEx : ToolStripControlHost
+    {
+        public ToolStripComboBoxEx() : base(new FlatCombo())
+        {
+            Font font = PluginBase.Settings.DefaultFont;
+            this.FlatCombo.Font = font;
+        }
+
+        public ComboBoxStyle DropDownStyle
+        {
+            set { this.FlatCombo.DropDownStyle = value; }
+            get { return this.FlatCombo.DropDownStyle; }
+        }
+
+        public FlatStyle FlatStyle
+        {
+            set 
+            { 
+                this.FlatCombo.FlatStyle = value;
+                this.FlatCombo.UseTheme = value == Forms.FlatStyle.Popup;
+            }
+            get { return this.FlatCombo.FlatStyle; }
+        }
+
+        public Int32 SelectedIndex
+        {
+            set { this.FlatCombo.SelectedIndex = value; }
+            get { return this.FlatCombo.SelectedIndex; }
+        }
+
+        public Object SelectedItem
+        {
+            set { this.FlatCombo.SelectedItem = value; }
+            get { return this.FlatCombo.SelectedItem; }
+        }
+
+        public FlatCombo.ObjectCollection Items
+        {
+            get { return this.FlatCombo.Items; }
+        }
+
+        public FlatCombo FlatCombo
+        {
+            get { return this.Control as FlatCombo; }
+        }
+
+    }
+
+    public class FlatCombo : ComboBox
+    {
+        private Boolean useTheme = true;
+        private Pen BorderPen = new Pen(SystemColors.ControlText);
+        private SolidBrush BackBrush = new SolidBrush(SystemColors.Window);
+        private SolidBrush ArrowBrush = new SolidBrush(SystemColors.ControlText);
+        
+        public FlatCombo()
+        {
+            this.UseTheme = true;
+        }
+
+        public Boolean UseTheme
+        {
+            get { return this.useTheme; }
+            set
+            {
+                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
+                Color back = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
+                Color border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
+                this.ForeColor = value ? fore : SystemColors.ControlText;
+                this.BackColor = value ? back : SystemColors.Window;
+                this.BorderPen.Color = value ? border : SystemColors.ControlText;
+                this.ArrowBrush.Color = value ? fore: SystemColors.ControlText;
+                this.BackBrush.Color = value ? back : SystemColors.Window;
+                this.useTheme = value;
+            }
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+            switch (m.Msg)
+            {
+                case 0x85: // WM_NCPAINT
+                case 0x14: // WM_ERASEBKGND 
+                case 0xf: // WM_PAINT
+                    Int32 pad = ScaleHelper.Scale(2);
+                    Graphics g = this.CreateGraphics();
+                    Rectangle backRect = new Rectangle(this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width - 1, this.ClientRectangle.Height - 1);
+                    Rectangle dropRect = new Rectangle(this.ClientRectangle.Right - 18, this.ClientRectangle.Y, 18, this.ClientRectangle.Height);
+                    g.FillRectangle(BackBrush, dropRect);
+                    g.DrawRectangle(BorderPen, backRect);
+                    Point middle = new Point(dropRect.Left + (dropRect.Width / 2), dropRect.Top + (dropRect.Height / 2));
+                    Point[] arrow = new Point[] 
+                    {
+                        new Point(middle.X - pad, middle.Y - 1),
+                        new Point(middle.X + pad + 1, middle.Y - 1),
+                        new Point(middle.X, middle.Y + pad)
+                    };
+                    g.FillPolygon(ArrowBrush, arrow);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        protected override void OnMouseEnter(System.EventArgs e)
+        {
+            base.OnMouseEnter(e);
+            BorderPen.Color = SystemColors.Highlight;
+            this.Invalidate();
+        }
+
+        protected override void OnMouseLeave(System.EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            if (this.Focused) return;
+            Color border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
+            BorderPen.Color = border != Color.Empty ? border : SystemColors.ControlText;
+            this.Invalidate();
+        }
+
+        protected override void OnLostFocus(System.EventArgs e)
+        {
+            base.OnLostFocus(e);
+            Color border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
+            BorderPen.Color = border != Color.Empty ? border : SystemColors.ControlText;
+            this.Invalidate();
+        }
+
+        protected override void OnGotFocus(System.EventArgs e)
+        {
+            base.OnGotFocus(e);
+            BorderPen.Color = SystemColors.Highlight;
+            this.Invalidate();
+        }
+
+        protected override void OnMouseHover(System.EventArgs e)
+        {
+            base.OnMouseHover(e);
+            BorderPen.Color = SystemColors.Highlight;
+            this.Invalidate();
         }
 
     }

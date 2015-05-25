@@ -193,7 +193,7 @@ namespace ProjectManager
             menus.BuildProject.Click += BuildProjectClick;
             menus.View.Click += delegate { OpenPanel(); };
             menus.GlobalClasspaths.Click += delegate { OpenGlobalClasspaths(); };
-            menus.ConfigurationSelector.SelectedIndexChanged += delegate 
+            menus.ConfigurationSelector.FlatCombo.SelectedIndexChanged += delegate 
             {
                 bool isDebug = menus.ConfigurationSelector.Text == TextHelper.GetString("Info.Debug");
                 FlexCompilerShell.Cleanup();
@@ -202,7 +202,7 @@ namespace ProjectManager
                 if (project != null) project.TraceEnabled = isDebug;
             };
             menus.TargetBuildSelector.KeyDown += new KeyEventHandler(TargetBuildSelector_KeyDown);
-            menus.TargetBuildSelector.SelectedIndexChanged += delegate { ApplyTargetBuild(); };
+            menus.TargetBuildSelector.FlatCombo.SelectedIndexChanged += delegate { ApplyTargetBuild(); };
             menus.TargetBuildSelector.LostFocus += delegate { ApplyTargetBuild(); };
             
             menus.ProjectMenu.NewProject.Click += delegate { NewProject(); };
