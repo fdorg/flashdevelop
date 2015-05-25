@@ -98,8 +98,13 @@ namespace PluginCore.Utilities
             foreach (String mask in masks)
             {
                 String[] files = Directory.GetFiles(path, mask);
+                String control = mask.Length == 5 && mask[0] == '*' && mask[1] == '.' ? mask.Substring(1) : null;
                 foreach (String file in files)
                 {
+                    //prevent too generous extension matching: *.hxp matching .hxproj
+                    if (control != null && Path.GetExtension(file).ToLower() != control) 
+                        continue;
+
                     //prevents the addition of the same file multiple times if it happens to match multiple masks
                     if (!this.foundFiles.Contains(file))
                     {
