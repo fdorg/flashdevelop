@@ -2537,6 +2537,9 @@ namespace ASCompletion.Completion
 
                 if (token.Length == 0)
                 {
+                    // this means expression ends with one dot
+                    if (i == n - 1)
+                        return step;
                     // this means 2 dots in the expression: consider as E4X expression
                     if (ctx.Features.hasE4X && IsXmlType(step.Type) && i < n - 1)
                     {
@@ -2779,7 +2782,7 @@ namespace ASCompletion.Completion
                         result.InFile = aDecl.InFile;
                         return result;
                     }
-                    else if ((aDecl.Flags & FlagType.Variable) > 0)
+                    else if ((aDecl.Flags & (FlagType.Variable | FlagType.Getter)) > 0)
                     {
                         result.Member = aDecl;
                         result.RelClass = ClassModel.VoidClass;
