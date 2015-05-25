@@ -655,38 +655,64 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private List<SearchMatch> GetResults(ScintillaControl sci, Boolean simple)
         {
-            if (this.findComboBox.Text != String.Empty)
+            if (!IsValidPattern())
+                return null;
+
+            String pattern = this.findComboBox.Text;
+            FRSearch search = new FRSearch(pattern);
+            search.NoCase = !this.matchCaseCheckBox.Checked;
+            search.Filter = SearchFilter.None;
+            search.SourceFile = sci.FileName;
+            if (!simple)
             {
-                String pattern = this.findComboBox.Text;
-                FRSearch search = new FRSearch(pattern);
-                search.NoCase = !this.matchCaseCheckBox.Checked;
-                search.Filter = SearchFilter.None;
-                search.SourceFile = sci.FileName;
-                if (!simple)
+                search.IsRegex = this.useRegexCheckBox.Checked;
+                search.IsEscaped = this.escapedCheckBox.Checked;
+                search.WholeWord = this.wholeWordCheckBox.Checked;
+                if (this.lookComboBox.SelectedIndex == 2)
                 {
-                    search.IsRegex = this.useRegexCheckBox.Checked;
-                    search.IsEscaped = this.escapedCheckBox.Checked;
-                    search.WholeWord = this.wholeWordCheckBox.Checked;
-                    if (this.lookComboBox.SelectedIndex == 2)
-                    {
-                        search.Filter = SearchFilter.OutsideCodeComments;
-                    }
-                    else if (this.lookComboBox.SelectedIndex == 3)
-                    {
-                        search.Filter = SearchFilter.InCodeComments | SearchFilter.OutsideStringLiterals;
-                    }
-                    else if (this.lookComboBox.SelectedIndex == 4)
-                    {
-                        search.Filter = SearchFilter.InStringLiterals | SearchFilter.OutsideCodeComments;
-                    }
+                    search.Filter = SearchFilter.OutsideCodeComments;
                 }
-                return search.Matches(sci.Text);
+                else if (this.lookComboBox.SelectedIndex == 3)
+                {
+                    search.Filter = SearchFilter.InCodeComments | SearchFilter.OutsideStringLiterals;
+                }
+                else if (this.lookComboBox.SelectedIndex == 4)
+                {
+                    search.Filter = SearchFilter.InStringLiterals | SearchFilter.OutsideCodeComments;
+                }
             }
-            return null;
+            return search.Matches(sci.Text);
         }
         private List<SearchMatch> GetResults(ScintillaControl sci)
         {
             return this.GetResults(sci, false);
+        }
+
+        /// <summary>
+        /// Control user pattern
+        /// </summary>
+        private bool IsValidPattern()
+        {
+            String pattern = this.findComboBox.Text;
+            if (pattern.Length < 1)
+            {
+                // no pattern
+                return false;
+            }
+
+            if (this.useRegexCheckBox.Checked)
+            {
+                try
+                {
+                    new Regex(pattern);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowInfo(ex.Message); 
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>

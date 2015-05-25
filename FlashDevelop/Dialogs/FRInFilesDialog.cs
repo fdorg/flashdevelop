@@ -16,6 +16,7 @@ using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
 using Ookii.Dialogs;
+using System.Text.RegularExpressions;
 
 namespace FlashDevelop.Dialogs
 {
@@ -527,7 +528,7 @@ namespace FlashDevelop.Dialogs
         {
             String mask = this.extensionComboBox.Text;
             Boolean recursive = this.subDirectoriesCheckBox.Checked;
-            if (!String.IsNullOrEmpty(this.findComboBox.Text) && this.IsValidFileMask(mask))
+            if (IsValidPattern() && this.IsValidFileMask(mask))
             {
                 string[] paths = this.folderComboBox.Text.Split(';');
                 foreach (string path in paths)
@@ -555,7 +556,7 @@ namespace FlashDevelop.Dialogs
         {
             String mask = this.extensionComboBox.Text;
             Boolean recursive = this.subDirectoriesCheckBox.Checked;
-            if (!String.IsNullOrEmpty(this.findComboBox.Text) && this.IsValidFileMask(mask))
+            if (IsValidPattern() && this.IsValidFileMask(mask))
             {
                 if (!Globals.Settings.DisableReplaceFilesConfirm)
                 {
@@ -989,6 +990,33 @@ namespace FlashDevelop.Dialogs
                 if (Directory.Exists(absHiddenPath) && file.StartsWith(absHiddenPath)) return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Control user pattern
+        /// </summary>
+        private bool IsValidPattern()
+        {
+            String pattern = this.findComboBox.Text;
+            if (pattern.Length < 2)
+            {
+                ErrorManager.ShowInfo("Pattern too short (2 characters mininum)");
+                return false;
+            }
+
+            if (this.regexCheckBox.Checked)
+            {
+                try
+                {
+                    new Regex(pattern);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowInfo(ex.Message); 
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>
