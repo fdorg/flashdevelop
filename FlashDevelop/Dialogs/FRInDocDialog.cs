@@ -655,7 +655,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private List<SearchMatch> GetResults(ScintillaControl sci, Boolean simple)
         {
-            if (this.findComboBox.Text != String.Empty)
+            if (IsValidPattern())
             {
                 String pattern = this.findComboBox.Text;
                 FRSearch search = new FRSearch(pattern);
@@ -687,6 +687,33 @@ namespace FlashDevelop.Dialogs
         private List<SearchMatch> GetResults(ScintillaControl sci)
         {
             return this.GetResults(sci, false);
+        }
+
+        /// <summary>
+        /// Control user pattern
+        /// </summary>
+        private bool IsValidPattern()
+        {
+            String pattern = this.findComboBox.Text;
+            if (pattern.Length < 1)
+            {
+                // no pattern
+                return false;
+            }
+
+            if (this.useRegexCheckBox.Checked)
+            {
+                try
+                {
+                    new Regex(pattern);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowInfo(ex.Message); 
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>
