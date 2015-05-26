@@ -999,7 +999,10 @@ namespace FlashDevelop.Dialogs
         {
             String pattern = this.findComboBox.Text;
             if (pattern.Length < 1)
+            {
+                // no pattern
                 return false;
+            }
 
             /*if (pattern.Length < 2)
             {
