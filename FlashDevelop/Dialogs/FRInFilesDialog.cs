@@ -998,11 +998,14 @@ namespace FlashDevelop.Dialogs
         private bool IsValidPattern()
         {
             String pattern = this.findComboBox.Text;
-            if (pattern.Length < 2)
-            {
-                ErrorManager.ShowInfo("Pattern too short (2 characters mininum)");
+            if (pattern.Length < 1)
                 return false;
-            }
+
+            /*if (pattern.Length < 2)
+            {
+                // TODO warn user
+                return false;
+            }*/
 
             if (this.regexCheckBox.Checked)
             {
