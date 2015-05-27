@@ -92,9 +92,11 @@ namespace ScintillaNet
         /// </summary>
         private void OnScrollUpdate(ScintillaControl sender)
         {
-            Int32 vMax = sender.LineCount;
+            Int32 vMax = sender.LineCount - 1;
+            Int32 vPage = sender.LinesOnScreen;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
+            sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.Maximum = vMax;
             sender.vScrollBar.CurrentPosition = sender.CurrentLine;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
