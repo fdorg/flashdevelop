@@ -82,7 +82,8 @@ namespace FlashDebugger
             this.dgv.BorderStyle = BorderStyle.None;
             this.dgv.BackgroundColor = SystemColors.Window;
             this.dgv.Font = PluginBase.Settings.DefaultFont;
-            this.dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            if (ScaleHelper.GetScale() > 1) this.dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            else this.dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             this.dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             this.dgv.CellBorderStyle = DataGridViewCellBorderStyle.Single;

@@ -9,6 +9,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using System.Collections;
 using PluginCore.Helpers;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace FlashDevelop.Managers
@@ -151,6 +152,11 @@ namespace FlashDevelop.Managers
                 PropertyInfo ground = type.GetProperty("BackgroundColor");
                 PropertyInfo alink = type.GetProperty("ActiveLinkColor");
                 PropertyInfo dlink = type.GetProperty("DisabledLinkColor");
+                PropertyInfo dborder = type.GetProperty("DisabledBorderColor");
+                PropertyInfo curpos = type.GetProperty("CurrentPositionColor");
+                PropertyInfo dback = type.GetProperty("DisabledBackColor");
+                PropertyInfo afore = type.GetProperty("ActiveForeColor");
+                PropertyInfo border = type.GetProperty("BorderColor");
                 PropertyInfo link = type.GetProperty("LinkColor");
                 PropertyInfo back = type.GetProperty("BackColor");
                 PropertyInfo fore = type.GetProperty("ForeColor");
@@ -206,6 +212,51 @@ namespace FlashDevelop.Managers
                     if (color != Color.Empty)
                     {
                         link.SetValue(obj, color, null);
+                    }
+                }
+                if (border != null)
+                {
+                    String key = name + ".BorderColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        border.SetValue(obj, color, null);
+                    }
+                }
+                if (afore != null)
+                {
+                    String key = name + ".ActiveForeColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        afore.SetValue(obj, color, null);
+                    }
+                }
+                if (dborder != null)
+                {
+                    String key = name + ".DisabledBorderColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        dborder.SetValue(obj, color, null);
+                    }
+                }
+                if (curpos != null)
+                {
+                    String key = name + ".CurrentPositionColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        curpos.SetValue(obj, color, null);
+                    }
+                }
+                if (dback != null)
+                {
+                    String key = name + ".DisabledBackColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        dback.SetValue(obj, color, null);
                     }
                 }
             }

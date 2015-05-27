@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Text;
+using System.Drawing;
 using System.Collections;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -8,13 +11,13 @@ using System.Drawing.Printing;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
-using System.IO;
-using System.Text;
+using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore;
 
 namespace ScintillaNet
 {
-    public class ScintillaControl : Control
+    public class ScintillaControl : Control, IEventHandler
     {
         private bool saveBOM;
         private Encoding encoding;
@@ -36,7 +39,122 @@ namespace ScintillaNet
         private int lastSelectionLength = 0;
         private int lastSelectionStart = 0;
         private int lastSelectionEnd = 0;
-        
+
+        #region ScrollBarEx
+
+        private ScrollBarEx vScrollBar;
+        private ScrollBarEx hScrollBar;
+
+        /// <summary>
+        /// Handle the incoming theme events
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme)
+            {
+                Boolean enabled = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor") != Color.Empty;
+                if (enabled && !this.Controls.Contains(this.vScrollBar))
+                {
+                    this.AddScrollBars(this);
+                }
+                else if (!enabled && this.Controls.Contains(this.vScrollBar))
+                {
+                    this.RemoveScrollBars(this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Init the custom scrollbars
+        /// </summary>
+        private void InitScrollBars(ScintillaControl sender)
+        {
+            sender.vScrollBar = new ScrollBarEx();
+            sender.vScrollBar.Width = ScaleHelper.Scale(17);
+            sender.vScrollBar.Orientation = ScrollBarOrientation.Vertical;
+            sender.vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
+            sender.vScrollBar.Dock = DockStyle.Right;
+            sender.vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(17));
+            sender.hScrollBar = new ScrollBarEx();
+            sender.hScrollBar.Height = ScaleHelper.Scale(17);
+            sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
+            sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
+            sender.hScrollBar.Dock = DockStyle.Bottom;
+            sender.hScrollBar.LargeChange *= 2;
+            if (PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor") != Color.Empty)
+            {
+                sender.AddScrollBars(sender);
+            }
+        }
+
+        /// <summary>
+        /// Update the scrollbars on sci control ui update
+        /// </summary>
+        private void OnScrollUpdate(ScintillaControl sender)
+        {
+            Int32 vMax = sender.LineCount;
+            sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
+            sender.vScrollBar.Minimum = 0;
+            sender.vScrollBar.Maximum = vMax;
+            sender.vScrollBar.CurrentPosition = sender.CurrentLine;
+            sender.vScrollBar.Value = sender.FirstVisibleLine;
+            sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
+            sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
+            sender.hScrollBar.Minimum = 0;
+            sender.hScrollBar.Maximum = sender.ScrollWidth;
+            sender.hScrollBar.Value = sender.XOffset;
+            sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
+            sender.vScrollBar.Visible = vMax > 1;
+            if (sender.vScrollBar.Visible == vMax > 1)
+            {
+                sender.OnResize(null, null);
+            }
+        }
+
+        /// <summary>
+        /// Update the sci control on scrollbar scroll
+        /// </summary>
+        private void OnScrollBarScroll(Object sender, ScrollEventArgs e)
+        {
+            if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
+            {
+                if (e.OldValue != -1) this.LineScroll(0, e.NewValue - e.OldValue);
+            }
+            else this.XOffset = this.hScrollBar.Value;
+        }
+
+        /// <summary>
+        /// Add controls to container
+        /// </summary>
+        private void AddScrollBars(ScintillaControl sender)
+        {
+            sender.IsVScrollBar = false;
+            sender.IsHScrollBar = false;
+            sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
+            sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
+            sender.Controls.Add(sender.hScrollBar);
+            sender.Controls.Add(sender.vScrollBar);
+            sender.UpdateUI += new UpdateUIHandler(sender.OnScrollUpdate);
+            sender.OnResize(null, null);
+        }
+
+        /// <summary>
+        /// Remove controls from container
+        /// </summary>
+        private void RemoveScrollBars(ScintillaControl sender)
+        {
+            sender.IsVScrollBar = true;
+            sender.IsHScrollBar = true;
+            sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
+            sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
+            sender.Controls.Remove(sender.hScrollBar);
+            sender.Controls.Remove(sender.vScrollBar);
+            sender.UpdateUI -= new UpdateUIHandler(sender.OnScrollUpdate);
+            sender.OnResize(null, null);
+        }
+
+        #endregion
+
         #region Scintilla Main
 
         public ScintillaControl() : this("SciLexer.dll")
@@ -55,12 +173,14 @@ namespace ScintillaNet
                     directPointer = (int)SlowPerform(2185, 0, 0);
                     directPointer = DirectPointer;
                 }
+                EventManager.AddEventHandler(this, EventType.ApplyTheme);
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
+                this.InitScrollBars(this);
             }
             catch (Exception ex)
             {
@@ -76,7 +196,9 @@ namespace ScintillaNet
 
         public void OnResize(object sender, EventArgs e)
         {
-            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height, 0);
+            Int32 vsbWidth = this.vScrollBar != null && this.vScrollBar.Visible && this.Controls.Contains(this.vScrollBar) ? this.vScrollBar.Width : 0;
+            Int32 hsbHeight = this.hScrollBar != null && this.hScrollBar.Visible && this.Controls.Contains(this.hScrollBar) ? this.hScrollBar.Height : 0;
+            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width - vsbWidth, this.ClientRectangle.Height - hsbHeight, 0);
         }
 
         #endregion
@@ -4982,6 +5104,7 @@ namespace ScintillaNet
         
         #region Scintilla Constants
 
+        public const int MAXDWELLTIME = 10000000;
         private const int WM_NOTIFY = 0x004e;
         private const int WM_SYSCHAR = 0x106;
         private const int WM_COMMAND = 0x0111;
@@ -4992,7 +5115,6 @@ namespace ScintillaNet
         private const uint WS_VISIBLE = (uint)0x10000000L;
         private const uint WS_TABSTOP = (uint)0x00010000L;
         private const uint WS_CHILD_VISIBLE_TABSTOP = WS_CHILD|WS_VISIBLE|WS_TABSTOP;
-        public const int MAXDWELLTIME = 10000000;
         private const int PATH_LEN = 1024;
     
         #endregion

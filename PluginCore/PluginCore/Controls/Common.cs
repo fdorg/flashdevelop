@@ -299,7 +299,7 @@ namespace System.Windows.Forms
     public class FlatCombo : ComboBox
     {
         private Boolean useTheme = true;
-        private Pen BorderPen = new Pen(SystemColors.ControlText);
+        private Pen BorderPen = new Pen(SystemColors.ControlDark);
         private SolidBrush BackBrush = new SolidBrush(SystemColors.Window);
         private SolidBrush ArrowBrush = new SolidBrush(SystemColors.ControlText);
         
@@ -313,14 +313,14 @@ namespace System.Windows.Forms
             get { return this.useTheme; }
             set
             {
-                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
-                Color border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
-                this.ForeColor = value ? fore : SystemColors.ControlText;
-                this.BackColor = value ? back : SystemColors.Window;
-                this.BorderPen.Color = value ? border : SystemColors.ControlText;
-                this.ArrowBrush.Color = value ? fore: SystemColors.ControlText;
-                this.BackBrush.Color = value ? back : SystemColors.Window;
+                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
+                Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
+                Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
+                this.BorderPen.Color = value && border != Color.Empty ? border : SystemColors.ControlDark;
+                this.ArrowBrush.Color = value && fore != Color.Empty ? fore : SystemColors.ControlText;
+                this.BackBrush.Color = value && back != Color.Empty ? back : SystemColors.Window;
+                this.ForeColor = value && fore != Color.Empty ? fore : SystemColors.ControlText;
+                this.BackColor = value && back != Color.Empty ? back : SystemColors.Window;
                 this.useTheme = value;
             }
         }
@@ -334,9 +334,10 @@ namespace System.Windows.Forms
                 case 0x14: // WM_ERASEBKGND 
                 case 0xf: // WM_PAINT
                     Int32 pad = ScaleHelper.Scale(2);
+                    Int32 width = ScaleHelper.Scale(18);
                     Graphics g = this.CreateGraphics();
                     Rectangle backRect = new Rectangle(this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width - 1, this.ClientRectangle.Height - 1);
-                    Rectangle dropRect = new Rectangle(this.ClientRectangle.Right - 18, this.ClientRectangle.Y, 18, this.ClientRectangle.Height);
+                    Rectangle dropRect = new Rectangle(this.ClientRectangle.Right - width, this.ClientRectangle.Y, width, this.ClientRectangle.Height);
                     g.FillRectangle(BackBrush, dropRect);
                     g.DrawRectangle(BorderPen, backRect);
                     Point middle = new Point(dropRect.Left + (dropRect.Width / 2), dropRect.Top + (dropRect.Height / 2));
@@ -364,16 +365,16 @@ namespace System.Windows.Forms
         {
             base.OnMouseLeave(e);
             if (this.Focused) return;
-            Color border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
-            BorderPen.Color = border != Color.Empty ? border : SystemColors.ControlText;
+            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
+            BorderPen.Color = border != Color.Empty ? border : SystemColors.ControlDark;
             this.Invalidate();
         }
 
         protected override void OnLostFocus(System.EventArgs e)
         {
             base.OnLostFocus(e);
-            Color border = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
-            BorderPen.Color = border != Color.Empty ? border : SystemColors.ControlText;
+            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
+            BorderPen.Color = border != Color.Empty ? border : SystemColors.ControlDark;
             this.Invalidate();
         }
 

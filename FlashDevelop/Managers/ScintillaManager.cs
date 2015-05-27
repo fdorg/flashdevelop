@@ -314,16 +314,14 @@ namespace FlashDevelop.Managers
             sci.CurrentPos = 0;
             sci.CursorType = -1;
             sci.Dock = System.Windows.Forms.DockStyle.Fill;
-            sci.EndAtLastLine = 1;
+            sci.EndAtLastLine = 0;
             sci.EdgeColumn = 0;
             sci.EdgeMode = 0;
-            sci.IsHScrollBar = true;
             sci.IsMouseDownCaptures = true;
             sci.IsBufferedDraw = true;
             sci.IsOvertype = false;
             sci.IsReadOnly = false;
             sci.IsUndoCollection = true;
-            sci.IsVScrollBar = true;
             sci.IsUsePalette = true;
             sci.IsTwoPhaseDraw = true;
             sci.LayoutCache = 1;

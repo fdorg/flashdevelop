@@ -312,6 +312,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
+    <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PluginCore\Controls\ShellContextMenu.cs" />
     <Compile Include="PluginCore\Controls\SmartForm.cs">
       <SubType>Form</SubType>
