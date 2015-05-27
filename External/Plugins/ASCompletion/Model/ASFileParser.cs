@@ -1761,7 +1761,11 @@ namespace ASCompletion.Model
             if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line;
             if (version == 2)
             {
-                string testPackage = Path.Combine(Path.GetDirectoryName(model.FileName), model.GetPublicClass().Name);
+                string className = model.GetPublicClass().Name;
+                if (className.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
+                    return;
+
+                string testPackage = Path.Combine(Path.GetDirectoryName(model.FileName), className);
                 if (Directory.Exists(testPackage)) model.TryAsPackage = true;
             }
         }
