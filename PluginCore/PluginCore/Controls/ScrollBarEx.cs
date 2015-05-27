@@ -1421,19 +1421,19 @@ namespace PluginCore.Controls
                 this.clickedBarRectangle.Height -= this.arrowHeight * 2;
                 this.channelRectangle = this.clickedBarRectangle;
                 this.thumbRectangle = new Rectangle(
-                   rect.X + 2,
+                   rect.X + ScaleHelper.Scale(2),
                    rect.Y + this.arrowHeight + 2,
                    this.thumbWidth,
                    this.thumbHeight
                 );
                 this.topArrowRectangle = new Rectangle(
-                   rect.X + 2,
+                   rect.X + ScaleHelper.Scale(2),
                    rect.Y + 1,
                    this.arrowWidth,
                    this.arrowHeight
                 );
                 this.bottomArrowRectangle = new Rectangle(
-                   rect.X + 2,
+                   rect.X + ScaleHelper.Scale(2),
                    rect.Bottom - this.arrowHeight - 1,
                    this.arrowWidth,
                    this.arrowHeight
@@ -1460,19 +1460,19 @@ namespace PluginCore.Controls
                 this.channelRectangle = this.clickedBarRectangle;
                 this.thumbRectangle = new Rectangle(
                    rect.X + this.arrowWidth + 2,
-                   rect.Y + 2,
+                   rect.Y + ScaleHelper.Scale(2),
                    this.thumbWidth,
                    this.thumbHeight
                 );
                 this.topArrowRectangle = new Rectangle(
                    rect.X + 1,
-                   rect.Y + 2,
+                   rect.Y + ScaleHelper.Scale(2),
                    this.arrowWidth,
                    this.arrowHeight
                 );
                 this.bottomArrowRectangle = new Rectangle(
                    rect.Right - this.arrowWidth + 1,
-                   rect.Y + 2,
+                   rect.Y + ScaleHelper.Scale(2),
                    this.arrowWidth,
                    this.arrowHeight
                 );

@@ -27,7 +27,8 @@ DockPanel.ShowAutoHideContentOn=Hover
 #ColumnHeader.TextColor=#333333
 #ColumnHeader.BorderColor=#888888
 
-ToolStripComboBoxControl.BorderColor=#CCCCCC
+#ToolStripComboBoxControl.BorderColor=#CCCCCC
+#ToolStripComboBoxControl.ActiveBorderColor=#3897FF
 #ToolStripTextBoxControl.BorderColor=#CCCCCC
 
 #ToolStrip.BorderColor=#ff0000

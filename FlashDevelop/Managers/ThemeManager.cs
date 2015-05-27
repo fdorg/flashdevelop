@@ -121,6 +121,7 @@ namespace FlashDevelop.Managers
                 {
                     NotifyEvent ne = new NotifyEvent(EventType.ApplyTheme);
                     EventManager.DispatchEvent(Globals.MainForm, ne);
+                    Globals.MainForm.Refresh();
                 }
             }
             catch (Exception ex)

@@ -4,8 +4,9 @@ using System.Drawing.Drawing2D;
 using System.ComponentModel.Design;
 using System.Windows.Forms;
 using System.Reflection;
-using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Managers;
+using PluginCore;
 
 namespace System.Windows.Forms
 {
@@ -220,7 +221,7 @@ namespace System.Windows.Forms
                 e.Graphics.FillRectangle(new SolidBrush(back), e.Bounds.X, 0, e.Bounds.Width, e.Bounds.Height);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 1, 3, e.Bounds.X + e.Bounds.Width - 1, e.Bounds.Height - 6);
-                var textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + (e.Bounds.Height / 2), e.Bounds.Width, e.Bounds.Height);
+                Rectangle textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + (e.Bounds.Height / 2), e.Bounds.Width, e.Bounds.Height);
                 TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text, TextFormatFlags.VerticalCenter);
             }
             else e.DrawDefault = true;
@@ -296,7 +297,7 @@ namespace System.Windows.Forms
 
     }
 
-    public class FlatCombo : ComboBox
+    public class FlatCombo : ComboBox, IEventHandler
     {
         private Boolean useTheme = true;
         private Pen BorderPen = new Pen(SystemColors.ControlDark);
@@ -305,6 +306,7 @@ namespace System.Windows.Forms
         
         public FlatCombo()
         {
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
             this.UseTheme = true;
         }
 
@@ -313,16 +315,21 @@ namespace System.Windows.Forms
             get { return this.useTheme; }
             set
             {
-                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
-                Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
-                Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
-                this.BorderPen.Color = value && border != Color.Empty ? border : SystemColors.ControlDark;
-                this.ArrowBrush.Color = value && fore != Color.Empty ? fore : SystemColors.ControlText;
-                this.BackBrush.Color = value && back != Color.Empty ? back : SystemColors.Window;
-                this.ForeColor = value && fore != Color.Empty ? fore : SystemColors.ControlText;
-                this.BackColor = value && back != Color.Empty ? back : SystemColors.Window;
+                this.RefreshColors();
                 this.useTheme = value;
             }
+        }
+
+        private void RefreshColors()
+        {
+            Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
+            Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
+            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
+            this.BorderPen.Color = useTheme && border != Color.Empty ? border : SystemColors.ControlDark;
+            this.ArrowBrush.Color = useTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
+            this.BackBrush.Color = useTheme && back != Color.Empty ? back : SystemColors.Window;
+            this.ForeColor = useTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
+            this.BackColor = useTheme && back != Color.Empty ? back : SystemColors.Window;
         }
 
         protected override void WndProc(ref Message m)
@@ -354,10 +361,16 @@ namespace System.Windows.Forms
             }
         }
 
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme) RefreshColors();
+        }
+
         protected override void OnMouseEnter(System.EventArgs e)
         {
             base.OnMouseEnter(e);
-            BorderPen.Color = SystemColors.Highlight;
+            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor");
+            BorderPen.Color = border != Color.Empty ? border : SystemColors.Highlight;
             this.Invalidate();
         }
 
@@ -381,14 +394,16 @@ namespace System.Windows.Forms
         protected override void OnGotFocus(System.EventArgs e)
         {
             base.OnGotFocus(e);
-            BorderPen.Color = SystemColors.Highlight;
+            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor");
+            BorderPen.Color = border != Color.Empty ? border : SystemColors.Highlight;
             this.Invalidate();
         }
 
         protected override void OnMouseHover(System.EventArgs e)
         {
             base.OnMouseHover(e);
-            BorderPen.Color = SystemColors.Highlight;
+            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor");
+            BorderPen.Color = border != Color.Empty ? border : SystemColors.Highlight;
             this.Invalidate();
         }
 

@@ -36,6 +36,7 @@ ColumnHeader.TextColor=#333333
 ColumnHeader.BorderColor=#75828A
 
 ToolStripComboBoxControl.BorderColor=#75828A
+ToolStripComboBoxControl.ActiveBorderColor=#3897FF
 ToolStripTextBoxControl.BorderColor=#75828A
 
 ToolStrip.BorderColor=#6D767C

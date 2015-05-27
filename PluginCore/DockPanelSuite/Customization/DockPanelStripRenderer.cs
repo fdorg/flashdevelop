@@ -26,8 +26,8 @@ namespace System.Windows.Forms
         public static void DrawRoundedRectangle(Graphics graphics, int xAxis, int yAxis, int width, int height, int diameter, Color color)
         {
             Pen pen = new Pen(color);
-            var BaseRect = new RectangleF(xAxis, yAxis, width, height);
-            var ArcRect = new RectangleF(BaseRect.Location, new SizeF(diameter, diameter));
+            RectangleF BaseRect = new RectangleF(xAxis, yAxis, width, height);
+            RectangleF ArcRect = new RectangleF(BaseRect.Location, new SizeF(diameter, diameter));
             graphics.DrawArc(pen, ArcRect, 180, 90);
             graphics.DrawLine(pen, xAxis + (int)(diameter / 2), yAxis, xAxis + width - (int)(diameter / 2), yAxis);
             ArcRect.X = BaseRect.Right - diameter;
@@ -103,19 +103,9 @@ namespace System.Windows.Forms
                     item.Padding = new Padding(2, 2, 2, 2);
                 }
             }
-            else if (item is ToolStripTextBox)
-            {
-                var textBox = item as ToolStripTextBox;
-                Color border = GetThemeColor("ToolStripTextBoxControl.BorderColor");
-                if (border != Color.Empty) // Are we theming?
-                {
-                    textBox.Margin = new Padding(2, 1, 2, 1);
-                    textBox.BorderStyle = BorderStyle.None;
-                }
-            }
             else if (item is ToolStripComboBoxEx)
             {
-                var comboBox = item as ToolStripComboBoxEx;
+                ToolStripComboBoxEx comboBox = item as ToolStripComboBoxEx;
                 comboBox.Margin = new Padding(2, 0, 2, 0);
                 comboBox.FlatCombo.UseTheme = useTheme;
             }
@@ -125,15 +115,29 @@ namespace System.Windows.Forms
         {
             Font font = PluginBase.MainForm.Settings.DefaultFont;
             Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
+            Color cborder = GetThemeColor("ToolStripComboBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
             {
-                if (item is ToolStripTextBox && tborder != Color.Empty)
+                if (item is ToolStripTextBox)
                 {
-                    var textBox = item as ToolStripTextBox;
-                    var size = textBox.TextBox.Size;
-                    var location = textBox.TextBox.Location;
-                    e.Graphics.FillRectangle(new SolidBrush(item.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
-                    e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                    ToolStripTextBox textBox = item as ToolStripTextBox;
+                    if (tborder != Color.Empty)
+                    {
+                        Size size = textBox.TextBox.Size;
+                        Point location = textBox.TextBox.Location;
+                        if (textBox.BorderStyle != BorderStyle.None)
+                        {
+                            textBox.Margin = new Padding(2, 1, 2, 1);
+                            textBox.BorderStyle = BorderStyle.None;
+                        }
+                        e.Graphics.FillRectangle(new SolidBrush(item.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                        e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                    }
+                    else if (textBox.BorderStyle != BorderStyle.Fixed3D) // Reset
+                    {
+                        textBox.Margin = new Padding(0);
+                        textBox.BorderStyle = BorderStyle.Fixed3D;
+                    }
                 }
             }
         }

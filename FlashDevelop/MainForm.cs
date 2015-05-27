@@ -636,9 +636,8 @@ namespace FlashDevelop
                     {
                         ThemeManager.LoadTheme(currentTheme);
                         ThemeManager.WalkControls(this);
+                        this.RefreshSciConfig();
                     }
-                    this.RefreshSciConfig();
-                    this.Refresh();
                 }
                 return null;
             }
@@ -3744,7 +3743,6 @@ namespace FlashDevelop
                     if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
                     ThemeManager.WalkControls(this);
                     this.RefreshSciConfig();
-                    this.Refresh();
                 }
             }
         }
