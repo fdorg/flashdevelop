@@ -479,8 +479,15 @@ namespace PluginCore.FRService
             RegexOptions options = RegexOptions.None;
             if (!singleLine) options |= RegexOptions.Multiline;
             if (noCase) options |= RegexOptions.IgnoreCase;
-            
-            operation = new Regex(pattern, options);
+
+            try
+            {
+                operation = new Regex(pattern, options);
+            }
+            catch
+            {
+                operation = null;
+            }
         }
 
         private List<SearchMatch> SearchSource(string src, int startIndex, int startLine)
@@ -489,6 +496,8 @@ namespace PluginCore.FRService
 
             // raw search results
             if (needParsePattern) BuildRegex(pattern);
+            if (operation == null)
+                return results;
             MatchCollection matches = operation.Matches(src, startIndex);
             if (matches.Count == 0) 
                 return results;

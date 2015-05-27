@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using PluginCore;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace PluginCore.Utilities
 {
@@ -19,6 +20,7 @@ namespace PluginCore.Utilities
         private Boolean recursive;
         private List<String> knownPathes;
         private List<String> foundFiles;
+        private Regex reUnsafeMask = new Regex("^\\*(\\.[a-z0-9]{3})$"); 
 
         public PathWalker(String basePath, String fileMask, Boolean recursive)
         {
@@ -98,8 +100,14 @@ namespace PluginCore.Utilities
             foreach (String mask in masks)
             {
                 String[] files = Directory.GetFiles(path, mask);
+                String control = mask.Length == 5 ? getMaskControl(mask) : null;
+
                 foreach (String file in files)
                 {
+                    //prevent too generous extension matching: *.hxp matching .hxproj
+                    if (control != null && Path.GetExtension(file).ToLower() != control) 
+                        continue;
+
                     //prevents the addition of the same file multiple times if it happens to match multiple masks
                     if (!this.foundFiles.Contains(file))
                     {
@@ -122,6 +130,13 @@ namespace PluginCore.Utilities
                 }
                 catch { /* Might be system folder.. */ };
             }
+        }
+
+        private string getMaskControl(string mask)
+        {
+            Match m = reUnsafeMask.Match(mask);
+            if (m.Success) return m.Groups[1].Value;
+            else return null;
         }
 
     }

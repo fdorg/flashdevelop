@@ -24,6 +24,8 @@ namespace ProjectManager.Controls.TreeView
 
         public override void Refresh(bool recursive)
         {
+            RemoveReferences();
+
             base.Refresh(recursive);
             FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
             NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, FontStyle.Bold);
@@ -31,15 +33,8 @@ namespace ProjectManager.Controls.TreeView
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
 
-            if (References != null)
-            {
-                int p = Nodes.IndexOf(References);
-                if (p > 0)
-                {
-                    Nodes.RemoveAt(p);
-                    Nodes.Insert(0, References);
-                }
-            }
+            if (References != null && References.Parent == null)
+                Nodes.Insert(0, References);
 
             NotifyProjectRefresh();
             Expand();
