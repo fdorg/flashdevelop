@@ -265,11 +265,7 @@ namespace System.Windows.Forms
 
         public FlatStyle FlatStyle
         {
-            set 
-            { 
-                this.FlatCombo.FlatStyle = value;
-                this.FlatCombo.UseTheme = value == Forms.FlatStyle.Popup;
-            }
+            set { this.FlatCombo.FlatStyle = value; }
             get { return this.FlatCombo.FlatStyle; }
         }
 
@@ -306,8 +302,17 @@ namespace System.Windows.Forms
         
         public FlatCombo()
         {
-            EventManager.AddEventHandler(this, EventType.ApplyTheme);
             this.UseTheme = true;
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
+        }
+
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme)
+            {
+                this.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+                this.UseTheme = (this.FlatStyle == FlatStyle.Popup);
+            }
         }
 
         public Boolean UseTheme
@@ -315,8 +320,8 @@ namespace System.Windows.Forms
             get { return this.useTheme; }
             set
             {
-                this.RefreshColors();
                 this.useTheme = value;
+                this.RefreshColors();
             }
         }
 
@@ -335,6 +340,7 @@ namespace System.Windows.Forms
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
+            if (!this.useTheme) return;
             switch (m.Msg)
             {
                 case 0x85: // WM_NCPAINT
@@ -359,11 +365,6 @@ namespace System.Windows.Forms
                 default:
                     break;
             }
-        }
-
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
-        {
-            if (e.Type == EventType.ApplyTheme) RefreshColors();
         }
 
         protected override void OnMouseEnter(System.EventArgs e)
