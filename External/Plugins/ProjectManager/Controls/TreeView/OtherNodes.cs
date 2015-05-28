@@ -217,9 +217,11 @@ namespace ProjectManager.Controls.TreeView
                 projectClasspaths.AddRange(project.Classpaths);
                 if (project.AdditionalPaths != null) projectClasspaths.AddRange(project.AdditionalPaths);
             }
+            projectClasspaths.Sort();
 
             if (PluginMain.Settings.ShowGlobalClasspaths)
                 globalClasspaths.AddRange(PluginMain.Settings.GlobalClasspaths);
+            globalClasspaths.Sort();
 
             // create references nodes
             ClasspathNode cpNode;
