@@ -1,7 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<Entry>
-		<Id>haxe3setup</Id>
+		<Id>haxe3setup1</Id>
+		<Name>Haxe + Neko</Name>
+		<Version>3.2.0</Version>
+		<Build>1</Build>
+		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
+		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://www.haxe.org</Info>
+		<Urls>
+			<Url>http://haxe.org/file/haxe-3.2.0-win.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>haxe3setup2</Id>
 		<Name>Haxe + Neko</Name>
 		<Version>3.1.3</Version>
 		<Build>1</Build>
