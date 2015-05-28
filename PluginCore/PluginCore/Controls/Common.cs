@@ -154,11 +154,30 @@ namespace System.Windows.Forms
 
     }
 
-    public class DataGridViewEx : DataGridView
+    public class DataGridViewEx : DataGridView, IEventHandler
     {
         public DataGridViewEx()
         {
             this.CellPainting += this.OnDataGridViewCellPainting;
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
+        }
+
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme)
+            {
+                RefreshColors();
+            }
+        }
+
+        private void RefreshColors()
+        {
+            Color fore = PluginBase.MainForm.GetThemeColor("DataGridView.ForeColor");
+            Color back = PluginBase.MainForm.GetThemeColor("DataGridView.BackColor");
+            Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
+            DefaultCellStyle.ForeColor = (fore != Color.Empty) ? fore : SystemColors.WindowText;
+            DefaultCellStyle.BackColor = (back != Color.Empty) ? back : SystemColors.Window;
+            GridColor = (border != Color.Empty) ? border :  SystemColors.ControlDark;
         }
 
         private void OnDataGridViewCellPainting(Object sender, DataGridViewCellPaintingEventArgs e)
