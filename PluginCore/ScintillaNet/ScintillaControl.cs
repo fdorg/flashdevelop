@@ -186,14 +186,14 @@ namespace ScintillaNet
                     directPointer = (int)SlowPerform(2185, 0, 0);
                     directPointer = DirectPointer;
                 }
-                EventManager.AddEventHandler(this, EventType.ApplyTheme);
+                //EventManager.AddEventHandler(this, EventType.ApplyTheme);
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
-                this.InitScrollBars(this);
+                //this.InitScrollBars(this);
             }
             catch (Exception ex)
             {

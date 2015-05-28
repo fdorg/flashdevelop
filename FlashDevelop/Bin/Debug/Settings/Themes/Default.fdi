@@ -19,6 +19,14 @@ VS2005AutoHideStrip.TabUnderlineColor=#ff0000
 # Default (Hover), Click
 DockPanel.ShowAutoHideContentOn=Hover
 
+#ScrollBar.ForeColor=#686A68
+#ScrollBar.BackColor=#A8ACAA
+#ScrollBar.BorderColor=#A8ACAA
+#ScrollBar.ActiveForeColor=#485253
+#ScrollBar.DisabledBackColor=#333F42
+#ScrollBar.DisabledBorderColor=#666D73
+#ScrollBar.CurrentPositionColor=#804000
+
 #LinkLabel.LinkColor=#ff0000
 #LinkLabel.ActiveLinkColor=#00ff00
 #LinkLabel.DisabledLinkColor=#0000ff
