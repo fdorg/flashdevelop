@@ -96,6 +96,7 @@ namespace ScintillaNet
             Int32 vPage = sender.LinesOnScreen;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
+            sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.Maximum = vMax;
             sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.CurrentPosition = sender.CurrentLine;
