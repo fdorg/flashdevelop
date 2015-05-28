@@ -27,7 +27,7 @@ namespace ProjectManager.Controls
     }
 
     /// <summary>
-    /// Contains all icons used by the Project Explorer
+    /// Contains all icons used by the Project Manager
     /// </summary>
     public class Icons
     {
@@ -95,6 +95,7 @@ namespace ProjectManager.Controls
         public static FDImage LibrarypathFolder;
         public static FDImage DocumentClass;
         public static FDImage CommandPrompt;
+        public static FDImage CollapseAll;
 
         public static ImageList ImageList { get { return imageList; } }
 
@@ -112,9 +113,9 @@ namespace ProjectManager.Controls
             XmlFile = GetResource("Icons.XmlFile.png");
             MxmlFile = GetResource("Icons.MxmlFile.png");
             MxmlFileCompile = GetResource("Icons.MxmlFileCompile.png");
-            HiddenItems = GetGray("292");
-            HiddenFolder = GetGray("203");
-            HiddenFile = GetGray("526");
+            HiddenItems = GetGray(292);
+            HiddenFolder = GetGray(203);
+            HiddenFile = GetGray(526);
             BlankFile = Get(526);
             Project = Get(274);
             ProjectClasspath = Get(98);
@@ -166,6 +167,12 @@ namespace ProjectManager.Controls
             LibrarypathFolder = Get(208);
             DocumentClass = Get(147);
             CommandPrompt = Get(57);
+            CollapseAll = GetGray(166);
+        }
+
+        public static FDImage GetGray(int fdIndex)
+        {
+            return GetGray(fdIndex.ToString());
         }
 
         public static FDImage GetGray(string data)

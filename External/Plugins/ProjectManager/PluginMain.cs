@@ -239,6 +239,7 @@ namespace ProjectManager
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
             pluginUI.TreeBar.Synchronize.Click += delegate { ToggleTrackActiveDocument(); };
             pluginUI.TreeBar.SynchronizeMain.Click += delegate { TreeSyncToMainFile(); };
+            pluginUI.TreeBar.CollapseAll.Click += delegate { CollapseAll(); };
             pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(); };
             pluginUI.TreeBar.RefreshSelected.Click += delegate { TreeRefreshSelectedNode(); };
             pluginUI.TreeBar.ProjectTypes.Click += delegate 
@@ -1595,6 +1596,17 @@ namespace ProjectManager
             {
                 Tree.Select(activeProject.GetAbsolutePath(activeProject.CompileTargets[0]));
                 Tree.SelectedNode.EnsureVisible();
+            }
+        }
+
+        private void CollapseAll()
+        {
+            foreach (TreeNode rootNode in Tree.Nodes)
+            {
+                foreach (TreeNode node in rootNode.Nodes)
+                {
+                    node.Collapse(false);
+                }
             }
         }
 
