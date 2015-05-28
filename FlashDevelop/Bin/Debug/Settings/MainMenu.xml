@@ -171,8 +171,8 @@
 		<button label="Label.CustomArguments" click="ShowArguments" image="242" />
 		<separator />
 		<button label="Label.ApplicationFiles" click="PluginCommand" tag="FileExplorer.Explore;$(BaseDir)" image="46|30|2|3" />
-		<button label="Label.BackupSettings" click="BackupSettings" image="54|9|3|3" flags="Enable:!StandaloneMode" />
-		<button label="Label.ProgramSettings" click="ShowSettings" image="54" />
+		<button label="Label.BackupSettings" click="BackupSettings" image="481|9|3|3" flags="Enable:!StandaloneMode" />
+		<button label="Label.ProgramSettings" click="ShowSettings" image="481" />
 	</menu>
 	<menu label="Label.Syntax" name="SyntaxMenu">
 		<!-- GENERATED ON RUNTIME -->
