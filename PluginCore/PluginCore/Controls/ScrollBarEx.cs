@@ -1029,7 +1029,7 @@ namespace PluginCore.Controls
             if (this.curPos > -1 && this.orientation == ScrollBarOrientation.Vertical)
             {
                 Decimal pad = this.arrowHeight + ScaleHelper.Scale(2);
-                Decimal step = ((this.Height - this.Margin.Bottom) - (pad * 2)) / this.maximum;
+                Decimal step = ((this.Height - this.Margin.Bottom) - (pad * 2)) / (this.maximum + this.largeChange + 1);
                 using (SolidBrush brush = new SolidBrush(this.curPosColor))
                 {
                     Int32 position = Convert.ToInt32(pad + (step * this.curPos));
@@ -1592,7 +1592,7 @@ namespace PluginCore.Controls
             {
                 return trackSize;
             }
-            float newThumbSize = ((float)this.largeChange * (float)trackSize) / (float)this.maximum;
+            float newThumbSize = ((float)this.largeChange * (float)trackSize) / (float)(this.maximum + this.largeChange);
             return Convert.ToInt32(Math.Min((float)trackSize, Math.Max(newThumbSize, 10f)));
         }
 

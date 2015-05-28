@@ -92,16 +92,19 @@ namespace ScintillaNet
         /// </summary>
         private void OnScrollUpdate(ScintillaControl sender)
         {
-            Int32 vMax = sender.LineCount;
+            Int32 vMax = sender.LineCount - 1;
+            Int32 vPage = sender.LinesOnScreen;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
             sender.vScrollBar.Maximum = vMax;
+            sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.CurrentPosition = sender.CurrentLine;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Minimum = 0;
             sender.hScrollBar.Maximum = sender.ScrollWidth;
+            sender.hScrollBar.LargeChange = sender.Width;
             sender.hScrollBar.Value = sender.XOffset;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.vScrollBar.Visible = vMax > 1;
@@ -128,6 +131,11 @@ namespace ScintillaNet
         /// </summary>
         private void AddScrollBars(ScintillaControl sender)
         {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate { this.AddScrollBars(sender); });
+                return;
+            }
             sender.IsVScrollBar = false;
             sender.IsHScrollBar = false;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
@@ -143,6 +151,11 @@ namespace ScintillaNet
         /// </summary>
         private void RemoveScrollBars(ScintillaControl sender)
         {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke((MethodInvoker)delegate { this.RemoveScrollBars(sender); });
+                return;
+            }
             sender.IsVScrollBar = true;
             sender.IsHScrollBar = true;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;

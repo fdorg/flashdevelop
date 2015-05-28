@@ -94,7 +94,7 @@ namespace PluginCore
         #endregion
     }
 
-    public interface IMainForm : IWin32Window
+    public interface IMainForm : IContainerControl, IWin32Window
     {
         #region IMainForm Methods
 
