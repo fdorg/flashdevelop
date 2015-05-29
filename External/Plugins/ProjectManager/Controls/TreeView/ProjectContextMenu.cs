@@ -37,7 +37,7 @@ namespace ProjectManager.Controls.TreeView
         public ToolStripMenuItem Copy = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), Icons.Copy.Img);
         public ToolStripMenuItem Paste = new ToolStripMenuItem(TextHelper.GetString("Label.Paste"), Icons.Paste.Img);
         public ToolStripMenuItem Delete = new ToolStripMenuItem(TextHelper.GetString("Label.Delete"), Icons.Delete.Img);
-        public ToolStripMenuItem Rename = new ToolStripMenuItem(TextHelper.GetString("Label.Rename"));
+        public ToolStripMenuItem Rename = new ToolStripMenuItem(TextHelper.GetString("Label.Rename"), Icons.Rename.Img);
         public ToolStripMenuItem LibraryOptions = new ToolStripMenuItem(TextHelper.GetString("Label.Options"), Icons.Options.Img);
         public ToolStripMenuItem NothingToDo = new ToolStripMenuItem(TextHelper.GetString("Label.NotValidGroup"));
         public ToolStripMenuItem NoProjectOutput = new ToolStripMenuItem(TextHelper.GetString("Label.NoProjectOutput"));
