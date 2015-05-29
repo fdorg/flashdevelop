@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <tabmenu>
 	<button label="Label.Close" click="Close" keyid="FileMenu.Close" />
-	<button label="Label.CloseOthers" click="CloseOthers" keyid="FileMenu.CloseOthers" flags="Enable:HasSeveralDocs" />
-	<button label="Label.CloseAll" click="CloseAll" keyid="FileMenu.CloseAll" flags="Enable:HasSeveralDocs" />
+	<button label="Label.CloseOthers" click="CloseOthers" keyid="FileMenu.CloseOthers" flags="Enable:!IsAloneInPane" />
+	<button label="Label.CloseAll" click="CloseAll" keyid="FileMenu.CloseAll" flags="Enable:!IsAloneInPane" />
 	<separator />
 	<button label="Label.Reload" click="Reload" keyid="ModifyMenu.Reload" flags="Enable:IsEditable|!IsUntitled" />
 	<button label="Label.Duplicate" click="Duplicate" keyId="ModifyMenu.Duplicate" flags="Enable:IsEditable" />

@@ -82,13 +82,13 @@ namespace FlashDevelop.Managers
             {
                 if (document.HasBookmarks) return false;
             }
-            if (action.Contains("!HasSeveralDocs"))
-            {
-                if (!document.IsAloneInPane) return false;
-            }
-            else if (action.Contains("HasSeveralDocs"))
+            if (action.Contains("!IsAloneInPane"))
             {
                 if (document.IsAloneInPane) return false;
+            }
+            else if (action.Contains("IsAloneInPane"))
+            {
+                if (!document.IsAloneInPane) return false;
             }
             if (action.Contains("!HasModified"))
             {
