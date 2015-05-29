@@ -66,6 +66,7 @@ namespace PluginCore
         Boolean IsUntitled { get; }
         Boolean IsEditable { get; }
         Boolean HasBookmarks { get; }
+        Boolean IsAloneInPane { get; }
 
         #endregion
 

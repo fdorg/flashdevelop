@@ -2580,7 +2580,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Closes all open documents in the current group
+        /// Closes all open documents in the current pane
         /// </summary>
         public void CloseAll(Object sender, System.EventArgs e)
         {
@@ -2588,7 +2588,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Closes all open documents in the current group exept the current
+        /// Closes all open documents except the current in the current pane
         /// </summary>
         public void CloseOthers(Object sender, System.EventArgs e)
         {

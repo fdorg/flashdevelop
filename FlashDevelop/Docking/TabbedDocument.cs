@@ -127,6 +127,23 @@ namespace FlashDevelop.Docking
         }
 
         /// <summary>
+        /// Does this document's pane have any other documents?
+        /// </summary> 
+        public Boolean IsAloneInPane
+        {
+            get
+            {
+                int count = 0;
+                foreach (ITabbedDocument document in Globals.MainForm.Documents)
+                {
+                    if (document.DockHandler.PanelPane == DockHandler.PanelPane)
+                        count++;
+                }
+                return count <= 1;
+            }
+        }
+
+        /// <summary>
         /// Current ScintillaControl of the document
         /// </summary>
         public ScintillaControl SciControl
@@ -232,6 +249,7 @@ namespace FlashDevelop.Docking
                 this.focusTimer.Stop();
                 this.focusTimer.Start();
             }
+            ButtonManager.UpdateFlaggedButtons();
         }
         private void OnFocusTimer(Object sender, EventArgs e)
         {
@@ -552,6 +570,10 @@ namespace FlashDevelop.Docking
             this.UpdateDocumentIcon(this.FileName);
         }
 
+        public void Close()
+        {
+            base.Close();
+            ButtonManager.UpdateFlaggedButtons();
+        }
     }
-    
 }
