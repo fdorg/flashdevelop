@@ -396,6 +396,33 @@ namespace PluginCore.Helpers
             }
             return info;
         }
+
+        /// <summary>
+        /// Filters a list of paths so that only thsoe meeting the File.Exists() condition remain.
+        /// </summary>
+        public static List<string> FilterByExisiting(List<string> paths, bool logicalDrivesOnly)
+        {
+            List<string> toCheck = new List<string>(paths);
+            if (logicalDrivesOnly)
+            {
+                DriveInfo[] driveInfo = DriveInfo.GetDrives();
+                toCheck = new List<string>(paths);
+                toCheck.RemoveAll(delegate(string path)
+                {
+                    foreach (DriveInfo drive in driveInfo)
+                    {
+                        if (path.StartsWith(drive.RootDirectory.ToString()))
+                            return false;
+                    }
+                    return true;
+                });
+            }
+
+            toCheck.RemoveAll(path => !File.Exists(path));
+            paths.Clear();
+            paths.AddRange(toCheck);
+            return paths;
+        }
     }
 
     /// <summary>
