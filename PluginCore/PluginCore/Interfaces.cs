@@ -47,7 +47,7 @@ namespace PluginCore
         #endregion
     }
 
-    public interface ITabbedDocument
+    public interface ITabbedDocument : IDockContent
     {
         #region ITabbedDocument Properties
 
@@ -66,6 +66,7 @@ namespace PluginCore
         Boolean IsUntitled { get; }
         Boolean IsEditable { get; }
         Boolean HasBookmarks { get; }
+        Boolean IsAloneInPane { get; }
 
         #endregion
 
