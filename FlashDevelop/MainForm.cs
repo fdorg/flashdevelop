@@ -724,7 +724,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Initializes the config detection
+        /// Initializes the theme and config detection
         /// </summary>
         private void InitializeConfig()
         {
@@ -744,6 +744,9 @@ namespace FlashDevelop
                     File.Delete(appman);
                     this.refreshConfig = true;
                 }
+                // Load current theme for applying later
+                String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
                 // Apply FD dir and appman dir to PATH
                 String amPath = Path.Combine(PathHelper.ToolDir, "AppMan");
                 String oldPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
@@ -825,8 +828,6 @@ namespace FlashDevelop
                 this.appSettings = (SettingObject)obj;
             }
             SettingObject.EnsureValidity(this.appSettings);
-            String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-            if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
             PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
             FileStateManager.RemoveOldStateFiles();
         }
