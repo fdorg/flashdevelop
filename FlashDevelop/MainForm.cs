@@ -2306,6 +2306,15 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Clears invalid entries from the old documents list
+        /// </summary>
+        public void CleanReopenList(Object sender, System.EventArgs e)
+        {
+            FileHelper.FilterByExisiting(this.appSettings.PreviousDocuments, true);
+            ButtonManager.PopulateReopenMenu();
+        }
+
+        /// <summary>
         /// Clears all entries from the old documents list
         /// </summary>
         public void ClearReopenList(Object sender, System.EventArgs e)
