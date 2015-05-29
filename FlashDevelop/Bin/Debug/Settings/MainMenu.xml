@@ -104,7 +104,7 @@
 		<button label="Label.WhitespaceCharacters" click="ToggleBooleanSetting" tag="ViewWhitespace" flags="Enable:IsEditable+Check:IsEditable|TracksBoolean" />
 		<button label="Label.WrapEditorText" click="ToggleBooleanSetting" tag="WrapText" flags="Enable:IsEditable+Check:IsEditable|TracksBoolean" />
 		<separator />
-		<button label="Label.ToggleFold" click="ToggleFold" shortcut="Control|Shift|F" flags="Enable:IsEditable" />
+		<button label="Label.ToggleFold" click="ToggleFold" flags="Enable:IsEditable" />
 		<button label="Label.CollapseRegions" click="ScintillaCommand" tag="CollapseRegions" shortcut="Control|Shift|U" flags="Enable:IsEditable" />
 		<button label="Label.CollapseFunctions" click="ScintillaCommand" tag="CollapseFunctions" shortcut="Control|Shift|Y" flags="Enable:IsEditable" />
 		<button label="Label.CollapseAll" click="ScintillaCommand" tag="CollapseAllFolds" shortcut="Control|Shift|A" flags="Enable:IsEditable" />
@@ -120,7 +120,7 @@
 		<button label="Label.QuickFindPrevious" click="FindPrevious" shortcut="Shift|F3" image="484|1|3|-4" flags="Enable:IsEditable" />
 		<separator />
 		<button label="Label.FindAndReplace" click="FindAndReplace" shortcut="Control|H" image="484" flags="Enable:IsEditable" />
-		<button label="Label.FindAndReplaceInFiles" click="FindAndReplaceInFiles" shortcut="Control|I" image="209" />
+		<button label="Label.FindAndReplaceInFiles" click="FindAndReplaceInFiles" shortcut="Control|Shift|F" image="209" />
 		<separator />
 		<button label="Label.GotoPositionOrLine" click="GoTo" shortcut="Control|G" image="67" flags="Enable:IsEditable" />
 		<button label="Label.GotoMatchingBrace" click="GoToMatchingBrace" shortcut="Control|M" image="67" flags="Enable:IsEditable" />
