@@ -426,7 +426,7 @@
 		<Checksum>52f824304662af369133fadd035eb8f1</Checksum>
 		<Desc>Find and Replace plugin Expanded.</Desc>
 		<Group>Plugins</Group>
-		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&t=12200</Info>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12200</Info>
 		<Urls>
 			<Url>https://github.com/mikicho/findandreplaceex/releases/download/v1.1/Find.ReplaceEx.fdz</Url>
 		</Urls>
