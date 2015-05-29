@@ -418,5 +418,18 @@
 			<Url>https://github.com/JoeRobich/fd-vink/releases/download/v1.4/VinkSyntaxTheme.fdz</Url>
 		</Urls>
 	</Entry>
+	<Entry>
+		<Id>find&replaceadvance</Id>
+		<Name>Find&ReplaceAdvance</Name>
+		<Version>1.1</Version>
+		<Build>1</Build>
+		<Checksum>52f824304662af369133fadd035eb8f1</Checksum>
+		<Desc>Find and Replace plugin Expanded.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&t=12200</Info>
+		<Urls>
+			<Url>https://github.com/mikicho/findandreplaceex/releases/download/v1.1/Find.ReplaceEx.fdz</Url>
+		</Urls>
+	</Entry>
 	FD5-->
 </Entries>
