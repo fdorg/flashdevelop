@@ -2,23 +2,23 @@
 <mainmenu>
 	<menu label="Label.File" name="FileMenu">
 		<menu label="Label.New" name="NewMenu">
-			<button label="Label.BlankDocument" click="SmartNew" shortcut="Control|N" image="559" />
+			<button label="Label.BlankDocument" click="SmartNew" shortcut="Control|N" />
 			<separator />
-			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" />
-			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" />
-			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.fdt" />
-			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" />
-			<button label="Label.HTMLDocument" click="NewFromTemplate" tag="html;$(TemplateDir)\HTML.fdt" />
-			<button label="Label.JScriptDocument" click="NewFromTemplate" tag="js;$(TemplateDir)\JScript.js.fdt" />
-			<button label="Label.CSSDocument" click="NewFromTemplate" tag="css;$(TemplateDir)\CSS.fdt" />
-			<button label="Label.PHPDocument" click="NewFromTemplate" tag="php;$(TemplateDir)\PHP.fdt" />
-			<button label="Label.XMLDocument" click="NewFromTemplate" tag="xml;$(TemplateDir)\XML.fdt" />
-			<button label="Label.TextDocument" click="NewFromTemplate" tag="txt;$(TemplateDir)\TXT.fdt" />
+			<button label="Label.AS2Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS2.fdt" image="285" />
+			<button label="Label.AS3Document" click="NewFromTemplate" tag="as;$(TemplateDir)\AS3.fdt" image="285" />
+			<button label="Label.MXMLDocument" click="NewFromTemplate" tag="mxml;$(TemplateDir)\MXML.fdt" image="300" />
+			<button label="Label.HaxeDocument" click="NewFromTemplate" tag="hx;$(TemplateDir)\Haxe.fdt" image="547" />
+			<button label="Label.HTMLDocument" click="NewFromTemplate" tag="html;$(TemplateDir)\HTML.fdt" image="546" />
+			<button label="Label.JScriptDocument" click="NewFromTemplate" tag="js;$(TemplateDir)\JScript.js.fdt" image="546" />
+			<button label="Label.CSSDocument" click="NewFromTemplate" tag="css;$(TemplateDir)\CSS.fdt" image="546" />
+			<button label="Label.PHPDocument" click="NewFromTemplate" tag="php;$(TemplateDir)\PHP.fdt" image="310" />
+			<button label="Label.XMLDocument" click="NewFromTemplate" tag="xml;$(TemplateDir)\XML.fdt" image="289" />
+			<button label="Label.TextDocument" click="NewFromTemplate" tag="txt;$(TemplateDir)\TXT.fdt" image="315" />
 		</menu>
 		<menu label="Label.Modify" name="ModifyMenu" flags="Enable:IsEditable">
-			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" image="559" />
-			<button label="Label.Duplicate" click="Duplicate" shortcut="Control|Shift|N" flags="Enable:IsEditable" />
-			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|T" flags="Enable:IsEditable|CanUndo" />
+			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" image="66" />
+			<button label="Label.Duplicate" click="Duplicate" shortcut="Control|Shift|N" flags="Enable:IsEditable" image="292" />
+			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|T" flags="Enable:IsEditable|CanUndo" image="73" />
 		</menu>
 		<button label="Label.Open" click="Open" shortcut="Control|O" image="214" />
 		<separator />
@@ -131,33 +131,33 @@
 		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" flags="Enable:IsEditable|HasBookmarks" />
 	</menu>
 	<menu label="Label.Insert" name="InsertMenu">
-		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" image="559" />
-		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" />
-		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" flags="Enable:IsEditable" />
+		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" image="275" />
+		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" image="275|16|4|4" />
+		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" flags="Enable:IsEditable" image="163" />
 		<separator />
-		<button label="Label.Snippet" click="InsertSnippet" shortcut="Control|B" tag="null" flags="Enable:IsEditable" />
-		<button label="Label.Color" click="InsertColor" shortcut="Control|Shift|K" flags="Enable:IsEditable" />
+		<button label="Label.Snippet" click="InsertSnippet" shortcut="Control|B" tag="null" flags="Enable:IsEditable" image="341" />
+		<button label="Label.Color" click="InsertColor" shortcut="Control|Shift|K" flags="Enable:IsEditable" image="328" />
 		<button label="Label.GUID" click="InsertGUID" shortcut="Control|Shift|I" flags="Enable:IsEditable" />
 		<separator />
 		<button label="Label.Hash" click="InsertHash" shortcut="Control|Shift|H" flags="Enable:IsEditable" />
 	</menu>
 	<menu label="Label.Tools" name="ToolsMenu">
-		<button label="Label.KillRunningProcess" click="KillProcess" flags="Enable:ProcessIsRunning" />
+		<button label="Label.KillRunningProcess" click="KillProcess" flags="Enable:ProcessIsRunning" image="153" />
 		<separator />
-		<menu label="Label.FlashTools" name="FlashToolsMenu">
+		<menu label="Label.FlashTools" name="FlashToolsMenu" >
 			<button label="Label.SOReader" click="RunProcess" tag="$(Quote)$(AppDir)\Tools\soreader\SOReaderUI.exe$(Quote)" />
 			<button label="Label.ASDocGen" click="RunProcess" tag="$(Quote)$(AppDir)\Tools\asdocgen\ASDocGen.exe$(Quote)" />
 			<separator />
 			<button label="Label.TestMovieInFlash" click="PluginCommand" tag="ASCompletion.CallFlashIDE;$(Quote)$(AppDir)\Tools\flashide\testmovie.jsfl$(Quote)" shortcut="F6" />
 			<button label="Label.PublishMovieInFlash" click="PluginCommand" tag="ASCompletion.CallFlashIDE;$(Quote)$(AppDir)\Tools\flashide\buildmovie.jsfl$(Quote)" shortcut="Control|F6" />
 		</menu>
-		<menu label="Label.GeneralTools" name="GeneralToolsMenu">
+		<menu label="Label.GeneralTools" name="GeneralToolsMenu" >
 			<button label="Label.CommandPrompt" click="PluginCommand" tag="FileExplorer.PromptHere;$(WorkingDir)" image="57" />
 			<button label="Label.WindowsExplorer" click="PluginCommand" tag="FileExplorer.Explore;$(WorkingDir)" image="56" />
 			<separator />
 			<button label="Label.CompareFiles" click="RunProcess" tag="$(Quote)$(AppDir)\Tools\diffui\diffui.exe$(Quote)" image="37|16|-1|-1" />
 		</menu>
-		<menu label="Label.WebTools" name="WebToolsMenu">
+		<menu label="Label.WebTools" name="WebToolsMenu" >
 			<button label="Label.HTMLValidator" click="Browse" tag="http://validator.w3.org/" image="559" />
 			<button label="Label.CSSValidator" click="Browse" tag="http://jigsaw.w3.org/css-validator/" />
 		</menu>

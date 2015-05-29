@@ -186,6 +186,7 @@ namespace ProjectManager.Controls
             //AllItems.Add(NewProject);
 
             OpenProject = new ToolStripMenuItem(TextHelper.GetString("Label.OpenProject"));
+            OpenProject.Image = Icons.OpenProject.Img;
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.OpenProject", OpenProject);
             //AllItems.Add(OpenProject);
 
