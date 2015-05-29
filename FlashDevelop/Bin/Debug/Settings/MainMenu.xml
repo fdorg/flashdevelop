@@ -104,7 +104,7 @@
 		<button label="Label.WhitespaceCharacters" click="ToggleBooleanSetting" tag="ViewWhitespace" flags="Enable:IsEditable+Check:IsEditable|TracksBoolean" />
 		<button label="Label.WrapEditorText" click="ToggleBooleanSetting" tag="WrapText" flags="Enable:IsEditable+Check:IsEditable|TracksBoolean" />
 		<separator />
-		<button label="Label.ToggleFold" click="ToggleFold" flags="Enable:IsEditable" />
+		<button label="Label.ToggleFold" click="ToggleFold" shortcut="Control|Shift|O" flags="Enable:IsEditable" />
 		<button label="Label.CollapseRegions" click="ScintillaCommand" tag="CollapseRegions" shortcut="Control|Shift|U" flags="Enable:IsEditable" />
 		<button label="Label.CollapseFunctions" click="ScintillaCommand" tag="CollapseFunctions" shortcut="Control|Shift|Y" flags="Enable:IsEditable" />
 		<button label="Label.CollapseAll" click="ScintillaCommand" tag="CollapseAllFolds" shortcut="Control|Shift|A" flags="Enable:IsEditable" />
