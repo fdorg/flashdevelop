@@ -398,7 +398,7 @@ namespace PluginCore.Helpers
         }
 
         /// <summary>
-        /// Filters a list of paths so that only thsoe meeting the File.Exists() condition remain.
+        /// Filters a list of paths so that only those meeting the File.Exists() condition remain.
         /// </summary>
         public static List<string> FilterByExisiting(List<string> paths, bool logicalDrivesOnly)
         {
