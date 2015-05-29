@@ -31,13 +31,13 @@ DockPanel.ShowAutoHideContentOn=Hover
 #LinkLabel.ActiveLinkColor=#00ff00
 #LinkLabel.DisabledLinkColor=#0000ff
 
-#ColumnHeader.BackColor=#ECECEC
-#ColumnHeader.TextColor=#333333
-#ColumnHeader.BorderColor=#888888
+ColumnHeader.BackColor=#ECECEC
+ColumnHeader.TextColor=#333333
+ColumnHeader.BorderColor=#CCCCCC
 
-#ToolStripComboBoxControl.BorderColor=#CCCCCC
-#ToolStripComboBoxControl.ActiveBorderColor=#3897FF
-#ToolStripTextBoxControl.BorderColor=#CCCCCC
+ToolStripComboBoxControl.BorderColor=#CCCCCC
+ToolStripComboBoxControl.ActiveBorderColor=#3897FF
+ToolStripTextBoxControl.BorderColor=#CCCCCC
 
 #ToolStrip.BorderColor=#ff0000
 #DockWindow.BorderColor=#ff0000

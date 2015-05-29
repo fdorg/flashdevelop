@@ -115,7 +115,6 @@ namespace System.Windows.Forms
         {
             Font font = PluginBase.MainForm.Settings.DefaultFont;
             Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
-            Color cborder = GetThemeColor("ToolStripComboBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
             {
                 if (item is ToolStripTextBox)

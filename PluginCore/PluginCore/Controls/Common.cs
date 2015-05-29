@@ -187,16 +187,17 @@ namespace System.Windows.Forms
                 Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
                 Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
                 Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
-                if (back != Color.Empty && border != Color.Empty)
+                if (back != Color.Empty && border != Color.Empty && text != Color.Empty)
                 {
                     this.EnableHeadersVisualStyles = false;
-                    this.Columns[0].HeaderCell.Style.BackColor = text;
+                    this.ColumnHeadersDefaultCellStyle.ForeColor = text;
                     e.Graphics.FillRectangle(new SolidBrush(back), e.CellBounds);
                     e.Graphics.DrawLine(new Pen(border), e.CellBounds.X, e.CellBounds.Height - 1, e.CellBounds.X + e.CellBounds.Width, e.CellBounds.Height - 1);
                     e.Graphics.DrawLine(new Pen(border), e.CellBounds.X + e.CellBounds.Width - 1, 3, e.CellBounds.X + e.CellBounds.Width - 1, e.CellBounds.Height - 6);
                     e.PaintContent(e.ClipBounds);
                     e.Handled = true;
                 }
+                else this.EnableHeadersVisualStyles = true;
             }
         }
 
@@ -240,8 +241,9 @@ namespace System.Windows.Forms
                 e.Graphics.FillRectangle(new SolidBrush(back), e.Bounds.X, 0, e.Bounds.Width, e.Bounds.Height);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X + e.Bounds.Width - 1, 3, e.Bounds.X + e.Bounds.Width - 1, e.Bounds.Height - 6);
-                Rectangle textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + (e.Bounds.Height / 2), e.Bounds.Width, e.Bounds.Height);
-                TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text, TextFormatFlags.VerticalCenter);
+                Int32 textHeight = TextRenderer.MeasureText("HeightTest", e.Font).Height + 1;
+                Rectangle textRect = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + (e.Bounds.Height / 2) - (textHeight / 2), e.Bounds.Width, e.Bounds.Height);
+                TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, textRect.Location, text);
             }
             else e.DrawDefault = true;
         }
@@ -349,6 +351,7 @@ namespace System.Windows.Forms
             Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
             Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
+            if (fore == Color.Empty && back == Color.Empty && border == Color.Empty) this.useTheme = false;
             this.BorderPen.Color = useTheme && border != Color.Empty ? border : SystemColors.ControlDark;
             this.ArrowBrush.Color = useTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
             this.BackBrush.Color = useTheme && back != Color.Empty ? back : SystemColors.Window;
