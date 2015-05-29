@@ -47,7 +47,7 @@ namespace PluginCore
         #endregion
     }
 
-    public interface ITabbedDocument
+    public interface ITabbedDocument : IDockContent
     {
         #region ITabbedDocument Properties
 
