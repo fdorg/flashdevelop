@@ -921,6 +921,10 @@
   <data name="FlashDevelop.Label.ClearBreakpoints" xml:space="preserve">
     <value>ブレークポイントをクリア</value>
   </data>
+  <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
+    <value>&amp;Clean Recent Files List</value>
+    <comment>Added after 5.0.0</comment>
+  </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
     <value>最近開いたファイルをクリア(&amp;C)</value>
   </data>
@@ -1884,6 +1888,10 @@
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>キャンセル</value>
+  </data>
+  <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
+    <value>&amp;Clean Recent Projects List</value>
+    <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">
     <value>最近開いたプロジェクトをクリア(&amp;C)</value>

@@ -935,6 +935,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="FlashDevelop.Label.ClearBreakpoints" xml:space="preserve">
     <value>Haltepunkte löschen</value>
   </data>
+  <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
+    <value>Liste der &amp;zuletzt verwendeten Dateien aufräumen</value>
+    <comment>Added after 5.0.0</comment>
+  </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
     <value>Liste der &amp;zuletzt verwendeten Dateien löschen</value>
   </data>
@@ -1895,6 +1899,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Abbrechen</value>
+  </data>
+  <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
+    <value>&amp;Clean Recent Projects List</value>
+    <comment>Liste der zuletzt benutzten Projekte &amp;aufräumen</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">
     <value>Liste der zuletzt benutzten Projekte &amp;löschen</value>

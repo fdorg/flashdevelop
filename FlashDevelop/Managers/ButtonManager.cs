@@ -264,9 +264,11 @@ namespace FlashDevelop.Managers
                 }
                 if (Globals.PreviousDocuments.Count > 0)
                 {
-                    String label = TextHelper.GetString("Label.ClearReopenList");
+                    String cleanLabel = TextHelper.GetString("Label.CleanReopenList");
+                    String clearLabel = TextHelper.GetString("Label.ClearReopenList");
                     reopenMenu.DropDownItems.Add(new ToolStripSeparator());
-                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(label, null, new EventHandler(Globals.MainForm.ClearReopenList)));
+                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(cleanLabel, null, new EventHandler(Globals.MainForm.CleanReopenList)));
+                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(clearLabel, null, new EventHandler(Globals.MainForm.ClearReopenList)));
                     reopenMenu.Enabled = true;
                 }
                 else reopenMenu.Enabled = false;
