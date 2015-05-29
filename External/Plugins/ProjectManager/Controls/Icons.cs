@@ -78,7 +78,6 @@ namespace ProjectManager.Controls
         public static FDImage Options;
         public static FDImage OptionsWithIssues;
         public static FDImage NewProject;
-        public static FDImage OpenProject;
         public static FDImage GreenCheck;
         public static FDImage Gear;
         public static FDImage X;
@@ -152,7 +151,6 @@ namespace ProjectManager.Controls
             Options = Get(54);
             OptionsWithIssues = Get("54|6|3|3");
             NewProject = Get("274|0|5|4");
-            OpenProject = Get("274|8|5|4");
             GreenCheck = Get(351);
             Gear = Get(127);
             X = Get(153);
