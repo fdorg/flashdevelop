@@ -304,14 +304,14 @@
 	<Entry>
 		<Id>editorminimap</Id>
 		<Name>EditorMiniMap</Name>
-		<Version>1.4</Version>
+		<Version>1.5</Version>
 		<Build>1</Build>
-		<Checksum>5cbbb78c3bdcd4c213af0f022f132cae</Checksum>
+		<Checksum>c5a8ba2b1209afc53bab86ca64b850c9</Checksum>
 		<Desc>Renders a miniature version of the open file in a bar to the side of the editor.</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9397</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-editorminimap/releases/download/v1.4/EditorMiniMap_1.4.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-editorminimap/releases/download/v1.5/EditorMiniMap_1.5.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
