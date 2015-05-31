@@ -31,7 +31,7 @@ namespace CodeFormatter.InfoCollector
 
         public static bool isJavaIdentifierPart(char ch)
         {
-            return Char.IsLetterOrDigit(ch) || ch == '_';
+            return Char.IsLetterOrDigit(ch) || ch == '_' || ch == '$';
         }
 
     }
