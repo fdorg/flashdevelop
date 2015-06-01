@@ -9,7 +9,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "5.0.0"
+!define VERSION "5.0.1"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "FlashDevelop.org"

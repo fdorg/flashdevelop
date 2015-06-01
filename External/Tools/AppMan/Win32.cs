@@ -20,7 +20,7 @@ namespace AppMan
         static Win32()
         {
             IsRunningOnMono = Type.GetType("Mono.Runtime") != null;
-            if (IsRunningOnMono) WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
+            if (!IsRunningOnMono) WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
         }
 
         #region Externs
