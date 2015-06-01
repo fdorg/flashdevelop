@@ -70,6 +70,7 @@ namespace ScintillaNet
         private void InitScrollBars(ScintillaControl sender)
         {
             sender.vScrollBar = new ScrollBarEx();
+            sender.vScrollBar.OverScroll = true;
             sender.vScrollBar.Width = ScaleHelper.Scale(17);
             sender.vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             sender.vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
@@ -80,11 +81,11 @@ namespace ScintillaNet
             sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             sender.hScrollBar.Dock = DockStyle.Bottom;
-            sender.hScrollBar.LargeChange *= 2;
-            if (PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor") != Color.Empty)
-            {
-                sender.AddScrollBars(sender);
-            }
+            Color foreColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
+            if (foreColor != Color.Empty) sender.AddScrollBars(sender);
+            PluginBase.MainForm.ThemeControls(sender.vScrollBar);
+            PluginBase.MainForm.ThemeControls(sender.hScrollBar);
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
 
         /// <summary>
@@ -92,14 +93,14 @@ namespace ScintillaNet
         /// </summary>
         private void OnScrollUpdate(ScintillaControl sender)
         {
-            Int32 vMax = sender.LineCount - 1;
+            Int32 vMax = sender.LinesVisible;
             Int32 vPage = sender.LinesOnScreen;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
             sender.vScrollBar.Maximum = vMax;
             sender.vScrollBar.LargeChange = vPage;
-            sender.vScrollBar.CurrentPosition = sender.CurrentLine;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
+            sender.vScrollBar.CurrentPosition = sender.VisibleFromDocLine(sender.CurrentLine);
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Minimum = 0;
@@ -142,7 +143,7 @@ namespace ScintillaNet
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.Controls.Add(sender.hScrollBar);
             sender.Controls.Add(sender.vScrollBar);
-            sender.UpdateUI += new UpdateUIHandler(sender.OnScrollUpdate);
+            sender.Painted += sender.OnScrollUpdate;
             sender.OnResize(null, null);
         }
 
@@ -162,7 +163,7 @@ namespace ScintillaNet
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.Controls.Remove(sender.hScrollBar);
             sender.Controls.Remove(sender.vScrollBar);
-            sender.UpdateUI -= new UpdateUIHandler(sender.OnScrollUpdate);
+            sender.Painted -= sender.OnScrollUpdate;
             sender.OnResize(null, null);
         }
 
@@ -186,14 +187,13 @@ namespace ScintillaNet
                     directPointer = (int)SlowPerform(2185, 0, 0);
                     directPointer = DirectPointer;
                 }
-                //EventManager.AddEventHandler(this, EventType.ApplyTheme);
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
-                //this.InitScrollBars(this);
+                this.InitScrollBars(this);
             }
             catch (Exception ex)
             {
@@ -209,9 +209,9 @@ namespace ScintillaNet
 
         public void OnResize(object sender, EventArgs e)
         {
-            Int32 vsbWidth = this.vScrollBar != null && this.vScrollBar.Visible && this.Controls.Contains(this.vScrollBar) ? this.vScrollBar.Width : 0;
-            Int32 hsbHeight = this.hScrollBar != null && this.hScrollBar.Visible && this.Controls.Contains(this.hScrollBar) ? this.hScrollBar.Height : 0;
-            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width - vsbWidth, this.ClientRectangle.Height - hsbHeight, 0);
+            Int32 vsbWidth = this.vScrollBar.Visible && this.Controls.Contains(this.vScrollBar) ? this.vScrollBar.Width : 0;
+            Int32 hsbHeight = this.hScrollBar.Visible && this.Controls.Contains(this.hScrollBar) ? this.hScrollBar.Height : 0;
+            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
         }
 
         #endregion
@@ -1796,17 +1796,6 @@ namespace ScintillaNet
                 SPerform(2198, (uint)value, 0);
             }
         }
-        
-        /// <summary>
-        /// Is a line visible?
-        /// </summary>  
-        public bool IsLineVisible
-        {
-            get 
-            {
-                return SPerform(2228, 0, 0) != 0;
-            }
-        }
 
         /// <summary>
         /// Does a tab pressed when caret is within indentation indent?
@@ -2511,7 +2500,15 @@ namespace ScintillaNet
         public int LastChild(int line)
         {
             return (int)SPerform(2224, (uint)line, 0);
-        }   
+        }
+
+        /// <summary>
+        /// Is a line visible?
+        /// </summary>  
+        public bool GetLineVisible(Int32 line)
+        {
+            return SPerform(2228, (uint)line, 0) != 0;
+        }
 
         /// <summary>
         /// Find the parent line of a child line.
@@ -5796,6 +5793,22 @@ namespace ScintillaNet
         #endregion 
 
         #region Misc Custom Stuff
+
+        /// <summary>
+        /// Gets the amount of lines visible (ie. not folded)
+        /// </summary>
+        private Int32 LinesVisible
+        {
+            get 
+            {
+                Int32 vlineCount = 0;
+                for (Int32 i = 1; i < LineCount; i++)
+                {
+                    if (this.GetLineVisible(i)) vlineCount++;
+                }
+                return vlineCount;
+            }
+        }
 
         /// <summary>
         /// Set caret to line to indent position and ensure it is visible.

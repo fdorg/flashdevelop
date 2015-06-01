@@ -115,7 +115,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private const int _DocumentButtonGapTop = 2;
         private const int _DocumentButtonGapBottom = 3;
         private const int _DocumentButtonGapBetween = 0;
-        private const int _DocumentButtonGapRight = 0;
+        private const int _DocumentButtonGapRight = 2;
         private const int _DocumentTabGapTop = 2;
         private const int _DocumentTabGapLeft = 0;
         private const int _DocumentTabGapRight = 3;

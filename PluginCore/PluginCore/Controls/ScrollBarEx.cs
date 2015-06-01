@@ -282,6 +282,11 @@ namespace PluginCore.Controls
         private int curPos = -1;
 
         /// <summary>
+        /// Is over scroll enabled? Follows large change value.
+        /// </summary>
+        private bool overScroll = false;
+
+        /// <summary>
         /// The scrollbar orientation - horizontal / vertical.
         /// </summary>
         private ScrollBarOrientation orientation = ScrollBarOrientation.Vertical;
@@ -533,6 +538,29 @@ namespace PluginCore.Controls
         #endregion
 
         #region properties
+
+        /// <summary>
+        /// Gets or sets the current position.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Gets or sets the is over scroll is enabled.")]
+        [DefaultValue(false)]
+        public Boolean OverScroll
+        {
+            get
+            {
+                return this.overScroll;
+            }
+            set
+            {
+                // no change, return
+                if (this.overScroll == value)
+                {
+                    return;
+                }
+                this.overScroll = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the current position.
@@ -1025,14 +1053,13 @@ namespace PluginCore.Controls
                     this.clickedBarRectangle.Width = this.thumbBottomLimitBottom - this.clickedBarRectangle.X + 1;
                 }
             }
+            // TODO: Horizontal?
             // draw current line
             if (this.curPos > -1 && this.orientation == ScrollBarOrientation.Vertical)
             {
-                Decimal pad = this.arrowHeight + ScaleHelper.Scale(2);
-                Decimal step = ((this.Height - this.Margin.Bottom) - (pad * 2)) / (this.maximum + this.largeChange + 1);
                 using (SolidBrush brush = new SolidBrush(this.curPosColor))
                 {
-                    Int32 position = Convert.ToInt32(pad + (step * this.curPos));
+                    Int32 position = Convert.ToInt32(GetCurPosition());
                     e.Graphics.FillRectangle(brush, 0, position, this.Width, ScaleHelper.Scale(2));
                 }
             }
@@ -1043,6 +1070,28 @@ namespace PluginCore.Controls
             }
         }
 
+        private int GetCurPosition()
+        {
+            int pixelRange, arrowSize;
+            if (this.orientation == ScrollBarOrientation.Vertical)
+            {
+                pixelRange = this.Height - (2 * this.arrowHeight) - this.thumbHeight;
+                arrowSize = this.arrowHeight;
+            }
+            else
+            {
+                pixelRange = this.Width - (2 * this.arrowWidth) - this.thumbWidth;
+                arrowSize = this.arrowWidth;
+            }
+            int realRange = this.maximum - this.minimum;
+            float perc = 0f;
+            if (realRange != 0)
+            {
+                perc = ((float)this.curPos - (float)this.minimum) / (float)realRange;
+            }
+            return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + arrowSize)));
+        }
+
         /// <summary>
         /// Raises the MouseDown event.
         /// </summary>
@@ -1050,7 +1099,7 @@ namespace PluginCore.Controls
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            this.Focus();
+            //this.Focus();
             if (e.Button == MouseButtons.Left)
             {
                 // prevents showing the context menu if pressing the right mouse
@@ -1592,7 +1641,7 @@ namespace PluginCore.Controls
             {
                 return trackSize;
             }
-            float newThumbSize = ((float)this.largeChange * (float)trackSize) / (float)(this.maximum + this.largeChange);
+            float newThumbSize = ((float)this.largeChange * (float)trackSize) / (float)(this.overScroll ? (float)(this.maximum + this.largeChange) : this.maximum);
             return Convert.ToInt32(Math.Min((float)trackSize, Math.Max(newThumbSize, 10f)));
         }
 
