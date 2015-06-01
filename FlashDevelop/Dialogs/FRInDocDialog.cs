@@ -695,12 +695,7 @@ namespace FlashDevelop.Dialogs
         private bool IsValidPattern()
         {
             String pattern = this.findComboBox.Text;
-            if (pattern.Length < 1)
-            {
-                // no pattern
-                return false;
-            }
-
+            if (pattern.Length < 1) return false;
             if (this.useRegexCheckBox.Checked)
             {
                 try

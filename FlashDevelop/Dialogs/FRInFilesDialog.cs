@@ -530,8 +530,8 @@ namespace FlashDevelop.Dialogs
             Boolean recursive = this.subDirectoriesCheckBox.Checked;
             if (IsValidPattern() && this.IsValidFileMask(mask))
             {
-                string[] paths = this.folderComboBox.Text.Split(';');
-                foreach (string path in paths)
+                String[] paths = this.folderComboBox.Text.Split(';');
+                foreach (String path in paths)
                 {
                     FRConfiguration config = this.GetFRConfig(path, mask, recursive);
                     if (config == null) return;
@@ -541,7 +541,6 @@ namespace FlashDevelop.Dialogs
                     this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
                     this.runner.Finished += new FRFinishedHandler(this.FindFinished);
                     this.runner.SearchAsync(config);
-                    
                     FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
@@ -565,9 +564,8 @@ namespace FlashDevelop.Dialogs
                     DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                     if (result == DialogResult.Cancel) return;
                 }
-
-                string[] paths = this.folderComboBox.Text.Split(';');
-                foreach (string path in paths)
+                String[] paths = this.folderComboBox.Text.Split(';');
+                foreach (String path in paths)
                 {
                     FRConfiguration config = this.GetFRConfig(path, mask, recursive);
                     if (config == null) return;
@@ -579,7 +577,6 @@ namespace FlashDevelop.Dialogs
                     this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
                     this.runner.Finished += new FRFinishedHandler(this.ReplaceFinished);
                     this.runner.ReplaceAsync(config);
-                    //
                     FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
@@ -979,7 +976,7 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-        /// 
+        /// Check if file is hidden in project
         /// </summary>
         private Boolean IsFileHidden(String file, IProject project)
         {
@@ -995,21 +992,17 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Control user pattern
         /// </summary>
-        private bool IsValidPattern()
+        private Boolean IsValidPattern()
         {
             String pattern = this.findComboBox.Text;
-            if (pattern.Length < 1)
+            if (pattern.Length < 1) return false;
+            if (pattern.Length < 2)
             {
-                // no pattern
-                return false;
+                String caption = TextHelper.GetString("Title.ConfirmDialog");
+                String message = TextHelper.GetString("Info.AreYouSureToFindMiniPattern");
+                DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Cancel) return false;
             }
-
-            /*if (pattern.Length < 2)
-            {
-                // TODO warn user
-                return false;
-            }*/
-
             if (this.regexCheckBox.Checked)
             {
                 try

@@ -5937,10 +5937,6 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Objektu zuhaitz batek arbelra kopiatzean izan dezakeen karaktere kopuru maximoa, gutxi gora-behera.</value>
     <comment>Added after 4.7.2</comment>
   </data>
-  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
-    <value>Balioa kopiatu</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
   <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
     <value>ID-a kopiatu</value>
     <comment>Added after 4.7.2</comment>
@@ -5956,5 +5952,9 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
     <value>[{0} objektua lehendik zerrendatua]</value>
     <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.AreYouSureToFindMiniPattern" xml:space="preserve">
+    <value>Are you sure you want to use a really short find text? If the text is common, it may cause a lot of results and a lockup.</value>
+    <comment>Added after 5.0.0</comment>
   </data>
 </root>

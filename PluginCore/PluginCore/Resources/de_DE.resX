@@ -5940,10 +5940,6 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
     <comment>Added after 4.7.2</comment>
   </data>
-  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
-    <value>Copy Value</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
   <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
     <value>Copy ID</value>
     <comment>Added after 4.7.2</comment>
@@ -5959,5 +5955,9 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
     <value>[Object {0} already listed before]</value>
     <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.AreYouSureToFindMiniPattern" xml:space="preserve">
+    <value>Are you sure you want to use a really short find text? If the text is common, it may cause a lot of results and a lockup.</value>
+    <comment>Added after 5.0.0</comment>
   </data>
 </root>
