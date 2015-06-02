@@ -97,7 +97,7 @@ namespace ScintillaNet
             Int32 vPage = sender.LinesOnScreen;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
-            sender.vScrollBar.Maximum = vMax;
+            sender.vScrollBar.Maximum = vMax - 1;
             sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
             sender.vScrollBar.CurrentPosition = vMax > 1 ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
@@ -116,11 +116,13 @@ namespace ScintillaNet
         /// </summary>
         private void OnScrollBarScroll(Object sender, ScrollEventArgs e)
         {
+            this.Painted -= this.OnScrollUpdate;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                if (e.OldValue != -1) this.LineScroll(0, e.NewValue - e.OldValue);
+                if (e.OldValue != -1) this.FirstVisibleLine = e.NewValue;
             }
             else this.XOffset = this.hScrollBar.Value;
+            this.Painted += this.OnScrollUpdate;
         }
 
         /// <summary>
@@ -1617,6 +1619,10 @@ namespace ScintillaNet
         /// </summary>
         public int FirstVisibleLine
         {
+            set
+            {
+                SPerform(2613, (uint)value, 0);
+            }
             get 
             {
                 return (int)SPerform(2152, 0, 0);
@@ -5789,7 +5795,7 @@ namespace ScintillaNet
             get 
             {
                 Int32 vlineCount = 0;
-                for (Int32 i = 1; i < LineCount; i++)
+                for (Int32 i = 0; i < LineCount; i++)
                 {
                     if (this.GetLineVisible(i)) vlineCount++;
                 }

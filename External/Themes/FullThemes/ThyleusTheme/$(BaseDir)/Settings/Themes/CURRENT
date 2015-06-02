@@ -25,8 +25,8 @@ ScrollBar.ForeColor=#4B4645
 ScrollBar.BackColor=#7B7675
 ScrollBar.BorderColor=#7B7675
 ScrollBar.ActiveForeColor=#333333
-ScrollBar.DisabledBackColor=#423833
-ScrollBar.DisabledBorderColor=#726967
+ScrollBar.DisabledBackColor=#7B7675
+ScrollBar.DisabledBorderColor=#7B7675
 ScrollBar.CurrentPositionColor=#F0AC62
 
 LinkLabel.LinkColor=#0000FF
