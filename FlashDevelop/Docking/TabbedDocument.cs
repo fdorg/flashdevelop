@@ -570,10 +570,16 @@ namespace FlashDevelop.Docking
             this.UpdateDocumentIcon(this.FileName);
         }
 
-        public void Close()
+        /// <summary>
+        /// Close the document and update buttons
+        /// </summary>
+        public new void Close()
         {
             base.Close();
             ButtonManager.UpdateFlaggedButtons();
         }
+
     }
+
 }
+

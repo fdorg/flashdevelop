@@ -472,7 +472,8 @@ namespace System.Windows.Forms
             Graphics g = e.Graphics;
             Rectangle dropDownRect = e.ArrowRectangle;
             Color color = GetThemeColor("ToolStripItem.ArrowColor");
-            if (color != Color.Empty) e.ArrowColor = color;
+            if (!e.Item.Enabled) e.ArrowColor = SystemColors.GrayText;
+            else if (color != Color.Empty) e.ArrowColor = color;
             else e.ArrowColor = SystemColors.MenuText;
             using (Brush brush = new SolidBrush(e.ArrowColor))
             {

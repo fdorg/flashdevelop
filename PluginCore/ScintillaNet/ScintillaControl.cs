@@ -100,7 +100,7 @@ namespace ScintillaNet
             sender.vScrollBar.Maximum = vMax;
             sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
-            sender.vScrollBar.CurrentPosition = sender.VisibleFromDocLine(sender.CurrentLine);
+            sender.vScrollBar.CurrentPosition = vMax > 1 ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Minimum = 0;
@@ -108,11 +108,7 @@ namespace ScintillaNet
             sender.hScrollBar.LargeChange = sender.Width;
             sender.hScrollBar.Value = sender.XOffset;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
-            sender.vScrollBar.Visible = vMax > 1;
-            if (sender.vScrollBar.Visible == vMax > 1)
-            {
-                sender.OnResize(null, null);
-            }
+            sender.vScrollBar.Enabled = vMax > 1;
         }
 
         /// <summary>
@@ -132,11 +128,6 @@ namespace ScintillaNet
         /// </summary>
         private void AddScrollBars(ScintillaControl sender)
         {
-            if (this.InvokeRequired)
-            {
-                this.BeginInvoke((MethodInvoker)delegate { this.AddScrollBars(sender); });
-                return;
-            }
             sender.IsVScrollBar = false;
             sender.IsHScrollBar = false;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
@@ -152,11 +143,6 @@ namespace ScintillaNet
         /// </summary>
         private void RemoveScrollBars(ScintillaControl sender)
         {
-            if (this.InvokeRequired)
-            {
-                this.BeginInvoke((MethodInvoker)delegate { this.RemoveScrollBars(sender); });
-                return;
-            }
             sender.IsVScrollBar = true;
             sender.IsHScrollBar = true;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
@@ -203,14 +189,15 @@ namespace ScintillaNet
 
         protected override void Dispose(bool disposing)
         {
+            EventManager.RemoveEventHandler(this);
             if (highlightDelay != null) highlightDelay.Stop();
             base.Dispose(disposing);
         }
 
         public void OnResize(object sender, EventArgs e)
         {
-            Int32 vsbWidth = this.vScrollBar.Visible && this.Controls.Contains(this.vScrollBar) ? this.vScrollBar.Width : 0;
-            Int32 hsbHeight = this.hScrollBar.Visible && this.Controls.Contains(this.hScrollBar) ? this.hScrollBar.Height : 0;
+            Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) ? this.vScrollBar.Width : 0;
+            Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) ? this.hScrollBar.Height : 0;
             if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
         }
 

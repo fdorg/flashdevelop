@@ -531,7 +531,7 @@ namespace FlashDevelop.Controls
                 {
                     Rectangle find = this.RectangleToScreen(this.ClientRectangle);
                     Rectangle doc = document.RectangleToScreen(document.ClientRectangle);
-                    if (this.Visible && doc.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, this.Height);
+                    if (this.Visible && doc.IntersectsWith(find)) document.Padding = new Padding(0, 0, 0, this.Height - 1);
                     else document.Padding = new Padding(0);
                 }
             }

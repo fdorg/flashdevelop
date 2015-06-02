@@ -162,6 +162,12 @@ namespace System.Windows.Forms
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            EventManager.RemoveEventHandler(this);
+            base.Dispose(disposing);
+        }
+
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.ApplyTheme)
@@ -327,6 +333,12 @@ namespace System.Windows.Forms
         {
             this.UseTheme = true;
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            EventManager.RemoveEventHandler(this);
+            base.Dispose(disposing);
         }
 
         public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
