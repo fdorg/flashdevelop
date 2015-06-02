@@ -30,7 +30,7 @@ namespace HaXeContext
         public readonly ScintillaControl Sci;
         public readonly ASExpr Expr;
         public readonly bool AutoHide;
-        public readonly HaxeCompleteType CompleteType;
+        public readonly HaxeCompilerService CompilerService;
 
         // result
         public HaxeCompleteStatus Status;
@@ -41,13 +41,13 @@ namespace HaXeContext
         readonly IHaxeCompletionHandler handler;
         readonly string FileName;
 
-        public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler, HaxeCompleteType completeType)
+        public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler, HaxeCompilerService compilerService)
         {
             Sci = sci;
             Expr = expr;
             AutoHide = autoHide;
             handler = completionHandler;
-            CompleteType = completeType;
+            CompilerService = compilerService;
             Status = HaxeCompleteStatus.NONE;
             FileName = PluginBase.MainForm.CurrentDocument.FileName;
         }
@@ -119,7 +119,7 @@ namespace HaXeContext
             else
                 hxmlArgs.Add(GetMainClassName());
 
-            String mode = (CompleteType == HaxeCompleteType.REGULAR) ? "" : "@position";
+            String mode = (CompilerService == HaxeCompilerService.COMPLETION) ? "" : "@position";
             hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}{2}", FileName, pos, mode));
             hxmlArgs.Insert(1, "-D use_rtti_doc");
             hxmlArgs.Insert(2, "-D display-details");
@@ -156,15 +156,15 @@ namespace HaXeContext
         {
             var pos = Expr.Position;
 
-            switch (CompleteType)
+            switch (CompilerService)
             {
-                case HaxeCompleteType.REGULAR:
+                case HaxeCompilerService.COMPLETION:
                     // locate a . or (
                     while (pos > 1 && Sci.CharAt(pos - 1) != '.' && Sci.CharAt(pos - 1) != '(')
                         pos--;
                     break;
 
-                case HaxeCompleteType.POSITION:
+                case HaxeCompilerService.POSITION:
                     pos = Sci.WordEndPosition(Sci.CurrentPos, true) + 1;
                     break;
             }
@@ -389,9 +389,9 @@ namespace HaXeContext
         POSITION = 5
     }
 
-    enum HaxeCompleteType
+    enum HaxeCompilerService
     {
-        REGULAR,
+        COMPLETION,
         POSITION
     }
 

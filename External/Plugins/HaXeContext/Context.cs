@@ -1189,7 +1189,7 @@ namespace HaXeContext
             if (expression.Value != "")
             {
                 // async processing
-                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompleteType.REGULAR);
+                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION);
                 hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
@@ -1365,7 +1365,7 @@ namespace HaXeContext
                 return null;
 
             expression.Position++;
-            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompleteType.REGULAR);
+            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION);
             hc.GetList(OnFunctionCompletionResult);
 
             resolvingFunction = true;
@@ -1391,7 +1391,7 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
-            var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompleteType.POSITION);
+            var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION);
             hc.GetPosition(OnPositionCompletionResult);
             return true;
         }
@@ -1464,7 +1464,7 @@ namespace HaXeContext
         public override void CheckSyntax()
         {
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompleteType.REGULAR);
+            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
         }
 
