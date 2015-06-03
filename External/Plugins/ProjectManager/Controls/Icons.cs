@@ -272,7 +272,8 @@ namespace ProjectManager.Controls
             Bitmap composed = image.Clone() as Bitmap;
             using (Graphics destination = Graphics.FromImage(composed))
             {
-                destination.DrawImage(overlay, new Rectangle(x, y, overlay.Width, overlay.Height), new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
+                Rectangle dest = new Rectangle(ScaleHelper.Scale(x), ScaleHelper.Scale(y), overlay.Width, overlay.Height);
+                destination.DrawImage(overlay, dest, new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
             }
             return composed;
         }
