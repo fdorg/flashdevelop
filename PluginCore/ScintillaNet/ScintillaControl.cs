@@ -46,6 +46,22 @@ namespace ScintillaNet
         private ScrollBarEx hScrollBar;
 
         /// <summary>
+        /// Gets the reference to the custom vertical scrollbar
+        /// </summary>
+        public ScrollBarEx VScrollBar
+        {
+            get { return this.vScrollBar; }
+        }
+
+        /// <summary>
+        /// Gets the reference to the custom horizontal scrollbar
+        /// </summary>
+        public ScrollBarEx HScrollBar
+        {
+            get { return this.hScrollBar; }
+        }
+
+        /// <summary>
         /// Handle the incoming theme events
         /// </summary>
         public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
