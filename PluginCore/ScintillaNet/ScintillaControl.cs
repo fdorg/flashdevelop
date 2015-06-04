@@ -168,6 +168,8 @@ namespace ScintillaNet
             Boolean hScroll = sender.IsHScrollBar;
             sender.IsVScrollBar = false; // Hide builtin
             sender.IsHScrollBar = false; // Hide builtin
+            sender.vScrollBar.VisibleChanged += OnResize;
+            sender.hScrollBar.VisibleChanged += OnResize;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.Controls.Add(sender.hScrollBar);
@@ -185,6 +187,8 @@ namespace ScintillaNet
         {
             Boolean vScroll = sender.IsVScrollBar;
             Boolean hScroll = sender.IsHScrollBar;
+            sender.vScrollBar.VisibleChanged -= OnResize;
+            sender.hScrollBar.VisibleChanged -= OnResize;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.Controls.Remove(sender.hScrollBar);
