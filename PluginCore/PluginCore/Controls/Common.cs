@@ -284,6 +284,11 @@ namespace System.Windows.Forms
             this.FlatCombo.Font = font;
         }
 
+        protected override Size DefaultSize
+        {
+            get { return new Size(100, 22); }
+        }
+
         public ComboBoxStyle DropDownStyle
         {
             set { this.FlatCombo.DropDownStyle = value; }
