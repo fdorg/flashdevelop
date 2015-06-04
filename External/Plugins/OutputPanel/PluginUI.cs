@@ -12,6 +12,7 @@ using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
+using System.Text;
 
 namespace OutputPanel
 {
@@ -359,85 +360,89 @@ namespace OutputPanel
             Int32 state;
             String message;
             TraceItem entry;
-            String newText = "";
             Color newColor = Color.Black;
             Color currentColor = Color.Black;
             int oldSelectionStart = this.textLog.SelectionStart;
             int oldSelectionLength = this.textLog.SelectionLength;
             List<HighlightMarker> markers = this.pluginMain.PluginSettings.HighlightMarkers;
             int visibPos = this.textLog.GetCharIndexFromPosition(Point.Empty);
+            Boolean fastMode = (newCount - this.logCount) > 1000;
+            StringBuilder newText = new StringBuilder();
             for (Int32 i = this.logCount; i < newCount; i++)
             {
                 entry = log[i];
                 state = entry.State;
                 if (entry.Message == null) message = "";
                 else message = entry.Message;
-                // Automatic state from message, legacy format, ie. "2:message" -> state = 2
-                if (this.pluginMain.PluginSettings.UseLegacyColoring && state == 1 && message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                if (!fastMode)
                 {
-                    if (int.TryParse(message[0].ToString(), out state))
+                    // Automatic state from message, legacy format, ie. "2:message" -> state = 2
+                    if (this.pluginMain.PluginSettings.UseLegacyColoring && state == 1 && message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
                     {
-                        message = message.Substring(2);
-                    }
-                }
-                // Automatic state from message: New format with customizable markers
-                if (state == 1 && markers != null && markers.Count > 0)
-                {
-                    foreach (HighlightMarker marker in markers)
-                    {
-                        if (message.Contains(marker.Marker))
+                        if (int.TryParse(message[0].ToString(), out state))
                         {
-                            state = (int)marker.Level;
-                            break;
+                            message = message.Substring(2);
                         }
                     }
-                }
-                switch (state)
-                {
-                    case 0: // Info
-                        newColor = Color.Gray;
-                        break;
-                    case 1: // Debug
-                        newColor = this.ForeColor;
-                        break;
-                    case 2: // Warning
-                        newColor = Color.Orange;
-                        break;
-                    case 3: // Error
-                        newColor = Color.Red;
-                        break;
-                    case 4: // Fatal
-                        newColor = Color.Magenta;
-                        break;
-                    case -1: // ProcessStart
-                        newColor = Color.Blue;
-                        break;
-                    case -2: // ProcessEnd
-                        newColor = Color.Blue;
-                        break;
-                    case -3: // ProcessError
-                        newColor = (message.IndexOf("Warning") >= 0) ? Color.Orange : Color.Red;
-                        break;
-                }
-                if (newColor != currentColor)
-                {
-                    if (newText.Length > 0)
+                    // Automatic state from message: New format with customizable markers
+                    if (state == 1 && markers != null && markers.Count > 0)
                     {
-                        this.textLog.Select(this.textLog.TextLength, 0);
-                        this.textLog.SelectionColor = currentColor;
-                        this.textLog.AppendText(newText);
-                        newText = "";
+                        foreach (HighlightMarker marker in markers)
+                        {
+                            if (message.Contains(marker.Marker))
+                            {
+                                state = (int)marker.Level;
+                                break;
+                            }
+                        }
                     }
-                    currentColor = newColor;
+                    switch (state)
+                    {
+                        case 0: // Info
+                            newColor = Color.Gray;
+                            break;
+                        case 1: // Debug
+                            newColor = this.ForeColor;
+                            break;
+                        case 2: // Warning
+                            newColor = Color.Orange;
+                            break;
+                        case 3: // Error
+                            newColor = Color.Red;
+                            break;
+                        case 4: // Fatal
+                            newColor = Color.Magenta;
+                            break;
+                        case -1: // ProcessStart
+                            newColor = Color.Blue;
+                            break;
+                        case -2: // ProcessEnd
+                            newColor = Color.Blue;
+                            break;
+                        case -3: // ProcessError
+                            newColor = (message.IndexOf("Warning") >= 0) ? Color.Orange : Color.Red;
+                            break;
+                    }
+                    if (newColor != currentColor)
+                    {
+                        if (newText.Length > 0)
+                        {
+                            this.textLog.Select(this.textLog.TextLength, 0);
+                            this.textLog.SelectionColor = currentColor;
+                            this.textLog.AppendText(newText.ToString());
+                            newText.Remove(0, newText.Length);
+                        }
+                        currentColor = newColor;
+                    }
                 }
-                newText += message + "\n";
+                newText.Append(message + "\n");
             }
             if (newText.Length > 0)
             {
                 this.ClearCurrentSelection();
                 this.textLog.Select(this.textLog.TextLength, 0);
                 this.textLog.SelectionColor = currentColor;
-                this.textLog.AppendText(newText);
+                this.textLog.AppendText(newText.ToString());
             }
             if (oldSelectionLength != 0) this.textLog.Select(oldSelectionStart, oldSelectionLength);
             else if (scrolling) this.textLog.Select(this.textLog.TextLength, 0);

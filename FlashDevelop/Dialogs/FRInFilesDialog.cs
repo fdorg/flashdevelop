@@ -996,13 +996,6 @@ namespace FlashDevelop.Dialogs
         {
             String pattern = this.findComboBox.Text;
             if (pattern.Length < 1) return false;
-            if (pattern.Length < 2)
-            {
-                String caption = TextHelper.GetString("Title.ConfirmDialog");
-                String message = TextHelper.GetString("Info.AreYouSureToFindMiniPattern");
-                DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                if (result == DialogResult.Cancel) return false;
-            }
             if (this.regexCheckBox.Checked)
             {
                 try

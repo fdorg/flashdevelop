@@ -5972,8 +5972,4 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
     <value>Choose a package folder:</value>
   </data>
-  <data name="FlashDevelop.Info.AreYouSureToFindMiniPattern" xml:space="preserve">
-    <value>Are you sure you want to use a really short find text? If the text is common, it may cause a lot of results and a lockup.</value>
-    <comment>Added after 5.0.0</comment>
-  </data>
 </root>

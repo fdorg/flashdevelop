@@ -387,7 +387,7 @@ namespace ResultsPanel
         }
 
         /// <summary>
-        /// Clears any result entries that are ignored.  Invoked from the context menu.
+        /// Clears any result entries that are ignored. Invoked from the context menu.
         /// </summary>
         public void ClearIgnoredEntries(Object sender, System.EventArgs e)
         {
@@ -395,11 +395,13 @@ namespace ResultsPanel
             this.FilterResults(false);
         }
 
-        public bool IgnoreEntryShortcut()
+        /// <summary>
+        /// Ignore entry via shortcut
+        /// </summary>
+        public Boolean IgnoreEntryShortcut()
         {
-            if (!ContainsFocus || !entriesView.Focused)
-                return false;
-            IgnoreEntryClick(null, null);
+            if (!this.ContainsFocus || !this.entriesView.Focused) return false;
+            this.IgnoreEntryClick(null, null);
             return true;
         }
 
@@ -445,6 +447,9 @@ namespace ResultsPanel
             this.UpdateButtons();
         }
 
+        /// <summary>
+        /// When context menu opens, update button enabled states
+        /// </summary>
         private void ContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.nextEntry.Enabled = this.previousEntry.Enabled = this.ignoreEntriesContextMenuItem.Enabled = this.entriesView.Items.Count > 0;
@@ -564,6 +569,9 @@ namespace ResultsPanel
             this.UpdateButtons();
         }
 
+        /// <summary>
+        /// Disables all context menu items
+        /// </summary>
         private void DisableContextMenuItems()
         {
             foreach (ToolStripItem item in this.entriesView.ContextMenuStrip.Items)
@@ -615,7 +623,9 @@ namespace ResultsPanel
             String fileTest; Boolean inExec; Int32 icon; Int32 state;
             IProject project = PluginBase.CurrentProject;
             String projectDir = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
-            for (Int32 i = this.logCount; i < count; i++)
+            Boolean limitMode = (count - this.logCount) > 1000;
+            this.entriesView.BeginUpdate();
+            for (Int32 i = this.logCount; i < (limitMode ? 1000 : count); i++)
             {
                 entry = TraceManager.TraceLog[i];
                 if (entry.Message != null && entry.Message.Length > 7 && entry.Message.IndexOf(':') > 0)

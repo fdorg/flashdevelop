@@ -3934,7 +3934,7 @@ namespace FlashDevelop
         /// </summary>
         public void KillProcess(Object sender, System.EventArgs e)
         {
-            KillProcess();
+            this.KillProcess();
         }
 
         /// <summary>
@@ -3996,8 +3996,7 @@ namespace FlashDevelop
             {
                 Host host = new Host();
                 String[] args = file.Split(new Char[1]{';'});
-                if (args.Length == 1 || String.IsNullOrEmpty(args[1]))
-                    return; // no file selected / the open file dialog was cancelled
+                if (args.Length == 1 || String.IsNullOrEmpty(args[1])) return; // no file selected / the open file dialog was cancelled
                 if (args[0] == "Internal") host.ExecuteScriptInternal(args[1], false);
                 else if (args[0] == "Development") host.ExecuteScriptInternal(args[1], true);
                 else host.ExecuteScriptExternal(file);

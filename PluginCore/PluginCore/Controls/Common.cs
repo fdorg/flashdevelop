@@ -221,7 +221,7 @@ namespace System.Windows.Forms
             this.DrawSubItem += this.OnDrawSubItem;
             this.DrawItem += this.OnDrawItem;
             this.expandDelay = new Timer();
-            this.expandDelay.Interval = 10;
+            this.expandDelay.Interval = 50;
             this.expandDelay.Tick += this.ExpandDelayTick;
             this.expandDelay.Enabled = true;
             this.expandDelay.Start();
