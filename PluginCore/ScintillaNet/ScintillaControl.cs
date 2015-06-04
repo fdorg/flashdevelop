@@ -44,6 +44,8 @@ namespace ScintillaNet
 
         private ScrollBarEx vScrollBar;
         private ScrollBarEx hScrollBar;
+        private bool useCustomScrollBars = false;
+
 
         /// <summary>
         /// Gets the reference to the custom vertical scrollbar
@@ -146,14 +148,16 @@ namespace ScintillaNet
         /// </summary>
         private void AddScrollBars(ScintillaControl sender)
         {
-            sender.IsVScrollBar = false;
-            sender.IsHScrollBar = false;
+            useCustomScrollBars = true;
+            sender.IsCustomVScrollBar = sender.IsNativeVScrollBar;
+            sender.IsCustomHScrollBar = sender.IsNativeHScrollBar;
+            sender.IsNativeVScrollBar = false;
+            sender.IsNativeHScrollBar = false;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.Controls.Add(sender.hScrollBar);
             sender.Controls.Add(sender.vScrollBar);
             sender.Painted += sender.OnScrollUpdate;
-            sender.OnResize(null, null);
         }
 
         /// <summary>
@@ -161,14 +165,16 @@ namespace ScintillaNet
         /// </summary>
         private void RemoveScrollBars(ScintillaControl sender)
         {
-            sender.IsVScrollBar = true;
-            sender.IsHScrollBar = true;
+            useCustomScrollBars = false;
+            sender.IsNativeVScrollBar = sender.IsCustomVScrollBar;
+            sender.IsNativeHScrollBar = sender.IsCustomHScrollBar;
+            sender.IsCustomVScrollBar = false;
+            sender.IsCustomHScrollBar = false;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.Controls.Remove(sender.hScrollBar);
             sender.Controls.Remove(sender.vScrollBar);
             sender.Painted -= sender.OnScrollUpdate;
-            sender.OnResize(null, null);
         }
 
         #endregion
@@ -214,8 +220,8 @@ namespace ScintillaNet
 
         public void OnResize(object sender, EventArgs e)
         {
-            Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) ? this.vScrollBar.Width : 0;
-            Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) ? this.hScrollBar.Height : 0;
+            Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) && IsCustomVScrollBar ? this.vScrollBar.Width : 0;
+            Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) && IsCustomHScrollBar ? this.hScrollBar.Height : 0;
             if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
         }
 
@@ -1459,15 +1465,57 @@ namespace ScintillaNet
         /// </summary>
         public bool IsHScrollBar
         {
-            get 
+            get
+            {
+                if (useCustomScrollBars)
+                    return IsCustomHScrollBar;
+                else
+                    return IsNativeHScrollBar;
+            }
+            set
+            {
+                if (useCustomScrollBars)
+                    IsCustomHScrollBar = value;
+                else
+                    IsNativeHScrollBar = value;
+            }
+        }
+
+        /// <summary>
+        /// Is the custom vertical scroll bar visible?
+        /// </summary>
+        private bool IsCustomHScrollBar
+        {
+            get
+            {
+                return hScrollBar.Visible;
+            }
+            set
+            {
+                if (value == IsCustomHScrollBar)
+                    return;
+
+                hScrollBar.Visible = value;
+
+                OnResize(null, null);
+            }
+        }
+
+        /// <summary>
+        /// Is the native horizontal scroll bar visible?
+        /// </summary>
+        private bool IsNativeHScrollBar
+        {
+            get
             {
                 return SPerform(2131, 0, 0) != 0;
             }
+
             set
             {
                 SPerform(2130, (uint)(value ? 1 : 0), 0);
             }
-        }   
+        }
 
         /// <summary>
         /// Are the indentation guides visible?
@@ -1962,7 +2010,48 @@ namespace ScintillaNet
         /// </summary>
         public bool IsVScrollBar
         {
-            get 
+            get
+            {
+                if (useCustomScrollBars)
+                    return IsCustomVScrollBar;
+                else
+                    return IsNativeVScrollBar;
+            }
+            set
+            {
+                if (useCustomScrollBars)
+                    IsCustomVScrollBar = value;
+                else
+                    IsNativeVScrollBar = value;
+            }
+        }
+
+        /// <summary>
+        /// Is the custom vertical scroll bar visible?
+        /// </summary>
+        private bool IsCustomVScrollBar
+        {
+            get
+            {
+                return vScrollBar.Visible;
+            }
+            set
+            {
+                if (value == IsCustomVScrollBar)
+                    return;
+
+                vScrollBar.Visible = value;
+
+                OnResize(null, null);
+            }
+        }
+
+        /// <summary>
+        /// Is the native vertical scroll bar visible?
+        /// </summary>
+        private bool IsNativeVScrollBar
+        {
+            get
             {
                 return SPerform(2281, 0, 0) != 0;
             }
@@ -1970,7 +2059,7 @@ namespace ScintillaNet
             {
                 SPerform(2280, (uint)(value ? 1 : 0), 0);
             }
-        }   
+        }
 
         /// <summary>
         /// Is drawing done in two phases with backgrounds drawn before faoregrounds?
