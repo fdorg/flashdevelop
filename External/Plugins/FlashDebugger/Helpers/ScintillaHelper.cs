@@ -50,9 +50,9 @@ namespace FlashDebugger
             var enabledImage = ScaleHelper.Scale(Properties.Resource.Enabled);
             var disabledImage = ScaleHelper.Scale(Properties.Resource.Disabled);
             var curlineImage = ScaleHelper.Scale(Properties.Resource.CurLine);
-            sci.MarkerDefinePixmap(markerBPEnabled, ScintillaNet.XPM.ConvertToXPM(enabledImage, "#00FF00"));
-            sci.MarkerDefinePixmap(markerBPDisabled, ScintillaNet.XPM.ConvertToXPM(disabledImage, "#00FF00"));
-            sci.MarkerDefinePixmap(markerCurrentLine, ScintillaNet.XPM.ConvertToXPM(curlineImage, "#00FF00"));
+            sci.MarkerDefineRGBAImage(markerBPEnabled, enabledImage);
+            sci.MarkerDefineRGBAImage(markerBPDisabled, disabledImage);
+            sci.MarkerDefineRGBAImage(markerCurrentLine, curlineImage);
             Language lang = PluginBase.MainForm.SciConfig.GetLanguage("as3"); // default
             sci.MarkerSetBack(markerBPEnabled, lang.editorstyle.ErrorLineBack); // enable
             sci.MarkerSetBack(markerBPDisabled, lang.editorstyle.DisabledLineBack); // disable
