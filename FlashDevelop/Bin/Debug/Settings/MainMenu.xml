@@ -132,7 +132,7 @@
 	</menu>
 	<menu label="Label.Insert" name="InsertMenu">
 		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" image="275" />
-		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" image="275|16|4|4" />
+		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" image="315|16|3|3" />
 		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" flags="Enable:IsEditable" image="163" />
 		<separator />
 		<button label="Label.Snippet" click="InsertSnippet" shortcut="Control|B" tag="null" flags="Enable:IsEditable" image="341" />
