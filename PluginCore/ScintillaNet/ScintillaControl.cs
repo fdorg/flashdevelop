@@ -3211,7 +3211,26 @@ namespace ScintillaNet
             {
                  SPerform(2049, (uint)markerNumber, (uint)b);
             }   
-        }           
+        }
+
+        /// <summary>
+        /// Define a marker image from a bitmap. Supports alpha channel.
+        /// </summary>
+        unsafe public void MarkerDefineRGBAImage(int markerNumber, Bitmap image)
+        {
+            var rgba = RGBA.ConvertToRGBA(image);
+
+            //SCI_RGBAIMAGESETWIDTH
+            SPerform(2624, (uint)image.Width, 0);
+            //SCI_RGBAIMAGESETHEIGHT
+            SPerform(2625, (uint)image.Height, 0);
+
+            fixed (byte* b = rgba)
+            {
+                //SCI_MARKERDEFINERGBAIMAGE
+                SPerform(2626, (uint)markerNumber, (uint)b);
+            }
+        }
 
         /// <summary>
         /// Reset the default style to its state at startup

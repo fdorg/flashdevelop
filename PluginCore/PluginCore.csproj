@@ -428,6 +428,7 @@
     <Compile Include="ScintillaNet\Lexers.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ScintillaNet\RGBA.cs" />
     <Compile Include="ScintillaNet\RTF.cs" />
     <Compile Include="ScintillaNet\ScintillaControl.cs">
       <SubType>Component</SubType>
