@@ -324,7 +324,7 @@ namespace FlashDevelop.Dialogs
         {
             this.itemListView.Items.Clear();
             Int32 count = PluginServices.AvailablePlugins.Count;
-            ListViewItem main = new ListViewItem(PluginBase.DISTRIBUTION_NAME, 2);
+            ListViewItem main = new ListViewItem(DistroConfig.DISTRIBUTION_NAME, 2);
             this.itemListView.Items.Add(main);
             this.mainGroup.Items.Add(main);
             for (Int32 i = 0; i < count; i++)
@@ -390,8 +390,8 @@ namespace FlashDevelop.Dialogs
                     this.itemPropertyGrid.Enabled = true;
                     this.itemPropertyGrid.SelectedObject = Globals.Settings;
                     this.descLabel.Text = TextHelper.GetString("Info.AppDescription");
-                    this.helpUrl = PluginBase.DISTRIBUTION_HELP;
-                    this.nameLabel.Text = PluginBase.DISTRIBUTION_NAME;
+                    this.helpUrl = DistroConfig.DISTRIBUTION_HELP;
+                    this.nameLabel.Text = DistroConfig.DISTRIBUTION_NAME;
                     this.nameLabel.Enabled = true;
                     this.ShowInfoControls(false);
                     this.FilterPropertySheet();
@@ -552,7 +552,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void DialogShown(Object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(this.itemFilter) || this.itemFilter == PluginBase.DISTRIBUTION_NAME)
+            if (String.IsNullOrEmpty(this.itemFilter) || this.itemFilter == DistroConfig.DISTRIBUTION_NAME)
             {
                 this.itemListView.SelectedIndices.Add(lastItemIndex);
                 this.itemListView.EnsureVisible(lastItemIndex);

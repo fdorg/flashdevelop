@@ -3,7 +3,7 @@ using System.Text;
 
 namespace PluginCore
 {
-    class DistroConfig
+    public class DistroConfig
     {
         public const String DISTRIBUTION_NAME = "FlashDevelop";
         public const String DISTRIBUTION_DESC = "FlashDevelop is an open source script editor.";
