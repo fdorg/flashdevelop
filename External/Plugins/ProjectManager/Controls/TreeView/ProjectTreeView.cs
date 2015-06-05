@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using ProjectManager.Projects.AS3;
 using PluginCore;
+using PluginCore.Managers;
+using System.Linq;
 
 namespace ProjectManager.Controls.TreeView
 {
