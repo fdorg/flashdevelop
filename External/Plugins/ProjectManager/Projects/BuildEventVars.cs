@@ -76,14 +76,14 @@ namespace ProjectManager.Projects
                 Uri uri = new Uri(url);
                 
                 // special behavior if we're running in flashdevelop.exe
-                if (Path.GetFileName(uri.LocalPath).ToLower() == PluginCore.PluginBase.DISTRIBUTION_NAME.ToLower() + ".exe")
+                if (Path.GetFileName(uri.LocalPath).ToLower() == PluginCore.DistroConfig.DISTRIBUTION_NAME.ToLower() + ".exe")
                 {
                     string startupDir = Path.GetDirectoryName(uri.LocalPath);
                     string local = Path.Combine(Path.GetDirectoryName(uri.LocalPath), ".local");
                     if (!File.Exists(local))
                     {
                         String appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        startupDir = Path.Combine(appDir, PluginCore.PluginBase.DISTRIBUTION_NAME);
+                        startupDir = Path.Combine(appDir, PluginCore.DistroConfig.DISTRIBUTION_NAME);
                     }
                     string toolsDir = Path.Combine(startupDir, "Tools");
                     string fdbuildDir = Path.Combine(toolsDir, "fdbuild");

@@ -10,9 +10,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("BasicCompletion")]
 [assembly: AssemblyDescription("BasicCompletion Plugin For FlashDevelop")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany(PluginCore.PluginBase.DISTRIBUTION_COMPANY)]
+[assembly: AssemblyCompany(PluginCore.DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("BasicCompletion")]
-[assembly: AssemblyCopyright(PluginCore.PluginBase.DISTRIBUTION_COPYRIGHT)]
+[assembly: AssemblyCopyright(PluginCore.DistroConfig.DISTRIBUTION_COPYRIGHT)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

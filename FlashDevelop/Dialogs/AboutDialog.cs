@@ -63,7 +63,7 @@ namespace FlashDevelop.Dialogs
             this.copyLabel.Name = "copyLabel";
             this.copyLabel.Size = new System.Drawing.Size(383, 30);
             this.copyLabel.TabIndex = 0;
-            this.copyLabel.Text = PluginCore.PluginBase.DISTRIBUTION_ABOUT;
+            this.copyLabel.Text = PluginCore.DistroConfig.DISTRIBUTION_ABOUT;
             this.copyLabel.Click += new System.EventHandler(this.DialogCloseClick);
             // 
             // versionLabel
