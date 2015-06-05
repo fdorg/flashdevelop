@@ -53,7 +53,6 @@ namespace ProjectManager.Controls.TreeView
         {
             BeginUpdate();
 
-            PluginBase.MainForm.ThemeControls(this);
             RefreshNodeColors(Nodes, true);
 
             EndUpdate();
