@@ -1409,39 +1409,18 @@ namespace HaXeContext
 
                     PluginBase.MainForm.OpenEditableDocument(result.Path, false);
                     ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    const string keywords = "(function|var|[,(])";
 
                     if (sci.InvokeRequired)
                     {
                         sci.BeginInvoke((MethodInvoker)delegate
                         {
-                            HighlightDeclaration(sci, result);
+                            ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
                         });
                     }
-                    else HighlightDeclaration(sci, result);
+                    else ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
                     break;
             }
-        }
-
-        internal void HighlightDeclaration(ScintillaControl sci, HaxePositionCompleteResult result)
-        {
-            sci.EnsureVisible(result.LineStart);
-
-            int lineStartPos = sci.PositionFromLine(result.LineStart - 1);
-            int lineEndPos = sci.PositionFromLine(result.LineStart - 1) - 1;
-
-            switch (result.RangeType)
-            {
-                case HaxePositionCompleteRangeType.LINES:
-                    sci.SetSel(lineStartPos, lineEndPos);
-                    break;
-
-                case HaxePositionCompleteRangeType.CHARACTERS:
-                    sci.SelectionStart = result.CharacterStart + lineStartPos;
-                    sci.SelectionEnd = result.CharacterEnd + lineStartPos;
-                    break;
-            }
-
-            sci.Focus();
         }
 
         #endregion

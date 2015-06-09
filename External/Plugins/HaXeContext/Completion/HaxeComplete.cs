@@ -29,6 +29,7 @@ namespace HaXeContext
         // completion context
         public readonly ScintillaControl Sci;
         public readonly ASExpr Expr;
+        public readonly string CurrentWord;
         public readonly bool AutoHide;
         public readonly HaxeCompilerService CompilerService;
 
@@ -45,6 +46,7 @@ namespace HaXeContext
         {
             Sci = sci;
             Expr = expr;
+            CurrentWord = Sci.GetWordFromPosition(Sci.CurrentPos);
             AutoHide = autoHide;
             handler = completionHandler;
             CompilerService = compilerService;
