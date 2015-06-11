@@ -131,7 +131,7 @@
 		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" flags="Enable:IsEditable|HasBookmarks" />
 	</menu>
 	<menu label="Label.Insert" name="InsertMenu">
-		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" image="275" />
+		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" image="315" />
 		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" image="315|16|3|3" />
 		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" flags="Enable:IsEditable" image="163" />
 		<separator />
