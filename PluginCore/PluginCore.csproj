@@ -279,6 +279,62 @@
     <Compile Include="DockPanelSuite\Win32\NativeMethods.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FastColoredTB\AutocompleteItem.cs" />
+    <Compile Include="FastColoredTB\AutocompleteMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\Bookmarks.cs" />
+    <Compile Include="FastColoredTB\Char.cs" />
+    <Compile Include="FastColoredTB\CommandManager.cs" />
+    <Compile Include="FastColoredTB\Commands.cs" />
+    <Compile Include="FastColoredTB\DocumentMap.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\EncodingDetector.cs" />
+    <Compile Include="FastColoredTB\ExportToHTML.cs" />
+    <Compile Include="FastColoredTB\ExportToRTF.cs" />
+    <Compile Include="FastColoredTB\FastColoredTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\FileTextSource.cs" />
+    <Compile Include="FastColoredTB\FindForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\FindForm.Designer.cs" />
+    <Compile Include="FastColoredTB\GoToForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\GoToForm.Designer.cs" />
+    <Compile Include="FastColoredTB\Hints.cs" />
+    <Compile Include="FastColoredTB\Hotkeys.cs" />
+    <Compile Include="FastColoredTB\HotkeysEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\HotkeysEditorForm.Designer.cs" />
+    <Compile Include="FastColoredTB\LimitedStack.cs" />
+    <Compile Include="FastColoredTB\Line.cs" />
+    <Compile Include="FastColoredTB\LinesAccessor.cs" />
+    <Compile Include="FastColoredTB\MacrosManager.cs" />
+    <Compile Include="FastColoredTB\Place.cs" />
+    <Compile Include="FastColoredTB\PlatformType.cs" />
+    <Compile Include="FastColoredTB\Range.cs" />
+    <Compile Include="FastColoredTB\ReplaceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\ReplaceForm.Designer.cs" />
+    <Compile Include="FastColoredTB\Ruler.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\Ruler.Designer.cs" />
+    <Compile Include="FastColoredTB\Style.cs" />
+    <Compile Include="FastColoredTB\SyntaxDescriptor.cs" />
+    <Compile Include="FastColoredTB\SyntaxHighlighter.cs" />
+    <Compile Include="FastColoredTB\TextSource.cs" />
+    <Compile Include="FastColoredTB\TypeDescriptor.cs" />
+    <Compile Include="FastColoredTB\UnfocusablePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FastColoredTB\VisualMarker.cs" />
     <Compile Include="LitJsonLib\IJsonWrapper.cs" />
     <Compile Include="LitJsonLib\JsonData.cs" />
     <Compile Include="LitJsonLib\JsonException.cs" />
@@ -531,6 +587,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="FastColoredTB\FastColoredTextBox.resx" />
+    <EmbeddedResource Include="FastColoredTB\FindForm.resx" />
+    <EmbeddedResource Include="FastColoredTB\GoToForm.resx" />
+    <EmbeddedResource Include="FastColoredTB\HotkeysEditorForm.resx" />
+    <EmbeddedResource Include="FastColoredTB\ReplaceForm.resx" />
     <EmbeddedResource Include="PluginCore\Resources\de_DE.resX">
       <SubType>Designer</SubType>
     </EmbeddedResource>

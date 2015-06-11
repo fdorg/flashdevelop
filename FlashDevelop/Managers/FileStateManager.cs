@@ -142,6 +142,7 @@ namespace FlashDevelop.Managers
             so.LineCount = sci.LineCount;
             so.Position = sci.CurrentPos;
             so.FileName = sci.FileName;
+            return so; // FIX THIS
             for (Int32 line = 0;; line++)
             {
                 Int32 lineNext = sci.ContractedFoldNext(line);

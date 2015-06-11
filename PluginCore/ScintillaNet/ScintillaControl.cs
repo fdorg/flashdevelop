@@ -201,6 +201,161 @@ namespace ScintillaNet
 
         #endregion
 
+        #region FastColoredTB
+
+        private FastColoredTextBoxNS.FastColoredTextBox fctb;
+
+        private void InitCustomEditor()
+        {
+            this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.fctb.Language = FastColoredTextBoxNS.Language.JS;
+            this.fctb.Dock = DockStyle.Fill;
+            this.fctb.ShowLineNumbers = true;
+            this.fctb.ShowFoldingLines = true;
+            this.fctb.HighlightFoldingIndicator = false;
+            this.fctb.KeyDown += this.OnEditorKeyDown;
+            this.fctb.DoubleClick += this.OnEditorDoubleClick;
+            this.fctb.GotFocus += this.OnEditorFocusChanged;
+            this.fctb.LostFocus += this.OnEditorFocusChanged;
+            this.fctb.ZoomChanged += this.OnEditorZoomChanged;
+            this.fctb.TextChangedDelayed += this.OnEditorTextChanged;
+            this.fctb.SelectionChangedDelayed += this.OnEditorSelectionChanged;
+            this.fctb.UndoRedoStateChanged += this.OnEditorUndoRedoStateChanged;
+            this.fctb.TextChanging += this.OnEditorTextChanging;
+            this.fctb.Paint += this.OnEditorPaint;
+            this.fctb.Paddings = new Padding(4);
+            this.fctb.LeftPadding = 10;
+            this.Controls.Add(this.fctb);
+        }
+
+        private void ApplyEditorStyles(string language)
+        {
+            Language lang = sciConfiguration.GetLanguage(language);
+            this.fctb.Font = new Font("Consolas", 9f, FontStyle.Regular);
+            this.fctb.DisabledColor = Color.Lime;
+            foreach (UseStyle style in lang.usestyles)
+            {
+                // TODO: Fix this
+                style.key = (int)Enum.Parse(typeof(Lexers.CPP), style.name, true);
+                if (style.key == 0) // Default
+                {
+                    FontStyle fontStyle = FontStyle.Regular;
+                    if (style.IsBold) fontStyle |= FontStyle.Bold;
+                    if (style.IsItalics) fontStyle |= FontStyle.Italic;
+                    Color fore = DataConverter.BGRToColor(style.ForegroundColor);
+                    Color back = DataConverter.BGRToColor(style.BackgroundColor);
+                    this.fctb.DefaultStyle = new FastColoredTextBoxNS.TextStyle(new SolidBrush(fore), new SolidBrush(back), fontStyle);
+                    this.fctb.BackColor = this.fctb.ChangedLineColor = this.fctb.PaddingBackColor = back;
+                    this.fctb.IndentBackColor = back;
+                    this.fctb.FoldingIndicatorColor = Color.Lime;
+                }
+                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.LineNumber)
+                {
+                    this.fctb.LineNumberColor = DataConverter.BGRToColor(style.ForegroundColor);
+                }
+                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.IndentGuide)
+                {
+                    this.fctb.ServiceLinesColor = DataConverter.BGRToColor(style.ForegroundColor);
+                }
+                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.BraceLight)
+                {
+                    Color color = DataConverter.BGRToColor(style.BackgroundColor);
+                    this.fctb.BracketsStyle = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                    this.fctb.BracketsStyle2 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                }
+            }
+            this.fctb.ServiceColors.CollapseMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
+            this.fctb.ServiceColors.CollapseMarkerBorderColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
+            this.fctb.ServiceColors.CollapseMarkerForeColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
+            this.fctb.ServiceColors.ExpandMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
+            this.fctb.ServiceColors.ExpandMarkerBorderColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
+            this.fctb.ServiceColors.ExpandMarkerForeColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
+            this.fctb.CaretColor = DataConverter.BGRToColor(lang.editorstyle.CaretForegroundColor);
+            //
+            this.fctb.CurrentLineColor = DataConverter.BGRToColor(lang.editorstyle.CaretLineBackgroundColor);
+            this.fctb.SelectionColor = DataConverter.BGRToColor(lang.editorstyle.SelectionBackgroundColor);
+            //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
+            this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
+            /*
+            EdgeColour = lang.editorstyle.PrintMarginColor;
+            */
+        }
+
+        private FastColoredTextBoxNS.Language LanguageToFCTB(string language)
+        {
+            switch (language)
+            {
+                case "jscript": return FastColoredTextBoxNS.Language.JS;
+                case "csharp": return FastColoredTextBoxNS.Language.CSharp;
+                case "html": return FastColoredTextBoxNS.Language.HTML;
+                case "php": return FastColoredTextBoxNS.Language.PHP;
+                case "xml": return FastColoredTextBoxNS.Language.XML;
+                default: return FastColoredTextBoxNS.Language.JS;
+            }
+        }
+
+        private void OnEditorDoubleClick(object sender, EventArgs e)
+        {
+            if (DoubleClick != null) DoubleClick(this);
+        }
+
+        private void OnEditorKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Key != null) Key(this, (int)e.KeyData, (int)e.Modifiers);
+        }
+
+        private void OnEditorFocusChanged(object sender, EventArgs e)
+        {
+            if (FocusChanged != null) FocusChanged(this);
+        }
+
+        private void OnEditorZoomChanged(object sender, EventArgs e)
+        {
+            if (Zoom != null) Zoom(this);
+        }
+
+        private void OnEditorSelectionChanged(object sender, EventArgs e)
+        {
+            if (SelectionChanged != null) SelectionChanged(this);
+        }
+
+        private void OnEditorUndoRedoStateChanged(object sender, EventArgs e)
+        {
+            if (this.fctb.UndoEnabled && this.IsModify)
+            {
+                if (SavePointLeft != null) SavePointLeft(this);
+            }
+            if (!this.fctb.UndoEnabled)
+            {
+                if (SavePointReached != null) SavePointReached(this);
+            }
+        }
+
+        private void OnEditorTextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
+        {
+            int linesAdded = e.ChangedRange.Text.Split('\n').Length;
+            if (TextInserted != null) TextInserted(this, e.ChangedRange.Start.iChar, e.ChangedRange.Text.Length, linesAdded);
+            if (TextDeleted != null) TextDeleted(this, e.ChangedRange.Start.iChar, e.ChangedRange.Text.Length, linesAdded);
+            if (e.ChangedRange.Text.Length == 1 && CharAdded != null) CharAdded(this, e.ChangedRange.Text[0]);
+            //
+            //if (Modified != null) Modified(this, this.CurrentPos, 1, e.ChangedRange.Text, e.ChangedRange.Text.Length, e.ChangedRange.FromLine - e.ChangedRange.ToLine, this.CurrentLine, 1, 1);
+        }
+
+        private void OnEditorTextChanging(object sender, FastColoredTextBoxNS.TextChangingEventArgs e)
+        {
+            bool insert = !String.IsNullOrEmpty(e.InsertingText);
+            if (insert && BeforeInsert != null) BeforeInsert(this, this.CurrentPos, e.InsertingText.Length);
+            if (!insert && BeforeDelete != null) BeforeDelete(this, this.CurrentPos, e.InsertingText.Length);
+        }
+
+        private void OnEditorPaint(object sender, PaintEventArgs e)
+        {
+            if (UpdateUI != null) UpdateUI(this);
+            if (Painted != null) Painted(this);
+        }
+
+        #endregion
+
         #region Scintilla Main
 
         public ScintillaControl() : this("SciLexer.dll")
@@ -219,13 +374,14 @@ namespace ScintillaNet
                     directPointer = (int)SlowPerform(2185, 0, 0);
                     directPointer = DirectPointer;
                 }
-                UpdateUI += new UpdateUIHandler(OnUpdateUI);
+                /*UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
-                this.InitScrollBars(this);
+                this.InitScrollBars(this);*/
+                this.InitCustomEditor();
             }
             catch (Exception ex)
             {
@@ -251,20 +407,20 @@ namespace ScintillaNet
 
         #region Scintilla Event Members
         
-        public event KeyHandler Key;
-        public event ZoomHandler Zoom;
-        public event FocusHandler FocusChanged;
+        public event KeyHandler Key; //
+        public event ZoomHandler Zoom; //
+        public event FocusHandler FocusChanged; //
         public event StyleNeededHandler StyleNeeded;
-        public event CharAddedHandler CharAdded;
-        public event SavePointReachedHandler SavePointReached;
-        public event SavePointLeftHandler SavePointLeft;
+        public event CharAddedHandler CharAdded; //
+        public event SavePointReachedHandler SavePointReached; //
+        public event SavePointLeftHandler SavePointLeft; //
         public event ModifyAttemptROHandler ModifyAttemptRO;
-        public event UpdateUIHandler UpdateUI;
+        public event UpdateUIHandler UpdateUI; //
         public event ModifiedHandler Modified;
         public event MacroRecordHandler MacroRecord;
         public event MarginClickHandler MarginClick;
         public event NeedShownHandler NeedShown;
-        public event PaintedHandler Painted;
+        public event PaintedHandler Painted; //
         public event UserListSelectionHandler UserListSelection;
         public event URIDroppedHandler URIDropped;
         public event DwellStartHandler DwellStart;
@@ -273,16 +429,16 @@ namespace ScintillaNet
         public event HotSpotDoubleClickHandler HotSpotDoubleClick;
         public event CallTipClickHandler CallTipClick;
         public event AutoCSelectionHandler AutoCSelection;
-        public event TextInsertedHandler TextInserted;
-        public event TextDeletedHandler TextDeleted;
+        public event TextInsertedHandler TextInserted; //
+        public event TextDeletedHandler TextDeleted; //
         public event FoldChangedHandler FoldChanged;
         public event UserPerformedHandler UserPerformed;
         public event UndoPerformedHandler UndoPerformed;
         public event RedoPerformedHandler RedoPerformed;
         public event LastStepInUndoRedoHandler LastStepInUndoRedo;
         public event MarkerChangedHandler MarkerChanged;
-        public event BeforeInsertHandler BeforeInsert;
-        public event BeforeDeleteHandler BeforeDelete;
+        public event BeforeInsertHandler BeforeInsert; //
+        public event BeforeDeleteHandler BeforeDelete; //
         public event SmartIndentHandler SmartIndent;
         public new event StyleChangedHandler StyleChanged;
         public new event DoubleClickHandler DoubleClick;
@@ -290,8 +446,8 @@ namespace ScintillaNet
         public event IndicatorReleaseHandler IndicatorRelease;
         public event AutoCCancelledHandler AutoCCancelled;
         public event AutoCCharDeletedHandler AutoCCharDeleted;
-        public event UpdateSyncHandler UpdateSync;
-        public event SelectionChangedHandler SelectionChanged;
+        public event UpdateSyncHandler UpdateSync; //
+        public event SelectionChangedHandler SelectionChanged; //
         
         #endregion
 
@@ -310,14 +466,8 @@ namespace ScintillaNet
         /// </summary> 
         static public Scintilla Configuration
         {
-            get 
-            { 
-                return sciConfiguration; 
-            }
-            set 
-            { 
-                sciConfiguration = value; 
-            }
+            get { return sciConfiguration; }
+            set  { sciConfiguration = value; }
         }
 
         /// <summary>
@@ -325,14 +475,8 @@ namespace ScintillaNet
         /// </summary>
         public Enums.IndentView IndentView
         {
-            get
-            {
-                return this.indentView;
-            }
-            set
-            {
-                this.indentView = value;
-            }
+            get { return this.indentView; }
+            set { this.indentView = value; }
         }
 
         /// <summary>
@@ -340,14 +484,17 @@ namespace ScintillaNet
         /// </summary>
         public string ConfigurationLanguage
         {
-            get 
-            { 
-                return this.configLanguage;
-            }
+            get { return this.configLanguage; }
             set
             {
                 if (string.IsNullOrEmpty(value)) return;
-                this.SetLanguage(value);
+                if (this.fctb != null)
+                {
+                    this.configLanguage = value;
+                    this.fctb.Language = LanguageToFCTB(value);
+                    this.ApplyEditorStyles(value);
+                }
+                else this.SetLanguage(value);
             }
         }
 
@@ -357,11 +504,13 @@ namespace ScintillaNet
         public string GetFileExtension()
         {
             string extension = Path.GetExtension(FileName);
-            if (!string.IsNullOrEmpty(extension))
-                extension = extension.Substring(1); // remove dot
+            if (!string.IsNullOrEmpty(extension)) extension = extension.Substring(1); // remove dot
             return extension;
         }
 
+        /// <summary>
+        /// Save the extension to syntax files and remove from others
+        /// </summary>
         public void SaveExtensionToSyntaxConfig(string extension)
         {
             List<Language> languages = sciConfiguration.GetLanguages();
@@ -379,24 +528,25 @@ namespace ScintillaNet
                     language.SaveExtensions();
                 }
             }
-
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
                 ScintillaControl sci = document.SciControl;
                 if (sci.GetFileExtension() == extension)
+                {
                     sci.ConfigurationLanguage = ConfigurationLanguage;
+                }
             }
         }
 
+        /// <summary>
+        /// Sets the language and applies correct styling
+        /// </summary>
         private void SetLanguage(String value)
         {
             Language lang = sciConfiguration.GetLanguage(value);
             if (lang == null) return;
             StyleClearAll();
-            try
-            {
-                lang.lexer.key = (int)Enum.Parse(typeof(Enums.Lexer), lang.lexer.name, true);
-            }
+            try { lang.lexer.key = (int)Enum.Parse(typeof(Enums.Lexer), lang.lexer.name, true); }
             catch { /* If not found, uses the lang.lexer.key directly. */ }
             this.configLanguage = value;
             Lexer = lang.lexer.key;
@@ -691,10 +841,7 @@ namespace ScintillaNet
                             theType = typeof(Lexers.SML);
                             break;
                     }
-                    try
-                    {
-                        usestyle.key = (int)Enum.Parse(theType, usestyle.name, true);
-                    }
+                    try { usestyle.key = (int)Enum.Parse(theType, usestyle.name, true); }
                     catch (Exception ex)
                     {
                         String info;
@@ -757,11 +904,11 @@ namespace ScintillaNet
         {
             get 
             { 
-                return fileName; 
+                return this.fileName; 
             }
             set 
-            { 
-                fileName = value;
+            {
+                this.fileName = value;
                 if (UpdateSync != null) this.UpdateSync(this);
             }
         }
@@ -772,7 +919,8 @@ namespace ScintillaNet
         public override bool Focused
         {
             get 
-            { 
+            {
+                if (this.fctb != null) return this.fctb.Focused;
                 return IsFocus; 
             }
         }
@@ -783,12 +931,12 @@ namespace ScintillaNet
         public bool IgnoreAllKeys
         {
             get 
-            { 
-                return ignoreAllKeys; 
+            {
+                return this.ignoreAllKeys; 
             }
             set 
-            { 
-                ignoreAllKeys = value;
+            {
+                this.ignoreAllKeys = value;
             }
         }
 
@@ -799,11 +947,11 @@ namespace ScintillaNet
         {
             get
             {
-                return isHiliteSelected;
+                return this.isHiliteSelected;
             }
             set
             {
-                isHiliteSelected = value;
+                this.isHiliteSelected = value;
                 if (UpdateSync != null) this.UpdateSync(this);
             }
         }
@@ -814,12 +962,12 @@ namespace ScintillaNet
         public bool IsBraceMatching
         {
             get 
-            { 
-                return isBraceMatching; 
+            {
+                return this.isBraceMatching; 
             }
             set 
-            { 
-                isBraceMatching = value;
+            {
+                this.isBraceMatching = value;
                 if (UpdateSync != null) this.UpdateSync(this);
             }
         }
@@ -831,11 +979,11 @@ namespace ScintillaNet
         {
             get
             {
-                return useHighlightGuides;
+                return this.useHighlightGuides;
             }
             set
             {
-                useHighlightGuides = value;
+                this.useHighlightGuides = value;
                 if (UpdateSync != null) this.UpdateSync(this);
             }
         }
@@ -846,12 +994,12 @@ namespace ScintillaNet
         public Enums.SmartIndent SmartIndentType
         {
             get 
-            { 
-                return smartIndent; 
+            {
+                return this.smartIndent; 
             }
             set 
-            { 
-                smartIndent = value;
+            {
+                this.smartIndent = value;
                 if (UpdateSync != null) this.UpdateSync(this);
             }
         }
@@ -863,12 +1011,12 @@ namespace ScintillaNet
         public Enums.WhiteSpace ViewWhitespace
         {
             get 
-            { 
-                return (Enums.WhiteSpace)ViewWS; 
+            {
+                return (Enums.WhiteSpace)this.ViewWS; 
             }
             set 
-            { 
-                ViewWS = (int)value; 
+            {
+                this.ViewWS = (int)value; 
             }
         }
 
@@ -879,26 +1027,47 @@ namespace ScintillaNet
         {
             get 
             { 
-                return (int)SPerform(2471, 0, 0);
+                if (this.fctb != null) return this.fctb.CurrentLineColor.A;
+                else return (int)SPerform(2471, 0, 0);
             }
             set
             {
-                SPerform(2470, (uint)value, 0);
+                if (this.fctb != null)
+                {
+                    Color color = Color.FromArgb(value > 0 && value < 255 ? value : 255, this.fctb.CurrentLineColor);
+                    this.fctb.CurrentLineColor = color;
+                }
+                else SPerform(2470, (uint)value, 0);
             }
         }
 
         /// <summary>
-        /// Get or sets the background alpha of the caret line.
+        /// Get or sets the style of the caret.
         /// </summary>
         public int CaretStyle
         {
             get
             {
-                return (int)SPerform(2513, 0, 0);
+                if (this.fctb != null)
+                {
+                    if (this.fctb.WideCaret) return (int)Enums.CaretStyle.Block;
+                    else if (this.fctb.CaretColor.A == 1) return (int)Enums.CaretStyle.Invisible;
+                    else return (int)Enums.CaretStyle.Line;
+                }
+                else return (int)SPerform(2513, 0, 0);
             }
             set
             {
-                SPerform(2512, (uint)value, 0);
+                if (this.fctb != null)
+                {
+                    if (value == (int)Enums.CaretStyle.Block) this.fctb.WideCaret = true;
+                    else if (value == (int)Enums.CaretStyle.Invisible)
+                    {
+                        this.fctb.CaretColor = Color.FromArgb(1, this.fctb.CaretColor);
+                    }
+                    else this.fctb.WideCaret = false;
+                }
+                else SPerform(2512, (uint)value, 0);
             }
         }
 
@@ -909,6 +1078,7 @@ namespace ScintillaNet
         {
             get
             {
+                // TODO, implement
                 return (int)SPerform(2501, 0, 0);
             }
             set
@@ -924,6 +1094,7 @@ namespace ScintillaNet
         {
             get
             {
+                // TODO, implement
                 return (int)SPerform(2515, 0, 0);
             }
             set
@@ -939,6 +1110,7 @@ namespace ScintillaNet
         {
             get
             {
+                // TODO, implement
                 return (int)SPerform(2503, 0, 0);
             }
             set
@@ -970,7 +1142,8 @@ namespace ScintillaNet
         {   
             get
             {
-                return (int)SPerform(2027, 0 , 0);
+                if (this.fctb != null) return this.fctb.GetLineLength(this.CurrentLine);
+                else return (int)SPerform(2027, 0, 0);
             }
         }
         
@@ -982,7 +1155,8 @@ namespace ScintillaNet
         {   
             get
             {
-                return (int)SPerform(2153, 0, 0);
+                if (this.fctb != null) return this.fctb.GetLineLength(this.CurrentLine);
+                else return (int)SPerform(2153, 0, 0);
             }
         }
         
@@ -994,7 +1168,8 @@ namespace ScintillaNet
         {   
             get
             {
-                return (int)SPerform(2161, 0, 0) - 1;
+                if (this.fctb != null) return this.fctb.SelectionLength;
+                else return (int)SPerform(2161, 0, 0) - 1;
             }
         }
         
@@ -1006,7 +1181,8 @@ namespace ScintillaNet
         {   
             get
             {
-                return (int)SPerform(2182, 0, 0);
+                if (this.fctb != null) return this.fctb.Text.Length;
+                else return (int)SPerform(2182, 0, 0);
             }
         }
         
@@ -1017,7 +1193,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2016, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.RedoEnabled;
+                else return SPerform(2016, 0, 0) != 0;
             }
         }
         
@@ -1028,7 +1205,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2102, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.Hints.Count > 1;
+                else return SPerform(2102, 0, 0) != 0;
             }
         }   
 
@@ -1039,7 +1217,44 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2103, 0, 0);
+            }
+        }
+
+        /// <summary>
+        /// Get currently selected item position in the auto-completion list
+        /// </summary>
+        public int AutoCGetCurrent
+        {
+            get
+            {
+                // TODO
+                return (int)SPerform(2445, 0, 0);
+            }
+        }  
+
+        /// <summary>
+        /// Is there an active call tip?
+        /// </summary>
+        public bool IsCallTipActive
+        {
+            get
+            {
+                // TODO
+                return SPerform(2202, 0, 0) != 0;
+            }
+        }
+
+        /// <summary>
+        /// Retrieve the position where the caret was before displaying the call tip.
+        /// </summary>
+        public int CallTipPosStart
+        {
+            get
+            {
+                // TODO
+                return (int)SPerform(2203, 0, 0);
             }
         }   
 
@@ -1050,7 +1265,9 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2173, 0, 0) != 0;
+                // TODO: ok?
+                if (this.fctb != null) return this.fctb.Focused && Clipboard.ContainsText();
+                else return SPerform(2173, 0, 0) != 0;
             }
         }   
 
@@ -1061,29 +1278,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2174, 0, 0) != 0;
-            }
-        }   
-
-        /// <summary>
-        /// Is there an active call tip?
-        /// </summary>
-        public bool IsCallTipActive
-        {
-            get 
-            {
-                return SPerform(2202, 0, 0) != 0;
-            }
-        }   
-
-        /// <summary>
-        /// Retrieve the position where the caret was before displaying the call tip.
-        /// </summary>
-        public int CallTipPosStart
-        {
-            get 
-            {
-                return (int)SPerform(2203, 0, 0);
+                if (this.fctb != null) return this.fctb.UndoEnabled;
+                else return SPerform(2174, 0, 0) != 0;
             }
         }   
         
@@ -1097,18 +1293,7 @@ namespace ScintillaNet
             {
                 return (int)SPerform(2375, 0, 0);
             }
-        }   
-
-        /// <summary>
-        /// Get currently selected item position in the auto-completion list
-        /// </summary>
-        public int AutoCGetCurrent
-        {
-            get 
-            {
-                return (int)SPerform(2445, 0, 0);
-            }
-        }   
+        } 
 
         /// <summary>
         /// Returns the number of characters in the document.
@@ -1117,6 +1302,7 @@ namespace ScintillaNet
         {
             get 
             {
+                if (this.fctb != null) return this.fctb.Text.Length;
                 return (int)SPerform(2006, 0, 0); 
             }
         }
@@ -1128,6 +1314,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return SPerform(2468, 0, 0) != 0; 
             }
             set 
@@ -1143,7 +1330,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2008, 0, 0); 
+                if (this.fctb != null) return this.fctb.SelectionStart;
+                else return (int)SPerform(2008, 0, 0); 
             }
             set 
             {
@@ -1180,11 +1368,29 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2009, 0, 0);
+                if (this.fctb != null)
+                {
+                    if (this.fctb.SelectionStart == this.CurrentPos)
+                    {
+                        return this.fctb.SelectionStart + this.fctb.SelectionLength;
+                    }
+                    else return this.fctb.SelectionStart;
+                }
+                else return (int)SPerform(2009, 0, 0);
             }
             set
             {
-                SPerform(2026, (uint)value , 0);
+                if (this.fctb != null)
+                {
+                    if (this.fctb.SelectionStart < value)
+                    {
+                        int start = this.fctb.SelectionStart;
+                        this.fctb.Selection.Start = this.fctb.PositionToPlace(value);
+                        this.fctb.Selection.End = this.fctb.PositionToPlace(start);
+                    }
+                    else this.fctb.Selection.End = this.fctb.PositionToPlace(value);
+                }
+                else SPerform(2026, (uint)value, 0);
             }
         }
 
@@ -1195,11 +1401,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2019, 0, 0)!=0;
+                if (this.fctb != null) return this.fctb.TextSource.Manager.UndoRedoStackIsEnabled;
+                else return SPerform(2019, 0, 0) != 0;
             }
             set
             {
-                SPerform(2012 , (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) this.fctb.TextSource.Manager.UndoRedoStackIsEnabled = value;
+                else SPerform(2012, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1211,6 +1419,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2020, 0, 0);
             }
             set
@@ -1226,6 +1435,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2028, 0, 0);
             }
         }   
@@ -1237,6 +1447,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2030, 0, 0);
             }
             set
@@ -1252,11 +1463,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2034, 0, 0)!=0;
+                if (this.fctb != null) return this.DoubleBuffered;
+                else return SPerform(2034, 0, 0) != 0;
             }
             set
             {
-                SPerform(2035 , (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) this.DoubleBuffered = value;
+                else SPerform(2035, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1267,11 +1480,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2121, 0, 0);
+                if (this.fctb != null) return this.fctb.TabLength;
+                else return (int)SPerform(2121, 0, 0);
             }
             set
             {
-                SPerform(2036, (uint)value, 0);
+                if (this.fctb != null) this.fctb.TabLength = value;
+                else SPerform(2036, (uint)value, 0);
             }
         }   
 
@@ -1282,11 +1497,14 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2075, 0, 0);
+                // TODO: Customize?
+                if (this.fctb != null) return SystemInformation.CaretBlinkTime;
+                else return (int)SPerform(2075, 0, 0);
             }
             set
             {
-                SPerform(2076, (uint)value, 0);
+                if (this.fctb != null) return;
+                else SPerform(2076, (uint)value, 0);
             }
         }
         
@@ -1297,11 +1515,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2091, 0, 0);
+                if (this.fctb != null) return this.fctb.Styles.Length;
+                else return (int)SPerform(2091, 0, 0);
             }
             set
             {
-                SPerform(2090, (uint)value, 0);
+                if (this.fctb != null) return; // MAX is 64
+                else SPerform(2090, (uint)value, 0);
             }
         }   
 
@@ -1312,6 +1532,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2094, 0, 0);
             }
         }   
@@ -1323,11 +1544,17 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2095, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.CurrentLineColor != Color.Transparent;
+                else return SPerform(2095, 0, 0) != 0;
             }
             set
             {
-                SPerform(2096, (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null)
+                {
+                    if (!value) this.fctb.CurrentLineColor = Color.Transparent;
+                    else return; // AUTOMATIC, set color
+                }
+                else SPerform(2096, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1338,11 +1565,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2097, 0, 0);
+                if (this.fctb != null) return DataConverter.ColorToBGR(this.fctb.CurrentLineColor);
+                else return (int)SPerform(2097, 0, 0);
             }
             set
             {
-                SPerform(2098, (uint)value, 0);
+                if (this.fctb != null) this.fctb.CurrentLineColor = DataConverter.BGRToColor(value);
+                else SPerform(2098, (uint)value, 0);
             }
         }   
 
@@ -1353,6 +1582,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2107, 0, 0);
             }
             set
@@ -1368,6 +1598,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return SPerform(2111, 0, 0) != 0;
             }
             set
@@ -1383,6 +1614,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return SPerform(2114, 0, 0) != 0;
             }
             set
@@ -1398,6 +1630,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return SPerform(2116, 0, 0) != 0;
             }
             set
@@ -1413,6 +1646,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return SPerform(2119, 0, 0) != 0;
             }
             set
@@ -1429,6 +1663,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return SPerform(2271, 0, 0) != 0;
             }
             set
@@ -1444,6 +1679,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2285, 0, 0);
             }
             set
@@ -1459,11 +1695,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2123, 0, 0);
+                if (this.fctb != null) return 1; // FIXED
+                else return (int)SPerform(2123, 0, 0);
             }
             set
             {
-                SPerform(2122, (uint)value, 0);
+                if (this.fctb != null) return;
+                else SPerform(2122, (uint)value, 0);
             }
         }   
 
@@ -1474,11 +1712,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2125, 0, 0) != 0;
+                if (this.fctb != null) return !this.fctb.VirtualSpace;
+                else return SPerform(2125, 0, 0) != 0;
             }
             set
             {
-                SPerform(2124 , (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) this.fctb.VirtualSpace = !value;
+                else SPerform(2124, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1489,11 +1729,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2133, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.ShowFoldingLines;
+                else return SPerform(2133, 0, 0) != 0;
             }
             set
             {
-                SPerform(2132, (uint)(value ? (int)this.indentView : 0), 0);
+                if (this.fctb != null) this.fctb.ShowFoldingLines = value;
+                else SPerform(2132, (uint)(value ? (int)this.indentView : 0), 0);
             }
         }   
 
@@ -1504,11 +1746,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2135, 0, 0);
+                if (this.fctb != null) return 1; // AUTOMATIC
+                else return (int)SPerform(2135, 0, 0);
             }
             set
             {
-                SPerform(2134, (uint)value, 0);
+                if (this.fctb != null) this.fctb.HighlightFoldingIndicator = value > 0;
+                else SPerform(2134, (uint)value, 0);
             }
         }   
 
@@ -1519,11 +1763,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2137, 0, 0);
+                if (this.fctb != null) return 65001; // AUTOMATIC
+                else return (int)SPerform(2137, 0, 0);
             }
             set
             {
-                SPerform(2037, (uint)value, 0);
+                if (this.fctb != null) return;
+                else SPerform(2037, (uint)value, 0);
             }
         }   
 
@@ -1534,28 +1780,24 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2138, 0, 0);
+                if (this.fctb != null) return DataConverter.ColorToBGR(this.fctb.CaretColor);
+                else return (int)SPerform(2138, 0, 0);
             }
             set
             {
-                SPerform(2069, (uint)value, 0);
+                if (this.fctb != null) this.fctb.CaretColor = DataConverter.BGRToColor(value);
+                else SPerform(2069, (uint)value, 0);
             }
         }   
 
         /// <summary>
-        /// In palette mode?
+        /// In palette mode? Deprecated, the last version to support palettes was 2.29.
         /// </summary>
         public bool IsUsePalette
         {
-            get 
-            {
-                return SPerform(2139, 0, 0) != 0;
-            }
-            set
-            {
-                SPerform(2039, (uint)(value ? 1 : 0), 0);
-            }
-        }   
+            get { return true; }
+            set { return; }
+        }
 
         /// <summary>
         /// In read-only mode?
@@ -1564,11 +1806,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2140, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.ReadOnly;
+                else return SPerform(2140, 0, 0) != 0;
             }
             set
             {
-                SPerform(2171, (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) this.fctb.ReadOnly = value;
+                else SPerform(2171, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1579,11 +1823,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2143, 0, 0);
+                if (this.fctb != null) return this.fctb.SelectionStart;
+                else return (int)SPerform(2143, 0, 0);
             }
             set
             {
-                SPerform(2142, (uint)value, 0);
+                if (this.fctb != null) this.fctb.SelectionStart = value;
+                else SPerform(2142, (uint)value, 0);
             }
         }   
 
@@ -1594,11 +1840,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2145, 0, 0);
+                if (this.fctb != null) return this.fctb.PlaceToPosition(this.fctb.Selection.End);
+                else return (int)SPerform(2145, 0, 0);
             }
             set
             {
-                SPerform(2144, (uint)value, 0);
+                if (this.fctb != null) this.fctb.Selection.End = this.fctb.PositionToPlace(value);
+                else SPerform(2144, (uint)value, 0);
             }
         }
 
@@ -1620,6 +1868,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2147, 0, 0);
             }
             set
@@ -1635,6 +1884,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2149, 0, 0);
             }
             set
@@ -1650,11 +1900,18 @@ namespace ScintillaNet
         {
             set
             {
-                SPerform(2613, (uint)value, 0);
+                if (this.fctb != null) 
+                {
+                    if (value < 0 || value > this.LineCount) return;
+                    FastColoredTextBoxNS.Range range = new FastColoredTextBoxNS.Range(this.fctb, value);
+                    this.fctb.DoRangeVisible(range);
+                }
+                else SPerform(2613, (uint)value, 0);
             }
             get 
             {
-                return (int)SPerform(2152, 0, 0);
+                if (this.fctb != null) return this.fctb.FindPrevVisibleLine(this.CurrentLine);
+                else return (int)SPerform(2152, 0, 0);
             }
         }   
 
@@ -1665,6 +1922,7 @@ namespace ScintillaNet
         {
             get 
             {
+                if (this.fctb != null) return this.fctb.LinesCount;
                 return (int)SPerform(2154, 0, 0);
             }
         }   
@@ -1676,11 +1934,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2156, 0, 0);
+                if (this.fctb != null) return this.fctb.LeftPadding;
+                else return (int)SPerform(2156, 0, 0);
             }
             set
             {
-                SPerform(2155, 0, (uint)value);
+                if (this.fctb != null) this.fctb.LeftPadding = value;
+                else SPerform(2155, 0, (uint)value);
             }
         }   
 
@@ -1691,11 +1951,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2158, 0, 0);
+                if (this.fctb != null) return 0; // FIXED
+                else return (int)SPerform(2158, 0, 0);
             }
             set
             {
-                SPerform(2157, 0, (uint)value);
+                if (this.fctb != null) return;
+                else SPerform(2157, 0, (uint)value);
             }
         }   
 
@@ -1706,7 +1968,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2159, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.IsChanged;
+                else return SPerform(2159, 0, 0) != 0;
             }
         }   
 
@@ -1717,7 +1980,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2183, 0, 0);
+                if (this.fctb != null) return this.fctb.Text.Length;
+                else return (int)SPerform(2183, 0, 0);
             }
         }   
 
@@ -1728,7 +1992,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2184, 0, 0);
+                if (this.fctb != null) return 0; // INVALID
+                else return (int)SPerform(2184, 0, 0);
             }
         }   
 
@@ -1740,7 +2005,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2185, 0, 0);
+                if (this.fctb != null) return 0; // INVALID
+                else return (int)SPerform(2185, 0, 0);
             }
         }   
 
@@ -1751,11 +2017,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2187, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.IsReplaceMode;
+                else return SPerform(2187, 0, 0) != 0;
             }
             set
             {
-                SPerform(2186 , (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) this.fctb.IsReplaceMode = value;
+                else SPerform(2186, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1766,11 +2034,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2189, 0, 0);
+                if (this.fctb != null) return this.fctb.CaretWidth;
+                else return (int)SPerform(2189, 0, 0);
             }
             set
             {
-                SPerform(2188, (uint)value, 0);
+                if (this.fctb != null) this.fctb.CaretWidth = value;
+                else SPerform(2188, (uint)value, 0);
             }
         }   
 
@@ -1781,6 +2051,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2191, 0, 0);
             }
             set
@@ -1796,6 +2067,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2193, 0, 0);
             }
             set
@@ -1811,6 +2083,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2199, 0, 0);
             }
             set
@@ -1826,11 +2099,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2261, 0, 0) != 0;
+                if (this.fctb != null) return true; // AUTOMATIC?
+                else return SPerform(2261, 0, 0) != 0;
             }
             set
             {
-                SPerform(2260, (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) return;
+                else SPerform(2260, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1841,11 +2116,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2263, 0, 0) != 0;
+                if (this.fctb != null) return true; // AUTOMATIC?
+                else return SPerform(2263, 0, 0) != 0;
             }
             set
             {
-                SPerform(2262, (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) return;
+                else SPerform(2262, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1856,6 +2133,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2265, 0, 0);
             }
             set
@@ -1871,11 +2149,23 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2269, 0, 0);
+                if (this.fctb != null)
+                {
+                    if (this.fctb.WordWrapMode == FastColoredTextBoxNS.WordWrapMode.WordWrapControlWidth) return 1;
+                    else if (this.fctb.WordWrapMode == FastColoredTextBoxNS.WordWrapMode.CharWrapControlWidth) return 2;
+                    else return 0; // NONE
+                }
+                else return (int)SPerform(2269, 0, 0);
             }
             set
             {
-                SPerform(2268, (uint)value, 0);
+                if (this.fctb != null)
+                {
+                    if (value == 1) this.fctb.WordWrapMode = FastColoredTextBoxNS.WordWrapMode.WordWrapControlWidth;
+                    else if (value == 2) this.fctb.WordWrapMode = FastColoredTextBoxNS.WordWrapMode.CharWrapControlWidth;
+                    else this.fctb.WordWrap = false;
+                }
+                else SPerform(2268, (uint)value, 0);
             }
         }   
 
@@ -1886,6 +2176,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2461, 0, 0);
             }
             set
@@ -1901,6 +2192,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2463, 0, 0);
             }
             set
@@ -1916,11 +2208,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2465, 0, 0);
+                if (this.fctb != null) return this.fctb.WordWrapIndent;
+                else return (int)SPerform(2465, 0, 0);
             }
             set
             {
-                SPerform(2464, (uint)value, 0);
+                if (this.fctb != null) this.fctb.WordWrapIndent = value;
+                else SPerform(2464, (uint)value, 0);
             }
         }   
 
@@ -1931,11 +2225,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2273, 0, 0);
+                if (this.fctb != null) return 0; // INVALID
+                else return (int)SPerform(2273, 0, 0);
             }
             set
             {
-                SPerform(2272, (uint)value, 0);
+                if (this.fctb != null) return;
+                else SPerform(2272, (uint)value, 0);
             }
         }   
 
@@ -1946,11 +2242,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2275, 0, 0);
+                if (this.fctb != null) return 0; // INVALID?
+                else return (int)SPerform(2275, 0, 0);
             }
             set
             {
-                SPerform(2274, (uint)value, 0);
+                if (this.fctb != null) return;
+                else SPerform(2274, (uint)value, 0);
             }
         }   
 
@@ -1962,11 +2260,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2278, 0, 0);
+                if (this.fctb != null) return 0; // AUTOMATIC? FIX?
+                else return (int)SPerform(2278, 0, 0);
             }
             set
             {
-                SPerform(2277, (uint)value , 0);
+                if (this.fctb != null) return;
+                else SPerform(2277, (uint)value, 0);
             }
         } 
 
@@ -1977,11 +2277,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2283, 0, 0)!=0;
+                if (this.fctb != null) return true; // INVALID? AUTOMATIC?
+                else return SPerform(2283, 0, 0) != 0;
             }
             set
             {
-                SPerform(2284, (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) return;
+                else SPerform(2284, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -1992,6 +2294,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return SPerform(2355, 0, 0) != 0;
             }
             set
@@ -2007,6 +2310,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2357, 0, 0);
             }
             set
@@ -2022,6 +2326,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2360, 0, 0);
             }
             set
@@ -2037,6 +2342,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2362, 0, 0);
             }
             set
@@ -2052,6 +2358,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2364, 0, 0);
             }
             set
@@ -2067,7 +2374,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2370, 0, 0);
+                if (this.fctb != null) return this.fctb.VisibleRange.ToLine - this.fctb.VisibleRange.FromLine;
+                else return (int)SPerform(2370, 0, 0);
             }
         }   
 
@@ -2078,7 +2386,8 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2372, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.Selection.ColumnSelectionMode;
+                else return SPerform(2372, 0, 0) != 0;
             }
         }   
 
@@ -2090,11 +2399,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2374, 0, 0);
+                if (this.fctb != null) return this.fctb.Zoom; // CHECK?
+                else return (int)SPerform(2374, 0, 0);
             }
             set
             {
-                SPerform(2373, (uint)value, 0);
+                if (this.fctb != null) this.fctb.Zoom = value;
+                else SPerform(2373, (uint)value, 0);
             }
         }   
 
@@ -2105,6 +2416,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2378, 0, 0);
             }
             set
@@ -2120,11 +2432,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return SPerform(2381, 0, 0) != 0;
+                if (this.fctb != null) return this.fctb.Focused;
+                else return SPerform(2381, 0, 0) != 0;
             }
             set
             {
-                SPerform(2380 , (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) this.fctb.Focus();
+                else SPerform(2380, (uint)(value ? 1 : 0), 0);
             }
         }   
 
@@ -2135,11 +2449,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2383, 0, 0);
+                if (this.fctb != null) return 0; // INVALID
+                else return (int)SPerform(2383, 0, 0);
             }
             set
             {
-                SPerform(2382, (uint)value, 0);
+                if (this.fctb != null) return;
+                else SPerform(2382, (uint)value, 0);
             }
         }   
 
@@ -2150,6 +2466,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO, true?
                 return SPerform(2385, 0, 0) != 0;
             }
             set
@@ -2165,11 +2482,21 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2387, 0, 0);
+                if (this.fctb != null)
+                {
+                    if (this.fctb.Cursor == Cursors.WaitCursor) return (int)Enums.CursorShape.Wait;
+                    else return (int)Enums.CursorShape.Normal; // Arrow
+                }
+                else return (int)SPerform(2387, 0, 0);
             }
             set
             {
-                SPerform(2386, (uint)value, 0);
+                if (this.fctb != null)
+                {
+                    if (value == (int)Enums.CursorShape.Wait) this.fctb.Cursor = Cursors.WaitCursor;
+                    else this.fctb.Cursor = Cursors.Arrow;
+                }
+                else SPerform(2386, (uint)value, 0);
             }
         }   
 
@@ -2182,6 +2509,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO, automatic false?
                 return (int)SPerform(2389, 0, 0);
             }
             set
@@ -2197,11 +2525,13 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2398, 0, 0);
+                if (this.fctb != null) return this.fctb.VerticalScroll.Value;
+                else return (int)SPerform(2398, 0, 0);
             }
             set
             {
-                SPerform(2397, (uint)value, 0);
+                if (this.fctb != null) this.fctb.VerticalScroll.Value = value;
+                else SPerform(2397, (uint)value, 0);
             }
         }   
 
@@ -2212,6 +2542,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(2407, 0, 0);
             }
             set
@@ -2227,11 +2558,17 @@ namespace ScintillaNet
         {
             get 
             {
-                return (int)SPerform(2423, 0, 0);
+                if (this.fctb != null)
+                {
+                    if (this.fctb.Selection.ColumnSelectionMode) return (int)Enums.SelectionMode.Rectangle;
+                    else return (int)Enums.SelectionMode.Stream;
+                }
+                else return (int)SPerform(2423, 0, 0);
             }
             set
             {
-                SPerform(2422, (uint)value, 0);
+                if (this.fctb != null) this.fctb.Selection.ColumnSelectionMode = (value == (int)Enums.SelectionMode.Rectangle);
+                else SPerform(2422, (uint)value, 0);
             }
         }
 
@@ -2242,6 +2579,7 @@ namespace ScintillaNet
         {
             get 
             {
+                // TODO
                 return (int)SPerform(4002, 0, 0);
             }
             set
@@ -2281,11 +2619,13 @@ namespace ScintillaNet
         {
             get
             {
-                return SPerform(2522, 0, 0) != 0;
+                if (this.fctb != null) return true; // FIXED
+                else return SPerform(2522, 0, 0) != 0;
             }
             set
             {
-                SPerform(2521, (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) return;
+                else SPerform(2521, (uint)(value ? 1 : 0), 0);
             }
         }
 
@@ -2296,6 +2636,7 @@ namespace ScintillaNet
         {
             get
             {
+                // TODO
                 return (int)SPerform(2526, 0, 0);
             }
             set
@@ -2311,6 +2652,7 @@ namespace ScintillaNet
         {
             get
             {
+                // TODO
                 return (int)SPerform(2528, 0, 0);
             }
             set
@@ -2326,6 +2668,7 @@ namespace ScintillaNet
         {
             get
             {
+                // TODO
                 return (int)SPerform(2538, 0, 0);
             }
             set
@@ -2341,6 +2684,7 @@ namespace ScintillaNet
         {
             get
             {
+                // TODO
                 return (int)SPerform(2551, 0, 0);
             }
             set
@@ -2356,6 +2700,7 @@ namespace ScintillaNet
         {
             get
             {
+                // TODO
                 return SPerform(2549, 0, 0) != 0;
             }
             set
@@ -2371,11 +2716,13 @@ namespace ScintillaNet
         {
             get
             {
-                return SPerform(2517, 0, 0) != 0;
+                if (this.fctb != null) return true; // AUTOMATIC
+                else return SPerform(2517, 0, 0) != 0;
             }
             set
             {
-                SPerform(2516, (uint)(value ? 1 : 0), 0);
+                if (this.fctb != null) return;
+                else SPerform(2516, (uint)(value ? 1 : 0), 0);
             }
         }
 
@@ -2416,11 +2763,12 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Sets the focud to the control
+        /// Sets the focus to the control
         /// </summary>
         public new bool Focus()
         {
-            return SetFocus(hwndScintilla) != IntPtr.Zero;
+            if (this.fctb != null) return this.fctb.Focus();
+            else return SetFocus(hwndScintilla) != IntPtr.Zero;
         }
 
         /// <summary>
@@ -2429,7 +2777,26 @@ namespace ScintillaNet
         /// </summary>
         public void SelectionDuplicate()
         {
-            SPerform(2469, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.SelectionLength > 0)
+                {
+                    int pos = this.fctb.SelectionStart;
+                    int lenght = this.fctb.SelectionLength;
+                    this.fctb.InsertText(this.fctb.SelectedText + this.fctb.SelectedText);
+                    this.fctb.Selection.Start = this.fctb.PositionToPlace(pos + lenght);
+                    this.fctb.Selection.End = this.fctb.PositionToPlace(pos);
+                }
+                else
+                {
+                    int pos = this.fctb.SelectionStart;
+                    string text = this.fctb.GetLineText(this.CurrentLine);
+                    this.fctb.Selection.GoEnd(false);
+                    this.fctb.InsertText(this.NewLineMarker + text);
+                    this.fctb.Selection.Start = this.fctb.PositionToPlace(pos);
+                }
+            }
+            else SPerform(2469, 0, 0);
         }
 
         /// <summary>
@@ -2441,8 +2808,7 @@ namespace ScintillaNet
             bool wholeLine = SelectionStart == SelectionEnd;
             int selectionLength = SelectionEnd - SelectionStart;
             SelectionDuplicate();
-            if (wholeLine)
-                LineDown();
+            if (wholeLine) LineDown();
             else
             {
                 SelectionStart += selectionLength;
@@ -2455,7 +2821,8 @@ namespace ScintillaNet
         /// </summary>
         public bool GetCaretSticky()
         {
-            return SPerform(2457, 0, 0) != 0;
+            if (this.fctb != null) return false; // FIXED
+            else return SPerform(2457, 0, 0) != 0;
         }
         
         /// <summary>
@@ -2463,7 +2830,8 @@ namespace ScintillaNet
         /// </summary>
         public void SetCaretSticky(bool useSetting)
         {
-            SPerform(2458, (uint)(useSetting ? 1 : 0), 0);
+            if (this.fctb != null) return; // FIXED
+            else SPerform(2458, (uint)(useSetting ? 1 : 0), 0);
         }
         
         /// <summary>
@@ -2471,16 +2839,24 @@ namespace ScintillaNet
         /// </summary>
         public void ToggleCaretSticky()
         {
-            SPerform(2459, 0, 0);
+            if (this.fctb != null) return; // FIXED
+            else SPerform(2459, 0, 0);
         }
         
-
         /// <summary>
         /// Retrieve the fold level of a line.
         /// </summary>
         public int GetFoldLevel(int line)
         {
-            return (int)SPerform(2223, (uint)line, 0);
+            if (this.fctb != null) // CHECK
+            {
+                if (this.fctb.TextSource.LineHasFoldingStartMarker(line))
+                {
+                    return (int)Enums.FoldLevel.HeaderFlag;
+                }
+                else return (int)Enums.FoldLevel.Base;
+            }
+            else return (int)SPerform(2223, (uint)line, 0);
         }
 
         /// <summary>
@@ -2490,7 +2866,16 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldLevel(int line, int level)
         {
-            SPerform(2222, (uint)line, (uint)level);
+            if (this.fctb != null) // CHECK
+            {
+                int id = this.fctb[line - 1].UniqueId;
+                int fold = level & (int)Enums.FoldLevel.HeaderFlag;
+                if (fold == (int)Enums.FoldLevel.HeaderFlag)
+                {
+                    this.fctb.FoldedBlocks[id] = id;
+                }
+            }
+            else SPerform(2222, (uint)line, (uint)level);
         }   
 
         /// <summary>
@@ -2498,7 +2883,8 @@ namespace ScintillaNet
         /// </summary>
         public int LastChild(int line, int level)
         {
-            return (int)SPerform(2224, (uint)line, (uint)level);
+            if (this.fctb != null) return this.fctb.FindEndOfFoldingBlock(line); // CHECK
+            else return (int)SPerform(2224, (uint)line, (uint)level);
         }   
 
         /// <summary>
@@ -2506,7 +2892,8 @@ namespace ScintillaNet
         /// </summary>
         public int LastChild(int line)
         {
-            return (int)SPerform(2224, (uint)line, 0);
+            if (this.fctb != null) return this.fctb.FindEndOfFoldingBlock(line); // CHECK
+            else return (int)SPerform(2224, (uint)line, 0);
         }
 
         /// <summary>
@@ -2514,7 +2901,11 @@ namespace ScintillaNet
         /// </summary>  
         public bool GetLineVisible(Int32 line)
         {
-            return SPerform(2228, (uint)line, 0) != 0;
+            if (this.fctb != null)
+            {
+                return this.fctb.GetVisibleState(line) == FastColoredTextBoxNS.VisibleState.Visible;
+            }
+            else return SPerform(2228, (uint)line, 0) != 0;
         }
 
         /// <summary>
@@ -2522,7 +2913,15 @@ namespace ScintillaNet
         /// </summary>
         public int FoldParent(int line)
         {
-            return (int)SPerform(2225, (uint)line, 0);
+            if (this.fctb != null) // CHECK
+            {
+                for (int i = line - 1; i > 1; i--)
+                {
+                    if (this.fctb.TextSource.LineHasFoldingStartMarker(i)) return i;
+                }
+                return -1;
+            }
+            else return (int)SPerform(2225, (uint)line, 0);
         }   
         
         /// <summary>
@@ -2530,7 +2929,11 @@ namespace ScintillaNet
         /// </summary>
         public bool FoldExpanded(int line)
         {
-            return SPerform(2230, (uint)line, 0) != 0;
+            if (this.fctb != null)
+            {
+                return this.fctb.GetVisibleState(line) == FastColoredTextBoxNS.VisibleState.Visible;
+            }
+            else return SPerform(2230, (uint)line, 0) != 0;
         }
 
         /// <summary>
@@ -2538,7 +2941,16 @@ namespace ScintillaNet
         /// </summary>
         public void FoldExpanded(int line, bool expanded)
         {
-            SPerform(2229, (uint)line, (uint)(expanded ? 1 : 0));
+            if (this.fctb != null)
+            {
+                if (this.fctb.TextSource.LineHasFoldingStartMarker(line))
+                {
+                    if (expanded) this.fctb.ExpandFoldedBlock(line);
+                    else this.fctb.CollapseFoldingBlock(line);
+                    this.fctb.AdjustFolding();
+                }
+            }
+            else SPerform(2229, (uint)line, (uint)(expanded ? 1 : 0));
         }   
         
         /// <summary>
@@ -2814,7 +3226,12 @@ namespace ScintillaNet
         /// </summary>
         public int LineIndentPosition(int line)
         {
-            return (int)SPerform(2128, (uint)line, 0);
+            if (this.fctb != null)
+            {
+                int columns = this.fctb.CalcAutoIndent(line);
+                return this.fctb.PlaceToPosition(new FastColoredTextBoxNS.Place(columns, line));
+            }
+            else return (int)SPerform(2128, (uint)line, 0);
         }
 
         /// <summary>
@@ -2822,7 +3239,8 @@ namespace ScintillaNet
         /// </summary>
         public int Column(int pos)
         {
-            return (int)SPerform(2129, (uint)pos, 0);
+            if (this.fctb != null) return this.fctb.PositionToPlace(pos).iChar;
+            else return (int)SPerform(2129, (uint)pos, 0);
         }
         
         /// <summary>
@@ -2838,7 +3256,12 @@ namespace ScintillaNet
         /// </summary>
         public int CharAt(int pos)
         {
-            return (int)SPerform(2007, (uint)pos, 0);
+            if (this.fctb != null) 
+            {
+                if (pos < 0 || pos > this.Length - 1) return 0;
+                return (int)this.fctb.Text[pos];
+            }
+            else return (int)SPerform(2007, (uint)pos, 0);
         }   
         
         /// <summary>
@@ -2950,10 +3373,18 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void AddText(int length, string text )
         {
-            if (text == null || text.Equals("")) text = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
+            if (this.fctb != null)
             {
-                 SPerform(2001,(uint)length, (uint)b);
+                this.fctb.Selection.Start = this.fctb.PositionToPlace(length);
+                this.fctb.InsertText(text, true);
+            }
+            else
+            {
+                if (text == null || text.Equals("")) text = "\0\0";
+                fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
+                {
+                    SPerform(2001, (uint)length, (uint)b);
+                }
             }
         }           
 
@@ -2962,10 +3393,18 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void InsertText(int pos, string text )
         {
-            if (text == null || text.Equals("")) text = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
+            if (this.fctb != null)
             {
-                SPerform(2003, (uint)pos, (uint)b);
+                this.fctb.Selection.Start = this.fctb.PositionToPlace(pos);
+                this.fctb.InsertText(text, true);
+            }
+            else
+            {
+                if (text == null || text.Equals("")) text = "\0\0";
+                fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
+                {
+                    SPerform(2003, (uint)pos, (uint)b);
+                }
             }
         }   
                         
@@ -3006,7 +3445,8 @@ namespace ScintillaNet
         /// </summary>
         public void ClearAll()
         {
-            SPerform(2004, 0, 0);
+            if (this.fctb != null) this.fctb.Clear();
+            else SPerform(2004, 0, 0);
         }           
 
         /// <summary>
@@ -3022,7 +3462,8 @@ namespace ScintillaNet
         /// </summary>
         public void Redo()
         {
-            SPerform(2011, 0, 0);
+            if (this.fctb != null) this.fctb.Redo();
+            else SPerform(2011, 0, 0);
         }   
                         
         /// <summary>
@@ -3030,7 +3471,8 @@ namespace ScintillaNet
         /// </summary>
         public void SelectAll()
         {
-            SPerform(2013, 0, 0);
+            if (this.fctb != null) this.fctb.SelectAll();
+            else SPerform(2013, 0, 0);
         }   
                         
         /// <summary>
@@ -3039,7 +3481,12 @@ namespace ScintillaNet
         /// </summary>
         public void SetSavePoint()
         {
-            SPerform(2014, 0, 0);
+            if (this.fctb != null)
+            {
+                this.fctb.ClearUndo();
+                this.fctb.IsChanged = false;
+            }
+            else SPerform(2014, 0, 0);
         }   
                     
         /// <summary>
@@ -3063,7 +3510,8 @@ namespace ScintillaNet
         /// </summary>
         public int PositionFromPoint(int x, int y)
         {
-            return (int)SPerform(2022, (uint)x, (uint)y);
+            if (this.fctb != null) return this.fctb.PointToPosition(new Point(x, y));
+            else return (int)SPerform(2022, (uint)x, (uint)y);
         }   
                         
         /// <summary>
@@ -3080,7 +3528,13 @@ namespace ScintillaNet
         /// </summary>
         public void GotoLine(int line)
         {
-             SPerform(2024, (uint)line, 0);
+            if (this.fctb != null)
+            {
+                Int32 nl = Math.Min(this.fctb.LinesCount - 1, Math.Max(0, line - 1));
+                this.fctb.Selection = new FastColoredTextBoxNS.Range(this.fctb, 0, nl, 0, nl);
+                this.fctb.DoSelectionVisible();
+            }
+            else SPerform(2024, (uint)line, 0);
         }   
                         
         /// <summary>
@@ -3088,7 +3542,12 @@ namespace ScintillaNet
         /// </summary>
         public void GotoPos(int pos)
         {
-             SPerform(2025, (uint)pos, 0);
+            if (this.fctb != null)
+            {
+                this.fctb.Selection.Start = this.fctb.PositionToPlace(pos);
+                this.fctb.DoSelectionVisible();
+            }
+            else SPerform(2025, (uint)pos, 0);
         }   
                         
         /// <summary>
@@ -3097,10 +3556,15 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetCurLine(int length)
         {
-            int sz = (int)SPerform(2027, (uint)length, 0);
-            byte[] buffer = new byte[sz+1];
-            fixed (byte* b = buffer) SPerform(2027, (uint)length+1, (uint)b);
-            return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz-1);
+            // TODO: Fix this
+            if (this.fctb != null) return this.GetLine(this.CurrentLine);
+            else
+            {
+                int sz = (int)SPerform(2027, (uint)length, 0);
+                byte[] buffer = new byte[sz + 1];
+                fixed (byte* b = buffer) SPerform(2027, (uint)length + 1, (uint)b);
+                return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
+            }
         }
 
         /// <summary>
@@ -3219,15 +3683,13 @@ namespace ScintillaNet
         unsafe public void MarkerDefineRGBAImage(int markerNumber, Bitmap image)
         {
             var rgba = RGBA.ConvertToRGBA(image);
-
-            //SCI_RGBAIMAGESETWIDTH
+            // SCI_RGBAIMAGESETWIDTH
             SPerform(2624, (uint)image.Width, 0);
-            //SCI_RGBAIMAGESETHEIGHT
+            // SCI_RGBAIMAGESETHEIGHT
             SPerform(2625, (uint)image.Height, 0);
-
             fixed (byte* b = rgba)
             {
-                //SCI_MARKERDEFINERGBAIMAGE
+                // SCI_MARKERDEFINERGBAIMAGE
                 SPerform(2626, (uint)markerNumber, (uint)b);
             }
         }
@@ -3298,7 +3760,8 @@ namespace ScintillaNet
         /// </summary>
         public void BeginUndoAction()
         {
-            SPerform(2078, 0, 0);
+            if (this.fctb != null) this.fctb.BeginAutoUndo();
+            else SPerform(2078, 0, 0);
         }   
                         
         /// <summary>
@@ -3306,7 +3769,8 @@ namespace ScintillaNet
         /// </summary>
         public void EndUndoAction()
         {
-            SPerform(2079, 0, 0);
+            if (this.fctb != null) this.fctb.EndAutoUndo();
+            else SPerform(2079, 0, 0);
         }   
                         
         /// <summary>
@@ -3416,19 +3880,28 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetLine(int line)
         {
-            int sz = (int)SPerform(2153, (uint)line, 0);
-            byte[] buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2153, (uint)line, (uint)b);
-            if (sz == 0) return ""; // Empty last line
-            return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz);
+            if (this.fctb != null) return (line < 0 || line > this.LineCount - 1) ? this.fctb.GetLineText(line) : "";
+            else
+            {
+                int sz = (int)SPerform(2153, (uint)line, 0);
+                byte[] buffer = new byte[sz + 1];
+                fixed (byte* b = buffer) SPerform(2153, (uint)line, (uint)b);
+                if (sz == 0) return ""; // Empty last line
+                return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz);
+            }
         }
 
         /// <summary>
         /// Select a range of text.
         /// </summary>
         public void SetSel(int start, int end)
-        { 
-            SPerform(2160, (uint)start, (uint)end);
+        {
+            if (this.fctb != null)
+            {
+                this.fctb.Selection.Start = this.fctb.PositionToPlace(start);
+                this.fctb.Selection.End = this.fctb.PositionToPlace(end);
+            }
+            else SPerform(2160, (uint)start, (uint)end);
         }                   
 
         /// <summary>
@@ -3439,13 +3912,17 @@ namespace ScintillaNet
         {
             get
             {
-                int sz = (int)SPerform(2161,0 ,0);
-                byte[] buffer = new byte[sz+1];
-                fixed (byte* b = buffer)
+                if (this.fctb != null) return this.fctb.SelectedText;
+                else
                 {
-                    SPerform(2161, (UInt32)sz + 1, (uint)b);
+                    int sz = (int)SPerform(2161, 0, 0);
+                    byte[] buffer = new byte[sz + 1];
+                    fixed (byte* b = buffer)
+                    {
+                        SPerform(2161, (UInt32)sz + 1, (uint)b);
+                    }
+                    return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
                 }
-                return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz-1);
             }
         }
 
@@ -3462,7 +3939,8 @@ namespace ScintillaNet
         /// </summary>
         public int PointXFromPosition(int pos)
         {
-            return (int) SPerform(2164, 0, (uint)pos);
+            if (this.fctb != null) return this.fctb.PositionToPoint(pos).X;
+            else return (int)SPerform(2164, 0, (uint)pos);
         }   
                         
         /// <summary>
@@ -3470,7 +3948,8 @@ namespace ScintillaNet
         /// </summary>
         public int PointYFromPosition(int pos)
         {
-            return (int) SPerform(2165, 0, (uint)pos);
+            if (this.fctb != null) return this.fctb.PositionToPoint(pos).Y;
+            else return (int)SPerform(2165, 0, (uint)pos);
         }   
                         
         /// <summary>
@@ -3478,7 +3957,8 @@ namespace ScintillaNet
         /// </summary>
         public int LineFromPosition(int pos)
         {
-            return (int) SPerform(2166, (uint)pos, 0);
+            if (this.fctb != null) return this.fctb.PositionToPlace(pos).iLine;
+            else return (int)SPerform(2166, (uint)pos, 0);
         }   
                         
         /// <summary>
@@ -3486,7 +3966,8 @@ namespace ScintillaNet
         /// </summary>
         public int PositionFromLine(int line)
         {
-            return (int) SPerform(2167, (uint)line, 0);
+            if (this.fctb != null) return this.fctb.PlaceToPosition(new FastColoredTextBoxNS.Place(0, line));
+            else return (int) SPerform(2167, (uint)line, 0);
         }
         
         /// <summary>
@@ -3507,7 +3988,12 @@ namespace ScintillaNet
         /// </summary>
         public void LineScroll(int columns, int lines)
         {
-             SPerform(2168, (uint)columns, (uint)lines);
+            if (this.fctb != null) 
+            {
+                this.fctb.VerticalScroll.Value += this.fctb.CharHeight;
+                this.fctb.HorizontalScroll.Value += this.fctb.CharWidth;
+            }
+            else SPerform(2168, (uint)columns, (uint)lines);
         }   
                         
         /// <summary>
@@ -3515,7 +4001,8 @@ namespace ScintillaNet
         /// </summary>
         public void ScrollCaret()
         {
-            SPerform(2169, 0, 0);
+            if (this.fctb != null) this.fctb.DoCaretVisible();
+            else SPerform(2169, 0, 0);
         }   
                     
         /// <summary>
@@ -3523,10 +4010,14 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void ReplaceSel(string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
+            if (this.fctb != null) this.fctb.InsertText(text);
+            else
             {
-                SPerform(2170,0 , (uint)b);
+                if (text == null || text.Equals("")) text = "\0\0";
+                fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
+                {
+                    SPerform(2170, 0, (uint)b);
+                }
             }
         }   
                         
@@ -3535,7 +4026,7 @@ namespace ScintillaNet
         /// </summary>
         public void Null()
         {
-            SPerform(2172, 0, 0);
+            if (this.fctb == null) SPerform(2172, 0, 0);
         }   
                         
         /// <summary>
@@ -3543,7 +4034,8 @@ namespace ScintillaNet
         /// </summary>
         public void EmptyUndoBuffer()
         {
-            SPerform(2175, 0, 0);
+            if (this.fctb != null) this.fctb.ClearUndo();
+            else SPerform(2175, 0, 0);
         }   
                         
         /// <summary>
@@ -3551,7 +4043,8 @@ namespace ScintillaNet
         /// </summary>
         public void Undo()
         {
-            SPerform(2176, 0, 0);
+            if (this.fctb != null) this.fctb.Undo();
+            else SPerform(2176, 0, 0);
         }   
                         
         /// <summary>
@@ -3559,7 +4052,8 @@ namespace ScintillaNet
         /// </summary>
         public void Cut()
         {
-            SPerform(2177, 0, 0);
+            if (this.fctb != null) this.fctb.Cut();
+            else SPerform(2177, 0, 0);
         }   
                         
         /// <summary>
@@ -3567,9 +4061,13 @@ namespace ScintillaNet
         /// </summary>
         public void Copy()
         {
-            SPerform(2178, 0, 0);
-            // Invoke UI update after copy...
-            if (UpdateUI != null) UpdateUI(this);
+            if (this.fctb != null) this.fctb.Copy();
+            else
+            {
+                SPerform(2178, 0, 0);
+                // Invoke UI update after copy...
+                if (UpdateUI != null) UpdateUI(this);
+            }
         }
 
         /// <summary>
@@ -3577,9 +4075,13 @@ namespace ScintillaNet
         /// </summary>
         public void CopyRTF()
         {
-            Language language = ScintillaControl.Configuration.GetLanguage(this.configLanguage);
-            String conversion = RTF.GetConversion(language, this, this.SelectionStart, this.SelectionEnd);
-            Clipboard.SetText(conversion, TextDataFormat.Rtf);
+            if (this.fctb != null) Clipboard.SetText(this.fctb.Rtf, TextDataFormat.Rtf);
+            else
+            {
+                Language language = ScintillaControl.Configuration.GetLanguage(this.configLanguage);
+                String conversion = RTF.GetConversion(language, this, this.SelectionStart, this.SelectionEnd);
+                Clipboard.SetText(conversion, TextDataFormat.Rtf);
+            }
         }
             
         /// <summary>
@@ -3587,7 +4089,8 @@ namespace ScintillaNet
         /// </summary>
         public void Paste()
         {
-            SPerform(2179, 0, 0);
+            if (this.fctb != null) this.fctb.Paste();
+            else SPerform(2179, 0, 0);
         }   
                         
         /// <summary>
@@ -3595,7 +4098,8 @@ namespace ScintillaNet
         /// </summary>
         public void Clear()
         {
-            SPerform(2180, 0, 0);
+            if (this.fctb != null) this.fctb.SelectedText = "";
+            else SPerform(2180, 0, 0);
         }   
                         
         /// <summary>
@@ -3603,6 +4107,11 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void SetText(string text)
         {
+            if (this.fctb != null)
+            {
+                this.fctb.Text = text;
+                return;
+            }
             if (text == null || text.Equals("")) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
@@ -3615,6 +4124,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetText(int length)
         {
+            if (this.fctb != null) return this.fctb.Text;
             int sz = (int)SPerform(2182, (uint)length, 0);
             byte[] buffer = new byte[sz+1];
             fixed (byte* b = buffer)SPerform(2182, (uint)length+1, (uint)b);
@@ -3763,7 +4273,8 @@ namespace ScintillaNet
         /// </summary>
         public void EnsureVisible(int line)
         {
-             SPerform(2232, (uint)line, 0);
+            if (this.fctb != null) this.fctb.DoRangeVisible(new FastColoredTextBoxNS.Range(this.fctb, line));
+            else SPerform(2232, (uint)line, 0);
         }               
 
         /// <summary>
@@ -3818,6 +4329,7 @@ namespace ScintillaNet
         /// </summary>
         public int TextHeight(int line)
         {
+            if (this.fctb != null) return this.fctb.TextHeight;
             return (int) SPerform(2279, (uint)line, 0);
         }   
                         
@@ -3826,6 +4338,11 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void AppendText(int length, string text)
         {
+            if (this.fctb != null)
+            {
+                this.fctb.AppendText(text);
+                return;
+            }
             if (text == null || text.Equals("")) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
@@ -3850,8 +4367,7 @@ namespace ScintillaNet
         }   
                         
         /// <summary>
-        /// Split the lines in the target into lines that are less wide than pixelWidth
-        /// where possible.
+        /// Split the lines in the target into lines that are less wide than pixelWidth where possible.
         /// </summary>
         public void LinesSplit(int pixelWidth)
         {
@@ -3863,7 +4379,15 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldMarginColour(bool useSetting, int back)
         {
-             SPerform(2290,(uint)(useSetting ? 1 : 0), (uint)back);
+            if (this.fctb != null)
+            {
+                if (!useSetting) return;
+                this.fctb.ServiceColors.CollapseMarkerBorderColor = DataConverter.BGRToColor(back);
+                this.fctb.ServiceColors.CollapseMarkerForeColor = DataConverter.BGRToColor(back);
+                this.fctb.ServiceColors.ExpandMarkerBorderColor = DataConverter.BGRToColor(back);
+                this.fctb.ServiceColors.ExpandMarkerForeColor = DataConverter.BGRToColor(back);
+            }
+            else SPerform(2290, (uint)(useSetting ? 1 : 0), (uint)back);
         }   
                         
         /// <summary>
@@ -3871,7 +4395,13 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldMarginHiColour(bool useSetting, int fore)
         {
-             SPerform(2291,(uint)(useSetting ? 1 : 0), (uint)fore);
+            if (this.fctb != null)
+            {
+                if (!useSetting) return;
+                this.fctb.ServiceColors.CollapseMarkerBackColor = DataConverter.BGRToColor(fore);
+                this.fctb.ServiceColors.ExpandMarkerBackColor = DataConverter.BGRToColor(fore);
+            }
+            else SPerform(2291, (uint)(useSetting ? 1 : 0), (uint)fore);
         }   
                         
         /// <summary>
@@ -3879,7 +4409,12 @@ namespace ScintillaNet
         /// </summary>
         public void LineDown()
         {
-            SPerform(2300, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.Selection.ColumnSelectionMode) this.fctb.Selection.GoDown_ColumnSelectionMode();
+                else this.fctb.Selection.GoDown(false);
+            }
+            else SPerform(2300, 0, 0);
         }   
                         
         /// <summary>
@@ -3887,7 +4422,12 @@ namespace ScintillaNet
         /// </summary>
         public void LineDownExtend()
         {
-            SPerform(2301, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.Selection.ColumnSelectionMode) this.fctb.Selection.GoDown_ColumnSelectionMode();
+                else this.fctb.Selection.GoDown(true);
+            }
+            else SPerform(2301, 0, 0);
         }   
                         
         /// <summary>
@@ -3895,7 +4435,12 @@ namespace ScintillaNet
         /// </summary>
         public void LineUp()
         {
-            SPerform(2302, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.Selection.ColumnSelectionMode) this.fctb.Selection.GoUp_ColumnSelectionMode();
+                else this.fctb.Selection.GoUp(false);
+            }
+            else SPerform(2302, 0, 0);
         }   
                         
         /// <summary>
@@ -3903,7 +4448,12 @@ namespace ScintillaNet
         /// </summary>
         public void LineUpExtend()
         {
-            SPerform(2303, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.Selection.ColumnSelectionMode) this.fctb.Selection.GoUp_ColumnSelectionMode();
+                else this.fctb.Selection.GoUp(true);
+            }
+            else SPerform(2303, 0, 0);
         }   
                         
         /// <summary>
@@ -3911,7 +4461,12 @@ namespace ScintillaNet
         /// </summary>
         public void CharLeft()
         {
-            SPerform(2304, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.Selection.ColumnSelectionMode) this.fctb.Selection.GoLeft_ColumnSelectionMode();
+                else this.fctb.Selection.GoLeft(false);
+            }
+            else SPerform(2304, 0, 0);
         }   
                         
         /// <summary>
@@ -3919,7 +4474,12 @@ namespace ScintillaNet
         /// </summary>
         public void CharLeftExtend()
         {
-            SPerform(2305, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.Selection.ColumnSelectionMode) this.fctb.Selection.GoLeft_ColumnSelectionMode();
+                else this.fctb.Selection.GoLeft(true);
+            }
+            else SPerform(2305, 0, 0);
         }   
                         
         /// <summary>
@@ -3927,7 +4487,12 @@ namespace ScintillaNet
         /// </summary>
         public void CharRight()
         {
-            SPerform(2306, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.Selection.ColumnSelectionMode) this.fctb.Selection.GoRight_ColumnSelectionMode();
+                else this.fctb.Selection.GoRight(false);
+            }
+            else SPerform(2306, 0, 0);
         }   
                         
         /// <summary>
@@ -3935,7 +4500,12 @@ namespace ScintillaNet
         /// </summary>
         public void CharRightExtend()
         {
-            SPerform(2307, 0, 0);
+            if (this.fctb != null)
+            {
+                if (this.fctb.Selection.ColumnSelectionMode) this.fctb.Selection.GoRight_ColumnSelectionMode();
+                else this.fctb.Selection.GoRight(true);
+            }
+            else SPerform(2307, 0, 0);
         }   
                         
         /// <summary>
@@ -3943,7 +4513,8 @@ namespace ScintillaNet
         /// </summary>
         public void WordLeft()
         {
-            SPerform(2308, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoWordLeft(false);
+            else SPerform(2308, 0, 0);
         }   
                         
         /// <summary>
@@ -3951,7 +4522,8 @@ namespace ScintillaNet
         /// </summary>
         public void WordLeftExtend()
         {
-            SPerform(2309, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoWordLeft(true);
+            else SPerform(2309, 0, 0);
         }   
                         
         /// <summary>
@@ -3959,7 +4531,8 @@ namespace ScintillaNet
         /// </summary>
         public void WordRight()
         {
-            SPerform(2310, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoRight(false);
+            else SPerform(2310, 0, 0);
         }   
                         
         /// <summary>
@@ -3967,7 +4540,8 @@ namespace ScintillaNet
         /// </summary>
         public void WordRightExtend()
         {
-            SPerform(2311, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoRight(true);
+            else SPerform(2311, 0, 0);
         }   
                         
         /// <summary>
@@ -3975,7 +4549,8 @@ namespace ScintillaNet
         /// </summary>
         public void Home()
         {
-            SPerform(2312, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoHome(false);
+            else SPerform(2312, 0, 0);
         }   
                         
         /// <summary>
@@ -3983,7 +4558,8 @@ namespace ScintillaNet
         /// </summary>
         public void HomeExtend()
         {
-            SPerform(2313, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoHome(true);
+            else SPerform(2313, 0, 0);
         }   
                         
         /// <summary>
@@ -3991,7 +4567,8 @@ namespace ScintillaNet
         /// </summary>
         public void LineEnd()
         {
-            SPerform(2314, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoEnd(false);
+            else SPerform(2314, 0, 0);
         }   
                         
         /// <summary>
@@ -3999,7 +4576,8 @@ namespace ScintillaNet
         /// </summary>
         public void LineEndExtend()
         {
-            SPerform(2315, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoEnd(true);
+            else SPerform(2315, 0, 0);
         }   
                         
         /// <summary>
@@ -4007,7 +4585,8 @@ namespace ScintillaNet
         /// </summary>
         public void DocumentStart()
         {
-            SPerform(2316, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoFirst(false);
+            else SPerform(2316, 0, 0);
         }   
                         
         /// <summary>
@@ -4015,7 +4594,8 @@ namespace ScintillaNet
         /// </summary>
         public void DocumentStartExtend()
         {
-            SPerform(2317, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoFirst(true);
+            else SPerform(2317, 0, 0);
         }   
                         
         /// <summary>
@@ -4023,7 +4603,8 @@ namespace ScintillaNet
         /// </summary>
         public void DocumentEnd()
         {
-            SPerform(2318, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoLast(false);
+            else SPerform(2318, 0, 0);
         }   
                         
         /// <summary>
@@ -4031,7 +4612,8 @@ namespace ScintillaNet
         /// </summary>
         public void DocumentEndExtend()
         {
-            SPerform(2319, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoLast(true);
+            else SPerform(2319, 0, 0);
         }   
                         
         /// <summary>
@@ -4039,7 +4621,8 @@ namespace ScintillaNet
         /// </summary>
         public void PageUp()
         {
-            SPerform(2320, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoPageUp(false);
+            else SPerform(2320, 0, 0);
         }   
                         
         /// <summary>
@@ -4047,7 +4630,8 @@ namespace ScintillaNet
         /// </summary>
         public void PageUpExtend()
         {
-            SPerform(2321, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoPageUp(true);
+            else SPerform(2321, 0, 0);
         }   
                         
         /// <summary>
@@ -4055,7 +4639,8 @@ namespace ScintillaNet
         /// </summary>
         public void PageDown()
         {
-            SPerform(2322, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoPageDown(false);
+            else SPerform(2322, 0, 0);
         }   
                         
         /// <summary>
@@ -4063,7 +4648,8 @@ namespace ScintillaNet
         /// </summary>
         public void PageDownExtend()
         {
-            SPerform(2323, 0, 0);
+            if (this.fctb != null) this.fctb.Selection.GoPageDown(true);
+            else SPerform(2323, 0, 0);
         }   
                         
         /// <summary>
@@ -4071,7 +4657,8 @@ namespace ScintillaNet
         /// </summary>
         public void EditToggleOvertype()
         {
-            SPerform(2324, 0, 0);
+            if (this.fctb != null) this.fctb.IsReplaceMode = !this.fctb.IsReplaceMode;
+            else SPerform(2324, 0, 0);
         }   
                         
         /// <summary>
@@ -4087,7 +4674,16 @@ namespace ScintillaNet
         /// </summary>
         public void DeleteBack()
         {
-            SPerform(2326, 0, 0);
+            if (this.fctb != null)
+            {
+                if (!this.fctb.Selection.IsEmpty) this.fctb.ClearSelected();
+                else
+                {
+                    this.SetSel(this.CurrentPos - 1, this.CurrentPos);
+                    this.fctb.ClearSelected();
+                }
+            }
+            else SPerform(2326, 0, 0);
         }
 
         /// <summary>
@@ -4105,7 +4701,8 @@ namespace ScintillaNet
         /// </summary>
         public void Tab()
         {
-            SPerform(2327, 0, 0);
+            if (this.fctb != null) this.fctb.IncreaseIndent();
+            else SPerform(2327, 0, 0);
         }   
                         
         /// <summary>
@@ -4113,7 +4710,8 @@ namespace ScintillaNet
         /// </summary>
         public void BackTab()
         {
-            SPerform(2328, 0, 0);
+            if (this.fctb != null) this.fctb.DecreaseIndent();
+            else SPerform(2328, 0, 0);
         }   
                         
         /// <summary>
@@ -4121,7 +4719,12 @@ namespace ScintillaNet
         /// </summary>
         public void NewLine()
         {
-            SPerform(2329, 0, 0);
+            if (this.fctb != null)
+            {
+                int index = this.CurrentLine - 1;
+                this.fctb.TextSource.Insert(index, this.fctb.TextSource.CreateLine());
+            }
+            else SPerform(2329, 0, 0);
         }   
                         
         /// <summary>
@@ -5311,7 +5914,7 @@ namespace ScintillaNet
                     if (FocusChanged != null) FocusChanged(this);
                 }
             }
-            else if (m.Msg == WM_NOTIFY)
+            else if (this.fctb == null && m.Msg == WM_NOTIFY)
             {
                 SCNotification scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
                 if (scn.nmhdr.hwndFrom == hwndScintilla && !this.DisableAllSciEvents) 

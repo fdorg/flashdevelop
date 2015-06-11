@@ -136,8 +136,7 @@ namespace FlashDevelop.Docking
                 int count = 0;
                 foreach (ITabbedDocument document in Globals.MainForm.Documents)
                 {
-                    if (document.DockHandler.PanelPane == DockHandler.PanelPane)
-                        count++;
+                    if (document.DockHandler.PanelPane == DockHandler.PanelPane) count++;
                 }
                 return count <= 1;
             }
