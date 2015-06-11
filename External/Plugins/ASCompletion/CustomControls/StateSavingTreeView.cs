@@ -53,14 +53,14 @@ namespace System.Windows.Forms
 
         new public void BeginUpdate()
         {
-            Win32.SendMessage(Handle, Win32.WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
+            if (Win32.ShouldUseWin32()) Win32.SendMessage(Handle, Win32.WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
             base.BeginUpdate();
         }
 
         new public void EndUpdate()
         {
             base.EndUpdate();
-            Win32.SendMessage(Handle, Win32.WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);
+            if (Win32.ShouldUseWin32()) Win32.SendMessage(Handle, Win32.WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);
         }
 
         #region Expanded State Saving

@@ -956,7 +956,7 @@ namespace PluginCore.Controls
         /// </summary>
         public void BeginUpdate()
         {
-            Win32.SendMessage(this.Handle, Win32.WM_SETREDRAW, 0, 0);
+            if (Win32.ShouldUseWin32()) Win32.SendMessage(this.Handle, Win32.WM_SETREDRAW, 0, 0);
             this.inUpdate = true;
         }
 
@@ -965,7 +965,7 @@ namespace PluginCore.Controls
         /// </summary>
         public void EndUpdate()
         {
-            Win32.SendMessage(this.Handle, Win32.WM_SETREDRAW, 1, 0);
+            if (Win32.ShouldUseWin32()) Win32.SendMessage(this.Handle, Win32.WM_SETREDRAW, 1, 0);
             this.inUpdate = false;
             this.SetUpScrollBar();
             this.Refresh();

@@ -109,7 +109,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Converts a integer (BGR order) to a color
         /// </summary>
-        private static Color BGRToColor(Int32 bgr)
+        public static Color BGRToColor(Int32 bgr)
         {
             return Color.FromArgb((bgr >> 0) & 0xff, (bgr >> 8) & 0xff, (bgr >> 16) & 0xff);
         }
