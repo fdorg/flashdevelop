@@ -259,7 +259,7 @@ namespace HaXeContext
             String metaList = process.StandardOutput.ReadToEnd();
             process.Close();
 
-            Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?= @:[a-zA-Z]* :)");
+            Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
             metaList = Regex.Replace(metaList, "\\s+", " ");
 
             MatchCollection matches = regex.Matches(metaList);
