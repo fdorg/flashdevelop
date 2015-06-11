@@ -170,8 +170,7 @@ namespace ASCompletion.Completion
                         break;
 
                     case ':':
-                        if (ASContext.Context.CurrentModel.haXe && 
-                            ASContext.Context.CurrentMember == null && prevValue == '@')
+                        if (ASContext.Context.CurrentModel.haXe && prevValue == '@')
                         {
                             return HandleMetadataCompletion(Sci, autoHide);
                         }
