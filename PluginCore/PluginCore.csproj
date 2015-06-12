@@ -326,6 +326,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FastColoredTB\Ruler.Designer.cs" />
+    <Compile Include="FastColoredTB\CustomHighlighter.cs" />
     <Compile Include="FastColoredTB\Style.cs" />
     <Compile Include="FastColoredTB\SyntaxDescriptor.cs" />
     <Compile Include="FastColoredTB\SyntaxHighlighter.cs" />

@@ -226,6 +226,7 @@ namespace ScintillaNet
             this.fctb.Paddings = new Padding(4);
             this.fctb.LeftPadding = 10;
             this.Controls.Add(this.fctb);
+            FastColoredTextBoxNS.CustomHighlighter.Init(this.fctb);
         }
 
         private void ApplyEditorStyles(string language)
@@ -259,9 +260,10 @@ namespace ScintillaNet
                 }
                 else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.BraceLight)
                 {
-                    Color color = DataConverter.BGRToColor(style.BackgroundColor);
+                    Color color = DataConverter.BGRToColor(style.BackgroundColor, 125);
                     this.fctb.BracketsStyle = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
                     this.fctb.BracketsStyle2 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                    this.fctb.BracketsStyle3 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
                 }
             }
             this.fctb.ServiceColors.CollapseMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
@@ -274,23 +276,102 @@ namespace ScintillaNet
             //
             this.fctb.CurrentLineColor = DataConverter.BGRToColor(lang.editorstyle.CaretLineBackgroundColor);
             this.fctb.SelectionColor = DataConverter.BGRToColor(lang.editorstyle.SelectionBackgroundColor);
-            //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
+            this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
+
+            //this.fctb.SyntaxHighlighter = null;
             /*
             EdgeColour = lang.editorstyle.PrintMarginColor;
             */
+        }
+
+        private FastColoredTextBoxNS.Style GetFCTBStyle(int style)
+        {
+            if (style < 0 || style > 31 || this.fctb.Styles[style] == null)
+            {
+                return this.fctb.DefaultStyle;
+            }
+            else return this.fctb.Styles[style];
+        }
+
+        private void SetFCTBStyleString(int index, string value, string type)
+        {
+            FastColoredTextBoxNS.Style style = GetFCTBStyle(index);
+            if (style is FastColoredTextBoxNS.TextStyle)
+            {
+                FastColoredTextBoxNS.TextStyle cast = style as FastColoredTextBoxNS.TextStyle;
+                switch (type)
+                {
+                    case "font":
+                        // TODO: CANT ADJUST FOR STYLE?
+                        break;
+                }
+            }
+        }
+
+        private void SetFCTBStyleInt(int index, int value, string type)
+        {
+            TraceManager.Add("Set: " + index + "=" + value + ", type: " + type);
+            FastColoredTextBoxNS.Style style = GetFCTBStyle(index);
+            if (style is FastColoredTextBoxNS.TextStyle)
+            {
+                Color color = DataConverter.BGRToColor(value);
+                FastColoredTextBoxNS.TextStyle cast = style as FastColoredTextBoxNS.TextStyle;
+                switch (type)
+                {
+                    case "fore":
+                        cast.ForeBrush = new SolidBrush(color);
+                        break;
+                    case "back":
+                        cast.BackgroundBrush = new SolidBrush(color);
+                        break;
+                    case "italic":
+                        if (value == 1) cast.FontStyle |= FontStyle.Italic;
+                        else cast.FontStyle &= ~FontStyle.Italic;
+                        break;
+                    case "bold":
+                        if (value == 1) cast.FontStyle |= FontStyle.Bold;
+                        else cast.FontStyle &= ~FontStyle.Bold;
+                        break;
+                    case "visible":
+                        cast.ForeBrush = new SolidBrush(Color.Transparent); // CHECK
+                        cast.BackgroundBrush = new SolidBrush(Color.Transparent);
+                        break;
+                    case "readonly":
+                        // TODO: CANT ADJUST FOR STYLE?
+                        break;
+                    case "hotspot":
+                        // TODO: CANT ADJUST FOR STYLE?
+                        break;
+                    case "charset":
+                        // TODO: CANT ADJUST FOR STYLE?
+                        break;
+                    case "underline":
+                        // TODO: CANT ADJUST FOR STYLE?
+                        break;
+                    case "size":
+                        // TODO: CANT ADJUST FOR STYLE?
+                        break;
+                    case "case":
+                        // TODO: CANT ADJUST FOR STYLE?
+                        break;
+                    case "eol":
+                        // TODO: CANT ADJUST FOR STYLE?
+                        break;
+                }
+            }
         }
 
         private FastColoredTextBoxNS.Language LanguageToFCTB(string language)
         {
             switch (language)
             {
-                case "jscript": return FastColoredTextBoxNS.Language.JS;
-                case "csharp": return FastColoredTextBoxNS.Language.CSharp;
-                case "html": return FastColoredTextBoxNS.Language.HTML;
                 case "php": return FastColoredTextBoxNS.Language.PHP;
                 case "xml": return FastColoredTextBoxNS.Language.XML;
-                default: return FastColoredTextBoxNS.Language.JS;
+                case "html": return FastColoredTextBoxNS.Language.HTML;
+                case "jscript": return FastColoredTextBoxNS.Language.JS;
+                case "csharp": return FastColoredTextBoxNS.Language.CSharp;
+                default: return FastColoredTextBoxNS.Language.CSharp;
             }
         }
 
@@ -491,10 +572,11 @@ namespace ScintillaNet
                 if (this.fctb != null)
                 {
                     this.configLanguage = value;
-                    this.fctb.Language = LanguageToFCTB(value);
+                    //this.fctb.Language = LanguageToFCTB(value);
                     this.ApplyEditorStyles(value);
                 }
                 else this.SetLanguage(value);
+                //this.fctb.Language = LanguageToFCTB(value);
             }
         }
 
@@ -2951,22 +3033,24 @@ namespace ScintillaNet
                 }
             }
             else SPerform(2229, (uint)line, (uint)(expanded ? 1 : 0));
-        }   
-        
+        }
+
         /// <summary>
         /// Clear all the styles and make equivalent to the global default style.
         /// </summary>
         public void StyleClearAll()
         {
-            SPerform(2050, 0, 0);
-        }   
+            if (this.fctb != null) this.fctb.ClearStylesBuffer(); // CHECK?
+            else SPerform(2050, 0, 0);
+        } 
 
         /// <summary>
         /// Set the foreground colour of a style.
         /// </summary>
         public void StyleSetFore(int style, int fore)
         {
-            SPerform(2051, (uint)style, (uint)fore);
+            if (this.fctb != null) SetFCTBStyleInt(style, fore, "fore");
+            else SPerform(2051, (uint)style, (uint)fore);
         }   
 
         /// <summary>
@@ -2974,7 +3058,8 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetBack(int style, int back)
         {
-            SPerform(2052, (uint)style, (uint)back);
+            if (this.fctb != null) SetFCTBStyleInt(style, back, "back");
+            else SPerform(2052, (uint)style, (uint)back);
         }   
 
         /// <summary>
@@ -2982,7 +3067,8 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetBold(int style, bool bold)
         {
-            SPerform(2053, (uint)style, (uint)(bold ? 1 : 0));
+            if (this.fctb != null) SetFCTBStyleInt(style, bold ? 1 : 0, "bold");
+            else SPerform(2053, (uint)style, (uint)(bold ? 1 : 0));
         }   
 
         /// <summary>
@@ -2990,7 +3076,8 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetItalic(int style, bool italic)
         {
-            SPerform(2054, (uint)style, (uint)(italic ? 1 : 0));
+            if (this.fctb != null) SetFCTBStyleInt(style, italic ? 1 : 0, "italic");
+            else SPerform(2054, (uint)style, (uint)(italic ? 1 : 0));
         }   
 
         /// <summary>
@@ -2998,7 +3085,8 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetSize(int style, int sizePoints)
         {
-            SPerform(2055, (uint)style, (uint)sizePoints);
+            if (this.fctb != null) SetFCTBStyleInt(style, sizePoints, "size");
+            else SPerform(2055, (uint)style, (uint)sizePoints);
         }   
 
         /// <summary>
@@ -3006,10 +3094,14 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void StyleSetFont(int style, string fontName)
         {
-            if (fontName == null || fontName.Equals("")) fontName = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(fontName)) 
+            if (this.fctb != null) SetFCTBStyleString(style, fontName, "font");
+            else
             {
-                SPerform(2056,(uint)style, (uint)b );
+                if (fontName == null || fontName.Equals("")) fontName = "\0\0";
+                fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(fontName))
+                {
+                    SPerform(2056, (uint)style, (uint)b);
+                }
             }
         }   
                         
@@ -3018,15 +3110,17 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetEOLFilled(int style, bool filled)
         {
-            SPerform(2057, (uint)style, (uint)(filled ? 1 : 0));
+            if (this.fctb != null) SetFCTBStyleInt(style, filled ? 1 : 0, "eol");
+            else SPerform(2057, (uint)style, (uint)(filled ? 1 : 0));
         }   
 
         /// <summary>
         /// Set a style to be underlined or not.
         /// </summary>
-        public void StyleSetUnderline(int style, bool underline )
+        public void StyleSetUnderline(int style, bool underline)
         {
-            SPerform(2059, (uint)style, (uint)(underline?1:0) );
+            if (this.fctb != null) SetFCTBStyleInt(style, underline ? 1 : 0, "underline");
+            else SPerform(2059, (uint)style, (uint)(underline ? 1 : 0));
         }   
 
         /// <summary>
@@ -3034,15 +3128,17 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetCase(int style, int caseForce)
         {
-            SPerform(2060, (uint)style, (uint)caseForce);
+            if (this.fctb != null) SetFCTBStyleInt(style, caseForce, "case");
+            else SPerform(2060, (uint)style, (uint)caseForce);
         }   
 
         /// <summary>
         /// Set the character set of the font in a style.
         /// </summary>
-        public void StyleSetCharacterSet(int style, int characterSet )
+        public void StyleSetCharacterSet(int style, int characterSet)
         {
-            SPerform(2066, (uint)style, (uint)characterSet);
+            if (this.fctb != null) SetFCTBStyleInt(style, characterSet, "charset");
+            else SPerform(2066, (uint)style, (uint)characterSet);
         }   
 
         /// <summary>
@@ -3050,7 +3146,8 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetHotSpot(int style, bool hotspot)
         {
-            SPerform(2409, (uint)style, (uint)(hotspot ? 1 : 0));
+            if (this.fctb != null) SetFCTBStyleInt(style, hotspot ? 1 : 0, "hotspot");
+            else SPerform(2409, (uint)style, (uint)(hotspot ? 1 : 0));
         }   
 
         /// <summary>
@@ -3058,7 +3155,8 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetVisible(int style, bool visible)
         {
-            SPerform(2074, (uint)style, (uint)(visible ? 1 : 0));
+            if (this.fctb != null) SetFCTBStyleInt(style, visible ? 1 : 0, "visible");
+            else SPerform(2074, (uint)style, (uint)(visible ? 1 : 0));
         }   
 
         /// <summary>
@@ -3076,18 +3174,18 @@ namespace ScintillaNet
 
         /// <summary>
         /// Set a style to be changeable or not (read only).
-        /// Experimental feature, currently buggy.
         /// </summary>
-        public void StyleSetChangeable(int style, bool changeable )
+        public void StyleSetChangeable(int style, bool changeable)
         {
-            SPerform(2099, (uint)style, (uint)(changeable?1:0) );
+            if (this.fctb != null) SetFCTBStyleInt(style, changeable ? 1 : 0, "readonly");
+            else SPerform(2099, (uint)style, (uint)(changeable ? 1 : 0));
         }   
 
         /// <summary>
         /// Define a set of characters that when typed will cause the autocompletion to
         /// choose the selected item.
         /// </summary>
-        unsafe public void AutoCSetFillUps(string characterSet )
+        unsafe public void AutoCSetFillUps(string characterSet)
         {
             if (characterSet == null || characterSet.Equals("")) characterSet = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(characterSet))
@@ -3880,7 +3978,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetLine(int line)
         {
-            if (this.fctb != null) return (line < 0 || line > this.LineCount - 1) ? this.fctb.GetLineText(line) : "";
+            if (this.fctb != null) return (line < 0 || line > this.LineCount) ? this.fctb.GetLineText(line) : "";
             else
             {
                 int sz = (int)SPerform(2153, (uint)line, 0);
