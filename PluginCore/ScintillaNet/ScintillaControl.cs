@@ -203,12 +203,13 @@ namespace ScintillaNet
 
         #region FastColoredTB
 
+        private FastColoredTextBoxNS.CustomHighlighter chl;
         private FastColoredTextBoxNS.FastColoredTextBox fctb;
 
         private void InitCustomEditor()
         {
             this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.fctb.Language = FastColoredTextBoxNS.Language.JS;
+            this.fctb.SyntaxHighlighter = null;
             this.fctb.Dock = DockStyle.Fill;
             this.fctb.ShowLineNumbers = true;
             this.fctb.ShowFoldingLines = true;
@@ -226,7 +227,8 @@ namespace ScintillaNet
             this.fctb.Paddings = new Padding(4);
             this.fctb.LeftPadding = 10;
             this.Controls.Add(this.fctb);
-            FastColoredTextBoxNS.CustomHighlighter.Init(this.fctb);
+
+            this.chl = new FastColoredTextBoxNS.CustomHighlighter(this.fctb);
         }
 
         private void ApplyEditorStyles(string language)
@@ -264,6 +266,16 @@ namespace ScintillaNet
                     this.fctb.BracketsStyle2 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
                     this.fctb.BracketsStyle3 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
                 }
+                else
+                {
+                    if (style.HasForegroundColor) StyleSetFore(style.key, style.ForegroundColor);
+                    if (style.HasBackgroundColor) StyleSetBack(style.key, style.BackgroundColor);
+                    if (style.HasFontName) StyleSetFont(style.key, style.FontName);
+                    if (style.HasFontSize) StyleSetSize(style.key, style.FontSize);
+                    if (style.HasBold) StyleSetBold(style.key, style.IsBold);
+                    if (style.HasItalics) StyleSetItalic(style.key, style.IsItalics);
+                    if (style.HasEolFilled) StyleSetEOLFilled(style.key, style.IsEolFilled);
+                } 
             }
             this.fctb.ServiceColors.CollapseMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
             this.fctb.ServiceColors.CollapseMarkerBorderColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
@@ -280,83 +292,6 @@ namespace ScintillaNet
             // EdgeColour = lang.editorstyle.PrintMarginColor;
         }
 
-        private FastColoredTextBoxNS.Style GetFCTBStyle(int style)
-        {
-            if (style < 0 || style > 31 || this.fctb.Styles[style] == null)
-            {
-                return this.fctb.DefaultStyle;
-            }
-            else return this.fctb.Styles[style];
-        }
-
-        private void SetFCTBStyleString(int index, string value, string type)
-        {
-            FastColoredTextBoxNS.Style style = GetFCTBStyle(index);
-            if (style is FastColoredTextBoxNS.TextStyle)
-            {
-                FastColoredTextBoxNS.TextStyle cast = style as FastColoredTextBoxNS.TextStyle;
-                switch (type)
-                {
-                    case "font":
-                        // TODO: CANT ADJUST FOR STYLE?
-                        break;
-                }
-            }
-        }
-
-        private void SetFCTBStyleInt(int index, int value, string type)
-        {
-            TraceManager.Add("Set: " + index + "=" + value + ", type: " + type);
-            FastColoredTextBoxNS.Style style = GetFCTBStyle(index);
-            if (style is FastColoredTextBoxNS.TextStyle)
-            {
-                Color color = DataConverter.BGRToColor(value);
-                FastColoredTextBoxNS.TextStyle cast = style as FastColoredTextBoxNS.TextStyle;
-                switch (type)
-                {
-                    case "fore":
-                        cast.ForeBrush = new SolidBrush(color);
-                        break;
-                    case "back":
-                        cast.BackgroundBrush = new SolidBrush(color);
-                        break;
-                    case "italic":
-                        if (value == 1) cast.FontStyle |= FontStyle.Italic;
-                        else cast.FontStyle &= ~FontStyle.Italic;
-                        break;
-                    case "bold":
-                        if (value == 1) cast.FontStyle |= FontStyle.Bold;
-                        else cast.FontStyle &= ~FontStyle.Bold;
-                        break;
-                    case "visible":
-                        cast.ForeBrush = new SolidBrush(Color.Transparent); // CHECK
-                        cast.BackgroundBrush = new SolidBrush(Color.Transparent);
-                        break;
-                    case "readonly":
-                        // TODO: CANT ADJUST FOR STYLE?
-                        break;
-                    case "hotspot":
-                        // TODO: CANT ADJUST FOR STYLE?
-                        break;
-                    case "charset":
-                        // TODO: CANT ADJUST FOR STYLE?
-                        break;
-                    case "underline":
-                        // TODO: CANT ADJUST FOR STYLE?
-                        break;
-                    case "size":
-                        // TODO: CANT ADJUST FOR STYLE?
-                        break;
-                    case "case":
-                        // TODO: CANT ADJUST FOR STYLE?
-                        break;
-                    case "eol":
-                        // TODO: CANT ADJUST FOR STYLE?
-                        break;
-                }
-            }
-        }
-
         private FastColoredTextBoxNS.Language LanguageToFCTB(string language)
         {
             switch (language)
@@ -369,6 +304,16 @@ namespace ScintillaNet
                 default: return FastColoredTextBoxNS.Language.CSharp;
             }
         }
+
+        private void SetFCTBStyleInt(int index, int value, string type)
+        {
+            this.chl.SetStyleInt(index, value, type);
+        }
+
+        private void SetFCTBStyleString(int index, string value, string type)
+        {
+            this.chl.SetStyleString(index, value, type);
+        }  
 
         private void OnEditorDoubleClick(object sender, EventArgs e)
         {
@@ -3046,7 +2991,7 @@ namespace ScintillaNet
         {
             if (this.fctb != null) SetFCTBStyleInt(style, fore, "fore");
             else SPerform(2051, (uint)style, (uint)fore);
-        }   
+        } 
 
         /// <summary>
         /// Set the background colour of a style.
@@ -3098,7 +3043,7 @@ namespace ScintillaNet
                     SPerform(2056, (uint)style, (uint)b);
                 }
             }
-        }   
+        } 
                         
         /// <summary>
         /// Set a style to have its end of line filled or not.
