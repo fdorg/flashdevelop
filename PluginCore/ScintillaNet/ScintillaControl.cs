@@ -232,8 +232,6 @@ namespace ScintillaNet
         private void ApplyEditorStyles(string language)
         {
             Language lang = sciConfiguration.GetLanguage(language);
-            this.fctb.Font = new Font("Consolas", 9f, FontStyle.Regular);
-            this.fctb.DisabledColor = Color.Lime;
             foreach (UseStyle style in lang.usestyles)
             {
                 // TODO: Fix this
@@ -243,12 +241,13 @@ namespace ScintillaNet
                     FontStyle fontStyle = FontStyle.Regular;
                     if (style.IsBold) fontStyle |= FontStyle.Bold;
                     if (style.IsItalics) fontStyle |= FontStyle.Italic;
+                    this.fctb.Font = new Font(style.FontName, style.FontSize, FontStyle.Regular);
                     Color fore = DataConverter.BGRToColor(style.ForegroundColor);
                     Color back = DataConverter.BGRToColor(style.BackgroundColor);
                     this.fctb.DefaultStyle = new FastColoredTextBoxNS.TextStyle(new SolidBrush(fore), new SolidBrush(back), fontStyle);
                     this.fctb.BackColor = this.fctb.ChangedLineColor = this.fctb.PaddingBackColor = back;
-                    this.fctb.IndentBackColor = back;
                     this.fctb.FoldingIndicatorColor = Color.Lime;
+                    this.fctb.IndentBackColor = back;
                 }
                 else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.LineNumber)
                 {
@@ -272,17 +271,13 @@ namespace ScintillaNet
             this.fctb.ServiceColors.ExpandMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
             this.fctb.ServiceColors.ExpandMarkerBorderColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
             this.fctb.ServiceColors.ExpandMarkerForeColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
+            this.fctb.DisabledColor = Color.Lime;
             this.fctb.CaretColor = DataConverter.BGRToColor(lang.editorstyle.CaretForegroundColor);
-            //
             this.fctb.CurrentLineColor = DataConverter.BGRToColor(lang.editorstyle.CaretLineBackgroundColor);
             this.fctb.SelectionColor = DataConverter.BGRToColor(lang.editorstyle.SelectionBackgroundColor);
-            this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
+            //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
-
-            //this.fctb.SyntaxHighlighter = null;
-            /*
-            EdgeColour = lang.editorstyle.PrintMarginColor;
-            */
+            // EdgeColour = lang.editorstyle.PrintMarginColor;
         }
 
         private FastColoredTextBoxNS.Style GetFCTBStyle(int style)
@@ -2567,7 +2562,7 @@ namespace ScintillaNet
                 if (this.fctb != null)
                 {
                     if (this.fctb.Cursor == Cursors.WaitCursor) return (int)Enums.CursorShape.Wait;
-                    else return (int)Enums.CursorShape.Normal; // Arrow
+                    else return (int)Enums.CursorShape.Normal; // IBeam
                 }
                 else return (int)SPerform(2387, 0, 0);
             }
@@ -2576,7 +2571,7 @@ namespace ScintillaNet
                 if (this.fctb != null)
                 {
                     if (value == (int)Enums.CursorShape.Wait) this.fctb.Cursor = Cursors.WaitCursor;
-                    else this.fctb.Cursor = Cursors.Arrow;
+                    else this.fctb.Cursor = Cursors.IBeam;
                 }
                 else SPerform(2386, (uint)value, 0);
             }

@@ -4,6 +4,7 @@ using System.Text;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using ScintillaNet.Enums;
 
 namespace FastColoredTextBoxNS
 {
@@ -12,6 +13,14 @@ namespace FastColoredTextBoxNS
         private static FastColoredTextBox editor;
         private static Regex[] regexes = new Regex[32];
         private static Style[] styles = new Style[32];
+
+        /**
+        * Built in styles:
+        * DefaultStyle, SelectionStyle, FoldedBlockStyle, BracketsStyle, BracketsStyle2, BracketsStyle3
+        * Built in colors:
+        * BackColor (BackBrush too), ForeColor, CurrentLineColor, ChangedLineColor, BookmarkColor, LineNumberColor, IndentBackColor, PaddingBackColor, 
+        * DisabledColor, CaretColor, ServiceLinesColor, FoldingIndicatorColor, ServiceColors (has 6), 
+        */
 
         /*
         DEFAULT = 0,
@@ -41,6 +50,7 @@ namespace FastColoredTextBoxNS
         WORD3 = 24,
         WORD4 = 25,
         WORD5 = 26,
+        //
         GDEFAULT = 32,
         LINENUMBER = 33,
         BRACELIGHT = 34,
@@ -53,6 +63,7 @@ namespace FastColoredTextBoxNS
         public static void Init(FastColoredTextBox fctb)
         {
             editor = fctb;
+            editor.AllowSeveralTextStyleDrawing = true;
             styles = new Style[32];
             regexes = new Regex[32];
             for (int i = 0; i < 32; i++)
@@ -60,6 +71,7 @@ namespace FastColoredTextBoxNS
                 regexes[i] = new Regex("");
                 styles[i] = new TextStyle(new SolidBrush(SystemColors.Highlight), null, System.Drawing.FontStyle.Regular);
             }
+            regexes[31] = new Regex(@"\b(class|var|else|if)\b");
             editor.TextChanged += OnTextChangedDelayed;
         }
 
@@ -80,7 +92,7 @@ namespace FastColoredTextBoxNS
 
             // set styles
             range.ClearStyle(styles);
-            range.SetStyle(styles[31], @"\b(class|var|else|if)\b");
+            range.SetStyle(styles[31], regexes[31]);
 
             // set folding markers
             range.ClearFoldingMarkers();

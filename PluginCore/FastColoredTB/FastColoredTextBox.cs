@@ -204,7 +204,7 @@ namespace FastColoredTextBoxNS
             caretVisible = true;
             CaretColor = Color.Black;
             WideCaret = false;
-            CaretWidth = 2;
+            CaretWidth = 1;
             Paddings = new Padding(0, 0, 0, 0);
             PaddingBackColor = Color.Transparent;
             DisabledColor = Color.FromArgb(100, 180, 180, 180);
@@ -698,7 +698,7 @@ namespace FastColoredTextBoxNS
         /// <summary>
         /// Caret width
         /// </summary>
-        [DefaultValue(2)]
+        [DefaultValue(1)]
         [Description("Caret width.")]
         public int CaretWidth { get; set; }
 
@@ -5090,26 +5090,31 @@ namespace FastColoredTextBoxNS
             DrawMarkers(e, servicePen);
             //draw caret
             Point car = PlaceToPoint(Selection.Start);
+            // MODDED
+            car.Offset(-1, 0);
             var caretHeight = CharHeight - lineInterval;
             car.Offset(0, lineInterval / 2);
 
             if ((Focused || IsDragDrop) && car.X >= LeftIndent && CaretVisible)
             {
                 // MODDED
-                int carWidth = (IsReplaceMode || WideCaret) ? CharWidth : 2;
+                int carWidth = (IsReplaceMode || WideCaret) ? CharWidth : CaretWidth;
                 //int carWidth = (IsReplaceMode || WideCaret) ? CharWidth : 1;
-                if (WideCaret)
+                if (!Win32.ShouldUseWin32() || CaretBlinking)
                 {
-                    using (var brush = new SolidBrush(CaretColor))
-                        e.Graphics.FillRectangle(brush, car.X, car.Y, carWidth, caretHeight + 1);
-                }
-                else
-                {
-                    // MODDED
-                    using (var brush = new SolidBrush(CaretColor))
-                        e.Graphics.FillRectangle(brush, car.X, car.Y, carWidth, caretHeight + 1);
-                    //using (var pen = new Pen(CaretColor))
-                    //e.Graphics.DrawLine(pen, car.X, car.Y, car.X, car.Y + caretHeight);
+                    if (WideCaret)
+                    {
+                        using (var brush = new SolidBrush(CaretColor))
+                            e.Graphics.FillRectangle(brush, car.X, car.Y, carWidth, caretHeight + 1);
+                    }
+                    else
+                    {
+                        // MODDED
+                        using (var brush = new SolidBrush(CaretColor))
+                            e.Graphics.FillRectangle(brush, car.X, car.Y, carWidth, caretHeight + 1);
+                        //using (var pen = new Pen(CaretColor))
+                        //e.Graphics.DrawLine(pen, car.X, car.Y, car.X, car.Y + caretHeight);
+                    }
                 }
                 var caretRect = new Rectangle(HorizontalScroll.Value + car.X, VerticalScroll.Value + car.Y, carWidth, caretHeight + 1);
 
