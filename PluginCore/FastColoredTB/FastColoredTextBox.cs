@@ -5100,7 +5100,7 @@ namespace FastColoredTextBoxNS
                 // MODDED
                 int carWidth = (IsReplaceMode || WideCaret) ? CharWidth : CaretWidth;
                 //int carWidth = (IsReplaceMode || WideCaret) ? CharWidth : 1;
-                if (!Win32.ShouldUseWin32() || CaretBlinking)
+                if (!Win32.ShouldUseWin32() || !CaretBlinking)
                 {
                     if (WideCaret)
                     {
@@ -7006,6 +7006,8 @@ namespace FastColoredTextBoxNS
             rightBracketPosition = null;
             leftBracketPosition2 = null;
             rightBracketPosition2 = null;
+            leftBracketPosition3 = null;
+            rightBracketPosition3 = null;
         }
 
         /// <summary>
@@ -7013,7 +7015,7 @@ namespace FastColoredTextBoxNS
         /// </summary>
         private void HighlightBrackets(char LeftBracket, char RightBracket, ref Range leftBracketPosition, ref Range rightBracketPosition)
         {
-            switch(BracketsHighlightStrategy)
+            switch (BracketsHighlightStrategy)
             {
                 case BracketsHighlightStrategy.Strategy1: HighlightBrackets1(LeftBracket, RightBracket, ref leftBracketPosition, ref rightBracketPosition); break;
                 case BracketsHighlightStrategy.Strategy2: HighlightBrackets2(LeftBracket, RightBracket, ref leftBracketPosition, ref rightBracketPosition); break;

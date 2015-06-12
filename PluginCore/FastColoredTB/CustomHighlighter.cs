@@ -88,7 +88,7 @@ namespace FastColoredTextBoxNS
             range.tb.LeftBracket3 = '[';
             range.tb.RightBracket3 = ']';
             range.tb.AutoIndentCharsPatterns = @"^\s*[\w\.]+(\s\w+)?\s*(?<range>=)\s*(?<range>[^;]+);^\s*(case|default)\s*[^:]*(?<range>:)\s*(?<range>[^;]+);";
-            range.tb.BracketsHighlightStrategy = BracketsHighlightStrategy.Strategy2;
+            range.tb.BracketsHighlightStrategy = BracketsHighlightStrategy.Strategy1;
 
             // set styles
             range.ClearStyle(styles);
