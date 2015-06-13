@@ -8,12 +8,14 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ScintillaNet.Configuration;
 using System.Drawing.Printing;
+using FastColoredTextBoxNS;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
+using Language = ScintillaNet.Configuration.Language;
 
 namespace ScintillaNet
 {
@@ -203,12 +205,12 @@ namespace ScintillaNet
 
         #region FastColoredTB
 
-        private FastColoredTextBoxNS.CustomHighlighter chl;
         private FastColoredTextBoxNS.FastColoredTextBox fctb;
 
         private void InitCustomEditor()
         {
             this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.fctb.CustomHighlighter = new FastColoredTextBoxNS.CustomHighlighter(this.fctb);
             this.fctb.SyntaxHighlighter = null;
             this.fctb.Dock = DockStyle.Fill;
             this.fctb.ShowLineNumbers = true;
@@ -227,8 +229,6 @@ namespace ScintillaNet
             this.fctb.Paddings = new Padding(4);
             this.fctb.LeftPadding = 10;
             this.Controls.Add(this.fctb);
-
-            this.chl = new FastColoredTextBoxNS.CustomHighlighter(this.fctb);
         }
 
         private void ApplyEditorStyles(string language)
@@ -290,7 +290,7 @@ namespace ScintillaNet
             //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
             // EdgeColour = lang.editorstyle.PrintMarginColor;
-            this.chl.Language = lang;
+            this.fctb.CustomHighlighter.Language = lang;
         }
 
         private FastColoredTextBoxNS.Language LanguageToFCTB(string language)
@@ -308,12 +308,12 @@ namespace ScintillaNet
 
         private void SetFCTBStyleInt(int index, int value, string type)
         {
-            this.chl.SetStyleInt(index, value, type);
+            this.fctb.CustomHighlighter.SetStyleInt(index, value, type);
         }
 
         private void SetFCTBStyleString(int index, string value, string type)
         {
-            this.chl.SetStyleString(index, value, type);
+            this.fctb.CustomHighlighter.SetStyleString(index, value, type);
         }  
 
         private void OnEditorDoubleClick(object sender, EventArgs e)
@@ -5457,7 +5457,8 @@ namespace ScintillaNet
         /// </summary>
         public void Colourise(int start, int end)
         {
-             SPerform(4003, (uint)start, (uint)end);
+            if (end < start) this.fctb.CustomHighlighter.Colourize();
+            SPerform(4003, (uint)start, (uint)end);
         }   
                         
         /// <summary>

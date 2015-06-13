@@ -56,17 +56,22 @@ namespace FastColoredTextBoxNS
         {
             editor = fctb;
             //editor.AllowSeveralTextStyleDrawing = true;
-            editor.TextChanged += OnTextChangedDelayed;
         }
 
         private void InitCppRegexes()
         {
-            // Try few...
             regexes[CPP.COMMENT] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled);
             regexes[CPP.COMMENTLINE] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled);
             regexes[CPP.NUMBER] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled);
             regexes[CPP.WORD] = new Regex(@"\b(public|private|static|const|import|package|class|function|default|throw|new|switch|case|var|else|if|return|null|for|while)\b");
             regexes[CPP.STRING] = new Regex(@"""((\\[^\n]|[^""\n])*)""");
+        }
+
+        public void Colourize()
+        {
+            editor.ClearStylesBuffer();
+            editor.Range.ClearStyle(StyleIndex.All);
+            editor.OnSyntaxHighlight(new TextChangedEventArgs(editor.Range));
         }
 
         public FastColoredTextBoxNS.Style GetStyle(int index)
@@ -144,10 +149,8 @@ namespace FastColoredTextBoxNS
             }
         }
 
-        private void OnTextChangedDelayed(Object sender, TextChangedEventArgs e)
+        public void HighlightSyntax(Range range)
         {
-            Range range = editor.Range;
-
             // set options
             range.tb.CommentPrefix = "//";
             range.tb.LeftBracket = '(';
