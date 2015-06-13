@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using ScintillaNet.Enums;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet.Configuration;
@@ -25,18 +20,13 @@ namespace FastColoredTextBoxNS
                     UseStyle style = language.GetUseStyle(i);
                     if (style != null)
                         styles[i] = new TextStyle(
-                            BrushFromRGB(style.ForegroundColor),
-                            BrushFromRGB(style.BackgroundColor),
+                            DataConverter.BGRToBrush(style.ForegroundColor),
+                            DataConverter.BGRToBrush(style.BackgroundColor),
                             System.Drawing.FontStyle.Regular);
                 }
                 InitCppRegexes();
             }
             get { return language; }
-        }
-
-        private Brush BrushFromRGB(int color)
-        {
-            return new SolidBrush(DataConverter.BGRToColor(color));
         }
 
         private ScintillaNet.Configuration.Language language;
@@ -170,6 +160,8 @@ namespace FastColoredTextBoxNS
 
         public void HighlightSyntax(Range range)
         {
+            if (language == null) return;
+
             // set options
             range.tb.CommentPrefix = "//";
             range.tb.LeftBracket = '(';

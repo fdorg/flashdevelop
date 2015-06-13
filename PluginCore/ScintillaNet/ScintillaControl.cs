@@ -286,7 +286,9 @@ namespace ScintillaNet
             this.fctb.DisabledColor = Color.Lime;
             this.fctb.CaretColor = DataConverter.BGRToColor(lang.editorstyle.CaretForegroundColor);
             this.fctb.CurrentLineColor = DataConverter.BGRToColor(lang.editorstyle.CaretLineBackgroundColor);
-            this.fctb.SelectionColor = DataConverter.BGRToColor(lang.editorstyle.SelectionBackgroundColor);
+            this.fctb.SelectionStyle = new SelectionStyle(
+                DataConverter.BGRToBrush(lang.editorstyle.SelectionBackgroundColor),
+                DataConverter.BGRToBrush(lang.editorstyle.SelectionForegroundColor));
             //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
             // EdgeColour = lang.editorstyle.PrintMarginColor;

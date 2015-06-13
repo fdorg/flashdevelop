@@ -118,6 +118,11 @@ namespace PluginCore.Utilities
             return Color.FromArgb(trans, (bgr >> 0) & 0xff, (bgr >> 8) & 0xff, (bgr >> 16) & 0xff);
         }
 
+        public static Brush BGRToBrush(int color)
+        {
+            return new SolidBrush(BGRToColor(color));
+        }
+
         /// <summary>
         /// Converts a color to an integer (BGR order)
         /// </summary>
