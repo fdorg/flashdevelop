@@ -63,8 +63,25 @@ namespace FastColoredTextBoxNS
             regexes[CPP.COMMENT] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled);
             regexes[CPP.COMMENTLINE] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled);
             regexes[CPP.NUMBER] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled);
-            regexes[CPP.WORD] = new Regex(@"\b(public|private|static|const|import|package|class|function|default|throw|new|switch|case|var|else|if|return|null|for|while)\b");
             regexes[CPP.STRING] = new Regex(@"""((\\[^\n]|[^""\n])*)""");
+        }
+
+        public void SetKeywords(int keywordSet, string keyWords)
+        {
+            int styleIndex = CppStyleFromKeywordSet(keywordSet);
+
+            string regex = "";
+            if (!string.IsNullOrEmpty(keyWords))
+            {
+                keyWords = Regex.Replace(keyWords, "\\s+", " ").Trim();
+                if (styleIndex == CPP.COMMENTDOCKEYWORD)
+                    regex = "@(" + keyWords.Replace(" ", "|") + ")";
+                else
+                    regex = @"\b(" + keyWords.Replace(" ", "|") + @")\b";
+            }
+ 
+            if (styleIndex >= 0)
+                regexes[styleIndex] = new Regex(regex);
         }
 
         public void Colourize()
@@ -166,11 +183,17 @@ namespace FastColoredTextBoxNS
             range.ClearStyle(styles);
 
             // order matters for priority
+            SetRangeStyle(range, CPP.COMMENTDOCKEYWORD);
             SetRangeStyle(range, CPP.COMMENT);
             SetRangeStyle(range, CPP.COMMENTLINE);
             SetRangeStyle(range, CPP.STRING);
             SetRangeStyle(range, CPP.NUMBER);
+            SetRangeStyle(range, CPP.GLOBALCLASS);
             SetRangeStyle(range, CPP.WORD);
+            SetRangeStyle(range, CPP.WORD2);
+            SetRangeStyle(range, CPP.WORD3);
+            SetRangeStyle(range, CPP.WORD4);
+            SetRangeStyle(range, CPP.WORD5);
             
             // set folding markers
             range.ClearFoldingMarkers();
@@ -182,6 +205,33 @@ namespace FastColoredTextBoxNS
         {
             if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
         }
+
+        private int CppStyleFromKeywordSet(int keywordSet)
+        {
+            switch (keywordSet)
+            {
+                case KeywordSet.PRIMARY: return CPP.WORD;
+                case KeywordSet.SECONDARY: return CPP.WORD2;
+                case KeywordSet.DOCUMENTATION: return CPP.COMMENTDOCKEYWORD;
+                case KeywordSet.GLOBAL: return CPP.GLOBALCLASS;
+                case KeywordSet.EXTENDED1: return CPP.WORD3;
+                case KeywordSet.EXTENDED2: return CPP.WORD4;
+                case KeywordSet.EXTENDED3: return CPP.WORD5;
+            }
+            return -1;
+        }
+    }
+
+    internal static class KeywordSet
+    {
+        public const int PRIMARY = 0;
+        public const int SECONDARY = 1;
+        public const int DOCUMENTATION = 2;
+        public const int GLOBAL = 3;
+        public const int PREPOCESSOR = 4; // unused
+        public const int EXTENDED1 = 5;
+        public const int EXTENDED2 = 6;
+        public const int EXTENDED3 = 7;
     }
 
     internal static class CPP

@@ -291,6 +291,7 @@ namespace ScintillaNet
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
             // EdgeColour = lang.editorstyle.PrintMarginColor;
             this.fctb.CustomHighlighter.Language = lang;
+            LoadKeywordLists(lang);
         }
 
         private FastColoredTextBoxNS.Language LanguageToFCTB(string language)
@@ -894,6 +895,12 @@ namespace ScintillaNet
                 if (usestyle.HasItalics) StyleSetItalic(usestyle.key, usestyle.IsItalics);
                 if (usestyle.HasEolFilled) StyleSetEOLFilled(usestyle.key, usestyle.IsEolFilled);
             }
+            LoadKeywordLists(lang);
+            if (UpdateSync != null) this.UpdateSync(this);
+        }
+
+        private void LoadKeywordLists(Language lang)
+        {
             // Clear the keywords lists 
             for (int j = 0; j < 9; j++) KeyWords(j, "");
             for (int j = 0; j < lang.usekeywords.Length; j++)
@@ -902,7 +909,6 @@ namespace ScintillaNet
                 KeywordClass kc = sciConfiguration.GetKeywordClass(usekeyword.cls);
                 if (kc != null) KeyWords(usekeyword.key, kc.val);
             }
-            if (UpdateSync != null) this.UpdateSync(this);
         }
 
         /// <summary>
@@ -3209,6 +3215,8 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void KeyWords(int keywordSet, string keyWords)
         {
+            this.fctb.CustomHighlighter.SetKeywords(keywordSet, keyWords);
+
             if (keyWords == null || keyWords.Equals("")) keyWords = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(keyWords))
             {
