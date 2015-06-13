@@ -5294,6 +5294,11 @@ namespace FastColoredTextBoxNS
                     if (iLine.Key < endLine && iLine.Value > startLine)
                     {
                         Line line = lines[iLine.Key];
+
+                        // modded
+                        if (line.StartSpacesCount == 0)
+                            continue;
+
                         int y = LineInfos[iLine.Key].startY - VerticalScroll.Value + CharHeight;
                         y += y%2;
 
