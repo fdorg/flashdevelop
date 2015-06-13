@@ -1046,6 +1046,9 @@ namespace FastColoredTextBoxNS
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public SyntaxHighlighter SyntaxHighlighter { get; set; }
 
+        // modded
+        public CustomHighlighter CustomHighlighter { get; set; }
+
         /// <summary>
         /// XML file with description of syntax highlighting.
         /// This property works only with Language == Language.Custom.
@@ -5291,6 +5294,11 @@ namespace FastColoredTextBoxNS
                     if (iLine.Key < endLine && iLine.Value > startLine)
                     {
                         Line line = lines[iLine.Key];
+
+                        // modded
+                        if (line.StartSpacesCount == 0)
+                            continue;
+
                         int y = LineInfos[iLine.Key].startY - VerticalScroll.Value + CharHeight;
                         y += y%2;
 
@@ -7205,13 +7213,16 @@ namespace FastColoredTextBoxNS
                     break;
             }
 
-            if (SyntaxHighlighter != null)
+            // modded
+            if (CustomHighlighter != null)
+                CustomHighlighter.HighlightSyntax(range);
+            /*if (SyntaxHighlighter != null)
             {
                 if (Language == Language.Custom && !string.IsNullOrEmpty(DescriptionFile))
                     SyntaxHighlighter.HighlightSyntax(DescriptionFile, range);
                 else
                     SyntaxHighlighter.HighlightSyntax(Language, range);
-            }
+            }*/
 
 #if debug
             Console.WriteLine("OnSyntaxHighlight: "+ sw.ElapsedMilliseconds);

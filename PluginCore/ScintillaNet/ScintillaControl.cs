@@ -8,12 +8,14 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ScintillaNet.Configuration;
 using System.Drawing.Printing;
+using FastColoredTextBoxNS;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
+using Language = ScintillaNet.Configuration.Language;
 
 namespace ScintillaNet
 {
@@ -203,12 +205,12 @@ namespace ScintillaNet
 
         #region FastColoredTB
 
-        private FastColoredTextBoxNS.CustomHighlighter chl;
         private FastColoredTextBoxNS.FastColoredTextBox fctb;
 
         private void InitCustomEditor()
         {
             this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.fctb.CustomHighlighter = new FastColoredTextBoxNS.CustomHighlighter(this.fctb);
             this.fctb.SyntaxHighlighter = null;
             this.fctb.Dock = DockStyle.Fill;
             this.fctb.ShowLineNumbers = true;
@@ -227,8 +229,6 @@ namespace ScintillaNet
             this.fctb.Paddings = new Padding(4);
             this.fctb.LeftPadding = 10;
             this.Controls.Add(this.fctb);
-
-            this.chl = new FastColoredTextBoxNS.CustomHighlighter(this.fctb);
         }
 
         private void ApplyEditorStyles(string language)
@@ -286,10 +286,14 @@ namespace ScintillaNet
             this.fctb.DisabledColor = Color.Lime;
             this.fctb.CaretColor = DataConverter.BGRToColor(lang.editorstyle.CaretForegroundColor);
             this.fctb.CurrentLineColor = DataConverter.BGRToColor(lang.editorstyle.CaretLineBackgroundColor);
-            this.fctb.SelectionColor = DataConverter.BGRToColor(lang.editorstyle.SelectionBackgroundColor);
+            this.fctb.SelectionStyle = new SelectionStyle(
+                DataConverter.BGRToBrush(lang.editorstyle.SelectionBackgroundColor),
+                DataConverter.BGRToBrush(lang.editorstyle.SelectionForegroundColor));
             //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
             // EdgeColour = lang.editorstyle.PrintMarginColor;
+            this.fctb.CustomHighlighter.Language = lang;
+            LoadKeywordLists(lang);
         }
 
         private FastColoredTextBoxNS.Language LanguageToFCTB(string language)
@@ -307,12 +311,12 @@ namespace ScintillaNet
 
         private void SetFCTBStyleInt(int index, int value, string type)
         {
-            this.chl.SetStyleInt(index, value, type);
+            this.fctb.CustomHighlighter.SetStyleInt(index, value, type);
         }
 
         private void SetFCTBStyleString(int index, string value, string type)
         {
-            this.chl.SetStyleString(index, value, type);
+            this.fctb.CustomHighlighter.SetStyleString(index, value, type);
         }  
 
         private void OnEditorDoubleClick(object sender, EventArgs e)
@@ -893,6 +897,12 @@ namespace ScintillaNet
                 if (usestyle.HasItalics) StyleSetItalic(usestyle.key, usestyle.IsItalics);
                 if (usestyle.HasEolFilled) StyleSetEOLFilled(usestyle.key, usestyle.IsEolFilled);
             }
+            LoadKeywordLists(lang);
+            if (UpdateSync != null) this.UpdateSync(this);
+        }
+
+        private void LoadKeywordLists(Language lang)
+        {
             // Clear the keywords lists 
             for (int j = 0; j < 9; j++) KeyWords(j, "");
             for (int j = 0; j < lang.usekeywords.Length; j++)
@@ -901,7 +911,6 @@ namespace ScintillaNet
                 KeywordClass kc = sciConfiguration.GetKeywordClass(usekeyword.cls);
                 if (kc != null) KeyWords(usekeyword.key, kc.val);
             }
-            if (UpdateSync != null) this.UpdateSync(this);
         }
 
         /// <summary>
@@ -3208,6 +3217,8 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void KeyWords(int keywordSet, string keyWords)
         {
+            if (this.fctb != null) this.fctb.CustomHighlighter.SetKeywords(keywordSet, keyWords);
+
             if (keyWords == null || keyWords.Equals("")) keyWords = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(keyWords))
             {
@@ -5456,7 +5467,8 @@ namespace ScintillaNet
         /// </summary>
         public void Colourise(int start, int end)
         {
-             SPerform(4003, (uint)start, (uint)end);
+            if (this.fctb != null && end < start) this.fctb.CustomHighlighter.Colourize();
+            SPerform(4003, (uint)start, (uint)end);
         }   
                         
         /// <summary>

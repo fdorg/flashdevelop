@@ -1,17 +1,35 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using ScintillaNet.Enums;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ScintillaNet.Configuration;
 
 namespace FastColoredTextBoxNS
 {
     public class CustomHighlighter
     {
+        public ScintillaNet.Configuration.Language Language
+        {
+            set
+            {
+                language = value;
+                for (int i = 0; i < 32; i++)
+                {
+                    regexes[i] = new Regex("");
+
+                    UseStyle style = language.GetUseStyle(i);
+                    if (style != null)
+                        styles[i] = new TextStyle(
+                            DataConverter.BGRToBrush(style.ForegroundColor),
+                            DataConverter.BGRToBrush(style.BackgroundColor),
+                            System.Drawing.FontStyle.Regular);
+                }
+                InitCppRegexes();
+            }
+            get { return language; }
+        }
+
+        private ScintillaNet.Configuration.Language language;
         private FastColoredTextBox editor;
         private Regex[] regexes = new Regex[32];
         private Style[] styles = new Style[32];
@@ -28,21 +46,41 @@ namespace FastColoredTextBoxNS
         {
             editor = fctb;
             //editor.AllowSeveralTextStyleDrawing = true;
-            styles = new Style[32];
-            regexes = new Regex[32];
-            for (int i = 0; i < 32; i++)
+        }
+
+        private void InitCppRegexes()
+        {
+            regexes[CPP.COMMENT] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled);
+            regexes[CPP.COMMENTLINE] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled);
+            regexes[CPP.NUMBER] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled);
+            regexes[CPP.STRING] = new Regex(@"""""|"".*?[^\\]""", RegexOptions.Compiled);
+            regexes[CPP.CHARACTER] = new Regex(@"''|'.*?[^\\]'", RegexOptions.Compiled);
+            regexes[CPP.PREPROCESSOR] = new Regex(@"#(if|elseif|else|end|error)\b");
+        }
+
+        public void SetKeywords(int keywordSet, string keyWords)
+        {
+            int styleIndex = CppStyleFromKeywordSet(keywordSet);
+
+            string regex = "";
+            if (!string.IsNullOrEmpty(keyWords))
             {
-                regexes[i] = new Regex("");
-                styles[i] = new TextStyle(new SolidBrush(Color.Blue), null, System.Drawing.FontStyle.Regular);
+                keyWords = Regex.Replace(keyWords, "\\s+", " ").Trim();
+                if (styleIndex == CPP.COMMENTDOCKEYWORD)
+                    regex = "@(" + keyWords.Replace(" ", "|") + ")";
+                else
+                    regex = @"\b(" + keyWords.Replace(" ", "|") + @")\b";
             }
-            // Try few...
-            regexes[1] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled); // COMMENT
-            regexes[2] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled); // COMMENTLINE
-            //
-            regexes[4] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled); // NUMBER
-            regexes[5] = new Regex(@"\b(public|private|static|const|import|package|class|function|default|throw|new|switch|case|var|else|if|return|null|for|while)\b"); // WORD
-            regexes[6] = new Regex(@"""((\\[^\n]|[^""\n])*)"""); // STRING
-            editor.TextChanged += OnTextChangedDelayed;
+ 
+            if (styleIndex >= 0)
+                regexes[styleIndex] = new Regex(regex);
+        }
+
+        public void Colourize()
+        {
+            editor.ClearStylesBuffer();
+            editor.Range.ClearStyle(StyleIndex.All);
+            editor.OnSyntaxHighlight(new TextChangedEventArgs(editor.Range));
         }
 
         public FastColoredTextBoxNS.Style GetStyle(int index)
@@ -120,9 +158,9 @@ namespace FastColoredTextBoxNS
             }
         }
 
-        private void OnTextChangedDelayed(Object sender, TextChangedEventArgs e)
+        public void HighlightSyntax(Range range)
         {
-            Range range = editor.Range;
+            if (language == null) return;
 
             // set options
             range.tb.CommentPrefix = "//";
@@ -137,21 +175,96 @@ namespace FastColoredTextBoxNS
 
             // set styles
             range.ClearStyle(styles);
-            for (int i = 0; i < 32; i++) 
-            {
-                if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
-            }
 
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.COMMENT)).ForeBrush = new SolidBrush(Color.Green);
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.COMMENTDOC)).ForeBrush = new SolidBrush(Color.Green);
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.NUMBER)).ForeBrush = new SolidBrush(Color.Orange);
-
+            // order matters for priority
+            SetRangeStyle(range, CPP.COMMENTDOCKEYWORD);
+            SetRangeStyle(range, CPP.COMMENT);
+            SetRangeStyle(range, CPP.COMMENTLINE);
+            SetRangeStyle(range, CPP.STRING);
+            SetRangeStyle(range, CPP.CHARACTER);
+            SetRangeStyle(range, CPP.NUMBER);
+            SetRangeStyle(range, CPP.PREPROCESSOR);
+            SetRangeStyle(range, CPP.GLOBALCLASS);
+            SetRangeStyle(range, CPP.WORD);
+            SetRangeStyle(range, CPP.WORD2);
+            SetRangeStyle(range, CPP.WORD3);
+            SetRangeStyle(range, CPP.WORD4);
+            SetRangeStyle(range, CPP.WORD5);
+            
             // set folding markers
             range.ClearFoldingMarkers();
             range.SetFoldingMarkers("{", "}"); // bracket block
             range.SetFoldingMarkers(@"/\*", @"\*/"); // comment block
         }
 
+        private void SetRangeStyle(Range range, int i)
+        {
+            if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
+        }
+
+        private int CppStyleFromKeywordSet(int keywordSet)
+        {
+            switch (keywordSet)
+            {
+                case KeywordSet.PRIMARY: return CPP.WORD;
+                case KeywordSet.SECONDARY: return CPP.WORD2;
+                case KeywordSet.DOCUMENTATION: return CPP.COMMENTDOCKEYWORD;
+                case KeywordSet.GLOBAL: return CPP.GLOBALCLASS;
+                case KeywordSet.EXTENDED1: return CPP.WORD3;
+                case KeywordSet.EXTENDED2: return CPP.WORD4;
+                case KeywordSet.EXTENDED3: return CPP.WORD5;
+            }
+            return -1;
+        }
     }
 
+    internal static class KeywordSet
+    {
+        public const int PRIMARY = 0;
+        public const int SECONDARY = 1;
+        public const int DOCUMENTATION = 2;
+        public const int GLOBAL = 3;
+        public const int PREPOCESSOR = 4; // unused
+        public const int EXTENDED1 = 5;
+        public const int EXTENDED2 = 6;
+        public const int EXTENDED3 = 7;
+    }
+
+    internal static class CPP
+    {
+        public const int DEFAULT = 0;
+        public const int COMMENT = 1;
+        public const int COMMENTLINE = 2;
+        public const int COMMENTDOC = 3;
+        public const int NUMBER = 4;
+        public const int WORD = 5;
+        public const int STRING = 6;
+        public const int CHARACTER = 7;
+        public const int UUID = 8;
+        public const int PREPROCESSOR = 9;
+        public const int OPERATOR = 10;
+        public const int IDENTIFIER = 11;
+        public const int STRINGEOL = 12;
+        public const int VERBATIM = 13;
+        public const int REGEX = 14;
+        public const int COMMENTLINEDOC = 15;
+        public const int WORD2 = 16;
+        public const int COMMENTDOCKEYWORD = 17;
+        public const int COMMENTDOCKEYWORDERROR = 18;
+        public const int GLOBALCLASS = 19;
+        public const int STRINGRAW = 20;
+        public const int TRIPLEVERBATIM = 21;
+        public const int HASHQUOTEDSTRING = 22;
+        public const int PREPROCESSORCOMMENT = 23;
+        public const int WORD3 = 24;
+        public const int WORD4 = 25;
+        public const int WORD5 = 26;
+        public const int GDEFAULT = 32;
+        public const int LINENUMBER = 33;
+        public const int BRACELIGHT = 34;
+        public const int BRACEBAD = 35;
+        public const int CONTROLCHAR = 36;
+        public const int INDENTGUIDE = 37;
+        public const int LASTPREDEFINED = 39;
+    }
 }
