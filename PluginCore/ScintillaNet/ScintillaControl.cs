@@ -290,6 +290,7 @@ namespace ScintillaNet
             //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
             // EdgeColour = lang.editorstyle.PrintMarginColor;
+            this.chl.Language = lang;
         }
 
         private FastColoredTextBoxNS.Language LanguageToFCTB(string language)

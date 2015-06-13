@@ -7,11 +7,39 @@ using System.Collections.Generic;
 using ScintillaNet.Enums;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ScintillaNet.Configuration;
 
 namespace FastColoredTextBoxNS
 {
     public class CustomHighlighter
     {
+        public ScintillaNet.Configuration.Language Language
+        {
+            set
+            {
+                language = value;
+                for (int i = 0; i < 32; i++)
+                {
+                    regexes[i] = new Regex("");
+
+                    UseStyle style = language.GetUseStyle(i);
+                    if (style != null)
+                        styles[i] = new TextStyle(
+                            BrushFromRGB(style.ForegroundColor),
+                            BrushFromRGB(style.BackgroundColor),
+                            System.Drawing.FontStyle.Regular);
+                }
+                InitCppRegexes();
+            }
+            get { return language; }
+        }
+
+        private Brush BrushFromRGB(int color)
+        {
+            return new SolidBrush(DataConverter.BGRToColor(color));
+        }
+
+        private ScintillaNet.Configuration.Language language;
         private FastColoredTextBox editor;
         private Regex[] regexes = new Regex[32];
         private Style[] styles = new Style[32];
@@ -28,21 +56,17 @@ namespace FastColoredTextBoxNS
         {
             editor = fctb;
             //editor.AllowSeveralTextStyleDrawing = true;
-            styles = new Style[32];
-            regexes = new Regex[32];
-            for (int i = 0; i < 32; i++)
-            {
-                regexes[i] = new Regex("");
-                styles[i] = new TextStyle(new SolidBrush(Color.Blue), null, System.Drawing.FontStyle.Regular);
-            }
-            // Try few...
-            regexes[1] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled); // COMMENT
-            regexes[2] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled); // COMMENTLINE
-            //
-            regexes[4] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled); // NUMBER
-            regexes[5] = new Regex(@"\b(public|private|static|const|import|package|class|function|default|throw|new|switch|case|var|else|if|return|null|for|while)\b"); // WORD
-            regexes[6] = new Regex(@"""((\\[^\n]|[^""\n])*)"""); // STRING
             editor.TextChanged += OnTextChangedDelayed;
+        }
+
+        private void InitCppRegexes()
+        {
+            // Try few...
+            regexes[CPP.COMMENT] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled);
+            regexes[CPP.COMMENTLINE] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled);
+            regexes[CPP.NUMBER] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled);
+            regexes[CPP.WORD] = new Regex(@"\b(public|private|static|const|import|package|class|function|default|throw|new|switch|case|var|else|if|return|null|for|while)\b");
+            regexes[CPP.STRING] = new Regex(@"""((\\[^\n]|[^""\n])*)""");
         }
 
         public FastColoredTextBoxNS.Style GetStyle(int index)
@@ -142,16 +166,48 @@ namespace FastColoredTextBoxNS
                 if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
             }
 
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.COMMENT)).ForeBrush = new SolidBrush(Color.Green);
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.COMMENTDOC)).ForeBrush = new SolidBrush(Color.Green);
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.NUMBER)).ForeBrush = new SolidBrush(Color.Orange);
-
             // set folding markers
             range.ClearFoldingMarkers();
             range.SetFoldingMarkers("{", "}"); // bracket block
             range.SetFoldingMarkers(@"/\*", @"\*/"); // comment block
         }
-
     }
 
+    internal static class CPP
+    {
+        public const int DEFAULT = 0;
+        public const int COMMENT = 1;
+        public const int COMMENTLINE = 2;
+        public const int COMMENTDOC = 3;
+        public const int NUMBER = 4;
+        public const int WORD = 5;
+        public const int STRING = 6;
+        public const int CHARACTER = 7;
+        public const int UUID = 8;
+        public const int PREPROCESSOR = 9;
+        public const int OPERATOR = 10;
+        public const int IDENTIFIER = 11;
+        public const int STRINGEOL = 12;
+        public const int VERBATIM = 13;
+        public const int REGEX = 14;
+        public const int COMMENTLINEDOC = 15;
+        public const int WORD2 = 16;
+        public const int COMMENTDOCKEYWORD = 17;
+        public const int COMMENTDOCKEYWORDERROR = 18;
+        public const int GLOBALCLASS = 19;
+        public const int STRINGRAW = 20;
+        public const int TRIPLEVERBATIM = 21;
+        public const int HASHQUOTEDSTRING = 22;
+        public const int PREPROCESSORCOMMENT = 23;
+        public const int WORD3 = 24;
+        public const int WORD4 = 25;
+        public const int WORD5 = 26;
+        public const int GDEFAULT = 32;
+        public const int LINENUMBER = 33;
+        public const int BRACELIGHT = 34;
+        public const int BRACEBAD = 35;
+        public const int CONTROLCHAR = 36;
+        public const int INDENTGUIDE = 37;
+        public const int LASTPREDEFINED = 39;
+    }
 }
