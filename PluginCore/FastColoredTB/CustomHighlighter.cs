@@ -164,15 +164,23 @@ namespace FastColoredTextBoxNS
 
             // set styles
             range.ClearStyle(styles);
-            for (int i = 0; i < 32; i++) 
-            {
-                if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
-            }
 
+            // order matters for priority
+            SetRangeStyle(range, CPP.COMMENT);
+            SetRangeStyle(range, CPP.COMMENTLINE);
+            SetRangeStyle(range, CPP.STRING);
+            SetRangeStyle(range, CPP.NUMBER);
+            SetRangeStyle(range, CPP.WORD);
+            
             // set folding markers
             range.ClearFoldingMarkers();
             range.SetFoldingMarkers("{", "}"); // bracket block
             range.SetFoldingMarkers(@"/\*", @"\*/"); // comment block
+        }
+
+        private void SetRangeStyle(Range range, int i)
+        {
+            if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
         }
     }
 
