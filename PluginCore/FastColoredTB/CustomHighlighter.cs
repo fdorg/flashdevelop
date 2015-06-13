@@ -63,7 +63,9 @@ namespace FastColoredTextBoxNS
             regexes[CPP.COMMENT] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled);
             regexes[CPP.COMMENTLINE] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled);
             regexes[CPP.NUMBER] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled);
-            regexes[CPP.STRING] = new Regex(@"""((\\[^\n]|[^""\n])*)""");
+            regexes[CPP.STRING] = new Regex(@"""""|"".*?[^\\]""", RegexOptions.Compiled);
+            regexes[CPP.CHARACTER] = new Regex(@"''|'.*?[^\\]'", RegexOptions.Compiled);
+            regexes[CPP.PREPROCESSOR] = new Regex(@"#(if|elseif|else|end|error)\b");
         }
 
         public void SetKeywords(int keywordSet, string keyWords)
@@ -187,7 +189,9 @@ namespace FastColoredTextBoxNS
             SetRangeStyle(range, CPP.COMMENT);
             SetRangeStyle(range, CPP.COMMENTLINE);
             SetRangeStyle(range, CPP.STRING);
+            SetRangeStyle(range, CPP.CHARACTER);
             SetRangeStyle(range, CPP.NUMBER);
+            SetRangeStyle(range, CPP.PREPROCESSOR);
             SetRangeStyle(range, CPP.GLOBALCLASS);
             SetRangeStyle(range, CPP.WORD);
             SetRangeStyle(range, CPP.WORD2);

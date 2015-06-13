@@ -3215,7 +3215,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void KeyWords(int keywordSet, string keyWords)
         {
-            this.fctb.CustomHighlighter.SetKeywords(keywordSet, keyWords);
+            if (this.fctb != null) this.fctb.CustomHighlighter.SetKeywords(keywordSet, keyWords);
 
             if (keyWords == null || keyWords.Equals("")) keyWords = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(keyWords))
@@ -5465,7 +5465,7 @@ namespace ScintillaNet
         /// </summary>
         public void Colourise(int start, int end)
         {
-            if (end < start) this.fctb.CustomHighlighter.Colourize();
+            if (this.fctb != null && end < start) this.fctb.CustomHighlighter.Colourize();
             SPerform(4003, (uint)start, (uint)end);
         }   
                         
