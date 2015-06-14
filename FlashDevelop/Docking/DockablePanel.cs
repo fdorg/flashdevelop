@@ -22,7 +22,7 @@ namespace FlashDevelop.Docking
             this.HideOnClose = true;
             this.Controls.Add(ctrl);
             Globals.MainForm.ThemeControls(this);
-            this.Show();
+            //this.Show();
         }
 
         /// <summary>

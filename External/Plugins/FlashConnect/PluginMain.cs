@@ -25,6 +25,7 @@ namespace FlashConnect
         private String settingFilename;
         private Settings settingObject;
         private XmlSocket xmlSocket;
+        private Timer pendingSetup;
 
         #region Required Properties
 
@@ -104,6 +105,11 @@ namespace FlashConnect
         /// </summary>
         public void Dispose()
         {
+            if (this.pendingSetup != null)
+            {
+                this.pendingSetup.Stop();
+                this.pendingSetup = null;
+            }
             this.SaveSettings();
         }
 
@@ -140,11 +146,19 @@ namespace FlashConnect
         /// </summary> 
         private void SetupSocket()
         {
-            if (this.settingObject.Enabled && !SingleInstanceApp.AlreadyExists)
+            this.pendingSetup = new Timer();
+            this.pendingSetup.Interval = 5000;
+            this.pendingSetup.Tick += (sender, e) =>
             {
-                this.xmlSocket = new XmlSocket(this.settingObject.Host, this.settingObject.Port);
-                this.xmlSocket.XmlReceived += new XmlReceivedEventHandler(this.HandleXml);
-            }
+                this.pendingSetup.Stop();
+                this.pendingSetup = null;
+                if (this.settingObject.Enabled && !SingleInstanceApp.AlreadyExists)
+                {
+                    this.xmlSocket = new XmlSocket(this.settingObject.Host, this.settingObject.Port);
+                    this.xmlSocket.XmlReceived += new XmlReceivedEventHandler(this.HandleXml);
+                }
+            };
+            this.pendingSetup.Start();
         }
         
         /// <summary>

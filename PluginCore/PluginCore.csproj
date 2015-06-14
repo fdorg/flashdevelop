@@ -254,6 +254,9 @@
     <Compile Include="DockPanelSuite\Helpers\DockHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DockPanelSuite\Helpers\DelayedDockContent.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DockPanelSuite\Helpers\DrawHelper.cs">
       <SubType>Code</SubType>
     </Compile>
