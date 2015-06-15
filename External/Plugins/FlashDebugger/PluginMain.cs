@@ -26,10 +26,19 @@ namespace FlashDebugger
         private Image pluginImage;
 
         static internal Settings settingObject;
-        static internal LiveDataTip liveDataTip;
         static internal DebuggerManager debugManager;
         static internal BreakPointManager breakPointManager;
         static internal Boolean disableDebugger = false;
+
+        static internal LiveDataTip liveDataTip
+        {
+            get
+            {
+                if (_liveDataTip == null) _liveDataTip = new LiveDataTip();
+                return _liveDataTip;
+            }
+        }
+        static private LiveDataTip _liveDataTip;
 
         #region Required Properties
 
@@ -235,7 +244,6 @@ namespace FlashDebugger
             this.pluginImage = PluginBase.MainForm.FindImage("54|23|5|4");
             breakPointManager = new BreakPointManager();
             debugManager = new DebuggerManager();
-            liveDataTip = new LiveDataTip();
         }
 
         /// <summary>

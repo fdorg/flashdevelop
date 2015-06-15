@@ -9,6 +9,7 @@ using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
 using PluginCore;
+using PluginCore.DockPanelSuite.Helpers;
 
 namespace FlashLogViewer
 {
@@ -22,8 +23,17 @@ namespace FlashLogViewer
         private String settingFilename;
         private Settings settingObject;
         private DockContent pluginPanel;
-        private PluginUI pluginUI;
+        private PluginUI _pluginUI;
         private Image pluginImage;
+
+        private PluginUI pluginUI
+        {
+            get
+            {
+                if (_pluginUI == null) _pluginUI = new PluginUI(this);
+                return _pluginUI;
+            }
+        }
 
         #region Required Properties
 
@@ -184,9 +194,12 @@ namespace FlashLogViewer
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+            var pluginStub = new DelayedDockContent(delegate
+            {
+                return pluginUI;
+            });
+            pluginStub.Text = TextHelper.GetString("Title.PluginPanel");
+            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginStub, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
         }
 
         /// <summary>
