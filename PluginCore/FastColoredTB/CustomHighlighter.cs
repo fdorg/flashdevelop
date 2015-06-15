@@ -47,12 +47,19 @@ namespace FastColoredTextBoxNS
             regexes[(int)CPP.PREPROCESSOR] = new Regex(@"#(if|elseif|else|end|error)\b");
             //
             regexes[(int)CPP.COMMENTDOCKEYWORD] = new Regex(@"\*?@\S+", RegexOptions.Singleline | RegexOptions.Compiled);
-            editor.VisibleRangeChanged += OnVisibleRangeChanged;
+            //
+            editor.VisibleRangeChangedDelayed += OnVisibleRangeChanged;
+            //editor.TextChangedDelayed += OnTextChangedDelayed;
         }
 
-        public void Colourize()
+        private void OnTextChangedDelayed(Object sender, TextChangedEventArgs e)
         {
-            this.OnVisibleRangeChanged(editor, new EventArgs());
+            HighlightSyntax(editor.Range);
+        }
+
+        private void OnVisibleRangeChanged(Object sender, EventArgs e)
+        {
+            HighlightSyntax(editor.VisibleRange);
         }
 
         public void ApplyBaseStyles(ScintillaNet.Configuration.Language lang)
@@ -176,10 +183,8 @@ namespace FastColoredTextBoxNS
             }
         }
 
-        private void OnVisibleRangeChanged(Object sender, EventArgs e)
+        private void HighlightSyntax(Range range)
         {
-            Range range = editor.VisibleRange;
-
             // set options
             range.tb.CommentPrefix = "//";
             range.tb.LeftBracket = '(';
@@ -222,6 +227,11 @@ namespace FastColoredTextBoxNS
                 case KeywordSet.EXTENDED3: return (int)CPP.WORD5;
             }
             return -1;
+        }
+
+        public void Colourize()
+        {
+            this.OnVisibleRangeChanged(editor, new EventArgs());
         }
 
         private bool IsDocKeyWord(int style)

@@ -5105,7 +5105,8 @@ namespace FastColoredTextBoxNS
             //draw caret
             Point car = PlaceToPoint(Selection.Start);
             // MODDED
-            car.Offset(-1, 0);
+            if (!IsReplaceMode && !WideCaret) car.Offset(-1, 0);
+            //
             var caretHeight = CharHeight - lineInterval;
             car.Offset(0, lineInterval / 2);
 

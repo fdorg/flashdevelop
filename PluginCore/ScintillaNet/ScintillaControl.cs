@@ -207,6 +207,11 @@ namespace ScintillaNet
         private FastColoredTextBoxNS.CustomHighlighter chl;
         private FastColoredTextBoxNS.FastColoredTextBox fctb;
 
+        public FastColoredTextBoxNS.FastColoredTextBox FCTB
+        {
+            get { return this.fctb; }
+        }
+
         private void InitCustomEditor()
         {
             this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
@@ -1998,15 +2003,14 @@ namespace ScintillaNet
         {
             get 
             {
-                // TODO
                 return (int)SPerform(2357, 0, 0);
             }
             set
             {
                 SPerform(2358, 0, (uint)value);
             }
-        }   
-
+        } 
+ 
         /// <summary>
         /// Retrieve the column number which text should be kept within.
         /// </summary>
