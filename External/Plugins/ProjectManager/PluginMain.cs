@@ -292,7 +292,8 @@ namespace ProjectManager
 
             #endregion
 
-            pluginPanel = MainForm.CreateDockablePanel(pluginUI, Guid, Icons.Project.Img, DockState.DockRight);
+            pluginPanel = MainForm.CreateDockablePanel(pluginUI, Guid, Icons.Project.Img, DockState.DockRight, true);
+
             buildQueue = new Queue<String>();
             buildTimer = new Timer();
             buildTimer.Interval = 500;

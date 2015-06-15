@@ -554,11 +554,24 @@ namespace FlashDevelop
         /// </summary>
         public DockContent CreateDockablePanel(Control ctrl, String guid, Image image, DockState defaultDockState)
         {
+            return CreateDockablePanel(ctrl, guid, image, defaultDockState, false);
+        }
+
+        /// <summary>
+        /// Creates a floating panel for the plugin
+        /// </summary>
+        public DockContent CreateDockablePanel(Control ctrl, String guid, Image image, DockState defaultDockState, bool defaultVisible)
+        {
             try
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
                 if (image != null) dockablePanel.Icon = ImageKonverter.ImageToIcon(image);
-                dockablePanel.DockState = defaultDockState;
+                if (defaultVisible) dockablePanel.DockState = defaultDockState;
+                else
+                {
+                    dockablePanel.DockState = DockState.Hidden;
+                    if (defaultDockState != DockState.Hidden) dockablePanel.VisibleState = defaultDockState;
+                }
                 LayoutManager.PluginPanels.Add(dockablePanel);
                 return dockablePanel;
             }

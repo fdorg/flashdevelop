@@ -260,7 +260,7 @@ namespace ResultsPanel
         {
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide, true);
         }
 
         /// <summary>

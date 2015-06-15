@@ -49,7 +49,6 @@ namespace FlashDebugger
             });
             localsStub.Text = TextHelper.GetString("Title.LocalVariables");
             localsPanel = PluginBase.MainForm.CreateDockablePanel(localsStub, localsGuid, pluginImage, DockState.DockLeft);
-            localsPanel.Hide();
 
             var stackframeStub = new DelayedDockContent(delegate
             {
@@ -58,7 +57,6 @@ namespace FlashDebugger
             });
             stackframeStub.Text = TextHelper.GetString("Title.StackTrace");
             stackframePanel = PluginBase.MainForm.CreateDockablePanel(stackframeStub, stackframeGuid, pluginImage, DockState.DockLeft);
-            stackframePanel.Hide();
 
             var watchStub = new DelayedDockContent(delegate
             {
@@ -67,16 +65,10 @@ namespace FlashDebugger
             });
             watchStub.Text = TextHelper.GetString("Title.Watch");
             watchPanel = PluginBase.MainForm.CreateDockablePanel(watchStub, watchGuid, pluginImage, DockState.DockLeft);
-            watchPanel.Hide();
 
-            var breakPointStub = new DelayedDockContent(delegate
-            {
-                CreateUIs();
-                return breakPointUI;
-            });
-            breakPointStub.Text = TextHelper.GetString("Title.Breakpoints");
-            breakPointPanel = PluginBase.MainForm.CreateDockablePanel(breakPointStub, breakPointGuid, pluginImage, DockState.DockLeft);
-            breakPointPanel.Hide();
+            breakPointUI = new BreakPointUI(pluginMain, PluginMain.breakPointManager);
+            breakPointUI.Text = TextHelper.GetString("Title.Breakpoints");
+            breakPointPanel = PluginBase.MainForm.CreateDockablePanel(breakPointUI, breakPointGuid, pluginImage, DockState.DockLeft);
 
             var immediateStub = new DelayedDockContent(delegate
             {
@@ -85,7 +77,6 @@ namespace FlashDebugger
             });
             immediateStub.Text = TextHelper.GetString("Title.Immediate");
             immediatePanel = PluginBase.MainForm.CreateDockablePanel(immediateStub, immediateGuid, pluginImage, DockState.DockLeft);
-            immediatePanel.Hide();
 
             var threadsStub = new DelayedDockContent(delegate
             {
@@ -94,7 +85,6 @@ namespace FlashDebugger
             });
             threadsStub.Text = TextHelper.GetString("Title.Threads");
             threadsPanel = PluginBase.MainForm.CreateDockablePanel(threadsStub, threadsGuid, pluginImage, DockState.DockLeft);
-            threadsPanel.Hide();
         }
 
         static internal void CreateUIs()
@@ -105,7 +95,6 @@ namespace FlashDebugger
             localsUI = new LocalsUI(pluginMain);
             stackframeUI = new StackframeUI(pluginMain, MenusHelper.imageList);
             watchUI = new WatchUI();
-            breakPointUI = new BreakPointUI(pluginMain, PluginMain.breakPointManager);
             immediateUI = new ImmediateUI();
             threadsUI = new ThreadsUI(pluginMain, MenusHelper.imageList);
         }
@@ -138,6 +127,7 @@ namespace FlashDebugger
             watchUI.Clear();
             threadsUI.ClearItem();
         }
+
     }
 
 }

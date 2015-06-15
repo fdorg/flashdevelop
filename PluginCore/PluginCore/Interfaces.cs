@@ -118,6 +118,7 @@ namespace PluginCore
         DockContent CreateCustomDocument(Control ctrl);
         DockContent CreateEditableDocument(String file, String text, Int32 codepage);
         DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
+        DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState, bool defaultVisible);
         Boolean CallCommand(String command, String arguments);
         List<ToolStripItem> FindMenuItems(String name);
         ToolStripItem FindMenuItem(String name);
