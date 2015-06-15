@@ -159,7 +159,7 @@ namespace FastColoredTextBoxNS
 
                     bool isTextStyle = style is TextStyle;
                     if (isTextStyle)
-                        if (!hasTextStyle || tb.AllowSeveralTextStyleDrawing)
+                        if (!hasTextStyle || style.AllowSeveralTextStyles)
                         {
                             hasTextStyle = true;
                             textStyle = style as TextStyle;

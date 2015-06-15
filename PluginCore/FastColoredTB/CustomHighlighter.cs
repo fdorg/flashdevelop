@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ScintillaNet.Configuration;
 using ScintillaNet.Lexers;
 using ScintillaNet.Enums;
 
@@ -46,24 +47,57 @@ namespace FastColoredTextBoxNS
             regexes[(int)CPP.PREPROCESSOR] = new Regex(@"#(if|elseif|else|end|error)\b");
             //
             regexes[(int)CPP.COMMENTDOCKEYWORD] = new Regex(@"\*?@\S+", RegexOptions.Singleline | RegexOptions.Compiled);
-            editor.TextChanged += OnTextChangedDelayed;
+            editor.VisibleRangeChanged += OnVisibleRangeChanged;
         }
 
         public void Colourize()
         {
-            editor.ClearStylesBuffer();
-            editor.Range.ClearStyle(StyleIndex.All);
-            this.OnTextChangedDelayed(editor, new TextChangedEventArgs(editor.Range));
+            this.OnVisibleRangeChanged(editor, new EventArgs());
+        }
+
+        public void ApplyBaseStyles(ScintillaNet.Configuration.Language lang)
+        {
+            foreach (UseStyle style in lang.usestyles)
+            {
+                if (style.key == 0) // Default
+                {
+                    FontStyle fontStyle = FontStyle.Regular;
+                    if (style.IsBold) fontStyle |= FontStyle.Bold;
+                    if (style.IsItalics) fontStyle |= FontStyle.Italic;
+                    editor.Font = new Font(style.FontName, style.FontSize, FontStyle.Regular);
+                    Color fore = DataConverter.BGRToColor(style.ForegroundColor);
+                    Color back = DataConverter.BGRToColor(style.BackgroundColor);
+                    editor.DefaultStyle = new FastColoredTextBoxNS.TextStyle(new SolidBrush(fore), new SolidBrush(back), fontStyle);
+                    editor.BackColor = editor.PaddingBackColor = editor.IndentBackColor = back;
+                    editor.FoldingIndicatorColor = Color.Lime; // TODO?
+                }
+                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.LineNumber)
+                {
+                    editor.LineNumberColor = DataConverter.BGRToColor(style.ForegroundColor);
+                }
+                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.IndentGuide)
+                {
+                    editor.ServiceLinesColor = DataConverter.BGRToColor(style.ForegroundColor);
+                }
+                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.BraceLight)
+                {
+                    Color color = DataConverter.BGRToColor(style.BackgroundColor, 125);
+                    editor.BracketsStyle = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                    editor.BracketsStyle2 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                    editor.BracketsStyle3 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                }
+            }
         }
 
         public void SetKeywords(int keywordSet, string keyWords)
         {
             string regex = "";
-            int styleIndex = CppStyleFromKeywordSet(keywordSet);
+            int styleIndex = StyleFromKeywordSet(keywordSet);
             if (!string.IsNullOrEmpty(keyWords))
             {
                 keyWords = Regex.Replace(keyWords, "\\s+", " ").Trim();
-                regex = @"\b(" + keyWords.Replace(" ", "|") + @")\b";
+                if (IsDocKeyWord(styleIndex)) regex = "@(" + keyWords.Replace(" ", "|") + ")";
+                else regex = @"\b(" + keyWords.Replace(" ", "|") + @")\b";
             }
             if (styleIndex >= 0) regexes[styleIndex] = new Regex(regex);
         }
@@ -142,9 +176,9 @@ namespace FastColoredTextBoxNS
             }
         }
 
-        private void OnTextChangedDelayed(Object sender, TextChangedEventArgs e)
+        private void OnVisibleRangeChanged(Object sender, EventArgs e)
         {
-            Range range = editor.Range;
+            Range range = editor.VisibleRange;
 
             // set options
             range.tb.CommentPrefix = "//";
@@ -161,21 +195,21 @@ namespace FastColoredTextBoxNS
             range.ClearStyle(styles);
             for (int i = 0; i < 32; i++) 
             {
-                if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
+                if (styles[i] != null)
+                {
+                    // string and dockeyword can overwrite
+                    if (IsString(i) || IsDocKeyWord(i)) styles[i].AllowSeveralTextStyles = true;
+                    range.SetStyle(styles[i], regexes[i]);
+                }
             }
 
             // set folding markers
-            //range.ClearFoldingMarkers();
-            //range.SetFoldingMarkers("{", "}"); // bracket block
-            //range.SetFoldingMarkers(@"/\*", @"\*/"); // comment block
+            range.ClearFoldingMarkers();
+            range.SetFoldingMarkers("{", "}"); // bracket block
+            range.SetFoldingMarkers(@"/\*", @"\*/"); // comment block
         }
 
-        private void SetRangeStyle(Range range, int i)
-        {
-            if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
-        }
-
-        private int CppStyleFromKeywordSet(int keywordSet)
+        private int StyleFromKeywordSet(int keywordSet)
         {
             switch (keywordSet)
             {
@@ -188,6 +222,16 @@ namespace FastColoredTextBoxNS
                 case KeywordSet.EXTENDED3: return (int)CPP.WORD5;
             }
             return -1;
+        }
+
+        private bool IsDocKeyWord(int style)
+        {
+            return style == (int)CPP.COMMENTDOCKEYWORD || style == (int)CPP.COMMENTDOCKEYWORDERROR; // CPP
+        }
+
+        private bool IsString(int style)
+        {
+            return style == (int)CPP.STRING; // CPP
         }
 
     }

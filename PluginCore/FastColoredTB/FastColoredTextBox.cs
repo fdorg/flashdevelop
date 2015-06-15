@@ -183,7 +183,8 @@ namespace FastColoredTextBoxNS
             BracketsStyle2 = new MarkerStyle(new SolidBrush(Color.FromArgb(60, Color.Red)));
             DelayedEventsInterval = 100;
             DelayedTextChangedInterval = 100;
-            AllowSeveralTextStyleDrawing = false;
+            // MODDED
+            //AllowSeveralTextStyleDrawing = false;
             LeftBracket = '\x0';
             RightBracket = '\x0';
             LeftBracket2 = '\x0';
@@ -971,13 +972,14 @@ namespace FastColoredTextBoxNS
             set { isReplaceMode = value; }
         }
 
+        // MODDED
         /// <summary>
         /// Allows text rendering several styles same time.
         /// </summary>
-        [Browsable(true)]
+        /*[Browsable(true)]
         [DefaultValue(false)]
         [Description("Allows text rendering several styles same time.")]
-        public bool AllowSeveralTextStyleDrawing { get; set; }
+        public bool AllowSeveralTextStyleDrawing { get; set; }*/
 
         /// <summary>
         /// Allows to record macros.
@@ -5397,9 +5399,15 @@ namespace FastColoredTextBoxNS
                     {
                         Style style = Styles[i];
                         bool isTextStyle = style is TextStyle;
-                        if (!hasTextStyle || !isTextStyle || AllowSeveralTextStyleDrawing)
+                        // MODDED
+                        if (!hasTextStyle || !isTextStyle || style.AllowSeveralTextStyles)
+                        {
                             //cancelling secondary rendering by TextStyle
                             style.Draw(gr, pos, range); //rendering
+                        }
+                        /*if (!hasTextStyle || !isTextStyle || AllowSeveralTextStyleDrawing)
+                            //cancelling secondary rendering by TextStyle
+                            style.Draw(gr, pos, range); //rendering*/
                         hasTextStyle |= isTextStyle;
                     }
                     mask = mask << 1;

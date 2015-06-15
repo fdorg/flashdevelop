@@ -15,6 +15,13 @@ namespace FastColoredTextBoxNS
         /// This style is exported to outer formats (HTML for example)
         /// </summary>
         public virtual bool IsExportable { get; set; }
+
+        // MODDED
+        /// <summary>
+        /// This style is allows several styles to be used
+        /// </summary>
+        public bool AllowSeveralTextStyles { get; set; }
+
         /// <summary>
         /// Occurs when user click on StyleVisualMarker joined to this style 
         /// </summary>
@@ -26,6 +33,8 @@ namespace FastColoredTextBoxNS
         public Style()
         {
             IsExportable = true;
+            // MODDED
+            AllowSeveralTextStyles = false;
         }
 
         /// <summary>

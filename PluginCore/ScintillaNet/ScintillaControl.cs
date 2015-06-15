@@ -216,7 +216,6 @@ namespace ScintillaNet
             this.fctb.ShowLineNumbers = true;
             this.fctb.ShowFoldingLines = true;
             this.fctb.PreferredLineWidth = 140;
-            this.fctb.AllowSeveralTextStyleDrawing = true;
             this.fctb.SelectionHighlightingForLineBreaksEnabled = false;
             this.fctb.HighlightFoldingIndicator = false;
             this.fctb.KeyDown += this.OnEditorKeyDown;
@@ -232,82 +231,7 @@ namespace ScintillaNet
             this.fctb.Paddings = new Padding(4);
             this.fctb.LeftPadding = 10;
             this.Controls.Add(this.fctb);
-            //
             this.chl = new FastColoredTextBoxNS.CustomHighlighter(this.fctb);
-        }
-
-        private void ApplyEditorStyles(string language)
-        {
-            Language lang = sciConfiguration.GetLanguage(language);
-            foreach (UseStyle style in lang.usestyles)
-            {
-                // TODO: Fix this
-                style.key = (int)Enum.Parse(typeof(Lexers.CPP), style.name, true);
-                if (style.key == 0) // Default
-                {
-                    FontStyle fontStyle = FontStyle.Regular;
-                    if (style.IsBold) fontStyle |= FontStyle.Bold;
-                    if (style.IsItalics) fontStyle |= FontStyle.Italic;
-                    this.fctb.Font = new Font(style.FontName, style.FontSize, FontStyle.Regular);
-                    Color fore = DataConverter.BGRToColor(style.ForegroundColor);
-                    Color back = DataConverter.BGRToColor(style.BackgroundColor);
-                    this.fctb.DefaultStyle = new FastColoredTextBoxNS.TextStyle(new SolidBrush(fore), new SolidBrush(back), fontStyle);
-                    this.fctb.BackColor = this.fctb.ChangedLineColor = this.fctb.PaddingBackColor = back;
-                    this.fctb.FoldingIndicatorColor = Color.Lime;
-                    this.fctb.IndentBackColor = back;
-                }
-                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.LineNumber)
-                {
-                    this.fctb.LineNumberColor = DataConverter.BGRToColor(style.ForegroundColor);
-                }
-                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.IndentGuide)
-                {
-                    this.fctb.ServiceLinesColor = DataConverter.BGRToColor(style.ForegroundColor);
-                }
-                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.BraceLight)
-                {
-                    Color color = DataConverter.BGRToColor(style.BackgroundColor, 125);
-                    this.fctb.BracketsStyle = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
-                    this.fctb.BracketsStyle2 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
-                    this.fctb.BracketsStyle3 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
-                }
-                else
-                {
-                    if (style.HasForegroundColor) StyleSetFore(style.key, style.ForegroundColor);
-                    if (style.HasBackgroundColor) StyleSetBack(style.key, style.BackgroundColor);
-                    if (style.HasFontName) StyleSetFont(style.key, style.FontName);
-                    if (style.HasFontSize) StyleSetSize(style.key, style.FontSize);
-                    if (style.HasBold) StyleSetBold(style.key, style.IsBold);
-                    if (style.HasItalics) StyleSetItalic(style.key, style.IsItalics);
-                    if (style.HasEolFilled) StyleSetEOLFilled(style.key, style.IsEolFilled);
-                }
-            }
-            this.fctb.DisabledColor = SystemColors.Control;
-            this.fctb.ServiceColors.CollapseMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
-            this.fctb.ServiceColors.CollapseMarkerBorderColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
-            this.fctb.ServiceColors.CollapseMarkerForeColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
-            this.fctb.ServiceColors.ExpandMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
-            this.fctb.ServiceColors.ExpandMarkerBorderColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
-            this.fctb.ServiceColors.ExpandMarkerForeColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
-            this.fctb.CaretColor = DataConverter.BGRToColor(lang.editorstyle.CaretForegroundColor);
-            this.fctb.CurrentLineColor = DataConverter.BGRToColor(lang.editorstyle.CaretLineBackgroundColor);
-            this.fctb.SelectionColor = DataConverter.BGRToColor(lang.editorstyle.SelectionBackgroundColor);
-            this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
-            this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
-            this.fctb.EdgeColor = DataConverter.BGRToColor(lang.editorstyle.PrintMarginColor);
-        }
-
-        private FastColoredTextBoxNS.Language LanguageToFCTB(string language)
-        {
-            switch (language)
-            {
-                case "php": return FastColoredTextBoxNS.Language.PHP;
-                case "xml": return FastColoredTextBoxNS.Language.XML;
-                case "html": return FastColoredTextBoxNS.Language.HTML;
-                case "jscript": return FastColoredTextBoxNS.Language.JS;
-                case "csharp": return FastColoredTextBoxNS.Language.CSharp;
-                default: return FastColoredTextBoxNS.Language.CSharp;
-            }
         }
 
         private void SetFCTBStyleInt(int index, int value, string type)
@@ -349,14 +273,8 @@ namespace ScintillaNet
         {
             
             int current = this.fctb.TextSource.Manager.CurrentId;
-            if (savePointId == current) 
-            { 
-                if (SavePointReached != null) SavePointReached(this);
-            }
-            else
-            {
-                if (SavePointLeft != null) SavePointLeft(this);
-            }
+            if (savePointId == current) { if (SavePointReached != null) SavePointReached(this); }
+            else { if (SavePointLeft != null) SavePointLeft(this); }
         }
 
         private void OnEditorTextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
@@ -365,7 +283,6 @@ namespace ScintillaNet
             if (TextInserted != null) TextInserted(this, e.ChangedRange.Start.iChar, e.ChangedRange.Text.Length, linesAdded);
             if (TextDeleted != null) TextDeleted(this, e.ChangedRange.Start.iChar, e.ChangedRange.Text.Length, linesAdded);
             if (e.ChangedRange.Text.Length == 1 && CharAdded != null) CharAdded(this, e.ChangedRange.Text[0]);
-            //
             //if (Modified != null) Modified(this, this.CurrentPos, 1, e.ChangedRange.Text, e.ChangedRange.Text.Length, e.ChangedRange.FromLine - e.ChangedRange.ToLine, this.CurrentLine, 1, 1);
         }
 
@@ -516,14 +433,7 @@ namespace ScintillaNet
             set
             {
                 if (string.IsNullOrEmpty(value)) return;
-                if (this.fctb != null)
-                {
-                    this.configLanguage = value;
-                    //this.fctb.Language = LanguageToFCTB(value);
-                    this.ApplyEditorStyles(value);
-                }
-                else this.SetLanguage(value);
-                //this.fctb.Language = LanguageToFCTB(value);
+                this.SetLanguage(value);
             }
         }
 
@@ -582,6 +492,7 @@ namespace ScintillaNet
             if (lang.lexer.stylebits > 0) StyleBits = lang.lexer.stylebits;
             if (lang.editorstyle != null)
             {
+                if (this.fctb != null) this.chl.ApplyBaseStyles(lang);
                 EdgeColour = lang.editorstyle.PrintMarginColor;
                 CaretFore = lang.editorstyle.CaretForegroundColor;
                 CaretLineBack = lang.editorstyle.CaretLineBackgroundColor;
@@ -3421,6 +3332,15 @@ namespace ScintillaNet
                     case 2:
                         this.fctb.ChangedLineColor = color;
                         break;
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31: // MarkerOutline
+                        SetFoldMarginHiColour(true, fore);
+                        break;
                 }
             }
             else SPerform(2041, (uint)markerNumber, (uint)fore);
@@ -3441,6 +3361,15 @@ namespace ScintillaNet
                         break;
                     case 2:
                         this.fctb.ChangedLineColor = color;
+                        break;
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31: // MarkerOutline
+                        SetFoldMarginColour(true, back);
                         break;
                 }
             }
