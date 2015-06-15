@@ -349,14 +349,14 @@ namespace AS3Context
         /// </summary>
         private void CreatePanels()
         {
-            var delayedUI = new DelayedDockContent(delegate {
+            var profilerStub = new DelayedDockContent(delegate {
                 profilerUI = new ProfilerUI();
                 profilerUI.PanelRef = profilerPanel;
                 return profilerUI;
             });
-            delayedUI.Text = TextHelper.GetString("Title.Profiler");
+            profilerStub.Text = TextHelper.GetString("Title.Profiler");
 
-            profilerPanel = PluginBase.MainForm.CreateDockablePanel(delayedUI, pluginGuid, pluginIcon, DockState.Hidden);
+            profilerPanel = PluginBase.MainForm.CreateDockablePanel(profilerStub, pluginGuid, pluginIcon, DockState.Hidden);
             profilerPanel.VisibleState = DockState.Float;
         }
 
