@@ -55,7 +55,8 @@ namespace FastColoredTextBoxNS
             return item;
         }
 
-        int LastIndex
+        // MODDED, public
+        public int LastIndex
         {
             get { return (start + count - 1) % items.Length; }
         }

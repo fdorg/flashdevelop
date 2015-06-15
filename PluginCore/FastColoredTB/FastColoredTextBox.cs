@@ -349,6 +349,14 @@ namespace FastColoredTextBoxNS
         public Color BookmarkColor { get; set; }
 
         /// <summary>
+        /// Color of bookmarks
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(typeof(Color), "PowderBlue")]
+        [Description("Color of print margin edge.")]
+        public Color EdgeColor { get; set; }
+
+        /// <summary>
         /// Bookmarks
         /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
@@ -2272,7 +2280,7 @@ namespace FastColoredTextBoxNS
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            m_hImc = ImmGetContext(Handle);
+            if (Win32.ShouldUseWin32()) m_hImc = ImmGetContext(Handle);
         }
 
         private void timer2_Tick(object sender, EventArgs e)
@@ -4900,6 +4908,8 @@ namespace FastColoredTextBoxNS
             visibleMarkers.Clear();
             e.Graphics.SmoothingMode = SmoothingMode.None;
             //
+            // MODDED
+            Pen edgePen = new Pen(EdgeColor);
             var servicePen = new Pen(ServiceLinesColor);
             Brush changedLineBrush = new SolidBrush(ChangedLineColor);
             Brush indentBrush = new SolidBrush(IndentBackColor);
@@ -4928,7 +4938,9 @@ namespace FastColoredTextBoxNS
                 e.Graphics.DrawLine(servicePen, LeftIndentLine, 0, LeftIndentLine, ClientSize.Height);
             //draw preferred line width
             if (PreferredLineWidth > 0)
-                e.Graphics.DrawLine(servicePen,
+                // MODDED
+                e.Graphics.DrawLine(edgePen,
+                //e.Graphics.DrawLine(servicePen,
                                     new Point(
                                         LeftIndent + Paddings.Left + PreferredLineWidth*CharWidth -
                                         HorizontalScroll.Value + 1, textAreaRect.Top + 1),
@@ -5150,6 +5162,7 @@ namespace FastColoredTextBoxNS
                 DrawMiddleClickScrolling(e.Graphics);
 
             //dispose resources
+            edgePen.Dispose();
             servicePen.Dispose();
             changedLineBrush.Dispose();
             indentBrush.Dispose();

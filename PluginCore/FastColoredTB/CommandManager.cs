@@ -147,6 +147,15 @@ namespace FastColoredTextBoxNS
             TextSource.CurrentTB.OnUndoRedoStateChanged();
         }
 
+        // MODDED
+        public int CurrentId
+        {
+            get
+            {
+                return history.LastIndex;
+            }
+        }
+
         public bool UndoEnabled 
         { 
             get

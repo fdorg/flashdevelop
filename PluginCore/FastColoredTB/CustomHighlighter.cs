@@ -4,9 +4,10 @@ using System.Text;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using ScintillaNet.Enums;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ScintillaNet.Lexers;
+using ScintillaNet.Enums;
 
 namespace FastColoredTextBoxNS
 {
@@ -21,13 +22,12 @@ namespace FastColoredTextBoxNS
         * DefaultStyle, SelectionStyle, FoldedBlockStyle, BracketsStyle, BracketsStyle2, BracketsStyle3
         * Built in colors:
         * BackColor (BackBrush too), ForeColor, CurrentLineColor, ChangedLineColor, BookmarkColor, LineNumberColor, IndentBackColor, PaddingBackColor, 
-        * DisabledColor, CaretColor, ServiceLinesColor, FoldingIndicatorColor, ServiceColors (has 6), 
+        * EdgeColor, DisabledColor, CaretColor, ServiceLinesColor, FoldingIndicatorColor, ServiceColors (has 6)
         */
 
         public CustomHighlighter(FastColoredTextBox fctb)
         {
             editor = fctb;
-            //editor.AllowSeveralTextStyleDrawing = true;
             styles = new Style[32];
             regexes = new Regex[32];
             for (int i = 0; i < 32; i++)
@@ -36,13 +36,36 @@ namespace FastColoredTextBoxNS
                 styles[i] = new TextStyle(new SolidBrush(Color.Blue), null, System.Drawing.FontStyle.Regular);
             }
             // Try few...
-            regexes[1] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled); // COMMENT
-            regexes[2] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled); // COMMENTLINE
+            regexes[(int)CPP.COMMENT] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled);
+            regexes[(int)CPP.COMMENTLINE] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled);
             //
-            regexes[4] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled); // NUMBER
-            regexes[5] = new Regex(@"\b(public|private|static|const|import|package|class|function|default|throw|new|switch|case|var|else|if|return|null|for|while)\b"); // WORD
-            regexes[6] = new Regex(@"""((\\[^\n]|[^""\n])*)"""); // STRING
+            regexes[(int)CPP.NUMBER] = new Regex(@"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexOptions.Compiled);
+            regexes[(int)CPP.WORD] = new Regex(@"\b(public|private|static|const|import|package|class|function|default|throw|new|switch|case|var|else|if|return|null|for|while)\b");
+            regexes[(int)CPP.STRING] = new Regex(@"""""|"".*?[^\\]""", RegexOptions.Compiled);
+            regexes[(int)CPP.CHARACTER] = new Regex(@"''|'.*?[^\\]'", RegexOptions.Compiled);
+            regexes[(int)CPP.PREPROCESSOR] = new Regex(@"#(if|elseif|else|end|error)\b");
+            //
+            regexes[(int)CPP.COMMENTDOCKEYWORD] = new Regex(@"\*?@\S+", RegexOptions.Singleline | RegexOptions.Compiled);
             editor.TextChanged += OnTextChangedDelayed;
+        }
+
+        public void Colourize()
+        {
+            editor.ClearStylesBuffer();
+            editor.Range.ClearStyle(StyleIndex.All);
+            this.OnTextChangedDelayed(editor, new TextChangedEventArgs(editor.Range));
+        }
+
+        public void SetKeywords(int keywordSet, string keyWords)
+        {
+            string regex = "";
+            int styleIndex = CppStyleFromKeywordSet(keywordSet);
+            if (!string.IsNullOrEmpty(keyWords))
+            {
+                keyWords = Regex.Replace(keyWords, "\\s+", " ").Trim();
+                regex = @"\b(" + keyWords.Replace(" ", "|") + @")\b";
+            }
+            if (styleIndex >= 0) regexes[styleIndex] = new Regex(regex);
         }
 
         public FastColoredTextBoxNS.Style GetStyle(int index)
@@ -77,7 +100,6 @@ namespace FastColoredTextBoxNS
                 switch (type)
                 {
                     case "fore":
-                        TraceManager.Add("Fore set: " + index + "=" + value + ", type: " + type);
                         cast.ForeBrush = new SolidBrush(color);
                         break;
                     case "back":
@@ -142,16 +164,44 @@ namespace FastColoredTextBoxNS
                 if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
             }
 
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.COMMENT)).ForeBrush = new SolidBrush(Color.Green);
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.COMMENTDOC)).ForeBrush = new SolidBrush(Color.Green);
-            ((TextStyle)GetStyle((int)ScintillaNet.Lexers.CPP.NUMBER)).ForeBrush = new SolidBrush(Color.Orange);
-
             // set folding markers
-            range.ClearFoldingMarkers();
-            range.SetFoldingMarkers("{", "}"); // bracket block
-            range.SetFoldingMarkers(@"/\*", @"\*/"); // comment block
+            //range.ClearFoldingMarkers();
+            //range.SetFoldingMarkers("{", "}"); // bracket block
+            //range.SetFoldingMarkers(@"/\*", @"\*/"); // comment block
         }
 
+        private void SetRangeStyle(Range range, int i)
+        {
+            if (styles[i] != null) range.SetStyle(styles[i], regexes[i]);
+        }
+
+        private int CppStyleFromKeywordSet(int keywordSet)
+        {
+            switch (keywordSet)
+            {
+                case KeywordSet.PRIMARY: return (int)CPP.WORD;
+                case KeywordSet.SECONDARY: return (int)CPP.WORD2;
+                case KeywordSet.DOCUMENTATION: return (int)CPP.COMMENTDOCKEYWORD;
+                case KeywordSet.GLOBAL: return (int)CPP.GLOBALCLASS;
+                case KeywordSet.EXTENDED1: return (int)CPP.WORD3;
+                case KeywordSet.EXTENDED2: return (int)CPP.WORD4;
+                case KeywordSet.EXTENDED3: return (int)CPP.WORD5;
+            }
+            return -1;
+        }
+
+    }
+
+    internal static class KeywordSet
+    {
+        public const int PRIMARY = 0;
+        public const int SECONDARY = 1;
+        public const int DOCUMENTATION = 2;
+        public const int GLOBAL = 3;
+        public const int PREPOCESSOR = 4; // unused
+        public const int EXTENDED1 = 5;
+        public const int EXTENDED2 = 6;
+        public const int EXTENDED3 = 7;
     }
 
 }

@@ -203,6 +203,7 @@ namespace ScintillaNet
 
         #region FastColoredTB
 
+        private Int32 savePointId = -1;
         private FastColoredTextBoxNS.CustomHighlighter chl;
         private FastColoredTextBoxNS.FastColoredTextBox fctb;
 
@@ -211,8 +212,12 @@ namespace ScintillaNet
             this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
             this.fctb.SyntaxHighlighter = null;
             this.fctb.Dock = DockStyle.Fill;
+            this.fctb.AutoIndent = false;
             this.fctb.ShowLineNumbers = true;
             this.fctb.ShowFoldingLines = true;
+            this.fctb.PreferredLineWidth = 140;
+            this.fctb.AllowSeveralTextStyleDrawing = true;
+            this.fctb.SelectionHighlightingForLineBreaksEnabled = false;
             this.fctb.HighlightFoldingIndicator = false;
             this.fctb.KeyDown += this.OnEditorKeyDown;
             this.fctb.DoubleClick += this.OnEditorDoubleClick;
@@ -227,7 +232,7 @@ namespace ScintillaNet
             this.fctb.Paddings = new Padding(4);
             this.fctb.LeftPadding = 10;
             this.Controls.Add(this.fctb);
-
+            //
             this.chl = new FastColoredTextBoxNS.CustomHighlighter(this.fctb);
         }
 
@@ -275,21 +280,21 @@ namespace ScintillaNet
                     if (style.HasBold) StyleSetBold(style.key, style.IsBold);
                     if (style.HasItalics) StyleSetItalic(style.key, style.IsItalics);
                     if (style.HasEolFilled) StyleSetEOLFilled(style.key, style.IsEolFilled);
-                } 
+                }
             }
+            this.fctb.DisabledColor = SystemColors.Control;
             this.fctb.ServiceColors.CollapseMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
             this.fctb.ServiceColors.CollapseMarkerBorderColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
             this.fctb.ServiceColors.CollapseMarkerForeColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
             this.fctb.ServiceColors.ExpandMarkerBackColor = DataConverter.BGRToColor(lang.editorstyle.MarkerForegroundColor);
             this.fctb.ServiceColors.ExpandMarkerBorderColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
             this.fctb.ServiceColors.ExpandMarkerForeColor = DataConverter.BGRToColor(lang.editorstyle.MarkerBackgroundColor);
-            this.fctb.DisabledColor = Color.Lime;
             this.fctb.CaretColor = DataConverter.BGRToColor(lang.editorstyle.CaretForegroundColor);
             this.fctb.CurrentLineColor = DataConverter.BGRToColor(lang.editorstyle.CaretLineBackgroundColor);
             this.fctb.SelectionColor = DataConverter.BGRToColor(lang.editorstyle.SelectionBackgroundColor);
-            //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
+            this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
-            // EdgeColour = lang.editorstyle.PrintMarginColor;
+            this.fctb.EdgeColor = DataConverter.BGRToColor(lang.editorstyle.PrintMarginColor);
         }
 
         private FastColoredTextBoxNS.Language LanguageToFCTB(string language)
@@ -342,13 +347,15 @@ namespace ScintillaNet
 
         private void OnEditorUndoRedoStateChanged(object sender, EventArgs e)
         {
-            if (this.fctb.UndoEnabled && this.IsModify)
+            
+            int current = this.fctb.TextSource.Manager.CurrentId;
+            if (savePointId == current) 
+            { 
+                if (SavePointReached != null) SavePointReached(this);
+            }
+            else
             {
                 if (SavePointLeft != null) SavePointLeft(this);
-            }
-            if (!this.fctb.UndoEnabled)
-            {
-                if (SavePointReached != null) SavePointReached(this);
             }
         }
 
@@ -610,259 +617,7 @@ namespace ScintillaNet
                 UseStyle usestyle = lang.usestyles[j];
                 if (usestyle.key == 0)
                 {
-                    System.Type theType = null;
-                    switch ((Enums.Lexer)lang.lexer.key)
-                    {
-                        case Enums.Lexer.PYTHON:
-                            theType = typeof(Lexers.PYTHON);
-                            break;
-                        case Enums.Lexer.CPP:
-                            theType = typeof(Lexers.CPP);
-                            break;
-                        case Enums.Lexer.HTML:
-                            theType = typeof(Lexers.HTML);
-                            break;
-                        case Enums.Lexer.XML:
-                            theType = typeof(Lexers.XML);
-                            break;
-                        case Enums.Lexer.PERL:
-                            theType = typeof(Lexers.PERL);
-                            break;
-                        case Enums.Lexer.SQL:
-                            theType = typeof(Lexers.SQL);
-                            break;
-                        case Enums.Lexer.VB:
-                            theType = typeof(Lexers.VB);
-                            break;
-                        case Enums.Lexer.PROPERTIES:
-                            theType = typeof(Lexers.PROPERTIES);
-                            break;
-                        case Enums.Lexer.ERRORLIST:
-                            theType = typeof(Lexers.ERRORLIST);
-                            break;
-                        case Enums.Lexer.MAKEFILE:
-                            theType = typeof(Lexers.MAKEFILE);
-                            break;
-                        case Enums.Lexer.BATCH:
-                            theType = typeof(Lexers.BATCH);
-                            break;
-                        case Enums.Lexer.LATEX:
-                            theType = typeof(Lexers.LATEX);
-                            break;
-                        case Enums.Lexer.LUA:
-                            theType = typeof(Lexers.LUA);
-                            break;
-                        case Enums.Lexer.DIFF:
-                            theType = typeof(Lexers.DIFF);
-                            break;
-                        case Enums.Lexer.CONF:
-                            theType = typeof(Lexers.CONF);
-                            break;
-                        case Enums.Lexer.PASCAL:
-                            theType = typeof(Lexers.PASCAL);
-                            break;
-                        case Enums.Lexer.AVE:
-                            theType = typeof(Lexers.AVE);
-                            break;
-                        case Enums.Lexer.ADA:
-                            theType = typeof(Lexers.ADA);
-                            break;
-                        case Enums.Lexer.LISP:
-                            theType = typeof(Lexers.LISP);
-                            break;
-                        case Enums.Lexer.RUBY:
-                            theType = typeof(Lexers.RUBY);
-                            break;
-                        case Enums.Lexer.EIFFEL:
-                            theType = typeof(Lexers.EIFFEL);
-                            break;
-                        case Enums.Lexer.EIFFELKW:
-                            theType = typeof(Lexers.EIFFELKW);
-                            break;
-                        case Enums.Lexer.TCL:
-                            theType = typeof(Lexers.TCL);
-                            break;
-                        case Enums.Lexer.NNCRONTAB:
-                            theType = typeof(Lexers.NNCRONTAB);
-                            break;
-                        case Enums.Lexer.BULLANT:
-                            theType = typeof(Lexers.BULLANT);
-                            break;
-                        case Enums.Lexer.VBSCRIPT:
-                            theType = typeof(Lexers.VBSCRIPT);
-                            break;
-                        case Enums.Lexer.BAAN:
-                            theType = typeof(Lexers.BAAN);
-                            break;
-                        case Enums.Lexer.MATLAB:
-                            theType = typeof(Lexers.MATLAB);
-                            break;
-                        case Enums.Lexer.SCRIPTOL:
-                            theType = typeof(Lexers.SCRIPTOL);
-                            break;
-                        case Enums.Lexer.ASM:
-                            theType = typeof(Lexers.ASM);
-                            break;
-                        case Enums.Lexer.FORTRAN:
-                            theType = typeof(Lexers.FORTRAN);
-                            break;
-                        case Enums.Lexer.F77:
-                            theType = typeof(Lexers.F77);
-                            break;
-                        case Enums.Lexer.CSS:
-                            theType = typeof(Lexers.CSS);
-                            break;
-                        case Enums.Lexer.POV:
-                            theType = typeof(Lexers.POV);
-                            break;
-                        case Enums.Lexer.LOUT:
-                            theType = typeof(Lexers.LOUT);
-                            break;
-                        case Enums.Lexer.ESCRIPT:
-                            theType = typeof(Lexers.ESCRIPT);
-                            break;
-                        case Enums.Lexer.PS:
-                            theType = typeof(Lexers.PS);
-                            break;
-                        case Enums.Lexer.NSIS:
-                            theType = typeof(Lexers.NSIS);
-                            break;
-                        case Enums.Lexer.MMIXAL:
-                            theType = typeof(Lexers.MMIXAL);
-                            break;
-                        case Enums.Lexer.LOT:
-                            theType = typeof(Lexers.LOT);
-                            break;
-                        case Enums.Lexer.YAML:
-                            theType = typeof(Lexers.YAML);
-                            break;
-                        case Enums.Lexer.TEX:
-                            theType = typeof(Lexers.TEX);
-                            break;
-                        case Enums.Lexer.METAPOST:
-                            theType = typeof(Lexers.METAPOST);
-                            break;
-                        case Enums.Lexer.POWERBASIC:
-                            theType = typeof(Lexers.POWERBASIC);
-                            break;
-                        case Enums.Lexer.FORTH:
-                            theType = typeof(Lexers.FORTH);
-                            break;
-                        case Enums.Lexer.ERLANG:
-                            theType = typeof(Lexers.ERLANG);
-                            break;
-                        case Enums.Lexer.OCTAVE:
-                            theType = typeof(Lexers.OCTAVE);
-                            break;
-                        case Enums.Lexer.MSSQL:
-                            theType = typeof(Lexers.MSSQL);
-                            break;
-                        case Enums.Lexer.VERILOG:
-                            theType = typeof(Lexers.VERILOG);
-                            break;
-                        case Enums.Lexer.KIX:
-                            theType = typeof(Lexers.KIX);
-                            break;
-                        case Enums.Lexer.GUI4CLI:
-                            theType = typeof(Lexers.GUI4CLI);
-                            break;
-                        case Enums.Lexer.SPECMAN:
-                            theType = typeof(Lexers.SPECMAN);
-                            break;
-                        case Enums.Lexer.AU3:
-                            theType = typeof(Lexers.AU3);
-                            break;
-                        case Enums.Lexer.APDL:
-                            theType = typeof(Lexers.APDL);
-                            break;
-                        case Enums.Lexer.BASH:
-                            theType = typeof(Lexers.BASH);
-                            break;
-                        case Enums.Lexer.ASN1:
-                            theType = typeof(Lexers.ASN1);
-                            break;
-                        case Enums.Lexer.VHDL:
-                            theType = typeof(Lexers.VHDL);
-                            break;
-                        case Enums.Lexer.CAML:
-                            theType = typeof(Lexers.CAML);
-                            break;
-                        case Enums.Lexer.HASKELL:
-                            theType = typeof(Lexers.HASKELL);
-                            break;
-                        case Enums.Lexer.TADS3:
-                            theType = typeof(Lexers.TADS3);
-                            break;
-                        case Enums.Lexer.REBOL:
-                            theType = typeof(Lexers.REBOL);
-                            break;
-                        case Enums.Lexer.SMALLTALK:
-                            theType = typeof(Lexers.SMALLTALK);
-                            break;
-                        case Enums.Lexer.FLAGSHIP:
-                            theType = typeof(Lexers.FLAGSHIP);
-                            break;
-                        case Enums.Lexer.CSOUND:
-                            theType = typeof(Lexers.CSOUND);
-                            break;
-                        case Enums.Lexer.INNOSETUP:
-                            theType = typeof(Lexers.INNOSETUP);
-                            break;
-                        case Enums.Lexer.OPAL:
-                            theType = typeof(Lexers.OPAL);
-                            break;
-                        case Enums.Lexer.SPICE:
-                            theType = typeof(Lexers.SPICE);
-                            break;
-                        case Enums.Lexer.D:
-                            theType = typeof(Lexers.D);
-                            break;
-                        case Enums.Lexer.CMAKE:
-                            theType = typeof(Lexers.CMAKE);
-                            break;
-                        case Enums.Lexer.GAP:
-                            theType = typeof(Lexers.GAP);
-                            break;
-                        case Enums.Lexer.PLM:
-                            theType = typeof(Lexers.PLM);
-                            break;
-                        case Enums.Lexer.PROGRESS:
-                            theType = typeof(Lexers.PROGRESS);
-                            break;
-                        case Enums.Lexer.ABAQUS:
-                            theType = typeof(Lexers.ABAQUS);
-                            break;
-                        case Enums.Lexer.ASYMPTOTE:
-                            theType = typeof(Lexers.ASYMPTOTE);
-                            break;
-                        case Enums.Lexer.R:
-                            theType = typeof(Lexers.R);
-                            break;
-                        case Enums.Lexer.MAGIK:
-                            theType = typeof(Lexers.MAGIK);
-                            break;
-                        case Enums.Lexer.POWERSHELL:
-                            theType = typeof(Lexers.POWERSHELL);
-                            break;
-                        case Enums.Lexer.MYSQL:
-                            theType = typeof(Lexers.MYSQL);
-                            break;
-                        case Enums.Lexer.PO:
-                            theType = typeof(Lexers.PO);
-                            break;
-                        case Enums.Lexer.SORCUS:
-                            theType = typeof(Lexers.SORCUS);
-                            break;
-                        case Enums.Lexer.POWERPRO:
-                            theType = typeof(Lexers.POWERPRO);
-                            break;
-                        case Enums.Lexer.NIMROD:
-                            theType = typeof(Lexers.NIMROD);
-                            break;
-                        case Enums.Lexer.SML:
-                            theType = typeof(Lexers.SML);
-                            break;
-                    }
+                    System.Type theType = this.GetLexerType(lang.lexer.key);
                     try { usestyle.key = (int)Enum.Parse(theType, usestyle.name, true); }
                     catch (Exception ex)
                     {
@@ -2348,12 +2103,13 @@ namespace ScintillaNet
         {
             get 
             {
-                // TODO
-                return (int)SPerform(2360, 0, 0);
+                if (this.fctb != null) return this.fctb.PreferredLineWidth;
+                else return (int)SPerform(2360, 0, 0);
             }
             set
             {
-                SPerform(2361, (uint)value, 0);
+                if (this.fctb != null) this.fctb.PreferredLineWidth = value;
+                else SPerform(2361, (uint)value, 0);
             }
         }   
 
@@ -2364,12 +2120,13 @@ namespace ScintillaNet
         {
             get 
             {
-                // TODO
-                return (int)SPerform(2362, 0, 0);
+                if (this.fctb != null) return this.fctb.PreferredLineWidth > 0 ? 1 : 0;
+                else return (int)SPerform(2362, 0, 0);
             }
             set
             {
-                SPerform(2363, (uint)value, 0);
+                if (this.fctb != null) this.fctb.PreferredLineWidth = value > 0 ? EdgeColumn : 0;
+                else SPerform(2363, (uint)value, 0);
             }
         }   
 
@@ -2380,12 +2137,13 @@ namespace ScintillaNet
         {
             get 
             {
-                // TODO
-                return (int)SPerform(2364, 0, 0);
+                if (this.fctb != null) return DataConverter.ColorToBGR(this.fctb.EdgeColor);
+                else return (int)SPerform(2364, 0, 0);
             }
             set
             {
-                SPerform(2365, (uint)value, 0);
+                if (this.fctb != null) this.fctb.EdgeColor = DataConverter.BGRToColor(value);
+                else SPerform(2365, (uint)value, 0);
             }
         }   
 
@@ -3105,10 +2863,14 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void WordChars(string characters)
         {
-            if (characters == null || characters.Equals("")) characters = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(characters))
+            if (this.fctb != null) return; // TODO: implement?
+            else
             {
-                SPerform(2077, 0, (uint)b);
+                if (characters == null || characters.Equals("")) characters = "\0\0";
+                fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(characters))
+                {
+                    SPerform(2077, 0, (uint)b);
+                }
             }
         }                   
 
@@ -3208,10 +2970,14 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void KeyWords(int keywordSet, string keyWords)
         {
-            if (keyWords == null || keyWords.Equals("")) keyWords = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(keyWords))
+            if (this.fctb != null) this.chl.SetKeywords(keywordSet, keyWords);
+            else
             {
-                SPerform(4005, (uint)keywordSet, (uint)b);
+                if (keyWords == null || keyWords.Equals("")) keyWords = "\0\0";
+                fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(keyWords))
+                {
+                    SPerform(4005, (uint)keywordSet, (uint)b);
+                }
             }
         }   
                         
@@ -3521,7 +3287,7 @@ namespace ScintillaNet
         {
             if (this.fctb != null)
             {
-                this.fctb.ClearUndo();
+                this.savePointId = this.fctb.TextSource.Manager.CurrentId;
                 this.fctb.IsChanged = false;
             }
             else SPerform(2014, 0, 0);
@@ -3644,7 +3410,20 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerSetFore(int markerNumber, int fore)
         {
-             SPerform(2041, (uint)markerNumber, (uint)fore);
+            if (this.fctb != null) // TODO: Map these
+            {
+                Color color = DataConverter.BGRToColor(fore);
+                switch (markerNumber)
+                {
+                    case 0: 
+                        this.fctb.BookmarkColor = color;
+                        break;
+                    case 2:
+                        this.fctb.ChangedLineColor = color;
+                        break;
+                }
+            }
+            else SPerform(2041, (uint)markerNumber, (uint)fore);
         }   
                         
         /// <summary>
@@ -3652,7 +3431,20 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerSetBack(int markerNumber, int back)
         {
-             SPerform(2042, (uint)markerNumber, (uint)back);
+            if (this.fctb != null) // TODO: Map these
+            {
+                Color color = DataConverter.BGRToColor(back);
+                switch (markerNumber)
+                {
+                    case 0:
+                        this.fctb.BookmarkColor = color;
+                        break;
+                    case 2:
+                        this.fctb.ChangedLineColor = color;
+                        break;
+                }
+            }
+            else SPerform(2042, (uint)markerNumber, (uint)back);
         }   
                         
         /// <summary>
@@ -3660,7 +3452,17 @@ namespace ScintillaNet
         /// </summary>
         public int MarkerAdd(int line, int markerNumber)
         {
-            return (int)SPerform(2043, (uint)line, (uint)markerNumber);
+            if (this.fctb != null) // TODO: Map these
+            {
+                switch (markerNumber)
+                {
+                    case 0:
+                        this.fctb.BookmarkLine(line);
+                        break;
+                }
+                return 0;
+            }
+            else return (int)SPerform(2043, (uint)line, (uint)markerNumber);
         }   
                         
         /// <summary>
@@ -3668,7 +3470,16 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerDelete(int line, int markerNumber)
         {
-             SPerform(2044, (uint)line, (uint)markerNumber);
+            if (this.fctb != null) // TODO: Map these
+            {
+                switch (markerNumber)
+                {
+                    case 0:
+                        this.fctb.UnbookmarkLine(line);
+                        break;
+                }
+            }
+            else SPerform(2044, (uint)line, (uint)markerNumber);
         }   
                         
         /// <summary>
@@ -3676,7 +3487,16 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerDeleteAll(int markerNumber)
         {
-             SPerform(2045, (uint)markerNumber, 0);
+            if (this.fctb != null) // TODO: Map these
+            {
+                switch (markerNumber)
+                {
+                    case 0:
+                        this.fctb.Bookmarks.Clear();
+                        break;
+                }
+            }
+            else SPerform(2045, (uint)markerNumber, 0);
         }   
                         
         /// <summary>
@@ -3745,7 +3565,14 @@ namespace ScintillaNet
         /// </summary>
         public void SetSelFore(bool useSetting, int fore)
         {
-             SPerform(2067,(uint)(useSetting ? 1 : 0), (uint)fore);
+            if (this.fctb != null)
+            {
+                if (!useSetting) return;
+                Color color = DataConverter.BGRToColor(fore);
+                Brush back = this.fctb.SelectionStyle.BackgroundBrush;
+                this.fctb.SelectionStyle = new FastColoredTextBoxNS.SelectionStyle(back, new SolidBrush(color));
+            }
+            else SPerform(2067, (uint)(useSetting ? 1 : 0), (uint)fore);
         }   
                         
         /// <summary>
@@ -3753,7 +3580,14 @@ namespace ScintillaNet
         /// </summary>
         public void SetSelBack(bool useSetting, int back)
         {
-             SPerform(2068, (uint)(useSetting ? 1 : 0), (uint)back);
+            if (this.fctb != null)
+            {
+                if (!useSetting) return;
+                Color color = DataConverter.BGRToColor(back);
+                Brush fore = this.fctb.SelectionStyle.ForegroundBrush;
+                this.fctb.SelectionStyle = new FastColoredTextBoxNS.SelectionStyle(new SolidBrush(color), fore);
+            }
+            else SPerform(2068, (uint)(useSetting ? 1 : 0), (uint)back);
         }   
                         
         /// <summary>
@@ -4064,7 +3898,8 @@ namespace ScintillaNet
         /// </summary>
         public void Null()
         {
-            if (this.fctb == null) SPerform(2172, 0, 0);
+            if (this.fctb == null) return;
+            else SPerform(2172, 0, 0);
         }   
                         
         /// <summary>
@@ -4072,7 +3907,11 @@ namespace ScintillaNet
         /// </summary>
         public void EmptyUndoBuffer()
         {
-            if (this.fctb != null) this.fctb.ClearUndo();
+            if (this.fctb != null)
+            {
+                this.fctb.ClearUndo();
+                this.fctb.IsChanged = false;
+            }
             else SPerform(2175, 0, 0);
         }   
                         
@@ -5456,7 +5295,8 @@ namespace ScintillaNet
         /// </summary>
         public void Colourise(int start, int end)
         {
-             SPerform(4003, (uint)start, (uint)end);
+            if (this.fctb != null) this.chl.Colourize();
+            else SPerform(4003, (uint)start, (uint)end);
         }   
                         
         /// <summary>
@@ -5464,10 +5304,14 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void LoadLexerLibrary(string path)
         {
-            if (path == null || path.Equals("")) path = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(path))
+            if (this.fctb != null) return; // INVALID
+            else
             {
-                 SPerform(4007, 0, (uint)b);
+                if (path == null || path.Equals("")) path = "\0\0";
+                fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(path))
+                {
+                    SPerform(4007, 0, (uint)b);
+                }
             }
         }
 
@@ -7716,6 +7560,267 @@ namespace ScintillaNet
                 position--;
             }
             return word;
+        }
+
+        /// <summary>
+        /// Gets the type of the lexer
+        /// </summary>
+        public Type GetLexerType(int key)
+        {
+            System.Type theType = null;
+            switch ((Enums.Lexer)key)
+            {
+                case Enums.Lexer.PYTHON:
+                    theType = typeof(Lexers.PYTHON);
+                    break;
+                case Enums.Lexer.CPP:
+                    theType = typeof(Lexers.CPP);
+                    break;
+                case Enums.Lexer.HTML:
+                    theType = typeof(Lexers.HTML);
+                    break;
+                case Enums.Lexer.XML:
+                    theType = typeof(Lexers.XML);
+                    break;
+                case Enums.Lexer.PERL:
+                    theType = typeof(Lexers.PERL);
+                    break;
+                case Enums.Lexer.SQL:
+                    theType = typeof(Lexers.SQL);
+                    break;
+                case Enums.Lexer.VB:
+                    theType = typeof(Lexers.VB);
+                    break;
+                case Enums.Lexer.PROPERTIES:
+                    theType = typeof(Lexers.PROPERTIES);
+                    break;
+                case Enums.Lexer.ERRORLIST:
+                    theType = typeof(Lexers.ERRORLIST);
+                    break;
+                case Enums.Lexer.MAKEFILE:
+                    theType = typeof(Lexers.MAKEFILE);
+                    break;
+                case Enums.Lexer.BATCH:
+                    theType = typeof(Lexers.BATCH);
+                    break;
+                case Enums.Lexer.LATEX:
+                    theType = typeof(Lexers.LATEX);
+                    break;
+                case Enums.Lexer.LUA:
+                    theType = typeof(Lexers.LUA);
+                    break;
+                case Enums.Lexer.DIFF:
+                    theType = typeof(Lexers.DIFF);
+                    break;
+                case Enums.Lexer.CONF:
+                    theType = typeof(Lexers.CONF);
+                    break;
+                case Enums.Lexer.PASCAL:
+                    theType = typeof(Lexers.PASCAL);
+                    break;
+                case Enums.Lexer.AVE:
+                    theType = typeof(Lexers.AVE);
+                    break;
+                case Enums.Lexer.ADA:
+                    theType = typeof(Lexers.ADA);
+                    break;
+                case Enums.Lexer.LISP:
+                    theType = typeof(Lexers.LISP);
+                    break;
+                case Enums.Lexer.RUBY:
+                    theType = typeof(Lexers.RUBY);
+                    break;
+                case Enums.Lexer.EIFFEL:
+                    theType = typeof(Lexers.EIFFEL);
+                    break;
+                case Enums.Lexer.EIFFELKW:
+                    theType = typeof(Lexers.EIFFELKW);
+                    break;
+                case Enums.Lexer.TCL:
+                    theType = typeof(Lexers.TCL);
+                    break;
+                case Enums.Lexer.NNCRONTAB:
+                    theType = typeof(Lexers.NNCRONTAB);
+                    break;
+                case Enums.Lexer.BULLANT:
+                    theType = typeof(Lexers.BULLANT);
+                    break;
+                case Enums.Lexer.VBSCRIPT:
+                    theType = typeof(Lexers.VBSCRIPT);
+                    break;
+                case Enums.Lexer.BAAN:
+                    theType = typeof(Lexers.BAAN);
+                    break;
+                case Enums.Lexer.MATLAB:
+                    theType = typeof(Lexers.MATLAB);
+                    break;
+                case Enums.Lexer.SCRIPTOL:
+                    theType = typeof(Lexers.SCRIPTOL);
+                    break;
+                case Enums.Lexer.ASM:
+                    theType = typeof(Lexers.ASM);
+                    break;
+                case Enums.Lexer.FORTRAN:
+                    theType = typeof(Lexers.FORTRAN);
+                    break;
+                case Enums.Lexer.F77:
+                    theType = typeof(Lexers.F77);
+                    break;
+                case Enums.Lexer.CSS:
+                    theType = typeof(Lexers.CSS);
+                    break;
+                case Enums.Lexer.POV:
+                    theType = typeof(Lexers.POV);
+                    break;
+                case Enums.Lexer.LOUT:
+                    theType = typeof(Lexers.LOUT);
+                    break;
+                case Enums.Lexer.ESCRIPT:
+                    theType = typeof(Lexers.ESCRIPT);
+                    break;
+                case Enums.Lexer.PS:
+                    theType = typeof(Lexers.PS);
+                    break;
+                case Enums.Lexer.NSIS:
+                    theType = typeof(Lexers.NSIS);
+                    break;
+                case Enums.Lexer.MMIXAL:
+                    theType = typeof(Lexers.MMIXAL);
+                    break;
+                case Enums.Lexer.LOT:
+                    theType = typeof(Lexers.LOT);
+                    break;
+                case Enums.Lexer.YAML:
+                    theType = typeof(Lexers.YAML);
+                    break;
+                case Enums.Lexer.TEX:
+                    theType = typeof(Lexers.TEX);
+                    break;
+                case Enums.Lexer.METAPOST:
+                    theType = typeof(Lexers.METAPOST);
+                    break;
+                case Enums.Lexer.POWERBASIC:
+                    theType = typeof(Lexers.POWERBASIC);
+                    break;
+                case Enums.Lexer.FORTH:
+                    theType = typeof(Lexers.FORTH);
+                    break;
+                case Enums.Lexer.ERLANG:
+                    theType = typeof(Lexers.ERLANG);
+                    break;
+                case Enums.Lexer.OCTAVE:
+                    theType = typeof(Lexers.OCTAVE);
+                    break;
+                case Enums.Lexer.MSSQL:
+                    theType = typeof(Lexers.MSSQL);
+                    break;
+                case Enums.Lexer.VERILOG:
+                    theType = typeof(Lexers.VERILOG);
+                    break;
+                case Enums.Lexer.KIX:
+                    theType = typeof(Lexers.KIX);
+                    break;
+                case Enums.Lexer.GUI4CLI:
+                    theType = typeof(Lexers.GUI4CLI);
+                    break;
+                case Enums.Lexer.SPECMAN:
+                    theType = typeof(Lexers.SPECMAN);
+                    break;
+                case Enums.Lexer.AU3:
+                    theType = typeof(Lexers.AU3);
+                    break;
+                case Enums.Lexer.APDL:
+                    theType = typeof(Lexers.APDL);
+                    break;
+                case Enums.Lexer.BASH:
+                    theType = typeof(Lexers.BASH);
+                    break;
+                case Enums.Lexer.ASN1:
+                    theType = typeof(Lexers.ASN1);
+                    break;
+                case Enums.Lexer.VHDL:
+                    theType = typeof(Lexers.VHDL);
+                    break;
+                case Enums.Lexer.CAML:
+                    theType = typeof(Lexers.CAML);
+                    break;
+                case Enums.Lexer.HASKELL:
+                    theType = typeof(Lexers.HASKELL);
+                    break;
+                case Enums.Lexer.TADS3:
+                    theType = typeof(Lexers.TADS3);
+                    break;
+                case Enums.Lexer.REBOL:
+                    theType = typeof(Lexers.REBOL);
+                    break;
+                case Enums.Lexer.SMALLTALK:
+                    theType = typeof(Lexers.SMALLTALK);
+                    break;
+                case Enums.Lexer.FLAGSHIP:
+                    theType = typeof(Lexers.FLAGSHIP);
+                    break;
+                case Enums.Lexer.CSOUND:
+                    theType = typeof(Lexers.CSOUND);
+                    break;
+                case Enums.Lexer.INNOSETUP:
+                    theType = typeof(Lexers.INNOSETUP);
+                    break;
+                case Enums.Lexer.OPAL:
+                    theType = typeof(Lexers.OPAL);
+                    break;
+                case Enums.Lexer.SPICE:
+                    theType = typeof(Lexers.SPICE);
+                    break;
+                case Enums.Lexer.D:
+                    theType = typeof(Lexers.D);
+                    break;
+                case Enums.Lexer.CMAKE:
+                    theType = typeof(Lexers.CMAKE);
+                    break;
+                case Enums.Lexer.GAP:
+                    theType = typeof(Lexers.GAP);
+                    break;
+                case Enums.Lexer.PLM:
+                    theType = typeof(Lexers.PLM);
+                    break;
+                case Enums.Lexer.PROGRESS:
+                    theType = typeof(Lexers.PROGRESS);
+                    break;
+                case Enums.Lexer.ABAQUS:
+                    theType = typeof(Lexers.ABAQUS);
+                    break;
+                case Enums.Lexer.ASYMPTOTE:
+                    theType = typeof(Lexers.ASYMPTOTE);
+                    break;
+                case Enums.Lexer.R:
+                    theType = typeof(Lexers.R);
+                    break;
+                case Enums.Lexer.MAGIK:
+                    theType = typeof(Lexers.MAGIK);
+                    break;
+                case Enums.Lexer.POWERSHELL:
+                    theType = typeof(Lexers.POWERSHELL);
+                    break;
+                case Enums.Lexer.MYSQL:
+                    theType = typeof(Lexers.MYSQL);
+                    break;
+                case Enums.Lexer.PO:
+                    theType = typeof(Lexers.PO);
+                    break;
+                case Enums.Lexer.SORCUS:
+                    theType = typeof(Lexers.SORCUS);
+                    break;
+                case Enums.Lexer.POWERPRO:
+                    theType = typeof(Lexers.POWERPRO);
+                    break;
+                case Enums.Lexer.NIMROD:
+                    theType = typeof(Lexers.NIMROD);
+                    break;
+                case Enums.Lexer.SML:
+                    theType = typeof(Lexers.SML);
+                    break;
+            }
+            return theType;
         }
 
         #endregion

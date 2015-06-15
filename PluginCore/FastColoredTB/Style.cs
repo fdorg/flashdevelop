@@ -276,7 +276,9 @@ namespace FastColoredTextBoxNS
             if (BackgroundBrush != null)
             {
                 gr.SmoothingMode = SmoothingMode.None;
-                var rect = new Rectangle(position.X, position.Y, (range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight);
+                // MODDED: Y - 1 and Height + 1 
+                var rect = new Rectangle(position.X, position.Y - 1, (range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight + 1);
+                //var rect = new Rectangle(position.X, position.Y, (range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight);
                 if (rect.Width == 0)
                     return;
                 gr.FillRectangle(BackgroundBrush, rect);
