@@ -221,6 +221,7 @@ namespace ScintillaNet
             this.fctb.ShowLineNumbers = true;
             this.fctb.ShowFoldingLines = true;
             this.fctb.PreferredLineWidth = 140;
+            this.fctb.DelayedEventsInterval = 20;
             this.fctb.SelectionHighlightingForLineBreaksEnabled = false;
             this.fctb.HighlightFoldingIndicator = false;
             this.fctb.KeyDown += this.OnEditorKeyDown;
@@ -492,12 +493,16 @@ namespace ScintillaNet
             StyleClearAll();
             try { lang.lexer.key = (int)Enum.Parse(typeof(Enums.Lexer), lang.lexer.name, true); }
             catch { /* If not found, uses the lang.lexer.key directly. */ }
-            this.configLanguage = value;
             Lexer = lang.lexer.key;
+            this.configLanguage = value;
+            if (this.fctb != null)
+            {
+                this.chl.SetLexer(lang.lexer.name);
+                this.chl.ApplyBaseStyles(lang);
+            }
             if (lang.lexer.stylebits > 0) StyleBits = lang.lexer.stylebits;
             if (lang.editorstyle != null)
             {
-                if (this.fctb != null) this.chl.ApplyBaseStyles(lang);
                 EdgeColour = lang.editorstyle.PrintMarginColor;
                 CaretFore = lang.editorstyle.CaretForegroundColor;
                 CaretLineBack = lang.editorstyle.CaretLineBackgroundColor;
