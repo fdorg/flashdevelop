@@ -566,9 +566,19 @@ namespace FlashDevelop
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
                 if (image != null) dockablePanel.Icon = ImageKonverter.ImageToIcon(image);
-                if (defaultDockState == DockState.Hidden) dockablePanel.DockState = DockState.Hidden;
-                else if (defaultVisible) dockablePanel.DockState = defaultDockState;
-                else dockablePanel.VisibleState = defaultDockState;
+                if (defaultDockState == DockState.Hidden)
+                {
+                    dockablePanel.DockState = DockState.Hidden;
+                }
+                else if (defaultVisible)
+                {
+                    dockablePanel.Show();
+                    dockablePanel.DockState = defaultDockState;
+                }
+                else
+                {
+                    dockablePanel.VisibleState = defaultDockState;
+                }
                 LayoutManager.PluginPanels.Add(dockablePanel);
                 return dockablePanel;
             }

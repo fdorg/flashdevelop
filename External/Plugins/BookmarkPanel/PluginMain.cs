@@ -172,7 +172,7 @@ namespace BookmarkPanel
         {
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockRight);
+            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockRight, true);
         }
 
         /// <summary>

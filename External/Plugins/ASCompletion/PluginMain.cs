@@ -612,7 +612,7 @@ namespace ASCompletion
             pluginIcon = PluginBase.MainForm.FindImage("99");
             pluginUI = new PluginUI(this);
             pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, pluginGuid, pluginIcon, DockState.DockRightAutoHide, true);
+            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, pluginGuid, pluginIcon, DockState.DockRight, true);
         }
 
         private void CreateMenuItems()
