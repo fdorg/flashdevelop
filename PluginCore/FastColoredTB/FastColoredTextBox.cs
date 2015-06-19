@@ -4952,6 +4952,14 @@ namespace FastColoredTextBoxNS
 
             //draw text area border
             DrawTextAreaBorder(e.Graphics);
+
+            // MODDED
+            if (ServiceColors.ServiceAreaBackColor != Color.Empty)
+            {
+                using (var brush = new SolidBrush(ServiceColors.ServiceAreaBackColor))
+                    e.Graphics.FillRectangle(brush, 0, 0, LeftPadding > 15 ? 15 : LeftPadding, ClientRectangle.Height);
+            }
+
             //
             int firstChar = (Math.Max(0, HorizontalScroll.Value - Paddings.Left))/CharWidth;
             int lastChar = (HorizontalScroll.Value + ClientSize.Width)/CharWidth;
@@ -4999,7 +5007,8 @@ namespace FastColoredTextBoxNS
                 //draw changed line marker
                 if (ChangedLineColor != Color.Transparent && line.IsChanged)
                     e.Graphics.FillRectangle(changedLineBrush,
-                                             new RectangleF(-10, y, LeftIndent - minLeftIndent - 2 + 10, CharHeight + 1));
+                                             new RectangleF(LeftPadding > 15 ? 15 : LeftPadding, y, Paddings.Left, CharHeight + 1));
+                                             //new RectangleF(-10, y, LeftIndent - minLeftIndent - 2 + 10, CharHeight + 1));
                 //
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 //
@@ -8515,6 +8524,7 @@ window.status = ""#print"";
         public Color ExpandMarkerForeColor { get; set; }
         public Color ExpandMarkerBackColor { get; set; }
         public Color ExpandMarkerBorderColor { get; set; }
+        public Color ServiceAreaBackColor { get; set; }
 
         public ServiceColors()
         {
@@ -8524,6 +8534,7 @@ window.status = ""#print"";
             ExpandMarkerForeColor = Color.Red;
             ExpandMarkerBackColor = Color.White;
             ExpandMarkerBorderColor = Color.Silver;
+            ServiceAreaBackColor = Color.Gray;
         }
     }
 

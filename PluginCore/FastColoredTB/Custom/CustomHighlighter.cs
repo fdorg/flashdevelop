@@ -14,32 +14,46 @@ namespace FastColoredTextBoxNS
 {
     public class CustomHighlighter
     {
+        private int counter = 0;
         private string lexer = "cpp";
         private FastColoredTextBox editor;
+        private Dictionary<int, int> mapping = new Dictionary<int, int>();
         private Regex[] regexes = new Regex[32];
         private Style[] styles = new Style[32];
 
+        /// <summary>
+        /// Constructor of the class
+        /// </summary>
         public CustomHighlighter(FastColoredTextBox fctb)
         {
-            editor = fctb;
-            styles = new Style[32];
-            regexes = new Regex[32];
-            for (int i = 0; i < 32; i++)
-            {
-                regexes[i] = new Regex("");
-                styles[i] = new TextStyle(new SolidBrush(Color.Blue), null, System.Drawing.FontStyle.Regular);
-            }
-            editor.VisibleRangeChangedDelayed += OnVisibleRangeChanged;
+            this.editor = fctb;
+            this.ResetStyles();
+            this.editor.VisibleRangeChangedDelayed += this.OnVisibleRangeChanged;
         }
 
+        /// <summary>
+        /// Highlights code after delayed visible range change
+        /// </summary>
         private void OnVisibleRangeChanged(Object sender, EventArgs e)
         {
-            HighlightSyntax(editor.VisibleRange);
+            Range range = editor.VisibleRange;
+            if (editor.Text.Length < 10240) range = editor.Range;
+            this.HighlightSyntax(range);
         }
 
+        /// <summary>
+        /// Hightlights editor with current style and adjust params by lexer
+        /// </summary>
         private void HighlightSyntax(Range range)
         {
             // set options
+            if (this.lexer == "css")
+            {
+                range.tb.CommentPrefix = null;
+                range.tb.LeftBracket = '{';
+                range.tb.RightBracket = '}';
+                range.tb.AutoIndentCharsPatterns = @"";
+            }
             if (this.lexer == "xml" || this.lexer == "html")
             {
                 range.tb.CommentPrefix = null;
@@ -66,24 +80,25 @@ namespace FastColoredTextBoxNS
             range.ClearStyle(styles);
             for (int i = 0; i < 32; i++)
             {
-                if (styles[i] != null && regexes[i] != null)
+                int style = this.GetStyleIndex(i);
+                if (this.styles[i] != null && this.regexes[style] != null)
                 {
                     // xml and html comments can overwrite
-                    if ((this.lexer == "xml" || this.lexer == "html") && i == (int)XML.COMMENT)
+                    if ((this.lexer == "xml" || this.lexer == "html") && style == (int)XML.COMMENT)
                     {
-                        styles[i].AllowSeveralTextStyles = true;
+                        this.styles[i].AllowSeveralTextStyles = true;
                     }
-                    // css strings can overwrite
-                    if ((this.lexer == "css") && (i == (int)CSS.DOUBLESTRING || i == (int)CSS.SINGLESTRING))
+                    // css strings and comments can overwrite
+                    if ((this.lexer == "css") && (style == (int)CSS.DOUBLESTRING || style == (int)CSS.SINGLESTRING || style == (int)CSS.COMMENT))
                     {
-                        styles[i].AllowSeveralTextStyles = true;
+                        this.styles[i].AllowSeveralTextStyles = true;
                     }
                     // cpp string and dockeywords can overwrite
-                    if (this.lexer == "cpp" && (i == (int)CPP.STRING) || (i == (int)CPP.COMMENTDOCKEYWORD || i == (int)CPP.COMMENTDOCKEYWORDERROR))
+                    if (this.lexer == "cpp" && (style == (int)CPP.STRING) || (style == (int)CPP.COMMENTDOCKEYWORD || style == (int)CPP.COMMENTDOCKEYWORDERROR))
                     {
-                        styles[i].AllowSeveralTextStyles = true;
+                        this.styles[i].AllowSeveralTextStyles = true;
                     }
-                    range.SetStyle(styles[i], regexes[i]);
+                    range.SetStyle(this.styles[i], this.regexes[style]);
                 }
             }
 
@@ -92,25 +107,51 @@ namespace FastColoredTextBoxNS
             if (this.lexer == "xml" || this.lexer == "html")
             {
                 range.SetFoldingMarkers("<!--", "-->"); // comment
-                range.SetFoldingMarkers(@"(<(?!meta)\w+(?:)\w+.+(?<!\/)(?<!<\/\w+)>)", @"(</\w+.\w+>)"); // tag, not meta
+                range.SetFoldingMarkers(@"(<(?!meta|link|base)\w+(?:)\w+.+(?<!\/)(?<!<\/\w+)>)", @"(</\w+.\w+>)"); // tag, not meta
             }
             else // Others
             {
                 range.SetFoldingMarkers("{", "}"); // bracket
                 range.SetFoldingMarkers(@"/\*", @"\*/"); // comment
+                range.SetFoldingMarkers(@"////{", @"////}"); // comment bracket
             }
         }
 
+        /// <summary>
+        /// Gets a style by index or null
+        /// </summary>
         public FastColoredTextBoxNS.Style GetStyle(int index)
         {
-            if (index < 0 || index > 31 || styles[index] == null) return editor.DefaultStyle;
-            else return styles[index];
+            int mapped = this.GetStyleIndex(index);
+            return mapped > -1 ? this.styles[mapped] : null;
         }
 
+        /// <summary>
+        /// Gets and maps style index of a requested style index
+        /// </summary>
+        public Int32 GetStyleIndex(int index)
+        {
+            // ignore negative and do not map common styles
+            if (index < 0 || (index > 31 && index < 40)) return -1;
+            if (!this.mapping.ContainsKey(index))
+            {
+                if (this.counter <= 31)
+                {
+                    this.mapping.Add(index, this.counter);
+                    this.counter++;
+                }
+                else return -1;
+            }
+            return this.mapping[index];
+        }
+
+        /// <summary>
+        /// Sets string value of a style
+        /// </summary>
         public void SetStyleString(int index, string value, string type)
         {
-            Style style = GetStyle(index);
-            if (style is TextStyle)
+            Style style = this.GetStyle(index);
+            if (style != null && style is TextStyle)
             {
                 TextStyle cast = style as TextStyle;
                 switch (type)
@@ -122,11 +163,13 @@ namespace FastColoredTextBoxNS
             }
         }
 
+        /// <summary>
+        /// Sets integer value of a style
+        /// </summary>
         public void SetStyleInt(int index, int value, string type)
         {
-            if (index < 1 || index > 31 || styles[index] == null) return;
-            Style style = GetStyle(index);
-            if (style is TextStyle)
+            Style style = this.GetStyle(index);
+            if (style != null && style is TextStyle)
             {
                 TextStyle cast = style as TextStyle;
                 Color color = DataConverter.BGRToColor(value);
@@ -175,11 +218,18 @@ namespace FastColoredTextBoxNS
             }
         }
 
+        /// <summary>
+        /// Activates the colorization of the editor
+        /// </summary>
         public void Colourize()
         {
             this.OnVisibleRangeChanged(editor, new EventArgs());
         }
 
+        /// <summary>
+        /// Applies the common editor styles
+        /// </summary>
+        /// <param name="lang"></param>
         public void ApplyBaseStyles(ScintillaNet.Configuration.Language lang)
         {
             foreach (UseStyle style in lang.usestyles)
@@ -189,82 +239,122 @@ namespace FastColoredTextBoxNS
                     FontStyle fontStyle = FontStyle.Regular;
                     if (style.IsBold) fontStyle |= FontStyle.Bold;
                     if (style.IsItalics) fontStyle |= FontStyle.Italic;
-                    editor.Font = new Font(style.FontName, style.FontSize, FontStyle.Regular);
+                    this.editor.Font = new Font(style.FontName, style.FontSize, FontStyle.Regular);
                     Color fore = DataConverter.BGRToColor(style.ForegroundColor);
                     Color back = DataConverter.BGRToColor(style.BackgroundColor);
-                    editor.DefaultStyle = new FastColoredTextBoxNS.TextStyle(new SolidBrush(fore), new SolidBrush(back), fontStyle);
-                    editor.BackColor = editor.PaddingBackColor = editor.IndentBackColor = back;
-                    editor.FoldingIndicatorColor = Color.Lime; // TODO?
+                    this.editor.DefaultStyle = new FastColoredTextBoxNS.TextStyle(new SolidBrush(fore), new SolidBrush(back), fontStyle);
+                    this.editor.BackColor = this.editor.PaddingBackColor = this.editor.IndentBackColor = back;
+                    this.editor.FoldingIndicatorColor = Color.Lime; // TODO?
                 }
                 else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.LineNumber)
                 {
-                    editor.LineNumberColor = DataConverter.BGRToColor(style.ForegroundColor);
+                    this.editor.LineNumberColor = DataConverter.BGRToColor(style.ForegroundColor);
                 }
                 else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.IndentGuide)
                 {
-                    editor.ServiceLinesColor = DataConverter.BGRToColor(style.ForegroundColor);
+                    this.editor.ServiceLinesColor = DataConverter.BGRToColor(style.ForegroundColor);
                 }
                 else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.BraceLight)
                 {
                     Color color = DataConverter.BGRToColor(style.BackgroundColor, 125);
-                    editor.BracketsStyle = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
-                    editor.BracketsStyle2 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
-                    editor.BracketsStyle3 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                    this.editor.BracketsStyle = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                    this.editor.BracketsStyle2 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                    this.editor.BracketsStyle3 = new FastColoredTextBoxNS.MarkerStyle(new SolidBrush(color));
+                }
+                else if (style.key == (Int32)ScintillaNet.Enums.StylesCommon.Default)
+                {
+                    if (lang.editorstyle.ColorizeMarkerBack)
+                    {
+                        Color fore = DataConverter.BGRToColor(style.ForegroundColor);
+                        this.editor.ServiceColors.ServiceAreaBackColor = fore;
+                    }
+                    else this.editor.ServiceColors.ServiceAreaBackColor = Color.Empty;
                 }
             }
         }
 
-        public void SetLexer(String lexer)
+        /// <summary>
+        /// Resets styles and related regexes
+        /// </summary>
+        public void ResetStyles()
         {
-            if (string.IsNullOrEmpty(lexer)) return;
-            this.lexer = lexer;
-            switch (lexer)
+            this.styles = new Style[32];
+            this.regexes = new Regex[32];
+            for (int i = 0; i < 32; i++)
             {
-                case "cpp":
-                    regexes = Regexes.CppRegexes;
-                    break;
-                case "css":
-                    regexes = Regexes.CssRegexes;
-                    break;
-                case "xml":
-                    regexes = Regexes.XmlRegexes;
-                    break;
-                case "html":
-                    regexes = Regexes.HtmlRegexes;
-                    break;
-                case "properties":
-                    regexes = Regexes.PropRegexes;
-                    break;
+                this.regexes[i] = new Regex("");
+                this.styles[i] = new TextStyle(null, null, FontStyle.Regular);
             }
         }
 
+        /// <summary>
+        /// Sets the lexer, resets styling and sets regexes
+        /// </summary>
+        public void SetLexer(String lexer)
+        {
+            if (string.IsNullOrEmpty(lexer)) return;
+            this.ResetStyles();
+            this.lexer = lexer;
+            this.mapping.Clear();
+            this.counter = 0;
+            switch (lexer)
+            {
+                case "cpp":
+                    this.regexes = Regexes.CppRegexes;
+                    break;
+                case "css":
+                    this.regexes = Regexes.CssRegexes;
+                    break;
+                case "xml":
+                    this.regexes = Regexes.XmlRegexes;
+                    break;
+                case "html":
+                    this.regexes = Regexes.HtmlRegexes;
+                    break;
+                case "properties":
+                    this.regexes = Regexes.PropRegexes;
+                    break;
+            }
+            this.Colourize();
+        }
+
+        /// <summary>
+        /// Sets the keyword regexes to styles
+        /// </summary>
         public void SetKeywords(int keywordSet, string keyWords)
         {
             string regex = "";
-            int styleIndex = StyleFromKeywordSet(keywordSet);
-            if (!string.IsNullOrEmpty(keyWords) && styleIndex > -1)
+            int style = this.GetKeywordStyle(keywordSet);
+            int mapped = this.GetStyleIndex(style);
+            if (!string.IsNullOrEmpty(keyWords) && style > -1)
             {
                 keyWords = Regex.Replace(keyWords, "\\s+", " ").Trim();
-                if (this.lexer == "cpp" && (styleIndex == (int)CPP.COMMENTDOCKEYWORD || styleIndex == (int)CPP.COMMENTDOCKEYWORDERROR))
+                if (this.lexer == "cpp" && (style == (int)CPP.COMMENTDOCKEYWORD || style == (int)CPP.COMMENTDOCKEYWORDERROR))
                 {
                     // cpp doc keywords need @ char
                     regex = "@(" + keyWords.Replace(" ", "|") + ")";
                 }
                 else regex = @"\b(" + keyWords.Replace(" ", "|") + @")\b";
             }
-            if (styleIndex > -1) regexes[styleIndex] = new Regex(regex);
+            if (mapped > -1)
+            {
+                this.regexes[mapped] = new Regex(regex);
+            }
         }
 
-        private int StyleFromKeywordSet(int keywordSet)
+        /// <summary>
+        /// Gets the style for a keyword set
+        /// </summary>
+        private int GetKeywordStyle(int keywordSet)
         {
             switch (this.lexer)
             {
                 case "css":
-                    /*if (keywordSet == 0) return (int)CSS.IDENTIFIER;
+                    if (keywordSet == 0) return (int)CSS.IDENTIFIER;
                     else if (keywordSet == 1) return (int)CSS.PSEUDOCLASS;
                     else if (keywordSet == 2) return (int)CSS.IDENTIFIER2;
                     else if (keywordSet == 3) return (int)CSS.IDENTIFIER3;
-                    else if (keywordSet == 5) return (int)CSS.EXTENDED_IDENTIFIER;*/
+                    else if (keywordSet == 5) return (int)CSS.EXTENDED_IDENTIFIER;
                     break;
                 case "cpp":
                     if (keywordSet == 0) return (int)CPP.WORD;
@@ -276,15 +366,15 @@ namespace FastColoredTextBoxNS
                     else if (keywordSet == 7) return (int)CPP.WORD5;
                     break;
                 case "xml":
-                    //if (keywordSet == 1) return (int)XML.J_KEYWORD;
-                    //else if (keywordSet == 4) return (int)XML.PHP_WORD;
-                    /*else*/ if (keywordSet == 5) return (int)XML.SGML_COMMAND;
+                    /*if (keywordSet == 1) return (int)XML.J_KEYWORD;
+                    else if (keywordSet == 4) return (int)XML.PHP_WORD;
+                    else*/ if (keywordSet == 5) return (int)XML.SGML_COMMAND;
                     break;
                 case "html":
-                    if (keywordSet == 0) return (int)HTML.SCRIPT;
-                    //else if (keywordSet == 1) return (int)XML.J_KEYWORD;
-                    //else if (keywordSet == 4) return (int)XML.PHP_WORD;
-                    else if (keywordSet == 5) return (int)XML.SGML_COMMAND;
+                    /*if (keywordSet == 0) return (int)HTML.SCRIPT;
+                    else if (keywordSet == 1) return (int)XML.J_KEYWORD;
+                    else if (keywordSet == 4) return (int)XML.PHP_WORD;
+                    else*/ if (keywordSet == 5) return (int)XML.SGML_COMMAND;
                     break;
             }
             return -1;

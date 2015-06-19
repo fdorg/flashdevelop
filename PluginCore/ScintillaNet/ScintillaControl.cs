@@ -234,8 +234,8 @@ namespace ScintillaNet
             this.fctb.UndoRedoStateChanged += this.OnEditorUndoRedoStateChanged;
             this.fctb.TextChanging += this.OnEditorTextChanging;
             this.fctb.Paint += this.OnEditorPaint;
-            this.fctb.Paddings = new Padding(4);
-            this.fctb.LeftPadding = 10;
+            this.fctb.Paddings = new Padding(5);
+            this.fctb.LeftPadding = 22;
             this.Controls.Add(this.fctb);
             this.chl = new FastColoredTextBoxNS.CustomHighlighter(this.fctb);
         }
@@ -495,14 +495,14 @@ namespace ScintillaNet
             catch { /* If not found, uses the lang.lexer.key directly. */ }
             Lexer = lang.lexer.key;
             this.configLanguage = value;
-            if (this.fctb != null)
-            {
-                this.chl.SetLexer(lang.lexer.name);
-                this.chl.ApplyBaseStyles(lang);
-            }
             if (lang.lexer.stylebits > 0) StyleBits = lang.lexer.stylebits;
             if (lang.editorstyle != null)
             {
+                if (this.fctb != null)
+                {
+                    this.chl.SetLexer(lang.lexer.name);
+                    this.chl.ApplyBaseStyles(lang);
+                }
                 EdgeColour = lang.editorstyle.PrintMarginColor;
                 CaretFore = lang.editorstyle.CaretForegroundColor;
                 CaretLineBack = lang.editorstyle.CaretLineBackgroundColor;
@@ -1632,12 +1632,17 @@ namespace ScintillaNet
         {
             get 
             {
-                if (this.fctb != null) return this.fctb.LeftPadding;
+                if (this.fctb != null) return this.fctb.Paddings.Left;
                 else return (int)SPerform(2156, 0, 0);
             }
             set
             {
-                if (this.fctb != null) this.fctb.LeftPadding = value;
+                if (this.fctb != null) 
+                {
+                    Padding padding = this.fctb.Paddings;
+                    padding.Left = value;
+                    this.fctb.Paddings = padding;
+                }
                 else SPerform(2155, 0, (uint)value);
             }
         }   
@@ -1649,12 +1654,17 @@ namespace ScintillaNet
         {
             get 
             {
-                if (this.fctb != null) return 0; // FIXED
+                if (this.fctb != null) return this.fctb.Paddings.Right;
                 else return (int)SPerform(2158, 0, 0);
             }
             set
             {
-                if (this.fctb != null) return;
+                if (this.fctb != null)
+                {
+                    Padding padding = this.fctb.Paddings;
+                    padding.Right = value;
+                    this.fctb.Paddings = padding;
+                }
                 else SPerform(2157, 0, (uint)value);
             }
         }   
@@ -4197,10 +4207,11 @@ namespace ScintillaNet
             if (this.fctb != null)
             {
                 if (!useSetting) return;
-                this.fctb.ServiceColors.CollapseMarkerBorderColor = DataConverter.BGRToColor(back);
-                this.fctb.ServiceColors.CollapseMarkerForeColor = DataConverter.BGRToColor(back);
-                this.fctb.ServiceColors.ExpandMarkerBorderColor = DataConverter.BGRToColor(back);
-                this.fctb.ServiceColors.ExpandMarkerForeColor = DataConverter.BGRToColor(back);
+                Color color = DataConverter.BGRToColor(back);
+                this.fctb.ServiceColors.CollapseMarkerBorderColor = color;
+                this.fctb.ServiceColors.CollapseMarkerForeColor = color;
+                this.fctb.ServiceColors.ExpandMarkerBorderColor = color;
+                this.fctb.ServiceColors.ExpandMarkerForeColor = color;
             }
             else SPerform(2290, (uint)(useSetting ? 1 : 0), (uint)back);
         }   
@@ -4213,8 +4224,9 @@ namespace ScintillaNet
             if (this.fctb != null)
             {
                 if (!useSetting) return;
-                this.fctb.ServiceColors.CollapseMarkerBackColor = DataConverter.BGRToColor(fore);
-                this.fctb.ServiceColors.ExpandMarkerBackColor = DataConverter.BGRToColor(fore);
+                Color color = DataConverter.BGRToColor(fore);
+                this.fctb.ServiceColors.CollapseMarkerBackColor = color;
+                this.fctb.ServiceColors.ExpandMarkerBackColor = color;
             }
             else SPerform(2291, (uint)(useSetting ? 1 : 0), (uint)fore);
         }   

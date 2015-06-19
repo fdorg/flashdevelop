@@ -247,10 +247,14 @@ namespace FastColoredTextBoxNS
         public virtual void Paint(Graphics gr, Rectangle lineRect)
         {
             var size = TB.CharHeight - 1;
-            using (var brush = new LinearGradientBrush(new Rectangle(0, lineRect.Top, size, size), Color.White, Color, 45))
-                gr.FillEllipse(brush, 0, lineRect.Top, size, size);
+            // MODDED
+            using (var brush = new LinearGradientBrush(new Rectangle(1, lineRect.Top + 1, size - 2, size - 2), Color.White, Color, 45))
+            //using (var brush = new LinearGradientBrush(new Rectangle(0, lineRect.Top, size, size), Color.White, Color, 45))
+                gr.FillEllipse(brush, 1, lineRect.Top + 1, size - 2, size - 2);
+                //gr.FillEllipse(brush, 0, lineRect.Top, size, size);
             using (var pen = new Pen(Color))
-                gr.DrawEllipse(pen, 0, lineRect.Top, size, size);
+                gr.DrawEllipse(pen, 1, lineRect.Top + 1, size - 2, size - 2);
+                //gr.DrawEllipse(pen, 0, lineRect.Top, size, size);
         }
     }
 }

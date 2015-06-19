@@ -31,12 +31,12 @@ namespace FastColoredTextBoxNS
             CssRegexes[(int)CSS.COMMENT] = new Regex(@"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexOptions.Compiled);
             CssRegexes[(int)CSS.OPERATOR] = new Regex(@"[#:;{}.]", RegexOptions.Compiled);
             CssRegexes[(int)CSS.VALUE] = new Regex(@":.+\w+.+(?<!;)", RegexOptions.Compiled);
-            CssRegexes[(int)CSS.TAG] = new Regex(@"^\w+[\n,]", RegexOptions.Compiled);
-            CssRegexes[(int)CSS.CLASS] = new Regex(@":\w+[\n,]", RegexOptions.Compiled);
-            CssRegexes[(int)CSS.PSEUDOCLASS] = new Regex(@":\w+[\n,]", RegexOptions.Compiled);
+            CssRegexes[(int)CSS.TAG] = new Regex(@"^(\w)|(\w+)[., {\n\r>]", RegexOptions.Compiled);
+            CssRegexes[(int)CSS.CLASS] = new Regex(@".\w+[., {\n\r>]", RegexOptions.Compiled);
+            CssRegexes[(int)CSS.PSEUDOCLASS] = new Regex(@":\w+[., {\n\r>]", RegexOptions.Compiled);
             CssRegexes[(int)CSS.DOUBLESTRING] = new Regex(@"""""|"".*?[^\\]""", RegexOptions.Singleline | RegexOptions.Compiled);
             CssRegexes[(int)CSS.SINGLESTRING] = new Regex(@"''|'.*?[^\\]''", RegexOptions.Singleline | RegexOptions.Compiled);
-            CssRegexes[(int)CSS.ID] = new Regex(@"#\w+[., $]", RegexOptions.Compiled);
+            CssRegexes[(int)CSS.ID] = new Regex(@"#\w+[., {\n\r>]", RegexOptions.Compiled);
             // XML
             XmlRegexes[(int)XML.COMMENT] = new Regex(@"(<!--.*?-->)|(<!--.*)|(-->)", RegexOptions.Multiline | RegexOptions.Compiled);
             XmlRegexes[(int)XML.TAG] = new Regex(@"<\?|<|/>|</|>|\?>", RegexOptions.Compiled);
