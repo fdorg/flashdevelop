@@ -88,8 +88,11 @@ namespace ASCompletion.Completion
                 char prevValue = (char)Sci.CharAt(position - 2);
                 bool skipQuoteCheck = false;
 
+                Sci.Colourise(0, -1);
+                int style = Sci.BaseStyleAt(position - 1);
+
                 // string interpolation
-                if (features.hasStringInterpolation &&
+                if (features.hasStringInterpolation && !IsCommentStyle(style) &&
                     features.stringInterpolationQuotes.IndexOf(Sci.GetStringType(position)) >= 0)
                 {
                     if (Value == '$')
@@ -105,10 +108,7 @@ namespace ASCompletion.Completion
                 if (!skipQuoteCheck)
                 {
                     // ignore text in comments & quoted text
-                    Sci.Colourise(0, -1);
-                    int stylemask = (1 << Sci.StyleBits) - 1;
-                    int style = Sci.StyleAt(position - 1) & stylemask;
-                    if (!IsTextStyle(style) && !IsTextStyle(Sci.StyleAt(position) & stylemask))
+                    if (!IsTextStyle(style) && !IsTextStyle(Sci.BaseStyleAt(position)))
                     {
                         // documentation completion
                         if (ASContext.CommonSettings.SmartTipsEnabled && IsCommentStyle(style))
@@ -405,10 +405,7 @@ namespace ASCompletion.Completion
             if (!ASContext.CommonSettings.AddClosingBraces)
                 return;
 
-            int stylemask = (1 << sci.StyleBits) - 1;
-            int style = sci.StyleAt(sci.CurrentPos - 1) & stylemask;
-
-            if (IsTextStyle(sci.StyleAt(sci.CurrentPos - 2) & stylemask) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+            if (IsTextStyle(sci.BaseStyleAt(sci.CurrentPos - 2)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
             {
                 foreach (Braces braces in AddClosingBracesData)
                 {
@@ -2339,6 +2336,7 @@ namespace ASCompletion.Completion
             IASContext ctx = ASContext.Context;
             MemberList members = new MemberList();
             ASExpr expr = GetExpression(sci, sci.CurrentPos);
+            if (expr.ContextMember == null) return false;
 
             members.Merge(ctx.CurrentClass.GetSortedMembersList());
 
