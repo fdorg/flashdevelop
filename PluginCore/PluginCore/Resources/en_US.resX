@@ -918,7 +918,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Clear Breakpoints</value>
   </data>
   <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
-    <value>&amp;Clean Recent Files List</value>
+    <value>&amp;Remove Invalid Files</value>
     <comment>Added after 5.0.0</comment>
   </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
@@ -1888,7 +1888,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>&amp;Cancel</value>
   </data>
   <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
-    <value>&amp;Clean Recent Projects List</value>
+    <value>&amp;Remove Invalid Projects</value>
     <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">

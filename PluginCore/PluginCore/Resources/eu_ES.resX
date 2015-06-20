@@ -918,7 +918,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>Eten-puntuak garbitu</value>
   </data>
   <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
-    <value>&amp;Clean Recent Files List</value>
+    <value>&amp;Remove Invalid Files</value>
     <comment>Added after 5.0.0</comment>
   </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
@@ -1887,7 +1887,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>&amp;Ezeztatu</value>
   </data>
   <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
-    <value>&amp;Clean Recent Projects List</value>
+    <value>&amp;Remove Invalid Projects</value>
     <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">
