@@ -918,7 +918,7 @@
     <value>清除断点</value>
   </data>
   <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
-    <value>&amp;Clean Recent Files List</value>
+    <value>&amp;Remove Invalid Files</value>
     <comment>Added after 5.0.0</comment>
   </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
@@ -1888,7 +1888,7 @@
     <value>取消(&amp;C)</value>
   </data>
   <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
-    <value>&amp;Clean Recent Projects List</value>
+    <value>&amp;Remove Invalid Projects</value>
     <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">

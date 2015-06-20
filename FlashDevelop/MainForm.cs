@@ -2276,7 +2276,7 @@ namespace FlashDevelop
         /// </summary>
         public void CleanReopenList(Object sender, System.EventArgs e)
         {
-            FileHelper.FilterByExisiting(this.appSettings.PreviousDocuments, true);
+            FileHelper.FilterByExisting(this.appSettings.PreviousDocuments, true);
             ButtonManager.PopulateReopenMenu();
         }
 
