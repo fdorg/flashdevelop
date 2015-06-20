@@ -88,8 +88,12 @@ namespace ASCompletion.Completion
                 char prevValue = (char)Sci.CharAt(position - 2);
                 bool skipQuoteCheck = false;
 
+                Sci.Colourise(0, -1);
+                int stylemask = (1 << Sci.StyleBits) - 1;
+                int style = Sci.StyleAt(position - 1) & stylemask;
+
                 // string interpolation
-                if (features.hasStringInterpolation &&
+                if (features.hasStringInterpolation && !IsCommentStyle(style) &&
                     features.stringInterpolationQuotes.IndexOf(Sci.GetStringType(position)) >= 0)
                 {
                     if (Value == '$')
@@ -105,9 +109,6 @@ namespace ASCompletion.Completion
                 if (!skipQuoteCheck)
                 {
                     // ignore text in comments & quoted text
-                    Sci.Colourise(0, -1);
-                    int stylemask = (1 << Sci.StyleBits) - 1;
-                    int style = Sci.StyleAt(position - 1) & stylemask;
                     if (!IsTextStyle(style) && !IsTextStyle(Sci.StyleAt(position) & stylemask))
                     {
                         // documentation completion
@@ -2339,6 +2340,7 @@ namespace ASCompletion.Completion
             IASContext ctx = ASContext.Context;
             MemberList members = new MemberList();
             ASExpr expr = GetExpression(sci, sci.CurrentPos);
+            if (expr.ContextMember == null) return false;
 
             members.Merge(ctx.CurrentClass.GetSortedMembersList());
 
