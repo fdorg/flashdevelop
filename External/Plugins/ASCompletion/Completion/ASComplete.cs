@@ -89,8 +89,7 @@ namespace ASCompletion.Completion
                 bool skipQuoteCheck = false;
 
                 Sci.Colourise(0, -1);
-                int stylemask = (1 << Sci.StyleBits) - 1;
-                int style = Sci.StyleAt(position - 1) & stylemask;
+                int style = Sci.BaseStyleAt(position - 1);
 
                 // string interpolation
                 if (features.hasStringInterpolation && !IsCommentStyle(style) &&
@@ -109,7 +108,7 @@ namespace ASCompletion.Completion
                 if (!skipQuoteCheck)
                 {
                     // ignore text in comments & quoted text
-                    if (!IsTextStyle(style) && !IsTextStyle(Sci.StyleAt(position) & stylemask))
+                    if (!IsTextStyle(style) && !IsTextStyle(Sci.BaseStyleAt(position)))
                     {
                         // documentation completion
                         if (ASContext.CommonSettings.SmartTipsEnabled && IsCommentStyle(style))
@@ -406,10 +405,7 @@ namespace ASCompletion.Completion
             if (!ASContext.CommonSettings.AddClosingBraces)
                 return;
 
-            int stylemask = (1 << sci.StyleBits) - 1;
-            int style = sci.StyleAt(sci.CurrentPos - 1) & stylemask;
-
-            if (IsTextStyle(sci.StyleAt(sci.CurrentPos - 2) & stylemask) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+            if (IsTextStyle(sci.BaseStyleAt(sci.CurrentPos - 2)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
             {
                 foreach (Braces braces in AddClosingBracesData)
                 {
