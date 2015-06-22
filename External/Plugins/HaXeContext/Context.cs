@@ -12,6 +12,8 @@ using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
 using System.Collections;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
@@ -577,6 +579,18 @@ namespace HaXeContext
         public override void RemoveClassCompilerCache()
         {
             // not implemented - is there any?
+        }
+        #endregion
+
+        #region SDK
+        private InstalledSDK GetCurrentSDK()
+        {
+            return hxsettings.InstalledSDKs.FirstOrDefault(sdk => sdk.Path == currentSDK);
+        }
+
+        private SemVer GetCurrentSDKVersion()
+        {
+            return new SemVer(GetCurrentSDK().Version);
         }
         #endregion
 
@@ -1391,6 +1405,9 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
+            if (GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
+                return false;
+
             var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION);
             hc.GetPosition(OnPositionCompletionResult);
             return true;
@@ -1651,6 +1668,44 @@ namespace HaXeContext
             : base(context, elements)
         {
             OtherElements = otherElements;
+        }
+    }
+
+    /// <summary>
+    /// Represents a semantic version, see http://semver.org/
+    /// </summary>
+    class SemVer
+    {
+        public readonly int Major;
+        public readonly int Minor;
+        public readonly int Patch;
+
+        public SemVer(string version)
+        {
+            string[] numbers = version.Split('.');
+
+            if (numbers.Length >= 1)
+                int.TryParse(numbers[0], out Major);
+            if (numbers.Length >= 2)
+                int.TryParse(numbers[1], out Minor);
+            if (numbers.Length >= 3)
+                int.TryParse(numbers[2], out Patch);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}.{1}.{2}", Major, Minor, Patch);
+        }
+
+        public bool IsOlderThan(SemVer semVer)
+        {
+            if (semVer.Major > Major)
+                return true;
+            if (semVer.Major == Major && semVer.Minor > Minor)
+                return true;
+            if (semVer.Major == Major && semVer.Minor == Minor && semVer.Patch > Patch)
+                return true;
+            return false;
         }
     }
 }
