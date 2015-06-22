@@ -590,7 +590,10 @@ namespace HaXeContext
 
         private SemVer GetCurrentSDKVersion()
         {
-            return new SemVer(GetCurrentSDK().Version);
+            InstalledSDK currentSDK = GetCurrentSDK();
+            if (currentSDK != null)
+                return new SemVer(currentSDK.Version);
+            return SemVer.Zero;
         }
         #endregion
 
@@ -1676,9 +1679,15 @@ namespace HaXeContext
     /// </summary>
     class SemVer
     {
+        public static readonly SemVer Zero = new SemVer();
+
         public readonly int Major;
         public readonly int Minor;
         public readonly int Patch;
+
+        private SemVer()
+        {
+        }
 
         public SemVer(string version)
         {
