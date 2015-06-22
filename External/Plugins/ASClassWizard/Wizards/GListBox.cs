@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace ASClassWizard.Wizards
 {
-
-    // GListBox class 
     public class GListBox : ListBox
     {
         private ImageList _myImageList;
@@ -62,40 +56,36 @@ namespace ASClassWizard.Wizards
             base.OnDrawItem(e);
         }
 
-    
-    public class GListBoxItem
-    {
-        public int matchScore;
+        public class GListBoxItem
+        {
+            public int matchScore;
         
-        private string _myText;
-        private int _myImageIndex;
+            private string _myText;
+            private int _myImageIndex;
 
-        // properties 
-        public string Text
-        {
-            get { return _myText; }
-            set { _myText = value; }
-        }
-        public int ImageIndex
-        {
-            get { return _myImageIndex; }
-            set { _myImageIndex = value; }
-        }
+            // properties 
+            public string Text
+            {
+                get { return _myText; }
+                set { _myText = value; }
+            }
+            public int ImageIndex
+            {
+                get { return _myImageIndex; }
+                set { _myImageIndex = value; }
+            }
         
-        //constructor
-        public GListBoxItem(string text, int index)
-        {
-            _myText = text;
-            _myImageIndex = index;
+            public GListBoxItem(string text, int index)
+            {
+                _myText = text;
+                _myImageIndex = index;
+            }
+            public GListBoxItem(string text) : this(text, -1) { }
+            public GListBoxItem() : this("") { }
+            public override string ToString()
+            {
+             return _myText;
+            }
         }
-        public GListBoxItem(string text) : this(text, -1) { }
-        public GListBoxItem() : this("") { }
-        public override string ToString()
-        {
-            return _myText;
-        }
-
-
-    }//End of GListBoxItem class
-    }//End of GListBox class
+    }
 }
