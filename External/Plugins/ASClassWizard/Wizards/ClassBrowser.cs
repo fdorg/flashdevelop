@@ -77,6 +77,8 @@ namespace ASClassWizard.Wizards
             {
                 foreach (MemberModel item in this.ClassList)
                 {
+                    // exclude types imported in the current file
+                    if (item.Name != item.Type) continue;
                     if (ExcludeFlag > 0) if ((item.Flags & ExcludeFlag) > 0) continue;
                     if (IncludeFlag > 0)
                     {
