@@ -191,6 +191,7 @@
     <Compile Include="Managers\LayoutManager.cs" />
     <Compile Include="Utilities\FRDialogGenerics.cs" />
     <Compile Include="Utilities\PluginServices.cs" />
+    <Compile Include="Utilities\SemVer.cs" />
   </ItemGroup>
   <ItemGroup>
     <BaseApplicationManifest Include="Properties\Program.manifest" />
