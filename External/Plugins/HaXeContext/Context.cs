@@ -1688,6 +1688,11 @@ namespace HaXeContext
 
         public SemVer(string version)
         {
+            // ignore the pre-release denotation if present
+            int hyphenIndex = version.IndexOf('-');
+            if (hyphenIndex >= 0)
+                version = version.Substring(0, hyphenIndex);
+
             string[] numbers = version.Split('.');
 
             if (numbers.Length >= 1)
