@@ -307,6 +307,7 @@
     <Compile Include="Ookii.Dialogs\VistaFolderBrowserDialog.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Ookii.Dialogs\VistaFolderNameEditor.cs" />
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>

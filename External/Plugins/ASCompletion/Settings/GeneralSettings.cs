@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using Ookii.Dialogs;
 using PluginCore.Localization;
 
 namespace ASCompletion.Settings
@@ -196,7 +197,7 @@ namespace ASCompletion.Settings
 
         [DisplayName("Path To Flash IDE")]
         [LocalizedCategory("ASCompletion.Category.FlashIDE"), LocalizedDescription("ASCompletion.Description.PathToFlashIDE")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string PathToFlashIDE
         {
             get { return pathToFlashIDE; }

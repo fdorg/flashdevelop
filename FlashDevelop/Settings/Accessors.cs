@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Windows.Forms.Design;
 using PluginCore.Localization;
 using System.Windows.Forms;
+using Ookii.Dialogs;
 using PluginCore.Managers;
 using ScintillaNet;
 using PluginCore;
@@ -753,6 +754,7 @@ namespace FlashDevelop.Settings
         [DisplayName("Last Active Path")]
         [LocalizedCategory("FlashDevelop.Category.State")]
         [LocalizedDescription("FlashDevelop.Description.LatestDialogPath")]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String LatestDialogPath
         {
             get { return this.latestDialogPath; }
@@ -905,7 +907,7 @@ namespace FlashDevelop.Settings
         [DisplayName("Custom Snippet Directory")]
         [LocalizedCategory("FlashDevelop.Category.Paths")]
         [LocalizedDescription("FlashDevelop.Description.CustomSnippetDir")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String CustomSnippetDir
         {
             get { return this.customSnippetDir; }
@@ -916,7 +918,7 @@ namespace FlashDevelop.Settings
         [DisplayName("Custom Template Directory")]
         [LocalizedCategory("FlashDevelop.Category.Paths")]
         [LocalizedDescription("FlashDevelop.Description.CustomTemplateDir")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String CustomTemplateDir
         {
             get { return this.customTemplateDir; }
@@ -927,7 +929,7 @@ namespace FlashDevelop.Settings
         [DisplayName("Custom Projects Directory")]
         [LocalizedCategory("FlashDevelop.Category.Paths")]
         [LocalizedDescription("FlashDevelop.Description.CustomProjectsDir")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String CustomProjectsDir
         {
             get { return this.customProjectsDir; }

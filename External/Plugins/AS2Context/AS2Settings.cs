@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.IO;
 using ASCompletion.Context;
+using Ookii.Dialogs;
 using PluginCore.Localization;
 using PluginCore;
 
@@ -249,7 +250,7 @@ namespace AS2Context
 
         [DisplayName("Flash IDE Classpath")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS2Context.Description.MMClassPath")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string MMClassPath
         {
             get { return mmClassPath; }

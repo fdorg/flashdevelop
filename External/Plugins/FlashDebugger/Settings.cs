@@ -5,6 +5,7 @@ using System.ComponentModel.Design;
 using System.Windows.Forms.Design;
 using PluginCore.Localization;
 using LayoutManager.Controls;
+using Ookii.Dialogs;
 
 namespace FlashDebugger
 {
@@ -31,7 +32,7 @@ namespace FlashDebugger
             return m_Value;
         }
 
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String Path
         {
             get { return m_Value; }
