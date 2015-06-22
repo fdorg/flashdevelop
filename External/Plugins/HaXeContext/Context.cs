@@ -11,15 +11,12 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
-using System.Collections;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
 using ScintillaNet;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace HaXeContext
 {
