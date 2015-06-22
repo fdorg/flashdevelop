@@ -3714,7 +3714,7 @@ namespace FlashDevelop
             Int32 indentPos = sci.LineIndentPosition(sci.CurrentLine);
             Int32 lineEndPos = sci.LineEndPosition(sci.CurrentLine);
             bool afterBlockStart = sci.CurrentPos > indentPos;
-            bool afterBlockEnd = sci.CurrentPos > lineEndPos;
+            bool afterBlockEnd = sci.CurrentPos >= lineEndPos;
 
             sci.SelectionStart = indentPos;
             sci.SelectionEnd = lineEndPos;
