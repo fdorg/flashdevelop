@@ -135,6 +135,7 @@ namespace ProjectManager.Projects.AS3
         public override LibraryAsset GetAsset(string path)
         {
             if (!FileInspector.IsSwc(path) && !base.IsDirectory(path)) return base.GetAsset(path);
+            else if (SwcLibraries.Contains(path)) return SwcLibraries[path];
             else return SwcLibraries[GetRelativePath(path)];
         }
 
