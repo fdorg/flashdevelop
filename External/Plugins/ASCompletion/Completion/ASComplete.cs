@@ -184,10 +184,9 @@ namespace ASCompletion.Completion
                         if (features.hasGenerics && position > 2)
                         {
                             char c0 = (char)Sci.CharAt(position - 2);
-                            bool result = false;
                             if (c0 == '.' /*|| Char.IsLetterOrDigit(c0)*/)
                                 return HandleColonCompletion(Sci, "", autoHide);
-                            return result;
+                            return false;
                         }
                         else break;
 
@@ -3956,8 +3955,17 @@ namespace ASCompletion.Completion
                 ASExpr expr = GetExpression(sci, position + text.Length);
                 if (expr.Value == null) return;
 
-                // look for a snippet
                 ContextFeatures features = ASContext.Context.Features;
+
+                // add ; for imports
+                if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt)
+                {
+                    sci.InsertText(sci.CurrentPos, ";");
+                    sci.SetSel(sci.CurrentPos + 1, sci.CurrentPos + 1);
+                    return;
+                }
+
+                // look for a snippet
                 if (trigger == '\t' && expr.Value.IndexOf(features.dot) < 0)
                 {
                     foreach(string key in features.codeKeywords)
@@ -4052,7 +4060,7 @@ namespace ASCompletion.Completion
             if (inFile == null || import == null)
                 return false;
 
-            if (expr.Separator == ' ' && expr.WordBefore != null && expr.WordBefore != "")
+            if (expr.Separator == ' ' && !string.IsNullOrEmpty(expr.WordBefore))
             {
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
                     /*|| (!features.HasTypePreKey(expr.WordBefore) && expr.WordBefore != "case" && expr.WordBefore != "return")*/)
