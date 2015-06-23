@@ -16,7 +16,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
-using FlashDevelop.Utilities;
+using PluginCore.Utilities;
 using ScintillaNet;
 
 namespace HaXeContext
