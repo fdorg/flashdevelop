@@ -11,10 +11,13 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
-using System.Collections;
+using System.Linq;
+using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using PluginCore.Utilities;
+using ScintillaNet;
 
 namespace HaXeContext
 {
@@ -574,6 +577,21 @@ namespace HaXeContext
         public override void RemoveClassCompilerCache()
         {
             // not implemented - is there any?
+        }
+        #endregion
+
+        #region SDK
+        private InstalledSDK GetCurrentSDK()
+        {
+            return hxsettings.InstalledSDKs.FirstOrDefault(sdk => sdk.Path == currentSDK);
+        }
+
+        private SemVer GetCurrentSDKVersion()
+        {
+            InstalledSDK currentSDK = GetCurrentSDK();
+            if (currentSDK != null)
+                return new SemVer(currentSDK.Version);
+            return SemVer.Zero;
         }
         #endregion
 
@@ -1186,7 +1204,7 @@ namespace HaXeContext
             if (expression.Value != "")
             {
                 // async processing
-                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler);
+                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION);
                 hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
@@ -1195,7 +1213,7 @@ namespace HaXeContext
             return null; 
         }
 
-        internal void OnDotCompletionResult(HaxeComplete hc, HaxeCompleteStatus status)
+        internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             resolvingDot = false;
 
@@ -1206,8 +1224,8 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.MEMBERS:
-                    if (hc.Members != null && hc.Members.Count > 0)
-                        ASComplete.DotContextResolved(hc.Sci, hc.Expr, hc.Members, hc.AutoHide);
+                    if (result.Members != null && result.Members.Count > 0)
+                        ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
                     break;
             }
         }
@@ -1362,14 +1380,14 @@ namespace HaXeContext
                 return null;
 
             expression.Position++;
-            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler);
+            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION);
             hc.GetList(OnFunctionCompletionResult);
 
             resolvingFunction = true;
             return null; // running asynchronously
         }
 
-        internal void OnFunctionCompletionResult(HaxeComplete hc, HaxeCompleteStatus status)
+        internal void OnFunctionCompletionResult(HaxeComplete hc, HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             resolvingFunction = false;
 
@@ -1381,10 +1399,53 @@ namespace HaXeContext
 
                 case HaxeCompleteStatus.TYPE:
                     hc.Expr.Position--;
-                    ASComplete.FunctionContextResolved(hc.Sci, hc.Expr, hc.Type, null, true);
+                    ASComplete.FunctionContextResolved(hc.Sci, hc.Expr, result.Type, null, true);
                     break;
             }
         }
+
+        public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
+        {
+            if (GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
+                return false;
+
+            var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION);
+            hc.GetPosition(OnPositionCompletionResult);
+            return true;
+        }
+
+        internal void OnPositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        {
+            if (hc.Sci.InvokeRequired)
+            {
+                hc.Sci.BeginInvoke((MethodInvoker)delegate
+                {
+                    HandlePositionCompletionResult(hc, result, status); 
+                });
+            }
+            else HandlePositionCompletionResult(hc, result, status); 
+        }
+
+        private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        {
+            switch (status)
+            {
+                case HaxeCompleteStatus.ERROR:
+                    TraceManager.Add(hc.Errors, -3);
+                    break;
+
+                case HaxeCompleteStatus.POSITION:
+                    ASComplete.SaveLastLookupPosition(hc.Sci);
+
+                    PluginBase.MainForm.OpenEditableDocument(result.Path, false);
+                    ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    const string keywords = "(function|var|[,(])";
+
+                    ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
+                    break;
+            }
+        }
+
         #endregion
 
         #region command line compiler
@@ -1405,11 +1466,11 @@ namespace HaXeContext
         public override void CheckSyntax()
         {
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler);
+            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
         }
 
-        internal void OnCheckSyntaxResult(HaxeComplete hc, HaxeCompleteStatus status)
+        internal void OnCheckSyntaxResult(HaxeComplete hc, HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {

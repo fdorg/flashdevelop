@@ -298,6 +298,8 @@ namespace ASCompletion.Context
         /// <param name="expression">Completion context</param>
         /// <returns>Null (not handled) or function signature</returns>
         MemberModel ResolveFunctionContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide);
+
+        bool HandleGotoDeclaration(ScintillaNet.ScintillaControl sci, ASExpr expression);
         #endregion
 
         #region Properties

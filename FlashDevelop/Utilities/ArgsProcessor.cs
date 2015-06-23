@@ -25,7 +25,7 @@ namespace FlashDevelop.Utilities
         private static Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         
         /// <summary>
-        /// Regexes and variabled for enhanced arguments
+        /// Regexes and variables for enhanced arguments
         /// </summary>
         private static Dictionary<String, String> userArgs;
         private static Regex reUserArgs = new Regex("\\$\\$\\(([a-z0-9]+)\\=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -51,7 +51,7 @@ namespace FlashDevelop.Utilities
         }
 
         /// <summary>
-        /// Gets the users FlashDevelop directory
+        /// Gets the user's FlashDevelop directory
         /// </summary>
         public static String GetUserAppDir()
         {

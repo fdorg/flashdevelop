@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -16,59 +15,79 @@ using System.Windows.Forms;
 
 namespace HaXeContext
 {
-    internal delegate void HaXeCompletionResultHandler(HaxeComplete sender, HaxeCompleteStatus status);
+    internal delegate void HaxeCompleteResultHandler<T>(HaxeComplete hc, T result, HaxeCompleteStatus status);
 
     internal class HaxeComplete
     {
-        static readonly Regex reArg = new Regex("^(-cp)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        static readonly Regex reArg =
+            new Regex("^(-cp)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        static readonly Regex rePosition =
+            new Regex("(?<path>.*?):(?<line>[0-9]*): (?<range>characters|lines) (?<start>[0-9]*)-(?<end>[0-9]*)",
+                RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // completion context
         public readonly ScintillaControl Sci;
         public readonly ASExpr Expr;
+        public readonly string CurrentWord;
         public readonly bool AutoHide;
+        public readonly HaxeCompilerService CompilerService;
 
         // result
         public HaxeCompleteStatus Status;
         public string Errors;
-        public MemberModel Type;
-        public MemberList Members;
+        private HaxeCompleteResult result;
+        private HaxePositionCompleteResult positionResult;
 
         readonly IHaxeCompletionHandler handler;
         readonly string FileName;
 
-        public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler)
+        public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler, HaxeCompilerService compilerService)
         {
             Sci = sci;
             Expr = expr;
+            CurrentWord = Sci.GetWordFromPosition(Sci.CurrentPos);
             AutoHide = autoHide;
             handler = completionHandler;
+            CompilerService = compilerService;
             Status = HaxeCompleteStatus.NONE;
             FileName = PluginBase.MainForm.CurrentDocument.FileName;
         }
 
         /* EXECUTION */
 
-        public void GetList(HaXeCompletionResultHandler callback)
+        public void GetList(HaxeCompleteResultHandler<HaxeCompleteResult> callback)
         {
             PluginBase.MainForm.CallCommand("Save", null);
 
             ThreadPool.QueueUserWorkItem(_ =>
             {
                 Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()));
-                Notify(callback);
+                Notify(callback, result);
             });
         }
 
-        void Notify(HaXeCompletionResultHandler callback)
+        public void GetPosition(HaxeCompleteResultHandler<HaxePositionCompleteResult> callback)
+        {
+            PluginBase.MainForm.CallCommand("Save", null);
+
+            ThreadPool.QueueUserWorkItem(_ =>
+            {
+                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()));
+                Notify(callback, positionResult);
+            });
+        }
+
+        void Notify<T>(HaxeCompleteResultHandler<T> callback, T result)
         {
             if (Sci.InvokeRequired)
             {
                 Sci.BeginInvoke((MethodInvoker)delegate {
-                    Notify(callback);
+                    Notify(callback, result);
                 });
                 return;
             }
-            callback(this, Status);
+            callback(this, result, Status);
         }
 
         /* HAXE COMPILER ARGS */
@@ -83,7 +102,7 @@ namespace HaXeContext
             var hxproj = (PluginBase.CurrentProject as HaxeProject);
             var pos = GetDisplayPosition();
 
-            // Build haXe command
+            // Build Haxe command
             var paths = ProjectManager.PluginMain.Settings.GlobalClasspaths.ToArray();
             var hxmlArgs = new List<String>(hxproj.BuildHXML(paths, "Nothing__", true));
             QuotePath(hxmlArgs);
@@ -102,9 +121,11 @@ namespace HaXeContext
             else
                 hxmlArgs.Add(GetMainClassName());
 
-            hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}", FileName, pos));
+            String mode = (CompilerService == HaxeCompilerService.COMPLETION) ? "" : "@position";
+            hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}{2}", FileName, pos, mode));
             hxmlArgs.Insert(1, "-D use_rtti_doc");
             hxmlArgs.Insert(2, "-D display-details");
+            
             if (hxproj.TraceEnabled) hxmlArgs.Insert(2, "-debug");
 
             return hxmlArgs.ToArray();
@@ -136,10 +157,20 @@ namespace HaXeContext
         int GetDisplayPosition()
         {
             var pos = Expr.Position;
-            // locate a . or (
-            while (pos > 1 && Sci.CharAt(pos - 1) != '.' && Sci.CharAt(pos - 1) != '(')
-                pos--;
 
+            switch (CompilerService)
+            {
+                case HaxeCompilerService.COMPLETION:
+                    // locate a . or (
+                    while (pos > 1 && Sci.CharAt(pos - 1) != '.' && Sci.CharAt(pos - 1) != '(')
+                        pos--;
+                    break;
+
+                case HaxeCompilerService.POSITION:
+                    pos = Sci.WordEndPosition(Sci.CurrentPos, true) + 1;
+                    break;
+            }
+            
             // account for BOM characters
             pos += FileHelper.GetEncodingFileInfo(FileName).BomLength;
             return pos;
@@ -175,6 +206,7 @@ namespace HaXeContext
         HaxeCompleteStatus ProcessResponse(XmlTextReader reader)
         {
             reader.MoveToContent();
+
             switch (reader.Name)
             {
                 case "type":
@@ -182,8 +214,8 @@ namespace HaXeContext
                     return HaxeCompleteStatus.TYPE;
 
                 case "list":
-                    ProcessMembers(reader);
-                    return HaxeCompleteStatus.MEMBERS;
+                    return ProcessList(reader);
+
             }
             return HaxeCompleteStatus.FAILED;
         }
@@ -196,13 +228,14 @@ namespace HaXeContext
             var type = new MemberModel();
             type.Name = name;
             ExtractType(reader, type);
-            this.Type = type;
+            result.Type = type;
         }
 
-        void ProcessMembers(XmlTextReader reader)
+        HaxeCompleteStatus ProcessList(XmlTextReader reader)
         {
-            Members = new MemberList();
-            MemberModel member = null; 
+            result = new HaxeCompleteResult();
+            result.Members = new MemberList();
+            MemberModel member = null;
 
             while (reader.Read())
             {
@@ -210,8 +243,11 @@ namespace HaXeContext
                 {
                     switch (reader.Name)
                     {
-                        case "list": return;
-                        case "i": member = null; break;
+                        case "list":
+                            return HaxeCompleteStatus.MEMBERS;
+                        case "i":
+                            member = null;
+                            break;
                     }
                     continue;
                 }
@@ -232,17 +268,55 @@ namespace HaXeContext
                     case "t":
                         if (member == null) continue;
                         ExtractType(reader, member);
-                        if (!IsOverload(member))
-                            Members.Add(member);
+                        if (!IsOverload(result.Members, member))
+                            result.Members.Add(member);
                         break;
+
+                    case "pos":
+                        positionResult = ExtractPos(reader);
+                        return HaxeCompleteStatus.POSITION;
                 }
             }
+            return HaxeCompleteStatus.MEMBERS;
         }
 
-        bool IsOverload(MemberModel member)
+        HaxePositionCompleteResult ExtractPos(XmlTextReader reader)
         {
-            return Members.Count > 0 && Members[Members.Count - 1].FullName == member.FullName;
+            var result = new HaxePositionCompleteResult();
+
+            string value = ReadValue(reader);
+            Match match = rePosition.Match(value);
+            result.Path = match.Groups["path"].Value;
+            int.TryParse(match.Groups["line"].Value, out result.LineStart);
+            string rangeType = match.Groups["range"].Value;
+            if (rangeType == "lines")
+                result.RangeType = HaxePositionCompleteRangeType.LINES;
+            else
+                result.RangeType = HaxePositionCompleteRangeType.CHARACTERS;
+
+            int start = 0;
+            int end = 0;
+            int.TryParse(match.Groups["start"].Value, out start);
+            int.TryParse(match.Groups["end"].Value, out end);
+
+            if (result.RangeType == HaxePositionCompleteRangeType.LINES)
+            {
+                result.LineStart = start;
+                result.LineEnd = end;
+            }
+            else
+            {
+                result.CharacterStart = start;
+                result.CharacterEnd = end;
+            }
+
+            return result;
         }
+
+        bool IsOverload(MemberList members, MemberModel member)
+        {
+            return members.Count > 0 && members[members.Count - 1].FullName == member.FullName;
+        } 
 
         MemberModel ExtractMember(XmlTextReader reader)
         {
@@ -296,7 +370,6 @@ namespace HaXeContext
                     if (member.Flags == 0) member.Flags = FlagType.Variable;
                     member.Type = type;
                 }
-
             }
         }
 
@@ -314,6 +387,35 @@ namespace HaXeContext
         FAILED = 1,
         ERROR = 2,
         TYPE = 3,
-        MEMBERS = 4
+        MEMBERS = 4,
+        POSITION = 5
+    }
+
+    enum HaxeCompilerService
+    {
+        COMPLETION,
+        POSITION
+    }
+
+    class HaxeCompleteResult
+    {
+        public MemberModel Type;
+        public MemberList Members;
+    }
+
+    class HaxePositionCompleteResult
+    {
+        public string Path;
+        public HaxePositionCompleteRangeType RangeType;
+        public int LineStart;
+        public int LineEnd;
+        public int CharacterStart;
+        public int CharacterEnd;
+    }
+
+    enum HaxePositionCompleteRangeType
+    {
+        CHARACTERS,
+        LINES
     }
 }

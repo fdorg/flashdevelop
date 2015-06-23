@@ -466,6 +466,20 @@ namespace ASCompletion.Completion
         {
             if (!ASContext.Context.IsFileValid || (Sci == null)) return false;
 
+            // let the context handle goto declaration if we couldn't find anything
+            if (!InternalDeclarationLookup(Sci))
+            {
+                ASExpr expression = GetExpression(Sci, Sci.CurrentPos);
+                if (expression != null)
+                {
+                    return ASContext.Context.HandleGotoDeclaration(Sci, expression);
+                }
+            }
+            return true;
+        }
+
+        static private bool InternalDeclarationLookup(ScintillaControl Sci)
+        {
             // get type at cursor position
             int position = Sci.WordEndPosition(Sci.CurrentPos, true);
             ASResult result = GetExpressionType(Sci, position, false);
@@ -518,6 +532,16 @@ namespace ASCompletion.Completion
             return false;
         }
 
+        static public void SaveLastLookupPosition(ScintillaControl Sci)
+        {
+            if (Sci != null)
+            {
+                int lookupLine = Sci.CurrentLine;
+                int lookupCol = Sci.CurrentPos - Sci.PositionFromLine(lookupLine);
+                ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
+            }
+        }
+
         /// <summary>
         /// Show resolved element declaration
         /// </summary>
@@ -529,13 +553,7 @@ namespace ASCompletion.Completion
             if (model == null || model.FileName == "") return false;
             ClassModel inClass = result.InClass ?? result.Type;
 
-            // for Back command
-            if (Sci != null)
-            {
-                int lookupLine = Sci.CurrentLine;
-                int lookupCol = Sci.CurrentPos - Sci.PositionFromLine(lookupLine);
-                ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
-            }
+            SaveLastLookupPosition(Sci);
 
             if (model != ASContext.Context.CurrentModel)
             {
