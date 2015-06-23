@@ -1423,8 +1423,7 @@ namespace HaXeContext
                     HandlePositionCompletionResult(hc, result, status); 
                 });
             }
-
-            HandlePositionCompletionResult(hc, result, status); 
+            else HandlePositionCompletionResult(hc, result, status); 
         }
 
         private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
