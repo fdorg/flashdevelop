@@ -1416,41 +1416,35 @@ namespace HaXeContext
 
         internal void OnPositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
         {
+            if (hc.Sci.InvokeRequired)
+            {
+                hc.Sci.BeginInvoke((MethodInvoker)delegate
+                {
+                    HandlePositionCompletionResult(hc, result, status); 
+                });
+            }
+
+            HandlePositionCompletionResult(hc, result, status); 
+        }
+
+        private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        {
             switch (status)
             {
                 case HaxeCompleteStatus.ERROR:
-                    TraceManager.AddAsync(hc.Errors, -3);
+                    TraceManager.Add(hc.Errors, -3);
                     break;
 
                 case HaxeCompleteStatus.POSITION:
-                    if (hc.Sci.InvokeRequired)
-                    {
-                        hc.Sci.BeginInvoke((MethodInvoker)delegate
-                        {
-                           HandlePositionCompletionResult(hc, result); 
-                        });
-                    }
-                    else HandlePositionCompletionResult(hc, result);
+                    ASComplete.SaveLastLookupPosition(hc.Sci);
+
+                    PluginBase.MainForm.OpenEditableDocument(result.Path, false);
+                    ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    const string keywords = "(function|var|[,(])";
+
+                    ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
                     break;
             }
-        }
-
-        private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result)
-        {
-            ASComplete.SaveLastLookupPosition(hc.Sci);
-
-            PluginBase.MainForm.OpenEditableDocument(result.Path, false);
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            const string keywords = "(function|var|[,(])";
-
-            if (sci.InvokeRequired)
-            {
-                sci.BeginInvoke((MethodInvoker)delegate
-                {
-                    ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
-                });
-            }
-            else ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
         }
 
         #endregion
