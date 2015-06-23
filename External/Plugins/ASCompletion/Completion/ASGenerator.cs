@@ -111,8 +111,7 @@ namespace ASCompletion.Completion
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found)) return;
                 if (resolve.Type == null)
                 {
-                    int stylemask = (1 << Sci.StyleBits) - 1;
-                    suggestItemDeclaration = ASComplete.IsTextStyle(Sci.StyleAt(position - 1) & stylemask);
+                    suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
                 }
             }
 
@@ -2926,7 +2925,6 @@ namespace ASCompletion.Completion
             ASResult resolve = null;
             int pos = -1; 
             string word = null;
-            int stylemask = (1 << Sci.StyleBits) - 1;
             ClassModel type = null;
 
             if (line[line.Length - 1] == ')')

@@ -75,7 +75,7 @@ namespace PluginCore.Managers
                     }
                     else if (count == MAX_QUEUE)
                     {
-                        asyncQueue.Add(new TraceItem("FlashDevelop: Trace overflow", 4));
+                        asyncQueue.Add(new TraceItem(DistroConfig.DISTRIBUTION_NAME + ": Trace overflow", 4));
                         asyncTimer.Stop();
                         asyncTimer.Start();
                     }

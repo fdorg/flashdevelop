@@ -46,7 +46,7 @@ namespace PluginCore.Helpers
             get
             {
                 String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                return Path.Combine(userAppDir, "FlashDevelop");
+                return Path.Combine(userAppDir, DistroConfig.DISTRIBUTION_NAME);
             }
         }
 

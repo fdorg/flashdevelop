@@ -323,6 +323,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\WinFormUtils.cs" />
+    <Compile Include="PluginCore\DistroConfig.cs" />
     <Compile Include="PluginCore\Helpers\ConfigHelper.cs" />
     <Compile Include="PluginCore\Helpers\FileInspector.cs" />
     <Compile Include="PluginCore\Helpers\ScaleHelper.cs" />
@@ -429,6 +430,7 @@
     <Compile Include="ScintillaNet\Lexers.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ScintillaNet\RGBA.cs" />
     <Compile Include="ScintillaNet\RTF.cs" />
     <Compile Include="ScintillaNet\ScintillaControl.cs">
       <SubType>Component</SubType>

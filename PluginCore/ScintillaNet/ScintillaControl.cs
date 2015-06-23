@@ -40,25 +40,43 @@ namespace ScintillaNet
         private int lastSelectionStart = 0;
         private int lastSelectionEnd = 0;
 
-        #region ScrollBarEx
+        #region ScrollBars
 
         private ScrollBarEx vScrollBar;
         private ScrollBarEx hScrollBar;
 
         /// <summary>
-        /// Gets the reference to the custom vertical scrollbar
+        /// Is the vertical scroll bar visible?
         /// </summary>
-        public ScrollBarEx VScrollBar
+        public Boolean IsVScrollBar
         {
-            get { return this.vScrollBar; }
+            get
+            {
+                if (this.Controls.Contains(this.vScrollBar)) return this.vScrollBar.Visible;
+                else return SPerform(2281, 0, 0) != 0;
+            }
+            set
+            {
+                if (this.Controls.Contains(this.vScrollBar)) this.vScrollBar.Visible = value;
+                else SPerform(2280, (uint)(value ? 1 : 0), 0);
+            }
         }
 
         /// <summary>
-        /// Gets the reference to the custom horizontal scrollbar
+        /// Is the horizontal scroll bar visible? 
         /// </summary>
-        public ScrollBarEx HScrollBar
+        public Boolean IsHScrollBar
         {
-            get { return this.hScrollBar; }
+            get
+            {
+                if (this.Controls.Contains(this.hScrollBar)) return this.hScrollBar.Visible;
+                else return SPerform(2131, 0, 0) != 0;
+            }
+            set
+            {
+                if (this.Controls.Contains(this.hScrollBar)) this.hScrollBar.Visible = value;
+                else SPerform(2130, (uint)(value ? 1 : 0), 0);
+            }
         }
 
         /// <summary>
@@ -146,13 +164,19 @@ namespace ScintillaNet
         /// </summary>
         private void AddScrollBars(ScintillaControl sender)
         {
-            sender.IsVScrollBar = false;
-            sender.IsHScrollBar = false;
+            Boolean vScroll = sender.IsVScrollBar;
+            Boolean hScroll = sender.IsHScrollBar;
+            sender.IsVScrollBar = false; // Hide builtin
+            sender.IsHScrollBar = false; // Hide builtin
+            sender.vScrollBar.VisibleChanged += OnResize;
+            sender.hScrollBar.VisibleChanged += OnResize;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.Controls.Add(sender.hScrollBar);
             sender.Controls.Add(sender.vScrollBar);
             sender.Painted += sender.OnScrollUpdate;
+            sender.IsVScrollBar = vScroll;
+            sender.IsHScrollBar = hScroll;
             sender.OnResize(null, null);
         }
 
@@ -161,13 +185,17 @@ namespace ScintillaNet
         /// </summary>
         private void RemoveScrollBars(ScintillaControl sender)
         {
-            sender.IsVScrollBar = true;
-            sender.IsHScrollBar = true;
+            Boolean vScroll = sender.IsVScrollBar;
+            Boolean hScroll = sender.IsHScrollBar;
+            sender.vScrollBar.VisibleChanged -= OnResize;
+            sender.hScrollBar.VisibleChanged -= OnResize;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.Controls.Remove(sender.hScrollBar);
             sender.Controls.Remove(sender.vScrollBar);
             sender.Painted -= sender.OnScrollUpdate;
+            sender.IsVScrollBar = vScroll;
+            sender.IsHScrollBar = hScroll;
             sender.OnResize(null, null);
         }
 
@@ -214,8 +242,8 @@ namespace ScintillaNet
 
         public void OnResize(object sender, EventArgs e)
         {
-            Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) ? this.vScrollBar.Width : 0;
-            Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) ? this.hScrollBar.Height : 0;
+            Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) && this.vScrollBar.Visible ? this.vScrollBar.Width : 0;
+            Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) && this.hScrollBar.Visible ? this.hScrollBar.Height : 0;
             if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
         }
 
@@ -1452,21 +1480,6 @@ namespace ScintillaNet
             {
                 SPerform(2124 , (uint)(value ? 1 : 0), 0);
             }
-        }
-
-        /// <summary>
-        /// Is the horizontal scroll bar visible? 
-        /// </summary>
-        public bool IsHScrollBar
-        {
-            get 
-            {
-                return SPerform(2131, 0, 0) != 0;
-            }
-            set
-            {
-                SPerform(2130, (uint)(value ? 1 : 0), 0);
-            }
         }   
 
         /// <summary>
@@ -1955,22 +1968,7 @@ namespace ScintillaNet
             {
                 SPerform(2277, (uint)value , 0);
             }
-        }   
-
-        /// <summary>
-        /// Is the vertical scroll bar visible?
-        /// </summary>
-        public bool IsVScrollBar
-        {
-            get 
-            {
-                return SPerform(2281, 0, 0) != 0;
-            }
-            set
-            {
-                SPerform(2280, (uint)(value ? 1 : 0), 0);
-            }
-        }   
+        } 
 
         /// <summary>
         /// Is drawing done in two phases with backgrounds drawn before faoregrounds?
@@ -3213,7 +3211,26 @@ namespace ScintillaNet
             {
                  SPerform(2049, (uint)markerNumber, (uint)b);
             }   
-        }           
+        }
+
+        /// <summary>
+        /// Define a marker image from a bitmap. Supports alpha channel.
+        /// </summary>
+        unsafe public void MarkerDefineRGBAImage(int markerNumber, Bitmap image)
+        {
+            var rgba = RGBA.ConvertToRGBA(image);
+
+            //SCI_RGBAIMAGESETWIDTH
+            SPerform(2624, (uint)image.Width, 0);
+            //SCI_RGBAIMAGESETHEIGHT
+            SPerform(2625, (uint)image.Height, 0);
+
+            fixed (byte* b = rgba)
+            {
+                //SCI_MARKERDEFINERGBAIMAGE
+                SPerform(2626, (uint)markerNumber, (uint)b);
+            }
+        }
 
         /// <summary>
         /// Reset the default style to its state at startup

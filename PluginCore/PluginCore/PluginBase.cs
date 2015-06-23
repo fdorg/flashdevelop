@@ -11,7 +11,7 @@ namespace PluginCore
         private static IProject solution;
         private static InstalledSDK sdk;
         private static IMainForm instance;
-        
+
         /// <summary>
         /// Activates if the sender is MainForm
         /// </summary>

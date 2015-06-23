@@ -1021,7 +1021,7 @@ namespace FlashDevelop
             //
             this.AllowDrop = true;
             this.Name = "MainForm";
-            this.Text = "FlashDevelop";
+            this.Text = DistroConfig.DISTRIBUTION_NAME;
             this.Controls.Add(this.dockPanel);
             this.Controls.Add(this.toolStripPanel);
             this.Controls.Add(this.statusStrip);
@@ -1618,13 +1618,13 @@ namespace FlashDevelop
         {
             IProject project = PluginBase.CurrentProject;
             ITabbedDocument document = this.CurrentDocument;
-            if (project != null) this.Text = project.Name + " - FlashDevelop";
+            if (project != null) this.Text = project.Name + " - " + DistroConfig.DISTRIBUTION_NAME;
             else if (document != null && document.IsEditable)
             {
                 String file = Path.GetFileName(document.FileName);
-                this.Text = file + " - FlashDevelop";
+                this.Text = file + " - " + DistroConfig.DISTRIBUTION_NAME;
             }
-            else this.Text = "FlashDevelop";
+            else this.Text = DistroConfig.DISTRIBUTION_NAME;
         }
 
         /// <summary>
@@ -2276,7 +2276,7 @@ namespace FlashDevelop
         /// </summary>
         public void CleanReopenList(Object sender, System.EventArgs e)
         {
-            FileHelper.FilterByExisiting(this.appSettings.PreviousDocuments, true);
+            FileHelper.FilterByExisting(this.appSettings.PreviousDocuments, true);
             ButtonManager.PopulateReopenMenu();
         }
 
@@ -3568,6 +3568,11 @@ namespace FlashDevelop
         /// </summary>
         public void CommentSelection(Object sender, System.EventArgs e)
         {
+            CommentSelection();
+        }
+
+        private bool? CommentSelection()
+        {
             ScintillaControl sci = Globals.SciControl;
             Int32 selEnd = sci.SelectionEnd;
             Int32 selStart = sci.SelectionStart;
@@ -3578,14 +3583,15 @@ namespace FlashDevelop
                 sci.BeginUndoAction();
                 try
                 {
-                    Int32 indexLenght = sci.SelText.Length - commentStart.Length - commentEnd.Length;
-                    String withoutComment = sci.SelText.Substring(commentStart.Length, indexLenght);
+                    Int32 indexLength = sci.SelText.Length - commentStart.Length - commentEnd.Length;
+                    String withoutComment = sci.SelText.Substring(commentStart.Length, indexLength);
                     sci.ReplaceSel(withoutComment);
                 }
                 finally
                 {
                     sci.EndUndoAction();
                 }
+                return false;
             }
             else if (sci.SelText.Length > 0)
             {
@@ -3599,7 +3605,9 @@ namespace FlashDevelop
                 {
                     sci.EndUndoAction();
                 }
+                return true;
             }
+            return null;
         }
 
         /// <summary>
@@ -3663,6 +3671,14 @@ namespace FlashDevelop
             ScintillaControl sci = Globals.SciControl;
             String lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             Int32 position = sci.CurrentPos;
+            
+            // try doing a block comment on the current line instead (xml, html...)
+            if (lineComment == "")
+            {
+                ToggleBlockOnCurrentLine(sci);
+                return;
+            }
+
             Int32 curLine = sci.LineFromPosition(position);
             Int32 startPosInLine = position - sci.PositionFromLine(curLine);
             Int32 startLine = sci.LineFromPosition(sci.SelectionStart);
@@ -3689,6 +3705,32 @@ namespace FlashDevelop
 
             if (containsCodeLine) this.CommentLine(null, null);
             else this.UncommentLine(null, null);
+        }
+
+        private void ToggleBlockOnCurrentLine(ScintillaControl sci)
+        {
+            Int32 selStart = sci.SelectionStart;
+
+            Int32 indentPos = sci.LineIndentPosition(sci.CurrentLine);
+            Int32 lineEndPos = sci.LineEndPosition(sci.CurrentLine);
+            bool afterBlockStart = sci.CurrentPos > indentPos;
+            bool afterBlockEnd = sci.CurrentPos >= lineEndPos;
+
+            sci.SelectionStart = indentPos;
+            sci.SelectionEnd = lineEndPos;
+
+            bool? added = CommentSelection();
+            if (added == null) return;
+
+            int factor = (bool)added ? 1 : -1;
+
+            String commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
+            String commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
+
+            // preserve cursor pos
+            if (afterBlockStart) selStart += commentStart.Length * factor;
+            if (afterBlockEnd) selStart += commentEnd.Length * factor;
+            sci.SetSel(selStart, selStart);
         }
 
         /// <summary>

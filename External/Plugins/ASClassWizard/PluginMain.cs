@@ -1,34 +1,19 @@
-#region imports
-
 using System;
 using System.IO;
-using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Collections;
-
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Managers;
-using PluginCore.Helpers;
 using PluginCore;
-
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS3;
-using ProjectManager.Projects.AS2;
-
 using ASCompletion.Model;
 using ASCompletion.Context;
-
 using ASClassWizard.Resources;
 using ASClassWizard.Wizards;
-
-using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using System.Collections.Generic;
-
-#endregion
 
 namespace ASClassWizard
 {
@@ -464,7 +449,5 @@ namespace ASClassWizard
         }
 
         #endregion
-
     }
-    
 }

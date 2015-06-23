@@ -23,12 +23,11 @@ namespace FlashDevelop.Managers
     {
         public static Scintilla SciConfig;
         public static ConfigurationUtility SciConfigUtil;
-        public static System.String XpmBookmark;
+        public static Bitmap Bookmark;
 
         static ScintillaManager()
         {
-            Bitmap bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
-            XpmBookmark = ScintillaNet.XPM.ConvertToXPM(bookmark, "#00FF00");
+            Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
             LoadConfiguration();
         }
 
@@ -230,7 +229,7 @@ namespace FlashDevelop.Managers
                     if (colorizeMarkerBack) sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Fore);
                     else sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Symbol);
                 }
-                /** 
+                /**
                 * Set correct line number margin width
                 */
                 Boolean viewLineNumbers = Globals.Settings.ViewLineNumbers;
@@ -298,7 +297,7 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Creates a new editor control for the document 
+        /// Creates a new editor control for the document
         /// </summary>
         public static ScintillaControl CreateControl(String file, String text, Int32 codepage)
         {
@@ -361,7 +360,7 @@ namespace FlashDevelop.Managers
             sci.SetMarginMaskN(2, -33554432 | 1 << 2);
             sci.MarginSensitiveN(2, true);
             sci.SetMultiSelectionTyping(true);
-            sci.MarkerDefinePixmap(0, XpmBookmark);
+            sci.MarkerDefineRGBAImage(0, Bookmark);
             sci.MarkerDefine(2, ScintillaNet.Enums.MarkerSymbol.Fullrect);
             sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.Folder, ScintillaNet.Enums.MarkerSymbol.BoxPlus);
             sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderOpen, ScintillaNet.Enums.MarkerSymbol.BoxMinus);

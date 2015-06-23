@@ -75,7 +75,7 @@ namespace ProjectManager.Controls.TreeView
             if (project.IsLibraryAsset(path))
             {
                 LibraryAsset asset = project.GetAsset(path);
-                if (asset.IsSwc)
+                if (asset != null && asset.IsSwc)
                 {
                     if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
                         colorId = "ProjectTreeView.ExternalLibraryTextColor";

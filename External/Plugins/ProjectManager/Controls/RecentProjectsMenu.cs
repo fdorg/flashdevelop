@@ -114,7 +114,7 @@ namespace ProjectManager.Controls
 
         private void CleanAllItems()
         {
-            FileHelper.FilterByExisiting(PluginMain.Settings.RecentProjects, true);
+            FileHelper.FilterByExisting(PluginMain.Settings.RecentProjects, true);
             RebuildList();
         }
 

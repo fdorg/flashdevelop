@@ -131,8 +131,8 @@
 		<button label="Label.ClearBookmarks" click="ClearBookmarks" image="402|4|4|4" flags="Enable:IsEditable|HasBookmarks" />
 	</menu>
 	<menu label="Label.Insert" name="InsertMenu">
-		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" image="275" />
-		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" image="275|16|4|4" />
+		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" flags="Enable:IsEditable" image="315" />
+		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:IsEditable|!IsUntitled" image="315|16|3|3" />
 		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" flags="Enable:IsEditable" image="163" />
 		<separator />
 		<button label="Label.Snippet" click="InsertSnippet" shortcut="Control|B" tag="null" flags="Enable:IsEditable" image="341" />
@@ -195,7 +195,7 @@
 		</menu>
 		<menu label="Label.LanguageReferences" name="LangRefsMenu">
 			<button label="&amp;Flash" click="Browse" tag="http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/index.html" image="559" />
-			<button label="&amp;Haxe" click="Browse" tag="http://haxe.org/ref" />
+			<button label="&amp;Haxe" click="Browse" tag="http://api.haxe.org/" />
 			<button label="&amp;MySQL" click="Browse" tag="http://dev.mysql.com/doc/mysql/en/" />
 			<button label="&amp;PHP" click="Browse" tag="http://www.php.net/manual/en/" />
 		</menu>
