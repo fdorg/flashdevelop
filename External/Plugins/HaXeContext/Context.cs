@@ -1423,22 +1423,34 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.POSITION:
-                    ASComplete.SaveLastLookupPosition(hc.Sci);
-
-                    PluginBase.MainForm.OpenEditableDocument(result.Path, false);
-                    ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                    const string keywords = "(function|var|[,(])";
-
-                    if (sci.InvokeRequired)
+                    if (hc.Sci.InvokeRequired)
                     {
-                        sci.BeginInvoke((MethodInvoker)delegate
+                        hc.Sci.BeginInvoke((MethodInvoker)delegate
                         {
-                            ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
+                           HandlePositionCompletionResult(hc, result); 
                         });
                     }
-                    else ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
+                    else HandlePositionCompletionResult(hc, result);
                     break;
             }
+        }
+
+        private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result)
+        {
+            ASComplete.SaveLastLookupPosition(hc.Sci);
+
+            PluginBase.MainForm.OpenEditableDocument(result.Path, false);
+            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            const string keywords = "(function|var|[,(])";
+
+            if (sci.InvokeRequired)
+            {
+                sci.BeginInvoke((MethodInvoker)delegate
+                {
+                    ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
+                });
+            }
+            else ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
         }
 
         #endregion
