@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
 using System.IO;
-using PluginCore.Localization;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ProjectManager.Projects;
 
@@ -27,6 +23,7 @@ namespace LoomContext.Projects
         }
 
         public override string Language { get { return "loom"; } }
+        public override string LanguageDisplayString { get { return "Loom"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool ReadOnly { get { return false; } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application; } }

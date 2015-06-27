@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using ProjectManager.Projects.AS3;
 using PluginCore;
 using PluginCore.Helpers;
 
@@ -23,6 +21,7 @@ namespace ProjectManager.Projects.Haxe
         }
 
         public override string Language { get { return "haxe"; } }
+        public override string LanguageDisplayString { get { return "Haxe"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool ReadOnly { get { return false; } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application && IsFlashOutput; } }
