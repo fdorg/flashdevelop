@@ -23,7 +23,7 @@ namespace LoomContext.Projects
         }
 
         public override string Language { get { return "loom"; } }
-        public override string LanguageDisplayString { get { return "Loom"; } }
+        public override string LanguageDisplayName { get { return "Loom"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool ReadOnly { get { return false; } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application; } }

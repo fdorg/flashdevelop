@@ -75,7 +75,7 @@ namespace ProjectManager.Projects
         }
 
         public abstract string Language { get; }
-        public abstract string LanguageDisplayString { get; }
+        public abstract string LanguageDisplayName { get; }
         public virtual bool IsCompilable { get { return false; } }
         public virtual bool ReadOnly { get { return false; } }
         public virtual bool UsesInjection { get { return false; } }

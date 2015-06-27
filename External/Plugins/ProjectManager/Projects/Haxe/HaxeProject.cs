@@ -21,7 +21,7 @@ namespace ProjectManager.Projects.Haxe
         }
 
         public override string Language { get { return "haxe"; } }
-        public override string LanguageDisplayString { get { return "Haxe"; } }
+        public override string LanguageDisplayName { get { return "Haxe"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool ReadOnly { get { return false; } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application && IsFlashOutput; } }

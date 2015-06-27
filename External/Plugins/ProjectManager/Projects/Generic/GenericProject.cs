@@ -12,7 +12,7 @@ namespace ProjectManager.Projects.Generic
         }
 
         public override string Language { get { return "*"; } }
-        public override string LanguageDisplayString { get { return "*"; } }
+        public override string LanguageDisplayName { get { return "*"; } }
         public override bool IsCompilable { get { return false; } }
 
         public override string DefaultSearchFilter
