@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
 using System.IO;
-using PluginCore.Localization;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Helpers;
 
@@ -28,6 +24,7 @@ namespace ProjectManager.Projects.AS3
         }
 
         public override string Language { get { return "as3"; } }
+        public override string LanguageDisplayName { get { return "AS3"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool ReadOnly { get { return FileInspector.IsFlexBuilderProject(ProjectPath); } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application || OutputType == OutputType.Library; } }

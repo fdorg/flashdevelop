@@ -29,7 +29,7 @@ namespace ProjectManager.Controls.TreeView
             base.Refresh(recursive);
             FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
             NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, FontStyle.Bold);
-            Text = ProjectRef.Name + " (" + ProjectRef.Language.ToUpper() + ")";
+            Text = ProjectRef.Name + " (" + ProjectRef.LanguageDisplayName + ")";
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
 
