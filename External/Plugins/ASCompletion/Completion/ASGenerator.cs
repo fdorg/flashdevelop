@@ -1202,7 +1202,8 @@ namespace ASCompletion.Completion
             {
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
-                    latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
+                    if (isHaxe) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
+                    else latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
                 }
                 else latest = member;
             }
