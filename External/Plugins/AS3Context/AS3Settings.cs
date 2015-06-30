@@ -7,6 +7,7 @@ using System.ComponentModel;
 using PluginCore.Localization;
 using PluginCore;
 using System.IO;
+using Ookii.Dialogs;
 
 namespace AS3Context
 {
@@ -210,7 +211,7 @@ namespace AS3Context
 
         [DisplayName("AS3 Classpath")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS3Context.Description.AS3Classpath"), DefaultValue(DEFAULT_AS3LIBRARY)]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string AS3ClassPath
         {
             get { return as3ClassPath; }

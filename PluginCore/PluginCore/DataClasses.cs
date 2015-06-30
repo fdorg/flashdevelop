@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
+using Ookii.Dialogs;
 
 namespace PluginCore
 {
@@ -101,7 +102,7 @@ namespace PluginCore
         private InstalledSDKOwner owner;
 
         [Category("Location")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String Path
         {
             get { return this.path; }

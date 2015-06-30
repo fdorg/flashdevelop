@@ -210,7 +210,7 @@ namespace LoomContext
 
         [DisplayName("AS3 Classpath")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS3Context.Description.AS3Classpath"), DefaultValue(DEFAULT_AS3LIBRARY)]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string AS3ClassPath
         {
             get { return as3ClassPath; }

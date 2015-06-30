@@ -6,6 +6,7 @@ using System.Drawing.Design;
 using System.ComponentModel;
 using System.Windows.Forms.Design;
 using System.Collections.Generic;
+using Ookii.Dialogs;
 using PluginCore.Localization;
 
 namespace LayoutManager
@@ -35,7 +36,7 @@ namespace LayoutManager
         /// </summary>
         [DisplayName("Custom Layout File Directory")]
         [LocalizedDescription("LayoutManager.Description.CustomLayoutPath"), DefaultValue("")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String CustomLayoutPath
         {
             get { return this.customLayoutPath; }
