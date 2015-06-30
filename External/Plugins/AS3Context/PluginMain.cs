@@ -16,6 +16,7 @@ using AS3Context.Controls;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.DockPanelSuite.Helpers;
 
 namespace AS3Context
 {
@@ -170,7 +171,7 @@ namespace AS3Context
                         }
                         else if (action == "AS3Context.StartProfiler")
                         {
-                            if (profilerUI.AutoStart) profilerUI.StartProfiling();
+                            if (profilerUI != null && profilerUI.AutoStart) profilerUI.StartProfiling();
                         }
                         break;
 
@@ -257,7 +258,7 @@ namespace AS3Context
                     }
                     else if (action == "FlashConnect")
                     {
-                        ProfilerUI.HandleFlashConnect(sender, (e as DataEvent).Data);
+                        if (profilerUI != null) ProfilerUI.HandleFlashConnect(sender, (e as DataEvent).Data);
                     }
                     else if (inMXML)
                     {
@@ -348,11 +349,15 @@ namespace AS3Context
         /// </summary>
         private void CreatePanels()
         {
-            profilerUI = new ProfilerUI();
-            profilerUI.Text = TextHelper.GetString("Title.Profiler");
-            profilerPanel = PluginBase.MainForm.CreateDockablePanel(profilerUI, pluginGuid, pluginIcon, DockState.Hidden);
+            var profilerStub = new DelayedDockContent(delegate {
+                profilerUI = new ProfilerUI();
+                profilerUI.PanelRef = profilerPanel;
+                return profilerUI;
+            });
+            profilerStub.Text = TextHelper.GetString("Title.Profiler");
+
+            profilerPanel = PluginBase.MainForm.CreateDockablePanel(profilerStub, pluginGuid, pluginIcon, DockState.Hidden);
             profilerPanel.VisibleState = DockState.Float;
-            profilerUI.PanelRef = profilerPanel;
         }
 
         /// <summary>

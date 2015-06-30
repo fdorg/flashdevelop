@@ -333,6 +333,7 @@ namespace FlashDebugger
                 });
                 return;
             }
+            PanelsHelper.CreateUIs();
             UpdateMenuState(DebuggerState.Running);
             PluginBase.MainForm.ProgressBar.Visible = false;
             PluginBase.MainForm.ProgressLabel.Visible = false;
@@ -345,12 +346,7 @@ namespace FlashDebugger
             }
             else if (!PluginMain.settingObject.DisablePanelsAutoshow)
             {
-                PanelsHelper.watchPanel.Show();
-                PanelsHelper.localsPanel.Show();
-                PanelsHelper.threadsPanel.Show();
-                PanelsHelper.immediatePanel.Show();
-                PanelsHelper.breakPointPanel.Show();
-                PanelsHelper.stackframePanel.Show();
+                PanelsHelper.ShowAllPanels();
             }
         }
 
@@ -375,17 +371,9 @@ namespace FlashDebugger
             }
             else if (!PluginMain.settingObject.DisablePanelsAutoshow)
             {
-                PanelsHelper.watchPanel.Hide();
-                PanelsHelper.localsPanel.Hide();
-                PanelsHelper.threadsPanel.Hide();
-                PanelsHelper.immediatePanel.Hide();
-                PanelsHelper.breakPointPanel.Hide();
-                PanelsHelper.stackframePanel.Hide();
+                PanelsHelper.HideAllPanels();
             }
-            PanelsHelper.localsUI.TreeControl.Nodes.Clear();
-            PanelsHelper.stackframeUI.ClearItem();
-            PanelsHelper.watchUI.Clear();
-            PanelsHelper.threadsUI.ClearItem();
+            PanelsHelper.ResetUIs();
             PluginMain.breakPointManager.ResetAll();
             PluginBase.MainForm.ProgressBar.Visible = false;
             PluginBase.MainForm.ProgressLabel.Visible = false;
