@@ -139,7 +139,7 @@ namespace ProjectManager.Controls
             AddFile = Get("526|0|5|4");
             OpenFile = Get(214);
             EditFile = Get(282);
-            Browse = Get(56);
+            Browse = Get(46);
 
             FindAndReplace = Get(484);
             FindInFiles = Get(209);
