@@ -368,12 +368,13 @@ namespace ProjectManager.Actions
                         }
                 }
             }
-            else
+            else if (PluginCore.PlatformData.SupportedLanguages.ContainsKey("as3"))
             {
                 var targets = PluginCore.PlatformData.SupportedLanguages["as3"].Platforms;
                 var flashPlatform = targets[PlatformData.FLASHPLAYER_PLATFORM];
                 version = flashPlatform.LastVersion.Value;
             }
+            else version = "11.0";
 
             DataEvent de;
             Hashtable info = new Hashtable();
