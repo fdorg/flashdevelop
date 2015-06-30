@@ -126,7 +126,7 @@
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
 		<Version>18.0.0</Version>
-		<Build>160</Build>
+		<Build>194</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -144,7 +144,7 @@
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
 		<Version>18.0.0</Version>
-		<Build>160</Build>
+		<Build>194</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
@@ -157,7 +157,7 @@
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
 		<Version>18.0.0</Version>
-		<Build>160</Build>
+		<Build>194</Build>
 		<Desc>Debug Flash Player plugin for Internet Explorer</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
@@ -170,7 +170,7 @@
 		<Id>flashppapi</Id>
 		<Name>Flash Player (PPAPI)</Name>
 		<Version>18.0.0</Version>
-		<Build>160</Build>
+		<Build>194</Build>
 		<Desc>Debug Flash Player plugin for Opera and Chromium based applications – PPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
@@ -182,7 +182,7 @@
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit (x86)</Name>
-		<Version>1.8.13</Version>
+		<Version>1.8.14</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -192,13 +192,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.13.0/TortoiseGit-1.8.13.0-32bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.14.0/TortoiseGit-1.8.14.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
-		<Version>1.8.13</Version>
+		<Version>1.8.14</Version>
 		<Build>1</Build>
 		<Desc>Git client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -208,7 +208,7 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.13.0/TortoiseGit-1.8.13.0-64bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.14.0/TortoiseGit-1.8.14.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -224,13 +224,13 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20141217/Git-1.9.5-preview20141217.exe</Url>
+			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20150319/Git-1.9.5-preview20150319.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN (x86)</Name>
-		<Version>1.8.10</Version>
+		<Version>1.8.11</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -238,15 +238,15 @@
 			<Bundle>SVN</Bundle>
 		</Bundles>
 		<Type>Executable</Type>
-		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.10/Application/TortoiseSVN-1.8.10.26129-win32-svn-1.8.11.msi</Url>
+			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.11/Application/TortoiseSVN-1.8.11.26392-win32-svn-1.8.13.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn64</Id>
 		<Name>TortoiseSVN (x64)</Name>
-		<Version>1.8.10</Version>
+		<Version>1.8.11</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -254,15 +254,15 @@
 			<Bundle>SVN</Bundle>
 		</Bundles>
 		<Type>Executable</Type>
-		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.10/Application/TortoiseSVN-1.8.10.26129-x64-svn-1.8.11.msi</Url>
+			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.11/Application/TortoiseSVN-1.8.11.26392-x64-svn-1.8.13.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>sliksvn</Id>
-		<Name>SlikSVN Client</Name>
-		<Version>1.8.11</Version>
+		<Name>SlikSVN Client (x86)</Name>
+		<Version>1.8.13</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -272,7 +272,23 @@
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.11-win32.msi</Url>
+			<Url>https://sliksvn.com/pub/Slik-Subversion-1.8.13-win32.msi</Url>
+		</Urls>
+	</Entry>
+    <Entry>
+		<Id>sliksvn</Id>
+		<Name>SlikSVN Client (x64)</Name>
+		<Version>1.8.13</Version>
+		<Build>1</Build>
+		<Desc>Subversion command line client 64-bit installer</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>SVN</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://www.sliksvn.com/en/download/</Info>
+		<Urls>
+			<Url>https://sliksvn.com/pub/Slik-Subversion-1.8.13-x64.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
