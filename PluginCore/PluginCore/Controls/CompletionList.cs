@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
@@ -840,17 +839,11 @@ namespace PluginCore.Controls
         
         #region Event Handling
         
-        /// <summary>
-        /// 
-        /// </summary> 
         static public IntPtr GetHandle()
         {
             return completionList.Handle;
         }
 
-        /// <summary>
-        /// 
-        /// </summary> 
         static public void OnChar(ScintillaControl sci, int value)
         {
             char c = (char)value;
@@ -889,9 +882,6 @@ namespace PluginCore.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary> 
         static public bool HandleKeys(ScintillaControl sci, Keys key)
         {
             int index;
