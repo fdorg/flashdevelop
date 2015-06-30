@@ -349,6 +349,7 @@
     <Compile Include="PluginCore\Utilities\ImageQuantizers.cs" />
     <Compile Include="PluginCore\Utilities\ProcessRunner.cs" />
     <Compile Include="PluginCore\Utilities\InteropSHFileOperation.cs" />
+    <Compile Include="PluginCore\Utilities\SemVer.cs" />
     <Compile Include="PluginCore\Utilities\SingleInstanceApp.cs" />
     <Compile Include="PluginCore\Win32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

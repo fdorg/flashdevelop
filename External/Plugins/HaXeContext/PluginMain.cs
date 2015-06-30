@@ -233,7 +233,7 @@ namespace HaXeContext
             {
                 foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
                 {
-                    sdk.Validate();
+                    ValidateSDK(sdk);
                 }
             }
             if (settingObject.CompletionServerPort == 0)

@@ -1334,6 +1334,11 @@ namespace ASCompletion.Context
         {
             return null;
         }
+
+        public virtual bool HandleGotoDeclaration(ScintillaNet.ScintillaControl sci, ASExpr expression)
+        {
+            return false;
+        }
         #endregion
 
         #region plugin commands
