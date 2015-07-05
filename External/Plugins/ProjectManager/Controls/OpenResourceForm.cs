@@ -392,12 +392,14 @@ namespace ProjectManager.Controls
         }
 
         /// <summary>
-        /// Quick filter of hidden/VCS directories
+        /// Filter out hidden/VCS directories
         /// </summary>
         private bool isFolderHidden(string folder)
         {
             String name = Path.GetFileName(folder);
             if (name.Length == 0 || !Char.IsLetterOrDigit(name[0])) return true;
+            foreach (string dir in PluginMain.Settings.ExcludedDirectories)
+                if (dir == name) return true;
             FileInfo info = new FileInfo(folder);
             return (info.Attributes & FileAttributes.Hidden) > 0;
         }

@@ -66,7 +66,11 @@ namespace PluginCore.Utilities
 
         void bg_DoWork(object sender, DoWorkEventArgs e)
         {
-            this.ExploreFolder(basePath);
+            try
+            {
+                this.ExploreFolder(basePath);
+            }
+            catch { }
         }
         
         /// <summary>
