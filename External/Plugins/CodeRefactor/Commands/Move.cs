@@ -108,7 +108,13 @@ namespace CodeRefactor.Commands
                 msg = TextHelper.GetString("Info.MovingFile");
                 title = TextHelper.GetString("Title.MoveDialog");
             }
-            if (targets.Count > 0 && MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            var dialogResult = MessageBox.Show(msg, title, MessageBoxButtons.YesNoCancel);
+            if (dialogResult == DialogResult.Cancel)
+            {
+                FireOnRefactorComplete();
+                return;
+            }
+            if (targets.Count > 0 && dialogResult == DialogResult.Yes)
             {
                 // We must keep the original files for validating references
                 CopyTargets();
