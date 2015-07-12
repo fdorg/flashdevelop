@@ -987,6 +987,7 @@ namespace ASCompletion.Context
         protected virtual void GetCurrentFileModel(string fileName)
         {
             cFile = GetCachedFileModel(fileName);
+            cFile.FileName = fileName; // fix casing changes
             if (cFile.Context == null || cFile.Context != this)
             {
                 cFile.Context = this;
