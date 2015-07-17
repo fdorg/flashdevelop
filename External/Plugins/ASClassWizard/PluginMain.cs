@@ -361,7 +361,8 @@ namespace ASClassWizard
                                 foreach (MemberModel param in member.Parameters)
                                 {
                                     if (param.Name.StartsWith(".")) break;
-                                    superConstructor += (index > 0 ? ", " : "") + param.Name;
+                                    var pname = TemplateUtils.GetParamName(param);
+                                    superConstructor += (index > 0 ? ", " : "") + pname;
                                     index++;
                                 }
                                 superConstructor += ");\n" + (lastFileOptions.Language == "as3" ? "\t\t\t" : "\t\t");
