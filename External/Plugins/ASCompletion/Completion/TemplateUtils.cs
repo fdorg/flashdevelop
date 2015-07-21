@@ -143,7 +143,8 @@ namespace ASCompletion.Completion
                     else
                         one = ReplaceTemplateVariable(one, "PComma", null);
 
-                    one = ReplaceTemplateVariable(one, "PName", param.Name);
+                    var pname = GetParamName(param);
+                    one = ReplaceTemplateVariable(one, "PName", pname);
 
                     one = ReplaceTemplateVariable(one, "PType", null);
                     one = ReplaceTemplateVariable(one, "PDefaultValue", null);
@@ -264,6 +265,11 @@ namespace ASCompletion.Completion
                 sr.Close();
             }
             return content;
+        }
+
+        public static string GetParamName(MemberModel param)
+        {
+            return (param.Name ?? "").Replace("?", ""); // '?' is a marker for optional arguments
         }
     }
 }
