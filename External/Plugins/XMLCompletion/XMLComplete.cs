@@ -654,9 +654,9 @@ namespace XMLCompletion
                 ScintillaControl sci = document.SciControl;
                 XMLContextTag ctag = GetXMLContextTag(sci, sci.CurrentPos);
                 // Starting tag
-                if (ctag.Tag == null && (sci.CurrentPos > 0))
+                if (ctag.Tag == null)
                 {
-                    if ((Char)sci.CharAt(sci.CurrentPos - 1) == '<') 
+                    if (sci.CurrentPos > 0 && (Char)sci.CharAt(sci.CurrentPos - 1) == '<')
                     {
                         ctag.Tag = "<";
                         ctag.Name = "";
