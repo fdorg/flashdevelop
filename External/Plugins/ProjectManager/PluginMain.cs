@@ -96,7 +96,7 @@ namespace ProjectManager
         public static IMainForm MainForm { get { return PluginBase.MainForm; } }
         public static ProjectManagerSettings Settings;
 
-        const EventType eventMask = EventType.UIStarted | EventType.FileOpening
+        const EventType eventMask = EventType.UIStarted | EventType.UIClosing | EventType.FileOpening
             | EventType.FileOpen | EventType.FileSave | EventType.FileSwitch | EventType.ProcessStart | EventType.ProcessEnd
             | EventType.ProcessArgs | EventType.Command | EventType.Keys | EventType.ApplySettings;
 
@@ -371,6 +371,11 @@ namespace ProjectManager
                     });
                     break;
 
+                case EventType.UIClosing:
+                    // save project session, documents have not been closed yet
+                    SaveProjectSession();
+                    break;
+
                 // replace $(SomeVariable) type stuff with things we know about
                 case EventType.ProcessArgs:
                     project = activeProject; // replace arguments using active project data
@@ -640,7 +645,10 @@ namespace ProjectManager
             listenToPathChange = true;
 
             // activate
-            if (!internalOpening) RestoreProjectSession(project);
+            if (!internalOpening || (internalOpening && !PluginBase.Settings.RestoreFileSession))
+            {
+                RestoreProjectSession(project);
+            }
 
             if (stealFocus)
             {

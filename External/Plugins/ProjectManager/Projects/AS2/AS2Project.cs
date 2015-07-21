@@ -14,7 +14,7 @@ namespace ProjectManager.Projects.AS2
         }
 
         public override string Language { get { return "as2"; } }
-        public override string LanguageDisplayName { get { return "AS3"; } }
+        public override string LanguageDisplayName { get { return "AS2"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool UsesInjection { get { return InputPath != ""; } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application && !UsesInjection; } }

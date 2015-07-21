@@ -232,6 +232,7 @@ namespace PluginCore
         Boolean DisableFindTextUpdating { get; set; }
         Boolean ApplyFileExtension { get; set; }
         Boolean RestoreFileStates { get; set; }
+        Boolean RestoreFileSession { get; set; }
         Boolean BackSpaceUnIndents { get; set; }
         Boolean BraceMatchingEnabled { get; set; }
         Boolean CaretLineVisible { get; set; }
