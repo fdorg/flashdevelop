@@ -4207,7 +4207,7 @@ namespace ASCompletion.Completion
                 foreach (MemberModel param in member.Parameters)
                 {
                     if (param.Name.StartsWith(".")) break;
-                    args += ", " + param.Name;
+                    args += ", " + TemplateUtils.GetParamName(param);
                     addTypeOnce(typesUsed, getQualifiedType(param.Type, aType));
                 }
 
