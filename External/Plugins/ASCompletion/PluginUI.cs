@@ -495,7 +495,7 @@ namespace ASCompletion
             if (currentHighlight != null)
             {
                 //currentHighlight.BackColor = System.Drawing.SystemColors.Window;
-                currentHighlight.ForeColor = System.Drawing.SystemColors.WindowText;
+                currentHighlight.ForeColor = outlineTree.ForeColor;
             }
             outlineTree.SelectedNode = currentHighlight = node;
             if (currentHighlight != null)
@@ -1093,7 +1093,9 @@ namespace ASCompletion
             if (findProcTxt.Text == searchInvitation)
             {
                 findProcTxt.Text = "";
-                findProcTxt.ForeColor = System.Drawing.SystemColors.WindowText;
+                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
+                if (fore == Color.Empty) findProcTxt.ForeColor = System.Drawing.SystemColors.WindowText;
+                else findProcTxt.ForeColor = fore;
             }
         }
 
@@ -1171,8 +1173,7 @@ namespace ASCompletion
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.BackColor == System.Drawing.Color.LightSkyBlue)
-                    return node;
+                if (node.BackColor == SystemColors.Highlight) return node;
                 if (node.Nodes.Count > 0)
                 {
                     TreeNode subnode = FindMatch(node.Nodes);

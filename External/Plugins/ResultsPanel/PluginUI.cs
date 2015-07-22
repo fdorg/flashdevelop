@@ -943,7 +943,7 @@ namespace ResultsPanel
             if (this.entriesView.Items.Count == 0) return;
             if (this.entryIndex >= 0 && this.entryIndex < this.entriesView.Items.Count)
             {
-                this.entriesView.Items[this.entryIndex].ForeColor = SystemColors.WindowText;
+                this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
             }
             this.entryIndex = (this.entryIndex + 1) % this.entriesView.Items.Count;
             this.entriesView.SelectedItems.Clear();
@@ -961,7 +961,7 @@ namespace ResultsPanel
             if (this.entriesView.Items.Count == 0) return;
             if (this.entryIndex >= 0 && this.entryIndex < this.entriesView.Items.Count)
             {
-                this.entriesView.Items[this.entryIndex].ForeColor = SystemColors.WindowText;
+                this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
             }
             if (--this.entryIndex < 0) this.entryIndex = this.entriesView.Items.Count - 1;
             this.entriesView.SelectedItems.Clear();

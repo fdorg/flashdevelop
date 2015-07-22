@@ -471,8 +471,15 @@ namespace ASCompletion
         {
             if (lastMatch != null)
             {
-                lastMatch.BackColor = SystemColors.Window;
-                lastMatch.ForeColor = SystemColors.WindowText;
+                //lastMatch.BackColor = SystemColors.Window;
+                //lastMatch.ForeColor = SystemColors.WindowText;
+                Color back = PluginBase.MainForm.GetThemeColor("FixedTreeView.BackColor");
+                Color fore = PluginBase.MainForm.GetThemeColor("FixedTreeView.ForeColor");
+                if (back == Color.Empty) lastMatch.BackColor = System.Drawing.SystemColors.Window;
+                else lastMatch.BackColor = back;
+                if (fore == Color.Empty) lastMatch.ForeColor = System.Drawing.SystemColors.WindowText;
+                else lastMatch.ForeColor = fore;
+
             }
             lastMatch = node;
             if (lastMatch != null)
