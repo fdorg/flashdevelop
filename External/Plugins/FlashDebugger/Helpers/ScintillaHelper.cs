@@ -210,14 +210,17 @@ namespace FlashDebugger
             if (indicator == indicatorDebugCurrentLine)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.DebugLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             else if (indicator == indicatorDebugEnabledBreakpoint)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.ErrorLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             else if (indicator == indicatorDebugDisabledBreakpoint)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.DisabledLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             sci.SetIndicStyle(indicator, 7);
             sci.CurrentIndicator = indicator;
@@ -241,14 +244,17 @@ namespace FlashDebugger
             if (indicator == indicatorDebugCurrentLine)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.DebugLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             else if (indicator == indicatorDebugEnabledBreakpoint)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.ErrorLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             else if (indicator == indicatorDebugDisabledBreakpoint)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.DisabledLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             sci.SetIndicStyle(indicator, 7);
             sci.CurrentIndicator = indicator;

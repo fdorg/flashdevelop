@@ -3219,12 +3219,10 @@ namespace ScintillaNet
         unsafe public void MarkerDefineRGBAImage(int markerNumber, Bitmap image)
         {
             var rgba = RGBA.ConvertToRGBA(image);
-
             //SCI_RGBAIMAGESETWIDTH
             SPerform(2624, (uint)image.Width, 0);
             //SCI_RGBAIMAGESETHEIGHT
             SPerform(2625, (uint)image.Height, 0);
-
             fixed (byte* b = rgba)
             {
                 //SCI_MARKERDEFINERGBAIMAGE
@@ -6613,8 +6611,10 @@ namespace ScintillaNet
             // Define indics in both controls...
             doc.SplitSci1.SetIndicStyle(indicator, indicStyle);
             doc.SplitSci1.SetIndicFore(indicator, highlightColor);
+            doc.SplitSci1.SetIndicSetAlpha(indicator, 40); // Improve contrast
             doc.SplitSci2.SetIndicStyle(indicator, indicStyle);
             doc.SplitSci2.SetIndicFore(indicator, highlightColor);
+            doc.SplitSci2.SetIndicSetAlpha(indicator, 40); // Improve contrast
             this.CurrentIndicator = indicator;
             this.IndicatorValue = 1;
             this.IndicatorFillRange(start, length);
@@ -6645,8 +6645,10 @@ namespace ScintillaNet
                 // Define indics in both controls...
                 doc.SplitSci1.SetIndicStyle(indicator, (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox);
                 doc.SplitSci1.SetIndicFore(indicator, highlightColor);
+                doc.SplitSci1.SetIndicSetAlpha(indicator, 40); // Improve contrast
                 doc.SplitSci2.SetIndicStyle(indicator, (Int32)ScintillaNet.Enums.IndicatorStyle.RoundBox);
                 doc.SplitSci2.SetIndicFore(indicator, highlightColor);
+                doc.SplitSci2.SetIndicSetAlpha(indicator, 40); // Improve contrast
                 this.CurrentIndicator = indicator;
                 this.IndicatorValue = 1;
                 this.IndicatorFillRange(start, this.MBSafeTextLength(match.Value));
