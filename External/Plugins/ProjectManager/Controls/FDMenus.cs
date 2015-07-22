@@ -106,7 +106,7 @@ namespace ProjectManager.Controls
             get { return !TestMovie.Enabled; }
             set
             {
-                BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.AllItemsEnabled = ConfigurationSelector.Enabled = !value;
+                BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.ProjectItemsEnabledForBuild = ConfigurationSelector.Enabled = !value;
                 EnableTargetBuildSelector(!value);
             }
         }
@@ -249,12 +249,25 @@ namespace ProjectManager.Controls
         {
             set
             {
+                RunProject.Enabled = value;
                 CloseProject.Enabled = value;
                 TestMovie.Enabled = value;
                 BuildProject.Enabled = value;
                 CleanProject.Enabled = value;
                 Properties.Enabled = value;
                 OpenResource.Enabled = value;
+            }
+        }
+
+        public bool ProjectItemsEnabledForBuild
+        {
+            set
+            {
+                RunProject.Enabled = value;
+                CloseProject.Enabled = value;
+                TestMovie.Enabled = value;
+                BuildProject.Enabled = value;
+                CleanProject.Enabled = value;
             }
         }
 
