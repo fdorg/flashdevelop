@@ -84,9 +84,11 @@ namespace AirProperties
                 new PropertyManager.AirApplicationIconField("50", PropertyManager.AirVersion.V34),
                 new PropertyManager.AirApplicationIconField("57", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("58", PropertyManager.AirVersion.V34),
+                new PropertyManager.AirApplicationIconField("64", PropertyManager.AirVersion.V170),
                 new PropertyManager.AirApplicationIconField("72", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("76", PropertyManager.AirVersion.V39),
                 new PropertyManager.AirApplicationIconField("80", PropertyManager.AirVersion.V39),
+                new PropertyManager.AirApplicationIconField("87", PropertyManager.AirVersion.V170),
                 new PropertyManager.AirApplicationIconField("96", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("100", PropertyManager.AirVersion.V34),
                 new PropertyManager.AirApplicationIconField("114", PropertyManager.AirVersion.V26),
@@ -94,7 +96,9 @@ namespace AirProperties
                 new PropertyManager.AirApplicationIconField("128", PropertyManager.AirVersion.V10),
                 new PropertyManager.AirApplicationIconField("144", PropertyManager.AirVersion.V33),
                 new PropertyManager.AirApplicationIconField("152", PropertyManager.AirVersion.V39),
+                new PropertyManager.AirApplicationIconField("180", PropertyManager.AirVersion.V170),
                 new PropertyManager.AirApplicationIconField("192", PropertyManager.AirVersion.V150),
+                new PropertyManager.AirApplicationIconField("320", PropertyManager.AirVersion.V170),
                 new PropertyManager.AirApplicationIconField("512", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("1024", PropertyManager.AirVersion.V34)
             };
