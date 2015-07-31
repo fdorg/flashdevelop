@@ -239,6 +239,7 @@ namespace CodeRefactor
         {
             this.refactorMainMenu = new RefactorMenu(true);
             this.refactorMainMenu.RenameMenuItem.Click += this.RenameClicked;
+            refactorMainMenu.MoveMenuItem.Click += MoveClicked;
             this.refactorMainMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
             this.refactorMainMenu.TruncateMenuItem.Click += this.TruncateImportsClicked;
             this.refactorMainMenu.ExtractMethodMenuItem.Click += this.ExtractMethodClicked;
@@ -248,6 +249,7 @@ namespace CodeRefactor
             this.refactorMainMenu.BatchMenuItem.Click += this.BatchMenuItemClicked;
             this.refactorContextMenu = new RefactorMenu(false);
             this.refactorContextMenu.RenameMenuItem.Click += this.RenameClicked;
+            refactorContextMenu.MoveMenuItem.Click += MoveClicked;
             this.refactorContextMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
             this.refactorContextMenu.TruncateMenuItem.Click += this.TruncateImportsClicked;
             this.refactorContextMenu.DelegateMenuItem.Click += this.DelegateMethodsClicked;
@@ -277,6 +279,7 @@ namespace CodeRefactor
         private void RegisterMenuItems()
         {
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Rename", this.refactorMainMenu.RenameMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Move", refactorMainMenu.MoveMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractMethod", this.refactorMainMenu.ExtractMethodMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractLocalVariable", this.refactorMainMenu.ExtractLocalVariableMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.GenerateDelegateMethods", this.refactorMainMenu.DelegateMenuItem);
@@ -285,6 +288,7 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeGenerator", this.refactorMainMenu.CodeGeneratorMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.BatchProcess", this.refactorMainMenu.BatchMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Rename", this.refactorContextMenu.RenameMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Move", refactorContextMenu.MoveMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractMethod", this.refactorContextMenu.ExtractMethodMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractLocalVariable", this.refactorContextMenu.ExtractLocalVariableMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.GenerateDelegateMethods", this.refactorContextMenu.DelegateMenuItem);
@@ -353,6 +357,8 @@ namespace CodeRefactor
                     this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
                     this.refactorMainMenu.TruncateMenuItem.Enabled = truncate;
                 }
+                refactorMainMenu.MoveMenuItem.Enabled = false;
+                refactorContextMenu.MoveMenuItem.Enabled = false;
                 this.surroundContextMenu.Enabled = false;
                 this.refactorMainMenu.SurroundMenu.Enabled = false;
                 this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
@@ -360,18 +366,24 @@ namespace CodeRefactor
                 this.refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-                if (document != null && document.IsEditable && langIsValid && document.SciControl.SelTextSize > 1)
+                if (document != null && document.IsEditable && langIsValid)
                 {
-                    Int32 selEnd = document.SciControl.SelectionEnd;
-                    Int32 selStart = document.SciControl.SelectionStart;
-                    if (!document.SciControl.PositionIsOnComment(selEnd) || !document.SciControl.PositionIsOnComment(selStart))
+                    bool isValidFile = IsValidFile(document.FileName);
+                    refactorMainMenu.MoveMenuItem.Enabled = isValidFile;
+                    refactorContextMenu.MoveMenuItem.Enabled = isValidFile;
+                    if (document.SciControl.SelTextSize > 1)
                     {
-                        this.surroundContextMenu.Enabled = true;
-                        this.refactorMainMenu.SurroundMenu.Enabled = true;
-                        this.refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
-                        this.refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
-                        this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
-                        this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                        Int32 selEnd = document.SciControl.SelectionEnd;
+                        Int32 selStart = document.SciControl.SelectionStart;
+                        if (!document.SciControl.PositionIsOnComment(selEnd) || !document.SciControl.PositionIsOnComment(selStart))
+                        {
+                            this.surroundContextMenu.Enabled = true;
+                            this.refactorMainMenu.SurroundMenu.Enabled = true;
+                            this.refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
+                            this.refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
+                            this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                            this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                        }
                     }
                 }
                 this.refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
@@ -426,6 +438,14 @@ namespace CodeRefactor
             {
                 ErrorManager.ShowError(ex);
             }
+        }
+
+        /// <summary>
+        /// Invoked when the user selects the "Move" command
+        /// </summary>
+        static void MoveClicked(object sender, EventArgs e)
+        {
+            
         }
 
         /// <summary>
