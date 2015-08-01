@@ -445,7 +445,11 @@ namespace CodeRefactor
         /// </summary>
         static void MoveClicked(object sender, EventArgs e)
         {
-            
+            MoveDialog dialog = new MoveDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                //TODO slavara: implement me
+            }
         }
 
         /// <summary>
