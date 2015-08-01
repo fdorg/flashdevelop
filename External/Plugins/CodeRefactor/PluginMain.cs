@@ -346,12 +346,11 @@ namespace CodeRefactor
                 IASContext context = ASContext.Context;
                 if (context != null && context.CurrentModel != null)
                 {
-                    bool truncate = langIsValid && context.CurrentModel.Imports.Count > 0;
-                    bool organize = (langIsValid && context.CurrentModel.Imports.Count > 1);
-                    this.refactorContextMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorContextMenu.TruncateMenuItem.Enabled = truncate;
-                    this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorMainMenu.TruncateMenuItem.Enabled = truncate;
+                    bool enabled = langIsValid && context.CurrentModel.Imports.Count > 0;
+                    this.refactorContextMenu.OrganizeMenuItem.Enabled = enabled;
+                    this.refactorContextMenu.TruncateMenuItem.Enabled = enabled;
+                    this.refactorMainMenu.OrganizeMenuItem.Enabled = enabled;
+                    this.refactorMainMenu.TruncateMenuItem.Enabled = enabled;
                 }
                 this.surroundContextMenu.Enabled = false;
                 this.refactorMainMenu.SurroundMenu.Enabled = false;
