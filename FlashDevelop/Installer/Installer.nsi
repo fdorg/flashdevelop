@@ -543,6 +543,7 @@ Section "un.FlashDevelop" UninstMain
 	RMDir /r "$INSTDIR\Snippets"
 	RMDir /r "$INSTDIR\Templates"
 	
+	Delete "$INSTDIR\FDMT.cmd"
 	Delete "$INSTDIR\README.txt"
 	Delete "$INSTDIR\FirstRun.fdb"
 	Delete "$INSTDIR\Exceptions.log"
