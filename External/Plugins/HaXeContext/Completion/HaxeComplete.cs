@@ -37,7 +37,7 @@ namespace HaXeContext
         public HaxeCompleteStatus Status;
         public string Errors;
         private HaxeCompleteResult result;
-        private HaxePositionCompleteResult positionResult;
+        private List<HaxePositionResult> positionResults;
 
         readonly IHaxeCompletionHandler handler;
         readonly string FileName;
@@ -58,23 +58,27 @@ namespace HaXeContext
 
         public void GetList(HaxeCompleteResultHandler<HaxeCompleteResult> callback)
         {
-            PluginBase.MainForm.CallCommand("Save", null);
-
-            ThreadPool.QueueUserWorkItem(_ =>
-            {
-                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()));
-                Notify(callback, result);
-            });
+            StartThread(callback, () => result);
         }
 
-        public void GetPosition(HaxeCompleteResultHandler<HaxePositionCompleteResult> callback)
+        public void GetPosition(HaxeCompleteResultHandler<HaxePositionResult> callback)
+        {
+            StartThread(callback, () => positionResults.Count > 0 ? positionResults[0] : null);
+        }
+
+        public void GetUsages(HaxeCompleteResultHandler<List<HaxePositionResult>> callback)
+        {
+            StartThread(callback, () => positionResults);
+        }
+
+        private void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
         {
             PluginBase.MainForm.CallCommand("Save", null);
 
             ThreadPool.QueueUserWorkItem(_ =>
             {
                 Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()));
-                Notify(callback, positionResult);
+                Notify(callback, resultFunc());
             });
         }
 
@@ -121,14 +125,27 @@ namespace HaXeContext
             else
                 hxmlArgs.Add(GetMainClassName());
 
-            String mode = (CompilerService == HaxeCompilerService.COMPLETION) ? "" : "@position";
-            hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}{2}", FileName, pos, mode));
+            hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
             hxmlArgs.Insert(1, "-D use_rtti_doc");
             hxmlArgs.Insert(2, "-D display-details");
             
             if (hxproj.TraceEnabled) hxmlArgs.Insert(2, "-debug");
 
             return hxmlArgs.ToArray();
+        }
+
+        string GetMode()
+        {
+            switch (CompilerService)
+            {
+                case HaxeCompilerService.POSITION:
+                    return "@position";
+
+                case HaxeCompilerService.USAGE:
+                    return "@usage";
+            }
+
+            return "";
         }
 
         void QuotePath(List<string> hxmlArgs)
@@ -235,6 +252,7 @@ namespace HaXeContext
         {
             result = new HaxeCompleteResult();
             result.Members = new MemberList();
+            positionResults = new List<HaxePositionResult>();
             MemberModel member = null;
 
             while (reader.Read())
@@ -244,7 +262,19 @@ namespace HaXeContext
                     switch (reader.Name)
                     {
                         case "list":
-                            return HaxeCompleteStatus.MEMBERS;
+                            switch (CompilerService)
+                            {
+                                case HaxeCompilerService.COMPLETION:
+                                    return HaxeCompleteStatus.MEMBERS;
+
+                                case HaxeCompilerService.POSITION:
+                                    return HaxeCompleteStatus.POSITION;
+
+                                case HaxeCompilerService.USAGE:
+                                    return HaxeCompleteStatus.USAGE;
+                            }
+                            break;
+
                         case "i":
                             member = null;
                             break;
@@ -273,16 +303,16 @@ namespace HaXeContext
                         break;
 
                     case "pos":
-                        positionResult = ExtractPos(reader);
-                        return HaxeCompleteStatus.POSITION;
+                        positionResults.Add(ExtractPos(reader));
+                        break;
                 }
             }
             return HaxeCompleteStatus.MEMBERS;
         }
 
-        HaxePositionCompleteResult ExtractPos(XmlTextReader reader)
+        HaxePositionResult ExtractPos(XmlTextReader reader)
         {
-            var result = new HaxePositionCompleteResult();
+            var result = new HaxePositionResult();
 
             string value = ReadValue(reader);
             Match match = rePosition.Match(value);
@@ -388,13 +418,15 @@ namespace HaXeContext
         ERROR = 2,
         TYPE = 3,
         MEMBERS = 4,
-        POSITION = 5
+        POSITION = 5,
+        USAGE = 6
     }
 
     enum HaxeCompilerService
     {
         COMPLETION,
-        POSITION
+        POSITION,
+        USAGE
     }
 
     class HaxeCompleteResult
@@ -403,7 +435,7 @@ namespace HaXeContext
         public MemberList Members;
     }
 
-    class HaxePositionCompleteResult
+    class HaxePositionResult
     {
         public string Path;
         public HaxePositionCompleteRangeType RangeType;

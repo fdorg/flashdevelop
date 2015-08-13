@@ -1410,23 +1410,23 @@ namespace HaXeContext
                 return false;
 
             var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION);
-            hc.GetPosition(OnPositionCompletionResult);
+            hc.GetPosition(OnPositionResult);
             return true;
         }
 
-        internal void OnPositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        internal void OnPositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             if (hc.Sci.InvokeRequired)
             {
                 hc.Sci.BeginInvoke((MethodInvoker)delegate
                 {
-                    HandlePositionCompletionResult(hc, result, status); 
+                    HandlePositionResult(hc, result, status); 
                 });
             }
-            else HandlePositionCompletionResult(hc, result, status); 
+            else HandlePositionResult(hc, result, status); 
         }
 
-        private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        private void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {
@@ -1435,6 +1435,8 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.POSITION:
+                    if (result == null) return;
+
                     ASComplete.SaveLastLookupPosition(hc.Sci);
 
                     PluginBase.MainForm.OpenEditableDocument(result.Path, false);
