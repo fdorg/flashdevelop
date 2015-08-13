@@ -1,12 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Drawing;
-using System.Diagnostics;
-using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using System.Reflection;
 using ProjectManager.Projects;
 using ProjectManager.Helpers;
 using PluginCore.Localization;
@@ -350,7 +346,7 @@ namespace ProjectManager.Controls
             createDirectoryBox.Checked = PluginMain.Settings.CreateProjectDirectory;
 
             string locationDir = PluginMain.Settings.NewProjectDefaultDirectory;
-            if (locationDir != null && locationDir.Length > 0 && Directory.Exists(locationDir))
+            if (!string.IsNullOrEmpty(locationDir) && Directory.Exists(locationDir))
                 locationTextBox.Text = locationDir;
             else locationTextBox.Text = ProjectPaths.DefaultProjectsDirectory;
             locationTextBox.SelectionStart = locationTextBox.Text.Length;
@@ -554,13 +550,14 @@ namespace ProjectManager.Controls
 
         private void UpdateStatusBar()
         {
-            string sep = Path.DirectorySeparatorChar.ToString();
             string ext = ProjectExt;
             if (ext != null)
             {
                 statusBar.Text = "  " + TextHelper.GetString("Info.WillCreate") + " ";
-                if (createDirectoryBox.Checked) statusBar.Text += locationTextBox.Text + sep + nameTextBox.Text + sep + nameTextBox.Text + ext;
-                else statusBar.Text += locationTextBox.Text + sep + nameTextBox.Text + ext;
+                statusBar.Text += Path.Combine(locationTextBox.Text.TrimEnd('\\', '/'), nameTextBox.Text);
+                if (createDirectoryBox.Checked) statusBar.Text = Path.Combine(statusBar.Text, nameTextBox.Text);
+                statusBar.Text += ext;
+                statusBar.Text = statusBar.Text.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
             }
             else statusBar.Text = "";
         }
