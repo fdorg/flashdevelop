@@ -365,6 +365,9 @@ namespace ProjectManager.Projects.Haxe
                 if (m.Success)
                 {
                     string op = m.Groups[1].Value;
+                    if (op == "-next")
+                        break; // ignore the rest
+
                     string value = m.Groups[2].Value.Trim();
                     switch (op)
                     {
@@ -385,7 +388,8 @@ namespace ProjectManager.Projects.Haxe
                             int.TryParse(header[2], out MovieOptions.Fps);
                             MovieOptions.Background = header[3];
                             break;
-                        case "--connect": break; // ignore
+                        case "-connect": break; // ignore
+                        case "-each": break; // ignore
                         default:
                             // detect platform (-cpp output, -js output, ...)
                             var targetPlatform = FindPlatform(op);
@@ -395,7 +399,8 @@ namespace ProjectManager.Projects.Haxe
                                 haxeTarget = targetPlatform.HaxeTarget;
                                 output = value;
                             }
-                            else add.Add(line); break;
+                            else add.Add(line); 
+                            break;
                     }
                 }
             }
