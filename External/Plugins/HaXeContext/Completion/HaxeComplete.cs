@@ -228,6 +228,7 @@ namespace HaXeContext
             var type = new MemberModel();
             type.Name = name;
             ExtractType(reader, type);
+            result = new HaxeCompleteResult();
             result.Type = type;
         }
 

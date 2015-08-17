@@ -1227,6 +1227,10 @@ namespace HaXeContext
                     if (result.Members != null && result.Members.Count > 0)
                         ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
                     break;
+
+                case HaxeCompleteStatus.TYPE:
+                    // eg. Int
+                    break;
             }
         }
 
