@@ -550,16 +550,18 @@ namespace ProjectManager.Controls
 
         private void UpdateStatusBar()
         {
+            string status = string.Empty;
             string ext = ProjectExt;
             if (ext != null)
             {
-                statusBar.Text = "  " + TextHelper.GetString("Info.WillCreate") + " ";
-                statusBar.Text += Path.Combine(locationTextBox.Text.TrimEnd('\\', '/'), nameTextBox.Text);
-                if (createDirectoryBox.Checked) statusBar.Text = Path.Combine(statusBar.Text, nameTextBox.Text);
-                statusBar.Text += ext;
-                statusBar.Text = statusBar.Text.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+                string name = nameTextBox.Text;
+                status = "  " + TextHelper.GetString("Info.WillCreate") + " ";
+                status += Path.Combine(locationTextBox.Text.TrimEnd('\\', '/'), name);
+                if (createDirectoryBox.Checked) status = Path.Combine(status, name);
+                status += ext;
+                status = status.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
             }
-            else statusBar.Text = "";
+            statusBar.Text = status;
         }
 
         private void locationTextBox_TextChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
