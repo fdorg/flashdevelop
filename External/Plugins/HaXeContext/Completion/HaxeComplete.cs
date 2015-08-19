@@ -267,6 +267,7 @@ namespace HaXeContext
                     switch (reader.Name)
                     {
                         case "list":
+                            result.Members.Sort();
                             return HaxeCompleteStatus.MEMBERS;
                         case "i":
                             member = null;
@@ -300,6 +301,8 @@ namespace HaXeContext
                         return HaxeCompleteStatus.POSITION;
                 }
             }
+
+            result.Members.Sort();
             return HaxeCompleteStatus.MEMBERS;
         }
 
