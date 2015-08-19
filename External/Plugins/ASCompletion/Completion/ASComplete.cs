@@ -3976,7 +3976,7 @@ namespace ASCompletion.Completion
                 ContextFeatures features = ASContext.Context.Features;
 
                 // add ; for imports
-                if (trigger != ';' && expr.WordBefore != null 
+                if (" \n\t".IndexOf(trigger) >= 0 && expr.WordBefore != null 
                     && (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt))
                 {
                     sci.InsertText(sci.CurrentPos, ";");
