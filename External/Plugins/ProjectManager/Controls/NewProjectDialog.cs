@@ -300,6 +300,9 @@ namespace ProjectManager.Controls
 
             ListViewGroup group = null;
             List<String> templateDirs = ProjectPaths.GetAllProjectDirs();
+            templateDirs.Sort(CompareFolderNames);
+            ListViewItem lastItem = null;
+
             foreach (string templateDir in templateDirs)
             {
                 // skip hidden folders (read: version control)
@@ -322,9 +325,18 @@ namespace ProjectManager.Controls
                     }
                     item.Group = group;
                 }
+
+                if (lastItem != null && lastItem.Text == item.Text) // remove duplicates (keep last)
+                    projectListView.Items.Remove(lastItem);
+                lastItem = item;
                 projectListView.Items.Add(item);
             }
             this.Load += new EventHandler(NewProjectDialog_Load);
+        }
+
+        int CompareFolderNames(string pathA, string pathB)
+        {
+            return Path.GetFileName(pathA).CompareTo(Path.GetFileName(pathB));
         }
 
         void NewProjectDialog_Load(object sender, EventArgs e)
