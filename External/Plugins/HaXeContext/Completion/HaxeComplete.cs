@@ -113,20 +113,6 @@ namespace HaXeContext
             QuotePath(hxmlArgs);
             EscapeMacros(hxmlArgs);
 
-            // Get the current class edited (ensure completion even if class not reference in the project)
-            var package = ASContext.Context.CurrentModel.Package;
-            if (!string.IsNullOrEmpty(package))
-            {
-                var cl = ASContext.Context.CurrentModel.Package + "." + GetMainClassName();
-                var libToAdd =
-                    FileName.Split(
-                        new[] {"\\" + String.Join("\\", cl.Split(new[] {"."}, StringSplitOptions.RemoveEmptyEntries))},
-                        StringSplitOptions.RemoveEmptyEntries).GetValue(0).ToString();
-                hxmlArgs.Add("-cp \"" + libToAdd + "\" " + cl);
-            }
-            else
-                hxmlArgs.Add(GetMainClassName());
-
             String mode = (CompilerService == HaxeCompilerService.COMPLETION) ? "" : "@position";
             hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}{2}", FileName, pos, mode));
             hxmlArgs.Insert(1, "-D use_rtti_doc");
