@@ -1,15 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
 using System.ComponentModel;
-using System.Collections.Generic;
-using WeifenLuo.WinFormsUI.Docking;
+using System.IO;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using PluginCore.Helpers;
 using PluginCore.Utilities;
-using PluginCore;
 
 namespace CodeAnalyzer
 {
@@ -165,7 +162,7 @@ namespace CodeAnalyzer
         /// <summary>
         /// Opens the ruleset creator page
         /// </summary>
-        private void OpenCreator(Object sender, System.EventArgs e)
+        private void OpenCreator(Object sender, EventArgs e)
         {
             String url = "http://opensource.adobe.com/svn/opensource/flexpmd/bin/flex-pmd-ruleset-creator.html";
             PluginBase.MainForm.CallCommand("Browse", url);
@@ -174,7 +171,7 @@ namespace CodeAnalyzer
         /// <summary>
         /// Analyzes the current project
         /// </summary>
-        private void AnalyzeProject(Object sender, System.EventArgs e)
+        private void AnalyzeProject(Object sender, EventArgs e)
         {
             if (PluginBase.CurrentProject != null)
             {

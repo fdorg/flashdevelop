@@ -1,9 +1,8 @@
-using Antlr.Runtime;
-using Antlr.Runtime.Tree;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using Antlr.Runtime;
+using Antlr.Runtime.Tree;
 
 namespace CodeFormatter.InfoCollector
 {

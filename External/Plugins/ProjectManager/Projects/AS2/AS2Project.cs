@@ -1,7 +1,10 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml;
 using PluginCore.Helpers;
+using ProjectManager.Controls;
+using ProjectManager.Controls.AS2;
 
 namespace ProjectManager.Projects.AS2
 {
@@ -23,9 +26,9 @@ namespace ProjectManager.Projects.AS2
 
         public new MtascOptions CompilerOptions { get { return (MtascOptions)base.CompilerOptions; } }
 
-        public override ProjectManager.Controls.PropertiesDialog CreatePropertiesDialog()
+        public override PropertiesDialog CreatePropertiesDialog()
         {
-            return new ProjectManager.Controls.AS2.AS2PropertiesDialog();
+            return new AS2PropertiesDialog();
         }
 
         public override void ValidateBuild(out string error)
@@ -89,7 +92,7 @@ namespace ProjectManager.Projects.AS2
             {
                 return reader.ReadProject();
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.",
                     exception.LineNumber,exception.LinePosition);

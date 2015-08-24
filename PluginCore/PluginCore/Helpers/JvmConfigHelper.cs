@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 
 namespace PluginCore.Helpers
@@ -127,7 +127,7 @@ namespace PluginCore.Helpers
         {
             get
             {
-                return Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                return Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             }
         }
 

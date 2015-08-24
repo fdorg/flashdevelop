@@ -1,27 +1,25 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Bridge;
+using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 using ProjectManager.Actions;
 using ProjectManager.Controls;
 using ProjectManager.Controls.AS2;
-using ProjectManager.Projects.AS3;
 using ProjectManager.Controls.TreeView;
-using WeifenLuo.WinFormsUI.Docking;
-using WeifenLuo.WinFormsUI;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using PluginCore.Helpers;
-using PluginCore;
-using PluginCore.Bridge;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ProjectManager
 {
@@ -632,7 +630,7 @@ namespace ProjectManager
             if (activeProject != null) CloseProject(true);
 
             // configure
-            var prefs = PluginMain.Settings.GetPrefs(project);
+            var prefs = Settings.GetPrefs(project);
             project.TraceEnabled = prefs.DebugMode;
             project.TargetBuild = prefs.TargetBuild;
             project.UpdateVars(true);
@@ -1128,7 +1126,7 @@ namespace ProjectManager
 
         private void FileDeleted(string path)
         {
-            PluginCore.Managers.DocumentManager.CloseDocuments(path);
+            DocumentManager.CloseDocuments(path);
             Project project = Tree.ProjectOf(path);
             if (project != null)
             {
@@ -1151,7 +1149,7 @@ namespace ProjectManager
                 }
             }
 
-            PluginCore.Managers.DocumentManager.MoveDocuments(fromPath, toPath);
+            DocumentManager.MoveDocuments(fromPath, toPath);
             if (project != null)
             {
                 projectActions.MoveReferences(project, fromPath, toPath);

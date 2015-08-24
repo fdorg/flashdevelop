@@ -1,19 +1,18 @@
 using System;
-using System.Runtime;
 using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class CharacterClass : ConfigItem
     {
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string name;
 
-        [XmlAttributeAttribute("inherit")]
+        [XmlAttribute("inherit")]
         public string inherit;
 
-        [XmlTextAttribute()]
+        [XmlText()]
         public string val = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_";
 
         public string Characters

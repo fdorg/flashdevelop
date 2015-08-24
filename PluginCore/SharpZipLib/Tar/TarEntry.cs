@@ -128,7 +128,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         public static TarEntry CreateTarEntry(string name)
         {
             TarEntry entry = new TarEntry();
-            TarEntry.NameTarHeader(entry.header, name);
+            NameTarHeader(entry.header, name);
             return entry;
         }
         
@@ -455,7 +455,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             TarEntry[] result = new TarEntry[list.Length];
 
             for (int i = 0; i < list.Length; ++i) {
-                result[i] = TarEntry.CreateEntryFromFile(list[i]);
+                result[i] = CreateEntryFromFile(list[i]);
             }
             
             return result;

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Windows.Forms;
-using System.Collections;
 
 namespace AirProperties
 {

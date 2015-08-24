@@ -1,58 +1,59 @@
 using System;
-using System.Runtime;
+using System.Drawing;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class EditorStyle : ConfigItem
     {
-        [XmlAttributeAttribute("caret-fore")]
+        [XmlAttribute("caret-fore")]
         public string caretfore;
         
-        [XmlAttributeAttribute("caretline-back")]
+        [XmlAttribute("caretline-back")]
         public string caretlineback;
 
-        [XmlAttributeAttribute("selection-fore")]
+        [XmlAttribute("selection-fore")]
         public string selectionfore;
 
-        [XmlAttributeAttribute("selection-back")]
+        [XmlAttribute("selection-back")]
         public string selectionback;
 
-        [XmlAttributeAttribute("marker-fore")]
+        [XmlAttribute("marker-fore")]
         public string markerfore;
 
-        [XmlAttributeAttribute("marker-back")]
+        [XmlAttribute("marker-back")]
         public string markerback;
 
-        [XmlAttributeAttribute("margin-fore")]
+        [XmlAttribute("margin-fore")]
         public string marginfore;
 
-        [XmlAttributeAttribute("margin-back")]
+        [XmlAttribute("margin-back")]
         public string marginback;
 
-        [XmlAttributeAttribute("print-margin")]
+        [XmlAttribute("print-margin")]
         public string printmargin;
 
-        [XmlAttributeAttribute("bookmarkline-back")]
+        [XmlAttribute("bookmarkline-back")]
         public string bookmarkline;
 
-        [XmlAttributeAttribute("modifiedline-back")]
+        [XmlAttribute("modifiedline-back")]
         public string modifiedline;
         
-        [XmlAttributeAttribute("highlight-back")]
+        [XmlAttribute("highlight-back")]
         public string highlightback;
         
-        [XmlAttributeAttribute("errorline-back")]
+        [XmlAttribute("errorline-back")]
         public string errorlineback;
 
-        [XmlAttributeAttribute("debugline-back")]
+        [XmlAttribute("debugline-back")]
         public string debuglineback;
 
-        [XmlAttributeAttribute("disabledline-back")]
+        [XmlAttribute("disabledline-back")]
         public string disabledlineback;
 
-        [XmlAttributeAttribute("colorize-marker-back")]
+        [XmlAttribute("colorize-marker-back")]
         public string colorizemarkerback;
 
         public int ResolveColor(string aColor)
@@ -65,12 +66,12 @@ namespace ScintillaNet.Configuration
                     aColor = v.val;
                     v = _parent.MasterScintilla.GetValue(aColor);
                 }
-                System.Drawing.Color c = System.Drawing.Color.FromName(aColor);
+                Color c = Color.FromName(aColor);
                 if (c.ToArgb() == 0)
                 {
                     if (aColor.IndexOf("0x") == 0)
                     {
-                        return TO_COLORREF(Int32.Parse(aColor.Substring(2), System.Globalization.NumberStyles.HexNumber));
+                        return TO_COLORREF(Int32.Parse(aColor.Substring(2), NumberStyles.HexNumber));
                     } 
                     else 
                     {

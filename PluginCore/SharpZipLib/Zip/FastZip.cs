@@ -34,6 +34,7 @@
 // exception statement from your version.
 
 using System;
+using System.Collections;
 using System.IO;
 using ICSharpCode.SharpZipLib.Core;
 
@@ -464,7 +465,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 }
 #endif
                 zipFile_.IsStreamOwner = isStreamOwner;
-                System.Collections.IEnumerator enumerator = zipFile_.GetEnumerator();
+                IEnumerator enumerator = zipFile_.GetEnumerator();
                 while (continueRunning_ && enumerator.MoveNext()) {
                     ZipEntry entry = (ZipEntry)enumerator.Current;
                     if (entry.IsFile)

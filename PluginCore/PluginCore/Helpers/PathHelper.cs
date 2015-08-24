@@ -1,14 +1,11 @@
 using System;
 using System.IO;
-using System.Text;
-using Microsoft.Win32;
-using System.Security;
-using System.Security.Principal;
 using System.Security.AccessControl;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
+using System.Security.Principal;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using PluginCore.Managers;
 
 namespace PluginCore.Helpers

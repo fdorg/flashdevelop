@@ -36,7 +36,6 @@
 using System;
 using System.IO;
 using System.Text;
-
 using ICSharpCode.SharpZipLib.Core;
 
 namespace ICSharpCode.SharpZipLib.Zip

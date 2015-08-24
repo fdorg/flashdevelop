@@ -1,15 +1,8 @@
 using System;
-using System.IO;
 using System.Drawing;
-using System.Collections;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using PluginCore.Utilities;
 using PluginCore.Managers;
-using PluginCore.Helpers;
 using ScintillaNet;
-using PluginCore;
-using WeifenLuo.WinFormsUI;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace PluginCore.Controls

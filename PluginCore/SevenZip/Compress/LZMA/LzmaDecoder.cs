@@ -1,11 +1,12 @@
 // LzmaDecoder.cs
 
 using System;
+using System.IO;
+using SevenZip.Compression.LZ;
+using SevenZip.Compression.RangeCoder;
 
 namespace SevenZip.Compression.LZMA
 {
-    using RangeCoder;
-
     public class Decoder : ICoder, ISetDecoderProperties // ,System.IO.Stream
     {
         class LenDecoder
@@ -132,7 +133,7 @@ namespace SevenZip.Compression.LZMA
             { return m_Coders[GetState(pos, prevByte)].DecodeWithMatchByte(rangeDecoder, matchByte); }
         };
 
-        LZ.OutWindow m_OutWindow = new LZ.OutWindow();
+        OutWindow m_OutWindow = new OutWindow();
         RangeCoder.Decoder m_RangeDecoder = new RangeCoder.Decoder();
 
         BitDecoder[] m_IsMatchDecoders = new BitDecoder[Base.kNumStates << Base.kNumPosStatesBitsMax];
@@ -195,7 +196,7 @@ namespace SevenZip.Compression.LZMA
         }
 
         bool _solid = false;
-        void Init(System.IO.Stream inStream, System.IO.Stream outStream)
+        void Init(Stream inStream, Stream outStream)
         {
             m_RangeDecoder.Init(inStream);
             m_OutWindow.Init(outStream, _solid);
@@ -227,7 +228,7 @@ namespace SevenZip.Compression.LZMA
             m_PosAlignDecoder.Init();
         }
 
-        public void Code(System.IO.Stream inStream, System.IO.Stream outStream,
+        public void Code(Stream inStream, Stream outStream,
             Int64 inSize, Int64 outSize, ICodeProgress progress)
         {
             Init(inStream, outStream);
@@ -364,7 +365,7 @@ namespace SevenZip.Compression.LZMA
             SetPosBitsProperties(pb);
         }
 
-        public bool Train(System.IO.Stream stream)
+        public bool Train(Stream stream)
         {
             _solid = true;
             return m_OutWindow.Train(stream);

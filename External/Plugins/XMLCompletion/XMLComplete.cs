@@ -1,19 +1,17 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
-using System.Drawing;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
+using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
 using ScintillaNet;
-using PluginCore;
 
 namespace XMLCompletion
 {
@@ -225,7 +223,7 @@ namespace XMLCompletion
         {
             try
             {
-                Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Assembly assembly = Assembly.GetExecutingAssembly();
                 Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + ext + ".xml");
                 if (src == null) return false;
 
@@ -825,7 +823,7 @@ namespace XMLCompletion
         /// <summary>
         /// Locates the parent tag of the tag provided
         /// </summary>
-        public static XMLContextTag GetParentTag(ScintillaNet.ScintillaControl sci, XMLContextTag tag)
+        public static XMLContextTag GetParentTag(ScintillaControl sci, XMLContextTag tag)
         {
             int pos = tag.Position + 1;
             if (pos <= 0) pos = sci.CurrentPos;
@@ -833,7 +831,7 @@ namespace XMLCompletion
             Stack<string> stack = new Stack<string>();
             do
             {
-                parent = XMLComplete.GetXMLContextTag(sci, pos);
+                parent = GetXMLContextTag(sci, pos);
                 pos = parent.Position;
                 if (parent.Name != null && parent.Tag != null)
                 {

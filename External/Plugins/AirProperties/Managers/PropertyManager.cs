@@ -1,12 +1,9 @@
 ﻿// TODO: Some of these methods should be merged with WizardHelper
 
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Xml.Schema;
+using System.Xml;
 using PluginCore.Localization;
 
 namespace AirProperties
@@ -890,7 +887,7 @@ namespace AirProperties
             private String _extension;
             private String _description;
             private String _contentType;
-            private readonly List<AirFileType.AirFileTypeIcon> _icons;
+            private readonly List<AirFileTypeIcon> _icons;
 
             private Boolean _nameIsValid;
             private Boolean _extensionIsValid;
@@ -904,16 +901,16 @@ namespace AirProperties
                 _description = String.Empty;
                 _contentType = String.Empty;
                 // According to Descriptor.xsd, 57x57 is not used for file icons
-                _icons = new List<AirFileType.AirFileTypeIcon> 
+                _icons = new List<AirFileTypeIcon> 
                 { 
-                    new AirFileType.AirFileTypeIcon(16, String.Empty, AirVersion.V10),
-                    new AirFileType.AirFileTypeIcon(29, String.Empty, AirVersion.V20),
-                    new AirFileType.AirFileTypeIcon(32, String.Empty, AirVersion.V10),
-                    new AirFileType.AirFileTypeIcon(36, String.Empty, AirVersion.V25),
-                    new AirFileType.AirFileTypeIcon(48, String.Empty, AirVersion.V10),
-                    new AirFileType.AirFileTypeIcon(72, String.Empty, AirVersion.V20),
-                    new AirFileType.AirFileTypeIcon(128, String.Empty, AirVersion.V10),
-                    new AirFileType.AirFileTypeIcon(512, String.Empty, AirVersion.V20)
+                    new AirFileTypeIcon(16, String.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(29, String.Empty, AirVersion.V20),
+                    new AirFileTypeIcon(32, String.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(36, String.Empty, AirVersion.V25),
+                    new AirFileTypeIcon(48, String.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(72, String.Empty, AirVersion.V20),
+                    new AirFileTypeIcon(128, String.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(512, String.Empty, AirVersion.V20)
                 };
             }
 
@@ -941,7 +938,7 @@ namespace AirProperties
                 set { _contentType = value; }
             }
 
-            public List<AirFileType.AirFileTypeIcon> Icons
+            public List<AirFileTypeIcon> Icons
             {
                 get { return _icons; }
             }

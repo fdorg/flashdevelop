@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
 
 namespace PluginCore.BBCode
 {
@@ -152,7 +149,7 @@ namespace PluginCore.BBCode
             bbCodeTree.data = rootPair;
 
             List<IndexTree> flatTree = IndexTree.flattenTree(bbCodeTree);
-            String flatText = BBCodeUtils.assembleOutput(input, bbCodeTree);
+            String flatText = assembleOutput(input, bbCodeTree);
             String corrFlatText = _replaceEnclosures(flatText);
 
             IndexTree.normalizeTree(bbCodeTree);
@@ -180,7 +177,7 @@ namespace PluginCore.BBCode
 
                 offsetB = currCorrText.Length + idxA - idxB;
 
-                applyStyleToTextbox(BBCodeUtils.getCascadedNodeStyle(flatTree[i]),
+                applyStyleToTextbox(getCascadedNodeStyle(flatTree[i]),
                                     tf,
                                     idxA + offsetA,
                                     idxB + offsetA + offsetB);
@@ -223,7 +220,7 @@ namespace PluginCore.BBCode
             _init();
 
             bbCodeParser.input = bbCodeText;
-            BBCodeUtils.applyStyleTreeToTextbox(texbox, bbCodeParser.input, bbCodeParser.parse());
+            applyStyleTreeToTextbox(texbox, bbCodeParser.input, bbCodeParser.parse());
 
             return texbox.Rtf;
         }

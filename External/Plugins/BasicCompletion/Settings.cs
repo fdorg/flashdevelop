@@ -1,8 +1,5 @@
 using System;
-using System.Text;
-using System.Windows.Forms;
 using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
 
 namespace BasicCompletion

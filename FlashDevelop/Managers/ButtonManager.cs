@@ -1,16 +1,11 @@
 using System;
 using System.Text;
-using System.Reflection;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
-using FlashDevelop.Docking;
-using FlashDevelop.Settings;
-using FlashDevelop.Helpers;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {

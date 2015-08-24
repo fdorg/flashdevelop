@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using System.Xml;
 using PluginCore;
 using PluginCore.Helpers;
 
@@ -300,7 +301,7 @@ namespace ProjectManager.Projects.Haxe
             {
                 return reader.ReadProject();
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.",
                     exception.LineNumber, exception.LinePosition);
@@ -424,7 +425,7 @@ namespace ProjectManager.Projects.Haxe
             if (MovieOptions.TargetBuildTypes == null)
             {
                 OutputPath = output;
-                OutputType = Projects.OutputType.Application;
+                OutputType = OutputType.Application;
                 MovieOptions.Platform = target;
             }
         }

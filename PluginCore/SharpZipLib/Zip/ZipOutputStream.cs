@@ -42,9 +42,8 @@
 //  22-02-2010  Z-1648  Zero byte entries would create invalid zip files
 
 using System;
-using System.IO;
 using System.Collections;
-
+using System.IO;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;

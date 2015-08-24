@@ -41,7 +41,6 @@
 
 using System;
 using System.IO;
-
 #if !NETCF_1_0
 using System.Security.Cryptography;
 using ICSharpCode.SharpZipLib.Encryption;

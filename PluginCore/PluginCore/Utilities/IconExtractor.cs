@@ -1,10 +1,6 @@
 using System;
 using System.Drawing;
-using System.Collections;
 using System.Runtime.InteropServices;
-using System.Drawing.Drawing2D;
-using System.ComponentModel;
-using System.Windows.Forms;
 
 namespace PluginCore.Utilities
 {

@@ -1,16 +1,14 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
+using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
-using PluginCore;
 
 namespace DataEncoder
 {

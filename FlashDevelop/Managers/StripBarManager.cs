@@ -1,15 +1,14 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using PluginCore.Localization;
-using PluginCore.Managers;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {

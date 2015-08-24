@@ -39,9 +39,7 @@
 // HISTORY
 //  11-08-2009  GeoffHart   T9121   Added Multi-member gzip support
 
-using System;
 using System.IO;
-
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;

@@ -1,11 +1,11 @@
 using System;
-using System.IO;
-using System.Drawing;
 using System.Collections;
-using System.Diagnostics;
-using ProjectManager.Projects;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Text.RegularExpressions;
+using PluginCore;
+using ProjectManager.Projects;
 using ProjectManager.Projects.AS3;
 
 namespace ProjectManager.Controls.TreeView
@@ -28,7 +28,7 @@ namespace ProjectManager.Controls.TreeView
 
             base.Refresh(recursive);
             FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
-            NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, FontStyle.Bold);
+            NodeFont = new Font(PluginBase.Settings.DefaultFont, FontStyle.Bold);
             Text = ProjectRef.Name + " (" + ProjectRef.LanguageDisplayName + ")";
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
@@ -89,7 +89,7 @@ namespace ProjectManager.Controls.TreeView
                 if (isActive == value) return;
                 isActive = value;
                 FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
-                NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, style);
+                NodeFont = new Font(PluginBase.Settings.DefaultFont, style);
                 Text = Text; // Reset text to update the font
             }
         }

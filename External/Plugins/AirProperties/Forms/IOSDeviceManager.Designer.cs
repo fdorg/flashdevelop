@@ -1,11 +1,15 @@
-﻿namespace AirProperties.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+using AirProperties.Controls;
+
+namespace AirProperties.Forms
 {
     partial class IOSDeviceManager
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -92,8 +96,8 @@
 
         #endregion
 
-        private Controls.TriStateTreeView IOSDevicesTree;
-        private System.Windows.Forms.Button OKButton;
-        private System.Windows.Forms.Button CancelButton1;
+        private TriStateTreeView IOSDevicesTree;
+        private Button OKButton;
+        private Button CancelButton1;
     }
 }

@@ -1,20 +1,17 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Drawing;
-using WeifenLuo.WinFormsUI;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using PluginCore.Localization;
 using FlashDevelop.Utilities;
-using FlashDevelop.Helpers;
-using PluginCore.Utilities;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
+using PluginCore.Localization;
 using PluginCore.Managers;
-using System.Collections;
+using PluginCore.Utilities;
 using ScintillaNet;
-using PluginCore;
 
 namespace FlashDevelop.Managers
 {

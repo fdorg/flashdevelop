@@ -1,10 +1,9 @@
 using System;
-using System.Text;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
-using CodeFormatter.Preferences;
+using System.ComponentModel;
+using System.Text;
 using CodeFormatter.Handlers;
+using CodeFormatter.Preferences;
 using PluginCore.Localization;
 
 namespace CodeFormatter

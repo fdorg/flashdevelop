@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
-using ASCompletion.Context;
+using PluginCore.Helpers;
 
 namespace ASCompletion.Model
 {
@@ -114,7 +114,7 @@ namespace ASCompletion.Model
                 if (m.Success)
                 {
                     if (!detectKindOnly)
-                        model.Type = TypeCommentUtils.ObjectType + "@" + m.Groups["type"].Value;
+                        model.Type = ObjectType + "@" + m.Groups["type"].Value;
                     return TypeDefinitionKind.TypedObject;
                 }
             }
@@ -401,7 +401,7 @@ namespace ASCompletion.Model
 
             string typeClassifier;
             string typeComment;
-            if (!ASFileParserUtils.ParseTypeDefinition(typeDefinition, out typeClassifier, out typeComment))
+            if (!ParseTypeDefinition(typeDefinition, out typeClassifier, out typeComment))
                 return TypeDefinitionKind.Null;
 
             model.Type = typeClassifier;
@@ -428,7 +428,7 @@ namespace ASCompletion.Model
             {
                 if (File.Exists(fileModel.FileName))
                 {
-                    src = PluginCore.Helpers.FileHelper.ReadFile(fileModel.FileName);
+                    src = FileHelper.ReadFile(fileModel.FileName);
                     ASFileParser parser = new ASFileParser();
                     fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
                     parser.ParseSrc(fileModel, src);

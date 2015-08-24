@@ -1,11 +1,11 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ASCompletion.Context;
 using ASCompletion.Model;
-using PluginCore.Helpers;
-using PluginCore.Utilities;
 using PluginCore;
+using PluginCore.Helpers;
+using ScintillaNet;
 
 namespace ASCompletion.Completion
 {
@@ -54,7 +54,7 @@ namespace ASCompletion.Completion
                 methodModifiers = (GetStaticExternOverride(m) + GetModifiers(m)).Trim();
 
             // Insert Modifiers (private, static, etc)
-            if (methodModifiers == "private" && Context.ASContext.Context.Features.methodModifierDefault == Visibility.Private)
+            if (methodModifiers == "private" && ASContext.Context.Features.methodModifierDefault == Visibility.Private)
                 methodModifiers = null;
             string res = ReplaceTemplateVariable(template, "Modifiers", methodModifiers);
 
@@ -181,7 +181,7 @@ namespace ASCompletion.Completion
             return MemberModel.FormatType(type);
         }
 
-        public static MemberModel GetTemplateBlockMember(ScintillaNet.ScintillaControl Sci, string blockTmpl)
+        public static MemberModel GetTemplateBlockMember(ScintillaControl Sci, string blockTmpl)
         {
             if (string.IsNullOrEmpty(blockTmpl))
                 return null;

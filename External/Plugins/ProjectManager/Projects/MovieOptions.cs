@@ -1,8 +1,5 @@
-using System;
-using System.Text;
 using System.Drawing;
 using PluginCore;
-using System.Collections.Generic;
 
 namespace ProjectManager.Projects
 {

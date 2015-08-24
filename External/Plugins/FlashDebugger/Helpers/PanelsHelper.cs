@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
 using FlashDebugger.Controls;
+using PluginCore;
 using PluginCore.Localization;
 using WeifenLuo.WinFormsUI.Docking;
-using PluginCore;
 
 namespace FlashDebugger
 {

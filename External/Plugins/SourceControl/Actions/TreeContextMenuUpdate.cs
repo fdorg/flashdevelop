@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Localization;
 using ProjectManager.Controls.TreeView;
 using SourceControl.Managers;
-using System.Windows.Forms;
 using SourceControl.Sources;
-using PluginCore.Localization;
-using PluginCore;
 
 namespace SourceControl.Actions
 {

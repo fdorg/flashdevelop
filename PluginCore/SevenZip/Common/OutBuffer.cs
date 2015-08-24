@@ -1,5 +1,7 @@
 // OutBuffer.cs
 
+using System.IO;
+
 namespace SevenZip.Buffer
 {
     public class OutBuffer
@@ -7,7 +9,7 @@ namespace SevenZip.Buffer
         byte[] m_Buffer;
         uint m_Pos;
         uint m_BufferSize;
-        System.IO.Stream m_Stream;
+        Stream m_Stream;
         ulong m_ProcessedSize;
 
         public OutBuffer(uint bufferSize)
@@ -16,7 +18,7 @@ namespace SevenZip.Buffer
             m_BufferSize = bufferSize;
         }
 
-        public void SetStream(System.IO.Stream stream) { m_Stream = stream; }
+        public void SetStream(Stream stream) { m_Stream = stream; }
         public void FlushStream() { m_Stream.Flush(); }
         public void CloseStream() { m_Stream.Close(); }
         public void ReleaseStream() { m_Stream = null; }

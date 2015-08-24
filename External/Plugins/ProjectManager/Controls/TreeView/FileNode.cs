@@ -1,6 +1,7 @@
-using System.IO;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using PluginCore;
 using PluginCore.Helpers;
 using ProjectManager.Projects;
 
@@ -89,7 +90,7 @@ namespace ProjectManager.Controls.TreeView
                     Text += " (" + asset.ManualID + ")";
             }
 
-            Color textColor = PluginCore.PluginBase.MainForm.GetThemeColor(colorId);
+            Color textColor = PluginBase.MainForm.GetThemeColor(colorId);
             if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = Color.Blue;
 
             if (textColor != Color.Empty) ForeColorRequest = textColor;

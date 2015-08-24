@@ -3,17 +3,17 @@
  */
 
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
-using PluginCore;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using ASCompletion.Model;
 using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -248,13 +248,13 @@ namespace ASCompletion.Completion
                 get { return TextHelper.GetString("Label.DocBoxTemplate"); }
             }
             
-            public System.Drawing.Bitmap Icon {
-                get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_TEMPLATE); }
+            public Bitmap Icon {
+                get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_TEMPLATE); }
             }
             
             public string Value { 
                 get {
-                    ASDocumentation.CompleteTemplate(Context);
+                    CompleteTemplate(Context);
                     return null;
                 }
             }
@@ -279,8 +279,8 @@ namespace ASCompletion.Completion
                 get { return TextHelper.GetString("Label.DocTagTemplate"); }
             }
             
-            public System.Drawing.Bitmap Icon {
-                get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
+            public Bitmap Icon {
+                get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
             }
             
             public string Value { 

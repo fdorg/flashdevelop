@@ -1,6 +1,7 @@
 // LzBinTree.cs
 
 using System;
+using System.IO;
 
 namespace SevenZip.Compression.LZ
 {
@@ -48,7 +49,7 @@ namespace SevenZip.Compression.LZ
             }
         }
 
-        public new void SetStream(System.IO.Stream stream) { base.SetStream(stream); }
+        public new void SetStream(Stream stream) { base.SetStream(stream); }
         public new void ReleaseStream() { base.ReleaseStream(); }
         
         public new void Init()
