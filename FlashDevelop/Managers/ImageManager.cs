@@ -94,7 +94,7 @@ namespace FlashDevelop.Managers
         {
             X = Y = 0;
             Icon = Bullet = -1;
-            if (data == null || data.Length == 0) return;
+            if (string.IsNullOrEmpty(data)) return;
             String[] par = data.Split('|');
             if (par.Length > 0)
             {

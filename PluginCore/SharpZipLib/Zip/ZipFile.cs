@@ -386,7 +386,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             set 
             {
-                if ( (value == null) || (value.Length == 0) ) {
+                if (string.IsNullOrEmpty(value)) {
                     key = null;
                 }
                 else {

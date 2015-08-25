@@ -224,7 +224,7 @@ namespace ASCompletion.Model
         }
         static public string FormatType(string type, bool allowBBCode)
         {
-            if (type == null || type.Length == 0)
+            if (string.IsNullOrEmpty(type))
                 return null;
             int p = type.IndexOf('@');
             if (p > 0)

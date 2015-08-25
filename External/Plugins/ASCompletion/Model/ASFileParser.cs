@@ -201,7 +201,7 @@ namespace ASCompletion.Model
         /// </summary>
         private static MemberModel extractTypedCallbackModel(string comment)
         {
-            if (comment == null || comment.Length == 0)
+            if (string.IsNullOrEmpty(comment))
                 return null;
 
             int idxBraceOp = comment.IndexOf("(");

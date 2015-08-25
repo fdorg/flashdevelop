@@ -301,7 +301,7 @@ namespace ProjectManager.Projects.AS3
 
         public static String ResolvePath(String path, String relativeTo)
         {
-            if (path == null || path.Length == 0) return null;
+            if (string.IsNullOrEmpty(path)) return null;
             Boolean isPathNetworked = path.StartsWith("\\\\") || path.StartsWith("//");
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
             String resolvedPath = Path.Combine(relativeTo, path);

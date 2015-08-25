@@ -2752,7 +2752,7 @@ namespace ASCompletion.Completion
             IASContext context = ASContext.Context;
 
             string selection = Sci.SelText;
-            if (selection == null || selection.Length == 0)
+            if (string.IsNullOrEmpty(selection))
             {
                 return;
             }
@@ -4166,7 +4166,7 @@ namespace ASCompletion.Completion
 
         private static string GetShortType(string type)
         {
-            if (type == null || type.Length == 0)
+            if (string.IsNullOrEmpty(type))
             {
                 return type;
             }
@@ -4186,7 +4186,7 @@ namespace ASCompletion.Completion
 
         private static string CleanType(string type)
         {
-            if (type == null || type.Length == 0)
+            if (string.IsNullOrEmpty(type))
             {
                 return type;
             }
@@ -4214,7 +4214,7 @@ namespace ASCompletion.Completion
                     addTypeOnce(typesUsed, getQualifiedType(param.Type, aType));
                 }
 
-            bool noRet = member.Type == null || member.Type.Length == 0 || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
+            bool noRet = string.IsNullOrEmpty(member.Type) || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
             if (!noRet) addTypeOnce(typesUsed, getQualifiedType(member.Type, aType));
 
             string action = "";
@@ -4257,7 +4257,7 @@ namespace ASCompletion.Completion
             foreach (string type in typesUsed)
             {
                 cleanType = CleanType(type);
-                if (cleanType == null || cleanType.Length == 0 || cleanType.IndexOf('.') <= 0 || addedTypes.Contains(cleanType))
+                if (string.IsNullOrEmpty(cleanType) || cleanType.IndexOf('.') <= 0 || addedTypes.Contains(cleanType))
                     continue;
                 addedTypes.Add(cleanType);
                 MemberModel import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);

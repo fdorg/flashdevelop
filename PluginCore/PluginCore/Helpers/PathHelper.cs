@@ -246,7 +246,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static String ResolvePath(String path, String relativeTo)
         {
-            if (path == null || path.Length == 0) return null;
+            if (string.IsNullOrEmpty(path)) return null;
             Boolean isPathNetworked = path.StartsWith("\\\\") || path.StartsWith("//");
             Boolean isPathAbsSlashed = (path.StartsWith("\\") || path.StartsWith("/")) && !isPathNetworked;
             if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);

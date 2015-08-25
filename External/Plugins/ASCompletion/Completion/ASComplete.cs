@@ -886,7 +886,7 @@ namespace ASCompletion.Completion
                 if (eventAction == "ShowDocumentation")
                 {
                     string cmd = ASContext.Context.Settings.DocumentationCommandLine;
-                    if (cmd == null || cmd.Length == 0) return null;
+                    if (string.IsNullOrEmpty(cmd)) return null;
                     // top-level vars should be searched only if the command includes member information
                     if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && cmd.IndexOf("$(Itm") < 0) 
                         return null;
@@ -1496,7 +1496,7 @@ namespace ASCompletion.Completion
 
             // get expression at cursor position
             ASExpr expr = GetExpression(Sci, position, true);
-            if (expr.Value == null || expr.Value.Length == 0
+            if (string.IsNullOrEmpty(expr.Value)
                 || (expr.WordBefore == "function" && expr.Separator == ' '))
                 return false;
 
