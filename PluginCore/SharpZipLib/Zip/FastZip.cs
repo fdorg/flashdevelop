@@ -695,8 +695,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 #else
         static bool NameIsValid(string name)
         {
-            return (name != null) &&
-                (name.Length > 0) &&
+            return (!string.IsNullOrEmpty(name)) &&
                 (name.IndexOfAny(Path.GetInvalidPathChars()) < 0);
         }
 #endif

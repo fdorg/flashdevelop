@@ -169,14 +169,14 @@ namespace XMLCompletion
                     else defaultNS = defs.Attributes["defaultNS"].Value;
 
                     foreach(XmlNode tag in defs.ChildNodes)
-                    if (tag.Name != null && tag.Name.Length > 0 && tag.Name[0] != '#')
+                    if (!string.IsNullOrEmpty(tag.Name) && tag.Name[0] != '#')
                     {
                         isLeaf = tag.Attributes["leaf"];
                         ns = tag.Attributes["ns"];
                         htag = new HTMLTag(
                             (toUpper) ? tag.Name.ToUpper() : tag.Name, 
                             (ns != null) ? ns.Value : null, isLeaf != null && isLeaf.Value == "yes");
-                        if (htag.NS != null && htag.NS.Length > 0 && !namespaces.Contains(htag.NS))
+                        if (!string.IsNullOrEmpty(htag.NS) && !namespaces.Contains(htag.NS))
                             namespaces.Add(htag.NS);
                         htag.Attributes = new List<string>();
                         temp = tag.Attributes["at"].Value;

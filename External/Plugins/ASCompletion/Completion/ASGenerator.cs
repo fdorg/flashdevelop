@@ -2166,7 +2166,7 @@ namespace ASCompletion.Completion
 
         static public string Capitalize(string name)
         {
-            return name != null && name.Length > 0 ? Char.ToUpper(name[0]) + name.Substring(1) : name;
+            return !string.IsNullOrEmpty(name) ? Char.ToUpper(name[0]) + name.Substring(1) : name;
         }
 
         static public string Camelize(string name)
@@ -3098,7 +3098,7 @@ namespace ASCompletion.Completion
 
             if (name == "this" || type == name)
             {
-                if (type != null && type.Length > 0)
+                if (!string.IsNullOrEmpty(type))
                     name = Char.ToLower(type[0]) + type.Substring(1);
                 else
                     name = "p_this";

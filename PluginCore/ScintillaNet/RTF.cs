@@ -146,7 +146,7 @@ namespace ScintillaNet
                     bool bold = sty.IsBold;
                     bool italic = sty.IsItalics;
                     uint back = (uint)sty.BackgroundColor;
-                    uint fore = (uint)(sty.fore != null && sty.fore.Length > 0 ? int.Parse(sty.fore.Substring(2, sty.fore.Length - 2), NumberStyles.HexNumber) : 0);
+                    uint fore = (uint)(!string.IsNullOrEmpty(sty.fore) ? int.Parse(sty.fore.Substring(2, sty.fore.Length - 2), NumberStyles.HexNumber) : 0);
                     if (lastFontName != fontName || lastFontSize != fontSize || lastBold != bold || lastItalic != italic || lastBack != back || lastFore != fore) 
                     {
                         // Check Colors

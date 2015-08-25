@@ -362,7 +362,7 @@ namespace ProjectManager.Controls
             createDirectoryBox.Checked = PluginMain.Settings.CreateProjectDirectory;
 
             string locationDir = PluginMain.Settings.NewProjectDefaultDirectory;
-            if (locationDir != null && locationDir.Length > 0 && Directory.Exists(locationDir))
+            if (!string.IsNullOrEmpty(locationDir) && Directory.Exists(locationDir))
                 locationTextBox.Text = locationDir;
             else locationTextBox.Text = ProjectPaths.DefaultProjectsDirectory;
             locationTextBox.SelectionStart = locationTextBox.Text.Length;

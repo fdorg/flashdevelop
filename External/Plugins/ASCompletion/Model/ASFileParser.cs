@@ -244,7 +244,7 @@ namespace ASCompletion.Model
             for (i = 0; i < l; i++)
             {
                 string pName = pMatches[i].Groups["pName"].Value;
-                if (pName != null && pName.Length > 0)
+                if (!string.IsNullOrEmpty(pName))
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
@@ -257,7 +257,7 @@ namespace ASCompletion.Model
                 }
 
                 string pType = pMatches[i].Groups["pType"].Value;
-                if (pType != null && pType.Length > 0)
+                if (!string.IsNullOrEmpty(pType))
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
@@ -270,7 +270,7 @@ namespace ASCompletion.Model
                 }
 
                 string pVal = pMatches[i].Groups["pVal"].Value;
-                if (pVal != null && pVal.Length > 0)
+                if (!string.IsNullOrEmpty(pVal))
                 {
                     if (qStrRepls.ContainsKey(pVal))
                     {

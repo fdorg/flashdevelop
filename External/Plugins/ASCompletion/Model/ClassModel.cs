@@ -448,7 +448,7 @@ namespace ASCompletion.Model
                     else modifiers += "intrinsic ";
                 }
                 else if (ofClass.InFile.Version > 2)
-                    if (ofClass.Namespace != null && ofClass.Namespace.Length > 0 
+                    if (!string.IsNullOrEmpty(ofClass.Namespace) 
                         && ofClass.Namespace != "internal") 
                     {
                     //  if ((ft & FlagType.Interface) == 0)
@@ -502,7 +502,7 @@ namespace ASCompletion.Model
                 if ((ft & FlagType.Extern) > 0) modifiers += "extern ";
                 else modifiers += "intrinsic ";
             }
-            else if (member.Namespace != null && member.Namespace.Length > 0 
+            else if (!string.IsNullOrEmpty(member.Namespace) 
                 && member.Namespace != "internal")
             {
                 if ((ft & FlagType.Interface) == 0)

@@ -107,7 +107,7 @@ namespace ProjectManager.Projects.AS3
         {
             try
             {
-                if (OutputPath != null && OutputPath.Length > 0 && File.Exists(GetAbsolutePath(OutputPath)))
+                if (!string.IsNullOrEmpty(OutputPath) && File.Exists(GetAbsolutePath(OutputPath)))
                     File.Delete(GetAbsolutePath(OutputPath));
                 return true;
             }

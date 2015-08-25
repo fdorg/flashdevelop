@@ -108,7 +108,7 @@ namespace PluginCore.BBCode
             else if (style.fontSize < 0)
                 fontSize += (float)style.fontSize;
 
-            if (style.fontName != null && style.fontName.Length > 0)
+            if (!string.IsNullOrEmpty(style.fontName))
                 fontName = style.fontName;
 
 

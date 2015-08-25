@@ -131,7 +131,7 @@ namespace ProjectManager.Projects.Haxe
         {
             try
             {
-                if (OutputPath != null && OutputPath.Length > 0 && File.Exists(GetAbsolutePath(OutputPath)))
+                if (!string.IsNullOrEmpty(OutputPath) && File.Exists(GetAbsolutePath(OutputPath)))
                 {
                     if (MovieOptions.HasPlatformSupport && MovieOptions.PlatformSupport.ExternalToolchain == null)
                         File.Delete(GetAbsolutePath(OutputPath));
@@ -240,7 +240,7 @@ namespace ProjectManager.Projects.Haxe
                 }
 
                 // add main class
-                if (CompilerOptions.MainClass != null && CompilerOptions.MainClass.Length > 0)
+                if (!string.IsNullOrEmpty(CompilerOptions.MainClass))
                     pr.Add("-main " + CompilerOptions.MainClass);
                 
                 // extra options

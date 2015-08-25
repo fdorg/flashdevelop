@@ -1868,7 +1868,7 @@ namespace ASCompletion.Completion
                 int line = Sci.LineFromPosition(position);
                 if (cMember == null && !ASContext.Context.CurrentClass.IsVoid())
                 {
-                    if (expr.Value != null && expr.Value.Length > 0)
+                    if (!string.IsNullOrEmpty(expr.Value))
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                     else if (ASContext.Context.CurrentModel.Version >= 2)
                         return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, features.overrideKey);
@@ -3613,7 +3613,7 @@ namespace ASCompletion.Completion
         static public MemberList ParseLocalVars(ASExpr expression)
         {
             FileModel model;
-            if (expression.FunctionBody != null && expression.FunctionBody.Length > 0)
+            if (!string.IsNullOrEmpty(expression.FunctionBody))
             {
                 MemberModel cm = expression.ContextMember;
                 string functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions

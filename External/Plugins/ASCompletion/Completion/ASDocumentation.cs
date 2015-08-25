@@ -430,7 +430,7 @@ namespace ASCompletion.Completion
             string details = "";
             
             // get parameter detail
-            if (highlightParam != null && highlightParam.Length > 0 && cb.ParamName != null)
+            if (!string.IsNullOrEmpty(highlightParam) && cb.ParamName != null)
             {
                 for(int i=0; i<cb.ParamName.Count; i++)
                 {
@@ -445,9 +445,9 @@ namespace ASCompletion.Completion
             // get description extract
             if (ASContext.CommonSettings.SmartTipsEnabled)
             {
-                if (cb.InfoTip != null && cb.InfoTip.Length > 0)
+                if (!string.IsNullOrEmpty(cb.InfoTip))
                     details += "\n"+cb.InfoTip;
-                else if (cb.Description != null && cb.Description.Length > 0) 
+                else if (!string.IsNullOrEmpty(cb.Description)) 
                     details += Get2LinesOf(cb.Description, cb.IsFunctionWithArguments);
             }
 

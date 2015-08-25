@@ -20,7 +20,7 @@ namespace ScintillaNet.Configuration
             get
             {
                 string result = val;
-                if (inherit != null && inherit.Length > 0)
+                if (!string.IsNullOrEmpty(inherit))
                 {
                     CharacterClass cc = _parent.MasterScintilla.GetCharacterClass(inherit);         
                     if (cc != null) result += cc.Characters;

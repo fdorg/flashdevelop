@@ -140,7 +140,7 @@ namespace ASCompletion.Model
                     if (Parameters != null && Parameters.Count > 0)
                     {
                         comment = "/*(" + ParametersString(true) + ")";
-                        if (Type != null && Type.Length > 0)
+                        if (!string.IsNullOrEmpty(Type))
                             comment += colon + FormatType(Type);
                         comment += "*/";
                     }
@@ -151,12 +151,12 @@ namespace ASCompletion.Model
                 }
             }
 
-            if ((type == null || type.Length == 0) && (Type != null && Type.Length > 0))
+            if (string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(Type))
                 type = FormatType(Type);
 
             if ((Flags & FlagType.Constructor) > 0)
                 return res;
-            else if (type != null && type.Length > 0)
+            else if (!string.IsNullOrEmpty(type))
                 res += colon + type;
 
             res += comment;

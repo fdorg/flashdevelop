@@ -52,7 +52,7 @@ namespace FlashDevelop.Managers
                 canShowList = true;
                 word = sci.GetWordFromPosition(sci.CurrentPos);
             }
-            if (word != null && word.Length > 0)
+            if (!string.IsNullOrEmpty(word))
             {
                 snippet = GetSnippet(word, sci.ConfigurationLanguage, sci.Encoding);
             }

@@ -863,7 +863,7 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.OpenDocument)
             {
-                if (project.TestMovieCommand != null && project.TestMovieCommand.Length > 0)
+                if (!string.IsNullOrEmpty(project.TestMovieCommand))
                 {
                     if (project.TraceEnabled && project.EnableInteractiveDebugger)
                     {
@@ -909,7 +909,7 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.Custom)
             {
-                if (project.TestMovieCommand != null && project.TestMovieCommand.Length > 0)
+                if (!string.IsNullOrEmpty(project.TestMovieCommand))
                 {
                     if (project.TraceEnabled && project.EnableInteractiveDebugger)
                     {

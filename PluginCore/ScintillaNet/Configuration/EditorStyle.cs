@@ -95,7 +95,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (caretfore != null && caretfore.Length > 0)
+                if (!string.IsNullOrEmpty(caretfore))
                 {
                     return ResolveColor(caretfore);
                 }
@@ -107,7 +107,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (caretlineback != null && caretlineback.Length > 0)
+                if (!string.IsNullOrEmpty(caretlineback))
                 {
                     return ResolveColor(caretlineback);
                 }
@@ -119,7 +119,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (selectionfore != null && selectionfore.Length > 0)
+                if (!string.IsNullOrEmpty(selectionfore))
                 {
                     return ResolveColor(selectionfore);
                 }
@@ -131,7 +131,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (selectionback != null && selectionback.Length > 0)
+                if (!string.IsNullOrEmpty(selectionback))
                 {
                     return ResolveColor(selectionback);
                 }
@@ -143,7 +143,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (markerback != null && markerback.Length > 0)
+                if (!string.IsNullOrEmpty(markerback))
                 {
                     return ResolveColor(markerback);
                 }
@@ -155,7 +155,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (markerfore != null && markerfore.Length > 0)
+                if (!string.IsNullOrEmpty(markerfore))
                 {
                     return ResolveColor(markerfore);
                 }
@@ -167,7 +167,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (marginfore != null && marginfore.Length > 0)
+                if (!string.IsNullOrEmpty(marginfore))
                 {
                     return ResolveColor(marginfore);
                 }
@@ -179,7 +179,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (marginback != null && marginback.Length > 0)
+                if (!string.IsNullOrEmpty(marginback))
                 {
                     return ResolveColor(marginback);
                 }
@@ -191,7 +191,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (printmargin != null && printmargin.Length > 0)
+                if (!string.IsNullOrEmpty(printmargin))
                 {
                     return ResolveColor(printmargin);
                 }
@@ -203,7 +203,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (bookmarkline != null && bookmarkline.Length > 0)
+                if (!string.IsNullOrEmpty(bookmarkline))
                 {
                     return ResolveColor(bookmarkline);
                 }
@@ -215,7 +215,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (modifiedline != null && modifiedline.Length > 0)
+                if (!string.IsNullOrEmpty(modifiedline))
                 {
                     return ResolveColor(modifiedline);
                 }
@@ -227,7 +227,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (highlightback != null && highlightback.Length > 0)
+                if (!string.IsNullOrEmpty(highlightback))
                 {
                     return ResolveColor(highlightback);
                 }
@@ -239,7 +239,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (errorlineback != null && errorlineback.Length > 0)
+                if (!string.IsNullOrEmpty(errorlineback))
                 {
                     return ResolveColor(errorlineback);
                 }
@@ -251,7 +251,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (debuglineback != null && debuglineback.Length > 0)
+                if (!string.IsNullOrEmpty(debuglineback))
                 {
                     return ResolveColor(debuglineback);
                 }
@@ -263,7 +263,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (disabledlineback != null && disabledlineback.Length > 0)
+                if (!string.IsNullOrEmpty(disabledlineback))
                 {
                     return ResolveColor(disabledlineback);
                 }
@@ -275,7 +275,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (colorizemarkerback != null && colorizemarkerback.Length > 0)
+                if (!string.IsNullOrEmpty(colorizemarkerback))
                 {
                     return colorizemarkerback.ToLower() == "true";
                 }
