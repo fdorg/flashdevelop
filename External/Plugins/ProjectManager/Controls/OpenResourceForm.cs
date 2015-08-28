@@ -21,6 +21,7 @@ namespace ProjectManager.Controls
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.TextBox textBox;
         private System.Windows.Forms.ListBox listBox;
+		private System.Windows.Forms.CheckBox cbInClasspathsOnly;
         private System.Windows.Forms.CheckBox checkBox;
         private System.Windows.Forms.Button refreshButton;
 
@@ -46,6 +47,7 @@ namespace ProjectManager.Controls
             this.infoLabel = new System.Windows.Forms.Label();
             this.textBox = new System.Windows.Forms.TextBox();
             this.listBox = new System.Windows.Forms.ListBox();
+			this.cbInClasspathsOnly = new System.Windows.Forms.CheckBox();
             this.checkBox = new System.Windows.Forms.CheckBox();
             this.refreshButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -75,20 +77,31 @@ namespace ProjectManager.Controls
             this.refreshButton.Location = new System.Drawing.Point(465, 30);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(26, 23);
-            this.refreshButton.TabIndex = 3;
+            this.refreshButton.TabIndex = 4;
             this.refreshButton.Click += new EventHandler(RefreshButtonClick);
+			// 
+			// cbInClasspathsOnly
+			// 
+			this.cbInClasspathsOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.cbInClasspathsOnly.Location = new System.Drawing.Point(279, 9);
+			this.cbInClasspathsOnly.Size = new System.Drawing.Size(111, 17);
+			this.cbInClasspathsOnly.AutoSize = true;
+			this.cbInClasspathsOnly.Name = "cbInClasspathsOnly";
+			this.cbInClasspathsOnly.TabIndex = 2;
+			this.cbInClasspathsOnly.Text = "In Classpaths only";
+			this.cbInClasspathsOnly.CheckedChanged += new System.EventHandler(this.CbInClasspathsOnlyCheckedChanged);
             // 
             // checkBox
             //
             this.checkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox.Location = new System.Drawing.Point(464, 9);
+			this.checkBox.Location = new System.Drawing.Point(396, 9);
             this.checkBox.Size = new System.Drawing.Size(26, 24);
             this.checkBox.CheckAlign = ContentAlignment.MiddleRight;
             this.checkBox.TextAlign = ContentAlignment.MiddleLeft;
             this.checkBox.Text = "Code files only";
             this.checkBox.Name = "checkBox";
             this.checkBox.AutoSize = true;
-            this.checkBox.TabIndex = 2;
+            this.checkBox.TabIndex = 3;
             this.checkBox.Checked = false;
             this.checkBox.CheckedChanged += new EventHandler(this.CheckBoxCheckedChanged);
             // 
@@ -100,7 +113,7 @@ namespace ProjectManager.Controls
             this.listBox.Location = new System.Drawing.Point(12, 62);
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(478, 276);
-            this.listBox.TabIndex = 4;
+            this.listBox.TabIndex = 5;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBoxDrawItem);
             this.listBox.Resize += new System.EventHandler(this.ListBoxResize);
             this.listBox.DoubleClick += new System.EventHandler(this.ListBoxDoubleClick);
@@ -110,6 +123,7 @@ namespace ProjectManager.Controls
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(502, 340);
+			this.Controls.Add(this.cbInClasspathsOnly);
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.textBox);
             this.Controls.Add(this.refreshButton);
@@ -153,6 +167,7 @@ namespace ProjectManager.Controls
         private void InitializeLocalization()
         {
             this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
+			this.cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
             this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
         }
@@ -161,6 +176,15 @@ namespace ProjectManager.Controls
         /// 
         /// </summary>
         private void RefreshButtonClick(Object sender, EventArgs e)
+        {
+            this.CreateFileList();
+            this.RefreshListBox();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void CbInClasspathsOnlyCheckedChanged(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
@@ -377,7 +401,7 @@ namespace ProjectManager.Controls
         {
             String projectFolder = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             List<String> folders = new List<String>();
-            folders.Add(projectFolder);
+            if (!cbInClasspathsOnly.Checked) folders.Add(projectFolder);
             if (!PluginMain.Settings.SearchExternalClassPath) return folders;
             foreach (String path in PluginBase.CurrentProject.SourcePaths)
             {
