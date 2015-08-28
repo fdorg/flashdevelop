@@ -749,6 +749,15 @@ namespace ASCompletion.Context
         {
         }
 
+        /// <summary>
+        /// Refresh all contexts
+        /// </summary>
+        internal static void UserRefreshRequestAll()
+        {
+            foreach (RegisteredContext reg in allContexts)
+                reg.Context.UserRefreshRequest();
+        }
+
         #endregion
 
         #region model caching

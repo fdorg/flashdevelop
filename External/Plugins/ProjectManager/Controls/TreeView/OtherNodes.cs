@@ -34,7 +34,10 @@ namespace ProjectManager.Controls.TreeView
             SelectedImageIndex = ImageIndex;
 
             if (References != null && References.Parent == null)
+            {
+                if (recursive) RefreshReferences(recursive);
                 Nodes.Insert(0, References);
+            }
 
             NotifyProjectRefresh();
             Expand();
