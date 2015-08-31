@@ -832,11 +832,7 @@ namespace HaXeContext
                 if (aPath.IsValid && !aPath.Updating)
                 {
                     string path;
-                    try
-                    {
-                        path = Path.Combine(aPath.Path, fileName);
-                    }
-                    catch { continue; }
+                    path = aPath.Path + dirSeparator + fileName;
 
                     FileModel file = null;
                     // cached file
