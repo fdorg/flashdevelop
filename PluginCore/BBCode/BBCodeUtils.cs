@@ -16,7 +16,7 @@ namespace PluginCore.BBCode
     {
         public static String assembleOutput(String input, IndexTree tree)
         {
-            if (input == null || input.Length < 1 || tree == null)
+            if (string.IsNullOrEmpty(input) || tree == null)
                 return null;
 
             String outStr = "";
@@ -125,7 +125,7 @@ namespace PluginCore.BBCode
 
         public static void applyStyleTreeToTextbox(RichTextBox tf, String input, IndexTree bbCodeTree)
         {
-            if (tf == null || bbCodeTree == null || input == null || input.Length < 1)
+            if (tf == null || bbCodeTree == null || string.IsNullOrEmpty(input))
                 return;
 
             tf.Text = "";
@@ -236,7 +236,7 @@ namespace PluginCore.BBCode
 
         private static String _replaceEnclosures(String input)
         {
-            if (input == null || input.Length < 1)
+            if (string.IsNullOrEmpty(input))
                 return input;
 
             String outStr = input;

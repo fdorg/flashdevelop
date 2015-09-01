@@ -1883,11 +1883,11 @@ namespace AirProperties
                 // always true;
                 fileType.DescriptionIsValid = true;
                 // set validity based on validation requirements
-                if (fileType.Name.Length <= 0) fileType.NameIsValid = false;
+                if (fileType.Name.Length == 0) fileType.NameIsValid = false;
                 else fileType.NameIsValid = true;
                 if (!Regex.IsMatch(fileType.Extension, _FileNameRegexPattern)) fileType.ExtensionIsValid = false;
                 else fileType.ExtensionIsValid = true;
-                if (fileType.ContentType.Length <= 0) fileType.ContentTypeIsValid = false;
+                if (fileType.ContentType.Length == 0) fileType.ContentTypeIsValid = false;
                 else fileType.ContentTypeIsValid = true;
                 foreach (PropertyManager.AirFileType.AirFileTypeIcon icon in fileType.Icons)
                 {
@@ -1964,7 +1964,7 @@ namespace AirProperties
 
         private void VersionField_Validating(object sender, CancelEventArgs e)
         {
-            if (VersionField.Text.Length <= 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
+            if (VersionField.Text.Length == 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
                 this.ValidationErrorProvider.SetError(VersionField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionLabel.Text));
                 e.Cancel = true;
@@ -2164,7 +2164,7 @@ namespace AirProperties
             {
                 FileTypeNameField.Text = FileTypeNameField.Text.Trim();
                 selectedFileType.Name = FileTypeNameField.Text;
-                if (FileTypeNameField.Text.Length <= 0)
+                if (FileTypeNameField.Text.Length == 0)
                 {
                     selectedFileType.NameIsValid = false;
                     this.ValidationErrorProvider.SetError(FileTypeNameField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
@@ -2220,7 +2220,7 @@ namespace AirProperties
                 FileTypeContentTypeField.Text = FileTypeContentTypeField.Text.Trim();
                 selectedFileType.ContentType = FileTypeContentTypeField.Text;
                 // validate as required field for AIR 1.5+
-                if (FileTypeContentTypeField.Text.Length <= 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
+                if (FileTypeContentTypeField.Text.Length == 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
                 {
                     selectedFileType.ContentTypeIsValid = false;
                     this.ValidationErrorProvider.SetError(FileTypeContentTypeField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));

@@ -273,7 +273,7 @@ namespace FlashDebugger
         
         internal virtual void  pushName(String name)
         {
-            if (m_nameLocked || name.Length < 1) return;
+            if (m_nameLocked || name.Length == 0) return;
             m_namedPath.Add(name);
         }
 

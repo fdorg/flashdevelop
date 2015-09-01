@@ -46,7 +46,7 @@ namespace PluginCore.BBCode
         public IPairTagMatch searchOpenerAs(IPairTagMatch opener, uint startAt)
         {
             BBCodeTagMatch tm = opener as BBCodeTagMatch;
-            if (tm == null || tm.tagName == null || tm.tagName.Length < 1)
+            if (tm == null || string.IsNullOrEmpty(tm.tagName))
                 return null;
 
             return searchOpenerByName(tm.tagName, startAt);
@@ -58,7 +58,7 @@ namespace PluginCore.BBCode
         }
         public IPairTagMatch searchOpenerByName(String tagName, uint startAt)
         {
-            if (tagName == null || tagName.Length < 1)
+            if (string.IsNullOrEmpty(tagName))
                 return null;
 
             return _searchMatch(_buildReOpenerFor(tagName), true, startAt);
@@ -71,7 +71,7 @@ namespace PluginCore.BBCode
         public IPairTagMatch searchCloserFor(IPairTagMatch opener, uint startAt)
         {
             BBCodeTagMatch tm = opener as BBCodeTagMatch;
-            if (tm == null || tm.tagName == null || tm.tagName.Length < 1)
+            if (tm == null || string.IsNullOrEmpty(tm.tagName))
                 return null;
 
             IPairTagMatch successMatch = null;
@@ -100,7 +100,7 @@ namespace PluginCore.BBCode
         }
         public IPairTagMatch searchCloserByName(String tagName, Boolean isOpener, uint startAt)
         {
-            if (tagName == null || tagName.Length < 1)
+            if (string.IsNullOrEmpty(tagName))
                 return null;
 
             return _searchMatch(_buildReCloserFor(tagName), isOpener, startAt);

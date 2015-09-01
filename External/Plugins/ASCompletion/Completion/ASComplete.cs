@@ -144,7 +144,7 @@ namespace ASCompletion.Completion
                     case ' ':
                         position--;
                         string word = GetWordLeft(Sci, ref position);
-                        if (word.Length <= 0)
+                        if (word.Length == 0)
                         {
                             char c = (char)Sci.CharAt(position);
                             if (c == ':' && features.hasEcmaTyping)

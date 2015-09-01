@@ -3405,7 +3405,7 @@ namespace ASCompletion.Completion
         private static string GetPropertyNameFor(MemberModel member)
         {
             string name = member.Name;
-            if (name.Length < 1)
+            if (name.Length == 0)
                 return null;
             Match parts = Regex.Match(name, "([^_$]*)[_$]+(.*)");
             if (parts.Success)
@@ -3422,7 +3422,7 @@ namespace ASCompletion.Completion
         /// </summary>
         private static string GetNewPropertyNameFor(MemberModel member)
         {
-            if (member.Name.Length < 1)
+            if (member.Name.Length == 0)
                 return "prop";
             if (Regex.IsMatch(member.Name, "^[A-Z].*[a-z]"))
                 return Char.ToLower(member.Name[0]) + member.Name.Substring(1);

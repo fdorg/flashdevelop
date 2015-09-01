@@ -114,7 +114,7 @@ namespace ProjectManager.Actions
                     return false;
                 }
 
-                if (project.OutputPath.Length < 1)
+                if (project.OutputPath.Length == 0)
                 {
                     String info = TextHelper.GetString("Info.SpecifyValidOutputSWF");
                     ErrorManager.ShowInfo(info);
