@@ -571,10 +571,10 @@ namespace ICSharpCode.SharpZipLib.Zip
                     else if (CompressionMethod.Deflated == method) {
                         result = 20;
                     } 
-                    else if (IsDirectory == true) {
+                    else if (IsDirectory) {
                         result = 20;
                     } 
-                    else if (IsCrypted == true) {
+                    else if (IsCrypted) {
                         result = 20;
                     } 
                     else if (HasDosAttributes(0x08) ) {
@@ -1204,7 +1204,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 return string.Empty;
             }
             
-            if (Path.IsPathRooted(name) == true) {
+            if (Path.IsPathRooted(name)) {
                 // NOTE:
                 // for UNC names...  \\machine\share\zoom\beet.txt gives \zoom\beet.txt
                 name = name.Substring(Path.GetPathRoot(name).Length);

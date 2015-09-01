@@ -110,7 +110,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
                 throw new ArgumentNullException("baseOutputStream");
             }
 
-            if (baseOutputStream.CanWrite == false) {
+            if (!baseOutputStream.CanWrite) {
                 throw new ArgumentException("Must support writing", "baseOutputStream");
             }
 

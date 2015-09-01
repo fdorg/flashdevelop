@@ -812,7 +812,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             CompressionMethod method = entries_[entryIndex].CompressionMethod;
             Stream result = new PartialInputStream(this, start, entries_[entryIndex].CompressedSize);
 
-            if (entries_[entryIndex].IsCrypted == true) {
+            if (entries_[entryIndex].IsCrypted) {
 #if NETCF_1_0
                 throw new ZipException("decryption not supported for Compact Framework 1.0");
 #else
@@ -2381,7 +2381,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             Stream result = baseStream_;
 
-            if ( entry.IsCrypted == true ) {
+            if ( entry.IsCrypted ) {
 #if NETCF_1_0
                 throw new ZipException("Encryption not supported for Compact Framework 1.0");
 #else
@@ -3094,7 +3094,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             // this could be invalid.
             // Could also speed this up by reading memory in larger blocks.         
 
-            if (baseStream_.CanSeek == false) {
+            if (!baseStream_.CanSeek) {
                 throw new ZipException("ZipFile stream must be seekable");
             }
             
@@ -3275,7 +3275,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 PkzipClassicManaged classicManaged = new PkzipClassicManaged();
 
                 OnKeysRequired(entry.Name);
-                if (HaveKeys == false) {
+                if (!HaveKeys) {
                     throw new ZipException("No password available for encrypted stream");
                 }
 
@@ -3287,7 +3287,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 if (entry.Version == ZipConstants.VERSION_AES) {
                     //
                     OnKeysRequired(entry.Name);
-                    if (HaveKeys == false) {
+                    if (!HaveKeys) {
                         throw new ZipException("No password available for AES encrypted stream");
                     }
                     int saltLen = entry.AESSaltLen;
@@ -3324,7 +3324,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 PkzipClassicManaged classicManaged = new PkzipClassicManaged();
 
                 OnKeysRequired(entry.Name);
-                if (HaveKeys == false) {
+                if (!HaveKeys) {
                     throw new ZipException("No password available for encrypted stream");
                 }
 

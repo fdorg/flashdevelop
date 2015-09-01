@@ -301,8 +301,8 @@ namespace ICSharpCode.SharpZipLib.Zip
                 }
             }
 
-            if (headerInfoAvailable == false) {
-                if (CanPatchEntries == false) {
+            if (!headerInfoAvailable) {
+                if (!CanPatchEntries) {
                     // Only way to record size and compressed size is to append a data descriptor
                     // after compressed data.
 
@@ -342,7 +342,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             WriteLeInt((int)entry.DosTime);
 
             // TODO: Refactor header writing.  Its done in several places.
-            if (headerInfoAvailable == true) {
+            if (headerInfoAvailable) {
                 WriteLeInt((int)entry.Crc);
                 if ( entry.LocalHeaderRequiresZip64 ) {
                     WriteLeInt(-1);
