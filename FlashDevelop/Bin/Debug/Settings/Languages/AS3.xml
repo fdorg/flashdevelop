@@ -44,7 +44,7 @@
 			<!-- trace addEventListener removeEventListener hasListener addChild addChildAt removeChild removeChildAt -->
 		</keyword-class>
 		<keyword-class name="as3-additional-keywords5">
-			super this arguments
+			super this
 		</keyword-class>
 	</keyword-classes>
 	<languages>
