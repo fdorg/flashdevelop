@@ -742,7 +742,7 @@ namespace ProjectManager
         {
             // try to open the last opened project
             string lastProject = Settings.LastProject;
-            if (lastProject != null && lastProject != "" && File.Exists(lastProject))
+            if (!string.IsNullOrEmpty(lastProject) && File.Exists(lastProject))
             {
                 SetProject(projectActions.OpenProjectSilent(lastProject), false, true);
             }

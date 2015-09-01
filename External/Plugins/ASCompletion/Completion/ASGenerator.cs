@@ -1366,7 +1366,7 @@ namespace ASCompletion.Completion
             }
             else value = resolve.Member.Type;
 
-            if (value == "" || value == null)
+            if (string.IsNullOrEmpty(value))
                 return;
 
             Regex re1 = new Regex("'(?:[^'\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*'");
@@ -3191,7 +3191,7 @@ namespace ASCompletion.Completion
 
         private static string getQualifiedType(string type, ClassModel aType)
         {
-            if (type == null || type == "") return "*";
+            if (string.IsNullOrEmpty(type)) return "*";
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
                 Match mGeneric = Regex.Match(type, "<([^>]+)>");

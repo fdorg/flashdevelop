@@ -215,7 +215,7 @@ namespace ProjectManager.Controls
 
         public static FDImage GetImageForFile(string file)
         {
-            if (file == null || file == string.Empty)
+            if (string.IsNullOrEmpty(file))
                 return BlankFile;
             string ext = Path.GetExtension(file).ToLower();
             if (FileInspector.IsActionScript(file, ext))

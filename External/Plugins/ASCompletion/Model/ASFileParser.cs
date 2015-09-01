@@ -82,7 +82,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind Parse(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 switch (model.Type)
                 {
@@ -108,7 +108,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 Match m = ASFileParserRegexes.ValidObjectType.Match(comment);
                 if (m.Success)
@@ -130,7 +130,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 Match m = ASFileParserRegexes.ValidTypeName.Match(comment);
                 if (m.Success)
@@ -153,7 +153,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != ""
+            if (model != null && !string.IsNullOrEmpty(comment)
                 && (model.Flags & FlagType.Function) == 0)
             {
                 MemberModel fnModel = extractTypedCallbackModel(comment);

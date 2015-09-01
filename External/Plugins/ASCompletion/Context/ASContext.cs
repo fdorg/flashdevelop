@@ -1557,7 +1557,7 @@ namespace ASCompletion.Context
         static public void ParseVersion(string version, ref int majorVersion, ref int minorVersion)
         {
             //if (version == "0.0") return;
-            if (version == null || version == "") return;
+            if (string.IsNullOrEmpty(version)) return;
             string[] parts = version.Split('.');
             int.TryParse(parts[0], out majorVersion);
             if (parts.Length > 1) int.TryParse(parts[1], out minorVersion);

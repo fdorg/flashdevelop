@@ -389,7 +389,6 @@ namespace AS3Context
         {
             char S = Path.DirectorySeparatorChar;
             string libPlayer = sdkLibs + S + "player";
-            string playerglobal = null;
             for (int i = minorVersion; i >= 0; i--)
             {
                 string version = majorVersion + "." + i;
@@ -399,7 +398,8 @@ namespace AS3Context
                     return libPlayer + S + version + S + "playerglobal.swc";
                 }
             }
-            if (playerglobal == null && Directory.Exists(libPlayer + S + majorVersion))
+            string playerglobal = null;
+            if (Directory.Exists(libPlayer + S + majorVersion))
                 playerglobal = "player" + S + majorVersion + S + "playerglobal.swc";
 
             if (playerglobal == null && majorVersion > 9)
@@ -841,7 +841,6 @@ namespace AS3Context
                         return true;
                     }
                 }
-                if (insert == null) return false;
                 if (trigger == '.')
                 {
                     sci.InsertText(position + text.Length, insert.Substring(1));
