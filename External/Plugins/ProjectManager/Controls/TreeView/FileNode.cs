@@ -55,7 +55,7 @@ namespace ProjectManager.Controls.TreeView
             string path = BackingPath;
             string ext = Path.GetExtension(path).ToLower();
 
-            if (project.IsPathHidden(path))
+            if (project != null && project.IsPathHidden(path))
                 ImageIndex = Icons.HiddenFile.Index;
             else if ((FileInspector.IsActionScript(path, ext) || FileInspector.IsHaxeFile(path, ext)) && project.IsCompileTarget(path))
                 ImageIndex = Icons.ActionScriptCompile.Index;
@@ -72,7 +72,7 @@ namespace ProjectManager.Controls.TreeView
             Text = Path.GetFileName(path);
 
             string colorId = "ProjectTreeView.ForeColor";
-            if (project.IsLibraryAsset(path))
+            if (project != null && project.IsLibraryAsset(path))
             {
                 LibraryAsset asset = project.GetAsset(path);
                 if (asset != null && asset.IsSwc)
