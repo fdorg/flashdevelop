@@ -29,7 +29,7 @@ namespace AS3Context.Compiler
         static public event SyntaxErrorHandler SyntaxError;
 
         static readonly public Regex re_SplitParams = 
-            new Regex("[\\s](?<switch>\\-[A-z0-9\\-\\.]+)", RegexOptions.Compiled | RegexOptions.Singleline);
+            new Regex("[\\s](?<switch>[-+][A-z0-9\\-\\.]+)", RegexOptions.Compiled | RegexOptions.Singleline);
 
         static private readonly string[] PATH_SWITCHES = { 
             "-compiler.context-root","-context-root",
@@ -321,6 +321,10 @@ namespace AS3Context.Compiler
                                             }
                                         }
                                         isPath = true;
+                                        // remove quotes
+                                        if (arg.StartsWith("\"") && arg.StartsWith("\""))
+                                            arg = arg.Substring(1, arg.Length - 2);
+
                                         if (!arg.StartsWith("\\") && !Path.IsPathRooted(arg))
                                             arg = Path.Combine(buildPath, arg);
                                     }
