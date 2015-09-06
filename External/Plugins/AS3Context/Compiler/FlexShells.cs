@@ -322,7 +322,7 @@ namespace AS3Context.Compiler
                                         }
                                         isPath = true;
                                         // remove quotes
-                                        if (arg.StartsWith("\"") && arg.StartsWith("\""))
+                                        if (arg.StartsWith("\"") && arg.EndsWith("\""))
                                             arg = arg.Substring(1, arg.Length - 2);
 
                                         if (!arg.StartsWith("\\") && !Path.IsPathRooted(arg))
