@@ -5887,7 +5887,7 @@
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.ProjectSources" xml:space="preserve">
-    <value>项目资源s</value>
+    <value>项目资源</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Label.BatchProcess" xml:space="preserve">
