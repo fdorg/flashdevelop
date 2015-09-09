@@ -626,7 +626,7 @@
     <value>默认文档宽度 （以像素为单位）。</value>
   </data>
   <data name="FlashDevelop.Description.SequentialTabbing" xml:space="preserve">
-    <value>使用连续的Tab制表符.</value>
+    <value>按顺序切换标签页.</value>
   </data>
   <data name="FlashDevelop.Description.ShowDetails" xml:space="preserve">
     <value>默认情况下显示详细信息提示 (详细信息可通过按 F1 键切换).</value>
@@ -5239,11 +5239,11 @@
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
-    <value>&amp;Run Project</value>
+    <value>运行项目(&amp;R)</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
-    <value>You are renaming a directory. Do you also want to update the references?</value>
+    <value>你正在重命名文件夹。要更新引用吗？</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
@@ -5251,19 +5251,19 @@
     <comment>Added after 4.6.2</comment>
   </data>
   <data name="AirProperties.AspectRatio.Any" xml:space="preserve">
-    <value>Any</value>
+    <value>任意</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.DesktopResolution.High" xml:space="preserve">
-    <value>High</value>
+    <value>高</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.DesktopResolution.Standard" xml:space="preserve">
-    <value>Standard</value>
+    <value>标准</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.ANEDescFileNotFound" xml:space="preserve">
-    <value>ANE descriptor file not found.</value>
+    <value>找不到 ANE 描述文件.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.AneFilter" xml:space="preserve">
@@ -5275,7 +5275,7 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.CouldNotLoadANE" xml:space="preserve">
-    <value>Could not load ANE file:</value>
+    <value>无法加载 ANE 文件:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.ExtensionIDNotFound" xml:space="preserve">
@@ -5283,7 +5283,7 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Info.SelectAtleastOneItem" xml:space="preserve">
-    <value>At least one item must be chosen.</value>
+    <value>必须至少选择一个项目.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhoneBGMode.Audio" xml:space="preserve">
@@ -5303,15 +5303,15 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhoneResolution.High" xml:space="preserve">
-    <value>High</value>
+    <value>高</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.IPhoneResolution.Standard" xml:space="preserve">
-    <value>Standard</value>
+    <value>标准</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Advanced" xml:space="preserve">
-    <value>Advanced &gt;&gt;</value>
+    <value>高级 &gt;&gt;</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.BackgroundBehavior" xml:space="preserve">
@@ -5319,7 +5319,7 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Basic" xml:space="preserve">
-    <value>&lt;&lt; Basic</value>
+    <value>&lt;&lt; 基本</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Browse" xml:space="preserve">
@@ -5327,15 +5327,15 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ColorDepth" xml:space="preserve">
-    <value>Color Depth</value>
+    <value>色深</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.CPURendering" xml:space="preserve">
-    <value>CPU Rendering</value>
+    <value>CPU 渲染</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Display" xml:space="preserve">
-    <value>Display</value>
+    <value>显示</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Entitlements" xml:space="preserve">
@@ -5351,7 +5351,7 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.ExternalSWFs" xml:space="preserve">
-    <value>External SWFs</value>
+    <value>外部 SWF</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.InfoAdditions" xml:space="preserve">
@@ -5375,7 +5375,7 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.Resolution" xml:space="preserve">
-    <value>Resolution</value>
+    <value>分辨率</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.SelectPermForInfo" xml:space="preserve">
@@ -5387,7 +5387,7 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.SupportedDevices" xml:space="preserve">
-    <value>Supported Devices</value>
+    <value>支持的设备</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.SoftKeyboard.None" xml:space="preserve">
@@ -5403,15 +5403,15 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidAndroidMinVersion" xml:space="preserve">
-    <value>Minimum supported Android version is 8.</value>
+    <value>支持的最低 Android 版本为 8.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidMinAIRVersion" xml:space="preserve">
-    <value>Minimum supported AIR version is 4.3.</value>
+    <value>支持的最低 AIR 版本为 4.3.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.InvalidVersionValue" xml:space="preserve">
-    <value>Invalid version value.</value>
+    <value>无效的版本值.</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.MissingSWFContainer" xml:space="preserve">
@@ -5431,15 +5431,15 @@
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFieldFromParameter" xml:space="preserve">
-    <value>Generate protected field</value>
+    <value>生成 protected 字段</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedFunction" xml:space="preserve">
-    <value>Generate protected function</value>
+    <value>生成 protected 函数</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Label.GenerateProtectedVar" xml:space="preserve">
-    <value>Declare protected variable</value>
+    <value>声明 protected 变量</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
@@ -5455,7 +5455,7 @@
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
-    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <value>如果你改变文件扩展名，它可能会变得不可用。你确定要改变吗？</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
@@ -5475,7 +5475,7 @@
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
-    <value>Show just my code</value>
+    <value>只显示我的代码</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
@@ -5491,11 +5491,11 @@
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.Options" xml:space="preserve">
-    <value>Options</value>
+    <value>选项</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
-    <value>Regular Expression</value>
+    <value>正则表达式</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AddBracesToCases" xml:space="preserve">
@@ -5871,7 +5871,7 @@
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDevelop.Description.CheckForUpdates" xml:space="preserve">
-    <value>Sets how often FlashDevelop checks for updates.</value>
+    <value>设置 FlashDevelop 多久检查更新.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.ConsistentEOLs" xml:space="preserve">
@@ -5879,23 +5879,23 @@
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.FormatCode" xml:space="preserve">
-    <value>Format Code</value>
+    <value>格式化代码</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.OpenFiles" xml:space="preserve">
-    <value>Open Files</value>
+    <value>打开文件</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.ProjectSources" xml:space="preserve">
-    <value>Project Sources</value>
+    <value>项目资源s</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Label.BatchProcess" xml:space="preserve">
-    <value>Batch Process...</value>
+    <value>批处理...</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Title.BatchProcessDialog" xml:space="preserve">
-    <value>Batch Process</value>
+    <value>批处理</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.HighlightMarkers" xml:space="preserve">
