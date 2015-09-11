@@ -605,7 +605,7 @@ namespace FlashDevelop.Controls
             {
                 UiRenderMode renderMode = Globals.Settings.RenderMode;
                 if (renderMode == UiRenderMode.System) this.renderer = new ToolStripSystemRenderer();
-                else this.renderer = new ToolStripProfessionalRenderer();
+                else this.renderer = new DockPanelStripRenderer();
             }
 
             protected override void Initialize(ToolStrip toolStrip)
