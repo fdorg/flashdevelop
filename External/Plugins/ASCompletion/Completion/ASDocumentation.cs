@@ -16,6 +16,7 @@ using ASCompletion.Context;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using ScintillaNet;
+using System.Drawing;
 
 namespace ASCompletion.Completion
 {
@@ -456,7 +457,9 @@ namespace ASCompletion.Completion
 
         static private string GetShortcutDocs()
         {
-            return "\n[COLOR=#666666:MULTIPLY][i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i][/COLOR]";
+            Color themeForeColor = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
+            string foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
+            return "\n[COLOR=" + foreColorString + "][i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i][/COLOR]";
         }
 
         /// <summary>
