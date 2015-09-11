@@ -554,12 +554,13 @@ namespace ProjectManager.Controls
             string ext = ProjectExt;
             if (ext != null)
             {
+                char separator = Path.DirectorySeparatorChar;
                 string name = nameTextBox.Text;
                 status = "  " + TextHelper.GetString("Info.WillCreate") + " ";
-                status += Path.Combine(locationTextBox.Text.TrimEnd('\\', '/'), name);
-                if (createDirectoryBox.Checked) status = Path.Combine(status, name);
+                status += locationTextBox.Text.TrimEnd('\\', '/') + separator + name;
+                if (createDirectoryBox.Checked) status += separator + name;
                 status += ext;
-                status = status.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+                status = status.Replace('\\', separator).Replace('/', separator);
             }
             statusBar.Text = status;
         }
