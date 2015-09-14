@@ -298,6 +298,7 @@ namespace ProjectManager.Controls
             List<String> templateDirs = ProjectPaths.GetAllProjectDirs();
             templateDirs.Sort(CompareFolderNames);
             ListViewItem lastItem = null;
+            String lastTemplate = null;
 
             foreach (string templateDir in templateDirs)
             {
@@ -322,9 +323,10 @@ namespace ProjectManager.Controls
                     item.Group = group;
                 }
 
-                if (lastItem != null && lastItem.Text == item.Text) // remove duplicates (keep last)
+                if (lastItem != null && lastTemplate == templateName) // remove duplicates (keep last)
                     projectListView.Items.Remove(lastItem);
                 lastItem = item;
+                lastTemplate = templateName;
                 projectListView.Items.Add(item);
             }
             this.Load += new EventHandler(NewProjectDialog_Load);
