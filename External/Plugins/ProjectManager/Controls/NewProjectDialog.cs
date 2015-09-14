@@ -1,12 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Drawing;
-using System.Diagnostics;
-using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using System.Reflection;
 using ProjectManager.Projects;
 using ProjectManager.Helpers;
 using PluginCore.Localization;
@@ -362,7 +358,7 @@ namespace ProjectManager.Controls
             createDirectoryBox.Checked = PluginMain.Settings.CreateProjectDirectory;
 
             string locationDir = PluginMain.Settings.NewProjectDefaultDirectory;
-            if (locationDir != null && locationDir.Length > 0 && Directory.Exists(locationDir))
+            if (!string.IsNullOrEmpty(locationDir) && Directory.Exists(locationDir))
                 locationTextBox.Text = locationDir;
             else locationTextBox.Text = ProjectPaths.DefaultProjectsDirectory;
             locationTextBox.SelectionStart = locationTextBox.Text.Length;
@@ -566,15 +562,19 @@ namespace ProjectManager.Controls
 
         private void UpdateStatusBar()
         {
-            string sep = Path.DirectorySeparatorChar.ToString();
+            string status = string.Empty;
             string ext = ProjectExt;
             if (ext != null)
             {
-                statusBar.Text = "  " + TextHelper.GetString("Info.WillCreate") + " ";
-                if (createDirectoryBox.Checked) statusBar.Text += locationTextBox.Text + sep + nameTextBox.Text + sep + nameTextBox.Text + ext;
-                else statusBar.Text += locationTextBox.Text + sep + nameTextBox.Text + ext;
+                char separator = Path.DirectorySeparatorChar;
+                string name = nameTextBox.Text;
+                status = "  " + TextHelper.GetString("Info.WillCreate") + " ";
+                status += locationTextBox.Text.TrimEnd('\\', '/') + separator + name;
+                if (createDirectoryBox.Checked) status += separator + name;
+                status += ext;
+                status = status.Replace('\\', separator).Replace('/', separator);
             }
-            else statusBar.Text = "";
+            statusBar.Text = status;
         }
 
         private void locationTextBox_TextChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
