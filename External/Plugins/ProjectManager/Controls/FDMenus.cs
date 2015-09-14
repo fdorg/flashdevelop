@@ -98,7 +98,9 @@ namespace ProjectManager.Controls
 
         public void EnableTargetBuildSelector(bool enabled)
         {
+            var target = TargetBuildSelector.Text; // prevent occasional loss of value when the control is disabled
             TargetBuildSelector.Enabled = enabled;
+            TargetBuildSelector.Text = target;
         }
 
         public bool DisabledForBuild
@@ -139,16 +141,24 @@ namespace ProjectManager.Controls
             {
                 TargetBuildSelector.Items.AddRange(project.MovieOptions.TargetBuildTypes);
                 string target = project.TargetBuild ?? project.MovieOptions.TargetBuildTypes[0];
-                if (!String.IsNullOrEmpty(target) && !TargetBuildSelector.Items.Contains(target)) TargetBuildSelector.Items.Insert(0, target);
+                AddTargetBuild(target);
                 TargetBuildSelector.Text = target;
             }
             else
             {
                 string target = project.TargetBuild ?? "";
-                if (target != "") TargetBuildSelector.Items.Insert(0, target);
+                AddTargetBuild(target);
                 TargetBuildSelector.Text = target;
             }
             EnableTargetBuildSelector(true);
+        }
+
+        internal void AddTargetBuild(string target)
+        {
+            if (target == null) return;
+            target = target.Trim();
+            if (target.Length > 0 && !TargetBuildSelector.Items.Contains(target)) 
+                TargetBuildSelector.Items.Insert(0, target);
         }
 
         
