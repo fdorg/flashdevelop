@@ -7,12 +7,14 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Provider;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.FRService;
-using PluginCore.Localization;
-using ScintillaNet;
-using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ProjectManager.Projects;
+using ScintillaNet;
 
 /* Considerations and known problems: 
  *  A. When moving a model that makes use of other models in the old package there will be a problem
@@ -448,7 +450,7 @@ namespace CodeRefactor.Commands
 
                     // Look for document class changes
                     // Do not use RefactoringHelper to avoid possible dialogs that we don't want
-                    ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+                    Project project = (Project)PluginBase.CurrentProject;
                     string newDocumentClass = null;
                     string searchPattern = project.DefaultSearchFilter;
                     foreach (string pattern in searchPattern.Split(';'))
@@ -469,13 +471,13 @@ namespace CodeRefactor.Commands
                     {
                         string tmpPath = oldPath + "$renaming$";
                         FileHelper.ForceMoveDirectory(oldPath, tmpPath);
-                        PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, tmpPath);
+                        DocumentManager.MoveDocuments(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
 
                     // Move directory contents to final location
                     FileHelper.ForceMoveDirectory(oldPath, newPath);
-                    PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                    DocumentManager.MoveDocuments(oldPath, newPath);
 
                     if (!string.IsNullOrEmpty(newDocumentClass))
                     {

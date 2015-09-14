@@ -1,22 +1,18 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Text.RegularExpressions;
-using PluginCore.Localization;
+using ASCompletion.Completion;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using LoomContext.Projects;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using AS3Context.Compiler;
-using ASCompletion.Model;
-using ASCompletion.Completion;
-using ASCompletion.Commands;
-using AS3Context.Controls;
-using WeifenLuo.WinFormsUI.Docking;
-using System.Windows.Forms;
-using PluginCore;
-using LoomContext.Projects;
+using ProjectManager.Helpers;
 using ProjectManager.Projects;
 
 namespace LoomContext
@@ -173,7 +169,7 @@ namespace LoomContext
                     contextInstance = new Context(settingObject);
                     ValidateSettings();
                     // Associate this context with Loom language
-                    ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "loom");
+                    ASContext.RegisterLanguage(contextInstance, "loom");
                     break;
 
                 case EventType.FileSave:
@@ -241,7 +237,7 @@ namespace LoomContext
                 settingObject = (LoomSettings)obj;
             }
 
-            ProjectManager.Helpers.ProjectCreator.AppendProjectType("project.lsproj", typeof(LoomProject));
+            ProjectCreator.AppendProjectType("project.lsproj", typeof(LoomProject));
         }
 
         /// <summary>

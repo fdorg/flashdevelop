@@ -1,21 +1,20 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using ScintillaNet.Configuration;
-using PluginCore.Localization;
-using FlashDevelop.Settings;
-using FlashDevelop.Utilities;
 using FlashDevelop.Helpers;
-using PluginCore.Managers;
-using PluginCore.Utilities;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 using ScintillaNet;
-using PluginCore;
+using ScintillaNet.Configuration;
+using ScintillaNet.Enums;
+using Keys = System.Windows.Forms.Keys;
 
 namespace FlashDevelop.Managers
 {
@@ -226,8 +225,8 @@ namespace FlashDevelop.Managers
                 if (language != null && language.editorstyle != null)
                 {
                     Boolean colorizeMarkerBack = language.editorstyle.ColorizeMarkerBack;
-                    if (colorizeMarkerBack) sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Fore);
-                    else sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+                    if (colorizeMarkerBack) sci.SetMarginTypeN(0, (Int32)MarginType.Fore);
+                    else sci.SetMarginTypeN(0, (Int32)MarginType.Symbol);
                 }
                 /**
                 * Set correct line number margin width
@@ -312,7 +311,7 @@ namespace FlashDevelop.Managers
             sci.ControlCharSymbol = 0;
             sci.CurrentPos = 0;
             sci.CursorType = -1;
-            sci.Dock = System.Windows.Forms.DockStyle.Fill;
+            sci.Dock = DockStyle.Fill;
             sci.EndAtLastLine = 0;
             sci.EdgeColumn = 0;
             sci.EdgeMode = 0;
@@ -325,52 +324,52 @@ namespace FlashDevelop.Managers
             sci.IsTwoPhaseDraw = true;
             sci.LayoutCache = 1;
             sci.Lexer = 3;
-            sci.Location = new System.Drawing.Point(0, 0);
+            sci.Location = new Point(0, 0);
             sci.MarginLeft = 5;
             sci.MarginRight = 5;
-            sci.ModEventMask = (Int32)ScintillaNet.Enums.ModificationFlags.InsertText | (Int32)ScintillaNet.Enums.ModificationFlags.DeleteText | (Int32)ScintillaNet.Enums.ModificationFlags.RedoPerformed | (Int32)ScintillaNet.Enums.ModificationFlags.UndoPerformed;
+            sci.ModEventMask = (Int32)ModificationFlags.InsertText | (Int32)ModificationFlags.DeleteText | (Int32)ModificationFlags.RedoPerformed | (Int32)ModificationFlags.UndoPerformed;
             sci.MouseDwellTime = ScintillaControl.MAXDWELLTIME;
             sci.Name = "sci";
             sci.PasteConvertEndings = false;
-            sci.PrintColourMode = (Int32)ScintillaNet.Enums.PrintOption.Normal;
-            sci.PrintWrapMode = (Int32)ScintillaNet.Enums.Wrap.Word;
+            sci.PrintColourMode = (Int32)PrintOption.Normal;
+            sci.PrintWrapMode = (Int32)Wrap.Word;
             sci.PrintMagnification = 0;
             sci.SearchFlags = 0;
             sci.SelectionEnd = 0;
             sci.SelectionMode = 0;
             sci.SelectionStart = 0;
-            sci.SmartIndentType = ScintillaNet.Enums.SmartIndent.CPP;
+            sci.SmartIndentType = SmartIndent.CPP;
             sci.Status = 0;
             sci.StyleBits = 7;
             sci.TabIndex = 0;
             sci.TargetEnd = 0;
             sci.TargetStart = 0;
             sci.WrapStartIndent = Globals.Settings.IndentSize;
-            sci.WrapVisualFlagsLocation = (Int32)ScintillaNet.Enums.WrapVisualLocation.EndByText;
-            sci.WrapVisualFlags = (Int32)ScintillaNet.Enums.WrapVisualFlag.End;
+            sci.WrapVisualFlagsLocation = (Int32)WrapVisualLocation.EndByText;
+            sci.WrapVisualFlags = (Int32)WrapVisualFlag.End;
             sci.XOffset = 0;
             sci.ZoomLevel = 0;
             sci.UsePopUp(false);
-            sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+            sci.SetMarginTypeN(0, (Int32)MarginType.Symbol);
             sci.SetMarginMaskN(0, MarkerManager.MARKERS);
             sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
-            sci.SetMarginTypeN(1, (Int32)ScintillaNet.Enums.MarginType.Number);
-            sci.SetMarginMaskN(1, (Int32)ScintillaNet.Enums.MarginType.Symbol);
-            sci.SetMarginTypeN(2, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+            sci.SetMarginTypeN(1, (Int32)MarginType.Number);
+            sci.SetMarginMaskN(1, (Int32)MarginType.Symbol);
+            sci.SetMarginTypeN(2, (Int32)MarginType.Symbol);
             sci.SetMarginMaskN(2, -33554432 | 1 << 2);
             sci.MarginSensitiveN(2, true);
             sci.SetMultiSelectionTyping(true);
             sci.MarkerDefineRGBAImage(0, Bookmark);
-            sci.MarkerDefine(2, ScintillaNet.Enums.MarkerSymbol.Fullrect);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.Folder, ScintillaNet.Enums.MarkerSymbol.BoxPlus);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderOpen, ScintillaNet.Enums.MarkerSymbol.BoxMinus);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderSub, ScintillaNet.Enums.MarkerSymbol.VLine);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderTail, ScintillaNet.Enums.MarkerSymbol.LCorner);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderEnd, ScintillaNet.Enums.MarkerSymbol.BoxPlusConnected);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderOpenMid, ScintillaNet.Enums.MarkerSymbol.BoxMinusConnected);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderMidTail, ScintillaNet.Enums.MarkerSymbol.TCorner);
-            sci.SetXCaretPolicy((Int32)(ScintillaNet.Enums.CaretPolicy.Jumps | ScintillaNet.Enums.CaretPolicy.Even), 30);
-            sci.SetYCaretPolicy((Int32)(ScintillaNet.Enums.CaretPolicy.Jumps | ScintillaNet.Enums.CaretPolicy.Even), 2);
+            sci.MarkerDefine(2, MarkerSymbol.Fullrect);
+            sci.MarkerDefine((Int32)MarkerOutline.Folder, MarkerSymbol.BoxPlus);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderOpen, MarkerSymbol.BoxMinus);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderSub, MarkerSymbol.VLine);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderTail, MarkerSymbol.LCorner);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderEnd, MarkerSymbol.BoxPlusConnected);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderOpenMid, MarkerSymbol.BoxMinusConnected);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderMidTail, MarkerSymbol.TCorner);
+            sci.SetXCaretPolicy((Int32)(CaretPolicy.Jumps | CaretPolicy.Even), 30);
+            sci.SetYCaretPolicy((Int32)(CaretPolicy.Jumps | CaretPolicy.Even), 2);
             sci.ScrollWidthTracking = (Globals.Settings.ScrollWidth == 3000);
             sci.CodePage = SelectCodePage(codepage);
             sci.Encoding = Encoding.GetEncoding(codepage);

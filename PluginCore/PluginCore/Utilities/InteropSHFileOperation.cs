@@ -156,22 +156,22 @@ namespace PluginCore.Utilities
                 get
                 {
                     ushort returnValue = 0;
-                    if (this.FOF_MULTIDESTFILES == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_MULTIDESTFILES;
-                    if (this.FOF_CONFIRMMOUSE == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_CONFIRMMOUSE;
-                    if (this.FOF_SILENT == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_SILENT;
-                    if (this.FOF_RENAMEONCOLLISION == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_RENAMEONCOLLISION;
-                    if (this.FOF_NOCONFIRMATION == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMATION;
-                    if (this.FOF_WANTMAPPINGHANDLE == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTMAPPINGHANDLE;
-                    if (this.FOF_ALLOWUNDO == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_ALLOWUNDO;
-                    if (this.FOF_FILESONLY == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_FILESONLY;
-                    if (this.FOF_SIMPLEPROGRESS == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_SIMPLEPROGRESS;
-                    if (this.FOF_NOCONFIRMMKDIR == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMMKDIR;
-                    if (this.FOF_NOERRORUI == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOERRORUI;
-                    if (this.FOF_NOCOPYSECURITYATTRIBS == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCOPYSECURITYATTRIBS;
-                    if (this.FOF_NORECURSION == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSION;
-                    if (this.FOF_NO_CONNECTED_ELEMENTS == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NO_CONNECTED_ELEMENTS;
-                    if (this.FOF_WANTNUKEWARNING == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTNUKEWARNING;
-                    if (this.FOF_NORECURSEREPARSE == true) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSEREPARSE;
+                    if (this.FOF_MULTIDESTFILES) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_MULTIDESTFILES;
+                    if (this.FOF_CONFIRMMOUSE) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_CONFIRMMOUSE;
+                    if (this.FOF_SILENT) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_SILENT;
+                    if (this.FOF_RENAMEONCOLLISION) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_RENAMEONCOLLISION;
+                    if (this.FOF_NOCONFIRMATION) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMATION;
+                    if (this.FOF_WANTMAPPINGHANDLE) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTMAPPINGHANDLE;
+                    if (this.FOF_ALLOWUNDO) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_ALLOWUNDO;
+                    if (this.FOF_FILESONLY) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_FILESONLY;
+                    if (this.FOF_SIMPLEPROGRESS) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_SIMPLEPROGRESS;
+                    if (this.FOF_NOCONFIRMMKDIR) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCONFIRMMKDIR;
+                    if (this.FOF_NOERRORUI) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOERRORUI;
+                    if (this.FOF_NOCOPYSECURITYATTRIBS) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NOCOPYSECURITYATTRIBS;
+                    if (this.FOF_NORECURSION) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSION;
+                    if (this.FOF_NO_CONNECTED_ELEMENTS) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NO_CONNECTED_ELEMENTS;
+                    if (this.FOF_WANTNUKEWARNING) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_WANTNUKEWARNING;
+                    if (this.FOF_NORECURSEREPARSE) returnValue |= (ushort)FILEOP_FLAGS_ENUM.FOF_NORECURSEREPARSE;
                     return returnValue;
                 }
             }

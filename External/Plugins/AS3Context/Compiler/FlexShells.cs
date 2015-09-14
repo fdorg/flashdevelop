@@ -1,21 +1,19 @@
 using System;
-using System.Windows.Forms;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Diagnostics;
-using System.Timers;
-using System.Runtime.InteropServices;
-using PluginCore;
-using PluginCore.Helpers;
-using ASCompletion.Context;
-using PluginCore.Managers;
-using PluginCore.Utilities;
-using PluginCore.Localization;
-using ASCompletion.Model;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace AS3Context.Compiler
 {
@@ -63,7 +61,7 @@ namespace AS3Context.Compiler
             if (!File.Exists(fullPath))
             {
                 string id = "AS3Context.Resources." + resName;
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Assembly assembly = Assembly.GetExecutingAssembly();
                 using (BinaryReader br = new BinaryReader(assembly.GetManifestResourceStream(id)))
                 {
                     using (FileStream bw = File.Create(fullPath))
@@ -609,12 +607,12 @@ namespace AS3Context.Compiler
             try 
             {
                 // change current directory
-                string currentPath = System.IO.Directory.GetCurrentDirectory();
-                System.IO.Directory.SetCurrentDirectory(Path.GetDirectoryName(swf));
+                string currentPath = Directory.GetCurrentDirectory();
+                Directory.SetCurrentDirectory(Path.GetDirectoryName(swf));
                 // run
-                System.Diagnostics.Process.Start(swf);
+                Process.Start(swf);
                 // restaure current directory
-                System.IO.Directory.SetCurrentDirectory(currentPath);
+                Directory.SetCurrentDirectory(currentPath);
             }
             catch (Exception ex)
             {

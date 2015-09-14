@@ -432,7 +432,7 @@ namespace ASCompletion
 
         private void FindPrevMatch(string search)
         {
-            if (search != null && allTypes != null && search.Length > 0)
+            if (!string.IsNullOrEmpty(search) && allTypes != null)
             {
                 typeIndex--;
                 if (typeIndex <= 0) typeIndex = allTypes.Count;
@@ -452,7 +452,7 @@ namespace ASCompletion
 
         private void FindNextMatch(string search)
         {
-            if (search != null && allTypes != null && search.Length > 0)
+            if (!string.IsNullOrEmpty(search) && allTypes != null)
             {
                 while (typeIndex < allTypes.Count)
                 {

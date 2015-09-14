@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using CodeFormatter.Preferences;
 using CodeFormatter.Handlers;
-using CodeFormatter;
+using CodeFormatter.Preferences;
 
 namespace CodeFormatter.Utilities
 {

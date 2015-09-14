@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Runtime.ConstrainedExecution;
-using System.Windows.Forms;
+using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Ookii.Dialogs.Interop;
 
 namespace Ookii.Dialogs
 {
@@ -32,7 +31,7 @@ namespace Ookii.Dialogs
         public const int ErrorFileNotFound = 2;
 
         [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern Ookii.Dialogs.SafeModuleHandle LoadLibraryEx(
+        public static extern SafeModuleHandle LoadLibraryEx(
             string lpFileName,
             IntPtr hFile,
             LoadLibraryExFlags dwFlags
@@ -65,7 +64,7 @@ namespace Ookii.Dialogs
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
         internal struct KNOWNFOLDER_DEFINITION
         {
-            internal NativeMethods.KF_CATEGORY category;
+            internal KF_CATEGORY category;
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pszName;
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -86,7 +85,7 @@ namespace Ookii.Dialogs
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pszSecurity;
             internal uint dwAttributes;
-            internal NativeMethods.KF_DEFINITION_FLAGS kfdFlags;
+            internal KF_DEFINITION_FLAGS kfdFlags;
             internal Guid ftidType;
         }
 
@@ -207,14 +206,14 @@ namespace Ookii.Dialogs
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         public static extern int SHCreateItemFromParsingName([MarshalAs(UnmanagedType.LPWStr)] string pszPath, IntPtr pbc, ref Guid riid, [MarshalAs(UnmanagedType.Interface)] out object ppv);
 
-        public static Interop.IShellItem CreateItemFromParsingName(string path)
+        public static IShellItem CreateItemFromParsingName(string path)
         {
             object item;
             Guid guid = new Guid("43826d1e-e718-42ee-bc55-a1e261c37bfe"); // IID_IShellItem
-            int hr = NativeMethods.SHCreateItemFromParsingName(path, IntPtr.Zero, ref guid, out item);
+            int hr = SHCreateItemFromParsingName(path, IntPtr.Zero, ref guid, out item);
             if( hr != 0 )
-                throw new System.ComponentModel.Win32Exception(hr);
-            return (Interop.IShellItem)item;
+                throw new Win32Exception(hr);
+            return (IShellItem)item;
         }
 
         #endregion

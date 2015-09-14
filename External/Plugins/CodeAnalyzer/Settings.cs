@@ -1,16 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Collections.Generic;
 using System.Windows.Forms.Design;
-using System.Xml.Serialization;
 using PluginCore.Localization;
-using System.Windows.Forms;
-using PluginCore.Managers;
-using PluginCore;
 
 namespace CodeAnalyzer
 {

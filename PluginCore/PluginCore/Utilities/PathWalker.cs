@@ -1,11 +1,9 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
-using PluginCore;
 using System.ComponentModel;
-using System.Windows.Forms;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace PluginCore.Utilities
 {

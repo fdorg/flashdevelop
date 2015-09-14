@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using flash.tools.debugger;
 using flash.tools.debugger.expression;
-using PluginCore.Controls;
 using FlashDebugger.Controls;
-using ScintillaNet;
+using java.io;
 using PluginCore;
+using PluginCore.Controls;
+using ScintillaNet;
 
 namespace FlashDebugger
 {
@@ -91,7 +93,7 @@ namespace FlashDebugger
                     try
                     {
                         IASTBuilder b = new ASTBuilder(false);
-                        ValueExp exp = b.parse(new java.io.StringReader(leftword));
+                        ValueExp exp = b.parse(new StringReader(leftword));
                         var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[debugManager.CurrentFrame]);
                         var obj = exp.evaluate(ctx);
                         if (obj as Variable != null)
@@ -108,7 +110,7 @@ namespace FlashDebugger
         {
             int insideBrackets = 0;
             Char c;
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            StringBuilder sb = new StringBuilder();
             for (Int32 startPosition = position - 1; startPosition >= 0; startPosition--)
             {
                 c = (Char)sci.CharAt(startPosition);

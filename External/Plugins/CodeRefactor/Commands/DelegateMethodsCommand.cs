@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using PluginCore;
 using ScintillaNet;
-using System.Collections.Generic;
 
 namespace CodeRefactor.Commands
 {

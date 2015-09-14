@@ -1,10 +1,12 @@
 // Copyright © Sven Groot (Ookii.org) 2009
 // BSD license; see license.txt for details.
-using Microsoft.Win32.SafeHandles;
-using System.Security.Permissions;
+
 using System;
-using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using Microsoft.Win32.SafeHandles;
 
 namespace Ookii.Dialogs
 {
@@ -36,7 +38,7 @@ namespace Ookii.Dialogs
         {
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal SafeDeviceHandle(IntPtr existingHandle, bool ownsHandle)
             : base(ownsHandle)
         {

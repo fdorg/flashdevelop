@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
@@ -995,7 +994,7 @@ namespace FlashDevelop.Dialogs
         private Boolean IsValidPattern()
         {
             String pattern = this.findComboBox.Text;
-            if (pattern.Length < 1) return false;
+            if (pattern.Length == 0) return false;
             if (this.regexCheckBox.Checked)
             {
                 try

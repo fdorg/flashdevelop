@@ -481,7 +481,7 @@ namespace BookmarkPanel
             ListViewGroup group = this.FindGroup(document.FileName);
             if (group == null) return;
             List<Int32> markers = this.GetMarkers(document.SciControl);
-            if (group != null && this.NeedRefresh(document.SciControl, markers, group.Items))
+            if (this.NeedRefresh(document.SciControl, markers, @group.Items))
             {
                 Int32 index = 0;
                 ListViewItem item;

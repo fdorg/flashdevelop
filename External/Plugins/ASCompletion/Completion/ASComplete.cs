@@ -3,23 +3,23 @@
  */
 
 using System;
-using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
-using PluginCore;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using ASCompletion.Model;
+using System.Windows.Forms;
+using ASCompletion.Commands;
 using ASCompletion.Context;
-using System.IO;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace ASCompletion.Completion
 {
@@ -144,7 +144,7 @@ namespace ASCompletion.Completion
                     case ' ':
                         position--;
                         string word = GetWordLeft(Sci, ref position);
-                        if (word.Length <= 0)
+                        if (word.Length == 0)
                         {
                             char c = (char)Sci.CharAt(position);
                             if (c == ':' && features.hasEcmaTyping)
@@ -219,7 +219,7 @@ namespace ASCompletion.Completion
             }
 
             // CodeAuto context
-            if (!PluginCore.Controls.CompletionList.Active) LastExpression = null;
+            if (!CompletionList.Active) LastExpression = null;
             return false;
         }
 
@@ -308,7 +308,7 @@ namespace ASCompletion.Completion
                                 string cmd = Path.Combine("Tools", Path.Combine("flashide", "testmovie.jsfl"));
                                 cmd = PathHelper.ResolvePath(cmd);
                                 if (cmd != null && File.Exists(cmd))
-                                    Commands.CallFlashIDE.Run(idePath, cmd);
+                                    CallFlashIDE.Run(idePath, cmd);
                             }
                         }
                     }
@@ -863,7 +863,7 @@ namespace ASCompletion.Completion
         private static void NotifyContextChanged()
         {
             if (OnResolvedContextChanged != null) 
-                ASComplete.OnResolvedContextChanged(CurrentResolvedContext);
+                OnResolvedContextChanged(CurrentResolvedContext);
         }
 
         /// <summary>
@@ -886,7 +886,7 @@ namespace ASCompletion.Completion
                 if (eventAction == "ShowDocumentation")
                 {
                     string cmd = ASContext.Context.Settings.DocumentationCommandLine;
-                    if (cmd == null || cmd.Length == 0) return null;
+                    if (string.IsNullOrEmpty(cmd)) return null;
                     // top-level vars should be searched only if the command includes member information
                     if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && cmd.IndexOf("$(Itm") < 0) 
                         return null;
@@ -1496,7 +1496,7 @@ namespace ASCompletion.Completion
 
             // get expression at cursor position
             ASExpr expr = GetExpression(Sci, position, true);
-            if (expr.Value == null || expr.Value.Length == 0
+            if (string.IsNullOrEmpty(expr.Value)
                 || (expr.WordBefore == "function" && expr.Separator == ' '))
                 return false;
 
@@ -1868,7 +1868,7 @@ namespace ASCompletion.Completion
                 int line = Sci.LineFromPosition(position);
                 if (cMember == null && !ASContext.Context.CurrentClass.IsVoid())
                 {
-                    if (expr.Value != null && expr.Value.Length > 0)
+                    if (!string.IsNullOrEmpty(expr.Value))
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                     else if (ASContext.Context.CurrentModel.Version >= 2)
                         return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, features.overrideKey);
@@ -3613,7 +3613,7 @@ namespace ASCompletion.Completion
         static public MemberList ParseLocalVars(ASExpr expression)
         {
             FileModel model;
-            if (expression.FunctionBody != null && expression.FunctionBody.Length > 0)
+            if (!string.IsNullOrEmpty(expression.FunctionBody))
             {
                 MemberModel cm = expression.ContextMember;
                 string functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
@@ -4292,9 +4292,9 @@ namespace ASCompletion.Completion
             }
         }
 
-        public System.Drawing.Bitmap Icon
+        public Bitmap Icon
         {
-            get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(icon); }
+            get { return (Bitmap)ASContext.Panel.GetIcon(icon); }
         }
 
         public string Value
@@ -4356,9 +4356,9 @@ namespace ASCompletion.Completion
             get { return TextHelper.GetString("Info.DeclarationTemplate"); }
         }
 
-        public System.Drawing.Bitmap Icon
+        public Bitmap Icon
         {
-            get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
+            get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
         }
 
         public string Value
@@ -4400,9 +4400,9 @@ namespace ASCompletion.Completion
             }
         }
 
-        public System.Drawing.Bitmap Icon
+        public Bitmap Icon
         {
-            get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_CONST); }
+            get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_CONST); }
         }
 
         public string Value

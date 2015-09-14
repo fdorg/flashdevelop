@@ -1,12 +1,13 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using ScintillaNet;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using ScintillaNet.Lexers;
 
 namespace CodeRefactor.Commands
 {
@@ -30,7 +31,7 @@ namespace CodeRefactor.Commands
             ScintillaControl sci = SciControl == null ? PluginBase.MainForm.CurrentDocument.SciControl : SciControl;
             Int32 pos = sci.CurrentPos;
             List<MemberModel> imports = new List<MemberModel>(context.CurrentModel.Imports.Items);
-            int cppPpStyle = (int)ScintillaNet.Lexers.CPP.PREPROCESSOR;
+            int cppPpStyle = (int)CPP.PREPROCESSOR;
             for (Int32 i = imports.Count - 1; i >= 0; i--)
             {
                 bool isPP = sci.LineIsInPreprocessor(sci, cppPpStyle, imports[i].LineTo);

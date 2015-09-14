@@ -1,11 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
 using FlashDebugger.Properties;
-using PluginCore.Localization;
 using PluginCore;
+using PluginCore.Localization;
 using PluginCore.Managers;
 
 namespace FlashDebugger
@@ -157,32 +157,32 @@ namespace FlashDebugger
             toolStrip.Items.AddRange(m_ToolStripButtons);
         }
 
-        public void OpenLocalVariablesPanel(Object sender, System.EventArgs e)
+        public void OpenLocalVariablesPanel(Object sender, EventArgs e)
         {
             PanelsHelper.localsPanel.Show();
         }
 
-        public void OpenBreakPointPanel(Object sender, System.EventArgs e)
+        public void OpenBreakPointPanel(Object sender, EventArgs e)
         {
             PanelsHelper.breakPointPanel.Show();
         }
 
-        public void OpenStackframePanel(Object sender, System.EventArgs e)
+        public void OpenStackframePanel(Object sender, EventArgs e)
         {
             PanelsHelper.stackframePanel.Show();
         }
 
-        public void OpenWatchPanel(Object sender, System.EventArgs e)
+        public void OpenWatchPanel(Object sender, EventArgs e)
         {
             PanelsHelper.watchPanel.Show();
         }
 
-        public void OpenImmediatePanel(Object sender, System.EventArgs e)
+        public void OpenImmediatePanel(Object sender, EventArgs e)
         {
             PanelsHelper.immediatePanel.Show();
         }
 
-        public void OpenThreadsPanel(Object sender, System.EventArgs e)
+        public void OpenThreadsPanel(Object sender, EventArgs e)
         {
             PanelsHelper.threadsPanel.Show();
         }

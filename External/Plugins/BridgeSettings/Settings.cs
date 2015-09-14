@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using System.ComponentModel;
-using PluginCore.Localization;
-using PluginCore.Bridge;
 using System.Text.RegularExpressions;
+using PluginCore.Bridge;
+using PluginCore.Localization;
 
 namespace BridgeSettings
 {

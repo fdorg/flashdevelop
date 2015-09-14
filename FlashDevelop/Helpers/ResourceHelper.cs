@@ -1,12 +1,6 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Drawing;
-using System.Resources;
 using System.Reflection;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
 
 namespace FlashDevelop.Helpers
 {

@@ -8,9 +8,7 @@
  **/
 #endregion
 
-
 using System;
-
 
 namespace LitJson
 {

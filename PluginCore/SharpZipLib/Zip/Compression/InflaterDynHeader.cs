@@ -36,7 +36,6 @@
 // exception statement from your version.
 
 using System;
-
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace ICSharpCode.SharpZipLib.Zip.Compression 

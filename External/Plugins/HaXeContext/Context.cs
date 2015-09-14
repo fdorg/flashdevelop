@@ -1580,7 +1580,7 @@ namespace HaXeContext
             {
                 command = Regex.Replace(command, "[\\r\\n]\\s*\\*", "", RegexOptions.Singleline);
                 command = " " + MainForm.ProcessArgString(command) + " ";
-                if (command == null || command.Length == 0)
+                if (string.IsNullOrEmpty(command))
                 {
                     if (!failSilently)
                         throw new Exception(TextHelper.GetString("Info.InvalidQuickBuildCommand"));

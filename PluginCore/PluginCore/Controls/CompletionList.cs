@@ -256,7 +256,7 @@ namespace PluginCore.Controls
             if (cl.Items.Count == 0) return;
 
             // measure control
-            if (needResize && widestLabel != null && widestLabel.Length > 0)
+            if (needResize && !string.IsNullOrEmpty(widestLabel))
             {
                 needResize = false;
                 Graphics g = cl.CreateGraphics();

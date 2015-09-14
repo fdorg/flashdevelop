@@ -1,13 +1,8 @@
 using System;
-using System.Text;
-using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Collections.Generic;
 using System.Windows.Forms.Design;
 using PluginCore.Localization;
-using PluginCore.Managers;
-using PluginCore;
 
 namespace FlashLogViewer
 {

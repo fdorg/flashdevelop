@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
+using System.Xml;
 
 namespace ProjectManager.Projects.AS3
 {
@@ -53,7 +52,7 @@ namespace ProjectManager.Projects.AS3
         // process AS3-specific stuff
         protected override void ProcessNode(string name)
         {
-            if (NodeType == System.Xml.XmlNodeType.Element)
+            if (NodeType == XmlNodeType.Element)
             switch (name)
             {
                 case "build": ReadBuildOptions(); break;

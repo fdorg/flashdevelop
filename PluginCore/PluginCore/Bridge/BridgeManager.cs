@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PluginCore.Bridge;
+﻿using System.IO;
 using PluginCore.Managers;
-using System.IO;
 
 namespace PluginCore.Bridge
 {

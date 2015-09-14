@@ -1,9 +1,5 @@
-using System;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Collections.Generic;
-using PluginCore.Managers;
 using PluginCore;
 using PluginCore.Helpers;
 

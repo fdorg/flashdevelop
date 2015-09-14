@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml;
+using ProjectManager.Controls;
 using ProjectManager.Projects;
 
 namespace LoomContext.Projects
@@ -32,9 +34,9 @@ namespace LoomContext.Projects
 
         public new LoomOptions CompilerOptions { get { return (LoomOptions)base.CompilerOptions; } }
 
-        public override ProjectManager.Controls.PropertiesDialog CreatePropertiesDialog()
+        public override PropertiesDialog CreatePropertiesDialog()
         {
-            return new LoomContext.Projects.LoomPropertiesDialog();
+            return new LoomPropertiesDialog();
         }
 
         public override void ValidateBuild(out string error)
@@ -165,7 +167,7 @@ namespace LoomContext.Projects
             {
                 return reader.ReadProject() as LoomProject;
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.",
                     exception.LineNumber, exception.LinePosition);

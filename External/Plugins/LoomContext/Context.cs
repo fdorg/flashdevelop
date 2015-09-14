@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ASCompletion.Model;
-using ASCompletion.Context;
-using PluginCore;
 using System.IO;
+using System.Text.RegularExpressions;
+using ASCompletion.Completion;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using PluginCore.Controls;
-using System.Text.RegularExpressions;
-using ASCompletion.Completion;
+using ScintillaNet;
 
 namespace LoomContext
 {
@@ -322,7 +322,7 @@ namespace LoomContext
             return fullList;
         }
 
-        public override bool OnCompletionInsert(ScintillaNet.ScintillaControl sci, int position, string text, char trigger)
+        public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
         {
             if (text == "Dictionary")
             {

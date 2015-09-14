@@ -1,14 +1,11 @@
-using System;
-using System.Drawing;
-using System.Reflection;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows.Forms;
-using PluginCore.Utilities;
-using PluginCore;
-using ProjectManager.Projects;
+using System.Drawing;
 using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Utilities;
 
 namespace ProjectManager.Controls
 {
@@ -218,31 +215,31 @@ namespace ProjectManager.Controls
 
         public static FDImage GetImageForFile(string file)
         {
-            if (file == null || file == string.Empty)
-                return Icons.BlankFile;
+            if (string.IsNullOrEmpty(file))
+                return BlankFile;
             string ext = Path.GetExtension(file).ToLower();
             if (FileInspector.IsActionScript(file, ext))
-                return Icons.ActionScript;
+                return ActionScript;
             else if (FileInspector.IsHaxeFile(file, ext))
-                return Icons.HaxeFile;
+                return HaxeFile;
             else if (FileInspector.IsMxml(file, ext))
-                return Icons.MxmlFile;
+                return MxmlFile;
             else if (FileInspector.IsFont(file, ext))
-                return Icons.Font;
+                return Font;
             else if (FileInspector.IsImage(file, ext) || ext == ".ico")
-                return Icons.ImageResource;
+                return ImageResource;
             else if (FileInspector.IsSwf(file, ext))
-                return Icons.SwfFile;
+                return SwfFile;
             else if (FileInspector.IsSwc(file, ext))
-                return Icons.SwcFile;
+                return SwcFile;
             else if (FileInspector.IsHtml(file, ext))
-                return Icons.HtmlFile;
+                return HtmlFile;
             else if (FileInspector.IsXml(file, ext))
-                return Icons.XmlFile;
+                return XmlFile;
             else if (FileInspector.IsText(file, ext))
-                return Icons.TextFile;
+                return TextFile;
             else if (FileInspector.IsFLA(file, ext))
-                return Icons.FlashCS3;
+                return FlashCS3;
             else
                 return ExtractIconIfNecessary(file);
         }

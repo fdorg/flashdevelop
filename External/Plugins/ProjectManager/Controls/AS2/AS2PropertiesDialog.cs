@@ -93,7 +93,7 @@ namespace ProjectManager.Controls.AS2
 
         protected override bool Apply()
         {
-            if (injectionCheckBox.Checked && inputSwfBox.Text.Length < 1)
+            if (injectionCheckBox.Checked && inputSwfBox.Text.Length == 0)
             {
                 string msg = TextHelper.GetString("Info.SpecifyInputSwfForInjection");
                 ErrorManager.ShowInfo(msg);

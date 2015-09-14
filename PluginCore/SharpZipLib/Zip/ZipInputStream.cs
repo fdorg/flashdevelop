@@ -42,11 +42,9 @@
 
 using System;
 using System.IO;
-
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-
 #if !NETCF_1_0
 using ICSharpCode.SharpZipLib.Encryption;
 #endif

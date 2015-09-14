@@ -1,12 +1,7 @@
 // $ANTLR 3.1.1 MXMLLexer.g3 2015-02-17 22:19:22
 
-   using System.Collections.Generic;
-
-
-using System;
+using System.Collections.Generic;
 using Antlr.Runtime;
-using IList         = System.Collections.IList;
-using ArrayList     = System.Collections.ArrayList;
 using Stack         = Antlr.Runtime.Collections.StackList;
 
 

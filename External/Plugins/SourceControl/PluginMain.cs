@@ -1,16 +1,15 @@
 using System;
-using System.IO;
-using System.Drawing;
 using System.ComponentModel;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using SourceControl.Actions;
-using ProjectManager.Projects;
-using ProjectManager.Actions;
-using ProjectManager;
+using System.IO;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ProjectManager;
+using ProjectManager.Actions;
+using ProjectManager.Projects;
+using SourceControl.Actions;
 
 namespace SourceControl
 {

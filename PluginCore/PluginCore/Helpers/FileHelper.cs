@@ -1,13 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Utilities;
-using PluginCore.Managers;
 using PluginCore.Localization;
-using PluginCore;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace PluginCore.Helpers
 {

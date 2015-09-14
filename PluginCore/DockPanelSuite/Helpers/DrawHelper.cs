@@ -1,8 +1,8 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
+using PluginCore;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -33,7 +33,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             
             int curveSize = 6;
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            String tabStyle = PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
             if (tabStyle == "Rect" || tabStyle == "Block")
             {
                 curveSize = 1;
