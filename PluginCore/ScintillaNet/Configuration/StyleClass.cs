@@ -44,7 +44,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (inheritstyle != null && !inheritstyle.Equals(""))
+                if (!string.IsNullOrEmpty(inheritstyle))
                 {
                     return _parent.MasterScintilla.GetStyleClass(inheritstyle);
                 }
