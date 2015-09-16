@@ -1152,7 +1152,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Returns the chracter at the caret posiion.
+        /// Returns the chracter at the caret position.
         /// </summary>
         public char CurrentChar
         {
@@ -2416,7 +2416,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Sets the focud to the control
+        /// Sets the focus to the control
         /// </summary>
         public new bool Focus()
         {
