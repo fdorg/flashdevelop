@@ -156,7 +156,7 @@ namespace ASCompletion
         /**
         * Handles the incoming events
         */
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             try
             {

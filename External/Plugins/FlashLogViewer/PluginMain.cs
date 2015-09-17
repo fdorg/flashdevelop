@@ -111,7 +111,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             StartType startType = this.settingObject.TrackingStartType;
             switch (e.Type)

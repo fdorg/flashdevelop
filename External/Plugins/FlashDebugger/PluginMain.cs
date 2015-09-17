@@ -117,7 +117,7 @@ namespace FlashDebugger
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (debugManager == null) return;
             switch (e.Type)
