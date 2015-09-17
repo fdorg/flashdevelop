@@ -270,7 +270,7 @@ namespace ASCompletion
 
                         if (command.StartsWith("ASCompletion."))
                         {
-                            string cmdData = (de.Data is string) ? (string)de.Data : null;
+                            string cmdData = de.Data as string;
 
                             // add a custom classpath
                             if (command == "ASCompletion.ClassPath")
