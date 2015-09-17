@@ -736,7 +736,6 @@ namespace FlashDevelop
         {
             try
             {
-                String appman = Path.Combine(PathHelper.BaseDir, ".appman");
                 NotifyEvent ne = new NotifyEvent(EventType.AppChanges);
                 EventManager.DispatchEvent(this, ne);
             }
@@ -1049,7 +1048,6 @@ namespace FlashDevelop
         {
             if (this.CurrentDocument == null) return;
             this.CurrentDocument.Activate(); // Activate the current document
-            TabbedDocument document = (TabbedDocument)this.CurrentDocument;
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -1059,7 +1057,6 @@ namespace FlashDevelop
         private void OnMainFormGotFocus(Object sender, System.EventArgs e)
         {
             if (this.CurrentDocument == null) return;
-            TabbedDocument document = (TabbedDocument)this.CurrentDocument;
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -3004,7 +3001,7 @@ namespace FlashDevelop
             {
                 ToolStripItem button = (ToolStripItem)sender;
                 String url = this.ProcessArgString(((ItemData)button.Tag).Tag);
-                DockContent document = this.CreateCustomDocument(browser);
+                this.CreateCustomDocument(browser);
                 if (url.Trim() != "") browser.WebBrowser.Navigate(url);
                 else browser.WebBrowser.GoHome();
             }
@@ -3167,7 +3164,6 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
                 ScintillaControl sci = Globals.SciControl;
                 sci.SaveBOM = !sci.SaveBOM;
                 this.OnScintillaControlUpdateControl(sci);

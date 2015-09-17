@@ -729,7 +729,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             rectTab.X -= rectTab.Height / 2;
             rectTab.Intersect(TabsRectangle);
             rectTab = RectangleToScreen(DrawHelper.RtlTransform(this, rectTab));
-            int y = rectTab.Top;
             Rectangle rectPaneClient = DockPane.RectangleToScreen(DockPane.ClientRectangle);
 
             GraphicsPath path = new GraphicsPath();
@@ -748,7 +747,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             Rectangle rectTab = GetTabRectangle(index);
             rectTab.Intersect(TabsRectangle);
             rectTab = RectangleToScreen(DrawHelper.RtlTransform(this, rectTab));
-            int y = rectTab.Top;
             Rectangle rectPaneClient = DockPane.RectangleToScreen(DockPane.ClientRectangle);
 
             GraphicsPath path = new GraphicsPath();
@@ -1517,7 +1515,6 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         protected internal override int HitTest(Point ptMouse)
         {
-            Rectangle rectTabStrip = TabsRectangle;
             if (!TabsRectangle.Contains(ptMouse))
                 return -1;
 

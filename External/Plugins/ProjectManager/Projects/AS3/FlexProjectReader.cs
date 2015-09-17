@@ -203,7 +203,6 @@ namespace ProjectManager.Projects.AS3
         private void ReadModules()
         {
             ReadStartElement("modules");
-            PathCollection targets = new PathCollection();
             while (Name == "module")
             {
                 string app = GetAttribute("application") ?? "";

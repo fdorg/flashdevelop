@@ -660,7 +660,6 @@ namespace CssCompletion
 
             // find where to include the closing brace
             int startIndent = indent;
-            int newIndent = indent + Sci.TabWidth;
             int count = Sci.LineCount;
             int lastLine = line;
             int position;

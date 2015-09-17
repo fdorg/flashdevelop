@@ -159,7 +159,6 @@ namespace AirProperties
         {
             SetUsesSdk();
 
-            string xml = backDoc.OuterXml;
             var builder = new StringBuilder();
             var settings = new XmlWriterSettings()
             {

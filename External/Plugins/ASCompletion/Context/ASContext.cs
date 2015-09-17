@@ -344,7 +344,6 @@ namespace ASCompletion.Context
         /// <param name="classpath">Additional classpath</param>
         static public void SetLanguageClassPath(ContextSetupInfos setup)
         {
-            string lang = setup.Lang.ToLower();
             foreach (RegisteredContext reg in allContexts)
             {
                 if (reg.Language == setup.Lang) reg.Context.Setup(setup);

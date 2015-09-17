@@ -255,7 +255,6 @@ namespace ProjectManager.Actions
                                 if (entry.IsFile)
                                 {
                                     Stream zip = zFile.GetInputStream(entry);
-                                    String ext = Path.GetExtension(newPath);
                                     String dirPath = Path.GetDirectoryName(newPath);
                                     if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
                                     FileStream extracted = new FileStream(newPath, FileMode.Create);

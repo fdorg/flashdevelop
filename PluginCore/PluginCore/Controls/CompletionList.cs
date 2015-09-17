@@ -158,7 +158,6 @@ namespace PluginCore.Controls
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable) return;
             ScintillaControl sci = doc.SciControl;
-            ListBox cl = completionList;
             try
             {
                 if ((itemList == null) || (itemList.Count == 0))
@@ -720,7 +719,6 @@ namespace PluginCore.Controls
             }
 
             // loose
-            int n = label.Length;
             int firstChar = label.IndexOf(word[0].ToString(), StringComparison.OrdinalIgnoreCase);
             int i = 1;
             p = firstChar;

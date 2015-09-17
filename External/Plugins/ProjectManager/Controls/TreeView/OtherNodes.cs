@@ -27,7 +27,6 @@ namespace ProjectManager.Controls.TreeView
             RemoveReferences();
 
             base.Refresh(recursive);
-            FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
             NodeFont = new Font(PluginBase.Settings.DefaultFont, FontStyle.Bold);
             Text = ProjectRef.Name + " (" + ProjectRef.LanguageDisplayName + ")";
             ImageIndex = Icons.Project.Index;

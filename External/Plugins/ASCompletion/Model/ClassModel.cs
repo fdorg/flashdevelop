@@ -439,7 +439,6 @@ namespace ASCompletion.Model
             else
             {
                 // modifiers
-                FlagType ft = ofClass.Flags;
                 Visibility acc = ofClass.Access;
                 string modifiers = "";
                 if ((ofClass.Flags & FlagType.Intrinsic) > 0)

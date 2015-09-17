@@ -216,7 +216,6 @@ namespace PluginCore.Controls
         {
             Point ctrlPos = ctrl.PointToScreen(new Point());
             Point pos = Cursor.Position;
-            Rectangle bounds = ctrl.Bounds;
             return new Point(pos.X - ctrlPos.X, pos.Y - ctrlPos.Y);
         }
 

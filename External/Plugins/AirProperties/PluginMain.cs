@@ -206,7 +206,6 @@ namespace AirProperties
         public void UpdateMenuItems()
         {
             Boolean pluginActive = false;
-            ToolStrip mainToolStrip = (ToolStrip)PluginBase.MainForm.ToolStrip;
             if (this.pluginMenuItem == null || this.pmMenuButton == null) return;
             if (PluginBase.CurrentProject != null)
             {

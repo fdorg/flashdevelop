@@ -281,7 +281,6 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                ToolStripMenuItem reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 if (Globals.PreviousDocuments.Contains(file))
                 {
                     Globals.PreviousDocuments.Remove(file);

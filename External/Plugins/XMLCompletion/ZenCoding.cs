@@ -60,7 +60,6 @@ namespace XMLCompletion
         private static ZenSettings ReadZenSettings(JsonReader reader)
         {
             ZenSettings settings = new ZenSettings();
-            Type objType = settings.GetType();
 
             reader.Read();
             if (reader.Token != JsonToken.ObjectStart)

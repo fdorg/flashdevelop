@@ -401,7 +401,7 @@ namespace PluginCore.Controls
 
                 pMenu = CreatePopupMenu();
 
-                int nResult = _oContextMenu.QueryContextMenu(
+                _oContextMenu.QueryContextMenu(
                     pMenu,
                     0,
                     CMD_FIRST,
@@ -489,7 +489,7 @@ namespace PluginCore.Controls
 
                 pMenu = CreatePopupMenu();
 
-                int nResult = _oContextMenu.QueryContextMenu(
+                _oContextMenu.QueryContextMenu(
                     pMenu,
                     0,
                     CMD_FIRST,

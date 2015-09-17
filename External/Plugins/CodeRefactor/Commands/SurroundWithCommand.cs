@@ -32,8 +32,6 @@ namespace CodeRefactor.Commands
             sci.BeginUndoAction();
             try
             {
-                IASContext context = ASContext.Context;
-
                 string selection = sci.SelText;
                 if (string.IsNullOrEmpty(selection))
                 {

@@ -713,8 +713,7 @@ namespace FlashDevelop.Dialogs
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            Int32 column = match.Column;
-                            TraceManager.Add(entry.Key + ":" + match.Line.ToString() + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");

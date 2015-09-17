@@ -464,8 +464,7 @@ namespace ResultsPanel
         {
             if (this.entriesView.SelectedItems.Count < 1) return;
             ListViewItem item = this.entriesView.SelectedItems[0];
-            if (item == null) return; 
-            Match match = (Match)item.Tag;
+            if (item == null) return;
             String file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
             file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             file = PathHelper.GetLongPathName(file);

@@ -1476,7 +1476,7 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                DockContent dc = ASContext.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
+                ASContext.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
                 Sci = ASContext.CurSciControl;
 
                 FileModel fileModel = new FileModel();
@@ -1522,7 +1522,7 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                DockContent dc = ASContext.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
+                ASContext.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
                 Sci = ASContext.CurSciControl;
 
                 FileModel fileModel = new FileModel(funcResult.Type.InFile.FileName);
@@ -1715,7 +1715,7 @@ namespace ASCompletion.Completion
                 template = TemplateUtils.GetTemplate("ISetter");
             }
 
-            DockContent dc = ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
+            ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
             Sci = ASContext.CurSciControl;
 
             MemberModel latest = GetLatestMemberForFunction(aType, Visibility.Default, new MemberModel());
@@ -1955,7 +1955,6 @@ namespace ASCompletion.Completion
             StringBuilder membersString = new StringBuilder();
             StringBuilder oneMembersString;
             int len = 0;
-            int indent = Sci.GetLineIndentation(Sci.CurrentLine);
             foreach (MemberModel m in members)
             {
                 if (((m.Flags & FlagType.Variable) > 0 || (m.Flags & FlagType.Getter) > 0)
@@ -2508,7 +2507,7 @@ namespace ASCompletion.Completion
                 AddLookupPosition();
                 lookupPosition = -1;
 
-                DockContent dc = ASContext.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
+                ASContext.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
                 Sci = ASContext.CurSciControl;
                 isOtherClass = true;
 
@@ -2660,8 +2659,6 @@ namespace ASCompletion.Completion
         public static void GenerateExtractVariable(ScintillaControl Sci, string NewName)
         {
             FileModel cFile;
-            IASContext context = ASContext.Context;
-            Int32 pos = Sci.CurrentPos;
 
             string expression = Sci.SelText.Trim(new char[] { '=', ' ', '\t', '\n', '\r', ';', '.' });
             expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
@@ -2766,8 +2763,6 @@ namespace ASCompletion.Completion
                 Sci.SelectionEnd);
             Sci.CurrentPos = Sci.SelectionEnd;
 
-            Int32 pos = Sci.CurrentPos;
-
             int lineStart = Sci.LineFromPosition(Sci.SelectionStart);
             int lineEnd = Sci.LineFromPosition(Sci.SelectionEnd);
             int firstLineIndent = Sci.GetLineIndentation(lineStart);
@@ -2792,8 +2787,6 @@ namespace ASCompletion.Completion
             cFile = ASContext.Context.CurrentModel;
             ASFileParser parser = new ASFileParser();
             parser.ParseSrc(cFile, Sci.Text);
-
-            bool isAs3 = cFile.Context.Settings.LanguageId == "AS3";
 
             FoundDeclaration found = GetDeclarationAtLine(Sci, lineStart);
             if (found == null || found.member == null)
@@ -4244,14 +4237,12 @@ namespace ASCompletion.Completion
         /// Generates all the missing imports in the given types list
         /// </summary>
         /// <param name="typesUsed">Types to import if needed</param>
-        /// <param name="fromFile">Resolve types to import from this other file</param>
         /// <param name="atLine">Current line in editor</param>
         /// <returns>Inserted characters count</returns>
         private static int AddImportsByName(List<string> typesUsed, int atLine)
         {
             int length = 0;
             IASContext context = ASContext.Context;
-            FileModel inFile = context.CurrentModel;
             List<string> addedTypes = new List<string>();
             string cleanType = null;
             foreach (string type in typesUsed)
