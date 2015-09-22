@@ -85,6 +85,7 @@ namespace ProjectManager.Controls
             TargetBuildSelector = new ToolStripComboBoxEx();
             TargetBuildSelector.Name = "TargetBuildSelector";
             TargetBuildSelector.ToolTipText = TextHelper.GetString("ToolTip.TargetBuild");
+            TargetBuildSelector.DropDownStyle = ComboBoxStyle.DropDownList;
             TargetBuildSelector.AutoSize = false;
             TargetBuildSelector.Width = ScaleHelper.Scale(85);
             TargetBuildSelector.Margin = new Padding(1, 0, 0, 0);
