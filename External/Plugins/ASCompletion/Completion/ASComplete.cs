@@ -3958,7 +3958,6 @@ namespace ASCompletion.Completion
             // let the context handle the insertion
             if (ASContext.Context.OnCompletionInsert(sci, position, text, trigger))
                 return;
-
             // event inserted
             if (item is EventItem)
             {
@@ -3969,18 +3968,19 @@ namespace ASCompletion.Completion
             // default handling
             if (ASContext.Context.Settings != null)
             {
+                int textEndPosition = position + text.Length;
                 // was a fully qualified type inserted?
-                ASExpr expr = GetExpression(sci, position + text.Length);
+                ASExpr expr = GetExpression(sci, textEndPosition);
                 if (expr.Value == null) return;
-
+                ASResult type = GetExpressionType(sci, textEndPosition);
+                if (type.IsPackage) return;
                 ContextFeatures features = ASContext.Context.Features;
 
                 // add ; for imports
                 if (" \n\t".IndexOf(trigger) >= 0 && expr.WordBefore != null 
                     && (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt))
                 {
-                    sci.InsertText(sci.CurrentPos, ";");
-                    sci.SetSel(sci.CurrentPos + 1, sci.CurrentPos + 1);
+                    if (!sci.GetLine(sci.CurrentLine).Contains(";")) sci.InsertText(sci.CurrentPos, ";");
                     return;
                 }
 
