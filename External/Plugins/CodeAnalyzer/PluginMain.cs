@@ -133,7 +133,7 @@ namespace CodeAnalyzer
             String dataPath = Path.Combine(PathHelper.DataDir, "CodeAnalyzer");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Decription");
+            this.pluginDesc = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>

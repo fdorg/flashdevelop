@@ -3570,7 +3570,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Standard Regeldatei für Flex PMD.</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>Fügt FlashDevelop Flex PMD Codeanalyse hinzu.</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
