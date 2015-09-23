@@ -213,7 +213,7 @@
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
-		<Name>Git For Windows</Name>
+		<Name>Git For Windows (x86)</Name>
 		<Version>2.5.3</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
@@ -229,7 +229,7 @@
 	</Entry>
     <Entry>
 		<Id>git4win</Id>
-		<Name>Git For Windows</Name>
+		<Name>Git For Windows (x64)</Name>
 		<Version>2.5.3</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 64-bit installer</Desc>
