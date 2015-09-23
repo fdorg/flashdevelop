@@ -3570,7 +3570,7 @@
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>为 Flex PMD 自定义默认规则文件。</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>集成 Flex PMD 代码分析器到 FlashDevelop。</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">

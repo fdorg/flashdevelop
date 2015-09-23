@@ -3575,7 +3575,7 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Flex PMD に使用するための既定のカスタムルールセットファイルを指定します。</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>FlashDevelop に Flex PMD コードアナライザ機能を統合します。</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
