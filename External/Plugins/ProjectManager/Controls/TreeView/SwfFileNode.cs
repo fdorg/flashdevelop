@@ -1,16 +1,14 @@
 using System;
-using System.IO;
-using System.Drawing;
 using System.Collections;
-using System.Diagnostics;
-using System.Windows.Forms;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Helpers;
-using System.ComponentModel;
 using System.Collections.Generic;
-using ProjectManager.Projects;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
 using SwfOp;
 using SwfOp.Utils;
 
@@ -23,7 +21,7 @@ namespace ProjectManager.Controls.TreeView
             Text = TextHelper.GetString("Info.Exploring");
             ImageIndex = SelectedImageIndex = Icons.Gear.Index;
             ForeColor = Color.Gray;
-            NodeFont = new Font(PluginCore.PluginBase.Settings.DefaultFont, FontStyle.Regular);
+            NodeFont = new Font(PluginBase.Settings.DefaultFont, FontStyle.Regular);
         }
 
         public void SetErrorText(string msg)

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
-using ASCompletion.Context;
+using PluginCore.Helpers;
 
 namespace ASCompletion.Model
 {
@@ -82,7 +82,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind Parse(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 switch (model.Type)
                 {
@@ -108,13 +108,13 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 Match m = ASFileParserRegexes.ValidObjectType.Match(comment);
                 if (m.Success)
                 {
                     if (!detectKindOnly)
-                        model.Type = TypeCommentUtils.ObjectType + "@" + m.Groups["type"].Value;
+                        model.Type = ObjectType + "@" + m.Groups["type"].Value;
                     return TypeDefinitionKind.TypedObject;
                 }
             }
@@ -130,7 +130,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 Match m = ASFileParserRegexes.ValidTypeName.Match(comment);
                 if (m.Success)
@@ -153,7 +153,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != ""
+            if (model != null && !string.IsNullOrEmpty(comment)
                 && (model.Flags & FlagType.Function) == 0)
             {
                 MemberModel fnModel = extractTypedCallbackModel(comment);
@@ -201,7 +201,7 @@ namespace ASCompletion.Model
         /// </summary>
         private static MemberModel extractTypedCallbackModel(string comment)
         {
-            if (comment == null || comment.Length == 0)
+            if (string.IsNullOrEmpty(comment))
                 return null;
 
             int idxBraceOp = comment.IndexOf("(");
@@ -244,7 +244,7 @@ namespace ASCompletion.Model
             for (i = 0; i < l; i++)
             {
                 string pName = pMatches[i].Groups["pName"].Value;
-                if (pName != null && pName.Length > 0)
+                if (!string.IsNullOrEmpty(pName))
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
@@ -257,7 +257,7 @@ namespace ASCompletion.Model
                 }
 
                 string pType = pMatches[i].Groups["pType"].Value;
-                if (pType != null && pType.Length > 0)
+                if (!string.IsNullOrEmpty(pType))
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
@@ -270,7 +270,7 @@ namespace ASCompletion.Model
                 }
 
                 string pVal = pMatches[i].Groups["pVal"].Value;
-                if (pVal != null && pVal.Length > 0)
+                if (!string.IsNullOrEmpty(pVal))
                 {
                     if (qStrRepls.ContainsKey(pVal))
                     {
@@ -401,7 +401,7 @@ namespace ASCompletion.Model
 
             string typeClassifier;
             string typeComment;
-            if (!ASFileParserUtils.ParseTypeDefinition(typeDefinition, out typeClassifier, out typeComment))
+            if (!ParseTypeDefinition(typeDefinition, out typeClassifier, out typeComment))
                 return TypeDefinitionKind.Null;
 
             model.Type = typeClassifier;
@@ -428,7 +428,7 @@ namespace ASCompletion.Model
             {
                 if (File.Exists(fileModel.FileName))
                 {
-                    src = PluginCore.Helpers.FileHelper.ReadFile(fileModel.FileName);
+                    src = FileHelper.ReadFile(fileModel.FileName);
                     ASFileParser parser = new ASFileParser();
                     fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
                     parser.ParseSrc(fileModel, src);

@@ -183,7 +183,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (show)
                 {
                     Bounds = DockPanel.GetAutoHideWindowBounds(new Rectangle(-rectTarget.Width, -rectTarget.Height, rectTarget.Width, rectTarget.Height));
-                    if (Visible == false)
+                    if (!Visible)
                         Visible = true;
                     PerformLayout();
                 }
@@ -191,7 +191,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 SuspendLayout();
 
                 LayoutAnimateWindow(rectSource);
-                if (Visible == false)
+                if (!Visible)
                     Visible = true;
 
                 int speedFactor = 1;

@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PluginCore.Helpers
 {

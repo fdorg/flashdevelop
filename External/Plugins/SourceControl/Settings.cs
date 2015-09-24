@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Windows.Forms.Design;
 using PluginCore.Localization;
-using System.Drawing.Design;
 
 namespace SourceControl
 {

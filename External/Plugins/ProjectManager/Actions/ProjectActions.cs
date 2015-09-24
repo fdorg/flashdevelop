@@ -1,22 +1,21 @@
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ICSharpCode.SharpZipLib.Zip;
+using Ookii.Dialogs;
 using PluginCore;
-using PluginCore.Managers;
+using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using ProjectManager.Controls;
+using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS2;
 using ProjectManager.Projects.AS3;
-using PluginCore.Helpers;
-using ICSharpCode.SharpZipLib.Zip;
-using ProjectManager.Controls.TreeView;
-using System.Text.RegularExpressions;
-using Ookii.Dialogs;
 
 namespace ProjectManager.Actions
 {
@@ -222,7 +221,7 @@ namespace ProjectManager.Actions
             descriptor = Path.Combine(path, descriptor);
             var fileInfo = FileHelper.GetEncodingFileInfo(descriptor);
             string contents = Regex.Replace(fileInfo.Contents, "<content>\\[This value will be overwritten by (Flex|Flash) Builder in the output app.xml]</content>", "<content>" + Path.GetFileName(project.OutputPath) + "</content>");
-            FileHelper.WriteFile(descriptor, contents, System.Text.Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
+            FileHelper.WriteFile(descriptor, contents, Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
         }
 
         private void PatchProject(Project project)
@@ -368,9 +367,9 @@ namespace ProjectManager.Actions
                         }
                 }
             }
-            else if (PluginCore.PlatformData.SupportedLanguages.ContainsKey("as3"))
+            else if (PlatformData.SupportedLanguages.ContainsKey("as3"))
             {
-                var targets = PluginCore.PlatformData.SupportedLanguages["as3"].Platforms;
+                var targets = PlatformData.SupportedLanguages["as3"].Platforms;
                 var flashPlatform = targets[PlatformData.FLASHPLAYER_PLATFORM];
                 version = flashPlatform.LastVersion.Value;
             }

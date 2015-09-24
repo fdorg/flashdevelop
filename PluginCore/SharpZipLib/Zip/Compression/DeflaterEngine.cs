@@ -38,7 +38,6 @@
 // exception statement from your version.
 
 using System;
-
 using ICSharpCode.SharpZipLib.Checksums;
 
 namespace ICSharpCode.SharpZipLib.Zip.Compression 
@@ -234,7 +233,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                 length = MAX_DIST;
             }
             
-            System.Array.Copy(buffer, offset, window, strstart, length);
+            Array.Copy(buffer, offset, window, strstart, length);
             
             UpdateHash();
             --length;
@@ -318,12 +317,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                 throw new ArgumentOutOfRangeException("level");
             }
 
-            goodLength = DeflaterConstants.GOOD_LENGTH[level];
-            max_lazy   = DeflaterConstants.MAX_LAZY[level];
-            niceLength = DeflaterConstants.NICE_LENGTH[level];
-            max_chain  = DeflaterConstants.MAX_CHAIN[level];
+            goodLength = GOOD_LENGTH[level];
+            max_lazy   = MAX_LAZY[level];
+            niceLength = NICE_LENGTH[level];
+            max_chain  = MAX_CHAIN[level];
             
-            if (DeflaterConstants.COMPR_FUNC[level] != compressionFunction) {
+            if (COMPR_FUNC[level] != compressionFunction) {
 
 #if DebugDeflation
                 if (DeflaterConstants.DEBUGGING) {
@@ -381,7 +380,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
             /* If there is not enough lookahead, but still some input left,
              * read in the input
              */
-            while (lookahead < DeflaterConstants.MIN_LOOKAHEAD && inputOff < inputEnd) 
+            while (lookahead < MIN_LOOKAHEAD && inputOff < inputEnd) 
             {
                 int more = 2 * WSIZE - lookahead - strstart;
                 
@@ -390,7 +389,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                     more = inputEnd - inputOff;
                 }
                 
-                System.Array.Copy(inputBuf, inputOff, window, strstart + lookahead, more);
+                Array.Copy(inputBuf, inputOff, window, strstart + lookahead, more);
                 adler.Update(inputBuf, inputOff, more);
                 
                 inputOff += more;
@@ -580,12 +579,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
             
             int storedLength = strstart - blockStart;
             
-            if ((storedLength >= DeflaterConstants.MAX_BLOCK_SIZE) || // Block is full
+            if ((storedLength >= MAX_BLOCK_SIZE) || // Block is full
                 (blockStart < WSIZE && storedLength >= MAX_DIST) ||   // Block may move out of window
                 flush) {
                 bool lastBlock = finish;
-                if (storedLength > DeflaterConstants.MAX_BLOCK_SIZE) {
-                    storedLength = DeflaterConstants.MAX_BLOCK_SIZE;
+                if (storedLength > MAX_BLOCK_SIZE) {
+                    storedLength = MAX_BLOCK_SIZE;
                     lastBlock = false;
                 }
                 

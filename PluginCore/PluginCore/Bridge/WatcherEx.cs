@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using PluginCore.Bridge;
-using PluginCore.Managers;
 using System.Text.RegularExpressions;
+using PluginCore.Managers;
 
 namespace PluginCore.Bridge
 {

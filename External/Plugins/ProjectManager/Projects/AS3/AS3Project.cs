@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml;
 using PluginCore.Helpers;
+using ProjectManager.Controls;
+using ProjectManager.Controls.AS3;
 
 namespace ProjectManager.Projects.AS3
 {
@@ -33,9 +36,9 @@ namespace ProjectManager.Projects.AS3
 
         public new MxmlcOptions CompilerOptions { get { return (MxmlcOptions)base.CompilerOptions; } }
 
-        public override ProjectManager.Controls.PropertiesDialog CreatePropertiesDialog()
+        public override PropertiesDialog CreatePropertiesDialog()
         {
-            return new ProjectManager.Controls.AS3.AS3PropertiesDialog();
+            return new AS3PropertiesDialog();
         }
 
         public override void ValidateBuild(out string error)
@@ -104,7 +107,7 @@ namespace ProjectManager.Projects.AS3
         {
             try
             {
-                if (OutputPath != null && OutputPath.Length > 0 && File.Exists(GetAbsolutePath(OutputPath)))
+                if (!string.IsNullOrEmpty(OutputPath) && File.Exists(GetAbsolutePath(OutputPath)))
                     File.Delete(GetAbsolutePath(OutputPath));
                 return true;
             }
@@ -209,7 +212,7 @@ namespace ProjectManager.Projects.AS3
             {
                 return reader.ReadProject() as AS3Project;
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.",
                     exception.LineNumber, exception.LinePosition);

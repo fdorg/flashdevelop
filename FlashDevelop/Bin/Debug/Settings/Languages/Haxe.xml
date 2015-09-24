@@ -20,7 +20,7 @@
 			dynamic macro extern inline override private public static
 		</keyword-class>
 		<keyword-class name="haxe-additional-keywords4">
-			untyped cast trace __cpp__ __global__ __js__ __php__ __cs__ __java__ 
+			untyped cast trace __cpp__ __global__ __js__ __php__ __cs__ __java__ __new__
 		</keyword-class>
 		<keyword-class name="haxe-additional-keywords5">
 			super this

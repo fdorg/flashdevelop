@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using PluginCore.Managers;
-using PluginCore;
 
 namespace FlashDevelop.Managers
 {

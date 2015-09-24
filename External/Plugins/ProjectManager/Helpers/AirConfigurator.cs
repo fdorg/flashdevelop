@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using PluginCore.Helpers;
-using PluginCore.Utilities;
 
 namespace ProjectManager.Helpers
 {

@@ -1,13 +1,12 @@
 using System;
-using System.Runtime;
 using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class include : ConfigItem
     {
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string file;
         
     }

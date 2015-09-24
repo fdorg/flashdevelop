@@ -1,16 +1,11 @@
 using System;
+using System.Collections;
 using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
-using WeifenLuo.WinFormsUI;
+using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
-using PluginCore.Controls;
-using PluginCore;
-using System.Collections;
 
 namespace XMLCompletion
 {

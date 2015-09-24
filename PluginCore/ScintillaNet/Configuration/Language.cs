@@ -2,45 +2,44 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime;
 using System.Xml;
 using System.Xml.Serialization;
 using PluginCore.Helpers;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class Language : ConfigItem
     {
         public Lexer lexer;
         
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string name;
         
-        [XmlElementAttribute(ElementName="line-comment")]
+        [XmlElement(ElementName="line-comment")]
         public string linecomment;
         
-        [XmlElementAttribute(ElementName="comment-start")]
+        [XmlElement(ElementName="comment-start")]
         public string commentstart;
         
-        [XmlElementAttribute(ElementName="comment-end")]
+        [XmlElement(ElementName="comment-end")]
         public string commentend;
         
-        [XmlElementAttribute(ElementName="file-extensions")]
+        [XmlElement(ElementName="file-extensions")]
         public string fileextensions;
         
-        [XmlElementAttribute(ElementName="character-class")]
+        [XmlElement(ElementName="character-class")]
         public CharacterClass characterclass;
 
-        [XmlElementAttribute(ElementName="editor-style")]
+        [XmlElement(ElementName="editor-style")]
         public EditorStyle editorstyle;
 
-        [XmlArrayAttribute("use-keywords")]
-        [XmlArrayItemAttribute("keyword")]
+        [XmlArray("use-keywords")]
+        [XmlArrayItem("keyword")]
         public UseKeyword[] usekeywords;
 
-        [XmlArrayAttribute("use-styles")]
-        [XmlArrayItemAttribute("style")]
+        [XmlArray("use-styles")]
+        [XmlArrayItem("style")]
         public UseStyle[] usestyles;
 
         public UseStyle GetUseStyle(int style)

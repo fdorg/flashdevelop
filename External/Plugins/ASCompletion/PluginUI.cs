@@ -555,8 +555,8 @@ namespace ASCompletion
                             names.Add(member.Name);
                         }
                     }
-
-                    foreach (MemberModel region in aFile.Regions) {
+                    foreach (MemberModel region in aFile.Regions)
+                    {
                         sb.Append(region.Name);
                         lines.Add(region.LineFrom);
                         names.Add(region.Name);
@@ -572,9 +572,10 @@ namespace ASCompletion
                 }
                 else
                 {
+                    int prevLinesCount = prevLines.Count;
                     for (int i = 0, count = lines.Count; i < count; i++)
                     {
-                        if (lines[i] == prevLines[i]) continue;
+                        if (i < prevLinesCount && lines[i] == prevLines[i]) continue;
                         UpdateTree(aFile, names, lines);
                         prevLines = lines;
                         break;
@@ -706,11 +707,13 @@ namespace ASCompletion
                     return;
 
                 var mapping = new Dictionary<string, string>();
-
+                int prevLinesCount = prevLines.Count;
                 for (int i = 0, count = newLines.Count; i < count; i++)
                 {
                     string name = modelNames[i];
-                    mapping[name + "@" + prevLines[i]] = name + "@" + newLines[i];
+                    string value = name + "@" + newLines[i];
+                    if (i < prevLinesCount) mapping[name + "@" + prevLines[i]] = value;
+                    else mapping[value] = value;
                 }
 
                 var tree = new Stack<TreeNodeCollection>();
@@ -741,7 +744,7 @@ namespace ASCompletion
             //if ((aClass.Flags & FlagType.TypeDef) > 0 && aClass.Members.Count == 0)
             //    folder.Text = "Defines"; // TODO need a better word I guess
 
-            while (aClass.ExtendsType != null && aClass.ExtendsType.Length > 0 
+            while (!string.IsNullOrEmpty(aClass.ExtendsType) 
                 && aClass.ExtendsType != "Object" 
                 && (!aClass.InFile.haXe || aClass.ExtendsType != "Dynamic"))
             {

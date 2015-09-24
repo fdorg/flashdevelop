@@ -717,7 +717,7 @@ namespace FileExplorer
             ListViewItem item = null;
             try
             {
-                if (e.CancelEdit || (e.Label == null) || (e.Label.Length == 0) || (e.Label == this.previousItemLabel))
+                if (e.CancelEdit || string.IsNullOrEmpty(e.Label) || e.Label == this.previousItemLabel)
                 {
                     e.CancelEdit = true;
                     return;

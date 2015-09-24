@@ -1,14 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Collections;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
+using FlashDevelop.Helpers;
+using PluginCore;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using FlashDevelop.Helpers;
 using ScintillaNet;
-using PluginCore;
 
 namespace FlashDevelop.Managers
 {
@@ -106,7 +104,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void ApplyAllShortcuts()
         {
-            ShortcutManager.UpdateAllShortcuts();
+            UpdateAllShortcuts();
             foreach (ShortcutItem item in RegisteredItems)
             {
                 if (item.Item != null)

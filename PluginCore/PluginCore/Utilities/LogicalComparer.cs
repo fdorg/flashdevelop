@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Collections;
 
 namespace PluginCore.Utilities
@@ -43,9 +42,9 @@ namespace PluginCore.Utilities
             if ((s1 == null) && (s2 == null)) return 0;
             else if (s1 == null) return -1;
             else if (s2 == null) return 1;
-            if ((s1.Length <= 0) && (s2.Length <= 0)) return 0;
-            else if (s1.Length <= 0) return -1;
-            else if (s2.Length <= 0) return 1;
+            if (s1.Length == 0 && s2.Length == 0) return 0;
+            else if (s1.Length == 0) return -1;
+            else if (s2.Length == 0) return 1;
             //special case
             bool sp1 = Char.IsLetterOrDigit(s1[0]);
             bool sp2 = Char.IsLetterOrDigit(s2[0]);

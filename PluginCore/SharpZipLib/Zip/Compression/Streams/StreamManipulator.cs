@@ -213,7 +213,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
             if (length > avail) {
                 length = avail;
             }
-            System.Array.Copy(window_, windowStart_, output, offset, length);
+            Array.Copy(window_, windowStart_, output, offset, length);
             windowStart_ += length;
             
             if (((windowStart_ - windowEnd_) & 1) != 0) {

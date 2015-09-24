@@ -35,7 +35,7 @@ namespace CodeRefactor.Commands
                 IASContext context = ASContext.Context;
 
                 string selection = sci.SelText;
-                if (selection == null || selection.Length == 0)
+                if (string.IsNullOrEmpty(selection))
                 {
                     return;
                 }

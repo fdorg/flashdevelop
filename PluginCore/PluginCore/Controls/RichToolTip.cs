@@ -1,15 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
-using ScintillaNet;
 using PluginCore.BBCode;
 using PluginCore.Managers;
-
+using ScintillaNet;
 
 namespace PluginCore.Controls
 {
@@ -70,17 +65,17 @@ namespace PluginCore.Controls
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
             // panel
             toolTip = new Panel();
-            toolTip.Location = new System.Drawing.Point(0,0);
-            toolTip.BackColor = System.Drawing.SystemColors.Info;
-            toolTip.ForeColor = System.Drawing.SystemColors.InfoText;
+            toolTip.Location = new Point(0,0);
+            toolTip.BackColor = SystemColors.Info;
+            toolTip.ForeColor = SystemColors.InfoText;
             toolTip.BorderStyle = BorderStyle.FixedSingle;
             toolTip.Visible = false;
             (mainForm as Form).Controls.Add(toolTip);
             // text
-            toolTipRTB = new System.Windows.Forms.RichTextBox();
-            toolTipRTB.Location = new System.Drawing.Point(2,1);
-            toolTipRTB.BackColor = System.Drawing.SystemColors.Info;
-            toolTipRTB.ForeColor = System.Drawing.SystemColors.InfoText;
+            toolTipRTB = new RichTextBox();
+            toolTipRTB.Location = new Point(2,1);
+            toolTipRTB.BackColor = SystemColors.Info;
+            toolTipRTB.ForeColor = SystemColors.InfoText;
             toolTipRTB.BorderStyle = BorderStyle.None;
             toolTipRTB.ScrollBars = RichTextBoxScrollBars.None;
             toolTipRTB.DetectUrls = false;
@@ -102,10 +97,10 @@ namespace PluginCore.Controls
             {
                 Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
                 Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
-                toolTip.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
-                toolTip.ForeColor = fore == Color.Empty ? System.Drawing.SystemColors.InfoText : fore;
-                toolTipRTB.ForeColor = fore == Color.Empty ? System.Drawing.SystemColors.InfoText : fore;
-                toolTipRTB.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
+                toolTip.BackColor = back == Color.Empty ? SystemColors.Info : back;
+                toolTip.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+                toolTipRTB.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+                toolTipRTB.BackColor = back == Color.Empty ? SystemColors.Info : back;
             }
         }
 
@@ -241,10 +236,10 @@ namespace PluginCore.Controls
 
             Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
-            toolTip.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
-            toolTip.ForeColor = fore == Color.Empty ? System.Drawing.SystemColors.InfoText : fore;
-            toolTipRTB.ForeColor = fore == Color.Empty ? System.Drawing.SystemColors.InfoText : fore;
-            toolTipRTB.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
+            toolTip.BackColor = back == Color.Empty ? SystemColors.Info : back;
+            toolTip.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+            toolTipRTB.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+            toolTipRTB.BackColor = back == Color.Empty ? SystemColors.Info : back;
 
             if (autoSize)
                 AutoSize();

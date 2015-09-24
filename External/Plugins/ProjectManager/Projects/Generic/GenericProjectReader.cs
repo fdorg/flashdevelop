@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ProjectManager.Projects.Generic
+﻿namespace ProjectManager.Projects.Generic
 {
     public class GenericProjectReader : ProjectReader
     {

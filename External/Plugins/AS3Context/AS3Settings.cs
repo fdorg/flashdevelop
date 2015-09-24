@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing.Design;
-using System.Windows.Forms.Design;
 using System.ComponentModel;
-using PluginCore.Localization;
-using PluginCore;
-using System.IO;
+using System.Drawing.Design;
+using ASCompletion.Settings;
 using Ookii.Dialogs;
+using PluginCore;
+using PluginCore.Localization;
 
 namespace AS3Context
 {
@@ -15,7 +12,7 @@ namespace AS3Context
     public delegate void InstalledSDKsChangedEvent();
 
     [Serializable]
-    public class AS3Settings : ASCompletion.Settings.IContextSettings
+    public class AS3Settings : IContextSettings
     {
         [field: NonSerialized]
         public event ClasspathChangedEvent OnClasspathChanged;

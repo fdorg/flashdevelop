@@ -1,8 +1,5 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Collections.Generic;
-using System.Windows.Forms;
 using PluginCore.Helpers;
 
 namespace FlashDevelop.Helpers

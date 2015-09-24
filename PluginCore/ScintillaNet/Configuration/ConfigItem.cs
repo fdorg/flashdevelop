@@ -1,12 +1,11 @@
 using System;
-using System.Runtime;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class ConfigItem
     {
-        [NonSerializedAttribute()]
+        [NonSerialized()]
         protected ConfigFile _parent;
 
         public virtual void init(ConfigurationUtility utility, ConfigFile theParent)

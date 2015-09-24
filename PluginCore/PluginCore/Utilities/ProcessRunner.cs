@@ -1,10 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
-using PluginCore;
-using PluginCore.Managers;
 using System.Text;
+using System.Threading;
+using PluginCore.Managers;
 
 namespace PluginCore.Utilities
 {

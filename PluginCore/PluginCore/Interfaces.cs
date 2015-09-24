@@ -1,15 +1,13 @@
 using System;
-using System.Drawing;
-using System.Resources;
-using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
-using ScintillaNet.Configuration;
-using WeifenLuo.WinFormsUI;
-using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using ScintillaNet;
+using ScintillaNet.Configuration;
+using ScintillaNet.Enums;
+using WeifenLuo.WinFormsUI.Docking;
+using Keys = System.Windows.Forms.Keys;
 
 namespace PluginCore
 {
@@ -262,12 +260,12 @@ namespace PluginCore
         Boolean ViewWhitespace { get; set; }
         Boolean ViewShortcuts { get; set; }
         Boolean WrapText { get; set; }
-        ScintillaNet.Enums.EndOfLine EOLMode { get; set; }
-        ScintillaNet.Enums.FoldFlag FoldFlags { get; set; }
-        ScintillaNet.Enums.SmartIndent SmartIndentType { get; set; }
-        ScintillaNet.Enums.VirtualSpaceMode VirtualSpaceMode { get; set; }
-        ScintillaNet.Enums.IndentView IndentView { get; set; }
-        ScintillaNet.Enums.HighlightMatchingWordsMode HighlightMatchingWordsMode { get; set; }
+        EndOfLine EOLMode { get; set; }
+        FoldFlag FoldFlags { get; set; }
+        SmartIndent SmartIndentType { get; set; }
+        VirtualSpaceMode VirtualSpaceMode { get; set; }
+        IndentView IndentView { get; set; }
+        HighlightMatchingWordsMode HighlightMatchingWordsMode { get; set; }
         Int32 HighlightMatchingWordsDelay { get; set; }
         CodePage DefaultCodePage { get; set; }
         Int32 TabWidth { get; set; }

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Drawing.Design;
-using System.Windows.Forms.Design;
 using System.ComponentModel;
-using PluginCore.Localization;
 using ASCompletion.Settings;
 using PluginCore;
+using PluginCore.Localization;
 
 namespace PHPContext
 {

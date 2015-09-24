@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ASCompletion.Completion

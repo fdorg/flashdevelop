@@ -785,7 +785,7 @@ namespace ResultsPanel
             }
             if (found)
             {
-                if (gp.Items.Contains(item) == false)
+                if (!gp.Items.Contains(item))
                 {
                     gp.Items.Add(item);
                 }

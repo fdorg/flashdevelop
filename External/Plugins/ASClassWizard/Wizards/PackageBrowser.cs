@@ -76,7 +76,7 @@ namespace ASClassWizard.Wizards
                         {
                             foreach (string item in Directory.GetDirectories(cp))
                             {
-                                if (IsDirectoryExcluded(item) == false)
+                                if (!IsDirectoryExcluded(item))
                                 {
                                     node = new SimpleDirectoryNode(item, Path.Combine(cp, item));
                                     node.ImageIndex = Icons.Folder.Index;
@@ -110,7 +110,7 @@ namespace ASClassWizard.Wizards
 
                     foreach (string item in Directory.GetDirectories(node.directoryPath))
                     {
-                        if (IsDirectoryExcluded(item) == false)
+                        if (!IsDirectoryExcluded(item))
                         {
                             newNode = new SimpleDirectoryNode(item, Path.Combine(node.directoryPath, item));
                             newNode.ImageIndex = Icons.Folder.Index;
