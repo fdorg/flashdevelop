@@ -1103,7 +1103,6 @@ namespace ASCompletion.Completion
 
             // find where to include the closing brace
             int startIndent = indent;
-            int newIndent = indent + Sci.TabWidth;
             int count = Sci.LineCount;
             int lastLine = line;
             int position;
@@ -1219,10 +1218,6 @@ namespace ASCompletion.Completion
             List<string> support = features.GetDeclarationKeywords(Sci.GetLine(line), insideClass);
             if (support.Count == 0) return true;
             
-            // current model
-            FileModel cFile = ASContext.Context.CurrentModel;
-            ClassModel cClass = ASContext.Context.CurrentClass;
-
             // does it need indentation?
             int tab = 0;
             int tempLine = line-1;
@@ -2216,7 +2211,6 @@ namespace ASCompletion.Completion
 
                 // list visible classes
                 MemberList known = new MemberList();
-                ClassModel cClass = ASContext.Context.CurrentClass;
                 known.Merge(ASContext.Context.GetVisibleExternalElements());
 
                 // show
@@ -3912,7 +3906,6 @@ namespace ASCompletion.Completion
             string foundIn = "";
             if (inClass != ClassModel.VoidClass)
             {
-                string package = inClass.InFile.Package;
                 foundIn = "\n[COLOR=#666666:MULTIPLY]in " + MemberModel.FormatType(inClass.QualifiedName) + "[/COLOR]";
             }
             if ((ft & (FlagType.Getter | FlagType.Setter)) > 0)

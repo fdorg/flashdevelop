@@ -156,7 +156,6 @@ namespace System.Windows.Forms
 
             if (msg.message == WM_INITDIALOG)
             {
-                int nLength = GetWindowTextLength(msg.hwnd);
                 StringBuilder className = new StringBuilder(10);
                 GetClassName(msg.hwnd, className, className.Capacity);
                 if (className.ToString() == "#32770")

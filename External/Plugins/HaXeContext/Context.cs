@@ -1020,7 +1020,6 @@ namespace HaXeContext
                 aClass.ExtendsType = indexType;
             }
 
-            string typed = "<" + indexType + ">";
             foreach (MemberModel member in aClass.Members)
             {
                 if (member.Type != null && member.Type.IndexOf(Tname) >= 0)
@@ -1273,8 +1272,6 @@ namespace HaXeContext
                 }
                 elements.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
 
-                bool qualify = Settings.CompletionShowQualifiedTypes && settings.GenerateImports;
-
                 // other classes in same package (or parent packages!)
                 if (features.hasPackages && cFile.Package != "")
                 {
@@ -1438,7 +1435,6 @@ namespace HaXeContext
                     ASComplete.SaveLastLookupPosition(hc.Sci);
 
                     PluginBase.MainForm.OpenEditableDocument(result.Path, false);
-                    ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
                     const string keywords = "(function|var|[,(])";
 
                     ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);

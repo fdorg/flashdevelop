@@ -130,9 +130,6 @@ namespace LoomContext
             minorVersion = 0;
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
 
-            string cpCheck = contextSetup.Classpath != null ?
-                String.Join(";", contextSetup.Classpath).Replace('\\', '/') : "";
-
             //
             // Class pathes
             //
@@ -221,7 +218,6 @@ namespace LoomContext
             {
                 if (File.Exists(path.Path) && !path.WasExplored)
                 {
-                    bool isRefresh = path.FilesCount > 0;
                     //TraceManager.AddAsync("parse " + path.Path);
                     lock (path)
                     {
@@ -396,10 +392,6 @@ namespace LoomContext
             if (IsFileValid && cFile.InlinedIn == null)
             {
                 PluginBase.MainForm.CallCommand("Save", null);
-
-                string sdk = PluginBase.CurrentProject != null
-                    ? PluginBase.CurrentProject.CurrentSDK
-                    : PathHelper.ResolvePath(loomSettings.GetDefaultSDK().Path);
                 // TODO CheckSyntax
             }
         }
@@ -416,7 +408,6 @@ namespace LoomContext
                 return;
             }
 
-            string command = (append ?? "") + " -- " + CurrentFile;
             // TODO RunCMD does it make sense?
         }
 
@@ -438,9 +429,6 @@ namespace LoomContext
 
             MainForm.CallCommand("SaveAllModified", null);
 
-            string sdk = PluginBase.CurrentProject != null
-                    ? PluginBase.CurrentProject.CurrentSDK
-                    : loomSettings.GetDefaultSDK().Path;
             // TODO BuildCMD does it make sense?
             return true;
         }

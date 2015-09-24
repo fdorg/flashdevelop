@@ -284,7 +284,6 @@ namespace AS2Context
                 {
                     if (cFile.FileName.Length > 0)
                     {
-                        string prevClassName = cClass.Name;
                         UpdateCurrentFile(true);
                     }
                     // update "this" and "super" special vars

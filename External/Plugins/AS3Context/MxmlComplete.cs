@@ -392,8 +392,6 @@ namespace AS3Context
             string setterType = null;
             while (tmpClass != null && !tmpClass.IsVoid())
             {
-                string className = tmpClass.Name;
-
                 foreach (MemberModel member in tmpClass.Members)
                     if ((member.Flags & FlagType.Dynamic) > 0 && (member.Flags & mask) > 0
                         && (member.Access & acc) > 0)
@@ -612,7 +610,6 @@ namespace AS3Context
                 tmpClass.ResolveExtends();
 
                 List<ICompletionListItem> result = null;
-                var validTypes = new Dictionary<string, bool>();
                 while (tmpClass != null && !tmpClass.IsVoid())
                 {
                     foreach (MemberModel member in tmpClass.Members)
@@ -833,7 +830,6 @@ namespace AS3Context
             ClassModel curClass = mxmlContext.model.GetPublicClass();
             ClassModel tmpClass = model;
             Visibility acc = context.TypesAffinity(curClass, tmpClass);
-            List<string> excludes = new List<string>();
             tmpClass.ResolveExtends();
 
             while (tmpClass != null && !tmpClass.IsVoid())
@@ -879,7 +875,6 @@ namespace AS3Context
             string b1;
             if (a.Label.Equals(b.Label, StringComparison.OrdinalIgnoreCase))
             {
-                int c = String.Compare("a", "b");
                 if (a is HtmlAttributeItem && b is HtmlTagItem) return 1;
                 else if (b is HtmlAttributeItem && a is HtmlTagItem) return -1;
             }

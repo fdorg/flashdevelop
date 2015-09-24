@@ -472,7 +472,6 @@ namespace FlashDevelop.Dialogs
                 if ((info.Attributes & FileAttributes.Hidden) > 0) continue;
                 String folderName = Path.GetFileNameWithoutExtension(folderPath);
                 String[] files = Directory.GetFiles(folderPath);
-                Int32 fileCount = files.Length;
                 this.snippets.Add(folderName, files);
                 this.languageDropDown.Items.Add(folderName.ToUpper());
             }
