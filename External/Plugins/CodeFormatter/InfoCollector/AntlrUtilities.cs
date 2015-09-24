@@ -240,7 +240,7 @@ namespace CodeFormatter.InfoCollector
             if (tree.Tree==null)
             {
                 //I think this only happens with implied semicolons
-                if (tree.Start is CommonToken && tree.Start!=null)
+                if (tree.Start is CommonToken)
                 {
                     //I think we should always be on at least token 1.  
                     IToken currentTok=rawTokens.Get(((CommonToken)tree.Start).TokenIndex);

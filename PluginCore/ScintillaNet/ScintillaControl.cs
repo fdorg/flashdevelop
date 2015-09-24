@@ -1152,7 +1152,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Returns the chracter at the caret posiion.
+        /// Returns the chracter at the caret position.
         /// </summary>
         public char CurrentChar
         {
@@ -2416,7 +2416,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Sets the focud to the control
+        /// Sets the focus to the control
         /// </summary>
         public new bool Focus()
         {
@@ -2594,7 +2594,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void StyleSetFont(int style, string fontName)
         {
-            if (fontName == null || fontName.Equals("")) fontName = "\0\0";
+            if (string.IsNullOrEmpty(fontName)) fontName = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(fontName)) 
             {
                 SPerform(2056,(uint)style, (uint)b );
@@ -2655,7 +2655,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void WordChars(string characters)
         {
-            if (characters == null || characters.Equals("")) characters = "\0\0";
+            if (string.IsNullOrEmpty(characters)) characters = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(characters))
             {
                 SPerform(2077, 0, (uint)b);
@@ -2677,7 +2677,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void AutoCSetFillUps(string characterSet )
         {
-            if (characterSet == null || characterSet.Equals("")) characterSet = "\0\0";
+            if (string.IsNullOrEmpty(characterSet)) characterSet = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(characterSet))
             {
                 SPerform(2112, 0, (uint)b);
@@ -2729,8 +2729,8 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void SetProperty(string key, string val)
         {
-            if (key == null || key.Equals("")) key = "\0\0";
-            if (val == null || val.Equals("")) val = "\0\0";
+            if (string.IsNullOrEmpty(key)) key = "\0\0";
+            if (string.IsNullOrEmpty(val)) val = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(val))
             {
                 fixed (byte* b2 = Encoding.GetEncoding(this.CodePage).GetBytes(key))
@@ -2746,7 +2746,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public int GetPropertyInt(string key)
         {
-            if (key == null || key.Equals("")) key = "\0\0";
+            if (string.IsNullOrEmpty(key)) key = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(key))
             {
                 return (int)SPerform(4010, (uint)b, 0);
@@ -2758,7 +2758,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void KeyWords(int keywordSet, string keyWords)
         {
-            if (keyWords == null || keyWords.Equals("")) keyWords = "\0\0";
+            if (string.IsNullOrEmpty(keyWords)) keyWords = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(keyWords))
             {
                 SPerform(4005, (uint)keywordSet, (uint)b);
@@ -2770,7 +2770,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void LexerLanguage(string language)
         {
-            if (language == null || language.Equals("")) language = "\0\0";
+            if (string.IsNullOrEmpty(language)) language = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(language))
             {
                 SPerform(4006, 0, (uint)b);
@@ -2950,7 +2950,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void AddText(int length, string text )
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
             {
                  SPerform(2001,(uint)length, (uint)b);
@@ -2962,7 +2962,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void InsertText(int pos, string text )
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
             {
                 SPerform(2003, (uint)pos, (uint)b);
@@ -3206,7 +3206,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void MarkerDefinePixmap(int markerNumber, string pixmap )
         {
-            if (pixmap == null || pixmap.Equals("")) pixmap = "\0\0";
+            if (string.IsNullOrEmpty(pixmap)) pixmap = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(pixmap))
             {
                  SPerform(2049, (uint)markerNumber, (uint)b);
@@ -3283,7 +3283,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void SetStylingEx(int length, string styles)
         {
-            if (styles == null || styles.Equals("")) styles = "\0\0";
+            if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(styles))
             {
                  SPerform(2073,(uint)length, (uint)b);
@@ -3330,7 +3330,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void AutoCShow(int lenEntered, string itemList)
         {
-            if (itemList == null || itemList.Equals("")) itemList = "\0\0";
+            if (string.IsNullOrEmpty(itemList)) itemList = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(itemList))
             {
                 SPerform(2100, (uint)lenEntered, (uint)b);
@@ -3358,7 +3358,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void AutoCStops(string characterSet)
         {
-            if (characterSet == null || characterSet.Equals("")) characterSet = "\0\0";
+            if (string.IsNullOrEmpty(characterSet)) characterSet = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(characterSet))
             {
                  SPerform(2105, 0, (uint)b);
@@ -3370,7 +3370,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void AutoCSelect(string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
                  SPerform(2108, 0, (uint)b);
@@ -3382,7 +3382,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void UserListShow(int listType, string itemList)
         {
-            if (itemList == null || itemList.Equals("")) itemList = "\0\0";
+            if (string.IsNullOrEmpty(itemList)) itemList = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(itemList))
             {
                  SPerform(2117, (uint)listType, (uint)b);
@@ -3394,7 +3394,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void RegisterImage(int type, string xpmData)
         {
-            if (xpmData == null || xpmData.Equals("")) xpmData = "\0\0";
+            if (string.IsNullOrEmpty(xpmData)) xpmData = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(xpmData)) 
             {
                  SPerform(2405,(uint)type, (uint)b);
@@ -3521,7 +3521,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void ReplaceSel(string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
             {
                 SPerform(2170,0 , (uint)b);
@@ -3601,7 +3601,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void SetText(string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
                 SPerform(2181, 0, (uint)b);
@@ -3626,7 +3626,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public int ReplaceTarget(int length, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
                 return (int)SPerform(2194, (uint)length, (uint)b);
@@ -3641,9 +3641,9 @@ namespace ScintillaNet
         /// Returns the length of the replacement text including any change
         /// caused by processing the \d patterns.
         /// </summary>
-        unsafe public int ReplaceTargetRE(int length, string text )
+        unsafe public int ReplaceTargetRE(int length, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
                 return (int) SPerform(2195, (uint)length, (uint)b);
@@ -3657,7 +3657,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public int SearchInTarget(int length, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
             {
                 return (int) SPerform(2197, (uint)length, (uint)b);
@@ -3669,7 +3669,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void CallTipShow(int pos, string definition)
         {
-            if (definition == null || definition.Equals("")) definition = "\0\0";
+            if (string.IsNullOrEmpty(definition)) definition = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(definition)) 
             {
                 SPerform(2200, (uint)pos, (uint)b);
@@ -3804,7 +3804,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public int TextWidth(int style, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
             {
                 return (int)SPerform(2276, (uint)style, (uint)b);
@@ -3824,7 +3824,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void AppendText(int length, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
                 SPerform(2282, (uint)length, (uint)b);
@@ -4398,7 +4398,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public int SearchNext(int flags, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
             {
                 return (int)SPerform(2367, (uint)flags, (uint)b);
@@ -4411,7 +4411,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public int SearchPrev(int flags, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text)) 
             {
                 return (int)SPerform(2368,(uint)flags, (uint)b);
@@ -4603,7 +4603,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void CopyText(int length, string text)
         {
-            if (text == null || text.Equals(""))text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
                 SPerform(2420,(uint)length, (uint)b);
@@ -4769,7 +4769,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void WhitespaceChars(string characters)
         {
-            if (characters == null || characters.Equals("")) characters = "\0\0";
+            if (string.IsNullOrEmpty(characters)) characters = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(characters))
             {
                 SPerform(2443, 0, (uint)b);
@@ -4821,7 +4821,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void LoadLexerLibrary(string path)
         {
-            if (path == null || path.Equals("")) path = "\0\0";
+            if (string.IsNullOrEmpty(path)) path = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(path))
             {
                  SPerform(4007, 0, (uint)b);
@@ -5004,7 +5004,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void SetMarginText(int line, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
                 SPerform(2530, (uint)line, (uint)b);
@@ -5016,7 +5016,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void SetMarginStyles(int line, string styles)
         {
-            if (styles == null || styles.Equals("")) styles = "\0\0";
+            if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(styles))
             {
                 SPerform(2534, (uint)line, (uint)b);
@@ -5028,7 +5028,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void SetAnnotationText(int line, string text)
         {
-            if (text == null || text.Equals("")) text = "\0\0";
+            if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
                 SPerform(2540, (uint)line, (uint)b);
@@ -5040,7 +5040,7 @@ namespace ScintillaNet
         /// </summary>
         unsafe public void SetAnnotationStyles(int line, string styles)
         {
-            if (styles == null || styles.Equals("")) styles = "\0\0";
+            if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(styles))
             {
                 SPerform(2544, (uint)line, (uint)b);

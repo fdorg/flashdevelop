@@ -106,7 +106,7 @@ namespace ASClassWizard
             // Nothing here...
         }
         
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             Project project;
             switch (e.Type)
