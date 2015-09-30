@@ -10,6 +10,7 @@ using PluginCore.Localization;
 using FlashDevelop.Utilities;
 using FlashDevelop.Helpers;
 using PluginCore.Managers;
+using PluginCore.Utilities;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
@@ -39,9 +40,11 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button addButton;
         private System.String currentSyntax;
         private System.Int32 folderCount;
+        private System.Int32 eolMode;
 
         public SnippetDialog()
         {
+            this.eolMode = 0;
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "38535b88-d4b2-4db5-a6f5-40cc0ce3cb01";
@@ -435,6 +438,9 @@ namespace FlashDevelop.Dialogs
             String path = Path.Combine(this.SnippetDir, this.currentSyntax);
             path = Path.Combine(path, name + ".fds");
             String content = File.ReadAllText(path);
+            // Convert eols to windows and save current eol mode
+            this.eolMode = LineEndDetector.DetectNewLineMarker(content, 0);
+            content = content.Replace(LineEndDetector.GetNewLineMarker(this.eolMode), "\r\n");
             this.snippetNameTextBox.Text = name;
             this.contentsTextBox.Text = content;
             this.saveButton.Enabled = false;
@@ -639,6 +645,8 @@ namespace FlashDevelop.Dialogs
         private void WriteFile(String name, String content)
         {
             StreamWriter file;
+            // Restore previous eol mode
+            content = content.Replace("\r\n", LineEndDetector.GetNewLineMarker(this.eolMode));
             String path = Path.Combine(this.SnippetDir, this.currentSyntax);
             path = Path.Combine(path, name + ".fds");
             file = File.CreateText(path);
