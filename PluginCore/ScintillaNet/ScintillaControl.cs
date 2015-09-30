@@ -5551,6 +5551,10 @@ namespace ScintillaNet
                 highlightDelay.SynchronizingObject = this as Control;
             }
             else highlightDelay.Stop();
+            if (highlightDelay.Interval != PluginBase.MainForm.Settings.HighlightMatchingWordsDelay)
+            {
+                highlightDelay.Interval = PluginBase.MainForm.Settings.HighlightMatchingWordsDelay;
+            }
             highlightDelay.Start();
         }
         void highlightDelay_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
