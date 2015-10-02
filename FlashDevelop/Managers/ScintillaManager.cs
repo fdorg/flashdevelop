@@ -122,7 +122,20 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static Int32 SelectCodePage(Int32 codepage)
         {
-            if (codepage == 65001 || codepage == 1201 || codepage == 1200) return 65001;
+            if (codepage == 65001 /*UTF-8*/ 
+                || codepage == 1200 /*UTF-16LE*/
+                || codepage == 1201)  /*UTF-16BE*/
+            {
+                return 65001;
+            }
+            else if (codepage == 932 /*Japanese Shift JIS*/
+                || codepage == 936 /*Simplified Chinese GBK*/ 
+                || codepage == 949 /*Korean Unified Hangul Code*/ 
+                || codepage == 950 /*Traditional Chinese Big5*/ 
+                || codepage == 1361 /*Korean Johab*/)
+            {
+                return codepage;
+            }
             else return 0; // Disable multibyte support
         }
 
