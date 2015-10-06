@@ -337,7 +337,6 @@ namespace ProjectManager.Controls.TreeView
                 }
                 if (sameCount <= 1) return i;
                 text = parts[parts.Length - 1 - i] + Path.DirectorySeparatorChar + text;
-                
             }
             return parts.Length;
         }
