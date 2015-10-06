@@ -101,7 +101,7 @@ namespace ProjectManager.Controls.TreeView
     {
         public string classpath;
 
-        public ClasspathNode(Project project, string classpath, string text) : base(classpath)
+		public ClasspathNode(Project project, string classpath, string text, int keepNamePartsCount=1) : base(classpath)
         {
             isDraggable = false;
             isRenamable = false;
@@ -120,16 +120,25 @@ namespace ProjectManager.Controls.TreeView
                 for (int i = parts.Length - 1; i > 0; --i)
                 {
                     String part = parts[i] as String;
-                    if (part != "" && part != "." && part != ".." && Array.IndexOf(excludes, part.ToLower()) == -1)
-                    {
-                        if (Char.IsDigit(part[0]) && reVersion.IsMatch(part)) label.Add(part);
-                        else
-                        {
-                            label.Add(part);
-                            break;
-                        }
-                    }
-                    else label.Add(part);
+					if (part != "" && part != "." && part != ".." && Array.IndexOf(excludes, part.ToLower()) == -1)
+					{
+						if (Char.IsDigit(part[0]) && reVersion.IsMatch(part))
+						{
+							label.Add(part);
+							keepNamePartsCount--;
+						}
+						else
+						{
+							label.Add(part);
+							keepNamePartsCount--;
+							if (keepNamePartsCount <= 0) break;
+						}
+					}
+					else
+					{
+						label.Add(part);
+						keepNamePartsCount--;
+					}
                 }
             }
             label.Reverse();
@@ -160,7 +169,7 @@ namespace ProjectManager.Controls.TreeView
 
     public class ProjectClasspathNode : ClasspathNode
     {
-        public ProjectClasspathNode(Project project, string classpath, string text) : base(project, classpath, text)
+		public ProjectClasspathNode(Project project, string classpath, string text, int keepNamePartsCount) : base(project, classpath, text, keepNamePartsCount)
         {
             if (text != Text)
             {
@@ -237,7 +246,7 @@ namespace ProjectManager.Controls.TreeView
                 if (!project.ShowHiddenPaths && project.IsPathHidden(absolute))
                     continue;
 
-                cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, absolute, projectClasspath);
+				cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, absolute, projectClasspath, GetKeepNamePartsCount(projectClasspaths, projectClasspath));
                 Nodes.Add(cpNode);
                 cpNode.Refresh(recursive);
             }
@@ -310,5 +319,27 @@ namespace ProjectManager.Controls.TreeView
                 }
             return null;
         }
+
+		private int GetKeepNamePartsCount(ArrayList projectClasspaths, string projectClasspath)
+		{
+			var parts = projectClasspath.Split(Path.DirectorySeparatorChar);
+			var text = parts[parts.Length-1];
+			for (int i=1; i<parts.Length; i++)
+			{
+				var sameCount = 0;
+				foreach (string s in projectClasspaths)
+				{
+					if (s.EndsWith(Path.DirectorySeparatorChar + text))
+					{
+						sameCount++;
+						if (sameCount == 2) break;
+					}
+				}
+				if (sameCount <= 1) return i;
+				text = parts[parts.Length - 1 - i] + Path.DirectorySeparatorChar + text;
+				
+			}
+			return parts.Length;
+		}
     }
 }
