@@ -101,7 +101,11 @@ namespace ProjectManager.Controls.TreeView
     {
         public string classpath;
 
-        public ClasspathNode(Project project, string classpath, string text, int keepNamePartsCount=1) : base(classpath)
+        public ClasspathNode(Project project, string classpath, string text) : this(project, classpath, text, 1)
+        {
+        }
+
+        public ClasspathNode(Project project, string classpath, string text, int keepNamePartsCount) : base(classpath)
         {
             isDraggable = false;
             isRenamable = false;
@@ -323,8 +327,8 @@ namespace ProjectManager.Controls.TreeView
         private int GetKeepNamePartsCount(ArrayList projectClasspaths, string projectClasspath)
         {
             var parts = projectClasspath.Split(Path.DirectorySeparatorChar);
-            var text = parts[parts.Length-1];
-            for (int i=1; i<parts.Length; i++)
+            var text = parts[parts.Length - 1];
+            for (int i = 1; i < parts.Length; i++)
             {
                 var sameCount = 0;
                 foreach (string s in projectClasspaths)
