@@ -334,21 +334,21 @@ namespace FlashDevelop.Managers
                     Boolean hasBOM = document.SciControl.SaveBOM;
                     if (codepage == Encoding.UTF8.CodePage)
                     {
-                        return GetLabelAsPlainText("Label.UTF8", hasBOM);
+                        return GetLabelAsPlainText("Label.UTF8", true, hasBOM);
                     }
                     else if (codepage == Encoding.UTF7.CodePage)
                     {
-                        return GetLabelAsPlainText("Label.UTF7", hasBOM);
+                        return GetLabelAsPlainText("Label.UTF7", true, hasBOM);
                     }
                     else if (codepage == Encoding.BigEndianUnicode.CodePage)
                     {
-                        return GetLabelAsPlainText("Label.BigEndian", hasBOM);
+                        return GetLabelAsPlainText("Label.BigEndian", true, hasBOM);
                     }
                     else if (codepage == Encoding.Unicode.CodePage)
                     {
-                        return GetLabelAsPlainText("Label.LittleEndian", hasBOM);
+                        return GetLabelAsPlainText("Label.LittleEndian", true, hasBOM);
                     }
-                    else return GetLabelAsPlainText("Label.8Bits", false);
+                    else return GetLabelAsPlainText("Label.8Bits", false, false);
                 }
             }
             else return TextHelper.GetString("Info.Unknown");
@@ -357,9 +357,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a label as plain text by removing the accelerator key
         /// </summary>
-        public static String GetLabelAsPlainText(String name, Boolean hasBOM)
+        public static String GetLabelAsPlainText(String name, Boolean unicode, Boolean hasBOM)
         {
             String label = TextHelper.GetString(name).Replace("&", "");
+            if (unicode) label = "Unicode (" + label.ToLower() + ")";
             return hasBOM ? label + " (BOM)" : label;
         }
 
