@@ -569,6 +569,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_selectMenu.Font = PluginCore.PluginBase.Settings.DefaultFont;
             m_selectMenu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             m_selectMenu.Renderer = new DockPanelStripRenderer(false);
+            m_selectMenu.MouseWheel += ContextMenu_MouseWheel;
 
             ResumeLayout();
         }
@@ -1439,6 +1440,51 @@ namespace WeifenLuo.WinFormsUI.Docking
                 item.MouseUp += new MouseEventHandler(ContextMenuItem_Up);
             }
             SelectMenu.Show(ButtonWindowList, x, y);
+        }
+
+        private static readonly Action<ToolStrip, int> ScrollInternal
+            = (Action<ToolStrip, int>)Delegate.CreateDelegate(typeof(Action<ToolStrip, int>),
+                typeof(ToolStrip).GetMethod("ScrollInternal",
+                    System.Reflection.BindingFlags.NonPublic
+                    | System.Reflection.BindingFlags.Instance));
+
+        private static readonly Action<ToolStripDropDownMenu> UpdateScrollButtonStatus
+            = (Action<ToolStripDropDownMenu>)Delegate.CreateDelegate(typeof(Action<ToolStripDropDownMenu>),
+                typeof(ToolStripDropDownMenu).GetMethod("UpdateScrollButtonStatus",
+                    System.Reflection.BindingFlags.NonPublic
+                    | System.Reflection.BindingFlags.Instance));
+
+        private void ContextMenu_MouseWheel(object sender, MouseEventArgs e)
+        {
+            /* Default size, can it be changed? if so we can get it with:
+            ((ToolStripItem)typeof(ToolStripDropDownMenu).GetProperty ("DownScrollButton", 
+                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance ).GetValue(ts, null)).
+                 GetPreferredSize(Size.Empty).Height
+            */
+            const int scrollButtonHeight = 9;
+
+            var ts = (ContextMenuStrip)sender;
+            int delta = e.Delta;
+            if (ts.Items.Count == 0)
+                return;
+            var firstItem = ts.Items[0];
+            var lastItem = ts.Items[ts.Items.Count - 1];
+            if (lastItem.Bounds.Bottom < ts.Height && firstItem.Bounds.Top > 0)
+                return;
+            delta = delta / -4;
+            if (delta < 0 && firstItem.Bounds.Top - delta > scrollButtonHeight)
+            {
+                delta = firstItem.Bounds.Top - scrollButtonHeight;
+            }
+            else if (delta > 0 && delta > lastItem.Bounds.Bottom - ts.Height + scrollButtonHeight * 2)
+            {
+                delta = lastItem.Bounds.Bottom - ts.Height + scrollButtonHeight * 2;
+            }
+            if (delta != 0)
+            {
+                ScrollInternal(ts, delta);
+                UpdateScrollButtonStatus(ts);
+            }
         }
 
         private void ContextMenuItem_Up(object sender, MouseEventArgs e)
