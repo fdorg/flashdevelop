@@ -935,6 +935,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   <data name="FlashDevelop.Label.ClearBreakpoints" xml:space="preserve">
     <value>Haltepunkte löschen</value>
   </data>
+  <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
+    <value>&amp;Remove Invalid Files</value>
+    <comment>Added after 5.0.0</comment>
+  </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
     <value>Liste der &amp;zuletzt verwendeten Dateien löschen</value>
   </data>
@@ -1895,6 +1899,10 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Abbrechen</value>
+  </data>
+  <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
+    <value>&amp;Remove Invalid Projects</value>
+    <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">
     <value>Liste der zuletzt benutzten Projekte &amp;löschen</value>
@@ -3562,7 +3570,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Standard Regeldatei für Flex PMD.</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>Fügt FlashDevelop Flex PMD Codeanalyse hinzu.</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
@@ -5930,10 +5938,6 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   </data>
   <data name="FlashDebugger.Description.CopyTreeMaxSize" xml:space="preserve">
     <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
-  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
-    <value>Copy Value</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Label.CopyID" xml:space="preserve">

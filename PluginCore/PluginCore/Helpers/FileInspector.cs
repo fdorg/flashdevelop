@@ -138,6 +138,11 @@ namespace PluginCore.Helpers
             return ext == ".hxproj";
         }
 
+        public static bool IsGenericProject(string path, string ext)
+        {
+            return ext == ".fdproj";
+        }
+
         public static bool IsProject(string path)
         {
             return IsProject(path, Path.GetExtension(path).ToLower());
@@ -145,13 +150,7 @@ namespace PluginCore.Helpers
 
         public static bool IsProject(string path, string ext)
         {
-            return IsAS2Project(path, ext) || IsAS3Project(path, ext) || IsHaxeProject(path, ext);
-        }
-        
-        public static bool IsCustomProject(string path, string ext)
-        {
-            return (!IsAS2Project(path, ext) && !IsAS3Project(path, ext) &&
-                !IsHaxeProject(path, ext));
+            return IsAS2Project(path, ext) || IsAS3Project(path, ext) || IsHaxeProject(path, ext) || IsGenericProject(path, ext);
         }
 
         public static bool IsTemplate(string path, string ext)

@@ -3,12 +3,12 @@
  * and the application using the parser
  */
 
-using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using ASCompletion.Completion;
 using ASCompletion.Model;
 using ASCompletion.Settings;
-using ASCompletion.Completion;
-using System.Collections.Generic;
+using ScintillaNet;
 
 namespace ASCompletion.Context
 {
@@ -194,7 +194,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Track text modifications
         /// </summary>
-        void TrackTextChange(ScintillaNet.ScintillaControl sender, int position, int length, int linesAdded);
+        void TrackTextChange(ScintillaControl sender, int position, int length, int linesAdded);
 
         /// <summary>
         /// Set current model out-of-date to force re-parse of the code when needed
@@ -266,13 +266,13 @@ namespace ASCompletion.Context
         /// <param name="position"></param>
         /// <param name="text"></param>
         /// <returns>Indicator that the event is handled</returns>
-        bool OnCompletionInsert(ScintillaNet.ScintillaControl sci, int position, string text, char trigger);
+        bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger);
 
         /// <summary>
         /// When selecting a node in the outline view
         /// </summary>
         /// <param name="node"></param>
-        void OnSelectOutlineNode(System.Windows.Forms.TreeNode node);
+        void OnSelectOutlineNode(TreeNode node);
 
         /// <summary>
         /// User refreshes project tree
@@ -289,7 +289,7 @@ namespace ASCompletion.Context
         /// <param name="expression">Completion context</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or member list</returns>
-        MemberList ResolveDotContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide);
+        MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
         /// <summary>
         /// Let contexts resolve function at give position
@@ -297,7 +297,9 @@ namespace ASCompletion.Context
         /// <param name="sci">Scintilla control</param>
         /// <param name="expression">Completion context</param>
         /// <returns>Null (not handled) or function signature</returns>
-        MemberModel ResolveFunctionContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide);
+        MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide);
+
+        bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression);
         #endregion
 
         #region Properties

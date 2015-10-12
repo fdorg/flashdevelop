@@ -38,7 +38,6 @@
 
 using System;
 
-
 namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams 
 {
     
@@ -105,7 +104,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
             int border = WindowSize - length;
             if ( (repStart <= border) && (windowEnd < border) ) {
                 if (length <= distance) {
-                    System.Array.Copy(window, repStart, window, windowEnd, length);
+                    Array.Copy(window, repStart, window, windowEnd, length);
                     windowEnd += length;
                 } else {
                     // We have to copy manually, since the repeat pattern overlaps.
@@ -167,7 +166,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
                 offset += length - WindowSize;
                 length = WindowSize;
             }
-            System.Array.Copy(dictionary, offset, window, 0, length);
+            Array.Copy(dictionary, offset, window, 0, length);
             windowEnd = length & WindowMask;
         }
 
@@ -212,11 +211,11 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
             int tailLen = len - copyEnd;
             
             if (tailLen > 0) {
-                System.Array.Copy(window, WindowSize - tailLen, output, offset, tailLen);
+                Array.Copy(window, WindowSize - tailLen, output, offset, tailLen);
                 offset += tailLen;
                 len = copyEnd;
             }
-            System.Array.Copy(window, copyEnd - len, output, offset, len);
+            Array.Copy(window, copyEnd - len, output, offset, len);
             windowFilled -= copied;
             if (windowFilled < 0) {
                 throw new InvalidOperationException();

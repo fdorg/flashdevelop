@@ -219,7 +219,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             CompressionMethod method)
         {
             if (name == null) {
-                throw new System.ArgumentNullException("name");
+                throw new ArgumentNullException("name");
             }
 
             if ( name.Length > 0xffff ) {
@@ -230,7 +230,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 throw new ArgumentOutOfRangeException("versionRequiredToExtract");
             }
             
-            this.DateTime = System.DateTime.Now;
+            this.DateTime = DateTime.Now;
             this.name = name;
             this.versionMadeBy = (ushort)madeByInfo;
             this.versionToExtract = (ushort)versionRequiredToExtract;
@@ -571,10 +571,10 @@ namespace ICSharpCode.SharpZipLib.Zip
                     else if (CompressionMethod.Deflated == method) {
                         result = 20;
                     } 
-                    else if (IsDirectory == true) {
+                    else if (IsDirectory) {
                         result = 20;
                     } 
-                    else if (IsCrypted == true) {
+                    else if (IsCrypted) {
                         result = 20;
                     } 
                     else if (HasDosAttributes(0x08) ) {
@@ -699,7 +699,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 uint mon  = Math.Max(1, Math.Min(12, ((dosTime >> 21) & 0xf)));
                 uint year = ((dosTime >> 25) & 0x7f) + 1980;
                 int day = Math.Max(1, Math.Min(DateTime.DaysInMonth((int)year, (int)mon), (int)((dosTime >> 16) & 0x1f)));
-                return new System.DateTime((int)year, (int)mon, day, (int)hrs, (int)min, (int)sec);
+                return new DateTime((int)year, (int)mon, day, (int)hrs, (int)min, (int)sec);
             }
 
             set {
@@ -866,7 +866,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 }
                 else {
                     if (value.Length > 0xffff) {
-                        throw new System.ArgumentOutOfRangeException("value");
+                        throw new ArgumentOutOfRangeException("value");
                     }
                 
                     extra = new byte[value.Length];
@@ -1004,7 +1004,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                             long lastAccess = extraData.ReadLong();
                             long createTime = extraData.ReadLong();
 
-                            DateTime = System.DateTime.FromFileTime(lastModification);
+                            DateTime = DateTime.FromFileTime(lastModification);
                         }
                         break;
                     }
@@ -1023,7 +1023,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 if ( ((flags & 1) != 0) && (length >= 5) ) {
                     int iTime = extraData.ReadInt();
 
-                    DateTime = (new System.DateTime ( 1970, 1, 1, 0, 0, 0 ).ToUniversalTime() +
+                    DateTime = (new DateTime ( 1970, 1, 1, 0, 0, 0 ).ToUniversalTime() +
                         new TimeSpan ( 0, 0, 0, iTime, 0 )).ToLocalTime();
                 }
             }
@@ -1204,7 +1204,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 return string.Empty;
             }
             
-            if (Path.IsPathRooted(name) == true) {
+            if (Path.IsPathRooted(name)) {
                 // NOTE:
                 // for UNC names...  \\machine\share\zoom\beet.txt gives \zoom\beet.txt
                 name = name.Substring(Path.GetPathRoot(name).Length);

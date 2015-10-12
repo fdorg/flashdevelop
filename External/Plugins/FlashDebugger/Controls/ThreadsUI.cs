@@ -7,7 +7,7 @@ namespace FlashDebugger
 {
     class ThreadsUI : DockPanelControl
     {
-        private ListView lv;
+        private ListViewEx lv;
         private ColumnHeader imageColumnHeader;
         private ColumnHeader frameColumnHeader;
         private PluginMain pluginMain;
@@ -16,33 +16,28 @@ namespace FlashDebugger
 
         public ThreadsUI(PluginMain pluginMain, ImageList imageList)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
-
-            lv = new ListView();
+            lv = new ListViewEx();
             lv.ShowItemToolTips = true;
             this.imageColumnHeader = new ColumnHeader();
             this.imageColumnHeader.Text = string.Empty;
             this.imageColumnHeader.Width = 20;
-
             this.frameColumnHeader = new ColumnHeader();
             this.frameColumnHeader.Text = string.Empty;
-
             lv.Columns.AddRange(new ColumnHeader[] {
             this.imageColumnHeader,
             this.frameColumnHeader});
             lv.FullRowSelect = true;
             lv.BorderStyle = BorderStyle.None;
             lv.Dock = System.Windows.Forms.DockStyle.Fill;
-
             lv.SmallImageList = imageList;
             runningImageIndex = imageList.Images.IndexOfKey("StartContinue");
             suspendedImageIndex = imageList.Images.IndexOfKey("Pause");
-
             lv.View = System.Windows.Forms.View.Details;
             lv.MouseDoubleClick += new MouseEventHandler(lv_MouseDoubleClick);
             lv.KeyDown += new KeyEventHandler(lv_KeyDown);
             lv.SizeChanged += new EventHandler(lv_SizeChanged);
-
             this.Controls.Add(lv);
         }
 

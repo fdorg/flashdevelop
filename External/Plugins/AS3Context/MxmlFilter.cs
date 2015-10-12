@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ASCompletion.Model;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
-using ASCompletion.Context;
 using System.Xml;
-using ProjectManager.Projects.AS3;
+using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Helpers;
+using ProjectManager.Projects.AS3;
 
 namespace AS3Context
 {

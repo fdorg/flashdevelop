@@ -42,9 +42,8 @@
 //  22-02-2010  Z-1648  Zero byte entries would create invalid zip files
 
 using System;
-using System.IO;
 using System.Collections;
-
+using System.IO;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
@@ -302,8 +301,8 @@ namespace ICSharpCode.SharpZipLib.Zip
                 }
             }
 
-            if (headerInfoAvailable == false) {
-                if (CanPatchEntries == false) {
+            if (!headerInfoAvailable) {
+                if (!CanPatchEntries) {
                     // Only way to record size and compressed size is to append a data descriptor
                     // after compressed data.
 
@@ -343,7 +342,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             WriteLeInt((int)entry.DosTime);
 
             // TODO: Refactor header writing.  Its done in several places.
-            if (headerInfoAvailable == true) {
+            if (headerInfoAvailable) {
                 WriteLeInt((int)entry.Crc);
                 if ( entry.LocalHeaderRequiresZip64 ) {
                     WriteLeInt(-1);

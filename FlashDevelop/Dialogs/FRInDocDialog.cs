@@ -626,15 +626,16 @@ namespace FlashDevelop.Dialogs
             this.CenterToParent();
         }
 
-        protected override bool ProcessDialogKey(Keys keyData)
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override Boolean ProcessDialogKey(Keys keyData)
         {
             if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
             {
-                FindNext(false, false);
-
+                this.FindNext(false, false);
                 return true;
             }
-
             return base.ProcessDialogKey(keyData);
         }
 
@@ -654,12 +655,13 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private List<SearchMatch> GetResults(ScintillaControl sci, Boolean simple)
         {
-            if (this.findComboBox.Text != String.Empty)
+            if (IsValidPattern())
             {
                 String pattern = this.findComboBox.Text;
                 FRSearch search = new FRSearch(pattern);
                 search.NoCase = !this.matchCaseCheckBox.Checked;
                 search.Filter = SearchFilter.None;
+                search.SourceFile = sci.FileName;
                 if (!simple)
                 {
                     search.IsRegex = this.useRegexCheckBox.Checked;
@@ -685,6 +687,28 @@ namespace FlashDevelop.Dialogs
         private List<SearchMatch> GetResults(ScintillaControl sci)
         {
             return this.GetResults(sci, false);
+        }
+
+        /// <summary>
+        /// Control user pattern
+        /// </summary>
+        private bool IsValidPattern()
+        {
+            String pattern = this.findComboBox.Text;
+            if (pattern.Length == 0) return false;
+            if (this.useRegexCheckBox.Checked)
+            {
+                try
+                {
+                    new Regex(pattern);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowInfo(ex.Message); 
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>

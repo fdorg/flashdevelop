@@ -1,14 +1,9 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
-using System.Drawing;
-using System.Collections;
-using System.Windows.Forms;
-using ScintillaNet;
-using PluginCore;
 using System.Collections.Generic;
+using System.Drawing;
+using PluginCore;
 using PluginCore.Localization;
+using ScintillaNet;
 
 namespace XMLCompletion
 {

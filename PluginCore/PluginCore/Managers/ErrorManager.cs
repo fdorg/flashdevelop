@@ -1,11 +1,8 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
-using PluginCore.Controls;
 using PluginCore.Helpers;
-using System.Text;
+using PluginCore.Localization;
 
 namespace PluginCore.Managers
 {

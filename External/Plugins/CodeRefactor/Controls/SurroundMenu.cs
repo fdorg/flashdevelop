@@ -12,19 +12,17 @@ namespace CodeRefactor.Controls
 {
     public class SurroundMenu : ToolStripMenuItem
     {
-        private Image image;
         private List<String> items;
 
         public SurroundMenu()
         {
             this.Text = TextHelper.GetString("Label.SurroundWith");
-            this.image = PluginBase.MainForm.FindImage("559"); // empty
         }
         
         /// <summary>
         /// 
         /// </summary>
-        override public bool Enabled
+        public override bool Enabled
         {
             set
             {
@@ -76,7 +74,7 @@ namespace CodeRefactor.Controls
                 content = File.ReadAllText(itm);
                 if (content.IndexOf("{0}") > -1)
                 {
-                    this.DropDownItems.Insert(this.DropDownItems.Count, new ToolStripMenuItem(Path.GetFileNameWithoutExtension(itm), image));
+                    this.DropDownItems.Insert(this.DropDownItems.Count, new ToolStripMenuItem(Path.GetFileNameWithoutExtension(itm)));
                 }
             }
         }

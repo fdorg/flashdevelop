@@ -1,6 +1,5 @@
 // $ANTLR 3.1.1 AS3_ex.g3 2015-02-17 22:17:17
 
-using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CodeFormatter.InfoCollector;

@@ -5,12 +5,9 @@
 //*****************************************************************//
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.ComTypes;
+using System.Threading;
 
 // Change the following attribute values to modify
 // the information associated with an assembly.
@@ -37,7 +34,7 @@ namespace Interop.ShockwaveFlashObjects
   [Guid("D27CDB6D-AE6D-11CF-96B8-444553540000")]
   [ComImport]
   [TypeLibType((short)4112)]
-  [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
+  [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface _IShockwaveFlashEvents
   {
     /// <summary><para><c>OnReadyStateChange</c> method of <c>_IShockwaveFlashEvents</c> interface.</para></summary>
@@ -219,7 +216,7 @@ namespace Interop.ShockwaveFlashObjects
     {
       Disconnect();
       ConnectionPointContainer = null;
-      System.GC.SuppressFinalize(this);
+      GC.SuppressFinalize(this);
     }
 
     // Connect to ActiveX event source
@@ -238,14 +235,14 @@ namespace Interop.ShockwaveFlashObjects
     // Disconnect from ActiveX event source
     void Disconnect()
     {
-      System.Threading.Monitor.Enter(this);
+      Monitor.Enter(this);
       try {
         if (EventSinkHelper != null)
           ConnectionPoint.Unadvise(EventSinkHelper.Cookie);
         ConnectionPoint = null;
         EventSinkHelper = null;
       } catch { }
-      System.Threading.Monitor.Exit(this);
+      Monitor.Exit(this);
     }
 
     // If no event handler present then disconnect from ActiveX event source
@@ -260,24 +257,24 @@ namespace Interop.ShockwaveFlashObjects
     {
       add
       {
-        System.Threading.Monitor.Enter(this);
+        Monitor.Enter(this);
         try {
           Connect();
           EventSinkHelper.OnReadyStateChangeDelegate += value;
           ConnectionCount++;
         } catch { }
-        System.Threading.Monitor.Exit(this);
+        Monitor.Exit(this);
       }
       remove
       {
         if (EventSinkHelper != null)
         {
-          System.Threading.Monitor.Enter(this);
+          Monitor.Enter(this);
           try {
             EventSinkHelper.OnReadyStateChangeDelegate -= value;
             CheckDisconnect();
           } catch { }
-          System.Threading.Monitor.Exit(this);
+          Monitor.Exit(this);
         }
       }
     }
@@ -286,24 +283,24 @@ namespace Interop.ShockwaveFlashObjects
     {
       add
       {
-        System.Threading.Monitor.Enter(this);
+        Monitor.Enter(this);
         try {
           Connect();
           EventSinkHelper.OnProgressDelegate += value;
           ConnectionCount++;
         } catch { }
-        System.Threading.Monitor.Exit(this);
+        Monitor.Exit(this);
       }
       remove
       {
         if (EventSinkHelper != null)
         {
-          System.Threading.Monitor.Enter(this);
+          Monitor.Enter(this);
           try {
             EventSinkHelper.OnProgressDelegate -= value;
             CheckDisconnect();
           } catch { }
-          System.Threading.Monitor.Exit(this);
+          Monitor.Exit(this);
         }
       }
     }
@@ -312,24 +309,24 @@ namespace Interop.ShockwaveFlashObjects
     {
       add
       {
-        System.Threading.Monitor.Enter(this);
+        Monitor.Enter(this);
         try {
           Connect();
           EventSinkHelper.FSCommandDelegate += value;
           ConnectionCount++;
         } catch { }
-        System.Threading.Monitor.Exit(this);
+        Monitor.Exit(this);
       }
       remove
       {
         if (EventSinkHelper != null)
         {
-          System.Threading.Monitor.Enter(this);
+          Monitor.Enter(this);
           try {
             EventSinkHelper.FSCommandDelegate -= value;
             CheckDisconnect();
           } catch { }
-          System.Threading.Monitor.Exit(this);
+          Monitor.Exit(this);
         }
       }
     }
@@ -338,24 +335,24 @@ namespace Interop.ShockwaveFlashObjects
     {
       add
       {
-        System.Threading.Monitor.Enter(this);
+        Monitor.Enter(this);
         try {
           Connect();
           EventSinkHelper.FlashCallDelegate += value;
           ConnectionCount++;
         } catch { }
-        System.Threading.Monitor.Exit(this);
+        Monitor.Exit(this);
       }
       remove
       {
         if (EventSinkHelper != null)
         {
-          System.Threading.Monitor.Enter(this);
+          Monitor.Enter(this);
           try {
             EventSinkHelper.FlashCallDelegate -= value;
             CheckDisconnect();
           } catch { }
-          System.Threading.Monitor.Exit(this);
+          Monitor.Exit(this);
         }
       }
     }
@@ -366,7 +363,7 @@ namespace Interop.ShockwaveFlashObjects
   [Guid("D27CDB6C-AE6D-11CF-96B8-444553540000")]
   [ComImport]
   [TypeLibType((short)4160)]
-  [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
+  [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IShockwaveFlash
   {
     /// <summary><para><c>SetZoomRect</c> method of <c>IShockwaveFlash</c> interface.  </para><para>method SetZoomRect</para></summary>
@@ -1184,7 +1181,7 @@ namespace Interop.ShockwaveFlashObjects
   [Guid("A6EF9860-C720-11D0-9337-00A0C90DCAA9")]
   [ComImport]
   [TypeLibType((short)4096)]
-  [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
+  [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IDispatchEx
   {
     /// <summary><para><c>GetDispID</c> method of <c>IDispatchEx</c> interface.</para></summary>
@@ -1249,7 +1246,7 @@ namespace Interop.ShockwaveFlashObjects
   [Guid("D27CDB70-AE6D-11CF-96B8-444553540000")]
   [ComImport]
   [TypeLibType((short)0)]
-  [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFlashFactory
   {
   }
@@ -1259,7 +1256,7 @@ namespace Interop.ShockwaveFlashObjects
   [Guid("D27CDB72-AE6D-11CF-96B8-444553540000")]
   [ComImport]
   [TypeLibType((short)4096)]
-  [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
+  [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IFlashObjectInterface
   {
   }
@@ -1268,7 +1265,7 @@ namespace Interop.ShockwaveFlashObjects
   [Guid("6D5140C1-7436-11CE-8034-00AA006009FA")]
   [ComImport]
   [TypeLibType((short)0)]
-  [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IServiceProvider
   {
     /// <summary><para><c>RemoteQueryService</c> method of <c>IServiceProvider</c> interface.</para></summary>

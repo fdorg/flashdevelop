@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore.Managers;
@@ -159,7 +158,6 @@ namespace PluginCore.Controls
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable) return;
             ScintillaControl sci = doc.SciControl;
-            ListBox cl = completionList;
             try
             {
                 if ((itemList == null) || (itemList.Count == 0))
@@ -257,7 +255,7 @@ namespace PluginCore.Controls
             if (cl.Items.Count == 0) return;
 
             // measure control
-            if (needResize && widestLabel != null && widestLabel.Length > 0)
+            if (needResize && !string.IsNullOrEmpty(widestLabel))
             {
                 needResize = false;
                 Graphics g = cl.CreateGraphics();
@@ -721,7 +719,6 @@ namespace PluginCore.Controls
             }
 
             // loose
-            int n = label.Length;
             int firstChar = label.IndexOf(word[0].ToString(), StringComparison.OrdinalIgnoreCase);
             int i = 1;
             p = firstChar;
@@ -840,17 +837,11 @@ namespace PluginCore.Controls
         
         #region Event Handling
         
-        /// <summary>
-        /// 
-        /// </summary> 
         static public IntPtr GetHandle()
         {
             return completionList.Handle;
         }
 
-        /// <summary>
-        /// 
-        /// </summary> 
         static public void OnChar(ScintillaControl sci, int value)
         {
             char c = (char)value;
@@ -889,9 +880,6 @@ namespace PluginCore.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary> 
         static public bool HandleKeys(ScintillaControl sci, Keys key)
         {
             int index;

@@ -183,7 +183,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (show)
                 {
                     Bounds = DockPanel.GetAutoHideWindowBounds(new Rectangle(-rectTarget.Width, -rectTarget.Height, rectTarget.Width, rectTarget.Height));
-                    if (Visible == false)
+                    if (!Visible)
                         Visible = true;
                     PerformLayout();
                 }
@@ -191,7 +191,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 SuspendLayout();
 
                 LayoutAnimateWindow(rectSource);
-                if (Visible == false)
+                if (!Visible)
                     Visible = true;
 
                 int speedFactor = 1;
@@ -307,23 +307,27 @@ namespace WeifenLuo.WinFormsUI.Docking
                 get
                 {
                     Rectangle rect = ClientRectangle;
+                    Boolean flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
 
                     // exclude the border and the splitter
                     if (DockState == DockState.DockBottomAutoHide)
                     {
-                        rect.Y += 2 + Measures.SplitterSize;
-                        rect.Height -= 2 + Measures.SplitterSize;
+                        rect.Y += flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
+                        rect.Height -= flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
                     }
                     else if (DockState == DockState.DockRightAutoHide)
                     {
-                        rect.X += 2 + Measures.SplitterSize;
-                        rect.Width -= 2 + Measures.SplitterSize;
+                        rect.X += flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
+                        rect.Width -= flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
                     }
                     else if (DockState == DockState.DockTopAutoHide)
-                        rect.Height -= 2 + Measures.SplitterSize;
+                    {
+                        rect.Height -= flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
+                    }
                     else if (DockState == DockState.DockLeftAutoHide)
-                        rect.Width -= 2 + Measures.SplitterSize;
-
+                    {
+                        rect.Width -= flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
+                    }
                     return rect;
                 }
             }
@@ -331,42 +335,36 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected override void OnLayout(LayoutEventArgs levent)
             {
                 DockPadding.All = 0;
+                Boolean flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
                 if (DockState == DockState.DockLeftAutoHide)
                 {
-                    DockPadding.Right = 2;
+                    DockPadding.Right = flat ? 1 : 2;
                     m_splitter.Dock = DockStyle.Right;
                 }
                 else if (DockState == DockState.DockRightAutoHide)
                 {
-                    DockPadding.Left = 2;
+                    DockPadding.Left = flat ? 1 : 2;
                     m_splitter.Dock = DockStyle.Left;
                 }
                 else if (DockState == DockState.DockTopAutoHide)
                 {
-                    DockPadding.Bottom = 2;
+                    DockPadding.Bottom = flat ? 1 : 2;
                     m_splitter.Dock = DockStyle.Bottom;
                 }
                 else if (DockState == DockState.DockBottomAutoHide)
                 {
-                    DockPadding.Top = 2;
+                    DockPadding.Top = flat ? 1 : 2;
                     m_splitter.Dock = DockStyle.Top;
                 }
-
                 Rectangle rectDisplaying = DisplayingRectangle;
                 Rectangle rectHidden = new Rectangle(-rectDisplaying.Width, rectDisplaying.Y, rectDisplaying.Width, rectDisplaying.Height);
                 foreach (Control c in Controls)
                 {
                     DockPane pane = c as DockPane;
-                    if (pane == null)
-                        continue;
-                    
-                    
-                    if (pane == ActivePane)
-                        pane.Bounds = rectDisplaying;
-                    else
-                        pane.Bounds = rectHidden;
+                    if (pane == null) continue;
+                    if (pane == ActivePane) pane.Bounds = rectDisplaying;
+                    else pane.Bounds = rectHidden;
                 }
-
                 base.OnLayout(levent);
             }
 
@@ -374,22 +372,35 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 // Draw the border
                 Graphics g = e.Graphics;
-
+                Color border = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor");
                 if (DockState == DockState.DockBottomAutoHide)
-                    g.DrawLine(SystemPens.ControlLightLight, 0, 1, ClientRectangle.Right, 1);
+                {
+                    if (border != Color.Empty) g.DrawLine(new Pen(border), 0, 1, ClientRectangle.Right, 1);
+                    else g.DrawLine(SystemPens.ControlLightLight, 0, 1, ClientRectangle.Right, 1);
+                }
                 else if (DockState == DockState.DockRightAutoHide)
-                    g.DrawLine(SystemPens.ControlLightLight, 1, 0, 1, ClientRectangle.Bottom);
+                {
+                    if (border != Color.Empty) g.DrawLine(new Pen(border), 1, 0, 1, ClientRectangle.Bottom);
+                    else g.DrawLine(SystemPens.ControlLightLight, 1, 0, 1, ClientRectangle.Bottom);
+                }
                 else if (DockState == DockState.DockTopAutoHide)
                 {
-                    g.DrawLine(SystemPens.ControlDark, 0, ClientRectangle.Height - 2, ClientRectangle.Right, ClientRectangle.Height - 2);
-                    g.DrawLine(SystemPens.ControlDarkDark, 0, ClientRectangle.Height - 1, ClientRectangle.Right, ClientRectangle.Height - 1);
+                    if (border != Color.Empty) g.DrawLine(new Pen(border), 0, ClientRectangle.Height - 1, ClientRectangle.Right, ClientRectangle.Height - 1);
+                    else
+                    {
+                        g.DrawLine(SystemPens.ControlDark, 0, ClientRectangle.Height - 2, ClientRectangle.Right, ClientRectangle.Height - 2);
+                        g.DrawLine(SystemPens.ControlDarkDark, 0, ClientRectangle.Height - 1, ClientRectangle.Right, ClientRectangle.Height - 1);
+                    }
                 }
                 else if (DockState == DockState.DockLeftAutoHide)
                 {
-                    g.DrawLine(SystemPens.ControlDark, ClientRectangle.Width - 2, 0, ClientRectangle.Width - 2, ClientRectangle.Bottom);
-                    g.DrawLine(SystemPens.ControlDarkDark, ClientRectangle.Width - 1, 0, ClientRectangle.Width - 1, ClientRectangle.Bottom);
+                    if (border != Color.Empty) g.DrawLine(new Pen(border), 0, ClientRectangle.Height - 1, ClientRectangle.Right, ClientRectangle.Height - 1);
+                    else
+                    {
+                        g.DrawLine(SystemPens.ControlDark, ClientRectangle.Width - 2, 0, ClientRectangle.Width - 2, ClientRectangle.Bottom);
+                        g.DrawLine(SystemPens.ControlDarkDark, ClientRectangle.Width - 1, 0, ClientRectangle.Width - 1, ClientRectangle.Bottom);
+                    }
                 }
-
                 base.OnPaint(e);
             }
 
@@ -610,4 +621,5 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
     }
+
 }

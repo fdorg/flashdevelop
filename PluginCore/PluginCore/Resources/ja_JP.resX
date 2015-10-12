@@ -921,6 +921,10 @@
   <data name="FlashDevelop.Label.ClearBreakpoints" xml:space="preserve">
     <value>ブレークポイントをクリア</value>
   </data>
+  <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
+    <value>&amp;Remove Invalid Files</value>
+    <comment>Added after 5.0.0</comment>
+  </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
     <value>最近開いたファイルをクリア(&amp;C)</value>
   </data>
@@ -1884,6 +1888,10 @@
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>キャンセル</value>
+  </data>
+  <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
+    <value>&amp;Remove Invalid Projects</value>
+    <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">
     <value>最近開いたプロジェクトをクリア(&amp;C)</value>
@@ -3567,7 +3575,7 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Flex PMD に使用するための既定のカスタムルールセットファイルを指定します。</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>FlashDevelop に Flex PMD コードアナライザ機能を統合します。</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
@@ -5994,10 +6002,6 @@ UseData:"</value>
     <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
     <comment>Added after 4.7.2</comment>
   </data>
-  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
-    <value>Copy Value</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
   <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
     <value>Copy ID</value>
     <comment>Added after 4.7.2</comment>
@@ -6008,10 +6012,6 @@ UseData:"</value>
   </data>
   <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
     <value>[Recursion too deep, increase Copy Tree Max Level in FlashDebugger settings]</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
-  <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
-    <value>[Object {0} already listed before]</value>
     <comment>Added after 4.7.2</comment>
   </data>
 </root>

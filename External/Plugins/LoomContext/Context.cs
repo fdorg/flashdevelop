@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ASCompletion.Model;
-using ASCompletion.Context;
-using PluginCore;
 using System.IO;
+using System.Text.RegularExpressions;
+using ASCompletion.Completion;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using PluginCore.Controls;
-using System.Text.RegularExpressions;
-using ASCompletion.Completion;
+using ScintillaNet;
 
 namespace LoomContext
 {
@@ -130,9 +130,6 @@ namespace LoomContext
             minorVersion = 0;
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
 
-            string cpCheck = contextSetup.Classpath != null ?
-                String.Join(";", contextSetup.Classpath).Replace('\\', '/') : "";
-
             //
             // Class pathes
             //
@@ -146,10 +143,12 @@ namespace LoomContext
             char S = Path.DirectorySeparatorChar;
             string sdkLibs = compiler + S + "libs";
 
-            if (majorVersion > 0 && !String.IsNullOrEmpty(sdkLibs) && Directory.Exists(sdkLibs))
+            if (!String.IsNullOrEmpty(sdkLibs) && Directory.Exists(sdkLibs))
             {
                 foreach (string loomlib in Directory.GetFiles(sdkLibs, "*.loomlib"))
-                    AddPath(loomlib);
+                {
+                    AddLib(contextSetup, loomlib);
+                }
             }
 
             // add external pathes
@@ -186,6 +185,15 @@ namespace LoomContext
             FinalizeClasspath();
         }
 
+        private void AddLib(ContextSetupInfos contextSetup, string loomlib)
+        {
+            AddPath(loomlib);
+
+            // TODO: it would be nice if Reference node could work with virtual models
+            //if (contextSetup.AdditionalPaths == null) contextSetup.AdditionalPaths = new List<string>();
+            //contextSetup.AdditionalPaths.Add(loomlib); // References
+        }
+
         /// <summary>
         /// Build a list of file mask to explore the classpath
         /// </summary>
@@ -210,11 +218,12 @@ namespace LoomContext
             {
                 if (File.Exists(path.Path) && !path.WasExplored)
                 {
-                    bool isRefresh = path.FilesCount > 0;
                     //TraceManager.AddAsync("parse " + path.Path);
                     lock (path)
                     {
                         path.WasExplored = true;
+                        // do not monitor
+                        path.ReleaseWatcher(); 
                         // PARSE LOOMLIB
                         LibParser.Parse(path, this);
                     }
@@ -309,7 +318,7 @@ namespace LoomContext
             return fullList;
         }
 
-        public override bool OnCompletionInsert(ScintillaNet.ScintillaControl sci, int position, string text, char trigger)
+        public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
         {
             if (text == "Dictionary")
             {
@@ -383,10 +392,6 @@ namespace LoomContext
             if (IsFileValid && cFile.InlinedIn == null)
             {
                 PluginBase.MainForm.CallCommand("Save", null);
-
-                string sdk = PluginBase.CurrentProject != null
-                    ? PluginBase.CurrentProject.CurrentSDK
-                    : PathHelper.ResolvePath(loomSettings.GetDefaultSDK().Path);
                 // TODO CheckSyntax
             }
         }
@@ -403,7 +408,6 @@ namespace LoomContext
                 return;
             }
 
-            string command = (append ?? "") + " -- " + CurrentFile;
             // TODO RunCMD does it make sense?
         }
 
@@ -425,9 +429,6 @@ namespace LoomContext
 
             MainForm.CallCommand("SaveAllModified", null);
 
-            string sdk = PluginBase.CurrentProject != null
-                    ? PluginBase.CurrentProject.CurrentSDK
-                    : loomSettings.GetDefaultSDK().Path;
             // TODO BuildCMD does it make sense?
             return true;
         }

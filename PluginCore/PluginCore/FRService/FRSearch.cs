@@ -1,8 +1,9 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
+using PluginCore.Helpers;
 
 namespace PluginCore.FRService
 {
@@ -354,6 +355,38 @@ namespace PluginCore.FRService
                 copyFullLineContext = value;
             }
         }
+
+        private bool hasRegexLiterals;
+        private bool isHaxeFile;
+        private string sourceFile;
+        public string SourceFile
+        {
+            get { return sourceFile; } 
+            set
+            {
+                if (sourceFile == value) return;
+                
+                sourceFile = value;
+
+                if (sourceFile == null)
+                {
+                    hasRegexLiterals = false;
+                    isHaxeFile = false;
+                    return;
+                }
+
+                string ext = Path.GetExtension(SourceFile).ToLowerInvariant();
+
+                isHaxeFile = FileInspector.IsHaxeFile(SourceFile, ext);
+
+                // Haxe, ActionScript, JavaScript and LoomScript support Regex literals
+                hasRegexLiterals = isHaxeFile || FileInspector.IsActionScript(SourceFile, ext) ||
+                                   FileInspector.IsMxml(SourceFile, ext) ||
+                                   FileInspector.IsHtml(SourceFile, ext) || ext == ".js" || ext == ".ls" ||
+                                   ext == ".ts";
+            }
+        }
+
         #endregion
 
         #region Public Search Methods
@@ -447,8 +480,15 @@ namespace PluginCore.FRService
             RegexOptions options = RegexOptions.None;
             if (!singleLine) options |= RegexOptions.Multiline;
             if (noCase) options |= RegexOptions.IgnoreCase;
-            
-            operation = new Regex(pattern, options);
+
+            try
+            {
+                operation = new Regex(pattern, options);
+            }
+            catch
+            {
+                operation = null;
+            }
         }
 
         private List<SearchMatch> SearchSource(string src, int startIndex, int startLine)
@@ -457,6 +497,8 @@ namespace PluginCore.FRService
 
             // raw search results
             if (needParsePattern) BuildRegex(pattern);
+            if (operation == null)
+                return results;
             MatchCollection matches = operation.Matches(src, startIndex);
             if (matches.Count == 0) 
                 return results;
@@ -519,6 +561,7 @@ namespace PluginCore.FRService
                             if (c == '/' && pos < len - 1)
                                 if (src[pos + 1] == '*') commentMatch = 1;
                                 else if (src[pos + 1] == '/') commentMatch = 2;
+                                else LookupRegex(src, ref pos);
                         }
                         else if (commentMatch == 1)
                         {
@@ -606,6 +649,53 @@ namespace PluginCore.FRService
                 sm.LineEnd = lineStart[endLine - 1];
             }
             return results;
+        }
+
+        private bool LookupRegex(string ba, ref int i)
+        {
+            if (!hasRegexLiterals)
+                return false;
+
+            int len = ba.Length;
+            int i0;
+            char c;
+            // regex in valid context
+
+            if (!isHaxeFile)
+                i0 = i - 2;
+            else
+            {
+                if (ba[i - 2] != '~')
+                    return false;
+                i0 = i - 3;
+            }
+
+            while (i0 > 0)
+            {
+                c = ba[i0--];
+                if ("=(,[{;:".IndexOf(c) >= 0) break; // ok
+                if (" \t".IndexOf(c) >= 0) continue;
+                return false; // anything else isn't expected before a regex
+            }
+            i0 = i;
+            while (i0 < len)
+            {
+                c = ba[i0++];
+                if (c == '\\') { i0++; continue; } // escape next
+                if (c == '/') break; // end of regex
+                if ("\r\n".IndexOf(c) >= 0) return false;
+            }
+            while (i0 < len)
+            {
+                c = ba[i0++];
+                if (!char.IsLetter(c))
+                {
+                    i0--;
+                    break;
+                }
+            }
+            i = i0; // ok, skip this regex
+            return true;
         }
 
         #endregion

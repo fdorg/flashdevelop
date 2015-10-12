@@ -17,6 +17,7 @@ namespace FlashDebugger.Controls
 
         public ImmediateUI()
         {
+            this.AutoKeyHandling = true;
             this.InitializeComponent();
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             this.history = new List<string>();

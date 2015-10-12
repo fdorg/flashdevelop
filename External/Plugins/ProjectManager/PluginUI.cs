@@ -33,6 +33,7 @@ namespace ProjectManager
         {
             this.menus = menus;
             this.plugin = plugin;
+            this.AutoKeyHandling = true;
             this.Text = TextHelper.GetString("Title.PluginPanel");
             
             #region Build TreeView and Toolbar
@@ -217,7 +218,7 @@ namespace ProjectManager
         /// </summary>
         private void tree_AfterLabelEdit(Object sender, NodeLabelEditEventArgs e)
         {
-            if (e.Label != null && Rename != null && e.Label.Length > 0)
+            if (!string.IsNullOrEmpty(e.Label) && Rename != null)
             {
                 if (!Rename((e.Node as GenericNode).BackingPath, e.Label))
                     e.CancelEdit = true;

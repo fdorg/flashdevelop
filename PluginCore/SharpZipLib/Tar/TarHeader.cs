@@ -573,52 +573,52 @@ namespace ICSharpCode.SharpZipLib.Tar
 
             int offset = 0;
             
-            name = TarHeader.ParseName(header, offset, TarHeader.NAMELEN).ToString();
-            offset += TarHeader.NAMELEN;
+            name = ParseName(header, offset, NAMELEN).ToString();
+            offset += NAMELEN;
             
-            mode = (int)TarHeader.ParseOctal(header, offset, TarHeader.MODELEN);
-            offset += TarHeader.MODELEN;
+            mode = (int)ParseOctal(header, offset, MODELEN);
+            offset += MODELEN;
             
-            UserId = (int)TarHeader.ParseOctal(header, offset, TarHeader.UIDLEN);
-            offset += TarHeader.UIDLEN;
+            UserId = (int)ParseOctal(header, offset, UIDLEN);
+            offset += UIDLEN;
             
-            GroupId = (int)TarHeader.ParseOctal(header, offset, TarHeader.GIDLEN);
-            offset += TarHeader.GIDLEN;
+            GroupId = (int)ParseOctal(header, offset, GIDLEN);
+            offset += GIDLEN;
             
-            Size = TarHeader.ParseOctal(header, offset, TarHeader.SIZELEN);
-            offset += TarHeader.SIZELEN;
+            Size = ParseOctal(header, offset, SIZELEN);
+            offset += SIZELEN;
             
-            ModTime = GetDateTimeFromCTime(TarHeader.ParseOctal(header, offset, TarHeader.MODTIMELEN));
-            offset += TarHeader.MODTIMELEN;
+            ModTime = GetDateTimeFromCTime(ParseOctal(header, offset, MODTIMELEN));
+            offset += MODTIMELEN;
             
-            checksum = (int)TarHeader.ParseOctal(header, offset, TarHeader.CHKSUMLEN);
-            offset += TarHeader.CHKSUMLEN;
+            checksum = (int)ParseOctal(header, offset, CHKSUMLEN);
+            offset += CHKSUMLEN;
             
             TypeFlag = header[ offset++ ];
 
-            LinkName = TarHeader.ParseName(header, offset, TarHeader.NAMELEN).ToString();
-            offset += TarHeader.NAMELEN;
+            LinkName = ParseName(header, offset, NAMELEN).ToString();
+            offset += NAMELEN;
             
-            Magic = TarHeader.ParseName(header, offset, TarHeader.MAGICLEN).ToString();
-            offset += TarHeader.MAGICLEN;
+            Magic = ParseName(header, offset, MAGICLEN).ToString();
+            offset += MAGICLEN;
             
-            Version = TarHeader.ParseName(header, offset, TarHeader.VERSIONLEN).ToString();
-            offset += TarHeader.VERSIONLEN;
+            Version = ParseName(header, offset, VERSIONLEN).ToString();
+            offset += VERSIONLEN;
             
-            UserName = TarHeader.ParseName(header, offset, TarHeader.UNAMELEN).ToString();
-            offset += TarHeader.UNAMELEN;
+            UserName = ParseName(header, offset, UNAMELEN).ToString();
+            offset += UNAMELEN;
             
-            GroupName = TarHeader.ParseName(header, offset, TarHeader.GNAMELEN).ToString();
-            offset += TarHeader.GNAMELEN;
+            GroupName = ParseName(header, offset, GNAMELEN).ToString();
+            offset += GNAMELEN;
             
-            DevMajor = (int)TarHeader.ParseOctal(header, offset, TarHeader.DEVLEN);
-            offset += TarHeader.DEVLEN;
+            DevMajor = (int)ParseOctal(header, offset, DEVLEN);
+            offset += DEVLEN;
             
-            DevMinor = (int)TarHeader.ParseOctal(header, offset, TarHeader.DEVLEN);
+            DevMinor = (int)ParseOctal(header, offset, DEVLEN);
             
             // Fields past this point not currently parsed or used...
             
-            isChecksumValid = Checksum == TarHeader.MakeCheckSum(header);
+            isChecksumValid = Checksum == MakeCheckSum(header);
         }
 
         /// <summary>
@@ -1043,7 +1043,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>The modified buffer offset</returns>
         static int GetCheckSumOctalBytes(long value, byte[] buffer, int offset, int length)
         {
-            TarHeader.GetOctalBytes(value, buffer, offset, length - 1);
+            GetOctalBytes(value, buffer, offset, length - 1);
             return offset + length;
         }
         
@@ -1075,7 +1075,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                 sum += buffer[i];
             }
         
-            for ( int i = 0; i < TarHeader.CHKSUMLEN; ++i)
+            for ( int i = 0; i < CHKSUMLEN; ++i)
             {
                 sum += (byte)' ';
             }
@@ -1087,7 +1087,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             return sum;
         }
         
-        static int GetCTime(System.DateTime dateTime)
+        static int GetCTime(DateTime dateTime)
         {
             return unchecked((int)((dateTime.Ticks - dateTime1970.Ticks) / timeConversionFactor));
         }

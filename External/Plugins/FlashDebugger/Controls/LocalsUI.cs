@@ -15,6 +15,7 @@ namespace FlashDebugger
 
         public LocalsUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             this.treeControl = new DataTreeControl();
             this.treeControl.Tree.BorderStyle = BorderStyle.None;

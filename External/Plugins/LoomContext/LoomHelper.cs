@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using PluginCore.Managers;
 using System.IO;
-using PluginCore;
-using LoomContext.Projects;
-using PluginCore.Bridge;
-using ProjectManager.Projects;
-using LitJson;
+using System.Timers;
 using System.Windows.Forms;
+using LitJson;
+using LoomContext.Projects;
+using PluginCore;
+using PluginCore.Bridge;
+using PluginCore.Managers;
+using ProjectManager.Projects;
+using Timer = System.Timers.Timer;
 
 namespace LoomContext
 {
@@ -19,7 +19,7 @@ namespace LoomContext
         static string configPath;
         static WatcherEx watcher;
         static LoomProject proj;
-        static System.Timers.Timer updater;
+        static Timer updater;
         static string lastProject;
 
         public static void Build(LoomProject project)
@@ -107,9 +107,9 @@ namespace LoomContext
         {
             if (updater == null && project != null)
             {
-                updater = new System.Timers.Timer();
+                updater = new Timer();
                 updater.Interval = 200;
-                updater.SynchronizingObject = PluginCore.PluginBase.MainForm as System.Windows.Forms.Form;
+                updater.SynchronizingObject = PluginBase.MainForm as Form;
                 updater.Elapsed += updater_Elapsed;
                 updater.AutoReset = false;
             }
@@ -196,7 +196,7 @@ namespace LoomContext
             else UpdateProject();
         }
 
-        static void updater_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        static void updater_Elapsed(object sender, ElapsedEventArgs e)
         {
             UpdateProject();
             proj.PropertiesChanged();

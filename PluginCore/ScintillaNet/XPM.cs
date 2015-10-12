@@ -1,8 +1,5 @@
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Drawing;
 using System.Text;
 using PluginCore.PluginCore.Utilities;
 

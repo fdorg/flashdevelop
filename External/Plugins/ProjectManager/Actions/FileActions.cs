@@ -1,16 +1,13 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Text;
-using System.Diagnostics;
 using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using PluginCore.Localization;
-using WeifenLuo.WinFormsUI;
-using PluginCore.Helpers;
-using PluginCore.Managers;
-using PluginCore;
 
 namespace ProjectManager.Actions
 {

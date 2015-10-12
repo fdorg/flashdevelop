@@ -37,8 +37,8 @@ namespace AS3Context.Controls
         LVS_EX_SIMPLESELECT     =0x00100000  
     }
 
-    [ToolboxBitmap(typeof(System.Windows.Forms.ListView))]
-    public class ListViewXP :System.Windows.Forms.ListView
+    [ToolboxBitmap(typeof(System.Windows.Forms.ListViewEx))]
+    public class ListViewXP : System.Windows.Forms.ListViewEx
     {
         private LVS_EX styles;
 

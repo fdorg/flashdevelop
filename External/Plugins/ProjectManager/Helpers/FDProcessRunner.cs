@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using PluginCore;
 
 namespace ProjectManager.Helpers

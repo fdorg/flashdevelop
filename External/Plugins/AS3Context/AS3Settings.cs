@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing.Design;
-using System.Windows.Forms.Design;
 using System.ComponentModel;
-using PluginCore.Localization;
+using System.Drawing.Design;
+using ASCompletion.Settings;
+using Ookii.Dialogs;
 using PluginCore;
-using System.IO;
+using PluginCore.Localization;
 
 namespace AS3Context
 {
@@ -14,7 +12,7 @@ namespace AS3Context
     public delegate void InstalledSDKsChangedEvent();
 
     [Serializable]
-    public class AS3Settings : ASCompletion.Settings.IContextSettings
+    public class AS3Settings : IContextSettings
     {
         [field: NonSerialized]
         public event ClasspathChangedEvent OnClasspathChanged;
@@ -210,7 +208,7 @@ namespace AS3Context
 
         [DisplayName("AS3 Classpath")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS3Context.Description.AS3Classpath"), DefaultValue(DEFAULT_AS3LIBRARY)]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string AS3ClassPath
         {
             get { return as3ClassPath; }

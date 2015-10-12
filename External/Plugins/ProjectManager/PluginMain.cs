@@ -1,27 +1,25 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Bridge;
+using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 using ProjectManager.Actions;
 using ProjectManager.Controls;
 using ProjectManager.Controls.AS2;
-using ProjectManager.Projects.AS3;
 using ProjectManager.Controls.TreeView;
-using WeifenLuo.WinFormsUI.Docking;
-using WeifenLuo.WinFormsUI;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using PluginCore.Helpers;
-using PluginCore;
-using PluginCore.Bridge;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ProjectManager
 {
@@ -96,7 +94,7 @@ namespace ProjectManager
         public static IMainForm MainForm { get { return PluginBase.MainForm; } }
         public static ProjectManagerSettings Settings;
 
-        const EventType eventMask = EventType.UIStarted | EventType.FileOpening
+        const EventType eventMask = EventType.UIStarted | EventType.UIClosing | EventType.FileOpening
             | EventType.FileOpen | EventType.FileSave | EventType.FileSwitch | EventType.ProcessStart | EventType.ProcessEnd
             | EventType.ProcessArgs | EventType.Command | EventType.Keys | EventType.ApplySettings;
 
@@ -137,12 +135,11 @@ namespace ProjectManager
                 this.SaveSettings();
             }
             // add new filtered types if user has old settings
-            if (Array.IndexOf<string>(Settings.FilteredDirectoryNames, "git") < 0)
+            if (Array.IndexOf<string>(Settings.ExcludedDirectories, "node_modules") < 0)
             {
-                List<String> fdn = new List<string>(Settings.FilteredDirectoryNames);
-                fdn.Add("git");
-                fdn.Add("hg");
-                Settings.FilteredDirectoryNames = fdn.ToArray();
+                List<String> list = new List<string>(Settings.ExcludedDirectories);
+                list.Add("node_modules");
+                Settings.ExcludedDirectories = list.ToArray();
                 this.SaveSettings();
             }
         }
@@ -193,7 +190,7 @@ namespace ProjectManager
             menus.BuildProject.Click += BuildProjectClick;
             menus.View.Click += delegate { OpenPanel(); };
             menus.GlobalClasspaths.Click += delegate { OpenGlobalClasspaths(); };
-            menus.ConfigurationSelector.SelectedIndexChanged += delegate 
+            menus.ConfigurationSelector.FlatCombo.SelectedIndexChanged += delegate 
             {
                 bool isDebug = menus.ConfigurationSelector.Text == TextHelper.GetString("Info.Debug");
                 FlexCompilerShell.Cleanup();
@@ -202,7 +199,7 @@ namespace ProjectManager
                 if (project != null) project.TraceEnabled = isDebug;
             };
             menus.TargetBuildSelector.KeyDown += new KeyEventHandler(TargetBuildSelector_KeyDown);
-            menus.TargetBuildSelector.SelectedIndexChanged += delegate { ApplyTargetBuild(); };
+            menus.TargetBuildSelector.FlatCombo.SelectedIndexChanged += delegate { ApplyTargetBuild(); };
             menus.TargetBuildSelector.LostFocus += delegate { ApplyTargetBuild(); };
             
             menus.ProjectMenu.NewProject.Click += delegate { NewProject(); };
@@ -239,6 +236,7 @@ namespace ProjectManager
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
             pluginUI.TreeBar.Synchronize.Click += delegate { ToggleTrackActiveDocument(); };
             pluginUI.TreeBar.SynchronizeMain.Click += delegate { TreeSyncToMainFile(); };
+            pluginUI.TreeBar.CollapseAll.Click += delegate { CollapseAll(); };
             pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(); };
             pluginUI.TreeBar.RefreshSelected.Click += delegate { TreeRefreshSelectedNode(); };
             pluginUI.TreeBar.ProjectTypes.Click += delegate 
@@ -322,8 +320,7 @@ namespace ProjectManager
             Project project = activeProject;
             if (project != null && project.TargetBuild != target)
             {
-                if (!menus.TargetBuildSelector.Items.Contains(target))
-                    menus.TargetBuildSelector.Items.Insert(0, target);
+                menus.AddTargetBuild(target);
                 FlexCompilerShell.Cleanup();
                 project.TargetBuild = menus.TargetBuildSelector.Text;
                 project.UpdateVars(false);
@@ -369,6 +366,11 @@ namespace ProjectManager
                         BroadcastToolBarInfo(); 
                         OpenLastProject(); 
                     });
+                    break;
+
+                case EventType.UIClosing:
+                    // save project session, documents have not been closed yet
+                    SaveProjectSession();
                     break;
 
                 // replace $(SomeVariable) type stuff with things we know about
@@ -627,7 +629,7 @@ namespace ProjectManager
             if (activeProject != null) CloseProject(true);
 
             // configure
-            var prefs = PluginMain.Settings.GetPrefs(project);
+            var prefs = Settings.GetPrefs(project);
             project.TraceEnabled = prefs.DebugMode;
             project.TargetBuild = prefs.TargetBuild;
             project.UpdateVars(true);
@@ -640,7 +642,10 @@ namespace ProjectManager
             listenToPathChange = true;
 
             // activate
-            if (!internalOpening) RestoreProjectSession(project);
+            if (!internalOpening || (internalOpening && !PluginBase.Settings.RestoreFileSession))
+            {
+                RestoreProjectSession(project);
+            }
 
             if (stealFocus)
             {
@@ -736,7 +741,7 @@ namespace ProjectManager
         {
             // try to open the last opened project
             string lastProject = Settings.LastProject;
-            if (lastProject != null && lastProject != "" && File.Exists(lastProject))
+            if (!string.IsNullOrEmpty(lastProject) && File.Exists(lastProject))
             {
                 SetProject(projectActions.OpenProjectSilent(lastProject), false, true);
             }
@@ -857,7 +862,7 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.OpenDocument)
             {
-                if (project.TestMovieCommand != null && project.TestMovieCommand.Length > 0)
+                if (!string.IsNullOrEmpty(project.TestMovieCommand))
                 {
                     if (project.TraceEnabled && project.EnableInteractiveDebugger)
                     {
@@ -903,7 +908,7 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.Custom)
             {
-                if (project.TestMovieCommand != null && project.TestMovieCommand.Length > 0)
+                if (!string.IsNullOrEmpty(project.TestMovieCommand))
                 {
                     if (project.TraceEnabled && project.EnableInteractiveDebugger)
                     {
@@ -1120,7 +1125,7 @@ namespace ProjectManager
 
         private void FileDeleted(string path)
         {
-            PluginCore.Managers.DocumentManager.CloseDocuments(path);
+            DocumentManager.CloseDocuments(path);
             Project project = Tree.ProjectOf(path);
             if (project != null)
             {
@@ -1143,7 +1148,7 @@ namespace ProjectManager
                 }
             }
 
-            PluginCore.Managers.DocumentManager.MoveDocuments(fromPath, toPath);
+            DocumentManager.MoveDocuments(fromPath, toPath);
             if (project != null)
             {
                 projectActions.MoveReferences(project, fromPath, toPath);
@@ -1595,6 +1600,17 @@ namespace ProjectManager
             {
                 Tree.Select(activeProject.GetAbsolutePath(activeProject.CompileTargets[0]));
                 Tree.SelectedNode.EnsureVisible();
+            }
+        }
+
+        private void CollapseAll()
+        {
+            foreach (TreeNode rootNode in Tree.Nodes)
+            {
+                foreach (TreeNode node in rootNode.Nodes)
+                {
+                    node.Collapse(false);
+                }
             }
         }
 

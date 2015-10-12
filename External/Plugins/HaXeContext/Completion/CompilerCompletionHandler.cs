@@ -17,11 +17,18 @@ namespace HaXeContext
         {
             if (args == null || haxeProcess == null)
                 return string.Empty;
-            haxeProcess.StartInfo.Arguments = String.Join(" ", args);
-            haxeProcess.Start();
-            var lines = haxeProcess.StandardError.ReadToEnd();
-            haxeProcess.Close();
-            return lines;
+            try
+            {
+                haxeProcess.StartInfo.Arguments = String.Join(" ", args);
+                haxeProcess.Start();
+                var lines = haxeProcess.StandardError.ReadToEnd();
+                haxeProcess.Close();
+                return lines;
+            }
+            catch 
+            { 
+                return string.Empty;
+            }
         }
 
         public void Stop()

@@ -1,7 +1,10 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml;
 using PluginCore.Helpers;
+using ProjectManager.Controls;
+using ProjectManager.Controls.AS2;
 
 namespace ProjectManager.Projects.AS2
 {
@@ -14,6 +17,7 @@ namespace ProjectManager.Projects.AS2
         }
 
         public override string Language { get { return "as2"; } }
+        public override string LanguageDisplayName { get { return "AS2"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool UsesInjection { get { return InputPath != ""; } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application && !UsesInjection; } }
@@ -22,9 +26,9 @@ namespace ProjectManager.Projects.AS2
 
         public new MtascOptions CompilerOptions { get { return (MtascOptions)base.CompilerOptions; } }
 
-        public override ProjectManager.Controls.PropertiesDialog CreatePropertiesDialog()
+        public override PropertiesDialog CreatePropertiesDialog()
         {
-            return new ProjectManager.Controls.AS2.AS2PropertiesDialog();
+            return new AS2PropertiesDialog();
         }
 
         public override void ValidateBuild(out string error)
@@ -62,7 +66,7 @@ namespace ProjectManager.Projects.AS2
         {
             try
             {
-                if (OutputPath != null && OutputPath.Length > 0 && File.Exists(GetAbsolutePath(OutputPath)))
+                if (!string.IsNullOrEmpty(OutputPath) && File.Exists(GetAbsolutePath(OutputPath)))
                     File.Delete(GetAbsolutePath(OutputPath));
                 return true;
             }
@@ -88,7 +92,7 @@ namespace ProjectManager.Projects.AS2
             {
                 return reader.ReadProject();
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.",
                     exception.LineNumber,exception.LinePosition);

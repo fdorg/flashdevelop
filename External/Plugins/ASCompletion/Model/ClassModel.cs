@@ -1,10 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Localization;
-using ASCompletion.Context;
 
 namespace ASCompletion.Model
 {
@@ -99,9 +99,9 @@ namespace ASCompletion.Model
                 if (resolvedExtend == null || !resolvedExtend.IsAlive)
                 {
                     resolvedExtend = null;
-                    return ClassModel.VoidClass;
+                    return VoidClass;
                 }
-                else return resolvedExtend.Target as ClassModel ?? ClassModel.VoidClass;
+                else return resolvedExtend.Target as ClassModel ?? VoidClass;
             }
         }
 
@@ -133,7 +133,7 @@ namespace ASCompletion.Model
             if (Name == objectKey && !string.IsNullOrEmpty(InFile.Package))
             {
                 string info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), objectKey, objectKey);
-                PluginCore.Controls.MessageBar.ShowWarning(info);
+                MessageBar.ShowWarning(info);
                 resolvedExtend = null;
                 return VoidClass;
             }
@@ -165,7 +165,7 @@ namespace ASCompletion.Model
                             if (model.QualifiedName == extends.QualifiedName)
                             {
                                 string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
-                                PluginCore.Controls.MessageBar.ShowWarning(info);
+                                MessageBar.ShowWarning(info);
                                 resolvedExtend = null;
                                 return VoidClass;
                             }
@@ -265,7 +265,7 @@ namespace ASCompletion.Model
                 MemberList newMembers = curClass.GetSortedMembersList();
                 items.Merge(newMembers);
                 
-            } while (curClass.Extends != ClassModel.VoidClass);
+            } while (curClass.Extends != VoidClass);
             items.RemoveAllWithFlag(FlagType.Static);
             items.Sort();
             return items;
@@ -388,8 +388,8 @@ namespace ASCompletion.Model
                         if ((property.Flags & FlagType.Function) > 0)
                         {
                             string commentDecl = property.ToDeclarationString();
-                            int idxA = System.Math.Max(memberDecl.LastIndexOf(":"), memberDecl.LastIndexOf(")") + 1);
-                            int idxB = System.Math.Min(commentDecl.IndexOf(":"), commentDecl.IndexOf("/*"));
+                            int idxA = Math.Max(memberDecl.LastIndexOf(":"), memberDecl.LastIndexOf(")") + 1);
+                            int idxB = Math.Min(commentDecl.IndexOf(":"), commentDecl.IndexOf("/*"));
 
                             if (idxA > 0 && idxB > -1)
                                 memberDecl = memberDecl.Substring(0, idxA) + commentDecl.Substring(idxB);
@@ -439,7 +439,6 @@ namespace ASCompletion.Model
             else
             {
                 // modifiers
-                FlagType ft = ofClass.Flags;
                 Visibility acc = ofClass.Access;
                 string modifiers = "";
                 if ((ofClass.Flags & FlagType.Intrinsic) > 0)
@@ -448,7 +447,7 @@ namespace ASCompletion.Model
                     else modifiers += "intrinsic ";
                 }
                 else if (ofClass.InFile.Version > 2)
-                    if (ofClass.Namespace != null && ofClass.Namespace.Length > 0 
+                    if (!string.IsNullOrEmpty(ofClass.Namespace) 
                         && ofClass.Namespace != "internal") 
                     {
                     //  if ((ft & FlagType.Interface) == 0)
@@ -502,7 +501,7 @@ namespace ASCompletion.Model
                 if ((ft & FlagType.Extern) > 0) modifiers += "extern ";
                 else modifiers += "intrinsic ";
             }
-            else if (member.Namespace != null && member.Namespace.Length > 0 
+            else if (!string.IsNullOrEmpty(member.Namespace) 
                 && member.Namespace != "internal")
             {
                 if ((ft & FlagType.Interface) == 0)
@@ -586,7 +585,7 @@ namespace ASCompletion.Model
             comment = comment.Trim();
             if (comment.Length == 0) return "";
             Boolean indent = tab != "";
-            String space = PluginCore.PluginBase.Settings.CommentBlockStyle == PluginCore.CommentBlockStyle.Indented ? " " : "";
+            String space = PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
             Boolean startWithStar = comment.StartsWith("*");
             if (startWithStar || comment.IndexOf('\n') > 0 || comment.IndexOf('\r') > 0)
             {

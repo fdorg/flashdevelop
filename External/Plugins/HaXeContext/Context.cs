@@ -11,10 +11,13 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
-using System.Collections;
+using System.Linq;
+using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using PluginCore.Utilities;
+using ScintillaNet;
 
 namespace HaXeContext
 {
@@ -177,13 +180,22 @@ namespace HaXeContext
                 p.WaitForExit();
 
                 List<string> paths = new List<string>();
-                string path = "";
+                string line = "";
                 do { 
-                    path = p.StandardOutput.ReadLine();
-                    if (path != null && path.Length > 0 && !path.StartsWith("-") && Directory.Exists(path))
+                    line = p.StandardOutput.ReadLine();
+                    if (string.IsNullOrEmpty(line)) continue;
+                    if (line.IndexOf("not installed") > 0)
                     {
-                        path = NormalizePath(path).TrimEnd(Path.DirectorySeparatorChar);
-                        paths.Add(path);
+                        TraceManager.Add(line, 3);
+                    }
+                    else if (!line.StartsWith("-"))
+                    {
+                        try
+                        {
+                            if (Directory.Exists(line))
+                                paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
+                        }
+                        catch (Exception) { }
                     }
                 }
                 while (!p.StandardOutput.EndOfStream);
@@ -250,7 +262,7 @@ namespace HaXeContext
             String metaList = process.StandardOutput.ReadToEnd();
             process.Close();
 
-            Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?= @:[a-zA-Z]* :)");
+            Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
             metaList = Regex.Replace(metaList, "\\s+", " ");
 
             MatchCollection matches = regex.Matches(metaList);
@@ -291,14 +303,20 @@ namespace HaXeContext
 
             if (lang == null)
             {
-                lang = "cpp";
-
-                if (contextSetup.TargetBuild == null || contextSetup.TargetBuild.StartsWith("flash"))
-                    lang = "";
-                else if (contextSetup.TargetBuild.StartsWith("html5"))
-                    lang = "js";
-                else if (contextSetup.TargetBuild.IndexOf("neko") >= 0)
-                    lang = "neko";
+                if (contextSetup.Platform == "hxml")
+                {
+                    lang = contextSetup.TargetBuild ?? "";
+                }
+                else // assume game-related toolchain
+                {
+                    lang = "cpp";
+                    if (contextSetup.TargetBuild == null || contextSetup.TargetBuild.StartsWith("flash"))
+                        lang = "";
+                    else if (contextSetup.TargetBuild.StartsWith("html5"))
+                        lang = "js";
+                    else if (contextSetup.TargetBuild.IndexOf("neko") >= 0)
+                        lang = "neko";
+                }
             }
             else if (lang == "swf")
             {
@@ -562,6 +580,21 @@ namespace HaXeContext
         }
         #endregion
 
+        #region SDK
+        private InstalledSDK GetCurrentSDK()
+        {
+            return hxsettings.InstalledSDKs.FirstOrDefault(sdk => sdk.Path == currentSDK);
+        }
+
+        private SemVer GetCurrentSDKVersion()
+        {
+            InstalledSDK currentSDK = GetCurrentSDK();
+            if (currentSDK != null)
+                return new SemVer(currentSDK.Version);
+            return SemVer.Zero;
+        }
+        #endregion
+
         #region class resolution
         /// <summary>
         /// Evaluates the visibility of one given type from another.
@@ -799,11 +832,7 @@ namespace HaXeContext
                 if (aPath.IsValid && !aPath.Updating)
                 {
                     string path;
-                    try
-                    {
-                        path = Path.Combine(aPath.Path, fileName);
-                    }
-                    catch { continue; }
+                    path = aPath.Path + dirSeparator + fileName;
 
                     FileModel file = null;
                     // cached file
@@ -991,7 +1020,6 @@ namespace HaXeContext
                 aClass.ExtendsType = indexType;
             }
 
-            string typed = "<" + indexType + ">";
             foreach (MemberModel member in aClass.Members)
             {
                 if (member.Type != null && member.Type.IndexOf(Tname) >= 0)
@@ -1171,7 +1199,7 @@ namespace HaXeContext
             if (expression.Value != "")
             {
                 // async processing
-                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler);
+                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION);
                 hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
@@ -1180,7 +1208,7 @@ namespace HaXeContext
             return null; 
         }
 
-        internal void OnDotCompletionResult(HaxeComplete hc, HaxeCompleteStatus status)
+        internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             resolvingDot = false;
 
@@ -1191,8 +1219,12 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.MEMBERS:
-                    if (hc.Members != null && hc.Members.Count > 0)
-                        ASComplete.DotContextResolved(hc.Sci, hc.Expr, hc.Members, hc.AutoHide);
+                    if (result.Members != null && result.Members.Count > 0)
+                        ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
+                    break;
+
+                case HaxeCompleteStatus.TYPE:
+                    // eg. Int
                     break;
             }
         }
@@ -1239,8 +1271,6 @@ namespace HaXeContext
                             elements.Add(decl);
                 }
                 elements.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
-
-                bool qualify = Settings.CompletionShowQualifiedTypes && settings.GenerateImports;
 
                 // other classes in same package (or parent packages!)
                 if (features.hasPackages && cFile.Package != "")
@@ -1347,14 +1377,14 @@ namespace HaXeContext
                 return null;
 
             expression.Position++;
-            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler);
+            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION);
             hc.GetList(OnFunctionCompletionResult);
 
             resolvingFunction = true;
             return null; // running asynchronously
         }
 
-        internal void OnFunctionCompletionResult(HaxeComplete hc, HaxeCompleteStatus status)
+        internal void OnFunctionCompletionResult(HaxeComplete hc, HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             resolvingFunction = false;
 
@@ -1366,10 +1396,52 @@ namespace HaXeContext
 
                 case HaxeCompleteStatus.TYPE:
                     hc.Expr.Position--;
-                    ASComplete.FunctionContextResolved(hc.Sci, hc.Expr, hc.Type, null, true);
+                    ASComplete.FunctionContextResolved(hc.Sci, hc.Expr, result.Type, null, true);
                     break;
             }
         }
+
+        public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
+        {
+            if (GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
+                return false;
+
+            var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION);
+            hc.GetPosition(OnPositionCompletionResult);
+            return true;
+        }
+
+        internal void OnPositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        {
+            if (hc.Sci.InvokeRequired)
+            {
+                hc.Sci.BeginInvoke((MethodInvoker)delegate
+                {
+                    HandlePositionCompletionResult(hc, result, status); 
+                });
+            }
+            else HandlePositionCompletionResult(hc, result, status); 
+        }
+
+        private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        {
+            switch (status)
+            {
+                case HaxeCompleteStatus.ERROR:
+                    TraceManager.Add(hc.Errors, -3);
+                    break;
+
+                case HaxeCompleteStatus.POSITION:
+                    ASComplete.SaveLastLookupPosition(hc.Sci);
+
+                    PluginBase.MainForm.OpenEditableDocument(result.Path, false);
+                    const string keywords = "(function|var|[,(])";
+
+                    ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
+                    break;
+            }
+        }
+
         #endregion
 
         #region command line compiler
@@ -1390,11 +1462,11 @@ namespace HaXeContext
         public override void CheckSyntax()
         {
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler);
+            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
         }
 
-        internal void OnCheckSyntaxResult(HaxeComplete hc, HaxeCompleteStatus status)
+        internal void OnCheckSyntaxResult(HaxeComplete hc, HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {
@@ -1504,7 +1576,7 @@ namespace HaXeContext
             {
                 command = Regex.Replace(command, "[\\r\\n]\\s*\\*", "", RegexOptions.Singleline);
                 command = " " + MainForm.ProcessArgString(command) + " ";
-                if (command == null || command.Length == 0)
+                if (string.IsNullOrEmpty(command))
                 {
                     if (!failSilently)
                         throw new Exception(TextHelper.GetString("Info.InvalidQuickBuildCommand"));

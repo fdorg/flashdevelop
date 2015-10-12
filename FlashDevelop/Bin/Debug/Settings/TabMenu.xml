@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <tabmenu>
 	<button label="Label.Close" click="Close" keyid="FileMenu.Close" />
-	<button label="Label.CloseOthers" click="CloseOthers" keyid="FileMenu.CloseOthers" />
-	<button label="Label.CloseAll" click="CloseAll" keyid="FileMenu.CloseAll" />
+	<button label="Label.CloseOthers" click="CloseOthers" keyid="FileMenu.CloseOthers" flags="Enable:!IsAloneInPane" />
+	<button label="Label.CloseAll" click="CloseAll" keyid="FileMenu.CloseAll" flags="Enable:!IsAloneInPane" />
 	<separator />
-	<button label="Label.Reload" click="Reload" keyid="ModifyMenu.Reload" flags="Enable:IsEditable|!IsUntitled" />
-	<button label="Label.Duplicate" click="Duplicate" keyId="ModifyMenu.Duplicate" flags="Enable:IsEditable" />
-	<button label="Label.Revert" click="Revert" keyid="ModifyMenu.Revert" flags="Enable:IsEditable|CanUndo" />
+	<button label="Label.Reload" click="Reload" keyid="ModifyMenu.Reload" flags="Enable:IsEditable|!IsUntitled" image="66" />
+	<button label="Label.Duplicate" click="Duplicate" keyId="ModifyMenu.Duplicate" flags="Enable:IsEditable" image="292" />
+	<button label="Label.Revert" click="Revert" keyid="ModifyMenu.Revert" flags="Enable:IsEditable|CanUndo" image="73" />
 	<separator />
-	<button label="Label.Save" click="Save" keyid="FileMenu.Save" flags="Enable:IsEditable" />
+	<button label="Label.Save" click="Save" keyid="FileMenu.Save" flags="Enable:IsEditable" image="168" />
 	<button label="Label.SaveAs" click="SaveAs" keyid="FileMenu.SaveAs" flags="Enable:IsEditable" />
 	<separator />
 	<button label="Label.CommandPrompt" click="PluginCommand" tag="FileExplorer.PromptHere;$(CurDir)" image="57" keyid="GeneralToolsMenu.CommandPrompt" />
-	<button label="Label.WindowsExplorer" click="PluginCommand" tag="FileExplorer.Explore;$(CurDir)" image="56" keyid="GeneralToolsMenu.WindowsExplorer" />
+	<button label="Label.WindowsExplorer" click="PluginCommand" tag="FileExplorer.Explore;$(CurDir)" image="46" keyid="GeneralToolsMenu.WindowsExplorer" />
 </tabmenu>

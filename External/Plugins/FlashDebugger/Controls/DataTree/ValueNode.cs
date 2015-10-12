@@ -1,5 +1,6 @@
 ﻿using System;
 using flash.tools.debugger;
+using Double = java.lang.Double;
 
 namespace FlashDebugger.Controls.DataTree
 {
@@ -68,8 +69,8 @@ namespace FlashDebugger.Controls.DataTree
                 }
                 else if (type == VariableType_.NUMBER)
                 {
-                    double number = ((java.lang.Double)m_Value.getValueAsObject()).doubleValue();
-                    if (!Double.IsNaN(number) && (double)(long)number == number)
+                    double number = ((Double)m_Value.getValueAsObject()).doubleValue();
+                    if (!System.Double.IsNaN(number) && (double)(long)number == number)
                     {
                         if (!m_bEditing)
                         {

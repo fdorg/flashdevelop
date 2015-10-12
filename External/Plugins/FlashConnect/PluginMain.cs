@@ -1,17 +1,16 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Web;
-using System.Text;
-using System.Net.Sockets;
 using System.ComponentModel;
+using System.IO;
+using System.Net.Sockets;
+using System.Text;
+using System.Web;
 using System.Windows.Forms;
-using WeifenLuo.WinFormsUI;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
+using System.Xml;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace FlashConnect
 {
@@ -110,7 +109,7 @@ namespace FlashConnect
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             // Nothing to do here..
         }

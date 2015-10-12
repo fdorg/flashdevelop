@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 
 namespace ASClassWizard.Resources
 {
@@ -38,7 +34,6 @@ namespace ASClassWizard.Resources
             isPublic = is_public;
             isDynamic = is_dynamic;
             isFinal = is_final;
-
         }
     }
 }

@@ -1,14 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using FlashDevelop.Managers;
-using PluginCore.Managers;
-using FlashDevelop;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Utilities 
 {

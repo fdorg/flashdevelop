@@ -28,15 +28,15 @@ echo.
 echo (hint: edit 'Run.bat' to test on device or change screen size)
 echo.
 
-:: CROSSOVER NOTE:
-:: FDEXE.sh needs execution rights, run once in Terminal: sudo chmod +x path/to/fd/FDEXE.sh
+:: Native exec tool
+set FDEXE=%FDBRIDGE%/FDEXE.sh
 
 if [%1] == [unix_adl] (
 	echo Running Mac/Linux ADL...
-	FDEXE.sh "%UNIX_FLEX_SDK%/bin/adl" -screensize %SCREEN_SIZE:\=/% %APP_XML:\=/% %APP_DIR:\=/%
+	%FDEXE% "%UNIX_FLEX_SDK%/bin/adl" -screensize %SCREEN_SIZE:\=/% %APP_XML:\=/% %APP_DIR:\=/%
 ) else (
 	echo Running Windows ADL...
-	adl -screensize %SCREEN_SIZE% "%APP_XML%" "%APP_DIR%"
+	adl.exe -screensize %SCREEN_SIZE% "%APP_XML%" "%APP_DIR%"
 )
 if errorlevel 1 goto end
 goto endNoPause

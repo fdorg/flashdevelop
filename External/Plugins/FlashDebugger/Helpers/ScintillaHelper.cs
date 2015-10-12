@@ -1,13 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using PluginCore.Utilities;
-using ScintillaNet;
+using System.IO;
+using FlashDebugger.Properties;
 using PluginCore;
-using ScintillaNet.Configuration;
-using PluginCore.Managers;
 using PluginCore.Helpers;
-using System.Drawing;
+using PluginCore.Managers;
+using ScintillaNet;
+using ScintillaNet.Configuration;
+using ScintillaNet.Enums;
 
 namespace FlashDebugger
 {
@@ -38,7 +38,7 @@ namespace FlashDebugger
 
         static public void InitMarkers(ScintillaControl sci)
         {
-            sci.ModEventMask |= (Int32)ScintillaNet.Enums.ModificationFlags.ChangeMarker;
+            sci.ModEventMask |= (Int32)ModificationFlags.ChangeMarker;
             sci.MarkerChanged += new MarkerChangedHandler(SciControl_MarkerChanged);
             sci.MarginSensitiveN(0, true);
             int mask = sci.GetMarginMaskN(0);
@@ -47,12 +47,12 @@ namespace FlashDebugger
             mask |= GetMarkerMask(markerBPNotAvailable);
             mask |= GetMarkerMask(markerCurrentLine);
             sci.SetMarginMaskN(0, mask);
-            var enabledImage = ScaleHelper.Scale(Properties.Resource.Enabled);
-            var disabledImage = ScaleHelper.Scale(Properties.Resource.Disabled);
-            var curlineImage = ScaleHelper.Scale(Properties.Resource.CurLine);
-            sci.MarkerDefinePixmap(markerBPEnabled, ScintillaNet.XPM.ConvertToXPM(enabledImage, "#00FF00"));
-            sci.MarkerDefinePixmap(markerBPDisabled, ScintillaNet.XPM.ConvertToXPM(disabledImage, "#00FF00"));
-            sci.MarkerDefinePixmap(markerCurrentLine, ScintillaNet.XPM.ConvertToXPM(curlineImage, "#00FF00"));
+            var enabledImage = ScaleHelper.Scale(Resource.Enabled);
+            var disabledImage = ScaleHelper.Scale(Resource.Disabled);
+            var curlineImage = ScaleHelper.Scale(Resource.CurLine);
+            sci.MarkerDefineRGBAImage(markerBPEnabled, enabledImage);
+            sci.MarkerDefineRGBAImage(markerBPDisabled, disabledImage);
+            sci.MarkerDefineRGBAImage(markerCurrentLine, curlineImage);
             Language lang = PluginBase.MainForm.SciConfig.GetLanguage("as3"); // default
             sci.MarkerSetBack(markerBPEnabled, lang.editorstyle.ErrorLineBack); // enable
             sci.MarkerSetBack(markerBPDisabled, lang.editorstyle.DisabledLineBack); // disable
@@ -152,9 +152,9 @@ namespace FlashDebugger
             ITabbedDocument document = DocumentManager.FindDocument(Path.GetFileName(value));
             if (document != null && document.IsEditable)
             {
-                document.SplitSci1.ModEventMask |= (Int32)ScintillaNet.Enums.ModificationFlags.ChangeMarker;
+                document.SplitSci1.ModEventMask |= (Int32)ModificationFlags.ChangeMarker;
                 document.SplitSci1.MarkerChanged -= new MarkerChangedHandler(SciControl_MarkerChanged);
-                document.SplitSci2.ModEventMask |= (Int32)ScintillaNet.Enums.ModificationFlags.ChangeMarker;
+                document.SplitSci2.ModEventMask |= (Int32)ModificationFlags.ChangeMarker;
                 document.SplitSci2.MarkerChanged -= new MarkerChangedHandler(SciControl_MarkerChanged);
             }
         }
@@ -210,14 +210,17 @@ namespace FlashDebugger
             if (indicator == indicatorDebugCurrentLine)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.DebugLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             else if (indicator == indicatorDebugEnabledBreakpoint)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.ErrorLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             else if (indicator == indicatorDebugDisabledBreakpoint)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.DisabledLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             sci.SetIndicStyle(indicator, 7);
             sci.CurrentIndicator = indicator;
@@ -241,14 +244,17 @@ namespace FlashDebugger
             if (indicator == indicatorDebugCurrentLine)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.DebugLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             else if (indicator == indicatorDebugEnabledBreakpoint)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.ErrorLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             else if (indicator == indicatorDebugDisabledBreakpoint)
             {
                 sci.SetIndicFore(indicator, lang.editorstyle.DisabledLineBack);
+                sci.SetIndicSetAlpha(indicator, 40); // Improve contrast
             }
             sci.SetIndicStyle(indicator, 7);
             sci.CurrentIndicator = indicator;

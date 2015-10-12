@@ -1,13 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Utilities;
-using PluginCore.Managers;
 using PluginCore.Localization;
-using PluginCore;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace PluginCore.Helpers
 {
@@ -395,6 +394,31 @@ namespace PluginCore.Helpers
                 info = new EncodingFileInfo();
             }
             return info;
+        }
+
+        /// <summary>
+        /// Filters a list of paths so that only those meeting the File.Exists() condition remain.
+        /// </summary>
+        public static List<String> FilterByExisting(List<String> paths, Boolean logicalDrivesOnly)
+        {
+            List<String> toCheck = new List<String>(paths);
+            if (logicalDrivesOnly)
+            {
+                DriveInfo[] driveInfo = DriveInfo.GetDrives();
+                toCheck = new List<String>(paths);
+                toCheck.RemoveAll(delegate(String path)
+                {
+                    foreach (DriveInfo drive in driveInfo)
+                    {
+                        if (path.StartsWith(drive.RootDirectory.ToString())) return false;
+                    }
+                    return true;
+                });
+            }
+            toCheck.RemoveAll(path => !File.Exists(path));
+            paths.Clear();
+            paths.AddRange(toCheck);
+            return paths;
         }
     }
 

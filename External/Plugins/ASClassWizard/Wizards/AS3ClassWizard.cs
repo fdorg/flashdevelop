@@ -1,32 +1,16 @@
-﻿
-#region Imports
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-
 using PluginCore;
 using PluginCore.Localization;
 using ProjectManager.Projects;
-
-using ASClassWizard.Wizards;
-using ASClassWizard.Resources;
-
 using ASCompletion.Context;
 using ASCompletion.Model;
-
-using AS3Context;
-using AS2Context;
 using System.Reflection;
 using System.Diagnostics;
-#endregion
-
 
 namespace ASClassWizard.Wizards
 {
@@ -139,8 +123,6 @@ namespace ASClassWizard.Wizards
         /// <summary>
         /// Browse project packages
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void packageBrowse_Click(object sender, EventArgs e)
         {
 
@@ -179,65 +161,65 @@ namespace ASClassWizard.Wizards
 
         private void baseBrowse_Click(object sender, EventArgs e)
         {
-            ClassBrowser browser = new ClassBrowser();
-            IASContext context   = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-            try
+            using (ClassBrowser browser = new ClassBrowser())
             {
-                browser.ClassList = context.GetAllProjectClasses();
+                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                try
+                {
+                    browser.ClassList = context.GetAllProjectClasses();
+                }
+                catch { }
+                browser.ExcludeFlag = FlagType.Interface;
+                browser.IncludeFlag = FlagType.Class;
+                if (browser.ShowDialog(this) == DialogResult.OK)
+                {
+                    this.baseBox.Text = browser.SelectedClass;
+                }
+                this.okButton.Focus();
             }
-            catch { }
-            browser.ExcludeFlag  = FlagType.Interface;
-            browser.IncludeFlag  = FlagType.Class;
-            if (browser.ShowDialog(this) == DialogResult.OK)
-            {
-                this.baseBox.Text = browser.SelectedClass;
-            }
-            this.okButton.Focus();
         }
 
         /// <summary>
         /// Added interface
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void implementBrowse_Click(object sender, EventArgs e)
         {
-            ClassBrowser browser = new ClassBrowser();
-            MemberList known = null;
-            browser.IncludeFlag = FlagType.Interface;
-            IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-            try
+            using (ClassBrowser browser = new ClassBrowser())
             {
-                known = context.GetAllProjectClasses();
-                known.Merge(ASContext.Context.GetVisibleExternalElements());
-            }
-            catch (Exception error)
-            {
-                Debug.WriteLine(error.StackTrace);
-            }
-            browser.ClassList = known;
-            if (browser.ShowDialog(this) == DialogResult.OK)
-            {
-                if (browser.SelectedClass != null)
+                MemberList known = null;
+                browser.IncludeFlag = FlagType.Interface;
+                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                try
                 {
-                    foreach (string item in this.implementList.Items)
-                    {
-                        if (item == browser.SelectedClass) return;
-                    }
-                    this.implementList.Items.Add(browser.SelectedClass);
+                    known = context.GetAllProjectClasses();
+                    known.Merge(ASContext.Context.GetVisibleExternalElements());
                 }
+                catch (Exception error)
+                {
+                    Debug.WriteLine(error.StackTrace);
+                }
+                browser.ClassList = known;
+                if (browser.ShowDialog(this) == DialogResult.OK)
+                {
+                    if (browser.SelectedClass != null)
+                    {
+                        foreach (string item in this.implementList.Items)
+                        {
+                            if (item == browser.SelectedClass) return;
+                        }
+                        this.implementList.Items.Add(browser.SelectedClass);
+                    }
+                }
+                this.implementRemove.Enabled = this.implementList.Items.Count > 0;
+                this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
+                this.superCheck.Enabled = this.implementList.Items.Count > 0;
+                ValidateClass();
             }
-            this.implementRemove.Enabled = this.implementList.Items.Count > 0;
-            this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
-            this.superCheck.Enabled = this.implementList.Items.Count > 0;
-            ValidateClass();
         }
 
         /// <summary>
         /// Remove interface
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void interfaceRemove_Click(object sender, EventArgs e)
         {
             if (this.implementList.SelectedItem != null)
@@ -271,7 +253,7 @@ namespace ASClassWizard.Wizards
 
         #endregion
 
-        public static Image GetResource( string resourceID )
+        public static Image GetResource(string resourceID)
         {
             resourceID = "ASClassWizard." + resourceID;
             Assembly assembly = Assembly.GetExecutingAssembly();

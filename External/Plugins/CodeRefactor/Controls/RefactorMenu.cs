@@ -21,9 +21,9 @@ namespace CodeRefactor.Controls
 
         public RefactorMenu(Boolean createSurroundMenu)
         {
-            Image empty = PluginBase.MainForm.FindImage("559");
             this.Text = TextHelper.GetString("Label.Refactor");
-            this.renameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename"), empty) as ToolStripMenuItem;
+            this.renameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename")) as ToolStripMenuItem;
+            this.renameMenuItem.Image = PluginBase.MainForm.FindImage("331");
             this.extractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
             this.extractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
             this.delegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;

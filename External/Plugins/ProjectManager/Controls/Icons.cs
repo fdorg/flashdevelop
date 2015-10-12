@@ -1,14 +1,11 @@
-using System;
-using System.Drawing;
-using System.Reflection;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows.Forms;
-using PluginCore.Utilities;
-using PluginCore;
-using ProjectManager.Projects;
+using System.Drawing;
 using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Utilities;
 
 namespace ProjectManager.Controls
 {
@@ -27,7 +24,7 @@ namespace ProjectManager.Controls
     }
 
     /// <summary>
-    /// Contains all icons used by the Project Explorer
+    /// Contains all icons used by the Project Manager
     /// </summary>
     public class Icons
     {
@@ -74,6 +71,7 @@ namespace ProjectManager.Controls
         public static FDImage Copy;
         public static FDImage Paste;
         public static FDImage Delete;
+        public static FDImage Rename;
         public static FDImage Options;
         public static FDImage OptionsWithIssues;
         public static FDImage NewProject;
@@ -95,6 +93,7 @@ namespace ProjectManager.Controls
         public static FDImage LibrarypathFolder;
         public static FDImage DocumentClass;
         public static FDImage CommandPrompt;
+        public static FDImage CollapseAll;
 
         public static ImageList ImageList { get { return imageList; } }
 
@@ -112,9 +111,9 @@ namespace ProjectManager.Controls
             XmlFile = GetResource("Icons.XmlFile.png");
             MxmlFile = GetResource("Icons.MxmlFile.png");
             MxmlFileCompile = GetResource("Icons.MxmlFileCompile.png");
-            HiddenItems = GetGray("292");
-            HiddenFolder = GetGray("203");
-            HiddenFile = GetGray("526");
+            HiddenItems = GetGray(292);
+            HiddenFolder = GetGray(203);
+            HiddenFile = GetGray(526);
             BlankFile = Get(526);
             Project = Get(274);
             ProjectClasspath = Get(98);
@@ -137,7 +136,7 @@ namespace ProjectManager.Controls
             AddFile = Get("526|0|5|4");
             OpenFile = Get(214);
             EditFile = Get(282);
-            Browse = Get(56);
+            Browse = Get(46);
 
             FindAndReplace = Get(484);
             FindInFiles = Get(209);
@@ -145,6 +144,7 @@ namespace ProjectManager.Controls
             Copy = Get(292);
             Paste = Get(283);
             Delete = Get(111);
+            Rename = Get(331);
             Options = Get(54);
             OptionsWithIssues = Get("54|6|3|3");
             NewProject = Get("274|0|5|4");
@@ -166,6 +166,12 @@ namespace ProjectManager.Controls
             LibrarypathFolder = Get(208);
             DocumentClass = Get(147);
             CommandPrompt = Get(57);
+            CollapseAll = GetGray(166);
+        }
+
+        public static FDImage GetGray(int fdIndex)
+        {
+            return GetGray(fdIndex.ToString());
         }
 
         public static FDImage GetGray(string data)
@@ -209,31 +215,31 @@ namespace ProjectManager.Controls
 
         public static FDImage GetImageForFile(string file)
         {
-            if (file == null || file == string.Empty)
-                return Icons.BlankFile;
+            if (string.IsNullOrEmpty(file))
+                return BlankFile;
             string ext = Path.GetExtension(file).ToLower();
             if (FileInspector.IsActionScript(file, ext))
-                return Icons.ActionScript;
+                return ActionScript;
             else if (FileInspector.IsHaxeFile(file, ext))
-                return Icons.HaxeFile;
+                return HaxeFile;
             else if (FileInspector.IsMxml(file, ext))
-                return Icons.MxmlFile;
+                return MxmlFile;
             else if (FileInspector.IsFont(file, ext))
-                return Icons.Font;
+                return Font;
             else if (FileInspector.IsImage(file, ext) || ext == ".ico")
-                return Icons.ImageResource;
+                return ImageResource;
             else if (FileInspector.IsSwf(file, ext))
-                return Icons.SwfFile;
+                return SwfFile;
             else if (FileInspector.IsSwc(file, ext))
-                return Icons.SwcFile;
+                return SwcFile;
             else if (FileInspector.IsHtml(file, ext))
-                return Icons.HtmlFile;
+                return HtmlFile;
             else if (FileInspector.IsXml(file, ext))
-                return Icons.XmlFile;
+                return XmlFile;
             else if (FileInspector.IsText(file, ext))
-                return Icons.TextFile;
+                return TextFile;
             else if (FileInspector.IsFLA(file, ext))
-                return Icons.FlashCS3;
+                return FlashCS3;
             else
                 return ExtractIconIfNecessary(file);
         }
@@ -263,7 +269,8 @@ namespace ProjectManager.Controls
             Bitmap composed = image.Clone() as Bitmap;
             using (Graphics destination = Graphics.FromImage(composed))
             {
-                destination.DrawImage(overlay, new Rectangle(x, y, overlay.Width, overlay.Height), new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
+                Rectangle dest = new Rectangle(ScaleHelper.Scale(x), ScaleHelper.Scale(y), overlay.Width, overlay.Height);
+                destination.DrawImage(overlay, dest, new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
             }
             return composed;
         }

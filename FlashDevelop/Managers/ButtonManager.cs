@@ -1,16 +1,11 @@
 using System;
 using System.Text;
-using System.Reflection;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
-using FlashDevelop.Docking;
-using FlashDevelop.Settings;
-using FlashDevelop.Helpers;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {
@@ -81,6 +76,14 @@ namespace FlashDevelop.Managers
             else if (action.Contains("!HasBookmarks"))
             {
                 if (document.HasBookmarks) return false;
+            }
+            if (action.Contains("!IsAloneInPane"))
+            {
+                if (document.IsAloneInPane) return false;
+            }
+            else if (action.Contains("IsAloneInPane"))
+            {
+                if (!document.IsAloneInPane) return false;
             }
             if (action.Contains("!HasModified"))
             {
@@ -256,9 +259,11 @@ namespace FlashDevelop.Managers
                 }
                 if (Globals.PreviousDocuments.Count > 0)
                 {
-                    String label = TextHelper.GetString("Label.ClearReopenList");
+                    String cleanLabel = TextHelper.GetString("Label.CleanReopenList");
+                    String clearLabel = TextHelper.GetString("Label.ClearReopenList");
                     reopenMenu.DropDownItems.Add(new ToolStripSeparator());
-                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(label, null, new EventHandler(Globals.MainForm.ClearReopenList)));
+                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(cleanLabel, null, new EventHandler(Globals.MainForm.CleanReopenList)));
+                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(clearLabel, null, new EventHandler(Globals.MainForm.ClearReopenList)));
                     reopenMenu.Enabled = true;
                 }
                 else reopenMenu.Enabled = false;
@@ -276,7 +281,6 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                ToolStripMenuItem reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 if (Globals.PreviousDocuments.Contains(file))
                 {
                     Globals.PreviousDocuments.Remove(file);

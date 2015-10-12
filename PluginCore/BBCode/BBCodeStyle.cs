@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace PluginCore.BBCode
 {
@@ -50,7 +48,7 @@ namespace PluginCore.BBCode
                 }
             }
 
-            if (outStyle.fontName == null || outStyle.fontName.Length < 1)
+            if (string.IsNullOrEmpty(outStyle.fontName))
                 outStyle.fontName = parent.fontName;
 
             if (outStyle.backColor == null)
@@ -213,7 +211,7 @@ namespace PluginCore.BBCode
 
             public static Mode ResolveColorMode(String modeStr)
             {
-                if (modeStr == null || modeStr.Length < 1)
+                if (string.IsNullOrEmpty(modeStr))
                     return Mode.NORMAL;
 
                 _InitStatics();

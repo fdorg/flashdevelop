@@ -47,17 +47,25 @@ namespace AppMan.Utilities
         [ComImportAttribute()]
         private class TaskbarInstance {}
 
-        private static ITaskbarList3 taskbarInstance = (ITaskbarList3)new TaskbarInstance();
-        private static bool taskbarSupported = (Environment.OSVersion.Version >= new Version(6, 1)) && !Win32.IsRunningOnMono;
+        private static ITaskbarList3 taskbarInstance;
+        private static Boolean taskbarSupported = (Environment.OSVersion.Version >= new Version(6, 1)) && !Win32.IsRunningOnMono;
 
         public static void SetState(IntPtr windowHandle, TaskbarStates taskbarState)
         {
-            if (taskbarSupported) taskbarInstance.SetProgressState(windowHandle, taskbarState);
+            if (taskbarSupported)
+            {
+                if (taskbarInstance == null) taskbarInstance = (ITaskbarList3)new TaskbarInstance();
+                taskbarInstance.SetProgressState(windowHandle, taskbarState);
+            }
         }
 
         public static void SetValue(IntPtr windowHandle, double progressValue, double progressMax)
         {
-            if (taskbarSupported) taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
+            if (taskbarSupported)
+            {
+                if (taskbarInstance == null) taskbarInstance = (ITaskbarList3)new TaskbarInstance();
+                taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
+            }
         }
 
     }

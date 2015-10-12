@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
 using System.IO;
-using PluginCore.Localization;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
 using PluginCore.Helpers;
+using ProjectManager.Controls;
+using ProjectManager.Controls.AS3;
 
 namespace ProjectManager.Projects.AS3
 {
@@ -28,6 +27,7 @@ namespace ProjectManager.Projects.AS3
         }
 
         public override string Language { get { return "as3"; } }
+        public override string LanguageDisplayName { get { return "AS3"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool ReadOnly { get { return FileInspector.IsFlexBuilderProject(ProjectPath); } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application || OutputType == OutputType.Library; } }
@@ -36,9 +36,9 @@ namespace ProjectManager.Projects.AS3
 
         public new MxmlcOptions CompilerOptions { get { return (MxmlcOptions)base.CompilerOptions; } }
 
-        public override ProjectManager.Controls.PropertiesDialog CreatePropertiesDialog()
+        public override PropertiesDialog CreatePropertiesDialog()
         {
-            return new ProjectManager.Controls.AS3.AS3PropertiesDialog();
+            return new AS3PropertiesDialog();
         }
 
         public override void ValidateBuild(out string error)
@@ -107,7 +107,7 @@ namespace ProjectManager.Projects.AS3
         {
             try
             {
-                if (OutputPath != null && OutputPath.Length > 0 && File.Exists(GetAbsolutePath(OutputPath)))
+                if (!string.IsNullOrEmpty(OutputPath) && File.Exists(GetAbsolutePath(OutputPath)))
                     File.Delete(GetAbsolutePath(OutputPath));
                 return true;
             }
@@ -135,6 +135,7 @@ namespace ProjectManager.Projects.AS3
         public override LibraryAsset GetAsset(string path)
         {
             if (!FileInspector.IsSwc(path) && !base.IsDirectory(path)) return base.GetAsset(path);
+            else if (SwcLibraries.Contains(path)) return SwcLibraries[path];
             else return SwcLibraries[GetRelativePath(path)];
         }
 
@@ -211,7 +212,7 @@ namespace ProjectManager.Projects.AS3
             {
                 return reader.ReadProject() as AS3Project;
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.",
                     exception.LineNumber, exception.LinePosition);

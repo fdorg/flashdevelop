@@ -8,7 +8,6 @@ import lime.graphics.RenderContext;
 $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-
 class Main extends Application $(CSLB){
 
 	public function new() $(CSLB){

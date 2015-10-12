@@ -7,7 +7,6 @@ import openfl.Lib;
 $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-
 class Main extends Sprite $(CSLB){
 
 	public function new() $(CSLB){
@@ -16,4 +15,5 @@ class Main extends Sprite $(CSLB){
 		// Assets:
 		// openfl.Assets.getBitmapData("img/assetname.jpg");
 	}
+
 }

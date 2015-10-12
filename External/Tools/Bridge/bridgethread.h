@@ -53,6 +53,7 @@ public:
     BridgeThread(int descriptor, QObject *parent);
     ~BridgeThread();
     BridgeHandler *handler;
+    static bool pathNotified;
 
 signals:
     void disconnected();

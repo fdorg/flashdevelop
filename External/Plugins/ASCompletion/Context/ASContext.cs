@@ -1,22 +1,21 @@
 /**
 * Autocompletion context manager
 */
+
 using System;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using ASCompletion.Commands;
+using ASCompletion.Completion;
+using ASCompletion.Model;
+using ASCompletion.Settings;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
-using PluginCore.Controls;
-using ASCompletion.Model;
-using ASCompletion.Completion;
-using ASCompletion.Settings;
-using System.Text;
+using ScintillaNet;
 
 namespace ASCompletion.Context
 {
@@ -80,7 +79,7 @@ namespace ASCompletion.Context
             get { return PluginBase.MainForm; }
         }
 
-        static public ScintillaNet.ScintillaControl CurSciControl
+        static public ScintillaControl CurSciControl
         {
             get 
             {
@@ -161,7 +160,7 @@ namespace ASCompletion.Context
                         else UpdateContext(cLine);
                     }
                     // require context
-                    if (ASContext.Context != this) ASContext.Context = this;
+                    if (Context != this) Context = this;
                 }
             }
         }
@@ -209,7 +208,7 @@ namespace ASCompletion.Context
                     GetCurrentFileModel(value);
                 }
                 // require context
-                ASContext.Context = this;
+                Context = this;
             }
         }
 
@@ -238,9 +237,9 @@ namespace ASCompletion.Context
             {
                 if (cFile == null || cFile == FileModel.Ignore || cFile.Version == 0 || Settings == null)
                     return false;
-                if (cFile.InlinedRanges != null && ASContext.CurSciControl != null)
+                if (cFile.InlinedRanges != null && CurSciControl != null)
                 {
-                    int position = ASContext.CurSciControl.CurrentPos;
+                    int position = CurSciControl.CurrentPos;
                     foreach (InlineRange range in cFile.InlinedRanges)
                     {
                         if (position > range.Start && position < range.End) return true;
@@ -282,14 +281,14 @@ namespace ASCompletion.Context
         /// <param name="mainForm">Reference to MainForm</param>
         static internal void GlobalInit(PluginMain pluginMain)
         {
-            dirSeparatorChar = System.IO.Path.DirectorySeparatorChar;
+            dirSeparatorChar = Path.DirectorySeparatorChar;
             dirSeparator = dirSeparatorChar.ToString();
-            dirAltSeparatorChar = System.IO.Path.AltDirectorySeparatorChar;
+            dirAltSeparatorChar = Path.AltDirectorySeparatorChar;
             dirAltSeparator = dirAltSeparatorChar.ToString();
             doPathNormalization = (dirSeparator != dirAltSeparator);
 
             // language contexts
-            ASContext.plugin = pluginMain;
+            plugin = pluginMain;
             validContexts = new List<IASContext>();
             context = null;
             try
@@ -345,7 +344,6 @@ namespace ASCompletion.Context
         /// <param name="classpath">Additional classpath</param>
         static public void SetLanguageClassPath(ContextSetupInfos setup)
         {
-            string lang = setup.Lang.ToLower();
             foreach (RegisteredContext reg in allContexts)
             {
                 if (reg.Language == setup.Lang) reg.Context.Setup(setup);
@@ -403,7 +401,7 @@ namespace ASCompletion.Context
 
         static internal void SetCurrentLine(int line)
         {
-            ScintillaNet.ScintillaControl sci = CurSciControl;
+            ScintillaControl sci = CurSciControl;
             if (validContexts.Count == 0 || sci == null)
             {
                 hasContext = false;
@@ -460,7 +458,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Current document's text changed
         /// </summary>
-        static public void OnTextChanged(ScintillaNet.ScintillaControl sender, int position, int length, int linesAdded)
+        static public void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (validContexts.Count > 0)
             {
@@ -493,7 +491,7 @@ namespace ASCompletion.Context
         /// </summary>
         static public void RebuildClasspath()
         {
-            ASContext.Context = defaultContext;
+            Context = defaultContext;
             validContexts.Clear();
             foreach (RegisteredContext reg in allContexts)
                 reg.Context.Reset();
@@ -614,7 +612,7 @@ namespace ASCompletion.Context
             if (hideDirectories != null) explorer.HideDirectories(hideDirectories);
             explorer.OnExplorationDone += new PathExplorer.ExplorationDoneHandler(RefreshContextCache);
             explorer.OnExplorationProgress += new PathExplorer.ExplorationProgressHandler(ExplorationProgress);
-            explorer.UseCache = !ASContext.CommonSettings.DisableCache;
+            explorer.UseCache = !CommonSettings.DisableCache;
             explorer.Run();
         }
 
@@ -633,7 +631,7 @@ namespace ASCompletion.Context
                 PathExplorer explorer = new PathExplorer(this, path);
                 explorer.OnExplorationDone += new PathExplorer.ExplorationDoneHandler(RefreshContextCache);
                 explorer.OnExplorationProgress += new PathExplorer.ExplorationProgressHandler(ExplorationProgress);
-                explorer.UseCache = !ASContext.CommonSettings.DisableCache;
+                explorer.UseCache = !CommonSettings.DisableCache;
                 explorer.Run();
                 return true;
             }
@@ -674,7 +672,7 @@ namespace ASCompletion.Context
         {
             cacheRefreshTimer.Enabled = false;
             cacheRefreshTimer.Interval = 200;
-            if (completionCache.IsDirty && ASContext.Context == this)
+            if (completionCache.IsDirty && Context == this)
             {
                 completionCache.IsDirty = false;
                 UpdateCurrentFile(true);
@@ -749,13 +747,22 @@ namespace ASCompletion.Context
         {
         }
 
+        /// <summary>
+        /// Refresh all contexts
+        /// </summary>
+        internal static void UserRefreshRequestAll()
+        {
+            foreach (RegisteredContext reg in allContexts)
+                reg.Context.UserRefreshRequest();
+        }
+
         #endregion
 
         #region model caching
         /// <summary>
         /// Track text modifications
         /// </summary>
-        public virtual void TrackTextChange(ScintillaNet.ScintillaControl sender, int position, int length, int linesAdded)
+        public virtual void TrackTextChange(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (cFile != FileModel.Ignore && !cFile.OutOfDate)
             {
@@ -955,7 +962,7 @@ namespace ASCompletion.Context
             parser.ScriptMode = true;
             // parse
             FileModel temp = new FileModel();
-            temp.haXe = ASContext.Context.Settings.LanguageId == "HAXE";
+            temp.haXe = Context.Settings.LanguageId == "HAXE";
             if (!string.IsNullOrEmpty(src)) parser.ParseSrc(temp, src);
             return temp;
         }
@@ -967,16 +974,16 @@ namespace ASCompletion.Context
         protected virtual ASFileParser GetCodeParser()
         {
             ASFileParser parser = new ASFileParser();
-            parser.Features.varKey = ASContext.Context.Features.varKey;
-            parser.Features.constKey = ASContext.Context.Features.constKey;
-            parser.Features.functionKey = ASContext.Context.Features.functionKey;
-            parser.Features.hasEcmaTyping = ASContext.Context.Features.hasEcmaTyping;
-            parser.Features.hasConsts = ASContext.Context.Features.hasConsts;
-            parser.Features.hasVars = ASContext.Context.Features.hasVars;
-            parser.Features.hasMethods = ASContext.Context.Features.hasMethods;
-            parser.Features.hasGenerics = ASContext.Context.Features.hasGenerics;
-            parser.Features.hasCArrays = ASContext.Context.Features.hasCArrays;
-            parser.Features.CArrayTemplate = ASContext.Context.Features.CArrayTemplate;
+            parser.Features.varKey = Context.Features.varKey;
+            parser.Features.constKey = Context.Features.constKey;
+            parser.Features.functionKey = Context.Features.functionKey;
+            parser.Features.hasEcmaTyping = Context.Features.hasEcmaTyping;
+            parser.Features.hasConsts = Context.Features.hasConsts;
+            parser.Features.hasVars = Context.Features.hasVars;
+            parser.Features.hasMethods = Context.Features.hasMethods;
+            parser.Features.hasGenerics = Context.Features.hasGenerics;
+            parser.Features.hasCArrays = Context.Features.hasCArrays;
+            parser.Features.CArrayTemplate = Context.Features.CArrayTemplate;
             return parser;
         }
 
@@ -987,6 +994,7 @@ namespace ASCompletion.Context
         protected virtual void GetCurrentFileModel(string fileName)
         {
             cFile = GetCachedFileModel(fileName);
+            cFile.FileName = fileName; // fix casing changes
             if (cFile.Context == null || cFile.Context != this)
             {
                 cFile.Context = this;
@@ -1015,7 +1023,7 @@ namespace ASCompletion.Context
             UpdateContext(cLine);
 
             // update outline
-            if (updateUI) ASContext.Context = this;
+            if (updateUI) Context = this;
         }
 
         /// <summary>
@@ -1260,7 +1268,7 @@ namespace ASCompletion.Context
         /// <param name="position"></param>
         /// <param name="text"></param>
         /// <returns>Indicator that the event is handled</returns>
-        public virtual bool OnCompletionInsert(ScintillaNet.ScintillaControl sci, int position, string text, char trigger)
+        public virtual bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
         {
             // override to do special handling operations (and return true)
             return false;
@@ -1274,7 +1282,7 @@ namespace ASCompletion.Context
         /// When selecting a node in the outline view
         /// </summary>
         /// <param name="node"></param>
-        public virtual void OnSelectOutlineNode(System.Windows.Forms.TreeNode node)
+        public virtual void OnSelectOutlineNode(TreeNode node)
         {
             ClassModel aClass;
             // imports
@@ -1319,7 +1327,7 @@ namespace ASCompletion.Context
         /// <param name="expression">Completion context</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or member list</returns>
-        public virtual MemberList ResolveDotContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
+        public virtual MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
             return null;
         }
@@ -1330,9 +1338,14 @@ namespace ASCompletion.Context
         /// <param name="sci">Scintilla control</param>
         /// <param name="expression">Completion context</param>
         /// <returns>Null (not handled) or function signature</returns>
-        public virtual MemberModel ResolveFunctionContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
+        public virtual MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
             return null;
+        }
+
+        public virtual bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
+        {
+            return false;
         }
         #endregion
 
@@ -1356,7 +1369,7 @@ namespace ASCompletion.Context
             foreach (PathModel aPath in classPath)
             {
                 string path = Path.Combine(aPath.Path, package);
-                if (System.IO.Directory.Exists(path))
+                if (Directory.Exists(path))
                 {
                     DataEvent de = new DataEvent(EventType.Command, "FileExplorer.BrowseTo", path);
                     EventManager.DispatchEvent(this, de);
@@ -1426,10 +1439,10 @@ namespace ASCompletion.Context
             // allow network access to the SWF
             if (trustFileWanted)
             {
-                System.IO.FileInfo info = new System.IO.FileInfo(swf);
+                FileInfo info = new FileInfo(swf);
                 string path = info.Directory.FullName;
                 string trustFile = "FlashDevelop.cfg";
-                Commands.CreateTrustFile.Run(trustFile, path);
+                CreateTrustFile.Run(trustFile, path);
             }
 
             // stop here if the user doesn't want to automatically play the SWF
@@ -1446,7 +1459,7 @@ namespace ASCompletion.Context
                 //string currentPath = System.IO.Directory.GetCurrentDirectory();
                 //System.IO.Directory.SetCurrentDirectory(CurrentClass.BasePath);
                 // run
-                System.Diagnostics.Process.Start(swf);
+                Process.Start(swf);
                 // restaure current directory
                 //if (System.IO.Directory.GetCurrentDirectory() == CurrentClass.BasePath)
                 //System.IO.Directory.SetCurrentDirectory(currentPath);
@@ -1485,7 +1498,7 @@ namespace ASCompletion.Context
             if (dest == null)
             {
                 MainForm.CallCommand("New", null);
-                ScintillaNet.ScintillaControl sci = CurSciControl;
+                ScintillaControl sci = CurSciControl;
                 if (sci != null)
                 {
                     sci.CurrentPos = 0;
@@ -1552,7 +1565,7 @@ namespace ASCompletion.Context
         static public void ParseVersion(string version, ref int majorVersion, ref int minorVersion)
         {
             //if (version == "0.0") return;
-            if (version == null || version == "") return;
+            if (string.IsNullOrEmpty(version)) return;
             string[] parts = version.Split('.');
             int.TryParse(parts[0], out majorVersion);
             if (parts.Length > 1) int.TryParse(parts[1], out minorVersion);

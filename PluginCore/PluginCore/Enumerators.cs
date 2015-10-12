@@ -43,7 +43,8 @@ namespace PluginCore
         Trace = 4294967296, // NotifyEvent
         Keys = 8589934592, // KeyEvent (keys)
         Completion = 17179869184, // NotifyEvent
-        AppChanges = 34359738368 // NotifyEvent
+        AppChanges = 34359738368, // NotifyEvent
+        ApplyTheme = 68719476736 // NotifyEvent
     }
 
     public enum UpdateInterval

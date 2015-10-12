@@ -1,19 +1,17 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
-using System.Drawing;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
+using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
 using ScintillaNet;
-using PluginCore;
 
 namespace XMLCompletion
 {
@@ -171,14 +169,14 @@ namespace XMLCompletion
                     else defaultNS = defs.Attributes["defaultNS"].Value;
 
                     foreach(XmlNode tag in defs.ChildNodes)
-                    if (tag.Name != null && tag.Name.Length > 0 && tag.Name[0] != '#')
+                    if (!string.IsNullOrEmpty(tag.Name) && tag.Name[0] != '#')
                     {
                         isLeaf = tag.Attributes["leaf"];
                         ns = tag.Attributes["ns"];
                         htag = new HTMLTag(
                             (toUpper) ? tag.Name.ToUpper() : tag.Name, 
                             (ns != null) ? ns.Value : null, isLeaf != null && isLeaf.Value == "yes");
-                        if (htag.NS != null && htag.NS.Length > 0 && !namespaces.Contains(htag.NS))
+                        if (!string.IsNullOrEmpty(htag.NS) && !namespaces.Contains(htag.NS))
                             namespaces.Add(htag.NS);
                         htag.Attributes = new List<string>();
                         temp = tag.Attributes["at"].Value;
@@ -225,7 +223,7 @@ namespace XMLCompletion
         {
             try
             {
-                Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Assembly assembly = Assembly.GetExecutingAssembly();
                 Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + ext + ".xml");
                 if (src == null) return false;
 
@@ -286,7 +284,8 @@ namespace XMLCompletion
                     }
                     if (PluginSettings.SmartIndenter)
                     {
-                        // Get last non-empty line
+                        // There is no standard for XML formatting, although most IDEs have similarities. We are mostly going with Visual Studio style with slight differences.
+                        // Get last non-empty line.
                         String text = "";
                         Int32 line2 = line - 1;
                         while (line2 >= 0 && text.Length == 0)
@@ -294,9 +293,9 @@ namespace XMLCompletion
                             text = sci.GetLine(line2).TrimEnd();
                             line2--;
                         }
-                        if ((text.EndsWith(">") && !text.EndsWith("?>") && !text.EndsWith("%>") && !closingTag.IsMatch(text)) || text.EndsWith("<!--") || text.EndsWith("<![CDATA["))
+                        if ((text.EndsWith(">") && !text.EndsWith("?>") && !text.EndsWith("%>")) || text.EndsWith("<!--") || text.EndsWith("<![CDATA["))
                         {
-                            // Get the previous tag
+                            // Get the previous tag.
                             do
                             {
                                 position--;
@@ -304,33 +303,109 @@ namespace XMLCompletion
                             }
                             while (position > 0 && c != '>');
                             ctag = GetXMLContextTag(sci, c == '>' ? position + 1 : position);
-                            if ((Char)sci.CharAt(position-1) == '/') return;
-                            // Insert blank line if we pressed Enter between a tag & it's closing tag
+                            // Line indentation.
                             Int32 indent = sci.GetLineIndentation(line2 + 1);
+
                             String checkStart = null;
                             bool subIndent = true;
                             if (text.EndsWith("<!--")) { checkStart = "-->"; subIndent = false; }
                             else if (text.EndsWith("<![CDATA[")) { checkStart = "]]>"; subIndent = false; }
-                            else if (ctag.Closed) subIndent = false;
+                            else if (ctag.Closed || ctag.Closing)
+                            {
+                                //Closed tag. Look for the nearest open and not closed tag for proper indentation
+                                subIndent = false;
+                                if (ctag.Name != null)
+                                {
+                                    var tmpTags = new Stack<XMLContextTag>();
+                                    var tmpTag = ctag;
+
+                                    if (!tmpTag.Closed) tmpTags.Push(tmpTag);
+                                    while (tmpTag.Position != 0)
+                                    {
+                                        tmpTag = GetXMLContextTag(sci, tmpTag.Position);
+                                        if (tmpTag.Tag != null && tmpTag.Name != null)
+                                        {
+                                            if (tmpTag.Closed) 
+                                                continue;
+                                            else if (tmpTag.Closing)
+                                            {
+                                                tmpTags.Push(tmpTag);
+                                            }
+                                            else
+                                            {
+                                                if (tmpTags.Count > 0 && tmpTags.Peek().Name == tmpTag.Name)
+                                                    tmpTags.Pop();
+                                                else
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    if (tmpTags.Count > 0)
+                                        indent = sci.GetLineIndentation(sci.LineFromPosition(tmpTags.Pop().Position));
+                                    else if (tmpTag.Name != null)
+                                    {
+                                        subIndent = true;
+                                        checkStart = "</" + tmpTag.Name;
+                                        indent = sci.GetLineIndentation(sci.LineFromPosition(tmpTag.Position));
+                                    }
+                                    else
+                                    {
+                                        indent = sci.GetLineIndentation(sci.LineFromPosition(tmpTag.Position));
+                                    }
+                                }
+                            }
                             else if (ctag.Name != null)
                             {
+                                // Indentation. Some IDEs use the tag position, VS uses the tag start line indentation. 
+                                indent = sci.GetLineIndentation(sci.LineFromPosition(ctag.Position));
                                 checkStart = "</" + ctag.Name;
                                 if (ctag.Name.ToLower() == "script" || ctag.Name.ToLower() == "style") 
                                     subIndent = false;
-                                if (ctag.Tag.IndexOf('\r') > 0 || ctag.Tag.IndexOf('\n') > 0)
-                                    subIndent = false;
                             }
-                            if (checkStart != null)
+                            try
                             {
-                                text = sci.GetLine(line).TrimStart();
-                                if (text.StartsWith(checkStart))
+                                sci.BeginUndoAction();
+                                if (checkStart != null)
                                 {
-                                    sci.SetLineIndentation(line, indent);
-                                    sci.InsertText(sci.PositionFromLine(line), LineEndDetector.GetNewLineMarker(sci.EOLMode));
+                                    text = sci.GetLine(line).TrimStart();
+                                    if (text.StartsWith(checkStart))
+                                    {
+                                        sci.SetLineIndentation(line, indent);
+                                        sci.InsertText(sci.PositionFromLine(line), LineEndDetector.GetNewLineMarker(sci.EOLMode));
+                                    }
                                 }
+                                // Indent the code
+                                if (subIndent) indent += sci.Indent;
+                                sci.SetLineIndentation(line, indent);
+                                position = sci.LineIndentPosition(line);
+                                sci.SetSel(position, position);
                             }
-                            // Indent the code
-                            if (subIndent) indent += sci.Indent;
+                            finally { sci.EndUndoAction(); }
+                            return;
+                        }
+                        else if (!text.EndsWith(">"))
+                        {
+                            ctag = GetXMLContextTag(sci, sci.CurrentPos);
+                            if (ctag.Tag == null || ctag.Name == null) return;
+                            // We're inside a tag. Visual Studio indents with regards to the first line, other IDEs indent using the indentation of the last line with text.
+                            int indent;
+                            string tag = (ctag.Tag.IndexOf('\r') > 0 || ctag.Tag.IndexOf('\n') > 0) ? ctag.Tag.Substring(0, ctag.Tag.IndexOfAny(new[] {'\r', '\n'})).TrimEnd() : ctag.Tag.TrimEnd();
+                            if (tag.EndsWith("\""))
+                            {
+                                int i;
+                                int l = tag.Length;
+                                for (i = ctag.Name.Length + 1; i < l; i++)
+                                {
+                                    if (!char.IsWhiteSpace(tag[i]))
+                                        break;
+                                }
+                                indent = sci.Column(ctag.Position) + sci.MBSafePosition(i);
+                            }
+                            else
+                            {
+                                indent = sci.GetLineIndentation(sci.LineFromPosition(ctag.Position)) + sci.Indent;
+                            }
+
                             sci.SetLineIndentation(line, indent);
                             position = sci.LineIndentPosition(line);
                             sci.SetSel(position, position);
@@ -577,9 +652,9 @@ namespace XMLCompletion
                 ScintillaControl sci = document.SciControl;
                 XMLContextTag ctag = GetXMLContextTag(sci, sci.CurrentPos);
                 // Starting tag
-                if (ctag.Tag == null && (sci.CurrentPos > 0))
+                if (ctag.Tag == null)
                 {
-                    if ((Char)sci.CharAt(sci.CurrentPos - 1) == '<') 
+                    if (sci.CurrentPos > 0 && (Char)sci.CharAt(sci.CurrentPos - 1) == '<')
                     {
                         ctag.Tag = "<";
                         ctag.Name = "";
@@ -748,7 +823,7 @@ namespace XMLCompletion
         /// <summary>
         /// Locates the parent tag of the tag provided
         /// </summary>
-        public static XMLContextTag GetParentTag(ScintillaNet.ScintillaControl sci, XMLContextTag tag)
+        public static XMLContextTag GetParentTag(ScintillaControl sci, XMLContextTag tag)
         {
             int pos = tag.Position + 1;
             if (pos <= 0) pos = sci.CurrentPos;
@@ -756,7 +831,7 @@ namespace XMLCompletion
             Stack<string> stack = new Stack<string>();
             do
             {
-                parent = XMLComplete.GetXMLContextTag(sci, pos);
+                parent = GetXMLContextTag(sci, pos);
                 pos = parent.Position;
                 if (parent.Name != null && parent.Tag != null)
                 {

@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
@@ -16,6 +15,7 @@ using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
 using Ookii.Dialogs;
+using System.Text.RegularExpressions;
 
 namespace FlashDevelop.Dialogs
 {
@@ -527,10 +527,10 @@ namespace FlashDevelop.Dialogs
         {
             String mask = this.extensionComboBox.Text;
             Boolean recursive = this.subDirectoriesCheckBox.Checked;
-            if (!String.IsNullOrEmpty(this.findComboBox.Text) && this.IsValidFileMask(mask))
+            if (IsValidPattern() && this.IsValidFileMask(mask))
             {
-                string[] paths = this.folderComboBox.Text.Split(';');
-                foreach (string path in paths)
+                String[] paths = this.folderComboBox.Text.Split(';');
+                foreach (String path in paths)
                 {
                     FRConfiguration config = this.GetFRConfig(path, mask, recursive);
                     if (config == null) return;
@@ -540,7 +540,6 @@ namespace FlashDevelop.Dialogs
                     this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
                     this.runner.Finished += new FRFinishedHandler(this.FindFinished);
                     this.runner.SearchAsync(config);
-                    
                     FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
@@ -555,7 +554,7 @@ namespace FlashDevelop.Dialogs
         {
             String mask = this.extensionComboBox.Text;
             Boolean recursive = this.subDirectoriesCheckBox.Checked;
-            if (!String.IsNullOrEmpty(this.findComboBox.Text) && this.IsValidFileMask(mask))
+            if (IsValidPattern() && this.IsValidFileMask(mask))
             {
                 if (!Globals.Settings.DisableReplaceFilesConfirm)
                 {
@@ -564,9 +563,8 @@ namespace FlashDevelop.Dialogs
                     DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                     if (result == DialogResult.Cancel) return;
                 }
-
-                string[] paths = this.folderComboBox.Text.Split(';');
-                foreach (string path in paths)
+                String[] paths = this.folderComboBox.Text.Split(';');
+                foreach (String path in paths)
                 {
                     FRConfiguration config = this.GetFRConfig(path, mask, recursive);
                     if (config == null) return;
@@ -578,7 +576,6 @@ namespace FlashDevelop.Dialogs
                     this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
                     this.runner.Finished += new FRFinishedHandler(this.ReplaceFinished);
                     this.runner.ReplaceAsync(config);
-                    //
                     FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
@@ -716,8 +713,7 @@ namespace FlashDevelop.Dialogs
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            Int32 column = match.Column;
-                            TraceManager.Add(entry.Key + ":" + match.Line.ToString() + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
@@ -978,7 +974,7 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-        /// 
+        /// Check if file is hidden in project
         /// </summary>
         private Boolean IsFileHidden(String file, IProject project)
         {
@@ -989,6 +985,28 @@ namespace FlashDevelop.Dialogs
                 if (Directory.Exists(absHiddenPath) && file.StartsWith(absHiddenPath)) return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Control user pattern
+        /// </summary>
+        private Boolean IsValidPattern()
+        {
+            String pattern = this.findComboBox.Text;
+            if (pattern.Length == 0) return false;
+            if (this.regexCheckBox.Checked)
+            {
+                try
+                {
+                    new Regex(pattern);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowInfo(ex.Message); 
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>

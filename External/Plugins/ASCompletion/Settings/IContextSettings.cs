@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+using PluginCore;
 
 namespace ASCompletion.Settings
 {
@@ -71,13 +68,13 @@ namespace ASCompletion.Settings
         /// <summary>
         /// Language SDKs list
         /// </summary>
-        PluginCore.InstalledSDK[] InstalledSDKs { get; set; }
+        InstalledSDK[] InstalledSDKs { get; set; }
 
         /// <summary>
         /// Return default language SDK
         /// - if no (valid) SDK is defined, this method must return InstalledSDK.INVALID_SDK;
         /// </summary>
-        PluginCore.InstalledSDK GetDefaultSDK();
+        InstalledSDK GetDefaultSDK();
 
         /// <summary>
         /// Status text when running syntax check

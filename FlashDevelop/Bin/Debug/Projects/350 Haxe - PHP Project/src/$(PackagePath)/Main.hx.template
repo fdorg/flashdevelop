@@ -6,7 +6,6 @@ import php.Lib;
 $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-
 class Main $(CSLB){
 
 	static function main() $(CSLB){

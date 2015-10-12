@@ -20,7 +20,7 @@ namespace BookmarkPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private System.Windows.Forms.ListView listView;
+        private System.Windows.Forms.ListViewEx listView;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ColumnHeader columnLine;
         private System.Windows.Forms.ColumnHeader columnText;
@@ -37,6 +37,7 @@ namespace BookmarkPanel
         
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.InitializeComponent();
             this.pluginMain = pluginMain;
             this.InitializeTimers();
@@ -55,7 +56,7 @@ namespace BookmarkPanel
         /// </summary>
         private void InitializeComponent() 
         {
-            this.listView = new System.Windows.Forms.ListView();
+            this.listView = new System.Windows.Forms.ListViewEx();
             this.columnLine = new System.Windows.Forms.ColumnHeader();
             this.columnText = new System.Windows.Forms.ColumnHeader();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
@@ -143,7 +144,7 @@ namespace BookmarkPanel
             // 
             // searchBox
             //
-            this.searchBox.MaxLength = 200;
+            this.searchBox.FlatCombo.MaxLength = 200;
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(200, 22);
             this.searchBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
@@ -220,7 +221,6 @@ namespace BookmarkPanel
             this.searchButton.ToolTipText = TextHelper.GetString("ToolTip.SearchBookmarks");
             this.contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             this.statusLabel.Font = PluginBase.Settings.DefaultFont;
-            this.columnText.Width = -2; // Extend last column
         }
 
         /// <summary>
@@ -257,6 +257,7 @@ namespace BookmarkPanel
         /// </summary>
         private void InitializeLayout()
         {
+            this.searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.toolStrip.Font = PluginBase.Settings.DefaultFont;
             this.toolStrip.Renderer = new DockPanelStripRenderer();
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
@@ -266,10 +267,10 @@ namespace BookmarkPanel
             this.contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             this.contextMenuStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.searchBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
-
             foreach (ColumnHeader column in listView.Columns)
+            {
                 column.Width = ScaleHelper.Scale(column.Width);
+            }
         }
 
         /// <summary>
@@ -405,6 +406,7 @@ namespace BookmarkPanel
                 search.NoCase = true;
                 search.IsRegex = true;
                 search.Filter = SearchFilter.None;
+                search.SourceFile = sci.FileName;
                 return search.Matches(sci.Text);
             }
             return null;
@@ -479,7 +481,7 @@ namespace BookmarkPanel
             ListViewGroup group = this.FindGroup(document.FileName);
             if (group == null) return;
             List<Int32> markers = this.GetMarkers(document.SciControl);
-            if (group != null && this.NeedRefresh(document.SciControl, markers, group.Items))
+            if (this.NeedRefresh(document.SciControl, markers, group.Items))
             {
                 Int32 index = 0;
                 ListViewItem item;

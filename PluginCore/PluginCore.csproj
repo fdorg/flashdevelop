@@ -107,9 +107,6 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Design">
       <Name>System.Design</Name>
     </Reference>
@@ -307,11 +304,15 @@
     <Compile Include="Ookii.Dialogs\VistaFolderBrowserDialog.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Ookii.Dialogs\VistaFolderNameEditor.cs" />
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
+    <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PluginCore\Controls\ShellContextMenu.cs" />
     <Compile Include="PluginCore\Controls\SmartForm.cs">
       <SubType>Form</SubType>
@@ -320,6 +321,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\WinFormUtils.cs" />
+    <Compile Include="PluginCore\DistroConfig.cs" />
     <Compile Include="PluginCore\Helpers\ConfigHelper.cs" />
     <Compile Include="PluginCore\Helpers\FileInspector.cs" />
     <Compile Include="PluginCore\Helpers\ScaleHelper.cs" />
@@ -344,6 +346,7 @@
     <Compile Include="PluginCore\Utilities\ImageQuantizers.cs" />
     <Compile Include="PluginCore\Utilities\ProcessRunner.cs" />
     <Compile Include="PluginCore\Utilities\InteropSHFileOperation.cs" />
+    <Compile Include="PluginCore\Utilities\SemVer.cs" />
     <Compile Include="PluginCore\Utilities\SingleInstanceApp.cs" />
     <Compile Include="PluginCore\Win32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -425,6 +428,7 @@
     <Compile Include="ScintillaNet\Lexers.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ScintillaNet\RGBA.cs" />
     <Compile Include="ScintillaNet\RTF.cs" />
     <Compile Include="ScintillaNet\ScintillaControl.cs">
       <SubType>Component</SubType>

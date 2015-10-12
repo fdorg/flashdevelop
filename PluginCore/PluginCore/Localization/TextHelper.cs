@@ -1,13 +1,7 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Resources;
 using System.Reflection;
-using System.Windows.Forms;
-using System.Collections.Generic;
+using System.Resources;
 using PluginCore.Managers;
-using PluginCore.Helpers;
-using PluginCore;
 
 namespace PluginCore.Localization
 {

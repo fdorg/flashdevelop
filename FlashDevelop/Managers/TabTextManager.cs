@@ -1,11 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
-using PluginCore.Managers;
-using PluginCore.Helpers;
 using PluginCore;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
