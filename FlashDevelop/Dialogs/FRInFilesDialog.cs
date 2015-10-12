@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
@@ -714,8 +713,7 @@ namespace FlashDevelop.Dialogs
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            Int32 column = match.Column;
-                            TraceManager.Add(entry.Key + ":" + match.Line.ToString() + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
@@ -995,7 +993,7 @@ namespace FlashDevelop.Dialogs
         private Boolean IsValidPattern()
         {
             String pattern = this.findComboBox.Text;
-            if (pattern.Length < 1) return false;
+            if (pattern.Length == 0) return false;
             if (this.regexCheckBox.Checked)
             {
                 try

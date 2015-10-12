@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PluginCore.BBCode
 {
@@ -22,7 +21,7 @@ namespace PluginCore.BBCode
         {
             lastTree = null;
 
-            if (pairTagMatcher == null || this.input == null || this.input.Length < 1)
+            if (pairTagMatcher == null || string.IsNullOrEmpty(this.input))
                 return null;
 
             lastTree = _parse();

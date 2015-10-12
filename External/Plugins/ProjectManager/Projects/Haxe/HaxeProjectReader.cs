@@ -1,8 +1,7 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
-using PluginCore;
 using System.IO;
+using PluginCore;
 
 namespace ProjectManager.Projects.Haxe
 {

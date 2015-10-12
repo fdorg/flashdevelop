@@ -42,7 +42,6 @@
 
 using System;
 using System.IO;
-
 #if !NETCF_1_0
 using System.Security.Cryptography;
 #endif
@@ -210,7 +209,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
                     }
                 }
                 int toCopy = Math.Min(currentLength, available);
-                System.Array.Copy(rawData, rawLength - (int)available, outBuffer, currentOffset, toCopy);
+                Array.Copy(rawData, rawLength - (int)available, outBuffer, currentOffset, toCopy);
                 currentOffset += toCopy;
                 currentLength -= toCopy;
                 available -= toCopy;

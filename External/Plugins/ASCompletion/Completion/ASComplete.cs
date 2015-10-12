@@ -3,23 +3,23 @@
  */
 
 using System;
-using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
-using PluginCore;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using ASCompletion.Model;
+using System.Windows.Forms;
+using ASCompletion.Commands;
 using ASCompletion.Context;
-using System.IO;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace ASCompletion.Completion
 {
@@ -144,7 +144,7 @@ namespace ASCompletion.Completion
                     case ' ':
                         position--;
                         string word = GetWordLeft(Sci, ref position);
-                        if (word.Length <= 0)
+                        if (word.Length == 0)
                         {
                             char c = (char)Sci.CharAt(position);
                             if (c == ':' && features.hasEcmaTyping)
@@ -184,10 +184,9 @@ namespace ASCompletion.Completion
                         if (features.hasGenerics && position > 2)
                         {
                             char c0 = (char)Sci.CharAt(position - 2);
-                            bool result = false;
                             if (c0 == '.' /*|| Char.IsLetterOrDigit(c0)*/)
                                 return HandleColonCompletion(Sci, "", autoHide);
-                            return result;
+                            return false;
                         }
                         else break;
 
@@ -220,7 +219,7 @@ namespace ASCompletion.Completion
             }
 
             // CodeAuto context
-            if (!PluginCore.Controls.CompletionList.Active) LastExpression = null;
+            if (!CompletionList.Active) LastExpression = null;
             return false;
         }
 
@@ -309,7 +308,7 @@ namespace ASCompletion.Completion
                                 string cmd = Path.Combine("Tools", Path.Combine("flashide", "testmovie.jsfl"));
                                 cmd = PathHelper.ResolvePath(cmd);
                                 if (cmd != null && File.Exists(cmd))
-                                    Commands.CallFlashIDE.Run(idePath, cmd);
+                                    CallFlashIDE.Run(idePath, cmd);
                             }
                         }
                     }
@@ -864,7 +863,7 @@ namespace ASCompletion.Completion
         private static void NotifyContextChanged()
         {
             if (OnResolvedContextChanged != null) 
-                ASComplete.OnResolvedContextChanged(CurrentResolvedContext);
+                OnResolvedContextChanged(CurrentResolvedContext);
         }
 
         /// <summary>
@@ -887,7 +886,7 @@ namespace ASCompletion.Completion
                 if (eventAction == "ShowDocumentation")
                 {
                     string cmd = ASContext.Context.Settings.DocumentationCommandLine;
-                    if (cmd == null || cmd.Length == 0) return null;
+                    if (string.IsNullOrEmpty(cmd)) return null;
                     // top-level vars should be searched only if the command includes member information
                     if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && cmd.IndexOf("$(Itm") < 0) 
                         return null;
@@ -1104,7 +1103,6 @@ namespace ASCompletion.Completion
 
             // find where to include the closing brace
             int startIndent = indent;
-            int newIndent = indent + Sci.TabWidth;
             int count = Sci.LineCount;
             int lastLine = line;
             int position;
@@ -1220,10 +1218,6 @@ namespace ASCompletion.Completion
             List<string> support = features.GetDeclarationKeywords(Sci.GetLine(line), insideClass);
             if (support.Count == 0) return true;
             
-            // current model
-            FileModel cFile = ASContext.Context.CurrentModel;
-            ClassModel cClass = ASContext.Context.CurrentClass;
-
             // does it need indentation?
             int tab = 0;
             int tempLine = line-1;
@@ -1497,7 +1491,7 @@ namespace ASCompletion.Completion
 
             // get expression at cursor position
             ASExpr expr = GetExpression(Sci, position, true);
-            if (expr.Value == null || expr.Value.Length == 0
+            if (string.IsNullOrEmpty(expr.Value)
                 || (expr.WordBefore == "function" && expr.Separator == ' '))
                 return false;
 
@@ -1869,7 +1863,7 @@ namespace ASCompletion.Completion
                 int line = Sci.LineFromPosition(position);
                 if (cMember == null && !ASContext.Context.CurrentClass.IsVoid())
                 {
-                    if (expr.Value != null && expr.Value.Length > 0)
+                    if (!string.IsNullOrEmpty(expr.Value))
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                     else if (ASContext.Context.CurrentModel.Version >= 2)
                         return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, features.overrideKey);
@@ -2217,7 +2211,6 @@ namespace ASCompletion.Completion
 
                 // list visible classes
                 MemberList known = new MemberList();
-                ClassModel cClass = ASContext.Context.CurrentClass;
                 known.Merge(ASContext.Context.GetVisibleExternalElements());
 
                 // show
@@ -3352,7 +3345,7 @@ namespace ASCompletion.Completion
                             expression.SubExpressions.Add(sbSub.ToString());
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
 
-                            if (testWord == "return" || testWord == "case" || testWord == "defaut" || (haXe && testWord == "cast"))
+                            if (testWord == "return" || testWord == "case" || testWord == "default" || (haXe && testWord == "cast"))
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
                                 // Haxe ex: return cast(a, B).<complete>
@@ -3614,7 +3607,7 @@ namespace ASCompletion.Completion
         static public MemberList ParseLocalVars(ASExpr expression)
         {
             FileModel model;
-            if (expression.FunctionBody != null && expression.FunctionBody.Length > 0)
+            if (!string.IsNullOrEmpty(expression.FunctionBody))
             {
                 MemberModel cm = expression.ContextMember;
                 string functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
@@ -3913,7 +3906,6 @@ namespace ASCompletion.Completion
             string foundIn = "";
             if (inClass != ClassModel.VoidClass)
             {
-                string package = inClass.InFile.Package;
                 foundIn = "\n[COLOR=#666666:MULTIPLY]in " + MemberModel.FormatType(inClass.QualifiedName) + "[/COLOR]";
             }
             if ((ft & (FlagType.Getter | FlagType.Setter)) > 0)
@@ -3959,7 +3951,6 @@ namespace ASCompletion.Completion
             // let the context handle the insertion
             if (ASContext.Context.OnCompletionInsert(sci, position, text, trigger))
                 return;
-
             // event inserted
             if (item is EventItem)
             {
@@ -3970,12 +3961,23 @@ namespace ASCompletion.Completion
             // default handling
             if (ASContext.Context.Settings != null)
             {
+                int textEndPosition = position + text.Length;
                 // was a fully qualified type inserted?
-                ASExpr expr = GetExpression(sci, position + text.Length);
+                ASExpr expr = GetExpression(sci, textEndPosition);
                 if (expr.Value == null) return;
+                ASResult type = GetExpressionType(sci, textEndPosition);
+                if (type.IsPackage) return;
+                ContextFeatures features = ASContext.Context.Features;
+
+                // add ; for imports
+                if (" \n\t".IndexOf(trigger) >= 0 && expr.WordBefore != null 
+                    && (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt))
+                {
+                    if (!sci.GetLine(sci.CurrentLine).Contains(";")) sci.InsertText(sci.CurrentPos, ";");
+                    return;
+                }
 
                 // look for a snippet
-                ContextFeatures features = ASContext.Context.Features;
                 if (trigger == '\t' && expr.Value.IndexOf(features.dot) < 0)
                 {
                     foreach(string key in features.codeKeywords)
@@ -4070,7 +4072,7 @@ namespace ASCompletion.Completion
             if (inFile == null || import == null)
                 return false;
 
-            if (expr.Separator == ' ' && expr.WordBefore != null && expr.WordBefore != "")
+            if (expr.Separator == ' ' && !string.IsNullOrEmpty(expr.WordBefore))
             {
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
                     /*|| (!features.HasTypePreKey(expr.WordBefore) && expr.WordBefore != "case" && expr.WordBefore != "return")*/)
@@ -4283,9 +4285,9 @@ namespace ASCompletion.Completion
             }
         }
 
-        public System.Drawing.Bitmap Icon
+        public Bitmap Icon
         {
-            get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(icon); }
+            get { return (Bitmap)ASContext.Panel.GetIcon(icon); }
         }
 
         public string Value
@@ -4347,9 +4349,9 @@ namespace ASCompletion.Completion
             get { return TextHelper.GetString("Info.DeclarationTemplate"); }
         }
 
-        public System.Drawing.Bitmap Icon
+        public Bitmap Icon
         {
-            get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
+            get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
         }
 
         public string Value
@@ -4391,9 +4393,9 @@ namespace ASCompletion.Completion
             }
         }
 
-        public System.Drawing.Bitmap Icon
+        public Bitmap Icon
         {
-            get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_CONST); }
+            get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_CONST); }
         }
 
         public string Value

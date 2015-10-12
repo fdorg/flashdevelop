@@ -19,21 +19,27 @@ namespace AppMan
         [STAThread]
         static void Main(String[] args)
         {
-            if (mutex.WaitOne(TimeSpan.Zero, true))
+            try
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm(args));
-                mutex.ReleaseMutex();
+                if (mutex.WaitOne(TimeSpan.Zero, true))
+                {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new MainForm(args));
+                    mutex.ReleaseMutex();
+                }
+                else if (Array.IndexOf(args, "-minimized") == -1)
+                {
+                    if (Win32.IsRunningOnMono) MessageBox.Show("AppMan is already running.");
+                    else Win32.PostMessage((IntPtr)Win32.HWND_BROADCAST, Win32.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+                }
             }
-            else if (Array.IndexOf(args, "-minimized") == -1)
+            catch (Exception ex)
             {
-                if (Win32.IsRunningOnMono) MessageBox.Show("AppMan is already running.");
-                else Win32.PostMessage((IntPtr)Win32.HWND_BROADCAST, Win32.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+                MessageBox.Show("Error while starting AppMan:\n" + ex.ToString());
             }
         }
 
     }
 
 }
-

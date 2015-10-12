@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PluginCore;
-using ScintillaNet;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using LitJson;
+using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using LitJson;
+using ScintillaNet;
 
 namespace XMLCompletion
 {
@@ -61,7 +60,6 @@ namespace XMLCompletion
         private static ZenSettings ReadZenSettings(JsonReader reader)
         {
             ZenSettings settings = new ZenSettings();
-            Type objType = settings.GetType();
 
             reader.Read();
             if (reader.Token != JsonToken.ObjectStart)

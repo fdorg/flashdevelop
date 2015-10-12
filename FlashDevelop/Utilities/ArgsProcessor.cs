@@ -1,18 +1,16 @@
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FlashDevelop.Settings;
-using PluginCore.Utilities;
-using FlashDevelop.Managers;
 using FlashDevelop.Dialogs;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using ScintillaNet;
-using PluginCore;
 using Ookii.Dialogs;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
 
 namespace FlashDevelop.Utilities
 {
@@ -459,7 +457,7 @@ namespace FlashDevelop.Utilities
         {
             if (match.Groups.Count > 0)
             {
-                switch (match.Groups[1].Value.ToUpper(System.Globalization.CultureInfo.InvariantCulture))
+                switch (match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case "DATETIME":
                     {

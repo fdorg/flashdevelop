@@ -1,10 +1,6 @@
 using System;
-using System.Text;
 using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
-using System.Windows.Forms.Design;
-using System.Drawing.Design;
 using ProjectManager.Projects;
 
 namespace LoomContext.Projects

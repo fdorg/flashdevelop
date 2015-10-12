@@ -1,10 +1,11 @@
 using System;
-using System.Drawing.Design;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-using System.Windows.Forms.Design;
-using PluginCore.Localization;
+using System.Drawing.Design;
+using System.Runtime.Serialization;
 using LayoutManager.Controls;
+using Ookii.Dialogs;
+using PluginCore.Localization;
 
 namespace FlashDebugger
 {
@@ -31,7 +32,7 @@ namespace FlashDebugger
             return m_Value;
         }
 
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String Path
         {
             get { return m_Value; }
@@ -253,8 +254,8 @@ namespace FlashDebugger
             }
         }
 
-        [System.Runtime.Serialization.OnDeserialized]
-        private void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
         {
             if (m_CopyTreeMaxChars == 0)
                 m_CopyTreeMaxChars = 1000000;

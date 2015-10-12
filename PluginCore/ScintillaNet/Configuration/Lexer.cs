@@ -1,19 +1,18 @@
 using System;
-using System.Runtime;
 using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class Lexer : ConfigItem
     {
-        [XmlAttributeAttribute("key")]
+        [XmlAttribute("key")]
         public int key;
         
-        [XmlAttributeAttribute("name")]
+        [XmlAttribute("name")]
         public string name;
 
-        [XmlAttributeAttribute("style-bits")]
+        [XmlAttribute("style-bits")]
         public int stylebits;
         
     }

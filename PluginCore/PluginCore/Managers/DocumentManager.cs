@@ -1,9 +1,7 @@
 using System;
 using System.IO;
-using System.Text;
 using PluginCore.Localization;
 using ScintillaNet;
-using PluginCore;
 
 namespace PluginCore.Managers
 {

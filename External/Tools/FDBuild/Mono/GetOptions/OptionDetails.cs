@@ -252,7 +252,7 @@ namespace Mono.GetOptions
             {
                 string text1;
                 string text2;
-                bool flag1 = (this.LongForm != null) && (this.LongForm != string.Empty);
+                bool flag1 = !string.IsNullOrEmpty(this.LongForm);
                 if (this.OptionBundle.ParsingMode == OptionsParsingMode.Windows)
                 {
                     text2 = "/";
@@ -279,7 +279,7 @@ namespace Mono.GetOptions
                     this.optionHelp = this.optionHelp + "[+|-]";
                 }
                 this.optionHelp = this.optionHelp + ("\t" + this.ShortDescription);
-                if ((this.AlternateForm != string.Empty) && (this.AlternateForm != null))
+                if (!string.IsNullOrEmpty(this.AlternateForm))
                 {
                     this.optionHelp = this.optionHelp + (" [short form: " + text2 + this.AlternateForm + "]");
                 }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace ProjectManager.Projects.Generic
 {
@@ -14,6 +13,7 @@ namespace ProjectManager.Projects.Generic
         }
 
         public override string Language { get { return "*"; } }
+        public override string LanguageDisplayName { get { return "*"; } }
         public override bool IsCompilable { get { return false; } }
 
         public override string DefaultSearchFilter
@@ -40,7 +40,7 @@ namespace ProjectManager.Projects.Generic
             {
                 return reader.ReadProject();
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.", exception.LineNumber, exception.LinePosition);
                 throw new Exception(format, exception);

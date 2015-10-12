@@ -1,7 +1,5 @@
 using System;
 using System.Text;
-using System.Security.Cryptography;
-using System.Collections;
 
 namespace PluginCore.Utilities
 {

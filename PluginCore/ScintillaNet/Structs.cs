@@ -5,7 +5,7 @@ namespace ScintillaNet
     public struct NotifyHeader
     {
         public IntPtr hwndFrom;
-        public uint idFrom;
+        public IntPtr idFrom;
         public uint code;
     };
 
@@ -13,7 +13,7 @@ namespace ScintillaNet
     {
         public NotifyHeader nmhdr;
         public int position;
-        public int ch;
+        public char ch;
         public int modifiers;
         public int modificationType;
         public IntPtr text;

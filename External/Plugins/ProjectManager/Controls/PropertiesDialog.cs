@@ -915,7 +915,7 @@ namespace ProjectManager.Controls
 
         protected virtual void BuildDisplay()
         {
-            this.Text = " " + project.Name + " (" + project.Language.ToUpper() + ") " + TextHelper.GetString("Info.Properties");
+            this.Text = " " + project.Name + " (" + project.LanguageDisplayName + ") " + TextHelper.GetString("Info.Properties");
 
             langPlatform = GetLanguagePlatform(project.MovieOptions.Platform);
 

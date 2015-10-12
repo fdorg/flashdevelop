@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -11,12 +17,6 @@ using PluginCore.Managers;
 using PluginCore.Utilities;
 using ProjectManager.Actions;
 using ProjectManager.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace CodeRefactor
 {
@@ -120,7 +120,7 @@ namespace CodeRefactor
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -346,12 +346,11 @@ namespace CodeRefactor
                 IASContext context = ASContext.Context;
                 if (context != null && context.CurrentModel != null)
                 {
-                    bool truncate = langIsValid && context.CurrentModel.Imports.Count > 0;
-                    bool organize = (langIsValid && context.CurrentModel.Imports.Count > 1);
-                    this.refactorContextMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorContextMenu.TruncateMenuItem.Enabled = truncate;
-                    this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorMainMenu.TruncateMenuItem.Enabled = truncate;
+                    bool enabled = langIsValid && context.CurrentModel.Imports.Count > 0;
+                    this.refactorContextMenu.OrganizeMenuItem.Enabled = enabled;
+                    this.refactorContextMenu.TruncateMenuItem.Enabled = enabled;
+                    this.refactorMainMenu.OrganizeMenuItem.Enabled = enabled;
+                    this.refactorMainMenu.TruncateMenuItem.Enabled = enabled;
                 }
                 this.surroundContextMenu.Enabled = false;
                 this.refactorMainMenu.SurroundMenu.Enabled = false;

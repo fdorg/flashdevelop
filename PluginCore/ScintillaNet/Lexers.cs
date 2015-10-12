@@ -1,6 +1,3 @@
-using System;
-using System.Windows.Forms;
-
 namespace ScintillaNet.Lexers
 {
     public enum PYTHON

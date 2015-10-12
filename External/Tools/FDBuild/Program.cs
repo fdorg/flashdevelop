@@ -157,7 +157,7 @@ namespace FDBuild
         /// <param name="arguments">the compc arguments</param>
         public static void BuildCOMPC( string workingdir, string arguments )
         {
-            AS3ProjectBuilder builder = new AS3ProjectBuilder(null, Program.BuildOptions.CompilerPath, Program.BuildOptions.IpcName);
+            new AS3ProjectBuilder(null, Program.BuildOptions.CompilerPath, Program.BuildOptions.IpcName);
         }
     }
 }

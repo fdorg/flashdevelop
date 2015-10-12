@@ -785,7 +785,7 @@ namespace TaskListPanel
         /// <summary>
         /// Handles the internal events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (!this.isEnabled) return;
             ITabbedDocument document;

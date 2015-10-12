@@ -1,8 +1,6 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
-using System.Text;
 
 namespace ProjectManager.Projects.Haxe
 {

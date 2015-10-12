@@ -1,9 +1,5 @@
-using System;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Collections.Generic;
-using PluginCore.Managers;
 using PluginCore;
 using PluginCore.Helpers;
 
@@ -113,7 +109,6 @@ namespace System.Windows.Forms
 
         private void OnToolStripPaint(Object sender, PaintEventArgs e)
         {
-            Font font = PluginBase.MainForm.Settings.DefaultFont;
             Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
             {
@@ -306,7 +301,6 @@ namespace System.Windows.Forms
                         Rectangle rect = new Rectangle(3, 1, e.Item.Width - 4, e.Item.Height - 2);
                         Rectangle rect2 = new Rectangle(4, 2, e.Item.Width - 6, e.Item.Height - 4);
                         LinearGradientBrush b = new LinearGradientBrush(rect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
-                        SolidBrush b2 = new SolidBrush(border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border);
                         e.Graphics.FillRectangle(b, rect);
                         DockDrawHelper.DrawRoundedRectangle(e.Graphics, rect.Left - 1, rect.Top - 1, rect.Width, rect.Height + 1, 3, border == Color.Empty ? DockDrawHelper.ColorSelectedBG_Border : border);
                         DockDrawHelper.DrawRoundedRectangle(e.Graphics, rect2.Left - 1, rect2.Top - 1, rect2.Width, rect2.Height + 1, 3, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back);
@@ -373,7 +367,6 @@ namespace System.Windows.Forms
                 Color border = GetThemeColor("ToolStripItem.BorderColor");
                 if (e.Item.Selected)
                 {
-                    Rectangle rectBorder = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
                     Rectangle rectBack = new Rectangle(1, 1, e.Item.Width - 2, e.Item.Height - 2);
                     LinearGradientBrush backBrush = new LinearGradientBrush(rectBack, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                     e.Graphics.FillRectangle(backBrush, rectBack);

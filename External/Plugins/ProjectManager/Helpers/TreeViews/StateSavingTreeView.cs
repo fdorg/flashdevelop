@@ -124,7 +124,7 @@ namespace System.Windows.Forms
 
         private TreeNode FindClosestPath(string path)
         {
-            if (path == null || path.Length < 1) return null;
+            if (string.IsNullOrEmpty(path)) return null;
             Queue queue = new Queue(path.Split('\\'));
             return FindClosestPath(base.Nodes,queue);
         }

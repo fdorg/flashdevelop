@@ -1,25 +1,27 @@
 using System;
-using System.Windows.Forms;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Drawing;
 using System.IO;
-using WeifenLuo.WinFormsUI;
-using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using PluginCore;
-using ASCompletion.Settings;
-using ASCompletion.Model;
-using ASCompletion.Context;
-using ASCompletion.Completion;
-using PluginCore.Localization;
 using System.Text.RegularExpressions;
-using PluginCore.Helpers;
+using System.Timers;
+using System.Windows.Forms;
+using ASCompletion.Commands;
+using ASCompletion.Completion;
+using ASCompletion.Context;
 using ASCompletion.Helpers;
+using ASCompletion.Model;
+using ASCompletion.Settings;
+using PluginCore;
+using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
+using WeifenLuo.WinFormsUI.Docking;
+using Timer = System.Timers.Timer;
 
 namespace ASCompletion
 {
@@ -57,7 +59,7 @@ namespace ASCompletion
         private bool started;
         private FlashErrorsWatcher flashErrorsWatcher;
         private bool checking = false;
-        private System.Timers.Timer timerPosition;
+        private Timer timerPosition;
         private int lastHoverPosition;
 
         private Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
@@ -154,7 +156,7 @@ namespace ASCompletion
         /**
         * Handles the incoming events
         */
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             try
             {
@@ -175,7 +177,7 @@ namespace ASCompletion
 
                 // editor ready?
                 if (doc == null) return;
-                ScintillaNet.ScintillaControl sci = doc.IsEditable ? doc.SciControl : null;
+                ScintillaControl sci = doc.IsEditable ? doc.SciControl : null;
 
                 //
                 //  Events always handled
@@ -268,7 +270,7 @@ namespace ASCompletion
 
                         if (command.StartsWith("ASCompletion."))
                         {
-                            string cmdData = (de.Data is string) ? (string)de.Data : null;
+                            string cmdData = de.Data as string;
 
                             // add a custom classpath
                             if (command == "ASCompletion.ClassPath")
@@ -362,7 +364,7 @@ namespace ASCompletion
                             else if (command == "ASCompletion.CallFlashIDE")
                             {
                                 if (flashErrorsWatcher == null) flashErrorsWatcher = new FlashErrorsWatcher();
-                                e.Handled = Commands.CallFlashIDE.Run(settingObject.PathToFlashIDE, cmdData);
+                                e.Handled = CallFlashIDE.Run(settingObject.PathToFlashIDE, cmdData);
                             }
 
                             // create Flash 8+ trust file
@@ -372,7 +374,7 @@ namespace ASCompletion
                                 {
                                     string[] args = cmdData.Split(';');
                                     if (args.Length == 2)
-                                        e.Handled = Commands.CreateTrustFile.Run(args[0], args[1]);
+                                        e.Handled = CreateTrustFile.Run(args[0], args[1]);
                                 }
                             }
                             else if (command == "ASCompletion.GetClassPath")
@@ -435,7 +437,7 @@ namespace ASCompletion
                         }
                         else if (command == "ProjectManager.UserRefreshTree")
                         {
-                            ASContext.Context.UserRefreshRequest();
+                            ASContext.UserRefreshRequestAll();
                         }
                         break;
                 }
@@ -592,7 +594,7 @@ namespace ASCompletion
             {
                 // default settings
                 settingObject.JavadocTags = GeneralSettings.DEFAULT_TAGS;
-                settingObject.PathToFlashIDE = Commands.CallFlashIDE.FindFlashIDE();
+                settingObject.PathToFlashIDE = CallFlashIDE.FindFlashIDE();
                 SaveSettings();
             }
             else
@@ -628,7 +630,7 @@ namespace ASCompletion
                 menu.DropDownItems.Add(item);
             }
 
-            System.Drawing.Image image;
+            Image image;
             // tools items
             menu = (ToolStripMenuItem)mainForm.FindMenuItem("FlashToolsMenu");
             if (menu != null)
@@ -744,10 +746,10 @@ namespace ASCompletion
             EventManager.AddEventHandler(this, EventType.UIStarted, HandlingPriority.Low);
             
             // cursor position changes tracking
-            timerPosition = new System.Timers.Timer();
+            timerPosition = new Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
             timerPosition.Interval = 200;
-            timerPosition.Elapsed += new System.Timers.ElapsedEventHandler(timerPosition_Elapsed);
+            timerPosition.Elapsed += new ElapsedEventHandler(timerPosition_Elapsed);
         }
 
         #endregion
@@ -782,7 +784,7 @@ namespace ASCompletion
         /// <summary>
         /// Clear and rebuild classpath models cache
         /// </summary>
-        private void RebuildClasspath(object sender, System.EventArgs e)
+        private void RebuildClasspath(object sender, EventArgs e)
         {
             ASContext.RebuildClasspath();
         }
@@ -790,7 +792,7 @@ namespace ASCompletion
         /// <summary>
         /// Open de types explorer dialog
         /// </summary>
-        private void TypesExplorer(object sender, System.EventArgs e)
+        private void TypesExplorer(object sender, EventArgs e)
         {
             ModelsExplorer.Instance.UpdateTree();
             ModelsExplorer.Open();
@@ -799,7 +801,7 @@ namespace ASCompletion
         /// <summary>
         /// Opens the plugin panel again if closed
         /// </summary>
-        public void OpenPanel(object sender, System.EventArgs e)
+        public void OpenPanel(object sender, EventArgs e)
         {
             pluginPanel.Show();
         }
@@ -807,7 +809,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Check ActionScript
         /// </summary>
-        public void CheckSyntax(object sender, System.EventArgs e)
+        public void CheckSyntax(object sender, EventArgs e)
         {
             if (!checking && !PluginBase.MainForm.SavingMultiple)
             {
@@ -820,7 +822,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Quick Build
         /// </summary>
-        public void QuickBuild(object sender, System.EventArgs e)
+        public void QuickBuild(object sender, EventArgs e)
         {
             ASContext.Context.BuildCMD(false);
         }
@@ -828,7 +830,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Convert To Intrinsic
         /// </summary>
-        public void MakeIntrinsic(object sender, System.EventArgs e)
+        public void MakeIntrinsic(object sender, EventArgs e)
         {
             if (PluginBase.MainForm.CurrentDocument.IsEditable)
                 ASContext.Context.MakeIntrinsic(null);
@@ -837,7 +839,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Goto Declaration
         /// </summary>
-        public void GotoDeclaration(object sender, System.EventArgs e)
+        public void GotoDeclaration(object sender, EventArgs e)
         {
             ASComplete.DeclarationLookup(ASContext.CurSciControl);
         }
@@ -845,7 +847,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Back From Declaration
         /// </summary>
-        public void BackDeclaration(object sender, System.EventArgs e)
+        public void BackDeclaration(object sender, EventArgs e)
         {
             pluginUI.RestoreLastLookupPosition();
         }
@@ -867,13 +869,13 @@ namespace ASCompletion
         /// <summary>
         /// Display completion list or calltip info
         /// </summary>
-        private void OnChar(ScintillaNet.ScintillaControl Sci, int Value)
+        private void OnChar(ScintillaControl Sci, int Value)
         {
             if (Sci.Lexer == 3 || Sci.Lexer == 4)
                 ASComplete.OnChar(Sci, Value, true);
         }
 
-        private void OnMouseHover(ScintillaNet.ScintillaControl sci, int position)
+        private void OnMouseHover(ScintillaControl sci, int position)
         {
             if (!ASContext.Context.IsFileValid)
                 return;
@@ -897,13 +899,13 @@ namespace ASCompletion
             }
         }
 
-        private void OnTextChanged(ScintillaNet.ScintillaControl sender, int position, int length, int linesAdded)
+        private void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             ASComplete.OnTextChanged(sender, position, length, linesAdded);
             ASContext.OnTextChanged(sender, position, length, linesAdded);
         }
 
-        private void OnUpdateCallTip(ScintillaNet.ScintillaControl sci, int position)
+        private void OnUpdateCallTip(ScintillaControl sci, int position)
         {
             if (ASComplete.HasCalltip())
             {
@@ -915,15 +917,15 @@ namespace ASCompletion
             }
         }
 
-        private void OnUpdateSimpleTip(ScintillaNet.ScintillaControl sci, Point mousePosition)
+        private void OnUpdateSimpleTip(ScintillaControl sci, Point mousePosition)
         {
             if (UITools.Tip.Visible)
                 OnMouseHover(sci, lastHoverPosition);
         }
 
-        void timerPosition_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void timerPosition_Elapsed(object sender, ElapsedEventArgs e)
         {
-            ScintillaNet.ScintillaControl sci = ASContext.CurSciControl;
+            ScintillaControl sci = ASContext.CurSciControl;
             if (sci == null) return;
             int position = sci.CurrentPos;
             if (position != currentPos)
@@ -940,7 +942,7 @@ namespace ASCompletion
 
             if (doc.IsEditable)
             {
-                ScintillaNet.ScintillaControl sci = ASContext.CurSciControl;
+                ScintillaControl sci = ASContext.CurSciControl;
                 if (currentDoc == doc.FileName && sci != null)
                 {
                     int line = sci.LineFromPosition(currentPos);

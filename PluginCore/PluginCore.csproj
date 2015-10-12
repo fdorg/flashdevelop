@@ -107,9 +107,6 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Design">
       <Name>System.Design</Name>
     </Reference>
@@ -307,6 +304,7 @@
     <Compile Include="Ookii.Dialogs\VistaFolderBrowserDialog.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Ookii.Dialogs\VistaFolderNameEditor.cs" />
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>

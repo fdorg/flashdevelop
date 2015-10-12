@@ -325,7 +325,7 @@ namespace WeifenLuo.WinFormsUI
             if (e.Button != MouseButtons.Left)
                 return;
 
-            if (m_mouseCapture == false || m_mouseOver == false)
+            if (!m_mouseCapture || !m_mouseOver)
             {
                 m_mouseCapture = true;
                 m_mouseOver = true;
@@ -358,7 +358,7 @@ namespace WeifenLuo.WinFormsUI
             if (e.Button != MouseButtons.Left)
                 return;
 
-            if (m_mouseOver == true || m_mouseCapture == true)
+            if (m_mouseOver || m_mouseCapture)
             {
                 m_mouseOver = false;
                 m_mouseCapture = false;
@@ -606,7 +606,7 @@ namespace WeifenLuo.WinFormsUI
         protected override void OnEnabledChanged(EventArgs e)
         {
             base.OnEnabledChanged(e);
-            if (Enabled == false)
+            if (!Enabled)
             {
                 m_mouseOver = false;
                 m_mouseCapture = false;

@@ -1,14 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using FlashDevelop.Managers;
-using PluginCore.Managers;
-using FlashDevelop;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Utilities 
 {
@@ -94,9 +91,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         private static void AddPlugin(String fileName)
         {
-            Assembly pluginAssembly = Assembly.LoadFrom(fileName);
             try
             {
+                Assembly pluginAssembly = Assembly.LoadFrom(fileName);
                 foreach (Type pluginType in pluginAssembly.GetTypes())
                 {
                     if (pluginType.IsPublic && !pluginType.IsAbstract)

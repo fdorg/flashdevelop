@@ -1,10 +1,8 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Collections;
-using PluginCore.Managers;
 using PluginCore.Helpers;
-using PluginCore;
+using PluginCore.Managers;
 
 namespace ASCompletion.Commands
 {

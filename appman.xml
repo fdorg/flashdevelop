@@ -48,8 +48,8 @@
 	<Entry>
 		<Id>flexairsdk</Id>
 		<Name>Flex SDK + AIR SDK</Name>
-		<Version>4.6.0+18.0.0</Version>
-		<Build>23201B+144</Build>
+		<Version>4.6.0+19.0.0</Version>
+		<Build>23201B+190</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -58,15 +58,15 @@
 		</Bundles>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://airdownload.adobe.com/air/win/download/18.0/AdobeAIRSDK.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/19.0/AdobeAIRSDK.zip</Url>
 			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-18.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
-		<Version>18.0.0</Version>
-		<Build>144</Build>
+		<Version>19.0.0</Version>
+		<Build>190</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -74,14 +74,14 @@
 			<Bundle>AIR</Bundle>
 		</Bundles>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/18.0/AIRSDK_Compiler.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/19.0/AIRSDK_Compiler.zip</Url>
 			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-18.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>aflexsdk</Id>
 		<Name>Apache Flex SDK</Name>
-		<Version>3.1.0</Version>
+		<Version>3.2.0</Version>
 		<Build>1</Build>
 		<Desc>Apache Flex SDK and dependencies installer</Desc>
 		<Group>Compilers</Group>
@@ -91,7 +91,7 @@
 		<Type>Executable</Type>
 		<Info>http://flex.apache.org/index.html</Info>
 		<Urls>
-			<Url>http://mirror.netinch.com/pub/apache/flex/installer/3.1/binaries/apache-flex-sdk-installer-3.1.0-bin.exe</Url>
+			<Url>http://www.apache.org/dyn/closer.lua/flex/installer/3.2/binaries/apache-flex-sdk-installer-3.2.0-bin.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -109,8 +109,8 @@
 	<Entry>
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
-		<Version>18.0.0</Version>
-		<Build>144</Build>
+		<Version>19.0.0</Version>
+		<Build>190</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -119,14 +119,14 @@
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/products/air.html</Info>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/18.0/AdobeAIRInstaller.exe</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/19.0/AdobeAIRInstaller.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
-		<Version>18.0.0</Version>
-		<Build>160</Build>
+		<Version>19.0.0</Version>
+		<Build>185</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -137,52 +137,52 @@
 		</Bundles>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/18/flashplayer_18_sa_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_sa_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
-		<Version>18.0.0</Version>
-		<Build>160</Build>
+		<Version>19.0.0</Version>
+		<Build>185</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/18/flashplayer_18_plugin_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_plugin_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
-		<Version>18.0.0</Version>
-		<Build>160</Build>
+		<Version>19.0.0</Version>
+		<Build>185</Build>
 		<Desc>Debug Flash Player plugin for Internet Explorer</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/18/flashplayer_18_ax_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ax_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashppapi</Id>
 		<Name>Flash Player (PPAPI)</Name>
-		<Version>18.0.0</Version>
-		<Build>160</Build>
+		<Version>19.0.0</Version>
+		<Build>185</Build>
 		<Desc>Debug Flash Player plugin for Opera and Chromium based applications – PPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/18/flashplayer_18_ppapi_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ppapi_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit (x86)</Name>
-		<Version>1.8.13</Version>
+		<Version>1.8.15</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -192,13 +192,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.13.0/TortoiseGit-1.8.13.0-32bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.15.0/TortoiseGit-1.8.15.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
-		<Version>1.8.13</Version>
+		<Version>1.8.15</Version>
 		<Build>1</Build>
 		<Desc>Git client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -208,13 +208,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.13.0/TortoiseGit-1.8.13.0-64bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.15.0/TortoiseGit-1.8.15.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
-		<Name>Git For Windows</Name>
-		<Version>1.9.5</Version>
+		<Name>Git For Windows (x86)</Name>
+		<Version>2.6.1</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -224,13 +224,29 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20141217/Git-1.9.5-preview20141217.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.1.windows.1/Git-2.6.1-32-bit.exe</Url>
 		</Urls>
+	</Entry>
+    <Entry>
+		<Id>git4win</Id>
+		<Name>Git For Windows (x64)</Name>
+		<Version>2.6.1</Version>
+		<Build>1</Build>
+		<Desc>Git command line client 64-bit installer</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>Git</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://msysgit.github.io/</Info>
+		<Urls>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.1.windows.1/Git-2.6.1-64-bit.exe</Url>
+        </Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN (x86)</Name>
-		<Version>1.8.10</Version>
+		<Version>1.9.2</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -238,15 +254,15 @@
 			<Bundle>SVN</Bundle>
 		</Bundles>
 		<Type>Executable</Type>
-		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.10/Application/TortoiseSVN-1.8.10.26129-win32-svn-1.8.11.msi</Url>
+			<Url>https://sourceforge.net/projects/tortoisesvn/files/1.9.2/Application/TortoiseSVN-1.9.2.26806-win32-svn-1.9.2.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn64</Id>
 		<Name>TortoiseSVN (x64)</Name>
-		<Version>1.8.10</Version>
+		<Version>1.9.2</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -254,15 +270,15 @@
 			<Bundle>SVN</Bundle>
 		</Bundles>
 		<Type>Executable</Type>
-		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.10/Application/TortoiseSVN-1.8.10.26129-x64-svn-1.8.11.msi</Url>
+			<Url>https://sourceforge.net/projects/tortoisesvn/files/1.9.2/Application/TortoiseSVN-1.9.2.26806-x64-svn-1.9.2.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>sliksvn</Id>
-		<Name>SlikSVN Client</Name>
-		<Version>1.8.11</Version>
+		<Name>SlikSVN Client (x86)</Name>
+		<Version>1.9.2</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -272,7 +288,23 @@
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.11-win32.msi</Url>
+			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.2-win32.msi</Url>
+		</Urls>
+	</Entry>
+    <Entry>
+		<Id>sliksvn</Id>
+		<Name>SlikSVN Client (x64)</Name>
+		<Version>1.9.2</Version>
+		<Build>1</Build>
+		<Desc>Subversion command line client 64-bit installer</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>SVN</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://www.sliksvn.com/en/download/</Info>
+		<Urls>
+			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.2-x64.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -436,7 +468,7 @@
 		<Name>FindAndReplaceAdvance</Name>
 		<Version>1.1</Version>
 		<Build>1</Build>
-		<Checksum>52f824304662af369133fadd035eb8f1</Checksum>
+		<Checksum>824842464cb24287ebfd326aa36a20ff</Checksum>
 		<Desc>Find and Replace plugin Expanded.</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12200</Info>

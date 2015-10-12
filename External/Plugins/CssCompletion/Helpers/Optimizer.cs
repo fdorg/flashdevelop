@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using PluginCore.Managers;
 using System.Diagnostics;
-using PluginCore.Helpers;
-using PluginCore;
+using System.IO;
 using System.Text.RegularExpressions;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Managers;
 
 namespace CssCompletion
 {

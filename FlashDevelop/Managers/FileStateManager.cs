@@ -1,15 +1,11 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
-using FlashDevelop.Utilities;
+using System.IO;
 using FlashDevelop.Helpers;
+using PluginCore;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
 using ScintillaNet;
-using PluginCore;
 
 namespace FlashDevelop.Managers
 {

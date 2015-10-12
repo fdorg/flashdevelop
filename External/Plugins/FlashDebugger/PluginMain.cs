@@ -1,16 +1,13 @@
 using System;
-using System.IO;
 using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
-using ASCompletion.Context;
-using PluginCore.Localization;
+using System.IO;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using ProjectManager.Projects;
-using ProjectManager.Projects.AS3;
-using PluginCore;
+using ProjectManager;
 
 namespace FlashDebugger
 {
@@ -120,7 +117,7 @@ namespace FlashDebugger
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (debugManager == null) return;
             switch (e.Type)
@@ -153,7 +150,7 @@ namespace FlashDebugger
                     break;
 
                 case EventType.Command:
-                    PluginCore.DataEvent buildevnt = (PluginCore.DataEvent)e;
+                    DataEvent buildevnt = (DataEvent)e;
                     if (buildevnt.Action == "AS3Context.StartDebugger")
                     {
                         if (settingObject.StartDebuggerOnTestMovie)
@@ -163,7 +160,7 @@ namespace FlashDebugger
                         return;
                     }
                     if (!buildevnt.Action.StartsWith("ProjectManager"))  return;
-                    if (buildevnt.Action == ProjectManager.ProjectManagerEvents.Project)
+                    if (buildevnt.Action == ProjectManagerEvents.Project)
                     {
                         IProject project = PluginBase.CurrentProject;
                         if (project != null && project.EnableInteractiveDebugger)
@@ -189,7 +186,7 @@ namespace FlashDebugger
                         }
                     }
                     else if (disableDebugger) return;
-                    if (buildevnt.Action == ProjectManager.ProjectManagerCommands.HotBuild || buildevnt.Action == ProjectManager.ProjectManagerCommands.BuildProject)
+                    if (buildevnt.Action == ProjectManagerCommands.HotBuild || buildevnt.Action == ProjectManagerCommands.BuildProject)
                     {
                         if (debugManager.FlashInterface.isDebuggerStarted)
                         {
@@ -200,7 +197,7 @@ namespace FlashDebugger
                             debugManager.Stop_Click(null, null);
                         }
                     }
-                    if (buildevnt.Action == ProjectManager.ProjectManagerEvents.TestProject)
+                    if (buildevnt.Action == ProjectManagerEvents.TestProject)
                     {
                         if (debugManager.FlashInterface.isDebuggerStarted)
                         {
@@ -212,7 +209,7 @@ namespace FlashDebugger
                             }
                         }
                     }
-                    if (buildevnt.Action == ProjectManager.ProjectManagerEvents.TestProject)
+                    if (buildevnt.Action == ProjectManagerEvents.TestProject)
                     {
                         menusHelper.UpdateMenuState(this, DebuggerState.Initializing);
                     }

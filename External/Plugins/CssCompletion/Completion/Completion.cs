@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using ScintillaNet.Configuration;
-using ScintillaNet;
-using PluginCore.Managers;
-using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore.Utilities;
+using ScintillaNet;
+using ScintillaNet.Configuration;
+using ScintillaNet.Lexers;
 
 namespace CssCompletion
 {
@@ -28,7 +28,7 @@ namespace CssCompletion
         CssFeatures features;
         int lastColonInsert;
 
-        public Completion(PluginCore.Helpers.SimpleIni config, Settings settings)
+        public Completion(SimpleIni config, Settings settings)
         {
             this.settings = settings;
             lang = ScintillaControl.Configuration.GetLanguage("css");
@@ -207,7 +207,7 @@ namespace CssCompletion
             int i = position - 1;
             int style = sci.StyleAt(i-1);
 
-            if (style == (int)ScintillaNet.Lexers.CSS.COMMENT) // inside comments
+            if (style == (int)CSS.COMMENT) // inside comments
             {
                 ctx.InComments = true;
                 return ctx;
@@ -628,7 +628,7 @@ namespace CssCompletion
             return list;
         }
 
-        private Dictionary<string, string> GetSection(PluginCore.Helpers.SimpleIni config, string name)
+        private Dictionary<string, string> GetSection(SimpleIni config, string name)
         {
             foreach (var def in config)
                 if (def.Key == name) return def.Value;
@@ -660,7 +660,6 @@ namespace CssCompletion
 
             // find where to include the closing brace
             int startIndent = indent;
-            int newIndent = indent + Sci.TabWidth;
             int count = Sci.LineCount;
             int lastLine = line;
             int position;

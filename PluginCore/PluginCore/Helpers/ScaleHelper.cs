@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
+using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.Utilities;
-using System.Collections;
 
 namespace PluginCore.Helpers
 {
@@ -96,7 +92,7 @@ namespace PluginCore.Helpers
         public static void AdjustForHighDPI(Control control, double multi)
         {
             if (IsAdjusted(control)) return;
-            double scale = ScaleHelper.GetScale();
+            double scale = GetScale();
             foreach (Control ctrl in control.Controls)
             {
                 if (ctrl is Button)

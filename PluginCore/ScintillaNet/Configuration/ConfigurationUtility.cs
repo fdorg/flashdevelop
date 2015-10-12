@@ -1,9 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using PluginCore.Helpers;
 
@@ -18,7 +16,7 @@ namespace ScintillaNet.Configuration
 
         protected virtual byte[] LoadFile(string filename, ConfigFile parent)
         {
-            System.IO.Stream res;
+            Stream res;
             byte[] buf;
             res = OpenFile(filename, parent);
             if (res != null)

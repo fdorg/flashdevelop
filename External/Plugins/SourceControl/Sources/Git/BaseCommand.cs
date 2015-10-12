@@ -1,12 +1,12 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
+using System.IO;
 using System.Windows.Forms;
-using PluginCore.Localization;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace SourceControl.Sources.Git
 {

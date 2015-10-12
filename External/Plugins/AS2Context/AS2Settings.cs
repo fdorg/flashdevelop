@@ -1,21 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Windows.Forms;
-using System.Windows.Forms.Design;
-using System.IO;
-using ASCompletion.Context;
-using PluginCore.Localization;
+using ASCompletion.Settings;
+using Ookii.Dialogs;
 using PluginCore;
+using PluginCore.Localization;
 
 namespace AS2Context
 {
     public delegate void ClasspathChangedEvent();
 
     [Serializable]
-    public class AS2Settings : ASCompletion.Settings.IContextSettings
+    public class AS2Settings : IContextSettings
     {
         [field: NonSerialized]
         public event ClasspathChangedEvent OnClasspathChanged;
@@ -249,7 +245,7 @@ namespace AS2Context
 
         [DisplayName("Flash IDE Classpath")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS2Context.Description.MMClassPath")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string MMClassPath
         {
             get { return mmClassPath; }

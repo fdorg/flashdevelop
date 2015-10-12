@@ -1,22 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Diagnostics;
-using ProjectManager.Projects;
-using ProjectManager.Controls.TreeView;
-using PluginCore.Helpers;
-using System.Text;
-using PluginCore;
-using System.Text.RegularExpressions;
 using System.Globalization;
-using PluginCore.Utilities;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Managers;
+using PluginCore.Utilities;
+using ProjectManager.Projects;
 using ProjectManager.Projects.AS2;
 using ProjectManager.Projects.AS3;
-using ProjectManager.Projects.Haxe;
-using System.Windows.Forms;
 using ProjectManager.Projects.Generic;
+using ProjectManager.Projects.Haxe;
 
 namespace ProjectManager.Helpers
 {

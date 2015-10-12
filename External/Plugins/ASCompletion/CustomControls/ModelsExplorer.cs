@@ -432,7 +432,7 @@ namespace ASCompletion
 
         private void FindPrevMatch(string search)
         {
-            if (search != null && allTypes != null && search.Length > 0)
+            if (!string.IsNullOrEmpty(search) && allTypes != null)
             {
                 typeIndex--;
                 if (typeIndex <= 0) typeIndex = allTypes.Count;
@@ -452,7 +452,7 @@ namespace ASCompletion
 
         private void FindNextMatch(string search)
         {
-            if (search != null && allTypes != null && search.Length > 0)
+            if (!string.IsNullOrEmpty(search) && allTypes != null)
             {
                 while (typeIndex < allTypes.Count)
                 {
@@ -471,8 +471,15 @@ namespace ASCompletion
         {
             if (lastMatch != null)
             {
-                lastMatch.BackColor = SystemColors.Window;
-                lastMatch.ForeColor = SystemColors.WindowText;
+                //lastMatch.BackColor = SystemColors.Window;
+                //lastMatch.ForeColor = SystemColors.WindowText;
+                Color back = PluginBase.MainForm.GetThemeColor("FixedTreeView.BackColor");
+                Color fore = PluginBase.MainForm.GetThemeColor("FixedTreeView.ForeColor");
+                if (back == Color.Empty) lastMatch.BackColor = System.Drawing.SystemColors.Window;
+                else lastMatch.BackColor = back;
+                if (fore == Color.Empty) lastMatch.ForeColor = System.Drawing.SystemColors.WindowText;
+                else lastMatch.ForeColor = fore;
+
             }
             lastMatch = node;
             if (lastMatch != null)

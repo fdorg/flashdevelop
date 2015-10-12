@@ -35,6 +35,7 @@
 
 
 using System;
+using System.IO;
 
 namespace ICSharpCode.SharpZipLib.Core
 {
@@ -459,7 +460,7 @@ namespace ICSharpCode.SharpZipLib.Core
         {
 
             try {
-                string[] names = System.IO.Directory.GetFiles(directory);
+                string[] names = Directory.GetFiles(directory);
                 bool hasMatch = false;
                 for (int fileIndex = 0; fileIndex < names.Length; ++fileIndex) {
                     if ( !fileFilter_.IsMatch(names[fileIndex]) ) {
@@ -497,7 +498,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
             if ( alive_ && recurse ) {
                 try {
-                    string[] names = System.IO.Directory.GetDirectories(directory);
+                    string[] names = Directory.GetDirectories(directory);
                     foreach (string fulldir in names) {
                         if ((directoryFilter_ == null) || (directoryFilter_.IsMatch(fulldir))) {
                             ScanDir(fulldir, true);

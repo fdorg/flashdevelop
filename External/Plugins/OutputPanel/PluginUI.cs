@@ -63,7 +63,6 @@ namespace OutputPanel
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
             this.scrollTimer = new System.Timers.Timer();
             this.textLog = new System.Windows.Forms.RichTextBox();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
@@ -525,7 +524,9 @@ namespace OutputPanel
             if (this.findTextBox.Text == searchInvitation)
             {
                 this.findTextBox.Text = "";
-                this.findTextBox.ForeColor = System.Drawing.SystemColors.WindowText;
+                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
+                if (fore == Color.Empty) this.findTextBox.ForeColor = System.Drawing.SystemColors.WindowText;
+                else this.findTextBox.ForeColor = fore;
             }
         }
 

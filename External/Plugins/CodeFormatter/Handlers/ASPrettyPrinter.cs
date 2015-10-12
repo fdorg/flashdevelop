@@ -1,13 +1,9 @@
 using System;
-using System.Linq;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
-using CodeFormatter.InfoCollector;
-using Antlr.Runtime.Tree;
+using System.Drawing;
+using System.Text;
 using Antlr.Runtime;
-using Antlr.Utility;
-using System.Text.RegularExpressions;
+using CodeFormatter.InfoCollector;
 
 namespace CodeFormatter.Handlers
 {
@@ -154,7 +150,7 @@ namespace CodeFormatter.Handlers
         private bool mMLCommentKeepBlankLines=true;
         private bool mMLCommentCollapseLines=false;
         private bool mMLTextOnNewLines=false;
-        private int mMLAsteriskMode=ASPrettyPrinter.MLAsteriskStyle_AsIs; //0=don't change (if I can tell), 1=add, 2=remove
+        private int mMLAsteriskMode=MLAsteriskStyle_AsIs; //0=don't change (if I can tell), 1=add, 2=remove
         private int mDocCommentHangingIndentTabs=0;
         private bool mKeepRelativeCommentIndent=false;
     
@@ -319,7 +315,7 @@ namespace CodeFormatter.Handlers
             if (mSourceData.IndexOf(mIgnoreFileProcessing)>=0)
             {
                 mParseErrors=new List<Exception>();
-                mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> "+ASPrettyPrinter.mIgnoreFileProcessing));
+                mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> "+mIgnoreFileProcessing));
                 return null;
             }
         
@@ -1241,7 +1237,7 @@ namespace CodeFormatter.Handlers
                         {
                             if (isUseDocCommentWrapping() && !isKeepRelativeCommentIndent())
                             {
-                                commentLines=wrapMultilineComment(indentAmount, commentLines, mDocCommentCollapseLines, isDocCommentKeepBlankLines(), true, ASPrettyPrinter.MLAsteriskStyle_All, "/**", getDocCommentHangingIndentTabs());
+                                commentLines=wrapMultilineComment(indentAmount, commentLines, mDocCommentCollapseLines, isDocCommentKeepBlankLines(), true, MLAsteriskStyle_All, "/**", getDocCommentHangingIndentTabs());
                                 useReplaceRange=true;
                             }
                         }
@@ -1264,7 +1260,7 @@ namespace CodeFormatter.Handlers
                             else
                                 prevLineEnd++; //move to start of next line
                             lineData.Insert(0, mSourceData.Substring(prevLineEnd, ((CommonToken)t).StartIndex - prevLineEnd));
-                            originalIndent=ASPrettyPrinter.findIndent(lineData, getTabSize());
+                            originalIndent=findIndent(lineData, getTabSize());
                         }
                     
                         Point replaceArea=new Point(mOutputBuffer.Length, -1);
@@ -1278,7 +1274,7 @@ namespace CodeFormatter.Handlers
                             {
                                 if (isKeepRelativeCommentIndent() && originalIndent>=0)
                                 {
-                                    int existingIndent=ASPrettyPrinter.findIndent(commentLines[j], getTabSize());
+                                    int existingIndent=findIndent(commentLines[j], getTabSize());
                                     indentAmount=Math.Max(0, indentAmount+(existingIndent-originalIndent));
                                 }
                                 else //using rules assuming '*' lines
@@ -1656,7 +1652,7 @@ namespace CodeFormatter.Handlers
                             line=AntlrUtilities.asTrim(line.Substring(nextBreakPoint));
                         }
 
-                        if (!currentLine.StartsWith("/*") && !currentLine.StartsWith("*/") && (asteriskMode==ASPrettyPrinter.MLAsteriskStyle_All || (asteriskMode==ASPrettyPrinter.MLAsteriskStyle_AsIs && hasAsterisks)))
+                        if (!currentLine.StartsWith("/*") && !currentLine.StartsWith("*/") && (asteriskMode==MLAsteriskStyle_All || (asteriskMode==MLAsteriskStyle_AsIs && hasAsterisks)))
                         {
                             //if we are on an attribute line, but not on the first loop iteration (i.e. we have already wrapped at least once)
                             if (workingOnAttribute && hangingIndentTabs>0 && !currentLine.StartsWith("@"))

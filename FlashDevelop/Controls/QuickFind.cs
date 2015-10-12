@@ -560,7 +560,6 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void AddHighlights(ScintillaControl sci, List<SearchMatch> matches)
         {
-            ITabbedDocument doc = DocumentManager.FindDocument(sci);
             Language language = MainForm.Instance.SciConfig.GetLanguage(sci.ConfigurationLanguage);
             sci.AddHighlights(matches, language.editorstyle.HighlightBackColor);
         }
@@ -605,7 +604,7 @@ namespace FlashDevelop.Controls
             {
                 UiRenderMode renderMode = Globals.Settings.RenderMode;
                 if (renderMode == UiRenderMode.System) this.renderer = new ToolStripSystemRenderer();
-                else this.renderer = new ToolStripProfessionalRenderer();
+                else this.renderer = new DockPanelStripRenderer();
             }
 
             protected override void Initialize(ToolStrip toolStrip)
@@ -649,7 +648,6 @@ namespace FlashDevelop.Controls
 
             private void OnToolStripPaint(Object sender, PaintEventArgs e)
             {
-                Font font = Globals.MainForm.Settings.DefaultFont;
                 Color tborder = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
                 foreach (ToolStripItem item in this.toolStrip.Items)
                 {

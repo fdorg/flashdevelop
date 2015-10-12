@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Text;
-using System.Xml;
-using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
 
 namespace ProjectManager.Projects
 {
@@ -219,8 +217,8 @@ namespace ProjectManager.Projects
         {
             if (path != null)
             {
-                path = path.Replace('/', System.IO.Path.DirectorySeparatorChar);
-                path = path.Replace('\\', System.IO.Path.DirectorySeparatorChar);
+                path = path.Replace('/', Path.DirectorySeparatorChar);
+                path = path.Replace('\\', Path.DirectorySeparatorChar);
             }
             return path;
         }

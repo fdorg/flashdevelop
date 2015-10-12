@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using System.ComponentModel;
 using PluginCore.Localization;
-using System.Windows.Forms;
 
 namespace ResultsPanel
 {
