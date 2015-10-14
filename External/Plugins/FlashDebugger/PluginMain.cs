@@ -166,11 +166,12 @@ namespace FlashDebugger
                         if (project != null && project.EnableInteractiveDebugger)
                         {
                             disableDebugger = false;
-                            PanelsHelper.breakPointUI.Clear();
                             if (breakPointManager.Project != null && breakPointManager.Project != project)
                             {
                                 breakPointManager.Save();
                             }
+                            PanelsHelper.breakPointUI.Clear();
+                            PanelsHelper.watchUI.Clear();
                             breakPointManager.Project = project;
                             breakPointManager.Load();
                             breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
@@ -183,6 +184,7 @@ namespace FlashDebugger
                                 breakPointManager.Save();
                             }
                             PanelsHelper.breakPointUI.Clear();
+                            PanelsHelper.watchUI.Clear();
                         }
                     }
                     else if (disableDebugger) return;

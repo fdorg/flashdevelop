@@ -94,6 +94,11 @@ namespace FlashDebugger.Controls
             DataNode node;
             try
             {
+                if (!PluginMain.debugManager.FlashInterface.isDebuggerStarted)
+                {
+                    return new ErrorNode(item, new Exception(""));
+                }
+
                 IASTBuilder builder = new ASTBuilder(false);
                 ValueExp exp = builder.parse(new java.io.StringReader(item));
                 var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, PluginMain.debugManager.FlashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);

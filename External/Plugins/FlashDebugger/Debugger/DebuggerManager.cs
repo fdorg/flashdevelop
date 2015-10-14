@@ -384,7 +384,7 @@ namespace FlashDebugger
             }
             PanelsHelper.localsUI.TreeControl.Nodes.Clear();
             PanelsHelper.stackframeUI.ClearItem();
-            PanelsHelper.watchUI.Clear();
+            PanelsHelper.watchUI.UpdateElements();
             PanelsHelper.threadsUI.ClearItem();
             PluginMain.breakPointManager.ResetAll();
             PluginBase.MainForm.ProgressBar.Visible = false;
