@@ -16,7 +16,6 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
-using System.Drawing;
 
 namespace ASCompletion.Completion
 {

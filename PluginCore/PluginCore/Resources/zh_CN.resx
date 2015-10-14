@@ -5970,4 +5970,8 @@
     <value>In Classpaths only</value>
     <comment>Added after 5.0.1</comment>
   </data>
+  <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
+    <value>Highlight word:</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
 </root>
