@@ -1,5 +1,15 @@
 ### DimGray.fdi
 
+# FD UI THEME (5.1+)
+
+#OutputPanel.InfoColor=#808080
+#OutputPanel.DebugColor=#000000
+#OutputPanel.WarningColor=#ffa500
+#OutputPanel.ErrorColor=#ff0000
+#OutputPanel.FatalColor=#ff00ff
+#OutputPanel.ProcessStartColor=#ff0000
+#OutputPanel.ProcessEndColor=ff0000
+
 # FD UI THEME (5.0+)
 
 # Use inherited base styles?

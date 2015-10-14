@@ -398,28 +398,62 @@ namespace OutputPanel
                     switch (state)
                     {
                         case 0: // Info
-                            newColor = Color.Gray;
+                            if (PluginBase.MainForm.GetThemeColor("OutputPanel.InfoColor") != Color.Empty)
+                            {
+                                newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.InfoColor");
+                            }
+                            else newColor = Color.Gray;
                             break;
                         case 1: // Debug
-                            newColor = this.ForeColor;
+                            if (PluginBase.MainForm.GetThemeColor("OutputPanel.DebugColor") != Color.Empty)
+                            {
+                                newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.DebugColor");
+                            }
+                            else newColor = this.ForeColor;
                             break;
                         case 2: // Warning
-                            newColor = Color.Orange;
+                            if (PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor") != Color.Empty)
+                            {
+                                newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor");
+                            }
+                            else newColor = Color.Orange;
                             break;
                         case 3: // Error
-                            newColor = Color.Red;
+                            if (PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor") != Color.Empty)
+                            {
+                                newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor");
+                            }
+                            else newColor = Color.Red;
                             break;
                         case 4: // Fatal
-                            newColor = Color.Magenta;
+                            if (PluginBase.MainForm.GetThemeColor("OutputPanel.FatalColor") != Color.Empty)
+                            {
+                                newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.FatalColor");
+                            }
+                            else newColor = Color.Magenta;
                             break;
                         case -1: // ProcessStart
-                            newColor = Color.Blue;
+                            if (PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessStartColor") != Color.Empty)
+                            {
+                                newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessStartColor");
+                            }
+                            else newColor = Color.Blue;
                             break;
                         case -2: // ProcessEnd
-                            newColor = Color.Blue;
+                            if (PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor") != Color.Empty)
+                            {
+                                newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor");
+                            }
+                            else newColor = Color.Blue;
                             break;
                         case -3: // ProcessError
-                            newColor = (message.IndexOf("Warning") >= 0) ? Color.Orange : Color.Red;
+                            if (PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor") != Color.Empty 
+                             && PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor") != Color.Empty)
+                            {
+                                if (message.IndexOf("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor");
+                                else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor");
+                            }
+                            else newColor = (message.IndexOf("Warning") >= 0) ? Color.Orange : Color.Red;
                             break;
                     }
                     if (newColor != currentColor)
