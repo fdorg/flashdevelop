@@ -1708,11 +1708,31 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Gets a theme property color with a fallback
+        /// </summary>
+        public Color GetThemeColor(String id, Color fallback)
+        {
+            Color color = ThemeManager.GetThemeColor(id);
+            if (color != Color.Empty) return color;
+            else return fallback;
+        }
+
+        /// <summary>
         /// Gets a theme property value
         /// </summary>
         public String GetThemeValue(String id)
         {
             return ThemeManager.GetThemeValue(id);
+        }
+
+        /// <summary>
+        /// Gets a theme property value with a fallback
+        /// </summary>
+        public String GetThemeValue(String id, String fallback)
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            if (!String.IsNullOrEmpty(value)) return value;
+            else return fallback;
         }
 
         /// <summary>

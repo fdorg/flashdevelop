@@ -1036,8 +1036,8 @@ namespace ASCompletion
             if (hilight)
             {
                 node.EnsureVisible();
-                node.ForeColor = SystemColors.HighlightText;
-                node.BackColor = SystemColors.Highlight;
+                node.BackColor = PluginBase.MainForm.GetThemeColor("Global.Highlight", SystemColors.Highlight);
+                node.ForeColor = PluginBase.MainForm.GetThemeColor("Global.HighlightText", SystemColors.HighlightText);
             }
             else
             {

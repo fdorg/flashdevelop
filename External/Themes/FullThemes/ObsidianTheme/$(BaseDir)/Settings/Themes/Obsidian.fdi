@@ -2,6 +2,10 @@
 
 # FD UI THEME (5.1+)
 
+# In: Projects, Results, Outline, Models
+#Global.Highlight=#3399ff
+#Global.HighlightText=#ffffff
+
 #OutputPanel.InfoColor=#808080
 #OutputPanel.DebugColor=#000000
 #OutputPanel.WarningColor=#ffa500
