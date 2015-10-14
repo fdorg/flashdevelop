@@ -2223,6 +2223,11 @@ namespace FlashDevelop
                 Int32 count = this.openFileDialog.FileNames.Length;
                 for (Int32 i = 0; i < count; i++)
                 {
+                    if (encMode == 0) // Detect 8bit encoding...
+                    {
+                        Int32 codepage = FileHelper.GetFileCodepage(openFileDialog.FileNames[i]);
+                        encoding = Encoding.GetEncoding(codepage);
+                    }
                     this.OpenEditableDocument(openFileDialog.FileNames[i], encoding, false);
                 }
             }
@@ -2584,7 +2589,7 @@ namespace FlashDevelop
             ScintillaControl sci = Globals.SciControl;
             String extension = Path.GetExtension(sci.FileName);
             String filename = DocumentManager.GetNewDocumentName(extension);
-            DockContent document = this.CreateEditableDocument(filename, sci.Text, sci.CodePage);
+            DockContent document = this.CreateEditableDocument(filename, sci.Text, sci.Encoding.CodePage);
             ((TabbedDocument)document).IsModified = true;
         }
 
@@ -3149,7 +3154,6 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 ScintillaControl sci = Globals.SciControl;
                 Int32 encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-                sci.CodePage = ScintillaManager.SelectCodePage(encMode);
                 sci.Encoding = Encoding.GetEncoding(encMode);
                 this.OnScintillaControlUpdateControl(sci);
                 this.OnDocumentModify(this.CurrentDocument);
@@ -3185,10 +3189,9 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 ScintillaControl sci = Globals.SciControl;
                 Int32 encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-                Int32 curMode = sci.CodePage; // From current..
+                Int32 curMode = sci.Encoding.CodePage; // From current..
                 String converted = DataConverter.ChangeEncoding(sci.Text, curMode, encMode);
                 sci.Encoding = Encoding.GetEncoding(encMode);
-                sci.CodePage = ScintillaManager.SelectCodePage(encMode);
                 sci.Text = converted; // Set after codepage change
                 this.OnScintillaControlUpdateControl(sci);
                 this.OnDocumentModify(this.CurrentDocument);

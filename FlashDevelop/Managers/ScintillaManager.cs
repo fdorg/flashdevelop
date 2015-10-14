@@ -118,12 +118,15 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Selects a correct codepage for the editor
+        /// Detects from codepage if the encoding is unicode
         /// </summary>
-        public static Int32 SelectCodePage(Int32 codepage)
+        public static Boolean IsUnicode(Int32 codepage)
         {
-            if (codepage == 65001 || codepage == 1201 || codepage == 1200) return 65001;
-            else return 0; // Disable multibyte support
+            return (codepage == Encoding.UTF7.CodePage
+                || codepage == Encoding.UTF8.CodePage
+                || codepage == Encoding.UTF32.CodePage
+                || codepage == Encoding.BigEndianUnicode.CodePage
+                || codepage == Encoding.Unicode.CodePage);
         }
 
         /// <summary>
@@ -371,9 +374,9 @@ namespace FlashDevelop.Managers
             sci.SetXCaretPolicy((Int32)(CaretPolicy.Jumps | CaretPolicy.Even), 30);
             sci.SetYCaretPolicy((Int32)(CaretPolicy.Jumps | CaretPolicy.Even), 2);
             sci.ScrollWidthTracking = (Globals.Settings.ScrollWidth == 3000);
-            sci.CodePage = SelectCodePage(codepage);
+            sci.CodePage = 65001; // Editor handles text as UTF-8
             sci.Encoding = Encoding.GetEncoding(codepage);
-            sci.SaveBOM = (sci.CodePage == 65001) && Globals.Settings.SaveUnicodeWithBOM;
+            sci.SaveBOM = IsUnicode(codepage) && Globals.Settings.SaveUnicodeWithBOM;
             sci.Text = text; sci.FileName = file; // Set text and save file name
             sci.Modified += new ModifiedHandler(Globals.MainForm.OnScintillaControlModified);
             sci.MarginClick += new MarginClickHandler(Globals.MainForm.OnScintillaControlMarginClick);

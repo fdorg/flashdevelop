@@ -339,6 +339,7 @@ namespace PluginCore.Helpers
                         startIndex = 3;
                         info.BomLength = 3;
                         info.ContainsBOM = true;
+                        info.Charset = Encoding.UTF8.WebName;
                         info.CodePage = Encoding.UTF8.CodePage;
                     }
                     else if (bytes.Length > 3 && (bytes[0] == 0xff && bytes[1] == 0xfe && bytes[2] == 0x00 && bytes[3] == 0x00))
@@ -346,6 +347,7 @@ namespace PluginCore.Helpers
                         startIndex = 4;
                         info.BomLength = 4;
                         info.ContainsBOM = true;
+                        info.Charset = Encoding.UTF32.WebName;
                         info.CodePage = Encoding.UTF32.CodePage;
                     }
                     else if (bytes.Length > 4 && ((bytes[0] == 0x2b && bytes[1] == 0x2f && bytes[2] == 0x76) && (bytes[3] == 0x38 || bytes[3] == 0x39 || bytes[3] == 0x2b || bytes[3] == 0x2f) && bytes[4] == 0x2D))
@@ -353,6 +355,7 @@ namespace PluginCore.Helpers
                         startIndex = 5;
                         info.BomLength = 5;
                         info.ContainsBOM = true;
+                        info.Charset = Encoding.UTF7.WebName;
                         info.CodePage = Encoding.UTF7.CodePage;
                     }
                     else if (bytes.Length > 3 && ((bytes[0] == 0x2b && bytes[1] == 0x2f && bytes[2] == 0x76) && (bytes[3] == 0x38 || bytes[3] == 0x39 || bytes[3] == 0x2b || bytes[3] == 0x2f)))
@@ -360,6 +363,7 @@ namespace PluginCore.Helpers
                         startIndex = 4;
                         info.BomLength = 4;
                         info.ContainsBOM = true;
+                        info.Charset = Encoding.UTF7.WebName;
                         info.CodePage = Encoding.UTF7.CodePage;
                     }
                     else if (bytes.Length > 1 && (bytes[0] == 0xff && bytes[1] == 0xfe))
@@ -367,6 +371,7 @@ namespace PluginCore.Helpers
                         startIndex = 2;
                         info.BomLength = 2;
                         info.ContainsBOM = true;
+                        info.Charset = Encoding.Unicode.WebName;
                         info.CodePage = Encoding.Unicode.CodePage;
                     }
                     else if (bytes.Length > 1 && (bytes[0] == 0xfe && bytes[1] == 0xff))
@@ -374,12 +379,32 @@ namespace PluginCore.Helpers
                         startIndex = 2;
                         info.BomLength = 2;
                         info.ContainsBOM = true;
+                        info.Charset = Encoding.BigEndianUnicode.WebName;
                         info.CodePage = Encoding.BigEndianUnicode.CodePage;
                     }
                     else
                     {
-                        if (!ContainsInvalidUTF8Bytes(bytes)) info.CodePage = Encoding.UTF8.CodePage;
-                        else info.CodePage = Encoding.Default.CodePage;
+                        if (!ContainsInvalidUTF8Bytes(bytes))
+                        {
+                            info.Charset = Encoding.UTF8.WebName;
+                            info.CodePage = Encoding.UTF8.CodePage;
+                        }
+                        else // Try detecting using Ude...
+                        {
+                            Ude.CharsetDetector detector = new Ude.CharsetDetector();
+                            detector.Feed(bytes, 0, bytes.Length); detector.DataEnd();
+                            if (detector.Charset != null)
+                            {
+                                Encoding encoding = Encoding.GetEncoding(detector.Charset);
+                                info.Charset = encoding.WebName;
+                                info.CodePage = encoding.CodePage;
+                            }
+                            else
+                            {
+                                info.Charset = Encoding.Default.WebName;
+                                info.CodePage = Encoding.Default.CodePage;
+                            }
+                        }
                     }
                     Int32 contentLength = bytes.Length - startIndex;
                     if (bytes.Length > 0 && bytes.Length > startIndex)
@@ -439,6 +464,7 @@ namespace PluginCore.Helpers
     public class EncodingFileInfo
     {
         public Int32 CodePage = -1;
+        public String Charset = String.Empty;
         public String Contents = String.Empty;
         public Boolean ContainsBOM = false;
         public Int32 BomLength = 0;
