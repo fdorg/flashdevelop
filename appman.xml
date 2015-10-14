@@ -1,6 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<Entry>
+		<Id>haxe3setup2</Id>
+		<Name>Haxe + Neko</Name>
+		<Version>3.2.1</Version>
+		<Build>1</Build>
+		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
+		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://www.haxe.org</Info>
+		<Urls>
+			<Url>http://haxe.org/website-content/downloads/3.2.1/downloads/haxe-3.2.1-win.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
 		<Id>haxe3setup1</Id>
 		<Name>Haxe + Neko</Name>
 		<Version>3.2.0</Version>
@@ -110,7 +126,7 @@
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
 		<Version>19.0.0</Version>
-		<Build>190</Build>
+		<Build>213</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -126,7 +142,7 @@
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
 		<Version>19.0.0</Version>
-		<Build>185</Build>
+		<Build>207</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -137,14 +153,14 @@
 		</Bundles>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_sa_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_sa_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
 		<Version>19.0.0</Version>
-		<Build>185</Build>
+		<Build>207</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
@@ -157,26 +173,26 @@
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
 		<Version>19.0.0</Version>
-		<Build>185</Build>
+		<Build>207</Build>
 		<Desc>Debug Flash Player plugin for Internet Explorer</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ax_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ax_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashppapi</Id>
 		<Name>Flash Player (PPAPI)</Name>
 		<Version>19.0.0</Version>
-		<Build>185</Build>
+		<Build>207</Build>
 		<Desc>Debug Flash Player plugin for Opera and Chromium based applications – PPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ppapi_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ppapi_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
