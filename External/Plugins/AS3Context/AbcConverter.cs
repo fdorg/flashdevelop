@@ -129,8 +129,17 @@ namespace AS3Context
                     type.Flags = FlagType.Class;
                     conflicts.Add(type.Name, type.QualifiedName);
 
-                    if (instance.flags == TraitMember.Function)
+                    if ((instance.flags & TraitFlag.Interface) > 0)
                         type.Flags |= FlagType.Interface;
+                    else
+                    {
+                        if ((instance.flags & TraitFlag.Final) > 0)
+                            type.Flags |= FlagType.Final;
+
+                        if ((instance.flags & TraitFlag.Sealed) == 0)
+                            type.Flags |= FlagType.Dynamic;
+
+                    }
 
                     thisDocs = GetDocs(model.Package);
                     if (thisDocs != null)

@@ -62,6 +62,7 @@ namespace SwfOp.Data
         HasProtectedNS = 0x08
     }
 
+    [Flags]
     public enum Attribute: byte
     {
         Final = 0x01, // 1=final, 0=virtual
@@ -70,11 +71,13 @@ namespace SwfOp.Data
         Public = 0x08 // 1=add public namespace
     }
 
-    public enum ClassFlag: byte
+    [Flags]
+    public enum TraitFlag : byte
     {
         Sealed = 0x01,
         Final = 0x02,
-        Interface = 0x04
+        Interface = 0x04,
+        HasProtectedNS = 0x08
     }
 
     public enum Op : byte
@@ -454,7 +457,7 @@ namespace SwfOp.Data
         public MethodInfo init;
         public Traits itraits;
         public QName baseName;
-        public TraitMember flags;
+        public TraitFlag flags;
         public Namespace protectedNs;
         public QName[] interfaces;
         public Dictionary<QName, MemberInfo> names;
@@ -838,8 +841,8 @@ namespace SwfOp.Data
                 instances[i] = t;
                 t.name = (QName)names[readU32(br)];
                 t.baseName = (QName)names[readU32(br)];
-                t.flags = (TraitMember)br.ReadByte();
-                if ((t.flags & TraitMember.HasProtectedNS) > 0)
+                t.flags = (TraitFlag)br.ReadByte();
+                if ((t.flags & TraitFlag.HasProtectedNS) > 0)
                     t.protectedNs = (Namespace)namespaces[readU32(br)];
 
                 int interface_count = readU32(br);
