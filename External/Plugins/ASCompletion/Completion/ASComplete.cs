@@ -3906,7 +3906,9 @@ namespace ASCompletion.Completion
             string foundIn = "";
             if (inClass != ClassModel.VoidClass)
             {
-                foundIn = "\n[COLOR=#666666:MULTIPLY]in " + MemberModel.FormatType(inClass.QualifiedName) + "[/COLOR]";
+                Color themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
+                string foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
+                foundIn = "\n[COLOR=" + foreColorString + "]in " + MemberModel.FormatType(inClass.QualifiedName) + "[/COLOR]";
             }
             if ((ft & (FlagType.Getter | FlagType.Setter)) > 0)
                 return String.Format("{0}property {1}{2}", modifiers, member.ToString(), foundIn);

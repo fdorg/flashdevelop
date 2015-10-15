@@ -16,6 +16,13 @@
 #OutputPanel.ProcessStartColor=#ff0000
 #OutputPanel.ProcessEndColor=ff0000
 
+#QuickFind.ErrorBack=#ff0000
+#CompletionList.SelectedTextColor=#ff0000
+#CompletionList.SelectedBackColor=#ff0000
+#CompletionList.PackageColor=#ff0000
+#MethodCallTip.SelectedBack=#ff0000
+#MethodCallTip.InfoColor=#ff0000
+
 # FD UI THEME (5.0+)
 
 # Use inherited base styles?
