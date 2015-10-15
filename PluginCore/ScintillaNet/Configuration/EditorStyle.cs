@@ -234,7 +234,7 @@ namespace ScintillaNet.Configuration
                 {
                     return ResolveColor(highlightback);
                 }
-                return ResolveColor("0x0088ff");
+                return ResolveColor("0x808000");
             }
         }
 
@@ -246,7 +246,7 @@ namespace ScintillaNet.Configuration
                 {
                     return ResolveColor(highlightwordback);
                 }
-                return ResolveColor("0x00ccff");
+                return ResolveColor("0x0088ff");
             }
         }
 
