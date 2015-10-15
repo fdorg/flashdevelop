@@ -544,7 +544,7 @@ namespace FlashLogViewer
                 try
                 {
                     this.reFilter = new Regex(filterComboBox.Text, RegexOptions.IgnoreCase);
-                    this.filterComboBox.ForeColor = SystemColors.ControlText;
+                    this.filterComboBox.ForeColor = PluginBase.MainForm.GetThemeColor("Global.ControlText", SystemColors.ControlText);
                 }
                 catch { this.filterComboBox.ForeColor = Color.Red; }
             }

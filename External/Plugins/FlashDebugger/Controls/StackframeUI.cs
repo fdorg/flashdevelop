@@ -406,7 +406,7 @@ namespace FlashDebugger
             string filterText = toolStripTextBoxFilter.Text.Trim();
             lv.Items.Clear();
             Regex regex = null;
-            Color color = System.Drawing.SystemColors.GrayText;
+            Color color = PluginBase.MainForm.GetThemeColor("Global.GrayText", SystemColors.GrayText);
             if (toolStripItemRegEx.Checked)
             {
                 try

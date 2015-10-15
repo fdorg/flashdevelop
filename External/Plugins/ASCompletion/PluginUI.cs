@@ -504,7 +504,8 @@ namespace ASCompletion
                     outlineTree.State.highlight = currentHighlight.FullPath;
 
                 //currentHighlight.BackColor = System.Drawing.Color.LightGray;
-                currentHighlight.ForeColor = System.Drawing.Color.Blue;
+                currentHighlight.ForeColor = PluginBase.MainForm.GetThemeColor("Global.Highlight", Color.Blue);
+
             }
         }
 
@@ -1107,7 +1108,7 @@ namespace ASCompletion
             if (findProcTxt.Text == "")
             {
                 findProcTxt.Text = searchInvitation;
-                findProcTxt.ForeColor = System.Drawing.SystemColors.GrayText;
+                findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("Global.GrayText", SystemColors.GrayText);
                 clearButton.Enabled = false;
             }
         }
@@ -1126,7 +1127,7 @@ namespace ASCompletion
         // Update colors on start after theme engine
         public void UpdateAfterTheme()
         {
-            findProcTxt.ForeColor = System.Drawing.SystemColors.GrayText;
+            findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("Global.GrayText", SystemColors.GrayText);
         }
 
         protected override Boolean ProcessDialogKey(Keys keyData)
@@ -1176,7 +1177,7 @@ namespace ASCompletion
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.BackColor == SystemColors.Highlight) return node;
+                if (node.BackColor == PluginBase.MainForm.GetThemeColor("Global.Highlight", SystemColors.Highlight)) return node;
                 if (node.Nodes.Count > 0)
                 {
                     TreeNode subnode = FindMatch(node.Nodes);
