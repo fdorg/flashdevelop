@@ -351,7 +351,7 @@ namespace FlashDevelop.Dialogs
             this.bookmarkAllButton.Text = TextHelper.GetString("Label.BookmarkAll");
             this.replaceAllButton.Text = TextHelper.GetString("Label.ReplaceAll");
             this.replaceButton.Text = TextHelper.GetString("Label.Replace").Replace("...", "");
-            this.closeButton.Text = TextHelper.GetString("Label.Close");
+            this.closeButton.Text = TextHelper.GetString("Label.Close").Replace("&", "");
             this.lookComboBox.Items[0] = TextHelper.GetString("Info.FullSourceCode");
             this.lookComboBox.Items[1] = TextHelper.GetString("Info.CurrentSelection");
             this.lookComboBox.Items[2] = TextHelper.GetString("Info.CodeAndStrings");
@@ -627,11 +627,16 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-        /// 
+        /// Process shortcuts
         /// </summary>
         protected override Boolean ProcessDialogKey(Keys keyData)
         {
-            if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                this.findComboBox.Focus();
+                return true;
+            }
+            else if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
             {
                 this.FindNext(false, false);
                 return true;

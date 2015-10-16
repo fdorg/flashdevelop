@@ -855,6 +855,19 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
+        /// Process shortcuts
+        /// </summary>
+        protected override Boolean ProcessDialogKey(Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                this.findComboBox.Focus();
+                return true;
+            }
+            return base.ProcessDialogKey(keyData);
+        }
+
+        /// <summary>
         /// Some event handling when showing the form
         /// </summary>
         private void VisibleChange(Object sender, System.EventArgs e)
