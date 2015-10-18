@@ -781,6 +781,7 @@ namespace AS2Context
                 base.CheckModel(onFileOpen);
                 return;
             }
+            ScintillaNet.ScintillaControl sci = CurSciControl;
             string prevPackage = (onFileOpen) ? null : cFile.Package;
             string prevCname = (onFileOpen) ? null : cFile.GetPublicClass().Name;
             // refresh model
@@ -790,89 +791,113 @@ namespace AS2Context
             {
                 string package = cFile.Package;
                 ClassModel pClass = cFile.GetPublicClass();
-                if (package.Length > 0)
+
+                string pathname = package.Replace('.', Path.DirectorySeparatorChar);
+                string fullpath = Path.GetDirectoryName(cFile.FileName);
+                bool inWrongPackage = true;
+
+                List<PathModel> classpaths = Context.Classpath;
+                string correctPath = null;
+                if (classpaths != null)
                 {
-                    string pathname = package.Replace('.', Path.DirectorySeparatorChar);
-                    string fullpath = Path.GetDirectoryName(cFile.FileName);
-                    if (!fullpath.EndsWith(Path.DirectorySeparatorChar + pathname))
+                    foreach (PathModel pm in classpaths)
                     {
-                        if (settings.FixPackageAutomatically && CurSciControl != null)
+                        string localPath;
+                        if (fullpath.Length > pm.Path.Length && fullpath.IndexOf(pm.Path) > -1)
                         {
-                            bool isAs2 = cFile.Context.Settings.LanguageId == "AS2";
+                            localPath = fullpath.Substring(pm.Path.Length + 1);
+                        }
+                        else if (fullpath == pm.Path)
+                        {
+                            localPath = ""; // We are in root, no package..
+                        }
+                        else continue;
+                        if (localPath == pathname)
+                        {
+                            inWrongPackage = false;
+                            break;
+                        }
+                        else if (correctPath == null || localPath.Length < correctPath.Length)
+                        {
+                            correctPath = localPath;
+                        }
+                    }
+                }
 
-                            int pos = -1;
+                if (inWrongPackage)
+                {
+                    if (settings.FixPackageAutomatically && sci != null)
+                    {
+                        bool isAs2 = cFile.Context.Settings.LanguageId == "AS2";
 
-                            var txt = new StringBuilder();
-                            string regexPackageLine = "";
+                        int pos = -1;
 
-                            int counter = CurSciControl.LineCount;
-                            int p = 0;
-                            Regex packagePattern = null;
-                            if (isAs2)
-                            {
-                                packagePattern = new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')');
-                            }
-                            else
-                            {
-                                packagePattern = new Regex("package\\s+(" + cFile.Package.Replace(".", "\\.") + ')');
-                            }
-                            while (p < counter)
-                            {
-                                txt.Append(CurSciControl.GetLine(p++));
-                                if (txt.Length > 5)
-                                {
-                                    Match m = packagePattern.Match(txt.ToString());
-                                    if (m.Success)
-                                    {
-                                        pos = m.Groups[1].Index;
-                                        regexPackageLine = m.Value;
-                                        break;
-                                    }
-                                }
-                            }
+                        var txt = new StringBuilder();
+                        string regexPackageLine = "";
 
-                            if (regexPackageLine.Length > 0 && pos > -1)
-                            {
-                                string orgid = "Info.PackageDontMatchFilePath";
-                                List<PathModel> classpaths = Context.Classpath;
-                                if (classpaths != null)
-                                {
-                                    string correctPath = null;
-                                    foreach (PathModel pm in classpaths)
-                                    {
-                                        if (fullpath.IndexOf(pm.Path) > -1 && fullpath.Length > pm.Path.Length)
-                                        {
-                                            correctPath = fullpath.Substring(pm.Path.Length + 1);
-                                        }
-                                        else if (fullpath.ToLower() == pm.Path.ToLower())
-                                        {
-                                            correctPath = ""; // We are in root, no package..
-                                        }
-                                    }
-                                    if (correctPath != null)
-                                    {
-                                        correctPath = correctPath.Replace(Path.DirectorySeparatorChar, '.');
-                                        CurSciControl.SetSel(CurSciControl.MBSafePosition(pos), CurSciControl.MBSafePosition(pos + cFile.Package.Length));
-                                        CurSciControl.ReplaceSel(correctPath);
-                                        orgid = "Info.PackageDidntMatchFilePath";
-                                    }
-                                }
-                                string org = TextHelper.GetString(orgid);
-                                string msg = String.Format(org, package) + "\n" + cFile.FileName;
-                                MessageBar.ShowWarning(msg);
-                            }
-
+                        int counter = sci.LineCount;
+                        int p = 0;
+                        Regex packagePattern;
+                        if (isAs2)
+                        {
+                            packagePattern = new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')');
+                        }
+                        else if (!string.IsNullOrEmpty(cFile.Package))
+                        {
+                            packagePattern = new Regex("package\\s+(" + cFile.Package.Replace(".", "\\.") + ')');
                         }
                         else
                         {
-                            string org = TextHelper.GetString("Info.PackageDontMatchFilePath");
+                            packagePattern = new Regex("package");
+                        }
+                        while (p < counter)
+                        {
+                            txt.Append(sci.GetLine(p++));
+                            if (txt.Length > 5)
+                            {
+                                Match m = packagePattern.Match(txt.ToString());
+                                if (m.Success)
+                                {
+                                    pos = m.Index;
+                                    regexPackageLine = m.Value;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ((regexPackageLine.Length > 0 && pos > -1) || sci.ConfigurationLanguage == "haxe")
+                        {
+                            string orgid = "Info.PackageDontMatchFilePath";
+                            if (correctPath != null)
+                            {
+                                correctPath = (isAs2 ? "class " : "package ") + correctPath.Replace(Path.DirectorySeparatorChar, '.');
+                                if (pos > -1)
+                                {
+                                    sci.SetSel(sci.MBSafePosition(pos), sci.MBSafePosition(pos + regexPackageLine.Length));
+                                    sci.ReplaceSel(correctPath);
+                                }
+                                else
+                                {
+                                    sci.InsertText(0, correctPath + ";\n\n");
+                                }
+                                orgid = "Info.PackageDidntMatchFilePath";
+                            }
+                            string org = TextHelper.GetString(orgid);
                             string msg = String.Format(org, package) + "\n" + cFile.FileName;
                             MessageBar.ShowWarning(msg);
                         }
-                        return;
+
                     }
-                    else MessageBar.HideWarning();
+                    else
+                    {
+                        string org = TextHelper.GetString("Info.PackageDontMatchFilePath");
+                        string msg = String.Format(org, package) + "\n" + cFile.FileName;
+                        MessageBar.ShowWarning(msg);
+                    }
+                    return;
                 }
+                else MessageBar.HideWarning();
+
                 if (!pClass.IsVoid())
                 {
                     string cname = pClass.Name;
