@@ -782,8 +782,6 @@ namespace AS2Context
                 return;
             }
             ScintillaNet.ScintillaControl sci = CurSciControl;
-            string prevPackage = (onFileOpen) ? null : cFile.Package;
-            string prevCname = (onFileOpen) ? null : cFile.GetPublicClass().Name;
             // refresh model
             base.CheckModel(onFileOpen);
 
@@ -901,18 +899,15 @@ namespace AS2Context
                 if (!pClass.IsVoid())
                 {
                     string cname = pClass.Name;
-                    if (prevPackage != package || prevCname != cname)
+                    if (package.Length > 0) cname = package + "." + cname;
+                    string filename = cname.Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(cFile.FileName);
+                    if (!cFile.FileName.EndsWith(filename))
                     {
-                        if (package.Length > 0) cname = package + "." + cname;
-                        string filename = cname.Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(cFile.FileName);
-                        if (!cFile.FileName.ToUpper().EndsWith(filename.ToUpper()))
-                        {
-                            string org = TextHelper.GetString("Info.TypeDontMatchFileName");
-                            string msg = String.Format(org, cname) + "\n" + cFile.FileName;
-                            MessageBar.ShowWarning(msg);
-                        }
-                        else MessageBar.HideWarning();
+                        string org = TextHelper.GetString("Info.TypeDontMatchFileName");
+                        string msg = String.Format(org, cname) + "\n" + cFile.FileName;
+                        MessageBar.ShowWarning(msg);
                     }
+                    else MessageBar.HideWarning();
                 }
             }
         }
