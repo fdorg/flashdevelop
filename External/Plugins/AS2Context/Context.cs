@@ -11,6 +11,7 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using System.Text;
 
 namespace AS2Context
 {
@@ -793,7 +794,7 @@ namespace AS2Context
                 {
                     string pathname = package.Replace('.', Path.DirectorySeparatorChar);
                     string fullpath = Path.GetDirectoryName(cFile.FileName);
-                    if (!fullpath.EndsWith(pathname))
+                    if (!fullpath.EndsWith(Path.DirectorySeparatorChar + pathname))
                     {
                         if (settings.FixPackageAutomatically && CurSciControl != null)
                         {
@@ -801,10 +802,10 @@ namespace AS2Context
 
                             int pos = -1;
 
-                            string txt = "";
+                            var txt = new StringBuilder();
                             string regexPackageLine = "";
 
-                            int counter = CurSciControl.Length;
+                            int counter = CurSciControl.LineCount;
                             int p = 0;
                             Regex packagePattern = null;
                             if (isAs2)
@@ -817,11 +818,10 @@ namespace AS2Context
                             }
                             while (p < counter)
                             {
-                                char c = (char)CurSciControl.CharAt(p++);
-                                txt += c;
-                                if (txt.Length > 5 && c <= 32)
+                                txt.Append(CurSciControl.GetLine(p++));
+                                if (txt.Length > 5)
                                 {
-                                    Match m = packagePattern.Match(txt);
+                                    Match m = packagePattern.Match(txt.ToString());
                                     if (m.Success)
                                     {
                                         pos = m.Groups[1].Index;
@@ -852,7 +852,7 @@ namespace AS2Context
                                     if (correctPath != null)
                                     {
                                         correctPath = correctPath.Replace(Path.DirectorySeparatorChar, '.');
-                                        CurSciControl.SetSel(pos, pos + cFile.Package.Length);
+                                        CurSciControl.SetSel(CurSciControl.MBSafePosition(pos), CurSciControl.MBSafePosition(pos + cFile.Package.Length));
                                         CurSciControl.ReplaceSel(correctPath);
                                         orgid = "Info.PackageDidntMatchFilePath";
                                     }
