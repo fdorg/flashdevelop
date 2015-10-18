@@ -1,5 +1,28 @@
 ### DimGray.fdi
 
+# FD UI THEME (5.1+)
+
+# In: Projects, Results, Outline, Models, Logs
+#Global.Highlight=#ff99ff
+#Global.HighlightText=#ff00ff
+#Global.ControlText=#ff3333
+#Global.GrayText=#0033ff
+
+#OutputPanel.InfoColor=#808080
+#OutputPanel.DebugColor=#000000
+#OutputPanel.WarningColor=#ffa500
+#OutputPanel.ErrorColor=#ff0000
+#OutputPanel.FatalColor=#ff00ff
+#OutputPanel.ProcessStartColor=#ff0000
+#OutputPanel.ProcessEndColor=ff0000
+
+#QuickFind.ErrorBack=#ff0000
+#CompletionList.SelectedTextColor=#ff0000
+#CompletionList.SelectedBackColor=#ff0000
+#CompletionList.PackageColor=#ff0000
+#MethodCallTip.SelectedBack=#ff0000
+#MethodCallTip.InfoColor=#ff0000
+
 # FD UI THEME (5.0+)
 
 # Use inherited base styles?

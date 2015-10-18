@@ -123,6 +123,8 @@ namespace PluginCore
         Keys GetShortcutItemKeys(String id);
         String GetThemeValue(String id);
         Color GetThemeColor(String id);
+        String GetThemeValue(String id, String fallback);
+        Color GetThemeColor(String id, Color fallback);
         IPlugin FindPlugin(String guid);
         Image ImageSetAdjust(Image image);
         Image FindImage(String data);

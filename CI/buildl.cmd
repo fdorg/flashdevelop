@@ -2,9 +2,11 @@
 
 :: Set paths
 set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
+set PATH=%PATH%;C:\Program Files\Git\bin\
 set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
-set PATH=%PATH%;C:\Program Files (x86)\NSIS
 set PATH=%PATH%;C:\Program Files\7-Zip\
+set PATH=%PATH%;C:\Program Files (x86)\7-Zip\
+set PATH=%PATH%;C:\Program Files (x86)\NSIS
 
 :: Need path up
 cd ..

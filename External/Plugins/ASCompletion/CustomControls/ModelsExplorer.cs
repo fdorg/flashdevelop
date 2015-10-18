@@ -484,8 +484,8 @@ namespace ASCompletion
             lastMatch = node;
             if (lastMatch != null)
             {
-                lastMatch.BackColor = SystemColors.Highlight;
-                lastMatch.ForeColor = SystemColors.HighlightText;
+                lastMatch.BackColor = PluginBase.MainForm.GetThemeColor("Global.Highlight", SystemColors.Highlight);
+                lastMatch.ForeColor = PluginBase.MainForm.GetThemeColor("Global.HighlightText", SystemColors.HighlightText);
                 outlineTreeView.SelectedNode = node;
             }
         }

@@ -343,7 +343,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private static Color InactiveTextColor
         {
-            get {   return SystemColors.ControlText;    }
+            get {   return PluginCore.PluginBase.MainForm.GetThemeColor("Global.ControlText", SystemColors.ControlText); }
         }
 
         private Color TextColor

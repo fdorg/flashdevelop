@@ -43,7 +43,10 @@ namespace ScintillaNet.Configuration
         
         [XmlAttribute("highlight-back")]
         public string highlightback;
-        
+
+        [XmlAttribute("highlightword-back")]
+        public string highlightwordback;
+
         [XmlAttribute("errorline-back")]
         public string errorlineback;
 
@@ -231,7 +234,19 @@ namespace ScintillaNet.Configuration
                 {
                     return ResolveColor(highlightback);
                 }
-                return ResolveColor("0x0000ff");
+                return ResolveColor("0x808000");
+            }
+        }
+
+        public int HighlightWordBackColor
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(highlightwordback))
+                {
+                    return ResolveColor(highlightwordback);
+                }
+                return ResolveColor("0x0088ff");
             }
         }
 
