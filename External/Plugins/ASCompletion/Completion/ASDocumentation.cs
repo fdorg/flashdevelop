@@ -456,7 +456,7 @@ namespace ASCompletion.Completion
 
         static private string GetShortcutDocs()
         {
-            Color themeForeColor = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
+            Color themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
             string foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
             return "\n[COLOR=" + foreColorString + "][i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i][/COLOR]";
         }

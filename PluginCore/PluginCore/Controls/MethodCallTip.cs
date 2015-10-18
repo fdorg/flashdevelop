@@ -15,7 +15,7 @@ namespace PluginCore.Controls
 
         public static string HLTextStyleBeg = "[B]";
         public static string HLTextStyleEnd = "[/B]";
-        public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
+        public static string HLBgStyleBeg = "[BGCOLOR=" + ColorTranslator.ToHtml(PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack", Color.Black)) + ":OVERLAY]";
         public static string HLBgStyleEnd = "[/BGCOLOR]";
 
 
