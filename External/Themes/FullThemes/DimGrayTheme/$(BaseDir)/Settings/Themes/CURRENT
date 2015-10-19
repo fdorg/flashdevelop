@@ -2,11 +2,14 @@
 
 # FD UI THEME (5.1+)
 
-# In: Projects, Results, Outline, Models, Logs
-#Global.Highlight=#ff99ff
-#Global.HighlightText=#ff00ff
-#Global.ControlText=#ff3333
-#Global.GrayText=#0033ff
+#ListView.Highlight=#ffa500
+#ListView.HighlightText=#ffa500
+#TreeView.Highlight=#ffa500
+#TreeView.HighlightText=#ffa500
+
+#FlashLogViewer.DebugColor
+#FlashLogViewer.WarningColor
+#FlashLogViewer.ErrorColor
 
 #OutputPanel.InfoColor=#808080
 #OutputPanel.DebugColor=#000000
@@ -15,8 +18,10 @@
 #OutputPanel.FatalColor=#ff00ff
 #OutputPanel.ProcessStartColor=#ff0000
 #OutputPanel.ProcessEndColor=ff0000
+#OutputPanel.HighlightColor=#ff0000
 
 #QuickFind.ErrorBack=#ff0000
+#ToolStripTextBoxControl.GrayText=#808080
 #CompletionList.SelectedTextColor=#ff0000
 #CompletionList.SelectedBackColor=#ff0000
 #CompletionList.PackageColor=#ff0000

@@ -194,8 +194,8 @@ namespace System.Windows.Forms
                 originalColor = node.BackColor;
                 originalText = node.ForeColor;
                 highlightedNode = node;
-                highlightedNode.BackColor = PluginCore.PluginBase.MainForm.GetThemeColor("Global.Highlight", SystemColors.Highlight);
-                highlightedNode.ForeColor = PluginCore.PluginBase.MainForm.GetThemeColor("Global.HighlightText", SystemColors.HighlightText);
+                highlightedNode.BackColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+                highlightedNode.ForeColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
             }
         }
 
