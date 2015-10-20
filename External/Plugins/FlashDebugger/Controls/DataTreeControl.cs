@@ -74,8 +74,8 @@ namespace FlashDebugger.Controls
             _tree.ColumnHeaderBackColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor", SystemColors.Control);
             _tree.ColumnHeaderTextColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor", SystemColors.ControlText);
             _tree.ColumnHeaderBorderColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor", SystemColors.ActiveBorder);
-            _tree.LineColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.WindowText);
-            _tree.LineColor2 = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.WindowText);
+            _tree.LineColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
+            _tree.LineColor2 = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
             _tree.DragDropMarkColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
 
             NameNodeTextBox.DrawText += NameNodeTextBox_DrawText;
@@ -167,12 +167,10 @@ namespace FlashDebugger.Controls
             Color grayText = PluginBase.MainForm.GetThemeColor("DataTreeControl.GrayText", SystemColors.GrayText);
             Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
             e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
-            if (e.Node.IsSelected) e.TextColor = hiliteText;
+            if (e.Node.IsSelected && this.ContainsFocus) e.TextColor = hiliteText;
             try
             {
-                if (e.Node.NextNode == null && e.Node.Level == 1 && !addingNewExpression) e.Font = new Font(e.Font, FontStyle.Italic);
-                else if (e.Node.Tag is ErrorNode) e.TextColor = e.Node.IsSelected ? hiliteText : grayText;
-
+                if (e.Node.Tag is ErrorNode) e.TextColor = e.Node.IsSelected ? hiliteText : grayText;
             }
             catch (Exception) { }
         }
@@ -304,7 +302,7 @@ namespace FlashDebugger.Controls
             Color errorText = PluginBase.MainForm.GetThemeColor("DataTreeControl.ErrorText", Color.Red);
             Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
             e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
-            if (e.Node.IsSelected) e.TextColor = hiliteText;
+            if (e.Node.IsSelected && this.ContainsFocus) e.TextColor = hiliteText;
             try
             {
                 VariableNode variableNode = e.Node.Tag as VariableNode;

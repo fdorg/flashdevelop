@@ -34,7 +34,13 @@ namespace PluginCore.Controls
         public MethodCallTip(IMainForm mainForm): base(mainForm)
         {
             Color color = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack");
+            Color fore = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedFore");
             if (color != Color.Empty) HLBgStyleBeg = "[BGCOLOR=" + DataConverter.ColorToHex(color).Replace("0x", "#") + "]";
+            if (fore != Color.Empty)
+            {
+                HLTextStyleBeg = "[B][COLOR=" + DataConverter.ColorToHex(fore).Replace("0x", "#") + "]";
+                HLTextStyleEnd = "[/COLOR][/B]";
+            }
         }
 
         public bool CallTipActive
