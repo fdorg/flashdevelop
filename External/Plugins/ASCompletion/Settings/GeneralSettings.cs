@@ -71,7 +71,7 @@ namespace ASCompletion.Settings
         const int DEFAULT_ALWAYSCOMPLETELENGTH = 2;
         const bool DEFAULT_DISABLECALLTIP = false;
         const string DEFAULT_COMPACTCHARS = ",;.():[]";
-        const string DEFAULT_SPACEDCHARS = ",;{}*+-=/%<>|&!^";
+        const string DEFAULT_SPACEDCHARS = ",;*+-=/%<>|&!^";
         const string DEFAULT_ADDSPACEAFTER = "if for while do catch with";
 
         private bool disableAutoCloseBraces = DEFAULT_DISABLE_CLOSEBRACE;
