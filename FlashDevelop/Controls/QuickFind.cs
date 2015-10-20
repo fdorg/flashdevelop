@@ -225,9 +225,11 @@ namespace FlashDevelop.Controls
         private void InitializeGraphics()
         {
             Color text = Globals.MainForm.GetThemeColor("QuickFind.ForeColor");
+            Color fore = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
             Color back = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
             if (back != Color.Empty) this.backColor = this.findTextBox.BackColor = back;
             if (text != Color.Empty) this.infoLabel.ForeColor = text;
+            if (fore != Color.Empty) this.findTextBox.ForeColor = fore;
             if (ScaleHelper.GetScale() >= 1.5)
             {
                 this.nextButton.Image = Globals.MainForm.FindImage("67");
@@ -367,6 +369,11 @@ namespace FlashDevelop.Controls
             if (this.findTextBox.Text.Trim() != "")
             {
                 this.FindCorrect(this.findTextBox.Text, this.highlightCheckBox.Checked);
+            }
+            else
+            {
+                this.findTextBox.BackColor = this.backColor;
+                this.infoLabel.Text = "";
             }
             Globals.MainForm.SetFindText(this, this.findTextBox.Text);
         }

@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using PluginCore.Utilities;
 using ScintillaNet;
 
 namespace PluginCore.Controls
@@ -15,7 +16,7 @@ namespace PluginCore.Controls
 
         public static string HLTextStyleBeg = "[B]";
         public static string HLTextStyleEnd = "[/B]";
-        public static string HLBgStyleBeg = "[BGCOLOR=" + ColorTranslator.ToHtml(PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack", Color.Black)) + ":OVERLAY]";
+        public static string HLBgStyleBeg = "[BGCOLOR=#000:OVERLAY]";
         public static string HLBgStyleEnd = "[/BGCOLOR]";
 
 
@@ -32,6 +33,8 @@ namespace PluginCore.Controls
 
         public MethodCallTip(IMainForm mainForm): base(mainForm)
         {
+            Color color = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack");
+            if (color != Color.Empty) HLBgStyleBeg = "[BGCOLOR=" + DataConverter.ColorToHex(color).Replace("0x", "#") + "]";
         }
 
         public bool CallTipActive

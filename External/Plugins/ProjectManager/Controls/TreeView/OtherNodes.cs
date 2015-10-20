@@ -198,6 +198,7 @@ namespace ProjectManager.Controls.TreeView
         {
             Text = text;
             ImageIndex = SelectedImageIndex = Icons.HiddenFolder.Index;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.ForeColor", SystemColors.WindowText);
             isDraggable = false;
             isRenamable = false;
         }

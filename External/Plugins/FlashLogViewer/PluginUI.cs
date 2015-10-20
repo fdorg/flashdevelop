@@ -564,7 +564,7 @@ namespace FlashLogViewer
             }
             catch 
             { 
-                this.Settings.RegexError = "Error #";
+                this.Settings.RegexError = "Error: ";
                 this.reError = new Regex(this.Settings.RegexError, RegexOptions.IgnoreCase);
             }
             try
