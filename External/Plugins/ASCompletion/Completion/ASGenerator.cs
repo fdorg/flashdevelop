@@ -4326,7 +4326,7 @@ namespace ASCompletion.Completion
                     // insert in alphabetical order
                     mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success &&
-                        String.Compare(mImport.Groups["package"].Value, fullPath) > 0)
+                        ComparePackages(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;
                         break;
@@ -4426,6 +4426,23 @@ namespace ASCompletion.Completion
                 int lookupCol = lookupPosition - Sci.PositionFromLine(lookupLine);
                 ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
             }
+        }
+
+        private static Int32 ComparePackages(String package1, String package2)
+        {
+            IComparer cmp = new CaseInsensitiveComparer();
+            String[] parts1 = package1.Split('.');
+            String[] parts2 = package2.Split('.');
+            int pkgLen1 = parts1.Length - 1;
+            int pkgLen2 = parts2.Length - 1;
+            int commonLen = (pkgLen1 <= pkgLen2) ? pkgLen1 : pkgLen2;
+            for (int i = 0; i < commonLen; ++i)
+            {
+                int cmpResult = cmp.Compare(parts1[i], parts2[i]);
+                if (cmpResult != 0)
+                    return cmpResult;
+            }
+            return pkgLen1 - pkgLen2;
         }
         #endregion     
     }

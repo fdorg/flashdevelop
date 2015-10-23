@@ -149,8 +149,7 @@ namespace CodeRefactor.Commands
         {
             String eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             Int32 line = imports[0].LineFrom - DeletedImportsCompensation;
-            ImportsComparerType comparerType = new ImportsComparerType();
-            imports.Sort(comparerType);
+            imports.Sort(new ImportsComparerType());
             sci.GotoLine(line);
             Int32 curLine = 0;
             List<String> uniques = this.GetUniqueImports(imports, searchInText, sci.FileName);
@@ -226,7 +225,19 @@ namespace CodeRefactor.Commands
     {
         public Int32 Compare(MemberModel item1, MemberModel item2)
         {
-            return new CaseInsensitiveComparer().Compare(item1.Type, item2.Type);
+            IComparer cmp = new CaseInsensitiveComparer();
+            String[] parts1 = item1.Type.Split('.');
+            String[] parts2 = item2.Type.Split('.');
+            int pkgLen1 = parts1.Length - 1;
+            int pkgLen2 = parts2.Length - 1;
+            int commonLen = (pkgLen1 <= pkgLen2) ? pkgLen1 : pkgLen2;
+            for (int i = 0; i < commonLen; ++i)
+            {
+                int cmpResult = cmp.Compare(parts1[i], parts2[i]);
+                if (cmpResult != 0)
+                    return cmpResult;
+            }
+            return pkgLen1 - pkgLen2;
         }
     }
 
