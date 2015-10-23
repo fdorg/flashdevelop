@@ -438,7 +438,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolBorderColor");
                 if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark;
+                else return Pens.Transparent;
             }
         }
 
@@ -1228,6 +1228,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     Point pt2 = new Point(rect.Right, rect.Bottom - ToolWindowTabSeperatorGapBottom); 
                     g.DrawLine(PenToolWindowTabBorder, DrawHelper.RtlTransform(this, pt1), DrawHelper.RtlTransform(this, pt2));
                 }*/
+                g.DrawPath(PenToolWindowTabInactiveBorder, path);
                 TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, Font, rectText, ColorToolWindowInactiveText, ToolWindowTextFormat);
             }
 

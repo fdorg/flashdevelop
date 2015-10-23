@@ -180,7 +180,7 @@ namespace System.Windows.Forms
         {
             Color fore = PluginBase.MainForm.GetThemeColor("DataGridView.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("DataGridView.BackColor");
-            Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
+            Color border = PluginBase.MainForm.GetThemeColor("DataGridView.LineColor");
             DefaultCellStyle.ForeColor = (fore != Color.Empty) ? fore : SystemColors.WindowText;
             DefaultCellStyle.BackColor = (back != Color.Empty) ? back : SystemColors.Window;
             GridColor = (border != Color.Empty) ? border :  SystemColors.ControlDark;

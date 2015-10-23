@@ -29,7 +29,8 @@ namespace Aga.Controls.Tree
 		private const int DividerCorrectionGap = -2;
 
 		private Pen _linePen;
-		private Pen _markPen;
+        private Pen _line2Pen;
+        private Pen _markPen;
 		private bool _suspendUpdate;
 		private bool _needFullUpdate;
 		private bool _fireSelectionEvent;
@@ -491,7 +492,8 @@ namespace Aga.Controls.Tree
 				if (_dragBitmap != null) _dragBitmap.Dispose();
 				if (_dragTimer != null) _dragTimer.Dispose();
 				if (_linePen != null) _linePen.Dispose();
-				if (_markPen != null) _markPen.Dispose();
+                if (_line2Pen != null) _linePen.Dispose();
+                if (_markPen != null) _markPen.Dispose();
 			}
 			base.Dispose(disposing);
 		}

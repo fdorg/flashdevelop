@@ -504,7 +504,7 @@ namespace ASCompletion
                     outlineTree.State.highlight = currentHighlight.FullPath;
 
                 //currentHighlight.BackColor = System.Drawing.Color.LightGray;
-                currentHighlight.ForeColor = PluginBase.MainForm.GetThemeColor("Global.Highlight", Color.Blue);
+                currentHighlight.ForeColor = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
 
             }
         }
@@ -1037,8 +1037,8 @@ namespace ASCompletion
             if (hilight)
             {
                 node.EnsureVisible();
-                node.BackColor = PluginBase.MainForm.GetThemeColor("Global.Highlight", SystemColors.Highlight);
-                node.ForeColor = PluginBase.MainForm.GetThemeColor("Global.HighlightText", SystemColors.HighlightText);
+                node.BackColor = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+                node.ForeColor = PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
             }
             else
             {
@@ -1097,9 +1097,7 @@ namespace ASCompletion
             if (findProcTxt.Text == searchInvitation)
             {
                 findProcTxt.Text = "";
-                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
-                if (fore == Color.Empty) findProcTxt.ForeColor = System.Drawing.SystemColors.WindowText;
-                else findProcTxt.ForeColor = fore;
+                findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
             }
         }
 
@@ -1108,7 +1106,7 @@ namespace ASCompletion
             if (findProcTxt.Text == "")
             {
                 findProcTxt.Text = searchInvitation;
-                findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("Global.GrayText", SystemColors.GrayText);
+                findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
                 clearButton.Enabled = false;
             }
         }
@@ -1127,7 +1125,7 @@ namespace ASCompletion
         // Update colors on start after theme engine
         public void UpdateAfterTheme()
         {
-            findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("Global.GrayText", SystemColors.GrayText);
+            findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
         }
 
         protected override Boolean ProcessDialogKey(Keys keyData)
@@ -1177,7 +1175,7 @@ namespace ASCompletion
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.BackColor == PluginBase.MainForm.GetThemeColor("Global.Highlight", SystemColors.Highlight)) return node;
+                if (node.BackColor == PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight)) return node;
                 if (node.Nodes.Count > 0)
                 {
                     TreeNode subnode = FindMatch(node.Nodes);

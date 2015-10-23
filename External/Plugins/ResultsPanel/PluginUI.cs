@@ -947,7 +947,7 @@ namespace ResultsPanel
             this.entryIndex = (this.entryIndex + 1) % this.entriesView.Items.Count;
             this.entriesView.SelectedItems.Clear();
             this.entriesView.Items[this.entryIndex].Selected = true;
-            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("Global.Highlight", Color.Blue);
+            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
             this.EntriesViewDoubleClick(null, null);
         }
@@ -965,7 +965,7 @@ namespace ResultsPanel
             if (--this.entryIndex < 0) this.entryIndex = this.entriesView.Items.Count - 1;
             this.entriesView.SelectedItems.Clear();
             this.entriesView.Items[this.entryIndex].Selected = true;
-            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("Global.Highlight", Color.Blue);
+            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
             this.EntriesViewDoubleClick(null, null);
         }
