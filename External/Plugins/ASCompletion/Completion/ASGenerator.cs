@@ -4326,7 +4326,7 @@ namespace ASCompletion.Completion
                     // insert in alphabetical order
                     mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success &&
-                        CompareImports(mImport.Groups["package"].Value, fullPath) > 0)
+                        ByImportTypeMemberComparer.CompareImports(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;
                         break;
@@ -4426,28 +4426,6 @@ namespace ASCompletion.Completion
                 int lookupCol = lookupPosition - Sci.PositionFromLine(lookupLine);
                 ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
             }
-        }
-
-        private static Int32 CompareImports(String import1, String import2)
-        {
-            IComparer cmp = StringComparer.Ordinal;
-            String[] parts1 = import1.Split('.');
-            String[] parts2 = import2.Split('.');
-            int len1 = parts1.Length;
-            int len2 = parts2.Length;
-            // If the imports are at the same depth, compare them alphabetically.
-            if (len1 == len2)
-                return cmp.Compare(import1, import2);
-            int minPackageLen = ((len1 <= len2) ? len1 : len2) - 1;
-            // Alphabetically compare import packages part by part.
-            for (int i = 0; i < minPackageLen; ++i)
-            {
-                int cmpResult = cmp.Compare(parts1[i], parts2[i]);
-                if (cmpResult != 0)
-                    return cmpResult;
-            }
-            // One of the packages is a sub-package of the other one. Consider the parent package to compare as less than the sub-package.
-            return len1 - len2;
         }
         #endregion     
     }

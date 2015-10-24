@@ -149,7 +149,7 @@ namespace CodeRefactor.Commands
         {
             String eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             Int32 line = imports[0].LineFrom - DeletedImportsCompensation;
-            imports.Sort(new ImportsComparerType());
+            imports.Sort(new ByImportTypeMemberComparer());
             sci.GotoLine(line);
             Int32 curLine = 0;
             List<String> uniques = this.GetUniqueImports(imports, searchInText, sci.FileName);
@@ -216,34 +216,6 @@ namespace CodeRefactor.Commands
             return true;
         }
 
-    }
-
-    /// <summary>
-    /// Compare import statements based on import name
-    /// </summary>
-    class ImportsComparerType : IComparer<MemberModel>
-    {
-        public Int32 Compare(MemberModel item1, MemberModel item2)
-        {
-            IComparer cmp = StringComparer.Ordinal;
-            String[] parts1 = item1.Type.Split('.');
-            String[] parts2 = item2.Type.Split('.');
-            int len1 = parts1.Length;
-            int len2 = parts2.Length;
-            // If the imports are at the same depth, compare them alphabetically.
-            if (len1 == len2)
-                return cmp.Compare(item1.Type, item2.Type);
-            int minPackageLen = ((len1 <= len2) ? len1 : len2) - 1;
-            // Alphabetically compare import packages part by part.
-            for (int i = 0; i < minPackageLen; ++i)
-            {
-                int cmpResult = cmp.Compare(parts1[i], parts2[i]);
-                if (cmpResult != 0)
-                    return cmpResult;
-            }
-            // One of the packages is a sub-package of the other one. Consider the parent package to compare as less than the sub-package.
-            return len1 - len2;
-        }
     }
 
     /// <summary>
