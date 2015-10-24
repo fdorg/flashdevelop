@@ -228,16 +228,17 @@ namespace CodeRefactor.Commands
             IComparer cmp = new CaseInsensitiveComparer();
             String[] parts1 = item1.Type.Split('.');
             String[] parts2 = item2.Type.Split('.');
-            int pkgLen1 = parts1.Length - 1;
-            int pkgLen2 = parts2.Length - 1;
-            int commonLen = (pkgLen1 <= pkgLen2) ? pkgLen1 : pkgLen2;
-            for (int i = 0; i < commonLen; ++i)
+            int len1 = parts1.Length;
+            int len2 = parts2.Length;
+            int minPackageLen = ((len1 <= len2) ? len1 : len2) - 1;
+            int i;
+            for (i = 0; i < minPackageLen; ++i)
             {
                 int cmpResult = cmp.Compare(parts1[i], parts2[i]);
                 if (cmpResult != 0)
                     return cmpResult;
             }
-            return pkgLen1 - pkgLen2;
+            return (len1 == len2) ? cmp.Compare(parts1[i], parts2[i]) : (len1 - len2);
         }
     }
 

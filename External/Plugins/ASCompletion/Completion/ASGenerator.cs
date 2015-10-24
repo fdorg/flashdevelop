@@ -4326,7 +4326,7 @@ namespace ASCompletion.Completion
                     // insert in alphabetical order
                     mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success &&
-                        ComparePackages(mImport.Groups["package"].Value, fullPath) > 0)
+                        CompareImports(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;
                         break;
@@ -4428,21 +4428,22 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static Int32 ComparePackages(String package1, String package2)
+        private static Int32 CompareImports(String import1, String import2)
         {
             IComparer cmp = new CaseInsensitiveComparer();
-            String[] parts1 = package1.Split('.');
-            String[] parts2 = package2.Split('.');
-            int pkgLen1 = parts1.Length - 1;
-            int pkgLen2 = parts2.Length - 1;
-            int commonLen = (pkgLen1 <= pkgLen2) ? pkgLen1 : pkgLen2;
-            for (int i = 0; i < commonLen; ++i)
+            String[] parts1 = import1.Split('.');
+            String[] parts2 = import2.Split('.');
+            int len1 = parts1.Length;
+            int len2 = parts2.Length;
+            int minPackageLen = ((len1 <= len2) ? len1 : len2) - 1;
+            int i;
+            for (i = 0; i < minPackageLen; ++i)
             {
                 int cmpResult = cmp.Compare(parts1[i], parts2[i]);
                 if (cmpResult != 0)
                     return cmpResult;
             }
-            return pkgLen1 - pkgLen2;
+            return (len1 == len2) ? cmp.Compare(parts1[i], parts2[i]) : (len1 - len2);
         }
         #endregion     
     }
