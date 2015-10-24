@@ -92,6 +92,11 @@ namespace FlashDebugger.Controls
             watchManager.ClearAll();
         }
         
+        public void Lock()
+        {
+            treeControl.Enabled = false;
+        }
+
         public void UpdateElements()
         {
             treeControl.Tree.BeginUpdate();
