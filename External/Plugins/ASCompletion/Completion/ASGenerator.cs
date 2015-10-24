@@ -4435,15 +4435,19 @@ namespace ASCompletion.Completion
             String[] parts2 = import2.Split('.');
             int len1 = parts1.Length;
             int len2 = parts2.Length;
+            // If the imports are at the same depth, compare them alphabetically.
+            if (len1 == len2)
+                return cmp.Compare(import1, import2);
             int minPackageLen = ((len1 <= len2) ? len1 : len2) - 1;
-            int i;
-            for (i = 0; i < minPackageLen; ++i)
+            // Alphabetically compare import packages part by part.
+            for (int i = 0; i < minPackageLen; ++i)
             {
                 int cmpResult = cmp.Compare(parts1[i], parts2[i]);
                 if (cmpResult != 0)
                     return cmpResult;
             }
-            return (len1 == len2) ? cmp.Compare(parts1[i], parts2[i]) : (len1 - len2);
+            // One of the packages is a sub-package of the other one. Consider the parent package to compare as less than the sub-package.
+            return len1 - len2;
         }
         #endregion     
     }
