@@ -225,7 +225,7 @@ namespace CodeRefactor.Commands
     {
         public Int32 Compare(MemberModel item1, MemberModel item2)
         {
-            IComparer cmp = new CaseInsensitiveComparer();
+            IComparer cmp = StringComparer.Ordinal;
             String[] parts1 = item1.Type.Split('.');
             String[] parts2 = item2.Type.Split('.');
             int len1 = parts1.Length;

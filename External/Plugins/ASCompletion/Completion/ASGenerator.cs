@@ -4430,7 +4430,7 @@ namespace ASCompletion.Completion
 
         private static Int32 CompareImports(String import1, String import2)
         {
-            IComparer cmp = new CaseInsensitiveComparer();
+            IComparer cmp = StringComparer.Ordinal;
             String[] parts1 = import1.Split('.');
             String[] parts2 = import2.Split('.');
             int len1 = parts1.Length;
