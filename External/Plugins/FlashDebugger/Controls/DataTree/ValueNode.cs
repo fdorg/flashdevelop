@@ -1,6 +1,7 @@
 ﻿using System;
 using flash.tools.debugger;
 using Double = java.lang.Double;
+using System.Text;
 
 namespace FlashDebugger.Controls.DataTree
 {
@@ -34,20 +35,18 @@ namespace FlashDebugger.Controls.DataTree
                 string temp = null;
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
-                    string typeStr = "";
+                    string typeStr = m_Value.getTypeName().ToString();
+                    // rename vector
+                    typeStr = typeStr.Replace("__AS3__.vec.Vector.<", "Vector.<");
                     if (HideFullClasspath)
                     {
                         // return class type without classpath
-                        string typeName = m_Value.getTypeName().ToString();
-                        if (typeName.StartsWith("__AS3__.vec::Vector.<") || typeName.StartsWith("Vector.<"))
-                            typeStr = "Vector.<" + typeName.AfterLast("::", true);
-                        else
-                            typeStr = typeName.After("::", 0, true).Replace("::", ".");
+                        typeStr = CleanTypeClassPaths(typeStr);
                     }
                     else
                     {
                         // return class type with classpath
-                        typeStr = m_Value.getTypeName().ToString().Replace("::", ".");
+                        typeStr = typeStr.Replace("::", ".");
                     }
                     
                     // show / hide IDs
@@ -57,12 +56,6 @@ namespace FlashDebugger.Controls.DataTree
                     if (typeStr.StartsWith("[]"))
                     {
                         typeStr = typeStr.Replace("[]", "Array");
-                    }
-
-                    // rename vector
-                    else if (typeStr.StartsWith("__AS3__.vec.Vector.<"))
-                    {
-                        typeStr = typeStr.Replace("__AS3__.vec.Vector.<", "Vector.<");
                     }
 
                     return typeStr;
@@ -206,24 +199,6 @@ namespace FlashDebugger.Controls.DataTree
             }
         }
 
-        
-        private string Escape(string text)
-        {
-            text = text.Replace("\\", "\\\\");
-            text = text.Replace("\"", "\\\"");
-            text = text.Replace("\0", "\\0");
-            text = text.Replace("\a", "\\a");
-            text = text.Replace("\b", "\\b");
-            text = text.Replace("\f", "\\f");
-            text = text.Replace("\n", "\\n");
-            text = text.Replace("\r", "\\r");
-            text = text.Replace("\t", "\\t");
-            text = text.Replace("\v", "\\v");
-            if (text.Length > 65533)
-                text = text.Substring(0, 65533 - 5) + "[...]";
-            return text;
-        }
-
         public Value PlayerValue
         {
             get
@@ -274,6 +249,51 @@ namespace FlashDebugger.Controls.DataTree
             m_Value = value;
         }
 
+        private string Escape(string text)
+        {
+            text = text.Replace("\\", "\\\\");
+            text = text.Replace("\"", "\\\"");
+            text = text.Replace("\0", "\\0");
+            text = text.Replace("\a", "\\a");
+            text = text.Replace("\b", "\\b");
+            text = text.Replace("\f", "\\f");
+            text = text.Replace("\n", "\\n");
+            text = text.Replace("\r", "\\r");
+            text = text.Replace("\t", "\\t");
+            text = text.Replace("\v", "\\v");
+            if (text.Length > 65533)
+                text = text.Substring(0, 65533 - 5) + "[...]";
+            return text;
+        }
+
+        private string CleanTypeClassPaths(string qualifiedName)
+        {
+            char[] delims = { ',', ' ', '<', '>' };
+            var buffer = new StringBuilder();
+            bool inPackage = false;
+
+            for (int i = qualifiedName.Length - 1; i >= 0; i--)
+            {
+                char c = qualifiedName[i];
+
+                if (inPackage)
+                {
+                    if (Array.IndexOf(delims, c) < 0)
+                        continue;
+
+                    inPackage = false;
+                }
+                else if ((c == '.' && qualifiedName[i + 1] != '<') || c == ':')
+                {
+                    inPackage = true;
+                    continue;
+                }
+
+                buffer.Insert(0, c);
+            }
+
+            return buffer.ToString();
+        }
     }
 
 }
