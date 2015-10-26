@@ -372,8 +372,11 @@ namespace FlashDevelop.Controls
             }
             else
             {
-                this.findTextBox.BackColor = this.backColor;
                 this.infoLabel.Text = "";
+                this.findTextBox.BackColor = this.backColor;
+                ScintillaControl sci = Globals.SciControl;
+                sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+                sci.RemoveHighlights();
             }
             Globals.MainForm.SetFindText(this, this.findTextBox.Text);
         }
