@@ -549,7 +549,7 @@ namespace OutputPanel
         {
             this.findTextBox.Text = "";
             this.ClearCurrentSelection();
-            this.FindTextBoxLeave(null, null);
+            this.findTextBox.Focus();
         }
 
         /// <summary>
