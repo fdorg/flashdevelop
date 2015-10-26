@@ -92,11 +92,6 @@ namespace FlashDebugger.Controls
             watchManager.ClearAll();
         }
         
-        public void Lock()
-        {
-            treeControl.Enabled = false;
-        }
-
         public void UpdateElements()
         {
             treeControl.Tree.BeginUpdate();
@@ -118,7 +113,7 @@ namespace FlashDebugger.Controls
             DataNode node;
             try
             {
-                if (!PluginMain.debugManager.FlashInterface.isDebuggerStarted)
+                if (!PluginMain.debugManager.FlashInterface.isDebuggerStarted || !PluginMain.debugManager.FlashInterface.isDebuggerSuspended )
                 {
                     return new ErrorNode(item, new Exception(""));
                 }
