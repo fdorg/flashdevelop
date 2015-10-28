@@ -348,9 +348,9 @@ namespace ProjectManager.Projects
         public string FixDebugReleasePath(string path)
         {
             if (!TraceEnabled)
-                return Regex.Replace(path, @"([a-zA-Z0-9])[-_.]debug([\\/.])", "$1$2");
+                return Regex.Replace(path, @"([a-zA-Z0-9])[-_.]debug([\\/.])", "$1$2").Replace("{Build}", "Release");
             else
-                return path;
+                return path.Replace("{Build}", "Debug");
         }
 
         /// <summary>
