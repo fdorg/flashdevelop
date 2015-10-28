@@ -404,7 +404,9 @@ namespace ASCompletion.Completion
             if (!ASContext.CommonSettings.AddClosingBraces)
                 return;
 
-            if (IsTextStyle(sci.BaseStyleAt(sci.CurrentPos - 2)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+            int style = sci.BaseStyleAt(sci.CurrentPos - 2);
+
+            if (IsTextStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
             {
                 foreach (Braces braces in AddClosingBracesData)
                 {
@@ -414,27 +416,42 @@ namespace ASCompletion.Completion
                         HandleRemoveBrace(sci, c, braces);
                 }
             }
+            // If the current style is a string literal in double/single quotes and the matching char is entered
+            else if (c == '"' && IsDoubleQuoteStyle(style) || c == '\'' && IsSingleQuoteStyle(style))
+            {
+                // If the next char is the corresponding closing char
+                if (addedChar && c == sci.CurrentChar)
+                {
+                    foreach (Braces braces in AddClosingBracesData)
+                    {
+                        HandleAddBrace(sci, c, braces);
+                    }
+                }
+            }
         }
 
         private static void HandleAddBrace(ScintillaControl sci, char c, Braces braces)
         {
             if (ASContext.CommonSettings.AddClosingBraces)
             {
-                if (c == braces.opening)
+                // Handle closing first due to braces that have equal opening & closing chars
+                if (c == braces.closing && sci.CurrentChar == braces.closing)
                 {
-                    // already an opening brace?
-                    if ((char)sci.CharAt(sci.CurrentPos - 2) != braces.opening)
-                    {
-                        sci.InsertText(sci.CurrentPos, braces.closing.ToString());
-                    }
+                    // move the condition to above so that it handles opening properly
+                    //// already a closing brace?
+                    //if (sci.CurrentChar == braces.closing)
+                    //{
+                    sci.DeleteForward();
+                    //}
                 }
-                else if (c == braces.closing)
+                else if (c == braces.opening)
                 {
-                    // already a closing brace?
-                    if (sci.CurrentChar == braces.closing)
-                    {
-                        sci.DeleteForward();
-                    }
+                    // already having an opening doesn't mean you can't open another brace (quotes are handled already)
+                    //// already an opening brace?
+                    //if ((char)sci.CharAt(sci.CurrentPos - 2) != braces.opening)
+                    //{
+                    sci.InsertText(sci.CurrentPos, braces.closing.ToString());
+                    //}
                 }
             }
         }
@@ -3674,11 +3691,21 @@ namespace ASCompletion.Completion
         #region tools_functions
 
 
-        static public bool IsLiteralStyle(int style)
+        public static bool IsLiteralStyle(int style)
         {
-            return (style == 4) || (style == 6) || (style == 7);
+            return style == 4 || style == 6 || style == 7;
+        }
+        
+        public static bool IsDoubleQuoteStyle(int style)
+        {
+            return style == 6;
         }
 
+        public static bool IsSingleQuoteStyle(int style)
+        {
+            return style == 7;
+        }
+        
         /// <summary>
         /// Text is word 
         /// </summary>
@@ -3778,7 +3805,7 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// Returns whether or not position is insidse of an expression
+        /// Returns whether or not position is inside of an expression
         /// block in Haxe String interpolation ('${expr}')
         /// </summary>
         static private bool IsInterpolationExpr(ScintillaControl sci, int position)
