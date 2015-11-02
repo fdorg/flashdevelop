@@ -37,7 +37,7 @@ namespace FlashDebugger.Controls.DataTree
                 {
                     string typeStr = m_Value.getTypeName().ToString();
                     // rename vector
-                    typeStr = typeStr.Replace("__AS3__.vec.Vector.<", "Vector.<");
+                    typeStr = typeStr.Replace("__AS3__.vec::Vector.<", "Vector.<");
                     if (HideFullClasspath)
                     {
                         // return class type without classpath
