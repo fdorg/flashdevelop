@@ -145,7 +145,7 @@ namespace HaXeContext
                 {
                     Match m = reMacro.Match(arg);
                     if (m.Success)
-                        hxmlArgs[i] = m.Groups[1].Value + " \"" + EscapeQuotes(m.Groups[2].Value.Trim()) + "\"";
+                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim() + "\"";
                 }
             }
         }

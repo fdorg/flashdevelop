@@ -225,9 +225,11 @@ namespace FlashDevelop.Controls
         private void InitializeGraphics()
         {
             Color text = Globals.MainForm.GetThemeColor("QuickFind.ForeColor");
+            Color fore = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
             Color back = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
             if (back != Color.Empty) this.backColor = this.findTextBox.BackColor = back;
             if (text != Color.Empty) this.infoLabel.ForeColor = text;
+            if (fore != Color.Empty) this.findTextBox.ForeColor = fore;
             if (ScaleHelper.GetScale() >= 1.5)
             {
                 this.nextButton.Image = Globals.MainForm.FindImage("67");
@@ -368,6 +370,14 @@ namespace FlashDevelop.Controls
             {
                 this.FindCorrect(this.findTextBox.Text, this.highlightCheckBox.Checked);
             }
+            else
+            {
+                this.infoLabel.Text = "";
+                this.findTextBox.BackColor = this.backColor;
+                ScintillaControl sci = Globals.SciControl;
+                sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+                sci.RemoveHighlights();
+            }
             Globals.MainForm.SetFindText(this, this.findTextBox.Text);
         }
 
@@ -456,7 +466,7 @@ namespace FlashDevelop.Controls
             }
             else
             {
-                this.findTextBox.BackColor = Color.Salmon;
+                this.findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
                 String message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
@@ -484,7 +494,7 @@ namespace FlashDevelop.Controls
             }
             else
             {
-                this.findTextBox.BackColor = Color.Salmon;
+                this.findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
                 String message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
@@ -512,7 +522,7 @@ namespace FlashDevelop.Controls
             }
             else
             {
-                this.findTextBox.BackColor = Color.Salmon;
+                this.findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
                 String message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;

@@ -91,7 +91,7 @@ namespace ProjectManager.Controls.TreeView
             }
 
             Color textColor = PluginBase.MainForm.GetThemeColor(colorId);
-            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = Color.Blue;
+            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = SystemColors.Highlight;
 
             if (textColor != Color.Empty) ForeColorRequest = textColor;
             else ForeColorRequest = SystemColors.ControlText;

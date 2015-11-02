@@ -104,7 +104,10 @@ namespace PluginCore.Managers
             {
                 PluginBase.MainForm.Documents[index].Activate();
             }
-            else PluginBase.MainForm.Documents[0].Activate();
+            else if (PluginBase.MainForm.Documents.Length > 0)
+            {
+                PluginBase.MainForm.Documents[0].Activate();
+            }
         }
 
         /// <summary>

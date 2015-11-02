@@ -1413,9 +1413,9 @@ namespace FlashDevelop
             ITabbedDocument document = DocumentManager.FindDocument(sci);
             if (sci != null && document != null && document.IsEditable)
             {
-                Int32 column = sci.Column(sci.CurrentPos) + 1;
-                Int32 line = sci.CurrentLine + 1;
                 String statusText = " " + TextHelper.GetString("Info.StatusText");
+                String line = sci.CurrentLine + 1 + " / " + sci.LineCount.ToString();
+                String column = sci.Column(sci.CurrentPos) + 1 + " / " + (sci.Column(sci.LineEndPosition(sci.CurrentLine)) + 1).ToString();
                 var oldOS = this.OSVersion.Major < 6; // Vista is 6.0 and ok...
                 String file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
                 String eol = (sci.EOLMode == 0) ? "CR+LF" : ((sci.EOLMode == 1) ? "CR" : "LF");
@@ -1708,11 +1708,31 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Gets a theme property color with a fallback
+        /// </summary>
+        public Color GetThemeColor(String id, Color fallback)
+        {
+            Color color = ThemeManager.GetThemeColor(id);
+            if (color != Color.Empty) return color;
+            else return fallback;
+        }
+
+        /// <summary>
         /// Gets a theme property value
         /// </summary>
         public String GetThemeValue(String id)
         {
             return ThemeManager.GetThemeValue(id);
+        }
+
+        /// <summary>
+        /// Gets a theme property value with a fallback
+        /// </summary>
+        public String GetThemeValue(String id, String fallback)
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            if (!String.IsNullOrEmpty(value)) return value;
+            else return fallback;
         }
 
         /// <summary>
@@ -2223,6 +2243,11 @@ namespace FlashDevelop
                 Int32 count = this.openFileDialog.FileNames.Length;
                 for (Int32 i = 0; i < count; i++)
                 {
+                    if (encMode == 0) // Detect 8bit encoding...
+                    {
+                        Int32 codepage = FileHelper.GetFileCodepage(openFileDialog.FileNames[i]);
+                        encoding = Encoding.GetEncoding(codepage);
+                    }
                     this.OpenEditableDocument(openFileDialog.FileNames[i], encoding, false);
                 }
             }
@@ -2584,7 +2609,7 @@ namespace FlashDevelop
             ScintillaControl sci = Globals.SciControl;
             String extension = Path.GetExtension(sci.FileName);
             String filename = DocumentManager.GetNewDocumentName(extension);
-            DockContent document = this.CreateEditableDocument(filename, sci.Text, sci.CodePage);
+            DockContent document = this.CreateEditableDocument(filename, sci.Text, sci.Encoding.CodePage);
             ((TabbedDocument)document).IsModified = true;
         }
 
@@ -3149,7 +3174,6 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 ScintillaControl sci = Globals.SciControl;
                 Int32 encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-                sci.CodePage = ScintillaManager.SelectCodePage(encMode);
                 sci.Encoding = Encoding.GetEncoding(encMode);
                 this.OnScintillaControlUpdateControl(sci);
                 this.OnDocumentModify(this.CurrentDocument);
@@ -3185,10 +3209,9 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 ScintillaControl sci = Globals.SciControl;
                 Int32 encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-                Int32 curMode = sci.CodePage; // From current..
+                Int32 curMode = sci.Encoding.CodePage; // From current..
                 String converted = DataConverter.ChangeEncoding(sci.Text, curMode, encMode);
                 sci.Encoding = Encoding.GetEncoding(encMode);
-                sci.CodePage = ScintillaManager.SelectCodePage(encMode);
                 sci.Text = converted; // Set after codepage change
                 this.OnScintillaControlUpdateControl(sci);
                 this.OnDocumentModify(this.CurrentDocument);

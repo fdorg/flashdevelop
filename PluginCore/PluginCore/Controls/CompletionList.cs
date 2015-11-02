@@ -353,10 +353,11 @@ namespace PluginCore.Controls
         {
             ICompletionListItem item = completionList.Items[e.Index] as ICompletionListItem;
             e.DrawBackground();
-            Color fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor");
+            Color fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor", SystemColors.WindowText);
+            Color sel = PluginBase.MainForm.GetThemeColor("CompletionList.SelectedTextColor", SystemColors.HighlightText);
             bool selected = (e.State & DrawItemState.Selected) > 0;
-            Brush textBrush = (selected) ? SystemBrushes.HighlightText : fore == Color.Empty ? SystemBrushes.WindowText : new SolidBrush(fore);
-            Brush packageBrush = Brushes.Gray;
+            Brush textBrush = (selected) ? new SolidBrush(sel) : new SolidBrush(fore);
+            Brush packageBrush = new SolidBrush(PluginBase.MainForm.GetThemeColor("CompletionList.PackageColor", Color.Gray));
             Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
             if (item != null)
             {

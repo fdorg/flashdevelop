@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
 using PluginCore.Utilities;
@@ -12,10 +13,9 @@ using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using Ookii.Dialogs;
 using ScintillaNet;
 using PluginCore;
-using Ookii.Dialogs;
-using System.Text.RegularExpressions;
 
 namespace FlashDevelop.Dialogs
 {
@@ -852,6 +852,19 @@ namespace FlashDevelop.Dialogs
             String message = TextHelper.GetString("Info.NoMatches");
             this.infoLabel.Text = message;
             this.CenterToParent();
+        }
+
+        /// <summary>
+        /// Process shortcuts
+        /// </summary>
+        protected override Boolean ProcessDialogKey(Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                this.findComboBox.Focus();
+                return true;
+            }
+            return base.ProcessDialogKey(keyData);
         }
 
         /// <summary>

@@ -5189,7 +5189,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   </data>
   <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
     <value>In Classpaths only</value>
-    <comment>Added after 5.0.2</comment>
+    <comment>Added after 5.0.1</comment>
   </data>
   <data name="ProjectManager.Label.CodeFilesOnly" xml:space="preserve">
     <value>Code files only</value>
@@ -5975,5 +5975,9 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
     <value>Choose a package folder:</value>
+  </data>
+  <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
+    <value>Highlight word:</value>
+    <comment>Added after 5.0.2</comment>
   </data>
 </root>
