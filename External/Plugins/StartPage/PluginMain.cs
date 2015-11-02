@@ -249,7 +249,7 @@ namespace StartPage
         public void ShowStartPage()
         {
             if (this.startPage == null) this.CreateStartPage();
-            else this.startPage.Show();
+            else this.startPage.Show(PluginBase.MainForm.DockPanel);
         }
 
         #endregion
