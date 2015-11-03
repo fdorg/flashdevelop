@@ -403,68 +403,68 @@ namespace ASCompletion.Completion
         {
             if (!ASContext.CommonSettings.AddClosingBraces)
                 return;
+            
+            //when adding char, get the added char style
+            //otherwise get the style of the char before deleted char
+            int style = sci.BaseStyleAt(sci.CurrentPos - (addedChar ? 1 : 2));
+            bool isString = IsStringStyle(style);
+            bool isChar = IsCharStyle(style);
+            bool isInterpol = IsInterpolationExpr(sci, sci.CurrentPos - 2);
+            //Console.WriteLine($"style: {(ScintillaNet.Lexers.CPP) style}");
 
-            int style = sci.BaseStyleAt(sci.CurrentPos - 2);
-
-            if (IsTextStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+            if (addedChar)
             {
-                foreach (Braces braces in AddClosingBracesData)
+                //not inside a string literal
+                if (!isString && !isChar || isInterpol
+                //or inside a string literal but a closing char is entered and the string does terminate
+                    || (c == '"' && isString || c == '\'' && isChar) && sci.BaseStyleAt(sci.CurrentPos) == 12)
                 {
-                    if (addedChar)
-                        HandleAddBrace(sci, c, braces);
-                    else
-                        HandleRemoveBrace(sci, c, braces);
-                }
-            }
-            // If the current style is a string literal in double/single quotes and the matching char is entered
-            else if (c == '"' && IsDoubleQuoteStyle(style) || c == '\'' && IsSingleQuoteStyle(style))
-            {
-                // If the next char is the corresponding closing char
-                if (addedChar && c == sci.CurrentChar)
-                {
-                    foreach (Braces braces in AddClosingBracesData)
+                    foreach (var braces in AddClosingBracesData)
                     {
-                        HandleAddBrace(sci, c, braces);
+                        if (HandleAddBrace(sci, c, braces))
+                            break;
                     }
                 }
             }
-        }
-
-        private static void HandleAddBrace(ScintillaControl sci, char c, Braces braces)
-        {
-            if (ASContext.CommonSettings.AddClosingBraces)
+            //not inside a string literal
+            else if (!isString && !isChar || isInterpol)
             {
-                // Handle closing first due to braces that have equal opening & closing chars
-                if (c == braces.closing && sci.CurrentChar == braces.closing)
+                foreach (var braces in AddClosingBracesData)
                 {
-                    // move the condition to above so that it handles opening properly
-                    //// already a closing brace?
-                    //if (sci.CurrentChar == braces.closing)
-                    //{
-                    sci.DeleteForward();
-                    //}
-                }
-                else if (c == braces.opening)
-                {
-                    // already having an opening doesn't mean you can't open another brace (quotes are handled already)
-                    //// already an opening brace?
-                    //if ((char)sci.CharAt(sci.CurrentPos - 2) != braces.opening)
-                    //{
-                    sci.InsertText(sci.CurrentPos, braces.closing.ToString());
-                    //}
+                    if (HandleRemoveBrace(sci, c, braces))
+                        break;
                 }
             }
         }
-
-        private static void HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
+        
+        static bool HandleAddBrace(ScintillaControl sci, char c, Braces braces)
         {
-            if (ASContext.CommonSettings.AddClosingBraces && c == braces.closing)
+            // Handle closing first due to braces that have equal opening & closing chars
+            if (c == braces.closing && sci.CurrentChar == c)
             {
-                if ((char)sci.CharAt(sci.CurrentPos - 1) == braces.opening)
-                {
-                    sci.DeleteForward();
-                }
+                sci.DeleteForward();
             }
+            else if (c == braces.opening)
+            {
+                sci.InsertText(sci.CurrentPos, braces.closing.ToString());
+            }
+            else
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        static bool HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
+        {
+            if (c == braces.closing && (char) sci.CharAt(sci.CurrentPos - 1) == braces.opening)
+            {
+                sci.DeleteForward();
+                return true;
+            }
+            
+            return false;
         }
         #endregion
 
@@ -3696,12 +3696,12 @@ namespace ASCompletion.Completion
             return style == 4 || style == 6 || style == 7;
         }
         
-        public static bool IsDoubleQuoteStyle(int style)
+        public static bool IsStringStyle(int style)
         {
             return style == 6;
         }
-
-        public static bool IsSingleQuoteStyle(int style)
+        
+        public static bool IsCharStyle(int style)
         {
             return style == 7;
         }
