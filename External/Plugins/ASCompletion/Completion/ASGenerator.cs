@@ -977,16 +977,16 @@ namespace ASCompletion.Completion
                     break;
 
                 case GeneratorJobType.ImplementInterface:
-                    ClassModel aType = ASContext.Context.ResolveType(contextParam, ASContext.Context.CurrentModel);
+                    ClassModel aType = ASContext.Context.ResolveType(contextParam, inClass.InFile);
                     if (aType.IsVoid()) return;
 
                     latest = GetLatestMemberForFunction(inClass, Visibility.Public, null);
                     if (latest == null)
                         latest = FindLatest(0, 0, inClass, false, false);
 
-                    if (latest == null) return;
+                    position = latest == null ? GetBodyStart(inClass.LineFrom, inClass.LineTo, Sci) : latest.LineTo;
 
-                    position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
+                    position = Sci.PositionFromLine(position + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
                     Sci.SetSel(position, position);
                     GenerateImplementation(aType, position);
                     break;
@@ -1791,7 +1791,8 @@ namespace ASCompletion.Completion
                     int p = funcBodyStart + (body.Length - trimmed.Length);
                     int l = Sci.LineFromPosition(p);
                     p = Sci.PositionFromLine(l + 1);
-                    funcBodyStart = GetBodyStart(member.LineFrom, member.LineTo, Sci, p);
+                    throw new NotImplementedException("reimplement");
+                    //funcBodyStart = GetBodyStart(member.LineFrom, member.LineTo, Sci, p);
                 }
             }
 
@@ -1863,26 +1864,29 @@ namespace ASCompletion.Completion
 
         public static int GetBodyStart(int lineFrom, int lineTo, ScintillaControl Sci)
         {
-            return GetBodyStart(lineFrom, lineTo, Sci, -1);
-        }
-
-        public static int GetBodyStart(int lineFrom, int lineTo, ScintillaControl Sci, int pos)
-        {
             int posStart = Sci.PositionFromLine(lineFrom);
             int posEnd = Sci.LineEndPosition(lineTo);
 
-            Sci.SetSel(posStart, posEnd);
+            char[] characterClass = new[] { ' ', '\r', '\n', '\t' };
+            int funcBodyStart = -1;
 
-            List<char> characterClass = new List<char>(new char[] { ' ', '\r', '\n', '\t' });
-            string currentMethodBody = Sci.SelText;
-            int nCount = 0;
-            int funcBodyStart = pos;
-            int extraLine = 0;
-            if (pos == -1)
+            for (int i = posStart; i <= posEnd; i++)
             {
-                funcBodyStart = posStart + currentMethodBody.IndexOf('{');
-                extraLine = 1;
+                char c = (char)Sci.CharAt(i);
+
+                if (c == '{')
+                {
+                    int style = Sci.BaseStyleAt(i);
+                    if (ASComplete.IsCommentStyle(style) || ASComplete.IsTextStyle(style))
+                        continue;
+                    funcBodyStart = i;
+                    break;
+                }
             }
+
+            if (funcBodyStart == -1)
+                return -1;
+
             while (funcBodyStart <= posEnd)
             {
                 char c = (char)Sci.CharAt(++funcBodyStart);
@@ -1903,15 +1907,15 @@ namespace ASCompletion.Completion
                     funcBodyStart = Sci.LineEndPosition(ln);
                     break;
                 }
-                else if (!characterClass.Contains(c))
+                else if (Array.IndexOf(characterClass, c) == -1)
                 {
                     break;
                 }
-                else if (Sci.EOLMode == 1 && c == '\r' && (++nCount) > extraLine)
+                else if (Sci.EOLMode == 1 && c == '\r')
                 {
                     break;
                 }
-                else if (c == '\n' && (++nCount) > extraLine)
+                else if (c == '\n')
                 {
                     if (Sci.EOLMode != 2)
                     {
