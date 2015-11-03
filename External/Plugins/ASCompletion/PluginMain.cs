@@ -574,7 +574,7 @@ namespace ASCompletion
         }
 
         [Browsable(false)]
-        public List<ToolStripItem> MenuItems
+        public virtual List<ToolStripItem> MenuItems
         {
             get { return menuItems; }
         }
