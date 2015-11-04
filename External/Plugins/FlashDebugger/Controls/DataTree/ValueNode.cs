@@ -249,7 +249,7 @@ namespace FlashDebugger.Controls.DataTree
             m_Value = value;
         }
 
-        private string Escape(string text)
+        internal static string Escape(string text)
         {
             text = text.Replace("\\", "\\\\");
             text = text.Replace("\"", "\\\"");
@@ -266,12 +266,28 @@ namespace FlashDebugger.Controls.DataTree
             return text;
         }
 
-        private string CleanTypeClassPaths(string qualifiedName)
+        /// <summary>
+        /// Removes the class path from a fully qualified name. Eg.: flash.display::Sprite becomes Sprite
+        /// </summary>
+        /// <param name="qualifiedName">The fully qualified name to clean</param>
+        /// <returns>The class name with no class path</returns>
+        internal static string CleanTypeClassPaths(string qualifiedName)
         {
             char[] delims = { ',', ' ', '<', '>' };
             var buffer = new StringBuilder();
             bool inPackage = false;
 
+            /**
+               In order to strip the class-path we are going to traverse the class type in 
+                 reverse so we don't need to keep extra buffers or use complex splitting or regexes.
+               Packages are always separated by colons or dots, so the first time we found one we
+                 are on the package (watch out with Vector.<> notation), and the whole type is always
+                 together, so any delim means that we finished with the type, and since this comes
+                 from the debugger we know that we are not going to find any other type delimiter,
+                 or incomplete/wrong case. We could check for Char.IsWhiteSpace for other uses.
+               In resume, with this method we could support without much problem even complex cases like:
+                 Collections.Generic.Dictionary<Collections.Generic.Dictionary<String, Test.CustomClassKey>, Collections.Generic.List<Test.CustomClass>>
+            */
             for (int i = qualifiedName.Length - 1; i >= 0; i--)
             {
                 char c = qualifiedName[i];
