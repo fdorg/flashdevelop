@@ -267,10 +267,10 @@ namespace FlashDebugger.Controls.DataTree
         }
 
         /// <summary>
-        /// Removes the class path from a fully qualified name. Eg.: flash.display::Sprite becomes Sprite
+        /// Removes any class path from a fully qualified name. Eg.: flash.display::Sprite becomes Sprite
         /// </summary>
         /// <param name="qualifiedName">The fully qualified name to clean</param>
-        /// <returns>The class name with no class path</returns>
+        /// <returns>The class name with no class paths</returns>
         internal static string CleanTypeClassPaths(string qualifiedName)
         {
             char[] delims = { ',', ' ', '<', '>' };
