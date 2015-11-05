@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using FlashDebugger.Debugger;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -26,6 +27,7 @@ namespace FlashDebugger
         static internal LiveDataTip liveDataTip;
         static internal DebuggerManager debugManager;
         static internal BreakPointManager breakPointManager;
+        static internal WatchManager watchManager;
         static internal Boolean disableDebugger = false;
 
         #region Required Properties
@@ -111,6 +113,7 @@ namespace FlashDebugger
         {
             SaveSettings();
             breakPointManager.Save();
+            watchManager.Save();
             debugManager.Cleanup();
         }
 
@@ -166,14 +169,19 @@ namespace FlashDebugger
                         if (project != null && project.EnableInteractiveDebugger)
                         {
                             disableDebugger = false;
-                            PanelsHelper.breakPointUI.Clear();
                             if (breakPointManager.Project != null && breakPointManager.Project != project)
                             {
                                 breakPointManager.Save();
+                                watchManager.Save();
                             }
+                            PanelsHelper.breakPointUI.Clear();
+                            PanelsHelper.watchUI.Clear();
                             breakPointManager.Project = project;
                             breakPointManager.Load();
                             breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
+
+                            watchManager.Project = project;
+                            watchManager.Load();
                         }
                         else
                         {
@@ -181,8 +189,10 @@ namespace FlashDebugger
                             if (breakPointManager.Project != null)
                             {
                                 breakPointManager.Save();
+                                watchManager.Save();
                             }
                             PanelsHelper.breakPointUI.Clear();
+                            PanelsHelper.watchUI.Clear();
                         }
                     }
                     else if (disableDebugger) return;
@@ -231,6 +241,7 @@ namespace FlashDebugger
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginImage = PluginBase.MainForm.FindImage("54|23|5|4");
             breakPointManager = new BreakPointManager();
+            watchManager = new WatchManager();
             debugManager = new DebuggerManager();
             liveDataTip = new LiveDataTip();
         }
