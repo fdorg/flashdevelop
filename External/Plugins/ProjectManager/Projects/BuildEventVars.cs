@@ -1,9 +1,8 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using PluginCore;
 
 namespace ProjectManager.Projects
 {
@@ -76,14 +75,14 @@ namespace ProjectManager.Projects
                 Uri uri = new Uri(url);
                 
                 // special behavior if we're running in flashdevelop.exe
-                if (Path.GetFileName(uri.LocalPath).ToLower() == "flashdevelop.exe")
+                if (Path.GetFileName(uri.LocalPath).ToLower() == DistroConfig.DISTRIBUTION_NAME.ToLower() + ".exe")
                 {
                     string startupDir = Path.GetDirectoryName(uri.LocalPath);
                     string local = Path.Combine(Path.GetDirectoryName(uri.LocalPath), ".local");
                     if (!File.Exists(local))
                     {
                         String appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        startupDir = Path.Combine(appDir, "FlashDevelop");
+                        startupDir = Path.Combine(appDir, DistroConfig.DISTRIBUTION_NAME);
                     }
                     string toolsDir = Path.Combine(startupDir, "Tools");
                     string fdbuildDir = Path.Combine(toolsDir, "fdbuild");

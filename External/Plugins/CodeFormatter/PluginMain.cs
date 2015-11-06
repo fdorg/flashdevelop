@@ -1,20 +1,17 @@
 ﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
-using WeifenLuo.WinFormsUI.Docking;
-using ScintillaNet.Configuration;
-using PluginCore.Localization;
+using System.ComponentModel;
+using System.IO;
+using System.Windows.Forms;
+using ASCompletion.Context;
 using CodeFormatter.Handlers;
 using CodeFormatter.Utilities;
-using ASCompletion.Context;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
 
 namespace CodeFormatter
 {
@@ -115,7 +112,7 @@ namespace CodeFormatter
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -249,7 +246,7 @@ namespace CodeFormatter
         /// <summary>
         /// Formats the current document
         /// </summary>
-        public void Format(Object sender, System.EventArgs e)
+        public void Format(Object sender, EventArgs e)
         {
             this.DoFormat(PluginBase.MainForm.CurrentDocument);
         }

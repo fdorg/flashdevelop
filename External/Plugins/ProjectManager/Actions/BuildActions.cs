@@ -2,19 +2,16 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Managers;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS2;
-using ProjectManager.Projects.AS3;
-using ProjectManager.Controls;
 
 namespace ProjectManager.Actions
 {
@@ -117,7 +114,7 @@ namespace ProjectManager.Actions
                     return false;
                 }
 
-                if (project.OutputPath.Length < 1)
+                if (project.OutputPath.Length == 0)
                 {
                     String info = TextHelper.GetString("Info.SpecifyValidOutputSWF");
                     ErrorManager.ShowInfo(info);

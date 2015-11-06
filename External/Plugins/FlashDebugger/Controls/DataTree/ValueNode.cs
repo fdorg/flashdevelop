@@ -1,5 +1,7 @@
 ﻿using System;
 using flash.tools.debugger;
+using Double = java.lang.Double;
+using System.Text;
 
 namespace FlashDebugger.Controls.DataTree
 {
@@ -33,20 +35,18 @@ namespace FlashDebugger.Controls.DataTree
                 string temp = null;
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
-                    string typeStr = "";
+                    string typeStr = m_Value.getTypeName().ToString();
+                    // rename vector
+                    typeStr = typeStr.Replace("__AS3__.vec::Vector.<", "Vector.<");
                     if (HideFullClasspath)
                     {
                         // return class type without classpath
-                        string typeName = m_Value.getTypeName().ToString();
-                        if (typeName.StartsWith("__AS3__.vec::Vector.<") || typeName.StartsWith("Vector.<"))
-                            typeStr = "Vector.<" + typeName.AfterLast("::", true);
-                        else
-                            typeStr = typeName.After("::", 0, true).Replace("::", ".");
+                        typeStr = CleanTypeClassPaths(typeStr);
                     }
                     else
                     {
                         // return class type with classpath
-                        typeStr = m_Value.getTypeName().ToString().Replace("::", ".");
+                        typeStr = typeStr.Replace("::", ".");
                     }
                     
                     // show / hide IDs
@@ -58,18 +58,12 @@ namespace FlashDebugger.Controls.DataTree
                         typeStr = typeStr.Replace("[]", "Array");
                     }
 
-                    // rename vector
-                    else if (typeStr.StartsWith("__AS3__.vec.Vector.<"))
-                    {
-                        typeStr = typeStr.Replace("__AS3__.vec.Vector.<", "Vector.<");
-                    }
-
                     return typeStr;
                 }
                 else if (type == VariableType_.NUMBER)
                 {
-                    double number = ((java.lang.Double)m_Value.getValueAsObject()).doubleValue();
-                    if (!Double.IsNaN(number) && (double)(long)number == number)
+                    double number = ((Double)m_Value.getValueAsObject()).doubleValue();
+                    if (!System.Double.IsNaN(number) && (double)(long)number == number)
                     {
                         if (!m_bEditing)
                         {
@@ -205,24 +199,6 @@ namespace FlashDebugger.Controls.DataTree
             }
         }
 
-        
-        private string Escape(string text)
-        {
-            text = text.Replace("\\", "\\\\");
-            text = text.Replace("\"", "\\\"");
-            text = text.Replace("\0", "\\0");
-            text = text.Replace("\a", "\\a");
-            text = text.Replace("\b", "\\b");
-            text = text.Replace("\f", "\\f");
-            text = text.Replace("\n", "\\n");
-            text = text.Replace("\r", "\\r");
-            text = text.Replace("\t", "\\t");
-            text = text.Replace("\v", "\\v");
-            if (text.Length > 65533)
-                text = text.Substring(0, 65533 - 5) + "[...]";
-            return text;
-        }
-
         public Value PlayerValue
         {
             get
@@ -273,6 +249,67 @@ namespace FlashDebugger.Controls.DataTree
             m_Value = value;
         }
 
+        internal static string Escape(string text)
+        {
+            text = text.Replace("\\", "\\\\");
+            text = text.Replace("\"", "\\\"");
+            text = text.Replace("\0", "\\0");
+            text = text.Replace("\a", "\\a");
+            text = text.Replace("\b", "\\b");
+            text = text.Replace("\f", "\\f");
+            text = text.Replace("\n", "\\n");
+            text = text.Replace("\r", "\\r");
+            text = text.Replace("\t", "\\t");
+            text = text.Replace("\v", "\\v");
+            if (text.Length > 65533)
+                text = text.Substring(0, 65533 - 5) + "[...]";
+            return text;
+        }
+
+        /// <summary>
+        /// Removes any class path from a fully qualified name. Eg.: flash.display::Sprite becomes Sprite
+        /// </summary>
+        /// <param name="qualifiedName">The fully qualified name to clean</param>
+        /// <returns>The class name with no class paths</returns>
+        internal static string CleanTypeClassPaths(string qualifiedName)
+        {
+            char[] delims = { ',', ' ', '<', '>' };
+            var buffer = new StringBuilder();
+            bool inPackage = false;
+
+            /**
+               In order to strip the class-path we are going to traverse the class type in 
+                 reverse so we don't need to keep extra buffers or use complex splitting or regexes.
+               Packages are always separated by colons or dots, so the first time we found one we
+                 are on the package (watch out with Vector.<> notation), and the whole type is always
+                 together, so any delim means that we finished with the type, and since this comes
+                 from the debugger we know that we are not going to find any other type delimiter,
+                 or incomplete/wrong case. We could check for Char.IsWhiteSpace for other uses.
+               In resume, with this method we could support without much problem even complex cases like:
+                 Collections.Generic.Dictionary<Collections.Generic.Dictionary<String, Test.CustomClassKey>, Collections.Generic.List<Test.CustomClass>>
+            */
+            for (int i = qualifiedName.Length - 1; i >= 0; i--)
+            {
+                char c = qualifiedName[i];
+
+                if (inPackage)
+                {
+                    if (Array.IndexOf(delims, c) < 0)
+                        continue;
+
+                    inPackage = false;
+                }
+                else if ((c == '.' && qualifiedName[i + 1] != '<') || c == ':')
+                {
+                    inPackage = true;
+                    continue;
+                }
+
+                buffer.Insert(0, c);
+            }
+
+            return buffer.ToString();
+        }
     }
 
 }

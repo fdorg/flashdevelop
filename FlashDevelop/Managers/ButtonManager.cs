@@ -1,16 +1,11 @@
 using System;
 using System.Text;
-using System.Reflection;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
-using FlashDevelop.Docking;
-using FlashDevelop.Settings;
-using FlashDevelop.Helpers;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {
@@ -74,13 +69,21 @@ namespace FlashDevelop.Managers
             {
                 if (!document.IsUntitled) return false;
             }
+            if (action.Contains("!HasBookmarks"))
+            {
+                if (document.HasBookmarks) return false;
+            }
             else if (action.Contains("HasBookmarks"))
             {
                 if (!document.HasBookmarks) return false;
             }
-            else if (action.Contains("!HasBookmarks"))
+            if (action.Contains("!IsAloneInPane"))
             {
-                if (document.HasBookmarks) return false;
+                if (document.IsAloneInPane) return false;
+            }
+            else if (action.Contains("IsAloneInPane"))
+            {
+                if (!document.IsAloneInPane) return false;
             }
             if (action.Contains("!HasModified"))
             {
@@ -122,6 +125,19 @@ namespace FlashDevelop.Managers
             {
                 if (!Globals.MainForm.MultiInstanceMode) return false;
             }
+            if (action.Contains("!IsFullScreen"))
+            {
+                if (MainForm.Instance.IsFullScreen) return false;
+            }
+            else if (action.Contains("IsFullScreen"))
+            {
+                if (!MainForm.Instance.IsFullScreen) return false;
+            }
+            if (action.Contains("TracksBoolean"))
+            {
+                Boolean value = (Boolean)Globals.Settings.GetValue(((ItemData)item.Tag).Tag);
+                if (!value) return false;
+            }
             if (sci != null)
             {
                 if (action.Contains("!CanUndo"))
@@ -156,6 +172,31 @@ namespace FlashDevelop.Managers
                 {
                     if (sci.SelText.Length == 0) return false;
                 }
+                if (action.Contains("!SaveBOM"))
+                {
+                    if (document.SciControl.SaveBOM) return false;
+                }
+                else if (action.Contains("SaveBOM"))
+                {
+                    if (!document.SciControl.SaveBOM) return false;
+                }
+                if (action.Contains("!IsUnicode"))
+                {
+                    if (ScintillaManager.IsUnicode(document.SciControl.Encoding.CodePage)) return false;
+                }
+                else if (action.Contains("IsUnicode"))
+                {
+                    if (!ScintillaManager.IsUnicode(document.SciControl.Encoding.CodePage)) return false;
+                }
+                if (action.Contains("SyntaxIs?"))
+                {
+                    String[] chunks = action.Split('?');
+                    if (chunks.Length == 2)
+                    {
+                        String language = document.SciControl.ConfigurationLanguage;
+                        if (chunks[chunks.Length - 1] != language.ToUpper()) return false;
+                    }
+                }
                 if (action.Contains("IsActiveSyntax"))
                 {
                     String language = document.SciControl.ConfigurationLanguage;
@@ -167,42 +208,16 @@ namespace FlashDevelop.Managers
                     if (codepage == Encoding.Default.CodePage) codepage = 0;
                     if (((ItemData)item.Tag).Tag != codepage.ToString()) return false;
                 }
-                if (action.Contains("SaveBOM"))
-                {
-                    return document.SciControl.SaveBOM;
-                }
-                if (action.Contains("IsDefaultEncoding"))
-                {
-                    Int32 codepage = document.SciControl.Encoding.CodePage;
-                    return codepage == Encoding.Default.CodePage;
-                }
                 if (action.Contains("IsActiveEOL"))
                 {
                     Int32 eolMode = document.SciControl.EOLMode;
                     if (((ItemData)item.Tag).Tag != eolMode.ToString()) return false;
                 }
-                if (action.Contains("SyntaxIs?"))
+                if (action.Contains("IsDefaultEncoding"))
                 {
-                    String[] chunks = action.Split('?');
-                    if (chunks.Length == 2)
-                    {
-                        String language = document.SciControl.ConfigurationLanguage;
-                        if (chunks[chunks.Length - 1] != language.ToUpper()) return false;
-                    }
+                    Int32 codepage = document.SciControl.Encoding.CodePage;
+                    if (codepage != Encoding.Default.CodePage) return false;
                 }
-            }
-            if (action.Contains("!IsFullScreen"))
-            {
-                if (MainForm.Instance.IsFullScreen) return false;
-            }
-            else if (action.Contains("IsFullScreen"))
-            {
-                if (!MainForm.Instance.IsFullScreen) return false;
-            }
-            if (action.Contains("TracksBoolean"))
-            {
-                Boolean value = (Boolean)Globals.Settings.GetValue(((ItemData)item.Tag).Tag);
-                if (!value) return false;
             }
             return true;
         }
@@ -256,9 +271,11 @@ namespace FlashDevelop.Managers
                 }
                 if (Globals.PreviousDocuments.Count > 0)
                 {
-                    String label = TextHelper.GetString("Label.ClearReopenList");
+                    String cleanLabel = TextHelper.GetString("Label.CleanReopenList");
+                    String clearLabel = TextHelper.GetString("Label.ClearReopenList");
                     reopenMenu.DropDownItems.Add(new ToolStripSeparator());
-                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(label, null, new EventHandler(Globals.MainForm.ClearReopenList)));
+                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(cleanLabel, null, new EventHandler(Globals.MainForm.CleanReopenList)));
+                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(clearLabel, null, new EventHandler(Globals.MainForm.ClearReopenList)));
                     reopenMenu.Enabled = true;
                 }
                 else reopenMenu.Enabled = false;
@@ -276,7 +293,6 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                ToolStripMenuItem reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 if (Globals.PreviousDocuments.Contains(file))
                 {
                     Globals.PreviousDocuments.Remove(file);
@@ -298,25 +314,42 @@ namespace FlashDevelop.Managers
             ITabbedDocument document = Globals.CurrentDocument;
             if (document != null && document.IsEditable)
             {
-                Boolean hasBOM = document.SciControl.SaveBOM;
                 Int32 codepage = document.SciControl.Encoding.CodePage;
-                if (codepage == Encoding.UTF8.CodePage)
+                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(document.FileName);
+                if (codepage == info.CodePage)
                 {
-                    return GetLabelAsPlainText("Label.UTF8", hasBOM);
+                    if (ScintillaManager.IsUnicode(info.CodePage))
+                    {
+                        String name = "Unicode (" + info.Charset + ")";
+                        return info.ContainsBOM ? name + " (BOM)" : name;
+                    }
+                    else
+                    {
+                        String name = TextHelper.GetString("Label.8Bits").Replace("&", "");
+                        return name + " (" + info.Charset + ")";
+                    }
                 }
-                else if (codepage == Encoding.UTF7.CodePage)
+                else // Opened in different encoding...
                 {
-                    return GetLabelAsPlainText("Label.UTF7", hasBOM);
+                    Boolean hasBOM = document.SciControl.SaveBOM;
+                    if (codepage == Encoding.UTF8.CodePage)
+                    {
+                        return GetLabelAsPlainText("Label.UTF8", true, hasBOM);
+                    }
+                    else if (codepage == Encoding.UTF7.CodePage)
+                    {
+                        return GetLabelAsPlainText("Label.UTF7", true, hasBOM);
+                    }
+                    else if (codepage == Encoding.BigEndianUnicode.CodePage)
+                    {
+                        return GetLabelAsPlainText("Label.BigEndian", true, hasBOM);
+                    }
+                    else if (codepage == Encoding.Unicode.CodePage)
+                    {
+                        return GetLabelAsPlainText("Label.LittleEndian", true, hasBOM);
+                    }
+                    else return GetLabelAsPlainText("Label.8Bits", false, false);
                 }
-                else if (codepage == Encoding.BigEndianUnicode.CodePage)
-                {
-                    return GetLabelAsPlainText("Label.BigEndian", hasBOM);
-                }
-                else if (codepage == Encoding.Unicode.CodePage)
-                {
-                    return GetLabelAsPlainText("Label.LittleEndian", hasBOM);
-                }
-                else return GetLabelAsPlainText("Label.8Bits", false);
             }
             else return TextHelper.GetString("Info.Unknown");
         }
@@ -324,9 +357,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a label as plain text by removing the accelerator key
         /// </summary>
-        public static String GetLabelAsPlainText(String name, Boolean hasBOM)
+        public static String GetLabelAsPlainText(String name, Boolean unicode, Boolean hasBOM)
         {
             String label = TextHelper.GetString(name).Replace("&", "");
+            if (unicode) label = "Unicode (" + label.ToLower() + ")";
             return hasBOM ? label + " (BOM)" : label;
         }
 

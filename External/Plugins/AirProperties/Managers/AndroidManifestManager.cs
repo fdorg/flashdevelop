@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -158,7 +159,6 @@ namespace AirProperties
         {
             SetUsesSdk();
 
-            string xml = backDoc.OuterXml;
             var builder = new StringBuilder();
             var settings = new XmlWriterSettings()
             {
@@ -315,7 +315,7 @@ namespace AirProperties
                 return backData.Values.GetEnumerator();
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return backData.Values.GetEnumerator();
             }

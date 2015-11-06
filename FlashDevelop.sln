@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashDevelop", "FlashDevelop\FlashDevelop.csproj", "{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}"
 	ProjectSection(ProjectDependencies) = postProject
 		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
@@ -73,6 +75,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CssCompletion", "External\Plugins\CssCompletion\CssCompletion.csproj", "{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoomContext", "External\Plugins\LoomContext\LoomContext.csproj", "{92BBB3B6-E318-4B12-8378-6D46E69AB938}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FDBuild", "External\Tools\FDBuild\FDBuild.csproj", "{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}"
+	ProjectSection(ProjectDependencies) = postProject
+		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -338,6 +345,14 @@ Global
 		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Release|Any CPU.Build.0 = Release|Any CPU
 		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Release|x86.ActiveCfg = Release|x86
 		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Release|x86.Build.0 = Release|x86
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|x86.ActiveCfg = Debug|x86
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|x86.Build.0 = Debug|x86
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|x86.ActiveCfg = Release|x86
+		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

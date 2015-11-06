@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Data;
 using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -62,6 +61,7 @@ namespace CodeRefactor.Controls
             // 
             this.operationComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.operationComboBox.FormattingEnabled = true;
+            this.operationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.operationComboBox.Location = new System.Drawing.Point(15, 27);
             this.operationComboBox.Name = "operationComboBox";
             this.operationComboBox.Size = new System.Drawing.Size(276, 21);
@@ -98,6 +98,7 @@ namespace CodeRefactor.Controls
             // 
             this.targetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.targetComboBox.FormattingEnabled = true;
+            this.targetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.targetComboBox.Location = new System.Drawing.Point(15, 73);
             this.targetComboBox.Name = "targetComboBox";
             this.targetComboBox.Size = new System.Drawing.Size(276, 21);

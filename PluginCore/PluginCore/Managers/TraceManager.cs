@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Timers;
 using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 namespace PluginCore.Managers
 {
@@ -10,16 +12,16 @@ namespace PluginCore.Managers
         private static Int32 MAX_QUEUE = 1000;
         private static List<TraceItem> traceLog;
         private static List<TraceItem> asyncQueue;
-        private static System.Timers.Timer asyncTimer;
+        private static Timer asyncTimer;
 
         static TraceManager()
         {
             traceLog = new List<TraceItem>();
             asyncQueue = new List<TraceItem>();
-            asyncTimer = new System.Timers.Timer();
+            asyncTimer = new Timer();
             asyncTimer.Interval = 200;
             asyncTimer.AutoReset = false;
-            asyncTimer.Elapsed += new System.Timers.ElapsedEventHandler(asyncTimerElapsed);
+            asyncTimer.Elapsed += new ElapsedEventHandler(asyncTimerElapsed);
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace PluginCore.Managers
                     }
                     else if (count == MAX_QUEUE)
                     {
-                        asyncQueue.Add(new TraceItem("FlashDevelop: Trace overflow", 4));
+                        asyncQueue.Add(new TraceItem(DistroConfig.DISTRIBUTION_NAME + ": Trace overflow", 4));
                         asyncTimer.Stop();
                         asyncTimer.Start();
                     }
@@ -88,7 +90,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// After a delay, synchronizes the traces
         /// </summary>
-        private static void asyncTimerElapsed(Object sender, System.Timers.ElapsedEventArgs e)
+        private static void asyncTimerElapsed(Object sender, ElapsedEventArgs e)
         {
             lock (asyncQueue)
             {

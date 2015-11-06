@@ -30,7 +30,7 @@ namespace FlashLogViewer
         private ToolStripButton clearFilterButton;
         private ToolStripSeparator toolStripSeparator;
         private ToolStripSpringComboBox filterComboBox;
-        private ToolStripComboBox logComboBox;
+        private ToolStripComboBoxEx logComboBox;
         private DateTime policyLogWrited;
         private DateTime flashLogWrited;
         private PluginMain pluginMain;
@@ -43,6 +43,7 @@ namespace FlashLogViewer
         
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.Font = PluginBase.Settings.DefaultFont;
             this.pluginMain = pluginMain;
             this.InitializeSettings();
@@ -68,7 +69,7 @@ namespace FlashLogViewer
             this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.viewLabel = new System.Windows.Forms.ToolStripLabel();
-            this.logComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.logComboBox = new System.Windows.Forms.ToolStripComboBoxEx();
             this.filterLabel = new System.Windows.Forms.ToolStripLabel();
             this.filterComboBox = new System.Windows.Forms.ToolStripSpringComboBox();
             this.logTextBox = new System.Windows.Forms.RichTextBox();
@@ -133,10 +134,10 @@ namespace FlashLogViewer
             this.logComboBox.Enabled = false;
             this.logComboBox.Items.AddRange(new Object[] { TextHelper.GetString("Label.FlashLog"), TextHelper.GetString("Label.PolicyLog") });
             this.logComboBox.Name = "logComboBox";
-            this.logComboBox.Size = new System.Drawing.Size(90, 28);
+            this.logComboBox.Size = new System.Drawing.Size(120, 28);
             this.logComboBox.SelectedIndex = 0;
             this.logComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.logComboBox.SelectedIndexChanged += new System.EventHandler(this.LogComboBoxIndexChanged);
+            this.logComboBox.FlatCombo.SelectedIndexChanged += new System.EventHandler(this.LogComboBoxIndexChanged);
             // 
             // filterLabel
             // 
@@ -155,7 +156,7 @@ namespace FlashLogViewer
             // 
             // logTextBox
             // 
-            this.logTextBox.BackColor = System.Drawing.Color.White;
+            this.logTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.logTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.logTextBox.DetectUrls = false;
             this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -381,11 +382,11 @@ namespace FlashLogViewer
                 {
                     string line = s.ReadLine();
                     if (!this.PassesFilter(line)) continue;
-                    Color newColor = Color.Black;
+                    Color newColor = PluginBase.MainForm.GetThemeColor("FlashLogViewer.DebugColor", Color.Black);
                     if (colorize)
                     {
-                        if (reWarning.IsMatch(line)) newColor = Color.Orange;
-                        else if (reError.IsMatch(line)) newColor = Color.Red;
+                        if (reWarning.IsMatch(line)) newColor = PluginBase.MainForm.GetThemeColor("FlashLogViewer.WarningColor", Color.Orange);
+                        else if (reError.IsMatch(line)) newColor = PluginBase.MainForm.GetThemeColor("FlashLogViewer.ErrorColor", Color.Red);
                     }
                     if (newColor != currentColor)
                     {
@@ -543,9 +544,9 @@ namespace FlashLogViewer
                 try
                 {
                     this.reFilter = new Regex(filterComboBox.Text, RegexOptions.IgnoreCase);
-                    this.filterComboBox.ForeColor = SystemColors.ControlText;
+                    this.filterComboBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor", SystemColors.WindowText);
                 }
-                catch { this.filterComboBox.ForeColor = Color.Red; }
+                catch {}
             }
             this.lastPosition = 0;
             this.logTextBox.Clear();
@@ -563,7 +564,7 @@ namespace FlashLogViewer
             }
             catch 
             { 
-                this.Settings.RegexError = "Error #";
+                this.Settings.RegexError = "Error: ";
                 this.reError = new Regex(this.Settings.RegexError, RegexOptions.IgnoreCase);
             }
             try

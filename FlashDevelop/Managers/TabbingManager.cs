@@ -1,9 +1,6 @@
 using System;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using FlashDevelop.Docking;
 using PluginCore;
 
 namespace FlashDevelop.Managers
@@ -26,7 +23,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Checks to see if the Control key has been released
         /// </summary>
-        private static void OnTabTimer(Object sender, System.EventArgs e)
+        private static void OnTabTimer(Object sender, EventArgs e)
         {
             if ((Control.ModifierKeys & Keys.Control) == 0)
             {

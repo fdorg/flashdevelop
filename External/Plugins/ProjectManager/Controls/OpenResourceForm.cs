@@ -21,6 +21,7 @@ namespace ProjectManager.Controls
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.TextBox textBox;
         private System.Windows.Forms.ListBox listBox;
+        private System.Windows.Forms.CheckBox cbInClasspathsOnly;
         private System.Windows.Forms.CheckBox checkBox;
         private System.Windows.Forms.Button refreshButton;
 
@@ -46,6 +47,7 @@ namespace ProjectManager.Controls
             this.infoLabel = new System.Windows.Forms.Label();
             this.textBox = new System.Windows.Forms.TextBox();
             this.listBox = new System.Windows.Forms.ListBox();
+            this.cbInClasspathsOnly = new System.Windows.Forms.CheckBox();
             this.checkBox = new System.Windows.Forms.CheckBox();
             this.refreshButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -64,7 +66,7 @@ namespace ProjectManager.Controls
             this.textBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox.Location = new System.Drawing.Point(12, 32);
             this.textBox.Name = "textBox";
-            this.textBox.Size = new System.Drawing.Size(446, 22);
+            this.textBox.Size = new System.Drawing.Size(466, 22);
             this.textBox.TabIndex = 1;
             this.textBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
             this.textBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxKeyDown);
@@ -72,23 +74,33 @@ namespace ProjectManager.Controls
             // refreshButton
             //
             this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.refreshButton.Location = new System.Drawing.Point(465, 30);
+            this.refreshButton.Location = new System.Drawing.Point(485, 30);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(26, 23);
-            this.refreshButton.TabIndex = 3;
+            this.refreshButton.TabIndex = 4;
             this.refreshButton.Click += new EventHandler(RefreshButtonClick);
+            // 
+            // cbInClasspathsOnly
+            // 
+            this.cbInClasspathsOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbInClasspathsOnly.Location = new System.Drawing.Point(380, 9);
+            this.cbInClasspathsOnly.Size = new System.Drawing.Size(26, 24);
+            this.cbInClasspathsOnly.Text = "In Classpaths only";
+            this.cbInClasspathsOnly.Name = "cbInClasspathsOnly";
+            this.cbInClasspathsOnly.AutoSize = true;
+            this.cbInClasspathsOnly.TabIndex = 2;
+            this.cbInClasspathsOnly.Checked = false;
+            this.cbInClasspathsOnly.CheckedChanged += new System.EventHandler(this.CbInClasspathsOnlyCheckedChanged);
             // 
             // checkBox
             //
             this.checkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox.Location = new System.Drawing.Point(464, 9);
+            this.checkBox.Location = new System.Drawing.Point(480, 9);
             this.checkBox.Size = new System.Drawing.Size(26, 24);
-            this.checkBox.CheckAlign = ContentAlignment.MiddleRight;
-            this.checkBox.TextAlign = ContentAlignment.MiddleLeft;
             this.checkBox.Text = "Code files only";
             this.checkBox.Name = "checkBox";
             this.checkBox.AutoSize = true;
-            this.checkBox.TabIndex = 2;
+            this.checkBox.TabIndex = 3;
             this.checkBox.Checked = false;
             this.checkBox.CheckedChanged += new EventHandler(this.CheckBoxCheckedChanged);
             // 
@@ -99,8 +111,8 @@ namespace ProjectManager.Controls
             this.listBox.FormattingEnabled = true;
             this.listBox.Location = new System.Drawing.Point(12, 62);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(478, 276);
-            this.listBox.TabIndex = 4;
+            this.listBox.Size = new System.Drawing.Size(498, 276);
+            this.listBox.TabIndex = 5;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBoxDrawItem);
             this.listBox.Resize += new System.EventHandler(this.ListBoxResize);
             this.listBox.DoubleClick += new System.EventHandler(this.ListBoxDoubleClick);
@@ -109,7 +121,8 @@ namespace ProjectManager.Controls
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(502, 340);
+            this.ClientSize = new System.Drawing.Size(522, 340);
+            this.Controls.Add(this.cbInClasspathsOnly);
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.textBox);
             this.Controls.Add(this.refreshButton);
@@ -117,7 +130,7 @@ namespace ProjectManager.Controls
             this.Controls.Add(this.checkBox);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(400, 300);
+            this.MinimumSize = new System.Drawing.Size(480, 300);
             this.Name = "OpenResourceForm";
             this.ShowIcon = false;
             this.KeyPreview = true;
@@ -153,6 +166,7 @@ namespace ProjectManager.Controls
         private void InitializeLocalization()
         {
             this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
+            this.cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
             this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
         }
@@ -161,6 +175,15 @@ namespace ProjectManager.Controls
         /// 
         /// </summary>
         private void RefreshButtonClick(Object sender, EventArgs e)
+        {
+            this.CreateFileList();
+            this.RefreshListBox();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void CbInClasspathsOnlyCheckedChanged(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
@@ -377,7 +400,7 @@ namespace ProjectManager.Controls
         {
             String projectFolder = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             List<String> folders = new List<String>();
-            folders.Add(projectFolder);
+            if (!cbInClasspathsOnly.Checked) folders.Add(projectFolder);
             if (!PluginMain.Settings.SearchExternalClassPath) return folders;
             foreach (String path in PluginBase.CurrentProject.SourcePaths)
             {
@@ -385,19 +408,21 @@ namespace ProjectManager.Controls
                 else
                 {
                     String folder = Path.GetFullPath(Path.Combine(projectFolder, path));
-                    if (!folder.StartsWith(projectFolder)) folders.Add(folder);
+                    if (cbInClasspathsOnly.Checked || !folder.StartsWith(projectFolder)) folders.Add(folder);
                 }
             }
             return folders;
         }
 
         /// <summary>
-        /// Quick filter of hidden/VCS directories
+        /// Filter out hidden/VCS directories
         /// </summary>
         private bool isFolderHidden(string folder)
         {
             String name = Path.GetFileName(folder);
             if (name.Length == 0 || !Char.IsLetterOrDigit(name[0])) return true;
+            foreach (string dir in PluginMain.Settings.ExcludedDirectories)
+                if (dir == name) return true;
             FileInfo info = new FileInfo(folder);
             return (info.Attributes & FileAttributes.Hidden) > 0;
         }

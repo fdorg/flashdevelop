@@ -1,17 +1,14 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using PluginCore;
-using ASCompletion.Context;
 using System.Windows.Forms;
-using System.Diagnostics;
+using ASCompletion.Context;
+using ICSharpCode.SharpZipLib.Zip;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
-using System.Text;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace ASCompletion.Model
 {

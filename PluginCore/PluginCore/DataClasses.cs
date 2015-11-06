@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms.Design;
 using System.Drawing.Design;
+using System.IO;
+using Ookii.Dialogs;
 
 namespace PluginCore
 {
@@ -101,7 +100,7 @@ namespace PluginCore
         private InstalledSDKOwner owner;
 
         [Category("Location")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String Path
         {
             get { return this.path; }
@@ -135,7 +134,7 @@ namespace PluginCore
                 try
                 {
                     if (System.IO.Path.IsPathRooted(path) 
-                        && !System.IO.Directory.Exists(path) && !System.IO.File.Exists(path))
+                        && !Directory.Exists(path) && !File.Exists(path))
                         return false;
                 }
                 catch { return false; }

@@ -1,12 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
+﻿using System.IO;
 using System.Xml.Serialization;
-using Microsoft.Win32;
 
 namespace FlashDebugger
 {

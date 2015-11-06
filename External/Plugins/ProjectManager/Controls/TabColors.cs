@@ -1,12 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
-using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Managers;
-using ProjectManager;
+using System.Drawing;
+using System.IO;
 using PluginCore;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ProjectManager.Controls
 {

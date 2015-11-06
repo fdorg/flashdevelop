@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using ProjectManager.Projects.AS3;
 using PluginCore;
+using PluginCore.Managers;
+using System.Linq;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -17,7 +19,7 @@ namespace ProjectManager.Controls.TreeView
     /// <summary>
     /// The Project Explorer TreeView
     /// </summary>
-    public class ProjectTreeView : DragDropTreeView
+    public class ProjectTreeView : DragDropTreeView, IEventHandler
     {
         Dictionary<string, GenericNode> nodeMap;
         List<Project> projects = new List<Project>();
@@ -35,6 +37,37 @@ namespace ProjectManager.Controls.TreeView
             MultiSelect = true;
             nodeMap = new Dictionary<string, GenericNode>();
             ShowNodeToolTips = true;
+
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
+        }
+
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme)
+            {
+                RefreshColors();
+            }
+        }
+
+        private void RefreshColors()
+        {
+            BeginUpdate();
+
+            RefreshNodeColors(Nodes, true);
+
+            EndUpdate();
+        }
+
+        void RefreshNodeColors(TreeNodeCollection nodes, bool recursive)
+        {
+            foreach (var node in nodes.Cast<GenericNode>())
+            {
+                if (recursive) RefreshNodeColors(node.Nodes, recursive);
+
+                node.BackColor = this.BackColor;
+                node.ForeColor = this.ForeColor;
+                node.ForeColorRequest = this.ForeColor;
+            }
         }
 
         public Project ProjectOf(string path)

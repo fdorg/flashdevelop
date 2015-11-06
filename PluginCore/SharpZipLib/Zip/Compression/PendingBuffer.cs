@@ -161,7 +161,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                 throw new SharpZipBaseException("Debug check: start != 0");
             }
 #endif
-            System.Array.Copy(block, offset, buffer_, end, length);
+            Array.Copy(block, offset, buffer_, end, length);
             end += length;
         }
 
@@ -266,11 +266,11 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 
             if (length > end - start) {
                 length = end - start;
-                System.Array.Copy(buffer_, start, output, offset, length);
+                Array.Copy(buffer_, start, output, offset, length);
                 start = 0;
                 end = 0;
             } else {
-                System.Array.Copy(buffer_, start, output, offset, length);
+                Array.Copy(buffer_, start, output, offset, length);
                 start += length;
             }
             return length;
@@ -286,7 +286,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         public byte[] ToByteArray()
         {
             byte[] result = new byte[end - start];
-            System.Array.Copy(buffer_, start, result, 0, result.Length);
+            Array.Copy(buffer_, start, result, 0, result.Length);
             start = 0;
             end = 0;
             return result;

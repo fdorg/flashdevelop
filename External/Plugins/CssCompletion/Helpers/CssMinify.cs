@@ -1,9 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.IO.Compression;
-using System.Net;
 using System.Text;
-using System.Web;
 
 /**
  * Credit: http://www.ko-sw.com/Blog/post/An-Ultra-Fast-CSS-Minify-Algorithm.aspx

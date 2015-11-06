@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Reflection;
 using PluginCore;
 using PluginCore.Localization;
 using ASCompletion.Model;
-using ASClassWizard.Wizards;
-using ASClassWizard.Resources;
 using PluginCore.Controls;
 
 namespace ASClassWizard.Wizards
 {
     public partial class ClassBrowser : SmartForm
     {
-
         private MemberList all;
         private List<GListBox.GListBoxItem> dataProvider;
         private FlagType invalidFlag;
@@ -78,20 +70,22 @@ namespace ASClassWizard.Wizards
 
         private void ClassBrowser_Load(object sender, EventArgs e)
         {
-            ASClassWizard.Wizards.GListBox.GListBoxItem node;
+            GListBox.GListBoxItem node;
             this.itemList.BeginUpdate();
             this.itemList.Items.Clear();
             if (this.ClassList != null)
             {
                 foreach (MemberModel item in this.ClassList)
                 {
+                    // exclude types imported in the current file
+                    if (item.Name != item.Type) continue;
                     if (ExcludeFlag > 0) if ((item.Flags & ExcludeFlag) > 0) continue;
                     if (IncludeFlag > 0)
                     {
                         if (!((item.Flags & IncludeFlag) > 0)) continue;
                     }
                     if (this.itemList.Items.Count > 0 && item.Name == this.itemList.Items[this.itemList.Items.Count - 1].ToString()) continue;
-                    node = new ASClassWizard.Wizards.GListBox.GListBoxItem(item.Name, (item.Flags & FlagType.Interface) > 0 ? 6 : 8);
+                    node = new GListBox.GListBoxItem(item.Name, (item.Flags & FlagType.Interface) > 0 ? 6 : 8);
                     this.itemList.Items.Add(node);
                     this.DataProvider.Add(node);
                 }
@@ -106,11 +100,10 @@ namespace ASClassWizard.Wizards
         }
 
         /// <summary>
-        /// Filder the list
+        /// Filter the list
         /// </summary>
-        private void filterBox_TextChanged( Object sender, EventArgs e)
+        private void filterBox_TextChanged(Object sender, EventArgs e)
         {
-            string text = this.filterBox.Text;
             this.itemList.BeginUpdate();
             this.itemList.Items.Clear();
 
@@ -138,11 +131,9 @@ namespace ASClassWizard.Wizards
         }
 
         /// <summary>
-        /// Filder the results
+        /// Filter the results
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        private bool FindAllItems( GListBox.GListBoxItem item )
+        private bool FindAllItems(GListBox.GListBoxItem item)
         {
             if (matchLen == 0) return true;
             int score = PluginCore.Controls.CompletionList.SmartMatch(item.Text, matchToken, matchLen);
@@ -162,28 +153,12 @@ namespace ASClassWizard.Wizards
         /// <summary>
         /// Select None button click
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void cancelButton_Click(object sender, EventArgs e)
         {
             this.itemList.SelectedItem = null;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
         }
 
-
-        /// <summary>
-        /// Ok button click
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void okButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
-
-        private void itemList_DoubleClick( object sender, EventArgs e )
+        private void itemList_DoubleClick(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
             this.Close();

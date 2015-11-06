@@ -1,0 +1,9 @@
+<platform name="hxml" targets="" debugger="flash"
+  external="cmd" external-capture="" default-project="build.hxml,autocomplete.hxml">
+  <versions>
+    <version value="1.0">
+      <command name="display" value="type $(OutputFile)"/>
+      <command name="build" value="haxe $(OutputFile)"/>
+    </version>
+  </versions>
+</platform>

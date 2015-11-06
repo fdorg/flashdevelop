@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
@@ -101,7 +100,7 @@ namespace FlashDevelop.Controls
             this.addressComboBox.Size = new System.Drawing.Size(450, 21);
             this.addressComboBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.addressComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddressComboBoxKeyPress);
-            this.addressComboBox.SelectedIndexChanged += new System.EventHandler(this.AddressComboBoxSelectedIndexChanged);
+            this.addressComboBox.FlatCombo.SelectedIndexChanged += new System.EventHandler(this.AddressComboBoxSelectedIndexChanged);
             // 
             // goButton
             //
@@ -159,7 +158,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Accessor for the addressComboBox
         /// </summary>
-        public ToolStripComboBox AddressBox
+        public ToolStripComboBoxEx AddressBox
         {
             get { return this.addressComboBox; }
         }
@@ -180,8 +179,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void InitializeInterface()
         {
-            this.toolStrip.Renderer = new DockPanelStripRenderer(true);
             this.addressComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
+            this.toolStrip.Renderer = new DockPanelStripRenderer(true, false);
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             if (ScaleHelper.GetScale() >= 1.5)
             {

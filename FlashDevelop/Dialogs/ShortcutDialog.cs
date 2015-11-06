@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Collections;
@@ -213,7 +212,7 @@ namespace FlashDevelop.Dialogs
         {
             ContextMenuStrip cms = new ContextMenuStrip();
             cms.Font = Globals.Settings.DefaultFont;
-            cms.Renderer = new DockPanelStripRenderer(false);
+            cms.Renderer = new DockPanelStripRenderer(false, false);
             this.removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcutClick);
             this.removeShortcut.ShortcutKeys = Keys.Delete;
             this.revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
@@ -222,7 +221,7 @@ namespace FlashDevelop.Dialogs
             cms.Items.Add(this.revertToDefault);
             cms.Items.Add(this.revertAllToDefault);
             this.listView.ContextMenuStrip = cms;
-            this.listView.ContextMenuStrip.Opening += this.ContextMenuOpening;
+            cms.Opening += this.ContextMenuOpening;
         }
 
         /// <summary>

@@ -115,9 +115,9 @@ namespace WeifenLuo.WinFormsUI.Docking
         private const int _DocumentButtonGapTop = 2;
         private const int _DocumentButtonGapBottom = 3;
         private const int _DocumentButtonGapBetween = 0;
-        private const int _DocumentButtonGapRight = 0;
+        private const int _DocumentButtonGapRight = 2;
         private const int _DocumentTabGapTop = 2;
-        private const int _DocumentTabGapLeft = 2;
+        private const int _DocumentTabGapLeft = 0;
         private const int _DocumentTabGapRight = 3;
         private const int _DocumentIconGapBottom = 2;
         private const int _DocumentIconGapLeft = 8;
@@ -438,7 +438,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolBorderColor");
                 if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark;
+                else return Pens.Transparent;
             }
         }
 
@@ -569,6 +569,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_selectMenu.Font = PluginCore.PluginBase.Settings.DefaultFont;
             m_selectMenu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             m_selectMenu.Renderer = new DockPanelStripRenderer(false);
+            m_selectMenu.MouseWheel += ContextMenu_MouseWheel;
 
             ResumeLayout();
         }
@@ -729,7 +730,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             rectTab.X -= rectTab.Height / 2;
             rectTab.Intersect(TabsRectangle);
             rectTab = RectangleToScreen(DrawHelper.RtlTransform(this, rectTab));
-            int y = rectTab.Top;
             Rectangle rectPaneClient = DockPane.RectangleToScreen(DockPane.ClientRectangle);
 
             GraphicsPath path = new GraphicsPath();
@@ -748,7 +748,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             Rectangle rectTab = GetTabRectangle(index);
             rectTab.Intersect(TabsRectangle);
             rectTab = RectangleToScreen(DrawHelper.RtlTransform(this, rectTab));
-            int y = rectTab.Top;
             Rectangle rectPaneClient = DockPane.RectangleToScreen(DockPane.ClientRectangle);
 
             GraphicsPath path = new GraphicsPath();
@@ -1113,7 +1112,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 curveSize = 1;
             }
-            
 
             GraphicsPath.Reset();
             Rectangle rect = GetTabRectangle(Tabs.IndexOf(tab));
@@ -1121,6 +1119,12 @@ namespace WeifenLuo.WinFormsUI.Docking
                 rect = DrawHelper.RtlTransform(this, rect);
             if (toScreen)
                 rect = RectangleToScreen(rect);
+
+            if (tabStyle == "Rect")
+            {
+                GraphicsPath.AddRectangle(rect);
+                return GraphicsPath;
+            }
 
             // Draws the full angle piece for active content (or first tab)
             if (tab.Content == DockPane.ActiveContent || full || Tabs.IndexOf(tab) == FirstDisplayingTab)
@@ -1224,6 +1228,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     Point pt2 = new Point(rect.Right, rect.Bottom - ToolWindowTabSeperatorGapBottom); 
                     g.DrawLine(PenToolWindowTabBorder, DrawHelper.RtlTransform(this, pt1), DrawHelper.RtlTransform(this, pt2));
                 }*/
+                g.DrawPath(PenToolWindowTabInactiveBorder, path);
                 TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, Font, rectText, ColorToolWindowInactiveText, ToolWindowTextFormat);
             }
 
@@ -1438,6 +1443,51 @@ namespace WeifenLuo.WinFormsUI.Docking
             SelectMenu.Show(ButtonWindowList, x, y);
         }
 
+        private static readonly Action<ToolStrip, int> ScrollInternal
+            = (Action<ToolStrip, int>)Delegate.CreateDelegate(typeof(Action<ToolStrip, int>),
+                typeof(ToolStrip).GetMethod("ScrollInternal",
+                    System.Reflection.BindingFlags.NonPublic
+                    | System.Reflection.BindingFlags.Instance));
+
+        private static readonly Action<ToolStripDropDownMenu> UpdateScrollButtonStatus
+            = (Action<ToolStripDropDownMenu>)Delegate.CreateDelegate(typeof(Action<ToolStripDropDownMenu>),
+                typeof(ToolStripDropDownMenu).GetMethod("UpdateScrollButtonStatus",
+                    System.Reflection.BindingFlags.NonPublic
+                    | System.Reflection.BindingFlags.Instance));
+
+        private void ContextMenu_MouseWheel(object sender, MouseEventArgs e)
+        {
+            /* Default size, can it be changed? if so we can get it with:
+            ((ToolStripItem)typeof(ToolStripDropDownMenu).GetProperty ("DownScrollButton", 
+                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance ).GetValue(ts, null)).
+                 GetPreferredSize(Size.Empty).Height
+            */
+            const int scrollButtonHeight = 9;
+
+            var ts = (ContextMenuStrip)sender;
+            int delta = e.Delta;
+            if (ts.Items.Count == 0)
+                return;
+            var firstItem = ts.Items[0];
+            var lastItem = ts.Items[ts.Items.Count - 1];
+            if (lastItem.Bounds.Bottom < ts.Height && firstItem.Bounds.Top > 0)
+                return;
+            delta = delta / -4;
+            if (delta < 0 && firstItem.Bounds.Top - delta > scrollButtonHeight)
+            {
+                delta = firstItem.Bounds.Top - scrollButtonHeight;
+            }
+            else if (delta > 0 && delta > lastItem.Bounds.Bottom - ts.Height + scrollButtonHeight * 2)
+            {
+                delta = lastItem.Bounds.Bottom - ts.Height + scrollButtonHeight * 2;
+            }
+            if (delta != 0)
+            {
+                ScrollInternal(ts, delta);
+                UpdateScrollButtonStatus(ts);
+            }
+        }
+
         private void ContextMenuItem_Up(object sender, MouseEventArgs e)
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
@@ -1512,7 +1562,6 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         protected internal override int HitTest(Point ptMouse)
         {
-            Rectangle rectTabStrip = TabsRectangle;
             if (!TabsRectangle.Contains(ptMouse))
                 return -1;
 

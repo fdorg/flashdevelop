@@ -48,7 +48,7 @@ namespace TaskListPanel
         private ColumnHeader columnName;
         private ColumnHeader columnPath;
         private BackgroundWorker bgWork;
-        private ListView listView;
+        private ListViewEx listView;
 
         // Regex
         static private Regex reClean = new Regex(@"(\*)?\*/.*", RegexOptions.Compiled);
@@ -65,6 +65,7 @@ namespace TaskListPanel
             this.listView.ListViewItemSorter = this.columnSorter;
             Settings settings = (Settings)pluginMain.Settings;
             this.filesCache = new Dictionary<String, DateTime>();
+            EventManager.AddEventHandler(this, EventType.Keys); // Listen Esc
             try
             {
                 if (settings.GroupValues.Length > 0)
@@ -98,7 +99,7 @@ namespace TaskListPanel
         /// </summary>
         private void InitializeComponent()
         {
-            this.listView = new System.Windows.Forms.ListView();
+            this.listView = new System.Windows.Forms.ListViewEx();
             this.columnIcon = new System.Windows.Forms.ColumnHeader();
             this.columnPos = new System.Windows.Forms.ColumnHeader();
             this.columnType = new System.Windows.Forms.ColumnHeader();
@@ -239,7 +240,6 @@ namespace TaskListPanel
             this.columnText.Text = TextHelper.GetString("Column.Description");
             this.columnName.Text = TextHelper.GetString("Column.File");
             this.columnPath.Text = TextHelper.GetString("Column.Path");
-            this.columnPath.Width = -2; // Extend last column
         }
 
         /// <summary>
@@ -522,7 +522,7 @@ namespace TaskListPanel
             this.parseTimer.Stop();
             this.RefreshEnabled = true;
             this.toolStripLabel.Text = "";
-            if (this.firstExecutionCompleted == false)
+            if (!this.firstExecutionCompleted)
             {
                 EventManager.AddEventHandler(this, EventType.FileSwitch | EventType.FileSave);
             }
@@ -563,7 +563,6 @@ namespace TaskListPanel
                     this.listView.Items.Add(item);
                     this.AddToGroup(item, path);
                 }
-                this.columnPath.Width = -2; // Extend last column
             }
         }
 
@@ -605,7 +604,6 @@ namespace TaskListPanel
                     this.listView.Items.Add(item);
                     this.AddToGroup(item, path);
                 }
-                this.columnPath.Width = -2; // Extend last column
             }
         }
 
@@ -787,7 +785,7 @@ namespace TaskListPanel
         /// <summary>
         /// Handles the internal events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (!this.isEnabled) return;
             ITabbedDocument document;
@@ -812,6 +810,18 @@ namespace TaskListPanel
                 case EventType.FileSave:
                     document = PluginBase.MainForm.CurrentDocument;
                     if (document.IsEditable) RefreshCurrentFile(document.SciControl);
+                    break;
+                case EventType.Keys:
+                    Keys keys = (e as KeyEvent).Value;
+                    if (this.ContainsFocus && keys == Keys.Escape)
+                    {
+                        ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+                        if (doc != null && doc.IsEditable)
+                        {
+                            doc.SciControl.Focus();
+                            e.Handled = true;
+                        }
+                    }
                     break;
             }
         }

@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing.Design;
-using System.Windows.Forms.Design;
 using System.ComponentModel;
-using PluginCore.Localization;
+using ASCompletion.Settings;
 using PluginCore;
-using System.IO;
+using PluginCore.Localization;
 
 namespace LoomContext
 {
@@ -14,7 +10,7 @@ namespace LoomContext
     public delegate void InstalledSDKsChangedEvent();
 
     [Serializable]
-    public class LoomSettings : ASCompletion.Settings.IContextSettings
+    public class LoomSettings : IContextSettings
     {
         [field: NonSerialized]
         public event ClasspathChangedEvent OnClasspathChanged;
@@ -210,7 +206,7 @@ namespace LoomContext
 
         [DisplayName("AS3 Classpath")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS3Context.Description.AS3Classpath"), DefaultValue(DEFAULT_AS3LIBRARY)]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string AS3ClassPath
         {
             get { return as3ClassPath; }

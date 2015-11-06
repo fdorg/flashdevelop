@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace CodeFormatter.InfoCollector
 {
@@ -31,7 +30,7 @@ namespace CodeFormatter.InfoCollector
 
         public static bool isJavaIdentifierPart(char ch)
         {
-            return Char.IsLetterOrDigit(ch) || ch == '_';
+            return Char.IsLetterOrDigit(ch) || ch == '_' || ch == '$';
         }
 
     }

@@ -9,7 +9,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "5.0.0"
+!define VERSION "5.1.0"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "FlashDevelop.org"
@@ -94,6 +94,17 @@ InstType "un.Full"
 ;--------------------------------
 
 ; Functions
+
+Function GetIsWine
+	
+	Push $0
+	ClearErrors
+	EnumRegKey $0 HKLM "SOFTWARE\Wine" 0
+	IfErrors 0 +2
+	StrCpy $0 "not_found"
+	Exch $0
+	
+FunctionEnd
 
 Function GetDotNETVersion
 	
@@ -230,6 +241,16 @@ Section "FlashDevelop" Main
 
 	; Remove PluginCore from plugins...
 	Delete "$INSTDIR\Plugins\PluginCore.dll"
+	
+	; Patch CrossOver/Wine files
+	SetOverwrite on
+	SetOutPath "$INSTDIR"
+	Call GetIsWine
+	Pop $0
+	${If} $0 != "not_found"
+	SetOutPath "$INSTDIR"
+	File /r /x .svn /x .empty /x *.db "CrossOver\*.*"
+	${EndIf}
 	
 	; Write update flag file...
 	Call NotifyInstall
@@ -522,6 +543,7 @@ Section "un.FlashDevelop" UninstMain
 	RMDir /r "$INSTDIR\Snippets"
 	RMDir /r "$INSTDIR\Templates"
 	
+	Delete "$INSTDIR\FDMT.cmd"
 	Delete "$INSTDIR\README.txt"
 	Delete "$INSTDIR\FirstRun.fdb"
 	Delete "$INSTDIR\Exceptions.log"

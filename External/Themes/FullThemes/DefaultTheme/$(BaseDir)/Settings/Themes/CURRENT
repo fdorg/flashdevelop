@@ -1,4 +1,50 @@
+### Default.fdi
+
+# FD UI THEME (5.1+)
+
+#ListView.Highlight=#ffa500
+#ListView.HighlightText=#ffa500
+#TreeView.Highlight=#ffa500
+#TreeView.HighlightText=#ffa500
+
+#FlashLogViewer.DebugColor
+#FlashLogViewer.WarningColor
+#FlashLogViewer.ErrorColor
+
+#OutputPanel.InfoColor=#808080
+#OutputPanel.DebugColor=#000000
+#OutputPanel.WarningColor=#ffa500
+#OutputPanel.ErrorColor=#ff0000
+#OutputPanel.FatalColor=#ff00ff
+#OutputPanel.ProcessStartColor=#ff0000
+#OutputPanel.ProcessEndColor=ff0000
+#OutputPanel.HighlightColor=#ff0000
+
+#DataTreeControl.GrayText=#808080
+#DataTreeControl.ErrorText=#ff0000
+#DataTreeControl.HighlightText=#ffffff
+#DataTreeControl.LineColor=#808080
+
+#ProjectTreeView.InputColor=#0000ff
+#ProjectTreeView.SubItemColor=#808080
+#ProjectTreeView.ErrorColor=#ff0000
+
+#CompletionList.SelectedTextColor=#ff0000
+#CompletionList.SelectedBackColor=#ff0000
+#CompletionList.PackageColor=#ff0000
+
+#MethodCallTip.SelectedFore=#ffffff
+#MethodCallTip.SelectedBack=#0000ff
+#MethodCallTip.InfoColor=#ff0000
+
+#DataGridView.LineColor=#ff0000
+#ToolStripTextBoxControl.GrayText=#808080
+#QuickFind.ErrorBack=#ff0000
+
 # FD UI THEME (5.0+)
+
+# Use inherited base styles?
+#ThemeManager.UseInheritance=True
 
 # Bright, Default, Dim, Dark, Darker, Black
 ImageManager.ImageSet=Default
@@ -15,6 +61,26 @@ VS2005AutoHideStrip.TabUnderlineColor=#ff0000
 
 # Default (Hover), Click
 DockPanel.ShowAutoHideContentOn=Hover
+
+#ScrollBar.ForeColor=#686A68
+#ScrollBar.BackColor=#A8ACAA
+#ScrollBar.BorderColor=#A8ACAA
+#ScrollBar.ActiveForeColor=#485253
+#ScrollBar.DisabledBackColor=#333F42
+#ScrollBar.DisabledBorderColor=#666D73
+#ScrollBar.CurrentPositionColor=#804000
+
+#LinkLabel.LinkColor=#ff0000
+#LinkLabel.ActiveLinkColor=#00ff00
+#LinkLabel.DisabledLinkColor=#0000ff
+
+#ColumnHeader.BackColor=#ECECEC
+#ColumnHeader.TextColor=#333333
+#ColumnHeader.BorderColor=#888888
+
+#ToolStripComboBoxControl.BorderColor=#CCCCCC
+#ToolStripComboBoxControl.ActiveBorderColor=#3897FF
+#ToolStripTextBoxControl.BorderColor=#CCCCCC
 
 #ToolStrip.BorderColor=#ff0000
 #DockWindow.BorderColor=#ff0000

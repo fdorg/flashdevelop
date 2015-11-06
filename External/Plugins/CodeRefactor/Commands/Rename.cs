@@ -1,15 +1,19 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
-using CodeRefactor.Provider;
-using PluginCore.FRService;
+using System.IO;
+using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using CodeRefactor.Provider;
 using PluginCore;
+using PluginCore.Controls;
+using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using ProjectManager.Helpers;
+using ProjectManager.Projects;
 
 namespace CodeRefactor.Commands
 {
@@ -237,7 +241,7 @@ namespace CodeRefactor.Commands
         {
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
-            PluginCore.Controls.MessageBar.Locked = true;
+            MessageBar.Locked = true;
             foreach (KeyValuePair<String, List<SearchMatch>> entry in eventArgs.Results)
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
@@ -255,7 +259,7 @@ namespace CodeRefactor.Commands
             AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
             if (this.outputResults) this.ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
-            PluginCore.Controls.MessageBar.Locked = false;
+            MessageBar.Locked = false;
             this.FireOnRefactorComplete();
         }
 
@@ -284,7 +288,7 @@ namespace CodeRefactor.Commands
             }
             else
             {
-                var project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+                var project = (Project)PluginBase.CurrentProject;
                 FileHelper.ForceMove(oldFileName, newFileName);
                 DocumentManager.MoveDocuments(oldFileName, newFileName);
                 if (project.IsDocumentClass(oldFileName))
@@ -367,9 +371,9 @@ namespace CodeRefactor.Commands
             String label = TextHelper.GetString("Label.NewName");
             String title = String.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
             String suggestion = originalName;
-            ProjectManager.Helpers.LineEntryDialog askName = new ProjectManager.Helpers.LineEntryDialog(title, label, suggestion);
-            System.Windows.Forms.DialogResult choice = askName.ShowDialog();
-            if (choice == System.Windows.Forms.DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
+            LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
+            DialogResult choice = askName.ShowDialog();
+            if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
             {
                 return askName.Line.Trim();
             }

@@ -290,9 +290,8 @@ namespace System.Windows.Forms
             if (!originalColor.Contains(node))
             {
                 originalColor[node] = node.ForeColor;
-                node.BackColor = SystemColors.Highlight;
-                node.ForeColor = SystemColors.HighlightText;
-
+                node.BackColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+                node.ForeColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
                 MultiSelectTreeNode mNode = node as MultiSelectTreeNode;
                 if (mNode != null) mNode.Painted = true;
             }
@@ -346,7 +345,7 @@ namespace System.Windows.Forms
     /// </summary>
     public class MultiSelectTreeNode : TreeNode
     {
-        Color foreColorRequest = SystemColors.ControlText;
+        Color foreColorRequest = SystemColors.WindowText;
         internal bool Painted;
 
         public Color ForeColorRequest

@@ -1,7 +1,4 @@
-using System;
-using System.IO;
 using System.Windows.Forms;
-using PluginCore.Managers;
 
 namespace PluginCore
 {
@@ -11,7 +8,7 @@ namespace PluginCore
         private static IProject solution;
         private static InstalledSDK sdk;
         private static IMainForm instance;
-        
+
         /// <summary>
         /// Activates if the sender is MainForm
         /// </summary>

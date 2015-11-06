@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using PluginCore.Utilities;
-using PluginCore.Managers;
+using ScintillaNet;
 
 namespace PluginCore.Helpers
 {
@@ -15,7 +13,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Processes the snippet and template arguments
         /// </summary>
-        public static Int32 PostProcessSnippets(ScintillaNet.ScintillaControl sci, Int32 currentPosition)
+        public static Int32 PostProcessSnippets(ScintillaControl sci, Int32 currentPosition)
         {
             Int32 delta = 0;
             while (sci.SelectText(BOUNDARY, 0) != -1) { sci.ReplaceSel(""); delta -= BOUNDARY.Length; }
@@ -61,7 +59,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Selects the text specified in the action point
         /// </summary>
-        public static void ExecuteActionPoint(ActionPoint point, ScintillaNet.ScintillaControl sci)
+        public static void ExecuteActionPoint(ActionPoint point, ScintillaControl sci)
         {
             if (point.EntryPosition != -1 && point.ExitPosition != -1)
             {
@@ -79,7 +77,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Inserts the specified snippet to the document
         /// </summary>
-        public static Int32 InsertSnippetText(ScintillaNet.ScintillaControl sci, Int32 currentPosition, String snippet)
+        public static Int32 InsertSnippetText(ScintillaControl sci, Int32 currentPosition, String snippet)
         {
             sci.BeginUndoAction();
             try

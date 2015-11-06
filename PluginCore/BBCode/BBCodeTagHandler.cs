@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PluginCore.BBCode
 {
@@ -55,7 +54,7 @@ namespace PluginCore.BBCode
                 return false;
 
             _tmName = _tm.tagName;
-            if (_tmName == null || _tmName.Length < 1)
+            if (string.IsNullOrEmpty(_tmName))
                 return false;
 
             _tmName = _tmName.ToUpper();
@@ -131,7 +130,7 @@ namespace PluginCore.BBCode
             if (tmpSymbol == "\"" || tmpSymbol == "'")
                 fontName = fontName.Substring(0, fontName.Length - 1);
 
-            tm.bbCodeStyle.fontName = (fontName.Length < 1) ? null : fontName;
+            tm.bbCodeStyle.fontName = fontName.Length == 0 ? null : fontName;
             return true;
         }
 
@@ -177,7 +176,7 @@ namespace PluginCore.BBCode
 
         protected BBCodeStyle.Color _extractTagColor(String tagColorParam)
         {
-            if (tagColorParam == null || tagColorParam.Length < 1 || tagColorParam.Substring(0, 1) != "#")
+            if (string.IsNullOrEmpty(tagColorParam) || tagColorParam.Substring(0, 1) != "#")
                 return null;
 
             String p = tagColorParam.Substring(1);

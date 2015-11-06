@@ -9,13 +9,14 @@ using FlashDevelop.Utilities;
 using FlashDevelop.Helpers;
 using PluginCore.FRService;
 using PluginCore.Managers;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using ScintillaNet;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class FRInDocDialog : Form
+    public class FRInDocDialog : SmartForm
     {
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Label findLabel;
@@ -43,6 +44,7 @@ namespace FlashDevelop.Dialogs
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "24910809-a60a-4b7c-8d2a-d53a363f595f";
             this.InitializeComponent();
             this.InitializeProperties();
             this.ApplyLocalizedTexts();
@@ -82,7 +84,8 @@ namespace FlashDevelop.Dialogs
             this.SuspendLayout();
             // 
             // replaceButton
-            // 
+            //
+            this.replaceButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.replaceButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceButton.Location = new System.Drawing.Point(277, 112);
             this.replaceButton.Name = "replaceButton";
@@ -93,6 +96,7 @@ namespace FlashDevelop.Dialogs
             // 
             // findNextButton
             // 
+            this.findNextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.findNextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findNextButton.Location = new System.Drawing.Point(277, 22);
             this.findNextButton.Name = "findNextButton";
@@ -125,6 +129,7 @@ namespace FlashDevelop.Dialogs
             // 
             // closeButton
             //
+            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(277, 172);
             this.closeButton.Name = "closeButton";
@@ -135,6 +140,7 @@ namespace FlashDevelop.Dialogs
             // 
             // findPrevButton
             // 
+            this.findPrevButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.findPrevButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findPrevButton.Location = new System.Drawing.Point(277, 52);
             this.findPrevButton.Name = "findPrevButton";
@@ -144,7 +150,8 @@ namespace FlashDevelop.Dialogs
             this.findPrevButton.Click += new System.EventHandler(this.FindPrevButtonClick);
             // 
             // findComboBox
-            // 
+            //
+            this.findComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.findComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findComboBox.Location = new System.Drawing.Point(13, 23);
             this.findComboBox.Name = "findComboBox";
@@ -187,6 +194,7 @@ namespace FlashDevelop.Dialogs
             // 
             // infoPictureBox
             //
+            this.infoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.infoPictureBox.BackColor = System.Drawing.SystemColors.Control;
             this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.infoPictureBox.Location = new System.Drawing.Point(14, 202);
@@ -196,7 +204,8 @@ namespace FlashDevelop.Dialogs
             this.infoPictureBox.TabStop = false;
             // 
             // infoLabel
-            // 
+            //
+            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.infoLabel.AutoSize = true;
             this.infoLabel.BackColor = System.Drawing.SystemColors.Control;
             this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -208,7 +217,8 @@ namespace FlashDevelop.Dialogs
             this.infoLabel.Text = "No suitable results found.";
             // 
             // optionsGroupBox
-            // 
+            //
+            this.optionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.optionsGroupBox.Controls.Add(this.useRegexCheckBox);
             this.optionsGroupBox.Controls.Add(this.escapedCheckBox);
             this.optionsGroupBox.Controls.Add(this.wholeWordCheckBox);
@@ -222,7 +232,8 @@ namespace FlashDevelop.Dialogs
             this.optionsGroupBox.Text = " Options";
             // 
             // replaceComboBox
-            // 
+            //
+            this.replaceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.replaceComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceComboBox.Location = new System.Drawing.Point(13, 62);
             this.replaceComboBox.Name = "replaceComboBox";
@@ -241,7 +252,8 @@ namespace FlashDevelop.Dialogs
             this.replaceLabel.Text = "Replace with:";
             // 
             // replaceAllButton
-            // 
+            //
+            this.replaceAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.replaceAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceAllButton.Location = new System.Drawing.Point(277, 142);
             this.replaceAllButton.Name = "replaceAllButton";
@@ -251,7 +263,8 @@ namespace FlashDevelop.Dialogs
             this.replaceAllButton.Click += new System.EventHandler(this.ReplaceAllButtonClick);
             // 
             // lookComboBox
-            // 
+            //
+            this.lookComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lookComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.lookComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lookComboBox.Items.AddRange(new object[] {
@@ -277,7 +290,8 @@ namespace FlashDevelop.Dialogs
             this.lookLabel.Text = "Look in:";
             // 
             // bookmarkAllButton
-            // 
+            //
+            this.bookmarkAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bookmarkAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.bookmarkAllButton.Location = new System.Drawing.Point(277, 82);
             this.bookmarkAllButton.Name = "bookmarkAllButton";
@@ -293,6 +307,8 @@ namespace FlashDevelop.Dialogs
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 228);
+            this.MinimumSize = new System.Drawing.Size(384, 268);
+            //this.MaximumSize = new System.Drawing.Size(1000, 268);
             this.Controls.Add(this.bookmarkAllButton);
             this.Controls.Add(this.replaceComboBox);
             this.Controls.Add(this.lookComboBox);
@@ -308,11 +324,12 @@ namespace FlashDevelop.Dialogs
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.findLabel);
             this.Controls.Add(this.findNextButton);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FRInDocDialog";
             this.ShowInTaskbar = false;
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Find And Replace";
             this.Load += new System.EventHandler(this.DialogLoad);
@@ -351,7 +368,7 @@ namespace FlashDevelop.Dialogs
             this.bookmarkAllButton.Text = TextHelper.GetString("Label.BookmarkAll");
             this.replaceAllButton.Text = TextHelper.GetString("Label.ReplaceAll");
             this.replaceButton.Text = TextHelper.GetString("Label.Replace").Replace("...", "");
-            this.closeButton.Text = TextHelper.GetString("Label.Close");
+            this.closeButton.Text = TextHelper.GetString("Label.Close").Replace("&", "");
             this.lookComboBox.Items[0] = TextHelper.GetString("Info.FullSourceCode");
             this.lookComboBox.Items[1] = TextHelper.GetString("Info.CurrentSelection");
             this.lookComboBox.Items[2] = TextHelper.GetString("Info.CodeAndStrings");
@@ -626,15 +643,21 @@ namespace FlashDevelop.Dialogs
             this.CenterToParent();
         }
 
-        protected override bool ProcessDialogKey(Keys keyData)
+        /// <summary>
+        /// Process shortcuts
+        /// </summary>
+        protected override Boolean ProcessDialogKey(Keys keyData)
         {
-            if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
+            if (keyData == (Keys.Control | Keys.F))
             {
-                FindNext(false, false);
-
+                this.findComboBox.Focus();
                 return true;
             }
-
+            else if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
+            {
+                this.FindNext(false, false);
+                return true;
+            }
             return base.ProcessDialogKey(keyData);
         }
 
@@ -654,12 +677,13 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private List<SearchMatch> GetResults(ScintillaControl sci, Boolean simple)
         {
-            if (this.findComboBox.Text != String.Empty)
+            if (IsValidPattern())
             {
                 String pattern = this.findComboBox.Text;
                 FRSearch search = new FRSearch(pattern);
                 search.NoCase = !this.matchCaseCheckBox.Checked;
                 search.Filter = SearchFilter.None;
+                search.SourceFile = sci.FileName;
                 if (!simple)
                 {
                     search.IsRegex = this.useRegexCheckBox.Checked;
@@ -685,6 +709,28 @@ namespace FlashDevelop.Dialogs
         private List<SearchMatch> GetResults(ScintillaControl sci)
         {
             return this.GetResults(sci, false);
+        }
+
+        /// <summary>
+        /// Control user pattern
+        /// </summary>
+        private bool IsValidPattern()
+        {
+            String pattern = this.findComboBox.Text;
+            if (pattern.Length == 0) return false;
+            if (this.useRegexCheckBox.Checked)
+            {
+                try
+                {
+                    new Regex(pattern);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowInfo(ex.Message); 
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>

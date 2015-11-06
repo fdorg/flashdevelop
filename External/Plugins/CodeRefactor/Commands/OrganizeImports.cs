@@ -1,12 +1,13 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using ScintillaNet;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using ScintillaNet.Lexers;
 
 namespace CodeRefactor.Commands
 {
@@ -30,7 +31,7 @@ namespace CodeRefactor.Commands
             ScintillaControl sci = SciControl == null ? PluginBase.MainForm.CurrentDocument.SciControl : SciControl;
             Int32 pos = sci.CurrentPos;
             List<MemberModel> imports = new List<MemberModel>(context.CurrentModel.Imports.Items);
-            int cppPpStyle = (int)ScintillaNet.Lexers.CPP.PREPROCESSOR;
+            int cppPpStyle = (int)CPP.PREPROCESSOR;
             for (Int32 i = imports.Count - 1; i >= 0; i--)
             {
                 bool isPP = sci.LineIsInPreprocessor(sci, cppPpStyle, imports[i].LineTo);
@@ -152,7 +153,7 @@ namespace CodeRefactor.Commands
             imports.Sort(comparerType);
             sci.GotoLine(line);
             Int32 curLine = 0;
-            List<String> uniques = this.GetUniqueImports(imports, searchInText);
+            List<String> uniques = this.GetUniqueImports(imports, searchInText, sci.FileName);
             // correct position compensation for private imports
             DeletedImportsCompensation = imports.Count - uniques.Count;
             String prevPackage = null;
@@ -181,12 +182,12 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets the unique string list of imports
         /// </summary>
-        private List<String> GetUniqueImports(List<MemberModel> imports, String searchInText)
+        private List<String> GetUniqueImports(List<MemberModel> imports, String searchInText, String sourceFile)
         {
             List<String> results = new List<String>();
             foreach (MemberModel import in imports)
             {
-                if (!results.Contains(import.Type) && MemberTypeImported(import.Name, searchInText))
+                if (!results.Contains(import.Type) && MemberTypeImported(import.Name, searchInText, sourceFile))
                 {
                     results.Add(import.Type);
                 }
@@ -197,13 +198,14 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Checks if the member type is imported
         /// </summary>
-        private Boolean MemberTypeImported(String type, String searchInText)
+        private Boolean MemberTypeImported(String type, String searchInText, String sourceFile)
         {
             if (type == "*") return true;
             FRSearch search = new FRSearch(type);
             search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
             search.NoCase = false;
             search.WholeWord = true;
+            search.SourceFile = sourceFile;
             return search.Match(searchInText) != null;
         }
 

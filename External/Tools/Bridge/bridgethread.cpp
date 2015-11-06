@@ -4,6 +4,8 @@
 #include "bridgethread.h"
 #define EOL "*"
 
+bool BridgeThread::pathNotified = false;
+
 BridgeThread::BridgeThread(int descriptor, QObject *parent) : QObject(parent)
 {
     socketDescriptor = descriptor;
@@ -13,6 +15,13 @@ BridgeThread::BridgeThread(int descriptor, QObject *parent) : QObject(parent)
     {
         qDebug() << "Socket init error:" << client->errorString();
         return;
+    }
+    if (!BridgeThread::pathNotified)
+    {
+        qDebug() << "Notify bridge path...";
+        BridgeThread::pathNotified = true;
+        QString path = QCoreApplication::applicationDirPath();
+        BridgeThread::sendMessage("BRIDGE:" + path.toUtf8());
     }
     connect(client, SIGNAL(disconnected()), this, SLOT(client_disconnected()));
     connect(client, SIGNAL(readyRead()), this, SLOT(client_readyRead()));

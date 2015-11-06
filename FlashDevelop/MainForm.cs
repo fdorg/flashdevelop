@@ -93,39 +93,6 @@ namespace FlashDevelop
 
         #endregion
 
-        #region Flicker Prevention
-
-        // See: http://www.angryhacker.com/blog/archive/2010/07/21/how-to-get-rid-of-flicker-on-windows-forms-applications.aspx
-
-        private Int32 originalStyle = -1;
-        private Boolean enableBuffering = true;
-
-        /// <summary>
-        /// Reduce artifacts on FlashDevelop start
-        /// </summary>
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                if (originalStyle == -1) originalStyle = base.CreateParams.ExStyle;
-                CreateParams cp = base.CreateParams;
-                if (enableBuffering) cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
-                else cp.ExStyle = originalStyle;
-                return cp;
-            }
-        }
-
-        /// <summary>
-        /// Turn off buffering after form show
-        /// </summary>
-        private void TurnOffBuffering()
-        {
-            this.enableBuffering = false;
-            this.MaximizeBox = true;
-        }
-
-        #endregion
-
         #region Private Properties
 
         /* AppMan */
@@ -636,9 +603,8 @@ namespace FlashDevelop
                     {
                         ThemeManager.LoadTheme(currentTheme);
                         ThemeManager.WalkControls(this);
+                        this.RefreshSciConfig();
                     }
-                    this.RefreshSciConfig();
-                    this.Refresh();
                 }
                 return null;
             }
@@ -725,7 +691,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Initializes the config detection
+        /// Initializes the theme and config detection
         /// </summary>
         private void InitializeConfig()
         {
@@ -745,6 +711,9 @@ namespace FlashDevelop
                     File.Delete(appman);
                     this.refreshConfig = true;
                 }
+                // Load current theme for applying later
+                String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
                 // Apply FD dir and appman dir to PATH
                 String amPath = Path.Combine(PathHelper.ToolDir, "AppMan");
                 String oldPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
@@ -767,7 +736,6 @@ namespace FlashDevelop
         {
             try
             {
-                String appman = Path.Combine(PathHelper.BaseDir, ".appman");
                 NotifyEvent ne = new NotifyEvent(EventType.AppChanges);
                 EventManager.DispatchEvent(this, ne);
             }
@@ -826,8 +794,6 @@ namespace FlashDevelop
                 this.appSettings = (SettingObject)obj;
             }
             SettingObject.EnsureValidity(this.appSettings);
-            String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-            if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
             PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
             FileStateManager.RemoveOldStateFiles();
         }
@@ -1054,7 +1020,7 @@ namespace FlashDevelop
             //
             this.AllowDrop = true;
             this.Name = "MainForm";
-            this.Text = "FlashDevelop";
+            this.Text = DistroConfig.DISTRIBUTION_NAME;
             this.Controls.Add(this.dockPanel);
             this.Controls.Add(this.toolStripPanel);
             this.Controls.Add(this.statusStrip);
@@ -1082,7 +1048,6 @@ namespace FlashDevelop
         {
             if (this.CurrentDocument == null) return;
             this.CurrentDocument.Activate(); // Activate the current document
-            TabbedDocument document = (TabbedDocument)this.CurrentDocument;
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -1092,7 +1057,6 @@ namespace FlashDevelop
         private void OnMainFormGotFocus(Object sender, System.EventArgs e)
         {
             if (this.CurrentDocument == null) return;
-            TabbedDocument document = (TabbedDocument)this.CurrentDocument;
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -1102,7 +1066,6 @@ namespace FlashDevelop
         /// </summary>
         private void OnMainFormShow(Object sender, System.EventArgs e)
         {
-            this.TurnOffBuffering();
             if (RecoveryDialog.ShouldShowDialog()) RecoveryDialog.Show();
         }
 
@@ -1450,9 +1413,9 @@ namespace FlashDevelop
             ITabbedDocument document = DocumentManager.FindDocument(sci);
             if (sci != null && document != null && document.IsEditable)
             {
-                Int32 column = sci.Column(sci.CurrentPos) + 1;
-                Int32 line = sci.CurrentLine + 1;
                 String statusText = " " + TextHelper.GetString("Info.StatusText");
+                String line = sci.CurrentLine + 1 + " / " + sci.LineCount.ToString();
+                String column = sci.Column(sci.CurrentPos) + 1 + " / " + (sci.Column(sci.LineEndPosition(sci.CurrentLine)) + 1).ToString();
                 var oldOS = this.OSVersion.Major < 6; // Vista is 6.0 and ok...
                 String file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
                 String eol = (sci.EOLMode == 0) ? "CR+LF" : ((sci.EOLMode == 1) ? "CR" : "LF");
@@ -1654,13 +1617,13 @@ namespace FlashDevelop
         {
             IProject project = PluginBase.CurrentProject;
             ITabbedDocument document = this.CurrentDocument;
-            if (project != null) this.Text = project.Name + " - FlashDevelop";
+            if (project != null) this.Text = project.Name + " - " + DistroConfig.DISTRIBUTION_NAME;
             else if (document != null && document.IsEditable)
             {
                 String file = Path.GetFileName(document.FileName);
-                this.Text = file + " - FlashDevelop";
+                this.Text = file + " - " + DistroConfig.DISTRIBUTION_NAME;
             }
-            else this.Text = "FlashDevelop";
+            else this.Text = DistroConfig.DISTRIBUTION_NAME;
         }
 
         /// <summary>
@@ -1747,11 +1710,31 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Gets a theme property color with a fallback
+        /// </summary>
+        public Color GetThemeColor(String id, Color fallback)
+        {
+            Color color = ThemeManager.GetThemeColor(id);
+            if (color != Color.Empty) return color;
+            else return fallback;
+        }
+
+        /// <summary>
         /// Gets a theme property value
         /// </summary>
         public String GetThemeValue(String id)
         {
             return ThemeManager.GetThemeValue(id);
+        }
+
+        /// <summary>
+        /// Gets a theme property value with a fallback
+        /// </summary>
+        public String GetThemeValue(String id, String fallback)
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            if (!String.IsNullOrEmpty(value)) return value;
+            else return fallback;
         }
 
         /// <summary>
@@ -1977,19 +1960,25 @@ namespace FlashDevelop
         /// </summary>
         public void CloseAllDocuments(Boolean exceptCurrent)
         {
-            Int32 closeIndex = 0;
-            Int32 documentCount = this.Documents.Length;
+            CloseAllDocuments(exceptCurrent, false);
+        }
+
+        public void CloseAllDocuments(Boolean exceptCurrent, Boolean exceptOtherPanes)
+        {
             ITabbedDocument current = this.CurrentDocument;
+            DockPane currentPane = (current == null) ? null : current.DockHandler.PanelPane;
             this.closeAllCanceled = false; this.closingAll = true;
-            for (Int32 i = 0; i < documentCount; i++)
+            var documents = new List<ITabbedDocument>(Documents);
+
+            foreach (var document in documents)
             {
-                ITabbedDocument document = this.Documents[closeIndex];
-                if (exceptCurrent)
-                {
-                    if (document != current) document.Close();
-                    else closeIndex = 1;
-                }
-                else document.Close();
+                Boolean close = true;
+                if (exceptCurrent && document == current)
+                    close = false;
+                if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane)
+                    close = false;
+                
+                if (close) document.Close();
             }
             this.closingAll = false;
         }
@@ -2256,6 +2245,11 @@ namespace FlashDevelop
                 Int32 count = this.openFileDialog.FileNames.Length;
                 for (Int32 i = 0; i < count; i++)
                 {
+                    if (encMode == 0) // Detect 8bit encoding...
+                    {
+                        Int32 codepage = FileHelper.GetFileCodepage(openFileDialog.FileNames[i]);
+                        encoding = Encoding.GetEncoding(codepage);
+                    }
                     this.OpenEditableDocument(openFileDialog.FileNames[i], encoding, false);
                 }
             }
@@ -2299,6 +2293,15 @@ namespace FlashDevelop
         public void ReopenClosed(Object sender, System.EventArgs e)
         {
             OldTabsManager.OpenOldTabDocument();
+        }
+
+        /// <summary>
+        /// Clears invalid entries from the old documents list
+        /// </summary>
+        public void CleanReopenList(Object sender, System.EventArgs e)
+        {
+            FileHelper.FilterByExisting(this.appSettings.PreviousDocuments, true);
+            ButtonManager.PopulateReopenMenu();
         }
 
         /// <summary>
@@ -2577,19 +2580,19 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Closes all open documents
+        /// Closes all open documents in the current pane
         /// </summary>
         public void CloseAll(Object sender, System.EventArgs e)
         {
-            this.CloseAllDocuments(false);
+            this.CloseAllDocuments(false, true);
         }
 
         /// <summary>
-        /// Closes all open documents exept the current
+        /// Closes all open documents except the current in the current pane
         /// </summary>
         public void CloseOthers(Object sender, System.EventArgs e)
         {
-            this.CloseAllDocuments(true);
+            this.CloseAllDocuments(true, true);
         }
 
         /// <summary>
@@ -2608,7 +2611,7 @@ namespace FlashDevelop
             ScintillaControl sci = Globals.SciControl;
             String extension = Path.GetExtension(sci.FileName);
             String filename = DocumentManager.GetNewDocumentName(extension);
-            DockContent document = this.CreateEditableDocument(filename, sci.Text, sci.CodePage);
+            DockContent document = this.CreateEditableDocument(filename, sci.Text, sci.Encoding.CodePage);
             ((TabbedDocument)document).IsModified = true;
         }
 
@@ -3025,7 +3028,7 @@ namespace FlashDevelop
             {
                 ToolStripItem button = (ToolStripItem)sender;
                 String url = this.ProcessArgString(((ItemData)button.Tag).Tag);
-                DockContent document = this.CreateCustomDocument(browser);
+                this.CreateCustomDocument(browser);
                 if (url.Trim() != "") browser.WebBrowser.Navigate(url);
                 else browser.WebBrowser.GoHome();
             }
@@ -3173,7 +3176,6 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 ScintillaControl sci = Globals.SciControl;
                 Int32 encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-                sci.CodePage = ScintillaManager.SelectCodePage(encMode);
                 sci.Encoding = Encoding.GetEncoding(encMode);
                 this.OnScintillaControlUpdateControl(sci);
                 this.OnDocumentModify(this.CurrentDocument);
@@ -3188,7 +3190,6 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
                 ScintillaControl sci = Globals.SciControl;
                 sci.SaveBOM = !sci.SaveBOM;
                 this.OnScintillaControlUpdateControl(sci);
@@ -3210,10 +3211,9 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 ScintillaControl sci = Globals.SciControl;
                 Int32 encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-                Int32 curMode = sci.CodePage; // From current..
+                Int32 curMode = sci.Encoding.CodePage; // From current..
                 String converted = DataConverter.ChangeEncoding(sci.Text, curMode, encMode);
                 sci.Encoding = Encoding.GetEncoding(encMode);
-                sci.CodePage = ScintillaManager.SelectCodePage(encMode);
                 sci.Text = converted; // Set after codepage change
                 this.OnScintillaControlUpdateControl(sci);
                 this.OnDocumentModify(this.CurrentDocument);
@@ -3589,6 +3589,11 @@ namespace FlashDevelop
         /// </summary>
         public void CommentSelection(Object sender, System.EventArgs e)
         {
+            CommentSelection();
+        }
+
+        private bool? CommentSelection()
+        {
             ScintillaControl sci = Globals.SciControl;
             Int32 selEnd = sci.SelectionEnd;
             Int32 selStart = sci.SelectionStart;
@@ -3599,14 +3604,15 @@ namespace FlashDevelop
                 sci.BeginUndoAction();
                 try
                 {
-                    Int32 indexLenght = sci.SelText.Length - commentStart.Length - commentEnd.Length;
-                    String withoutComment = sci.SelText.Substring(commentStart.Length, indexLenght);
+                    Int32 indexLength = sci.SelText.Length - commentStart.Length - commentEnd.Length;
+                    String withoutComment = sci.SelText.Substring(commentStart.Length, indexLength);
                     sci.ReplaceSel(withoutComment);
                 }
                 finally
                 {
                     sci.EndUndoAction();
                 }
+                return false;
             }
             else if (sci.SelText.Length > 0)
             {
@@ -3620,7 +3626,9 @@ namespace FlashDevelop
                 {
                     sci.EndUndoAction();
                 }
+                return true;
             }
+            return null;
         }
 
         /// <summary>
@@ -3684,6 +3692,14 @@ namespace FlashDevelop
             ScintillaControl sci = Globals.SciControl;
             String lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             Int32 position = sci.CurrentPos;
+            
+            // try doing a block comment on the current line instead (xml, html...)
+            if (lineComment == "")
+            {
+                ToggleBlockOnCurrentLine(sci);
+                return;
+            }
+
             Int32 curLine = sci.LineFromPosition(position);
             Int32 startPosInLine = position - sci.PositionFromLine(curLine);
             Int32 startLine = sci.LineFromPosition(sci.SelectionStart);
@@ -3710,6 +3726,32 @@ namespace FlashDevelop
 
             if (containsCodeLine) this.CommentLine(null, null);
             else this.UncommentLine(null, null);
+        }
+
+        private void ToggleBlockOnCurrentLine(ScintillaControl sci)
+        {
+            Int32 selStart = sci.SelectionStart;
+
+            Int32 indentPos = sci.LineIndentPosition(sci.CurrentLine);
+            Int32 lineEndPos = sci.LineEndPosition(sci.CurrentLine);
+            bool afterBlockStart = sci.CurrentPos > indentPos;
+            bool afterBlockEnd = sci.CurrentPos >= lineEndPos;
+
+            sci.SelectionStart = indentPos;
+            sci.SelectionEnd = lineEndPos;
+
+            bool? added = CommentSelection();
+            if (added == null) return;
+
+            int factor = (bool)added ? 1 : -1;
+
+            String commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
+            String commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
+
+            // preserve cursor pos
+            if (afterBlockStart) selStart += commentStart.Length * factor;
+            if (afterBlockEnd) selStart += commentEnd.Length * factor;
+            sci.SetSel(selStart, selStart);
         }
 
         /// <summary>
@@ -3746,7 +3788,6 @@ namespace FlashDevelop
                     if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
                     ThemeManager.WalkControls(this);
                     this.RefreshSciConfig();
-                    this.Refresh();
                 }
             }
         }
@@ -3956,7 +3997,7 @@ namespace FlashDevelop
         /// </summary>
         public void KillProcess(Object sender, System.EventArgs e)
         {
-            KillProcess();
+            this.KillProcess();
         }
 
         /// <summary>
@@ -4018,8 +4059,7 @@ namespace FlashDevelop
             {
                 Host host = new Host();
                 String[] args = file.Split(new Char[1]{';'});
-                if (args.Length == 1 || String.IsNullOrEmpty(args[1]))
-                    return; // no file selected / the open file dialog was cancelled
+                if (args.Length == 1 || String.IsNullOrEmpty(args[1])) return; // no file selected / the open file dialog was cancelled
                 if (args[0] == "Internal") host.ExecuteScriptInternal(args[1], false);
                 else if (args[0] == "Development") host.ExecuteScriptInternal(args[1], true);
                 else host.ExecuteScriptExternal(file);

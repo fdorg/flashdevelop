@@ -1,14 +1,13 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
+using System.ComponentModel;
+using System.IO;
+using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace MacroManager
 {
@@ -112,7 +111,7 @@ namespace MacroManager
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.UIStarted)
             {
@@ -173,7 +172,7 @@ namespace MacroManager
         {
             MenuStrip mainMenu = PluginBase.MainForm.MenuStrip;
             this.macroMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Macros"));
-            this.editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), PluginBase.MainForm.FindImage("559"), this.EditMenuItemClick, Keys.Control | Keys.F10);
+            this.editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), null, this.EditMenuItemClick, Keys.Control | Keys.F10);
             PluginBase.MainForm.RegisterShortcutItem("MacrosMenu.EditMacros", this.editMenuItem);
             mainMenu.Items.Insert(mainMenu.Items.Count - 2, this.macroMenuItem);
         }

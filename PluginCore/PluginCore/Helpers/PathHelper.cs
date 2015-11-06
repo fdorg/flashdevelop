@@ -1,14 +1,11 @@
 using System;
 using System.IO;
-using System.Text;
-using Microsoft.Win32;
-using System.Security;
-using System.Security.Principal;
 using System.Security.AccessControl;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
+using System.Security.Principal;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using PluginCore.Managers;
 
 namespace PluginCore.Helpers
@@ -46,7 +43,7 @@ namespace PluginCore.Helpers
             get
             {
                 String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                return Path.Combine(userAppDir, "FlashDevelop");
+                return Path.Combine(userAppDir, DistroConfig.DISTRIBUTION_NAME);
             }
         }
 
@@ -249,7 +246,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static String ResolvePath(String path, String relativeTo)
         {
-            if (path == null || path.Length == 0) return null;
+            if (string.IsNullOrEmpty(path)) return null;
             Boolean isPathNetworked = path.StartsWith("\\\\") || path.StartsWith("//");
             Boolean isPathAbsSlashed = (path.StartsWith("\\") || path.StartsWith("/")) && !isPathNetworked;
             if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);

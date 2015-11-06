@@ -1,6 +1,7 @@
-using System.IO;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using PluginCore;
 using PluginCore.Helpers;
 using ProjectManager.Projects;
 
@@ -55,7 +56,7 @@ namespace ProjectManager.Controls.TreeView
             string path = BackingPath;
             string ext = Path.GetExtension(path).ToLower();
 
-            if (project.IsPathHidden(path))
+            if (project != null && project.IsPathHidden(path))
                 ImageIndex = Icons.HiddenFile.Index;
             else if ((FileInspector.IsActionScript(path, ext) || FileInspector.IsHaxeFile(path, ext)) && project.IsCompileTarget(path))
                 ImageIndex = Icons.ActionScriptCompile.Index;
@@ -72,10 +73,10 @@ namespace ProjectManager.Controls.TreeView
             Text = Path.GetFileName(path);
 
             string colorId = "ProjectTreeView.ForeColor";
-            if (project.IsLibraryAsset(path))
+            if (project != null && project.IsLibraryAsset(path))
             {
                 LibraryAsset asset = project.GetAsset(path);
-                if (asset.IsSwc)
+                if (asset != null && asset.IsSwc)
                 {
                     if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
                         colorId = "ProjectTreeView.ExternalLibraryTextColor";
@@ -89,8 +90,8 @@ namespace ProjectManager.Controls.TreeView
                     Text += " (" + asset.ManualID + ")";
             }
 
-            Color textColor = PluginCore.PluginBase.MainForm.GetThemeColor(colorId);
-            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = Color.Blue;
+            Color textColor = PluginBase.MainForm.GetThemeColor(colorId);
+            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = SystemColors.Highlight;
 
             if (textColor != Color.Empty) ForeColorRequest = textColor;
             else ForeColorRequest = SystemColors.ControlText;

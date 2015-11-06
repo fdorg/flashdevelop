@@ -1,34 +1,19 @@
-#region imports
-
 using System;
 using System.IO;
-using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Collections;
-
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Managers;
-using PluginCore.Helpers;
 using PluginCore;
-
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS3;
-using ProjectManager.Projects.AS2;
-
 using ASCompletion.Model;
 using ASCompletion.Context;
-
 using ASClassWizard.Resources;
 using ASClassWizard.Wizards;
-
-using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using System.Collections.Generic;
-
-#endregion
 
 namespace ASClassWizard
 {
@@ -121,7 +106,7 @@ namespace ASClassWizard
             // Nothing here...
         }
         
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             Project project;
             switch (e.Type)
@@ -376,7 +361,8 @@ namespace ASClassWizard
                                 foreach (MemberModel param in member.Parameters)
                                 {
                                     if (param.Name.StartsWith(".")) break;
-                                    superConstructor += (index > 0 ? ", " : "") + param.Name;
+                                    var pname = TemplateUtils.GetParamName(param);
+                                    superConstructor += (index > 0 ? ", " : "") + pname;
                                     index++;
                                 }
                                 superConstructor += ");\n" + (lastFileOptions.Language == "as3" ? "\t\t\t" : "\t\t");
@@ -464,7 +450,5 @@ namespace ASClassWizard
         }
 
         #endregion
-
     }
-    
 }

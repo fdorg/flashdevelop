@@ -19,7 +19,7 @@ namespace ResultsPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private ListView entriesView;
+        private ListViewEx entriesView;
         private ColumnHeader entryFile;
         private ColumnHeader entryDesc;
         private ColumnHeader entryLine;
@@ -49,6 +49,7 @@ namespace ResultsPanel
          
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             this.autoShow = new Timer();
             this.autoShow.Interval = 300;
@@ -72,7 +73,7 @@ namespace ResultsPanel
         /// </summary>
         private void InitializeComponent() 
         {
-            this.entriesView = new System.Windows.Forms.ListView();
+            this.entriesView = new System.Windows.Forms.ListViewEx();
             this.entryType = new System.Windows.Forms.ColumnHeader();
             this.entryLine = new System.Windows.Forms.ColumnHeader();
             this.entryDesc = new System.Windows.Forms.ColumnHeader();
@@ -304,7 +305,6 @@ namespace ResultsPanel
             this.toolStripButtonWarning.Text = "0 " + TextHelper.GetString("Filters.Warnings");
             this.toolStripButtonInfo.Text = "0 " + TextHelper.GetString("Filters.Informations");
             this.toolStripLabelFilter.Text = TextHelper.GetString("Filters.Filter");
-            this.entryPath.Width = -2; // Extend last column
         }
 
         /// <summary>
@@ -359,8 +359,7 @@ namespace ResultsPanel
         /// </summary>
         public bool CopyTextShortcut()
         {
-            if (!ContainsFocus || !entriesView.Focused)
-                return false;
+            if (!ContainsFocus || !entriesView.Focused) return false;
             CopyTextClick(null, null);
             return true;
         }
@@ -388,7 +387,7 @@ namespace ResultsPanel
         }
 
         /// <summary>
-        /// Clears any result entries that are ignored.  Invoked from the context menu.
+        /// Clears any result entries that are ignored. Invoked from the context menu.
         /// </summary>
         public void ClearIgnoredEntries(Object sender, System.EventArgs e)
         {
@@ -396,11 +395,13 @@ namespace ResultsPanel
             this.FilterResults(false);
         }
 
-        public bool IgnoreEntryShortcut()
+        /// <summary>
+        /// Ignore entry via shortcut
+        /// </summary>
+        public Boolean IgnoreEntryShortcut()
         {
-            if (!ContainsFocus || !entriesView.Focused)
-                return false;
-            IgnoreEntryClick(null, null);
+            if (!this.ContainsFocus || !this.entriesView.Focused) return false;
+            this.IgnoreEntryClick(null, null);
             return true;
         }
 
@@ -446,6 +447,9 @@ namespace ResultsPanel
             this.UpdateButtons();
         }
 
+        /// <summary>
+        /// When context menu opens, update button enabled states
+        /// </summary>
         private void ContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.nextEntry.Enabled = this.previousEntry.Enabled = this.ignoreEntriesContextMenuItem.Enabled = this.entriesView.Items.Count > 0;
@@ -460,8 +464,7 @@ namespace ResultsPanel
         {
             if (this.entriesView.SelectedItems.Count < 1) return;
             ListViewItem item = this.entriesView.SelectedItems[0];
-            if (item == null) return; 
-            Match match = (Match)item.Tag;
+            if (item == null) return;
             String file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
             file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             file = PathHelper.GetLongPathName(file);
@@ -565,6 +568,9 @@ namespace ResultsPanel
             this.UpdateButtons();
         }
 
+        /// <summary>
+        /// Disables all context menu items
+        /// </summary>
         private void DisableContextMenuItems()
         {
             foreach (ToolStripItem item in this.entriesView.ContextMenuStrip.Items)
@@ -616,7 +622,9 @@ namespace ResultsPanel
             String fileTest; Boolean inExec; Int32 icon; Int32 state;
             IProject project = PluginBase.CurrentProject;
             String projectDir = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
-            for (Int32 i = this.logCount; i < count; i++)
+            Boolean limitMode = (count - this.logCount) > 1000;
+            this.entriesView.BeginUpdate();
+            for (Int32 i = this.logCount; i < (limitMode ? 1000 : count); i++)
             {
                 entry = TraceManager.TraceLog[i];
                 if (entry.Message != null && entry.Message.Length > 7 && entry.Message.IndexOf(':') > 0)
@@ -696,7 +704,6 @@ namespace ResultsPanel
                 {
                     this.AddSquiggle(this.entriesView.Items[i]);
                 }
-                this.entryPath.Width = -2; // Extend last column
             }
             this.entriesView.EndUpdate();
         }
@@ -777,7 +784,7 @@ namespace ResultsPanel
             }
             if (found)
             {
-                if (gp.Items.Contains(item) == false)
+                if (!gp.Items.Contains(item))
                 {
                     gp.Items.Add(item);
                 }
@@ -935,12 +942,12 @@ namespace ResultsPanel
             if (this.entriesView.Items.Count == 0) return;
             if (this.entryIndex >= 0 && this.entryIndex < this.entriesView.Items.Count)
             {
-                this.entriesView.Items[this.entryIndex].ForeColor = SystemColors.WindowText;
+                this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
             }
             this.entryIndex = (this.entryIndex + 1) % this.entriesView.Items.Count;
             this.entriesView.SelectedItems.Clear();
             this.entriesView.Items[this.entryIndex].Selected = true;
-            this.entriesView.Items[this.entryIndex].ForeColor = Color.Blue;
+            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
             this.EntriesViewDoubleClick(null, null);
         }
@@ -953,12 +960,12 @@ namespace ResultsPanel
             if (this.entriesView.Items.Count == 0) return;
             if (this.entryIndex >= 0 && this.entryIndex < this.entriesView.Items.Count)
             {
-                this.entriesView.Items[this.entryIndex].ForeColor = SystemColors.WindowText;
+                this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
             }
             if (--this.entryIndex < 0) this.entryIndex = this.entriesView.Items.Count - 1;
             this.entriesView.SelectedItems.Clear();
             this.entriesView.Items[this.entryIndex].Selected = true;
-            this.entriesView.Items[this.entryIndex].ForeColor = Color.Blue;
+            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
             this.EntriesViewDoubleClick(null, null);
         }

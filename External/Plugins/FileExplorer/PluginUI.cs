@@ -19,7 +19,7 @@ namespace FileExplorer
 {
     public class PluginUI : DockPanelControl
     {
-        private System.Windows.Forms.ListView fileView;
+        private System.Windows.Forms.ListViewEx fileView;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ContextMenuStrip menu;
         private System.Windows.Forms.ToolStripMenuItem runButton;
@@ -51,6 +51,7 @@ namespace FileExplorer
         
         public PluginUI(PluginMain pluginMain)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             this.listViewSorter = new ListViewSorter();
             this.InitializeComponent();
@@ -72,7 +73,7 @@ namespace FileExplorer
             this.watcher = new System.IO.FileSystemWatcher();
             this.modifiedHeader = new System.Windows.Forms.ColumnHeader();
             this.typeHeader = new System.Windows.Forms.ColumnHeader();
-            this.fileView = new System.Windows.Forms.ListView();
+            this.fileView = new System.Windows.Forms.ListViewEx();
             this.fileHeader = new System.Windows.Forms.ColumnHeader();
             this.sizeHeader = new System.Windows.Forms.ColumnHeader();
             this.folderBrowserDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();
@@ -117,6 +118,7 @@ namespace FileExplorer
             this.fileView.Name = "fileView";
             this.fileView.Size = new System.Drawing.Size(278, 327);
             this.fileView.TabIndex = 5;
+            this.fileView.FullRowSelect = true;
             this.fileView.UseCompatibleStateImageBehavior = false;
             this.fileView.View = System.Windows.Forms.View.Details;
             this.fileView.ItemActivate += new System.EventHandler(this.FileViewItemActivate);
@@ -164,7 +166,7 @@ namespace FileExplorer
             this.selectedPath.Name = "selectedPath";
             this.selectedPath.Size = new System.Drawing.Size(200, 22);
             this.selectedPath.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.selectedPath.SelectedIndexChanged += new System.EventHandler(this.SelectedPathSelectedIndexChanged);
+            this.selectedPath.FlatCombo.SelectedIndexChanged += new System.EventHandler(this.SelectedPathSelectedIndexChanged);
             this.selectedPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SelectedPathKeyDown);
             // 
             // syncronizeButton
@@ -312,7 +314,6 @@ namespace FileExplorer
             this.browseButton.ToolTipText = TextHelper.GetString("ToolTip.Browse");
             this.typeHeader.Text = TextHelper.GetString("Header.Type");
             this.sizeHeader.Text = TextHelper.GetString("Header.Size");
-            this.modifiedHeader.Width = -2; // Extend last column
         }
 
         /// <summary>
@@ -320,9 +321,9 @@ namespace FileExplorer
         /// </summary>
         private void InitializeLayout()
         {
+            this.selectedPath.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.toolStrip.Renderer = new DockPanelStripRenderer();
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.selectedPath.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             foreach (ColumnHeader column in fileView.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);
@@ -483,7 +484,6 @@ namespace FileExplorer
                 this.selectedPath.Enabled = true;
                 this.browseButton.Enabled = true;
                 this.updateInProgress = false;
-                this.modifiedHeader.Width = -2; // Extend last column
                 this.fileView.EndUpdate();
             }
         }
@@ -717,7 +717,7 @@ namespace FileExplorer
             ListViewItem item = null;
             try
             {
-                if (e.CancelEdit || (e.Label == null) || (e.Label.Length == 0) || (e.Label == this.previousItemLabel))
+                if (e.CancelEdit || string.IsNullOrEmpty(e.Label) || e.Label == this.previousItemLabel)
                 {
                     e.CancelEdit = true;
                     return;

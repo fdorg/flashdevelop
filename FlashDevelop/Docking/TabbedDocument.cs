@@ -127,6 +127,23 @@ namespace FlashDevelop.Docking
         }
 
         /// <summary>
+        /// Does this document's pane have any other documents?
+        /// </summary> 
+        public Boolean IsAloneInPane
+        {
+            get
+            {
+                int count = 0;
+                foreach (ITabbedDocument document in Globals.MainForm.Documents)
+                {
+                    if (document.DockHandler.PanelPane == DockHandler.PanelPane)
+                        count++;
+                }
+                return count <= 1;
+            }
+        }
+
+        /// <summary>
         /// Current ScintillaControl of the document
         /// </summary>
         public ScintillaControl SciControl
@@ -232,6 +249,7 @@ namespace FlashDevelop.Docking
                 this.focusTimer.Stop();
                 this.focusTimer.Start();
             }
+            ButtonManager.UpdateFlaggedButtons();
         }
         private void OnFocusTimer(Object sender, EventArgs e)
         {
@@ -276,6 +294,7 @@ namespace FlashDevelop.Docking
             this.editor2.Dock = DockStyle.Fill;
             this.splitContainer = new SplitContainer();
             this.splitContainer.Name = "fdSplitView";
+            this.splitContainer.SplitterWidth = ScaleHelper.Scale(this.splitContainer.SplitterWidth);
             this.splitContainer.Orientation = Orientation.Horizontal;
             this.splitContainer.BackColor = SystemColors.Control;
             this.splitContainer.Panel1.Controls.Add(this.editor);
@@ -441,12 +460,10 @@ namespace FlashDevelop.Docking
                 Encoding encoding = Encoding.GetEncoding(info.CodePage);
                 this.SciControl.IsReadOnly = false;
                 this.SciControl.Encoding = encoding;
-                this.SciControl.CodePage = ScintillaManager.SelectCodePage(info.CodePage);
                 this.SciControl.Text = info.Contents;
                 this.SciControl.IsReadOnly = FileHelper.FileIsReadOnly(this.FileName);
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
-                this.SciControl.Focus();
                 this.InitBookmarks();
             }
             Globals.MainForm.OnDocumentReload(this);
@@ -550,6 +567,16 @@ namespace FlashDevelop.Docking
             this.UpdateDocumentIcon(this.FileName);
         }
 
+        /// <summary>
+        /// Close the document and update buttons
+        /// </summary>
+        public new void Close()
+        {
+            base.Close();
+            ButtonManager.UpdateFlaggedButtons();
+        }
+
     }
-    
+
 }
+

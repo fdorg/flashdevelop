@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using PluginCore.Utilities;
 
 namespace PluginCore.Controls
 {
@@ -33,6 +34,15 @@ namespace PluginCore.Controls
         {
             completionList = owner;
             host.VisibleChanged += Host_VisibleChanged;
+            
+            Color color = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack");
+            Color fore = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedFore");
+            if (color != Color.Empty) HLBgStyleBeg = "[BGCOLOR=" + DataConverter.ColorToHex(color).Replace("0x", "#") + "]";
+            if (fore != Color.Empty)
+            {
+                HLTextStyleBeg = "[B][COLOR=" + DataConverter.ColorToHex(fore).Replace("0x", "#") + "]";
+                HLTextStyleEnd = "[/COLOR][/B]";
+            }
         }
 
         public bool CallTipActive
@@ -297,7 +307,10 @@ namespace PluginCore.Controls
                 case Keys.Down:
                     currentPos = owner.CurrentPos;
                     if (!completionList.Active)
+                    {
                         if (OnUpdateCallTip != null) OnUpdateCallTip(owner.Owner, currentPos);
+                        else if (currentPos < startPos) Hide();
+                    }
                     break;
 
                 case Keys.PageDown:

@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using ProjectManager.Controls;
@@ -12,13 +8,11 @@ using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using ASClassWizard.Controls.TreeView;
-using ASClassWizard.Resources;
 
 namespace ASClassWizard.Wizards
 {
     public partial class PackageBrowser : SmartForm
     {
-
         List<string> classpathList;
         Project project;
 
@@ -61,7 +55,6 @@ namespace ASClassWizard.Wizards
             classpathList = new List<string>();
         }
 
-
         public void AddClassPath(string value)
         {
             classpathList.Add(value);
@@ -83,7 +76,7 @@ namespace ASClassWizard.Wizards
                         {
                             foreach (string item in Directory.GetDirectories(cp))
                             {
-                                if (IsDirectoryExcluded(item) == false)
+                                if (!IsDirectoryExcluded(item))
                                 {
                                     node = new SimpleDirectoryNode(item, Path.Combine(cp, item));
                                     node.ImageIndex = Icons.Folder.Index;
@@ -96,7 +89,6 @@ namespace ASClassWizard.Wizards
                 }
             }
             this.browserView.EndUpdate();
-
         }
 
         private void PackageBrowser_Load(object sender, EventArgs e)
@@ -118,7 +110,7 @@ namespace ASClassWizard.Wizards
 
                     foreach (string item in Directory.GetDirectories(node.directoryPath))
                     {
-                        if (IsDirectoryExcluded(item) == false)
+                        if (!IsDirectoryExcluded(item))
                         {
                             newNode = new SimpleDirectoryNode(item, Path.Combine(node.directoryPath, item));
                             newNode.ImageIndex = Icons.Folder.Index;
@@ -133,8 +125,6 @@ namespace ASClassWizard.Wizards
         /// <summary>
         /// Verify if a given directory is hidden
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         protected bool IsDirectoryExcluded(string path)
         {
             string dirName = Path.GetFileName(path);
@@ -148,8 +138,6 @@ namespace ASClassWizard.Wizards
             return Project.IsPathHidden(path) && !Project.ShowHiddenPaths;
         }
 
-
-
         private void okButton_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
@@ -162,6 +150,5 @@ namespace ASClassWizard.Wizards
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
-
     }
 }

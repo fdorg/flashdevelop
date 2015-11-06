@@ -1,12 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
-using System.Text;
-using System.Collections.Generic;
+using PluginCore;
+using PluginCore.Bridge;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Utilities;
-using System.ComponentModel;
-using PluginCore.Helpers;
-using PluginCore;
 
 namespace BridgeSettings
 {
@@ -90,7 +89,7 @@ namespace BridgeSettings
         {
             this.InitBasics();
             this.LoadSettings();
-            PluginCore.Bridge.BridgeManager.Settings = settingObject;
+            BridgeManager.Settings = settingObject;
         }
 
         /// <summary>
@@ -104,7 +103,7 @@ namespace BridgeSettings
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             // Nothing to do here..
         }

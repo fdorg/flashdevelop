@@ -1,5 +1,4 @@
 using System;
-using ScintillaNet.Enums;
 
 namespace ScintillaNet
 {

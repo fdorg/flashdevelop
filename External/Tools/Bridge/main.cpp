@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("FlashDevelop Bridge");
     QCoreApplication::setOrganizationDomain("www.flashdevelop.org");
     QCoreApplication::setOrganizationName("FlashDevelop.org");
-    QCoreApplication::setApplicationVersion("1.0.0");
+    QCoreApplication::setApplicationVersion("2.0.0");
     MainWindow w;
     //w.show();
     return a.exec();

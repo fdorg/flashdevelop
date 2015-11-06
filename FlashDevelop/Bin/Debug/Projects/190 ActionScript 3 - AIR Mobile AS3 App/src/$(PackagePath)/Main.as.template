@@ -21,9 +21,8 @@ package $(PackageName)$(CSLB){
 			// touch or gesture?
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			
-			// entry point
-			
-			// new to AIR? please read *carefully* the readme.txt files!
+			// Entry point
+			// New to AIR? Please read *carefully* the readme.txt files!
 		}
 		
 		private function deactivate(e:Event):void $(CSLB){

@@ -917,6 +917,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   <data name="FlashDevelop.Label.ClearBreakpoints" xml:space="preserve">
     <value>Clear Breakpoints</value>
   </data>
+  <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
+    <value>&amp;Remove Invalid Files</value>
+    <comment>Added after 5.0.0</comment>
+  </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
     <value>&amp;Clear Recent Files List</value>
   </data>
@@ -1882,6 +1886,10 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
+  </data>
+  <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
+    <value>&amp;Remove Invalid Projects</value>
+    <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">
     <value>&amp;Clear Recent Projects List</value>
@@ -3571,7 +3579,7 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Default custom ruleset file for the Flex PMD.</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>Integrates Flex PMD code analyzer into FlashDevelop.</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
@@ -5183,6 +5191,10 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>You are renaming a file. Do you also want to update the references?</value>
     <comment>Added after 4.4.3</comment>
   </data>
+  <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
+    <value>In Classpaths only</value>
+    <comment>Added after 5.0.1</comment>
+  </data>
   <data name="ProjectManager.Label.CodeFilesOnly" xml:space="preserve">
     <value>Code files only</value>
     <comment>Added after 4.4.3</comment>
@@ -5949,10 +5961,6 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
     <comment>Added after 4.7.2</comment>
   </data>
-  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
-    <value>Copy Value</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
   <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
     <value>Copy ID</value>
     <comment>Added after 4.7.2</comment>
@@ -5968,5 +5976,12 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
     <value>[Object {0} already listed before]</value>
     <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
+    <value>Choose a package folder:</value>
+  </data>
+  <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
+    <value>Highlight word:</value>
+    <comment>Added after 5.0.2</comment>
   </data>
 </root>

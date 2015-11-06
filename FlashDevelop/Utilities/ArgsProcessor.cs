@@ -1,18 +1,16 @@
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FlashDevelop.Settings;
-using PluginCore.Utilities;
-using FlashDevelop.Managers;
 using FlashDevelop.Dialogs;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using ScintillaNet;
-using PluginCore;
 using Ookii.Dialogs;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
 
 namespace FlashDevelop.Utilities
 {
@@ -25,7 +23,7 @@ namespace FlashDevelop.Utilities
         private static Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         
         /// <summary>
-        /// Regexes and variabled for enhanced arguments
+        /// Regexes and variables for enhanced arguments
         /// </summary>
         private static Dictionary<String, String> userArgs;
         private static Regex reUserArgs = new Regex("\\$\\$\\(([a-z0-9]+)\\=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -51,7 +49,7 @@ namespace FlashDevelop.Utilities
         }
 
         /// <summary>
-        /// Gets the users FlashDevelop directory
+        /// Gets the user's FlashDevelop directory
         /// </summary>
         public static String GetUserAppDir()
         {
@@ -459,7 +457,7 @@ namespace FlashDevelop.Utilities
         {
             if (match.Groups.Count > 0)
             {
-                switch (match.Groups[1].Value.ToUpper(System.Globalization.CultureInfo.InvariantCulture))
+                switch (match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case "DATETIME":
                     {

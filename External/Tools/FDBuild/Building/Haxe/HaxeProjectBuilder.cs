@@ -37,12 +37,6 @@ namespace ProjectManager.Building.Haxe
             string connect = (!serverPort.StartsWith("%") && serverPort != "0")
                 ? "--connect " + serverPort : "";
 
-            if (project.MovieOptions.HasPlatformSupport && project.MovieOptions.PlatformSupport.ExternalToolchain != null)
-            {
-                Console.WriteLine("Automatic NME/OpenFL build by FDBuild is deprecated.");
-                return;
-            }
-
             // always use relative path for CPP (because it prepends ./)
             //if (project.IsCppOutput)
             //    output = project.FixDebugReleasePath(project.OutputPath);

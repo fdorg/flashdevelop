@@ -1,16 +1,15 @@
 using System;
-using System.IO;
+using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using System.ComponentModel;
-using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
 using PluginCore;
-using ProjectManager.Projects.AS3;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ProjectManager.Projects;
 
 namespace AirProperties
 {
@@ -122,7 +121,7 @@ namespace AirProperties
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -198,7 +197,7 @@ namespace AirProperties
             this.pmMenuButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.pmMenuButton.Click += new EventHandler(this.OpenWizard);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.AirApplicationProperties", this.pmMenuButton);
-            toolStrip.Items.Insert(5, this.pmMenuButton);
+            toolStrip.Items.Insert(6, this.pmMenuButton);
         }
 
         /// <summary>
@@ -207,11 +206,10 @@ namespace AirProperties
         public void UpdateMenuItems()
         {
             Boolean pluginActive = false;
-            ToolStrip mainToolStrip = (ToolStrip)PluginBase.MainForm.ToolStrip;
             if (this.pluginMenuItem == null || this.pmMenuButton == null) return;
             if (PluginBase.CurrentProject != null)
             {
-                ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+                Project project = (Project)PluginBase.CurrentProject;
                 pluginActive = project.MovieOptions.Platform.StartsWith("AIR");
             }
             this.pluginMenuItem.Enabled = this.pmMenuButton.Enabled = pluginActive;
@@ -220,7 +218,7 @@ namespace AirProperties
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenWizard(Object sender, System.EventArgs e)
+        public void OpenWizard(Object sender, EventArgs e)
         {
             this.wizard = new AirWizard(this);
             if (this.wizard.IsPropertiesLoaded)

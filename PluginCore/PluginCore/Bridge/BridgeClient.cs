@@ -1,6 +1,5 @@
 using System;
 using System.Net.NetworkInformation;
-using System.IO;
 using PluginCore.Managers;
 
 namespace PluginCore.Bridge

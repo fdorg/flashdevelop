@@ -1,6 +1,3 @@
-using System;
-using System.Drawing;
-
 namespace CodeFormatter.Handlers
 {
     public class WrapOptions

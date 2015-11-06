@@ -1,12 +1,9 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
-using PluginCore.Managers;
+using System.Text;
 using PluginCore.Localization;
-using PluginCore;
+using PluginCore.Managers;
 
 namespace FlashConnect
 {

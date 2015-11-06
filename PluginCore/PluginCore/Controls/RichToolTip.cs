@@ -1,17 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using PluginCore.BBCode;
-
+using PluginCore.Managers;
 
 namespace PluginCore.Controls
 {
     /// <summary>
     /// RichTextBox-based tooltip
     /// </summary>
-    public class RichToolTip
+    public class RichToolTip : IEventHandler
     {
         public delegate void UpdateTipHandler(Control sender, Point mousePosition);
 
@@ -88,6 +88,8 @@ namespace PluginCore.Controls
 
         public RichToolTip(ICompletionListHost owner)
         {
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
+
             // host
             host = new InactiveForm();
             host.FormBorderStyle = FormBorderStyle.None;
@@ -101,17 +103,17 @@ namespace PluginCore.Controls
 
             // panel
             toolTip = new Panel();
-            toolTip.Location = new System.Drawing.Point(0, 0);
-            toolTip.BackColor = System.Drawing.SystemColors.Info;
-            toolTip.ForeColor = System.Drawing.SystemColors.InfoText;
+            toolTip.Location = new Point(0, 0);
+            toolTip.BackColor = SystemColors.Info;
+            toolTip.ForeColor = SystemColors.InfoText;
             toolTip.BorderStyle = BorderStyle.FixedSingle;
             toolTip.Dock = DockStyle.Fill;
             host.Controls.Add(toolTip);
             // text
             toolTipRTB = new SelectableRichTextBox();
-            toolTipRTB.Location = new System.Drawing.Point(2, 1);
-            toolTipRTB.BackColor = System.Drawing.SystemColors.Info;
-            toolTipRTB.ForeColor = System.Drawing.SystemColors.InfoText;
+            toolTipRTB.Location = new Point(2, 1);
+            toolTipRTB.BackColor = SystemColors.Info;
+            toolTipRTB.ForeColor = SystemColors.InfoText;
             toolTipRTB.BorderStyle = BorderStyle.None;
             toolTipRTB.ScrollBars = RichTextBoxScrollBars.None;
             toolTipRTB.DetectUrls = false;
@@ -125,6 +127,19 @@ namespace PluginCore.Controls
             // rtf cache
             rtfCache = new Dictionary<String, String>();
             rtfCacheList = new List<String>();
+        }
+        
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme)
+            {
+                Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
+                Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
+                toolTip.BackColor = back == Color.Empty ? SystemColors.Info : back;
+                toolTip.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+                toolTipRTB.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+                toolTipRTB.BackColor = back == Color.Empty ? SystemColors.Info : back;
+            }
         }
 
         #endregion
@@ -293,10 +308,10 @@ namespace PluginCore.Controls
 
             Color fore = PluginBase.MainForm.GetThemeColor("RichToolTip.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("RichToolTip.BackColor");
-            toolTip.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
-            toolTip.ForeColor = fore == Color.Empty ? System.Drawing.SystemColors.InfoText : fore;
-            toolTipRTB.ForeColor = fore == Color.Empty ? System.Drawing.SystemColors.InfoText : fore;
-            toolTipRTB.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
+            toolTip.BackColor = back == Color.Empty ? SystemColors.Info : back;
+            toolTip.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+            toolTipRTB.ForeColor = fore == Color.Empty ? SystemColors.InfoText : fore;
+            toolTipRTB.BackColor = back == Color.Empty ? SystemColors.Info : back;
 
             if (autoSize)
                 AutoSize();

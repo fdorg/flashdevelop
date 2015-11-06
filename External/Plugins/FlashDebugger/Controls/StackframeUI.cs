@@ -11,12 +11,14 @@ using ProjectManager.Projects;
 using flash.tools.debugger;
 using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Controls;
+using System.Drawing;
 
 namespace FlashDebugger
 {
     class StackframeUI : DockPanelControl
     {
-        private ListView lv;
+        private ListViewEx lv;
         private ColumnHeader imageColumnHeader;
         private ColumnHeader frameColumnHeader;
         private PluginMain pluginMain;
@@ -28,25 +30,21 @@ namespace FlashDebugger
         private ToolStripMenuItem toolStripItemMatchCase;
         private ToolStripMenuItem toolStripItemRegEx;
         private ToolStripMenuItem toolStripItemNegate;
-        private ToolStrip toolStripFilters;
-
+        private ToolStripEx toolStripFilters;
         private ToolStripMenuItem copyContextMenuItem;
         private ToolStripMenuItem copyAllContextMenuItem;
         private ToolStripMenuItem setFrameContextMenuItem;
         private ToolStripMenuItem gotoSourceContextMenuItem;
         private ToolStripMenuItem justMyCodeContextMenuItem;
-
         private List<ListViewItem> wholeFrameStack;
         private int lastSelected;
-
-        //private List<string> userPaths;
         private bool justMyCode;
 
         public StackframeUI(PluginMain pluginMain, ImageList imageList)
         {
+            this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             wholeFrameStack = new List<ListViewItem>();
-
             InitializeComponents(imageList);
             InitializeContextMenu();
             InitializeLocalization();
@@ -63,7 +61,6 @@ namespace FlashDebugger
             this.toolStripItemNegate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripFilters = new PluginCore.Controls.ToolStripEx();
             this.toolStripFilters.SuspendLayout();
-
             // 
             // toolStripTextBoxFilter
             //
@@ -122,7 +119,6 @@ namespace FlashDebugger
             this.toolStripItemNegate});
             this.toolStripDropDownOptions.Name = "toolStripDropDownOptions";
             this.toolStripDropDownOptions.Text = "Options";
-
             // 
             // toolStripFilters
             // 
@@ -141,35 +137,30 @@ namespace FlashDebugger
             this.toolStripFilters.Size = new System.Drawing.Size(710, 25);
             this.toolStripFilters.TabIndex = 0;
             this.toolStripFilters.Text = "toolStripFilters";
-
             // lv
-            this.lv = new ListView();
+            this.lv = new ListViewEx();
             this.lv.ShowItemToolTips = true;
             this.imageColumnHeader = new ColumnHeader();
             this.imageColumnHeader.Text = string.Empty;
             this.imageColumnHeader.Width = 20;
-
             this.frameColumnHeader = new ColumnHeader();
             this.frameColumnHeader.Text = string.Empty;
-
             this.lv.Columns.AddRange(new ColumnHeader[] {
             this.imageColumnHeader,
             this.frameColumnHeader});
             this.lv.FullRowSelect = true;
             this.lv.BorderStyle = BorderStyle.None;
             this.lv.Dock = System.Windows.Forms.DockStyle.Fill;
-
             foreach (ColumnHeader column in lv.Columns)
+            {
                 column.Width = ScaleHelper.Scale(column.Width);
-
+            }
             lv.SmallImageList = imageList;
             currentImageIndex = imageList.Images.IndexOfKey("StartContinue");
-
             lv.View = System.Windows.Forms.View.Details;
             lv.MouseDoubleClick += new MouseEventHandler(Lv_MouseDoubleClick);
             lv.KeyDown += new KeyEventHandler(Lv_KeyDown);
             lv.SizeChanged += new EventHandler(Lv_SizeChanged);
-
             this.Controls.Add(lv);
             this.Controls.Add(toolStripFilters);
             this.toolStripFilters.ResumeLayout(false);
@@ -188,15 +179,8 @@ namespace FlashDebugger
             this.gotoSourceContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Shift | Keys.Enter);
             this.justMyCodeContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.JustMyCode"), null, new EventHandler(this.JustMyCodeClick));
             this.justMyCodeContextMenuItem.CheckOnClick = true;
-            menu.Items.AddRange(new ToolStripItem[] {this.copyContextMenuItem, this.copyAllContextMenuItem, new ToolStripSeparator(), 
-                this.setFrameContextMenuItem, this.gotoSourceContextMenuItem, this.justMyCodeContextMenuItem});
+            menu.Items.AddRange(new ToolStripItem[] {this.copyContextMenuItem, this.copyAllContextMenuItem, new ToolStripSeparator(), this.setFrameContextMenuItem, this.gotoSourceContextMenuItem, this.justMyCodeContextMenuItem});
             this.lv.ContextMenuStrip = menu;
-
-            this.toolStripItemMatchCase.Text = TextHelper.GetString("Label.MatchCase");
-            this.toolStripItemRegEx.Text = TextHelper.GetString("Label.RegularExpression");
-            this.toolStripItemNegate.Text = TextHelper.GetString("Label.MatchOpposite");
-            this.toolStripDropDownOptions.Text = TextHelper.GetString("Label.Options");
-
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer(false);
             this.toolStripFilters.Renderer = new DockPanelStripRenderer();
@@ -206,13 +190,17 @@ namespace FlashDebugger
         private void InitializeLocalization()
         {
             this.toolStripLabelFilter.Text = TextHelper.GetString("Label.Filter");
+            this.toolStripItemMatchCase.Text = TextHelper.GetString("Label.MatchCase");
+            this.toolStripItemRegEx.Text = TextHelper.GetString("Label.RegularExpression");
+            this.toolStripItemNegate.Text = TextHelper.GetString("Label.MatchOpposite");
+            this.toolStripDropDownOptions.Text = TextHelper.GetString("Label.Options");
         }
 
         public void ClearItem()
         {
             wholeFrameStack.Clear();
             lv.Items.Clear();
-            toolStripTextBoxFilter.Enabled = lv.Enabled = false;
+            toolStripTextBoxFilter.Enabled = false;
         }
 
         public void ActiveItem()
@@ -274,8 +262,7 @@ namespace FlashDebugger
                             foreach (string cp in project.AbsoluteClasspaths)
                             {
                                 string pathBackSlash = cp.TrimEnd(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
-                                pathBackSlash = pathBackSlash.IndexOf(Path.AltDirectorySeparatorChar.ToString()) > -1 ?
-                                    pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
+                                pathBackSlash = pathBackSlash.IndexOf(Path.AltDirectorySeparatorChar.ToString()) > -1 ? pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
                                 if (sourceFile.getFullPath().ToString().StartsWith(pathBackSlash))
                                 {
                                     ownFile = true;
@@ -285,46 +272,46 @@ namespace FlashDebugger
                         }
                     }
                     var listItem = new ListViewItem(new[] { string.Empty, title }, -1)
-                        {
-                            Tag = new ListItemData { Frame = item, Index = i++ }
-                        };
+                    {
+                        Tag = new ListItemData { Frame = item, Index = i++ }
+                    };
                     listItem.UseItemStyleForSubItems = false;
-                    // TODO: Apply proper theming colour
-                    if (!ownFile) listItem.SubItems[1].ForeColor = System.Drawing.SystemColors.GrayText;
+                    // Apply proper theming colour
+                    if (!ownFile)
+                    {
+                        Color color = PluginBase.MainForm.GetThemeColor("ListView.ForeColor");
+                        if (color == Color.Empty) color = System.Drawing.SystemColors.GrayText;
+                        listItem.SubItems[1].ForeColor = color;
+                    }
                     wholeFrameStack.Add(listItem);
                 }
                 FilterResults();
-                toolStripTextBoxFilter.Enabled = lv.Enabled = true;
+                toolStripTextBoxFilter.Enabled = true;
             }
             else
             {
                 lv.Items.Clear();
-                toolStripTextBoxFilter.Enabled = lv.Enabled = false;
+                toolStripTextBoxFilter.Enabled = false;
             }
         }
 
         private void Lv_KeyDown(object sender, KeyEventArgs e)
         {
             if (lv.SelectedIndices.Count == 0) return;
-
             if (e.KeyCode == Keys.Return)
             {
-                if ((e.Modifiers & Keys.Shift) > 0)
-                    GotoSourceClick(sender, e);
-                else
-                    SetCurrentFrameClick(sender, e);
+                if ((e.Modifiers & Keys.Shift) > 0) GotoSourceClick(sender, e);
+                else SetCurrentFrameClick(sender, e);
             }
             else if (e.KeyCode == Keys.C)
             {
-                if ((e.Modifiers & Keys.Control) > 0)
-                    CopyTextClick(sender, e);
+                if ((e.Modifiers & Keys.Control) > 0) CopyTextClick(sender, e);
             }
         }
 
         void Lv_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (lv.SelectedIndices.Count > 0)
-                SetCurrentFrameClick(sender, e);
+            if (lv.SelectedIndices.Count > 0) SetCurrentFrameClick(sender, e);
         }
 
         private void Lv_SizeChanged(object sender, EventArgs e)
@@ -378,7 +365,6 @@ namespace FlashDebugger
             {
                 sb.AppendLine(item.SubItems[1].Text);
             }
-
             Clipboard.SetText(sb.ToString());
         }
 
@@ -392,10 +378,7 @@ namespace FlashDebugger
                 PluginMain.debugManager.CurrentLocation = null;
                 PluginMain.debugManager.CurrentLocation = tmp;
             }
-            else
-            {
-                PluginMain.debugManager.CurrentFrame = index;
-            }
+            else PluginMain.debugManager.CurrentFrame = index;
             ActiveItem();
         }
 
@@ -405,14 +388,12 @@ namespace FlashDebugger
             if (frame == null) return;
             string file = PluginMain.debugManager.GetLocalPath(frame.getLocation().getFile());
             if (file == null) return;
-            ScintillaHelper.ActivateDocument(file,
-                                             frame.getLocation().getLine() - 1, false);
+            ScintillaHelper.ActivateDocument(file, frame.getLocation().getLine() - 1, false);
         }
 
         private void JustMyCodeClick(Object sender, EventArgs e)
         {
             justMyCode = justMyCodeContextMenuItem.Checked;
-
             FilterResults();
         }
 
@@ -424,15 +405,13 @@ namespace FlashDebugger
             lv.BeginUpdate();
             string filterText = toolStripTextBoxFilter.Text.Trim();
             lv.Items.Clear();
-
             Regex regex = null;
-
+            Color color = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
             if (toolStripItemRegEx.Checked)
             {
                 try
                 {
-                    regex = new Regex(filterText, toolStripItemMatchCase.Checked ? RegexOptions.None
-                                    : RegexOptions.IgnoreCase);
+                    regex = new Regex(filterText, toolStripItemMatchCase.Checked ? RegexOptions.None : RegexOptions.IgnoreCase);
                 }
                 catch (Exception)
                 {
@@ -440,7 +419,6 @@ namespace FlashDebugger
                     return;
                 }
             }
-
             bool lastExternal = false;
             int currentFrame = PluginMain.debugManager.CurrentFrame;
             foreach (var item in wholeFrameStack)
@@ -449,24 +427,17 @@ namespace FlashDebugger
                 item.ImageIndex = -1;
                 if (filterText != string.Empty)
                 {
-                    if (regex != null)
-                    {
-                        match = regex.IsMatch(item.SubItems[1].Text);
-                    }
+                    if (regex != null) match = regex.IsMatch(item.SubItems[1].Text);
                     else
                     {
-                        match = item.SubItems[1].Text.IndexOf(filterText,
-                            toolStripItemMatchCase.Checked ? StringComparison.Ordinal
-                                : StringComparison.OrdinalIgnoreCase) > -1;
+                        match = item.SubItems[1].Text.IndexOf(filterText, toolStripItemMatchCase.Checked ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase) > -1;
                     }
-
                     if (toolStripItemNegate.Checked) match = !match;
                 }
-
                 if (match)
                 {
-                    // TODO: Check proper theming colour
-                    if (justMyCode && item.SubItems[1].ForeColor == System.Drawing.SystemColors.GrayText)
+                    // Check proper theming colour
+                    if (justMyCode && item.SubItems[1].ForeColor == color)
                     {
                         if (lastExternal)
                         {
@@ -481,16 +452,14 @@ namespace FlashDebugger
                         {
                             Tag = new ListItemData { Index = -1 }
                         });
-
                         newItem.UseItemStyleForSubItems = false;
-                        // TODO: Apply proper theming colour
-                        newItem.SubItems[1].ForeColor = System.Drawing.SystemColors.GrayText;
+                        // Apply proper theming colour
+                        newItem.SubItems[1].ForeColor = color;
                         if (((ListItemData) item.Tag).Index == currentFrame)
                         {
                             newItem.ImageIndex = currentImageIndex;
                             lastSelected = lv.Items.Count - 1;
                         }
-                        
                         lastExternal = true;
                     }
                     else
@@ -505,9 +474,7 @@ namespace FlashDebugger
                     }
                 }
             }
-
             wholeFrameStack[PluginMain.debugManager.CurrentFrame].ImageIndex = currentImageIndex;
-
             lv.EndUpdate();
         }
 
@@ -516,6 +483,7 @@ namespace FlashDebugger
             public Frame Frame;
             public int Index;
         }
+
     }
 
 }

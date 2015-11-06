@@ -1,10 +1,11 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Collections.Generic;
+using PluginCore;
+using ProjectManager.Controls;
 
 namespace ProjectManager.Projects
 {
@@ -24,7 +25,7 @@ namespace ProjectManager.Projects
     public delegate void ProjectUpdatingHandler(Project project);
     public delegate bool BeforeSaveHandler(Project project, string fileName);
 
-    public abstract class Project : PluginCore.IProject
+    public abstract class Project : IProject
     {
         string path; // full path to this project, including filename
 
@@ -76,6 +77,7 @@ namespace ProjectManager.Projects
         }
 
         public abstract string Language { get; }
+        public abstract string LanguageDisplayName { get; }
         public virtual bool IsCompilable { get { return false; } }
         public virtual bool ReadOnly { get { return false; } }
         public virtual bool UsesInjection { get { return false; } }
@@ -100,9 +102,9 @@ namespace ProjectManager.Projects
             OnClasspathChanged();
         }
 
-        public virtual ProjectManager.Controls.PropertiesDialog CreatePropertiesDialog()
+        public virtual PropertiesDialog CreatePropertiesDialog()
         {
-            return new ProjectManager.Controls.PropertiesDialog();
+            return new PropertiesDialog();
         }
 
         public void OnClasspathChanged()

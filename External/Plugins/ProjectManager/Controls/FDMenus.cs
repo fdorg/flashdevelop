@@ -18,8 +18,8 @@ namespace ProjectManager.Controls
         public ToolStripMenuItem GlobalClasspaths;
         public ToolStripButton TestMovie;
         public ToolStripButton BuildProject;
-        public ToolStripComboBox ConfigurationSelector;
-        public ToolStripComboBox TargetBuildSelector;
+        public ToolStripComboBoxEx ConfigurationSelector;
+        public ToolStripComboBoxEx TargetBuildSelector;
         public RecentProjectsMenu RecentProjects;
         public ProjectMenu ProjectMenu;
 
@@ -67,7 +67,7 @@ namespace ProjectManager.Controls
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TestMovie", TestMovie);
             toolBar.Items.Add(TestMovie);
 
-            ConfigurationSelector = new ToolStripComboBox();
+            ConfigurationSelector = new ToolStripComboBoxEx();
             ConfigurationSelector.Name = "ConfigurationSelector";
             ConfigurationSelector.ToolTipText = TextHelper.GetString("ToolTip.SelectConfiguration");
             ConfigurationSelector.Items.AddRange(new string[] { TextHelper.GetString("Info.Debug"), TextHelper.GetString("Info.Release") });
@@ -81,8 +81,8 @@ namespace ProjectManager.Controls
             toolBar.Items.Add(ConfigurationSelector);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelectorToggle", Keys.Control | Keys.F5);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.ConfigurationSelectorToggle", ConfigurationSelector);
-            
-            TargetBuildSelector = new ToolStripComboBox();
+
+            TargetBuildSelector = new ToolStripComboBoxEx();
             TargetBuildSelector.Name = "TargetBuildSelector";
             TargetBuildSelector.ToolTipText = TextHelper.GetString("ToolTip.TargetBuild");
             TargetBuildSelector.AutoSize = false;
@@ -98,7 +98,9 @@ namespace ProjectManager.Controls
 
         public void EnableTargetBuildSelector(bool enabled)
         {
+            var target = TargetBuildSelector.Text; // prevent occasional loss of value when the control is disabled
             TargetBuildSelector.Enabled = enabled;
+            TargetBuildSelector.Text = target;
         }
 
         public bool DisabledForBuild
@@ -106,7 +108,7 @@ namespace ProjectManager.Controls
             get { return !TestMovie.Enabled; }
             set
             {
-                BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.AllItemsEnabled = ConfigurationSelector.Enabled = !value;
+                BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.ProjectItemsEnabledForBuild = ConfigurationSelector.Enabled = !value;
                 EnableTargetBuildSelector(!value);
             }
         }
@@ -139,16 +141,24 @@ namespace ProjectManager.Controls
             {
                 TargetBuildSelector.Items.AddRange(project.MovieOptions.TargetBuildTypes);
                 string target = project.TargetBuild ?? project.MovieOptions.TargetBuildTypes[0];
-                if (!String.IsNullOrEmpty(target) && !TargetBuildSelector.Items.Contains(target)) TargetBuildSelector.Items.Insert(0, target);
+                AddTargetBuild(target);
                 TargetBuildSelector.Text = target;
             }
             else
             {
                 string target = project.TargetBuild ?? "";
-                if (target != "") TargetBuildSelector.Items.Insert(0, target);
+                AddTargetBuild(target);
                 TargetBuildSelector.Text = target;
             }
             EnableTargetBuildSelector(true);
+        }
+
+        internal void AddTargetBuild(string target)
+        {
+            if (target == null) return;
+            target = target.Trim();
+            if (target.Length > 0 && !TargetBuildSelector.Items.Contains(target)) 
+                TargetBuildSelector.Items.Insert(0, target);
         }
 
         
@@ -249,12 +259,25 @@ namespace ProjectManager.Controls
         {
             set
             {
+                RunProject.Enabled = value;
                 CloseProject.Enabled = value;
                 TestMovie.Enabled = value;
                 BuildProject.Enabled = value;
                 CleanProject.Enabled = value;
                 Properties.Enabled = value;
                 OpenResource.Enabled = value;
+            }
+        }
+
+        public bool ProjectItemsEnabledForBuild
+        {
+            set
+            {
+                RunProject.Enabled = value;
+                CloseProject.Enabled = value;
+                TestMovie.Enabled = value;
+                BuildProject.Enabled = value;
+                CleanProject.Enabled = value;
             }
         }
 

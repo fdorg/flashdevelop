@@ -21,12 +21,12 @@
 		<button label="Label.SaveAsSnippet" click="SaveAsSnippet" flags="Enable:HasSelection" />
 	</menu>
 	<menu label="Label.Insert" name="InsertMenu">
-		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" />
-		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:!IsUntitled" />
-		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" />
+		<button label="Label.FromFile" click="InsertFile" tag="$(OpenFile)" image="315" />
+		<button label="Label.FileDetails" click="InsertFileDetails" flags="Enable:!IsUntitled" image="315|16|3|3" />
+		<button label="Label.Timestamp" click="InsertTimestamp" tag="g" image="163" />
 		<separator />
-		<button label="Label.Snippet" click="InsertSnippet" tag="null" />
-		<button label="Label.Color" click="InsertColor" />
+		<button label="Label.Snippet" click="InsertSnippet" tag="null" image="341" />
+		<button label="Label.Color" click="InsertColor" image="328" />
 		<button label="Label.GUID" click="InsertGUID" />
 		<separator />
 		<button label="Label.Hash" click="InsertHash" />

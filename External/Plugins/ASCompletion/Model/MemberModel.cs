@@ -4,14 +4,7 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Diagnostics;
-using PluginCore;
-using PluginCore.Managers;
-using ASCompletion.Context;
 
 namespace ASCompletion.Model
 {
@@ -91,7 +84,7 @@ namespace ASCompletion.Model
         public override string ToString()
         {
             string res = FullName;
-            string type = (Type != null && Type.Length > 0) ? FormatType(Type) : null;
+            string type = !string.IsNullOrEmpty(Type) ? FormatType(Type) : null;
             string comment = "";
             if ((Flags & FlagType.Function) > 0)
             {
@@ -99,7 +92,7 @@ namespace ASCompletion.Model
 
                 if ((Flags & FlagType.Variable) > 0 || (Flags & FlagType.Getter) > 0)
                 {
-                    if (type != null && type.Length > 0)
+                    if (!string.IsNullOrEmpty(type))
                         functDecl += ":" + type;
 
                     res += " : Function" + TypedCallbackHLStart + functDecl + TypedCallbackHLEnd;
@@ -112,7 +105,7 @@ namespace ASCompletion.Model
             {
                 if ((Flags & FlagType.Setter) > 0)
                 {
-                    if (Parameters != null && Parameters.Count > 0 && Parameters[0].Type != null && Parameters[0].Type.Length > 0)
+                    if (Parameters != null && Parameters.Count > 0 && !string.IsNullOrEmpty(Parameters[0].Type))
                         return res + " : " + FormatType(Parameters[0].Type);
                 }
             }
@@ -120,7 +113,7 @@ namespace ASCompletion.Model
             if ((Flags & FlagType.Constructor) > 0)
                 return res;
             
-            if (type != null && type.Length > 0)
+            if (!string.IsNullOrEmpty(type))
                 res += " : " + type + comment;
 
             return res;
@@ -147,7 +140,7 @@ namespace ASCompletion.Model
                     if (Parameters != null && Parameters.Count > 0)
                     {
                         comment = "/*(" + ParametersString(true) + ")";
-                        if (Type != null && Type.Length > 0)
+                        if (!string.IsNullOrEmpty(Type))
                             comment += colon + FormatType(Type);
                         comment += "*/";
                     }
@@ -158,12 +151,12 @@ namespace ASCompletion.Model
                 }
             }
 
-            if ((type == null || type.Length == 0) && (Type != null && Type.Length > 0))
+            if (string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(Type))
                 type = FormatType(Type);
 
             if ((Flags & FlagType.Constructor) > 0)
                 return res;
-            else if (type != null && type.Length > 0)
+            else if (!string.IsNullOrEmpty(type))
                 res += colon + type;
 
             res += comment;
@@ -231,7 +224,7 @@ namespace ASCompletion.Model
         }
         static public string FormatType(string type, bool allowBBCode)
         {
-            if (type == null || type.Length == 0)
+            if (string.IsNullOrEmpty(type))
                 return null;
             int p = type.IndexOf('@');
             if (p > 0)

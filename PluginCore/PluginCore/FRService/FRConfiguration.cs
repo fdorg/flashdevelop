@@ -1,9 +1,9 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
-using PluginCore.Utilities;
-using PluginCore.Helpers;
+using System.Text;
 using System.Windows.Forms;
+using PluginCore.Helpers;
+using PluginCore.Utilities;
 
 namespace PluginCore.FRService
 {

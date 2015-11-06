@@ -1,17 +1,16 @@
-using System.Resources;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Resources;
+using PluginCore;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the information which is associated with the assembly you compile.
 [assembly: AssemblyTitle("FlashDebugger")]
-[assembly: AssemblyDescription("FlashDebugger Plugin For FlashDevelop.")]
+[assembly: AssemblyDescription("FlashDebugger Plugin For " + DistroConfig.DISTRIBUTION_NAME)]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("FlashDevelop.org")]
+[assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("FlashDebugger")]
-[assembly: AssemblyCopyright("FlashDevelop.org 2005-2015")]
+[assembly: AssemblyCopyright(DistroConfig.DISTRIBUTION_COPYRIGHT)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: NeutralResourcesLanguage("en")]
 [assembly: AssemblyVersion("1.0.0.0")]

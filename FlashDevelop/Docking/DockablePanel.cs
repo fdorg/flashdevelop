@@ -21,6 +21,7 @@ namespace FlashDevelop.Docking
             this.pluginGuid = pluginGuid;
             this.HideOnClose = true;
             this.Controls.Add(ctrl);
+            Globals.MainForm.ThemeControls(this);
             this.Show();
         }
 

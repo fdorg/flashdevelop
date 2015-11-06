@@ -44,19 +44,18 @@
 
 using System;
 using System.Collections;
-using System.IO;
-using System.Text;
 using System.Globalization;
-
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text;
+using ICSharpCode.SharpZipLib.Checksums;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip.Compression;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 #if !NETCF_1_0
 using System.Security.Cryptography;
 using ICSharpCode.SharpZipLib.Encryption;
 #endif
-
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Checksums;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using ICSharpCode.SharpZipLib.Zip.Compression;
 
 namespace ICSharpCode.SharpZipLib.Zip 
 {
@@ -387,7 +386,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             set 
             {
-                if ( (value == null) || (value.Length == 0) ) {
+                if (string.IsNullOrEmpty(value)) {
                     key = null;
                 }
                 else {
@@ -678,7 +677,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Indexer property for ZipEntries
         /// </summary>
-        [System.Runtime.CompilerServices.IndexerNameAttribute("EntryByIndex")]
+        [IndexerName("EntryByIndex")]
         public ZipEntry this[int index] 
         {
             get {
@@ -813,7 +812,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             CompressionMethod method = entries_[entryIndex].CompressionMethod;
             Stream result = new PartialInputStream(this, start, entries_[entryIndex].CompressedSize);
 
-            if (entries_[entryIndex].IsCrypted == true) {
+            if (entries_[entryIndex].IsCrypted) {
 #if NETCF_1_0
                 throw new ZipException("decryption not supported for Compact Framework 1.0");
 #else
@@ -2382,7 +2381,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             Stream result = baseStream_;
 
-            if ( entry.IsCrypted == true ) {
+            if ( entry.IsCrypted ) {
 #if NETCF_1_0
                 throw new ZipException("Encryption not supported for Compact Framework 1.0");
 #else
@@ -2702,7 +2701,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 updates_.Sort(new UpdateComparer());
             }
             else {
-                workFile = ZipFile.Create(archiveStorage_.GetTemporaryOutput());
+                workFile = Create(archiveStorage_.GetTemporaryOutput());
                 workFile.UseZip64 = UseZip64;
                 
                 if (key != null) {
@@ -3095,7 +3094,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             // this could be invalid.
             // Could also speed this up by reading memory in larger blocks.         
 
-            if (baseStream_.CanSeek == false) {
+            if (!baseStream_.CanSeek) {
                 throw new ZipException("ZipFile stream must be seekable");
             }
             
@@ -3276,7 +3275,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 PkzipClassicManaged classicManaged = new PkzipClassicManaged();
 
                 OnKeysRequired(entry.Name);
-                if (HaveKeys == false) {
+                if (!HaveKeys) {
                     throw new ZipException("No password available for encrypted stream");
                 }
 
@@ -3288,7 +3287,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 if (entry.Version == ZipConstants.VERSION_AES) {
                     //
                     OnKeysRequired(entry.Name);
-                    if (HaveKeys == false) {
+                    if (!HaveKeys) {
                         throw new ZipException("No password available for AES encrypted stream");
                     }
                     int saltLen = entry.AESSaltLen;
@@ -3325,7 +3324,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 PkzipClassicManaged classicManaged = new PkzipClassicManaged();
 
                 OnKeysRequired(entry.Name);
-                if (HaveKeys == false) {
+                if (!HaveKeys) {
                     throw new ZipException("No password available for encrypted stream");
                 }
 

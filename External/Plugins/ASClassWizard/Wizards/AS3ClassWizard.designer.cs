@@ -322,7 +322,8 @@ namespace ASClassWizard.Wizards
             this.errorLabel.Text = "Error";
             // 
             // errorIcon
-            // 
+            //
+            this.errorIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.errorIcon.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.errorIcon.Location = new System.Drawing.Point(3, 3);
             this.errorIcon.Name = "errorIcon";

@@ -1,12 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Drawing;
-using System.Diagnostics;
-using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using System.Reflection;
 using ProjectManager.Projects;
 using ProjectManager.Helpers;
 using PluginCore.Localization;
@@ -300,6 +296,10 @@ namespace ProjectManager.Controls
 
             ListViewGroup group = null;
             List<String> templateDirs = ProjectPaths.GetAllProjectDirs();
+            templateDirs.Sort(CompareFolderNames);
+            ListViewItem lastItem = null;
+            String lastTemplate = null;
+
             foreach (string templateDir in templateDirs)
             {
                 // skip hidden folders (read: version control)
@@ -322,9 +322,19 @@ namespace ProjectManager.Controls
                     }
                     item.Group = group;
                 }
+
+                if (lastItem != null && lastTemplate == templateName) // remove duplicates (keep last)
+                    projectListView.Items.Remove(lastItem);
+                lastItem = item;
+                lastTemplate = templateName;
                 projectListView.Items.Add(item);
             }
             this.Load += new EventHandler(NewProjectDialog_Load);
+        }
+
+        int CompareFolderNames(string pathA, string pathB)
+        {
+            return Path.GetFileName(pathA).CompareTo(Path.GetFileName(pathB));
         }
 
         void NewProjectDialog_Load(object sender, EventArgs e)
@@ -350,7 +360,7 @@ namespace ProjectManager.Controls
             createDirectoryBox.Checked = PluginMain.Settings.CreateProjectDirectory;
 
             string locationDir = PluginMain.Settings.NewProjectDefaultDirectory;
-            if (locationDir != null && locationDir.Length > 0 && Directory.Exists(locationDir))
+            if (!string.IsNullOrEmpty(locationDir) && Directory.Exists(locationDir))
                 locationTextBox.Text = locationDir;
             else locationTextBox.Text = ProjectPaths.DefaultProjectsDirectory;
             locationTextBox.SelectionStart = locationTextBox.Text.Length;
@@ -554,15 +564,19 @@ namespace ProjectManager.Controls
 
         private void UpdateStatusBar()
         {
-            string sep = Path.DirectorySeparatorChar.ToString();
+            string status = string.Empty;
             string ext = ProjectExt;
             if (ext != null)
             {
-                statusBar.Text = "  " + TextHelper.GetString("Info.WillCreate") + " ";
-                if (createDirectoryBox.Checked) statusBar.Text += locationTextBox.Text + sep + nameTextBox.Text + sep + nameTextBox.Text + ext;
-                else statusBar.Text += locationTextBox.Text + sep + nameTextBox.Text + ext;
+                char separator = Path.DirectorySeparatorChar;
+                string name = nameTextBox.Text;
+                status = "  " + TextHelper.GetString("Info.WillCreate") + " ";
+                status += locationTextBox.Text.TrimEnd('\\', '/') + separator + name;
+                if (createDirectoryBox.Checked) status += separator + name;
+                status += ext;
+                status = status.Replace('\\', separator).Replace('/', separator);
             }
-            else statusBar.Text = "";
+            statusBar.Text = status;
         }
 
         private void locationTextBox_TextChanged(object sender, System.EventArgs e) { UpdateStatusBar(); }
@@ -575,12 +589,12 @@ namespace ProjectManager.Controls
             if (!Regex.IsMatch(PackageName, "^[_a-zA-Z]([_a-zA-Z0-9])*([\\.][_a-zA-Z]([_a-zA-Z0-9])*)*$") && packageTextBox.Text.Length > 0)
             {
                 okButton.Enabled = false;
-                packageTextBox.BackColor = System.Drawing.Color.Pink;
+                packageTextBox.BackColor = System.Drawing.Color.Salmon;
             }
             else
             {
                 okButton.Enabled = true;
-                packageTextBox.BackColor = System.Drawing.Color.White;
+                packageTextBox.BackColor = System.Drawing.SystemColors.Window;
             }
         }
 

@@ -1,9 +1,8 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
 using FlashDevelop.Settings;
-using ScintillaNet;
 using PluginCore;
+using ScintillaNet;
 
 namespace FlashDevelop
 {

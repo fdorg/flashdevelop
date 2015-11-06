@@ -3,7 +3,6 @@ package $(Package);
 /**
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-
 typedef $(FileName) =$(CSLB){
 	$(EntryPoint)	
 }

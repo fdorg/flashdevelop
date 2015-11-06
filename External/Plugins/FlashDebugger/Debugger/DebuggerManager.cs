@@ -1,18 +1,18 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using flash.tools.debugger;
+using net.sf.jni4net;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using ProjectManager.Projects;
 using ScintillaNet;
-using net.sf.jni4net;
 
 namespace FlashDebugger
 {
@@ -113,7 +113,7 @@ namespace FlashDebugger
 
                     string flexSDKPath = null;
                     if (currentProject != null) flexSDKPath = currentProject.CurrentSDK;
-                    else flexSDKPath = PluginCore.Helpers.PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)"));
+                    else flexSDKPath = PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)"));
 
                     if (flexSDKPath != null && Directory.Exists(flexSDKPath))
                     {
@@ -122,8 +122,8 @@ namespace FlashDebugger
                         if (!String.IsNullOrEmpty(javaHome)) bridgeSetup.JavaHome = javaHome;
                     }
 
-                    bridgeSetup.AddAllJarsClassPath(PluginCore.Helpers.PathHelper.PluginDir);
-                    bridgeSetup.AddAllJarsClassPath(Path.Combine(PluginCore.Helpers.PathHelper.ToolDir, @"flexlibs\lib"));
+                    bridgeSetup.AddAllJarsClassPath(PathHelper.PluginDir);
+                    bridgeSetup.AddAllJarsClassPath(Path.Combine(PathHelper.ToolDir, @"flexlibs\lib"));
                     Bridge.CreateJVM(bridgeSetup);
                     Bridge.RegisterAssembly(typeof(IProgress).Assembly); // ??
                     Bridge.RegisterAssembly(typeof(Bootstrap).Assembly);
@@ -384,7 +384,7 @@ namespace FlashDebugger
             }
             PanelsHelper.localsUI.TreeControl.Nodes.Clear();
             PanelsHelper.stackframeUI.ClearItem();
-            PanelsHelper.watchUI.Clear();
+            PanelsHelper.watchUI.UpdateElements();
             PanelsHelper.threadsUI.ClearItem();
             PluginMain.breakPointManager.ResetAll();
             PluginBase.MainForm.ProgressBar.Visible = false;

@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Managers;
+using PluginCore;
 
 namespace System.Windows.Forms
 {
@@ -19,8 +21,9 @@ namespace System.Windows.Forms
 
     public class DockPanelControl : UserControl
     {
-        DockBorders borders;
         Pen borderPen;
+        DockBorders borders;
+        public Boolean AutoKeyHandling = false;
 
         public DockPanelControl()
         {
@@ -38,6 +41,23 @@ namespace System.Windows.Forms
                 borders = value;
                 this.Padding = new Padding((borders & DockBorders.Left) > 0 ? 1 : 0, (borders & DockBorders.Top) > 0 ? 1 : 0, (borders & DockBorders.Right) > 0 ? 1 : 0, (borders & DockBorders.Bottom) > 0 ? 1 : 0);
             }
+        }
+        
+        protected override Boolean ProcessDialogKey(Keys keyData)
+        {
+            if (this.AutoKeyHandling && this.ContainsFocus)
+            {
+                if (keyData == Keys.Escape)
+                {
+                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+                    if (doc != null && doc.IsEditable) 
+                    {
+                        doc.SciControl.Focus();
+                        return true;
+                    }
+                }
+            }
+            return base.ProcessDialogKey(keyData);
         }
 
         /// <summary>
@@ -88,6 +108,13 @@ namespace System.Windows.Forms
                 if (isOnlyTab) Borders = DockBorders.Left | DockBorders.Bottom | DockBorders.Right;
                 else Borders = DockBorders.Left | DockBorders.Right;
             }
+        }
+
+        private Boolean IsAutoHidden(DockContent content)
+        {
+            DockState state = content.DockState;
+            return state == DockState.DockLeftAutoHide || state == DockState.DockRightAutoHide 
+                || state == DockState.DockTopAutoHide || state == DockState.DockBottomAutoHide;
         }
 
         /// <summary>

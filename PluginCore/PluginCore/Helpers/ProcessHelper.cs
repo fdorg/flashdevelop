@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Diagnostics;
-using System.Threading;
 using PluginCore.Managers;
 
 namespace PluginCore.Helpers

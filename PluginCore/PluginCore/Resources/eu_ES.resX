@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -917,6 +917,10 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
   <data name="FlashDevelop.Label.ClearBreakpoints" xml:space="preserve">
     <value>Eten-puntuak garbitu</value>
   </data>
+  <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
+    <value>&amp;Remove Invalid Files</value>
+    <comment>Added after 5.0.0</comment>
+  </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
     <value>Azken fitxategien zerrenda garbitu</value>
   </data>
@@ -1284,7 +1288,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>Hitz osoa</value>
   </data>
   <data name="FlashDevelop.Label.More" xml:space="preserve">
-    <value>&amp;More...</value>
+    <value>&amp;Gehiago...</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Label.WindowsExplorer" xml:space="preserve">
@@ -1772,7 +1776,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>Proiektuaren bide-izenak proiektuaren kokapenari erlatiboak dira.</value>
   </data>
   <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
-    <value>Classpaths of {0} projects are determined by the Configuration file.</value>
+    <value>{0} proiektuen klase-bideak Konfigurazio fitxategian zehaztuak daude.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
@@ -1872,15 +1876,19 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>&amp;Proiektua eraiki</value>
   </data>
   <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
-    <value>Stop Build</value>
+    <value>Eraikitzea gelditu</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Info.AreYouSureToStopBuild" xml:space="preserve">
-    <value>Are you sure you want to stop the build?</value>
+    <value>Eraikitzea gelditu nahi duzula ziur zaude?</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
     <value>&amp;Ezeztatu</value>
+  </data>
+  <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
+    <value>&amp;Remove Invalid Projects</value>
+    <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">
     <value>&amp;Azken proiektuen zerrenda garbitu</value>
@@ -2009,7 +2017,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>&amp;Irteera fitxategia:</value>
   </data>
   <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
-    <value>&amp;Configuration file:</value>
+    <value>&amp;Konfigurazio fitxategia:</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
@@ -2328,11 +2336,11 @@ Inoiz - abiatzean ez da hasiera orria erakutsiko.</value>
     <value>Fitxategia gorde</value>
   </data>
   <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
-    <value>Remember extension</value>
+    <value>Luzapena gogoratu</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
-    <value>Always use this syntax for files with this extension?</value>
+    <value>Beti erabili nahi duzu sintaxi hau luzapen hau duten fitxategiekin?</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="ProjectManager.Title.OpenProjectDialog" xml:space="preserve">
@@ -2865,7 +2873,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Bide-izenaren izena ebazten ari den bitartean filtratuko diren direktorio izenak.</value>
   </data>
   <data name="AS2Context.Info.PackageDidntMatchFilePath" xml:space="preserve">
-    <value>'{0}' paketea ez dator fitxategiaren bidearekin bat. Pakete berria sortu da: did not match the file path. New package is generated:</value>
+    <value>'{0}' paketea ez dator fitxategiaren bidearekin bat. Pakete berria sortu da:</value>
   </data>
   <data name="AS2Context.Info.PackageDontMatchFilePath" xml:space="preserve">
     <value>'{0}' paketea ez dator fitxategiaren bidearekin bat:</value>
@@ -2913,11 +2921,11 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Sortzaile txantiloia</value>
   </data>
   <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
-    <value>Press Tab to insert the snippet for this keyword</value>
+    <value>Gako honen snippet-a gehitzeko Tab sakatu</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
-    <value>Press F1 to toggle details</value>
+    <value>Xehetasunak ikusteko F1 sakatu</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Info.SearchInvitation" xml:space="preserve">
@@ -3025,11 +3033,11 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Klase izenak baliogabeko karaktereak ditu.</value>
   </data>
   <data name="ASClassWizard.Wizard.Error.EmptyClassName" xml:space="preserve">
-    <value>Class name can't be empty.</value>
+    <value>Klase izena ezin da hutsa izan.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ASClassWizard.Wizard.Error.LowercaseClassName" xml:space="preserve">
-    <value>Class name must start with an uppercase letter.</value>
+    <value>Klase izenak letra larriekin hasi behar du.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
@@ -3153,7 +3161,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Irekitako fitxategietako aldaketak egiaztako tartea, milisegundutan adierazia.</value>
   </data>
   <data name="FlashDevelop.Description.HighlightMatchingWordsMode" xml:space="preserve">
-    <value>When words matching the current selection should be highlighted.</value>
+    <value>Hitzak bat datozenean, uneko aukeraketa nabarmendu.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Description.UseCamelHumps" xml:space="preserve">
@@ -3434,7 +3442,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Eten-puntu Guztiak Gaitu</value>
   </data>
   <data name="FlashDebugger.Label.Exp" xml:space="preserve">
-    <value>Condition</value>
+    <value>Baldintza</value>
     <comment>Modified after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Finish" xml:space="preserve">
@@ -3448,19 +3456,19 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>&amp;Pause</value>
   </data>
   <data name="FlashDebugger.Label.RunToCursor" xml:space="preserve">
-    <value>Kur&amp;tsorearen Lerrora Joan</value>
+    <value>Kurtsorearen Lerrora Joan</value>
   </data>
   <data name="FlashDebugger.Label.Start" xml:space="preserve">
-    <value>&amp;Hasi</value>
+    <value>Hasi</value>
   </data>
   <data name="FlashDebugger.Label.Step" xml:space="preserve">
-    <value>Urratsa &amp;Barrura</value>
+    <value>Urratsa Barrura</value>
   </data>
   <data name="FlashDebugger.Label.Stop" xml:space="preserve">
-    <value>G&amp;elditu</value>
+    <value>Gelditu</value>
   </data>
   <data name="FlashDebugger.Label.BreakOnAllErrors" xml:space="preserve">
-    <value>Break On All &amp;Errors</value>
+    <value>Errore guztietan gelditu</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.ToggleBreakpoint" xml:space="preserve">
@@ -3473,13 +3481,13 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Balioa</value>
   </data>
   <data name="FlashDebugger.Label.ViewBreakpointsPanel" xml:space="preserve">
-    <value>Eten-&amp;puntuen Panela</value>
+    <value>Eten-puntuen Panela</value>
   </data>
   <data name="FlashDebugger.Label.Viewer" xml:space="preserve">
-    <value>&amp;Ikuslea</value>
+    <value>Ikuslea</value>
   </data>
   <data name="FlashDebugger.Label.ViewLocalVariablesPanel" xml:space="preserve">
-    <value>&amp;Aldagai lokalen panela</value>
+    <value>Aldagai lokalen panela</value>
   </data>
   <data name="FlashDebugger.Label.ViewStackframePanel" xml:space="preserve">
     <value>TramaPila Panela</value>
@@ -3500,11 +3508,11 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Pila</value>
   </data>
   <data name="FlashDebugger.BreakPoints.RemoveSelected" xml:space="preserve">
-    <value>Remove selected breakpoints</value>
+    <value>Aukeratutako eten-puntuak ezabatu</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.RemoveAll" xml:space="preserve">
-    <value>Remove all listed breakpoints</value>
+    <value>Zerrendatutako eten-puntu guztiak ezabatu</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ToggleAll" xml:space="preserve">
@@ -3512,63 +3520,63 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ExportAll" xml:space="preserve">
-    <value>Export all listed breakpoints</value>
+    <value>Zerrendatutako eten-puntu guztiak esportatu</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ImportAll" xml:space="preserve">
-    <value>Import breakpoints from a file</value>
+    <value>Eten-puntuak fitxategitik inportatu</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterAll" xml:space="preserve">
-    <value>In All Columns</value>
+    <value>Zutabe guztietan</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterPath" xml:space="preserve">
-    <value>In File Path</value>
+    <value>Fitxategiaren helbidea</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterFile" xml:space="preserve">
-    <value>In File Name</value>
+    <value>Fitxategiaren izena</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterLine" xml:space="preserve">
-    <value>In File Line</value>
+    <value>Fitxategiaren lerroa</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterExp" xml:space="preserve">
-    <value>In Expression</value>
+    <value>Adierazpena</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Error.InvalidFile" xml:space="preserve">
-    <value>Error loading the selected file, it may not be valid</value>
+    <value>Aukeratutako fitxategia kargatzean errorea, agian ez da balizkoa</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
-    <value>Variable could not be reevaluated</value>
+    <value>Aldagaia ezin izan da berrebaluatu</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Error.NoSuchVariable" xml:space="preserve">
-    <value>{0} could not be resolved</value>
+    <value>{0} ezin izan da erabili</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
-    <value>Only scalar variables can be modified</value>
+    <value>Aldagai eskalarrak bakarrik alda daitezke</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Flex PMD-arentzako lehenetsitako arau-multzo pertsonalizatuen fitxategia custom ruleset file for the Flex PMD.</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>Flex PMD kode analizatzailea FlashDevelop-en txertatzen du.</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
-    <value>Proie&amp;ktuaren iturburu kodea analizatu...</value>
+    <value>Proiektuaren iturburu kodea analizatu...</value>
   </data>
   <data name="CodeAnalyzer.Info.RunningFlexPMD" xml:space="preserve">
     <value>Flex PMD Exekutatzen</value>
   </data>
   <data name="CodeAnalyzer.Label.RulesetCreator" xml:space="preserve">
-    <value>Kodea A&amp;nalzatzeko Arau-multzo sortzailea...</value>
+    <value>Kodea Analizatzeko Arau-multzo sortzailea...</value>
   </data>
   <data name="CodeAnalyzer.Info.FlexPMDFinished" xml:space="preserve">
     <value>Flex PMD Egina</value>
@@ -3733,11 +3741,11 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Errore lerroa:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Track Active Document</value>
+    <value>Dokumentu aktiboa jarraitu</value>
     <comment>Modified after 4.7.2</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
-    <value>Locate Document Class</value>
+    <value>Klase-dokumentua kokatu</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.FilterSettings" xml:space="preserve">
@@ -3930,7 +3938,7 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
-    <value>Revert All To &amp;Default</value>
+    <value>Denak defektuzkoan jarri</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">
@@ -3942,11 +3950,11 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
-    <value>View customized only</value>
+    <value>Pertsonalizatuak bakarrik ikusi</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.UnableToLoadPlugin" xml:space="preserve">
-    <value>Plugin bateraezina ezin izan da kargatu:</value>
+    <value>Plugin bateraezina, ezin izan da kargatu:</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="CodeRefactor.Label.InvokeCodeGenerator" xml:space="preserve">
@@ -5342,7 +5350,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.LookAndFeel" xml:space="preserve">
-    <value>TODO: hau aldatu, berezkoa "Look and Feel"</value>
+    <value>Itxura</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Label.OtherBehavior" xml:space="preserve">
@@ -5406,7 +5414,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.WrongEntitlementsXML" xml:space="preserve">
-    <value>Wrong iPhone entitlements XML:</value>
+    <value>iPhone XML izendatze okerrak:</value>
     <comment>Added after 4.6.3</comment>
   </data>
   <data name="AirProperties.Validation.WrongManifestXML" xml:space="preserve">
@@ -5426,43 +5434,43 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
-    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <value>Lasterbideak menu nagusi, ingurune menu eta tresna-barran ikusi.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
-    <value>Colorize first margin with 'gdefault' foreground color</value>
+    <value>Lehenengo marjina 'gdefault' kolorearekin margotu</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
-    <value>Track current active document in Project Tree.</value>
+    <value>Uneko dokumentu aktiboa Proiektu zuhaitzean jarri.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
-    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <value>Fitxategiaren luzapena aldatuz gero, ez-erabilgarri gera liteke. Aldatu nahi duzula ziur zaude?</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
-    <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
+    <value>Fitxategiak definitutako klase-bideetatik kanpo mugitzen ari zara. Ezin da berregituratu eta proiektua gelditu egingo da. Jarraitu?</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Filter" xml:space="preserve">
-    <value>Filter:</value>
+    <value>Filtroa:</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.SetCurrentFrame" xml:space="preserve">
-    <value>Set as current frame</value>
+    <value>Uneko frame gisa ezarri</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.GotoSource" xml:space="preserve">
-    <value>Go to source</value>
+    <value>Iturburura joan</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
-    <value>Show just my code</value>
+    <value>Nire kodea bakarrik erakutsi</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
-    <value>Add new expression</value>
+    <value>Adierazpen berri gehitu</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.MatchCase" xml:space="preserve">
@@ -5474,47 +5482,47 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.Options" xml:space="preserve">
-    <value>Options</value>
+    <value>Aukerak</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
-    <value>Regular Expression</value>
+    <value>Adierazpen Erregularra</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AddBracesToCases" xml:space="preserve">
-    <value>Add missing braces to cases.</value>
+    <value>case-ei falta diren giltzak gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AddBracesToConditionals" xml:space="preserve">
-    <value>Add missing braces to conditionals.</value>
+    <value>Baldintzei falta zaizkien giltzak gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AddBracesToLoops" xml:space="preserve">
-    <value>Add missing braces to loops.</value>
+    <value>Begiztei falta zaizkien giltzak gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAlignArrayItems" xml:space="preserve">
-    <value>Align array items with advanced wrapping.</value>
+    <value>Biltze aurreratuarekin array guztiak alineatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAlignObjectItems" xml:space="preserve">
-    <value>Align object items with advanced wrapping.</value>
+    <value>Biltze aurreratuarekin objektu guztiak alineatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAllArgs" xml:space="preserve">
-    <value>Use advanced all argument wrapping.</value>
+    <value>Argumentu guztietan biltze-aurreratua erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAllArrayItems" xml:space="preserve">
-    <value>Use advanced all array items wrapping.</value>
+    <value>Array-ko item guztietan biltze-aurreratua erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAllObjectItems" xml:space="preserve">
-    <value>Use advanced all object items wrapping.</value>
+    <value>Objektu guztietan biltze-aurreratua erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAllParms" xml:space="preserve">
-    <value>Use advanced all parameter wrapping.</value>
+    <value>Parametro guztietan biltze-aurreratua erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingEnforceMax" xml:space="preserve">
@@ -5522,19 +5530,19 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstArg" xml:space="preserve">
-    <value>Use advanced first argument wrapping.</value>
+    <value>Lehenengo argumentuan biltze-aurreratua erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstArrayItem" xml:space="preserve">
-    <value>Use advanced first array item wrapping.</value>
+    <value>Array-ko lehenengo itemean biltze-aurreratua erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstObjectItem" xml:space="preserve">
-    <value>Use advanced first object item wrapping.</value>
+    <value>Lehenengo objektuan biltze-aurreratua erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstParm" xml:space="preserve">
-    <value>Use advanced first parameter wrapping.</value>
+    <value>Lehenengo parametroan biltze-aurreratua erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingGraceColumns" xml:space="preserve">
@@ -5546,7 +5554,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AlignDeclEquals" xml:space="preserve">
-    <value>Align declaration equal symbols.</value>
+    <value>Deklarazioetako berdin ikurrak lerrokatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AlignDeclMode" xml:space="preserve">
@@ -5554,35 +5562,35 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AlignLineCommentsAtColumn" xml:space="preserve">
-    <value>Align line comments at column.</value>
+    <value>Iruzkin lerroak zutabeari lerrokatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesAtFunctionEnd" xml:space="preserve">
-    <value>Amount of blank lines at function end.</value>
+    <value>Funtzio bukaerako lerro zuri kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesAtFunctionStart" xml:space="preserve">
-    <value>Amount of blank lines at function start.</value>
+    <value>Funtzio hasierako lerro zuri kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesBeforeImportBlock" xml:space="preserve">
-    <value>Amount of blank lines before import block.</value>
+    <value>import blokearen aurreko lerro zuri kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BreakLinesBeforeArithmetic" xml:space="preserve">
-    <value>Break lines before arithmetic operations.</value>
+    <value>Eragiketa aritmetikoen aurretik lerro saltoa.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BreakLinesBeforeAssignment" xml:space="preserve">
-    <value>Break lines before assignment operation.</value>
+    <value>Esleitzeen aurretik lerro saltoa.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BreakLinesBeforeLogical" xml:space="preserve">
-    <value>Break lines before logical operations.</value>
+    <value>Eragiketa logikoen aurretik lerro saltoa.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.CRBeforeBraceSettings" xml:space="preserve">
-    <value>Add newline before brace settings.</value>
+    <value>Giltzaren aurretik lerro berria gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DocCommentHangingIndentTabs" xml:space="preserve">
@@ -5590,7 +5598,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DocCommentKeepBlankLines" xml:space="preserve">
-    <value>Keep the doc comment blank lines.</value>
+    <value>Dokumentazio iruzkinetako lerro zuriak mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DocCommentReflow" xml:space="preserve">
@@ -5598,51 +5606,51 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DontIndentSwitchCases" xml:space="preserve">
-    <value>Do not indent switch cases.</value>
+    <value>Switch-ak ez koskatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.EnsureConditionalsHaveBraces" xml:space="preserve">
-    <value>Ensure that conditionals have braces.</value>
+    <value>Baldintzek giltzak dituztela egiaztatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.EnsureLoopsHaveBraces" xml:space="preserve">
-    <value>Ensure that loops have braces.</value>
+    <value>Begiztek giltzak dituztela egiaztatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.EnsureSwitchCasesHaveBraces" xml:space="preserve">
-    <value>Ensure that switch cases have braces.</value>
+    <value>Switch-ek giltzak dituztela egiaztatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.KeepRelativeIndentInDocComments" xml:space="preserve">
-    <value>Keep relative indent in doc comments.</value>
+    <value>Dokumentazioko iruzkinetan oskatze erlatiboa mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.KeepSpacesBeforeLineComments" xml:space="preserve">
-    <value>Keep spaces before line comments.</value>
+    <value>Iruzkin lerroen aurretik zuriuneak mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.LeaveSingleLineFunctions" xml:space="preserve">
-    <value>Keep the single line functions intact.</value>
+    <value>Lerro bakarreko funtzioak ez ikutu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MetaTagsOnSameLineAsTargetFunction" xml:space="preserve">
-    <value>Metatags to keep on same line as target function.</value>
+    <value>Metaetiketak helburu funtzioaren lerro berean mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MetaTagsOnSameLineAsTargetProperty" xml:space="preserve">
-    <value>Metatags to keep on same line as target property.</value>
+    <value>Metaetiketak helburu propietatearen lerro berean mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MLCommentAsteriskMode" xml:space="preserve">
-    <value>Multiline comment asterisk render mode.</value>
+    <value>Lerro anitzeko iruzkinetako asteriskoaren errendatze modua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MLCommentHeaderOnSeparateLine" xml:space="preserve">
-    <value>Keep multiline comment header on separate line.</value>
+    <value>Lerro anitzeko iruzkinen izenburua aparteko lerro batean mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MLCommentKeepBlankLines" xml:space="preserve">
-    <value>Keep the multiline comment blank lines.</value>
+    <value>Lerro anitzeko iruzkinen lerro zuriak mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MLCommentReflow" xml:space="preserve">
@@ -5658,67 +5666,67 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeBreak" xml:space="preserve">
-    <value>Do not add new newlines before break.</value>
+    <value>break aurretik lerro zuririk ez gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeContinue" xml:space="preserve">
-    <value>Do not add new newlines before continue.</value>
+    <value>continue aurretik lerro zuririk ez gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeExpression" xml:space="preserve">
-    <value>Do not add new newlines before expression.</value>
+    <value>adierazpenen aurretik lerro zuririk ez gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeReturn" xml:space="preserve">
-    <value>Do not add new newlines before return.</value>
+    <value>return aurretik lerro zuririk ez gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeThrow" xml:space="preserve">
-    <value>Do not add new newlines before throw.</value>
+    <value>throw aurretik lerro zuririk ez gehitu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAfterColonsInDeclarations" xml:space="preserve">
-    <value>Amount of spaces after colons in declarations.</value>
+    <value>Adierezpenen ':'-ren ondorengo zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAfterColonsInFunctionTypes" xml:space="preserve">
-    <value>Amount of spaces after colons in function types.</value>
+    <value>Funtzio moten ':'-ren ondorengo zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAroundEqualsInMetatags" xml:space="preserve">
-    <value>Amount of spaces around equals in metatags.</value>
+    <value>Metaetiketen '='-en inguruko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeArguments" xml:space="preserve">
-    <value>Amount of spaces before arguments.</value>
+    <value>Argumentuen aurreko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeColonsInDeclarations" xml:space="preserve">
-    <value>Amount of spaces before colons in declarations.</value>
+    <value>Adierazpenen ':'-ren aurreko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeColonsInFunctionTypes" xml:space="preserve">
-    <value>Amount of spaces before colons in function types.</value>
+    <value>Funtzio moten ':'-ren aurreko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeFormalParameters" xml:space="preserve">
-    <value>Amount of spaces before formal parameters.</value>
+    <value>Parametro formalen aurreko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesInsideParensInArgumentLists" xml:space="preserve">
-    <value>Amount of spaces inside parens in argument lists.</value>
+    <value>Argumentu zerrendako parentesien barruko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesInsideParensInOtherPlaces" xml:space="preserve">
-    <value>Amount of spaces inside parens in other places.</value>
+    <value>Beste lekuetako parentesien barruko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesInsideParensInParameterLists" xml:space="preserve">
-    <value>Amount of spaces inside parens in parameter lists.</value>
+    <value>Parametro zerrendako parentesien barruko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.TabsInHangingIndent" xml:space="preserve">
-    <value>Amount of tabs in hanging indent.</value>
+    <value>Koskatzearen tabulazio kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UnindentExpressionTerminators" xml:space="preserve">
@@ -5726,39 +5734,39 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseAdvancedWrapping" xml:space="preserve">
-    <value>Use advanced wrapping settings.</value>
+    <value>Biltze aurreratuaren ezarpenak erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseDocCommentWrapping" xml:space="preserve">
-    <value>Use doc comment wrapping settings.</value>
+    <value>Dokumentazio iruzkinak biltzeko ezarpenak erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseGlobalCRBeforeBrace" xml:space="preserve">
-    <value>Use global newline before brace.</value>
+    <value>Giltzaren aurretik lerro-berri globala erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseGnuBraceIndent" xml:space="preserve">
-    <value>Use GNU style brace indent.</value>
+    <value>GNU estiloko giltza koskatzea erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseLineCommentWrapping" xml:space="preserve">
-    <value>Use line comment wrapping settings.</value>
+    <value>Lerro bakarreko iruzkina biltzeko ezarpenak erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseMLCommentWrapping" xml:space="preserve">
-    <value>Use multiline comment wrapping settings.</value>
+    <value>Lerro anitzeko iruzkinak biltzeko ezarpenak erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseSpacesAroundEqualsInMetatags" xml:space="preserve">
-    <value>Use spaces around equals in metatags setting.</value>
+    <value>Metaetiketen ezarpenetako '='-en inguruan zuriuneak erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.WhileOnNewLine" xml:space="preserve">
-    <value>Keep while on new line.</value>
+    <value>'while' lerro berri batean mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.AlwaysUseMaxLineLength" xml:space="preserve">
-    <value>Always use the maximum line length setting.</value>
+    <value>Gehienezko lerro luzeraren ezarpena beti erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.AttrGroups" xml:space="preserve">
@@ -5766,55 +5774,55 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesAfterParentTags" xml:space="preserve">
-    <value>Amount of blank lines after parent tags.</value>
+    <value>Etiketa gureasoen ondorengo lerro zuri kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesAfterSpecificParentTags" xml:space="preserve">
-    <value>Amount of blank lines after specific parent tags.</value>
+    <value>Etiketa guraso jakinen ondorengo lerro zuri kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesAtCDataStart" xml:space="preserve">
-    <value>Amount of blank lines at CData start.</value>
+    <value>CData hasierako lerro zuri kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesBeforeClosingTags" xml:space="preserve">
-    <value>Amount of blank lines before closing tags.</value>
+    <value>Etiketa itxi aurreko lerro zuri kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesBeforeComments" xml:space="preserve">
-    <value>Amount of blank lines before comments.</value>
+    <value>Iruzkinen aurreko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesBetweenSiblingTags" xml:space="preserve">
-    <value>Amount of blank lines between sibling tags.</value>
+    <value>Etiketan senideen arteko lerro zuri kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.IndentSize" xml:space="preserve">
-    <value>Size of the indent.</value>
+    <value>Koskaren tamaina.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.IndentTagClose" xml:space="preserve">
-    <value>Indent close tags.</value>
+    <value>Itxiera etiketak koskatu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.KeepRelativeIndentInMultilineComments" xml:space="preserve">
-    <value>Keep relative indent in multiline comments.</value>
+    <value>Iruzkinetan koskatze erlatiboa mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.KeepScriptCDataOnSameLine" xml:space="preserve">
-    <value>Keep script CData on the same line.</value>
+    <value>CData script-a lerro berean mantendu.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.ParentTagsWithBlankLinesAfter" xml:space="preserve">
-    <value>Parent tags that should have blank lines after them.</value>
+    <value>Beraien ondoren lerro zuriak izango dituzten etiketa gurasoak.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.ScriptCDataIndentTabs" xml:space="preserve">
-    <value>Amount of script CData indent tabs.</value>
+    <value>CData script-aren koskaren tabulazio kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.ScriptIndentTabs" xml:space="preserve">
-    <value>Amount of script indent tabs.</value>
+    <value>script-aren koskaren tabulazio kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SortAttrData" xml:space="preserve">
@@ -5822,7 +5830,7 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SpacesInsideAttributeBraces" xml:space="preserve">
-    <value>Amount of spaces inside attribute braces.</value>
+    <value>Atributuen giltzen barruko zuriune kopurua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TabsInHangingIndent" xml:space="preserve">
@@ -5830,67 +5838,67 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TabSize" xml:space="preserve">
-    <value>Size of tabs in spaces.</value>
+    <value>Tabulazioen tamaina, zuriunetan.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TagsDoNotFormatInside" xml:space="preserve">
-    <value>Tags that should not format inside them.</value>
+    <value>Barrukoa formateatu behar ez zaien etiketak.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TagsWithASContent" xml:space="preserve">
-    <value>Tags that contain ActionScript content in them.</value>
+    <value>ActionScript edukia barruan duten etiketak.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.UseFormattingOfBoundAttributes" xml:space="preserve">
-    <value>Use formatting of bound attributes settings.</value>
+    <value>Loturiko atributuei formateatze ezarpenak erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.UseSpacesInsideAttributeBraces" xml:space="preserve">
-    <value>Use spaces inside attribute braces settings.</value>
+    <value>Atributuen giltzen arteko zuriuneen ezarpenak erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.UseTagsDoNotFormatInside" xml:space="preserve">
-    <value>Use tags which do not format inside setting.</value>
+    <value>Etiketa barrukoa ez formateatzeko ezarpena erabili.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDevelop.Description.CheckForUpdates" xml:space="preserve">
-    <value>Sets how often FlashDevelop checks for updates.</value>
+    <value>FlashDevelop-ek eguneraketan egiaztatzeko maiztasuna.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.ConsistentEOLs" xml:space="preserve">
-    <value>Consistent EOLs</value>
+    <value>EOL koherenteak</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.FormatCode" xml:space="preserve">
-    <value>Format Code</value>
+    <value>Kodea formateatu</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.OpenFiles" xml:space="preserve">
-    <value>Open Files</value>
+    <value>Fitxategiak ireki</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.ProjectSources" xml:space="preserve">
-    <value>Project Sources</value>
+    <value>Proiektuaren iturburuak</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Label.BatchProcess" xml:space="preserve">
-    <value>Batch Process...</value>
+    <value>Prozesu multzoa...</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Title.BatchProcessDialog" xml:space="preserve">
-    <value>Batch Process</value>
+    <value>Prozesu multzoa</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.HighlightMarkers" xml:space="preserve">
-    <value>List of markers that highlight the message with the specified log level color.</value>
+    <value>Zehaztutako kolorearekin mezuak nabarmentzen dituztezn markagailuen zerrenda.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.Level" xml:space="preserve">
-    <value>The log level that the line should be colored to.</value>
+    <value>Lerroa koloreztatzeko erabiliko den log maila.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.Marker" xml:space="preserve">
-    <value>Highlight marker that marks the line to be colored.</value>
+    <value>Koloreztatuko den lerroa ezartzen duen nabarmentze-markagailua.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.UseLegacyColoring" xml:space="preserve">
@@ -5902,55 +5910,59 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDevelop.Description.HighlightMatchingWordsDelay" xml:space="preserve">
-    <value>The delay in milliseconds after the word match highlight should be shown.</value>
+    <value>Hitzen nabarmentzea erakusteko atzerapena milisegundutan.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Category.DataTree" xml:space="preserve">
-    <value>Data Tree</value>
+    <value>Datu zuhaitza</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.CombineInherited" xml:space="preserve">
-    <value>Display inherited members as direct descendants of the displayed object.</value>
+    <value>Heredatutako kideak erakutsitako objektuen ondorengo zuzen moduan erakutsi.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.HideStaticMembers" xml:space="preserve">
-    <value>Hide static members of the displayed object.</value>
+    <value>Bistaratutako objektuen kide estatikoak ezkutatu.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.HideFullClasspaths" xml:space="preserve">
-    <value>Show only the class name of the displayed objects.</value>
+    <value>Bistaratutako objektuen klase izena bakarrik erakutsi.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.HideClassIds" xml:space="preserve">
-    <value>Hide the ID of the displayed objects.</value>
+    <value>Bistaratutako objektuen ID-ñak eskutatu.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.CopyTreeMaxRecursion" xml:space="preserve">
-    <value>The maximum node depth to reach when copying an object tree to the clipboard.</value>
+    <value>Objektu zuhaitz bat arbelera kopiatzean kontutan hartu beharreko nodo-sakonera maximoa..</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.CopyTreeMaxSize" xml:space="preserve">
-    <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
-    <comment>Added after 4.7.2</comment>
-  </data>
-  <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
-    <value>Copy Value</value>
+    <value>Objektu zuhaitz batek arbelra kopiatzean izan dezakeen karaktere kopuru maximoa, gutxi gora-behera.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
-    <value>Copy ID</value>
+    <value>ID-a kopiatu</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Label.CopyTree" xml:space="preserve">
-    <value>Copy Tree</value>
+    <value>Zuhaitza kopiatu</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
-    <value>[Recursion too deep, increase Copy Tree Max Level in FlashDebugger settings]</value>
+    <value>[Errekursio sakonegia, FlashDebugger ezarpenetan Zuhaitz Kopia Maila Max balioa handitu]</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
-    <value>[Object {0} already listed before]</value>
+    <value>[{0} objektua lehendik zerrendatua]</value>
     <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
+    <value>In Classpaths only</value>
+    <comment>Added after 5.0.1</comment>
+  </data>
+  <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
+    <value>Highlight word:</value>
+    <comment>Added after 5.0.2</comment>
   </data>
 </root>

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
-using ASCompletion.Context;
+using PluginCore.Helpers;
 
 namespace ASCompletion.Model
 {
@@ -82,7 +82,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind Parse(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 switch (model.Type)
                 {
@@ -108,13 +108,13 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 Match m = ASFileParserRegexes.ValidObjectType.Match(comment);
                 if (m.Success)
                 {
                     if (!detectKindOnly)
-                        model.Type = TypeCommentUtils.ObjectType + "@" + m.Groups["type"].Value;
+                        model.Type = ObjectType + "@" + m.Groups["type"].Value;
                     return TypeDefinitionKind.TypedObject;
                 }
             }
@@ -130,7 +130,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != "")
+            if (model != null && !string.IsNullOrEmpty(comment))
             {
                 Match m = ASFileParserRegexes.ValidTypeName.Match(comment);
                 if (m.Success)
@@ -153,7 +153,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model, bool detectKindOnly)
         {
-            if (model != null && comment != null && comment != ""
+            if (model != null && !string.IsNullOrEmpty(comment)
                 && (model.Flags & FlagType.Function) == 0)
             {
                 MemberModel fnModel = extractTypedCallbackModel(comment);
@@ -201,7 +201,7 @@ namespace ASCompletion.Model
         /// </summary>
         private static MemberModel extractTypedCallbackModel(string comment)
         {
-            if (comment == null || comment.Length == 0)
+            if (string.IsNullOrEmpty(comment))
                 return null;
 
             int idxBraceOp = comment.IndexOf("(");
@@ -244,7 +244,7 @@ namespace ASCompletion.Model
             for (i = 0; i < l; i++)
             {
                 string pName = pMatches[i].Groups["pName"].Value;
-                if (pName != null && pName.Length > 0)
+                if (!string.IsNullOrEmpty(pName))
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
@@ -257,7 +257,7 @@ namespace ASCompletion.Model
                 }
 
                 string pType = pMatches[i].Groups["pType"].Value;
-                if (pType != null && pType.Length > 0)
+                if (!string.IsNullOrEmpty(pType))
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
@@ -270,7 +270,7 @@ namespace ASCompletion.Model
                 }
 
                 string pVal = pMatches[i].Groups["pVal"].Value;
-                if (pVal != null && pVal.Length > 0)
+                if (!string.IsNullOrEmpty(pVal))
                 {
                     if (qStrRepls.ContainsKey(pVal))
                     {
@@ -401,7 +401,7 @@ namespace ASCompletion.Model
 
             string typeClassifier;
             string typeComment;
-            if (!ASFileParserUtils.ParseTypeDefinition(typeDefinition, out typeClassifier, out typeComment))
+            if (!ParseTypeDefinition(typeDefinition, out typeClassifier, out typeComment))
                 return TypeDefinitionKind.Null;
 
             model.Type = typeClassifier;
@@ -428,7 +428,7 @@ namespace ASCompletion.Model
             {
                 if (File.Exists(fileModel.FileName))
                 {
-                    src = PluginCore.Helpers.FileHelper.ReadFile(fileModel.FileName);
+                    src = FileHelper.ReadFile(fileModel.FileName);
                     ASFileParser parser = new ASFileParser();
                     fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
                     parser.ParseSrc(fileModel, src);
@@ -698,13 +698,21 @@ namespace ASCompletion.Model
                                 }
                             }
                         }
-                        // end of string
+                        // end of string?
                         else if (isInString)
                         {
-                            if (c1 == '\\') { i++; continue; }
-                            else if (c1 == 10 || c1 == 13) inString = 0;
-                            else if ((inString == 1) && (c1 == '"')) inString = 0;
-                            else if ((inString == 2) && (c1 == '\'')) inString = 0;
+                            if (c1 == 10 || c1 == 13) { if (!haXe) inString = 0; }
+                            else if ((c1 == '"' && inString == 1) || (c1 == '\'' && inString == 2))
+                            {
+                                // Are we on an escaped ' or ""?
+                                int escNo = 0;
+                                int l = i - 2;
+                                while (l > -1 && ba[l--] == '\\')
+                                    escNo++;
+
+                                // Even number of escaped \ means we are not on an escaped ' or ""
+                                if (escNo % 2 == 0) inString = 0;
+                            }
 
                             // extract "include" declarations
                             if (inString == 0 && length == 7 && context == 0)
@@ -927,7 +935,7 @@ namespace ASCompletion.Model
                 {
                     if (c1 == '/')
                     {
-                        LookupRegex(ref ba, ref i);
+                        LookupRegex(ba, ref i);
                     }
                     else if (c1 == '}')
                     {
@@ -1013,7 +1021,7 @@ namespace ASCompletion.Model
                     else if (c1 == '/')
                     {
                         int i0 = i;
-                        if (LookupRegex(ref ba, ref i) && valueLength < VALUE_BUFFER - 3)
+                        if (LookupRegex(ba, ref i) && valueLength < VALUE_BUFFER - 3)
                         {
                             valueBuffer[valueLength++] = '/';
                             for (; i0 < i; i0++)
@@ -1611,7 +1619,7 @@ namespace ASCompletion.Model
                         // literal regex
                         else if (c1 == '/' && version == 3)
                         {
-                            if (LookupRegex(ref ba, ref i))
+                            if (LookupRegex(ba, ref i))
                                 continue;
                         }
                 }
@@ -1640,16 +1648,26 @@ namespace ASCompletion.Model
             //  Debug.WriteLine("out model: " + model.GenerateIntrinsic(false));
         }
 
-        private bool LookupRegex(ref string ba, ref int i)
+        private bool LookupRegex(string ba, ref int i)
         {
             int len = ba.Length;
-            int i0 = i - 2;
+            int i0;
             char c;
             // regex in valid context
+
+            if (!haXe)
+                i0 = i - 2;
+            else
+            {
+                if (ba[i - 2] != '~')
+                    return false;
+                i0 = i - 3;
+            }
+
             while (i0 > 0)
             {
                 c = ba[i0--];
-                if ("=(,[{;".IndexOf(c) >= 0) break; // ok
+                if ("=(,[{;:".IndexOf(c) >= 0) break; // ok
                 if (" \t".IndexOf(c) >= 0) continue;
                 return false; // anything else isn't expected before a regex
             }
@@ -1660,6 +1678,15 @@ namespace ASCompletion.Model
                 if (c == '\\') { i0++; continue; } // escape next
                 if (c == '/') break; // end of regex
                 if ("\r\n".IndexOf(c) >= 0) return false;
+            }
+            while (i0 < len)
+            {
+                c = ba[i0++];
+                if (!char.IsLetter(c))
+                {
+                    i--;
+                    break;
+                }
             }
             i = i0; // ok, skip this regex
             return true;
@@ -1734,7 +1761,11 @@ namespace ASCompletion.Model
             if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line;
             if (version == 2)
             {
-                string testPackage = Path.Combine(Path.GetDirectoryName(model.FileName), model.GetPublicClass().Name);
+                string className = model.GetPublicClass().Name;
+                if (className.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
+                    return;
+
+                string testPackage = Path.Combine(Path.GetDirectoryName(model.FileName), className);
                 if (Directory.Exists(testPackage)) model.TryAsPackage = true;
             }
         }

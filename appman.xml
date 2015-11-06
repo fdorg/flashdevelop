@@ -1,7 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<Entry>
-		<Id>haxe3setup</Id>
+		<Id>haxe3setup2</Id>
+		<Name>Haxe + Neko</Name>
+		<Version>3.2.1</Version>
+		<Build>1</Build>
+		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
+		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://www.haxe.org</Info>
+		<Urls>
+			<Url>http://haxe.org/website-content/downloads/3.2.1/downloads/haxe-3.2.1-win.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>haxe3setup1</Id>
+		<Name>Haxe + Neko</Name>
+		<Version>3.2.0</Version>
+		<Build>1</Build>
+		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
+		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://www.haxe.org</Info>
+		<Urls>
+			<Url>http://haxe.org/file/haxe-3.2.0-win.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>haxe3setup2</Id>
 		<Name>Haxe + Neko</Name>
 		<Version>3.1.3</Version>
 		<Build>1</Build>
@@ -26,14 +58,14 @@
 		<Info>http://www.adobe.com/devnet/flex.html</Info>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-16.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-19.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flexairsdk</Id>
 		<Name>Flex SDK + AIR SDK</Name>
-		<Version>4.6.0+17.0.0</Version>
-		<Build>23201B+124</Build>
+		<Version>4.6.0+19.0.0</Version>
+		<Build>23201B+190</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -42,15 +74,15 @@
 		</Bundles>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://airdownload.adobe.com/air/win/download/17.0/AdobeAIRSDK.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-17.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/19.0/AdobeAIRSDK.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-19.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
-		<Version>17.0.0</Version>
-		<Build>124</Build>
+		<Version>19.0.0</Version>
+		<Build>190</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -58,14 +90,14 @@
 			<Bundle>AIR</Bundle>
 		</Bundles>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/17.0/AIRSDK_Compiler.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-17.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/19.0/AIRSDK_Compiler.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-19.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>aflexsdk</Id>
 		<Name>Apache Flex SDK</Name>
-		<Version>3.1.0</Version>
+		<Version>3.2.0</Version>
 		<Build>1</Build>
 		<Desc>Apache Flex SDK and dependencies installer</Desc>
 		<Group>Compilers</Group>
@@ -75,7 +107,7 @@
 		<Type>Executable</Type>
 		<Info>http://flex.apache.org/index.html</Info>
 		<Urls>
-			<Url>http://mirror.netinch.com/pub/apache/flex/installer/3.1/binaries/apache-flex-sdk-installer-3.1.0-bin.exe</Url>
+			<Url>http://www.apache.org/dyn/closer.lua/flex/installer/3.2/binaries/apache-flex-sdk-installer-3.2.0-bin.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -93,8 +125,8 @@
 	<Entry>
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
-		<Version>17.0.0</Version>
-		<Build>124</Build>
+		<Version>19.0.0</Version>
+		<Build>213</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -103,14 +135,14 @@
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/products/air.html</Info>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/17.0/AdobeAIRInstaller.exe</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/19.0/AdobeAIRInstaller.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
-		<Version>17.0.0</Version>
-		<Build>134</Build>
+		<Version>19.0.0</Version>
+		<Build>207</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -121,39 +153,52 @@
 		</Bundles>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/17/flashplayer_17_sa_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_sa_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashns</Id>
 		<Name>Flash Player (NS)</Name>
-		<Version>17.0.0</Version>
-		<Build>134</Build>
+		<Version>19.0.0</Version>
+		<Build>207</Build>
 		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/17/flashplayer_17_plugin_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_plugin_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
-		<Version>17.0.0</Version>
-		<Build>134</Build>
+		<Version>19.0.0</Version>
+		<Build>207</Build>
 		<Desc>Debug Flash Player plugin for Internet Explorer</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/17/flashplayer_17_ax_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ax_debug.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>flashppapi</Id>
+		<Name>Flash Player (PPAPI)</Name>
+		<Version>19.0.0</Version>
+		<Build>207</Build>
+		<Desc>Debug Flash Player plugin for Opera and Chromium based applications – PPAPI</Desc>
+		<Group>Runtimes</Group>
+		<Type>Executable</Type>
+		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
+		<Urls>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ppapi_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit (x86)</Name>
-		<Version>1.8.13</Version>
+		<Version>1.8.15</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -163,13 +208,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.13.0/TortoiseGit-1.8.13.0-32bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.15.0/TortoiseGit-1.8.15.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
-		<Version>1.8.13</Version>
+		<Version>1.8.15</Version>
 		<Build>1</Build>
 		<Desc>Git client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -179,13 +224,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.13.0/TortoiseGit-1.8.13.0-64bit.msi</Url>
+			<Url>http://download.tortoisegit.org/tgit/1.8.15.0/TortoiseGit-1.8.15.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
-		<Name>Git For Windows</Name>
-		<Version>1.9.5</Version>
+		<Name>Git For Windows (x86)</Name>
+		<Version>2.6.1</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -195,13 +240,29 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20141217/Git-1.9.5-preview20141217.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.1.windows.1/Git-2.6.1-32-bit.exe</Url>
 		</Urls>
+	</Entry>
+    <Entry>
+		<Id>git4win</Id>
+		<Name>Git For Windows (x64)</Name>
+		<Version>2.6.1</Version>
+		<Build>1</Build>
+		<Desc>Git command line client 64-bit installer</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>Git</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://msysgit.github.io/</Info>
+		<Urls>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.1.windows.1/Git-2.6.1-64-bit.exe</Url>
+        </Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN (x86)</Name>
-		<Version>1.8.10</Version>
+		<Version>1.9.2</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -209,15 +270,15 @@
 			<Bundle>SVN</Bundle>
 		</Bundles>
 		<Type>Executable</Type>
-		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.10/Application/TortoiseSVN-1.8.10.26129-win32-svn-1.8.11.msi</Url>
+			<Url>https://sourceforge.net/projects/tortoisesvn/files/1.9.2/Application/TortoiseSVN-1.9.2.26806-win32-svn-1.9.2.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn64</Id>
 		<Name>TortoiseSVN (x64)</Name>
-		<Version>1.8.10</Version>
+		<Version>1.9.2</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -225,15 +286,15 @@
 			<Bundle>SVN</Bundle>
 		</Bundles>
 		<Type>Executable</Type>
-		<Info>https://code.google.com/p/tortoisegit/</Info>
+		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>http://sourceforge.net/projects/tortoisesvn/files/1.8.10/Application/TortoiseSVN-1.8.10.26129-x64-svn-1.8.11.msi</Url>
+			<Url>https://sourceforge.net/projects/tortoisesvn/files/1.9.2/Application/TortoiseSVN-1.9.2.26806-x64-svn-1.9.2.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>sliksvn</Id>
-		<Name>SlikSVN Client</Name>
-		<Version>1.8.11</Version>
+		<Name>SlikSVN Client (x86)</Name>
+		<Version>1.9.2</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -243,7 +304,23 @@
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>http://www.sliksvn.com/pub/Slik-Subversion-1.8.11-win32.msi</Url>
+			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.2-win32.msi</Url>
+		</Urls>
+	</Entry>
+    <Entry>
+		<Id>sliksvn</Id>
+		<Name>SlikSVN Client (x64)</Name>
+		<Version>1.9.2</Version>
+		<Build>1</Build>
+		<Desc>Subversion command line client 64-bit installer</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>SVN</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://www.sliksvn.com/en/download/</Info>
+		<Urls>
+			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.2-x64.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -275,27 +352,27 @@
 	<Entry>
 		<Id>navigationbar</Id>
 		<Name>NavigationBar</Name>
-		<Version>2.5</Version>
+		<Version>2.5.1</Version>
 		<Build>1</Build>
-		<Checksum>a98f36b6b051b1d22b34af63b49a2db1</Checksum>
+		<Checksum>7116b1f0dced75aef1a7cad1540c303d</Checksum>
 		<Desc>Adds a bar that provides dropdowns for classes, members, and optionally imports.</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9376</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-navigationbar/releases/download/v2.5/NavigationBar_2.5.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-navigationbar/releases/download/v2.5.1/NavigationBar_2.5.1.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>editorminimap</Id>
 		<Name>EditorMiniMap</Name>
-		<Version>1.4</Version>
+		<Version>1.5.1</Version>
 		<Build>1</Build>
-		<Checksum>5cbbb78c3bdcd4c213af0f022f132cae</Checksum>
+		<Checksum>f31b0892235c1bd0a147c756cac44288</Checksum>
 		<Desc>Renders a miniature version of the open file in a bar to the side of the editor.</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9397</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-editorminimap/releases/download/v1.4/EditorMiniMap_1.4.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-editorminimap/releases/download/v1.5.1/EditorMiniMap_1.5.1.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -314,79 +391,79 @@
 	<Entry>
 		<Id>quicklaunch</Id>
 		<Name>QuickLaunch</Name>
-		<Version>0.10</Version>
+		<Version>0.10.1</Version>
 		<Build>1</Build>
-		<Checksum>615102096400876ae23907640c15edd4</Checksum>
+		<Checksum>0e972e971fcb2ece036b5657f647f5b9</Checksum>
 		<Desc>Adds a quick launch box that provides easy access to commands, files, classes, and more.</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=9443</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-quicklaunch/releases/download/v0.10/QuickLaunch_0.10.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-quicklaunch/releases/download/v0.10.1/QuickLaunch_0.10.1.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>vsbluefulltheme</Id>
 		<Name>VsBlue Full Theme</Name>
-		<Version>1.1</Version>
+		<Version>1.2</Version>
 		<Build>1</Build>
-		<Checksum>1674D26C4F7D6C2D3155B5FB5A171D5C</Checksum>
+		<Checksum>4AA32F2776639727B05581C3B35B9884</Checksum>
 		<Desc>Adds a blue ui theme and a light syntax theme inspired by Visual Studio.</Desc>
 		<Group>Themes</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsBlueFullTheme.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.2/VsBlueFullTheme.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>vslightfulltheme</Id>
 		<Name>VsLight Full Theme</Name>
-		<Version>1.1</Version>
+		<Version>1.2</Version>
 		<Build>1</Build>
-		<Checksum>F1733EF0399C8E97B32A70EC5A0974F7</Checksum>
+		<Checksum>7A9D8F9718B20E21B72CBFBE8D086446</Checksum>
 		<Desc>Adds a light ui theme and a light syntax theme inspired by Visual Studio.</Desc>
 		<Group>Themes</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsLightFullTheme.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.2/VsLightFullTheme.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>vsdarkfulltheme</Id>
 		<Name>VsDark Full Theme</Name>
-		<Version>1.1</Version>
+		<Version>1.2</Version>
 		<Build>1</Build>
-		<Checksum>3CD468AAD9CCB35ED09084BA67E2208D</Checksum>
+		<Checksum>AB0936B241C93E10082EE36DC3354C70</Checksum>
 		<Desc>Adds a dark ui theme and a dark syntax theme inspired by Visual Studio.</Desc>
 		<Group>Themes</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsDarkFullTheme.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.2/VsDarkFullTheme.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>vslightsyntaxtheme</Id>
 		<Name>VsLight Syntax Theme</Name>
-		<Version>1.1</Version>
+		<Version>1.2</Version>
 		<Build>1</Build>
-		<Checksum>6784694F006FAE421067B612B51A6A49</Checksum>
+		<Checksum>4EE3BC2C059E1055857CD6C27F633067</Checksum>
 		<Desc>Adds a light syntax theme inspired by Visual Studio.</Desc>
 		<Group>Themes</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsLightSyntaxTheme.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.2/VsLightSyntaxTheme.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>vsdarksyntaxtheme</Id>
 		<Name>VsDark Syntax Theme</Name>
-		<Version>1.1</Version>
+		<Version>1.2</Version>
 		<Build>1</Build>
-		<Checksum>8F804F49F3098016E21025B2230D3E56</Checksum>
+		<Checksum>93728BF4253711B69241A97DF9AECC02</Checksum>
 		<Desc>Adds a dark syntax theme inspired by Visual Studio.</Desc>
 		<Group>Themes</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=11974</Info>
 		<Urls>
-			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.1/VsDarkSyntaxTheme.fdz</Url>
+			<Url>https://github.com/JoeRobich/fd-vsthemes/releases/download/v1.2/VsDarkSyntaxTheme.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -400,6 +477,32 @@
 		<Info>https://github.com/JoeRobich/fd-vink</Info>
 		<Urls>
 			<Url>https://github.com/JoeRobich/fd-vink/releases/download/v1.4/VinkSyntaxTheme.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>solarizedfulltheme</Id>
+		<Name>Solarized Full Theme</Name>
+		<Version>1.0</Version>
+		<Build>1</Build>
+		<Checksum>0EFDD1753EB7C4D42607B52BF296624B</Checksum>
+		<Desc>Adds Solarized light and dark ui themes and syntax themes, based on Solarized by Ethan Schoonover.</Desc>
+		<Group>Themes</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=12399</Info>
+		<Urls>
+			<Url>https://github.com/gene-pavlovsky/flashdevelop-colors-solarized/raw/v1.0/dist/SolarizedThemes.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>findandreplaceadvance</Id>
+		<Name>FindAndReplaceAdvance</Name>
+		<Version>1.1</Version>
+		<Build>1</Build>
+		<Checksum>824842464cb24287ebfd326aa36a20ff</Checksum>
+		<Desc>Find and Replace plugin Expanded.</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12200</Info>
+		<Urls>
+			<Url>https://github.com/mikicho/findandreplaceex/releases/download/v1.1/Find.ReplaceEx.fdz</Url>
 		</Urls>
 	</Entry>
 	FD5-->

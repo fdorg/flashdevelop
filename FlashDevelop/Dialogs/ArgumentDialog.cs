@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.ComponentModel;
@@ -265,7 +264,7 @@ namespace FlashDevelop.Dialogs
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
             contextMenu.Font = PluginBase.Settings.DefaultFont;
-            contextMenu.Renderer = new DockPanelStripRenderer();
+            contextMenu.Renderer = new DockPanelStripRenderer(false, false);
             contextMenu.Opening += new CancelEventHandler(this.ContextMenuOpening);
             contextMenu.Items.Add(TextHelper.GetString("Label.ImportArguments"), null, this.ImportArguments);
             this.exportItem = new ToolStripMenuItem(TextHelper.GetString("Label.ExportArguments"), null, this.ExportArguments);

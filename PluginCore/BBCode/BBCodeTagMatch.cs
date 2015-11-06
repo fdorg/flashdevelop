@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PluginCore.BBCode
 {
@@ -43,7 +42,7 @@ namespace PluginCore.BBCode
 
             _tagCloserInfos = new List<BBCodeTagInfo>();
 
-            if (autoGenerateCloserInfo && isTagOpener && tagName != null && tagName.Length > 0)
+            if (autoGenerateCloserInfo && isTagOpener && !string.IsNullOrEmpty(tagName))
                 _tagCloserInfos.Add(new BBCodeTagInfo(false, tagName, null));
         }
 

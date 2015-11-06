@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace ASClassWizard.Controls.TreeView
 {

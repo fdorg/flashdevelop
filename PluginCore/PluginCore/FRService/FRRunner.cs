@@ -1,9 +1,7 @@
 using System;
-using System.Text;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
-using PluginCore.Helpers;
+using System.Windows.Forms;
 
 namespace PluginCore.FRService
 {
@@ -61,6 +59,7 @@ namespace PluginCore.FRService
                 foreach (String file in files)
                 {
                     String src = configuration.GetSource(file);
+                    search.SourceFile = file;
                     List<SearchMatch> matches = search.Matches(src);
                     FRSearch.ExtractResultsLineText(matches, src);
                     results[file] = matches;
@@ -94,6 +93,7 @@ namespace PluginCore.FRService
                 foreach (String file in files)
                 {
                     src = configuration.GetSource(file);
+                    search.SourceFile = file;
                     results[file] = matches = search.Matches(src);
                     foreach (SearchMatch match in matches)
                     {
@@ -237,6 +237,7 @@ namespace PluginCore.FRService
                         {
                             // work
                             src = configuration.GetSource(file);
+                            search.SourceFile = file;
                             results[file] = matches = search.Matches(src);
 
                             if (matches.Count > 0)
