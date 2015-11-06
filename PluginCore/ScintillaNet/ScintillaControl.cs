@@ -271,8 +271,6 @@ namespace ScintillaNet
             Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) && this.vScrollBar.Visible ? this.vScrollBar.Width : 0;
             Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) && this.hScrollBar.Visible ? this.hScrollBar.Height : 0;
             //if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
-            this.size = new Size(this.Width - vsbWidth, this.Height - hsbHeight);
-            mar
         }
 
         protected override CreateParams CreateParams
