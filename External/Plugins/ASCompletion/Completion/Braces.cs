@@ -85,15 +85,9 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        bool Check<T>(IEnumerable<T> array, T value, Mode mode)
-        {
-            return array.Contains(value) == (mode == 0);
-        }
+        bool Check<T>(IEnumerable<T> array, T value, Mode mode) => array.Contains(value) == (mode == 0);
 
-        public override string ToString()
-        {
-            return IsValid ? $"Opening: {Opening} Closing: {Closing}" : "New Braces";
-        }
+        public override string ToString() => IsValid ? $"Opening: {Opening} Closing: {Closing}" : "New Braces";
     }
 
     public enum Logic
