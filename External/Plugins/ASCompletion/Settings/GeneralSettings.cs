@@ -305,12 +305,12 @@ namespace ASCompletion.Settings
 
         static Braces[] DEFAULT_ADD_CLOSING_BRACES_DATA = 
         {
-            new Braces('(',  ')',  null, null, null, null, null,   Inclusive, new[] { DEFAULT, COMMENT, COMMENTLINE, COMMENTLINEDOC, PREPROCESSOR, OPERATOR, GLOBALCLASS, WORD3 }, Inclusive, null),
-            new Braces('[',  ']',  null, null, null, null, null,   Inclusive, new[] { DEFAULT, COMMENT, COMMENTLINE, COMMENTLINEDOC, PREPROCESSOR, OPERATOR, GLOBALCLASS, WORD3 }, Inclusive, null),
-            new Braces('{',  '}',  null, null, null, null, ")]}>", Inclusive, new[] { DEFAULT },   Inclusive, null),
+            new Braces('(',  ')',  null, null, null, null, ")]}>", Inclusive, new[] { DEFAULT, COMMENT, COMMENTLINE, COMMENTLINEDOC, PREPROCESSOR, GLOBALCLASS, WORD3 }, Inclusive, OR),
+            new Braces('[',  ']',  null, null, null, null, ")]}>", Inclusive, new[] { DEFAULT, COMMENT, COMMENTLINE, COMMENTLINEDOC, PREPROCESSOR, GLOBALCLASS, WORD3 }, Inclusive, OR),
+            new Braces('{',  '}',  null, null, null, null, ")]}>", Inclusive, new[] { DEFAULT },   Inclusive, OR),
             new Braces('"',  '"',  null, null, null, null, null,   null,      new[] { STRINGEOL }, Inclusive, null),
-            new Braces('\'', '\'', null, null, null, null, "<",    Exclusive, new[] { STRINGEOL }, Inclusive, null),
-            new Braces('<',  '>',  ".",  Inclusive, null, null, null, null,   new[] { IDENTIFIER, WORD2 }, Exclusive, AND),
+            new Braces('\'', '\'', null, null, null, null, null,   null,      new[] { STRINGEOL }, Inclusive, null),
+            new Braces('<',  '>',  ".",  Inclusive, null, null, "<", Exclusive, new[] { IDENTIFIER, WORD2 }, Exclusive, AND),
         };
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
