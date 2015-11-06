@@ -1,11 +1,16 @@
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
+using ASCompletion.Completion;
 using Ookii.Dialogs;
 using PluginCore.Localization;
 
 namespace ASCompletion.Settings
 {
+    using static AS3Style;
+    using static Mode;
+    using static Logic;
+
     [Serializable]
     public class GeneralSettings
     {
@@ -298,6 +303,16 @@ namespace ASCompletion.Settings
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
+        static Braces[] DEFAULT_ADD_CLOSING_BRACES_DATA = 
+        {
+            new Braces('(',  ')',  null, null, null, null, null,   Inclusive, new[] { DEFAULT, COMMENT, COMMENTLINE, COMMENTLINEDOC, PREPROCESSOR, OPERATOR, GLOBALCLASS, WORD3 }, Inclusive, null),
+            new Braces('[',  ']',  null, null, null, null, null,   Inclusive, new[] { DEFAULT, COMMENT, COMMENTLINE, COMMENTLINEDOC, PREPROCESSOR, OPERATOR, GLOBALCLASS, WORD3 }, Inclusive, null),
+            new Braces('{',  '}',  null, null, null, null, ")]}>", Inclusive, new[] { DEFAULT },   Inclusive, null),
+            new Braces('"',  '"',  null, null, null, null, null,   null,      new[] { STRINGEOL }, Inclusive, null),
+            new Braces('\'', '\'', null, null, null, null, "<",    Exclusive, new[] { STRINGEOL }, Inclusive, null),
+            new Braces('<',  '>',  ".",  Inclusive, null, null, null, null,   new[] { IDENTIFIER, WORD2 }, Exclusive, AND),
+        };
+
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
         private string[] eventListenersAutoRemove;
         private bool startWithModifiers;
@@ -369,6 +384,13 @@ namespace ASCompletion.Settings
             get { return addClosingBraces; }
             set { addClosingBraces = value; }
         }
+
+        [DisplayName("Add Closing Braces Data")]
+        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesData")]
+        public Braces[] AddClosingBracesData
+        {
+            get; set;
+        } = DEFAULT_ADD_CLOSING_BRACES_DATA;
 
         [DisplayName("Prefix Fields When Generating From Params")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.PrefixFields"),

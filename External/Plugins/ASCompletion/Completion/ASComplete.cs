@@ -55,8 +55,6 @@ namespace ASCompletion.Completion
         static public ResolvedContext CurrentResolvedContext;
         static public event ResolvedContextChangeHandler OnResolvedContextChanged;
 
-        static private Braces[] AddClosingBracesData = new Braces[] { 
-            new Braces('(', ')'), new Braces('[', ']'), new Braces('{', '}'), new Braces('"', '"'), new Braces('\'', '\'') };
         #endregion
 
         #region application_event_handlers
@@ -416,10 +414,10 @@ namespace ASCompletion.Completion
             {
                 //not inside a string literal
                 if (!isString && !isChar || isInterpol
-                //or inside a string literal but a closing char is entered and the string does terminate
+                //or inside a string literal but a closing quote is entered and the string does terminate
                     || (c == '"' && isString || c == '\'' && isChar) && sci.BaseStyleAt(sci.CurrentPos) == 12)
                 {
-                    foreach (var braces in AddClosingBracesData)
+                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                     {
                         if (HandleAddBrace(sci, c, braces))
                             break;
@@ -429,7 +427,7 @@ namespace ASCompletion.Completion
             //not inside a string literal
             else if (!isString && !isChar || isInterpol)
             {
-                foreach (var braces in AddClosingBracesData)
+                foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                 {
                     if (HandleRemoveBrace(sci, c, braces))
                         break;
@@ -440,13 +438,21 @@ namespace ASCompletion.Completion
         static bool HandleAddBrace(ScintillaControl sci, char c, Braces braces)
         {
             // Handle closing first due to braces that have equal opening & closing chars
-            if (c == braces.closing && sci.CurrentChar == c)
+            if (c == braces.Closing && sci.CurrentChar == c)
             {
                 sci.DeleteForward();
             }
-            else if (c == braces.opening)
+            else if (c == braces.Opening)
             {
-                sci.InsertText(sci.CurrentPos, braces.closing.ToString());
+                char charAfter = (char) sci.CharAt(sci.CurrentPos);
+                char charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
+                int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
+                int styleBefore = sci.BaseStyleAt(sci.CurrentPos - 2);
+
+                if (braces.ShouldAutoClose(charAfter, styleAfter, charBefore, styleBefore))
+                {
+                    sci.InsertText(sci.CurrentPos, braces.Closing.ToString());
+                }
             }
             else
             {
@@ -458,7 +464,7 @@ namespace ASCompletion.Completion
         
         static bool HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
         {
-            if (c == braces.closing && (char) sci.CharAt(sci.CurrentPos - 1) == braces.opening)
+            if (c == braces.Closing && (char) sci.CharAt(sci.CurrentPos - 1) == braces.Opening)
             {
                 sci.DeleteForward();
                 return true;
@@ -4504,18 +4510,6 @@ namespace ASCompletion.Completion
         public bool IsNull()
         {
             return (Type == null && Member == null && !IsPackage);
-        }
-    }
-
-    sealed class Braces
-    {
-        public char opening;
-        public char closing;
-
-        public Braces(char opening, char closing)
-        {
-            this.opening = opening;
-            this.closing = closing;
         }
     }
 

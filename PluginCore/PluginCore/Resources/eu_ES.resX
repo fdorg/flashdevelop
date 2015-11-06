@@ -5961,4 +5961,8 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
   </data>
+  <data name="ASCompletion.Description.AddClosingBracesData" xml:space="preserve">
+    <value>[en_US] List of auto closing braces and their trigger options.</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
 </root>
