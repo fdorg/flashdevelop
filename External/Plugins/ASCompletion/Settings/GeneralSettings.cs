@@ -7,9 +7,9 @@ using PluginCore.Localization;
 
 namespace ASCompletion.Settings
 {
-    using static AS3Style;
-    using static Mode;
     using static Logic;
+    using static Mode;
+    using static Style;
 
     [Serializable]
     public class GeneralSettings
@@ -303,14 +303,14 @@ namespace ASCompletion.Settings
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
-        static Braces[] DEFAULT_ADD_CLOSING_BRACES_DATA = 
+        static Braces[] DEFAULT_ADD_CLOSING_BRACES_DATA =
         {
-            new Braces('(',  ')',  null, null, null, null, ")]}>", Inclusive, new[] { DEFAULT, COMMENT, COMMENTLINE, COMMENTLINEDOC, PREPROCESSOR, GLOBALCLASS, WORD3 }, Inclusive, OR),
-            new Braces('[',  ']',  null, null, null, null, ")]}>", Inclusive, new[] { DEFAULT, COMMENT, COMMENTLINE, COMMENTLINEDOC, PREPROCESSOR, GLOBALCLASS, WORD3 }, Inclusive, OR),
-            new Braces('{',  '}',  null, null, null, null, ")]}>", Inclusive, new[] { DEFAULT },   Inclusive, OR),
-            new Braces('"',  '"',  null, null, null, null, null,   null,      new[] { STRINGEOL }, Inclusive, null),
-            new Braces('\'', '\'', null, null, null, null, null,   null,      new[] { STRINGEOL }, Inclusive, null),
-            new Braces('<',  '>',  ".",  Inclusive, null, null, "<", Exclusive, new[] { IDENTIFIER, WORD2 }, Exclusive, AND),
+            new Braces('(',  ')',  null, null, null, null, ")]}>", Inclusive, new[] { Default, Comment, CommentLine, CommentLineDoc, Preprocessor, Keyword, Attribute }, Inclusive, OR),
+            new Braces('[',  ']',  null, null, null, null, ")]}>", Inclusive, new[] { Default, Comment, CommentLine, CommentLineDoc, Preprocessor, Keyword, Attribute }, Inclusive, OR),
+            new Braces('{',  '}',  null, null, null, null, ")]}>", Inclusive, new[] { Default },   Inclusive, OR),
+            new Braces('"',  '"',  null, null, null, null, null,   null,      new[] { StringEOL }, Inclusive, null),
+            new Braces('\'', '\'', null, null, null, null, null,   null,      new[] { StringEOL }, Inclusive, null),
+            new Braces('<',  '>', ".", Inclusive, null, null, "<", Exclusive, new[] { Identifier, Class }, Exclusive, AND),
         };
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;

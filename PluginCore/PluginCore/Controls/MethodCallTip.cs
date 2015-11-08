@@ -218,10 +218,11 @@ namespace PluginCore.Controls
                     return true;
 
                 case Keys.Back:
-                    //sci.DeleteBack();
                     currentPos = sci.CurrentPos - 1;
-                    if (currentPos + deltaPos <= startPos) Hide();
-                    else OnUpdateCallTip?.Invoke(sci, currentPos);
+                    if (currentPos + deltaPos > startPos)
+                        OnUpdateCallTip?.Invoke(sci, currentPos);
+                    else
+                        Hide();
                     return false;
 
                 case Keys.Tab:

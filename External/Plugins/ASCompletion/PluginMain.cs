@@ -494,7 +494,7 @@ namespace ASCompletion
                                 e.Handled = true;
                             }
 
-                            // resolve element under cusor and open declaration
+                            // resolve element under cursor and open declaration
                             else if (command == "ASCompletion.GotoDeclaration")
                             {
                                 ASComplete.DeclarationLookup(sci);

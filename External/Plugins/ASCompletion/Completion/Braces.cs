@@ -2,135 +2,139 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using ScintillaNet.Lexers;
 
 namespace ASCompletion.Completion
 {
     [Serializable]
     public class Braces
     {
-        [Category("1) Braces")]
-        public char Opening { get; set; }
+        char opening, closing;
+        string afterChars, beforeChars;
+        Style[] afterStyles, beforeStyles;
+        Mode acMode, asMode, bcMode, bsMode;
+        Logic logic;
 
-        [Category("1) Braces")]
-        public char Closing { get; set; }
+        [Category("Brace Character")]
+        public char Opening { get { return opening; } set { opening = value; } }
 
-        [Category("2) Auto Close Options")]
-        public string AfterChars { get; set; }
+        [Category("Brace Character")]
+        public char Closing { get { return closing; } set { closing = value; } }
 
-        [Category("2) Auto Close Options")]
-        public Mode AfterCharsMode { get; set; }
+        [Category("Trigger Auto Close")]
+        public string AfterChars { get { return afterChars; } set { afterChars = value; } }
 
-        [Category("2) Auto Close Options")]
-        public AS3Style[] AfterStyles { get; set; }
+        [Category("Trigger Auto Close")]
+        public Mode AfterCharsMode { get { return acMode; } set { acMode = value; } }
 
-        [Category("2) Auto Close Options")]
-        public Mode AfterStylesMode { get; set; }
+        [Category("Trigger Auto Close")]
+        public Style[] AfterStyles { get { return afterStyles; } set { afterStyles = value; } }
 
-        [Category("2) Auto Close Options")]
-        public string BeforeChars { get; set; }
+        [Category("Trigger Auto Close")]
+        public Mode AfterStylesMode { get { return asMode; } set { asMode = value; } }
 
-        [Category("2) Auto Close Options")]
-        public Mode BeforeCharsMode { get; set; }
+        [Category("Trigger Auto Close")]
+        public string BeforeChars { get { return beforeChars; } set { beforeChars = value; } }
 
-        [Category("2) Auto Close Options")]
-        public AS3Style[] BeforeStyles { get; set; }
+        [Category("Trigger Auto Close")]
+        public Mode BeforeCharsMode { get { return bcMode; } set { bcMode = value; } }
 
-        [Category("2) Auto Close Options")]
-        public Mode BeforeStylesMode { get; set; }
+        [Category("Trigger Auto Close")]
+        public Style[] BeforeStyles { get { return beforeStyles; } set { beforeStyles = value; } }
 
-        [Category("2) Auto Close Options")]
-        public Logic TriggerLogic { get; set; }
+        [Category("Trigger Auto Close")]
+        public Mode BeforeStylesMode { get { return bsMode; } set { bsMode = value; } }
+
+        [Category("Trigger Auto Close")]
+        public Logic TriggerLogic { get { return logic; } set { logic = value; } }
 
         [Browsable(false)]
         public bool IsValid => Opening != '\0' && Closing != '\0';
 
         public Braces() : this('\0', '\0', null, null, null, null, null, null, null, null, null) { }
 
-        public Braces(char opening, char closing, string afterChar, Mode? acMode, AS3Style[] afterStyle, Mode? asMode, string beforeChar, Mode? bcMode, AS3Style[] beforeStyle, Mode? bsMode, Logic? logic)
+        public Braces(char opening, char closing, string afterChars, Mode? acMode, Style[] afterStyles, Mode? asMode, string beforeChars, Mode? bcMode, Style[] beforeStyles, Mode? bsMode, Logic? logic)
         {
-            Opening = opening;
-            Closing = closing;
-            AfterChars = afterChar ?? string.Empty;
-            AfterCharsMode = acMode ?? 0;
-            AfterStyles = afterStyle ?? new AS3Style[0];
-            AfterStylesMode = asMode ?? 0;
-            BeforeChars = beforeChar ?? string.Empty;
-            BeforeCharsMode = bcMode ?? 0;
-            BeforeStyles = beforeStyle ?? new AS3Style[0];
-            BeforeStylesMode = bsMode ?? 0;
-            TriggerLogic = logic ?? 0;
+            this.opening = opening;
+            this.closing = closing;
+            this.logic = logic ?? 0;
+            this.afterChars = afterChars ?? string.Empty;
+            this.acMode = acMode ?? (Mode) this.logic;
+            this.afterStyles = afterStyles ?? new Style[0];
+            this.asMode = asMode ?? (Mode) this.logic;
+            this.beforeChars = beforeChars ?? string.Empty;
+            this.bcMode = bcMode ?? (Mode) this.logic;
+            this.beforeStyles = beforeStyles ?? new Style[0];
+            this.bsMode = bsMode ?? (Mode) this.logic;
         }
 
-        public bool ShouldAutoClose(char charAfter, int styleAfter, char charBefore, int styleBefore)
+        public bool ShouldAutoClose(char charAfter, byte styleAfter, char charBefore, byte styleBefore)
         {
             if (IsValid)
             {
-                switch (TriggerLogic)
+                switch (logic)
                 {
                     case Logic.OR:
-                        return Check(BeforeChars, charAfter, BeforeCharsMode)
-                            || Check(BeforeStyles, (AS3Style) styleAfter, BeforeStylesMode)
-                            || Check(AfterChars, charBefore, AfterCharsMode)
-                            || Check(AfterStyles, (AS3Style) styleBefore, AfterStylesMode);
+                        return Check(beforeChars, charAfter, bcMode)
+                            || Check(beforeStyles, (Style) styleAfter, bsMode)
+                            || Check(afterChars, charBefore, acMode)
+                            || Check(afterStyles, (Style) styleBefore, asMode);
                     case Logic.AND:
-                        return (BeforeChars.Length == 0 || Check(BeforeChars, charAfter, BeforeCharsMode))
-                            && (BeforeStyles.Length == 0 || Check(BeforeStyles, (AS3Style) styleAfter, BeforeStylesMode))
-                            && (AfterChars.Length == 0 || Check(AfterChars, charBefore, AfterCharsMode))
-                            && (AfterStyles.Length == 0 || Check(AfterStyles, (AS3Style) styleBefore, AfterStylesMode));
+                        return Check(beforeChars, charAfter, bcMode)
+                            && Check(beforeStyles, (Style) styleAfter, bsMode)
+                            && Check(afterChars, charBefore, acMode)
+                            && Check(afterStyles, (Style) styleBefore, asMode);
                 }
             }
 
             return false;
         }
 
-        bool Check<T>(IEnumerable<T> array, T value, Mode mode) => array.Contains(value) == (mode == 0);
+        static bool Check<T>(IEnumerable<T> array, T value, Mode mode) => array.Contains(value) == (mode == 0);
 
-        public override string ToString() => IsValid ? $"Opening: {Opening} Closing: {Closing}" : "New Braces";
+        public override string ToString() => IsValid ? $"Opening: {opening} Closing: {closing}" : "New Braces";
     }
 
-    public enum Logic
+    public enum Logic : byte
     {
         OR,
         AND,
     }
 
-    public enum Mode
+    public enum Mode : byte
     {
         Inclusive,
         Exclusive,
     }
 
-    public enum AS3Style
+    public enum Style : byte
     {
-        DEFAULT = 0,
-        COMMENT = 1,
-        COMMENTLINE = 2,
-        COMMENTDOC = 3,
-        NUMBER = 4,
-        WORD = 5,
-        STRING = 6,
-        CHARACTER = 7,
+        Default = 0,
+        Comment = 1,
+        CommentLine = 2,
+        CommentDoc = 3,
+        Number = 4,
+        Predefined = 5,
+        String = 6,
+        Character = 7,
         //UUID = 8,
-        PREPROCESSOR = 9,
-        OPERATOR = 10,
-        IDENTIFIER = 11,
-        STRINGEOL = 12,
-        VERBATIM = 13,
-        REGEX = 14,
-        COMMENTLINEDOC = 15,
-        WORD2 = 16,
-        COMMENTDOCKEYWORD = 17,
-        COMMENTDOCKEYWORDERROR = 18,
-        GLOBALCLASS = 19,
-        STRINGRAW = 20,
+        Preprocessor = 9,
+        Operator = 10,
+        Identifier = 11,
+        StringEOL = 12,
+        Verbatim = 13,
+        RegExp = 14,
+        CommentLineDoc = 15,
+        Class = 16,
+        CommentDocKeyword = 17,
+        CommentDocKeywordError = 18,
+        Keyword = 19,
+        //STRINGRAW = 20,
         //TRIPLEVERBATIM = 21,
         //HASHQUOTEDSTRING = 22,
         //PREPROCESSORCOMMENT = 23,
-        WORD3 = 24,
-        WORD4 = 25,
-        WORD5 = 26,
+        Attribute = 24,
+        Word4 = 25,
+        SpecialKeyword = 26,
         //GDEFAULT = 32,
         //LINENUMBER = 33,
         //BRACELIGHT = 34,

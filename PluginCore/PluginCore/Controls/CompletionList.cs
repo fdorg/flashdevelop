@@ -887,7 +887,6 @@ namespace PluginCore.Controls
             switch (key)
             {
                 case Keys.Back:
-                    //if (!UITools.CallTip.CallTipActive) sci.DeleteBack();
                     if (word.Length >= MinWordLength)
                     {
                         word = word.Substring(0, word.Length - 1);

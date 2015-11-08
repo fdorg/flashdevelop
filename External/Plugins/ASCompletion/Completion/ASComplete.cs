@@ -408,7 +408,6 @@ namespace ASCompletion.Completion
             bool isString = IsStringStyle(style);
             bool isChar = IsCharStyle(style);
             bool isInterpol = IsInterpolationExpr(sci, sci.CurrentPos - 2);
-            //Console.WriteLine($"style: {(ScintillaNet.Lexers.CPP) style}");
 
             if (addedChar)
             {
@@ -446,8 +445,8 @@ namespace ASCompletion.Completion
             {
                 char charAfter = (char) sci.CharAt(sci.CurrentPos);
                 char charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
-                int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
-                int styleBefore = sci.BaseStyleAt(sci.CurrentPos - 2);
+                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
+                byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 2);
 
                 if (braces.ShouldAutoClose(charAfter, styleAfter, charBefore, styleBefore))
                 {
@@ -517,7 +516,7 @@ namespace ASCompletion.Completion
                 // open the file
                 return OpenDocumentToDeclaration(Sci, result);
             }
-            // show overriden method
+            // show overridden method
             else if (ASContext.Context.CurrentMember != null 
                 && ASContext.Context.Features.overrideKey != null
                 && Sci.GetWordFromPosition(position) == ASContext.Context.Features.overrideKey)
@@ -3626,7 +3625,7 @@ namespace ASCompletion.Completion
         /// TODO  ASComplete: parse coma separated local vars definitions
         /// </summary>
         /// <param name="expression">Expression source</param>
-        /// <returns>Local vars dictionnary (name, type)</returns>
+        /// <returns>Local vars dictionary (name, type)</returns>
         static public MemberList ParseLocalVars(ASExpr expression)
         {
             FileModel model;
