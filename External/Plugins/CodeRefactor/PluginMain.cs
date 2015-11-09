@@ -629,7 +629,7 @@ namespace CodeRefactor
         /// </summary>
         private void CodeGeneratorMenuItemClicked(Object sender, EventArgs e)
         {
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator", null);
+            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator", refactorContextMenu);
             EventManager.DispatchEvent(this, de);
         }
 

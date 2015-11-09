@@ -446,104 +446,107 @@ namespace ASCompletion
                 // Actionscript context specific
                 //
                 if (ASContext.Context.IsFileValid)
-                switch (e.Type)
-                {
-                    case EventType.ProcessArgs:
-                        TextEvent te = (TextEvent)e;
-                        if (reArgs.IsMatch(te.Value))
-                        {
-                            // resolve current element
-                            Hashtable details = ASComplete.ResolveElement(sci, null);
-                            te.Value = ArgumentsProcessor.Process(te.Value, details);
-
-                            if (te.Value.IndexOf("$") >= 0 && reCostlyArgs.IsMatch(te.Value))
+                    switch (e.Type)
+                    {
+                        case EventType.ProcessArgs:
+                            TextEvent te = (TextEvent) e;
+                            if (reArgs.IsMatch(te.Value))
                             {
-                                ASResult result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
-                                details = new Hashtable();
-                                // Get closest list (Array or Vector)
-                                string closestListName = "", closestListItemType = "";
-                                ASComplete.FindClosestList(ASContext.Context, result.Context, sci.CurrentLine, ref closestListName, ref closestListItemType);
-                                details.Add("TypClosestListName", closestListName);
-                                details.Add("TypClosestListItemType", closestListItemType);
-                                // get free iterator index
-                                string iterator = ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, result.Context);
-                                details.Add("ItmUniqueVar", iterator);
+                                // resolve current element
+                                Hashtable details = ASComplete.ResolveElement(sci, null);
                                 te.Value = ArgumentsProcessor.Process(te.Value, details);
-                            }
-                        }
-                        break;
 
-                    // menu commands
-                    case EventType.Command:
-                        string command = (e as DataEvent).Action ?? "";
-                        if (command.StartsWith("ASCompletion."))
-                        {
-                            string cmdData = (e as DataEvent).Data as string;
-                            // run MTASC
-                            if (command == "ASCompletion.CustomBuild")
-                            {
-                                if (cmdData != null) ASContext.Context.RunCMD(cmdData);
-                                else ASContext.Context.RunCMD("");
-                                e.Handled = true;
-                            }
-
-                            // build the SWF using MTASC
-                            else if (command == "ASCompletion.QuickBuild")
-                            {
-                                ASContext.Context.BuildCMD(false);
-                                e.Handled = true;
-                            }
-
-                            // resolve element under cusor and open declaration
-                            else if (command == "ASCompletion.GotoDeclaration")
-                            {
-                                ASComplete.DeclarationLookup(sci);
-                                e.Handled = true;
-                            }
-
-                            // resolve element under cursor and send a CustomData event
-                            else if (command == "ASCompletion.ResolveElement")
-                            {
-                                ASComplete.ResolveElement(sci, cmdData);
-                                e.Handled = true;
-                            }
-                            else if (command == "ASCompletion.MakeIntrinsic")
-                            {
-                                ASContext.Context.MakeIntrinsic(cmdData);
-                                e.Handled = true;
-                            }
-
-                            // alternative to default shortcuts
-                            else if (command == "ASCompletion.CtrlSpace")
-                            {
-                                ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
-                                e.Handled = true;
-                            }
-                            else if (command == "ASCompletion.CtrlShiftSpace")
-                            {
-                                ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
-                                e.Handled = true;
-                            }
-                            else if (command == "ASCompletion.CtrlAltSpace")
-                            {
-                                ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
-                                e.Handled = true;
-                            }
-                            else if (command == "ASCompletion.ContextualGenerator")
-                            {
-                                if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                                if (te.Value.IndexOf("$") >= 0 && reCostlyArgs.IsMatch(te.Value))
                                 {
-                                    ASGenerator.ContextualGenerator(ASContext.CurSciControl);
+                                    ASResult result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
+                                    details = new Hashtable();
+                                    // Get closest list (Array or Vector)
+                                    string closestListName = "", closestListItemType = "";
+                                    ASComplete.FindClosestList(ASContext.Context, result.Context, sci.CurrentLine, ref closestListName, ref closestListItemType);
+                                    details.Add("TypClosestListName", closestListName);
+                                    details.Add("TypClosestListItemType", closestListItemType);
+                                    // get free iterator index
+                                    string iterator = ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, result.Context);
+                                    details.Add("ItmUniqueVar", iterator);
+                                    te.Value = ArgumentsProcessor.Process(te.Value, details);
                                 }
                             }
-                        }
-                        return;
+                            break;
 
-                    case EventType.ProcessEnd:
-                        string procResult = (e as TextEvent).Value;
-                        ASContext.Context.OnProcessEnd(procResult);
-                        break;
-                }
+                        // menu commands
+                        case EventType.Command:
+                            de = e as DataEvent;
+                            string command = de.Action ?? "";
+                            if (command.StartsWith("ASCompletion."))
+                            {
+                                string cmdData = de.Data as string;
+                                // run MTASC
+                                if (command == "ASCompletion.CustomBuild")
+                                {
+                                    if (cmdData != null) ASContext.Context.RunCMD(cmdData);
+                                    else ASContext.Context.RunCMD("");
+                                    e.Handled = true;
+                                }
+
+                                // build the SWF using MTASC
+                                else if (command == "ASCompletion.QuickBuild")
+                                {
+                                    ASContext.Context.BuildCMD(false);
+                                    e.Handled = true;
+                                }
+
+                                // resolve element under cursor and open declaration
+                                else if (command == "ASCompletion.GotoDeclaration")
+                                {
+                                    ASComplete.DeclarationLookup(sci);
+                                    e.Handled = true;
+                                }
+
+                                // resolve element under cursor and send a CustomData event
+                                else if (command == "ASCompletion.ResolveElement")
+                                {
+                                    ASComplete.ResolveElement(sci, cmdData);
+                                    e.Handled = true;
+                                }
+                                else if (command == "ASCompletion.MakeIntrinsic")
+                                {
+                                    ASContext.Context.MakeIntrinsic(cmdData);
+                                    e.Handled = true;
+                                }
+
+                                // alternative to default shortcuts
+                                else if (command == "ASCompletion.CtrlSpace")
+                                {
+                                    ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
+                                    e.Handled = true;
+                                }
+                                else if (command == "ASCompletion.CtrlShiftSpace")
+                                {
+                                    ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
+                                    e.Handled = true;
+                                }
+                                else if (command == "ASCompletion.CtrlAltSpace")
+                                {
+                                    ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
+                                    e.Handled = true;
+                                }
+                                else if (command == "ASCompletion.ContextualGenerator")
+                                {
+                                    if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                                    {
+                                        ASGenerator.ContextualGenerator(ASContext.CurSciControl);
+                                        AddRefactorMenus(ASGenerator.KnownList, de.Data as ToolStripMenuItem);
+                                        CompletionList.Show(ASGenerator.KnownList, false);
+                                    }
+                                }
+                            }
+                            return;
+
+                        case EventType.ProcessEnd:
+                            string procResult = (e as TextEvent).Value;
+                            ASContext.Context.OnProcessEnd(procResult);
+                            break;
+                    }
             }
             catch(Exception ex)
             {
@@ -959,6 +962,59 @@ namespace ASCompletion
             pluginUI.OutlineTree.Enabled = ASContext.Context.CurrentModel != null;
             SetItemsEnabled(enableItems, ASContext.Context.CanBuild);
         }
+        #endregion
+
+        #region Contextual Code Generation Utilities
+
+        void AddRefactorMenus(List<ICompletionListItem> list, ToolStripMenuItem menu)
+        {
+            if (list == null)
+                return;
+
+            ASComplete.NotifyContextChanged();
+            Type RefactorMenu = menu.GetType();
+
+            var RenameMenuItem = GetItem(RefactorMenu, menu, "RenameMenuItem");
+            var ExtractMethodMenuItem = GetItem(RefactorMenu, menu, "ExtractMethodMenuItem");
+            var ExtractLocalVariableMenuItem = GetItem(RefactorMenu, menu, "ExtractLocalVariableMenuItem");
+            var DelegateMenuItem = GetItem(RefactorMenu, menu, "DelegateMenuItem");
+
+            if (RenameMenuItem.Enabled) list.Add(new RefactorItem(RenameMenuItem));
+            if (ExtractMethodMenuItem.Enabled) list.Add(new RefactorItem(ExtractMethodMenuItem));
+            if (ExtractLocalVariableMenuItem.Enabled) list.Add(new RefactorItem(ExtractLocalVariableMenuItem));
+            if (DelegateMenuItem.Enabled) list.Add(new RefactorItem(DelegateMenuItem));
+
+            var features = ASContext.Context.Features;
+
+            if (!features.hasImports)
+                return;
+
+            var sci = ASContext.CurSciControl;
+            string line = sci.GetLine(sci.CurrentLine).TrimStart();
+
+            if (line.StartsWith(features.importKey, StringComparison.Ordinal)
+                || !string.IsNullOrEmpty(features.importKeyAlt) && line.StartsWith(features.importKeyAlt, StringComparison.Ordinal))
+            {
+                var OrganizeMenuItem = GetItem(RefactorMenu, menu, "OrganizeMenuItem");
+
+                if (OrganizeMenuItem.Enabled)
+                    list.Add(new RefactorItem(OrganizeMenuItem));
+
+                if (features.hasImportsWildcard)
+                {
+                    var TruncateMenuItem = GetItem(RefactorMenu, menu, "TruncateMenuItem");
+
+                    if (TruncateMenuItem.Enabled)
+                        list.Add(new RefactorItem(TruncateMenuItem)); 
+                }
+            }
+        }
+
+        ToolStripMenuItem GetItem(Type type, ToolStripMenuItem menu, string item)
+        {
+            return type.GetProperty(item).GetValue(menu, null) as ToolStripMenuItem;
+        }
+
         #endregion
     }
 

@@ -4,7 +4,7 @@ using CodeRefactor.Provider;
 namespace CodeRefactor.Commands
 {
     /// <summary>
-    /// Basic underyling Refactoring command.  Refactoring commands can derive from this.
+    /// Basic underlying Refactoring command.  Refactoring commands can derive from this.
     /// </summary>
     /// <typeparam name="RefactorResultType">The refactoring results return type</typeparam>
     public abstract class RefactorCommand<RefactorResultType>
