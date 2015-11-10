@@ -3696,11 +3696,20 @@ namespace ASCompletion.Completion
         #region tools_functions
 
 
-        public static bool IsLiteralStyle(int style) => style == 4 || style == 6 || style == 7;
-        
-        public static bool IsStringStyle(int style) => style == 6;
-        
-        public static bool IsCharStyle(int style) => style == 7;
+        public static bool IsLiteralStyle(int style)
+        {
+            return style == 4 || style == 6 || style == 7;
+        }
+
+        public static bool IsStringStyle(int style)
+        {
+            return style == 6;
+        }
+
+        public static bool IsCharStyle(int style)
+        {
+            return style == 7;
+        }
         
         /// <summary>
         /// Text is word 

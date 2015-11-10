@@ -48,7 +48,10 @@ namespace ASCompletion.Completion
         public Logic TriggerLogic { get { return logic; } set { logic = value; } }
 
         [Browsable(false)]
-        public bool IsValid => Opening != '\0' && Closing != '\0';
+        public bool IsValid
+        {
+            get { return Opening != '\0' && Closing != '\0'; }
+        }
 
         public Braces() : this('\0', '\0', null, null, null, null, null, null, null, null, null) { }
 
@@ -91,7 +94,10 @@ namespace ASCompletion.Completion
 
         static bool Check<T>(IEnumerable<T> array, T value, Mode mode) => array.Contains(value) == (mode == 0);
 
-        public override string ToString() => IsValid ? $"Opening: {opening} Closing: {closing}" : "New Braces";
+        public override string ToString()
+        {
+            return IsValid ? "Opening: " + opening + " Closing: " + closing : "New Braces";
+        }
     }
 
     public enum Logic : byte
