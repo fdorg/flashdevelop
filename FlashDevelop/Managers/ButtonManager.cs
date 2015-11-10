@@ -35,7 +35,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static Boolean ValidateFlagAction(ToolStripItem item, String action)
         {
-            ITabbedDocument document = Globals.CurrentDocument;
+            IMainForm mainForm = PluginBase.MainForm;
+            ITabbedDocument document = mainForm.CurrentDocument;
             ScintillaControl sci = document.SciControl;
             if (action.Contains("!IsEditable"))
             {
@@ -87,11 +88,11 @@ namespace FlashDevelop.Managers
             }
             if (action.Contains("!HasModified"))
             {
-                if (Globals.MainForm.HasModifiedDocuments) return false;
+                if (mainForm.HasModifiedDocuments) return false;
             }
             else if (action.Contains("HasModified"))
             {
-                if (!Globals.MainForm.HasModifiedDocuments) return false;
+                if (!mainForm.HasModifiedDocuments) return false;
             }
             if (action.Contains("!HasClosedDocs"))
             {
@@ -103,35 +104,35 @@ namespace FlashDevelop.Managers
             }
             if (action.Contains("!ProcessIsRunning"))
             {
-                if (Globals.MainForm.ProcessIsRunning) return false;
+                if (mainForm.ProcessIsRunning) return false;
             }
             else if (action.Contains("ProcessIsRunning"))
             {
-                if (!Globals.MainForm.ProcessIsRunning) return false;
+                if (!mainForm.ProcessIsRunning) return false;
             }
             if (action.Contains("!StandaloneMode"))
             {
-                if (Globals.MainForm.StandaloneMode) return false;
+                if (mainForm.StandaloneMode) return false;
             }
             else if (action.Contains("StandaloneMode"))
             {
-                if (!Globals.MainForm.StandaloneMode) return false;
+                if (!mainForm.StandaloneMode) return false;
             }
             if (action.Contains("!MultiInstanceMode"))
             {
-                if (Globals.MainForm.MultiInstanceMode) return false;
+                if (mainForm.MultiInstanceMode) return false;
             }
             else if (action.Contains("MultiInstanceMode"))
             {
-                if (!Globals.MainForm.MultiInstanceMode) return false;
+                if (!mainForm.MultiInstanceMode) return false;
             }
             if (action.Contains("!IsFullScreen"))
             {
-                if (MainForm.Instance.IsFullScreen) return false;
+                if (mainForm.IsFullScreen) return false;
             }
             else if (action.Contains("IsFullScreen"))
             {
-                if (!MainForm.Instance.IsFullScreen) return false;
+                if (!mainForm.IsFullScreen) return false;
             }
             if (action.Contains("TracksBoolean"))
             {

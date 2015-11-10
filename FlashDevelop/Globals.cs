@@ -13,7 +13,7 @@ namespace FlashDevelop
         /// </summary> 
         public static MainForm MainForm
         {
-            get { return MainForm.Instance; }
+            get; internal set;
         }
 
         /// <summary>
