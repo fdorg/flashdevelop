@@ -117,7 +117,6 @@ namespace HaXeContext
             features.numberKey = "Float";
             features.stringKey = "String";
             features.arrayKey = "Array<T>";
-            features.dynamicKey = "Dynamic";
             features.importKey = "import";
             features.importKeyAlt = "using";
             features.typesPreKeys = new string[] { "import", "new", "extends", "implements", "using" };

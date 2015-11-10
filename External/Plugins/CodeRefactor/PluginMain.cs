@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -139,7 +140,6 @@ namespace CodeRefactor
                     break;
 
                 case EventType.Command:
-                    if (settingObject.DisableMoveRefactoring) return;
                     DataEvent de = (DataEvent)e;
                     string[] args;
                     string oldPath;
@@ -147,6 +147,7 @@ namespace CodeRefactor
                     switch (de.Action)
                     {
                         case ProjectFileActionsEvents.FileRename:
+                            if (settingObject.DisableMoveRefactoring) break;
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
@@ -163,6 +164,7 @@ namespace CodeRefactor
                             break;
 
                         case ProjectFileActionsEvents.FileMove:
+                            if (settingObject.DisableMoveRefactoring) break;
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
@@ -171,6 +173,10 @@ namespace CodeRefactor
                                 MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, true);
                                 e.Handled = true;
                             }
+                            break;
+
+                        case "ASCompletion.ContextualGenerator.AddOptions":
+                            OnAddRefactorOptions(de.Data as List<ICompletionListItem>);
                             break;
                     }
                     break;
@@ -629,7 +635,7 @@ namespace CodeRefactor
         /// </summary>
         private void CodeGeneratorMenuItemClicked(Object sender, EventArgs e)
         {
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator", refactorContextMenu);
+            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator", null);
             EventManager.DispatchEvent(this, de);
         }
 
@@ -655,7 +661,79 @@ namespace CodeRefactor
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
+        void OnAddRefactorOptions(List<ICompletionListItem> list)
+        {
+            if (list == null)
+                return;
+
+            RefactorItem.AddItemToList(refactorMainMenu.RenameMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.ExtractMethodMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.ExtractLocalVariableMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.DelegateMenuItem, list);
+
+            var features = ASContext.Context.Features;
+
+            if (!features.hasImports)
+                return;
+
+            var sci = ASContext.CurSciControl;
+            string line = sci.GetLine(sci.CurrentLine).TrimStart();
+
+            if (line.StartsWith(features.importKey, StringComparison.Ordinal)
+                || !string.IsNullOrEmpty(features.importKeyAlt) && line.StartsWith(features.importKeyAlt, StringComparison.Ordinal))
+            {
+                RefactorItem.AddItemToList(refactorMainMenu.OrganizeMenuItem, list);
+
+                if (features.hasImportsWildcard)
+                    RefactorItem.AddItemToList(refactorMainMenu.TruncateMenuItem, list);
+            }
+        }
+
         #endregion
 
+    }
+
+    class RefactorItem : ICompletionListItem
+    {
+        ToolStripItem item;
+        string label;
+        Bitmap icon;
+
+        public static void AddItemToList(ToolStripMenuItem item, List<ICompletionListItem> list)
+        {
+            if (item.Enabled)
+                list.Add(new RefactorItem(item));
+        }
+
+        public RefactorItem(ToolStripItem item)
+        {
+            this.item = item;
+            label = Regex.Replace(item.Text, "[&.]", string.Empty);
+            icon = new Bitmap(item.Image ?? PluginBase.MainForm.FindImage("452")); //452, 473
+        }
+
+        public string Description
+        {
+            get { return label; /*TextHelper.GetString("ASCompletion.Info.GeneratorTemplate");*/ }
+        }
+
+        public Bitmap Icon
+        {
+            get { return icon; }
+        }
+
+        public string Label
+        {
+            get { return label; }
+        }
+
+        public string Value
+        {
+            get
+            {
+                item.PerformClick();
+                return null;
+            }
+        }
     }
 }

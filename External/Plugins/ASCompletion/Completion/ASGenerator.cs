@@ -44,8 +44,6 @@ namespace ASCompletion.Completion
 
         static List<ICompletionListItem> known;
 
-        public static List<ICompletionListItem> KnownList => known;
-
         static private bool isHaxe
         {
             get { return ASContext.Context.CurrentModel.haXe; }
@@ -59,18 +57,18 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static public void ContextualGenerator(ScintillaControl Sci)
+        public static List<ICompletionListItem> ContextualGenerator(ScintillaControl Sci)
         {
             known = new List<ICompletionListItem>();
 
             if (ASContext.Context is ASContext) (ASContext.Context as ASContext).UpdateCurrentFile(false); // update model
-            if ((ASContext.Context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return;
+            if ((ASContext.Context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return known;
 
             lookupPosition = -1;
             int position = Sci.CurrentPos;
             int style = Sci.BaseStyleAt(position);
             if (style == 19) // on keyword
-                return;
+                return known;
 
             bool isNotInterface = (ASContext.Context.CurrentClass.Flags & FlagType.Interface) == 0;
             int line = Sci.LineFromPosition(position);
@@ -85,8 +83,8 @@ namespace ASCompletion.Completion
             {
                 if (style == 4 || style == 6 || style == 7)
                 {
-                    ShowConvertToConst(found, style);
-                    return;
+                    ShowConvertToConst(found);
+                    return known;
                 }
             }
 
@@ -109,7 +107,7 @@ namespace ASCompletion.Completion
                 {
                     contextParam = resolve.Type.Type;
                     ShowImplementInterface(found);
-                    return;
+                    return known;
                 }
 
                 if (resolve.Member != null && !ASContext.Context.CurrentClass.IsVoid()
@@ -117,13 +115,13 @@ namespace ASCompletion.Completion
                 {
                     contextMember = resolve.Member;
                     ShowPromoteLocalAndAddParameter(found);
-                    return;
+                    return known;
                 }
             }
             
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found)) return known;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
@@ -142,10 +140,10 @@ namespace ASCompletion.Completion
                         contextMatch = m;
                         ClassModel type = ASContext.Context.ResolveType(contextToken, ASContext.Context.CurrentModel);
                         if (type.IsVoid() && CheckAutoImport(found))
-                            return;
+                            return known;
                     }
                     ShowGetSetList(found);
-                    return;
+                    return known;
                 }
                 // inside a function
                 else if ((found.member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
@@ -161,14 +159,14 @@ namespace ASCompletion.Completion
                             contextMatch = m;
                             contextParam = CheckEventType(m.Groups["event"].Value);
                             ShowEventList(found);
-                            return;
+                            return known;
                         }
                         m = Regex.Match(text, String.Format(patternAS2Delegate, contextToken), RegexOptions.IgnoreCase);
                         if (m.Success)
                         {
                             contextMatch = m;
                             ShowDelegateList(found);
-                            return;
+                            return known;
                         }
                         // suggest delegate
                         if (ASContext.Context.Features.hasDelegates)
@@ -183,7 +181,7 @@ namespace ASCompletion.Completion
                                     contextMember = ResolveDelegate(resolve.Member.Type, resolve.InFile);
                                 contextMatch = m;
                                 ShowDelegateList(found);
-                                return;
+                                return known;
                             }
                         }
                     }
@@ -202,7 +200,7 @@ namespace ASCompletion.Completion
                                 contextParam = CheckEventType(m.Groups["event"].Value);
                                 ShowEventList(found);
                             }
-                            return;
+                            return known;
                         }
 
                         // insert default delegate name, then "generate delegate" suggestion
@@ -226,7 +224,7 @@ namespace ASCompletion.Completion
                                         contextMatch = m;
                                         ShowDelegateList(found);
                                     }
-                                    return;
+                                    return known;
                                 }
                             }
                         }
@@ -241,7 +239,7 @@ namespace ASCompletion.Completion
                 {
                     contextMember = resolve.Member;
                     ShowFieldFromParameter(found);
-                    return;
+                    return known;
                 }
 
                 // "add to interface" suggestion
@@ -279,7 +277,7 @@ namespace ASCompletion.Completion
                     if (interfaces.Count > 0)
                     {
                         ShowAddInterfaceDefList(found, interfaces);
-                        return;
+                        return known;
                     }
                 }
 
@@ -290,7 +288,7 @@ namespace ASCompletion.Completion
                     && ln.Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine)) // cursor at end of line
                 {
                     ShowAssignStatementToVarList(found);
-                    return;
+                    return known;
                 }
             }
             
@@ -311,7 +309,7 @@ namespace ASCompletion.Completion
                 if (!hasConstructor || !hasToString)
                 {
                     ShowConstructorAndToStringList(found, hasConstructor, hasToString);
-                    return;
+                    return known;
                 }
             }
 
@@ -338,7 +336,7 @@ namespace ASCompletion.Completion
                             {
                                 contextParam = eventResolve.Type.QualifiedName;
                                 ShowEventMetatagList(found);
-                                return;
+                                return known;
                             }
                             aType = aType.Extends;
                         }
@@ -402,7 +400,8 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            // TODO: Empty line, show generators list?
+            // TODO: Empty line, show generators list? yep
+            return known;
         }
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
@@ -599,10 +598,10 @@ namespace ASCompletion.Completion
             known.Add(new GeneratorItem(labelParam, GeneratorJobType.AddAsParameter, found.member, found.inClass));
         }
 
-        private static void ShowConvertToConst(FoundDeclaration found, int style)
+        private static void ShowConvertToConst(FoundDeclaration found)
         {
             string label = TextHelper.GetString("ASCompletion.Label.ConvertToConst");
-            known.Add(new GeneratorItem(label, GeneratorJobType.ConvertToConst, found.member, found.inClass, style));
+            known.Add(new GeneratorItem(label, GeneratorJobType.ConvertToConst, found.member, found.inClass));
         }
 
         private static void ShowImplementInterface(FoundDeclaration found)
@@ -1100,7 +1099,7 @@ namespace ASCompletion.Completion
                     Sci.BeginUndoAction();
                     try
                     {
-                        ConvertToConst(inClass, Sci, member, detach, (int) data);
+                        ConvertToConst(inClass, Sci, member, detach);
                     }
                     finally
                     {
@@ -1363,7 +1362,7 @@ namespace ASCompletion.Completion
             InsertCode(position, template);
         }
 
-        private static void ConvertToConst(ClassModel inClass, ScintillaControl Sci, MemberModel member, bool detach, int style)
+        private static void ConvertToConst(ClassModel inClass, ScintillaControl Sci, MemberModel member, bool detach)
         {
             String suggestion = "NEW_CONST";
             String label = TextHelper.GetString("ASCompletion.Label.ConstName");
@@ -1381,6 +1380,7 @@ namespace ASCompletion.Completion
             suggestion = (string)info["suggestion"];
 
             int position = Sci.CurrentPos;
+            int style = Sci.BaseStyleAt(position);
             MemberModel latest = null;
 
             int wordPosEnd = position + 1;
@@ -1429,9 +1429,6 @@ namespace ASCompletion.Completion
                 case 6:
                 case 7:
                     m.Type = features.stringKey;
-                    break;
-                default:
-                    m.Type = features.dynamicKey ?? features.objectKey;
                     break;
             }
 
@@ -4491,35 +4488,6 @@ namespace ASCompletion.Completion
             get
             {
                 return data;
-            }
-        }
-    }
-
-    class RefactorItem : ICompletionListItem
-    {
-        ToolStripItem value;
-        string label;
-        Bitmap icon;
-
-        public RefactorItem(ToolStripItem item)
-        {
-            value = item;
-            label = Regex.Replace(item.Text, "[&.]", string.Empty);
-            icon = new Bitmap(item.Image ?? PluginBase.MainForm.FindImage("452")); //452, 473
-        }
-
-        public string Description => TextHelper.GetString("Info.GeneratorTemplate");
-
-        public Bitmap Icon => icon;
-
-        public string Label => label;
-
-        public string Value
-        {
-            get
-            {
-                value.PerformClick();
-                return null;
             }
         }
     }

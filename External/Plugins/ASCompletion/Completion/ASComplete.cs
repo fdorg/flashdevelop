@@ -860,9 +860,10 @@ namespace ASCompletion.Completion
             NotifyContextChanged();
         }
 
-        public static void NotifyContextChanged()
+        private static void NotifyContextChanged()
         {
-            OnResolvedContextChanged?.Invoke(CurrentResolvedContext);
+            if (OnResolvedContextChanged != null)
+                OnResolvedContextChanged.Invoke(CurrentResolvedContext);
         }
 
         /// <summary>

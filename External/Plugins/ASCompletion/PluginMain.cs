@@ -477,7 +477,7 @@ namespace ASCompletion
                         case EventType.Command:
                             de = e as DataEvent;
                             string command = de.Action ?? "";
-                            if (command.StartsWith("ASCompletion."))
+                            if (command.StartsWith("ASCompletion.", StringComparison.Ordinal))
                             {
                                 string cmdData = de.Data as string;
                                 // run MTASC
@@ -534,9 +534,10 @@ namespace ASCompletion
                                 {
                                     if (ASContext.HasContext && ASContext.Context.IsFileValid)
                                     {
-                                        ASGenerator.ContextualGenerator(ASContext.CurSciControl);
-                                        AddRefactorMenus(ASGenerator.KnownList, de.Data as ToolStripMenuItem);
-                                        CompletionList.Show(ASGenerator.KnownList, false);
+                                        var options = ASGenerator.ContextualGenerator(ASContext.CurSciControl);
+                                        var dataEvent = new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options);
+                                        EventManager.DispatchEvent(this, dataEvent);
+                                        CompletionList.Show(options, false);
                                     }
                                 }
                             }
@@ -962,59 +963,6 @@ namespace ASCompletion
             pluginUI.OutlineTree.Enabled = ASContext.Context.CurrentModel != null;
             SetItemsEnabled(enableItems, ASContext.Context.CanBuild);
         }
-        #endregion
-
-        #region Contextual Code Generation Utilities
-
-        void AddRefactorMenus(List<ICompletionListItem> list, ToolStripMenuItem menu)
-        {
-            if (list == null)
-                return;
-
-            ASComplete.NotifyContextChanged();
-            Type RefactorMenu = menu.GetType();
-
-            var RenameMenuItem = GetItem(RefactorMenu, menu, "RenameMenuItem");
-            var ExtractMethodMenuItem = GetItem(RefactorMenu, menu, "ExtractMethodMenuItem");
-            var ExtractLocalVariableMenuItem = GetItem(RefactorMenu, menu, "ExtractLocalVariableMenuItem");
-            var DelegateMenuItem = GetItem(RefactorMenu, menu, "DelegateMenuItem");
-
-            if (RenameMenuItem.Enabled) list.Add(new RefactorItem(RenameMenuItem));
-            if (ExtractMethodMenuItem.Enabled) list.Add(new RefactorItem(ExtractMethodMenuItem));
-            if (ExtractLocalVariableMenuItem.Enabled) list.Add(new RefactorItem(ExtractLocalVariableMenuItem));
-            if (DelegateMenuItem.Enabled) list.Add(new RefactorItem(DelegateMenuItem));
-
-            var features = ASContext.Context.Features;
-
-            if (!features.hasImports)
-                return;
-
-            var sci = ASContext.CurSciControl;
-            string line = sci.GetLine(sci.CurrentLine).TrimStart();
-
-            if (line.StartsWith(features.importKey, StringComparison.Ordinal)
-                || !string.IsNullOrEmpty(features.importKeyAlt) && line.StartsWith(features.importKeyAlt, StringComparison.Ordinal))
-            {
-                var OrganizeMenuItem = GetItem(RefactorMenu, menu, "OrganizeMenuItem");
-
-                if (OrganizeMenuItem.Enabled)
-                    list.Add(new RefactorItem(OrganizeMenuItem));
-
-                if (features.hasImportsWildcard)
-                {
-                    var TruncateMenuItem = GetItem(RefactorMenu, menu, "TruncateMenuItem");
-
-                    if (TruncateMenuItem.Enabled)
-                        list.Add(new RefactorItem(TruncateMenuItem)); 
-                }
-            }
-        }
-
-        ToolStripMenuItem GetItem(Type type, ToolStripMenuItem menu, string item)
-        {
-            return type.GetProperty(item).GetValue(menu, null) as ToolStripMenuItem;
-        }
-
         #endregion
     }
 
