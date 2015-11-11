@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using FlashDevelop.Utilities;
 using PluginCore;
 using ScintillaNet.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
@@ -123,7 +124,7 @@ namespace FlashDevelop
 
         public string ProcessArgString(string args)
         {
-            throw new NotImplementedException();
+            return ArgsProcessor.ProcessString(args, true);
         }
 
         public Keys GetShortcutItemKeys(string id)

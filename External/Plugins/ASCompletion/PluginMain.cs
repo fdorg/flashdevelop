@@ -99,7 +99,7 @@ namespace ASCompletion
         }
 
         [Browsable(false)]
-        public Object Settings
+        public virtual Object Settings
         {
             get { return settingObject; }
         }
@@ -568,7 +568,7 @@ namespace ASCompletion
         * Gets the PluginSettings
         */
         [Browsable(false)]
-        public GeneralSettings PluginSettings
+        public virtual GeneralSettings PluginSettings
         {
             get { return settingObject; }
         }
