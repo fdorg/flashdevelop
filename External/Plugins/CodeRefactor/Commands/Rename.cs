@@ -22,21 +22,24 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class Rename : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private String newName;
-        private Boolean outputResults;
-        private FindAllReferences findAllReferencesCommand;
-        private Move renamePackage;
+        string oldName;
+        string newName;
+        bool useInline;
+        bool outputResults;
+        FindAllReferences findAllReferencesCommand;
+        Move renamePackage;
 
-        private String oldFileName;
-        private String newFileName;
+        string oldFileName;
+        string newFileName;
 
-        public String NewName
+        public string NewName
         {
-            get { return this.newName; }
+            get { return newName; }
         }
 
         /// <summary>
         /// A new Rename refactoring command.
+        /// Uses inline renaming.
         /// Outputs found results.
         /// Uses the current text location as the declaration target.
         /// </summary>
@@ -47,49 +50,64 @@ namespace CodeRefactor.Commands
 
         /// <summary>
         /// A new Rename refactoring command.
+        /// Outputs found results.
+        /// </summary>
+        /// <param name="inline">Whether to use inline renaming.</param>
+        public Rename(bool inline)
+            : this(inline, true)
+        {
+        }
+
+        /// <summary>
+        /// A new Rename refactoring command.
         /// Uses the current text location as the declaration target.
         /// </summary>
+        /// <param name="inline">Whether to use inline renaming.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        public Rename(Boolean outputResults)
-            : this(RefactoringHelper.GetDefaultRefactorTarget(), outputResults)
+        public Rename(bool inline, bool outputResults)
+            : this(RefactoringHelper.GetDefaultRefactorTarget(), inline, outputResults)
         {
         }
 
         /// <summary>
         /// A new Rename refactoring command.
         /// </summary>
+        /// <param name="inline">Whether to use inline renaming.</param>
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        public Rename(ASResult target, Boolean outputResults)
-            : this(target, outputResults, null)
+        public Rename(ASResult target, bool inline, bool outputResults)
+            : this(target, inline, outputResults, null)
         {
         }
 
         /// <summary>
         /// A new Rename refactoring command.
         /// </summary>
+        /// <param name="inline">Whether to use inline renaming.</param>
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="newName">If provided, will not query the user for a new name.</param>
-        public Rename(ASResult target, Boolean outputResults, String newName)
-            : this(target, outputResults, newName, false)
+        public Rename(ASResult target, bool inline, bool outputResults, string newName)
+            : this(target, inline, outputResults, newName, false)
         {
         }
 
         /// <summary>
         /// A new Rename refactoring command.
         /// </summary>
+        /// <param name="inline">Whether to use inline renaming.</param>
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="newName">If provided, will not query the user for a new name.</param>
         /// <param name="ignoreDeclarationSource">If true, will not rename the original declaration source.  Useful for Encapsulation refactoring.</param>
-        public Rename(ASResult target, Boolean outputResults, String newName, Boolean ignoreDeclarationSource)
+        public Rename(ASResult target, bool inline, bool outputResults, string newName, bool ignoreDeclarationSource)
         {
             if (target == null)
             {
                 TraceManager.Add("refactor target is null");
                 return;
             }
+            useInline = inline;
             this.outputResults = outputResults;
             if (target.IsPackage)
             {
@@ -101,33 +119,41 @@ namespace CodeRefactor.Commands
                         string path = Path.Combine(aPath.Path, package);
                         if (aPath.IsValid && Directory.Exists(path))
                         {
-                            this.newName = string.IsNullOrEmpty(newName) ? GetNewName(Path.GetFileName(path)) : newName;
-                            if (string.IsNullOrEmpty(this.newName)) return;
-                            renamePackage = new Move(new Dictionary<string, string> { { path, this.newName } }, true, true);
+                            if (string.IsNullOrEmpty(newName))
+                            {
+                                StartRename(Path.GetFileName(path));
+                            }
+                            else
+                            {
+                                OnRename(path, newName);
+                            }
                             return;
                         }
                     }
                 }
                 return;
             }
-            Boolean isEnum = target.Type.IsEnum();
-            Boolean isVoid = target.Type.IsVoid();
-            Boolean isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
-
-            if (!string.IsNullOrEmpty(newName))
-                this.newName = newName;
-            else if (isEnum || isClass)
-                this.newName = GetNewName(target.Type.Name);
-            else
-                this.newName = GetNewName(target.Member.Name);
-
-            if (string.IsNullOrEmpty(this.newName)) return;
+            bool isEnum = target.Type.IsEnum();
+            bool isVoid = target.Type.IsVoid();
+            bool isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
-            this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) { OnlySourceFiles = true };
+            findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) { OnlySourceFiles = true };
             // register a completion listener to the FindAllReferences so we can rename the entries
-            this.findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
+            findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
+
+            if (string.IsNullOrEmpty(newName))
+            {
+                if (isEnum || isClass)
+                    StartRename(target.Type.Name);
+                else
+                    StartRename(target.Member.Name);
+            }
+            else
+            {
+                OnRename(null, newName);
+            }
         }
 
         #region RefactorCommand Implementation
@@ -164,29 +190,29 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public override Boolean IsValid()
+        public override bool IsValid()
         {
-            return renamePackage != null ? renamePackage.IsValid() : !string.IsNullOrEmpty(this.newName);
+            return renamePackage != null ? renamePackage.IsValid() : !string.IsNullOrEmpty(newName);
         }
 
         #endregion
 
         #region Private Helper Methods
 
-        private bool ValidateTargets()
+        bool ValidateTargets()
         {
             ASResult target = findAllReferencesCommand.CurrentTarget;
-            Boolean isEnum = target.Type.IsEnum();
-            Boolean isClass = false;
+            bool isEnum = target.Type.IsEnum();
+            bool isClass = false;
 
             if (!isEnum)
             {
-                Boolean isVoid = target.Type.IsVoid();
+                bool isVoid = target.Type.IsVoid();
                 isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
             }
 
-            Boolean isGlobalFunction = false;
-            Boolean isGlobalNamespace = false;
+            bool isGlobalFunction = false;
+            bool isGlobalNamespace = false;
 
             if (!isEnum && !isClass && (target.InClass == null || target.InClass.IsVoid()))
             {
@@ -199,7 +225,7 @@ namespace CodeRefactor.Commands
                 return true;
 
             FileModel inFile;
-            String originName;
+            string originName;
 
             if (isEnum || isClass)
             {
@@ -216,13 +242,13 @@ namespace CodeRefactor.Commands
             if (inFile == null) return true;
 
             oldFileName = inFile.FileName;
-            String oldName = Path.GetFileNameWithoutExtension(oldFileName);
+            string oldName = Path.GetFileNameWithoutExtension(oldFileName);
 
             // Private classes and similars
             if (string.IsNullOrEmpty(oldName) || !oldName.Equals(originName))
                 return true;
 
-            String fullPath = Path.GetFullPath(inFile.FileName);
+            string fullPath = Path.GetFullPath(inFile.FileName);
             fullPath = Path.GetDirectoryName(fullPath);
 
             newFileName = Path.Combine(fullPath, NewName + Path.GetExtension(oldFileName));
@@ -237,37 +263,37 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Renames the given the set of matched references
         /// </summary>
-        private void OnFindAllReferencesCompleted(Object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> eventArgs)
+        void OnFindAllReferencesCompleted(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> eventArgs)
         {
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
             MessageBar.Locked = true;
-            foreach (KeyValuePair<String, List<SearchMatch>> entry in eventArgs.Results)
+            foreach (KeyValuePair<string, List<SearchMatch>> entry in eventArgs.Results)
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
                 // re-open the document and replace all the text
                 var doc = AssociatedDocumentHelper.LoadDocument(entry.Key);
                 var sci = doc.SciControl;
                 // replace matches in the current file with the new name
-                RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName);
+                RefactoringHelper.ReplaceMatches(entry.Value, sci, newName);
                 //Uncomment if we want to keep modified files
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
                 doc.Save();
             }
             if (newFileName != null) RenameFile(eventArgs.Results);
-            this.Results = eventArgs.Results;
+            Results = eventArgs.Results;
             AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
-            if (this.outputResults) this.ReportResults();
+            if (outputResults) ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             MessageBar.Locked = false;
-            this.FireOnRefactorComplete();
+            FireOnRefactorComplete();
         }
 
-        private void RenameFile(IDictionary<string, List<SearchMatch>> results)
+        void RenameFile(IDictionary<string, List<SearchMatch>> results)
         {
             // We close previous files to avoid unwanted "file modified" dialogs
             ITabbedDocument doc;
-            Boolean reopen = false;
+            bool reopen = false;
             if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldFileName, out doc))
             {
                 doc.Close();
@@ -311,32 +337,32 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// 
         /// </summary>
-        private void ReportResults()
+        void ReportResults()
         {
-            int newNameLength = this.NewName.Length;
+            int newNameLength = NewName.Length;
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
             // outputs the lines as they change
             // some funky stuff to make sure it highlights/reports the resultant changes rather than the old data
             // TODO: this works on the assumption that multiple changes on the same line will come from left-to-right; consider updating to work regardless of order
-            foreach (KeyValuePair<String, List<SearchMatch>> entry in this.Results)
+            foreach (KeyValuePair<string, List<SearchMatch>> entry in Results)
             {
                 // as multiple changes are made to the same line, this stores the cumulative offset 
                 Dictionary<int, int> lineOffsets = new Dictionary<int, int>();
                 // as multiple changes are made to the same line, this stores the cumulative changes to the line
-                Dictionary<int, String> lineChanges = new Dictionary<int, string>();
+                Dictionary<int, string> lineChanges = new Dictionary<int, string>();
                 // stores a listing of lines to report.  Can store multiple instances of each line as some will have different columns
-                Dictionary<int, List<String>> reportableLines = new Dictionary<int, List<string>>();
+                Dictionary<int, List<string>> reportableLines = new Dictionary<int, List<string>>();
                 foreach (SearchMatch match in entry.Value)
                 {
-                    Int32 column = match.Column;
-                    Int32 lineNumber = match.Line;
+                    int column = match.Column;
+                    int lineNumber = match.Line;
                     // if we've already modified the line, we use the data from the last change
                     string changedLine = (lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText);
                     int offset = (lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0);
                     // offsets our column references to take into account previous changes to the line
                     column = column + offset;
                     // determines what the newly formed line will look like
-                    changedLine = changedLine.Substring(0, column) + this.NewName + changedLine.Substring(column + match.Length);
+                    changedLine = changedLine.Substring(0, column) + NewName + changedLine.Substring(column + match.Length);
                     // stores the changes in case we have to modify the line again later
                     lineChanges[lineNumber] = changedLine;
                     lineOffsets[lineNumber] = offset + (newNameLength - match.Length);
@@ -349,14 +375,14 @@ namespace CodeRefactor.Commands
                     reportableLines[lineNumber].Add(entry.Key + ":" + match.Line.ToString() + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
                 }
                 // report all the lines
-                foreach (KeyValuePair<int, List<String>> lineSetsToReport in reportableLines)
+                foreach (KeyValuePair<int, List<string>> lineSetsToReport in reportableLines)
                 {
                     // the final state of the line after all renaming
-                    String renamedLine = lineChanges[lineSetsToReport.Key].Trim();
-                    foreach (String lineToReport in lineSetsToReport.Value)
+                    string renamedLine = lineChanges[lineSetsToReport.Key].Trim();
+                    foreach (string lineToReport in lineSetsToReport.Value)
                     {
                         // use the String.Format and replace the {0} from above with our final line state
-                        TraceManager.Add(String.Format(lineToReport, renamedLine), (Int32)TraceType.Info);
+                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info);
                     }
                 }
             }
@@ -366,18 +392,38 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// This retrieves the new name from the user
         /// </summary>
-        private String GetNewName(String originalName)
+        void StartRename(string originalName)
         {
-            String label = TextHelper.GetString("Label.NewName");
-            String title = String.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
-            String suggestion = originalName;
-            LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
-            DialogResult choice = askName.ShowDialog();
-            if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
+            if (useInline)
             {
-                return askName.Line.Trim();
+                var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                int start = sci.WordStartPosition(sci.CurrentPos, true);
+
+                var inlineRename = new InlineRename(sci, originalName, start);
+                inlineRename.OnRename += OnRename;
             }
-            return null;
+            else
+            {
+                string label = TextHelper.GetString("Label.NewName");
+                string title = string.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
+                string suggestion = originalName;
+                LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
+                DialogResult choice = askName.ShowDialog();
+                if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
+                {
+                    OnRename(originalName, askName.Line.Trim());
+                }
+            }
+        }
+
+        void OnRename(string oldName, string newName)
+        {
+            if (findAllReferencesCommand == null)
+                renamePackage = new Move(new Dictionary<string, string> { { oldName, newName } }, true, true);
+
+            this.oldName = oldName;
+            this.newName = newName;
+            Execute();
         }
 
         #endregion
