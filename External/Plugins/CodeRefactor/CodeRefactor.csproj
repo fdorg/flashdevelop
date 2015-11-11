@@ -113,6 +113,7 @@
     <Compile Include="Provider\MovingHelper.cs" />
     <Compile Include="Provider\RefactoringHelper.cs" />
     <Compile Include="Provider\UserInterfaceManager.cs" />
+    <Compile Include="RefactorItem.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>

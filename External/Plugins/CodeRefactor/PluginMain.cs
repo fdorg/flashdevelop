@@ -139,7 +139,6 @@ namespace CodeRefactor
                     break;
 
                 case EventType.Command:
-                    if (settingObject.DisableMoveRefactoring) return;
                     DataEvent de = (DataEvent)e;
                     string[] args;
                     string oldPath;
@@ -147,6 +146,7 @@ namespace CodeRefactor
                     switch (de.Action)
                     {
                         case ProjectFileActionsEvents.FileRename:
+                            if (settingObject.DisableMoveRefactoring) break;
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
@@ -163,6 +163,7 @@ namespace CodeRefactor
                             break;
 
                         case ProjectFileActionsEvents.FileMove:
+                            if (settingObject.DisableMoveRefactoring) break;
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
@@ -171,6 +172,10 @@ namespace CodeRefactor
                                 MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, true);
                                 e.Handled = true;
                             }
+                            break;
+
+                        case "ASCompletion.ContextualGenerator.AddOptions":
+                            OnAddRefactorOptions(de.Data as List<ICompletionListItem>);
                             break;
                     }
                     break;
@@ -655,7 +660,34 @@ namespace CodeRefactor
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
-        #endregion
+        void OnAddRefactorOptions(List<ICompletionListItem> list)
+        {
+            if (list == null)
+                return;
 
+            RefactorItem.AddItemToList(refactorMainMenu.RenameMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.ExtractMethodMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.ExtractLocalVariableMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.DelegateMenuItem, list);
+
+            var features = ASContext.Context.Features;
+
+            if (!features.hasImports)
+                return;
+
+            var sci = ASContext.CurSciControl;
+            string line = sci.GetLine(sci.CurrentLine).TrimStart();
+
+            if (line.StartsWith(features.importKey, StringComparison.Ordinal)
+                || !string.IsNullOrEmpty(features.importKeyAlt) && line.StartsWith(features.importKeyAlt, StringComparison.Ordinal))
+            {
+                RefactorItem.AddItemToList(refactorMainMenu.OrganizeMenuItem, list);
+
+                if (features.hasImportsWildcard)
+                    RefactorItem.AddItemToList(refactorMainMenu.TruncateMenuItem, list);
+            }
+        }
+
+        #endregion
     }
 }
