@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -690,50 +689,5 @@ namespace CodeRefactor
         }
 
         #endregion
-
-    }
-
-    class RefactorItem : ICompletionListItem
-    {
-        ToolStripItem item;
-        string label;
-        Bitmap icon;
-
-        public static void AddItemToList(ToolStripMenuItem item, List<ICompletionListItem> list)
-        {
-            if (item.Enabled)
-                list.Add(new RefactorItem(item));
-        }
-
-        public RefactorItem(ToolStripItem item)
-        {
-            this.item = item;
-            label = Regex.Replace(item.Text, "[&.]", string.Empty);
-            icon = new Bitmap(item.Image ?? PluginBase.MainForm.FindImage("452")); //452, 473
-        }
-
-        public string Description
-        {
-            get { return label; /*TextHelper.GetString("ASCompletion.Info.GeneratorTemplate");*/ }
-        }
-
-        public Bitmap Icon
-        {
-            get { return icon; }
-        }
-
-        public string Label
-        {
-            get { return label; }
-        }
-
-        public string Value
-        {
-            get
-            {
-                item.PerformClick();
-                return null;
-            }
-        }
     }
 }
