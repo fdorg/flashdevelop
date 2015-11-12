@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
@@ -40,6 +41,8 @@ namespace ASCompletion.Completion
         static private MemberModel contextMember;
         static private bool firstVar;
 
+        static List<ICompletionListItem> known;
+
         static private bool IsHaxe
         {
             get { return ASContext.Context.CurrentModel.haXe; }
@@ -53,15 +56,19 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static public void ContextualGenerator(ScintillaControl Sci)
+        public static List<ICompletionListItem> ContextualGenerator(ScintillaControl Sci)
         {
+            known = new List<ICompletionListItem>();
+
             if (ASContext.Context is ASContext) (ASContext.Context as ASContext).UpdateCurrentFile(false); // update model
-            if ((ASContext.Context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return;
+            if ((ASContext.Context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return known;
 
             lookupPosition = -1;
             int position = Sci.CurrentPos;
-            if (Sci.BaseStyleAt(position) == 19) // on keyword
-                return;
+            int style = Sci.BaseStyleAt(position);
+            if (style == 19) // on keyword
+                return known;
+
             bool isNotInterface = (ASContext.Context.CurrentClass.Flags & FlagType.Interface) == 0;
             int line = Sci.LineFromPosition(position);
             contextToken = Sci.GetWordFromPosition(position);
@@ -71,10 +78,13 @@ namespace ASCompletion.Completion
             string text = Sci.GetLine(line);
             bool suggestItemDeclaration = false;
 
-            if (isNotInterface && !String.IsNullOrEmpty(contextToken) && Char.IsDigit(contextToken[0]))
+            if (isNotInterface)
             {
-                ShowConvertToConst(found);
-                return;
+                if (style == 4 || style == 6 || style == 7)
+                {
+                    ShowConvertToConst(found);
+                    return known;
+                }
             }
 
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
@@ -96,7 +106,7 @@ namespace ASCompletion.Completion
                 {
                     contextParam = resolve.Type.Type;
                     ShowImplementInterface(found);
-                    return;
+                    return known;
                 }
 
                 if (resolve.Member != null && !ASContext.Context.CurrentClass.IsVoid()
@@ -104,13 +114,13 @@ namespace ASCompletion.Completion
                 {
                     contextMember = resolve.Member;
                     ShowPromoteLocalAndAddParameter(found);
-                    return;
+                    return known;
                 }
             }
             
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found)) return known;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
@@ -129,10 +139,10 @@ namespace ASCompletion.Completion
                         contextMatch = m;
                         ClassModel type = ASContext.Context.ResolveType(contextToken, ASContext.Context.CurrentModel);
                         if (type.IsVoid() && CheckAutoImport(found))
-                            return;
+                            return known;
                     }
                     ShowGetSetList(found);
-                    return;
+                    return known;
                 }
                 // inside a function
                 else if ((found.member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
@@ -148,14 +158,14 @@ namespace ASCompletion.Completion
                             contextMatch = m;
                             contextParam = CheckEventType(m.Groups["event"].Value);
                             ShowEventList(found);
-                            return;
+                            return known;
                         }
                         m = Regex.Match(text, String.Format(patternAS2Delegate, contextToken), RegexOptions.IgnoreCase);
                         if (m.Success)
                         {
                             contextMatch = m;
                             ShowDelegateList(found);
-                            return;
+                            return known;
                         }
                         // suggest delegate
                         if (ASContext.Context.Features.hasDelegates)
@@ -170,7 +180,7 @@ namespace ASCompletion.Completion
                                     contextMember = ResolveDelegate(resolve.Member.Type, resolve.InFile);
                                 contextMatch = m;
                                 ShowDelegateList(found);
-                                return;
+                                return known;
                             }
                         }
                     }
@@ -189,7 +199,7 @@ namespace ASCompletion.Completion
                                 contextParam = CheckEventType(m.Groups["event"].Value);
                                 ShowEventList(found);
                             }
-                            return;
+                            return known;
                         }
 
                         // insert default delegate name, then "generate delegate" suggestion
@@ -213,7 +223,7 @@ namespace ASCompletion.Completion
                                         contextMatch = m;
                                         ShowDelegateList(found);
                                     }
-                                    return;
+                                    return known;
                                 }
                             }
                         }
@@ -228,7 +238,7 @@ namespace ASCompletion.Completion
                 {
                     contextMember = resolve.Member;
                     ShowFieldFromParameter(found);
-                    return;
+                    return known;
                 }
 
                 // "add to interface" suggestion
@@ -266,7 +276,7 @@ namespace ASCompletion.Completion
                     if (interfaces.Count > 0)
                     {
                         ShowAddInterfaceDefList(found, interfaces);
-                        return;
+                        return known;
                     }
                 }
 
@@ -277,7 +287,7 @@ namespace ASCompletion.Completion
                     && ln.Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine)) // cursor at end of line
                 {
                     ShowAssignStatementToVarList(found);
-                    return;
+                    return known;
                 }
             }
             
@@ -298,7 +308,7 @@ namespace ASCompletion.Completion
                 if (!hasConstructor || !hasToString)
                 {
                     ShowConstructorAndToStringList(found, hasConstructor, hasToString);
-                    return;
+                    return known;
                 }
             }
 
@@ -325,7 +335,7 @@ namespace ASCompletion.Completion
                             {
                                 contextParam = eventResolve.Type.QualifiedName;
                                 ShowEventMetatagList(found);
-                                return;
+                                return known;
                             }
                             aType = aType.Extends;
                         }
@@ -389,7 +399,8 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            // TODO: Empty line, show generators list?
+            // TODO: Empty line, show generators list? yep
+            return known;
         }
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
@@ -566,8 +577,7 @@ namespace ASCompletion.Completion
                 GenerateJob(GeneratorJobType.AddImport, matches[0], null, null, null);
                 return;
             }
-
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
+            
             foreach (MemberModel member in matches)
             {
                 if ((member.Flags & FlagType.Class) > 0)
@@ -575,35 +585,28 @@ namespace ASCompletion.Completion
                 else if (member.IsPackageLevel)
                     known.Add(new GeneratorItem("import " + member.Name, GeneratorJobType.AddImport, member, null));
             }
-            CompletionList.Show(known, false);
         }
 
         private static void ShowPromoteLocalAndAddParameter(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string label = TextHelper.GetString("ASCompletion.Label.PromoteLocal");
             string labelMove = TextHelper.GetString("ASCompletion.Label.MoveDeclarationOnTop");
             string labelParam = TextHelper.GetString("ASCompletion.Label.AddAsParameter");
             known.Add(new GeneratorItem(label, GeneratorJobType.PromoteLocal, found.member, found.inClass));
             known.Add(new GeneratorItem(labelMove, GeneratorJobType.MoveLocalUp, found.member, found.inClass));
             known.Add(new GeneratorItem(labelParam, GeneratorJobType.AddAsParameter, found.member, found.inClass));
-            CompletionList.Show(known, false);
         }
 
         private static void ShowConvertToConst(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string label = TextHelper.GetString("ASCompletion.Label.ConvertToConst");
             known.Add(new GeneratorItem(label, GeneratorJobType.ConvertToConst, found.member, found.inClass));
-            CompletionList.Show(known, false);
         }
 
         private static void ShowImplementInterface(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string label = TextHelper.GetString("ASCompletion.Label.ImplementInterface");
             known.Add(new GeneratorItem(label, GeneratorJobType.ImplementInterface, null, found.inClass));
-            CompletionList.Show(known, false);
         }
 
         private static void ShowNewVarList(FoundDeclaration found)
@@ -641,7 +644,6 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string label;
             if ((exprAtCursor != null && exprAtCursor.RelClass != null && (exprAtCursor.RelClass.Flags & FlagType.Interface) > 0)
                 || (found.inClass != null && (found.inClass.Flags & FlagType.Interface) > 0))
@@ -686,28 +688,22 @@ namespace ASCompletion.Completion
                     known.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass));
                 }
             }
-            CompletionList.Show(known, false);
         }
 
         private static void ShowChangeMethodDeclList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string label = TextHelper.GetString("ASCompletion.Label.ChangeMethodDecl");
             known.Add(new GeneratorItem(label, GeneratorJobType.ChangeMethodDecl, found.member, found.inClass));
-            CompletionList.Show(known, false);
         }
 
         private static void ShowChangeConstructorDeclList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string label = TextHelper.GetString("ASCompletion.Label.ChangeConstructorDecl");
             known.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.member, found.inClass));
-            CompletionList.Show(known, false);
         }
 
         private static void ShowNewMethodList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             ScintillaControl Sci = ASContext.CurSciControl;
             ASResult result = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(Sci.CurrentPos, true));
             if (result == null || result.RelClass == null || found.inClass.QualifiedName.Equals(result.RelClass.QualifiedName))
@@ -727,19 +723,14 @@ namespace ASCompletion.Completion
             known.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
             label = TextHelper.GetString("ASCompletion.Label.GeneratePublicCallback");
             known.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
-            CompletionList.Show(known, false);
         }
 
         private static void ShowAssignStatementToVarList(FoundDeclaration found)
         {
             if (GetLangIsValid())
             {
-                List<ICompletionListItem> known = new List<ICompletionListItem>();
-
                 string labelClass = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.AssignStatementToVar, found.member, found.inClass));
-
-                CompletionList.Show(known, false);
             }
         }
 
@@ -747,22 +738,15 @@ namespace ASCompletion.Completion
         {
             if (GetLangIsValid())
             {
-                List<ICompletionListItem> known = new List<ICompletionListItem>();
-
                 string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateClass");
                 known.Add(new GeneratorItem(labelClass, GeneratorJobType.Class, found.member, found.inClass));
-
-                CompletionList.Show(known, false);
             }
         }
 
         private static void ShowConstructorAndToStringList(FoundDeclaration found, bool hasConstructor, bool hasToString)
         {
-            
             if (GetLangIsValid())
             {
-                List<ICompletionListItem> known = new List<ICompletionListItem>();
-
                 if (!hasConstructor)
                 {
                     string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
@@ -774,26 +758,19 @@ namespace ASCompletion.Completion
                     string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateToString");
                     known.Add(new GeneratorItem(labelClass, GeneratorJobType.ToString, found.member, found.inClass));
                 }
-
-                CompletionList.Show(known, false);
             }
         }
 
         private static void ShowEventMetatagList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
             string label = TextHelper.GetString("ASCompletion.Label.GenerateEventMetatag");
             known.Add(new GeneratorItem(label, GeneratorJobType.EventMetatag, found.member, found.inClass));
-
-            CompletionList.Show(known, false);
         }
 
         private static void ShowFieldFromParameter(FoundDeclaration found)
         {
             if (GetLangIsValid())
             {
-                List<ICompletionListItem> known = new List<ICompletionListItem>();
                 Hashtable parameters = new Hashtable();
                 parameters["scope"] = GetDefaultVisibility();
                 string label;
@@ -805,7 +782,6 @@ namespace ASCompletion.Completion
                 parameters["scope"] = Visibility.Public;
                 label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
                 known.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
-                CompletionList.Show(known, false);
             }
         }
 
@@ -813,28 +789,22 @@ namespace ASCompletion.Completion
         {
             if (GetLangIsValid())
             {
-                List<ICompletionListItem> known = new List<ICompletionListItem>();
-
                 string labelClass = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
                 foreach (String interf in interfaces)
                 {
                     known.Add(new GeneratorItem(String.Format(labelClass, interf), GeneratorJobType.AddInterfaceDef, found.member, found.inClass, interf));
                 }
-                CompletionList.Show(known, false);
             }
         }
 
         private static void ShowDelegateList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string label = String.Format(TextHelper.GetString("ASCompletion.Label.GenerateHandler"), "Delegate");
             known.Add(new GeneratorItem(label, GeneratorJobType.Delegate, found.member, found.inClass));
-            CompletionList.Show(known, false);
         }
 
         private static void ShowEventList(FoundDeclaration found)
         {
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             string tmp = TextHelper.GetString("ASCompletion.Label.GenerateHandler");
             string labelEvent = String.Format(tmp, "Event");
             string labelDataEvent = String.Format(tmp, "DataEvent");
@@ -848,7 +818,6 @@ namespace ASCompletion.Completion
                     choices[i] == labelContext ? GeneratorJobType.ComplexEvent : GeneratorJobType.BasicEvent,
                     found.member, found.inClass));
             }
-            CompletionList.Show(known, false);
         }
 
         private static void ShowGetSetList(FoundDeclaration found)
@@ -861,7 +830,6 @@ namespace ASCompletion.Completion
             ASComplete.FindMember(name, curClass, result, FlagType.Setter, 0);
             bool hasSetter = !result.IsNull();
             if (hasGetter && hasSetter) return;
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
             if (!hasGetter && !hasSetter)
             {
                 string label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
@@ -877,7 +845,6 @@ namespace ASCompletion.Completion
                 string label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
                 known.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
             }
-            CompletionList.Show(known, false);
         }
 
         private static bool GetLangIsValid()
@@ -1412,23 +1379,15 @@ namespace ASCompletion.Completion
             suggestion = (string)info["suggestion"];
 
             int position = Sci.CurrentPos;
+            int style = Sci.BaseStyleAt(position);
             MemberModel latest = null;
 
-            int wordPosEnd = Sci.WordEndPosition(position, true);
-            int wordPosStart = Sci.WordStartPosition(position, true);
-            char cr = (char)Sci.CharAt(wordPosEnd);
-            if (cr == '.')
-            {
-                wordPosEnd = Sci.WordEndPosition(wordPosEnd + 1, true);
-            }
-            else
-            {
-                cr = (char)Sci.CharAt(wordPosStart - 1);
-                if (cr == '.')
-                {
-                    wordPosStart = Sci.WordStartPosition(wordPosStart - 1, true);
-                }
-            }
+            int wordPosEnd = position + 1;
+            int wordPosStart = position;
+
+            while (Sci.BaseStyleAt(wordPosEnd) == style) wordPosEnd++;
+            while (Sci.BaseStyleAt(wordPosStart - 1) == style) wordPosStart--;
+            
             Sci.SetSel(wordPosStart, wordPosEnd);
             string word = Sci.SelText;
             Sci.ReplaceSel(suggestion);
@@ -1458,7 +1417,20 @@ namespace ASCompletion.Completion
             }
 
             MemberModel m = NewMember(suggestion, member, FlagType.Variable | FlagType.Constant | FlagType.Static);
-            m.Type = ASContext.Context.Features.numberKey;
+
+            var features = ASContext.Context.Features;
+
+            switch (style)
+            {
+                case 4:
+                    m.Type = features.numberKey;
+                    break;
+                case 6:
+                case 7:
+                    m.Type = features.stringKey;
+                    break;
+            }
+
             m.Value = word;
             GenerateVariable(m, position, detach);
         }
@@ -4503,7 +4475,6 @@ namespace ASCompletion.Completion
 
         public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass, Object data) : this(label, job, member, inClass)
         {
-            
             this.data = data;
         }
 
