@@ -160,8 +160,10 @@ namespace ASCompletion.Completion
             var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest" };
             var classModel = new Model.ClassModel {InFile = new Model.FileModel()};
             var pluginMain = Substitute.For<PluginMain>();
+            var pluginUiMock = new PluginUIMock(pluginMain);
             pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
             pluginMain.Settings.Returns(new GeneralSettings());
+            pluginMain.Panel.Returns(pluginUiMock);
             ASContext.GlobalInit(pluginMain);
             ASContext.Context = Substitute.For<IASContext>();
             ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
@@ -177,11 +179,26 @@ namespace ASCompletion.Completion
             interfaceModel.Members.Add(new Model.MemberList
                                            {
                                                new Model.MemberModel("getter", "String", Model.FlagType.Getter, Model.Visibility.Default),
-                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Default),
-                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Getter, Model.Visibility.Default)
+                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Default)
+                                                   {
+                                                        Parameters = new List<Model.MemberModel> { new Model.MemberModel("value", "String", Model.FlagType.Variable, Model.Visibility.Default) }
+                                                   },
+                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Default),
+                                               new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Default)
+                                                   {
+                                                        Parameters = new List<Model.MemberModel> { new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default) }
+                                                   }
                                            });
 
             ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
+        }
+    }
+
+    internal class PluginUIMock : PluginUI
+    {
+        public PluginUIMock(PluginMain plugin) : base(plugin)
+        {
+
         }
     }
 }

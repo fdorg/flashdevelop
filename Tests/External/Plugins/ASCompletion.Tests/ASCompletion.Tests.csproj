@@ -96,7 +96,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Completion\ASGeneratorTests.cs" />
+    <Compile Include="Completion\ASGeneratorTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

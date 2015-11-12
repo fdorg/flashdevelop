@@ -4363,7 +4363,7 @@ namespace ASCompletion.Completion
 
                 int len = SnippetHelper.InsertSnippetText(sci, position + sci.MBSafeTextLength(sci.SelText), src);
                 UpdateLookupPosition(position, len);
-                AddLookupPosition();
+                AddLookupPosition(sci);
             }
             finally { sci.EndUndoAction(); }
         }
@@ -4407,13 +4407,17 @@ namespace ASCompletion.Completion
 
         private static void AddLookupPosition()
         {
-            if (lookupPosition >= 0)
+            AddLookupPosition(ASContext.CurSciControl);
+        }
+
+        private static void AddLookupPosition(ScintillaControl sci)
+        {
+            if (lookupPosition >= 0 && sci != null)
             {
-                ScintillaControl Sci = ASContext.CurSciControl;
-                if (Sci == null) return;
-                int lookupLine = Sci.LineFromPosition(lookupPosition);
-                int lookupCol = lookupPosition - Sci.PositionFromLine(lookupLine);
-                ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
+                int lookupLine = sci.LineFromPosition(lookupPosition);
+                int lookupCol = lookupPosition - sci.PositionFromLine(lookupLine);
+                // TODO: Refactor, doesn't make a lot of sense to have this feature inside the Panel
+                ASContext.Panel.SetLastLookupPosition(sci.FileName, lookupLine, lookupCol);
             }
         }
         #endregion     

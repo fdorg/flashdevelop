@@ -147,9 +147,12 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public int getThemeColorCount;
         public Color GetThemeColor(string id, Color fallback)
         {
-            throw new NotImplementedException();
+            getThemeColorCount++;
+
+            return fallback;
         }
 
         public IPlugin FindPlugin(string guid)
@@ -157,9 +160,11 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public int imageSetAdjustCount;
         public Image ImageSetAdjust(Image image)
         {
-            throw new NotImplementedException();
+            imageSetAdjustCount++;
+            return image;            
         }
 
         public Image FindImage(string data)
