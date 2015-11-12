@@ -71,8 +71,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static Boolean ModelFileExists(FileModel model)
         {
-            if (model != null && File.Exists(model.FileName)) return true;
-            else return false;
+            return model != null && File.Exists(model.FileName);
         }
 
         /// <summary>
@@ -85,8 +84,7 @@ namespace CodeRefactor.Provider
         public static Boolean IsUnderSDKPath(String file)
         {
             InstalledSDK sdk = PluginBase.CurrentSDK;
-            if (sdk != null && !String.IsNullOrEmpty(sdk.Path) && file.StartsWith(sdk.Path)) return true;
-            return false;
+            return sdk != null && !String.IsNullOrEmpty(sdk.Path) && file.StartsWith(sdk.Path);
         }
 
         /// <summary>
@@ -163,7 +161,7 @@ namespace CodeRefactor.Provider
             {
                 if (result.Member != null && (result.Member.Flags & FlagType.AutomaticVar) > 0) return null;
                 FileModel model = result.InFile ?? ((result.Member != null && result.Member.InFile != null) ? result.Member.InFile : null) ?? ((result.Type != null) ? result.Type.InFile : null);
-                if (model == null || model.FileName == "") return null;
+                if (model == null || model.FileName == string.Empty) return null;
                 ClassModel inClass = result.InClass ?? result.Type;
                 // for Back command
                 int lookupLine = Sci.CurrentLine;
@@ -297,12 +295,9 @@ namespace CodeRefactor.Provider
                     && result.Member.LineFrom == target.Member.LineFrom
                     && result.Member.Name == target.Member.Name;
             }
-            else // type
-            {
-                if (result.Type == null) return false;
-                if (result.Type.QualifiedName == target.Type.QualifiedName) return true;
-                return false;
-            }
+            //type
+            if (result.Type == null) return false;
+            return result.Type.QualifiedName == target.Type.QualifiedName;
         }
 
         /// <summary>
