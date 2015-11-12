@@ -19,6 +19,11 @@ namespace CodeRefactor.Commands
         public event Action<string> OnUpdate;
         public event Action OnCancel;
 
+        public static bool InProgress
+        {
+            get { return current != null; }
+        }
+
         public static bool CancelExisting()
         {
             if (current == null) return false;
@@ -26,17 +31,9 @@ namespace CodeRefactor.Commands
             return true;
         }
 
-        public static Rename Start()
-        {
-            if (current == null)
-                return new Rename(true);
-
-            return null;
-        }
-
         public InlineRename(ScintillaControl control, string original, int position)
         {
-            if (current != null)
+            if (InProgress)
                 current.Cancel();
 
             sci = control;

@@ -418,10 +418,10 @@ namespace CodeRefactor
         {
             try
             {
-                //InlineRename.CancelExisting();
-                //new Rename(useInline);
-                ////or
-                InlineRename.Start();
+                if (!InlineRename.InProgress)
+                {
+                    new Rename(settingObject.UseInlineRenaming);
+                }
             }
             catch (Exception ex)
             {

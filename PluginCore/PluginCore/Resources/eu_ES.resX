@@ -5961,4 +5961,8 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
   </data>
+  <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
+    <value>Whether to use inline editing for renaming processes. </value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
 </root>
