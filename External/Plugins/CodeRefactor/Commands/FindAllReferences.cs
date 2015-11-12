@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ASCompletion.Completion;
+using ASCompletion.Context;
 using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.FRService;
@@ -145,6 +146,27 @@ namespace CodeRefactor.Commands
             // this will hold actual references back to the source member (some result hits could point to different members with the same name)
             IDictionary<String, List<SearchMatch>> actualMatches = new Dictionary<String, List<SearchMatch>>();
             IDictionary<String, List<SearchMatch>> initialResultsList = RefactoringHelper.GetInitialResultsList(results);
+            if (ASContext.Context.Features.hasStringInterpolation)
+            {
+                IDictionary<String, List<SearchMatch>> filteredResults = new Dictionary<string, List<SearchMatch>>();
+                foreach (KeyValuePair<string, List<SearchMatch>> entry in initialResultsList)
+                {
+                    String fileName = entry.Key;
+                    ScintillaControl sci = AssociatedDocumentHelper.LoadDocument(fileName).SciControl;
+                    int stylemask = (1 << sci.StyleBits) - 1;
+                    List<SearchMatch> filteredMatches = new List<SearchMatch>();
+                    foreach (SearchMatch match in entry.Value)
+                    {
+                        int position = match.Index;
+                        int style = sci.StyleAt(position) & stylemask;
+                        if (!ASComplete.IsLiteralStyle(style)) filteredMatches.Add(match);
+                        else if (sci.CharAt(position - 1) == '$' || ASComplete.IsInterpolationExpr(sci, position))
+                            filteredMatches.Add(match);
+                    }
+                    filteredResults[fileName] = filteredMatches;
+                }
+                initialResultsList = filteredResults;
+            }
             int matchesChecked = 0;
             int totalMatches = 0;
             foreach (KeyValuePair<String, List<SearchMatch>> entry in initialResultsList)

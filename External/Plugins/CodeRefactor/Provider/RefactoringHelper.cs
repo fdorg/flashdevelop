@@ -481,7 +481,8 @@ namespace CodeRefactor.Provider
             search.IsEscaped = false;
             search.WholeWord = true;
             search.NoCase = false;
-            search.Filter = SearchFilter.None | SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
+            search.Filter = SearchFilter.None | SearchFilter.OutsideCodeComments;
+            if (!ASContext.Context.Features.hasStringInterpolation) search.Filter |= SearchFilter.OutsideStringLiterals;
             return search;
         }
 

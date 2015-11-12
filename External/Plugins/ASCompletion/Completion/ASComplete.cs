@@ -3674,7 +3674,7 @@ namespace ASCompletion.Completion
         #region tools_functions
 
 
-        static public bool IsLiteralStyle(int style)
+        public static bool IsLiteralStyle(int style)
         {
             return (style == 4) || (style == 6) || (style == 7);
         }
@@ -3778,10 +3778,10 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// Returns whether or not position is insidse of an expression
+        /// Returns whether or not position is inside of an expression
         /// block in Haxe String interpolation ('${expr}')
         /// </summary>
-        static private bool IsInterpolationExpr(ScintillaControl sci, int position)
+        public static bool IsInterpolationExpr(ScintillaControl sci, int position)
         {
             ContextFeatures features = ASContext.Context.Features;
             if (!features.hasStringInterpolation ||
@@ -3797,9 +3797,7 @@ namespace ASCompletion.Completion
                 c = next;
                 next = (char)sci.CharAt(i);
 
-                if (c == '\'')
-                    if (next != '\\')
-                        return false;
+                if (c == '\'' && next != '\\') return false;
                 if (c == '$' && prev == '{')
                     return true;
             }
