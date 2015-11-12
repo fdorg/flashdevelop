@@ -14,6 +14,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
+using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
@@ -24,10 +25,11 @@ namespace CodeRefactor.Commands
     {
         string oldName;
         string newName;
-        bool useInline;
         bool outputResults;
+        bool isRenamePackage;
         FindAllReferences findAllReferencesCommand;
         Move renamePackage;
+        InlineRename inlineRename;
 
         string oldFileName;
         string newFileName;
@@ -107,7 +109,6 @@ namespace CodeRefactor.Commands
                 TraceManager.Add("refactor target is null");
                 return;
             }
-            useInline = inline;
             this.outputResults = outputResults;
             if (target.IsPackage)
             {
@@ -119,14 +120,12 @@ namespace CodeRefactor.Commands
                         string path = Path.Combine(aPath.Path, package);
                         if (aPath.IsValid && Directory.Exists(path))
                         {
+                            isRenamePackage = true;
+
                             if (string.IsNullOrEmpty(newName))
-                            {
-                                StartRename(Path.GetFileName(path));
-                            }
+                                StartRename(inline, Path.GetFileName(path));
                             else
-                            {
                                 OnRename(path, newName);
-                            }
                             return;
                         }
                     }
@@ -137,18 +136,20 @@ namespace CodeRefactor.Commands
             bool isVoid = target.Type.IsVoid();
             bool isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
 
+            isRenamePackage = false;
+
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
             findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) { OnlySourceFiles = true };
             // register a completion listener to the FindAllReferences so we can rename the entries
             findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
-
+            
             if (string.IsNullOrEmpty(newName))
             {
                 if (isEnum || isClass)
-                    StartRename(target.Type.Name);
+                    StartRename(inline, target.Type.Name);
                 else
-                    StartRename(target.Member.Name);
+                    StartRename(inline, target.Member.Name);
             }
             else
             {
@@ -163,7 +164,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected override void ExecutionImplementation()
         {
-            if (renamePackage != null)
+            if (isRenamePackage)
             {
                 renamePackage.RegisterDocumentHelper(AssociatedDocumentHelper);
                 renamePackage.Execute();
@@ -192,7 +193,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override bool IsValid()
         {
-            return renamePackage != null ? renamePackage.IsValid() : !string.IsNullOrEmpty(newName);
+            return isRenamePackage ? renamePackage.IsValid() : !string.IsNullOrEmpty(newName);
         }
 
         #endregion
@@ -388,19 +389,17 @@ namespace CodeRefactor.Commands
             }
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
         }
-
-        /// <summary>
-        /// This retrieves the new name from the user
-        /// </summary>
-        void StartRename(string originalName)
+        
+        void StartRename(bool useInline, string originalName)
         {
             if (useInline)
             {
                 var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                 int start = sci.WordStartPosition(sci.CurrentPos, true);
 
-                var inlineRename = new InlineRename(sci, originalName, start);
+                inlineRename = new InlineRename(sci, originalName, start);
                 inlineRename.OnRename += OnRename;
+                inlineRename.OnCancel += RemoveInlineHandlers;
             }
             else
             {
@@ -418,12 +417,21 @@ namespace CodeRefactor.Commands
 
         void OnRename(string oldName, string newName)
         {
-            if (findAllReferencesCommand == null)
+            if (inlineRename != null) RemoveInlineHandlers();
+            if (oldName == newName) return;
+
+            if (isRenamePackage)
                 renamePackage = new Move(new Dictionary<string, string> { { oldName, newName } }, true, true);
 
             this.oldName = oldName;
             this.newName = newName;
             Execute();
+        }
+
+        void RemoveInlineHandlers()
+        {
+            inlineRename.OnRename -= OnRename;
+            inlineRename.OnCancel -= RemoveInlineHandlers;
         }
 
         #endregion

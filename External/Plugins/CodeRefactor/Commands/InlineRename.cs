@@ -2,11 +2,13 @@
 using System.Windows.Forms;
 using PluginCore;
 using ScintillaNet;
+using ScintillaNet.Enums;
 
 namespace CodeRefactor.Commands
 {
     public class InlineRename : IMessageFilter, IDisposable
     {
+        const int indicator = 0;
         static InlineRename current;
 
         ScintillaControl sci;
@@ -43,47 +45,36 @@ namespace CodeRefactor.Commands
             end = start + oldName.Length;
 
             Application.AddMessageFilter(this);
-            sci.TextInserted += Sci_TextInserted;
-            sci.TextDeleted += Sci_TextDeleted;
+            sci.TextInserted += OnTextInserted;
+            sci.TextDeleted += OnTextDeleted;
             current = this;
 
-            AddHighlight();
-        }
-
-        public void Dispose()
-        {
-            Application.RemoveMessageFilter(this);
-            sci.TextInserted -= Sci_TextInserted;
-            sci.TextDeleted -= Sci_TextDeleted;
-            current = null;
+            sci.RemoveHighlights(indicator);
+            sci.SetIndicSetAlpha(indicator, 100);
+            Highlight();
         }
 
         void Rename()
         {
-            Dispose();
-
-            RemoveHighlight();
-            sci.SetSel(start, end);
-            newName = sci.SelText;
-            sci.ReplaceSel(oldName);
-
-            if (OnRename != null) OnRename(oldName, newName);
+            using (this)
+            {
+                GetNewName();
+                if (OnRename != null) OnRename(oldName, newName);
+            }
         }
 
         void Cancel()
         {
-            Dispose();
-            
-            RemoveHighlight();
-            sci.SetSel(start, end);
-            sci.ReplaceSel(oldName);
-
-            if (OnCancel != null) OnCancel();
+            using (this)
+            {
+                GetNewName();
+                if (OnCancel != null) OnCancel();
+            }
         }
 
         void Update(int position)
         {
-            AddHighlight();
+            Highlight();
 
             if (OnUpdate != null)
             {
@@ -94,35 +85,55 @@ namespace CodeRefactor.Commands
             }
         }
 
-        void AddHighlight()
+        void GetNewName()
         {
-            //sci.AddHighlight(8, 0x00FF00, start, end - start);
-            ////if error: sci.AddHighlight(6, 0xFF0000, start, end - start);
+            sci.RemoveHighlight(start, end);
+            sci.SetIndicSetAlpha(indicator, 40);
+
+            sci.SetSel(start, end);
+            newName = sci.SelText;
+
+            if (newName == oldName)
+                sci.SetSel(end, end);
+            else
+                sci.ReplaceSel(oldName);
         }
 
-        void RemoveHighlight()
+        void Highlight()
         {
-            //sci.RemoveHighlight(start, end - start);
+            int es = sci.EndStyled;
+            int mask = (1 << sci.StyleBits) - 1;
+            sci.SetIndicStyle(indicator, (int) IndicatorStyle.Container);
+            sci.SetIndicFore(indicator, 0x00FF00);
+            sci.CurrentIndicator = indicator;
+            sci.IndicatorFillRange(start, end - start);
+            sci.StartStyling(es, mask);
         }
 
-        void Sci_TextInserted(ScintillaControl sender, int position, int length, int linesAdded)
+        void OnTextInserted(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (WithinRange)
             {
-                RemoveHighlight();
                 end += length;
                 Update(position);
             }
         }
 
-        void Sci_TextDeleted(ScintillaControl sender, int position, int length, int linesAdded)
+        void OnTextDeleted(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (WithinRange)
             {
-                RemoveHighlight();
                 end -= length;
                 Update(position);
             }
+        }
+
+        void IDisposable.Dispose()
+        {
+            Application.RemoveMessageFilter(this);
+            sci.TextInserted -= OnTextInserted;
+            sci.TextDeleted -= OnTextDeleted;
+            current = null;
         }
 
         bool IMessageFilter.PreFilterMessage(ref Message m)
@@ -135,7 +146,6 @@ namespace CodeRefactor.Commands
 
             if (m.Msg == Win32.WM_KEYDOWN)
             {
-
                 switch ((int) m.WParam)
                 {
                     case 0x1B: //VK_ESCAPE
