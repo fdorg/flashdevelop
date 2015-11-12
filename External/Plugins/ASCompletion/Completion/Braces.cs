@@ -15,37 +15,81 @@ namespace ASCompletion.Completion
         Logic logic;
 
         [Category("Brace Character")]
-        public char Opening { get { return opening; } set { opening = value; } }
+        public char Opening
+        {
+            get { return opening; }
+            set { opening = value; }
+        }
 
         [Category("Brace Character")]
-        public char Closing { get { return closing; } set { closing = value; } }
+        public char Closing
+        {
+            get { return closing; }
+            set { closing = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public string AfterChars { get { return afterChars; } set { afterChars = value; } }
+        public string AfterChars
+        {
+            get { return afterChars; }
+            set { afterChars = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public Mode AfterCharsMode { get { return acMode; } set { acMode = value; } }
+        public Mode AfterCharsMode
+        {
+            get { return acMode; }
+            set { acMode = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public Style[] AfterStyles { get { return afterStyles; } set { afterStyles = value; } }
+        public Style[] AfterStyles
+        {
+            get { return afterStyles; }
+            set { afterStyles = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public Mode AfterStylesMode { get { return asMode; } set { asMode = value; } }
+        public Mode AfterStylesMode
+        {
+            get { return asMode; }
+            set { asMode = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public string BeforeChars { get { return beforeChars; } set { beforeChars = value; } }
+        public string BeforeChars
+        {
+            get { return beforeChars; }
+            set { beforeChars = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public Mode BeforeCharsMode { get { return bcMode; } set { bcMode = value; } }
+        public Mode BeforeCharsMode
+        {
+            get { return bcMode; }
+            set { bcMode = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public Style[] BeforeStyles { get { return beforeStyles; } set { beforeStyles = value; } }
+        public Style[] BeforeStyles
+        {
+            get { return beforeStyles; }
+            set { beforeStyles = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public Mode BeforeStylesMode { get { return bsMode; } set { bsMode = value; } }
+        public Mode BeforeStylesMode
+        {
+            get { return bsMode; }
+            set { bsMode = value; }
+        }
 
         [Category("Trigger Auto Close")]
-        public Logic TriggerLogic { get { return logic; } set { logic = value; } }
+        public Logic TriggerLogic
+        {
+            get { return logic; }
+            set { logic = value; }
+        }
 
         [Browsable(false)]
         public bool IsValid
@@ -53,7 +97,9 @@ namespace ASCompletion.Completion
             get { return Opening != '\0' && Closing != '\0'; }
         }
 
-        public Braces() : this('\0', '\0', null, null, null, null, null, null, null, null, null) { }
+        public Braces() : this('\0', '\0', null, null, null, null, null, null, null, null, null)
+        {
+        }
 
         public Braces(char opening, char closing, string afterChars, Mode? acMode, Style[] afterStyles, Mode? asMode, string beforeChars, Mode? bcMode, Style[] beforeStyles, Mode? bsMode, Logic? logic)
         {
@@ -92,7 +138,10 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static bool Check<T>(IEnumerable<T> array, T value, Mode mode) => array.Contains(value) == (mode == 0);
+        static bool Check<T>(IEnumerable<T> array, T value, Mode mode)
+        {
+            return mode == 0 == array.Contains(value);
+        }
 
         public override string ToString()
         {

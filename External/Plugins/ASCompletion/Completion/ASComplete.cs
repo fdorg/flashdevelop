@@ -449,9 +449,7 @@ namespace ASCompletion.Completion
                 byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 2);
 
                 if (braces.ShouldAutoClose(charAfter, styleAfter, charBefore, styleBefore))
-                {
                     sci.InsertText(sci.CurrentPos, braces.Closing.ToString());
-                }
             }
             else
             {

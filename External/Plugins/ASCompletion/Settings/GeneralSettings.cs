@@ -7,10 +7,6 @@ using PluginCore.Localization;
 
 namespace ASCompletion.Settings
 {
-    using static Logic;
-    using static Mode;
-    using static Style;
-
     [Serializable]
     public class GeneralSettings
     {
@@ -305,12 +301,12 @@ namespace ASCompletion.Settings
 
         static Braces[] DEFAULT_ADD_CLOSING_BRACES_DATA =
         {
-            new Braces('(',  ')',  null, null, null, null, ")]}>", Inclusive, new[] { Default, Comment, CommentLine, CommentLineDoc, Preprocessor, Keyword, Attribute }, Inclusive, OR),
-            new Braces('[',  ']',  null, null, null, null, ")]}>", Inclusive, new[] { Default, Comment, CommentLine, CommentLineDoc, Preprocessor, Keyword, Attribute }, Inclusive, OR),
-            new Braces('{',  '}',  null, null, null, null, ")]}>", Inclusive, new[] { Default },   Inclusive, OR),
-            new Braces('"',  '"',  null, null, null, null, null,   null,      new[] { StringEOL }, Inclusive, null),
-            new Braces('\'', '\'', null, null, null, null, null,   null,      new[] { StringEOL }, Inclusive, null),
-            new Braces('<',  '>', ".", Inclusive, null, null, "<", Exclusive, new[] { Identifier, Class }, Exclusive, AND),
+            new Braces('(',  ')',  null, null,           null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('[',  ']',  null, null,           null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('{',  '}',  null, null,           null, null, ")]}>", Mode.Inclusive, new[] { Style.Default },                 Mode.Inclusive, Logic.OR),
+            new Braces('"',  '"',  null, null,           null, null, null,   null,           new[] { Style.StringEOL },               Mode.Inclusive, null),
+            new Braces('\'', '\'', null, null,           null, null, null,   null,           new[] { Style.StringEOL },               Mode.Inclusive, null),
+            new Braces('<',  '>',  ".",  Mode.Inclusive, null, null, "<",    Mode.Exclusive, new[] { Style.Identifier, Style.Class }, Mode.Exclusive, Logic.AND),
         };
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
@@ -320,6 +316,7 @@ namespace ASCompletion.Settings
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
         private bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
+        private Braces[] addClosingBracesData;
         private bool generateScope = DEFAULT_GENERATE_SCOPE;
         private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
 
@@ -389,8 +386,9 @@ namespace ASCompletion.Settings
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesData")]
         public Braces[] AddClosingBracesData
         {
-            get; set;
-        } = DEFAULT_ADD_CLOSING_BRACES_DATA;
+            get { return addClosingBracesData ?? DEFAULT_ADD_CLOSING_BRACES_DATA; }
+            set { addClosingBracesData = value; }
+        }
 
         [DisplayName("Prefix Fields When Generating From Params")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.PrefixFields"),
