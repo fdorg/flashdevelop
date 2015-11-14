@@ -159,6 +159,7 @@ namespace CodeRefactor.Commands
                     {
                         int position = match.Index;
                         int style = sci.StyleAt(position) & stylemask;
+                        if (style == 6) continue;
                         if (!ASComplete.IsLiteralStyle(style)) filteredMatches.Add(match);
                         else if (sci.CharAt(position - 1) == '$' || ASComplete.IsInterpolationExpr(sci, position))
                             filteredMatches.Add(match);
