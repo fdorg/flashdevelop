@@ -97,6 +97,12 @@
     <Compile Include="Controls\DividedCheckedListBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\InlineRenameDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PopupRenameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\ProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,6 +117,7 @@
     <Compile Include="Commands\RefactorCommand.cs" />
     <Compile Include="Commands\RefactorCompleteEventArgs.cs" />
     <Compile Include="Provider\DocumentHelper.cs" />
+    <Compile Include="Provider\IRenameHelper.cs" />
     <Compile Include="Provider\MovingHelper.cs" />
     <Compile Include="Provider\RefactoringHelper.cs" />
     <Compile Include="Provider\UserInterfaceManager.cs" />

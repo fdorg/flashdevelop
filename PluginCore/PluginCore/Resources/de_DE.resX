@@ -5968,4 +5968,16 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Whether to use inline editing for renaming processes. </value>
     <comment>REQUIRES TRANSLATION</comment>
   </data>
+  <data name="CodeRefactor.Label.IncludeComments" xml:space="preserve">
+    <value>Include comments</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
+  <data name="CodeRefactor.Label.IncludeStrings" xml:space="preserve">
+    <value>Include strings</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
+  <data name="CodeRefactor.Label.PreviewChanges" xml:space="preserve">
+    <value>Preview changes</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
 </root>

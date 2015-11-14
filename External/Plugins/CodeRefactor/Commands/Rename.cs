@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.Controls;
@@ -12,9 +13,7 @@ using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
@@ -23,13 +22,16 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class Rename : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        string oldName;
+        static bool includeComments, includeStrings, previewChanges;
+
         string newName;
         bool outputResults;
         bool isRenamePackage;
+        string renamePackagePath;
         FindAllReferences findAllReferencesCommand;
         Move renamePackage;
         InlineRename inlineRename;
+        IRenameHelper helper;
 
         string oldFileName;
         string newFileName;
@@ -112,6 +114,8 @@ namespace CodeRefactor.Commands
             this.outputResults = outputResults;
             if (target.IsPackage)
             {
+                isRenamePackage = true;
+
                 string package = target.Path.Replace('.', Path.DirectorySeparatorChar);
                 foreach (PathModel aPath in ASContext.Context.Classpath)
                 {
@@ -120,12 +124,8 @@ namespace CodeRefactor.Commands
                         string path = Path.Combine(aPath.Path, package);
                         if (aPath.IsValid && Directory.Exists(path))
                         {
-                            isRenamePackage = true;
-
-                            if (string.IsNullOrEmpty(newName))
-                                StartRename(inline, Path.GetFileName(path));
-                            else
-                                OnRename(path, newName);
+                            renamePackagePath = path;
+                            StartRename(inline, Path.GetFileName(path), newName);
                             return;
                         }
                     }
@@ -137,24 +137,15 @@ namespace CodeRefactor.Commands
             bool isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
 
             isRenamePackage = false;
+            string oldName = isEnum || isClass ? target.Type.Name : target.Member.Name;
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
             findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) { OnlySourceFiles = true };
             // register a completion listener to the FindAllReferences so we can rename the entries
             findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
-            
-            if (string.IsNullOrEmpty(newName))
-            {
-                if (isEnum || isClass)
-                    StartRename(inline, target.Type.Name);
-                else
-                    StartRename(inline, target.Member.Name);
-            }
-            else
-            {
-                OnRename(null, newName);
-            }
+
+            StartRename(inline, oldName, newName);
         }
 
         #region RefactorCommand Implementation
@@ -178,6 +169,8 @@ namespace CodeRefactor.Commands
                 // Targets have to be validated before getting and modifying all references, otherwise we may end with some bad state
                 if (ValidateTargets())
                 {
+                    findAllReferencesCommand.IncludeComments = includeComments;
+                    findAllReferencesCommand.IncludeStrings = includeStrings;
                     findAllReferencesCommand.Execute();
                 }
                 else
@@ -315,7 +308,7 @@ namespace CodeRefactor.Commands
             }
             else
             {
-                var project = (Project)PluginBase.CurrentProject;
+                var project = (Project) PluginBase.CurrentProject;
                 FileHelper.ForceMove(oldFileName, newFileName);
                 DocumentManager.MoveDocuments(oldFileName, newFileName);
                 if (project.IsDocumentClass(oldFileName))
@@ -389,49 +382,70 @@ namespace CodeRefactor.Commands
             }
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
         }
-        
-        void StartRename(bool useInline, string originalName)
+
+        void StartRename(bool useInline, string oldName, string newName)
         {
+            if (!string.IsNullOrEmpty(newName))
+            {
+                OnRename(oldName, newName);
+                return;
+            }
+
             if (useInline)
             {
                 var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                int start = sci.WordStartPosition(sci.CurrentPos, true);
+                int position = sci.WordEndPosition(sci.CurrentPos, true);
 
-                inlineRename = new InlineRename(sci, originalName, start);
+                if (isRenamePackage)
+                    inlineRename = new InlineRename(sci, oldName, position, null, null, null, null);
+                else
+                    inlineRename = new InlineRename(sci, oldName, position, includeComments, includeStrings, previewChanges, findAllReferencesCommand.CurrentTarget);
                 inlineRename.OnRename += OnRename;
-                inlineRename.OnCancel += RemoveInlineHandlers;
+                inlineRename.OnCancel += OnCancel;
+                helper = inlineRename;
             }
             else
             {
-                string label = TextHelper.GetString("Label.NewName");
-                string title = string.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
-                string suggestion = originalName;
-                LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
-                DialogResult choice = askName.ShowDialog();
-                if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
-                {
-                    OnRename(originalName, askName.Line.Trim());
-                }
+                var dialog = new PopupRenameDialog(oldName, includeComments, includeStrings, isRenamePackage);
+                helper = dialog;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    OnRename(oldName, dialog.Value.Trim());
             }
         }
 
         void OnRename(string oldName, string newName)
         {
             if (inlineRename != null) RemoveInlineHandlers();
-            if (oldName == newName) return;
+            if (newName.Length == 0 || oldName == newName) return;
 
             if (isRenamePackage)
-                renamePackage = new Move(new Dictionary<string, string> { { oldName, newName } }, true, true);
+            {
+                renamePackage = new Move(new Dictionary<string, string> { { renamePackagePath, newName } }, true, true);
+            }
+            else if (helper != null)
+            {
+                includeComments = helper.IncludeComments;
+                includeStrings = helper.IncludeStrings;
+                if (helper is InlineRename) previewChanges = ((InlineRename) helper).PreviewChanges;
+            }
 
-            this.oldName = oldName;
             this.newName = newName;
             Execute();
+        }
+
+        void OnCancel()
+        {
+            RemoveInlineHandlers();
+            includeComments = inlineRename.IncludeComments;
+            includeStrings = inlineRename.IncludeStrings;
+            previewChanges = inlineRename.PreviewChanges;
         }
 
         void RemoveInlineHandlers()
         {
             inlineRename.OnRename -= OnRename;
-            inlineRename.OnCancel -= RemoveInlineHandlers;
+            inlineRename.OnCancel -= OnCancel;
         }
 
         #endregion

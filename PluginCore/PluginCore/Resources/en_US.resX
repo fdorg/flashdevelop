@@ -5983,4 +5983,13 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>Whether to use inline editing for renaming processes. </value>
   </data>
+  <data name="CodeRefactor.Label.IncludeComments" xml:space="preserve">
+    <value>Include comments</value>
+  </data>
+  <data name="CodeRefactor.Label.IncludeStrings" xml:space="preserve">
+    <value>Include strings</value>
+  </data>
+  <data name="CodeRefactor.Label.PreviewChanges" xml:space="preserve">
+    <value>Preview changes</value>
+  </data>
 </root>
