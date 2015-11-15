@@ -306,7 +306,7 @@ namespace ASCompletion.Settings
             new Braces('{',  '}',  null, null,           null, null, ")]}>", Mode.Inclusive, new[] { Style.Default },                 Mode.Inclusive, Logic.OR),
             new Braces('"',  '"',  null, null,           null, null, null,   null,           new[] { Style.StringEOL },               Mode.Inclusive, null),
             new Braces('\'', '\'', null, null,           null, null, null,   null,           new[] { Style.StringEOL },               Mode.Inclusive, null),
-            new Braces('<',  '>',  ".",  Mode.Inclusive, null, null, "<",    Mode.Exclusive, new[] { Style.Identifier, Style.Class }, Mode.Exclusive, Logic.AND),
+            new Braces('<',  '>',  ".",  Mode.Inclusive, null, null, "<",    Mode.Exclusive, new[] { Style.Identifier, Style.Type }, Mode.Exclusive, Logic.AND),
         };
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;

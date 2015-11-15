@@ -411,15 +411,12 @@ namespace ASCompletion.Completion
 
             if (addedChar)
             {
-                //not inside a string literal
-                if (!isString && !isChar || isInterpol
-                //or inside a string literal but a closing quote is entered and the string does terminate
-                    || (c == '"' && isString || c == '\'' && isChar) && sci.BaseStyleAt(sci.CurrentPos) == 12)
+                //not inside a string literal or a closing quote is entered
+                if ((!isString || c == '"') && (!isChar || c == '\'') || isInterpol)
                 {
                     foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                     {
-                        if (HandleAddBrace(sci, c, braces))
-                            break;
+                        if (HandleAddBrace(sci, c, braces)) break;
                     }
                 }
             }
@@ -428,8 +425,7 @@ namespace ASCompletion.Completion
             {
                 foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                 {
-                    if (HandleRemoveBrace(sci, c, braces))
-                        break;
+                    if (HandleRemoveBrace(sci, c, braces)) break;
                 }
             }
         }
@@ -449,7 +445,9 @@ namespace ASCompletion.Completion
                 byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 2);
 
                 if (braces.ShouldAutoClose(charAfter, styleAfter, charBefore, styleBefore))
+                {
                     sci.InsertText(sci.CurrentPos, braces.Closing.ToString());
+                }
             }
             else
             {

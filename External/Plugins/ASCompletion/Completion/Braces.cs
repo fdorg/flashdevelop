@@ -14,6 +14,8 @@ namespace ASCompletion.Completion
         Mode acMode, asMode, bcMode, bsMode;
         Logic logic;
 
+        #region Browsable properties
+
         [Category("Brace Character")]
         public char Opening
         {
@@ -91,11 +93,7 @@ namespace ASCompletion.Completion
             set { logic = value; }
         }
 
-        [Browsable(false)]
-        public bool IsValid
-        {
-            get { return Opening != '\0' && Closing != '\0'; }
-        }
+        #endregion
 
         public Braces() : this('\0', '\0', null, null, null, null, null, null, null, null, null)
         {
@@ -114,6 +112,17 @@ namespace ASCompletion.Completion
             this.bcMode = bcMode ?? (Mode) this.logic;
             this.beforeStyles = beforeStyles ?? new Style[0];
             this.bsMode = bsMode ?? (Mode) this.logic;
+        }
+        
+        static bool Check<T>(IEnumerable<T> array, T value, Mode mode)
+        {
+            return mode == 0 == array.Contains(value);
+        }
+
+        [Browsable(false)]
+        public bool IsValid
+        {
+            get { return Opening != '\0' && Closing != '\0'; }
         }
 
         public bool ShouldAutoClose(char charAfter, byte styleAfter, char charBefore, byte styleBefore)
@@ -138,29 +147,27 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static bool Check<T>(IEnumerable<T> array, T value, Mode mode)
-        {
-            return mode == 0 == array.Contains(value);
-        }
-
         public override string ToString()
         {
-            return IsValid ? "Opening: " + opening + " Closing: " + closing : "New Braces";
+            return IsValid ? opening + " braces " + closing : "New braces";
         }
     }
 
+    [Serializable]
     public enum Logic : byte
     {
         OR,
         AND,
     }
 
+    [Serializable]
     public enum Mode : byte
     {
         Inclusive,
         Exclusive,
     }
 
+    [Serializable]
     public enum Style : byte
     {
         Default = 0,
@@ -168,18 +175,18 @@ namespace ASCompletion.Completion
         CommentLine = 2,
         CommentDoc = 3,
         Number = 4,
-        Predefined = 5,
+        Constant = 5,
         String = 6,
         Character = 7,
-        //UUID = 8,
+        Uuid = 8,
         Preprocessor = 9,
         Operator = 10,
         Identifier = 11,
         StringEOL = 12,
         Verbatim = 13,
-        RegExp = 14,
+        Regex = 14,
         CommentLineDoc = 15,
-        Class = 16,
+        Type = 16,
         CommentDocKeyword = 17,
         CommentDocKeywordError = 18,
         Keyword = 19,
@@ -188,7 +195,7 @@ namespace ASCompletion.Completion
         //HASHQUOTEDSTRING = 22,
         //PREPROCESSORCOMMENT = 23,
         Attribute = 24,
-        Word4 = 25,
+        SpecialWord = 25,
         SpecialKeyword = 26,
         //GDEFAULT = 32,
         //LINENUMBER = 33,
