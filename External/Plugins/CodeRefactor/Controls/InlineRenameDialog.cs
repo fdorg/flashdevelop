@@ -1,41 +1,21 @@
-﻿using System.ComponentModel;
-using System.Windows.Forms;
-using PluginCore.Localization;
-using PluginCore;
-
-namespace CodeRefactor.Controls
+﻿namespace CodeRefactor.Controls
 {
-    public partial class InlineRenameDialog : UserControl
+    internal class InlineRenameDialog : System.Windows.Forms.UserControl
     {
-        IContainer components = null;
-        Label titleLabel;
-        Label border;
-        public CheckBox IncludeComments;
-        public CheckBox IncludeStrings;
-        public CheckBox PreviewChanges;
-        public Button ApplyButton;
-        public Button CancelButton;
+        internal System.Windows.Forms.CheckBox IncludeComments;
+        internal System.Windows.Forms.CheckBox IncludeStrings;
+        internal System.Windows.Forms.CheckBox PreviewChanges;
+        internal System.Windows.Forms.Button ApplyButton;
+        internal System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Label titleLabel;
+        private System.Windows.Forms.Label border;
 
-        public InlineRenameDialog(string targetName, bool? includeComments, bool? includeStrings, bool? previewChanges)
+        internal InlineRenameDialog(string targetName, bool? includeComments, bool? includeStrings, bool? previewChanges)
         {
-            InitializeComponent();
-            InititalizeLocalization(targetName);
-            ActivateCheckBoxes(includeComments, includeStrings, previewChanges);
-
-            CancelButton.Image = PluginBase.MainForm.FindImage("153");
-        }
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
+            this.InitializeComponent();
+            this.InitializeLocalization(targetName);
+            this.InitializeVisualization();
+            this.InitializeCheckBoxes(includeComments, includeStrings, previewChanges);
         }
 
         #region Windows Form Designer generated code
@@ -44,7 +24,7 @@ namespace CodeRefactor.Controls
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        void InitializeComponent()
+        private void InitializeComponent()
         {
             this.titleLabel = new System.Windows.Forms.Label();
             this.IncludeComments = new System.Windows.Forms.CheckBox();
@@ -58,7 +38,7 @@ namespace CodeRefactor.Controls
             // titleLabel
             // 
             this.titleLabel.AutoEllipsis = true;
-            this.titleLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+            this.titleLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleLabel.Location = new System.Drawing.Point(0, 0);
             this.titleLabel.Margin = new System.Windows.Forms.Padding(0);
             this.titleLabel.Name = "titleLabel";
@@ -115,17 +95,16 @@ namespace CodeRefactor.Controls
             // 
             this.CancelButton.FlatAppearance.BorderSize = 0;
             this.CancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CancelButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.CancelButton.Location = new System.Drawing.Point(175, 0);
             this.CancelButton.Margin = new System.Windows.Forms.Padding(0);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(25, 25);
             this.CancelButton.TabIndex = 4;
+            this.CancelButton.Text = "X";
             this.CancelButton.UseVisualStyleBackColor = true;
             // 
             // border
             // 
-            this.border.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.border.Location = new System.Drawing.Point(0, 130);
             this.border.Margin = new System.Windows.Forms.Padding(0);
             this.border.Name = "border";
@@ -134,15 +113,14 @@ namespace CodeRefactor.Controls
             // 
             // InlineRenameDialog
             // 
-            this.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.Controls.Add(this.titleLabel);
+            this.Controls.Add(this.IncludeComments);
+            this.Controls.Add(this.IncludeStrings);
+            this.Controls.Add(this.PreviewChanges);
+            this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.border);
-            this.Controls.Add(this.ApplyButton);
-            this.Controls.Add(this.PreviewChanges);
-            this.Controls.Add(this.IncludeStrings);
-            this.Controls.Add(this.IncludeComments);
-            this.Controls.Add(this.titleLabel);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "InlineRenameDialog";
             this.Size = new System.Drawing.Size(200, 135);
             this.ResumeLayout(false);
@@ -151,31 +129,49 @@ namespace CodeRefactor.Controls
 
         #endregion
 
-        void InititalizeLocalization(string targetName)
+        private void InitializeLocalization(string targetName)
         {
-            titleLabel.Text = string.Format(TextHelper.GetString("Title.RenameDialog"), targetName);
-            IncludeComments.Text = TextHelper.GetString("Label.IncludeComments");
-            IncludeStrings.Text = TextHelper.GetString("Label.IncludeStrings");
-            PreviewChanges.Text = "Preview changes";
-            ApplyButton.Text = TextHelper.GetString("ProjectManager.Label.Apply");
+            this.titleLabel.Text = string.Format(PluginCore.Localization.TextHelper.GetString("Title.RenameDialog"), targetName);
+            this.IncludeComments.Text = PluginCore.Localization.TextHelper.GetString("Label.IncludeComments");
+            this.IncludeStrings.Text = PluginCore.Localization.TextHelper.GetString("Label.IncludeStrings");
+            this.PreviewChanges.Text = PluginCore.Localization.TextHelper.GetString("Label.PreviewChanges");
+            this.ApplyButton.Text = PluginCore.Localization.TextHelper.GetString("ProjectManager.Label.Apply");
+            this.CancelButton.Text = string.Empty;
         }
 
-        void ActivateCheckBoxes(bool? includeComments, bool? includeStrings, bool? previewChanges)
+        private void InitializeVisualization()
+        {
+            System.Drawing.Color foreColor = PluginCore.PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
+            System.Drawing.Color backColor = PluginCore.PluginBase.MainForm.GetThemeColor("QuickFind.BackColor");
+            System.Drawing.Color activeBorder = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.TabGradientStart");
+            System.Drawing.Color inactiveBorder = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor");
+
+            this.BackColor = backColor;
+            this.titleLabel.ForeColor = foreColor;
+            this.IncludeComments.ForeColor = foreColor;
+            this.IncludeStrings.ForeColor = foreColor;
+            this.PreviewChanges.ForeColor = foreColor;
+            this.border.BackColor = backColor == inactiveBorder ? activeBorder : inactiveBorder;
+
+            this.CancelButton.Image = PluginCore.PluginBase.MainForm.FindImage("153");
+        }
+
+        private void InitializeCheckBoxes(bool? includeComments, bool? includeStrings, bool? previewChanges)
         {
             if (includeComments.HasValue)
-                IncludeComments.Checked = includeComments.Value;
+                this.IncludeComments.Checked = includeComments.Value;
             else
-                IncludeComments.Enabled = false;
+                this.IncludeComments.Enabled = false;
 
             if (includeStrings.HasValue)
-                IncludeStrings.Checked = includeStrings.Value;
+                this.IncludeStrings.Checked = includeStrings.Value;
             else
-                IncludeStrings.Enabled = false;
+                this.IncludeStrings.Enabled = false;
 
             if (previewChanges.HasValue)
-                PreviewChanges.Checked = previewChanges.Value;
+                this.PreviewChanges.Checked = previewChanges.Value;
             else
-                PreviewChanges.Enabled = false;
+                this.PreviewChanges.Enabled = false;
         }
     }
 }

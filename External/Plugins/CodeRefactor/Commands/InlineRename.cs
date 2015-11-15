@@ -11,85 +11,158 @@ using ScintillaNet.Enums;
 
 namespace CodeRefactor.Commands
 {
-    public class InlineRename : IMessageFilter, IDisposable, IRenameHelper
+    /// <summary>
+    /// An asynchronously working command that enables users to rename variables in line with code.
+    /// </summary>
+    public class InlineRename : IDisposable, IMessageFilter, IRenameHelper
     {
-        const int indicator = 0;
-        static InlineRename current;
+        const int Indicator = 0;
+        static InlineRename Current;
 
-        ScintillaControl sci;
-        InlineRenameDialog dialog;
-        Control.ControlCollection controls;
-        string oldName, newName, prevName;
+        #region Event delegates
+
+        /// <summary>
+        /// Event delegate for <see cref="Apply"/>.
+        /// </summary>
+        /// <param name="sender">The <see cref="InlineRename"/> object.</param>
+        /// <param name="oldName">The original name of the renaming target.</param>
+        /// <param name="newName">The new name to be replaced with.</param>
+        public delegate void InlineRenameApplyHandler(InlineRename sender, string oldName, string newName);
+
+        /// <summary>
+        /// Event delegate for <see cref="Update"/>.
+        /// </summary>
+        /// <param name="sender">The <see cref="InlineRename"/> object.</param>
+        /// <param name="newName">The value that is currently entered as the new name.</param>
+        public delegate void InlineRenameUpdateHandler(InlineRename sender, /*string prevName,*/ string newName);
+
+        /// <summary>
+        /// Event delegate for <see cref="Cancel"/>.
+        /// </summary>
+        /// <param name="sender">The <see cref="InlineRename"/> object.</param>
+        public delegate void InlineRenameCancelHandler(InlineRename sender);
+
+        #endregion
+
         int start, end;
+        string oldName, newName/*, prevName*/;
         bool includeComments;
         bool includeStrings;
         bool previewChanges;
-
+        ScintillaControl sci;
+        InlineRenameDialog dialog;
         ITabbedDocument currentDoc;
-        List<ReferenceInfo> refs;
-        ReferenceInfo declaration;
+        Control.ControlCollection controls;
         DelayedExecution delayedExecution;
+        ReferenceInfo declaration;
+        List<ReferenceInfo> refs;
 
-        public event Action<string, string> OnRename;
-        public event Action<string, string> OnUpdate;
-        public event Action OnCancel;
+        /// <summary>
+        /// Occurs when the user clicks the Apply button or presses Enter.
+        /// </summary>
+        public event InlineRenameApplyHandler Apply;
 
+        /// <summary>
+        /// Occurs when the target name is changed by the user.
+        /// </summary>
+        public event InlineRenameUpdateHandler Update;
+
+        /// <summary>
+        /// Occurs when the user clicks the Cancel button, presses Escape or edits the content of
+        /// the <see cref="ScintillaControl"/> outside the boundary of target name.
+        /// </summary>
+        public event InlineRenameCancelHandler Cancel;
+
+        /// <summary>
+        /// Gets a value specifying whether there is an <see cref="InlineRename"/> object currently
+        /// working in progress.
+        /// </summary>
         public static bool InProgress
         {
-            get { return current != null; }
+            get { return Current != null; }
         }
 
+        /// <summary>
+        /// Cancels any existing <see cref="InlineRename"/> in progress, and returns a
+        /// <see cref="bool"/> value specifying whether an existing progress was canceled.
+        /// </summary>
+        /// <returns> Returns true if there was an <see cref="InlineRename"/> in progress. False otherwise.</returns>
         public static bool CancelCurrent()
         {
-            if (current == null) return false;
-            current.Cancel();
+            if (Current == null) return false;
+            Current.OnCancel();
             return true;
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="InlineRename"/>. Any existing instance in progress
+        /// is automatically canceled.
+        /// </summary>
+        /// <param name="control">The <see cref="ScintillaControl"/> object.</param>
+        /// <param name="original">The original name of the target.</param>
+        /// <param name="position">Word end position of the target.</param>
+        /// <param name="includeComments">Whether to initially include comments in search. Pass <code>null</code> to disable this option.</param>
+        /// <param name="includeStrings">Whether to initially include strings in search. Pass <code>null</code> to disable this option.</param>
+        /// <param name="previewChanges">Whether to initially preview changes during renaming. Pass <code>null</code> to disable this option.</param>
+        /// <param name="previewTarget">An <see cref="ASResult"/> object specifying the target. This parameter must not be <code>null</code> if <code>previewChanges</code> is not <code>null</code>.</param>
         public InlineRename(ScintillaControl control, string original, int position, bool? includeComments, bool? includeStrings, bool? previewChanges, ASResult previewTarget)
         {
+            if (previewChanges.HasValue && previewTarget == null)
+                throw new ArgumentNullException("previewTarget");
+
             if (InProgress)
-                current.Cancel();
+                Current.OnCancel();
 
             sci = control;
             start = position - original.Length;
             oldName = original;
             newName = original;
-            prevName = original;
+            //prevName = original;
             end = position;
-
-            currentDoc = PluginBase.MainForm.CurrentDocument;
 
             InitializeHighlights();
             SetupDelayedExecution();
             CreateDialog(includeComments, includeStrings, previewChanges);
-            SetupLivePreview(previewTarget);
+            SetupLivePreview(includeComments.HasValue, includeStrings.HasValue, previewChanges.HasValue, previewTarget);
             AddMessageFilter();
             Highlight(start, end);
         }
 
+        #region Retrieve Rename Options
+
+        /// <summary>
+        /// Gets a value specifying whether current renaming process includes comments.
+        /// </summary>
         public bool IncludeComments
         {
             get { return includeComments; }
         }
 
+        /// <summary>
+        /// Gets a value specifying whether current renaming process includes strings.
+        /// </summary>
         public bool IncludeStrings
         {
             get { return includeStrings; }
         }
 
+        /// <summary>
+        /// Gets a value specifying whether current renaming previews changes.
+        /// </summary>
         public bool PreviewChanges
         {
             get { return previewChanges; }
         }
+
+        #endregion
 
         #region Initialization
 
         void InitializeHighlights()
         {
             sci.SetSel(start, end);
-            sci.RemoveHighlights(indicator);
-            sci.SetIndicSetAlpha(indicator, 100);
+            sci.RemoveHighlights(Indicator);
+            sci.SetIndicSetAlpha(Indicator, 100);
         }
 
         void SetupDelayedExecution()
@@ -99,12 +172,13 @@ namespace CodeRefactor.Commands
 
         void CreateDialog(bool? comments, bool? strings, bool? preview)
         {
+            currentDoc = PluginBase.MainForm.CurrentDocument;
             dialog = new InlineRenameDialog(oldName, comments, strings, preview);
-            dialog.Left = sci.Width - dialog.Width;
+            dialog.Left = sci.Width - dialog.Width - 17;
             controls = currentDoc.SplitContainer.Parent.Controls;
             controls.Add(dialog);
             controls.SetChildIndex(dialog, 0);
-
+            
             dialog.IncludeComments.CheckedChanged += IncludeComments_CheckedChanged;
             dialog.IncludeStrings.CheckedChanged += IncludeStrings_CheckedChanged;
             dialog.PreviewChanges.CheckedChanged += PreviewChanges_CheckedChanged;
@@ -116,9 +190,9 @@ namespace CodeRefactor.Commands
             previewChanges = dialog.PreviewChanges.Checked;
         }
 
-        void SetupLivePreview(ASResult target)
+        void SetupLivePreview(bool supportInsideComment, bool supportInsideString, bool supportPreviewChanges, ASResult target)
         {
-            if (target == null) return;
+            if (!supportPreviewChanges) return;
 
             string file = currentDoc.FileName;
             var search = new FRSearch(oldName)
@@ -129,7 +203,7 @@ namespace CodeRefactor.Commands
                 NoCase = false,
                 WholeWord = true
             };
-            var config = new FRConfiguration(file, sci.Text, search);
+            var config = new FRConfiguration(file, sci.GetText(sci.Length), search);
             var runner = new FRRunner();
             var results = runner.SearchSync(config)[file];
             refs = new List<ReferenceInfo>();
@@ -143,7 +217,8 @@ namespace CodeRefactor.Commands
                 bool insideString = RefactoringHelper.IsInsideString(style);
 
                 if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null)
-                    || insideComment || insideString)
+                    || insideComment && supportInsideComment
+                    || insideString && supportInsideString)
                 {
                     var @ref = new ReferenceInfo { Index = index, Value = value };
                     refs.Add(@ref);
@@ -163,74 +238,89 @@ namespace CodeRefactor.Commands
         void AddMessageFilter()
         {
             Application.AddMessageFilter(this);
-            sci.SelectionChanged += OnSelectionChanged;
-            sci.TextInserted += OnTextInserted;
-            sci.TextDeleted += OnTextDeleted;
-            current = this;
+            sci.SelectionChanged += Sci_SelectionChanged;
+            sci.TextInserted += Sci_TextInserted;
+            sci.TextDeleted += Sci_TextDeleted;
+            Current = this;
         }
 
         #endregion
 
         #region States
 
-        void Rename()
+        void OnApply()
         {
             using (this)
             {
                 Finish();
             }
 
-            if (OnRename != null) OnRename(oldName, newName);
+            if (Apply != null) Apply(this, oldName, newName);
         }
 
-        void Cancel()
+        void OnCancel()
         {
             using (this)
             {
                 Finish();
             }
 
-            if (OnCancel != null) OnCancel();
+            if (Cancel != null) Cancel(this);
         }
 
-        void Update()
+        void OnUpdate()
         {
-            int pos = sci.CurrentPos;
-            sci.SetSel(start, end);
-            prevName = newName;
-            newName = sci.SelText;
-            sci.SetSel(pos, pos);
+            sci.DisableAllSciEvents = true;
+
+            try
+            {
+                int pos = sci.CurrentPos;
+                sci.SetSel(start, end);
+                //prevName = newName;
+                newName = sci.SelText;
+                sci.SetSel(pos, pos);
+            }
+            finally
+            {
+                sci.DisableAllSciEvents = false;
+            }
 
             if (refs == null)
             {
                 Highlight(start, end);
-                if (OnUpdate != null) OnUpdate(prevName, newName);
+                if (Update != null) Update(this, /*prevName,*/ newName);
             }
             else
             {
-                delayedExecution.Start(DelayedUpdate);
+                delayedExecution.Start(DelayedExecution_Update);
             }
         }
 
         void Finish()
         {
-            sci.RemoveHighlights(indicator);
-            sci.SetIndicSetAlpha(indicator, 40);
-
-            sci.SetSel(start, end);
-            newName = sci.SelText;
+            sci.RemoveHighlights(Indicator);
+            sci.SetIndicSetAlpha(Indicator, 40);
 
             sci.DisableAllSciEvents = true;
 
-            if (newName == oldName)
-                sci.SetSel(end, end);
-            else
-                sci.ReplaceSel(oldName);
+            try
+            {
+                sci.SetSel(start, end);
+                newName = sci.SelText;
+
+                if (newName == oldName)
+                    sci.SetSel(end, end);
+                else
+                    sci.ReplaceSel(oldName);
+            }
+            finally
+            {
+                sci.DisableAllSciEvents = false;
+            }
 
             if (refs != null)
                 UpdateReferences(oldName, true, includeComments, includeStrings, true, false);
 
-            sci.DisableAllSciEvents = false;
             currentDoc.Save();
         }
 
@@ -238,9 +328,9 @@ namespace CodeRefactor.Commands
         {
             int es = sci.EndStyled;
             int mask = (1 << sci.StyleBits) - 1;
-            sci.SetIndicStyle(indicator, (int) IndicatorStyle.Container);
-            sci.SetIndicFore(indicator, 0x00FF00);
-            sci.CurrentIndicator = indicator;
+            sci.SetIndicStyle(Indicator, (int) IndicatorStyle.Container);
+            sci.SetIndicFore(Indicator, 0x00FF00);
+            sci.CurrentIndicator = Indicator;
             sci.IndicatorFillRange(start, end - start);
             sci.StartStyling(es, mask);
         }
@@ -248,11 +338,11 @@ namespace CodeRefactor.Commands
         void IDisposable.Dispose()
         {
             Application.RemoveMessageFilter(this);
-            sci.SelectionChanged -= OnSelectionChanged;
-            sci.TextInserted -= OnTextInserted;
-            sci.TextDeleted -= OnTextDeleted;
+            sci.SelectionChanged -= Sci_SelectionChanged;
+            sci.TextInserted -= Sci_TextInserted;
+            sci.TextDeleted -= Sci_TextDeleted;
             sci = null;
-            current = null;
+            Current = null;
             currentDoc = null;
 
             controls.Remove(dialog);
@@ -275,30 +365,20 @@ namespace CodeRefactor.Commands
 
         #region Updating references
 
-        void DelayedCancel()
-        {
-            sci.Undo();
-            Cancel();
-        }
-
-        void DelayedUpdate()
-        {
-            UpdateReferences(newName, true, previewChanges && includeComments, previewChanges && includeStrings, previewChanges, true);
-
-            if (OnUpdate != null)
-                OnUpdate(prevName, newName);
-        }
-
         void UpdateReferences(string replacement, bool decl, bool comments, bool strings, bool others, bool addHighlight)
         {
-            sci.DisableAllSciEvents = true;
             sci.BeginUndoAction();
+            sci.DisableAllSciEvents = true;
 
             try
             {
-                int pos = sci.CurrentPos - start;
+                int pos = sci.CurrentPos;
                 int newLength = replacement.Length;
                 int delta = 0;
+
+                if (pos < start) pos = 0;
+                else if (pos > end) pos = end - start;
+                else pos -= start;
 
                 for (int i = 0, l = refs.Count; i < l; i++)
                 {
@@ -316,7 +396,7 @@ namespace CodeRefactor.Commands
                     }
                     else
                     {
-                        bool replace = false;
+                        bool replace;
                         int style = sci.BaseStyleAt(start);
 
                         if (RefactoringHelper.IsInsideComment(style))
@@ -347,9 +427,23 @@ namespace CodeRefactor.Commands
             }
             finally
             {
-                sci.DisableAllSciEvents = false;
                 sci.EndUndoAction();
+                sci.DisableAllSciEvents = false;
             }
+        }
+
+        void DelayedExecution_Cancel()
+        {
+            sci.Undo();
+            OnCancel();
+        }
+
+        void DelayedExecution_Update()
+        {
+            UpdateReferences(newName, true, previewChanges && includeComments, previewChanges && includeStrings, previewChanges, true);
+
+            if (Update != null)
+                Update(this, /*prevName,*/ newName);
         }
 
         void IncludeComments_CheckedChanged(object sender, EventArgs e)
@@ -358,10 +452,7 @@ namespace CodeRefactor.Commands
 
             if (previewChanges)
             {
-                if (includeComments)
-                    UpdateReferences(newName, false, true, false, false, true);
-                else
-                    UpdateReferences(oldName, false, true, false, false, false);
+                UpdateReferences(includeComments ? newName : oldName, false, true, false, false, includeComments);
             }
 
             sci.Focus();
@@ -373,10 +464,7 @@ namespace CodeRefactor.Commands
 
             if (previewChanges)
             {
-                if (includeStrings)
-                    UpdateReferences(newName, false, false, true, false, true);
-                else
-                    UpdateReferences(oldName, false, false, true, false, false);
+                UpdateReferences(includeStrings ? newName : oldName, false, false, true, false, includeStrings);
             }
 
             sci.Focus();
@@ -385,86 +473,83 @@ namespace CodeRefactor.Commands
         void PreviewChanges_CheckedChanged(object sender, EventArgs e)
         {
             previewChanges = dialog.PreviewChanges.Checked;
-
             UpdateReferences(previewChanges ? newName : oldName, false, includeComments, includeStrings, true, previewChanges);
 
             sci.Focus();
         }
 
-        void CancelButton_Click(object sender, EventArgs e)
-        {
-            Cancel();
-        }
-
         void ApplyButton_Click(object sender, EventArgs e)
         {
-            Rename();
+            OnApply();
+        }
+
+        void CancelButton_Click(object sender, EventArgs e)
+        {
+            OnCancel();
         }
 
         #endregion
 
         #region Scintilla events
 
-        void OnSelectionChanged(ScintillaControl sender)
+        void Sci_SelectionChanged(ScintillaControl sender)
         {
-            int s = sci.SelectionStart;
-            int e = sci.SelectionEnd;
+            sci.DisableAllSciEvents = true;
 
-            if (sci.SelTextSize == sci.TextLength)
+            try
             {
-                sci.SetSel(start, end);
-                return;
-            }
+                int s = sci.SelectionStart;
+                int e = sci.SelectionEnd;
 
-            if (sci.CurrentPos == e)
-            {
-                if (s < start) { if (e > start) sci.SetSel(s, start); }
-                else if (s < end) { if (e > end) sci.SetSel(s, end); }
+                //When selecting all, select the target text instead
+                if (sci.SelTextSize == sci.Length)
+                {
+                    sci.SetSel(start, end);
+                    return;
+                }
+
+                if (sci.CurrentPos == e)
+                {
+                    if (s < start) { if (e > start) sci.SetSel(s, start); }
+                    else if (s < end) { if (e > end) sci.SetSel(s, end); }
+                }
+                else
+                {
+                    if (e > end) { if (s < end) sci.SetSel(e, end); }
+                    else if (e > start) { if (s < start) sci.SetSel(e, start); }
+                }
             }
-            else
+            finally
             {
-                if (e > end) { if (s < end) sci.SetSel(e, end); }
-                else if (e > start) { if (s < start) sci.SetSel(e, start); }
+                sci.DisableAllSciEvents = false;
             }
         }
 
-        void OnTextInserted(ScintillaControl sender, int position, int length, int linesAdded)
+        void Sci_TextInserted(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (start <= position && position <= end)
             {
                 end += length;
-                Update();
+                OnUpdate();
             }
             else
             {
-                if (position < start)
-                {
-                    start += length;
-                    end += length;
-                }
-
-                delayedExecution.Start(DelayedCancel);
+                delayedExecution.Start(DelayedExecution_Cancel);
             }
         }
 
-        void OnTextDeleted(ScintillaControl sender, int position, int length, int linesAdded)
+        void Sci_TextDeleted(ScintillaControl sender, int position, int length, int linesAdded)
         {
             position += length;
 
             if (start < position && position <= end)
             {
                 end -= length;
-                Update();
+                OnUpdate();
             }
             else
             {
-                if (position <= start)
-                {
-                    start -= length;
-                    end -= length;
-                }
-
-                delayedExecution.Start(DelayedCancel);
+                delayedExecution.Start(DelayedExecution_Cancel);
             }
         }
 
@@ -476,7 +561,7 @@ namespace CodeRefactor.Commands
         {
             if (PluginBase.MainForm.CurrentDocument != currentDoc)
             {
-                Cancel();
+                OnCancel();
                 return false;
             }
 
@@ -485,10 +570,10 @@ namespace CodeRefactor.Commands
                 switch ((int) m.WParam)
                 {
                     case 0x1B: //VK_ESCAPE
-                        Cancel();
+                        OnCancel();
                         return true;
                     case 0x0D: //VK_RETURN
-                        Rename();
+                        OnApply();
                         return true;
                     case 0x08: //VK_BACK
                         if (!AtLeftmost) break;
@@ -546,12 +631,22 @@ namespace CodeRefactor.Commands
 
         #endregion
 
+        /// <summary>
+        /// Simplified version of <see cref="SearchMatch"/>, only containing fields that are needed
+        /// by <see cref="InlineRename"/>.
+        /// </summary>
         class ReferenceInfo
         {
             public int Index;
             public string Value;
         }
 
+        /// <summary>
+        /// Used to invoke methods with a very short delay.
+        /// This pattern is required since the <see cref="ScintillaControl"/> events
+        /// (<code>TextInserted</code>, <code>TextDeleted</code>) do not allow the contents of the
+        /// control to be modified while the event is being dispatched.
+        /// </summary>
         class DelayedExecution : IDisposable
         {
             Action action;
@@ -580,7 +675,7 @@ namespace CodeRefactor.Commands
             void Timer_Tick(object sender, EventArgs e)
             {
                 timer.Stop();
-                action();
+                action.Invoke();
                 action = null;
             }
         }

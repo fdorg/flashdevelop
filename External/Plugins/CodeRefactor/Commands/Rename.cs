@@ -30,7 +30,6 @@ namespace CodeRefactor.Commands
         string renamePackagePath;
         FindAllReferences findAllReferencesCommand;
         Move renamePackage;
-        InlineRename inlineRename;
         IRenameHelper helper;
 
         string oldFileName;
@@ -387,7 +386,7 @@ namespace CodeRefactor.Commands
         {
             if (!string.IsNullOrEmpty(newName))
             {
-                OnRename(oldName, newName);
+                OnApply(null, oldName, newName);
                 return;
             }
 
@@ -395,13 +394,15 @@ namespace CodeRefactor.Commands
             {
                 var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                 int position = sci.WordEndPosition(sci.CurrentPos, true);
+                InlineRename inlineRename;
 
                 if (isRenamePackage)
                     inlineRename = new InlineRename(sci, oldName, position, null, null, null, null);
                 else
                     inlineRename = new InlineRename(sci, oldName, position, includeComments, includeStrings, previewChanges, findAllReferencesCommand.CurrentTarget);
-                inlineRename.OnRename += OnRename;
-                inlineRename.OnCancel += OnCancel;
+
+                inlineRename.Apply += OnApply;
+                inlineRename.Cancel += OnCancel;
                 helper = inlineRename;
             }
             else
@@ -410,13 +411,13 @@ namespace CodeRefactor.Commands
                 helper = dialog;
 
                 if (dialog.ShowDialog() == DialogResult.OK)
-                    OnRename(oldName, dialog.Value.Trim());
+                    OnApply(null, oldName, dialog.Value.Trim());
             }
         }
 
-        void OnRename(string oldName, string newName)
+        void OnApply(InlineRename sender, string oldName, string newName)
         {
-            if (inlineRename != null) RemoveInlineHandlers();
+            if (sender != null) RemoveInlineHandlers(sender);
             if (newName.Length == 0 || oldName == newName) return;
 
             if (isRenamePackage)
@@ -434,18 +435,18 @@ namespace CodeRefactor.Commands
             Execute();
         }
 
-        void OnCancel()
+        void OnCancel(InlineRename sender)
         {
-            RemoveInlineHandlers();
-            includeComments = inlineRename.IncludeComments;
-            includeStrings = inlineRename.IncludeStrings;
-            previewChanges = inlineRename.PreviewChanges;
+            RemoveInlineHandlers(sender);
+            includeComments = sender.IncludeComments;
+            includeStrings = sender.IncludeStrings;
+            previewChanges = sender.PreviewChanges;
         }
 
-        void RemoveInlineHandlers()
+        void RemoveInlineHandlers(InlineRename inlineRename)
         {
-            inlineRename.OnRename -= OnRename;
-            inlineRename.OnCancel -= OnCancel;
+            inlineRename.Apply -= OnApply;
+            inlineRename.Cancel -= OnCancel;
         }
 
         #endregion

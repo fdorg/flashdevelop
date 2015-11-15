@@ -675,8 +675,6 @@ namespace CodeRefactor.Provider
                 case 2: //COMMENTLINE
                 case 3: //COMMENTDOC
                 case 15: //COMMENTLINEDOC
-                case 17: //COMMENTDOCKEYWORD
-                case 18: //COMMENTDOCKEYWORDERROR
                     return true;
                 default:
                     return false;
