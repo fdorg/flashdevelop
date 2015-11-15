@@ -1832,13 +1832,22 @@ namespace ASCompletion.Completion
             ASContext.Panel.RestoreLastLookupPosition();
         }
 
+        /// <summary>
+        /// Tries to get the best position inside a code block, delimited by { and }, to add new code, inserting new lines if needed.
+        /// </summary>
+        /// <param name="lineFrom">The line inside the scintilla document where the owner member of the body starts</param>
+        /// <param name="lineTo">The line inside the scintilla document where the owner member of the body ends</param>
+        /// <param name="Sci">The Scintilla control containing the document</param>
+        /// <returns>The position inside the scintilla document, or -1 if not suitable position was found</returns>
         public static int GetBodyStart(int lineFrom, int lineTo, ScintillaControl Sci)
         {
             int posStart = Sci.PositionFromLine(lineFrom);
             int posEnd = Sci.LineEndPosition(lineTo);
 
             char[] characterClass = new[] { ' ', '\r', '\n', '\t' };
+            int nCount = 0; 
             int funcBodyStart = -1;
+            int extraLine = 1;
 
             int genCount = 0;
             for (int i = posStart; i <= posEnd; i++)
@@ -1870,35 +1879,32 @@ namespace ASCompletion.Completion
             if (funcBodyStart == -1)
                 return -1;
 
+            int ln = Sci.LineFromPosition(funcBodyStart);
+            int indent = Sci.GetLineIndentation(ln);
             while (funcBodyStart <= posEnd)
             {
                 char c = (char)Sci.CharAt(++funcBodyStart);
-                if (c == '}')
+                if (Array.IndexOf(characterClass, c) == -1)
                 {
-                    int ln = Sci.LineFromPosition(funcBodyStart);
-                    int indent = Sci.GetLineIndentation(ln);
-                    if (lineFrom == lineTo || lineFrom == ln)
+                    int endLn = Sci.LineFromPosition(funcBodyStart);
+                    if (endLn == ln)
+                    {
+                        Sci.InsertText(funcBodyStart, Sci.NewLineMarker);
+                        Sci.SetLineIndentation(++ln, indent + Sci.Indent);
+                        funcBodyStart = Sci.LineIndentPosition(ln);
+                    }
+                    if (c == '}')
                     {
                         Sci.InsertText(funcBodyStart, Sci.NewLineMarker);
                         Sci.SetLineIndentation(ln + 1, indent);
-                        ln++;
                     }
-                    Sci.SetLineIndentation(ln, indent + Sci.Indent);
-                    Sci.InsertText(funcBodyStart, Sci.NewLineMarker);
-                    Sci.SetLineIndentation(ln + 1, indent);
-                    Sci.SetLineIndentation(ln, indent + Sci.Indent);
-                    funcBodyStart = Sci.LineEndPosition(ln);
                     break;
                 }
-                else if (Array.IndexOf(characterClass, c) == -1)
+                else if (Sci.EOLMode == 1 && c == '\r' && (++nCount) > extraLine)
                 {
                     break;
                 }
-                else if (Sci.EOLMode == 1 && c == '\r')
-                {
-                    break;
-                }
-                else if (c == '\n')
+                else if (c == '\n' && (++nCount) > extraLine)
                 {
                     if (Sci.EOLMode != 2)
                     {

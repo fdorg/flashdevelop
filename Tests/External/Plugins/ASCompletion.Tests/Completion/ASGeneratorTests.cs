@@ -42,53 +42,60 @@ namespace ASCompletion.Completion
         [Test]
         public void GetBodyStart_SimpleCase()
         {
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
-            sci.Text = "function test():void{\r\n\t\t\t}";
+            var sci = GetBaseScintillaControl();
+            sci.Text = "function test():void{\r\n\t\t\t\r\n}";
             sci.ConfigurationLanguage = "haxe";
             sci.Colourise(0, -1);
             int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
 
-            Assert.AreEqual(21, funcBodyStart);
+            Assert.AreEqual(26, funcBodyStart);
         }
 
         [Test]
         public void GetBodyStart_EndOnSameDeclarationLine()
         {
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
+            var sci = GetBaseScintillaControl();
             sci.Text = "function test():void{}";
             sci.ConfigurationLanguage = "haxe";
             sci.Colourise(0, -1);
-            int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
+            int funcBodyStart = ASGenerator.GetBodyStart(0, 0, sci);
 
-            Assert.AreEqual(22, funcBodyStart);
+            Assert.AreEqual(27, funcBodyStart);
+            Assert.AreEqual("function test():void{\r\n    \r\n}", sci.Text);
         }
 
         [Test]
         public void GetBodyStart_EndOnSameLine()
         {
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
-            sci.Text = "function test():void\r\n\r\n{}";
-            sci.ConfigurationLanguage = "haxe";
+            var sci = GetBaseScintillaControl();
+            sci.Text = "function test():void\r\n\r\n{}\r\n";
+            sci.ConfigurationLanguage = "as3";
             sci.Colourise(0, -1);
-            int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
+            int funcBodyStart = ASGenerator.GetBodyStart(0, 2, sci);
 
-            Assert.AreEqual(22, funcBodyStart);
+            Assert.AreEqual(31, funcBodyStart);
+            Assert.AreEqual("function test():void\r\n\r\n{\r\n    \r\n}\r\n", sci.Text);
+        }
+
+        [Test]
+        public void GetBodyStart_TextOnStartLine()
+        {
+            var sci = GetBaseScintillaControl();
+            sci.Text = "function test():void {trace(1);}";
+            sci.ConfigurationLanguage = "as3";
+            sci.Colourise(0, -1);
+            int funcBodyStart = ASGenerator.GetBodyStart(0, 2, sci);
+
+            Assert.AreEqual(28, funcBodyStart);
+            Assert.AreEqual("function test():void {\r\n    trace(1);}", sci.Text);
         }
 
         [Test]
         public void GetBodyStart_BracketInCommentsOrText()
         {
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
+            var sci = GetBaseScintillaControl();
             sci.ConfigurationLanguage = "haxe";
-            sci.Text = "function test(arg:String='{', arg2:String=\"{\"):void/*{*/\r\n{}";
+            sci.Text = "function test(arg:String='{', arg2:String=\"{\"):void/*{*/{\r\n}";
             sci.Colourise(0, -1);
             int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
 
@@ -98,25 +105,22 @@ namespace ASCompletion.Completion
         [Test]
         public void GetBodyStart_MultiByteCharacters()
         {
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
+            var sci = GetBaseScintillaControl();
             sci.Text = "function test():void/*áéíóú*/\r\n{}";
             sci.ConfigurationLanguage = "haxe";
             sci.Colourise(0, -1);
 
             int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
 
-            Assert.AreEqual(37, funcBodyStart);
+            Assert.AreEqual(43, funcBodyStart);
+            Assert.AreEqual("function test():void/*áéíóú*/\r\n{\r\n    \r\n}", sci.Text);
         }
 
         [Test]
-        [Ignore("Having only LineFrom and LineTo for members is not enough to handle these cases. FlashDevelop in general is not too kind when it comes to several members in the same line...")]
+        [Ignore("Having only LineFrom and LineTo for members is not enough to handle these cases. FlashDevelop in general is not too kind when it comes to several members in the same line, but we could change the method to use positions and try to get the proper position before.")]
         public void GetBodyWithAnotherMemberInTheSameLine()
         {
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
+            var sci = GetBaseScintillaControl();
             sci.Text = "function tricky():void {} function test():void{\r\n\t\t\t}";
             int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
 
@@ -125,19 +129,16 @@ namespace ASCompletion.Completion
 
 
         [Test]
-        public void GetBodyStart_BracketInGenericConstraint()
+        public void GetBodyStart_BracketsInGenericConstraint()
         {
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
-            sci.Lexer = 3;
-            sci.StyleBits = 7;
+            var sci = GetBaseScintillaControl();
             sci.ConfigurationLanguage = "haxe";
-            sci.Text = "function test<T:{}>(arg:T):void{\r\n}";
+            sci.Text = "function test<T:{}>(arg:T):void{\r\n\r\n}";
             sci.Colourise(0, -1);
             int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
 
-            Assert.AreEqual(32, funcBodyStart);
+            Assert.AreEqual(34, funcBodyStart);
+            Assert.AreEqual("function test<T:{}>(arg:T):void{\r\n\r\n}", sci.Text);
         }
 
         [Test]
@@ -146,9 +147,7 @@ namespace ASCompletion.Completion
             var table = new Hashtable();
             table["scope"] = Model.Visibility.Public;
 
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
+            var sci = GetBaseScintillaControl();
             sci.Text = "\tfunction test():void{\r\n\t\t\t}";
             doc.SciControl.Returns(sci);
             ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, null, null, null, table);
@@ -169,9 +168,7 @@ namespace ASCompletion.Completion
             ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
             ASContext.Context.Features.voidKey = "void";
 
-            var sci = new ScintillaControl();
-            sci.Encoding = System.Text.Encoding.UTF8;
-            sci.CodePage = 65001;
+            var sci = GetBaseScintillaControl();
             sci.Text = "package  test():void{\r\n\t\t\t}";
             sci.ConfigurationLanguage = "as3";
             doc.SciControl.Returns(sci);
@@ -192,13 +189,18 @@ namespace ASCompletion.Completion
 
             ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
         }
-    }
 
-    internal class PluginUIMock : PluginUI
-    {
-        public PluginUIMock(PluginMain plugin) : base(plugin)
+        private static ScintillaControl GetBaseScintillaControl()
         {
-
+            return new ScintillaControl
+                       {
+                           Encoding = System.Text.Encoding.UTF8,
+                           CodePage = 65001,
+                           Indent = 4,
+                           Lexer = 3,
+                           StyleBits = 7
+                       };
         }
+
     }
 }
