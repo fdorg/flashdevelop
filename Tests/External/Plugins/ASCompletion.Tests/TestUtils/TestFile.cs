@@ -14,7 +14,7 @@ namespace ASCompletion.TestUtils
         public string DestinationFile { get; private set; }
 
         public TestFile(string resourceFile)
-            : this(resourceFile, Path.GetTempFileName())
+            : this(resourceFile, GetTempFileName(resourceFile))
         {
         }
 
@@ -30,6 +30,13 @@ namespace ASCompletion.TestUtils
                 stream.Read(buffer, 0, buffer.Length);
                 File.WriteAllBytes(destinationFile, buffer);
             }
+        }
+
+        private static string GetTempFileName(string baseFileName)
+        {
+            string temp = Path.GetTempFileName();
+
+            return Path.GetFileNameWithoutExtension(temp) + Path.GetExtension(baseFileName);
         }
 
         public void Dispose()

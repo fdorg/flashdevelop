@@ -114,7 +114,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Test Files\Test.as" />
+    <EmbeddedResource Include="Test Files\as3\SimpleClassTest.as" />
+    <EmbeddedResource Include="Test Files\haxe\SimpleClassTest.hx" />
+    <EmbeddedResource Include="Test Files\as3\OverrideFunctionTest.as" />
+    <EmbeddedResource Include="Test Files\haxe\OverrideFunctionTest.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\ASCompletion\ASCompletion.csproj">
