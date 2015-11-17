@@ -16,7 +16,7 @@ namespace ProjectManager.Helpers
 
         #region Form Designer Components
 
-        private System.Windows.Forms.TextBox lineBox;
+        protected System.Windows.Forms.TextBox lineBox;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
         /// <summary>

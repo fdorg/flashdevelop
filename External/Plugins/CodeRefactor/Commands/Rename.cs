@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.Controls;
@@ -12,7 +13,6 @@ using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ProjectManager.Helpers;
 using ProjectManager.Projects;
 
 namespace CodeRefactor.Commands
