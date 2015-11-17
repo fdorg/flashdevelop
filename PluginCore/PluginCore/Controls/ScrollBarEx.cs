@@ -20,13 +20,87 @@ namespace PluginCore.Controls
     {
         #region drawing
 
-        private Color curPosColor = Color.DarkBlue;
-        private Color borderColor = SystemColors.ActiveBorder;
-        private Color borderColorDisabled = SystemColors.Control;
-        private Color foreColor = SystemColors.ControlDarkDark;
-        private Color foreColorActive = SystemColors.Highlight;
-        private Color backColor = SystemColors.ActiveBorder;
-        private Color backColorDisabled = SystemColors.ControlLight;
+        private Color curPosColor/* = Color.DarkBlue*/;
+        private Color borderColor/* = SystemColors.ActiveBorder*/;
+        private Color borderColorDisabled/* = SystemColors.Control*/;
+        private Color foreColor/* = SystemColors.ControlDarkDark*/;
+        private Color foreColorHot;
+        private Color foreColorPressed/* = SystemColors.Highlight*/;
+        private Color arrowColor;
+        private Color arrowColorHot;
+        private Color arrowColorPressed;
+        private Color backColor/* = SystemColors.ActiveBorder*/;
+        private Color backColorDisabled/* = SystemColors.ControlLight*/;
+
+        private bool colorsValidated;
+
+        /// <summary>
+        /// Resets the component colors to default values.
+        /// </summary>
+        private void InitializeColors()
+        {
+            curPosColor = Color.DarkBlue;
+            borderColor = SystemColors.ActiveBorder;
+            borderColorDisabled = SystemColors.InactiveBorder;
+            foreColor = SystemColors.ScrollBar;
+            foreColorHot = SystemColors.ControlDark;
+            foreColorPressed = SystemColors.ControlDarkDark;
+            arrowColor = SystemColors.ControlDark;
+            arrowColorHot = SystemColors.Highlight;
+            arrowColorPressed = SystemColors.HotTrack;
+            backColor = SystemColors.Control;
+            backColorDisabled = SystemColors.ControlLight;
+            colorsValidated = true;
+            Invalidate();
+        }
+
+        /// <summary>
+        /// Validates any unassigned colors to either default to associated colors.
+        /// Calling this method without assigning any new colors will set all colors to default.
+        /// </summary>
+        public void ValidateColors()
+        {
+            if (colorsValidated)
+            {
+                InitializeColors();
+                return;
+            }
+
+            if (curPosColor.IsEmpty) curPosColor = Color.DarkBlue;
+            if (borderColor.IsEmpty) borderColor = SystemColors.ActiveBorder;
+            if (borderColorDisabled.IsEmpty) borderColorDisabled = SystemColors.InactiveBorder;
+            if (foreColor.IsEmpty) foreColor = SystemColors.ScrollBar;
+            if (foreColorPressed.IsEmpty) foreColorPressed = SystemColors.ControlDarkDark;
+            if (backColor.IsEmpty) backColor = SystemColors.Control;
+            if (backColorDisabled.IsEmpty) backColorDisabled = SystemColors.ControlLight;
+            // new colors
+            if (foreColorHot.IsEmpty) foreColorHot = foreColor;
+            if (arrowColor.IsEmpty) arrowColor = foreColor;
+            if (arrowColorHot.IsEmpty) arrowColorHot = foreColorHot;
+            if (arrowColorPressed.IsEmpty) arrowColorPressed = foreColorPressed;
+
+            colorsValidated = true;
+        }
+
+        /// <summary>
+        /// Resets all colors to null values.
+        /// </summary>
+        private void ResetColors()
+        {
+            curPosColor =
+            borderColor =
+            borderColorDisabled =
+            foreColor =
+            foreColorHot =
+            foreColorPressed =
+            arrowColor =
+            arrowColorHot =
+            arrowColorPressed =
+            backColor =
+            backColorDisabled =
+            Color.Empty;
+            colorsValidated = false;
+        }
 
         /// <summary>
         /// Draws the background.
@@ -71,13 +145,25 @@ namespace PluginCore.Controls
             {
                 return;
             }
+
+            Color color = foreColor;
+            switch (state)
+            {
+                case ScrollBarState.Hot:
+                    color = foreColorHot;
+                    break;
+                case ScrollBarState.Pressed:
+                    color = foreColorPressed;
+                    break;
+            }
+
             if (orientation == ScrollBarOrientation.Vertical)
             {
-                DrawThumbVertical(g, rect, state);
+                DrawThumbVertical(g, rect, color);
             }
             else
             {
-                DrawThumbHorizontal(g, rect, state);
+                DrawThumbHorizontal(g, rect, color);
             }
         }
 
@@ -99,13 +185,28 @@ namespace PluginCore.Controls
             {
                 return;
             }
+
+            Color color = arrowColor;
+
+            switch (state)
+            {
+                case ScrollBarArrowButtonState.UpHot:
+                case ScrollBarArrowButtonState.DownHot:
+                    color = arrowColorHot;
+                    break;
+                case ScrollBarArrowButtonState.UpPressed:
+                case ScrollBarArrowButtonState.DownPressed:
+                    color = arrowColorPressed;
+                    break;
+            }
+
             if (orientation == ScrollBarOrientation.Vertical)
             {
-                DrawArrowButtonVertical(g, rect, state, arrowUp);
+                DrawArrowButtonVertical(g, rect, color, arrowUp);
             }
             else
             {
-                DrawArrowButtonHorizontal(g, rect, state, arrowUp);
+                DrawArrowButtonHorizontal(g, rect, color, arrowUp);
             }
         }
 
@@ -141,17 +242,8 @@ namespace PluginCore.Controls
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="state">The <see cref="ScrollBarState"/> of the thumb.</param>
-        private void DrawThumbVertical(Graphics g, Rectangle rect, ScrollBarState state)
+        private void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
-            Color color = foreColor;
-            switch (state)
-            {
-                case ScrollBarState.Pressed:
-                {
-                    color = foreColorActive;
-                    break;
-                }
-            }
             var innerRect = new Rectangle(rect.Left + ScaleHelper.Scale(2), rect.Top, rect.Width - ScaleHelper.Scale(4), rect.Height);
             using (Brush brush = new SolidBrush(color))
             {
@@ -166,17 +258,8 @@ namespace PluginCore.Controls
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="state">The <see cref="ScrollBarState"/> of the thumb.</param>
-        private void DrawThumbHorizontal(Graphics g, Rectangle rect, ScrollBarState state)
+        private void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
-            Color color = foreColor;
-            switch (state)
-            {
-                case ScrollBarState.Pressed:
-                {
-                    color = foreColorActive;
-                    break;
-                }
-            }
             var innerRect = new Rectangle(rect.Left, rect.Top + ScaleHelper.Scale(2), rect.Width, rect.Height - ScaleHelper.Scale(4));
             using (Brush brush = new SolidBrush(color))
             {
@@ -191,10 +274,9 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="state">The <see cref="ScrollBarArrowButtonState"/> of the arrow button.</param>
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
-        private void DrawArrowButtonVertical(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp)
+        private void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
-            var pressed = state == ScrollBarArrowButtonState.DownPressed || state == ScrollBarArrowButtonState.UpPressed;
-            using (Brush brush = new SolidBrush(pressed ? foreColorActive : foreColor))
+            using (Brush brush = new SolidBrush(color))
             {
                 Point[] arrow;
                 Int32 pad = 0;
@@ -204,7 +286,7 @@ namespace PluginCore.Controls
                     case true:
                         pad = ScaleHelper.Scale(4);
                         middle.Y += ScaleHelper.Scale(2);
-                        arrow = new Point[] 
+                        arrow = new[]
                         {
                             new Point(middle.X - pad , middle.Y + 1),
                             new Point(middle.X + pad  + 1, middle.Y + 1),
@@ -214,7 +296,7 @@ namespace PluginCore.Controls
                     default:
                         pad = ScaleHelper.Scale(3);
                         middle.Y -= ScaleHelper.Scale(1);
-                        arrow = new Point[] 
+                        arrow = new[]
                         {
                             new Point(middle.X - pad, middle.Y - 1),
                             new Point(middle.X + pad + 1, middle.Y - 1),
@@ -234,10 +316,9 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="state">The <see cref="ScrollBarArrowButtonState"/> of the arrow button.</param>
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
-        private void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp)
+        private void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
-            var pressed = state == ScrollBarArrowButtonState.DownPressed || state == ScrollBarArrowButtonState.UpPressed;
-            using (Brush brush = new SolidBrush(pressed ? foreColorActive : foreColor))
+            using (Brush brush = new SolidBrush(color))
             {
                 Point[] arrow;
                 Int32 pad = 0;
@@ -246,7 +327,7 @@ namespace PluginCore.Controls
                 {
                     case true:
                         pad = ScaleHelper.Scale(2);
-                        arrow = new Point[] 
+                        arrow = new[]
                         {
                             new Point(middle.X + pad, middle.Y - 2 * pad),
                             new Point(middle.X + pad, middle.Y + 2 * pad),
@@ -255,7 +336,7 @@ namespace PluginCore.Controls
                         break;
                     default:
                         pad = ScaleHelper.Scale(2);
-                        arrow = new Point[] 
+                        arrow = new[]
                         {
                             new Point(middle.X - pad, middle.Y - 2 * pad),
                             new Point(middle.X - pad, middle.Y + 2 * pad),
@@ -513,6 +594,7 @@ namespace PluginCore.Controls
                 | ControlStyles.UserPaint, true);
             // initializes the context menu
             this.InitializeComponent();
+            this.InitializeColors();
             this.Width = ScaleHelper.Scale(17);
             this.Height = ScaleHelper.Scale(200);
             // sets the scrollbar up
@@ -804,6 +886,7 @@ namespace PluginCore.Controls
             }
             set
             {
+                if (colorsValidated) ResetColors();
                 this.borderColor = value;
                 this.Invalidate();
             }
@@ -814,7 +897,7 @@ namespace PluginCore.Controls
         /// </summary>
         [Category("Appearance")]
         [Description("Gets or sets the border color in disabled state.")]
-        [DefaultValue(typeof(SystemColors), "Control")]
+        [DefaultValue(typeof(SystemColors), "InactiveBorder")]
         public Color DisabledBorderColor
         {
             get
@@ -823,6 +906,7 @@ namespace PluginCore.Controls
             }
             set
             {
+                if (colorsValidated) ResetColors();
                 this.borderColorDisabled = value;
                 this.Invalidate();
             }
@@ -833,7 +917,7 @@ namespace PluginCore.Controls
         /// </summary>
         [Category("Appearance")]
         [Description("Gets or sets the border color.")]
-        [DefaultValue(typeof(SystemColors), "ActiveBorder")]
+        [DefaultValue(typeof(SystemColors), "Control")]
         public override Color BackColor
         {
             get
@@ -842,6 +926,7 @@ namespace PluginCore.Controls
             }
             set
             {
+                if (colorsValidated) ResetColors();
                 this.backColor = value;
                 this.Invalidate();
             }
@@ -861,6 +946,7 @@ namespace PluginCore.Controls
             }
             set
             {
+                if (colorsValidated) ResetColors();
                 this.backColorDisabled = value;
                 this.Invalidate();
             }
@@ -871,7 +957,7 @@ namespace PluginCore.Controls
         /// </summary>
         [Category("Appearance")]
         [Description("Gets or sets the foreground color on idle.")]
-        [DefaultValue(typeof(SystemColors), "ControlDarkDark")]
+        [DefaultValue(typeof(SystemColors), "ScrollBar")]
         public override Color ForeColor
         {
             get
@@ -880,7 +966,25 @@ namespace PluginCore.Controls
             }
             set
             {
+                if (colorsValidated) ResetColors();
                 this.foreColor = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the hot fore color.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Gets or sets the foreground color on hover.")]
+        [DefaultValue(typeof(SystemColors), "ControlDark")]
+        public Color HotForeColor
+        {
+            get { return this.foreColorHot; }
+            set
+            {
+                if (colorsValidated) ResetColors();
+                this.foreColorHot = value;
                 this.Invalidate();
             }
         }
@@ -890,25 +994,77 @@ namespace PluginCore.Controls
         /// </summary>
         [Category("Appearance")]
         [Description("Gets or sets the foreground color when active.")]
-        [DefaultValue(typeof(SystemColors), "Highlight")]
+        [DefaultValue(typeof(SystemColors), "ControlDarkDark")]
         public Color ActiveForeColor
         {
             get
             {
-                return this.foreColorActive;
+                return this.foreColorPressed;
             }
             set
             {
-                this.foreColorActive = value;
+                if (colorsValidated) ResetColors();
+                this.foreColorPressed = value;
                 this.Invalidate();
             }
         }
 
         /// <summary>
-        /// Gets or sets the pressed fore color.
+        /// Gets or sets the arrow color.
         /// </summary>
         [Category("Appearance")]
-        [Description("Gets or sets the current position indic color.")]
+        [Description("Gets or sets the arrow color on idle.")]
+        [DefaultValue(typeof(SystemColors), "ControlDark")]
+        public Color ArrowColor
+        {
+            get { return this.arrowColor; }
+            set
+            {
+                if (colorsValidated) ResetColors();
+                this.arrowColor = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the hot arrow color.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Gets or sets the arrow color on hover.")]
+        [DefaultValue(typeof(SystemColors), "Highlight")]
+        public Color HotArrowColor
+        {
+            get { return this.arrowColorHot; }
+            set
+            {
+                if (colorsValidated) ResetColors();
+                this.arrowColorHot = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the pressed arrow color.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Gets or sets the arrow color when active.")]
+        [DefaultValue(typeof(SystemColors), "HotTrack")]
+        public Color ActiveArrowColor
+        {
+            get { return this.arrowColorPressed; }
+            set
+            {
+                if (colorsValidated) ResetColors();
+                this.arrowColorPressed = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the current position indicator color.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Gets or sets the current position indicator color.")]
         [DefaultValue(typeof(Color), "DarkBlue")]
         public Color CurrentPositionColor
         {
@@ -918,6 +1074,7 @@ namespace PluginCore.Controls
             }
             set
             {
+                if (colorsValidated) ResetColors();
                 this.curPosColor = value;
                 this.Invalidate();
             }
@@ -1228,14 +1385,14 @@ namespace PluginCore.Controls
                     int oldScrollValue = this.value;
                     this.topButtonState = ScrollBarArrowButtonState.UpActive;
                     this.bottomButtonState = ScrollBarArrowButtonState.DownActive;
-                    int pos = this.orientation == ScrollBarOrientation.Vertical ? e.Location.Y : e.Location.X;
+                    int pos = (this.orientation == ScrollBarOrientation.Vertical ? e.Location.Y : e.Location.X) - thumbPosition;
                     // The thumb is all the way to the top
-                    if (pos <= (this.thumbTopLimit + this.thumbPosition))
+                    if (pos <= this.thumbTopLimit)
                     {
                         this.ChangeThumbPosition(this.thumbTopLimit);
                         this.value = this.minimum;
                     }
-                    else if (pos >= (this.thumbBottomLimitTop + this.thumbPosition))
+                    else if (pos >= this.thumbBottomLimitTop)
                     {
                         // The thumb is all the way to the bottom
                         this.ChangeThumbPosition(this.thumbBottomLimitTop);
@@ -1244,7 +1401,7 @@ namespace PluginCore.Controls
                     else
                     {
                         // The thumb is between the ends of the track.
-                        this.ChangeThumbPosition(pos - this.thumbPosition);
+                        this.ChangeThumbPosition(pos);
                         int pixelRange, thumbPos, arrowSize;
                         // calculate the value - first some helper variables
                         // dependent on the current orientation
@@ -1488,7 +1645,7 @@ namespace PluginCore.Controls
                    this.arrowHeight
                 );
                 // Set the default starting thumb position.
-                this.thumbPosition = this.thumbRectangle.Height / 2;
+                //this.thumbPosition = this.thumbRectangle.Height / 2;
                 // Set the bottom limit of the thumb's bottom border.
                 this.thumbBottomLimitBottom = rect.Bottom - this.arrowHeight - ScaleHelper.Scale(4);
                 // Set the bottom limit of the thumb's top border.
@@ -1526,7 +1683,7 @@ namespace PluginCore.Controls
                    this.arrowHeight
                 );
                 // Set the default starting thumb position.
-                this.thumbPosition = this.thumbRectangle.Width / 2;
+                //this.thumbPosition = this.thumbRectangle.Width / 2;
                 // Set the bottom limit of the thumb's bottom border.
                 this.thumbBottomLimitBottom = rect.Right - this.arrowWidth - ScaleHelper.Scale(3);
                 // Set the bottom limit of the thumb's top border.

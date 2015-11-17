@@ -45,6 +45,16 @@ namespace ScintillaNet
         private ScrollBarEx vScrollBar;
         private ScrollBarEx hScrollBar;
 
+        public ScrollBarEx VScrollBar
+        {
+            get { return this.vScrollBar; }
+        }
+
+        public ScrollBarEx HScrollBar
+        {
+            get { return this.hScrollBar; }
+        }
+
         /// <summary>
         /// Is the vertical scroll bar visible?
         /// </summary>
@@ -86,15 +96,8 @@ namespace ScintillaNet
         {
             if (e.Type == EventType.ApplyTheme)
             {
-                Boolean enabled = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor") != Color.Empty;
-                if (enabled && !this.Controls.Contains(this.vScrollBar))
-                {
-                    this.AddScrollBars(this);
-                }
-                else if (!enabled && this.Controls.Contains(this.vScrollBar))
-                {
-                    this.RemoveScrollBars(this);
-                }
+                vScrollBar.ValidateColors();
+                hScrollBar.ValidateColors();
             }
         }
 
@@ -115,8 +118,8 @@ namespace ScintillaNet
             sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             sender.hScrollBar.Dock = DockStyle.Bottom;
-            Color foreColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
-            if (foreColor != Color.Empty) sender.AddScrollBars(sender);
+            //Color foreColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
+            /*if (foreColor != Color.Empty) */sender.AddScrollBars(sender);
             PluginBase.MainForm.ThemeControls(sender.vScrollBar);
             PluginBase.MainForm.ThemeControls(sender.hScrollBar);
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
