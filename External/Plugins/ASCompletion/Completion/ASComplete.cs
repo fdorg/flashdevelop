@@ -411,8 +411,10 @@ namespace ASCompletion.Completion
 
             if (addedChar)
             {
-                //not inside a string literal or a closing quote is entered
-                if ((!isString || c == '"') && (!isChar || c == '\'') || isInterpol)
+                //not inside a string literal
+                if (!isString && !isChar || isInterpol
+                //or inside a string literal but a closing quote is entered and the string does terminate
+                    || (c == '"' && isString || c == '\'' && isChar) && sci.BaseStyleAt(sci.CurrentPos) == 12)
                 {
                     foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                     {
