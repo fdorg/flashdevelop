@@ -16,6 +16,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ProjectManager.Actions;
+using ProjectManager.Helpers;
 
 namespace CodeRefactor
 {

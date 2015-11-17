@@ -13,6 +13,7 @@ using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using ProjectManager.Helpers;
 using ProjectManager.Projects;
 
 namespace CodeRefactor.Commands
@@ -370,8 +371,7 @@ namespace CodeRefactor.Commands
         {
             String label = TextHelper.GetString("Label.NewName");
             String title = String.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
-            String suggestion = originalName;
-            LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
+            LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
             DialogResult choice = askName.ShowDialog();
             if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
             {

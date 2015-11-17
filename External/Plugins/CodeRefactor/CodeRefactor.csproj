@@ -98,9 +98,6 @@
     <Compile Include="Controls\DividedCheckedListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\LineEntryDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Controls\ProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
