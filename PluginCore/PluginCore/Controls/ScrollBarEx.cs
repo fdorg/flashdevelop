@@ -32,7 +32,7 @@ namespace PluginCore.Controls
         private Color backColor/* = SystemColors.ActiveBorder*/;
         private Color backColorDisabled/* = SystemColors.ControlLight*/;
 
-        private bool colorsValidated;
+        private bool colorsInvalidated;
 
         /// <summary>
         /// Resets the component colors to default values.
@@ -50,18 +50,21 @@ namespace PluginCore.Controls
             arrowColorPressed = SystemColors.HotTrack;
             backColor = SystemColors.Control;
             backColorDisabled = SystemColors.ControlLight;
-            colorsValidated = true;
+            colorsInvalidated = false;
             Invalidate();
         }
 
         /// <summary>
-        /// Validates any unassigned colors to either default to associated colors.
+        /// Validates any unassigned colors to either default or to associated colors.
         /// Calling this method without assigning any new colors will set all colors to default.
+        /// <para/>
+        /// Call this method after the theme has been changed.
         /// </summary>
         public void ValidateColors()
         {
-            if (colorsValidated)
+            if (!colorsInvalidated)
             {
+                // No colors defined explicitly -> Reset colors to default.
                 InitializeColors();
                 return;
             }
@@ -73,20 +76,22 @@ namespace PluginCore.Controls
             if (foreColorPressed.IsEmpty) foreColorPressed = SystemColors.ControlDarkDark;
             if (backColor.IsEmpty) backColor = SystemColors.Control;
             if (backColorDisabled.IsEmpty) backColorDisabled = SystemColors.ControlLight;
-            // new colors
+            // Newly introduced color options - do not assign default colors. Instead fall back to associated colors
             if (foreColorHot.IsEmpty) foreColorHot = foreColor;
             if (arrowColor.IsEmpty) arrowColor = foreColor;
             if (arrowColorHot.IsEmpty) arrowColorHot = foreColorHot;
             if (arrowColorPressed.IsEmpty) arrowColorPressed = foreColorPressed;
 
-            colorsValidated = true;
+            colorsInvalidated = false;
         }
 
         /// <summary>
-        /// Resets all colors to null values.
+        /// Resets all validated colors to null values. Call this method before setting new colors.
         /// </summary>
         private void ResetColors()
         {
+            if (colorsInvalidated) return;
+
             curPosColor =
             borderColor =
             borderColorDisabled =
@@ -99,7 +104,7 @@ namespace PluginCore.Controls
             backColor =
             backColorDisabled =
             Color.Empty;
-            colorsValidated = false;
+            colorsInvalidated = true;
         }
 
         /// <summary>
@@ -237,11 +242,11 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Draws the thumb.
+        /// Draws the vertical thumb.
         /// </summary>
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
-        /// <param name="state">The <see cref="ScrollBarState"/> of the thumb.</param>
+        /// <param name="color">The color to draw the thumb with.</param>
         private void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
             var innerRect = new Rectangle(rect.Left + ScaleHelper.Scale(2), rect.Top, rect.Width - ScaleHelper.Scale(4), rect.Height);
@@ -253,11 +258,11 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Draws the thumb.
+        /// Draws the horizontal thumb.
         /// </summary>
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
-        /// <param name="state">The <see cref="ScrollBarState"/> of the thumb.</param>
+        /// <param name="color">The color to draw the thumb with.</param>
         private void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
             var innerRect = new Rectangle(rect.Left, rect.Top + ScaleHelper.Scale(2), rect.Width, rect.Height - ScaleHelper.Scale(4));
@@ -268,11 +273,11 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Draws an arrow button.
+        /// Draws arrow buttons for vertical scroll bar.
         /// </summary>
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
-        /// <param name="state">The <see cref="ScrollBarArrowButtonState"/> of the arrow button.</param>
+        /// <param name="color">The color to draw the arrow buttons with.</param>
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
         private void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
@@ -310,11 +315,11 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Draws an arrow button.
+        /// Draws arrow buttons for horizontal scroll bar.
         /// </summary>
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
-        /// <param name="state">The <see cref="ScrollBarArrowButtonState"/> of the arrow button.</param>
+        /// <param name="color">The color to draw the arrow buttons with.</param>
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
         private void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
@@ -886,7 +891,7 @@ namespace PluginCore.Controls
             }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.borderColor = value;
                 this.Invalidate();
             }
@@ -906,7 +911,7 @@ namespace PluginCore.Controls
             }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.borderColorDisabled = value;
                 this.Invalidate();
             }
@@ -926,7 +931,7 @@ namespace PluginCore.Controls
             }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.backColor = value;
                 this.Invalidate();
             }
@@ -946,7 +951,7 @@ namespace PluginCore.Controls
             }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.backColorDisabled = value;
                 this.Invalidate();
             }
@@ -966,7 +971,7 @@ namespace PluginCore.Controls
             }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.foreColor = value;
                 this.Invalidate();
             }
@@ -983,7 +988,7 @@ namespace PluginCore.Controls
             get { return this.foreColorHot; }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.foreColorHot = value;
                 this.Invalidate();
             }
@@ -1003,7 +1008,7 @@ namespace PluginCore.Controls
             }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.foreColorPressed = value;
                 this.Invalidate();
             }
@@ -1020,7 +1025,7 @@ namespace PluginCore.Controls
             get { return this.arrowColor; }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.arrowColor = value;
                 this.Invalidate();
             }
@@ -1037,7 +1042,7 @@ namespace PluginCore.Controls
             get { return this.arrowColorHot; }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.arrowColorHot = value;
                 this.Invalidate();
             }
@@ -1054,7 +1059,7 @@ namespace PluginCore.Controls
             get { return this.arrowColorPressed; }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.arrowColorPressed = value;
                 this.Invalidate();
             }
@@ -1074,7 +1079,7 @@ namespace PluginCore.Controls
             }
             set
             {
-                if (colorsValidated) ResetColors();
+                ResetColors();
                 this.curPosColor = value;
                 this.Invalidate();
             }
