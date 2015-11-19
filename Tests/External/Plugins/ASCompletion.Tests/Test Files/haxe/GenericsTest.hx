@@ -33,25 +33,13 @@ class TestMultiple<T:(Iterable<String>, Measurable)>
 	}
 }
 
-class TestObjectConstraint<T:({}, Measurable)>
-{
-	public function test1(expected:T, actual:T):T
-	{
-	}
-	
-	public function test2<K:({}, Measurable)>(expected:K, actual:K):K
-	{
-	}
-}
-
-
-class TestFullConstraint<T:({}, Measurable), Z:(Iterable<String>, Measurable)>
+class TestFullConstraint<T:Measurable, Z:(Iterable<String>, Measurable)>
 {
 	public function test1(expected:T, actual:Z):T
 	{
 	}
 	
-	public function test2<K:({}, Measurable), V:(Iterable<String>, Measurable)>(expected:K, actual:V):K
+	public function test2<K:Measurable, V:(Iterable<String>, Measurable)>(expected:K, actual:V):K
 	{
 	}
 }

@@ -120,6 +120,12 @@
     <EmbeddedResource Include="Test Files\haxe\OverrideFunctionTest.hx" />
     <EmbeddedResource Include="Test Files\haxe\TypeDefsTest.hx" />
     <EmbeddedResource Include="Test Files\haxe\GenericsTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\GenericsObjectConstraintTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\ImplementClassTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\ImportTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\InterfaceTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\PrivateClassTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\RegExTest.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
