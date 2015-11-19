@@ -126,6 +126,8 @@
     <EmbeddedResource Include="Test Files\haxe\InterfaceTest.hx" />
     <EmbeddedResource Include="Test Files\haxe\PrivateClassTest.hx" />
     <EmbeddedResource Include="Test Files\haxe\RegExTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\ImportAliasTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\ComplexClassTest.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

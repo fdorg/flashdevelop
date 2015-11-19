@@ -416,123 +416,193 @@ namespace ASCompletion.Model
                     Assert.AreEqual("V", arg.Type);
                 }
             }
-        }
-
-        [Ignore("Easy fix, to add")]
-        public void ParseFile_GenericsWithObjectConstraints()
-        {
-            using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.GenericsObjectConstraintTest.hx"))
+            [Ignore("Easy fix, to add")]
+            public void ParseFile_GenericsWithObjectConstraints()
             {
-                var srcModel = new FileModel(resourceFile.DestinationFile);
-                srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
-                var model = ASFileParser.ParseFile(srcModel);
-                Assert.AreEqual(2, model.Classes.Count);
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.GenericsObjectConstraintTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    Assert.AreEqual(2, model.Classes.Count);
 
-                var objectConstraintGeneric = model.Classes[0];
-                Assert.AreEqual(2, objectConstraintGeneric.LineFrom);
-                Assert.AreEqual(11, objectConstraintGeneric.LineTo);
-                Assert.AreEqual(FlagType.Class, objectConstraintGeneric.Flags & FlagType.Class);
-                Assert.AreEqual("TestObjectConstraint<T:({},Measurable)>", objectConstraintGeneric.FullName);
-                Assert.AreEqual("TestObjectConstraint", objectConstraintGeneric.Name);
-                Assert.AreEqual("<T:({},Measurable)>", objectConstraintGeneric.Template);
-                Assert.AreEqual(2, objectConstraintGeneric.Members.Count);
-                var member = objectConstraintGeneric.Members[0];
-                Assert.AreEqual("test1", member.Name);
-                Assert.AreEqual(4, member.LineFrom);
-                Assert.AreEqual(6, member.LineTo);
-                Assert.AreEqual("T", member.Type);
-                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                Assert.AreEqual(2, member.Parameters.Count);
-                var arg = member.Parameters[0];
-                Assert.AreEqual("expected", arg.Name);
-                Assert.AreEqual("T", arg.Type);
-                arg = member.Parameters[1];
-                Assert.AreEqual("actual", arg.Name);
-                Assert.AreEqual("T", arg.Type);
-                member = objectConstraintGeneric.Members[1];
-                Assert.AreEqual("test2<K:({},Measurable)>", member.FullName);
-                Assert.AreEqual("test2", member.Name);
-                Assert.AreEqual("<K:({},Measurable)>", member.Template);
-                Assert.AreEqual(8, member.LineFrom);
-                Assert.AreEqual(10, member.LineTo);
-                Assert.AreEqual("K", member.Type);
-                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                arg = member.Parameters[0];
-                Assert.AreEqual("expected", arg.Name);
-                Assert.AreEqual("K", arg.Type);
-                arg = member.Parameters[1];
-                Assert.AreEqual("actual", arg.Name);
-                Assert.AreEqual("K", arg.Type);
-                var simpleGeneric = model.Classes[0];
-                Assert.AreEqual(2, simpleGeneric.LineFrom);
-                Assert.AreEqual(11, simpleGeneric.LineTo);
-                Assert.AreEqual(FlagType.Class, simpleGeneric.Flags & FlagType.Class);
-                Assert.AreEqual("Test<T>", simpleGeneric.FullName);
-                Assert.AreEqual("Test", simpleGeneric.Name);
-                Assert.AreEqual("<T>", simpleGeneric.Template);
-                Assert.AreEqual(2, simpleGeneric.Members.Count);
+                    var objectConstraintGeneric = model.Classes[0];
+                    Assert.AreEqual(2, objectConstraintGeneric.LineFrom);
+                    Assert.AreEqual(11, objectConstraintGeneric.LineTo);
+                    Assert.AreEqual(FlagType.Class, objectConstraintGeneric.Flags & FlagType.Class);
+                    Assert.AreEqual("TestObjectConstraint<T:({},Measurable)>", objectConstraintGeneric.FullName);
+                    Assert.AreEqual("TestObjectConstraint", objectConstraintGeneric.Name);
+                    Assert.AreEqual("<T:({},Measurable)>", objectConstraintGeneric.Template);
+                    Assert.AreEqual(2, objectConstraintGeneric.Members.Count);
+                    var member = objectConstraintGeneric.Members[0];
+                    Assert.AreEqual("test1", member.Name);
+                    Assert.AreEqual(4, member.LineFrom);
+                    Assert.AreEqual(6, member.LineTo);
+                    Assert.AreEqual("T", member.Type);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    Assert.AreEqual(2, member.Parameters.Count);
+                    var arg = member.Parameters[0];
+                    Assert.AreEqual("expected", arg.Name);
+                    Assert.AreEqual("T", arg.Type);
+                    arg = member.Parameters[1];
+                    Assert.AreEqual("actual", arg.Name);
+                    Assert.AreEqual("T", arg.Type);
+                    member = objectConstraintGeneric.Members[1];
+                    Assert.AreEqual("test2<K:({},Measurable)>", member.FullName);
+                    Assert.AreEqual("test2", member.Name);
+                    Assert.AreEqual("<K:({},Measurable)>", member.Template);
+                    Assert.AreEqual(8, member.LineFrom);
+                    Assert.AreEqual(10, member.LineTo);
+                    Assert.AreEqual("K", member.Type);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    arg = member.Parameters[0];
+                    Assert.AreEqual("expected", arg.Name);
+                    Assert.AreEqual("K", arg.Type);
+                    arg = member.Parameters[1];
+                    Assert.AreEqual("actual", arg.Name);
+                    Assert.AreEqual("K", arg.Type);
+                    var simpleGeneric = model.Classes[0];
+                    Assert.AreEqual(2, simpleGeneric.LineFrom);
+                    Assert.AreEqual(11, simpleGeneric.LineTo);
+                    Assert.AreEqual(FlagType.Class, simpleGeneric.Flags & FlagType.Class);
+                    Assert.AreEqual("Test<T>", simpleGeneric.FullName);
+                    Assert.AreEqual("Test", simpleGeneric.Name);
+                    Assert.AreEqual("<T>", simpleGeneric.Template);
+                    Assert.AreEqual(2, simpleGeneric.Members.Count);
 
-                var fullConstraintGeneric = model.Classes[1];
-                Assert.AreEqual(13, fullConstraintGeneric.LineFrom);
-                Assert.AreEqual(22, fullConstraintGeneric.LineTo);
-                Assert.AreEqual(FlagType.Class, fullConstraintGeneric.Flags & FlagType.Class);
-                Assert.AreEqual("TestFullConstraint<T:({},Measurable),Z:(Iterable<String>,Measurable)>", fullConstraintGeneric.FullName);
-                Assert.AreEqual("TestFullConstraint", fullConstraintGeneric.Name);
-                Assert.AreEqual("<T:({},Measurable),Z:(Iterable<String>,Measurable)>", fullConstraintGeneric.Template);
-                Assert.AreEqual(2, fullConstraintGeneric.Members.Count);
-                member = fullConstraintGeneric.Members[0];
-                Assert.AreEqual("test1", member.Name);
-                Assert.AreEqual(15, member.LineFrom);
-                Assert.AreEqual(17, member.LineTo);
-                Assert.AreEqual("T", member.Type);
-                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                Assert.AreEqual(2, member.Parameters.Count);
-                arg = member.Parameters[0];
-                Assert.AreEqual("expected", arg.Name);
-                Assert.AreEqual("T", arg.Type);
-                arg = member.Parameters[1];
-                Assert.AreEqual("actual", arg.Name);
-                Assert.AreEqual("Z", arg.Type);
-                member = fullConstraintGeneric.Members[1];
-                Assert.AreEqual("test2<K:({},Measurable),V:(Iterable<String>,Measurable)>", member.FullName);
-                Assert.AreEqual("test2", member.Name);
-                Assert.AreEqual("<K:({},Measurable),V:(Iterable<String>,Measurable)>", member.Template);
-                Assert.AreEqual(19, member.LineFrom);
-                Assert.AreEqual(21, member.LineTo);
-                Assert.AreEqual("K", member.Type);
-                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                arg = member.Parameters[0];
-                Assert.AreEqual("expected", arg.Name);
-                Assert.AreEqual("K", arg.Type);
-                arg = member.Parameters[1];
-                Assert.AreEqual("actual", arg.Name);
-                Assert.AreEqual("V", arg.Type);
+                    var fullConstraintGeneric = model.Classes[1];
+                    Assert.AreEqual(13, fullConstraintGeneric.LineFrom);
+                    Assert.AreEqual(22, fullConstraintGeneric.LineTo);
+                    Assert.AreEqual(FlagType.Class, fullConstraintGeneric.Flags & FlagType.Class);
+                    Assert.AreEqual("TestFullConstraint<T:({},Measurable),Z:(Iterable<String>,Measurable)>", fullConstraintGeneric.FullName);
+                    Assert.AreEqual("TestFullConstraint", fullConstraintGeneric.Name);
+                    Assert.AreEqual("<T:({},Measurable),Z:(Iterable<String>,Measurable)>", fullConstraintGeneric.Template);
+                    Assert.AreEqual(2, fullConstraintGeneric.Members.Count);
+                    member = fullConstraintGeneric.Members[0];
+                    Assert.AreEqual("test1", member.Name);
+                    Assert.AreEqual(15, member.LineFrom);
+                    Assert.AreEqual(17, member.LineTo);
+                    Assert.AreEqual("T", member.Type);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    Assert.AreEqual(2, member.Parameters.Count);
+                    arg = member.Parameters[0];
+                    Assert.AreEqual("expected", arg.Name);
+                    Assert.AreEqual("T", arg.Type);
+                    arg = member.Parameters[1];
+                    Assert.AreEqual("actual", arg.Name);
+                    Assert.AreEqual("Z", arg.Type);
+                    member = fullConstraintGeneric.Members[1];
+                    Assert.AreEqual("test2<K:({},Measurable),V:(Iterable<String>,Measurable)>", member.FullName);
+                    Assert.AreEqual("test2", member.Name);
+                    Assert.AreEqual("<K:({},Measurable),V:(Iterable<String>,Measurable)>", member.Template);
+                    Assert.AreEqual(19, member.LineFrom);
+                    Assert.AreEqual(21, member.LineTo);
+                    Assert.AreEqual("K", member.Type);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    arg = member.Parameters[0];
+                    Assert.AreEqual("expected", arg.Name);
+                    Assert.AreEqual("K", arg.Type);
+                    arg = member.Parameters[1];
+                    Assert.AreEqual("actual", arg.Name);
+                    Assert.AreEqual("V", arg.Type);
+                }
+            }
+
+            [Test(Description = "PR 680")]
+            public void ParseFile_RegExLiterals()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.RegExTest.hx"))
+                {
+                    var plugin = Substitute.For<PluginMain>();
+                    plugin.MenuItems.Returns(new List<ToolStripItem>());
+                    var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    Context.ASContext.GlobalInit(plugin);
+                    Context.ASContext.Context = context;
+                    var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
+
+                    Assert.AreEqual(4, model.Members.Count);  // First member = function itself
+
+                    var regExMember = model.Members[1];
+                    Assert.AreEqual("regExInArray", regExMember.Name);
+                    Assert.AreEqual("Array<EReg>", regExMember.Type);
+                    regExMember = model.Members[2];
+                    Assert.AreEqual("regExInObject", regExMember.Name);
+                    regExMember = model.Members[3];
+                    Assert.AreEqual("regEx", regExMember.Name);
+                    Assert.AreEqual("EReg", regExMember.Type);
+                }
+            }
+
+            [Test]
+            public void ParseFile_Imports()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ImportTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+
+                    Assert.AreEqual(4, model.Imports.Count);  // import * ignored
+
+                    var import = model.Imports[0];
+                    Assert.AreEqual(FlagType.Class, import.Flags & FlagType.Class);
+                    Assert.AreEqual("Test", import.Name);
+                    Assert.AreEqual("package1.Test", import.Type);
+
+                    import = model.Imports[1];
+                    Assert.AreEqual(FlagType.Package, import.Flags & FlagType.Package);
+                    Assert.AreEqual("*", import.Name);
+                    Assert.AreEqual("package1.subpackage1.*", import.Type);
+
+                    import = model.Imports[2];
+                    Assert.AreEqual(FlagType.Package, import.Flags & FlagType.Package);
+                    Assert.AreEqual("*", import.Name);
+                    Assert.AreEqual("package2.*", import.Type);
+
+                    import = model.Imports[3];
+                    Assert.AreEqual(FlagType.Class, import.Flags & FlagType.Class);
+                    Assert.AreEqual("Test", import.Name);
+                    Assert.AreEqual("package2.subpackage1.Test", import.Type);
+                }
+            }
+
+            [Ignore("Not supported")]
+            public void ParseFile_ImportAliases()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ImportAliasTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+
+                    Assert.AreEqual(2, model.Imports.Count);
+                }
+            }
+
+            [Test]
+            public void ParseFile_ComplexClass()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ComplexClassTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("Test", classModel.Name);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(2, classModel.LineFrom);
+                    Assert.AreEqual(32, classModel.LineTo);
+                    Assert.AreEqual(13, classModel.Members.Count);
+                    var memberModel = classModel.Members[0];
+                    Assert.AreEqual("Test", memberModel.Name);
+                    Assert.AreEqual(FlagType.Function, memberModel.Flags & FlagType.Function);
+                    Assert.AreEqual(FlagType.Constructor, memberModel.Flags & FlagType.Constructor);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(4, memberModel.LineFrom);
+                    Assert.AreEqual(6, memberModel.LineTo);
+                }
             }
         }
 
-        [Test(Description = "PR 680")]
-        public void ParseFile_RegExLiterals()
-        {
-            using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.RegExTest.hx"))
-            {
-                var plugin = Substitute.For<PluginMain>();
-                plugin.MenuItems.Returns(new List<ToolStripItem>());
-                var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
-                Context.ASContext.GlobalInit(plugin);
-                Context.ASContext.Context = context;
-                var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
-
-                Assert.AreEqual(4, model.Members.Count);  // First member = function itself
-
-                var regExMember = model.Members[1];
-                Assert.AreEqual("regExInArray", regExMember.Name);
-                Assert.AreEqual("Array<EReg>", regExMember.Type);
-                regExMember = model.Members[2];
-                Assert.AreEqual("regExInObject", regExMember.Name);
-                regExMember = model.Members[3];
-                Assert.AreEqual("regEx", regExMember.Name);
-                Assert.AreEqual("EReg", regExMember.Type);
-            }
-        }
     }
 }
