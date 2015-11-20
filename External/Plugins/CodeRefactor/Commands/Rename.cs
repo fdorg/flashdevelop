@@ -22,7 +22,7 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class Rename : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        static bool includeComments, includeStrings, previewChanges;
+        static bool includeComments, includeStrings, previewChanges = true;
 
         string newName;
         bool outputResults;
@@ -429,6 +429,7 @@ namespace CodeRefactor.Commands
                 includeComments = helper.IncludeComments;
                 includeStrings = helper.IncludeStrings;
                 if (helper is InlineRename) previewChanges = ((InlineRename) helper).PreviewChanges;
+                helper = null;
             }
 
             this.newName = newName;

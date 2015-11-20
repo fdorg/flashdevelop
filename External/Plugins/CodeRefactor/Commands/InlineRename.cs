@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Completion;
+using ASCompletion.Context;
 using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.FRService;
 using ScintillaNet;
 using ScintillaNet.Enums;
+using Keys = System.Windows.Forms.Keys;
 
 namespace CodeRefactor.Commands
 {
@@ -56,6 +59,7 @@ namespace CodeRefactor.Commands
         DelayedExecution delayedExecution;
         ReferenceInfo declaration;
         List<ReferenceInfo> refs;
+        KeyValuePair<string, Keys>[] shortcuts;
 
         /// <summary>
         /// Occurs when the user clicks the Apply button or presses Enter.
@@ -94,6 +98,8 @@ namespace CodeRefactor.Commands
             return true;
         }
 
+        #region Constructor
+
         /// <summary>
         /// Creates a new instance of <see cref="InlineRename"/>. Any existing instance in progress
         /// is automatically canceled.
@@ -120,15 +126,18 @@ namespace CodeRefactor.Commands
             //prevName = original;
             end = position;
 
+            InitializeFields();
             InitializeHighlights();
-            SetupDelayedExecution();
             CreateDialog(includeComments, includeStrings, previewChanges);
             SetupLivePreview(includeComments.HasValue, includeStrings.HasValue, previewChanges.HasValue, previewTarget);
             AddMessageFilter();
+            DisableControls();
             Highlight(start, end);
         }
 
-        #region Retrieve Rename Options
+        #endregion
+
+        #region Rename Options
 
         /// <summary>
         /// Gets a value specifying whether current renaming process includes comments.
@@ -158,6 +167,12 @@ namespace CodeRefactor.Commands
 
         #region Initialization
 
+        void InitializeFields()
+        {
+            delayedExecution = new DelayedExecution();
+            shortcuts = PluginBase.MainForm.GetShortcutItems();
+        }
+        
         void InitializeHighlights()
         {
             sci.SetSel(start, end);
@@ -165,16 +180,11 @@ namespace CodeRefactor.Commands
             sci.SetIndicSetAlpha(Indicator, 100);
         }
 
-        void SetupDelayedExecution()
-        {
-            delayedExecution = new DelayedExecution();
-        }
-
         void CreateDialog(bool? comments, bool? strings, bool? preview)
         {
             currentDoc = PluginBase.MainForm.CurrentDocument;
             dialog = new InlineRenameDialog(oldName, comments, strings, preview);
-            dialog.Left = sci.Width - dialog.Width - 17;
+            Sci_Resize(null, null);
             controls = currentDoc.SplitContainer.Parent.Controls;
             controls.Add(dialog);
             controls.SetChildIndex(dialog, 0);
@@ -195,17 +205,15 @@ namespace CodeRefactor.Commands
             if (!supportPreviewChanges) return;
 
             string file = currentDoc.FileName;
-            var search = new FRSearch(oldName)
+            var config = new FRConfiguration(file, sci.Text, new FRSearch(oldName)
             {
                 Filter = SearchFilter.None,
                 IsRegex = false,
                 IsEscaped = false,
                 NoCase = false,
                 WholeWord = true
-            };
-            var config = new FRConfiguration(file, sci.GetText(sci.Length), search);
-            var runner = new FRRunner();
-            var results = runner.SearchSync(config)[file];
+            });
+            var results = new FRRunner().SearchSync(config)[file];
             refs = new List<ReferenceInfo>();
 
             foreach (var match in results)
@@ -213,8 +221,8 @@ namespace CodeRefactor.Commands
                 int index = match.Index;
                 string value = match.Value;
                 int style = sci.BaseStyleAt(index);
-                bool insideComment = RefactoringHelper.IsInsideComment(style);
-                bool insideString = RefactoringHelper.IsInsideString(style);
+                bool insideComment = RefactoringHelper.IsCommentStyle(style);
+                bool insideString = RefactoringHelper.IsStringStyle(style);
 
                 if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null)
                     || insideComment && supportInsideComment
@@ -241,12 +249,20 @@ namespace CodeRefactor.Commands
             sci.SelectionChanged += Sci_SelectionChanged;
             sci.TextInserted += Sci_TextInserted;
             sci.TextDeleted += Sci_TextDeleted;
+            sci.Resize += Sci_Resize;
             Current = this;
+        }
+
+        void DisableControls()
+        {
+            PluginBase.MainForm.MenuStrip.Enabled = false;
+            PluginBase.MainForm.ToolStrip.Enabled = false;
+            PluginBase.MainForm.EditorMenu.Enabled = false;
         }
 
         #endregion
 
-        #region States
+        #region Methods
 
         void OnApply()
         {
@@ -254,7 +270,7 @@ namespace CodeRefactor.Commands
             {
                 Finish();
             }
-
+            
             if (Apply != null) Apply(this, oldName, newName);
         }
 
@@ -318,10 +334,11 @@ namespace CodeRefactor.Commands
                 sci.DisableAllSciEvents = false;
             }
 
-            if (refs != null)
+            if (previewChanges)
                 UpdateReferences(oldName, true, includeComments, includeStrings, true, false);
-
+            
             currentDoc.Save();
+            ASContext.Context.UpdateCurrentFile(true);
         }
 
         void Highlight(int start, int end)
@@ -334,14 +351,15 @@ namespace CodeRefactor.Commands
             sci.IndicatorFillRange(start, end - start);
             sci.StartStyling(es, mask);
         }
-
+        
         void IDisposable.Dispose()
         {
             Application.RemoveMessageFilter(this);
             sci.SelectionChanged -= Sci_SelectionChanged;
             sci.TextInserted -= Sci_TextInserted;
             sci.TextDeleted -= Sci_TextDeleted;
-            sci = null;
+            sci.Resize -= Sci_Resize;
+            //sci = null;
             Current = null;
             currentDoc = null;
 
@@ -359,11 +377,15 @@ namespace CodeRefactor.Commands
                 refs.Clear();
                 refs = null;
             }
+
+            PluginBase.MainForm.MenuStrip.Enabled = true;
+            PluginBase.MainForm.ToolStrip.Enabled = true;
+            PluginBase.MainForm.EditorMenu.Enabled = true;
         }
 
         #endregion
 
-        #region Updating references
+        #region Updating References
 
         void UpdateReferences(string replacement, bool decl, bool comments, bool strings, bool others, bool addHighlight)
         {
@@ -383,7 +405,6 @@ namespace CodeRefactor.Commands
                 for (int i = 0, l = refs.Count; i < l; i++)
                 {
                     var @ref = refs[i];
-                    int oldIndex = @ref.Index;
                     int oldLength = @ref.Value.Length;
 
                     @ref.Index += delta;
@@ -399,9 +420,9 @@ namespace CodeRefactor.Commands
                         bool replace;
                         int style = sci.BaseStyleAt(start);
 
-                        if (RefactoringHelper.IsInsideComment(style))
+                        if (RefactoringHelper.IsCommentStyle(style))
                             replace = comments;
-                        else if (RefactoringHelper.IsInsideString(style))
+                        else if (RefactoringHelper.IsStringStyle(style))
                             replace = strings;
                         else
                             replace = others;
@@ -432,12 +453,6 @@ namespace CodeRefactor.Commands
             }
         }
 
-        void DelayedExecution_Cancel()
-        {
-            sci.Undo();
-            OnCancel();
-        }
-
         void DelayedExecution_Update()
         {
             UpdateReferences(newName, true, previewChanges && includeComments, previewChanges && includeStrings, previewChanges, true);
@@ -445,7 +460,7 @@ namespace CodeRefactor.Commands
             if (Update != null)
                 Update(this, /*prevName,*/ newName);
         }
-
+        
         void IncludeComments_CheckedChanged(object sender, EventArgs e)
         {
             includeComments = dialog.IncludeComments.Checked;
@@ -490,7 +505,43 @@ namespace CodeRefactor.Commands
 
         #endregion
 
-        #region Scintilla events
+        #region Shortcut Handlers
+
+        void PerformUndo()
+        {
+            
+        }
+
+        void PerformRedo()
+        {
+            
+        }
+
+        void PerformPaste()
+        {
+            if (Clipboard.ContainsText())
+            {
+                if (!CanWrite) return;
+                string value = Regex.Replace(Clipboard.GetText(), @"\s", string.Empty);
+                if (string.IsNullOrEmpty(value)) return;
+                foreach (char i in value)
+                {
+                    if (!IsValidChar(i)) return;
+                }
+                sci.ReplaceSel(value);
+            }
+        }
+
+        void PerformSelectAll()
+        {
+            sci.DisableAllSciEvents = true;
+            sci.SetSel(start, end);
+            sci.DisableAllSciEvents = false;
+        }
+
+        #endregion
+
+        #region Scintilla Events
 
         void Sci_SelectionChanged(ScintillaControl sender)
         {
@@ -501,21 +552,14 @@ namespace CodeRefactor.Commands
                 int s = sci.SelectionStart;
                 int e = sci.SelectionEnd;
 
-                //When selecting all, select the target text instead
-                if (sci.SelTextSize == sci.Length)
-                {
-                    sci.SetSel(start, end);
-                    return;
-                }
-
                 if (sci.CurrentPos == e)
                 {
-                    if (s < start) { if (e > start) sci.SetSel(s, start); }
+                    if (s < start) { /*if (e > start) sci.SetSel(s, start);*/ }
                     else if (s < end) { if (e > end) sci.SetSel(s, end); }
                 }
                 else
                 {
-                    if (e > end) { if (s < end) sci.SetSel(e, end); }
+                    if (e > end) { /*if (s < end) sci.SetSel(e, end);*/ }
                     else if (e > start) { if (s < start) sci.SetSel(e, start); }
                 }
             }
@@ -534,7 +578,7 @@ namespace CodeRefactor.Commands
             }
             else
             {
-                delayedExecution.Start(DelayedExecution_Cancel);
+                // throw exception?
             }
         }
 
@@ -549,8 +593,13 @@ namespace CodeRefactor.Commands
             }
             else
             {
-                delayedExecution.Start(DelayedExecution_Cancel);
+                // throw exception?
             }
+        }
+
+        void Sci_Resize(object sender, EventArgs e)
+        {
+            dialog.Left = sci.Width - dialog.Width - 17;
         }
 
         #endregion
@@ -565,45 +614,123 @@ namespace CodeRefactor.Commands
                 return false;
             }
 
-            if (m.Msg == Win32.WM_KEYDOWN)
+            switch (m.Msg)
             {
-                switch ((int) m.WParam)
+                case 0x0100: //WM_KEYDOWN
+                case 0x0104: //WM_SYSKEYDOWN
+                    var key = (Keys) (int) m.WParam;
+                    var modifier = Control.ModifierKeys;
+                    switch (key)
+                    {
+                        case Keys.Escape:
+                            OnCancel();
+                            return true;
+                        case Keys.Enter:
+                            OnApply();
+                            return true;
+                        case Keys.Back:
+                            if (CanBackspace) break;
+                            return true;
+                        case Keys.Left:
+                            if (!AtLeftmost) break;
+                            return true;
+                        case Keys.Delete:
+                            if (CanDelete) break;
+                            return true;
+                        case Keys.Right:
+                            if (!AtRightmost) break;
+                            if (sci.SelTextSize != 0) sci.SetSel(end, end);
+                            return true;
+                        case Keys.PageUp:
+                        case Keys.PageDown:
+                        case Keys.Up:
+                        case Keys.Down:
+                            if (OutsideRange) break;
+                            return true;
+                        case Keys.End:
+                            if (OutsideRange) break;
+                            sci.SetSel(end, end);
+                            return true;
+                        case Keys.Home:
+                            if (OutsideRange) break;
+                            sci.SetSel(start, start);
+                            return true;
+                        case Keys.Tab:
+                            return true;
+                        default:
+                            if (Keys.F1 <= key && key <= Keys.F24 || (modifier & Keys.Control) != 0 || (modifier & Keys.Alt) != 0)
+                                return !HandleShortcuts(key | modifier);
+                            break;
+                    }
+                    break;
+
+                case 0x0102: //WM_CHAR
+                case 0x0103: //WM_DEADCHAR
+                    int value = (int) m.WParam;
+                    if (CanWrite && IsValidChar(value)) break;
+                    return true;
+
+                //case 0x0200: //WM_MOUSEMOVE
+                //case 0x0201: //WM_LBUTTONDOWN
+                //case 0x0202: //WM_LBUTTONUP
+                //case 0x0203: //WM_LBUTTONDBCLICK
+                //case 0x0204: //WM_RBUTTONDOWN
+                //case 0x0205: //WM_RBUTTONUP
+                //case 0x0206: //WM_RBUTTONDBCLICK
+                //case 0x0207: //WM_MBUTTONDOWN
+                //case 0x0208: //WM_MBUTTONUP
+                //case 0x0209: //WM_MBUTTONDBCLICK
+                //    if (sci.ClientRectangle.Contains(sci.PointToClient(Control.MousePosition))) break;
+                //    return true;
+
+                //case 0x007B: //WM_CONTEXTMENU
+                //    return true;
+
+                case 0x010D: //WM_IME_STARTCOMPOSITION
+                case 0x010E: //WM_IME_ENDCOMPOSITION
+                case 0x010F: //WM_IME_COMPOSITION
+                    return true;
+            }
+
+            return false;
+        }
+
+        bool HandleShortcuts(Keys keys)
+        {
+            foreach (var shortcut in shortcuts)
+            {
+                if (shortcut.Value == keys)
                 {
-                    case 0x1B: //VK_ESCAPE
-                        OnCancel();
-                        return true;
-                    case 0x0D: //VK_RETURN
-                        OnApply();
-                        return true;
-                    case 0x08: //VK_BACK
-                        if (!AtLeftmost) break;
-                        if (sci.SelTextSize != 0) break;
-                        return true;
-                    case 0x25: //VK_LEFT
-                        if (!AtLeftmost) break;
-                        return true;
-                    case 0x2E: //VK_DELETE
-                        if (!AtRightmost) break;
-                        if (sci.SelTextSize != 0) break;
-                        return true;
-                    case 0x27: //VK_RIGHT
-                        if (!AtRightmost) break;
-                        if (sci.SelTextSize != 0) sci.SetSel(end, end);
-                        return true;
-                    case 0x21: //VK_PRIOR
-                    case 0x22: //VK_NEXY
-                    case 0x26: //VK_UP
-                    case 0x28: //VK_DOWN
-                        if (!WithinRange) break;
-                        return true;
-                    case 0x23: //VK_END
-                        if (!WithinRange) break;
-                        sci.SetSel(end, end);
-                        return true;
-                    case 0x24: //VK_HOME
-                        if (!WithinRange) break;
-                        sci.SetSel(start, start);
-                        return true;
+                    switch (shortcut.Key)
+                    {
+                        case "EditMenu.Copy":
+                        case "EditMenu.Cut":
+                            return true;
+                        case "EditMenu.Paste":
+                            PerformPaste();
+                            break;
+                        case "EditMenu.Redo":
+                            PerformRedo();
+                            break;
+                        case "EditMenu.SelectAll":
+                            PerformSelectAll();
+                            break;
+                        case "EditMenu.ToLowercase":
+                        case "EditMenu.ToUppercase":
+                            return true;
+                        case "EditMenu.Undo":
+                            PerformUndo();
+                            break;
+                        case "Scintilla.ResetZoom":
+                        case "Scintilla.ZoomIn":
+                        case "Scintilla.ZoomOut":
+                            return true;
+                        default:
+                            //"Shortcut \"{0}\" cannot be used during renaming", shortcut.Key
+                            break;
+                    }
+
+                    break;
                 }
             }
 
@@ -613,6 +740,39 @@ namespace CodeRefactor.Commands
         #endregion
 
         #region Utilities
+
+        bool CanBackspace
+        {
+            get
+            {
+                int pos = sci.SelectionStart;
+                if (pos < start || end < pos) return false;
+                pos = sci.SelectionEnd;
+                return start < pos && pos <= end;
+            }
+        }
+
+        bool CanDelete
+        {
+            get
+            {
+                int pos = sci.SelectionStart;
+                if (pos < start || end < pos) return false;
+                pos = sci.SelectionEnd;
+                return start <= pos && pos < end;
+            }
+        }
+
+        bool CanWrite
+        {
+            get
+            {
+                int pos = sci.SelectionStart;
+                if (pos < start || end < pos) return false;
+                pos = sci.SelectionEnd;
+                return start <= pos && pos <= end;
+            }
+        }
 
         bool AtLeftmost
         {
@@ -624,9 +784,18 @@ namespace CodeRefactor.Commands
             get { return sci.CurrentPos == end; }
         }
 
-        bool WithinRange
+        bool OutsideRange
         {
-            get { return sci.CurrentPos >= start && sci.CurrentPos <= end; }
+            get { return sci.CurrentPos < start || end < sci.CurrentPos; }
+        }
+
+        bool IsValidChar(int value)
+        {
+            return 0x60 < value && value < 0x7B
+                || 0x3F < value && value < 0x5B
+                || 0x29 < value && value < 0x3A
+                || value == 0x5F
+                || value == 0x24;
         }
 
         #endregion

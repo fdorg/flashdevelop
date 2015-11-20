@@ -1771,6 +1771,21 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Returns an array of <see cref="KeyValuePair{TKey, TValue}"/> containing all registered shortcuts.
+        /// </summary>
+        public KeyValuePair<string, Keys>[] GetShortcutItems()
+        {
+            var list = ShortcutManager.RegisteredItems;
+            var items = new KeyValuePair<string, Keys>[list.Count];
+            int count = 0;
+            foreach (var item in list)
+            {
+                items[count++] = new KeyValuePair<string, Keys>(item.Id, item.Custom);
+            }
+            return items;
+        }
+
+        /// <summary>
         /// Registers a new menu item with the shortcut manager
         /// </summary>
         public void RegisterShortcutItem(String id, Keys keys)

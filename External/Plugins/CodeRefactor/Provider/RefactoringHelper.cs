@@ -664,10 +664,10 @@ namespace CodeRefactor.Provider
         public static bool IsInsideCommentOrString(SearchMatch match, ScintillaControl sci, bool includeComments, bool includeStrings)
         {
             int style = sci.BaseStyleAt(match.Index);
-            return includeComments && IsInsideComment(style) || includeStrings && IsInsideString(style);
+            return includeComments && IsCommentStyle(style) || includeStrings && IsStringStyle(style);
         }
 
-        public static bool IsInsideComment(int style)
+        public static bool IsCommentStyle(int style)
         {
             switch (style)
             {
@@ -681,7 +681,7 @@ namespace CodeRefactor.Provider
             }
         }
 
-        public static bool IsInsideString(int style)
+        public static bool IsStringStyle(int style)
         {
             switch (style)
             {
