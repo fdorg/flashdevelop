@@ -566,7 +566,7 @@ namespace ASCompletion.Model
                 }
             }
 
-            [Ignore("Not supported")]
+            [Ignore("Not supported, for now we hope!")]
             public void ParseFile_ImportAliases()
             {
                 using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ImportAliasTest.hx"))
@@ -591,15 +591,167 @@ namespace ASCompletion.Model
                     Assert.AreEqual("Test", classModel.Name);
                     Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
                     Assert.AreEqual(2, classModel.LineFrom);
-                    Assert.AreEqual(32, classModel.LineTo);
-                    Assert.AreEqual(13, classModel.Members.Count);
+                    Assert.AreEqual(45, classModel.LineTo);
+                    Assert.AreEqual(14, classModel.Members.Count);
+
                     var memberModel = classModel.Members[0];
-                    Assert.AreEqual("Test", memberModel.Name);
-                    Assert.AreEqual(FlagType.Function, memberModel.Flags & FlagType.Function);
-                    Assert.AreEqual(FlagType.Constructor, memberModel.Flags & FlagType.Constructor);
+                    Assert.AreEqual("CONSTANT", memberModel.Name);
+                    var flags = FlagType.Static | FlagType.Variable;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
                     Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
                     Assert.AreEqual(4, memberModel.LineFrom);
+                    Assert.AreEqual(4, memberModel.LineTo);
+
+                    memberModel = classModel.Members[1];
+                    Assert.AreEqual("id", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Variable;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(6, memberModel.LineFrom);
                     Assert.AreEqual(6, memberModel.LineTo);
+
+                    memberModel = classModel.Members[2];
+                    Assert.AreEqual("_name", memberModel.Name);
+                    Assert.AreEqual("String", memberModel.Type);
+                    flags = FlagType.Variable;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(8, memberModel.LineFrom);
+                    Assert.AreEqual(8, memberModel.LineTo);
+
+                    memberModel = classModel.Members[3];
+                    Assert.AreEqual("ro", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Getter;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(10, memberModel.LineFrom);
+                    Assert.AreEqual(10, memberModel.LineTo);
+                    Assert.AreEqual(2, memberModel.Parameters.Count);
+                    Assert.AreEqual("default", memberModel.Parameters[0].Name);
+                    Assert.AreEqual("null", memberModel.Parameters[1].Name);
+
+                    memberModel = classModel.Members[4];
+                    Assert.AreEqual("wo", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Getter;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(12, memberModel.LineFrom);
+                    Assert.AreEqual(12, memberModel.LineTo);
+                    Assert.AreEqual(2, memberModel.Parameters.Count);
+                    Assert.AreEqual("null", memberModel.Parameters[0].Name);
+                    Assert.AreEqual("default", memberModel.Parameters[1].Name);
+
+                    memberModel = classModel.Members[5];
+                    Assert.AreEqual("x", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Getter;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(14, memberModel.LineFrom);
+                    Assert.AreEqual(14, memberModel.LineTo);
+                    Assert.AreEqual(2, memberModel.Parameters.Count);
+                    Assert.AreEqual("get", memberModel.Parameters[0].Name);
+                    Assert.AreEqual("set", memberModel.Parameters[1].Name);
+
+                    memberModel = classModel.Members[6];
+                    Assert.AreEqual("get_x", memberModel.Name);
+                    Assert.AreEqual(null, memberModel.Type);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(15, memberModel.LineFrom);
+                    Assert.AreEqual(18, memberModel.LineTo);
+                    Assert.IsNull(memberModel.Parameters);
+
+                    memberModel = classModel.Members[7];
+                    Assert.AreEqual("set_x", memberModel.Name);
+                    Assert.AreEqual(null, memberModel.Type);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(19, memberModel.LineFrom);
+                    Assert.AreEqual(22, memberModel.LineTo);
+                    Assert.AreEqual(1, memberModel.Parameters.Count);
+                    Assert.AreEqual("val", memberModel.Parameters[0].Name);
+                    flags = FlagType.ParameterVar;
+                    Assert.AreEqual(flags, memberModel.Parameters[0].Flags & flags);
+
+                    memberModel = classModel.Members[8];
+                    Assert.AreEqual("y", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Getter;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(24, memberModel.LineFrom);
+                    Assert.AreEqual(24, memberModel.LineTo);
+                    Assert.AreEqual(2, memberModel.Parameters.Count);
+                    Assert.AreEqual("get", memberModel.Parameters[0].Name);
+                    Assert.AreEqual("never", memberModel.Parameters[1].Name);
+
+                    memberModel = classModel.Members[9];
+                    Assert.AreEqual("get_y", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(25, memberModel.LineFrom);
+                    Assert.AreEqual(25, memberModel.LineTo);
+                    Assert.IsNull(memberModel.Parameters);
+
+                    memberModel = classModel.Members[10];
+                    Assert.AreEqual("Test", memberModel.Name);
+                    flags = FlagType.Function | FlagType.Constructor;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(27, memberModel.LineFrom);
+                    Assert.AreEqual(29, memberModel.LineTo);
+                    Assert.AreEqual(1, memberModel.Parameters.Count);
+                    var param = memberModel.Parameters[0];
+                    Assert.AreEqual("?ds", param.Name);
+                    Assert.AreEqual("Iterable<String>", param.Type);
+                    Assert.AreEqual(FlagType.ParameterVar, param.Flags & FlagType.ParameterVar);
+
+                    memberModel = classModel.Members[11];
+                    Assert.AreEqual("bar", memberModel.Name);
+                    flags = FlagType.Static | FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(31, memberModel.LineFrom);
+                    Assert.AreEqual(33, memberModel.LineTo);
+                    Assert.AreEqual(2, memberModel.Parameters.Count);
+                    param = memberModel.Parameters[0];
+                    Assert.AreEqual("s", param.Name);
+                    Assert.AreEqual("String", param.Type);
+                    Assert.AreEqual(FlagType.ParameterVar, param.Flags & FlagType.ParameterVar);
+
+                    memberModel = classModel.Members[12];
+                    Assert.AreEqual("foo", memberModel.Name);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(35, memberModel.LineFrom);
+                    Assert.AreEqual(38, memberModel.LineTo);
+                    Assert.AreEqual(2, memberModel.Parameters.Count);
+                    param = memberModel.Parameters[0];
+                    Assert.AreEqual("?s", param.Name);
+                    Assert.AreEqual("String", param.Type);
+                    Assert.AreEqual(FlagType.ParameterVar, param.Flags & FlagType.ParameterVar);
+
+                    memberModel = classModel.Members[13];
+                    Assert.AreEqual("boz", memberModel.Name);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(40, memberModel.LineFrom);
+                    Assert.AreEqual(44, memberModel.LineTo);
+                    Assert.AreEqual(2, memberModel.Parameters.Count);
+                    param = memberModel.Parameters[0];
+                    Assert.AreEqual("?s", param.Name);
+                    Assert.AreEqual("String", param.Type);
+                    Assert.AreEqual(FlagType.ParameterVar, param.Flags & FlagType.ParameterVar);
                 }
             }
         }

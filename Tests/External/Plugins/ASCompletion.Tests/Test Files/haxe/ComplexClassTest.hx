@@ -12,14 +12,20 @@ class Test
 
 	public var wo(null, default):Int;
 
-	public var x(get, set):Int;
-	function get_x() return 1;
-	function set_x(x) return x;
+	@:isVar public var x(get, set):Int;
+	function get_x()
+	{
+		return 1;
+	}
+	function set_x(val)
+	{
+		return x = val;
+	}
 
 	public var y(get, never):Int;
-	function get_y() return 1;
+	function get_y():Int return 1;
   
-	public function new()
+	public function new(?ds:Iterable<String>)
 	{
 	}
 	
@@ -27,7 +33,14 @@ class Test
 	{
 	}
 	
-	public function foo(?s:String, ?v:Bool = true):Void
+	public function foo(?s:String, ?v:Bool = true):Bool
 	{
+		return true;
+	}
+	
+	public function boz(?s:String, 
+		?v:Bool = true)
+	{
+		return true;
 	}
 }
