@@ -145,7 +145,7 @@ namespace PluginCore.BBCode
                    + " isUnderlined='" + isUnderlined + "'"
                    + " fontName='" + (fontName == null ? "null" : fontName) + "'"
                    + " fontSize='" + fontSize + "'"
-                   + " isAbsFontSize='" + isAbsFontSize.ToString() + "'"
+                   + " isAbsFontSize='" + isAbsFontSize + "'"
                    + " foreColor='" + (foreColor == null ? "null" : foreColor.ToString()) + "'"
                    + " backColor='" + (backColor == null ? "null" : backColor.ToString()) + "'"
                    + "]";

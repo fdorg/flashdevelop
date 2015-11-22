@@ -21,7 +21,7 @@ namespace PluginCore.Localization
             if (resourceManager == null || localeSetting != storedLocale)
             {
                 storedLocale = localeSetting;
-                String path = "PluginCore.PluginCore.Resources." + storedLocale.ToString();
+                String path = "PluginCore.PluginCore.Resources." + storedLocale;
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());
             }
             prefix = Assembly.GetCallingAssembly().GetName().Name;
