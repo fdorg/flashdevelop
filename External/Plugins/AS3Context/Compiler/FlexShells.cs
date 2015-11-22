@@ -508,7 +508,7 @@ namespace AS3Context.Compiler
         private void ascRunner_OutputError(object sender, string line)
         {
             if (line == null) return;
-            PluginBase.RunAsync((MethodInvoker)delegate
+            PluginBase.RunAsync(delegate
             {
                 if (line.StartsWith("Exception "))
                 {
@@ -563,7 +563,7 @@ namespace AS3Context.Compiler
 
         private void mxmlcRunner_Output(object sender, string line)
         {
-            PluginBase.RunAsync((MethodInvoker)delegate
+            PluginBase.RunAsync(delegate
             {
                 if (!notificationSent && line.StartsWith("Done("))
                 {

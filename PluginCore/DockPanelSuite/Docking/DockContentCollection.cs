@@ -30,7 +30,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (DockPane == null)
-                    return Items[index] as IDockContent;
+                    return Items[index];
                 else
                     return GetVisibleContent(index);
             }

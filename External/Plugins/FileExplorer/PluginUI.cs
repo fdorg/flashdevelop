@@ -397,7 +397,7 @@ namespace FileExplorer
                 dir = new DirectoryInfo(path);
                 infos = dir.GetFileSystemInfos();
             });
-            backgroundMethod.BeginInvoke((AsyncCallback)delegate(IAsyncResult result)
+            backgroundMethod.BeginInvoke(delegate(IAsyncResult result)
             {
                 backgroundMethod.EndInvoke(result);
                 // marshal back to the UI thread

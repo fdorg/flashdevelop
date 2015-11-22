@@ -258,7 +258,7 @@ namespace FlashDevelop
         /// </summary>
         public ISettings Settings
         {
-            get { return (ISettings)this.appSettings; }
+            get { return this.appSettings; }
         }
 
         /// <summary>
