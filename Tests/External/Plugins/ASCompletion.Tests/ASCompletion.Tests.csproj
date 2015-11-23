@@ -131,6 +131,12 @@
     <EmbeddedResource Include="Test Files\haxe\MultiLineStringsTest.hx" />
     <EmbeddedResource Include="Test Files\haxe\EscapedStringsTest.hx" />
     <EmbeddedResource Include="Test Files\haxe\EnumsTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\AbstractsTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\RegionsTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\FunctionTypesTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\FunctionTypesWithSubTypesTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\CommentsTest.hx" />
+    <EmbeddedResource Include="Test Files\haxe\SpecialClassesCommentsTest.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

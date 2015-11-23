@@ -194,6 +194,30 @@ namespace ASCompletion.Model
                 }
             }
 
+            [Test]
+            public void ParseFile_ClassImplements()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ImplementClassTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+
+                    Assert.AreEqual(2, model.Classes.Count);
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("Test", classModel.Name);
+                    Assert.AreEqual(Visibility.Public, classModel.Access);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.That(classModel.Implements, Is.EquivalentTo(new[] { "ITest" }));
+
+                    classModel = model.Classes[1];
+                    Assert.AreEqual("MultipleTest", classModel.Name);
+                    Assert.AreEqual(Visibility.Public, classModel.Access);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.That(classModel.Implements, Is.EquivalentTo(new[] { "ITest", "ITest2", "ITest3" }));
+                }
+            }
+
             [Test(Description = "Commit 7c8718c")]
             public void ParseFile_OverrideFunction()
             {
@@ -414,6 +438,52 @@ namespace ASCompletion.Model
                 }
             }
 
+            [Test(Description = "Constructors doesn't seem to be identified correctly?")]
+            public void ParseFile_Abstracts()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.AbstractsTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    Assert.AreEqual(2, model.Classes.Count);
+
+                    var plainAbstract = model.Classes[0];
+                    Assert.AreEqual("AbstractInt", plainAbstract.Name);
+                    Assert.AreEqual("Int", plainAbstract.ExtendsType);
+                    Assert.AreEqual(2, plainAbstract.LineFrom);
+                    Assert.AreEqual(6, plainAbstract.LineTo);
+                    Assert.AreEqual(FlagType.Abstract, plainAbstract.Flags & FlagType.Abstract);
+                    Assert.AreEqual(1, plainAbstract.Members.Count);
+                    var member = plainAbstract.Members[0];
+                    Assert.AreEqual(3, member.LineFrom);
+                    Assert.AreEqual(5, member.LineTo);
+                    // Is this one right?
+                    Assert.AreEqual("new", member.Name);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    Assert.AreEqual(1, member.Parameters.Count);
+                    Assert.AreEqual("i", member.Parameters[0].Name);
+                    Assert.AreEqual("Int", member.Parameters[0].Type);
+
+                    var implicitCastAbstract = model.Classes[1];
+                    Assert.AreEqual("MyAbstract", implicitCastAbstract.Name);
+                    Assert.AreEqual("Int", implicitCastAbstract.ExtendsType);
+                    Assert.AreEqual(8, implicitCastAbstract.LineFrom);
+                    Assert.AreEqual(12, implicitCastAbstract.LineTo);
+                    Assert.AreEqual(FlagType.Abstract, implicitCastAbstract.Flags & FlagType.Abstract);
+                    Assert.AreEqual(1, implicitCastAbstract.Members.Count);
+                    member = implicitCastAbstract.Members[0];
+                    Assert.AreEqual(9, member.LineFrom);
+                    Assert.AreEqual(11, member.LineTo);
+                    // Is this one right?
+                    Assert.AreEqual("new", member.Name);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    Assert.AreEqual(1, member.Parameters.Count);
+                    Assert.AreEqual("i", member.Parameters[0].Name);
+                    Assert.AreEqual("Int", member.Parameters[0].Type);
+                }
+            }
+
             [Test(Description = "Includes Commit 51938e0")]
             public void ParseFile_Generics()
             {
@@ -569,6 +639,7 @@ namespace ASCompletion.Model
                     Assert.AreEqual("V", arg.Type);
                 }
             }
+
             [Ignore("Easy fix, to add")]
             public void ParseFile_GenericsWithObjectConstraints()
             {
@@ -658,6 +729,148 @@ namespace ASCompletion.Model
                     arg = member.Parameters[1];
                     Assert.AreEqual("actual", arg.Name);
                     Assert.AreEqual("V", arg.Type);
+                }
+            }
+
+            [Test(Description = "Includes Commit a2b92a6")]
+            public void ParseFile_Regions()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.RegionsTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    Assert.AreEqual(1, model.Classes.Count);
+                    Assert.AreEqual(2, model.Regions.Count);
+
+                    var region = model.Regions[0];
+                    Assert.AreEqual("Fields", region.Name);
+                    Assert.AreEqual(4, region.LineFrom);
+                    Assert.AreEqual(6, region.LineTo);
+                    region = model.Regions[1];
+                    Assert.AreEqual("Complex stuff", region.Name);
+                    Assert.AreEqual(14, region.LineFrom);
+                    Assert.AreEqual(16, region.LineTo);
+
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("Test", classModel.Name);
+                    Assert.AreEqual(2, classModel.LineFrom);
+                    Assert.AreEqual(18, classModel.LineTo);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(3, classModel.Members.Count);
+                    var member = classModel.Members[0];
+                    Assert.AreEqual(5, member.LineFrom);
+                    Assert.AreEqual(5, member.LineTo);
+                    Assert.AreEqual("_test", member.Name);
+                    Assert.AreEqual("String", member.Type);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual(Visibility.Private, member.Access & Visibility.Private);
+                    member = classModel.Members[1];
+                    Assert.AreEqual(9, member.LineFrom);
+                    Assert.AreEqual(9, member.LineTo);
+                    Assert.AreEqual("_test2", member.Name);
+                    Assert.AreEqual("String", member.Type);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual(Visibility.Private, member.Access & Visibility.Private);
+                    member = classModel.Members[2];
+                    Assert.AreEqual(12, member.LineFrom);
+                    Assert.AreEqual(17, member.LineTo);
+                    Assert.AreEqual("regionInside", member.Name);
+                    Assert.AreEqual("String", member.Type);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    Assert.AreEqual(Visibility.Private, member.Access & Visibility.Private);
+                }
+            }
+
+            [Test]
+            public void ParseFile_Comments()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.CommentsTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    Assert.AreEqual(1, model.Classes.Count);
+
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("Test", classModel.Name);
+                    Assert.AreEqual("\r * Some custom comments\r ", classModel.Comments);
+                    Assert.AreEqual(5, classModel.LineFrom);
+                    Assert.AreEqual(19, classModel.LineTo);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(2, classModel.Members.Count);
+                    var member = classModel.Members[0];
+                    Assert.AreEqual(10, member.LineFrom);
+                    Assert.AreEqual(10, member.LineTo);
+                    Assert.AreEqual("Test", member.Name);
+                    Assert.AreEqual("Java Style comments", member.Comments);
+                    Assert.AreEqual(FlagType.Constructor, member.Flags & FlagType.Constructor);
+                    Assert.AreEqual(Visibility.Public, member.Access & Visibility.Public);
+                    member = classModel.Members[1];
+                    Assert.AreEqual(15, member.LineFrom);
+                    Assert.AreEqual(18, member.LineTo);
+                    Assert.AreEqual("testAdd", member.Name);
+                    Assert.AreEqual("Int", member.Type);
+                    Assert.AreEqual("\r\t * Some method documentation\r\t ", member.Comments);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    Assert.AreEqual(Visibility.Public, member.Access & Visibility.Public);
+                    Assert.AreEqual(2, member.Parameters.Count);
+                }
+            }
+
+            [Test(Description = "Shows that enum elements are not getting comments currently")]
+            public void ParseFile_SpecialClassesComments()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.SpecialClassesCommentsTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    Assert.AreEqual(3, model.Classes.Count);
+
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("TypedefTest", classModel.Name);
+                    Assert.AreEqual("\r * Some typedef custom comments\r ", classModel.Comments);
+                    Assert.AreEqual(5, classModel.LineFrom);
+                    Assert.AreEqual(11, classModel.LineTo);
+                    Assert.AreEqual(FlagType.TypeDef, classModel.Flags & FlagType.TypeDef);
+                    Assert.AreEqual(1, classModel.Members.Count);
+                    var member = classModel.Members[0];
+                    Assert.AreEqual(10, member.LineFrom);
+                    Assert.AreEqual(10, member.LineTo);
+                    Assert.AreEqual("age", member.Name);
+                    Assert.AreEqual("Int", member.Type);
+                    Assert.AreEqual("Java Style comments", member.Comments);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+
+                    classModel = model.Classes[1];
+                    Assert.AreEqual("EnumTest", classModel.Name);
+                    Assert.AreEqual("\r * Some enum custom comments\r ", classModel.Comments);
+                    Assert.AreEqual(16, classModel.LineFrom);
+                    Assert.AreEqual(22, classModel.LineTo);
+                    Assert.AreEqual(FlagType.Enum, classModel.Flags & FlagType.Enum);
+                    Assert.AreEqual(1, classModel.Members.Count);
+                    member = classModel.Members[0];
+                    Assert.AreEqual(21, member.LineFrom);
+                    Assert.AreEqual(21, member.LineTo);
+                    Assert.AreEqual("Foo", member.Name);
+                    //TODO: Add support for this!
+                    //Assert.AreEqual("\r\t * Enum element comments\r\t ", member.Comments);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+
+                    classModel = model.Classes[2];
+                    Assert.AreEqual("AbstractInt", classModel.Name);
+                    Assert.AreEqual("\r * Some abstract custom comments\r ", classModel.Comments);
+                    Assert.AreEqual("Int", classModel.ExtendsType);
+                    Assert.AreEqual(27, classModel.LineFrom);
+                    Assert.AreEqual(34, classModel.LineTo);
+                    Assert.AreEqual(FlagType.Abstract, classModel.Flags & FlagType.Abstract);
+                    Assert.AreEqual(1, classModel.Members.Count);
+                    member = classModel.Members[0];
+                    Assert.AreEqual(31, member.LineFrom);
+                    Assert.AreEqual(33, member.LineTo);
+                    Assert.AreEqual("new", member.Name);
+                    Assert.AreEqual("Java Style comments", member.Comments);
                 }
             }
 
@@ -804,6 +1017,62 @@ namespace ASCompletion.Model
                     var model = ASFileParser.ParseFile(srcModel);
 
                     Assert.AreEqual(2, model.Imports.Count);
+                }
+            }
+
+            [Test]
+            public void ParseFile_FunctionTypes()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.FunctionTypesTest.hx"))
+                {
+                    var plugin = Substitute.For<PluginMain>();
+                    plugin.MenuItems.Returns(new List<ToolStripItem>());
+                    var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    Context.ASContext.GlobalInit(plugin);
+                    Context.ASContext.Context = context;
+                    var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
+
+                    Assert.AreEqual(3, model.Members.Count);
+
+                    var member = model.Members[1];
+                    Assert.AreEqual("functionType", member.Name);
+                    Assert.AreEqual(2, member.LineFrom);
+                    Assert.AreEqual(2, member.LineTo);
+                    Assert.AreEqual("Dynamic->Dynamic", member.Type);
+
+                    member = model.Members[2];
+                    Assert.AreEqual("functionType2", member.Name);
+                    Assert.AreEqual(3, member.LineFrom);
+                    Assert.AreEqual(3, member.LineTo);
+                    Assert.AreEqual("Int->Int->Int", member.Type);
+                }
+            }
+
+            [Ignore("Not supported for now")]
+            public void ParseFile_FunctionTypesWithSubTypes()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.FunctionTypesWithSubTypesTest.hx"))
+                {
+                    var plugin = Substitute.For<PluginMain>();
+                    plugin.MenuItems.Returns(new List<ToolStripItem>());
+                    var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    Context.ASContext.GlobalInit(plugin);
+                    Context.ASContext.Context = context;
+                    var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
+
+                    Assert.AreEqual(3, model.Members.Count);
+
+                    var member = model.Members[0];
+                    Assert.AreEqual("functionType", member.Name);
+                    Assert.AreEqual(2, member.LineFrom);
+                    Assert.AreEqual(2, member.LineTo);
+                    Assert.AreEqual("(Dynamic->Dynamic)->Dynamic", member.Type);
+
+                    member = model.Members[1];
+                    Assert.AreEqual("functionType2", member.Name);
+                    Assert.AreEqual(3, member.LineFrom);
+                    Assert.AreEqual(3, member.LineTo);
+                    Assert.AreEqual("((Dynamic->Dynamic)->Int->)Int", member.Type);
                 }
             }
 
