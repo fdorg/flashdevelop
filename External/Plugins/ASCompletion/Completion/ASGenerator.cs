@@ -949,9 +949,9 @@ namespace ASCompletion.Completion
                     if (latest == null)
                         latest = FindLatest(0, 0, inClass, false, false);
 
-                    position = latest == null ? GetBodyStart(inClass.LineFrom, inClass.LineTo, sci) : latest.LineTo;
+                    position = latest == null ? GetBodyStart(inClass.LineFrom, inClass.LineTo, sci) : 
+                        sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
 
-                    position = sci.PositionFromLine(position + 1) - ((sci.EOLMode == 0) ? 2 : 1);
                     sci.SetSel(position, position);
                     GenerateImplementation(iType, inClass, sci);
                     break;
@@ -1890,13 +1890,15 @@ namespace ASCompletion.Completion
                     if (endLn == ln)
                     {
                         Sci.InsertText(funcBodyStart, Sci.NewLineMarker);
-                        Sci.SetLineIndentation(++ln, indent + Sci.Indent);
-                        funcBodyStart = Sci.LineIndentPosition(ln);
+                        // Do we want to set the line indentation no matter what? {\r\t\t\t\r} -> {\r\t\r}
+                        // Better results in most cases, but maybe highly unwanted in others?
+                        Sci.SetLineIndentation(++endLn, indent + Sci.Indent);
+                        funcBodyStart = Sci.LineIndentPosition(endLn);
                     }
                     if (c == '}')
                     {
                         Sci.InsertText(funcBodyStart, Sci.NewLineMarker);
-                        Sci.SetLineIndentation(ln + 1, indent);
+                        Sci.SetLineIndentation(endLn + 1, indent);
                     }
                     break;
                 }

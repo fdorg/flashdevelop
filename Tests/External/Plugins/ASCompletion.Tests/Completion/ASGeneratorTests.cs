@@ -157,7 +157,7 @@ namespace ASCompletion.Completion
         public void GenerateJob_ImplementFromInterface_FullAs3()
         {
             var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest" };
-            var classModel = new Model.ClassModel {InFile = new Model.FileModel()};
+            var classModel = new Model.ClassModel {InFile = new Model.FileModel(), LineTo = 1};
             var pluginMain = Substitute.For<PluginMain>();
             var pluginUiMock = new PluginUIMock(pluginMain);
             pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
@@ -169,19 +169,19 @@ namespace ASCompletion.Completion
             ASContext.Context.Features.voidKey = "void";
 
             var sci = GetBaseScintillaControl();
-            sci.Text = "package  test():void{\r\n\t\t\t}";
+            sci.Text = "package  test():void{\r\n\t}";
             sci.ConfigurationLanguage = "as3";
             doc.SciControl.Returns(sci);
 
             interfaceModel.Members.Add(new Model.MemberList
                                            {
-                                               new Model.MemberModel("getter", "String", Model.FlagType.Getter, Model.Visibility.Default),
-                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Default)
+                                               new Model.MemberModel("getter", "String", Model.FlagType.Getter, Model.Visibility.Public),
+                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Public)
                                                    {
                                                         Parameters = new List<Model.MemberModel> { new Model.MemberModel("value", "String", Model.FlagType.Variable, Model.Visibility.Default) }
                                                    },
-                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Default),
-                                               new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Default)
+                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Public),
+                                               new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Public)
                                                    {
                                                         Parameters = new List<Model.MemberModel> { new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default) }
                                                    }
