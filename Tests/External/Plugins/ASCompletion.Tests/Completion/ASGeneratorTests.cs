@@ -302,6 +302,54 @@ namespace ASCompletion.Completion
                 ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
                 Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfacePublicMemberBehindPrivate.as"), sci.Text);
             }
+
+            [Test]
+            public void ImplementFromInterface_FullAs3WithoutPublicMember()
+            {
+                var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest", Type = "ITest" };
+                var classModel = new Model.ClassModel { InFile = new Model.FileModel(), LineFrom = 1, LineTo = 10 };
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                ASContext.Context = Substitute.For<IASContext>();
+                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
+                ASContext.Context.Features.voidKey = "void";
+
+                var sci = GetBaseScintillaControl();
+                sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfaceNoPublicMember.as");
+                sci.ConfigurationLanguage = "as3";
+                doc.SciControl.Returns(sci);
+
+                classModel.Members.Add(new Model.MemberList
+                                           {
+                                               new Model.MemberModel("privateMember", "String", Model.FlagType.Function, Model.Visibility.Private)
+                                                   {LineFrom = 3, LineTo = 5}
+                                           });
+
+                interfaceModel.Members.Add(new Model.MemberList
+                                           {
+                                               new Model.MemberModel("getter", "String", Model.FlagType.Getter, Model.Visibility.Public),
+                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Public)
+                                                   {
+                                                        Parameters = new List<Model.MemberModel> { new Model.MemberModel("value", "String", Model.FlagType.Variable, Model.Visibility.Default) }
+                                                   },
+                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Public),
+                                               new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Public)
+                                                   {
+                                                        Parameters = new List<Model.MemberModel>
+                                                        {
+                                                            new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default),
+                                                            new Model.MemberModel("arg2", "Boolean", Model.FlagType.Variable, Model.Visibility.Default)
+                                                        }
+                                                   }
+                                           });
+
+                ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
+                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoPublicMember.as"), sci.Text);
+            }
         }
 
     }

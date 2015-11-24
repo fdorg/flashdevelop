@@ -141,6 +141,13 @@
     <EmbeddedResource Include="Test Files\parser\haxe\IdentifiersWithUnicodeCharsTest.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfacePublicMemberBehindPrivate.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ImplementInterfacePublicMemberBehindPrivate.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceNoPublicMember.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ImplementInterfaceNoPublicMember.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterfaceNoPublicMember.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterfacePublicMemberBehindPrivate.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoMembers.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoPublicMember.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfacePublicMemberBehindPrivate.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
