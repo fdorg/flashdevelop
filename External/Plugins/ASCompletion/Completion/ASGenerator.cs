@@ -949,11 +949,16 @@ namespace ASCompletion.Completion
                     if (latest == null)
                         latest = FindLatest(0, 0, inClass, false, false);
 
-                    position = latest == null ? GetBodyStart(inClass.LineFrom, inClass.LineTo, sci) : 
-                        sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
+                    if (latest == null)
+                    {
+                        position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
+                        detach = false;
+                    }
+                    else
+                        position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
 
                     sci.SetSel(position, position);
-                    GenerateImplementation(iType, inClass, sci);
+                    GenerateImplementation(iType, inClass, sci, detach);
                     break;
 
                 case GeneratorJobType.MoveLocalUp:
@@ -3094,11 +3099,18 @@ namespace ASCompletion.Completion
             return name;
         }
 
-        private static void GenerateImplementation(ClassModel iType, ClassModel inClass, ScintillaControl sci)
+        private static void GenerateImplementation(ClassModel iType, ClassModel inClass, ScintillaControl sci, bool detached)
         {
             List<string> typesUsed = new List<string>();
 
-            StringBuilder sb = new StringBuilder(TemplateUtils.ReplaceTemplateVariable(TemplateUtils.GetTemplate("ImplementHeader"), "Class", iType.Type));
+            StringBuilder sb = new StringBuilder();
+
+            string header = TemplateUtils.ReplaceTemplateVariable(TemplateUtils.GetTemplate("ImplementHeader"), "Class",
+                iType.Type);
+
+            header = TemplateUtils.ReplaceTemplateVariable(header, "BlankLine", detached ? BlankLine : null);
+
+            sb.Append(header);
             sb.Append(NewLine);
             bool entry = true;
             ASResult result = new ASResult();

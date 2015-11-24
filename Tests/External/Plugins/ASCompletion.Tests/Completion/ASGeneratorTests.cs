@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using ASCompletion.Context;
 using ASCompletion.Settings;
+using ASCompletion.TestUtils;
 using FlashDevelop;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
 using ScintillaNet;
+using ScintillaNet.Enums;
 
 namespace ASCompletion.Completion
 {
@@ -22,6 +24,11 @@ namespace ASCompletion.Completion
         {
             mainForm = new MainForm();
             settings = Substitute.For<ISettings>();
+            settings.UseTabs = true;
+            settings.IndentSize = 4;
+            settings.SmartIndentType = SmartIndent.CPP;
+            settings.TabIndents = true;
+            settings.TabWidth = 4;
             doc = Substitute.For<ITabbedDocument>();
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
@@ -181,11 +188,12 @@ namespace ASCompletion.Completion
             ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, null, null, null, table);
         }
 
+        // TODO: Tests with different formatting options
         [Test]
         public void GenerateJob_ImplementFromInterface_FullAs3()
         {
-            var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest" };
-            var classModel = new Model.ClassModel {InFile = new Model.FileModel(), LineTo = 1};
+            var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest", Type = "ITest"};
+            var classModel = new Model.ClassModel {InFile = new Model.FileModel(), LineFrom = 1, LineTo = 1};
             var pluginMain = Substitute.For<PluginMain>();
             var pluginUiMock = new PluginUIMock(pluginMain);
             pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
@@ -197,7 +205,7 @@ namespace ASCompletion.Completion
             ASContext.Context.Features.voidKey = "void";
 
             var sci = GetBaseScintillaControl();
-            sci.Text = "package  test():void{\r\n\t}";
+            sci.Text = "package generatortest {\r\n\tpublic class ImplementTest{}\r\n}";
             sci.ConfigurationLanguage = "as3";
             doc.SciControl.Returns(sci);
 
@@ -211,22 +219,80 @@ namespace ASCompletion.Completion
                                                new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Public),
                                                new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Public)
                                                    {
-                                                        Parameters = new List<Model.MemberModel> { new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default) }
+                                                        Parameters = new List<Model.MemberModel>
+                                                        {
+                                                            new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default),
+                                                            new Model.MemberModel("arg2", "Boolean", Model.FlagType.Variable, Model.Visibility.Default)
+                                                        }
                                                    }
                                            });
 
             ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
+            Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoMembers.as"), sci.Text);
         }
 
-        private static ScintillaControl GetBaseScintillaControl()
+        [Test]
+        public void GenerateJob_ImplementFromInterface_FullAs3WithPublicMemberBehindPrivate()
+        {
+            var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest", Type = "ITest" };
+            var classModel = new Model.ClassModel { InFile = new Model.FileModel(), LineFrom = 1, LineTo = 10 };
+            var pluginMain = Substitute.For<PluginMain>();
+            var pluginUiMock = new PluginUIMock(pluginMain);
+            pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+            pluginMain.Settings.Returns(new GeneralSettings());
+            pluginMain.Panel.Returns(pluginUiMock);
+            ASContext.GlobalInit(pluginMain);
+            ASContext.Context = Substitute.For<IASContext>();
+            ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
+            ASContext.Context.Features.voidKey = "void";
+
+            var sci = GetBaseScintillaControl();
+            sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfacePublicMemberBehindPrivate.as");
+            sci.ConfigurationLanguage = "as3";
+            doc.SciControl.Returns(sci);
+
+            classModel.Members.Add(new Model.MemberList
+                                           {
+                                               new Model.MemberModel("publicMember", "void", Model.FlagType.Function, Model.Visibility.Public)
+                                                   {LineFrom = 3, LineTo = 5},
+                                               new Model.MemberModel("privateMember", "String", Model.FlagType.Function, Model.Visibility.Private)
+                                                   {LineFrom = 7, LineTo = 9}
+                                           });
+
+            interfaceModel.Members.Add(new Model.MemberList
+                                           {
+                                               new Model.MemberModel("getter", "String", Model.FlagType.Getter, Model.Visibility.Public),
+                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Public)
+                                                   {
+                                                        Parameters = new List<Model.MemberModel> { new Model.MemberModel("value", "String", Model.FlagType.Variable, Model.Visibility.Default) }
+                                                   },
+                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Public),
+                                               new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Public)
+                                                   {
+                                                        Parameters = new List<Model.MemberModel>
+                                                        {
+                                                            new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default),
+                                                            new Model.MemberModel("arg2", "Boolean", Model.FlagType.Variable, Model.Visibility.Default)
+                                                        }
+                                                   }
+                                           });
+
+            ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
+            Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfacePublicMemberBehindPrivate.as"), sci.Text);
+        }
+
+        private ScintillaControl GetBaseScintillaControl()
         {
             return new ScintillaControl
                        {
                            Encoding = System.Text.Encoding.UTF8,
                            CodePage = 65001,
-                           Indent = 4,
+                           Indent = settings.IndentSize,
                            Lexer = 3,
-                           StyleBits = 7
+                           StyleBits = 7,
+                           IsTabIndents = settings.TabIndents,
+                           IsUseTabs = settings.UseTabs,
+                           TabWidth = settings.TabWidth
                        };
         }
 

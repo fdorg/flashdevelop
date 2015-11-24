@@ -114,29 +114,33 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Test Files\as3\SimpleClassTest.as" />
-    <EmbeddedResource Include="Test Files\haxe\SimpleClassTest.hx" />
-    <EmbeddedResource Include="Test Files\as3\OverrideFunctionTest.as" />
-    <EmbeddedResource Include="Test Files\haxe\OverrideFunctionTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\TypeDefsTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\GenericsTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\GenericsObjectConstraintTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\ImplementClassTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\ImportTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\InterfaceTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\PrivateClassTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\RegExTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\ImportAliasTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\ComplexClassTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\MultiLineStringsTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\EscapedStringsTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\EnumsTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\AbstractsTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\RegionsTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\FunctionTypesTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\FunctionTypesWithSubTypesTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\CommentsTest.hx" />
-    <EmbeddedResource Include="Test Files\haxe\SpecialClassesCommentsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\as3\OverrideFunctionTest.as" />
+    <EmbeddedResource Include="Test Files\parser\as3\SimpleClassTest.as" />
+    <EmbeddedResource Include="Test Files\parser\haxe\AbstractsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\CommentsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\ComplexClassTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\EnumsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\EscapedStringsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\FunctionTypesTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\FunctionTypesWithSubTypesTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\GenericsObjectConstraintTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\GenericsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\ImplementClassTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\ImportAliasTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\ImportTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\InterfaceTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\MultiLineStringsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\OverrideFunctionTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\PrivateClassTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\RegExTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\RegionsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\SimpleClassTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\SpecialClassesCommentsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\TypeDefsTest.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\ImplementInterfaceNoMembers.as" />
+    <EmbeddedResource Include="Test Files\parser\haxe\IdentifiersWithUnicodeCharsTest.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfacePublicMemberBehindPrivate.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ImplementInterfacePublicMemberBehindPrivate.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

@@ -15,7 +15,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_SimpleClass()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.as3.SimpleClassTest.as"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.as3.SimpleClassTest.as"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new AS3Context.Context();
@@ -45,7 +45,7 @@ namespace ASCompletion.Model
             [Test(Description = "Commit 7c8718c")]
             public void ParseFile_OverrideFunction()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.as3.OverrideFunctionTest.as"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.as3.OverrideFunctionTest.as"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new AS3Context.Context();
@@ -75,7 +75,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_SimpleClass()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.SimpleClassTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.SimpleClassTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -103,7 +103,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_PrivateClass()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.PrivateClassTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.PrivateClassTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -149,7 +149,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_Interface()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.InterfaceTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.InterfaceTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -197,7 +197,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_ClassImplements()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ImplementClassTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.ImplementClassTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -208,20 +208,20 @@ namespace ASCompletion.Model
                     Assert.AreEqual("Test", classModel.Name);
                     Assert.AreEqual(Visibility.Public, classModel.Access);
                     Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
-                    Assert.That(classModel.Implements, Is.EquivalentTo(new[] { "ITest" }));
+                    Assert.That(classModel.Implements, Is.EquivalentTo(new[] {"ITest"}));
 
                     classModel = model.Classes[1];
                     Assert.AreEqual("MultipleTest", classModel.Name);
                     Assert.AreEqual(Visibility.Public, classModel.Access);
                     Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
-                    Assert.That(classModel.Implements, Is.EquivalentTo(new[] { "ITest", "ITest2", "ITest3" }));
+                    Assert.That(classModel.Implements, Is.EquivalentTo(new[] {"ITest", "ITest2", "ITest3"}));
                 }
             }
 
             [Test(Description = "Commit 7c8718c")]
             public void ParseFile_OverrideFunction()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.OverrideFunctionTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.OverrideFunctionTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -247,7 +247,7 @@ namespace ASCompletion.Model
             [Test(Description = "Includes Commit 304ca93")]
             public void ParseFile_TypeDefs()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.TypeDefsTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.TypeDefsTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -382,7 +382,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_Enums()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.EnumsTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.EnumsTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -441,7 +441,7 @@ namespace ASCompletion.Model
             [Test(Description = "Constructors doesn't seem to be identified correctly?")]
             public void ParseFile_Abstracts()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.AbstractsTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.AbstractsTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -487,7 +487,7 @@ namespace ASCompletion.Model
             [Test(Description = "Includes Commit 51938e0")]
             public void ParseFile_Generics()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.GenericsTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.GenericsTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -606,7 +606,8 @@ namespace ASCompletion.Model
                     Assert.AreEqual(35, complexConstraintGeneric.LineFrom);
                     Assert.AreEqual(44, complexConstraintGeneric.LineTo);
                     Assert.AreEqual(FlagType.Class, complexConstraintGeneric.Flags & FlagType.Class);
-                    Assert.AreEqual("TestFullConstraint<T:Measurable,Z:(Iterable<String>,Measurable)>", complexConstraintGeneric.FullName);
+                    Assert.AreEqual("TestFullConstraint<T:Measurable,Z:(Iterable<String>,Measurable)>",
+                        complexConstraintGeneric.FullName);
                     Assert.AreEqual("TestFullConstraint", complexConstraintGeneric.Name);
                     Assert.AreEqual("<T:Measurable,Z:(Iterable<String>,Measurable)>", complexConstraintGeneric.Template);
                     Assert.AreEqual(2, complexConstraintGeneric.Members.Count);
@@ -643,7 +644,9 @@ namespace ASCompletion.Model
             [Ignore("Easy fix, to add")]
             public void ParseFile_GenericsWithObjectConstraints()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.GenericsObjectConstraintTest.hx"))
+                using (
+                    var resourceFile =
+                        new TestFile("ASCompletion.Test_Files.parser.haxe.GenericsObjectConstraintTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -698,9 +701,11 @@ namespace ASCompletion.Model
                     Assert.AreEqual(13, fullConstraintGeneric.LineFrom);
                     Assert.AreEqual(22, fullConstraintGeneric.LineTo);
                     Assert.AreEqual(FlagType.Class, fullConstraintGeneric.Flags & FlagType.Class);
-                    Assert.AreEqual("TestFullConstraint<T:({},Measurable),Z:(Iterable<String>,Measurable)>", fullConstraintGeneric.FullName);
+                    Assert.AreEqual("TestFullConstraint<T:({},Measurable),Z:(Iterable<String>,Measurable)>",
+                        fullConstraintGeneric.FullName);
                     Assert.AreEqual("TestFullConstraint", fullConstraintGeneric.Name);
-                    Assert.AreEqual("<T:({},Measurable),Z:(Iterable<String>,Measurable)>", fullConstraintGeneric.Template);
+                    Assert.AreEqual("<T:({},Measurable),Z:(Iterable<String>,Measurable)>",
+                        fullConstraintGeneric.Template);
                     Assert.AreEqual(2, fullConstraintGeneric.Members.Count);
                     member = fullConstraintGeneric.Members[0];
                     Assert.AreEqual("test1", member.Name);
@@ -735,7 +740,7 @@ namespace ASCompletion.Model
             [Test(Description = "Includes Commit a2b92a6")]
             public void ParseFile_Regions()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.RegionsTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.RegionsTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -785,7 +790,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_Comments()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.CommentsTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.CommentsTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -821,7 +826,9 @@ namespace ASCompletion.Model
             [Test(Description = "Shows that enum elements are not getting comments currently")]
             public void ParseFile_SpecialClassesComments()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.SpecialClassesCommentsTest.hx"))
+                using (
+                    var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.SpecialClassesCommentsTest.hx")
+                    )
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -877,7 +884,7 @@ namespace ASCompletion.Model
             [Test(Description = "PR 680")]
             public void ParseFile_RegExLiterals()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.RegExTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.RegExTest.hx"))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
@@ -886,7 +893,7 @@ namespace ASCompletion.Model
                     Context.ASContext.Context = context;
                     var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
 
-                    Assert.AreEqual(4, model.Members.Count);  // First member = function itself
+                    Assert.AreEqual(4, model.Members.Count); // First member = function itself
 
                     var regExMember = model.Members[1];
                     Assert.AreEqual("regExInArray", regExMember.Name);
@@ -902,7 +909,7 @@ namespace ASCompletion.Model
             [Test(Description = "PR 680")]
             public void ParseFile_MultiLineStrings()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.MultiLineStringsTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.MultiLineStringsTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -943,7 +950,7 @@ namespace ASCompletion.Model
             [Test(Description = "PR 680")]
             public void ParseFile_StringWithEscapedChars()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.EscapedStringsTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.EscapedStringsTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -977,13 +984,13 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_Imports()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ImportTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.ImportTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
                     var model = ASFileParser.ParseFile(srcModel);
 
-                    Assert.AreEqual(4, model.Imports.Count);  // import * ignored
+                    Assert.AreEqual(4, model.Imports.Count); // import * ignored
 
                     var import = model.Imports[0];
                     Assert.AreEqual(FlagType.Class, import.Flags & FlagType.Class);
@@ -1010,7 +1017,7 @@ namespace ASCompletion.Model
             [Ignore("Not supported, for now we hope!")]
             public void ParseFile_ImportAliases()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ImportAliasTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.ImportAliasTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1023,7 +1030,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_FunctionTypes()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.FunctionTypesTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.FunctionTypesTest.hx"))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
@@ -1051,7 +1058,9 @@ namespace ASCompletion.Model
             [Ignore("Not supported for now")]
             public void ParseFile_FunctionTypesWithSubTypes()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.FunctionTypesWithSubTypesTest.hx"))
+                using (
+                    var resourceFile =
+                        new TestFile("ASCompletion.Test_Files.parser.haxe.FunctionTypesWithSubTypesTest.hx"))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
@@ -1079,7 +1088,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_ComplexClass()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.haxe.ComplexClassTest.hx"))
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.ComplexClassTest.hx"))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1279,7 +1288,39 @@ namespace ASCompletion.Model
                     Assert.AreEqual(41, param.LineTo);
                 }
             }
-        }
 
+            [Ignore("Unsupported at the moment")]
+            public void ParseFile_IdentifiersWithUnicodeChars()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.IdentifiersWithUnicodeCharsTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("Test", classModel.Name);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(2, classModel.LineFrom);
+                    Assert.AreEqual(9, classModel.LineTo);
+                    Assert.AreEqual(2, classModel.Members.Count);
+
+                    var memberModel = classModel.Members[0];
+                    Assert.AreEqual("thísIsVälid", memberModel.Name);
+                    Assert.AreEqual("String", memberModel.Type);
+                    Assert.AreEqual(FlagType.Function, memberModel.Flags & FlagType.Function);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(4, memberModel.LineFrom);
+                    Assert.AreEqual(6, memberModel.LineTo);
+
+                    memberModel = classModel.Members[1];
+                    Assert.AreEqual("日本語文字ヴァリアブル", memberModel.Name);
+                    Assert.AreEqual("Dynamic", memberModel.Type);
+                    Assert.AreEqual(FlagType.Variable, memberModel.Flags & FlagType.Variable);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(8, memberModel.LineFrom);
+                    Assert.AreEqual(8, memberModel.LineTo);
+                }
+            }
+        }
     }
 }
