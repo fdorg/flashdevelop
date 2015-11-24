@@ -52,6 +52,34 @@ namespace ASCompletion.Completion
         }
 
         [Test]
+        public void GetBodyStart_EndOnSecondLine()
+        {
+            var sci = GetBaseScintillaControl();
+            // TODO: Should we reindent second line?
+            sci.Text = "function test():void{\r\n\t\t\t}";
+            sci.ConfigurationLanguage = "haxe";
+            sci.Colourise(0, -1);
+            int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
+
+            Assert.AreEqual(26, funcBodyStart);
+            Assert.AreEqual("function test():void{\r\n\t\t\t\r\n}", sci.Text);
+        }
+
+        [Test]
+        public void GetBodyStart_CharOnSecondLine()
+        {
+            var sci = GetBaseScintillaControl();
+            // TODO: Should we reindent second line?
+            sci.Text = "function test():void{\r\n\t\t\t//comment}";
+            sci.ConfigurationLanguage = "haxe";
+            sci.Colourise(0, -1);
+            int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
+
+            Assert.AreEqual(26, funcBodyStart);
+            Assert.AreEqual("function test():void{\r\n\t\t\t//comment}", sci.Text);
+        }
+
+        [Test]
         public void GetBodyStart_EndOnSameDeclarationLine()
         {
             var sci = GetBaseScintillaControl();
