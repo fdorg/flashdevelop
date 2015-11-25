@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace ProjectManager.Helpers
@@ -10,13 +11,15 @@ namespace ProjectManager.Helpers
     /// <summary>
     /// A simple form where a user can enter a text string.
     /// </summary>
-    public class LineEntryDialog : System.Windows.Forms.Form
+    public class LineEntryDialog : Form
     {
+        readonly Keys shortcutToLowercase;
+        readonly Keys shortcutToUppercase;
         string line;
 
         #region Form Designer Components
 
-        private System.Windows.Forms.TextBox lineBox;
+        protected System.Windows.Forms.TextBox lineBox;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
         /// <summary>
@@ -37,12 +40,14 @@ namespace ProjectManager.Helpers
 
         public LineEntryDialog(string captionText, string labelText, string defaultLine)
         {
+            shortcutToLowercase = PluginBase.MainForm.GetShortcutItemKeys("EditMenu.ToLowercase");
+            shortcutToUppercase = PluginBase.MainForm.GetShortcutItemKeys("EditMenu.ToUppercase");
             InitializeComponent();
             InititalizeLocalization();
-            this.Font = PluginCore.PluginBase.Settings.DefaultFont;
-
+            this.Font = PluginBase.Settings.DefaultFont;
             this.Text = " " + captionText;
             titleLabel.Text = labelText;
+            lineBox.KeyDown += OnLineBoxOnKeyDown;
             lineBox.Text = (defaultLine != null) ? defaultLine : string.Empty;
             lineBox.SelectAll();
             lineBox.Focus();
@@ -165,6 +170,20 @@ namespace ProjectManager.Helpers
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)
+        {
+            string selectedText = lineBox.SelectedText;
+            if (string.IsNullOrEmpty(selectedText)) return;
+            Keys keys = args.KeyData;
+            if (keys == shortcutToLowercase) selectedText = selectedText.ToLower();
+            else if (keys == shortcutToUppercase) selectedText = selectedText.ToUpper();
+            else return;
+            int selectionStart = lineBox.SelectionStart;
+            int selectionLength = lineBox.SelectionLength;
+            lineBox.Paste(selectedText);
+            SelectRange(selectionStart, selectionLength);
         }
 
         public void SelectRange(int start, int length)

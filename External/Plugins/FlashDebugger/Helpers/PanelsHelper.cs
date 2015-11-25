@@ -45,7 +45,7 @@ namespace FlashDebugger
             stackframePanel = PluginBase.MainForm.CreateDockablePanel(stackframeUI, stackframeGuid, pluginImage, DockState.DockLeft);
             stackframePanel.Hide();
 
-            watchUI = new WatchUI();
+            watchUI = new WatchUI(PluginMain.watchManager);
             watchUI.Text = TextHelper.GetString("Title.Watch");
             watchPanel = PluginBase.MainForm.CreateDockablePanel(watchUI, watchGuid, pluginImage, DockState.DockLeft);
             watchPanel.Hide();

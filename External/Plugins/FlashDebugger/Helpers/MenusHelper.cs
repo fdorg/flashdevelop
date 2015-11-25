@@ -272,6 +272,7 @@ namespace FlashDebugger
             {
                 PanelsHelper.localsUI.TreeControl.Nodes.Clear();
                 PanelsHelper.stackframeUI.ClearItem();
+                PanelsHelper.watchUI.UpdateElements();
             }
             enabled = GetLanguageIsValid();
             ToggleBreakPointMenu.Enabled = ToggleBreakPointEnableMenu.Enabled = enabled;

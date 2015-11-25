@@ -882,8 +882,8 @@ namespace ASCompletion.Completion
 
         private static void NotifyContextChanged()
         {
-            if (OnResolvedContextChanged != null) 
-                OnResolvedContextChanged(CurrentResolvedContext);
+            if (OnResolvedContextChanged != null)
+                OnResolvedContextChanged.Invoke(CurrentResolvedContext);
         }
 
         /// <summary>
