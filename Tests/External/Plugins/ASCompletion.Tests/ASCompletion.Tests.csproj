@@ -96,6 +96,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Completion\ASCompleteTests.cs" />
     <Compile Include="Completion\ASGeneratorTests.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -148,6 +149,7 @@
     <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoMembers.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoPublicMember.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfacePublicMemberBehindPrivate.hx" />
+    <EmbeddedResource Include="Test Files\completion\as3\SimpleTest.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
