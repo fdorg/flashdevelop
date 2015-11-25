@@ -4,29 +4,29 @@ class ImplementTest{
 	
 	/* INTERFACE ITest */
 	
-	public var normalVariable():Int;
+	public var normalVariable:Int;
 	
 	public var ro(default, null):Int;
-
+	
 	public var wo(null, default):Int;
-
+	
 	@:isVar public var x(get, set):Int;
 	
-	get_x():Int {
+	function get_x():Int {
 		return x;
 	}
 	
-	set_x(val:Int):Int {
-		return x = val;
+	function set_x(value:Int):Int {
+		return x = value;
 	}
-
+	
 	public var y(get, never):Int;
 	
 	function get_y():Int {
 		return y;
 	}
 	
-	public function testMethod():Number {
+	public function testMethod():Float {
 		
 	}
 	
@@ -34,7 +34,7 @@ class ImplementTest{
 		
 	}
 	
-	private function testPrivateMethod(?arg:String, ?arg2:Int = 1):Number {
+	private function testPrivateMethod(?arg:String, ?arg2:Int = 1):Float {
 		
 	}
 }

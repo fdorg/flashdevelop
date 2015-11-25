@@ -3117,13 +3117,16 @@ namespace ASCompletion.Completion
             IASContext context = ASContext.Context;
             ContextFeatures features = context.Features;
             bool canGenerate = false;
+            bool isHaxe = IsHaxe;
+            FlagType flags = (FlagType.Function | FlagType.Getter | FlagType.Setter);
+            if (isHaxe) flags |= FlagType.Variable;
 
             iType.ResolveExtends(); // resolve inheritance chain
             while (!iType.IsVoid() && iType.QualifiedName != "Object")
             {
                 foreach (MemberModel method in iType.Members)
                 {
-                    if ((method.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) == 0
+                    if ((method.Flags & flags) == 0
                         || method.Name == iType.Name)
                         continue;
 
@@ -3131,13 +3134,42 @@ namespace ASCompletion.Completion
                     ASComplete.FindMember(method.Name, inClass, result, method.Flags, 0);
                     if (!result.IsNull()) continue;
 
-                    string decl = entry ? NewLine : "";
+                    string decl;
                     if ((method.Flags & FlagType.Getter) > 0)
-                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Getter"));
+                    {
+                        if (isHaxe)
+                        {
+                            decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Property"));
+
+                            string getter = null, setter = null;
+                            if (method.Parameters[0].Name == "get")
+                            {
+                                getter = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate("Getter"));
+                                getter = TemplateUtils.ReplaceTemplateVariable(getter, "Modifiers", null);
+                                getter = TemplateUtils.ReplaceTemplateVariable(getter, "Member", method.Name);
+                                decl += getter;
+                            }
+
+                            if (method.Parameters[1].Name == "set")
+                            {
+                                setter = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate("Setter"));
+                                setter = TemplateUtils.ReplaceTemplateVariable(setter, "Modifiers", null);
+                                setter = TemplateUtils.ReplaceTemplateVariable(setter, "Member", method.Name);
+                                decl += setter;
+                            }
+
+                            string metadata = (getter != null && setter != null) ? "@:isVar" : null;
+                            decl = TemplateUtils.ReplaceTemplateVariable(decl, "MetaData", metadata);
+                        }
+                        else
+                            decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Getter"));
+                    }
                     else if ((method.Flags & FlagType.Setter) > 0)
                         decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
-                    else
+                    else if ((method.Flags & FlagType.Function) > 0)
                         decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
+                    else
+                        decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Variable"));
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", "_" + method.Name);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", features.voidKey);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", null);
@@ -3518,13 +3550,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateGetter(string name, MemberModel member, int position)
         {
-            string acc;
-            if (IsHaxe)
-            {
-                acc = GetStaticKeyword(member);
-                if (!string.IsNullOrEmpty(acc)) acc += " ";
-            }
-            else acc = GetPublicAccessor(member);
+            string acc = IsHaxe ? GetStaticKeyword(member) : GetPublicAccessor(member);
             string template = TemplateUtils.GetTemplate("Getter");
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
@@ -3536,12 +3562,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateSetter(string name, MemberModel member, int position)
         {
-            string acc;
-            if (IsHaxe)
-            {
-                acc = GetStaticKeyword(member);
-                if (!string.IsNullOrEmpty(acc)) acc += " ";
-            } else acc = GetPublicAccessor(member);
+            string acc = IsHaxe ? GetStaticKeyword(member) : GetPublicAccessor(member);
             string template = TemplateUtils.GetTemplate("Setter");
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
@@ -3562,13 +3583,7 @@ namespace ASCompletion.Completion
                 GenerateGetter(name, member, position);
                 return;
             }
-            string acc;
-            if (IsHaxe)
-            {
-                acc = GetStaticKeyword(member);
-                if (!string.IsNullOrEmpty(acc)) acc += " ";
-            }
-            else acc = GetPublicAccessor(member);
+            string acc = IsHaxe ? GetStaticKeyword(member) : GetPublicAccessor(member);
             string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Type", FormatType(member.Type));

@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ASCompletion.Context;
+using ASCompletion.Model;
 using ASCompletion.Settings;
 using ASCompletion.TestUtils;
 using FlashDevelop;
@@ -198,12 +199,100 @@ namespace ASCompletion.Completion
 
         public class GenerateJob : ASGeneratorTests
         {
+            private ClassModel GetAs3ImplementInterfaceModel()
+            {
+                var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
+                interfaceModel.Members.Add(new MemberList
+                                           {
+                                               new MemberModel("getter", "String", FlagType.Getter, Visibility.Public),
+                                               new MemberModel("setter", "void", FlagType.Setter, Visibility.Public)
+                                                   {
+                                                        Parameters = new List<MemberModel> { new MemberModel("value", "String", FlagType.Variable, Visibility.Default) }
+                                                   },
+                                               new MemberModel("testMethod", "Number", FlagType.Function, Visibility.Public),
+                                               new MemberModel("testMethodArgs", "int", FlagType.Function, Visibility.Public)
+                                                   {
+                                                        Parameters = new List<MemberModel>
+                                                        {
+                                                            new MemberModel("arg", "Number", FlagType.Variable, Visibility.Default),
+                                                            new MemberModel("arg2", "Boolean", FlagType.Variable, Visibility.Default)
+                                                        }
+                                                   }
+                                           });
+
+                return interfaceModel;
+            }
+
+            private ClassModel GetHaxeImplementInterfaceModel()
+            {
+                var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
+                interfaceModel.Members.Add(new MemberList
+                                           {
+                                               new MemberModel("normalVariable", "Int", FlagType.Variable, Visibility.Public),
+                                               new MemberModel("ro", "Int", FlagType.Getter, Visibility.Public)
+                                               {
+                                                   Parameters = new List<MemberModel>
+                                                   {
+                                                       new MemberModel {Name = "default"},
+                                                       new MemberModel {Name = "null"}
+                                                   }
+                                               },
+                                               new MemberModel("wo", "Int", FlagType.Getter, Visibility.Public)
+                                               {
+                                                   Parameters = new List<MemberModel>
+                                                   {
+                                                       new MemberModel {Name = "null"},
+                                                       new MemberModel {Name = "default"}
+                                                   }
+                                               },
+                                               new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
+                                               {
+                                                   Parameters = new List<MemberModel>
+                                                   {
+                                                       new MemberModel {Name = "get"},
+                                                       new MemberModel {Name = "set"}
+                                                   }
+                                               },
+                                               new MemberModel("y", "Int", FlagType.Getter, Visibility.Public)
+                                               {
+                                                   Parameters = new List<MemberModel>
+                                                   {
+                                                       new MemberModel {Name = "get"},
+                                                       new MemberModel {Name = "never"}
+                                                   }
+                                               },
+                                               new MemberModel("testMethod", "Float", FlagType.Function, Visibility.Public),
+                                               new MemberModel("testMethodArgs", "Int", FlagType.Function, Visibility.Public)
+                                               {
+                                                   Parameters = new List<MemberModel>
+                                                   {
+                                                       new MemberModel("arg", "Float", FlagType.Variable, Visibility.Default),
+                                                       new MemberModel("arg2", "Bool", FlagType.Variable, Visibility.Default)
+                                                   }
+                                               },
+                                               new MemberModel("testPrivateMethod", "Float", FlagType.Function, Visibility.Private)
+                                               {
+                                                   Parameters = new List<MemberModel>
+                                                   {
+                                                       new MemberModel("?arg", "String", FlagType.Variable, Visibility.Default),
+                                                       new MemberModel("?arg2", "Int", FlagType.Variable, Visibility.Default)
+                                                       {
+                                                           Value = "1"
+                                                       }
+                                                   }
+                                               }
+                                           });
+
+
+                return interfaceModel;
+            }
+
             [Test]
             [Ignore]
             public void FieldFromParameterPublicScope()
             {
                 var table = new Hashtable();
-                table["scope"] = Model.Visibility.Public;
+                table["scope"] = Visibility.Public;
 
                 var sci = GetBaseScintillaControl();
                 sci.Text = "\tfunction test():void{\r\n\t\t\t}";
@@ -214,8 +303,8 @@ namespace ASCompletion.Completion
             [Test]
             public void ImplementFromInterface_FullAs3()
             {
-                var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest", Type = "ITest" };
-                var classModel = new Model.ClassModel { InFile = new Model.FileModel(), LineFrom = 1, LineTo = 1 };
+                var interfaceModel = GetAs3ImplementInterfaceModel();
+                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 1 };
                 var pluginMain = Substitute.For<PluginMain>();
                 var pluginUiMock = new PluginUIMock(pluginMain);
                 pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
@@ -225,29 +314,12 @@ namespace ASCompletion.Completion
                 ASContext.Context = Substitute.For<IASContext>();
                 ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
                 ASContext.Context.Features.voidKey = "void";
+                ASContext.Context.CurrentModel.Returns(new FileModel());
 
                 var sci = GetBaseScintillaControl();
                 sci.Text = "package generatortest {\r\n\tpublic class ImplementTest{}\r\n}";
                 sci.ConfigurationLanguage = "as3";
                 doc.SciControl.Returns(sci);
-
-                interfaceModel.Members.Add(new Model.MemberList
-                                           {
-                                               new Model.MemberModel("getter", "String", Model.FlagType.Getter, Model.Visibility.Public),
-                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Public)
-                                                   {
-                                                        Parameters = new List<Model.MemberModel> { new Model.MemberModel("value", "String", Model.FlagType.Variable, Model.Visibility.Default) }
-                                                   },
-                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Public),
-                                               new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Public)
-                                                   {
-                                                        Parameters = new List<Model.MemberModel>
-                                                        {
-                                                            new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default),
-                                                            new Model.MemberModel("arg2", "Boolean", Model.FlagType.Variable, Model.Visibility.Default)
-                                                        }
-                                                   }
-                                           });
 
                 ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
                 Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoMembers.as"), sci.Text);
@@ -256,8 +328,8 @@ namespace ASCompletion.Completion
             [Test]
             public void ImplementFromInterface_FullAs3WithPublicMemberBehindPrivate()
             {
-                var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest", Type = "ITest" };
-                var classModel = new Model.ClassModel { InFile = new Model.FileModel(), LineFrom = 1, LineTo = 10 };
+                var interfaceModel = GetAs3ImplementInterfaceModel();
+                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 10 };
                 var pluginMain = Substitute.For<PluginMain>();
                 var pluginUiMock = new PluginUIMock(pluginMain);
                 pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
@@ -267,36 +339,19 @@ namespace ASCompletion.Completion
                 ASContext.Context = Substitute.For<IASContext>();
                 ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
                 ASContext.Context.Features.voidKey = "void";
+                ASContext.Context.CurrentModel.Returns(new FileModel());
 
                 var sci = GetBaseScintillaControl();
                 sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfacePublicMemberBehindPrivate.as");
                 sci.ConfigurationLanguage = "as3";
                 doc.SciControl.Returns(sci);
 
-                classModel.Members.Add(new Model.MemberList
+                classModel.Members.Add(new MemberList
                                            {
-                                               new Model.MemberModel("publicMember", "void", Model.FlagType.Function, Model.Visibility.Public)
+                                               new MemberModel("publicMember", "void", FlagType.Function, Visibility.Public)
                                                    {LineFrom = 3, LineTo = 5},
-                                               new Model.MemberModel("privateMember", "String", Model.FlagType.Function, Model.Visibility.Private)
+                                               new MemberModel("privateMember", "String", FlagType.Function, Visibility.Private)
                                                    {LineFrom = 7, LineTo = 9}
-                                           });
-
-                interfaceModel.Members.Add(new Model.MemberList
-                                           {
-                                               new Model.MemberModel("getter", "String", Model.FlagType.Getter, Model.Visibility.Public),
-                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Public)
-                                                   {
-                                                        Parameters = new List<Model.MemberModel> { new Model.MemberModel("value", "String", Model.FlagType.Variable, Model.Visibility.Default) }
-                                                   },
-                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Public),
-                                               new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Public)
-                                                   {
-                                                        Parameters = new List<Model.MemberModel>
-                                                        {
-                                                            new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default),
-                                                            new Model.MemberModel("arg2", "Boolean", Model.FlagType.Variable, Model.Visibility.Default)
-                                                        }
-                                                   }
                                            });
 
                 ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
@@ -306,8 +361,8 @@ namespace ASCompletion.Completion
             [Test]
             public void ImplementFromInterface_FullAs3WithoutPublicMember()
             {
-                var interfaceModel = new Model.ClassModel { InFile = new Model.FileModel(), Name = "ITest", Type = "ITest" };
-                var classModel = new Model.ClassModel { InFile = new Model.FileModel(), LineFrom = 1, LineTo = 10 };
+                var interfaceModel = GetAs3ImplementInterfaceModel();
+                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 10 };
                 var pluginMain = Substitute.For<PluginMain>();
                 var pluginUiMock = new PluginUIMock(pluginMain);
                 pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
@@ -317,40 +372,46 @@ namespace ASCompletion.Completion
                 ASContext.Context = Substitute.For<IASContext>();
                 ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
                 ASContext.Context.Features.voidKey = "void";
+                ASContext.Context.CurrentModel.Returns(new FileModel());
 
                 var sci = GetBaseScintillaControl();
                 sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfaceNoPublicMember.as");
                 sci.ConfigurationLanguage = "as3";
                 doc.SciControl.Returns(sci);
 
-                classModel.Members.Add(new Model.MemberList
-                                           {
-                                               new Model.MemberModel("privateMember", "String", Model.FlagType.Function, Model.Visibility.Private)
-                                                   {LineFrom = 3, LineTo = 5}
-                                           });
-
-                interfaceModel.Members.Add(new Model.MemberList
-                                           {
-                                               new Model.MemberModel("getter", "String", Model.FlagType.Getter, Model.Visibility.Public),
-                                               new Model.MemberModel("setter", "void", Model.FlagType.Setter, Model.Visibility.Public)
-                                                   {
-                                                        Parameters = new List<Model.MemberModel> { new Model.MemberModel("value", "String", Model.FlagType.Variable, Model.Visibility.Default) }
-                                                   },
-                                               new Model.MemberModel("testMethod", "Number", Model.FlagType.Function, Model.Visibility.Public),
-                                               new Model.MemberModel("testMethodArgs", "int", Model.FlagType.Function, Model.Visibility.Public)
-                                                   {
-                                                        Parameters = new List<Model.MemberModel>
-                                                        {
-                                                            new Model.MemberModel("arg", "Number", Model.FlagType.Variable, Model.Visibility.Default),
-                                                            new Model.MemberModel("arg2", "Boolean", Model.FlagType.Variable, Model.Visibility.Default)
-                                                        }
-                                                   }
-                                           });
+                classModel.Members.Add(new MemberModel("privateMember", "String", FlagType.Function, Visibility.Private)
+                {
+                    LineFrom = 3, LineTo = 5
+                });
 
                 ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
                 Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoPublicMember.as"), sci.Text);
             }
-        }
 
+            [Test]
+            public void ImplementFromInterface_FullHaxe()
+            {
+                var interfaceModel = GetHaxeImplementInterfaceModel();
+                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 };
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                ASContext.Context = Substitute.For<IASContext>();
+                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
+                ASContext.Context.Features.voidKey = "Void";
+                ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true});
+
+                var sci = GetBaseScintillaControl();
+                sci.Text = "package generatortest;\r\n\r\nclass ImplementTest{}";
+                sci.ConfigurationLanguage = "haxe";
+                doc.SciControl.Returns(sci);
+
+                ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
+                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembers.hx"), sci.Text);
+            }
+        }
     }
 }
