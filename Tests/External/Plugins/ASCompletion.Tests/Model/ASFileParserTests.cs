@@ -641,7 +641,7 @@ namespace ASCompletion.Model
                 }
             }
 
-            [Ignore("Easy fix, to add")]
+            [Test]
             public void ParseFile_GenericsWithObjectConstraints()
             {
                 using (
@@ -651,7 +651,7 @@ namespace ASCompletion.Model
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
                     var model = ASFileParser.ParseFile(srcModel);
-                    Assert.AreEqual(2, model.Classes.Count);
+                    Assert.AreEqual(3, model.Classes.Count);
 
                     var objectConstraintGeneric = model.Classes[0];
                     Assert.AreEqual(2, objectConstraintGeneric.LineFrom);
@@ -688,14 +688,6 @@ namespace ASCompletion.Model
                     arg = member.Parameters[1];
                     Assert.AreEqual("actual", arg.Name);
                     Assert.AreEqual("K", arg.Type);
-                    var simpleGeneric = model.Classes[0];
-                    Assert.AreEqual(2, simpleGeneric.LineFrom);
-                    Assert.AreEqual(11, simpleGeneric.LineTo);
-                    Assert.AreEqual(FlagType.Class, simpleGeneric.Flags & FlagType.Class);
-                    Assert.AreEqual("Test<T>", simpleGeneric.FullName);
-                    Assert.AreEqual("Test", simpleGeneric.Name);
-                    Assert.AreEqual("<T>", simpleGeneric.Template);
-                    Assert.AreEqual(2, simpleGeneric.Members.Count);
 
                     var fullConstraintGeneric = model.Classes[1];
                     Assert.AreEqual(13, fullConstraintGeneric.LineFrom);
@@ -734,6 +726,44 @@ namespace ASCompletion.Model
                     arg = member.Parameters[1];
                     Assert.AreEqual("actual", arg.Name);
                     Assert.AreEqual("V", arg.Type);
+
+                    // TODO: There should be a space between 'function' and 'new'! There should be a separate test covering this error
+                    var typeDefConstraintGeneric = model.Classes[2];
+                    Assert.AreEqual(24, typeDefConstraintGeneric.LineFrom);
+                    Assert.AreEqual(33, typeDefConstraintGeneric.LineTo);
+                    Assert.AreEqual(FlagType.Class, typeDefConstraintGeneric.Flags & FlagType.Class);
+                    Assert.AreEqual("TestTypeDefConstraint<T:({functionnew():Void;},Measurable)>", typeDefConstraintGeneric.FullName);
+                    Assert.AreEqual("TestTypeDefConstraint", typeDefConstraintGeneric.Name);
+                    Assert.AreEqual("<T:({functionnew():Void;},Measurable)>", typeDefConstraintGeneric.Template);
+                    Assert.AreEqual(2, typeDefConstraintGeneric.Members.Count);
+                    member = typeDefConstraintGeneric.Members[0];
+                    Assert.AreEqual("test1", member.Name);
+                    Assert.AreEqual(26, member.LineFrom);
+                    Assert.AreEqual(28, member.LineTo);
+                    Assert.AreEqual("T", member.Type);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    Assert.AreEqual(2, member.Parameters.Count);
+                    arg = member.Parameters[0];
+                    Assert.AreEqual("expected", arg.Name);
+                    Assert.AreEqual("T", arg.Type);
+                    arg = member.Parameters[1];
+                    Assert.AreEqual("actual", arg.Name);
+                    Assert.AreEqual("T", arg.Type);
+                    member = typeDefConstraintGeneric.Members[1];
+                    Assert.AreEqual("test2<K:({functionnew():Void;},Measurable)>", member.FullName);
+                    Assert.AreEqual("test2", member.Name);
+                    Assert.AreEqual("<K:({functionnew():Void;},Measurable)>", member.Template);
+                    Assert.AreEqual(30, member.LineFrom);
+                    Assert.AreEqual(32, member.LineTo);
+                    Assert.AreEqual("K", member.Type);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    arg = member.Parameters[0];
+                    Assert.AreEqual("expected", arg.Name);
+                    Assert.AreEqual("K", arg.Type);
+                    arg = member.Parameters[1];
+                    Assert.AreEqual("actual", arg.Name);
+                    Assert.AreEqual("K", arg.Type);
+
                 }
             }
 
@@ -1055,7 +1085,7 @@ namespace ASCompletion.Model
                 }
             }
 
-            [Ignore("Not supported for now")]
+            [Test]
             public void ParseFile_FunctionTypesWithSubTypes()
             {
                 using (
@@ -1289,7 +1319,7 @@ namespace ASCompletion.Model
                 }
             }
 
-            [Ignore("Unsupported at the moment")]
+            [Test]
             public void ParseFile_IdentifiersWithUnicodeChars()
             {
                 using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.IdentifiersWithUnicodeCharsTest.hx"))

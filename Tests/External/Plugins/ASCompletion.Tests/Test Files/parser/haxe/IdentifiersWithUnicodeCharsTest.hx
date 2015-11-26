@@ -6,5 +6,5 @@ class Test
 	{
     }
 	
-	public var 日本語文字ヴァリアブル：Dynamic;
+	public var 日本語文字ヴァリアブル:Dynamic;
 }

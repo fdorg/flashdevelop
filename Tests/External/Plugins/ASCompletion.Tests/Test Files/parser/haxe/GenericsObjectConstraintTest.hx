@@ -21,3 +21,14 @@ class TestFullConstraint<T:({}, Measurable), Z:(Iterable<String>, Measurable)>
 	{
 	}
 }
+
+class TestTypeDefConstraint<T:({ function new():Void; }, Measurable)>
+{
+	public function test1(expected:T, actual:T):T
+	{
+	}
+	
+	public function test2<K:({ function new():Void; }, Measurable)>(expected:K, actual:K):K
+	{
+	}
+}

@@ -1212,7 +1212,7 @@ namespace ASCompletion.Model
                     else
                     {
                         // valid chars for identifiers
-                        if (c1 >= 'A' && c1 <= 'Z')
+                        if (char.IsLetter(c1))
                         {
                             addChar = true;
                         }
@@ -1269,7 +1269,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
-                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')'))
+                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
                             {
                                 hadWS = false;
                                 hadDot = false;
