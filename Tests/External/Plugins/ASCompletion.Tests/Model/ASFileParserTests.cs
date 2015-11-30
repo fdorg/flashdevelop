@@ -1139,6 +1139,7 @@ namespace ASCompletion.Model
                     Assert.AreEqual("functionTypesWithSubTypes", member.Name);
                     Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
                     Assert.AreEqual(3, member.Parameters.Count);
+                    Assert.AreEqual("((Dynamic->Dynamic)->Int)->Int", member.Type);
                     var arg = member.Parameters[0];
                     Assert.AreEqual("functionTypeArg", arg.Name);
                     Assert.AreEqual("(Dynamic->Dynamic)->Dynamic", arg.Type);
@@ -1162,7 +1163,7 @@ namespace ASCompletion.Model
                     Assert.AreEqual(3, member.LineFrom);
                     Assert.AreEqual(3, member.LineTo);
                     Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                    Assert.AreEqual("((Dynamic->Dynamic)->Int->)Int", member.Type);
+                    Assert.AreEqual("((Dynamic->Dynamic)->Int)->Int", member.Type);
 
                     member = model.Members[3];
                     Assert.AreEqual("functionType3", member.Name);

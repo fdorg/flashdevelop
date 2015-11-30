@@ -1432,6 +1432,7 @@ namespace ASCompletion.Model
                         else if (c1 == '(')
                         {
                             if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && (!haXe || curToken.Text != "for"))
+                            {
                                 if (haXe && curMember != null && valueLength == 0)
                                 {
                                     if (!foundColon && !inType) // Haxe properties
@@ -1447,6 +1448,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                                 else context = 0;
+                            }
 
                             // beginning of method parameters
                             if (context == FlagType.Function)
@@ -1547,6 +1549,7 @@ namespace ASCompletion.Model
                             context = 0;
                             if (inEnum) context = FlagType.Enum;
                             else if (inTypedef) context = FlagType.TypeDef;
+                            else context = FlagType.Variable;
                             modifiers = 0;
                             inParams = false;
                             curMember = curMethod;
