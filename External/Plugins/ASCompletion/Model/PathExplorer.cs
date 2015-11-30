@@ -284,7 +284,7 @@ namespace ASCompletion.Model
             {
                 if (stopExploration) return writeCache;
                 // parse
-                filename = foundFiles[i] as string;
+                filename = foundFiles[i];
                 if (!File.Exists(filename))
                     continue;
                 if (pathModel.HasFile(filename))

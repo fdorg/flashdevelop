@@ -237,7 +237,7 @@ namespace PluginCore.Controls
                 {
                     if (Win32.ShouldUseWin32())
                     {
-                        Win32.SendMessage((IntPtr)CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
                         return true;
                     }
                     else return false;
@@ -427,7 +427,7 @@ namespace PluginCore.Controls
             if (sci == null) return 0;
             // evaluate the font size
             Font tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
-            Graphics g = ((Control)sci).CreateGraphics();
+            Graphics g = sci.CreateGraphics();
             SizeF textSize = g.MeasureString("S", tempFont);
             return (int)Math.Ceiling(textSize.Height);
         }

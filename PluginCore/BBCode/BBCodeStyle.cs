@@ -38,7 +38,7 @@ namespace PluginCore.BBCode
             {
                 if (!outStyle.isAbsFontSize)
                 {
-                    outStyle.isAbsFontSize = (bool)(parent.isAbsFontSize && parent.fontSize != 0);
+                    outStyle.isAbsFontSize = parent.isAbsFontSize && parent.fontSize != 0;
                     outStyle.fontSize = parent.fontSize + outStyle.fontSize;
                 }
                 else

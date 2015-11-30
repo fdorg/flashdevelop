@@ -68,7 +68,7 @@ namespace ASCompletion.Model
             PathModel aPath;
             if (pathes.ContainsKey(modelName))
             {
-                aPath = pathes[modelName] as PathModel;
+                aPath = pathes[modelName];
                 if (aPath.IsTemporaryPath || !aPath.IsValid || aPath.FilesCount == 0)
                 {
                     pathes[modelName] = aPath = new PathModel(path, context);

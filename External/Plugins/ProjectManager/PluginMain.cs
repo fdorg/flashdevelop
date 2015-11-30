@@ -1259,7 +1259,7 @@ namespace ProjectManager
         {
             if (openFileQueue.Count > 0)
             {
-                String file = openFileQueue.Dequeue() as String;
+                String file = openFileQueue.Dequeue();
                 if (File.Exists(file)) OpenFile(file);
                 if (file.IndexOf("::") > 0 && File.Exists(file.Substring(0, file.IndexOf("::")))) // virtual files
                 {
