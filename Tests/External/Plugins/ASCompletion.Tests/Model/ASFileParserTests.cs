@@ -7,9 +7,9 @@ using NUnit.Framework;
 
 namespace ASCompletion.Model
 {
-    [TestFixture]
     class ASFileParserTests
     {
+        [TestFixture]
         public class As3
         {
             [Test]
@@ -70,6 +70,7 @@ namespace ASCompletion.Model
 
         }
 
+        [TestFixture]
         public class Haxe
         {
             [Test]
@@ -1058,6 +1059,37 @@ namespace ASCompletion.Model
             }
 
             [Test]
+            public void ParseFile_AnonymousStructures()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.AnonymousStructuresTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+
+                    Assert.AreEqual(1, model.Classes.Count);
+
+                    var classModel = model.Classes[0];
+
+                    Assert.AreEqual(2, classModel.Members.Count);
+
+                    var member = classModel.Members[0];
+                    Assert.AreEqual("start", member.Name);
+                    Assert.AreEqual(1, member.LineFrom);
+                    Assert.AreEqual(1, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("{x:Int, y:Int}", member.Type);
+
+                    member = classModel.Members[1];
+                    Assert.AreEqual("target", member.Name);
+                    Assert.AreEqual(2, member.LineFrom);
+                    Assert.AreEqual(2, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("{x:Int, y:Int}", member.Type);
+                }
+            }
+
+            [Test]
             public void ParseFile_FunctionTypes()
             {
                 using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.FunctionTypesTest.hx"))
@@ -1075,12 +1107,14 @@ namespace ASCompletion.Model
                     Assert.AreEqual("functionType", member.Name);
                     Assert.AreEqual(2, member.LineFrom);
                     Assert.AreEqual(2, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                     Assert.AreEqual("Dynamic->Dynamic", member.Type);
 
                     member = model.Members[2];
                     Assert.AreEqual("functionType2", member.Name);
                     Assert.AreEqual(3, member.LineFrom);
                     Assert.AreEqual(3, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                     Assert.AreEqual("Int->Int->Int", member.Type);
                 }
             }
@@ -1099,19 +1133,43 @@ namespace ASCompletion.Model
                     Context.ASContext.Context = context;
                     var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
 
-                    Assert.AreEqual(3, model.Members.Count);
+                    Assert.AreEqual(4, model.Members.Count);
 
                     var member = model.Members[0];
+                    Assert.AreEqual("functionTypesWithSubTypes", member.Name);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                    Assert.AreEqual(3, member.Parameters.Count);
+                    var arg = member.Parameters[0];
+                    Assert.AreEqual("functionTypeArg", arg.Name);
+                    Assert.AreEqual("(Dynamic->Dynamic)->Dynamic", arg.Type);
+                    arg = member.Parameters[1];
+                    Assert.AreEqual("functionTypeArg2", arg.Name);
+                    Assert.AreEqual("(Dynamic->Dynamic)->(Int->Int)", arg.Type);
+                    Assert.AreEqual("null", arg.Value);
+                    arg = member.Parameters[2];
+                    Assert.AreEqual("test2", arg.Name);
+                    Assert.AreEqual("String", arg.Type);
+
+                    member = model.Members[1];
                     Assert.AreEqual("functionType", member.Name);
                     Assert.AreEqual(2, member.LineFrom);
                     Assert.AreEqual(2, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                     Assert.AreEqual("(Dynamic->Dynamic)->Dynamic", member.Type);
 
-                    member = model.Members[1];
+                    member = model.Members[2];
                     Assert.AreEqual("functionType2", member.Name);
                     Assert.AreEqual(3, member.LineFrom);
                     Assert.AreEqual(3, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                     Assert.AreEqual("((Dynamic->Dynamic)->Int->)Int", member.Type);
+
+                    member = model.Members[3];
+                    Assert.AreEqual("functionType3", member.Name);
+                    Assert.AreEqual(4, member.LineFrom);
+                    Assert.AreEqual(4, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("(Dynamic->Dynamic)->(Int->Int)", member.Type);
                 }
             }
 
