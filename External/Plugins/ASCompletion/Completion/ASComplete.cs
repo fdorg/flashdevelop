@@ -2150,18 +2150,18 @@ namespace ASCompletion.Completion
                 // show all project classes
                 HandleAllClassesCompletion(Sci, tail, true, true);
                 SelectTypedNewMember(Sci);
-                return true;
             }
-
-            // Consolidate known classes
-            MemberList known = new MemberList();
-            known.Merge(ASContext.Context.GetVisibleExternalElements());
-            // show
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
-            foreach(MemberModel member in known)
-                list.Add(new MemberItem(new MemberModel(member.Type, member.Type, member.Flags, member.Access)));
-            CompletionList.Show(list, autoHide, tail);
-            SelectTypedNewMember(Sci);
+            else
+            {
+                // Consolidate known classes
+                MemberList known = GetVisibleElements();
+                // show
+                List<ICompletionListItem> list = new List<ICompletionListItem>();
+                foreach (MemberModel member in known)
+                    list.Add(new MemberItem(new MemberModel(member.Type, member.Type, member.Flags, member.Access)));
+                CompletionList.Show(list, autoHide, tail);
+                SelectTypedNewMember(Sci);
+            }
             return true;
         }
 
@@ -2178,8 +2178,7 @@ namespace ASCompletion.Completion
             else
             {
                 // list visible classes
-                MemberList known = new MemberList();
-                known.Merge(ASContext.Context.GetVisibleExternalElements());
+                MemberList known = GetVisibleElements();
 
                 // show
                 List<ICompletionListItem> list = new List<ICompletionListItem>();
@@ -2210,8 +2209,7 @@ namespace ASCompletion.Completion
                 bool outOfDate = ASContext.Context.UnsetOutOfDate();
 
                 // list visible classes
-                MemberList known = new MemberList();
-                known.Merge(ASContext.Context.GetVisibleExternalElements());
+                MemberList known = GetVisibleElements();
 
                 // show
                 List<ICompletionListItem> list = new List<ICompletionListItem>();
@@ -2264,6 +2262,21 @@ namespace ASCompletion.Completion
                 }
                 keyword = GetWordLeft(Sci, ref position);
                 ContextFeatures features = ASContext.Context.Features;
+                if (keyword == "" && Sci.CharAt(position) == '>' && features.hasGenerics)
+                {
+                    int groupCount = 1;
+                    position--;
+                    while (position >= 0 && groupCount > 0)
+                    {
+                        c = (char)Sci.CharAt(position);
+                        if ("({[<".IndexOf(c) > -1)
+                            groupCount--;
+                        else if (")}]>".IndexOf(c) > -1)
+                            groupCount++;
+                        position--;
+                    }
+                    keyword = GetWordLeft(Sci, ref position);
+                }
                 if (keyword == features.functionKey)
                     coma = ComaExpression.FunctionDeclaration;
                 else
@@ -2318,12 +2331,24 @@ namespace ASCompletion.Completion
                     known = found;
                 }
             }
-
+            
             if (ASContext.Context.Features.hasDelegates && !ASContext.Context.CurrentClass.IsVoid())
             {
                 foreach (MemberModel field in ASContext.Context.CurrentClass.Members)
                     if ((field.Flags & FlagType.Delegate) > 0)
                         known.Add(field);
+            }
+
+            if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
+            {
+                var typeParams = GetVisibleTypeParameters();
+
+                if (typeParams.Items.Count > 0)
+                {
+                    typeParams.Add(known);
+                    typeParams.Sort();
+                    known = typeParams;
+                }
             }
 
             List<ICompletionListItem> list = new List<ICompletionListItem>();
@@ -3554,6 +3579,21 @@ namespace ASCompletion.Completion
                     {
                         position--;
                         string word1 = GetWordLeft(Sci, ref position);
+                        if (word1 == "" && Sci.CharAt(position) == '>' && features.hasGenerics)
+                        {
+                            int groupCount = 1;
+                            position--;
+                            while (position >= 0 && groupCount > 0)
+                            {
+                                c = (char)Sci.CharAt(position);
+                                if ("({[<".IndexOf(c) > -1)
+                                    groupCount--;
+                                else if (")}]>".IndexOf(c) > -1)
+                                    groupCount++;
+                                position--;
+                            }
+                            word1 = GetWordLeft(Sci, ref position);
+                        }
                         if (word1 == features.functionKey) return ComaExpression.FunctionDeclaration; // anonymous function
                         string word2 = GetWordLeft(Sci, ref position);
                         if (word2 == features.functionKey || word2 == features.setKey || word2 == features.getKey)
@@ -3775,6 +3815,94 @@ namespace ASCompletion.Completion
                 if (line != ASContext.Context.CurrentLine) 
                     ASContext.Context.UpdateContext(ASContext.Context.CurrentLine);
             }
+        }
+
+        static private MemberList GetTypeParameters(MemberModel model)
+        {
+            var retVal = new MemberList();
+            var template = model.Template;
+            if (template != null && template.StartsWith("<"))
+            {
+                var sb = new StringBuilder();
+                int groupCount = 0;
+                bool inConstraint = false;
+                MemberModel genType = null;
+                for (int i = 1, count = template.Length - 1; i < count; i++)
+                {
+                    char c = template[i];
+                    if (!inConstraint)
+                    {
+                        if (c == ':' || c == ',')
+                        {
+                            genType = new MemberModel();
+                            genType.Name = sb.ToString();
+                            genType.Type = sb.ToString();
+                            genType.Flags = FlagType.TypeDef;
+                            inConstraint = c == ':';
+                            retVal.Add(genType);
+                            sb.Length = 0;
+
+                            continue;
+                        }
+                        else if (char.IsWhiteSpace(c)) continue;
+                        sb.Append(c);
+                    }
+                    else
+                    {
+                        if (c == ',')
+                        {
+                            if (groupCount == 0)
+                            {
+                                genType.Type += ":" + sb.ToString();
+                                genType = null;
+                                inConstraint = false;
+                                sb.Length = 0;
+                                continue;
+                            }
+                        }
+                        else if ("({[<".IndexOf(c) > -1)
+                            groupCount++;
+                        else if (")}]>".IndexOf(c) > -1)
+                            groupCount--;
+                        sb.Append(c);
+                    }
+                }
+                if (sb.Length > 0)
+                {
+                    if (!inConstraint)
+                        retVal.Add(new MemberModel { Name = sb.ToString(), Type = sb.ToString(), Flags = FlagType.TypeDef });
+                    else
+                        genType.Type += ":" + sb.ToString();
+                }
+            }
+
+            return retVal;
+        }
+
+        static private MemberList GetVisibleElements()
+        {
+            MemberList known = new MemberList();
+            known.Merge(ASContext.Context.GetVisibleExternalElements());
+
+            if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
+            {
+                known.Merge(GetVisibleTypeParameters());
+            }
+
+            return known;
+        }
+
+        static private MemberList GetVisibleTypeParameters()
+        {
+            var typeParams = GetTypeParameters(ASContext.Context.CurrentClass);
+
+            var curMember = ASContext.Context.CurrentMember;
+            if (curMember != null && (curMember.Flags & FlagType.Function) > 0)
+            {
+                typeParams.Add(GetTypeParameters(curMember));
+            }
+
+            return typeParams;
         }
 
         /// <summary>
