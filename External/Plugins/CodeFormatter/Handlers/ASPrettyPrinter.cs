@@ -4735,7 +4735,7 @@ namespace CodeFormatter.Handlers
             mParent=parent;
             if (parent!=null)
             {
-                mPathCode=parent.mPathCode+index.ToString();
+                mPathCode = parent.mPathCode + index;
             }
             else
             {

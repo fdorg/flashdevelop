@@ -1065,11 +1065,11 @@ namespace AirProperties
                 {
                     if (_pluginMain.Settings.UseUniformFilenames)
                     {
-                        destinationFileName = filePrefix + dimensions.X.ToString() + Path.GetExtension(fileName);
+                        destinationFileName = filePrefix + dimensions.X + Path.GetExtension(fileName);
                     }
                     else if (_pluginMain.Settings.RenameIconsWithSize)
                     {
-                        destinationFileName = Path.GetFileNameWithoutExtension(fileName) + dimensions.X.ToString() + Path.GetExtension(fileName);
+                        destinationFileName = Path.GetFileNameWithoutExtension(fileName) + dimensions.X + Path.GetExtension(fileName);
                     }
                     else destinationFileName = Path.GetFileName(fileName);
                     if (!Directory.Exists(destinationPath))
@@ -1089,7 +1089,7 @@ namespace AirProperties
             }
             else
             {
-                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X.ToString(), dimensions.Y.ToString()), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X, dimensions.Y), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 

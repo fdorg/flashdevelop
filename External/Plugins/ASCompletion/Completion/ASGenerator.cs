@@ -3053,7 +3053,7 @@ namespace ASCompletion.Completion
             name = name.TrimStart(new char[] { '_' });
             if (name.Length > 3 && name.StartsWith("get") && (name[3].ToString() == char.ToUpper(name[3]).ToString()))
             {
-                name = char.ToLower(name[3]).ToString() + name.Substring(4);
+                name = char.ToLower(name[3]) + name.Substring(4);
             }
 
             if (name.Length > 1)
