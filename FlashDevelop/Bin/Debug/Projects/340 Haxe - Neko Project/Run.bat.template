@@ -1,4 +1,3 @@
 @echo off
 cd bin
-neko $(ProjectID).n
-pause
+neko $(ProjectID).n || pause
