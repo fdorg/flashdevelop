@@ -1175,6 +1175,64 @@ namespace ASCompletion.Model
             }
 
             [Test]
+            public void ParseFile_MultipleVarsAtOnce()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.MultipleVarsAtOnceTest.hx"))
+                {
+                    var plugin = Substitute.For<PluginMain>();
+                    plugin.MenuItems.Returns(new List<ToolStripItem>());
+                    var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    Context.ASContext.GlobalInit(plugin);
+                    Context.ASContext.Context = context;
+                    var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
+
+                    Assert.AreEqual(7, model.Members.Count);
+
+                    var member = model.Members[1];
+                    Assert.AreEqual("var1", member.Name);
+                    Assert.AreEqual(2, member.LineFrom);
+                    Assert.AreEqual(2, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("Int", member.Type);
+
+                    member = model.Members[2];
+                    Assert.AreEqual("var2", member.Name);
+                    Assert.AreEqual(2, member.LineFrom);
+                    Assert.AreEqual(2, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("(Dynamic->Dynamic)->(Int->Int)", member.Type);
+
+                    member = model.Members[3];
+                    Assert.AreEqual("var3", member.Name);
+                    Assert.AreEqual(3, member.LineFrom);
+                    Assert.AreEqual(3, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("Float", member.Type);
+
+                    member = model.Members[4];
+                    Assert.AreEqual("var4", member.Name);
+                    Assert.AreEqual(3, member.LineFrom);
+                    Assert.AreEqual(3, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("String", member.Type);
+
+                    member = model.Members[5];
+                    Assert.AreEqual("var5", member.Name);
+                    Assert.AreEqual(4, member.LineFrom);
+                    Assert.AreEqual(4, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("Bool", member.Type);
+
+                    member = model.Members[6];
+                    Assert.AreEqual("var6", member.Name);
+                    Assert.AreEqual(5, member.LineFrom);
+                    Assert.AreEqual(5, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("Dynamic", member.Type);
+                }
+            }
+
+            [Test]
             public void ParseFile_ComplexClass()
             {
                 using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.ComplexClassTest.hx"))

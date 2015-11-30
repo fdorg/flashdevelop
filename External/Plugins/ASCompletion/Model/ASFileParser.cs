@@ -1132,7 +1132,7 @@ namespace ASCompletion.Model
                     hadValue = false;
                     valueLength = 0;
                     valueMember = null;
-                    if (!inParams && !(inConst && context != 0) && c1 != '{') continue;
+                    if (!inParams && !(inConst && context != 0) && c1 != '{' && c1 != ',') continue;
                     else length = 0;
                 }
 
