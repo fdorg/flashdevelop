@@ -2683,7 +2683,10 @@ namespace FlashDevelop
         /// </summary>
         public void GoTo(Object sender, System.EventArgs e)
         {
-            this.gotoDialog.Show();
+            if (!this.gotoDialog.Visible)
+                this.gotoDialog.Show();
+            else
+                this.gotoDialog.Activate();
         }
 
         /// <summary>
@@ -2711,7 +2714,10 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplace(Object sender, System.EventArgs e)
         {
-            this.frInDocDialog.Show();
+            if (!this.frInDocDialog.Visible)
+                this.frInDocDialog.Show();
+            else
+                this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2725,7 +2731,10 @@ namespace FlashDevelop
             {
                 OpenEditableDocument(file);
             });
-            this.frInDocDialog.Show();
+            if (!this.frInDocDialog.Visible)
+                this.frInDocDialog.Show();
+            else
+                this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2733,7 +2742,10 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)
         {
-            this.frInFilesDialog.Show();
+            if (!this.frInFilesDialog.Visible)
+                this.frInFilesDialog.Show();
+            else
+                this.frInFilesDialog.Activate();
         }
 
         /// <summary>
@@ -2743,7 +2755,10 @@ namespace FlashDevelop
         {
             ToolStripItem button = (ToolStripItem)sender;
             String path = ((ItemData)button.Tag).Tag;
-            this.frInFilesDialog.Show(); // Show first..
+            if (!this.frInFilesDialog.Visible)
+                this.frInFilesDialog.Show(); // Show first..
+            else
+                this.frInFilesDialog.Activate();
             this.frInFilesDialog.SetFindPath(path);
         }
 
