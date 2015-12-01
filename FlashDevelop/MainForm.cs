@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Drawing;
-using System.Threading;
 using System.Reflection;
 using System.Collections;
 using System.Diagnostics;
@@ -13,7 +12,6 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
 using ScintillaNet.Configuration;
 using PluginCore.Localization;
 using FlashDevelop.Controls;
@@ -23,7 +21,6 @@ using FlashDevelop.Managers;
 using FlashDevelop.Helpers;
 using FlashDevelop.Dialogs;
 using FlashDevelop.Settings;
-using WeifenLuo.WinFormsUI;
 using WeifenLuo.WinFormsUI.Docking;
 using ICSharpCode.SharpZipLib.Zip;
 using PluginCore.Utilities;
@@ -291,7 +288,7 @@ namespace FlashDevelop
         /// </summary>
         public Boolean IsFirstInstance
         {
-            get { return MainForm.IsFirst; }
+            get { return IsFirst; }
         }
 
         /// <summary>
@@ -322,7 +319,7 @@ namespace FlashDevelop
             get
             {
                 List<ITabbedDocument> documents = new List<ITabbedDocument>();
-                foreach (DockPane pane in Globals.MainForm.DockPanel.Panes)
+                foreach (DockPane pane in DockPanel.Panes)
                 {
                     if (pane.DockState == DockState.Document)
                     {
@@ -462,7 +459,7 @@ namespace FlashDevelop
         /// </summary>
         public String[] StartArguments
         {
-            get { return MainForm.Arguments; }
+            get { return Arguments; }
         }
 
         /// <summary>
@@ -758,7 +755,7 @@ namespace FlashDevelop
         /// </summary>
         private DialogResult InitializeFirstRun()
         {
-            if (!this.StandaloneMode && MainForm.IsFirst && FirstRunDialog.ShouldProcessCommands())
+            if (!this.StandaloneMode && IsFirst && FirstRunDialog.ShouldProcessCommands())
             {
                 return FirstRunDialog.Show();
             }
@@ -1180,7 +1177,7 @@ namespace FlashDevelop
             {
                 String title = TextHelper.GetString("Title.ConfirmDialog");
                 String message = TextHelper.GetString("Info.AreYouSureToExit");
-                DialogResult result = MessageBox.Show(Globals.MainForm, message, " " + title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show(this, message, " " + title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.No) e.Cancel = true;
             }
             if (!e.Cancel) this.CloseAllDocuments(false);
@@ -1335,7 +1332,7 @@ namespace FlashDevelop
             {
                 String saveChanges = TextHelper.GetString("Info.SaveChanges");
                 String saveChangesTitle = TextHelper.GetString("Title.SaveChanges");
-                DialogResult result = MessageBox.Show(Globals.MainForm, saveChanges, saveChangesTitle + " " + document.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show(this, saveChanges, saveChangesTitle + " " + document.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
                     if (document.IsUntitled)
@@ -1467,7 +1464,7 @@ namespace FlashDevelop
             if (te.Handled) return; // Let plugin handle this...
             String dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
             String message = TextHelper.GetString("Info.MakeReadOnlyWritable");
-            if (MessageBox.Show(Globals.MainForm, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show(this, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 ScintillaManager.MakeFileWritable(sci);
             }
@@ -2683,7 +2680,10 @@ namespace FlashDevelop
         /// </summary>
         public void GoTo(Object sender, System.EventArgs e)
         {
-            this.gotoDialog.Show();
+            if (!this.gotoDialog.Visible)
+                this.gotoDialog.Show();
+            else
+                this.gotoDialog.Activate();
         }
 
         /// <summary>
@@ -2711,7 +2711,10 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplace(Object sender, System.EventArgs e)
         {
-            this.frInDocDialog.Show();
+            if (!this.frInDocDialog.Visible)
+                this.frInDocDialog.Show();
+            else
+                this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2721,11 +2724,14 @@ namespace FlashDevelop
         {
             ToolStripItem button = (ToolStripItem)sender;
             String file = ((ItemData)button.Tag).Tag;
-            ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
+            this.BeginInvoke((MethodInvoker)delegate
             {
                 OpenEditableDocument(file);
             });
-            this.frInDocDialog.Show();
+            if (!this.frInDocDialog.Visible)
+                this.frInDocDialog.Show();
+            else
+                this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2733,7 +2739,10 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)
         {
-            this.frInFilesDialog.Show();
+            if (!this.frInFilesDialog.Visible)
+                this.frInFilesDialog.Show();
+            else
+                this.frInFilesDialog.Activate();
         }
 
         /// <summary>
@@ -2743,7 +2752,10 @@ namespace FlashDevelop
         {
             ToolStripItem button = (ToolStripItem)sender;
             String path = ((ItemData)button.Tag).Tag;
-            this.frInFilesDialog.Show(); // Show first..
+            if (!this.frInFilesDialog.Visible)
+                this.frInFilesDialog.Show(); // Show first..
+            else
+                this.frInFilesDialog.Activate();
             this.frInFilesDialog.SetFindPath(path);
         }
 
@@ -2852,7 +2864,7 @@ namespace FlashDevelop
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
                 Boolean requiresRestart = false;
-                Boolean silentInstall = MainForm.Silent;
+                Boolean silentInstall = Silent;
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
                 if (chunks.Length > 1)
@@ -2934,7 +2946,7 @@ namespace FlashDevelop
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
                 Boolean requiresRestart = false;
-                Boolean silentRemove = MainForm.Silent;
+                Boolean silentRemove = Silent;
                 List<String> removeDirs = new List<String>();
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
