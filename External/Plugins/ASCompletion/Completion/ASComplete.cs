@@ -2334,16 +2334,25 @@ namespace ASCompletion.Completion
             
             if (ASContext.Context.Features.hasDelegates && !ASContext.Context.CurrentClass.IsVoid())
             {
+                MemberList delegates = new MemberList();
+
                 foreach (MemberModel field in ASContext.Context.CurrentClass.Members)
                     if ((field.Flags & FlagType.Delegate) > 0)
-                        known.Add(field);
+                        delegates.Add(field);
+
+                if (delegates.Count > 0)
+                {
+                    delegates.Sort();
+                    delegates.Merge(known);
+                    known = delegates;
+                }
             }
 
             if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
             {
                 var typeParams = GetVisibleTypeParameters();
 
-                if (typeParams.Items.Count > 0)
+                if (typeParams != null && typeParams.Items.Count > 0)
                 {
                     typeParams.Add(known);
                     typeParams.Sort();
@@ -3819,8 +3828,8 @@ namespace ASCompletion.Completion
 
         static private MemberList GetTypeParameters(MemberModel model)
         {
-            var retVal = new MemberList();
-            var template = model.Template;
+            MemberList retVal = null;
+            string template = model.Template;
             if (template != null && template.StartsWith("<"))
             {
                 var sb = new StringBuilder();
@@ -3839,6 +3848,7 @@ namespace ASCompletion.Completion
                             genType.Type = sb.ToString();
                             genType.Flags = FlagType.TypeDef;
                             inConstraint = c == ':';
+                            if (retVal == null) retVal = new MemberList();
                             retVal.Add(genType);
                             sb.Length = 0;
 
@@ -3869,6 +3879,7 @@ namespace ASCompletion.Completion
                 }
                 if (sb.Length > 0)
                 {
+                    if (retVal == null) retVal = new MemberList();
                     if (!inConstraint)
                         retVal.Add(new MemberModel { Name = sb.ToString(), Type = sb.ToString(), Flags = FlagType.TypeDef });
                     else
@@ -3882,7 +3893,7 @@ namespace ASCompletion.Completion
         static private MemberList GetVisibleElements()
         {
             MemberList known = new MemberList();
-            known.Merge(ASContext.Context.GetVisibleExternalElements());
+            known.Add(ASContext.Context.GetVisibleExternalElements());
 
             if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
             {
@@ -3899,7 +3910,11 @@ namespace ASCompletion.Completion
             var curMember = ASContext.Context.CurrentMember;
             if (curMember != null && (curMember.Flags & FlagType.Function) > 0)
             {
-                typeParams.Add(GetTypeParameters(curMember));
+                var memberTypeParams = GetTypeParameters(curMember);
+                if (typeParams != null && memberTypeParams != null)
+                    typeParams.Add(memberTypeParams);
+                else if (typeParams == null)
+                    typeParams = memberTypeParams;
             }
 
             return typeParams;
