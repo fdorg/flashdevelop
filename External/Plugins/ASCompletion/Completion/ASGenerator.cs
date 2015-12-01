@@ -3139,25 +3139,32 @@ namespace ASCompletion.Completion
                         {
                             decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Property"));
 
-                            string getter = null, setter = null;
+                            string templateName = null;
+                            string metadata = null;
                             if (method.Parameters[0].Name == "get")
                             {
-                                getter = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate("Getter"));
-                                getter = TemplateUtils.ReplaceTemplateVariable(getter, "Modifiers", null);
-                                getter = TemplateUtils.ReplaceTemplateVariable(getter, "Member", method.Name);
-                                decl += getter;
+                                if (method.Parameters[1].Name == "set")
+                                {
+                                    templateName = "GetterSetter";
+                                    metadata = "@:isVar";
+                                }
+                                else
+                                    templateName = "Getter";
                             }
-
-                            if (method.Parameters[1].Name == "set")
+                            else if (method.Parameters[1].Name == "set")
                             {
-                                setter = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate("Setter"));
-                                setter = TemplateUtils.ReplaceTemplateVariable(setter, "Modifiers", null);
-                                setter = TemplateUtils.ReplaceTemplateVariable(setter, "Member", method.Name);
-                                decl += setter;
+                                templateName = "Setter";
                             }
 
-                            string metadata = (getter != null && setter != null) ? "@:isVar" : null;
                             decl = TemplateUtils.ReplaceTemplateVariable(decl, "MetaData", metadata);
+
+                            if (templateName != null)
+                            {
+                                var accessor = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate(templateName));
+                                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Modifiers", null);
+                                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Member", method.Name);
+                                decl += accessor;
+                            }
                         }
                         else
                             decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Getter"));

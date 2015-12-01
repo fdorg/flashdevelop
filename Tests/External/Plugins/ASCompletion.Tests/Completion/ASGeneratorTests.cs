@@ -412,6 +412,43 @@ namespace ASCompletion.Completion
                 ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
                 Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembers.hx"), sci.Text);
             }
+
+            [Test]
+            public void ImplementFromInterface_SinglePropertyHaxe()
+            {
+                var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
+                interfaceModel.Members.Add(new MemberList
+                                           {
+                                               new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
+                                               {
+                                                   Parameters = new List<MemberModel>
+                                                   {
+                                                       new MemberModel {Name = "get"},
+                                                       new MemberModel {Name = "set"}
+                                                   }
+                                               }
+                                           });
+
+                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 };
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                ASContext.Context = Substitute.For<IASContext>();
+                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
+                ASContext.Context.Features.voidKey = "Void";
+                ASContext.Context.CurrentModel.Returns(new FileModel { haXe = true });
+
+                var sci = GetBaseScintillaControl();
+                sci.Text = "package generatortest;\r\n\r\nclass ImplementTest{}";
+                sci.ConfigurationLanguage = "haxe";
+                doc.SciControl.Returns(sci);
+
+                ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
+                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembersInsertSingleProperty.hx"), sci.Text);
+            }
         }
     }
 }
