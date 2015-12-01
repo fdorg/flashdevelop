@@ -18,6 +18,26 @@ namespace PluginCore.Controls
     [DefaultProperty("Value")]
     public class ScrollBarEx : Control
     {
+        #region scroll bar settings
+
+        public delegate void SettingsChangedEventHandler(ScrollBarMode value);
+        public static event SettingsChangedEventHandler SettingsChanged;
+
+        private static ScrollBarMode settingsMode = ScrollBarMode.Auto;
+
+        public static ScrollBarMode SettingsMode
+        {
+            get { return settingsMode; }
+        }
+
+        public static void NotifySettingsChanged(ScrollBarMode value)
+        {
+            settingsMode = value;
+            if (SettingsChanged != null) SettingsChanged.Invoke(settingsMode);
+        }
+
+        #endregion
+
         #region drawing
 
         private Color curPosColor/* = Color.DarkBlue*/;
@@ -2225,6 +2245,27 @@ namespace PluginCore.Controls
         /// Indicates a vertical scrollbar.
         /// </summary>
         Vertical
+    }
+
+    /// <summary>
+    /// Enum for scrollbar usage settings.
+    /// </summary>
+    public enum ScrollBarMode
+    {
+        /// <summary>
+        /// Turn off the usage of <see cref="ScrollBarEx"/> completely.
+        /// </summary>
+        Off,
+
+        /// <summary>
+        /// Use <see cref="ScrollBarEx"/> only when explicit theme is defined for scroll bars.
+        /// </summary>
+        Auto,
+
+        /// <summary>
+        /// Always use <see cref="ScrollBarEx"/> instead of the system scroll bar.
+        /// </summary>
+        On
     }
 
     /// <summary>

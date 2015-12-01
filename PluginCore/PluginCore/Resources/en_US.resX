@@ -5980,4 +5980,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
   </data>
+  <data name="FlashDevelop.Description.UseCustomScrollBar" xml:space="preserve">
+    <value>Whether to use the custom scroll bar for text editors. Set to 'On' to always enable the custom scroll bar, 'Off' to disable it completely, or 'Auto' to use the custom scroll bar only when the current theme has scroll bar color definitions.</value>
+  </data>
 </root>

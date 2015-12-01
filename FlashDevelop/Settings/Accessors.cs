@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using Ookii.Dialogs;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Localization;
 using ScintillaNet.Enums;
 
@@ -372,13 +373,30 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsDelay")]
         public Int32 HighlightMatchingWordsDelay
         {
-            get 
+            get
             {
                 // Make sure this is not an invalid value
                 if (this.highlightMatchingWordsDelay <= 0) this.highlightMatchingWordsDelay = 1200;
                 return this.highlightMatchingWordsDelay;
             }
             set { this.highlightMatchingWordsDelay = value; }
+        }
+
+        [DefaultValue(ScrollBarMode.Auto)]
+        [DisplayName("Use Custom Scroll Bar")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.UseCustomScrollBar")]
+        public ScrollBarMode UseCustomScrollBar
+        {
+            get { return this.useCustomScrollBar; }
+            set
+            {
+                if (this.useCustomScrollBar != value)
+                {
+                    this.useCustomScrollBar = value;
+                    ScrollBarEx.NotifySettingsChanged(this.useCustomScrollBar);
+                }
+            }
         }
 
         #endregion
@@ -445,10 +463,10 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.IndentView")]
         public IndentView IndentView
         {
-            get 
+            get
             {
                 if ((Int32)this.indentView == 0) this.indentView = IndentView.Real;
-                return this.indentView; 
+                return this.indentView;
             }
             set
             {
