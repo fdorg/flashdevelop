@@ -647,6 +647,9 @@ namespace ProjectManager
                 RestoreProjectSession(project);
             }
 
+            // track active file
+            if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
+
             if (stealFocus)
             {
                 OpenPanel();
@@ -1259,7 +1262,7 @@ namespace ProjectManager
         {
             if (openFileQueue.Count > 0)
             {
-                String file = openFileQueue.Dequeue() as String;
+                String file = openFileQueue.Dequeue();
                 if (File.Exists(file)) OpenFile(file);
                 if (file.IndexOf("::") > 0 && File.Exists(file.Substring(0, file.IndexOf("::")))) // virtual files
                 {
@@ -1629,8 +1632,19 @@ namespace ProjectManager
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (activeProject != null && doc != null && doc.IsEditable && !doc.IsUntitled)
             {
-                Tree.Select(doc.FileName);
-                Tree.SelectedNode.EnsureVisible();
+                string path = doc.FileName;
+
+                if (Tree.SelectedNode != null && Tree.SelectedNode.BackingPath == path)
+                    return;
+
+                Tree.Select(path);
+                if (Tree.SelectedNode.BackingPath == path)
+                {
+                    Tree.SelectedNode.EnsureVisible();
+                    Tree.PathToSelect = null;
+                }
+                else
+                    Tree.PathToSelect = path;
             }
         }
 

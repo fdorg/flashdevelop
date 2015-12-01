@@ -432,7 +432,7 @@ namespace AirProperties
 
         private Boolean GetSelectedLocaleIsDefault()
         {
-            return (Boolean)(LocalesField.SelectedIndex == 0);
+            return LocalesField.SelectedIndex == 0;
         }
 
         public void SetTitle(string projectName, string airVersion)
@@ -1065,11 +1065,11 @@ namespace AirProperties
                 {
                     if (_pluginMain.Settings.UseUniformFilenames)
                     {
-                        destinationFileName = filePrefix + dimensions.X.ToString() + Path.GetExtension(fileName);
+                        destinationFileName = filePrefix + dimensions.X + Path.GetExtension(fileName);
                     }
                     else if (_pluginMain.Settings.RenameIconsWithSize)
                     {
-                        destinationFileName = Path.GetFileNameWithoutExtension(fileName) + dimensions.X.ToString() + Path.GetExtension(fileName);
+                        destinationFileName = Path.GetFileNameWithoutExtension(fileName) + dimensions.X + Path.GetExtension(fileName);
                     }
                     else destinationFileName = Path.GetFileName(fileName);
                     if (!Directory.Exists(destinationPath))
@@ -1089,7 +1089,7 @@ namespace AirProperties
             }
             else
             {
-                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X.ToString(), dimensions.Y.ToString()), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X, dimensions.Y), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -1473,8 +1473,8 @@ namespace AirProperties
                     {
                         //create the affected properties now, even though value is empty, so the locale 
                         //will be preserved if the user closes the form without specifying a value
-                        PropertyManager.CreateLocalizedProperty("name", locale, (Boolean)_locales[0].Equals(locale));
-                        PropertyManager.CreateLocalizedProperty("description", locale, (Boolean)_locales[0].Equals(locale));
+                        PropertyManager.CreateLocalizedProperty("name", locale, _locales[0].Equals(locale));
+                        PropertyManager.CreateLocalizedProperty("description", locale, _locales[0].Equals(locale));
                     }
                 }
                 //Re-initialize locales and refresh affected property fields

@@ -38,7 +38,7 @@ namespace PluginCore.BBCode
             {
                 if (!outStyle.isAbsFontSize)
                 {
-                    outStyle.isAbsFontSize = (bool)(parent.isAbsFontSize && parent.fontSize != 0);
+                    outStyle.isAbsFontSize = parent.isAbsFontSize && parent.fontSize != 0;
                     outStyle.fontSize = parent.fontSize + outStyle.fontSize;
                 }
                 else
@@ -145,7 +145,7 @@ namespace PluginCore.BBCode
                    + " isUnderlined='" + isUnderlined + "'"
                    + " fontName='" + (fontName == null ? "null" : fontName) + "'"
                    + " fontSize='" + fontSize + "'"
-                   + " isAbsFontSize='" + isAbsFontSize.ToString() + "'"
+                   + " isAbsFontSize='" + isAbsFontSize + "'"
                    + " foreColor='" + (foreColor == null ? "null" : foreColor.ToString()) + "'"
                    + " backColor='" + (backColor == null ? "null" : backColor.ToString()) + "'"
                    + "]";

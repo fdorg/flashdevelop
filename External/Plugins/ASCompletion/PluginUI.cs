@@ -533,7 +533,7 @@ namespace ASCompletion
                     }
                     foreach (MemberModel member in aFile.Members)
                     {
-                        sb.Append(member.Flags.ToString()).Append(member.ToString());
+                        sb.Append(member.Flags).Append(member);
                         lines.Add(member.LineFrom);
                         names.Add(member.Name);
                     }
@@ -542,7 +542,7 @@ namespace ASCompletion
                         if (string.IsNullOrEmpty(aClass.ExtendsType))
                             aClass.ResolveExtends();
 
-                        sb.Append(aClass.Flags.ToString()).Append(aClass.FullName);
+                        sb.Append(aClass.Flags).Append(aClass.FullName);
                         sb.Append(aClass.ExtendsType);
                         if (aClass.Implements != null)
                             foreach (string implements in aClass.Implements)
@@ -551,7 +551,7 @@ namespace ASCompletion
                         names.Add(aClass.Name);
                         foreach (MemberModel member in aClass.Members)
                         {
-                            sb.Append(member.Flags.ToString()).Append(member.ToString());
+                            sb.Append(member.Flags).Append(member);
                             lines.Add(member.LineFrom);
                             names.Add(member.Name);
                         }

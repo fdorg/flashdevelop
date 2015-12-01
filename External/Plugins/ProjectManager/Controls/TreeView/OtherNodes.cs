@@ -248,7 +248,7 @@ namespace ProjectManager.Controls.TreeView
                 string absolute = globalClasspath;
                 if (!Path.IsPathRooted(absolute))
                     absolute = project.GetAbsolutePath(globalClasspath);
-                if (absolute.StartsWith(project.Directory + Path.DirectorySeparatorChar.ToString()))
+                if (absolute.StartsWith(project.Directory + Path.DirectorySeparatorChar))
                     continue;
 
                 cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(project, absolute, globalClasspath);

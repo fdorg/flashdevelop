@@ -266,7 +266,7 @@ namespace PluginCore.Controls
             if (newHeight != cl.Height) cl.Height = newHeight;
             // place control
             Point coord = new Point(sci.PointXFromPosition(startPos), sci.PointYFromPosition(startPos));
-            listUp = UITools.CallTip.CallTipActive || (coord.Y+cl.Height > (sci as Control).Height);
+            listUp = UITools.CallTip.CallTipActive || (coord.Y+cl.Height > sci.Height);
             coord = sci.PointToScreen(coord);
             coord = ((Form)PluginBase.MainForm).PointToClient(coord);
             cl.Left = coord.X-20 + sci.Left;

@@ -495,7 +495,7 @@ namespace FlashDevelop.Dialogs
         {
             if (this.itemListView.SelectedIndices.Count > 0)
             {
-                GridItem changedItem = (GridItem)e.ChangedItem;
+                GridItem changedItem = e.ChangedItem;
                 String settingId = this.nameLabel.Text + "." + changedItem.Label.Replace(" ", "");
                 TextEvent te = new TextEvent(EventType.SettingChanged, settingId);
                 EventManager.DispatchEvent(Globals.MainForm, te);

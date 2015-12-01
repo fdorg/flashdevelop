@@ -5548,7 +5548,7 @@ namespace ScintillaNet
             {
                 highlightDelay = new System.Timers.Timer(PluginBase.MainForm.Settings.HighlightMatchingWordsDelay);
                 highlightDelay.Elapsed += highlightDelay_Elapsed;
-                highlightDelay.SynchronizingObject = this as Control;
+                highlightDelay.SynchronizingObject = this;
             }
             else highlightDelay.Stop();
             if (highlightDelay.Interval != PluginBase.MainForm.Settings.HighlightMatchingWordsDelay)
@@ -5869,8 +5869,8 @@ namespace ScintillaNet
         private RangeToFormat GetRangeToFormat(IntPtr hdc, int charFrom, int charTo)
         {
             RangeToFormat frPrint;
-            int pageWidth = (int)GetDeviceCaps(hdc, 110);
-            int pageHeight = (int)GetDeviceCaps(hdc, 111);
+            int pageWidth = GetDeviceCaps(hdc, 110);
+            int pageHeight = GetDeviceCaps(hdc, 111);
             frPrint.hdcTarget = hdc;
             frPrint.hdc = hdc;
             frPrint.rcPage.Left = 0;

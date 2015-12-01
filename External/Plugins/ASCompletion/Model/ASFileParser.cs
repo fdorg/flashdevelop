@@ -193,7 +193,7 @@ namespace ASCompletion.Model
         private static string getRandomStringRepl()
         {
             random.NextDouble();
-            return "StringRepl" + random.Next(0xFFFFFFF).ToString();
+            return "StringRepl" + random.Next(0xFFFFFFF);
         }
 
         /// <summary>
