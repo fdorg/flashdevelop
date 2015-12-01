@@ -1784,10 +1784,6 @@ namespace ASCompletion.Completion
             CompletionList.Show(items, true, tail);
         }
 
-        int CompareEvents(Object a, Object b)
-        {
-            return 0;
-        }
         #endregion
 
         #region dot_completion
@@ -2879,44 +2875,6 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void FindInPackage(string token, FileModel inFile, string pkg, ASResult result)
-        {
-            IASContext context = ASContext.Context;
-            int p = token.IndexOf('(');
-
-            FileModel inPackage = context.ResolvePackage(pkg, false);
-            if (inPackage != null)
-            {
-                int pLen = pkg != null ? pkg.Length : 0;
-                foreach (MemberModel friend in inPackage.Imports)
-                {
-                    if (friend.Name == token && (pLen == 0 || friend.Type.LastIndexOf(context.Features.dot) == pLen))
-                    {
-                        ClassModel friendClass = context.GetModel(inFile.Package, token, inFile.Package);
-                        if (!friendClass.IsVoid())
-                        {
-                            result.Type = friendClass;
-                            result.IsStatic = (p < 0);
-                            return;
-                        }
-                        break;
-                    }
-                }
-                foreach (MemberModel friend in inPackage.Members)
-                {
-                    if (friend.Name == token)
-                    {
-                        result.Member = friend;
-                        result.Type = (p < 0 && (friend.Flags & FlagType.Function) > 0)
-                            ? context.ResolveType("Function", null)
-                            : context.ResolveType(friend.Type, friend.InFile);
-                        return;
-                    }
-                }
-            }
-            return;
-        }
-
         /// <summary>
         /// Find package-level member
         /// </summary>
@@ -3510,18 +3468,12 @@ namespace ASCompletion.Completion
             int braceCount = 0;
             int sqCount = 0;
             char c = (char)Sci.CharAt(position);
-            bool wasPar = false;
-            //if (c == '{') { wasPar = true; position--; }
             while (position > minPos)
             {
                 c = (char)Sci.CharAt(position);
                 if (c == ';')
                 {
                     return ComaExpression.None;
-                }
-                else if ((c == ',' || c == '=') && wasPar)
-                {
-                    return ComaExpression.AnonymousObject;
                 }
                 // var declaration
                 else if (c == ':')
@@ -3543,7 +3495,6 @@ namespace ASCompletion.Completion
                 }
                 else if (c == ']')
                 {
-                    if (wasPar) return ComaExpression.None;
                     sqCount++;
                 }
                 // function declaration or parameter
@@ -3565,7 +3516,6 @@ namespace ASCompletion.Completion
                 }
                 else if (c == ')')
                 {
-                    if (wasPar) return ComaExpression.None;
                     parCount++;
                 }
                 // code block or anonymous object
@@ -3589,7 +3539,6 @@ namespace ASCompletion.Completion
                 }
                 else if (c == '}')
                 {
-                    if (wasPar) return ComaExpression.None;
                     braceCount++;
                 }
                 else if (c == '?') return ComaExpression.AnonymousObject;

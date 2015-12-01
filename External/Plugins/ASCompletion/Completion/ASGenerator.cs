@@ -863,8 +863,6 @@ namespace ASCompletion.Completion
 
         #region code generation
 
-        static private Regex reInsert = new Regex("\\s*([a-z])", RegexOptions.Compiled);
-
         static public void SetJobContext(String contextToken, String contextParam, MemberModel contextMember, Match contextMatch)
         {
             ASGenerator.contextToken = contextToken;
@@ -3253,22 +3251,6 @@ namespace ASCompletion.Completion
             InsertCode(position, result);
         }
 
-        private static string ReplaceAll(string template, string oldValue, string newValue)
-        {
-            if (template == null)
-                return null;
-
-            string result = "";
-            string[] a = template.Split(new string[] { oldValue }, StringSplitOptions.None);
-            for (int i = 0; i < a.Length; i++)
-            {
-                if (i > 0)
-                    result += newValue;
-                result += a[i];
-            }
-            return result;
-        }
-
         public static bool MakePrivate(ScintillaControl Sci, MemberModel member)
         {
             ContextFeatures features = ASContext.Context.Features;
@@ -3713,31 +3695,6 @@ namespace ASCompletion.Completion
             if (isFlagMatchStrict || isVisibilityMatchStrict)
                 fallback = null;
             return latest ?? fallback;
-        }
-        
-        static private string GetDeclaration(MemberModel member)
-        {
-            return GetDeclaration(member, true);
-        }
-
-        static private string GetDeclaration(MemberModel member, bool addModifiers)
-        {
-            // modifiers
-            string modifiers = TemplateUtils.GetStaticExternOverride(member);
-            if (addModifiers) modifiers += TemplateUtils.GetModifiers(member);
-            
-            // signature
-            FlagType ft = member.Flags;
-            if ((ft & FlagType.Getter) > 0)
-                return String.Format("{0}function get {1}", modifiers, member.ToDeclarationString());
-            else if ((ft & FlagType.Setter) > 0)
-                return String.Format("{0}function set {1}", modifiers, member.ToDeclarationString());
-            else if (ft == FlagType.Function)
-                return String.Format("{0}function {1}", modifiers, member.ToDeclarationString());
-            else if (((ft & FlagType.Constant) > 0) && ASContext.Context.Settings.LanguageId != "AS2")
-                return String.Format("{0}const {1}", modifiers, member.ToDeclarationString());
-            else
-                return String.Format("{0}var {1}", modifiers, member.ToDeclarationString());
         }
         #endregion
 
