@@ -2331,32 +2331,35 @@ namespace ASCompletion.Completion
                     known = found;
                 }
             }
-            
-            if (ASContext.Context.Features.hasDelegates && !ASContext.Context.CurrentClass.IsVoid())
+
+            if (!ASContext.Context.CurrentClass.IsVoid())
             {
-                MemberList delegates = new MemberList();
-
-                foreach (MemberModel field in ASContext.Context.CurrentClass.Members)
-                    if ((field.Flags & FlagType.Delegate) > 0)
-                        delegates.Add(field);
-
-                if (delegates.Count > 0)
+                if (ASContext.Context.Features.hasDelegates)
                 {
-                    delegates.Sort();
-                    delegates.Merge(known);
-                    known = delegates;
+                    MemberList delegates = new MemberList();
+
+                    foreach (MemberModel field in ASContext.Context.CurrentClass.Members)
+                        if ((field.Flags & FlagType.Delegate) > 0)
+                            delegates.Add(field);
+
+                    if (delegates.Count > 0)
+                    {
+                        delegates.Sort();
+                        delegates.Merge(known);
+                        known = delegates;
+                    }
                 }
-            }
 
-            if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
-            {
-                var typeParams = GetVisibleTypeParameters();
-
-                if (typeParams != null && typeParams.Items.Count > 0)
+                if (ASContext.Context.Features.hasGenerics)
                 {
-                    typeParams.Add(known);
-                    typeParams.Sort();
-                    known = typeParams;
+                    var typeParams = GetVisibleTypeParameters();
+
+                    if (typeParams != null && typeParams.Items.Count > 0)
+                    {
+                        typeParams.Add(known);
+                        typeParams.Sort();
+                        known = typeParams;
+                    }
                 }
             }
 
