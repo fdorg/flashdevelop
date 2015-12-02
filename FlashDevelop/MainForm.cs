@@ -2680,10 +2680,8 @@ namespace FlashDevelop
         /// </summary>
         public void GoTo(Object sender, System.EventArgs e)
         {
-            if (!this.gotoDialog.Visible)
-                this.gotoDialog.Show();
-            else
-                this.gotoDialog.Activate();
+            if (!this.gotoDialog.Visible) this.gotoDialog.Show();
+            else this.gotoDialog.Activate();
         }
 
         /// <summary>
@@ -2711,10 +2709,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplace(Object sender, System.EventArgs e)
         {
-            if (!this.frInDocDialog.Visible)
-                this.frInDocDialog.Show();
-            else
-                this.frInDocDialog.Activate();
+            if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
+            else this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2728,10 +2724,8 @@ namespace FlashDevelop
             {
                 OpenEditableDocument(file);
             });
-            if (!this.frInDocDialog.Visible)
-                this.frInDocDialog.Show();
-            else
-                this.frInDocDialog.Activate();
+            if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
+            else this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2739,10 +2733,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)
         {
-            if (!this.frInFilesDialog.Visible)
-                this.frInFilesDialog.Show();
-            else
-                this.frInFilesDialog.Activate();
+            if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show();
+            else this.frInFilesDialog.Activate();
         }
 
         /// <summary>
@@ -2752,10 +2744,8 @@ namespace FlashDevelop
         {
             ToolStripItem button = (ToolStripItem)sender;
             String path = ((ItemData)button.Tag).Tag;
-            if (!this.frInFilesDialog.Visible)
-                this.frInFilesDialog.Show(); // Show first..
-            else
-                this.frInFilesDialog.Activate();
+            if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show(); // Show first..
+            else this.frInFilesDialog.Activate();
             this.frInFilesDialog.SetFindPath(path);
         }
 
@@ -3398,11 +3388,8 @@ namespace FlashDevelop
                 ScintillaControl sci = Globals.SciControl;
                 ToolStripItem button = (ToolStripItem)sender;
                 string language = ((ItemData) button.Tag).Tag;
-                if (sci.ConfigurationLanguage.Equals(language))
-                    return; // already using this syntax
-
+                if (sci.ConfigurationLanguage.Equals(language)) return; // already using this syntax
                 ScintillaManager.ChangeSyntax(language, sci);
-
                 string extension = sci.GetFileExtension();
                 if (!string.IsNullOrEmpty(extension))
                 {
