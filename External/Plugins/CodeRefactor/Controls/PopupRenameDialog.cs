@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CodeRefactor.Provider;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace CodeRefactor.Controls
@@ -18,6 +20,7 @@ namespace CodeRefactor.Controls
         private string value;
         private bool includeComments;
         private bool includeStrings;
+        Dictionary<Keys, string> shortcuts;
 
         public PopupRenameDialog(string targetName)
             : this(targetName, false, false, false)
@@ -49,6 +52,8 @@ namespace CodeRefactor.Controls
             inputTxt.Text = targetName;
             inputTxt.SelectAll();
             inputTxt.Focus();
+
+            shortcuts = PluginBase.MainForm.GetShortcutItemsByKeys();
         }
 
         public string Value
@@ -112,6 +117,7 @@ namespace CodeRefactor.Controls
             this.inputTxt.Name = "inputTxt";
             this.inputTxt.Size = new System.Drawing.Size(260, 23);
             this.inputTxt.TabIndex = 0;
+            this.inputTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputTxt_KeyDown);
             // 
             // btnOK
             // 
@@ -189,6 +195,26 @@ namespace CodeRefactor.Controls
             cbxStrings.Text = TextHelper.GetString("Label.IncludeStrings");
             btnOK.Text = TextHelper.GetString("ProjectManager.Label.OK");
             btnCancel.Text = TextHelper.GetString("ProjectManager.Label.Cancel");
+        }
+
+        void InputTxt_KeyDown(object sender, KeyEventArgs e)
+        {
+            string shortcutId;
+            if (shortcuts.TryGetValue(e.KeyData, out shortcutId))
+            {
+                switch (shortcutId)
+                {
+                    case "EditMenu.ToLowercase":
+                    case "EditMenu.ToUppercase":
+                        string text = inputTxt.SelectedText;
+                        if (string.IsNullOrEmpty(text)) break;
+                        text = shortcutId == "EditMenu.ToLowercase" ? text.ToLower() : text.ToUpper();
+                        int selectionStart = inputTxt.SelectionStart;
+                        inputTxt.Paste(text);
+                        inputTxt.Select(selectionStart, text.Length);
+                        break;
+                }
+            }
         }
 
         void btnOK_Click(object sender, EventArgs e)

@@ -1771,16 +1771,17 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Returns an array of <see cref="KeyValuePair{TKey, TValue}"/> containing all registered shortcuts.
+        /// Returns a <see cref="Dictionary{TKey, TValue}"/> object containing all registered
+        /// shortcuts with the shortcut values as keys.
         /// </summary>
-        public KeyValuePair<string, Keys>[] GetShortcutItems()
+        public Dictionary<Keys, string> GetShortcutItemsByKeys()
         {
-            var list = ShortcutManager.RegisteredItems;
-            var items = new KeyValuePair<string, Keys>[list.Count];
-            int count = 0;
+            var list = ShortcutManager.RegisteredItems.Values;
+            var items = new Dictionary<Keys, string>(list.Count);
             foreach (var item in list)
             {
-                items[count++] = new KeyValuePair<string, Keys>(item.Id, item.Custom);
+                if (item.Custom == Keys.None || items.ContainsKey(item.Custom)) continue;
+                items.Add(item.Custom, item.Id);
             }
             return items;
         }

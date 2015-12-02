@@ -14,7 +14,7 @@ namespace FlashDevelop.Managers
     {
         public static List<Keys> AllShortcuts = new List<Keys>();
         public static List<ToolStripItem> SecondaryItems = new List<ToolStripItem>();
-        public static List<ShortcutItem> RegisteredItems = new List<ShortcutItem>();
+        public static Dictionary<string, ShortcutItem> RegisteredItems { get; set; } = new Dictionary<string, ShortcutItem>();
 
         /// <summary>
         /// Registers a shortcut item
@@ -22,7 +22,7 @@ namespace FlashDevelop.Managers
         public static void RegisterItem(String key, Keys keys)
         {
             ShortcutItem registered = new ShortcutItem(key, keys);
-            RegisteredItems.Add(registered);
+            RegisteredItems.Add(key, registered);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace FlashDevelop.Managers
         public static void RegisterItem(String key, ToolStripMenuItem item)
         {
             ShortcutItem registered = new ShortcutItem(key, item);
-            RegisteredItems.Add(registered);
+            RegisteredItems.Add(key, registered);
         }
 
         /// <summary>
@@ -56,10 +56,9 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ShortcutItem GetRegisteredItem(String id)
         {
-            foreach (ShortcutItem item in RegisteredItems)
-            {
-                if (item.Id == id) return item;
-            }
+            ShortcutItem item;
+            if (RegisteredItems.TryGetValue(id, out item))
+                return item;
             return null;
         }
 
@@ -90,7 +89,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void UpdateAllShortcuts()
         {
-            foreach (ShortcutItem item in RegisteredItems)
+            foreach (ShortcutItem item in RegisteredItems.Values)
             {
                 if (!AllShortcuts.Contains(item.Custom))
                 {
@@ -105,7 +104,7 @@ namespace FlashDevelop.Managers
         public static void ApplyAllShortcuts()
         {
             UpdateAllShortcuts();
-            foreach (ShortcutItem item in RegisteredItems)
+            foreach (ShortcutItem item in RegisteredItems.Values)
             {
                 if (item.Item != null)
                 {
@@ -189,7 +188,7 @@ namespace FlashDevelop.Managers
         public static void SaveCustomShortcuts()
         {
             List<Argument> shortcuts = new List<Argument>();
-            foreach (ShortcutItem item in RegisteredItems)
+            foreach (ShortcutItem item in RegisteredItems.Values)
             {
                 if (item.Custom != item.Default)
                 {
