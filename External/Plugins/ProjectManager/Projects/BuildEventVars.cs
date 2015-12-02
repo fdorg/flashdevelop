@@ -44,6 +44,7 @@ namespace ProjectManager.Projects
             infos.Add(new BuildEventInfo("FDBuild", FDBuild));
             infos.Add(new BuildEventInfo("ToolsDir", ToolsDir));
             infos.Add(new BuildEventInfo("TimeStamp", DateTime.Now.ToString("g")));
+            infos.Add(new BuildEventInfo("UserAppDir", UserAppDir));
             if (project != null)
             {
                 infos.Add(new BuildEventInfo("OutputFile", project.OutputPath));
@@ -73,22 +74,32 @@ namespace ProjectManager.Projects
             {
                 string url = Assembly.GetEntryAssembly().GetName().CodeBase;
                 Uri uri = new Uri(url);
-                
+
                 // special behavior if we're running in flashdevelop.exe
                 if (Path.GetFileName(uri.LocalPath).ToLower() == DistroConfig.DISTRIBUTION_NAME.ToLower() + ".exe")
                 {
                     string startupDir = Path.GetDirectoryName(uri.LocalPath);
-                    string local = Path.Combine(Path.GetDirectoryName(uri.LocalPath), ".local");
-                    if (!File.Exists(local))
-                    {
-                        String appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        startupDir = Path.Combine(appDir, DistroConfig.DISTRIBUTION_NAME);
-                    }
+                    //NOTE: FDBuild does not exist in AppData\Local\FlashDevelop; code commented out in case of reuse
+                    //string local = Path.Combine(Path.GetDirectoryName(uri.LocalPath), ".local");
+                    //if (!File.Exists(local))
+                    //{
+                    //    String appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    //    startupDir = Path.Combine(appDir, DistroConfig.DISTRIBUTION_NAME);
+                    //}
                     string toolsDir = Path.Combine(startupDir, "Tools");
                     string fdbuildDir = Path.Combine(toolsDir, "fdbuild");
                     return Path.Combine(fdbuildDir, "fdbuild.exe");
                 }
                 else return uri.LocalPath;
+            }
+        }
+
+        public string UserAppDir
+        {
+            get
+            {
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                return Path.Combine(localAppData, DistroConfig.DISTRIBUTION_NAME);
             }
         }
     }
