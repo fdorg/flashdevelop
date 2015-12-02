@@ -93,7 +93,7 @@ namespace FlashDevelop
         #region Private Properties
 
         /* AppMan */
-        FileSystemWatcher amWatcher;
+        private FileSystemWatcher amWatcher;
 
         /* Components */
         private QuickFind quickFind;
