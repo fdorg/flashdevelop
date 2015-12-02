@@ -2356,8 +2356,8 @@ namespace ASCompletion.Completion
 
                     if (typeParams != null && typeParams.Items.Count > 0)
                     {
-                        typeParams.Add(known);
                         typeParams.Sort();
+                        typeParams.Merge(known);
                         known = typeParams;
                     }
                 }
@@ -3895,12 +3895,19 @@ namespace ASCompletion.Completion
 
         static private MemberList GetVisibleElements()
         {
-            MemberList known = new MemberList();
-            known.Add(ASContext.Context.GetVisibleExternalElements());
+            MemberList known = ASContext.Context.GetVisibleExternalElements();
 
             if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
             {
-                known.Merge(GetVisibleTypeParameters());
+                var typeParams = GetVisibleTypeParameters();
+
+                if (typeParams != null && typeParams.Count > 0)
+                {
+                    typeParams.Sort();
+                    typeParams.Merge(known);
+
+                    known = typeParams;
+                }
             }
 
             return known;
