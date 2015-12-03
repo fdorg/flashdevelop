@@ -364,10 +364,10 @@ namespace CodeRefactor.Commands
             String label = TextHelper.GetString("Label.NewName");
             String title = String.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
             LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
-            DialogResult choice = askName.ShowDialog();
-            if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
+            if (askName.ShowDialog() == DialogResult.OK)
             {
-                return askName.Line.Trim();
+                string newName = askName.Line.Trim();
+                if(newName.Length > 0 && newName != originalName) return newName;
             }
             return null;
         }

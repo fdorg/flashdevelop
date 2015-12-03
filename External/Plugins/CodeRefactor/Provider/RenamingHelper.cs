@@ -24,20 +24,21 @@ namespace CodeRefactor.Provider
         }
         public static void AddToQueue(ASResult target, bool outputResults)
         {
-            string name = RefactoringHelper.GetRefactorTargetName(target);
+            string originalName = RefactoringHelper.GetRefactorTargetName(target);
             string label = TextHelper.GetString("Label.NewName");
-            string title = string.Format(TextHelper.GetString("Title.RenameDialog"), name);
-            LineEntryDialog askName = new LineEntryDialog(title, label, name);
-            if (askName.ShowDialog() == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != name)
+            string title = string.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
+            LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
+            if (askName.ShowDialog() == DialogResult.OK)
             {
                 string newName = askName.Line.Trim();
+                if (newName.Length == 0 || newName == originalName) return;
                 queue.Add(new Rename(target, outputResults, newName));
                 if (ASContext.Context.CurrentModel.haXe && target.Member != null &&
                     (target.Member.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
                 {
                     List<MemberModel> list = target.Member.Parameters;
-                    if (list[0].Name == "get") RenameMember(target.InClass, "get_" + name, "get_" + newName, outputResults);
-                    if (list[1].Name == "set") RenameMember(target.InClass, "set_" + name, "set_" + newName, outputResults);
+                    if (list[0].Name == "get") RenameMember(target.InClass, "get_" + originalName, "get_" + newName, outputResults);
+                    if (list[1].Name == "set") RenameMember(target.InClass, "set_" + originalName, "set_" + newName, outputResults);
                 }
                 if (currentCommand == null) ExecuteFirst();
             }
