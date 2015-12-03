@@ -3585,7 +3585,7 @@ namespace ASCompletion.Completion
         private static string GetStaticKeyword(MemberModel member)
         {
             if ((member.Flags & FlagType.Static) > 0) return ASContext.Context.Features.staticKey ?? "static";
-            return string.Empty;
+            return null;
         }
 
         private static string GetPrivateAccessor(MemberModel member)
