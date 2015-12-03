@@ -49,6 +49,7 @@ namespace CodeRefactor.Provider
             if (m == null) return;
             ASResult result = new ASResult();
             ASComplete.FindMember(name, inClass, result, FlagType.Dynamic | FlagType.Function, 0);
+            if (result.Member == null) return;
             queue.Add(new Rename(result, outputResults, newName));
         }
 
