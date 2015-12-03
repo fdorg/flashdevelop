@@ -3497,7 +3497,7 @@ namespace ASCompletion.Completion
         /// Find out in what context is a coma-separated expression
         /// </summary>
         /// <returns></returns>
-        private static ComaExpression DisambiguateComa(ScintillaControl Sci, int position, int minPos)
+        internal static ComaExpression DisambiguateComa(ScintillaControl Sci, int position, int minPos)
         {
             ContextFeatures features = ASContext.Context.Features;
             // find block start '(' or '{'
