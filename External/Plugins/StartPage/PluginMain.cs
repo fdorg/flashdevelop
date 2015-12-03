@@ -176,7 +176,7 @@ namespace StartPage
             String dataDir = Path.Combine(PathHelper.DataDir, "StartPage");
             String startPageDir = Path.Combine(PathHelper.AppDir, "StartPage");
             String localeName = PluginBase.MainForm.Settings.LocaleVersion.ToString();
-            String version = Application.ProductName.Substring(13, Application.ProductName.IndexOf(" for") - 13);
+            String version = Application.ProductName.Substring(13, Application.ProductName.IndexOfOrdinal(" for") - 13);
             String fileWithArgs = "index.html?l=" + localeName + "&v=" + HttpUtility.HtmlEncode(version);
             this.defaultStartPageUrl = Path.Combine(startPageDir, fileWithArgs);
             this.defaultRssUrl = "http://www.flashdevelop.org/community/rss.php?f=15";

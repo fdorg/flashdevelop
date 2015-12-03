@@ -431,7 +431,7 @@ namespace TaskListPanel
             {
                 if (!String.IsNullOrEmpty(ext))
                 {
-                    if (!ext.StartsWith("*")) this.extensions.Add("*" + ext);
+                    if (!ext.StartsWithOrdinal("*")) this.extensions.Add("*" + ext);
                     else this.extensions.Add(ext);
                 }
             }

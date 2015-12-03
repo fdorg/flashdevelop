@@ -142,7 +142,7 @@ namespace ProjectManager.Helpers
                 Encoding encoding = Encoding.GetEncoding((Int32)PluginBase.MainForm.Settings.DefaultCodePage);
                 // batch files must be encoded in ASCII
                 ext = Path.GetExtension(dest).ToLower();
-                if (ext == ".bat" || ext == ".cmd" || ext.StartsWith(".php")) encoding = Encoding.ASCII;
+                if (ext == ".bat" || ext == ".cmd" || ext.StartsWithOrdinal(".php")) encoding = Encoding.ASCII;
 
                 string src = File.ReadAllText(source);
                 src = ReplaceKeywords(ProcessCodeStyleLineBreaks(src));
@@ -153,7 +153,7 @@ namespace ProjectManager.Helpers
 
         private string ReplaceKeywords(string line)
         {
-            if (line.IndexOf("$") < 0) return line;
+            if (line.IndexOfOrdinal("$") < 0) return line;
             if (packageName == "") line = line.Replace(" $(PackageName)", "");
             return line = reArgs.Replace(line, new MatchEvaluator(ReplaceVars));
         }
@@ -291,7 +291,7 @@ namespace ProjectManager.Helpers
         public static String ProcessCodeStyleLineBreaks(String text)
         {
             String CSLB = "$(CSLB)";
-            Int32 nextIndex = text.IndexOf(CSLB);
+            Int32 nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
             CodingStyle cs = PluginBase.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
@@ -302,7 +302,7 @@ namespace ProjectManager.Helpers
             {
                 result += text.Substring(currentIndex, nextIndex - currentIndex) + lineBreak + GetLineIndentation(text, nextIndex);
                 currentIndex = nextIndex + CSLB.Length;
-                nextIndex = text.IndexOf(CSLB, currentIndex);
+                nextIndex = text.IndexOfOrdinal(CSLB, currentIndex);
             }
             return result + text.Substring(currentIndex);
         }

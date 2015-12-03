@@ -295,7 +295,7 @@ namespace ProjectManager.Controls
             {
                 foreach (string folder in folders)
                 {
-                    if (file.StartsWith(folder))
+                    if (file.StartsWithOrdinal(folder))
                     {
                         openedFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
                         break;
@@ -408,7 +408,7 @@ namespace ProjectManager.Controls
                 else
                 {
                     String folder = Path.GetFullPath(Path.Combine(projectFolder, path));
-                    if (cbInClasspathsOnly.Checked || !folder.StartsWith(projectFolder)) folders.Add(folder);
+                    if (cbInClasspathsOnly.Checked || !folder.StartsWithOrdinal(projectFolder)) folders.Add(folder);
                 }
             }
             return folders;
@@ -562,7 +562,7 @@ namespace ProjectManager.Controls
         private static Boolean SimpleSearchMatch(String file, String searchText, String pathSeparator)
         {
             String fileName = Path.GetFileName(file).ToLower();
-            return fileName.IndexOf(searchText.ToLower()) > -1;
+            return fileName.IndexOfOrdinal(searchText.ToLower()) > -1;
         }
 
     }

@@ -189,7 +189,7 @@ namespace ASCompletion.Completion
             string firstLine = blockTmpl;
             int lineCount = 0;
 
-            int index = blockTmpl.IndexOf("\n");
+            int index = blockTmpl.IndexOf('\n');
             if (index != -1)
             {
                 firstLine = blockTmpl.Substring(0, index);
@@ -200,7 +200,7 @@ namespace ASCompletion.Completion
             while (lineNum < Sci.LineCount)
             {
                 string line = Sci.GetLine(lineNum);
-                int funcBlockIndex = line.IndexOf(firstLine);
+                int funcBlockIndex = line.IndexOfOrdinal(firstLine);
                 if (funcBlockIndex != -1)
                 {
                     MemberModel latest = new MemberModel();

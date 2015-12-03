@@ -50,7 +50,7 @@ namespace FlashDevelop.Managers
                     foreach (String rawLine in lines)
                     {
                         String line = rawLine.Trim();
-                        if (line.Length < 2 || line.StartsWith("#")) continue;
+                        if (line.Length < 2 || line.StartsWithOrdinal("#")) continue;
                         String[] entry = line.Split(new Char[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         valueMap[entry[0]] = entry[1];
@@ -145,7 +145,7 @@ namespace FlashDevelop.Managers
                 Boolean useIn = GetThemeValue("ThemeManager.UseInheritance") == "True";
                 if (useIn && type.BaseType != null) ThemeControl(obj, type.BaseType);
                 // Handle type with full name, with or without suffix 'Ex'
-                String name = type.Name.EndsWith("Ex") ? type.Name.Remove(type.Name.Length - 2) : type.Name;
+                String name = type.Name.EndsWithOrdinal("Ex") ? type.Name.Remove(type.Name.Length - 2) : type.Name;
                 PropertyInfo ground = type.GetProperty("BackgroundColor");
                 PropertyInfo alink = type.GetProperty("ActiveLinkColor");
                 PropertyInfo dlink = type.GetProperty("DisabledLinkColor");

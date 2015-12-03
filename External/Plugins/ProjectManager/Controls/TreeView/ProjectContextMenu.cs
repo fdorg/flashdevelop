@@ -533,14 +533,14 @@ namespace ProjectManager.Controls.TreeView
             {
                 file = project.GetAbsolutePath(file);
             }
-            if (file.StartsWith(project.Directory)) return false;
+            if (file.StartsWithOrdinal(project.Directory)) return false;
             foreach (string path in project.AbsoluteClasspaths)
             {
-                if (file.StartsWith(path)) return false;
+                if (file.StartsWithOrdinal(path)) return false;
             }
             foreach (string path in PluginMain.Settings.GlobalClasspaths)
             {
-                if (file.StartsWith(path)) return false;
+                if (file.StartsWithOrdinal(path)) return false;
             }
             return true;
         }

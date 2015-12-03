@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Context;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace ASCompletion.Model
@@ -180,7 +181,7 @@ namespace ASCompletion.Model
 
             // get up the packages path
             string packPath = Path.DirectorySeparatorChar + Package.Replace('.', Path.DirectorySeparatorChar);
-            if (path.ToUpper().EndsWith(packPath.ToUpper()))
+            if (path.ToUpper().EndsWithOrdinal(packPath.ToUpper()))
             {
                 return path.Substring(0, path.Length - packPath.Length);
             }

@@ -593,7 +593,7 @@ namespace ASCompletion
         {
             //TraceManager.Add("Outline refresh...");
             outlineTree.BeginStatefulUpdate();
-            if (prevChecksum.StartsWith(aFile.FileName))
+            if (prevChecksum.StartsWithOrdinal(aFile.FileName))
                 aFile.OutlineState = outlineTree.State;
 
             try
@@ -626,7 +626,7 @@ namespace ASCompletion
                     nodes = node.Nodes;
                     foreach (MemberModel import in aFile.Imports)
                     {
-                        if (import.Type.EndsWith(".*"))
+                        if (import.Type.EndsWithOrdinal(".*"))
                             nodes.Add(new TreeNode(import.Type, ICON_PACKAGE, ICON_PACKAGE));
                         else
                         {
@@ -1053,7 +1053,7 @@ namespace ASCompletion
             {
                 return false;
             }
-            return (inputText.ToUpper().IndexOf(searchText) >= 0);
+            return (inputText.ToUpper().IndexOfOrdinal(searchText) >= 0);
         }
 
         private void HighlightAllMachingDeclaration(string text)

@@ -227,25 +227,25 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void ExecuteFlagAction(ToolStripItem item, String action, Boolean value)
         {
-            if (action.StartsWith("Check:"))
+            if (action.StartsWithOrdinal("Check:"))
             {
                 if (item is ToolStripMenuItem)
                 {
                     ((ToolStripMenuItem)item).Checked = value;
                 }
             }
-            else if (action.StartsWith("Uncheck:"))
+            else if (action.StartsWithOrdinal("Uncheck:"))
             {
                 if (item is ToolStripMenuItem)
                 {
                     ((ToolStripMenuItem)item).Checked = !value;
                 }
             }
-            else if (action.StartsWith("Enable:"))
+            else if (action.StartsWithOrdinal("Enable:"))
             {
                 item.Enabled = value;
             }
-            else if (action.StartsWith("Disable:"))
+            else if (action.StartsWithOrdinal("Disable:"))
             {
                 item.Enabled = !value;
             }

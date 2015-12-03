@@ -138,7 +138,7 @@ namespace AS3Context
                 {
                     case EventType.ProcessArgs:
                         TextEvent te = e as TextEvent;
-                        if (te.Value.IndexOf("$(FlexSDK)") >= 0)
+                        if (te.Value.IndexOfOrdinal("$(FlexSDK)") >= 0)
                         {
                             te.Value = te.Value.Replace("$(FlexSDK)", contextInstance.GetCompilerPath());
                         }
@@ -235,7 +235,7 @@ namespace AS3Context
                         IProject project = PluginBase.CurrentProject;
                         viewButton.Enabled = project == null || project.Language == "as3" || project.Language == "haxe";
                     }
-                    else if (action.StartsWith("FlashViewer."))
+                    else if (action.StartsWithOrdinal("FlashViewer."))
                     {
                         if (action == "FlashViewer.Closed")
                         {
@@ -292,7 +292,7 @@ namespace AS3Context
 
         private bool OpenVirtualFileModel(string virtualPath)
         {
-            int p = virtualPath.IndexOf("::");
+            int p = virtualPath.IndexOfOrdinal("::");
             if (p < 0) return false;
 
             string container = virtualPath.Substring(0, p);
@@ -406,7 +406,7 @@ namespace AS3Context
         /// </summary>
         public void OpenPanel(object sender, EventArgs e)
         {
-            if (sender is ToolStripButton && profilerPanel.Visible && profilerPanel.DockState.ToString().IndexOf("AutoHide") < 0)
+            if (sender is ToolStripButton && profilerPanel.Visible && profilerPanel.DockState.ToString().IndexOfOrdinal("AutoHide") < 0)
             {
                 profilerPanel.Hide();
             }
@@ -663,7 +663,7 @@ namespace AS3Context
                     sdk.Version = mVer.Groups[1].Value;
 
                     descriptor = Path.Combine(path, "AIR SDK Readme.txt");
-                    if (sdk.Name.StartsWith("Flex") && File.Exists(descriptor))
+                    if (sdk.Name.StartsWithOrdinal("Flex") && File.Exists(descriptor))
                     {
                         raw = File.ReadAllText(descriptor);
                         Match mAIR = Regex.Match(raw, "Adobe AIR ([0-9.]+) SDK");

@@ -210,7 +210,7 @@ namespace AirProperties
             if (PluginBase.CurrentProject != null)
             {
                 Project project = (Project)PluginBase.CurrentProject;
-                pluginActive = project.MovieOptions.Platform.StartsWith("AIR");
+                pluginActive = project.MovieOptions.Platform.StartsWithOrdinal("AIR");
             }
             this.pluginMenuItem.Enabled = this.pmMenuButton.Enabled = pluginActive;
         }

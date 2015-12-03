@@ -155,7 +155,7 @@ namespace FlashDevelop.Managers
                     }
                     else
                     {
-                        Int32 end = item.ToolTipText.IndexOf(" (");
+                        Int32 end = item.ToolTipText.IndexOfOrdinal(" (");
                         String keytext = view ? " (" + DataConverter.KeysToString(keys) + ")" : "";
                         if (end != -1) item.ToolTipText = item.ToolTipText.Substring(0, end) + keytext;
                         else item.ToolTipText = item.ToolTipText + keytext;

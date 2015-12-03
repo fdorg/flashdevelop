@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using PluginCore;
 using PluginCore.Helpers;
 using ProjectManager.Projects.AS2;
 
@@ -124,7 +125,7 @@ namespace ProjectManager.Projects
             {
                 LibraryAsset asset = List[i] as LibraryAsset;
 
-                if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar) ||
+                if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
                     asset.Path == path)
                 {
                     List.RemoveAt(i--); // search this index again

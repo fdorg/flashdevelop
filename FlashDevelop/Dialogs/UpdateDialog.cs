@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.ComponentModel;
+using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
@@ -178,7 +179,7 @@ namespace FlashDevelop.Dialogs
                 String version = reader.ReadLine(); // Read version
                 String download = reader.ReadLine(); // Read download
                 String product = Application.ProductName; // Internal version
-                String current = product.Substring(13, product.IndexOf(" for") - 13);
+                String current = product.Substring(13, product.IndexOfOrdinal(" for") - 13);
                 stream.Close(); response.Close(); // Close all resources
                 e.Result = new UpdateInfo(current, version, download);
             }

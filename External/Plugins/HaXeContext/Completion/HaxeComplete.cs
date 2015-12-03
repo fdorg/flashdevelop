@@ -130,7 +130,7 @@ namespace HaXeContext
                 string arg = hxmlArgs[i];
                 if (!string.IsNullOrEmpty(arg))
                 {
-                    if (arg.StartsWith("#")) // commented line
+                    if (arg.StartsWithOrdinal("#")) // commented line
                         hxmlArgs[i] = "";
                 }
             }
@@ -171,8 +171,8 @@ namespace HaXeContext
 
         string GetMainClassName()
         {
-            var start = FileName.LastIndexOf("\\") + 1;
-            var end = FileName.LastIndexOf(".");
+            var start = FileName.LastIndexOf('\\') + 1;
+            var end = FileName.LastIndexOf('.');
             return FileName.Substring(start, end - start);
         }
 
@@ -202,7 +202,7 @@ namespace HaXeContext
 
         HaxeCompleteStatus ParseLines(string lines)
         {
-            if (!lines.StartsWith("<"))
+            if (!lines.StartsWithOrdinal("<"))
             {
                 Errors = lines.Trim();
                 return HaxeCompleteStatus.ERROR;

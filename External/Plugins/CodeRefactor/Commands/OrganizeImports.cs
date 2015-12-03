@@ -162,7 +162,7 @@ namespace CodeRefactor.Commands
                 string importStringToInsert = "import " + uniques[i] + ";" + eol;
                 if (this.SeparatePackages)
                 {
-                    string currentPackage = importStringToInsert.Substring(0, importStringToInsert.LastIndexOf("."));
+                    string currentPackage = importStringToInsert.Substring(0, importStringToInsert.LastIndexOf('.'));
                     if (prevPackage != null && prevPackage != currentPackage)
                     {
                         sci.NewLine();

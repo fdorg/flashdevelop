@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.IO;
 
@@ -104,12 +105,12 @@ namespace PluginCore.Helpers
         public static bool IsXml(string path, string ext)
         {
             // allow for mxml, sxml, asml, etc
-            return (ext == ".xml" || (ext.Length == 5 && ext.EndsWith("ml")));
+            return (ext == ".xml" || (ext.Length == 5 && ext.EndsWith("ml", StringComparison.Ordinal)));
         }
 
         public static bool IsText(string path, string ext)
         {
-            return ext == ".txt" || Path.GetFileName(path).StartsWith(".");
+            return ext == ".txt" || Path.GetFileName(path).StartsWith(".", StringComparison.Ordinal);
         }
 
         public static bool IsAS2Project(string path, string ext)

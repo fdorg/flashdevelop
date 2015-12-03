@@ -384,7 +384,7 @@ namespace FlashDevelop.Managers
             sci.URIDropped += new URIDroppedHandler(Globals.MainForm.OnScintillaControlDropFiles);
             sci.ModifyAttemptRO += new ModifyAttemptROHandler(Globals.MainForm.OnScintillaControlModifyRO);
             String untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
-            if (!file.StartsWith(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
+            if (!file.StartsWithOrdinal(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
             sci.SetFoldFlags((Int32)Globals.Settings.FoldFlags);
             sci.EmptyUndoBuffer(); ApplySciSettings(sci);
             UITools.Manager.ListenTo(sci);

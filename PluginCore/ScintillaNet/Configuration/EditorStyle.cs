@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Globalization;
 using System.Xml.Serialization;
+using PluginCore;
 
 namespace ScintillaNet.Configuration
 {
@@ -72,7 +73,7 @@ namespace ScintillaNet.Configuration
                 Color c = Color.FromName(aColor);
                 if (c.ToArgb() == 0)
                 {
-                    if (aColor.IndexOf("0x") == 0)
+                    if (aColor.IndexOfOrdinal("0x") == 0)
                     {
                         return TO_COLORREF(Int32.Parse(aColor.Substring(2), NumberStyles.HexNumber));
                     } 

@@ -271,8 +271,8 @@ namespace AS3Context.Compiler
 
                     // cleanup tag
                     string tag = mCmd.Groups["cmd"].Value;
-                    if (tag.IndexOf("-->") > 0) tag = tag.Substring(0, tag.IndexOf("-->"));
-                    if (tag.IndexOf("]]>") > 0) tag = tag.Substring(0, tag.IndexOf("]]>"));
+                    if (tag.IndexOfOrdinal("-->") > 0) tag = tag.Substring(0, tag.IndexOfOrdinal("-->"));
+                    if (tag.IndexOfOrdinal("]]>") > 0) tag = tag.Substring(0, tag.IndexOfOrdinal("]]>"));
                     tag = " " + tag.Trim() + " --";
 
                     // split
@@ -299,7 +299,7 @@ namespace AS3Context.Compiler
                             {
                                 string concat = ";";
                                 arg = tag.Substring(start, end - start).Trim();
-                                if (arg.StartsWith("+=") || arg.StartsWith("="))
+                                if (arg.StartsWithOrdinal("+=") || arg.StartsWithOrdinal("="))
                                 {
                                     concat = arg.Substring(0, arg.IndexOf('=') + 1);
                                     arg = arg.Substring(concat.Length);
@@ -309,7 +309,7 @@ namespace AS3Context.Compiler
                                 {
                                     if (pswitch == op)
                                     {
-                                        if (op.EndsWith("namespace"))
+                                        if (op.EndsWithOrdinal("namespace"))
                                         {
                                             int sp = arg.IndexOf(' ');
                                             if (sp > 0)
@@ -320,10 +320,10 @@ namespace AS3Context.Compiler
                                         }
                                         isPath = true;
                                         // remove quotes
-                                        if (arg.StartsWith("\"") && arg.EndsWith("\""))
+                                        if (arg.StartsWithOrdinal("\"") && arg.EndsWithOrdinal("\""))
                                             arg = arg.Substring(1, arg.Length - 2);
 
-                                        if (!arg.StartsWith("\\") && !Path.IsPathRooted(arg))
+                                        if (!arg.StartsWithOrdinal("\\") && !Path.IsPathRooted(arg))
                                             arg = Path.Combine(buildPath, arg);
                                     }
                                 }
@@ -347,7 +347,7 @@ namespace AS3Context.Compiler
             else if (requireTag) return;
 
             // Flex4 static linking
-            if (isFlex4SDK && cmd.IndexOf("-static-link-runtime-shared-libraries") < 0)
+            if (isFlex4SDK && cmd.IndexOfOrdinal("-static-link-runtime-shared-libraries") < 0)
                 cmd += ";-static-link-runtime-shared-libraries=true";
 
             // add current class sourcepath and global classpaths
@@ -382,7 +382,7 @@ namespace AS3Context.Compiler
             if (File.Exists(flexDesc))
             {
                 string src = File.ReadAllText(flexDesc);
-                isFlex4SDK = src.IndexOf("<version>4") > 0;
+                isFlex4SDK = src.IndexOfOrdinal("<version>4") > 0;
             }
             else isFlex4SDK = false;
         }
@@ -473,7 +473,7 @@ namespace AS3Context.Compiler
 
         private void ascRunner_Error(object sender, string line)
         {
-            if (line.StartsWith("[Compiler] Error"))
+            if (line.StartsWithOrdinal("[Compiler] Error"))
             {
                 errorState = 1;
                 errorDesc = line.Substring(10);
@@ -500,7 +500,7 @@ namespace AS3Context.Compiler
             }
             else if (errorState > 0)
             {
-                if (line.IndexOf("error found") > 0) errorState = 0;
+                if (line.IndexOfOrdinal("error found") > 0) errorState = 0;
             }
             else if (line.Trim().Length > 0) ascRunner_OutputError(sender, line);
         }
@@ -510,7 +510,7 @@ namespace AS3Context.Compiler
             if (line == null) return;
             PluginBase.RunAsync(delegate
             {
-                if (line.StartsWith("Exception "))
+                if (line.StartsWithOrdinal("Exception "))
                 {
                     TraceManager.AddAsync(line, -3);
                     return;
@@ -534,9 +534,9 @@ namespace AS3Context.Compiler
 
         private void ascRunner_Output(object sender, string line)
         {
-            if (line.StartsWith("(ash)"))
+            if (line.StartsWithOrdinal("(ash)"))
             {
-                if (line.IndexOf("Done") > 0)
+                if (line.IndexOfOrdinal("Done") > 0)
                 {
                     running = false;
                     if (!silentChecking && !notificationSent)
@@ -565,7 +565,7 @@ namespace AS3Context.Compiler
         {
             PluginBase.RunAsync(delegate
             {
-                if (!notificationSent && line.StartsWith("Done("))
+                if (!notificationSent && line.StartsWithOrdinal("Done("))
                 {
                     running = false;
                     TraceManager.Add(line, -2);

@@ -637,7 +637,7 @@ namespace FileExplorer
                 ListViewItem whereToMove = this.fileView.GetItemAt(cp.X, cp.Y);
                 if (whereToMove == null) return; // Item is dropped on nothing
                 String targetDirectory = whereToMove.Tag.ToString();
-                if (whereToMove.Text.StartsWith("[") || Directory.Exists(targetDirectory))
+                if (whereToMove.Text.StartsWithOrdinal("[") || Directory.Exists(targetDirectory))
                 {
                     for (Int32 i = 0; i < this.fileView.SelectedItems.Count; i++)
                     {
@@ -701,7 +701,7 @@ namespace FileExplorer
             try
             {
                 this.previousItemLabel = this.fileView.Items[e.Item].Text;
-                if (this.previousItemLabel.StartsWith("[")) e.CancelEdit = true;
+                if (this.previousItemLabel.StartsWithOrdinal("[")) e.CancelEdit = true;
             }
             catch
             {
@@ -780,7 +780,7 @@ namespace FileExplorer
             Boolean targetIsDirectory = false;
             Boolean onlyFiles = this.SelectedItemsAreOnlyFiles();
             Int32 selectedItems = this.fileView.SelectedItems.Count;
-            if (selectedItems > 0) notFirstItem = !this.fileView.SelectedItems[0].Text.StartsWith("[");
+            if (selectedItems > 0) notFirstItem = !this.fileView.SelectedItems[0].Text.StartsWithOrdinal("[");
             if (selectedItems == 1) targetIsDirectory = Directory.Exists(this.fileView.SelectedItems[0].Tag.ToString());
             if (!targetIsDirectory) targetIsDirectory = Directory.Exists(this.selectedPath.Text);
             canPaste = (targetIsDirectory && notFirstItem && Clipboard.ContainsFileDropList());

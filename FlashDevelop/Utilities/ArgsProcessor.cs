@@ -269,7 +269,7 @@ namespace FlashDevelop.Utilities
         public static String ProcessCodeStyleLineBreaks(String text)
         {
             String CSLB = "$(CSLB)";
-            Int32 nextIndex = text.IndexOf(CSLB);
+            Int32 nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
             CodingStyle cs = Globals.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
@@ -280,7 +280,7 @@ namespace FlashDevelop.Utilities
             {
                 result += text.Substring(currentIndex, nextIndex - currentIndex) + lineBreak + GetLineIndentation(text, nextIndex);
                 currentIndex = nextIndex + CSLB.Length;
-                nextIndex = text.IndexOf(CSLB, currentIndex);
+                nextIndex = text.IndexOfOrdinal(CSLB, currentIndex);
             }
             return result + text.Substring(currentIndex);
         }
@@ -402,7 +402,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static String ReplaceArgsWithGUI(String args)
         {
-            if (args.IndexOf("$$(") < 0) return args;
+            if (args.IndexOfOrdinal("$$(") < 0) return args;
             if (reEnvArgs.IsMatch(args)) // Environmental arguments
             {
                 args = reEnvArgs.Replace(args, new MatchEvaluator(ReplaceEnvArgs));

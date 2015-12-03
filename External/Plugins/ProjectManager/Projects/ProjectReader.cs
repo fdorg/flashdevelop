@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using PluginCore;
 
 namespace ProjectManager.Projects
 {
@@ -185,7 +186,7 @@ namespace ProjectManager.Projects
                         break;
 
                     case "defaultBuildTargets":
-                        if (!String.IsNullOrEmpty(Value.Trim()) && Value.IndexOf(",") > -1)
+                        if (!String.IsNullOrEmpty(Value.Trim()) && Value.IndexOf(",", StringComparison.Ordinal) > -1)
                         {
                             String[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<String>();
                             project.MovieOptions.DefaultBuildTargets = cleaned;
