@@ -22,18 +22,20 @@ namespace PluginCore.Controls
 
         public delegate void SettingsChangedEventHandler(ScrollBarMode value);
         public static event SettingsChangedEventHandler SettingsChanged;
-
-        private static ScrollBarMode settingsMode = ScrollBarMode.Auto;
-
+        
         public static ScrollBarMode SettingsMode
         {
-            get { return settingsMode; }
+            get { return PluginBase.MainForm.Settings.UseCustomScrollBar; }
+        }
+
+        public static bool UseCustom
+        {
+            get { return PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom", "false").ToLower() == "true"; }
         }
 
         public static void NotifySettingsChanged(ScrollBarMode value)
         {
-            settingsMode = value;
-            if (SettingsChanged != null) SettingsChanged.Invoke(settingsMode);
+            if (SettingsChanged != null) SettingsChanged.Invoke(value);
         }
 
         #endregion
@@ -41,8 +43,6 @@ namespace PluginCore.Controls
         #region drawing
 
         private Color curPosColor/* = Color.DarkBlue*/;
-        private Color borderColor/* = SystemColors.ActiveBorder*/;
-        private Color borderColorDisabled/* = SystemColors.Control*/;
         private Color foreColor/* = SystemColors.ControlDarkDark*/;
         private Color foreColorHot;
         private Color foreColorPressed/* = SystemColors.Highlight*/;
@@ -51,7 +51,8 @@ namespace PluginCore.Controls
         private Color arrowColorPressed;
         private Color backColor/* = SystemColors.ActiveBorder*/;
         private Color backColorDisabled/* = SystemColors.ControlLight*/;
-
+        private Color borderColor/* = SystemColors.ActiveBorder*/;
+        private Color borderColorDisabled/* = SystemColors.Control*/;
         private bool colorsInvalidated;
 
         /// <summary>
@@ -59,17 +60,17 @@ namespace PluginCore.Controls
         /// </summary>
         private void InitializeColors()
         {
-            curPosColor = Color.DarkBlue;
-            borderColor = SystemColors.ActiveBorder;
-            borderColorDisabled = SystemColors.InactiveBorder;
-            foreColor = SystemColors.ScrollBar;
-            foreColorHot = SystemColors.ControlDark;
-            foreColorPressed = SystemColors.ControlDarkDark;
-            arrowColor = SystemColors.ControlDark;
-            arrowColorHot = SystemColors.Highlight;
-            arrowColorPressed = SystemColors.HotTrack;
-            backColor = SystemColors.Control;
-            backColorDisabled = SystemColors.ControlLight;
+            if (curPosColor.IsEmpty)         curPosColor         = Color.FromArgb(  0,   0, 205); //#0000CD
+            if (foreColor.IsEmpty)           foreColor           = Color.FromArgb(208, 209, 215); //#D0D1D7
+            if (!colorsInvalidated)          foreColorHot        = Color.FromArgb(136, 136, 136); //#888888
+            if (foreColorPressed.IsEmpty)    foreColorPressed    = Color.FromArgb(106, 106, 106); //#6A6A6A
+            if (!colorsInvalidated)          arrowColor          = Color.FromArgb(134, 137, 153); //#868999
+            if (!colorsInvalidated)          arrowColorHot       = Color.FromArgb( 28, 151, 234); //#1C97EA
+            if (!colorsInvalidated)          arrowColorPressed   = Color.FromArgb(  0, 122, 204); //#007ACC
+            if (backColor.IsEmpty)           backColor           = Color.FromArgb(232, 232, 236); //#E8E8EC
+            if (backColorDisabled.IsEmpty)   backColorDisabled   = Color.FromArgb(192, 192, 192); //#C0C0C0
+            if (borderColor.IsEmpty)         borderColor         = Color.FromArgb(232, 232, 236); //#E8E8EC
+            if (borderColorDisabled.IsEmpty) borderColorDisabled = Color.FromArgb(136, 136, 136); //#888888
             colorsInvalidated = false;
             Invalidate();
         }
@@ -82,25 +83,17 @@ namespace PluginCore.Controls
         /// </summary>
         public void ValidateColors()
         {
-            if (!colorsInvalidated)
-            {
-                // No colors defined explicitly -> Reset colors to default.
-                InitializeColors();
-                return;
-            }
+            // Reset any unassigned colors to default.
+            InitializeColors();
 
-            if (curPosColor.IsEmpty) curPosColor = Color.DarkBlue;
-            if (borderColor.IsEmpty) borderColor = SystemColors.ActiveBorder;
-            if (borderColorDisabled.IsEmpty) borderColorDisabled = SystemColors.InactiveBorder;
-            if (foreColor.IsEmpty) foreColor = SystemColors.ScrollBar;
-            if (foreColorPressed.IsEmpty) foreColorPressed = SystemColors.ControlDarkDark;
-            if (backColor.IsEmpty) backColor = SystemColors.Control;
-            if (backColorDisabled.IsEmpty) backColorDisabled = SystemColors.ControlLight;
-            // Newly introduced color options - do not assign default colors. Instead fall back to associated colors
-            if (foreColorHot.IsEmpty) foreColorHot = foreColor;
-            if (arrowColor.IsEmpty) arrowColor = foreColor;
-            if (arrowColorHot.IsEmpty) arrowColorHot = foreColorHot;
-            if (arrowColorPressed.IsEmpty) arrowColorPressed = foreColorPressed;
+            // If no colors are explicitly defined, not fallback colors are required.
+            if (!colorsInvalidated) return;
+
+            // Newly introduced color options - do not assign default colors. Instead fall back to associated colors.
+            foreColorHot      = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", foreColor);
+            arrowColor        = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", foreColor);
+            arrowColorHot     = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", arrowColor);
+            arrowColorPressed = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", foreColorPressed);
 
             colorsInvalidated = false;
         }
@@ -267,14 +260,13 @@ namespace PluginCore.Controls
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the thumb with.</param>
-        private void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
+        private static void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
             var innerRect = new Rectangle(rect.Left + ScaleHelper.Scale(2), rect.Top, rect.Width - ScaleHelper.Scale(4), rect.Height);
             using (Brush brush = new SolidBrush(color))
             {
                 g.FillRectangle(brush, innerRect);
             }
-
         }
 
         /// <summary>
@@ -283,7 +275,7 @@ namespace PluginCore.Controls
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the thumb with.</param>
-        private void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
+        private static void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
             var innerRect = new Rectangle(rect.Left, rect.Top + ScaleHelper.Scale(2), rect.Width, rect.Height - ScaleHelper.Scale(4));
             using (Brush brush = new SolidBrush(color))
@@ -299,19 +291,19 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the arrow buttons with.</param>
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
-        private void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
+        private static void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
             using (Brush brush = new SolidBrush(color))
             {
                 Point[] arrow;
-                Int32 pad = 0;
+                Int32 pad;
                 Point middle = new Point(rect.Left + rect.Width / 2, (rect.Top + rect.Height / 2));
                 switch (arrowUp)
                 {
                     case true:
                         pad = ScaleHelper.Scale(4);
                         middle.Y += ScaleHelper.Scale(2);
-                        arrow = new[]
+                        arrow = new Point[]
                         {
                             new Point(middle.X - pad , middle.Y + 1),
                             new Point(middle.X + pad  + 1, middle.Y + 1),
@@ -321,7 +313,7 @@ namespace PluginCore.Controls
                     default:
                         pad = ScaleHelper.Scale(3);
                         middle.Y -= ScaleHelper.Scale(1);
-                        arrow = new[]
+                        arrow = new Point[]
                         {
                             new Point(middle.X - pad, middle.Y - 1),
                             new Point(middle.X + pad + 1, middle.Y - 1),
@@ -341,18 +333,18 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the arrow buttons with.</param>
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
-        private void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowUp)
+        private static void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
             using (Brush brush = new SolidBrush(color))
             {
                 Point[] arrow;
-                Int32 pad = 0;
+                Int32 pad;
                 Point middle = new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2);
                 switch (arrowUp)
                 {
                     case true:
                         pad = ScaleHelper.Scale(2);
-                        arrow = new[]
+                        arrow = new Point[]
                         {
                             new Point(middle.X + pad, middle.Y - 2 * pad),
                             new Point(middle.X + pad, middle.Y + 2 * pad),
@@ -361,7 +353,7 @@ namespace PluginCore.Controls
                         break;
                     default:
                         pad = ScaleHelper.Scale(2);
-                        arrow = new[]
+                        arrow = new Point[]
                         {
                             new Point(middle.X - pad, middle.Y - 2 * pad),
                             new Point(middle.X - pad, middle.Y + 2 * pad),

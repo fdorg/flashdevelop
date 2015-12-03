@@ -391,11 +391,9 @@ namespace FlashDevelop.Settings
             get { return this.useCustomScrollBar; }
             set
             {
-                if (this.useCustomScrollBar != value)
-                {
-                    this.useCustomScrollBar = value;
-                    ScrollBarEx.NotifySettingsChanged(this.useCustomScrollBar);
-                }
+                if (this.useCustomScrollBar == value) return;
+                this.useCustomScrollBar = value;
+                ScrollBarEx.NotifySettingsChanged(this.useCustomScrollBar);
             }
         }
 

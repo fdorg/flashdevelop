@@ -122,18 +122,22 @@ namespace ScintillaNet
         /// </summary>
         private static void InitScrollBars(ScintillaControl sender)
         {
-            sender.vScrollBar = new ScrollBarEx();
-            sender.vScrollBar.OverScroll = true;
-            sender.vScrollBar.Width = ScaleHelper.Scale(17);
-            sender.vScrollBar.Orientation = ScrollBarOrientation.Vertical;
-            sender.vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
-            sender.vScrollBar.Dock = DockStyle.Right;
-            sender.vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(17));
-            sender.hScrollBar = new ScrollBarEx();
-            sender.hScrollBar.Height = ScaleHelper.Scale(17);
-            sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
-            sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
-            sender.hScrollBar.Dock = DockStyle.Bottom;
+            sender.vScrollBar = new ScrollBarEx
+            {
+                OverScroll = true,
+                Width = ScaleHelper.Scale(17),
+                Orientation = ScrollBarOrientation.Vertical,
+                ContextMenuStrip = { Renderer = new DockPanelStripRenderer() },
+                Dock = DockStyle.Right,
+                Margin = new Padding(0, 0, 0, ScaleHelper.Scale(17))
+            };
+            sender.hScrollBar = new ScrollBarEx
+            {
+                Height = ScaleHelper.Scale(17),
+                Orientation = ScrollBarOrientation.Horizontal,
+                ContextMenuStrip = { Renderer = new DockPanelStripRenderer() },
+                Dock = DockStyle.Bottom
+            };
             sender.ScrollBarEx_SettingsChanged(ScrollBarEx.SettingsMode);
             ScrollBarEx.SettingsChanged += sender.ScrollBarEx_SettingsChanged;
             EventManager.AddEventHandler(sender, EventType.ApplyTheme);
@@ -202,13 +206,13 @@ namespace ScintillaNet
         /// <param name="sender">The <see cref="ScintillaControl"/> object.</param>
         private static void AutoAddRemoveScrollBars(ScintillaControl sender)
         {
-            if (PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor").IsEmpty)
+            if (ScrollBarEx.UseCustom)
             {
-                TurnOffScrollBars(sender);
+                TurnOnScrollBars(sender);
             }
             else
             {
-                TurnOnScrollBars(sender);
+                TurnOffScrollBars(sender);
             }
         }
 
