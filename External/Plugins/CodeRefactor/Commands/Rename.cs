@@ -111,16 +111,8 @@ namespace CodeRefactor.Commands
                 }
                 return;
             }
-            Boolean isEnum = target.Type.IsEnum();
-            Boolean isVoid = target.Type.IsVoid();
-            Boolean isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
 
-            if (!string.IsNullOrEmpty(newName))
-                this.newName = newName;
-            else if (isEnum || isClass)
-                this.newName = GetNewName(target.Type.Name);
-            else
-                this.newName = GetNewName(target.Member.Name);
+            this.newName = !string.IsNullOrEmpty(newName) ? newName : GetNewName(RefactoringHelper.GetRefactorTargetName(target));
 
             if (string.IsNullOrEmpty(this.newName)) return;
 
