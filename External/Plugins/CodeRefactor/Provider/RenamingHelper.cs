@@ -46,7 +46,7 @@ namespace CodeRefactor.Provider
 
         static void RenameMember(ClassModel inClass, string name, string newName, bool outputResults)
         {
-            MemberModel m = inClass.Members.Cast<MemberModel>().FirstOrDefault(it => it.Name == name);
+            MemberModel m = inClass.Members.Items.FirstOrDefault(it => it.Name == name);
             if (m == null) return;
             ASResult result = new ASResult();
             ASComplete.FindMember(name, inClass, result, FlagType.Dynamic | FlagType.Function, 0);
