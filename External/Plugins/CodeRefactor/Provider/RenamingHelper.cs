@@ -36,8 +36,8 @@ namespace CodeRefactor.Provider
                     (target.Member.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
                 {
                     List<MemberModel> list = target.Member.Parameters;
-                    if (list[0].Name == "get") RenameMember(target.InClass, $"get_{name}", $"get_{newName}", outputResults);
-                    if (list[1].Name == "set") RenameMember(target.InClass, $"set_{name}", $"set_{newName}", outputResults);
+                    if (list[0].Name == "get") RenameMember(target.InClass, "get_" + name, "get_" + newName, outputResults);
+                    if (list[1].Name == "set") RenameMember(target.InClass, "set_" + name, "set_" + newName, outputResults);
                 }
                 if (currentCommand == null) ExecuteFirst();
             }
