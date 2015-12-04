@@ -53,7 +53,7 @@ private void OnFormActivate(object sender, /*System.*/EventArgs e)
 
 ```
 // Comment...	
-private int memberMethod(int value)
+private int MemberMethod(int value)
 {
 	
 	
