@@ -158,6 +158,44 @@ namespace ASCompletion.Completion
             Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
         }
 
+        [Test(Description = "This includes PR #963")]
+        public void DisambiguateComa_GenericFunctionArgumentType()
+        {
+            var pluginMain = Substitute.For<PluginMain>();
+            var pluginUiMock = new PluginUIMock(pluginMain);
+            pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+            pluginMain.Settings.Returns(new GeneralSettings());
+            pluginMain.Panel.Returns(pluginUiMock);
+            ASContext.GlobalInit(pluginMain);
+            ASContext.Context = new AS3Context.Context(new AS3Settings());
+
+            var sci = GetBaseScintillaControl();
+            sci.Text = "function test<K:(ArrayAccess, {})>(arg:";
+            sci.ConfigurationLanguage = "as3";
+
+            var coma = ASComplete.DisambiguateComa(sci, 39, 0);
+            Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
+        }
+
+        [Test(Description = "This includes PR #963")]
+        public void DisambiguateComa_GenericFunctionArgument()
+        {
+            var pluginMain = Substitute.For<PluginMain>();
+            var pluginUiMock = new PluginUIMock(pluginMain);
+            pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+            pluginMain.Settings.Returns(new GeneralSettings());
+            pluginMain.Panel.Returns(pluginUiMock);
+            ASContext.GlobalInit(pluginMain);
+            ASContext.Context = new AS3Context.Context(new AS3Settings());
+
+            var sci = GetBaseScintillaControl();
+            sci.Text = "function test<K:(ArrayAccess, {})>(arg:String, arg2";
+            sci.ConfigurationLanguage = "as3";
+
+            var coma = ASComplete.DisambiguateComa(sci, 51, 0);
+            Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
+        }
+
         [Test]
         public void DisambiguateComa_ArrayValue()
         {
@@ -196,6 +234,64 @@ namespace ASCompletion.Completion
             var coma = ASComplete.DisambiguateComa(sci, 26, 0);
 
             Assert.AreEqual(ComaExpression.AnonymousObjectParam, coma);
+        }
+
+        [Test]
+        public void DisambiguateComa_ObjectProperty()
+        {
+            var pluginMain = Substitute.For<PluginMain>();
+            var pluginUiMock = new PluginUIMock(pluginMain);
+            pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+            pluginMain.Settings.Returns(new GeneralSettings());
+            pluginMain.Panel.Returns(pluginUiMock);
+            ASContext.GlobalInit(pluginMain);
+            ASContext.Context = new AS3Context.Context(new AS3Settings());
+
+            var sci = GetBaseScintillaControl();
+            sci.Text = "var obj:Object = {test";
+            sci.ConfigurationLanguage = "as3";
+
+            var coma = ASComplete.DisambiguateComa(sci, 22, 0);
+            // Should this be AnonymousObject?
+            Assert.AreEqual(ComaExpression.AnonymousObjectParam, coma);
+        }
+
+        [Test]
+        public void DisambiguateComa_VariableType()
+        {
+            var pluginMain = Substitute.For<PluginMain>();
+            var pluginUiMock = new PluginUIMock(pluginMain);
+            pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+            pluginMain.Settings.Returns(new GeneralSettings());
+            pluginMain.Panel.Returns(pluginUiMock);
+            ASContext.GlobalInit(pluginMain);
+            ASContext.Context = new AS3Context.Context(new AS3Settings());
+
+            var sci = GetBaseScintillaControl();
+            sci.Text = "var obj:Obj";
+            sci.ConfigurationLanguage = "as3";
+
+            var coma = ASComplete.DisambiguateComa(sci, 11, 0);
+            Assert.AreEqual(ComaExpression.VarDeclaration, coma);
+        }
+
+        [Test]
+        public void DisambiguateComa_FunctionCallSimple()
+        {
+            var pluginMain = Substitute.For<PluginMain>();
+            var pluginUiMock = new PluginUIMock(pluginMain);
+            pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+            pluginMain.Settings.Returns(new GeneralSettings());
+            pluginMain.Panel.Returns(pluginUiMock);
+            ASContext.GlobalInit(pluginMain);
+            ASContext.Context = new AS3Context.Context(new AS3Settings());
+
+            var sci = GetBaseScintillaControl();
+            sci.Text = "this.call(true";
+            sci.ConfigurationLanguage = "as3";
+
+            var coma = ASComplete.DisambiguateComa(sci, 14, 0);
+            Assert.AreEqual(ComaExpression.FunctionParameter, coma);
         }
     }
 }
