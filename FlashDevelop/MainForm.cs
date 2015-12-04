@@ -1754,6 +1754,30 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Gets a theme enumeration value.
+        /// </summary>
+        public T GetThemeValue<T>(String id) where T : struct
+        {
+            return GetThemeValue(id, default(T));
+        }
+
+        /// <summary>
+        /// Gets a theme enumeration value with a fallback.
+        /// </summary>
+        public T GetThemeValue<T>(String id, T fallback) where T : struct
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            try
+            {
+                return (T) Enum.Parse(typeof(T), value);
+            }
+            catch
+            {
+                return fallback;
+            }
+        }
+
+        /// <summary>
         /// Finds the specified menu item by name
         /// </summary>
         public ToolStripItem FindMenuItem(String name)
@@ -1800,11 +1824,11 @@ namespace FlashDevelop
         /// Returns a <see cref="Dictionary{TKey, TValue}"/> object containing all registered
         /// shortcuts with the shortcut values as keys.
         /// </summary>
-        public Dictionary<Keys, string> GetShortcutItemsByKeys()
+        public Dictionary<Keys, String> GetShortcutItemsByKeys()
         {
-            var list = ShortcutManager.RegisteredItems.Values;
-            var items = new Dictionary<Keys, string>(list.Count);
-            foreach (var item in list)
+            Dictionary<String, ShortcutItem>.ValueCollection list = ShortcutManager.RegisteredItems.Values;
+            Dictionary<Keys, String> items = new Dictionary<Keys, String>(list.Count);
+            foreach (ShortcutItem item in list)
             {
                 if (item.Custom == Keys.None) continue;
                 items[item.Custom] = item.Id;
