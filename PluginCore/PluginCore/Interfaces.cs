@@ -122,10 +122,16 @@ namespace PluginCore
         ToolStripItem FindMenuItem(String name);
         String ProcessArgString(String args);
         Keys GetShortcutItemKeys(String id);
+        String GetShortcutItemId(Keys keys);
+        Dictionary<Keys, String> GetShortcutItemsByKeys();
         String GetThemeValue(String id);
         Color GetThemeColor(String id);
+        Boolean GetThemeFlag(String id);
+        T GetThemeValue<T>(String id) where T : struct;
         String GetThemeValue(String id, String fallback);
         Color GetThemeColor(String id, Color fallback);
+        Boolean GetThemeFlag(String id, Boolean fallback);
+        T GetThemeValue<T>(String id, T fallback) where T : struct;
         IPlugin FindPlugin(String guid);
         Image ImageSetAdjust(Image image);
         Image FindImage(String data);
