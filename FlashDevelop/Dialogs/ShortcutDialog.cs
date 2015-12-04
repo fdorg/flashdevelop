@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Collections;
@@ -285,7 +284,7 @@ namespace FlashDevelop.Dialogs
             this.listView.BeginUpdate();
             this.listView.Items.Clear();
             this.listView.ListViewItemSorter = new ListViewComparer();
-            foreach (ShortcutItem item in ShortcutManager.RegisteredItems)
+            foreach (ShortcutItem item in ShortcutManager.RegisteredItems.Values)
             {
                 if (!this.listView.Items.ContainsKey(item.Id) && 
                     (item.Id.ToLower().Contains(filter.ToLower()) || 

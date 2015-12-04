@@ -432,7 +432,7 @@ namespace AirProperties
 
         private Boolean GetSelectedLocaleIsDefault()
         {
-            return (Boolean)(LocalesField.SelectedIndex == 0);
+            return LocalesField.SelectedIndex == 0;
         }
 
         public void SetTitle(string projectName, string airVersion)
@@ -1065,11 +1065,11 @@ namespace AirProperties
                 {
                     if (_pluginMain.Settings.UseUniformFilenames)
                     {
-                        destinationFileName = filePrefix + dimensions.X.ToString() + Path.GetExtension(fileName);
+                        destinationFileName = filePrefix + dimensions.X + Path.GetExtension(fileName);
                     }
                     else if (_pluginMain.Settings.RenameIconsWithSize)
                     {
-                        destinationFileName = Path.GetFileNameWithoutExtension(fileName) + dimensions.X.ToString() + Path.GetExtension(fileName);
+                        destinationFileName = Path.GetFileNameWithoutExtension(fileName) + dimensions.X + Path.GetExtension(fileName);
                     }
                     else destinationFileName = Path.GetFileName(fileName);
                     if (!Directory.Exists(destinationPath))
@@ -1089,7 +1089,7 @@ namespace AirProperties
             }
             else
             {
-                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X.ToString(), dimensions.Y.ToString()), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X, dimensions.Y), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -1473,8 +1473,8 @@ namespace AirProperties
                     {
                         //create the affected properties now, even though value is empty, so the locale 
                         //will be preserved if the user closes the form without specifying a value
-                        PropertyManager.CreateLocalizedProperty("name", locale, (Boolean)_locales[0].Equals(locale));
-                        PropertyManager.CreateLocalizedProperty("description", locale, (Boolean)_locales[0].Equals(locale));
+                        PropertyManager.CreateLocalizedProperty("name", locale, _locales[0].Equals(locale));
+                        PropertyManager.CreateLocalizedProperty("description", locale, _locales[0].Equals(locale));
                     }
                 }
                 //Re-initialize locales and refresh affected property fields
@@ -1883,11 +1883,11 @@ namespace AirProperties
                 // always true;
                 fileType.DescriptionIsValid = true;
                 // set validity based on validation requirements
-                if (fileType.Name.Length <= 0) fileType.NameIsValid = false;
+                if (fileType.Name.Length == 0) fileType.NameIsValid = false;
                 else fileType.NameIsValid = true;
                 if (!Regex.IsMatch(fileType.Extension, _FileNameRegexPattern)) fileType.ExtensionIsValid = false;
                 else fileType.ExtensionIsValid = true;
-                if (fileType.ContentType.Length <= 0) fileType.ContentTypeIsValid = false;
+                if (fileType.ContentType.Length == 0) fileType.ContentTypeIsValid = false;
                 else fileType.ContentTypeIsValid = true;
                 foreach (PropertyManager.AirFileType.AirFileTypeIcon icon in fileType.Icons)
                 {
@@ -1964,7 +1964,7 @@ namespace AirProperties
 
         private void VersionField_Validating(object sender, CancelEventArgs e)
         {
-            if (VersionField.Text.Length <= 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
+            if (VersionField.Text.Length == 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
                 this.ValidationErrorProvider.SetError(VersionField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionLabel.Text));
                 e.Cancel = true;
@@ -2164,7 +2164,7 @@ namespace AirProperties
             {
                 FileTypeNameField.Text = FileTypeNameField.Text.Trim();
                 selectedFileType.Name = FileTypeNameField.Text;
-                if (FileTypeNameField.Text.Length <= 0)
+                if (FileTypeNameField.Text.Length == 0)
                 {
                     selectedFileType.NameIsValid = false;
                     this.ValidationErrorProvider.SetError(FileTypeNameField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
@@ -2220,7 +2220,7 @@ namespace AirProperties
                 FileTypeContentTypeField.Text = FileTypeContentTypeField.Text.Trim();
                 selectedFileType.ContentType = FileTypeContentTypeField.Text;
                 // validate as required field for AIR 1.5+
-                if (FileTypeContentTypeField.Text.Length <= 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
+                if (FileTypeContentTypeField.Text.Length == 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
                 {
                     selectedFileType.ContentTypeIsValid = false;
                     this.ValidationErrorProvider.SetError(FileTypeContentTypeField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));

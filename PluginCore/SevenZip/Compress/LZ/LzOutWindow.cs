@@ -1,5 +1,7 @@
 // LzOutWindow.cs
 
+using System.IO;
+
 namespace SevenZip.Compression.LZ
 {
     public class OutWindow
@@ -8,7 +10,7 @@ namespace SevenZip.Compression.LZ
         uint _pos;
         uint _windowSize = 0;
         uint _streamPos;
-        System.IO.Stream _stream;
+        Stream _stream;
 
         public uint TrainSize = 0;
 
@@ -24,7 +26,7 @@ namespace SevenZip.Compression.LZ
             _streamPos = 0;
         }
 
-        public void Init(System.IO.Stream stream, bool solid)
+        public void Init(Stream stream, bool solid)
         {
             ReleaseStream();
             _stream = stream;
@@ -36,7 +38,7 @@ namespace SevenZip.Compression.LZ
             }
         }
     
-        public bool Train(System.IO.Stream stream)
+        public bool Train(Stream stream)
         {
             long len = stream.Length;
             uint size = (len < _windowSize) ? (uint)len : _windowSize;

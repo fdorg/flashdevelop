@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
+using System.Text.RegularExpressions;
 using ASCompletion.Model;
 
 namespace ASCompletion.Completion
@@ -74,7 +72,9 @@ namespace ASCompletion.Completion
         public string objectKey;
         public string booleanKey;
         public string numberKey;
+        public string stringKey;
         public string arrayKey;
+        public string dynamicKey;
         public string importKey;
         public string importKeyAlt;
         public string[] typesPreKeys = new string[] { };
@@ -131,7 +131,7 @@ namespace ASCompletion.Completion
 
             if (text != null)
             {
-                string[] tokens = System.Text.RegularExpressions.Regex.Split(text, "\\s+");
+                string[] tokens = Regex.Split(text, "\\s+");
                 foreach (string token in tokens)
                 {
                     if (token.Length > 0 && members.Contains(token))

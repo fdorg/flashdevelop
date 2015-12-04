@@ -14,7 +14,7 @@ namespace ProjectManager.Building.AS3
         {
             this.project = project;
             flex45 = sdkVersion >= 4.5;
-            flex410 = sdkVersion > 4.9;
+            flex410 = Math.Truncate(sdkVersion) >= 4 && (sdkVersion % 1) * 100 > 9;
             asc2 = asc2Mode;
         }
 

@@ -115,6 +115,7 @@ namespace HaXeContext
             features.objectKey = "Dynamic";
             features.booleanKey = "Bool";
             features.numberKey = "Float";
+            features.stringKey = "String";
             features.arrayKey = "Array<T>";
             features.importKey = "import";
             features.importKeyAlt = "using";
@@ -832,11 +833,7 @@ namespace HaXeContext
                 if (aPath.IsValid && !aPath.Updating)
                 {
                     string path;
-                    try
-                    {
-                        path = Path.Combine(aPath.Path, fileName);
-                    }
-                    catch { continue; }
+                    path = aPath.Path + dirSeparator + fileName;
 
                     FileModel file = null;
                     // cached file
@@ -1024,7 +1021,6 @@ namespace HaXeContext
                 aClass.ExtendsType = indexType;
             }
 
-            string typed = "<" + indexType + ">";
             foreach (MemberModel member in aClass.Members)
             {
                 if (member.Type != null && member.Type.IndexOf(Tname) >= 0)
@@ -1227,6 +1223,10 @@ namespace HaXeContext
                     if (result.Members != null && result.Members.Count > 0)
                         ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
                     break;
+
+                case HaxeCompleteStatus.TYPE:
+                    // eg. Int
+                    break;
             }
         }
 
@@ -1272,8 +1272,6 @@ namespace HaXeContext
                             elements.Add(decl);
                 }
                 elements.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
-
-                bool qualify = Settings.CompletionShowQualifiedTypes && settings.GenerateImports;
 
                 // other classes in same package (or parent packages!)
                 if (features.hasPackages && cFile.Package != "")
@@ -1440,7 +1438,6 @@ namespace HaXeContext
                     ASComplete.SaveLastLookupPosition(hc.Sci);
 
                     PluginBase.MainForm.OpenEditableDocument(result.Path, false);
-                    ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
                     const string keywords = "(function|var|[,(])";
 
                     ASComplete.LocateMember(keywords, hc.CurrentWord, result.LineStart - 1);
@@ -1582,7 +1579,7 @@ namespace HaXeContext
             {
                 command = Regex.Replace(command, "[\\r\\n]\\s*\\*", "", RegexOptions.Singleline);
                 command = " " + MainForm.ProcessArgString(command) + " ";
-                if (command == null || command.Length == 0)
+                if (string.IsNullOrEmpty(command))
                 {
                     if (!failSilently)
                         throw new Exception(TextHelper.GetString("Info.InvalidQuickBuildCommand"));

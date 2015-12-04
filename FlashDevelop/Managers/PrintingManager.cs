@@ -1,13 +1,8 @@
 using System;
-using System.Text;
 using System.Drawing;
-using System.Collections.Generic;
 using System.Drawing.Printing;
-using PluginCore.Localization;
-using FlashDevelop.Docking;
-using FlashDevelop.Helpers;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Localization;
 
 namespace FlashDevelop.Managers
 {
@@ -45,7 +40,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Handles the PrintPage event
         /// </summary>
-        public static void OnPrintDocumentPrintPage(Object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        public static void OnPrintDocumentPrintPage(Object sender, PrintPageEventArgs e)
         {
             PrintPageNumber++;
             ITabbedDocument document = Globals.CurrentDocument;

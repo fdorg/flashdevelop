@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.IO;
-using PluginCore.Managers;
+using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using PluginCore.Localization;
-using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
 
 namespace PHPContext
 {

@@ -382,11 +382,11 @@ namespace FlashLogViewer
                 {
                     string line = s.ReadLine();
                     if (!this.PassesFilter(line)) continue;
-                    Color newColor = Color.Black;
+                    Color newColor = PluginBase.MainForm.GetThemeColor("FlashLogViewer.DebugColor", Color.Black);
                     if (colorize)
                     {
-                        if (reWarning.IsMatch(line)) newColor = Color.Orange;
-                        else if (reError.IsMatch(line)) newColor = Color.Red;
+                        if (reWarning.IsMatch(line)) newColor = PluginBase.MainForm.GetThemeColor("FlashLogViewer.WarningColor", Color.Orange);
+                        else if (reError.IsMatch(line)) newColor = PluginBase.MainForm.GetThemeColor("FlashLogViewer.ErrorColor", Color.Red);
                     }
                     if (newColor != currentColor)
                     {
@@ -544,9 +544,9 @@ namespace FlashLogViewer
                 try
                 {
                     this.reFilter = new Regex(filterComboBox.Text, RegexOptions.IgnoreCase);
-                    this.filterComboBox.ForeColor = SystemColors.ControlText;
+                    this.filterComboBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor", SystemColors.WindowText);
                 }
-                catch { this.filterComboBox.ForeColor = Color.Red; }
+                catch {}
             }
             this.lastPosition = 0;
             this.logTextBox.Clear();
@@ -564,7 +564,7 @@ namespace FlashLogViewer
             }
             catch 
             { 
-                this.Settings.RegexError = "Error #";
+                this.Settings.RegexError = "Error: ";
                 this.reError = new Regex(this.Settings.RegexError, RegexOptions.IgnoreCase);
             }
             try

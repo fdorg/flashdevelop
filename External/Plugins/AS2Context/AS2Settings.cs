@@ -1,22 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Windows.Forms;
-using System.Windows.Forms.Design;
-using System.IO;
-using ASCompletion.Context;
+using ASCompletion.Settings;
 using Ookii.Dialogs;
-using PluginCore.Localization;
 using PluginCore;
+using PluginCore.Localization;
 
 namespace AS2Context
 {
     public delegate void ClasspathChangedEvent();
 
     [Serializable]
-    public class AS2Settings : ASCompletion.Settings.IContextSettings
+    public class AS2Settings : IContextSettings
     {
         [field: NonSerialized]
         public event ClasspathChangedEvent OnClasspathChanged;

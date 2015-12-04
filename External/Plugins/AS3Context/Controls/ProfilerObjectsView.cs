@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Aga.Controls.Tree;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore;
-using System.IO;
+using PluginCore.Localization;
+using ScintillaNet;
 
 namespace AS3Context.Controls
 {
@@ -28,7 +27,7 @@ namespace AS3Context.Controls
             delayOpen.Tick += new EventHandler(delayOpen_Tick);
 
             // action
-            openItem = new ToolStripMenuItem(PluginCore.Localization.TextHelper.GetString("Label.OpenMethodFile"));
+            openItem = new ToolStripMenuItem(TextHelper.GetString("Label.OpenMethodFile"));
             openItem.Click += new EventHandler(objectsGrid_Open);
 
             objectsGrid.ContextMenuStrip = new ContextMenuStrip();
@@ -49,7 +48,7 @@ namespace AS3Context.Controls
                     if (PluginBase.MainForm.CurrentDocument.IsEditable
                         && PluginBase.MainForm.CurrentDocument.FileName.Equals(fileToOpen, StringComparison.OrdinalIgnoreCase))
                     {
-                        ScintillaNet.ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                        ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
                         int pos = sci.PositionFromLine(lineToOpen);
                         sci.SetSel(pos, pos);
                         sci.EnsureVisible(lineToOpen);
@@ -66,7 +65,7 @@ namespace AS3Context.Controls
                 ObjectRefsNode node = objectsGrid.SelectedNode.Tag as ObjectRefsNode;
                 if (node != null && node.Line.Length > 0)
                 {
-                    fileToOpen = node.Path.Replace(';', System.IO.Path.DirectorySeparatorChar);
+                    fileToOpen = node.Path.Replace(';', Path.DirectorySeparatorChar);
                     lineToOpen = int.Parse(node.Line) - 1;
                     delayOpen.Start();
                 }

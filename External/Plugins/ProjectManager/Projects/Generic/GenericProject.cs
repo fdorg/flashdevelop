@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace ProjectManager.Projects.Generic
 {
@@ -39,7 +40,7 @@ namespace ProjectManager.Projects.Generic
             {
                 return reader.ReadProject();
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.", exception.LineNumber, exception.LinePosition);
                 throw new Exception(format, exception);

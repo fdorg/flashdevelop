@@ -1,17 +1,17 @@
 using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Web;
-using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
-using WeifenLuo.WinFormsUI.Docking;
-using ProjectManager.Projects;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using StartPage.Controls;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ProjectManager;
+using StartPage.Controls;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace StartPage
 {
@@ -115,7 +115,7 @@ namespace StartPage
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -123,7 +123,7 @@ namespace StartPage
                     DataEvent de = (DataEvent)e;
                     switch (de.Action)
                     {
-                        case ProjectManager.ProjectManagerEvents.Project :
+                        case ProjectManagerEvents.Project :
                             // Close pluginPanel if the user has the setting checked and a project is opened
                             if (de.Data != null & this.startPage != null)
                             {
@@ -249,7 +249,7 @@ namespace StartPage
         public void ShowStartPage()
         {
             if (this.startPage == null) this.CreateStartPage();
-            else this.startPage.Show();
+            else this.startPage.Show(PluginBase.MainForm.DockPanel);
         }
 
         #endregion
@@ -259,7 +259,7 @@ namespace StartPage
         /// <summary>
         /// Shows the start page.
         /// </summary>
-        private void ViewMenuClick(Object sender, System.EventArgs e)
+        private void ViewMenuClick(Object sender, EventArgs e)
         {
             this.ShowStartPage();
         }

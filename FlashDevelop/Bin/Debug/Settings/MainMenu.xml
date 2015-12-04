@@ -34,7 +34,7 @@
 		<button label="Label.CloseAll" click="CloseAll" shortcut="Control|Shift|V" flags="Enable:!IsAloneInPane" />
 		<separator />
 		<menu label="Label.Encoding" name="EncodingMenu" flags="Enable:IsEditable">
-			<button label="Label.8Bits" click="ChangeEncoding" tag="0" flags="Check:IsEditable|IsActiveEncoding" />
+			<button label="Label.8Bits" click="ChangeEncoding" tag="0" flags="Check:IsEditable|!IsUnicode" />
 			<button label="Label.BigEndian" click="ChangeEncoding" tag="1201" flags="Check:IsEditable|IsActiveEncoding" />
 			<button label="Label.LittleEndian" click="ChangeEncoding" tag="1200" flags="Check:IsEditable|IsActiveEncoding" />
 			<button label="Label.UTF8" click="ChangeEncoding" tag="65001" flags="Check:IsEditable|IsActiveEncoding" />
@@ -42,13 +42,6 @@
 			<separator />
 			<button label="Label.SaveBOM" click="ToggleSaveBOM" flags="Check:IsEditable|SaveBOM+Disable:IsDefaultEncoding" />
 			<separator />
-			<menu label="Label.ConvertTextTo" name="ConvertToMenu" flags="Enable:IsEditable">
-				<button label="Label.8Bits" click="ConvertEncoding" tag="0" image="559" />
-				<button label="Label.BigEndian" click="ConvertEncoding" tag="1201" />
-				<button label="Label.LittleEndian" click="ConvertEncoding" tag="1200" />
-				<button label="Label.UTF8" click="ConvertEncoding" tag="65001" />
-				<button label="Label.UTF7" click="ConvertEncoding" tag="65000" />
-			</menu>
 			<menu label="Label.OpenFilesIn" name="OpenInMenu" flags="Enable:IsEditable" image="559">
 				<button label="Label.8Bits" click="OpenIn" tag="0" image="559" />
 				<button label="Label.BigEndian" click="OpenIn" tag="1201" />

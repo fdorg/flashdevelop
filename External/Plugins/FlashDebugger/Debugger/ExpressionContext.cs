@@ -1,13 +1,13 @@
 #if true
 using System;
-using PluginCore.Localization;
-using flash.tools.debugger;
-using flash.tools.debugger.expression;
-using flash.tools.debugger.concrete;
-using ASCompletion.Model;
-using ASCompletion.Completion;
 using ASCompletion.Context;
-using System.Collections.Generic;
+using ASCompletion.Model;
+using flash.tools.debugger;
+using flash.tools.debugger.concrete;
+using flash.tools.debugger.expression;
+using PluginCore.Localization;
+using Object = java.lang.Object;
+using String = java.lang.String;
 
 namespace FlashDebugger
 {
@@ -28,7 +28,7 @@ namespace FlashDebugger
             this.frame = frame;
         }
 
-        public void assign(java.lang.Object par0, Value par1)
+        public void assign(Object par0, Value par1)
         {
             Variable var = lookup(par0) as Variable;
             if (var != null)
@@ -40,15 +40,15 @@ namespace FlashDebugger
                     throw new NotSupportedException(TextHelper.GetString("Error.NoScalar"));
             } 
             else
-                throw new NoSuchVariableException(String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+                throw new NoSuchVariableException(System.String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
         }
 
-        public Context createContext(java.lang.Object par0)
+        public Context createContext(Object par0)
         {
             Value val;
             if (par0 is Variable) val = ((Variable)par0).getValue();
             else if (par0 is Value) val = (Value)par0;
-            else if (par0 is java.lang.String) val = DValue.forPrimitive(par0, getIsolateId());
+            else if (par0 is String) val = DValue.forPrimitive(par0, getIsolateId());
             else throw new NotImplementedException();
             return new ExpressionContext(session, frame, val);
         }
@@ -63,53 +63,53 @@ namespace FlashDebugger
             return session;
         }
 
-        public java.lang.Object lookup(java.lang.Object par0)
+        public Object lookup(Object par0)
         {
-            if (par0 is java.lang.String)
+            if (par0 is String)
             {
                 if (null != contextVal)
                 {
                     foreach (Variable v in contextVal.getMembers(session))
                     {
-                        if (v.getName().Equals(par0)) return (java.lang.Object)v;
+                        if (v.getName().Equals(par0)) return (Object)v;
                     }
-                    throw new NoSuchVariableException(String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+                    throw new NoSuchVariableException(System.String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
                 }
 
-                if ((java.lang.String)par0 == "this")
+                if ((String)par0 == "this")
                 {
-                    return (java.lang.Object)frame.getThis(session);
+                    return (Object)frame.getThis(session);
                 }
                 foreach (Variable v in frame.getArguments(session))
                 {
-                    if (v.getName().Equals(par0)) return (java.lang.Object)v;
+                    if (v.getName().Equals(par0)) return (Object)v;
                 }
                 foreach (Variable v in frame.getLocals(session))
                 {
-                    if (v.getName().Equals(par0)) return (java.lang.Object)v;
+                    if (v.getName().Equals(par0)) return (Object)v;
                 }
                 foreach (Variable v in frame.getThis(session).getValue().getMembers(session))
                 {
-                    if (v.getName().Equals(par0)) return (java.lang.Object)v;
+                    if (v.getName().Equals(par0)) return (Object)v;
                 }
                 foreach (Variable scope in frame.getScopeChain(session))
                 {
                     foreach (Variable v in scope.getValue().getMembers(session))
                     {
-                        if (v.getName().Equals(par0)) return (java.lang.Object)v;
+                        if (v.getName().Equals(par0)) return (Object)v;
                     }
                 }
-                var fullClassName = findClassName((java.lang.String)par0);
+                var fullClassName = findClassName((String)par0);
                 if (null != fullClassName)
                 {
-                    return (java.lang.Object)session.getGlobal(new java.lang.String(fullClassName));
+                    return (Object)session.getGlobal(new String(fullClassName));
                 }
             }
-            throw new NoSuchVariableException(String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+            throw new NoSuchVariableException(System.String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
             //Value_.UNDEFINED;
         }
 
-        public string findClassName(java.lang.String className)
+        public string findClassName(String className)
         {
             string endOfClassName = "." + className;
 
@@ -133,9 +133,9 @@ namespace FlashDebugger
             return null;
         }
 
-        public java.lang.Object lookupMembers(java.lang.Object par0)
+        public Object lookupMembers(Object par0)
         {
-            java.lang.String name = "?";
+            String name = "?";
             Value val = null;
 
             if (par0 is Value)
@@ -155,14 +155,14 @@ namespace FlashDebugger
                 int type = val.getType();
                 if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
                 {
-                    java.lang.String ret = name + " = " + FormatValue(val) + "\r\n";
+                    String ret = name + " = " + FormatValue(val) + "\r\n";
                     foreach (Variable v in val.getMembers(session))
                     {
                         ret += " " + v.getName() + " = " + FormatValue(v.getValue()) + "\r\n";
                     }
                     return ret;
                 }
-                return new java.lang.String(name + " = " + val.getValueAsString());
+                return new String(name + " = " + val.getValueAsString());
             }
 
             //NoSuchVariableException
@@ -170,9 +170,9 @@ namespace FlashDebugger
             throw new NotImplementedException();
         }
 
-        public java.lang.String FormatValue(Value val)
+        public String FormatValue(Value val)
         {
-            java.lang.String ret = "";
+            String ret = "";
             if (val == null) return "null";
             int type = val.getType();
             if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
@@ -186,7 +186,7 @@ namespace FlashDebugger
             return ret;
         }
 
-        public Value toValue(java.lang.Object par0)
+        public Value toValue(Object par0)
         {
             if (par0 is Value) return (Value)par0;
             if (par0 is Variable) return ((Variable)par0).getValue();
@@ -273,7 +273,7 @@ namespace FlashDebugger
         
         internal virtual void  pushName(String name)
         {
-            if (m_nameLocked || name.Length < 1) return;
+            if (m_nameLocked || name.Length == 0) return;
             m_namedPath.Add(name);
         }
 

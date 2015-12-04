@@ -1,16 +1,11 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Collections;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Localization;
-using FlashDevelop.Helpers;
-using PluginCore.Utilities;
-using PluginCore.Managers;
+using System.IO;
+using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace FlashDevelop.Managers
 {

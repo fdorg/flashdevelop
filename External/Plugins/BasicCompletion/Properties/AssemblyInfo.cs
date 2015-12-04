@@ -1,5 +1,5 @@
 using System.Reflection;
-using System.Runtime.CompilerServices;
+using PluginCore;
 
 // Information about this assembly is defined by the following
 // attributes.
@@ -10,9 +10,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("BasicCompletion")]
 [assembly: AssemblyDescription("BasicCompletion Plugin For FlashDevelop")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany(PluginCore.DistroConfig.DISTRIBUTION_COMPANY)]
+[assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("BasicCompletion")]
-[assembly: AssemblyCopyright(PluginCore.DistroConfig.DISTRIBUTION_COPYRIGHT)]
+[assembly: AssemblyCopyright(DistroConfig.DISTRIBUTION_COPYRIGHT)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

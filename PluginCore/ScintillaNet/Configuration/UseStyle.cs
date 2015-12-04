@@ -1,16 +1,15 @@
 using System;
-using System.Runtime;
 using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class UseStyle : StyleClass
     {
-        [XmlAttributeAttribute("class")]
+        [XmlAttribute("class")]
         public string cls;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public int key;
 
         public override void init(ConfigurationUtility utility, ConfigFile theParent)

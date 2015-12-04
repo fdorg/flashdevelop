@@ -1,11 +1,9 @@
 using System;
-using System.Text;
-using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.Collections.Generic;
-using PluginCore.Localization;
+using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms;
+using PluginCore.Localization;
 
 namespace OutputPanel
 {

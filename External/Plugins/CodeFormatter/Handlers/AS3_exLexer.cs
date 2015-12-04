@@ -1,21 +1,8 @@
 // $ANTLR 3.1.1 AS3_ex.g3 2015-02-17 22:17:17
 
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using CodeFormatter.InfoCollector;
-using CodeFormatter.Handlers;
-using PluginCore.Managers;
-
-
 using System;
 using Antlr.Runtime;
-using IList         = System.Collections.IList;
-using ArrayList     = System.Collections.ArrayList;
 using Stack         = Antlr.Runtime.Collections.StackList;
-
-using IDictionary   = System.Collections.IDictionary;
-using Hashtable     = System.Collections.Hashtable;
 
 public class AS3_exLexer : Lexer {
     public const int UNDERSCORE = 115;

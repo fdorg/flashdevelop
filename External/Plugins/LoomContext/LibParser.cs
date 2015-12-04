@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using ASCompletion.Model;
 using LitJson;
-using System.IO;
 using PluginCore.Managers;
 
 namespace LoomContext

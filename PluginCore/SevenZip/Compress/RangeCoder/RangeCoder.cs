@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace SevenZip.Compression.RangeCoder
 {
@@ -6,7 +7,7 @@ namespace SevenZip.Compression.RangeCoder
     {
         public const uint kTopValue = (1 << 24);
 
-        System.IO.Stream Stream;
+        Stream Stream;
 
         public UInt64 Low;
         public uint Range;
@@ -15,7 +16,7 @@ namespace SevenZip.Compression.RangeCoder
 
         long StartPosition;
 
-        public void SetStream(System.IO.Stream stream)
+        public void SetStream(Stream stream)
         {
             Stream = stream;
         }
@@ -125,9 +126,9 @@ namespace SevenZip.Compression.RangeCoder
         public uint Range;
         public uint Code;
         // public Buffer.InBuffer Stream = new Buffer.InBuffer(1 << 16);
-        public System.IO.Stream Stream;
+        public Stream Stream;
 
-        public void Init(System.IO.Stream stream)
+        public void Init(Stream stream)
         {
             // Stream.Init(stream);
             Stream = stream;

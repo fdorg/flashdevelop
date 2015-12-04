@@ -1009,7 +1009,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public void FloatAt(Rectangle floatWindowBounds)
         {
-            DockPane pane = DockPanel.DockPaneFactory.CreateDockPane(Content, floatWindowBounds, true);
+            DockPanel.DockPaneFactory.CreateDockPane(Content, floatWindowBounds, true);
         }
 
         public void DockTo(DockPane pane, DockStyle dockStyle, int contentIndex)

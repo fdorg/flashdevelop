@@ -463,7 +463,6 @@ namespace FlashDevelop.Docking
                 Encoding encoding = Encoding.GetEncoding(info.CodePage);
                 this.SciControl.IsReadOnly = false;
                 this.SciControl.Encoding = encoding;
-                this.SciControl.CodePage = ScintillaManager.SelectCodePage(info.CodePage);
                 this.SciControl.Text = info.Contents;
                 this.SciControl.IsReadOnly = FileHelper.FileIsReadOnly(this.FileName);
                 this.SciControl.SetSel(position, position);

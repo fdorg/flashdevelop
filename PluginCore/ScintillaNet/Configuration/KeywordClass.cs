@@ -1,16 +1,15 @@
 using System;
-using System.Runtime;
 using System.Xml.Serialization;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class KeywordClass : ConfigItem
     {
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string name;
 
-        [XmlTextAttribute()]
+        [XmlText()]
         public string val;
         
     }

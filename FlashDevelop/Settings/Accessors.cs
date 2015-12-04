@@ -1,19 +1,15 @@
 using System;
-using System.Text;
-using System.Drawing;
-using System.Reflection;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing.Design;
-using System.Xml.Serialization;
 using System.Collections.Generic;
-using System.Windows.Forms.Design;
-using PluginCore.Localization;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Design;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using Ookii.Dialogs;
-using PluginCore.Managers;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Controls;
+using PluginCore.Localization;
+using ScintillaNet.Enums;
 
 namespace FlashDevelop.Settings
 {
@@ -83,9 +79,9 @@ namespace FlashDevelop.Settings
 
         [DisplayName("Fold Flags")]
         [LocalizedCategory("FlashDevelop.Category.Folding")]
-        [DefaultValue(ScintillaNet.Enums.FoldFlag.LineAfterContracted)]
+        [DefaultValue(FoldFlag.LineAfterContracted)]
         [LocalizedDescription("FlashDevelop.Description.FoldFlags")]
-        public ScintillaNet.Enums.FoldFlag FoldFlags
+        public FoldFlag FoldFlags
         {
             get { return this.foldFlags; }
             set { this.foldFlags = value; }
@@ -284,18 +280,18 @@ namespace FlashDevelop.Settings
         [DisplayName("Virtual Space Mode")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.VirtualSpaceMode")]
-        [DefaultValue(ScintillaNet.Enums.VirtualSpaceMode.RectangularSelection)]
-        public ScintillaNet.Enums.VirtualSpaceMode VirtualSpaceMode
+        [DefaultValue(VirtualSpaceMode.RectangularSelection)]
+        public VirtualSpaceMode VirtualSpaceMode
         {
             get { return this.virtualSpaceMode; }
             set { this.virtualSpaceMode = value; }
         }
 
         [DisplayName("End Of Line Mode")]
-        [DefaultValue(ScintillaNet.Enums.EndOfLine.CRLF)]
+        [DefaultValue(EndOfLine.CRLF)]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.EOLMode")]
-        public ScintillaNet.Enums.EndOfLine EOLMode
+        public EndOfLine EOLMode
         {
             get { return this.eolMode; }
             set { this.eolMode = value; }
@@ -361,11 +357,11 @@ namespace FlashDevelop.Settings
             set { this.filePollInterval = value; }
         }
 
-        [DefaultValue(ScintillaNet.Enums.HighlightMatchingWordsMode.SelectionOrPosition)]
+        [DefaultValue(HighlightMatchingWordsMode.SelectionOrPosition)]
         [DisplayName("Highlight Matching Words Mode")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsMode")]
-        public ScintillaNet.Enums.HighlightMatchingWordsMode HighlightMatchingWordsMode
+        public HighlightMatchingWordsMode HighlightMatchingWordsMode
         {
             get { return this.highlightMatchingWordsMode; }
             set { this.highlightMatchingWordsMode = value; }
@@ -377,7 +373,7 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsDelay")]
         public Int32 HighlightMatchingWordsDelay
         {
-            get 
+            get
             {
                 // Make sure this is not an invalid value
                 if (this.highlightMatchingWordsDelay <= 0) this.highlightMatchingWordsDelay = 1200;
@@ -444,16 +440,16 @@ namespace FlashDevelop.Settings
             set { this.tabIndents = value; }
         }
 
-        [DefaultValue(ScintillaNet.Enums.IndentView.Real)]
+        [DefaultValue(IndentView.Real)]
         [DisplayName("Indent Guide Type")]
         [LocalizedCategory("FlashDevelop.Category.Indenting")]
         [LocalizedDescription("FlashDevelop.Description.IndentView")]
-        public ScintillaNet.Enums.IndentView IndentView
+        public IndentView IndentView
         {
-            get 
+            get
             {
-                if ((Int32)this.indentView == 0) this.indentView = ScintillaNet.Enums.IndentView.Real;
-                return this.indentView; 
+                if ((Int32)this.indentView == 0) this.indentView = IndentView.Real;
+                return this.indentView;
             }
             set
             {
@@ -462,10 +458,10 @@ namespace FlashDevelop.Settings
         }
 
         [DisplayName("Smart Indent Type")]
-        [DefaultValue(ScintillaNet.Enums.SmartIndent.CPP)]
+        [DefaultValue(SmartIndent.CPP)]
         [LocalizedCategory("FlashDevelop.Category.Indenting")]
         [LocalizedDescription("FlashDevelop.Description.SmartIndentType")]
-        public ScintillaNet.Enums.SmartIndent SmartIndentType
+        public SmartIndent SmartIndentType
         {
             get { return this.smartIndentType; }
             set { this.smartIndentType = value; }

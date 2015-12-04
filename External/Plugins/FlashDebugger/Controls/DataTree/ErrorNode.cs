@@ -1,6 +1,4 @@
 ﻿using System;
-using PluginCore.Localization;
-using flash.tools.debugger.expression;
 
 namespace FlashDebugger.Controls.DataTree
 {

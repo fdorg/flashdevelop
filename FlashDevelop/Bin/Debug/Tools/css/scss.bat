@@ -1,2 +1,2 @@
-@scss %*
-:: scss <options> in:out
+@sass %*
+:: sass <options> in:out

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using System.Xml;
 using PluginCore;
 using PluginCore.Helpers;
 
@@ -130,7 +131,7 @@ namespace ProjectManager.Projects.Haxe
         {
             try
             {
-                if (OutputPath != null && OutputPath.Length > 0 && File.Exists(GetAbsolutePath(OutputPath)))
+                if (!string.IsNullOrEmpty(OutputPath) && File.Exists(GetAbsolutePath(OutputPath)))
                 {
                     if (MovieOptions.HasPlatformSupport && MovieOptions.PlatformSupport.ExternalToolchain == null)
                         File.Delete(GetAbsolutePath(OutputPath));
@@ -239,7 +240,7 @@ namespace ProjectManager.Projects.Haxe
                 }
 
                 // add main class
-                if (CompilerOptions.MainClass != null && CompilerOptions.MainClass.Length > 0)
+                if (!string.IsNullOrEmpty(CompilerOptions.MainClass))
                     pr.Add("-main " + CompilerOptions.MainClass);
                 
                 // extra options
@@ -300,7 +301,7 @@ namespace ProjectManager.Projects.Haxe
             {
                 return reader.ReadProject();
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.",
                     exception.LineNumber, exception.LinePosition);
@@ -365,6 +366,9 @@ namespace ProjectManager.Projects.Haxe
                 if (m.Success)
                 {
                     string op = m.Groups[1].Value;
+                    if (op == "-next")
+                        break; // ignore the rest
+
                     string value = m.Groups[2].Value.Trim();
                     switch (op)
                     {
@@ -385,7 +389,8 @@ namespace ProjectManager.Projects.Haxe
                             int.TryParse(header[2], out MovieOptions.Fps);
                             MovieOptions.Background = header[3];
                             break;
-                        case "--connect": break; // ignore
+                        case "-connect": break; // ignore
+                        case "-each": break; // ignore
                         default:
                             // detect platform (-cpp output, -js output, ...)
                             var targetPlatform = FindPlatform(op);
@@ -395,7 +400,8 @@ namespace ProjectManager.Projects.Haxe
                                 haxeTarget = targetPlatform.HaxeTarget;
                                 output = value;
                             }
-                            else add.Add(line); break;
+                            else add.Add(line); 
+                            break;
                     }
                 }
             }
@@ -419,7 +425,7 @@ namespace ProjectManager.Projects.Haxe
             if (MovieOptions.TargetBuildTypes == null)
             {
                 OutputPath = output;
-                OutputType = Projects.OutputType.Application;
+                OutputType = OutputType.Application;
                 MovieOptions.Platform = target;
             }
         }

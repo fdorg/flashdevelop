@@ -1,14 +1,10 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
-using System.Collections;
-using WeifenLuo.WinFormsUI;
-using WeifenLuo.WinFormsUI.Docking;
-using FlashDevelop.Helpers;
-using PluginCore.Managers;
-using PluginCore.Helpers;
+using System.IO;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Managers;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace FlashDevelop.Managers
 {
@@ -139,7 +135,7 @@ namespace FlashDevelop.Managers
                     if (!Globals.MainForm.CloseAllCanceled)
                     {
                         session.Type = SessionType.Layout;
-                        LayoutManager.BuildLayoutSystems(file);
+                        BuildLayoutSystems(file);
                         SessionManager.RestoreSession("", session);
                     }
                 }

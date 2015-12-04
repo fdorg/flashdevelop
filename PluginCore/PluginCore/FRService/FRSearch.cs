@@ -1,8 +1,9 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
+using PluginCore.Helpers;
 
 namespace PluginCore.FRService
 {
@@ -374,14 +375,14 @@ namespace PluginCore.FRService
                     return;
                 }
 
-                string ext = System.IO.Path.GetExtension(SourceFile).ToLowerInvariant();
+                string ext = Path.GetExtension(SourceFile).ToLowerInvariant();
 
-                isHaxeFile = Helpers.FileInspector.IsHaxeFile(SourceFile, ext);
+                isHaxeFile = FileInspector.IsHaxeFile(SourceFile, ext);
 
                 // Haxe, ActionScript, JavaScript and LoomScript support Regex literals
-                hasRegexLiterals = isHaxeFile || Helpers.FileInspector.IsActionScript(SourceFile, ext) ||
-                                   Helpers.FileInspector.IsMxml(SourceFile, ext) ||
-                                   Helpers.FileInspector.IsHtml(SourceFile, ext) || ext == ".js" || ext == ".ls" ||
+                hasRegexLiterals = isHaxeFile || FileInspector.IsActionScript(SourceFile, ext) ||
+                                   FileInspector.IsMxml(SourceFile, ext) ||
+                                   FileInspector.IsHtml(SourceFile, ext) || ext == ".js" || ext == ".ls" ||
                                    ext == ".ts";
             }
         }

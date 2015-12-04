@@ -1,16 +1,13 @@
 ﻿using System;
 using System.IO;
-using System.Xml;
-using System.Text;
 using System.Timers;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using PluginCore.Managers;
 using System.Windows.Forms;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Helpers;
+using System.Xml;
 using PluginCore;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using Timer = System.Timers.Timer;
 
 namespace CodeAnalyzer
 {
@@ -20,7 +17,7 @@ namespace CodeAnalyzer
         private String watchedFile;
         private ProcessRunner pmdRunner;
         private FileSystemWatcher pmdWatcher;
-        private System.Timers.Timer deleteTimer;
+        private Timer deleteTimer;
 
         /// <summary>
         /// Runs the pmd analyzer process
@@ -47,7 +44,7 @@ namespace CodeAnalyzer
         private void RunPMD(String pmdPath, String projectPath, String sourcePath, String pmdRuleset)
         {
             String args = "-Xmx256m -jar \"" + pmdPath + "\" -s \"" + sourcePath + "\" -o \"" + projectPath + "\"";
-            if (pmdRuleset != "" && pmdRuleset != null && File.Exists(pmdRuleset)) args += " -r \"" + pmdRuleset + "\"";
+            if (!string.IsNullOrEmpty(pmdRuleset) && File.Exists(pmdRuleset)) args += " -r \"" + pmdRuleset + "\"";
             this.SetStatusText(TextHelper.GetString("Info.RunningFlexPMD"));
             this.pmdRunner = new ProcessRunner();
             this.pmdRunner.ProcessEnded += new ProcessEndedHandler(this.PmdRunnerProcessEnded);
@@ -86,7 +83,7 @@ namespace CodeAnalyzer
             this.pmdWatcher.EnableRaisingEvents = false;
             this.pmdWatcher.Filter = "pmd.xml";
             this.pmdWatcher.Created += new FileSystemEventHandler(this.onCreateFile);
-            this.deleteTimer = new System.Timers.Timer();
+            this.deleteTimer = new Timer();
             this.deleteTimer.Enabled = false;
             this.deleteTimer.AutoReset = false;
             this.deleteTimer.Interval = 500;

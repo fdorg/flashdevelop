@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel.Design;
@@ -180,7 +181,7 @@ namespace System.Windows.Forms
         {
             Color fore = PluginBase.MainForm.GetThemeColor("DataGridView.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("DataGridView.BackColor");
-            Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
+            Color border = PluginBase.MainForm.GetThemeColor("DataGridView.LineColor");
             DefaultCellStyle.ForeColor = (fore != Color.Empty) ? fore : SystemColors.WindowText;
             DefaultCellStyle.BackColor = (back != Color.Empty) ? back : SystemColors.Window;
             GridColor = (border != Color.Empty) ? border :  SystemColors.ControlDark;
@@ -276,6 +277,115 @@ namespace System.Windows.Forms
         }
 
     }
+
+    public class TreeViewEx : TreeView
+    {
+        private static Int32 SIZE1 = ScaleHelper.Scale(1);
+        private static Int32 SIZE2 = ScaleHelper.Scale(2);
+        private static Int32 SIZE3 = ScaleHelper.Scale(3);
+
+        public TreeViewEx() : base()
+        {
+            this.DrawMode = TreeViewDrawMode.OwnerDrawAll;
+            this.DrawNode += OnDrawNode;
+            this.DragOver += OnDragOver;
+            this.ShowPlusMinus = true;
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000; // WS_CLIPCHILDREN
+                return cp;
+            }
+        }
+
+        private void OnDragOver(Object sender, DragEventArgs e)
+        {
+            Point point = this.PointToClient(new Point(e.X, e.Y));
+            TreeViewHitTestInfo hit = this.HitTest(point);
+            if (hit.Node != null) this.SelectedNode = hit.Node;
+        }
+
+        private void OnDrawNode(Object sender, DrawTreeNodeEventArgs e)
+        {
+            e.DrawDefault = false;
+            Rectangle bounds = e.Node.Bounds;
+            Color backHl = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+            Color foreHl = PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
+            SolidBrush brushFore = new SolidBrush(e.Node.TreeView.LineColor);
+            SolidBrush brushBack = new SolidBrush(e.Node.TreeView.BackColor);
+            if (bounds.IsEmpty || !e.Node.IsVisible) return;
+            if ((e.State & TreeNodeStates.Focused) != 0)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(backHl), Rectangle.Inflate(bounds, 1, 0));
+            }
+            else if ((e.State & TreeNodeStates.Selected) != 0)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(Color.Gray), Rectangle.Inflate(bounds, 1, 0));
+            }
+            else e.Graphics.FillRectangle(brushBack, bounds);
+            if (e.Node.Nodes.Count > 0)
+            {
+                Point[] arrow;
+                Point middle = new Point(bounds.Left - 28, bounds.Top + bounds.Height / 2);
+                if (e.Node.IsExpanded)
+                {
+                    arrow = new Point[]
+                    {
+                        new Point(middle.X - SIZE3, middle.Y - 1),
+                        new Point(middle.X + SIZE3 + 1, middle.Y - 1),
+                        new Point(middle.X, middle.Y + SIZE3)
+                    };
+                    e.Graphics.FillPolygon(brushFore, arrow);
+                    arrow = new Point[]
+                    {
+                        new Point(middle.X - SIZE1, middle.Y - 1),
+                        new Point(middle.X + SIZE1 + 1, middle.Y - 1),
+                        new Point(middle.X, middle.Y + SIZE1)
+                    };
+                    e.Graphics.FillPolygon(brushBack, arrow);
+                }
+                else
+                {
+                    arrow = new Point[]
+                    {
+                        new Point(middle.X - SIZE2, middle.Y - 2 * SIZE2),
+                        new Point(middle.X - SIZE2, middle.Y + 2 * SIZE2),
+                        new Point(middle.X + SIZE2, middle.Y)
+                    };
+                    e.Graphics.FillPolygon(brushFore, arrow);
+                    arrow = new Point[]
+                    {
+                        new Point(middle.X - SIZE1 - 1, middle.Y - 2 * SIZE1),
+                        new Point(middle.X - SIZE1 - 1, middle.Y + 2 * SIZE1),
+                        new Point(middle.X + SIZE1 - 1, middle.Y)
+                    };
+                    e.Graphics.FillPolygon(brushBack, arrow);
+                }
+            }
+            if (e.Node.ImageIndex != -1)
+            {
+                Point nodePt = new Point(bounds.Location.X - 20, bounds.Location.Y + 1);
+                Image nodeImg = e.Node.TreeView.ImageList.Images[e.Node.ImageIndex];
+                e.Graphics.DrawImage(nodeImg, nodePt);
+            }
+            Rectangle textRect = bounds;
+            Font nodeFont = e.Node.NodeFont;
+            Color textColor = e.Node.ForeColor;
+            textRect = Rectangle.Inflate(textRect, 2, 0);
+            if (nodeFont == null) nodeFont = ((TreeView)sender).Font;
+            if (nodeFont.Bold) textRect.X += 1;
+            if ((e.State & TreeNodeStates.Focused) != 0) textColor = foreHl;
+            if ((e.State & TreeNodeStates.Selected) != 0) textColor = foreHl;
+            if ((e.State & TreeNodeStates.Hot) != 0) nodeFont = new Font(nodeFont, FontStyle.Underline);
+            TextRenderer.DrawText(e.Graphics, e.Node.Text, nodeFont, textRect, textColor);
+        }
+
+    }
+
     public class ToolStripComboBoxEx : ToolStripControlHost
     {
         public ToolStripComboBoxEx() : base(new FlatCombo())

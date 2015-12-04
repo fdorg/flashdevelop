@@ -1,9 +1,6 @@
 using System;
-using System.Text;
-using ScintillaNet;
-using PluginCore.Managers;
 using PluginCore.Controls;
-using PluginCore;
+using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {

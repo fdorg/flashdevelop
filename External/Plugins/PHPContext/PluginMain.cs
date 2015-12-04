@@ -1,13 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Collections.Generic;
 using System.ComponentModel;
-using PluginCore.Localization;
+using System.IO;
+using ASCompletion.Context;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore;
 
 namespace PHPContext
 {
@@ -108,14 +107,14 @@ namespace PHPContext
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.UIStarted :
                     contextInstance = new Context(settingObject);
                     // Associate this context with a file type
-                    ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, associatedSyntax);
+                    ASContext.RegisterLanguage(contextInstance, associatedSyntax);
                     break;
             }
         }

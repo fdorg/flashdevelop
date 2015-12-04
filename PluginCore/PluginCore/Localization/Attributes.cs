@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using PluginCore.Localization;
 
 namespace PluginCore.Localization
 {

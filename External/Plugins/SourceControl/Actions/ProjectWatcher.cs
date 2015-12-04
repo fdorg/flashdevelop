@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using PluginCore;
-using System.IO;
-using SourceControl.Sources;
-using SourceControl.Managers;
-using ProjectManager.Projects;
-using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
-using PluginCore.Localization;
+using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using ProjectManager.Projects;
+using SourceControl.Managers;
+using SourceControl.Sources;
 
 namespace SourceControl.Actions
 {

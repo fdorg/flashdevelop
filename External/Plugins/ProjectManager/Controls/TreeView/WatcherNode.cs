@@ -1,14 +1,9 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows.Forms;
-using ProjectManager.Projects;
-using PluginCore.Localization;
-using System.Text.RegularExpressions;
+using System.IO;
+using System.Timers;
 using PluginCore.Bridge;
+using PluginCore.Localization;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -17,7 +12,7 @@ namespace ProjectManager.Controls.TreeView
     /// </summary>
     public class WatcherNode : DirectoryNode
     {
-        System.Timers.Timer updateTimer;
+        Timer updateTimer;
         WatcherEx watcher;
         List<String> changedPaths;
         String[] excludedFiles;
@@ -31,7 +26,7 @@ namespace ProjectManager.Controls.TreeView
             excludedDirs = PluginMain.Settings.ExcludedDirectories.Clone() as String[];
             excludedFiles = PluginMain.Settings.ExcludedFileTypes.Clone() as String[];
             // Use a timer for FileSystemWatcher updates so they don't do lots of redrawing
-            updateTimer = new System.Timers.Timer();
+            updateTimer = new Timer();
             updateTimer.SynchronizingObject = Tree;
             updateTimer.Interval = 500;
             updateTimer.Elapsed += updateTimer_Tick;

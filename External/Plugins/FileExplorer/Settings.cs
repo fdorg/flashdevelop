@@ -1,9 +1,6 @@
 using System;
-using System.Text;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Collections.Generic;
-using System.Windows.Forms.Design;
+using System.Drawing.Design;
 using Ookii.Dialogs;
 using PluginCore.Localization;
 

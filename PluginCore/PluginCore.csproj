@@ -107,9 +107,6 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Design">
       <Name>System.Design</Name>
     </Reference>
@@ -518,6 +515,39 @@
     <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\Big5Prober.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\BitPackage.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\CharDistributionAnalyser.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\CharsetProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\Charsets.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\CodingStateMachine.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EscCharsetProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EscSM.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EUCJPProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EUCKRProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EUCTWProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\GB18030Prober.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\HebrewProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\JapaneseContextAnalyser.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangBulgarianModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangCyrillicModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangGreekModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangHebrewModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangHungarianModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangThaiModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\Latin1Prober.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\MBCSGroupProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\MBCSSM.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SBCharsetProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SBCSGroupProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SequenceModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SJISProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SMModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\UniversalDetector.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\UTF8Prober.cs" />
+    <Compile Include="UdeLibrary\Ude\CharsetDetector.cs" />
+    <Compile Include="UdeLibrary\Ude\DetectionConfidence.cs" />
+    <Compile Include="UdeLibrary\Ude\ICharsetDetector.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />

@@ -20,7 +20,11 @@ namespace HaXeContext
     internal class HaxeComplete
     {
         static readonly Regex reArg =
-            new Regex("^(-cp)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            new Regex("^(-cp|-resource)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        static readonly Regex reMacro =
+            new Regex("^(--macro)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        static readonly Regex reQuote =
+            new Regex("([^\"])\"", RegexOptions.Compiled);
 
         static readonly Regex rePosition =
             new Regex("(?<path>.*?):(?<line>[0-9]*): (?<range>characters|lines) (?<start>[0-9]*)-(?<end>[0-9]*)",
@@ -109,21 +113,9 @@ namespace HaXeContext
             // Build Haxe command
             var paths = ProjectManager.PluginMain.Settings.GlobalClasspaths.ToArray();
             var hxmlArgs = new List<String>(hxproj.BuildHXML(paths, "Nothing__", true));
+            RemoveComments(hxmlArgs);
             QuotePath(hxmlArgs);
-
-            // Get the current class edited (ensure completion even if class not reference in the project)
-            var package = ASContext.Context.CurrentModel.Package;
-            if (!string.IsNullOrEmpty(package))
-            {
-                var cl = ASContext.Context.CurrentModel.Package + "." + GetMainClassName();
-                var libToAdd =
-                    FileName.Split(
-                        new[] {"\\" + String.Join("\\", cl.Split(new[] {"."}, StringSplitOptions.RemoveEmptyEntries))},
-                        StringSplitOptions.RemoveEmptyEntries).GetValue(0).ToString();
-                hxmlArgs.Add("-cp \"" + libToAdd + "\" " + cl);
-            }
-            else
-                hxmlArgs.Add(GetMainClassName());
+            EscapeMacros(hxmlArgs);
 
             hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
             hxmlArgs.Insert(1, "-D use_rtti_doc");
@@ -134,7 +126,7 @@ namespace HaXeContext
             return hxmlArgs.ToArray();
         }
 
-        string GetMode()
+        private string GetMode()
         {
             switch (CompilerService)
             {
@@ -148,6 +140,38 @@ namespace HaXeContext
             return "";
         }
 
+        private void RemoveComments(List<string> hxmlArgs)
+        {
+            for (int i = 0; i < hxmlArgs.Count; i++)
+            {
+                string arg = hxmlArgs[i];
+                if (!string.IsNullOrEmpty(arg))
+                {
+                    if (arg.StartsWith("#")) // commented line
+                        hxmlArgs[i] = "";
+                }
+            }
+        }
+
+        private void EscapeMacros(List<string> hxmlArgs)
+        {
+            for (int i = 0; i < hxmlArgs.Count; i++)
+            {
+                string arg = hxmlArgs[i];
+                if (!string.IsNullOrEmpty(arg))
+                {
+                    Match m = reMacro.Match(arg);
+                    if (m.Success)
+                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim() + "\"";
+                }
+            }
+        }
+
+        private string EscapeQuotes(string expr)
+        {
+            return reQuote.Replace(expr, "$1\\\"");
+        }
+
         void QuotePath(List<string> hxmlArgs)
         {
             for (int i = 0; i < hxmlArgs.Count; i++)
@@ -158,8 +182,6 @@ namespace HaXeContext
                     Match m = reArg.Match(arg);
                     if (m.Success)
                         hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim() + "\"";
-                    else if (arg.StartsWith("#")) // commented line
-                        hxmlArgs[i] = "";
                 }
             }
         }
@@ -245,6 +267,7 @@ namespace HaXeContext
             var type = new MemberModel();
             type.Name = name;
             ExtractType(reader, type);
+            result = new HaxeCompleteResult();
             result.Type = type;
         }
 
@@ -265,6 +288,7 @@ namespace HaXeContext
                             switch (CompilerService)
                             {
                                 case HaxeCompilerService.COMPLETION:
+                                    result.Members.Sort();
                                     return HaxeCompleteStatus.MEMBERS;
 
                                 case HaxeCompilerService.POSITION:
@@ -307,6 +331,8 @@ namespace HaXeContext
                         break;
                 }
             }
+
+            result.Members.Sort();
             return HaxeCompleteStatus.MEMBERS;
         }
 

@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Xml;
 using System.IO;
+using System.Xml;
 
 namespace PluginCore
 {
@@ -20,9 +19,9 @@ namespace PluginCore
 
         public static string ResolveFlashPlayerVersion(string lang, string platformName, string version)
         {
-            if (!SupportedLanguages.ContainsKey(lang)) return "17.0";
+            if (!SupportedLanguages.ContainsKey(lang)) return "19.0";
             var platforms = SupportedLanguages[lang.ToLower()].Platforms;
-            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM)) return "17.0";
+            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM)) return "19.0";
             var flashPlatform = platforms[FLASHPLAYER_PLATFORM];
             if (platforms.ContainsKey(platformName))
             {
@@ -40,9 +39,9 @@ namespace PluginCore
 
         public static string ResolveSwfVersion(string lang, string platformName, string version)
         {
-            if (!SupportedLanguages.ContainsKey(lang)) return "28";
+            if (!SupportedLanguages.ContainsKey(lang)) return "30";
             var platforms = SupportedLanguages[lang.ToLower()].Platforms;
-            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM) || !platforms.ContainsKey(platformName)) return "28";
+            if (!platforms.ContainsKey(FLASHPLAYER_PLATFORM) || !platforms.ContainsKey(platformName)) return "29";
             var platform = platforms[platformName];
             foreach (var platformVersion in platform.Versions)
                 if (platformVersion.Value == version)

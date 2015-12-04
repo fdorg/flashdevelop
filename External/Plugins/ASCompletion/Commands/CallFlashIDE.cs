@@ -1,14 +1,12 @@
 using System;
-using System.Text;
-using System.Windows.Forms;
-using PluginCore;
-using PluginCore.Managers;
-using ASCompletion;
-using PluginCore.Localization;
 using System.IO;
+using System.Windows.Forms;
 using ASCompletion.Context;
-using PluginCore.Helpers;
+using PluginCore;
 using PluginCore.Bridge;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace ASCompletion.Commands
 {
@@ -73,7 +71,7 @@ namespace ASCompletion.Commands
             {
                 if (pathToIDE != null && Directory.Exists(pathToIDE))
                     pathToIDE = Path.Combine(pathToIDE, "Flash.exe");
-                if (pathToIDE == null || !System.IO.File.Exists(pathToIDE))
+                if (pathToIDE == null || !File.Exists(pathToIDE))
                 {
                     string msg = TextHelper.GetString("Info.ConfigureFlashPath");
                     string title = TextHelper.GetString("Info.ConfigurationRequired");

@@ -1,8 +1,7 @@
 // Copyright © Sven Groot (Ookii.org) 2009
 // BSD license; see license.txt for details.
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Ookii.Dialogs.Interop

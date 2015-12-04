@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Localization;
 using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
-using PluginCore.Localization;
 
 namespace SourceControl.Sources.Git
 {

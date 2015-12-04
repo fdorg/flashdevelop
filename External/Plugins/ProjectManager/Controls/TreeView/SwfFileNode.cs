@@ -1,16 +1,14 @@
 using System;
-using System.IO;
-using System.Drawing;
 using System.Collections;
-using System.Diagnostics;
-using System.Windows.Forms;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Helpers;
-using System.ComponentModel;
 using System.Collections.Generic;
-using ProjectManager.Projects;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
 using SwfOp;
 using SwfOp.Utils;
 
@@ -22,14 +20,14 @@ namespace ProjectManager.Controls.TreeView
         {
             Text = TextHelper.GetString("Info.Exploring");
             ImageIndex = SelectedImageIndex = Icons.Gear.Index;
-            ForeColor = Color.Gray;
-            NodeFont = new Font(PluginCore.PluginBase.Settings.DefaultFont, FontStyle.Regular);
+            ForeColor = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
+            NodeFont = new Font(PluginBase.Settings.DefaultFont, FontStyle.Regular);
         }
 
         public void SetErrorText(string msg)
         {
             Text = msg;
-            ForeColor = Color.Red;
+            ForeColor = PluginBase.MainForm.GetThemeColor("ProjectTreeView.ErrorColor", Color.Red);
         }
     }
 
@@ -51,7 +49,7 @@ namespace ProjectManager.Controls.TreeView
             ContainingSwfPath = filePath;
             Export = export;
             Text = export;
-            ForeColorRequest = Color.Gray;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
             ImageIndex = SelectedImageIndex = Icons.ImageResource.Index;
         }
 
@@ -94,14 +92,14 @@ namespace ProjectManager.Controls.TreeView
             : base("")
         {
             Text = label;
-            ForeColorRequest = Color.Gray;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
             ImageIndex = SelectedImageIndex = Icons.Info.Index;
         }
         public HeaderInfoNode(string label, object value)
             : base("")
         {
             Text = label + " : " + value;
-            ForeColorRequest = Color.Gray;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
             ImageIndex = SelectedImageIndex = Icons.Info.Index;
         }
     }
@@ -112,7 +110,7 @@ namespace ProjectManager.Controls.TreeView
             : base(filePath + ";__header__")
         {
             Text = "Properties";
-            ForeColorRequest = Color.Gray;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
             ImageIndex = SelectedImageIndex = Icons.HiddenFolder.Index;
         }
     }
@@ -123,7 +121,7 @@ namespace ProjectManager.Controls.TreeView
             : base(filePath+";__classes__")
         {
             Text = "Classes";
-            ForeColorRequest = Color.Gray;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
             ImageIndex = SelectedImageIndex = Icons.HiddenFolder.Index;
         }
     }
@@ -134,7 +132,7 @@ namespace ProjectManager.Controls.TreeView
             : base(filePath + ";__symbols__")
         {
             Text = "Symbols";
-            ForeColorRequest = Color.Gray;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
             ImageIndex = SelectedImageIndex = Icons.HiddenFolder.Index;
         }
     }
@@ -145,7 +143,7 @@ namespace ProjectManager.Controls.TreeView
             : base(filePath + ";__fonts__")
         {
             Text = "Fonts";
-            ForeColorRequest = Color.Gray;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.SubItemColor", Color.Gray);
             ImageIndex = SelectedImageIndex = Icons.HiddenFolder.Index;
         }
     }
@@ -441,7 +439,7 @@ namespace ProjectManager.Controls.TreeView
         public override void Refresh(bool recursive)
         {
             base.Refresh (recursive);
-            ForeColorRequest = Color.Blue;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.InputColor", SystemColors.Highlight);
         }
     }
 

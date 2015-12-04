@@ -1,9 +1,8 @@
 using System;
-using System.Text;
-using System.Windows.Forms;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Collections.Generic;
+using System.Windows.Forms;
 using PluginCore.Localization;
 
 namespace MacroManager

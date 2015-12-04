@@ -1,17 +1,13 @@
 using System;
-using System.IO;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Helpers;
-using PluginCore.Managers;
+using ProjectManager.Controls.AS3;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS3;
-using ProjectManager.Controls.AS3;
-using System.Runtime.InteropServices;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -95,8 +91,8 @@ namespace ProjectManager.Controls.TreeView
 
             SelectedImageIndex = ImageIndex;
 
-            Color textColor = PluginCore.PluginBase.MainForm.GetThemeColor(colorId);
-            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = Color.Blue;
+            Color textColor = PluginBase.MainForm.GetThemeColor(colorId);
+            if (colorId != "ProjectTreeView.ForeColor" && textColor == Color.Empty) textColor = SystemColors.Highlight;
             if (textColor != Color.Empty) ForeColorRequest = textColor;
             else ForeColorRequest = SystemColors.ControlText;
 

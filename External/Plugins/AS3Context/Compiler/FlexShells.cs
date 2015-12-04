@@ -1,21 +1,19 @@
 using System;
-using System.Windows.Forms;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Diagnostics;
-using System.Timers;
-using System.Runtime.InteropServices;
-using PluginCore;
-using PluginCore.Helpers;
-using ASCompletion.Context;
-using PluginCore.Managers;
-using PluginCore.Utilities;
-using PluginCore.Localization;
-using ASCompletion.Model;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace AS3Context.Compiler
 {
@@ -29,7 +27,7 @@ namespace AS3Context.Compiler
         static public event SyntaxErrorHandler SyntaxError;
 
         static readonly public Regex re_SplitParams = 
-            new Regex("[\\s](?<switch>\\-[A-z0-9\\-\\.]+)", RegexOptions.Compiled | RegexOptions.Singleline);
+            new Regex("[\\s](?<switch>[-+][A-z0-9\\-\\.]+)", RegexOptions.Compiled | RegexOptions.Singleline);
 
         static private readonly string[] PATH_SWITCHES = { 
             "-compiler.context-root","-context-root",
@@ -63,7 +61,7 @@ namespace AS3Context.Compiler
             if (!File.Exists(fullPath))
             {
                 string id = "AS3Context.Resources." + resName;
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Assembly assembly = Assembly.GetExecutingAssembly();
                 using (BinaryReader br = new BinaryReader(assembly.GetManifestResourceStream(id)))
                 {
                     using (FileStream bw = File.Create(fullPath))
@@ -321,6 +319,10 @@ namespace AS3Context.Compiler
                                             }
                                         }
                                         isPath = true;
+                                        // remove quotes
+                                        if (arg.StartsWith("\"") && arg.EndsWith("\""))
+                                            arg = arg.Substring(1, arg.Length - 2);
+
                                         if (!arg.StartsWith("\\") && !Path.IsPathRooted(arg))
                                             arg = Path.Combine(buildPath, arg);
                                     }
@@ -506,7 +508,7 @@ namespace AS3Context.Compiler
         private void ascRunner_OutputError(object sender, string line)
         {
             if (line == null) return;
-            PluginBase.RunAsync((MethodInvoker)delegate
+            PluginBase.RunAsync(delegate
             {
                 if (line.StartsWith("Exception "))
                 {
@@ -561,7 +563,7 @@ namespace AS3Context.Compiler
 
         private void mxmlcRunner_Output(object sender, string line)
         {
-            PluginBase.RunAsync((MethodInvoker)delegate
+            PluginBase.RunAsync(delegate
             {
                 if (!notificationSent && line.StartsWith("Done("))
                 {
@@ -605,12 +607,12 @@ namespace AS3Context.Compiler
             try 
             {
                 // change current directory
-                string currentPath = System.IO.Directory.GetCurrentDirectory();
-                System.IO.Directory.SetCurrentDirectory(Path.GetDirectoryName(swf));
+                string currentPath = Directory.GetCurrentDirectory();
+                Directory.SetCurrentDirectory(Path.GetDirectoryName(swf));
                 // run
-                System.Diagnostics.Process.Start(swf);
+                Process.Start(swf);
                 // restaure current directory
-                System.IO.Directory.SetCurrentDirectory(currentPath);
+                Directory.SetCurrentDirectory(currentPath);
             }
             catch (Exception ex)
             {

@@ -3,9 +3,9 @@ using System.Windows.Forms;
 using PluginCore;
 using SourceControl.Actions;
 using SourceControl.Sources;
-using SourceControl.Sources.Subversion;
 using SourceControl.Sources.Git;
 using SourceControl.Sources.Mercurial;
+using SourceControl.Sources.Subversion;
 
 namespace SourceControl.Managers
 {
