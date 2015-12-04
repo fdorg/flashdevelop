@@ -1710,8 +1710,7 @@ namespace FlashDevelop
         public Color GetThemeColor(String id, Color fallback)
         {
             Color color = ThemeManager.GetThemeColor(id);
-            if (color != Color.Empty) return color;
-            else return fallback;
+            return color.IsEmpty ? fallback : color;
         }
 
         /// <summary>
@@ -1728,8 +1727,30 @@ namespace FlashDevelop
         public String GetThemeValue(String id, String fallback)
         {
             String value = ThemeManager.GetThemeValue(id);
-            if (!String.IsNullOrEmpty(value)) return value;
-            else return fallback;
+            return String.IsNullOrEmpty(value) ? fallback : value;
+        }
+
+        /// <summary>
+        /// Gets a theme flag value.
+        /// </summary>
+        public Boolean GetThemeFlag(String id)
+        {
+            return GetThemeFlag(id, false);
+        }
+
+        /// <summary>
+        /// Gets a theme flag value with a fallback.
+        /// </summary>
+        public Boolean GetThemeFlag(String id, Boolean fallback)
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            if (String.IsNullOrEmpty(value)) return fallback;
+            switch (value.ToLower())
+            {
+                case "true": return true;
+                case "false": return false;
+                default: return fallback;
+            }
         }
 
         /// <summary>
@@ -1763,8 +1784,32 @@ namespace FlashDevelop
         public Keys GetShortcutItemKeys(String id)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
-            if (item != null) return item.Custom;
-            else return Keys.None;
+            return item != null ? item.Custom : Keys.None;
+        }
+
+        /// <summary>
+        /// Gets the shortcut id associated the keys.
+        /// </summary>
+        public string GetShortcutItemId(Keys keys)
+        {
+            ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
+            return item != null ? item.Id : null;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Dictionary{TKey, TValue}"/> object containing all registered
+        /// shortcuts with the shortcut values as keys.
+        /// </summary>
+        public Dictionary<Keys, string> GetShortcutItemsByKeys()
+        {
+            var list = ShortcutManager.RegisteredItems.Values;
+            var items = new Dictionary<Keys, string>(list.Count);
+            foreach (var item in list)
+            {
+                if (item.Custom == Keys.None) continue;
+                items[item.Custom] = item.Id;
+            }
+            return items;
         }
 
         /// <summary>

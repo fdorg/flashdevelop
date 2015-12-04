@@ -14,12 +14,12 @@ namespace PluginCore
     public interface IPlugin : IEventHandler
     {
         #region IPlugin Methods
-        
+
         void Dispose();
         void Initialize();
-        
+
         #endregion
-        
+
         #region IPlugin Properties
 
         Int32 Api { get; }
@@ -32,7 +32,7 @@ namespace PluginCore
 
         // List of valid API levels:
         // FlashDevelop 4.0 = 1
-        
+
         #endregion
     }
 
@@ -121,10 +121,14 @@ namespace PluginCore
         ToolStripItem FindMenuItem(String name);
         String ProcessArgString(String args);
         Keys GetShortcutItemKeys(String id);
+        String GetShortcutItemId(Keys keys);
+        Dictionary<Keys, string> GetShortcutItemsByKeys();
         String GetThemeValue(String id);
         Color GetThemeColor(String id);
+        Boolean GetThemeFlag(String id);
         String GetThemeValue(String id, String fallback);
         Color GetThemeColor(String id, Color fallback);
+        Boolean GetThemeFlag(String id, Boolean fallback);
         IPlugin FindPlugin(String guid);
         Image ImageSetAdjust(Image image);
         Image FindImage(String data);
@@ -275,7 +279,7 @@ namespace PluginCore
         Int32 CaretPeriod { get; set; }
         Int32 CaretWidth { get; set; }
         Int32 ScrollWidth { get; set; }
-        Int32 PrintMarginColumn  { get; set; }
+        Int32 PrintMarginColumn { get; set; }
         Size WindowSize { get; set; }
         FormWindowState WindowState { get; set; }
         Point WindowPosition { get; set; }
@@ -288,7 +292,7 @@ namespace PluginCore
         Boolean DisableSmartMatch { get; set; }
         Boolean SaveUnicodeWithBOM { get; set; }
         String InsertionTriggers { get; set; }
-        
+
         #endregion
     }
 
