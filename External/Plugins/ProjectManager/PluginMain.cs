@@ -561,38 +561,38 @@ namespace ProjectManager
         {
             if (activeProject == null) return false;
 
-            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelector"))
+            switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
             {
-                pluginUI.menus.ConfigurationSelector.Focus();
-            }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelectorToggle"))
-            {
-                pluginUI.menus.ToggleDebugRelease();
-            }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.TargetBuildSelector"))
-            {
-                pluginUI.menus.TargetBuildSelector.Focus();
-            }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectTree.LocateActiveFile"))
-            {
-                ToggleTrackActiveDocument();
+                case "ProjectMenu.ConfigurationSelector":
+                    pluginUI.menus.ConfigurationSelector.Focus();
+                    break;
+                case "ProjectMenu.ConfigurationSelectorToggle":
+                    pluginUI.menus.ToggleDebugRelease();
+                    break;
+                case "ProjectMenu.TargetBuildSelector":
+                    pluginUI.menus.TargetBuildSelector.Focus();
+                    break;
+                case "ProjectTree.LocateActiveFile":
+                    ToggleTrackActiveDocument();
+                    break;
+                default:
+                    if (Tree.Focused && !pluginUI.IsEditingLabel)
+                    {
+                        if (ke.Value == (Keys.Control | Keys.C) && pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();
+                        else if (ke.Value == (Keys.Control | Keys.X) && pluginUI.Menu.Contains(pluginUI.Menu.Cut)) TreeCutItems();
+                        else if (ke.Value == (Keys.Control | Keys.V) && pluginUI.Menu.Contains(pluginUI.Menu.Paste)) TreePasteItems();
+                        else if (ke.Value == Keys.Delete && pluginUI.Menu.Contains(pluginUI.Menu.Delete)) TreeDeleteItems();
+                        else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Open)) TreeOpenItems();
+                        else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Insert)) TreeInsertItem();
+                        else return false;
+                    }
+                    else return false;
+                    break;
             }
 
-            // Handle tree-level simple shortcuts like copy/paste/del
-            else if (Tree.Focused && !pluginUI.IsEditingLabel && ke != null)
-            {
-                if (ke.Value == (Keys.Control | Keys.C) && pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();
-                else if (ke.Value == (Keys.Control | Keys.X) && pluginUI.Menu.Contains(pluginUI.Menu.Cut)) TreeCutItems();
-                else if (ke.Value == (Keys.Control | Keys.V) && pluginUI.Menu.Contains(pluginUI.Menu.Paste)) TreePasteItems();
-                else if (ke.Value == Keys.Delete && pluginUI.Menu.Contains(pluginUI.Menu.Delete)) TreeDeleteItems();
-                else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Open)) TreeOpenItems();
-                else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Insert)) TreeInsertItem();
-                else return false;
-            }
-            else return false;
             return true;
         }
-        
+
         #endregion
 
         #region Custom Methods

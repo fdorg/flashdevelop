@@ -9,6 +9,7 @@ using PluginCore.Localization;
 using System.Windows.Forms;
 using PluginCore.Managers;
 using PluginCore;
+using PluginCore.Controls;
 
 namespace FlashDevelop.Settings
 {
@@ -103,7 +104,6 @@ namespace FlashDevelop.Settings
         private Boolean uiWrapList = false;
         private Boolean uiDisableSmartMatch = false;
         private String uiInsertionTriggers = "";
-
     }
 
 }

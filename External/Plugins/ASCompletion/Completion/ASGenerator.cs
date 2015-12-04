@@ -77,13 +77,10 @@ namespace ASCompletion.Completion
             string text = Sci.GetLine(line);
             bool suggestItemDeclaration = false;
 
-            if (isNotInterface)
+            if (isNotInterface && ASComplete.IsLiteralStyle(style))
             {
-                if (style == 4 || style == 6 || style == 7)
-                {
-                    ShowConvertToConst(found);
-                    return known;
-                }
+                ShowConvertToConst(found);
+                return known;
             }
 
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
