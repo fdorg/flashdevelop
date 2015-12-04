@@ -1,14 +1,19 @@
-﻿namespace CodeRefactor.Controls
+﻿using System.Drawing;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Localization;
+
+namespace CodeRefactor.Controls
 {
-    internal class InlineRenameDialog : System.Windows.Forms.UserControl
+    internal class InlineRenameDialog : UserControl
     {
-        internal System.Windows.Forms.CheckBox IncludeComments;
-        internal System.Windows.Forms.CheckBox IncludeStrings;
-        internal System.Windows.Forms.CheckBox PreviewChanges;
-        internal System.Windows.Forms.Button ApplyButton;
-        internal System.Windows.Forms.Button CancelButton;
-        private System.Windows.Forms.Label titleLabel;
-        private System.Windows.Forms.Label border;
+        internal CheckBox IncludeComments;
+        internal CheckBox IncludeStrings;
+        internal CheckBox PreviewChanges;
+        internal Button ApplyButton;
+        internal Button CancelButton;
+        private Label titleLabel;
+        private Label border;
 
         internal InlineRenameDialog(string targetName, bool? includeComments, bool? includeStrings, bool? previewChanges)
         {
@@ -131,20 +136,20 @@
 
         private void InitializeLocalization(string targetName)
         {
-            this.titleLabel.Text = string.Format(PluginCore.Localization.TextHelper.GetString("Title.RenameDialog"), targetName);
-            this.IncludeComments.Text = PluginCore.Localization.TextHelper.GetString("Label.IncludeComments");
-            this.IncludeStrings.Text = PluginCore.Localization.TextHelper.GetString("Label.IncludeStrings");
-            this.PreviewChanges.Text = PluginCore.Localization.TextHelper.GetString("Label.PreviewChanges");
-            this.ApplyButton.Text = PluginCore.Localization.TextHelper.GetString("ProjectManager.Label.Apply");
+            this.titleLabel.Text = string.Format(TextHelper.GetString("Title.RenameDialog"), targetName);
+            this.IncludeComments.Text = TextHelper.GetString("Label.IncludeComments");
+            this.IncludeStrings.Text = TextHelper.GetString("Label.IncludeStrings");
+            this.PreviewChanges.Text = TextHelper.GetString("Label.PreviewChanges");
+            this.ApplyButton.Text = TextHelper.GetString("ProjectManager.Label.Apply");
             this.CancelButton.Text = string.Empty;
         }
 
         private void InitializeVisualization()
         {
-            System.Drawing.Color foreColor = PluginCore.PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
-            System.Drawing.Color backColor = PluginCore.PluginBase.MainForm.GetThemeColor("QuickFind.BackColor");
-            System.Drawing.Color activeBorder = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.TabGradientStart");
-            System.Drawing.Color inactiveBorder = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor");
+            Color foreColor = PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
+            Color backColor = PluginBase.MainForm.GetThemeColor("QuickFind.BackColor");
+            Color activeBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.TabGradientStart");
+            Color inactiveBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor");
 
             this.BackColor = backColor;
             this.titleLabel.ForeColor = foreColor;
@@ -153,7 +158,7 @@
             this.PreviewChanges.ForeColor = foreColor;
             this.border.BackColor = backColor == inactiveBorder ? activeBorder : inactiveBorder;
 
-            this.CancelButton.Image = PluginCore.PluginBase.MainForm.FindImage("153");
+            this.CancelButton.Image = PluginBase.MainForm.FindImage("153");
         }
 
         private void InitializeCheckBoxes(bool? includeComments, bool? includeStrings, bool? previewChanges)

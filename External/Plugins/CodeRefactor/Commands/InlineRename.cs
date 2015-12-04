@@ -146,7 +146,7 @@ namespace CodeRefactor.Commands
             SetupLivePreview(includeComments.HasValue, includeStrings.HasValue, previewChanges.HasValue, previewTarget);
             AddMessageFilter();
             DisableControls();
-            Highlight(start, end);
+            Highlight(start, end - start);
         }
 
         #endregion
@@ -191,7 +191,7 @@ namespace CodeRefactor.Commands
             historyIndex = 0;
             history = new List<string> { oldName };
         }
-        
+
         /// <summary>
         /// Modify the highlight indicator alpha and select current word.
         /// </summary>
@@ -225,7 +225,7 @@ namespace CodeRefactor.Commands
             controls = currentDoc.SplitContainer.Parent.Controls;
             controls.Add(dialog);
             controls.SetChildIndex(dialog, 0);
-            
+
             dialog.IncludeComments.CheckedChanged += IncludeComments_CheckedChanged;
             dialog.IncludeStrings.CheckedChanged += IncludeStrings_CheckedChanged;
             dialog.PreviewChanges.CheckedChanged += PreviewChanges_CheckedChanged;
@@ -281,7 +281,7 @@ namespace CodeRefactor.Commands
                     }
                     else if (previewChanges && (!insideComment || includeComments) && (!insideString || includeStrings))
                     {
-                        Highlight(index, index + value.Length);
+                        Highlight(index, value.Length);
                     }
                 }
             }
@@ -306,7 +306,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Disable main controls from <see cref="IMainForm"/>.
         /// </summary>
-        void DisableControls()
+        static void DisableControls()
         {
             PluginBase.MainForm.MenuStrip.Enabled = false;
             PluginBase.MainForm.ToolStrip.Enabled = false;
@@ -326,7 +326,7 @@ namespace CodeRefactor.Commands
             {
                 Finish();
             }
-            
+
             if (Apply != null) Apply(this, oldName, newName);
         }
 
@@ -366,7 +366,7 @@ namespace CodeRefactor.Commands
 
             if (refs == null)
             {
-                Highlight(start, end);
+                Highlight(start, end - start);
                 if (Update != null) Update(this, /*prevName,*/ newName);
             }
             else
@@ -477,8 +477,8 @@ namespace CodeRefactor.Commands
                     int oldLength = @ref.Value.Length;
 
                     @ref.Index += delta;
-                    int start = @ref.Index;
-                    int end = start + oldLength;
+                    int s = @ref.Index;
+                    int e = s + oldLength;
 
                     if (@ref == declaration)
                     {
@@ -487,7 +487,7 @@ namespace CodeRefactor.Commands
                     else
                     {
                         bool replace;
-                        int style = sci.BaseStyleAt(start);
+                        int style = sci.BaseStyleAt(s);
 
                         if (RefactoringHelper.IsCommentStyle(style))
                             replace = comments;
@@ -498,7 +498,7 @@ namespace CodeRefactor.Commands
 
                         if (!replace) continue;
 
-                        sci.SetSel(start, end);
+                        sci.SetSel(s, e);
                         sci.ReplaceSel(replacement);
                     }
 
@@ -506,7 +506,7 @@ namespace CodeRefactor.Commands
                     delta += newLength - oldLength;
 
                     if (highlight)
-                        Highlight(start, start + newLength);
+                        Highlight(s, newLength);
                 }
 
                 start = declaration.Index;
@@ -532,7 +532,7 @@ namespace CodeRefactor.Commands
             if (Update != null)
                 Update(this, /*prevName,*/ newName);
         }
-        
+
         /// <summary>
         /// Invoked when the checked state of the checkbox <see cref="InlineRenameDialog.IncludeComments"/> changes.
         /// </summary>
@@ -627,17 +627,14 @@ namespace CodeRefactor.Commands
         /// </summary>
         void PerformPaste()
         {
-            if (Clipboard.ContainsText())
+            if (!Clipboard.ContainsText() || !CanWrite) return;
+            string value = Regex.Replace(Clipboard.GetText(), @"\s", string.Empty);
+            if (string.IsNullOrEmpty(value)) return;
+            foreach (char i in value)
             {
-                if (!CanWrite) return;
-                string value = Regex.Replace(Clipboard.GetText(), @"\s", string.Empty);
-                if (string.IsNullOrEmpty(value)) return;
-                foreach (char i in value)
-                {
-                    if (!IsValidChar(i)) return;
-                }
-                sci.ReplaceSel(value);
+                if (!IsValidChar(i)) return;
             }
+            sci.ReplaceSel(value);
         }
 
         /// <summary>
@@ -952,7 +949,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         /// <param name="value">A character to test for validity.</param>
         /// <returns><code>true</code> if the character is valid; <code>false</code> otherwize.</returns>
-        bool IsValidChar(int value)
+        static bool IsValidChar(int value)
         {
             return 0x60 < value && value < 0x7B
                 || 0x3F < value && value < 0x5B
@@ -964,16 +961,16 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Highlight the specified region.
         /// </summary>
-        /// <param name="start">The start index of the highlight.</param>
-        /// <param name="end">The end index of the highlight.</param>
-        void Highlight(int start, int end)
+        /// <param name="startIndex">The start index of the highlight.</param>
+        /// <param name="length">The length of the highlight.</param>
+        void Highlight(int startIndex, int length)
         {
             int es = sci.EndStyled;
             int mask = (1 << sci.StyleBits) - 1;
             sci.SetIndicStyle(Indicator, (int) IndicatorStyle.Container);
             sci.SetIndicFore(Indicator, 0x00FF00);
             sci.CurrentIndicator = Indicator;
-            sci.IndicatorFillRange(start, end - start);
+            sci.IndicatorFillRange(startIndex, length);
             sci.StartStyling(es, mask);
         }
 
@@ -985,7 +982,9 @@ namespace CodeRefactor.Commands
         {
             int excessCount = history.Count - ++historyIndex;
             if (excessCount > 0)
+            {
                 history.RemoveRange(historyIndex, excessCount);
+            }
 
             history.Add(value);
         }
@@ -1015,7 +1014,7 @@ namespace CodeRefactor.Commands
 
             if (refs == null)
             {
-                Highlight(start, end);
+                Highlight(start, end - start);
                 if (Update != null) Update(this, /*prevName,*/ newName);
             }
             else
@@ -1059,9 +1058,11 @@ namespace CodeRefactor.Commands
             /// </summary>
             public DelayedExecution()
             {
-                timer = new Timer();
-                timer.Enabled = false;
-                timer.Interval = 1;
+                timer = new Timer
+                {
+                    Enabled = false,
+                    Interval = 1
+                };
                 timer.Tick += Timer_Tick;
             }
 

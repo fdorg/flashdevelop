@@ -24,7 +24,6 @@ namespace CodeRefactor.Commands
     {
         static bool includeComments, includeStrings, previewChanges = true;
 
-        string newName;
         bool outputResults;
         bool isRenamePackage;
         string renamePackagePath;
@@ -35,19 +34,15 @@ namespace CodeRefactor.Commands
         string oldFileName;
         string newFileName;
 
-        public string NewName
-        {
-            get { return newName; }
-        }
+        public string NewName { get; private set; }
 
         /// <summary>
         /// A new Rename refactoring command.
-        /// Uses inline renaming.
         /// Outputs found results.
         /// Uses the current text location as the declaration target.
         /// </summary>
         public Rename()
-            : this(true)
+            : this(false)
         {
         }
 
@@ -118,16 +113,12 @@ namespace CodeRefactor.Commands
                 string package = target.Path.Replace('.', Path.DirectorySeparatorChar);
                 foreach (PathModel aPath in ASContext.Context.Classpath)
                 {
-                    if (aPath.IsValid && !aPath.Updating)
-                    {
-                        string path = Path.Combine(aPath.Path, package);
-                        if (aPath.IsValid && Directory.Exists(path))
-                        {
-                            renamePackagePath = path;
-                            StartRename(inline, Path.GetFileName(path), newName);
-                            return;
-                        }
-                    }
+                    if (!aPath.IsValid || aPath.Updating) continue;
+                    string path = Path.Combine(aPath.Path, package);
+                    if (!aPath.IsValid || !Directory.Exists(path)) continue;
+                    renamePackagePath = path;
+                    StartRename(inline, Path.GetFileName(path), newName);
+                    return;
                 }
                 return;
             }
@@ -185,7 +176,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override bool IsValid()
         {
-            return isRenamePackage ? renamePackage.IsValid() : !string.IsNullOrEmpty(newName);
+            return isRenamePackage ? renamePackage.IsValid() : !string.IsNullOrEmpty(NewName);
         }
 
         #endregion
@@ -268,7 +259,7 @@ namespace CodeRefactor.Commands
                 var doc = AssociatedDocumentHelper.LoadDocument(entry.Key);
                 var sci = doc.SciControl;
                 // replace matches in the current file with the new name
-                RefactoringHelper.ReplaceMatches(entry.Value, sci, newName);
+                RefactoringHelper.ReplaceMatches(entry.Value, sci, NewName);
                 //Uncomment if we want to keep modified files
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
                 doc.Save();
@@ -394,12 +385,10 @@ namespace CodeRefactor.Commands
             {
                 var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                 int position = sci.WordEndPosition(sci.CurrentPos, true);
-                InlineRename inlineRename;
 
-                if (isRenamePackage)
-                    inlineRename = new InlineRename(sci, oldName, position, null, null, null, null);
-                else
-                    inlineRename = new InlineRename(sci, oldName, position, includeComments, includeStrings, previewChanges, findAllReferencesCommand.CurrentTarget);
+                var inlineRename = isRenamePackage ?
+                    new InlineRename(sci, oldName, position, null, null, null, null)
+                    : new InlineRename(sci, oldName, position, includeComments, includeStrings, previewChanges, findAllReferencesCommand.CurrentTarget);
 
                 inlineRename.Apply += OnApply;
                 inlineRename.Cancel += OnCancel;
@@ -432,7 +421,7 @@ namespace CodeRefactor.Commands
                 helper = null;
             }
 
-            this.newName = newName;
+            NewName = newName;
             Execute();
         }
 
