@@ -72,7 +72,9 @@ namespace ASCompletion.Completion
         public string objectKey;
         public string booleanKey;
         public string numberKey;
+        public string stringKey;
         public string arrayKey;
+        public string dynamicKey;
         public string importKey;
         public string importKeyAlt;
         public string[] typesPreKeys = new string[] { };

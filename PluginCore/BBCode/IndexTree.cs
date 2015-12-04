@@ -266,11 +266,11 @@ namespace PluginCore.BBCode
                 s += "\n";
             
             s += space + "<tree"
-                       + " indexA=" + tree.indexA.ToString()
-                       + " indexB=" + tree.indexB.ToString()
-                       + " offsetA=" + tree.offsetA.ToString()
-                       + " offsetB=" + tree.offsetB.ToString()
-                       + " nodes=" + tree.nodes.Count.ToString()
+                       + " indexA=" + tree.indexA
+                       + " indexB=" + tree.indexB
+                       + " offsetA=" + tree.offsetA
+                       + " offsetB=" + tree.offsetB
+                       + " nodes=" + tree.nodes.Count
                        + " data='" + (tree.data == null ? "null" : tree.data.ToString()) + "'"
                        + " root='" + (getRootNode(tree).data == null ? "null" : getRootNode(tree).data.ToString()) + "'"
                        + ">";

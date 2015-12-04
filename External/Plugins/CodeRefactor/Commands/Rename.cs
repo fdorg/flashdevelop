@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.Controls;
@@ -346,7 +347,7 @@ namespace CodeRefactor.Commands
                         reportableLines[lineNumber] = new List<string>();
                     }
                     // the data we store matches the TraceManager.Add's formatting.  We insert the {0} at the end so that we can insert the final line state later
-                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line.ToString() + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
+                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
                 }
                 // report all the lines
                 foreach (KeyValuePair<int, List<String>> lineSetsToReport in reportableLines)
@@ -370,8 +371,7 @@ namespace CodeRefactor.Commands
         {
             String label = TextHelper.GetString("Label.NewName");
             String title = String.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
-            String suggestion = originalName;
-            LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
+            LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
             DialogResult choice = askName.ShowDialog();
             if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
             {

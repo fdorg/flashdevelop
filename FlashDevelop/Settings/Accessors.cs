@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using Ookii.Dialogs;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Localization;
 using ScintillaNet.Enums;
 
@@ -372,7 +373,7 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsDelay")]
         public Int32 HighlightMatchingWordsDelay
         {
-            get 
+            get
             {
                 // Make sure this is not an invalid value
                 if (this.highlightMatchingWordsDelay <= 0) this.highlightMatchingWordsDelay = 1200;
@@ -445,10 +446,10 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.IndentView")]
         public IndentView IndentView
         {
-            get 
+            get
             {
                 if ((Int32)this.indentView == 0) this.indentView = IndentView.Real;
-                return this.indentView; 
+                return this.indentView;
             }
             set
             {

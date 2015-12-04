@@ -73,6 +73,7 @@ namespace LoomContext
             features.objectKey = "Object";
             features.booleanKey = "Boolean";
             features.numberKey = "Number";
+            features.stringKey = "String";
             features.arrayKey = "Array";
             features.importKey = "import";
             features.typesPreKeys = new string[] { "import", "new", "typeof", "is", "as", "extends", "implements" };

@@ -58,7 +58,7 @@ namespace System.Windows.Forms
                     if (prev != "") tip.SetToolTip(this, "");
                     return;
                 }
-                Graphics g = ((Control)this).CreateGraphics();
+                Graphics g = this.CreateGraphics();
                 SizeF textSize = g.MeasureString(text, this.Font);
                 int w = (int)textSize.Width;
                 if (w+offset > this.Width)

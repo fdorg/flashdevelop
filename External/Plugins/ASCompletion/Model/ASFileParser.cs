@@ -193,7 +193,7 @@ namespace ASCompletion.Model
         private static string getRandomStringRepl()
         {
             random.NextDouble();
-            return "StringRepl" + random.Next(0xFFFFFFF).ToString();
+            return "StringRepl" + random.Next(0xFFFFFFF);
         }
 
         /// <summary>
@@ -1028,29 +1028,6 @@ namespace ASCompletion.Model
                                 if (valueLength < VALUE_BUFFER - 2) valueBuffer[valueLength++] = ba[i0];
                             valueBuffer[valueLength++] = '/';
                             continue;
-                        }
-                    }
-                    else if (inValue && (inParams || inType || inConst)
-                        && c1 == '/' && valueLength == 0) // lookup native regex
-                    {
-                        int itemp = i;
-                        valueBuffer[valueLength++] = '/';
-                        while (valueLength < VALUE_BUFFER && i < len)
-                        {
-                            c1 = ba[i++];
-                            if (c1 == '\n' || c1 == '\r')
-                            {
-                                valueLength = 0;
-                                i = itemp;
-                                break;
-                            }
-                            valueBuffer[valueLength++] = c1;
-                            if (c1 == '\\' && i < len)
-                            {
-                                c1 = ba[i++];
-                                valueBuffer[valueLength++] = c1;
-                            }
-                            else if (c1 == '/') break;
                         }
                     }
                     else if ((c1 == ':' || c1 == ',') && paramBraceCount > 0) stopParser = true;

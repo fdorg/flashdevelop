@@ -166,7 +166,7 @@ namespace CodeFormatter
         private void UpdateMenuItems()
         {
             if (this.mainMenuItem == null || this.contextMenuItem == null) return;
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument as ITabbedDocument;
+            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             Boolean isValid = doc != null && doc.IsEditable && this.IsSupportedLanguage(doc.FileName);
             this.mainMenuItem.Enabled = this.contextMenuItem.Enabled = isValid;
         }

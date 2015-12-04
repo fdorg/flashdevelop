@@ -99,7 +99,7 @@ namespace AS3Context
 
         static public AS3Settings Settings
         {
-            get { return settingObject as AS3Settings; }
+            get { return settingObject; }
         }
         #endregion
         
@@ -156,13 +156,13 @@ namespace AS3Context
                             if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3")
                                 e.Handled = OpenVirtualFileModel(de.Data as String);
                         }
-                        else if (!(settingObject as AS3Settings).DisableFDB && action == "AS3Context.StartDebugger")
+                        else if (!settingObject.DisableFDB && action == "AS3Context.StartDebugger")
                         {
                             string workDir = (PluginBase.CurrentProject != null)
                                 ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath)
                                 : Environment.CurrentDirectory;
 
-                            string flexSdk = (settingObject as AS3Settings).GetDefaultSDK().Path;
+                            string flexSdk = settingObject.GetDefaultSDK().Path;
 
                             // if the default sdk is not defined ask for project sdk
                             if (String.IsNullOrEmpty(flexSdk))
@@ -265,25 +265,23 @@ namespace AS3Context
                     else if (inMXML)
                     {
                         DataEvent de = e as DataEvent;
-                        if (de.Action == "XMLCompletion.Element")
+                        switch (de.Action)
                         {
-                            de.Handled = MxmlComplete.HandleElement(de.Data);
-                        }
-                        if (de.Action == "XMLCompletion.Namespace")
-                        {
-                            de.Handled = MxmlComplete.HandleNamespace(de.Data);
-                        }
-                        else if (de.Action == "XMLCompletion.CloseElement")
-                        {
-                            de.Handled = MxmlComplete.HandleElementClose(de.Data);
-                        }
-                        else if (de.Action == "XMLCompletion.Attribute")
-                        {
-                            de.Handled = MxmlComplete.HandleAttribute(de.Data);
-                        }
-                        else if (de.Action == "XMLCompletion.AttributeValue")
-                        {
-                            de.Handled = MxmlComplete.HandleAttributeValue(de.Data);
+                            case "XMLCompletion.Element":
+                                de.Handled = MxmlComplete.HandleElement(de.Data);
+                                break;
+                            case "XMLCompletion.Namespace":
+                                de.Handled = MxmlComplete.HandleNamespace(de.Data);
+                                break;
+                            case "XMLCompletion.CloseElement":
+                                de.Handled = MxmlComplete.HandleElementClose(de.Data);
+                                break;
+                            case "XMLCompletion.Attribute":
+                                de.Handled = MxmlComplete.HandleAttribute(de.Data);
+                                break;
+                            case "XMLCompletion.AttributeValue":
+                                de.Handled = MxmlComplete.HandleAttributeValue(de.Data);
+                                break;
                         }
                     }
                 }
