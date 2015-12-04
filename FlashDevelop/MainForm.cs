@@ -93,7 +93,7 @@ namespace FlashDevelop
         #region Private Properties
 
         /* AppMan */
-        FileSystemWatcher amWatcher;
+        private FileSystemWatcher amWatcher;
 
         /* Components */
         private QuickFind quickFind;
@@ -1710,8 +1710,7 @@ namespace FlashDevelop
         public Color GetThemeColor(String id, Color fallback)
         {
             Color color = ThemeManager.GetThemeColor(id);
-            if (color != Color.Empty) return color;
-            else return fallback;
+            return color.IsEmpty ? fallback : color;
         }
 
         /// <summary>
@@ -1728,8 +1727,54 @@ namespace FlashDevelop
         public String GetThemeValue(String id, String fallback)
         {
             String value = ThemeManager.GetThemeValue(id);
-            if (!String.IsNullOrEmpty(value)) return value;
-            else return fallback;
+            return String.IsNullOrEmpty(value) ? fallback : value;
+        }
+
+        /// <summary>
+        /// Gets a theme flag value.
+        /// </summary>
+        public Boolean GetThemeFlag(String id)
+        {
+            return GetThemeFlag(id, false);
+        }
+
+        /// <summary>
+        /// Gets a theme flag value with a fallback.
+        /// </summary>
+        public Boolean GetThemeFlag(String id, Boolean fallback)
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            if (String.IsNullOrEmpty(value)) return fallback;
+            switch (value.ToLower())
+            {
+                case "true": return true;
+                case "false": return false;
+                default: return fallback;
+            }
+        }
+
+        /// <summary>
+        /// Gets a theme enumeration value.
+        /// </summary>
+        public T GetThemeValue<T>(String id) where T : struct
+        {
+            return GetThemeValue(id, default(T));
+        }
+
+        /// <summary>
+        /// Gets a theme enumeration value with a fallback.
+        /// </summary>
+        public T GetThemeValue<T>(String id, T fallback) where T : struct
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            try
+            {
+                return (T) Enum.Parse(typeof(T), value);
+            }
+            catch
+            {
+                return fallback;
+            }
         }
 
         /// <summary>
@@ -1763,8 +1808,32 @@ namespace FlashDevelop
         public Keys GetShortcutItemKeys(String id)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
-            if (item != null) return item.Custom;
-            else return Keys.None;
+            return item != null ? item.Custom : Keys.None;
+        }
+
+        /// <summary>
+        /// Gets the shortcut id associated the keys.
+        /// </summary>
+        public string GetShortcutItemId(Keys keys)
+        {
+            ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
+            return item != null ? item.Id : null;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Dictionary{TKey, TValue}"/> object containing all registered
+        /// shortcuts with the shortcut values as keys.
+        /// </summary>
+        public Dictionary<Keys, String> GetShortcutItemsByKeys()
+        {
+            Dictionary<String, ShortcutItem>.ValueCollection list = ShortcutManager.RegisteredItems.Values;
+            Dictionary<Keys, String> items = new Dictionary<Keys, String>(list.Count);
+            foreach (ShortcutItem item in list)
+            {
+                if (item.Custom == Keys.None) continue;
+                items[item.Custom] = item.Id;
+            }
+            return items;
         }
 
         /// <summary>
@@ -2680,10 +2749,8 @@ namespace FlashDevelop
         /// </summary>
         public void GoTo(Object sender, System.EventArgs e)
         {
-            if (!this.gotoDialog.Visible)
-                this.gotoDialog.Show();
-            else
-                this.gotoDialog.Activate();
+            if (!this.gotoDialog.Visible) this.gotoDialog.Show();
+            else this.gotoDialog.Activate();
         }
 
         /// <summary>
@@ -2711,10 +2778,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplace(Object sender, System.EventArgs e)
         {
-            if (!this.frInDocDialog.Visible)
-                this.frInDocDialog.Show();
-            else
-                this.frInDocDialog.Activate();
+            if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
+            else this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2728,10 +2793,8 @@ namespace FlashDevelop
             {
                 OpenEditableDocument(file);
             });
-            if (!this.frInDocDialog.Visible)
-                this.frInDocDialog.Show();
-            else
-                this.frInDocDialog.Activate();
+            if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
+            else this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2739,10 +2802,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)
         {
-            if (!this.frInFilesDialog.Visible)
-                this.frInFilesDialog.Show();
-            else
-                this.frInFilesDialog.Activate();
+            if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show();
+            else this.frInFilesDialog.Activate();
         }
 
         /// <summary>
@@ -2752,10 +2813,8 @@ namespace FlashDevelop
         {
             ToolStripItem button = (ToolStripItem)sender;
             String path = ((ItemData)button.Tag).Tag;
-            if (!this.frInFilesDialog.Visible)
-                this.frInFilesDialog.Show(); // Show first..
-            else
-                this.frInFilesDialog.Activate();
+            if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show(); // Show first..
+            else this.frInFilesDialog.Activate();
             this.frInFilesDialog.SetFindPath(path);
         }
 
@@ -3398,11 +3457,8 @@ namespace FlashDevelop
                 ScintillaControl sci = Globals.SciControl;
                 ToolStripItem button = (ToolStripItem)sender;
                 string language = ((ItemData) button.Tag).Tag;
-                if (sci.ConfigurationLanguage.Equals(language))
-                    return; // already using this syntax
-
+                if (sci.ConfigurationLanguage.Equals(language)) return; // already using this syntax
                 ScintillaManager.ChangeSyntax(language, sci);
-
                 string extension = sci.GetFileExtension();
                 if (!string.IsNullOrEmpty(extension))
                 {
