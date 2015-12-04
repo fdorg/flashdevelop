@@ -79,13 +79,10 @@ namespace ASCompletion.Completion
             string text = Sci.GetLine(line);
             bool suggestItemDeclaration = false;
 
-            if (isNotInterface)
+            if (isNotInterface && ASComplete.IsLiteralStyle(style))
             {
-                if (style == 4 || style == 6 || style == 7)
-                {
-                    ShowConvertToConst(found);
-                    return known;
-                }
+                ShowConvertToConst(found);
+                return known;
             }
 
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
@@ -862,8 +859,6 @@ namespace ASCompletion.Completion
         #endregion
 
         #region code generation
-
-        static private Regex reInsert = new Regex("\\s*([a-z])", RegexOptions.Compiled);
 
         static public void SetJobContext(String contextToken, String contextParam, MemberModel contextMember, Match contextMatch)
         {
@@ -3053,7 +3048,7 @@ namespace ASCompletion.Completion
             name = name.TrimStart(new char[] { '_' });
             if (name.Length > 3 && name.StartsWith("get") && (name[3].ToString() == char.ToUpper(name[3]).ToString()))
             {
-                name = char.ToLower(name[3]).ToString() + name.Substring(4);
+                name = char.ToLower(name[3]) + name.Substring(4);
             }
 
             if (name.Length > 1)
@@ -3251,22 +3246,6 @@ namespace ASCompletion.Completion
             }
             if (detach) result = NewLine + result;
             InsertCode(position, result);
-        }
-
-        private static string ReplaceAll(string template, string oldValue, string newValue)
-        {
-            if (template == null)
-                return null;
-
-            string result = "";
-            string[] a = template.Split(new string[] { oldValue }, StringSplitOptions.None);
-            for (int i = 0; i < a.Length; i++)
-            {
-                if (i > 0)
-                    result += newValue;
-                result += a[i];
-            }
-            return result;
         }
 
         public static bool MakePrivate(ScintillaControl Sci, MemberModel member)
@@ -3713,31 +3692,6 @@ namespace ASCompletion.Completion
             if (isFlagMatchStrict || isVisibilityMatchStrict)
                 fallback = null;
             return latest ?? fallback;
-        }
-        
-        static private string GetDeclaration(MemberModel member)
-        {
-            return GetDeclaration(member, true);
-        }
-
-        static private string GetDeclaration(MemberModel member, bool addModifiers)
-        {
-            // modifiers
-            string modifiers = TemplateUtils.GetStaticExternOverride(member);
-            if (addModifiers) modifiers += TemplateUtils.GetModifiers(member);
-            
-            // signature
-            FlagType ft = member.Flags;
-            if ((ft & FlagType.Getter) > 0)
-                return String.Format("{0}function get {1}", modifiers, member.ToDeclarationString());
-            else if ((ft & FlagType.Setter) > 0)
-                return String.Format("{0}function set {1}", modifiers, member.ToDeclarationString());
-            else if (ft == FlagType.Function)
-                return String.Format("{0}function {1}", modifiers, member.ToDeclarationString());
-            else if (((ft & FlagType.Constant) > 0) && ASContext.Context.Settings.LanguageId != "AS2")
-                return String.Format("{0}const {1}", modifiers, member.ToDeclarationString());
-            else
-                return String.Format("{0}var {1}", modifiers, member.ToDeclarationString());
         }
         #endregion
 

@@ -46,19 +46,31 @@ namespace ScintillaNet
         private ScrollBarEx hScrollBar;
 
         /// <summary>
+        /// Gets the custom vertical scroll bar.
+        /// </summary>
+        public ScrollBarEx VScrollBar
+        {
+            get { return this.vScrollBar; }
+        }
+
+        /// <summary>
+        /// Gets the custom horizontal scroll bar.
+        /// </summary>
+        public ScrollBarEx HScrollBar
+        {
+            get { return this.hScrollBar; }
+        }
+
+        /// <summary>
         /// Is the vertical scroll bar visible?
         /// </summary>
         public Boolean IsVScrollBar
         {
-            get
-            {
-                if (this.Controls.Contains(this.vScrollBar)) return this.vScrollBar.Visible;
-                else return SPerform(2281, 0, 0) != 0;
-            }
+            get { return this.Controls.Contains(this.vScrollBar) ? this.vScrollBar.Visible : SPerform(2281, 0, 0) != 0; }
             set
             {
                 if (this.Controls.Contains(this.vScrollBar)) this.vScrollBar.Visible = value;
-                else SPerform(2280, (uint)(value ? 1 : 0), 0);
+                else SPerform(2280, value ? (UInt32) 1 : 0, 0);
             }
         }
 
@@ -67,15 +79,11 @@ namespace ScintillaNet
         /// </summary>
         public Boolean IsHScrollBar
         {
-            get
-            {
-                if (this.Controls.Contains(this.hScrollBar)) return this.hScrollBar.Visible;
-                else return SPerform(2131, 0, 0) != 0;
-            }
+            get { return this.Controls.Contains(this.hScrollBar) ? this.hScrollBar.Visible : SPerform(2131, 0, 0) != 0; }
             set
             {
                 if (this.Controls.Contains(this.hScrollBar)) this.hScrollBar.Visible = value;
-                else SPerform(2130, (uint)(value ? 1 : 0), 0);
+                else SPerform(2130, value ? (UInt32) 1 : 0, 0);
             }
         }
 
@@ -84,48 +92,43 @@ namespace ScintillaNet
         /// </summary>
         public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
-            if (e.Type == EventType.ApplyTheme)
+            switch (e.Type)
             {
-                Boolean enabled = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor") != Color.Empty;
-                if (enabled && !this.Controls.Contains(this.vScrollBar))
-                {
-                    this.AddScrollBars(this);
-                }
-                else if (!enabled && this.Controls.Contains(this.vScrollBar))
-                {
-                    this.RemoveScrollBars(this);
-                }
+                case EventType.ApplyTheme:
+                    AutoAddRemoveScrollBars(this);
+                    break;
             }
         }
 
         /// <summary>
         /// Init the custom scrollbars
         /// </summary>
-        private void InitScrollBars(ScintillaControl sender)
+        private static void InitScrollBars(ScintillaControl sender)
         {
-            sender.vScrollBar = new ScrollBarEx();
-            sender.vScrollBar.OverScroll = true;
-            sender.vScrollBar.Width = ScaleHelper.Scale(17);
-            sender.vScrollBar.Orientation = ScrollBarOrientation.Vertical;
-            sender.vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
-            sender.vScrollBar.Dock = DockStyle.Right;
-            sender.vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(17));
-            sender.hScrollBar = new ScrollBarEx();
-            sender.hScrollBar.Height = ScaleHelper.Scale(17);
-            sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
-            sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
-            sender.hScrollBar.Dock = DockStyle.Bottom;
-            Color foreColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
-            if (foreColor != Color.Empty) sender.AddScrollBars(sender);
-            PluginBase.MainForm.ThemeControls(sender.vScrollBar);
-            PluginBase.MainForm.ThemeControls(sender.hScrollBar);
-            EventManager.AddEventHandler(this, EventType.ApplyTheme);
+            sender.vScrollBar = new ScrollBarEx
+            {
+                OverScroll = true,
+                Width = ScaleHelper.Scale(17),
+                Orientation = ScrollBarOrientation.Vertical,
+                ContextMenuStrip = { Renderer = new DockPanelStripRenderer() },
+                Dock = DockStyle.Right,
+                Margin = new Padding(0, 0, 0, ScaleHelper.Scale(17))
+            };
+            sender.hScrollBar = new ScrollBarEx
+            {
+                Height = ScaleHelper.Scale(17),
+                Orientation = ScrollBarOrientation.Horizontal,
+                ContextMenuStrip = { Renderer = new DockPanelStripRenderer() },
+                Dock = DockStyle.Bottom
+            };
+            AutoAddRemoveScrollBars(sender);
+            EventManager.AddEventHandler(sender, EventType.ApplyTheme);
         }
 
         /// <summary>
         /// Update the scrollbars on sci control ui update
         /// </summary>
-        private void OnScrollUpdate(ScintillaControl sender)
+        private static void OnScrollUpdate(ScintillaControl sender)
         {
             Int32 vMax = sender.LinesVisible;
             Int32 vPage = sender.LinesOnScreen;
@@ -150,31 +153,77 @@ namespace ScintillaNet
         /// </summary>
         private void OnScrollBarScroll(Object sender, ScrollEventArgs e)
         {
-            this.Painted -= this.OnScrollUpdate;
+            this.Painted -= OnScrollUpdate;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
                 if (e.OldValue != -1) this.FirstVisibleLine = e.NewValue;
             }
             else this.XOffset = this.hScrollBar.Value;
-            this.Painted += this.OnScrollUpdate;
+            this.Painted += OnScrollUpdate;
+        }
+
+        /// <summary>
+        /// Automatically add or remove scroll bars.
+        /// </summary>
+        /// <param name="sender">The <see cref="ScintillaControl"/> object.</param>
+        private static void AutoAddRemoveScrollBars(ScintillaControl sender)
+        {
+            if (ScrollBarEx.UseCustom)
+            {
+                TurnOnScrollBars(sender);
+            }
+            else
+            {
+                TurnOffScrollBars(sender);
+            }
+        }
+
+        /// <summary>
+        /// Add scroll bars and apply the current theme.
+        /// </summary>
+        /// <param name="sender">The <see cref="ScintillaControl"/> object.</param>
+        private static void TurnOnScrollBars(ScintillaControl sender)
+        {
+            if (!sender.Controls.Contains(sender.vScrollBar))
+            {
+                AddScrollBars(sender);
+                PluginBase.MainForm.ThemeControls(sender.vScrollBar);
+                PluginBase.MainForm.ThemeControls(sender.hScrollBar);
+            }
+
+            sender.vScrollBar.ValidateColors();
+            sender.hScrollBar.ValidateColors();
+        }
+
+        /// <summary>
+        /// Remove scroll bars from the container.
+        /// </summary>
+        /// <param name="sender">The <see cref="ScintillaControl"/> object.</param>
+        private static void TurnOffScrollBars(ScintillaControl sender)
+        {
+            if (sender.Controls.Contains(sender.vScrollBar))
+            {
+                RemoveScrollBars(sender);
+            }
         }
 
         /// <summary>
         /// Add controls to container
         /// </summary>
-        private void AddScrollBars(ScintillaControl sender)
+        /// <param name="sender">The <see cref="ScintillaControl"/> object.</param>
+        private static void AddScrollBars(ScintillaControl sender)
         {
             Boolean vScroll = sender.IsVScrollBar;
             Boolean hScroll = sender.IsHScrollBar;
             sender.IsVScrollBar = false; // Hide builtin
             sender.IsHScrollBar = false; // Hide builtin
-            sender.vScrollBar.VisibleChanged += OnResize;
-            sender.hScrollBar.VisibleChanged += OnResize;
+            sender.vScrollBar.VisibleChanged += sender.OnResize;
+            sender.hScrollBar.VisibleChanged += sender.OnResize;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.Controls.Add(sender.hScrollBar);
             sender.Controls.Add(sender.vScrollBar);
-            sender.Painted += sender.OnScrollUpdate;
+            sender.Painted += OnScrollUpdate;
             sender.IsVScrollBar = vScroll;
             sender.IsHScrollBar = hScroll;
             sender.OnResize(null, null);
@@ -183,17 +232,18 @@ namespace ScintillaNet
         /// <summary>
         /// Remove controls from container
         /// </summary>
-        private void RemoveScrollBars(ScintillaControl sender)
+        /// <param name="sender">The <see cref="ScintillaControl"/> object.</param>
+        private static void RemoveScrollBars(ScintillaControl sender)
         {
             Boolean vScroll = sender.IsVScrollBar;
             Boolean hScroll = sender.IsHScrollBar;
-            sender.vScrollBar.VisibleChanged -= OnResize;
-            sender.hScrollBar.VisibleChanged -= OnResize;
+            sender.vScrollBar.VisibleChanged -= sender.OnResize;
+            sender.hScrollBar.VisibleChanged -= sender.OnResize;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.Controls.Remove(sender.hScrollBar);
             sender.Controls.Remove(sender.vScrollBar);
-            sender.Painted -= sender.OnScrollUpdate;
+            sender.Painted -= OnScrollUpdate;
             sender.IsVScrollBar = vScroll;
             sender.IsHScrollBar = hScroll;
             sender.OnResize(null, null);
@@ -225,7 +275,7 @@ namespace ScintillaNet
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
                 Resize += new EventHandler(OnResize);
-                this.InitScrollBars(this);
+                InitScrollBars(this);
             }
             catch (Exception ex)
             {
@@ -5548,7 +5598,7 @@ namespace ScintillaNet
             {
                 highlightDelay = new System.Timers.Timer(PluginBase.MainForm.Settings.HighlightMatchingWordsDelay);
                 highlightDelay.Elapsed += highlightDelay_Elapsed;
-                highlightDelay.SynchronizingObject = this as Control;
+                highlightDelay.SynchronizingObject = this;
             }
             else highlightDelay.Stop();
             if (highlightDelay.Interval != PluginBase.MainForm.Settings.HighlightMatchingWordsDelay)
@@ -5869,8 +5919,8 @@ namespace ScintillaNet
         private RangeToFormat GetRangeToFormat(IntPtr hdc, int charFrom, int charTo)
         {
             RangeToFormat frPrint;
-            int pageWidth = (int)GetDeviceCaps(hdc, 110);
-            int pageHeight = (int)GetDeviceCaps(hdc, 111);
+            int pageWidth = GetDeviceCaps(hdc, 110);
+            int pageHeight = GetDeviceCaps(hdc, 111);
             frPrint.hdcTarget = hdc;
             frPrint.hdc = hdc;
             frPrint.rcPage.Left = 0;

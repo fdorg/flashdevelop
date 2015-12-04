@@ -298,7 +298,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (hovertime <= 0)
                     hovertime = 400;
 
-                m_timerMouseTrack.Interval = 2 * (int)hovertime;
+                m_timerMouseTrack.Interval = 2 * hovertime;
                 m_timerMouseTrack.Enabled = true;
             }
 

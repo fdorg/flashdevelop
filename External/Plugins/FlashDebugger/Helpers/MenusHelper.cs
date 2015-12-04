@@ -289,7 +289,7 @@ namespace FlashDebugger
             // Notify plugins of main states when state changes...
             if (hasChanged && (state == DebuggerState.Running || state == DebuggerState.Stopped))
             {
-                DataEvent de = new DataEvent(EventType.Command, "FlashDebugger." + state.ToString(), null);
+                DataEvent de = new DataEvent(EventType.Command, "FlashDebugger." + state, null);
                 EventManager.DispatchEvent(this, de);
             }
             PluginBase.MainForm.RefreshUI();

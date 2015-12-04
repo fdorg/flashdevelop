@@ -54,7 +54,7 @@ namespace AS3Context.Compiler
         {
             if (startMessage == null) 
                 return;
-            PluginBase.RunAsync((MethodInvoker)delegate
+            PluginBase.RunAsync(delegate
             {
                 // send message again
                 ignoreMessage = true;
