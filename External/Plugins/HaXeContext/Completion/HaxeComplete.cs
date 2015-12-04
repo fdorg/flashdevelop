@@ -206,6 +206,7 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompilerService.POSITION:
+                case HaxeCompilerService.USAGE:
                     pos = Sci.WordEndPosition(Sci.CurrentPos, true) + 1;
                     break;
             }
