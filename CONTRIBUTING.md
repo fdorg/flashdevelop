@@ -10,26 +10,26 @@ If you want to add your plugin, theme or extension to AppMan, you need to do a p
 
 ##### Use spaces instead of tabs with a width of 4
 
-```
+```c#
 public bool IsMember()
 {
-    if (this.value > 2))
-	{
-		return false;
-	}
+    if (this.value > 2)
+    {
+        return false;
+    }
     else return true;
 }
 ```
 
 ##### Naming should be in English and clear
 
-```
+```c#
 private int memberProperty = 0;
 ```
 
 ##### Use camelCase for private members and uppercase for public properties, methods and types:
 
-```
+```c#
 private int memberProperty = 0;
 
 public string MemberName = "MemberName";
@@ -42,7 +42,7 @@ public bool IsMember()
 
 ##### Use types without explicit path:
 
-```	
+```c#
 private void OnFormActivate(object sender, /*System.*/EventArgs e)
 {
 	// Do something...
@@ -51,7 +51,7 @@ private void OnFormActivate(object sender, /*System.*/EventArgs e)
 
 ##### Do not use extensive extra empty lines and keep the code clean, not like:
 
-```
+```c#
 // Comment...	
 private int MemberMethod(int value)
 {
@@ -88,7 +88,7 @@ private int MemberMethod(int value)
 
 ##### Use brackets and parenthesis for easier readability:
 
-```
+```c#
 if ((val1 > val2) && (val1 > val3))
 {
 	if (val2 > val3)
@@ -100,7 +100,7 @@ if ((val1 > val2) && (val1 > val3))
 
 ##### Do not nest expressions without brackets:
 
-```
+```c#
 if (val1 > val2 && val1 > val3)
 
 	if (val2 > val3)
@@ -111,7 +111,7 @@ if (val1 > val2 && val1 > val3)
 
 ##### Use can use one liners to shorten the code:
 
-```
+```c#
 if (val1 > val2 && val1 > val3)
 {
 	if (val2 > val3) doThing();
@@ -120,7 +120,7 @@ if (val1 > val2 && val1 > val3)
 
 ##### Use explicit types:
 
-```
+```c#
 int myValue = 0;
 Point[] myPoints = new Point[]
 {
@@ -131,7 +131,7 @@ Point[] myPoints = new Point[]
 
 ##### Code example:
 
-```
+```c#
 import System;
 
 namespace MyNameSpace
@@ -166,7 +166,7 @@ namespace MyNameSpace
 		public void MemberMethod(int value)
 		{
 			int temp = CONSTANT;
-			if (value > 2))
+			if (value > 2)
 			{
 				this.memberProperty2 = temp;
 				this.memberProperty3 = temp;
