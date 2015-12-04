@@ -8,20 +8,33 @@ If you want to add your plugin, theme or extension to AppMan, you need to do a p
 
 # Coding style
 
+##### Use spaces instead of tabs with a width of 4
+
+```
+public bool IsMember()
+{
+    if (this.value > 2))
+	{
+		return false;
+	}
+    else return true;
+}
+```
+
 ##### Naming should be in English and clear
 
 ```
-private Int32 memberProperty = 0;
+private int memberProperty = 0;
 ```
 
 ##### Use camelCase for private members and uppercase for public properties, methods and types:
 
 ```
-private Int32 memberProperty = 0;
+private int memberProperty = 0;
 
-public String MemberName = "MemberName";
+public string MemberName = "MemberName";
 
-public Boolean IsMember()
+public bool IsMember()
 {
 	return true;
 }
@@ -30,7 +43,7 @@ public Boolean IsMember()
 ##### Use types without explicit path:
 
 ```	
-private void OnFormActivate(Object sender, /*System.*/EventArgs e)
+private void OnFormActivate(object sender, /*System.*/EventArgs e)
 {
 	// Do something...
 }
@@ -40,7 +53,7 @@ private void OnFormActivate(Object sender, /*System.*/EventArgs e)
 
 ```
 // Comment...	
-private Int32 memberMethod(Int32 value)
+private int memberMethod(int value)
 {
 	
 	
@@ -108,7 +121,7 @@ if (val1 > val2 && val1 > val3)
 ##### Use explicit types:
 
 ```
-Int32 myValue = 0;
+int myValue = 0;
 Point[] myPoints = new Point[]
 {
 	new Point(1, 1),
@@ -126,23 +139,23 @@ namespace MyNameSpace
 	class MyClass
 	{
 		// Comment here...
-		private Int32 memberProperty = 0;
-		private Int32 memberProperty2 = 1;
-		private Int32 memberProperty3 = 2;
+		private int memberProperty = 0;
+		private int memberProperty2 = 1;
+		private int memberProperty3 = 2;
 		
 		// Comment here...
-		public String MemberName = "MemberName";
+		public string MemberName = "MemberName";
 		
 		// Comment here...
-		public static Boolean IsMemberProperty = false;
+		public static bool IsMemberProperty = false;
 		
 		// Comment here...
-		public const Int32 CONSTANT = 1;
+		public const int CONSTANT = 1;
 		
 		/// <summary>
 		/// Comment here...
 		/// </summary> 
-		public Boolean IsMember()
+		public bool IsMember()
 		{
 			return true;
 		}
@@ -150,9 +163,9 @@ namespace MyNameSpace
 		/// <summary>
 		/// Comment here...
 		/// </summary> 
-		public void MemberMethod(Int32 value)
+		public void MemberMethod(int value)
 		{
-			Int32 temp = MyClass.CONSTANT;
+			int temp = CONSTANT;
 			if (value > 2))
 			{
 				this.memberProperty2 = temp;
@@ -164,9 +177,9 @@ namespace MyNameSpace
 		/// <summary>
 		/// Comment here...
 		/// </summary> 
-		private Int32 MemberMethodEx(Int32 value)
+		private int MemberMethodEx(int value)
 		{
-			Int32 temp = MyClass.CONSTANT;
+			int temp = CONSTANT;
 			this.memberProperty3 = temp;
 			switch (value)
 			{
@@ -182,7 +195,7 @@ namespace MyNameSpace
 		/// <summary>
 		/// Comment here...
 		/// </summary> 
-		private void OnFormActivate(Object sender, EventArgs e)
+		private void OnFormActivate(object sender, EventArgs e)
 		{
 			this.MemberMethod(null, null);
 		}
