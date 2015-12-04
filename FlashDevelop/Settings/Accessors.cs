@@ -382,21 +382,6 @@ namespace FlashDevelop.Settings
             set { this.highlightMatchingWordsDelay = value; }
         }
 
-        [DefaultValue(ScrollBarMode.Auto)]
-        [DisplayName("Use Custom Scroll Bar")]
-        [LocalizedCategory("FlashDevelop.Category.Editor")]
-        [LocalizedDescription("FlashDevelop.Description.UseCustomScrollBar")]
-        public ScrollBarMode UseCustomScrollBar
-        {
-            get { return this.useCustomScrollBar; }
-            set
-            {
-                if (this.useCustomScrollBar == value) return;
-                this.useCustomScrollBar = value;
-                ScrollBarEx.NotifySettingsChanged(this.useCustomScrollBar);
-            }
-        }
-
         #endregion
 
         #region Locale

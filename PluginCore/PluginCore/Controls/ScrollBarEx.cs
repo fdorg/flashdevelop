@@ -20,22 +20,9 @@ namespace PluginCore.Controls
     {
         #region scroll bar settings
 
-        public delegate void SettingsChangedEventHandler(ScrollBarMode value);
-        public static event SettingsChangedEventHandler SettingsChanged;
-        
-        public static ScrollBarMode SettingsMode
-        {
-            get { return PluginBase.MainForm.Settings.UseCustomScrollBar; }
-        }
-
         public static bool UseCustom
         {
             get { return PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom", "false").ToLower() == "true"; }
-        }
-
-        public static void NotifySettingsChanged(ScrollBarMode value)
-        {
-            if (SettingsChanged != null) SettingsChanged.Invoke(value);
         }
 
         #endregion
@@ -53,7 +40,7 @@ namespace PluginCore.Controls
         private Color backColorDisabled/* = SystemColors.ControlLight*/;
         private Color borderColor/* = SystemColors.ActiveBorder*/;
         private Color borderColorDisabled/* = SystemColors.Control*/;
-        private bool colorsInvalidated;
+        private Boolean colorsInvalidated = false;
 
         /// <summary>
         /// Resets the component colors to default values.
@@ -86,14 +73,14 @@ namespace PluginCore.Controls
             // Reset any unassigned colors to default.
             InitializeColors();
 
-            // If no colors are explicitly defined, not fallback colors are required.
+            // If no colors are explicitly defined, no fallback colors are required.
             if (!colorsInvalidated) return;
 
             // Newly introduced color options - do not assign default colors. Instead fall back to associated colors.
-            foreColorHot      = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", foreColor);
-            arrowColor        = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", foreColor);
-            arrowColorHot     = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", arrowColor);
-            arrowColorPressed = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", foreColorPressed);
+            if (foreColorHot.IsEmpty)      foreColorHot      = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", foreColor);
+            if (arrowColor.IsEmpty)        arrowColor        = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", foreColor);
+            if (arrowColorHot.IsEmpty)     arrowColorHot     = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", arrowColor);
+            if (arrowColorPressed.IsEmpty) arrowColorPressed = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", foreColorPressed);
 
             colorsInvalidated = false;
         }
@@ -117,6 +104,7 @@ namespace PluginCore.Controls
             backColor =
             backColorDisabled =
             Color.Empty;
+
             colorsInvalidated = true;
         }
 
@@ -128,21 +116,18 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawBackground(Graphics g, Rectangle rect, ScrollBarOrientation orientation)
         {
-            if (g == null)
-            {
-                throw new ArgumentNullException("g");
-            }
+            if (g == null) throw new ArgumentNullException("g");
+
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
-            {
                 return;
-            }
-            if (orientation == ScrollBarOrientation.Vertical)
-            {
-                DrawBackgroundVertical(g, rect);
-            }
-            else
-            {
-                DrawBackgroundHorizontal(g, rect);
+
+            switch (orientation) {
+                case ScrollBarOrientation.Vertical:
+                    DrawBackgroundVertical(g, rect);
+                    break;
+                default:
+                    DrawBackgroundHorizontal(g, rect);
+                    break;
             }
         }
 
@@ -155,16 +140,12 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawThumb(Graphics g, Rectangle rect, ScrollBarState state, ScrollBarOrientation orientation)
         {
-            if (g == null)
-            {
-                throw new ArgumentNullException("g");
-            }
-            if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect) || state == ScrollBarState.Disabled)
-            {
-                return;
-            }
+            if (g == null) throw new ArgumentNullException("g");
 
-            Color color = foreColor;
+            if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect) || state == ScrollBarState.Disabled)
+                return;
+
+            Color color;
             switch (state)
             {
                 case ScrollBarState.Hot:
@@ -173,15 +154,18 @@ namespace PluginCore.Controls
                 case ScrollBarState.Pressed:
                     color = foreColorPressed;
                     break;
+                default:
+                    color = foreColor;
+                    break;
             }
 
-            if (orientation == ScrollBarOrientation.Vertical)
-            {
-                DrawThumbVertical(g, rect, color);
-            }
-            else
-            {
-                DrawThumbHorizontal(g, rect, color);
+            switch (orientation) {
+                case ScrollBarOrientation.Vertical:
+                    DrawThumbVertical(g, rect, color);
+                    break;
+                default:
+                    DrawThumbHorizontal(g, rect, color);
+                    break;
             }
         }
 
@@ -195,16 +179,12 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawArrowButton(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp, ScrollBarOrientation orientation)
         {
-            if (g == null)
-            {
-                throw new ArgumentNullException("g");
-            }
-            if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
-            {
-                return;
-            }
+            if (g == null) throw new ArgumentNullException("g");
 
-            Color color = arrowColor;
+            if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
+                return;
+
+            Color color;
 
             switch (state)
             {
@@ -216,15 +196,18 @@ namespace PluginCore.Controls
                 case ScrollBarArrowButtonState.DownPressed:
                     color = arrowColorPressed;
                     break;
+                default:
+                    color = arrowColor;
+                    break;
             }
 
-            if (orientation == ScrollBarOrientation.Vertical)
-            {
-                DrawArrowButtonVertical(g, rect, color, arrowUp);
-            }
-            else
-            {
-                DrawArrowButtonHorizontal(g, rect, color, arrowUp);
+            switch (orientation) {
+                case ScrollBarOrientation.Vertical:
+                    DrawArrowButtonVertical(g, rect, color, arrowUp);
+                    break;
+                default:
+                    DrawArrowButtonHorizontal(g, rect, color, arrowUp);
+                    break;
             }
         }
 
@@ -235,7 +218,7 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         private void DrawBackgroundVertical(Graphics g, Rectangle rect)
         {
-            using (SolidBrush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
+            using (Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
             {
                 g.FillRectangle(brush, rect);
             }
@@ -248,7 +231,7 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         private void DrawBackgroundHorizontal(Graphics g, Rectangle rect)
         {
-            using (SolidBrush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
+            using (Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
             {
                 g.FillRectangle(brush, rect);
             }
@@ -262,10 +245,11 @@ namespace PluginCore.Controls
         /// <param name="color">The color to draw the thumb with.</param>
         private static void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
-            var innerRect = new Rectangle(rect.Left + ScaleHelper.Scale(2), rect.Top, rect.Width - ScaleHelper.Scale(4), rect.Height);
+            rect.X += ScaleHelper.Scale(2);
+            rect.Width -= ScaleHelper.Scale(4);
             using (Brush brush = new SolidBrush(color))
             {
-                g.FillRectangle(brush, innerRect);
+                g.FillRectangle(brush, rect);
             }
         }
 
@@ -277,10 +261,11 @@ namespace PluginCore.Controls
         /// <param name="color">The color to draw the thumb with.</param>
         private static void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
-            var innerRect = new Rectangle(rect.Left, rect.Top + ScaleHelper.Scale(2), rect.Width, rect.Height - ScaleHelper.Scale(4));
+            rect.Y += ScaleHelper.Scale(2);
+            rect.Height -= ScaleHelper.Scale(4);
             using (Brush brush = new SolidBrush(color))
             {
-                g.FillRectangle(brush, innerRect);
+                g.FillRectangle(brush, rect);
             }
         }
 
@@ -317,7 +302,7 @@ namespace PluginCore.Controls
                         {
                             new Point(middle.X - pad, middle.Y - 1),
                             new Point(middle.X + pad + 1, middle.Y - 1),
-                            new Point(middle.X, middle.Y + pad) 
+                            new Point(middle.X, middle.Y + pad)
                         };
                         break;
                 }
@@ -2238,28 +2223,7 @@ namespace PluginCore.Controls
         /// </summary>
         Vertical
     }
-
-    /// <summary>
-    /// Enum for scrollbar usage settings.
-    /// </summary>
-    public enum ScrollBarMode
-    {
-        /// <summary>
-        /// Turn off the usage of <see cref="ScrollBarEx"/> completely.
-        /// </summary>
-        Off,
-
-        /// <summary>
-        /// Use <see cref="ScrollBarEx"/> only when explicit theme is defined for scroll bars.
-        /// </summary>
-        Auto,
-
-        /// <summary>
-        /// Always use <see cref="ScrollBarEx"/> instead of the system scroll bar.
-        /// </summary>
-        On
-    }
-
+    
     /// <summary>
     /// The scrollbar states.
     /// </summary>

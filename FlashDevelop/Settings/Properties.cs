@@ -104,7 +104,6 @@ namespace FlashDevelop.Settings
         private Boolean uiWrapList = false;
         private Boolean uiDisableSmartMatch = false;
         private String uiInsertionTriggers = "";
-        private ScrollBarMode useCustomScrollBar = ScrollBarMode.Auto;
     }
 
 }

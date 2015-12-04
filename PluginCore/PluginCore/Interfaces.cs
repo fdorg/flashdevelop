@@ -289,7 +289,6 @@ namespace PluginCore
         Boolean DisableSmartMatch { get; set; }
         Boolean SaveUnicodeWithBOM { get; set; }
         String InsertionTriggers { get; set; }
-        ScrollBarMode UseCustomScrollBar { get; set; }
 
         #endregion
     }
