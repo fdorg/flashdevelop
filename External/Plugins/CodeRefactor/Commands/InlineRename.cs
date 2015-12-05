@@ -7,8 +7,8 @@ using ASCompletion.Context;
 using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.FRService;
-using PluginCore.Helpers;
 using ScintillaNet;
 using ScintillaNet.Enums;
 using Keys = System.Windows.Forms.Keys;
@@ -420,7 +420,6 @@ namespace CodeRefactor.Commands
             sci.Resize -= Sci_Resize;
             Current = null;
 
-
             sci = null;
             controls.Remove(dialog);
             controls = null;
@@ -730,7 +729,8 @@ namespace CodeRefactor.Commands
         /// <param name="e">The event arguments.</param>
         void Sci_Resize(object sender, EventArgs e)
         {
-            dialog.Left = sci.Width - dialog.Width - ScaleHelper.Scale(17); //scroll bar width
+            int scrollBarWidth = ScrollBarEx.UseCustom ? sci.VScrollBar.Width : SystemInformation.VerticalScrollBarWidth;
+            dialog.Left = sci.Width - dialog.Width - scrollBarWidth;
         }
 
         #endregion

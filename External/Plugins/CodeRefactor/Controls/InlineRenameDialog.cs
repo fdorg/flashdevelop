@@ -1,11 +1,13 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
 
 namespace CodeRefactor.Controls
 {
-    internal class InlineRenameDialog : UserControl
+    /// <summary>
+    /// A small utility dialog present at the top right corner during inline renaming.
+    /// </summary>
+    class InlineRenameDialog : UserControl
     {
         internal CheckBox IncludeComments;
         internal CheckBox IncludeStrings;
@@ -15,12 +17,19 @@ namespace CodeRefactor.Controls
         private Label titleLabel;
         private Label border;
 
+        /// <summary>
+        /// Creates a new instance of <see cref="InlineRenameDialog"/>.
+        /// </summary>
+        /// <param name="targetName">The name of the target to initialize the title.</param>
+        /// <param name="includeComments">Whether to initially include comments in search. Pass <code>null</code> to disable this option.</param>
+        /// <param name="includeStrings">Whether to initially include strings in search. Pass <code>null</code> to disable this option.</param>
+        /// <param name="previewChanges">Whether to initially preview changes during renaming. Pass <code>null</code> to disable this option.</param>
         internal InlineRenameDialog(string targetName, bool? includeComments, bool? includeStrings, bool? previewChanges)
         {
-            this.InitializeComponent();
-            this.InitializeLocalization(targetName);
-            this.InitializeVisualization();
-            this.InitializeCheckBoxes(includeComments, includeStrings, previewChanges);
+            InitializeComponent();
+            InitializeLocalization(targetName);
+            InitializeVisualization();
+            InitializeCheckBoxes(includeComments, includeStrings, previewChanges);
         }
 
         #region Windows Form Designer generated code
@@ -134,49 +143,62 @@ namespace CodeRefactor.Controls
 
         #endregion
 
-        private void InitializeLocalization(string targetName)
+        /// <summary>
+        /// Localizes texts in this control.
+        /// </summary>
+        /// <param name="targetName">The target name to initialize the title with.</param>
+        void InitializeLocalization(string targetName)
         {
-            this.titleLabel.Text = string.Format(TextHelper.GetString("Title.RenameDialog"), targetName);
-            this.IncludeComments.Text = TextHelper.GetString("Label.IncludeComments");
-            this.IncludeStrings.Text = TextHelper.GetString("Label.IncludeStrings");
-            this.PreviewChanges.Text = TextHelper.GetString("Label.PreviewChanges");
-            this.ApplyButton.Text = TextHelper.GetString("ProjectManager.Label.Apply");
-            this.CancelButton.Text = string.Empty;
+            titleLabel.Text = string.Format(TextHelper.GetString("Title.RenameDialog"), targetName);
+            IncludeComments.Text = TextHelper.GetString("Label.IncludeComments");
+            IncludeStrings.Text = TextHelper.GetString("Label.IncludeStrings");
+            PreviewChanges.Text = TextHelper.GetString("Label.PreviewChanges");
+            ApplyButton.Text = TextHelper.GetString("ProjectManager.Label.Apply");
+            CancelButton.Text = string.Empty;
         }
 
-        private void InitializeVisualization()
+        /// <summary>
+        /// Initializes the colors and images.
+        /// </summary>
+        void InitializeVisualization()
         {
-            Color foreColor = PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
-            Color backColor = PluginBase.MainForm.GetThemeColor("QuickFind.BackColor");
-            Color activeBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.TabGradientStart");
-            Color inactiveBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor");
+            var foreColor = PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
+            var backColor = PluginBase.MainForm.GetThemeColor("QuickFind.BackColor");
+            var activeBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.TabGradientStart");
+            var inactiveBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor");
 
-            this.BackColor = backColor;
-            this.titleLabel.ForeColor = foreColor;
-            this.IncludeComments.ForeColor = foreColor;
-            this.IncludeStrings.ForeColor = foreColor;
-            this.PreviewChanges.ForeColor = foreColor;
-            this.border.BackColor = backColor == inactiveBorder ? activeBorder : inactiveBorder;
+            BackColor = backColor;
+            titleLabel.ForeColor = foreColor;
+            IncludeComments.ForeColor = foreColor;
+            IncludeStrings.ForeColor = foreColor;
+            PreviewChanges.ForeColor = foreColor;
+            border.BackColor = backColor == inactiveBorder ? activeBorder : inactiveBorder;
 
-            this.CancelButton.Image = PluginBase.MainForm.FindImage("153");
+            CancelButton.Image = PluginBase.MainForm.FindImage("153");
         }
 
-        private void InitializeCheckBoxes(bool? includeComments, bool? includeStrings, bool? previewChanges)
+        /// <summary>
+        /// Enables or disables check boxes and sets their initial states.
+        /// </summary>
+        /// <param name="includeComments">Initial <see cref="CheckBox.Checked"/> value of <see cref="IncludeComments"/>. Pass <code>null</code> to disable this check box.</param>
+        /// <param name="includeStrings">Initial <see cref="CheckBox.Checked"/> value of <see cref="IncludeStrings"/>. Pass <code>null</code> to disable this check box.</param>
+        /// <param name="previewChanges">Initial <see cref="CheckBox.Checked"/> value of <see cref="PreviewChanges"/>. Pass <code>null</code> to disable this check box.</param>
+        void InitializeCheckBoxes(bool? includeComments, bool? includeStrings, bool? previewChanges)
         {
             if (includeComments.HasValue)
-                this.IncludeComments.Checked = includeComments.Value;
+                IncludeComments.Checked = includeComments.Value;
             else
-                this.IncludeComments.Enabled = false;
+                IncludeComments.Enabled = false;
 
             if (includeStrings.HasValue)
-                this.IncludeStrings.Checked = includeStrings.Value;
+                IncludeStrings.Checked = includeStrings.Value;
             else
-                this.IncludeStrings.Enabled = false;
+                IncludeStrings.Enabled = false;
 
             if (previewChanges.HasValue)
-                this.PreviewChanges.Checked = previewChanges.Value;
+                PreviewChanges.Checked = previewChanges.Value;
             else
-                this.PreviewChanges.Enabled = false;
+                PreviewChanges.Enabled = false;
         }
     }
 }

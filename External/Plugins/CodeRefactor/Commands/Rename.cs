@@ -373,6 +373,9 @@ namespace CodeRefactor.Commands
             //PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
         }
 
+        /// <summary>
+        /// Begins the process of renaming.
+        /// </summary>
         void StartRename(bool useInline, string oldName, string newName)
         {
             if (!string.IsNullOrEmpty(newName))
@@ -387,38 +390,41 @@ namespace CodeRefactor.Commands
                 int position = sci.WordEndPosition(sci.CurrentPos, true);
 
                 var inlineRename = isRenamePackage ?
-                    new InlineRename(sci, oldName, position, null, null, null, null)
-                    : new InlineRename(sci, oldName, position, includeComments, includeStrings, previewChanges, findAllReferencesCommand.CurrentTarget);
+                    new InlineRename(sci, oldName, position, null, null, null, null) :
+                    new InlineRename(sci, oldName, position, includeComments, includeStrings, previewChanges, Target);
+                helper = inlineRename;
 
                 inlineRename.Apply += OnApply;
                 inlineRename.Cancel += OnCancel;
-                helper = inlineRename;
             }
             else
             {
                 var dialog = new PopupRenameDialog(oldName, includeComments, includeStrings, isRenamePackage);
                 helper = dialog;
 
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    OnApply(null, oldName, dialog.Value.Trim());
+                switch (dialog.ShowDialog())
+                {
+                    case DialogResult.OK:
+                        OnApply(null, oldName, dialog.Value.Trim());
+                        break;
+                    case DialogResult.Cancel:
+                        OnCancel(null);
+                        break;
+                }
             }
         }
 
+        /// <summary>
+        /// Apply the new name.
+        /// </summary>
         void OnApply(InlineRename sender, string oldName, string newName)
         {
-            if (sender != null) RemoveInlineHandlers(sender);
+            UpdateDefaultFlags(sender);
             if (newName.Length == 0 || oldName == newName) return;
 
             if (isRenamePackage)
             {
                 renamePackage = new Move(new Dictionary<string, string> { { renamePackagePath, newName } }, true, true);
-            }
-            else if (helper != null)
-            {
-                includeComments = helper.IncludeComments;
-                includeStrings = helper.IncludeStrings;
-                if (helper is InlineRename) previewChanges = ((InlineRename) helper).PreviewChanges;
-                helper = null;
             }
 
             OldName = oldName;
@@ -426,16 +432,29 @@ namespace CodeRefactor.Commands
             RenamingHelper.AddToQueue(this);
         }
 
+        /// <summary>
+        /// Cancel renaming and clean up.
+        /// </summary>
         void OnCancel(InlineRename sender)
         {
-            RemoveInlineHandlers(sender);
-            includeComments = sender.IncludeComments;
-            includeStrings = sender.IncludeStrings;
-            previewChanges = sender.PreviewChanges;
+            UpdateDefaultFlags(sender);
+            if (findAllReferencesCommand != null)
+            {
+                findAllReferencesCommand.OnRefactorComplete -= OnFindAllReferencesCompleted;
+            }
         }
 
-        void RemoveInlineHandlers(InlineRename inlineRename)
+        /// <summary>
+        /// Update the default flags and clean up.
+        /// </summary>
+        void UpdateDefaultFlags(InlineRename inlineRename)
         {
+            if (helper == null) return;
+            includeComments = helper.IncludeComments;
+            includeStrings = helper.IncludeStrings;
+            helper = null;
+            if (inlineRename == null) return;
+            previewChanges = inlineRename.PreviewChanges;
             inlineRename.Apply -= OnApply;
             inlineRename.Cancel -= OnCancel;
         }
