@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
-using System.Collections.Generic;
 
 namespace ProjectManager.Helpers
 {

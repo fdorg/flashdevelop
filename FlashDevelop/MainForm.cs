@@ -1837,22 +1837,6 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Returns a <see cref="Dictionary{TKey, TValue}"/> object containing all registered
-        /// shortcuts with the shortcut values as keys.
-        /// </summary>
-        public Dictionary<Keys, string> GetShortcutItemsByKeys()
-        {
-            var list = ShortcutManager.RegisteredItems.Values;
-            var items = new Dictionary<Keys, string>(list.Count);
-            foreach (var item in list)
-            {
-                if (item.Custom == Keys.None || items.ContainsKey(item.Custom)) continue;
-                items.Add(item.Custom, item.Id);
-            }
-            return items;
-        }
-
-        /// <summary>
         /// Registers a new menu item with the shortcut manager
         /// </summary>
         public void RegisterShortcutItem(String id, Keys keys)

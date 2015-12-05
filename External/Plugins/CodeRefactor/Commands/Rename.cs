@@ -24,7 +24,6 @@ namespace CodeRefactor.Commands
     {
         static bool includeComments, includeStrings, previewChanges = true;
 
-        bool outputResults;
         bool isRenamePackage;
         string renamePackagePath;
         FindAllReferences findAllReferencesCommand;
@@ -34,7 +33,10 @@ namespace CodeRefactor.Commands
         string oldFileName;
         string newFileName;
 
+        public string OldName { get; private set; }
         public string NewName { get; private set; }
+        public bool OutputResults { get; private set; }
+        public ASResult Target { get; private set; }
 
         /// <summary>
         /// A new Rename refactoring command.
@@ -105,7 +107,8 @@ namespace CodeRefactor.Commands
                 TraceManager.Add("refactor target is null");
                 return;
             }
-            this.outputResults = outputResults;
+            Target = target;
+            OutputResults = outputResults;
             if (target.IsPackage)
             {
                 isRenamePackage = true;
@@ -122,12 +125,9 @@ namespace CodeRefactor.Commands
                 }
                 return;
             }
-            bool isEnum = target.Type.IsEnum();
-            bool isVoid = target.Type.IsVoid();
-            bool isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
 
             isRenamePackage = false;
-            string oldName = isEnum || isClass ? target.Type.Name : target.Member.Name;
+            string oldName = RefactoringHelper.GetRefactorTargetName(target);
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
@@ -267,7 +267,7 @@ namespace CodeRefactor.Commands
             if (newFileName != null) RenameFile(eventArgs.Results);
             Results = eventArgs.Results;
             AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
-            if (outputResults) ReportResults();
+            if (OutputResults) ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             MessageBar.Locked = false;
             FireOnRefactorComplete();
@@ -421,8 +421,9 @@ namespace CodeRefactor.Commands
                 helper = null;
             }
 
+            OldName = oldName;
             NewName = newName;
-            Execute();
+            RenamingHelper.AddToQueue(this);
         }
 
         void OnCancel(InlineRename sender)
