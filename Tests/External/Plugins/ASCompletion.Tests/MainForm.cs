@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -132,6 +131,16 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public string GetShortcutItemId(Keys keys)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Dictionary<Keys, string> GetShortcutItemsByKeys()
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetThemeValue(string id)
         {
             throw new NotImplementedException();
@@ -142,8 +151,20 @@ namespace FlashDevelop
             return Color.Black;
         }
 
+        public bool GetThemeFlag(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T GetThemeValue<T>(string id) where T : struct
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetThemeValue(string id, string fallback)
         {
+            if (id == "ScrollBar.UseCustom")
+                return fallback;
             throw new NotImplementedException();
         }
 
@@ -153,6 +174,16 @@ namespace FlashDevelop
             getThemeColorCount++;
 
             return fallback;
+        }
+
+        public bool GetThemeFlag(string id, bool fallback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T GetThemeValue<T>(string id, T fallback) where T : struct
+        {
+            throw new NotImplementedException();
         }
 
         public IPlugin FindPlugin(string guid)
