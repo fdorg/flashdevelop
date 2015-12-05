@@ -281,6 +281,25 @@ namespace ASCompletion.Completion
             }
 
             [Test]
+            public void VariableMultiple()
+            {
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                ASContext.Context = new AS3Context.Context(new AS3Settings());
+
+                var sci = GetBaseScintillaControl();
+                sci.Text = "var obj:Object, ";
+                sci.ConfigurationLanguage = "as3";
+
+                var coma = ASComplete.DisambiguateComa(sci, 20, 0);
+                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
+            }
+
+            [Test]
             public void FunctionCallSimple()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -489,7 +508,7 @@ namespace ASCompletion.Completion
                 Assert.AreNotEqual(ComaExpression.None, coma);
             }
 
-            [Test(Description = "Not supported for now")]
+            [Test]
             public void HaxeAnonymousStructureParameterType()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -506,10 +525,10 @@ namespace ASCompletion.Completion
 
                 var coma = ASComplete.DisambiguateComa(sci, 9, 0);
 
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
+                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
             }
 
-            [Test(Description = "Not supported for now")]
+            [Test]
             public void HaxeAnonymousStructureOptionalParameterType()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -526,10 +545,10 @@ namespace ASCompletion.Completion
 
                 var coma = ASComplete.DisambiguateComa(sci, 10, 0);
 
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
+                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
             }
 
-            [Test(Description = "Not supported for now")]
+            [Test]
             public void HaxeAnonymousStructureParameterTypeAsFunctionArg()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -546,10 +565,10 @@ namespace ASCompletion.Completion
 
                 var coma = ASComplete.DisambiguateComa(sci, 18, 0);
 
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
+                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
             }
 
-            [Test(Description = "Not supported for now")]
+            [Test]
             public void HaxeAnonymousStructureOptionalParameterTypeAsFunctionArg()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -566,10 +585,10 @@ namespace ASCompletion.Completion
 
                 var coma = ASComplete.DisambiguateComa(sci, 19, 0);
 
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
+                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
             }
 
-            [Test(Description = "Not supported for now")]
+            [Test]
             public void HaxeAnonymousStructureOptionalParameterTypeAsFunctionOptionalArg()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -586,10 +605,10 @@ namespace ASCompletion.Completion
 
                 var coma = ASComplete.DisambiguateComa(sci, 20, 0);
 
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
+                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
             }
 
-            [Test(Description = "Not supported for now")]
+            [Test]
             public void HaxeFunctionOptionalArgument()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -609,8 +628,8 @@ namespace ASCompletion.Completion
                 Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
             }
 
-            [Test(Description = "Not supported for now")]
-            public void HaxeoArgumentType()
+            [Test]
+            public void HaxeFunctionOptionalArgumentType()
             {
                 var pluginMain = Substitute.For<PluginMain>();
                 var pluginUiMock = new PluginUIMock(pluginMain);
@@ -641,10 +660,10 @@ namespace ASCompletion.Completion
                 ASContext.Context = new HaXeContext.Context(new HaXeSettings());
 
                 var sci = GetBaseScintillaControl();
-                sci.Text = "var a = (2 > 3) ?";
+                sci.Text = "var a:String = (2 > 3) ?";
                 sci.ConfigurationLanguage = "haxe";
 
-                var coma = ASComplete.DisambiguateComa(sci, 17, 0);
+                var coma = ASComplete.DisambiguateComa(sci, 28, 0);
 
                 Assert.AreEqual(ComaExpression.AnonymousObject, coma);
             }
@@ -661,10 +680,10 @@ namespace ASCompletion.Completion
                 ASContext.Context = new HaXeContext.Context(new HaXeSettings());
 
                 var sci = GetBaseScintillaControl();
-                sci.Text = "var a = (2 > 3) ? 'Hah' :";
+                sci.Text = "var a:String = (2 > 3) ? 'Hah' :";
                 sci.ConfigurationLanguage = "haxe";
 
-                var coma = ASComplete.DisambiguateComa(sci, 25, 0);
+                var coma = ASComplete.DisambiguateComa(sci, 36, 0);
 
                 Assert.AreEqual(ComaExpression.AnonymousObject, coma);
             }
