@@ -96,12 +96,12 @@ namespace FlashConnect
                     * Check packet
                     */
                     if (packets != null) packets.Append(contents);
-                    else if (contents.StartsWithOrdinal("<")) packets = new StringBuilder(contents);
+                    else if (contents.StartsWith('<')) packets = new StringBuilder(contents);
                     else ErrorManager.ShowWarning(INCORRECT_PKT + contents, null);
                     /**
                     * Validate message
                     */
-                    if (packets != null && contents.EndsWithOrdinal("\0"))
+                    if (packets != null && contents.EndsWith('\0'))
                     {
                         String msg = packets.ToString(); packets = null; 
                         if (msg == "<policy-file-request/>\0") 

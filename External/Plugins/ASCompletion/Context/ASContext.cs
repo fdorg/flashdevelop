@@ -1434,7 +1434,7 @@ namespace ASCompletion.Context
                 return;
 
             // remove quotes
-            if (swf.StartsWithOrdinal("\"")) swf = swf.Substring(1, swf.Length-2);
+            if (swf.StartsWith('\"')) swf = swf.Substring(1, swf.Length-2);
 
             // allow network access to the SWF
             if (trustFileWanted)

@@ -1033,7 +1033,7 @@ namespace ASCompletion.Completion
                             if (Sci.PositionIsOnComment(Sci.PositionFromLine(line-1) + slashes))
                                 txt = txt.Substring(0, txt.IndexOfOrdinal("//")).Trim();
                         }
-                        if (txt.EndsWithOrdinal("{") && (line > 1)) AutoCloseBrace(Sci, line);
+                        if (txt.EndsWith('{') && (line > 1)) AutoCloseBrace(Sci, line);
                     }
                     // code reformatting
                     if (!ASContext.CommonSettings.DisableCodeReformat && !txt.EndsWithOrdinal("*/"))
@@ -1170,7 +1170,7 @@ namespace ASCompletion.Completion
             {
                 string txt = Sci.GetLine(startLine).TrimStart();
                 if (txt.StartsWithOrdinal("/*")) break;
-                else if (!txt.StartsWithOrdinal("*")) break;
+                else if (!txt.StartsWith('*')) break;
                 startLine--;
             }
             Sci.SetLineIndentation(line, Sci.GetLineIndentation(startLine));
@@ -1195,7 +1195,7 @@ namespace ASCompletion.Completion
                 int position = Sci.LineIndentPosition(line) + 2;
                 Sci.SetSel(position, position);
             }
-            else if (txt.StartsWithOrdinal("*"))
+            else if (txt.StartsWith('*'))
             {
                 Sci.ReplaceSel("* ");
                 int position = Sci.LineIndentPosition(line) + 2;
@@ -1232,11 +1232,11 @@ namespace ASCompletion.Completion
                     tab = tempIndent + Sci.TabWidth;
                     break;
                 }
-                if (tempText.Length > 0 && (tempText.EndsWithOrdinal("}") || IsDeclaration(tempText, features)))
+                if (tempText.Length > 0 && (tempText.EndsWith('}') || IsDeclaration(tempText, features)))
                 {
                     tempIndent = Sci.GetLineIndentation(tempLine);
                     tab = tempIndent;
-                    if (tempText.EndsWithOrdinal("{")) tab += Sci.TabWidth;
+                    if (tempText.EndsWith('{')) tab += Sci.TabWidth;
                     break;
                 }
                 tempLine--;
@@ -2470,7 +2470,7 @@ namespace ASCompletion.Completion
             if (asFunction && tokens.Length == 1) token += "(";
 
             ASResult head;
-            if (token.StartsWithOrdinal("#"))
+            if (token.StartsWith('#'))
             {
                 Match mSub = re_sub.Match(token);
                 if (mSub.Success)
@@ -2889,7 +2889,7 @@ namespace ASCompletion.Completion
                 int p = text.IndexOf(';');
                 text = text.TrimEnd();
                 if (p < 0) p = text.Length;
-                if (text.EndsWithOrdinal("(")) p--;
+                if (text.EndsWith('(')) p--;
                 // resolve expression
                 ASExpr expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
                 if (!string.IsNullOrEmpty(expr.Value))

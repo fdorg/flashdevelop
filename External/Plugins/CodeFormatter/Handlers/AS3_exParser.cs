@@ -493,7 +493,7 @@ public class AS3_exParser : Parser
        while (true)
        {
            IToken token=input.LT(i);
-           if (token.Text!=null && token.Text.StartsWithOrdinal("<"))
+           if (token.Text!=null && token.Text.StartsWith('<'))
               return (i>1);
            if (token.Type==EOF)
               return false;
@@ -507,7 +507,7 @@ public class AS3_exParser : Parser
        while (true)
        {
            IToken t=input.LT(i);
-           if (t.Text!=null && t.Text.StartsWithOrdinal("<"))
+           if (t.Text!=null && t.Text.StartsWith('<'))
               return;
            if (t.Type==EOF)
               return;

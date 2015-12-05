@@ -103,7 +103,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             name = TransformFile(name);
             if (name.Length > 0) {
-                if (!name.EndsWithOrdinal("/")) {
+                if (!name.EndsWith('/')) {
                     name += "/";
                 }
             }

@@ -315,7 +315,7 @@ namespace MacroManager
                 foreach (String entry in ((Macro)macroItem.Tag).Entries)
                 {
                     String data = entry;
-                    if (data.StartsWithOrdinal("#")) // Hardcore mode :)
+                    if (data.StartsWith('#')) // Hardcore mode :)
                     {
                         data = PluginBase.MainForm.ProcessArgString(entry.Substring(1));
                         if (data == "|") return; // Invalid, don't execute..

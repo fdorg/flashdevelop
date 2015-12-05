@@ -193,7 +193,7 @@ namespace AS3Context
                         }
                         else genericTypes[genType] = model;
                     }
-                    else if (type.Name.StartsWithOrdinal("_") && string.IsNullOrEmpty(model.Package))
+                    else if (type.Name.StartsWith('_') && string.IsNullOrEmpty(model.Package))
                     {
                         type.Access = Visibility.Private;
                         type.Namespace = "private";
@@ -720,7 +720,7 @@ namespace AS3Context
 
             if (id != null)
             {
-                if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWithOrdinal("\""))
+                if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith('\"'))
                     doc.Value = "\"" + doc.Value + "\"";
 
                 if (doc.LongDesc == null)

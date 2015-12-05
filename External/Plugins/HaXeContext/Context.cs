@@ -189,7 +189,7 @@ namespace HaXeContext
                     {
                         TraceManager.Add(line, 3);
                     }
-                    else if (!line.StartsWithOrdinal("-"))
+                    else if (!line.StartsWith('-'))
                     {
                         try
                         {
@@ -1192,7 +1192,7 @@ namespace HaXeContext
                 return null;
 
             // auto-started completion, can be ignored for performance (show default completion tooltip)
-            if (expression.Value.IndexOfOrdinal(".") < 0 || (autoHide && !expression.Value.EndsWithOrdinal(".")))
+            if (expression.Value.IndexOfOrdinal(".") < 0 || (autoHide && !expression.Value.EndsWith('.')))
                 if (hxsettings.DisableMixedCompletion && expression.Value.Length > 0 && autoHide) return new MemberList();
                 else return null;
 

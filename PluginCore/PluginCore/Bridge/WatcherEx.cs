@@ -86,7 +86,7 @@ namespace PluginCore.Bridge
                     }
                     else
                     {
-                        if (Directory.Exists(path) && !path.EndsWithOrdinal("\\")) path += "\\";
+                        if (Directory.Exists(path) && !path.EndsWith('\\')) path += "\\";
                         bridge.DataReceived += new DataReceivedEventHandler(bridge_DataReceived);
                         if (filter == null) bridge.Send("watch:" + path);
                         else bridge.Send("watch:" + Path.Combine(path, filter));
@@ -118,7 +118,7 @@ namespace PluginCore.Bridge
                 Environment.SetEnvironmentVariable("FDBRIDGE", fullPath.Replace("BRIDGE:", ""));
                 return;
             }
-            if (!fullPath.EndsWithOrdinal("\\")) fullPath += '\\';
+            if (!fullPath.EndsWith('\\')) fullPath += '\\';
             if (fullPath.Length < 3) return;
             string folder = Path.GetDirectoryName(fullPath);
             string name = Path.GetFileName(fullPath);

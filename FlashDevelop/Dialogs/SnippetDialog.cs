@@ -565,7 +565,7 @@ namespace FlashDevelop.Dialogs
             {
                 this.contentsTextBox.Focus();
                 String data = this.insertComboBox.SelectedItem.ToString();
-                if (!data.StartsWithOrdinal("-"))
+                if (!data.StartsWith('-'))
                 {
                     Int32 variableEnd = data.IndexOfOrdinal(")") + 1;
                     String variable = data.Substring(0, variableEnd);

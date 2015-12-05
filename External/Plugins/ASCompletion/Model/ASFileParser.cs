@@ -1107,7 +1107,7 @@ namespace ASCompletion.Model
                         foundColon = false;
                         if (haXe)
                         {
-                            if (param.EndsWithOrdinal("}") || param.Contains(">"))
+                            if (param.EndsWith('}') || param.Contains(">"))
                             {
                                 param = ASFileParserRegexes.Spaces.Replace(param, "");
                                 param = param.Replace(",", ", ");
@@ -2153,7 +2153,7 @@ namespace ASCompletion.Model
                             member.Type = token;
                             member.LineFrom = prevToken.Line;
                             member.LineTo = curToken.Line;
-                            member.Flags = (token.EndsWithOrdinal("*")) ? FlagType.Package : FlagType.Class;
+                            member.Flags = (token.EndsWith('*')) ? FlagType.Package : FlagType.Class;
                             if (flattenNextBlock > 0) // this declaration is inside a config block
                                 member.Flags |= FlagType.Constant; 
                             model.Imports.Add(member);

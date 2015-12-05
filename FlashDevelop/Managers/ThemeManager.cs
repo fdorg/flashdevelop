@@ -50,7 +50,7 @@ namespace FlashDevelop.Managers
                     foreach (String rawLine in lines)
                     {
                         String line = rawLine.Trim();
-                        if (line.Length < 2 || line.StartsWithOrdinal("#")) continue;
+                        if (line.Length < 2 || line.StartsWith('#')) continue;
                         String[] entry = line.Split(new Char[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         valueMap[entry[0]] = entry[1];

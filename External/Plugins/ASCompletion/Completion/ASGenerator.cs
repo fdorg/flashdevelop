@@ -1317,11 +1317,11 @@ namespace ASCompletion.Completion
             string value = resolve.Member.Value;
             if (value != null)
             {
-                if (value.StartsWithOrdinal("\""))
+                if (value.StartsWith('\"'))
                 {
                     value = value.Trim(new char[] { '"' });
                 }
-                else if (value.StartsWithOrdinal("'"))
+                else if (value.StartsWith('\''))
                 {
                     value = value.Trim(new char[] { '\'' });
                 }
@@ -2643,8 +2643,8 @@ namespace ASCompletion.Completion
             Sci.SetSel(funcBodyStart, Sci.LineEndPosition(current.LineTo));
             string currentMethodBody = Sci.SelText;
 
-            bool isExprInSingleQuotes = (expression.StartsWithOrdinal("'") && expression.EndsWithOrdinal("'"));
-            bool isExprInDoubleQuotes = (expression.StartsWithOrdinal("\"") && expression.EndsWithOrdinal("\""));
+            bool isExprInSingleQuotes = (expression.StartsWith('\'') && expression.EndsWith('\''));
+            bool isExprInDoubleQuotes = (expression.StartsWith('\"') && expression.EndsWith('\"'));
             int stylemask = (1 << Sci.StyleBits) - 1;
             int lastPos = -1;
             char prevOrNextChar;
@@ -2956,7 +2956,7 @@ namespace ASCompletion.Completion
                 else
                     cname = String.Concat(m1, m2);
 
-                if (cname.StartsWithOrdinal("<"))
+                if (cname.StartsWith('<'))
                     cname = "Vector." + cname; // literal vector
 
                 type = ctx.ResolveType(cname, inClass.InFile);
@@ -4128,7 +4128,7 @@ namespace ASCompletion.Completion
             if (member.Parameters != null)
                 foreach (MemberModel param in member.Parameters)
                 {
-                    if (param.Name.StartsWithOrdinal(".")) break;
+                    if (param.Name.StartsWith('.')) break;
                     args += ", " + TemplateUtils.GetParamName(param);
                     addTypeOnce(typesUsed, getQualifiedType(param.Type, aType));
                 }

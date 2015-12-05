@@ -102,7 +102,7 @@ namespace ASCompletion.Commands
 
             try
             {
-                string file = args.StartsWithOrdinal("\"") ? args.Substring(1, args.Length-2) : args;
+                string file = args.StartsWith('\"') ? args.Substring(1, args.Length-2) : args;
                 if (BridgeManager.Active && BridgeManager.Settings.TargetRemoteIDE 
                     && File.Exists(file) && Path.GetExtension(file) == ".jsfl" && file[0] <= 'H')
                 {

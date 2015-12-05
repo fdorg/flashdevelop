@@ -114,7 +114,7 @@ namespace HaXeContext
                 return;
 
             string adb = Environment.ExpandEnvironmentVariables("%ANDROID_SDK%/platform-tools");
-            if (adb.StartsWithOrdinal("%") || !Directory.Exists(adb))
+            if (adb.StartsWith('%') || !Directory.Exists(adb))
                 adb = Path.Combine(PathHelper.ToolDir, "android/platform-tools");
             if (Directory.Exists(adb))
             {

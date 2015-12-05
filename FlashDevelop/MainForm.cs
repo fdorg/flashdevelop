@@ -2386,7 +2386,7 @@ namespace FlashDevelop
             if (sci.CanPaste)
             {
                 // if clip is not line-based, then just do simple paste
-                if ((sci.SelTextSize > 0 && !sci.SelText.EndsWithOrdinal("\n")) || !Clipboard.GetText().EndsWithOrdinal("\n") || Clipboard.ContainsData("MSDEVColumnSelect")) sci.Paste();
+                if ((sci.SelTextSize > 0 && !sci.SelText.EndsWith('\n')) || !Clipboard.GetText().EndsWith('\n') || Clipboard.ContainsData("MSDEVColumnSelect")) sci.Paste();
                 else
                 {
                     sci.BeginUndoAction();
@@ -3344,13 +3344,13 @@ namespace FlashDevelop
                 ScintillaControl sci = Globals.SciControl;
                 if (sci.SelText.Length > 0)
                 {
-                    isAsterisk = sci.SelText.StartsWithOrdinal("#");
+                    isAsterisk = sci.SelText.StartsWith('#');
                     if (sci.SelText.StartsWithOrdinal("0x") && sci.SelText.Length == 8)
                     {
                         Int32 convertedColor = DataConverter.StringToColor(sci.SelText);
                         this.colorDialog.Color = ColorTranslator.FromWin32(convertedColor);
                     }
-                    else if (sci.SelText.StartsWithOrdinal("#") && sci.SelText.Length == 7)
+                    else if (sci.SelText.StartsWith('#') && sci.SelText.Length == 7)
                     {
                         String foundColor = sci.SelText.Replace("#", "0x");
                         Int32 convertedColor = DataConverter.StringToColor(foundColor);

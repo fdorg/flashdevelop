@@ -202,7 +202,7 @@ namespace ProjectManager.Actions
             if (project.Language == "as3") 
             {
                 string playerglobalHome = Environment.ExpandEnvironmentVariables("%PLAYERGLOBAL_HOME%");
-                if (playerglobalHome.StartsWithOrdinal("%")) setPlayerglobalHomeEnv = true;
+                if (playerglobalHome.StartsWith('%')) setPlayerglobalHomeEnv = true;
                 if (setPlayerglobalHomeEnv)
                 {
                     Environment.SetEnvironmentVariable("PLAYERGLOBAL_HOME", Path.Combine(project.CurrentSDK, "frameworks/libs/player"));

@@ -197,7 +197,7 @@ namespace ProjectManager.Actions
 
                 if (excluded) continue;
                 var fileDirectory = Path.GetDirectoryName(file).Replace(projectPath, string.Empty);
-                if (fileDirectory.StartsWithOrdinal("\\")) fileDirectory = fileDirectory.Substring(1);
+                if (fileDirectory.StartsWith('\\')) fileDirectory = fileDirectory.Substring(1);
                 var folder = Path.Combine(path, fileDirectory);
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
                 string newFile = Path.Combine(folder, Path.GetFileName(file));

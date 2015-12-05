@@ -54,7 +54,7 @@ namespace ProjectManager.Projects.AS3
             string src = GetAttribute("sourceFolderPath");
             if (src != null) project.Classpaths.Add(src);
             mainApp = (src ?? "") + "/" + mainApp;
-            if (mainApp.StartsWithOrdinal("/")) mainApp = mainApp.Substring(1);
+            if (mainApp.StartsWith('/')) mainApp = mainApp.Substring(1);
             project.CompileTargets.Add(OSPath(mainApp.Replace('/', '\\')));
 
             project.TraceEnabled = GetAttribute("enableModuleDebug") == "true";
@@ -171,7 +171,7 @@ namespace ProjectManager.Projects.AS3
                         if (!Directory.Exists(pathTmp) && !File.Exists(pathTmp))
                             pathTmp = reArgs.Replace(path, ReplaceVars);
                             
-                        if (pathTmp.Length > 0 && !pathTmp.StartsWithOrdinal("$"))
+                        if (pathTmp.Length > 0 && !pathTmp.StartsWith('$'))
                         {
                             asset = new LibraryAsset(project, pathTmp);
                             if (exclude || GetAttribute("linkType") == "2")

@@ -299,7 +299,7 @@ namespace AS3Context.Compiler
                             {
                                 string concat = ";";
                                 arg = tag.Substring(start, end - start).Trim();
-                                if (arg.StartsWithOrdinal("+=") || arg.StartsWithOrdinal("="))
+                                if (arg.StartsWithOrdinal("+=") || arg.StartsWith('='))
                                 {
                                     concat = arg.Substring(0, arg.IndexOf('=') + 1);
                                     arg = arg.Substring(concat.Length);
@@ -320,10 +320,10 @@ namespace AS3Context.Compiler
                                         }
                                         isPath = true;
                                         // remove quotes
-                                        if (arg.StartsWithOrdinal("\"") && arg.EndsWithOrdinal("\""))
+                                        if (arg.StartsWith('\"') && arg.EndsWith('\"'))
                                             arg = arg.Substring(1, arg.Length - 2);
 
-                                        if (!arg.StartsWithOrdinal("\\") && !Path.IsPathRooted(arg))
+                                        if (!arg.StartsWith('\\') && !Path.IsPathRooted(arg))
                                             arg = Path.Combine(buildPath, arg);
                                     }
                                 }
@@ -332,7 +332,7 @@ namespace AS3Context.Compiler
                                     builtSWF = arg;
                                     hasOutput = true;
                                 }
-                                if (!isPath) arg = arg.Replace(" ", ";");
+                                if (!isPath) arg = arg.Replace(' ', ';');
                                 cmd += op + concat + arg + ";";
                             }
                             else cmd += op + ";";

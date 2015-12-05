@@ -338,7 +338,7 @@ namespace XMLCompletion
                 delayOpenConfig.Start();
                 return "";
             }
-            else if (expr.EndsWithOrdinal("+"))
+            else if (expr.EndsWith('+'))
             {
                 if (lang.abbreviations.ContainsKey(expr))
                     expr = (string)lang.abbreviations[expr]; // expandos

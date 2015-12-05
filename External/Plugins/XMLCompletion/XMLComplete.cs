@@ -186,7 +186,7 @@ namespace XMLCompletion
                             temp = "";
                             foreach (String attribute in attributes)
                             {
-                                if (attribute.StartsWithOrdinal("@"))
+                                if (attribute.StartsWith('@'))
                                 {
                                     if (groups.ContainsKey(attribute))
                                         temp += "," + groups[attribute];
@@ -273,7 +273,7 @@ namespace XMLCompletion
                     if (Control.ModifierKeys == Keys.Shift)
                     {
                         ctag = GetXMLContextTag(sci, position);
-                        if (ctag.Tag == null || ctag.Tag.EndsWithOrdinal(">"))
+                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
                         {
                             int start = sci.PositionFromLine(line)-((sci.EOLMode == 0)? 2:1);
                             sci.SetSel(start, position);
@@ -293,7 +293,7 @@ namespace XMLCompletion
                             text = sci.GetLine(line2).TrimEnd();
                             line2--;
                         }
-                        if ((text.EndsWithOrdinal(">") && !text.EndsWithOrdinal("?>") && !text.EndsWithOrdinal("%>")) || text.EndsWithOrdinal("<!--") || text.EndsWithOrdinal("<![CDATA["))
+                        if ((text.EndsWith('>') && !text.EndsWithOrdinal("?>") && !text.EndsWithOrdinal("%>")) || text.EndsWithOrdinal("<!--") || text.EndsWithOrdinal("<![CDATA["))
                         {
                             // Get the previous tag.
                             do
@@ -383,14 +383,14 @@ namespace XMLCompletion
                             finally { sci.EndUndoAction(); }
                             return;
                         }
-                        else if (!text.EndsWithOrdinal(">"))
+                        else if (!text.EndsWith('>'))
                         {
                             ctag = GetXMLContextTag(sci, sci.CurrentPos);
                             if (ctag.Tag == null || ctag.Name == null) return;
                             // We're inside a tag. Visual Studio indents with regards to the first line, other IDEs indent using the indentation of the last line with text.
                             int indent;
                             string tag = (ctag.Tag.IndexOf('\r') > 0 || ctag.Tag.IndexOf('\n') > 0) ? ctag.Tag.Substring(0, ctag.Tag.IndexOfAny(new[] {'\r', '\n'})).TrimEnd() : ctag.Tag.TrimEnd();
-                            if (tag.EndsWithOrdinal("\""))
+                            if (tag.EndsWith('\"'))
                             {
                                 int i;
                                 int l = tag.Length;
@@ -612,7 +612,7 @@ namespace XMLCompletion
                     if (PluginSettings.CloseTags && position > 1)
                     {
                         ctag = GetXMLContextTag(sci, position-2);
-                        if (ctag.Tag == null || ctag.Tag.EndsWithOrdinal(">"))
+                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
                         {
                             if ((Char)sci.CharAt(position-2) == '<')
                             {
@@ -627,7 +627,7 @@ namespace XMLCompletion
                     if (PluginSettings.CloseTags && position > 1)
                     {
                         ctag = GetXMLContextTag(sci, position-2);
-                        if (ctag.Tag == null || ctag.Tag.EndsWithOrdinal(">"))
+                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
                         {
                             if ((Char)sci.CharAt(position-2) == '<')
                             {
@@ -661,7 +661,7 @@ namespace XMLCompletion
                     }
                     else return false;
                 }
-                else if (ctag.Tag.EndsWithOrdinal(">"))
+                else if (ctag.Tag.EndsWith('>'))
                 {
                     return false;
                 }

@@ -1550,7 +1550,7 @@ namespace CodeFormatter.Handlers
                 for (int i=0;i<lines.Count;i++)
                 {
                     String line = lines[i];
-                    if (line.StartsWithOrdinal("*") && !line.StartsWithOrdinal("*/"))
+                    if (line.StartsWith('*') && !line.StartsWithOrdinal("*/"))
                     {
                         hasAsterisks=true;
                         line=line.Substring(1);
@@ -1589,7 +1589,7 @@ namespace CodeFormatter.Handlers
                             newLines.Add(""); //for the additional blank line
                             continue;
                         }
-                        else if (line.StartsWithOrdinal("@")) //don't join lines that start with '@', because those are asdoc attributes
+                        else if (line.StartsWith('@')) //don't join lines that start with '@', because those are asdoc attributes
                         {
                             if (buffer.Length>0)
                                 newLines.Add(buffer);
@@ -1632,13 +1632,13 @@ namespace CodeFormatter.Handlers
                         workingOnAttribute=false;
                     int extraSpaces=0; //accounts for aligning text to right of "/* " or "*"
                     //                  bool lineHasAsterisk=line.StartsWith("*") && !line.StartsWith("*/");
-                    if (line.StartsWithOrdinal("@"))
+                    if (line.StartsWith('@'))
                         workingOnAttribute=true; //once we see an attribute, we assume that subsequent lines are as well, until we see a blank line
                     while (true)
                     {
                         String currentLine;
                         int hangingSpaces=0;
-                        if (workingOnAttribute && !line.StartsWithOrdinal("@"))
+                        if (workingOnAttribute && !line.StartsWith('@'))
                             hangingSpaces=mTabSize*hangingIndentTabs;
                         int nextBreakPoint=findCommentBreakpoint(line, indentAmount+extraSpaces+hangingSpaces, mMaxLineLength);
                         extraSpaces=3; //accounts for aligning text to right of "/* " or "*" on lines 2..n-1
@@ -1656,7 +1656,7 @@ namespace CodeFormatter.Handlers
                         if (!currentLine.StartsWithOrdinal("/*") && !currentLine.StartsWithOrdinal("*/") && (asteriskMode==MLAsteriskStyle_All || (asteriskMode==MLAsteriskStyle_AsIs && hasAsterisks)))
                         {
                             //if we are on an attribute line, but not on the first loop iteration (i.e. we have already wrapped at least once)
-                            if (workingOnAttribute && hangingIndentTabs>0 && !currentLine.StartsWithOrdinal("@"))
+                            if (workingOnAttribute && hangingIndentTabs>0 && !currentLine.StartsWith('@'))
                             {
                                 //I think I should always use spaces here
                                 currentLine=ASFormatter.generateIndent(mTabSize*hangingIndentTabs, false, mTabSize)+currentLine;
@@ -3730,9 +3730,9 @@ namespace CodeFormatter.Handlers
             {
                 //remove braces from statementData, if at ends
                 statementData=statementData.Trim();
-                if (statementData.StartsWithOrdinal("{"))
+                if (statementData.StartsWith('{'))
                     statementData=statementData.Substring(1);
-                if (statementData.EndsWithOrdinal("}"))
+                if (statementData.EndsWith('}'))
                     statementData=statementData.Substring(0, statementData.Length-1);
             }
             if (statementData.Trim().IndexOf('\n')>=0)

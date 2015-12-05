@@ -64,7 +64,7 @@ namespace AS3Context
                             if (p < 0) continue;
                             string uri = temp.Substring(0, p);
                             string path = temp.Substring(p + 1).Trim();
-                            if (path.StartsWithOrdinal("\"")) path = path.Substring(1, path.Length - 2);
+                            if (path.StartsWith('\"')) path = path.Substring(1, path.Length - 2);
                             AddManifest(uri, PathHelper.ResolvePath(path, project.Directory));
                         }
                     }

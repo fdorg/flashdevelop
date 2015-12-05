@@ -360,7 +360,7 @@ namespace ASClassWizard
                                 if (member.Parameters != null)
                                 foreach (MemberModel param in member.Parameters)
                                 {
-                                    if (param.Name.StartsWithOrdinal(".")) break;
+                                    if (param.Name.StartsWith('.')) break;
                                     var pname = TemplateUtils.GetParamName(param);
                                     superConstructor += (index > 0 ? ", " : "") + pname;
                                     index++;

@@ -413,7 +413,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             // No absolute pathnames
             // Windows (and Posix?) paths can start with UNC style "\\NetworkDrive\",
             // so we loop on starting /'s.
-            while (name.StartsWithOrdinal("/")) {
+            while (name.StartsWith('/')) {
                 name = name.Substring(1);
             }
 
@@ -507,7 +507,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                 throw new ArgumentNullException("name");
             }
 
-            bool isDir = name.EndsWithOrdinal("/");
+            bool isDir = name.EndsWith('/');
             
             header.Name = name;
             header.Mode = isDir ? 1003 : 33216;

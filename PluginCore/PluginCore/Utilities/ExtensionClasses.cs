@@ -5,6 +5,19 @@ namespace PluginCore
     public static class StringExtensions
     {
         /// <summary>
+        /// Determines whether the beginning of this <see cref="string"/> instance matches the specified Unicode character.
+        /// <para/>
+        /// WARNING! Always use this method instead of <see cref="string.StartsWith(string)"/> with length-1 string as parameter.
+        /// </summary>
+        /// <param name="this">A <see cref="string"/> object.</param>
+        /// <param name="value">The Unicode character to compare.</param>
+        /// <returns><code>true</code> if <code>value</code> matches the beginning of this string; otherwise, <code>false</code>.</returns>
+        public static bool StartsWith(this string @this, char value)
+        {
+            return @this.Length != 0 && @this[0] == value;
+        }
+
+        /// <summary>
         /// Determines whether the beginning of this <see cref="string"/> instance matches the specified string when compared using the ordinal comparison option.
         /// <para/>
         /// WARNING! Always use this method instead of <see cref="string.StartsWith(string)"/>.
@@ -15,6 +28,20 @@ namespace PluginCore
         public static bool StartsWithOrdinal(this string @this, string value)
         {
             return @this.StartsWith(value, StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// Determines whether the end of this <see cref="string"/> instance matches the specified Unicode character.
+        /// <para/>
+        /// WARNING! Always use this method instead of <see cref="string.EndsWith(string)"/> with length-1 string as parameter.
+        /// </summary>
+        /// <param name="this">A <see cref="string"/> object.</param>
+        /// <param name="value">The Unicode character to compare to the substring at the end of this instance.</param>
+        /// <returns></returns>
+        public static bool EndsWith(this string @this, char value)
+        {
+            int length = @this.Length;
+            return length != 0 && @this[length - 1] == value;
         }
 
         /// <summary>

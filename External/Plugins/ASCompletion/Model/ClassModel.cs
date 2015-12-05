@@ -586,7 +586,7 @@ namespace ASCompletion.Model
             if (comment.Length == 0) return "";
             Boolean indent = tab != "";
             String space = PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
-            Boolean startWithStar = comment.StartsWithOrdinal("*");
+            Boolean startWithStar = comment.StartsWith('*');
             if (startWithStar || comment.IndexOf('\n') > 0 || comment.IndexOf('\r') > 0)
             {
                 if (!startWithStar)

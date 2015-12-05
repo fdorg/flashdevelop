@@ -81,7 +81,7 @@ namespace CssCompletion
                 {
                     int line = sci.LineFromPosition(position);
                     string text = sci.GetLine(line - 1).TrimEnd();
-                    if (text.EndsWithOrdinal("{")) AutoCloseBrace(sci, line);
+                    if (text.EndsWith('{')) AutoCloseBrace(sci, line);
                 }
                 else if (c == '\t') // TODO get tab notification!
                 {

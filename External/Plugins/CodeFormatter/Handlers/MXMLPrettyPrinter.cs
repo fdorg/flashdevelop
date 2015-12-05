@@ -1691,7 +1691,7 @@ namespace CodeFormatter.Handlers
                         {
                             //skip newlines and other meta flags
                             String newAttrName = newAttrOrder[j].mName;
-                            if (newAttrName == NewLineFlag || newAttrName.StartsWithOrdinal("<"))
+                            if (newAttrName == NewLineFlag || newAttrName.StartsWith('<'))
                             {
                                 j++;
                                 continue;
@@ -1722,7 +1722,7 @@ namespace CodeFormatter.Handlers
                     Attr attr = attrs[j];
                     if (!allAttrsArePartOfCustomOrdering && attr.mName == NewLineFlag)
                         lastNewLine = j;
-                    if (!attr.mName.StartsWithOrdinal("<"))
+                    if (!attr.mName.StartsWith('<'))
                         lastAttr = j;
                 }
 
@@ -1755,7 +1755,7 @@ namespace CodeFormatter.Handlers
                         int currentLineLength = ASPrettyPrinter.determineLastLineLength(buffer, getTabSize());
                         foreach (Attr attr in attrs)
                         {
-                            if (attr.mName.StartsWithOrdinal("<"))
+                            if (attr.mName.StartsWith('<'))
                             {
                                 //do nothing
                                 continue;
@@ -1785,7 +1785,7 @@ namespace CodeFormatter.Handlers
                     Attr attr = attrs[j];
 
                     //check for a group wrap mode
-                    if (attr.mName.StartsWithOrdinal("<"))
+                    if (attr.mName.StartsWith('<'))
                     {
                         if (disableWrapping)
                             continue;

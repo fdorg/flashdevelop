@@ -26,7 +26,7 @@ namespace PluginCore.Managers
                 else extension = "as";
             }
             Int32 count = DocumentCount++;
-            if (!extension.StartsWithOrdinal(".")) extension = "." + extension;
+            if (!extension.StartsWith('.')) extension = "." + extension;
             String untitled = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
             return untitled + count + extension;
         }

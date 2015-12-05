@@ -305,9 +305,9 @@ namespace ProjectManager.Controls.TreeView
                             string name = cls.Replace(':', '.');
                             if (cls.EndsWithOrdinal("()"))
                                 node.Nodes.Add(new MemberExportNode(BackingPath, name.Replace("()", ""), Icons.Method.Index));
-                            else if (cls.EndsWithOrdinal("$"))
+                            else if (cls.EndsWith('$'))
                                 node.Nodes.Add(new MemberExportNode(BackingPath, name.Replace("$", ""), Icons.Variable.Index));
-                            else if (cls.EndsWithOrdinal("#"))
+                            else if (cls.EndsWith('#'))
                                 node.Nodes.Add(new MemberExportNode(BackingPath, name.Replace("#", ""), Icons.Const.Index));
                             else
                                 node.Nodes.Add(new ClassExportNode(BackingPath, name));

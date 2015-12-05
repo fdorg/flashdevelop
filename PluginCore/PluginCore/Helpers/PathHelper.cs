@@ -248,7 +248,7 @@ namespace PluginCore.Helpers
         {
             if (string.IsNullOrEmpty(path)) return null;
             Boolean isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
-            Boolean isPathAbsSlashed = (path.StartsWithOrdinal("\\") || path.StartsWithOrdinal("/")) && !isPathNetworked;
+            Boolean isPathAbsSlashed = (path.StartsWith('\\') || path.StartsWith('/')) && !isPathNetworked;
             if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
             String resolvedPath;

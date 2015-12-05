@@ -130,7 +130,7 @@ namespace HaXeContext
                 string arg = hxmlArgs[i];
                 if (!string.IsNullOrEmpty(arg))
                 {
-                    if (arg.StartsWithOrdinal("#")) // commented line
+                    if (arg.StartsWith('#')) // commented line
                         hxmlArgs[i] = "";
                 }
             }
@@ -202,7 +202,7 @@ namespace HaXeContext
 
         HaxeCompleteStatus ParseLines(string lines)
         {
-            if (!lines.StartsWithOrdinal("<"))
+            if (!lines.StartsWith('<'))
             {
                 Errors = lines.Trim();
                 return HaxeCompleteStatus.ERROR;

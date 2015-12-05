@@ -199,7 +199,7 @@ namespace AS3Context
             List<string> addLibs = new List<string>();
             List<string> addLocales = new List<string>();
 
-            if (!Directory.Exists(sdkLibs) && !sdkLibs.StartsWithOrdinal("$")) // fallback
+            if (!Directory.Exists(sdkLibs) && !sdkLibs.StartsWith('$')) // fallback
             {
                 sdkLibs = PathHelper.ResolvePath(PathHelper.ToolDir + S + "flexlibs" + S + "frameworks" + S + "libs" + S + "player");
             }

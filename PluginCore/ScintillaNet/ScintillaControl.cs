@@ -5765,7 +5765,7 @@ namespace ScintillaNet
                                 if (this.PositionIsOnComment(PositionFromLine(tempLine) + slashes))
                                     tempText = tempText.Substring(0, tempText.IndexOfOrdinal("//")).Trim();
                             }
-                            if (tempText.EndsWithOrdinal("{"))
+                            if (tempText.EndsWith('{'))
                             {
                                 int bracePos = CurrentPos - 1;
                                 while (bracePos > 0 && CharAt(bracePos) != '{') bracePos--;
@@ -5774,7 +5774,7 @@ namespace ScintillaNet
                                     previousIndent += TabWidth;
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
-                            if (Lexer == 3 && tempText.EndsWithOrdinal(":") && !tempText.EndsWithOrdinal("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
+                            if (Lexer == 3 && tempText.EndsWith(':') && !tempText.EndsWithOrdinal("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
                             {
                                 int prevLine = tempLine;
                                 while (--prevLine > 0)
@@ -5783,8 +5783,8 @@ namespace ScintillaNet
                                     if (tempText.Length != 0 && !tempText.StartsWithOrdinal("//"))
                                     {
                                         int prevIndent = GetLineIndentation(prevLine);
-                                        if ((tempText.EndsWithOrdinal(";") && previousIndent == prevIndent) ||
-                                            (tempText.EndsWithOrdinal(":") && previousIndent == prevIndent + Indent))
+                                        if ((tempText.EndsWith(';') && previousIndent == prevIndent) ||
+                                            (tempText.EndsWith(':') && previousIndent == prevIndent + Indent))
                                         {
                                             previousIndent -= Indent;
                                             SetLineIndentation(tempLine, previousIndent);
@@ -6782,7 +6782,7 @@ namespace ScintillaNet
             if (this.SelectionStart == this.SelectionEnd && PluginBase.MainForm.Settings.CodingStyle == CodingStyle.BracesAfterLine)
             {
                 string str = this.GetLine(startLine).Trim();
-                if (str.StartsWithOrdinal("{")) startLine = this.GetStartLine(startLine - 1);
+                if (str.StartsWith('{')) startLine = this.GetStartLine(startLine - 1);
                 else if (str.IndexOf('(') >= 0)
                 {
                     int pos = this.GetLine(startLine).IndexOf('(');
@@ -6791,7 +6791,7 @@ namespace ScintillaNet
                     if (pos != -1 /*INVALID_POSITION*/)
                     {
                         int nextLine = this.LineFromPosition(pos);
-                        if (this.GetLine(nextLine + 1).Trim().StartsWithOrdinal("{")) endLine = nextLine + 2;
+                        if (this.GetLine(nextLine + 1).Trim().StartsWith('{')) endLine = nextLine + 2;
                     }
                 }
             }
@@ -7001,7 +7001,7 @@ namespace ScintillaNet
             if (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css")
             {
                 if (str.StartsWithOrdinal("</")) ret = 1;
-                else if (!str.StartsWithOrdinal("<?") && !str.StartsWithOrdinal("<!") && !str.Contains("</") && !str.EndsWithOrdinal("/>") && str.EndsWithOrdinal(">")) ret = -1;
+                else if (!str.StartsWithOrdinal("<?") && !str.StartsWithOrdinal("<!") && !str.Contains("</") && !str.EndsWithOrdinal("/>") && str.EndsWith('>')) ret = -1;
             }
             else
             {

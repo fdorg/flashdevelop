@@ -372,7 +372,7 @@ namespace AS2Context
                 if (!result.IsNull()) return;
 
                 // special _levelN
-                if (hasLevels && token.StartsWithOrdinal("_") && re_level.IsMatch(token))
+                if (hasLevels && token.StartsWith('_') && re_level.IsMatch(token))
                 {
                     result.Member = new MemberModel();
                     result.Member.Name = token;
