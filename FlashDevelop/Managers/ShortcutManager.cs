@@ -36,7 +36,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void RegisterItem(String key, ToolStripMenuItem item)
         {
-            RegisteredItems.Add(key, new ShortcutItem(key, item.ShortcutKeys));
+            RegisteredItems.Add(key, new ShortcutItem(key, item));
         }
 
         /// <summary>
@@ -85,16 +85,11 @@ namespace FlashDevelop.Managers
         {
             foreach (ToolStripItem item in SecondaryItems)
             {
-                String temp = String.Empty;
                 String[] ids = ((ItemData) item.Tag).Id.Split(';');
-                if (ids.Length == 2 && String.IsNullOrEmpty(ids[1]))
+                if (ids.Length == 2)
                 {
-                    temp = StripBarManager.GetMenuItemId(item);
-                }
-                else if (ids.Length == 2) temp = ids[1];
-                if (!String.IsNullOrEmpty(temp) && temp == id)
-                {
-                    return item;
+                    String temp = String.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
+                    if (temp == id) return item;
                 }
             }
             return null;
@@ -224,6 +219,13 @@ namespace FlashDevelop.Managers
         {
             Id = id;
             Default = Custom = keys;
+        }
+
+        public ShortcutItem(String id, ToolStripMenuItem item)
+        {
+            Id = id;
+            Item = item;
+            Default = Custom = item.ShortcutKeys;
         }
 
         public override String ToString()
