@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using System.Reflection;
 using PluginCore;
 
@@ -40,11 +40,10 @@ namespace ProjectManager.Projects
         public BuildEventInfo[] GetVars()
         {
             List<BuildEventInfo> infos = new List<BuildEventInfo>();
-
+            infos.Add(new BuildEventInfo("BaseDir", BaseDir));
             infos.Add(new BuildEventInfo("FDBuild", FDBuild));
             infos.Add(new BuildEventInfo("ToolsDir", ToolsDir));
             infos.Add(new BuildEventInfo("TimeStamp", DateTime.Now.ToString("g")));
-            infos.Add(new BuildEventInfo("UserAppDir", UserAppDir));
             if (project != null)
             {
                 infos.Add(new BuildEventInfo("OutputFile", project.OutputPath));
@@ -61,31 +60,41 @@ namespace ProjectManager.Projects
                 if (project.Language == "as3") infos.Add(new BuildEventInfo("FlexSDK", project.CurrentSDK));
             }
             infos.AddRange(additional);
-
             return infos.ToArray();
         }
 
         public string FDBuildDir { get { return Path.GetDirectoryName(FDBuild); } }
         public string ToolsDir { get { return Path.GetDirectoryName(FDBuildDir); } }
 
+        public string BaseDir
+        {
+            get
+            {
+                Uri uri = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+                // special behavior if we're running in flashdevelop.exe
+                if (Path.GetFileName(uri.LocalPath).ToLower() == DistroConfig.DISTRIBUTION_NAME.ToLower() + ".exe")
+                {
+                    string local = Path.Combine(Path.GetDirectoryName(uri.LocalPath), ".local");
+                    if (!File.Exists(local))
+                    {
+                        String appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        return Path.Combine(appDir, DistroConfig.DISTRIBUTION_NAME);
+                    }
+                    else return Path.GetDirectoryName(uri.LocalPath);
+                }
+                else return string.Empty;
+            }
+        }
+
         public string FDBuild
         {
             get
             {
-                string url = Assembly.GetEntryAssembly().GetName().CodeBase;
-                Uri uri = new Uri(url);
-
+                Uri uri = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
                 // special behavior if we're running in flashdevelop.exe
                 if (Path.GetFileName(uri.LocalPath).ToLower() == DistroConfig.DISTRIBUTION_NAME.ToLower() + ".exe")
                 {
                     string startupDir = Path.GetDirectoryName(uri.LocalPath);
-                    //NOTE: FDBuild does not exist in AppData\Local\FlashDevelop; code commented out in case of reuse
-                    //string local = Path.Combine(Path.GetDirectoryName(uri.LocalPath), ".local");
-                    //if (!File.Exists(local))
-                    //{
-                    //    String appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    //    startupDir = Path.Combine(appDir, DistroConfig.DISTRIBUTION_NAME);
-                    //}
                     string toolsDir = Path.Combine(startupDir, "Tools");
                     string fdbuildDir = Path.Combine(toolsDir, "fdbuild");
                     return Path.Combine(fdbuildDir, "fdbuild.exe");
@@ -94,13 +103,6 @@ namespace ProjectManager.Projects
             }
         }
 
-        public string UserAppDir
-        {
-            get
-            {
-                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                return Path.Combine(localAppData, DistroConfig.DISTRIBUTION_NAME);
-            }
-        }
     }
+
 }

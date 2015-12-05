@@ -20,7 +20,7 @@ namespace FlashDevelop.Managers
             if (Globals.CurrentDocument == null) return;
             for (Int32 i = 0; i < count; i++)
             {
-                ToolStripItem item = (ToolStripItem)StripBarManager.Items[i];
+                ToolStripItem item = StripBarManager.Items[i];
                 String[] actions = ((ItemData)item.Tag).Flags.Split('+');
                 for (Int32 j = 0; j < actions.Length; j++)
                 {

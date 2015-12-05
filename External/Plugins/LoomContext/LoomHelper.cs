@@ -143,7 +143,7 @@ namespace LoomContext
             if (!project.Storage.ContainsKey("package"))
                 return;
 
-            string pkg = project.Storage["package"] as String;
+            string pkg = project.Storage["package"];
             project.Storage.Remove("package");
             project.Save();
             

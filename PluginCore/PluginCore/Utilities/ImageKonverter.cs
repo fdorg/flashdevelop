@@ -61,7 +61,7 @@ namespace PluginCore.Utilities
                 attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
                 graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
                 graphics.Dispose(); // Dispose temp graphics
-                return (Image)bitmap;
+                return bitmap;
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace PluginCore.Utilities
                 attributes.SetColorMatrix(matrix);
                 graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
                 graphics.Dispose(); // Dispose temp graphics
-                return (Image)bitmap;
+                return bitmap;
             }
             catch (Exception ex)
             {

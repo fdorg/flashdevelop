@@ -21,20 +21,21 @@ namespace System.Windows.Forms
         /// </summary>
         public static void DrawRoundedRectangle(Graphics graphics, int xAxis, int yAxis, int width, int height, int diameter, Color color)
         {
+            int radius = diameter / 2;
             Pen pen = new Pen(color);
             RectangleF BaseRect = new RectangleF(xAxis, yAxis, width, height);
             RectangleF ArcRect = new RectangleF(BaseRect.Location, new SizeF(diameter, diameter));
             graphics.DrawArc(pen, ArcRect, 180, 90);
-            graphics.DrawLine(pen, xAxis + (int)(diameter / 2), yAxis, xAxis + width - (int)(diameter / 2), yAxis);
+            graphics.DrawLine(pen, xAxis + radius, yAxis, xAxis + width - radius, yAxis);
             ArcRect.X = BaseRect.Right - diameter;
             graphics.DrawArc(pen, ArcRect, 270, 90);
-            graphics.DrawLine(pen, xAxis + width, yAxis + (int)(diameter / 2), xAxis + width, yAxis + height - (int)(diameter / 2));
+            graphics.DrawLine(pen, xAxis + width, yAxis + radius, xAxis + width, yAxis + height - radius);
             ArcRect.Y = BaseRect.Bottom - diameter;
             graphics.DrawArc(pen, ArcRect, 0, 90);
-            graphics.DrawLine(pen, xAxis + (int)(diameter / 2), yAxis + height, xAxis + width - (int)(diameter / 2), yAxis + height);
+            graphics.DrawLine(pen, xAxis + radius, yAxis + height, xAxis + width - radius, yAxis + height);
             ArcRect.X = BaseRect.Left;
             graphics.DrawArc(pen, ArcRect, 90, 90);
-            graphics.DrawLine(pen, xAxis, yAxis + (int)(diameter / 2), xAxis, yAxis + height - (int)(diameter / 2));
+            graphics.DrawLine(pen, xAxis, yAxis + radius, xAxis, yAxis + height - radius);
         }
 
     } 
