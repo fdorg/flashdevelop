@@ -18,8 +18,8 @@ namespace ProjectManager.Projects
         }
 
         // SendKeys requires brackets around certain characters which have meaning
-        public string SendKeysName { get { return "${(}"+Name+"{)}"; } }
-        public string FormattedName { get { return "$("+Name+")"; } }
+        public string SendKeysName { get { return "${(}" + Name + "{)}"; } }
+        public string FormattedName { get { return "$(" + Name + ")"; } }
     }
 
     public class BuildEventVars
@@ -70,19 +70,23 @@ namespace ProjectManager.Projects
         {
             get
             {
-                Uri uri = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-                // special behavior if we're running in flashdevelop.exe
-                if (Path.GetFileName(uri.LocalPath).ToLower() == DistroConfig.DISTRIBUTION_NAME.ToLower() + ".exe")
+                string localPath = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath;
+                string entry = Path.GetFileName(localPath);
+                string flashdevelop = DistroConfig.DISTRIBUTION_NAME + ".exe";
+
+                string appDir = Path.GetDirectoryName(localPath);
+                if (!entry.Equals(flashdevelop, StringComparison.OrdinalIgnoreCase))
                 {
-                    string local = Path.Combine(Path.GetDirectoryName(uri.LocalPath), ".local");
-                    if (!File.Exists(local))
-                    {
-                        String appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        return Path.Combine(appDir, DistroConfig.DISTRIBUTION_NAME);
-                    }
-                    else return Path.GetDirectoryName(uri.LocalPath);
+                    // assume we're running in fdbuild.exe - appDir is fdbuildDir
+                    string toolsDir = Path.GetDirectoryName(appDir);
+                    appDir = Path.GetDirectoryName(toolsDir);
                 }
-                else return string.Empty;
+
+                string local = Path.Combine(appDir, ".local");
+                if (File.Exists(local)) return appDir;
+
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                return Path.Combine(localAppData, DistroConfig.DISTRIBUTION_NAME);
             }
         }
 
@@ -90,16 +94,19 @@ namespace ProjectManager.Projects
         {
             get
             {
-                Uri uri = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+                string localPath = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath;
+                string entry = Path.GetFileName(localPath);
+                string flashdevelop = DistroConfig.DISTRIBUTION_NAME + ".exe";
+
                 // special behavior if we're running in flashdevelop.exe
-                if (Path.GetFileName(uri.LocalPath).ToLower() == DistroConfig.DISTRIBUTION_NAME.ToLower() + ".exe")
+                if (entry.Equals(flashdevelop, StringComparison.OrdinalIgnoreCase))
                 {
-                    string startupDir = Path.GetDirectoryName(uri.LocalPath);
-                    string toolsDir = Path.Combine(startupDir, "Tools");
+                    string appDir = Path.GetDirectoryName(localPath);
+                    string toolsDir = Path.Combine(appDir, "Tools");
                     string fdbuildDir = Path.Combine(toolsDir, "fdbuild");
                     return Path.Combine(fdbuildDir, "fdbuild.exe");
                 }
-                else return uri.LocalPath;
+                else return localPath;
             }
         }
 
