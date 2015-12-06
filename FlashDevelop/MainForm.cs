@@ -1733,6 +1733,29 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Gets a theme flag value.
+        /// </summary>
+        public Boolean GetThemeFlag(String id)
+        {
+            return GetThemeFlag(id, false);
+        }
+
+        /// <summary>
+        /// Gets a theme flag value with a fallback.
+        /// </summary>
+        public Boolean GetThemeFlag(String id, Boolean fallback)
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            if (String.IsNullOrEmpty(value)) return fallback;
+            switch (value.ToLower())
+            {
+                case "true": return true;
+                case "false": return false;
+                default: return fallback;
+            }
+        }
+
+        /// <summary>
         /// Finds the specified menu item by name
         /// </summary>
         public ToolStripItem FindMenuItem(String name)

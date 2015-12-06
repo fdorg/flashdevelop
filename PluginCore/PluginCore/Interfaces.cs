@@ -124,6 +124,8 @@ namespace PluginCore
         Keys GetShortcutItemKeys(String id);
         String GetThemeValue(String id);
         Color GetThemeColor(String id);
+        Boolean GetThemeFlag(String id);
+        Boolean GetThemeFlag(String id, Boolean fallback);
         String GetThemeValue(String id, String fallback);
         Color GetThemeColor(String id, Color fallback);
         IPlugin FindPlugin(String guid);
