@@ -68,6 +68,33 @@ namespace ASCompletion.Model
                 }
             }
 
+            [Test(Description = "Error #617")]
+            public void ParseFile_CompletionError()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.as3.CompletionErrorTest.as"))
+                {
+                    var plugin = Substitute.For<PluginMain>();
+                    plugin.MenuItems.Returns(new List<ToolStripItem>());
+                    var context = new AS3Context.Context(new AS3Context.AS3Settings());
+                    Context.ASContext.GlobalInit(plugin);
+                    Context.ASContext.Context = context;
+                    var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
+
+                    Assert.AreEqual(2, model.Members.Count); // First member = function itself
+
+                    var funcMember = model.Members[0];
+                    Assert.AreEqual("init", funcMember.Name);
+                    Assert.AreEqual("void", funcMember.Type);
+                    Assert.AreEqual(FlagType.Function, funcMember.Flags & FlagType.Function);
+                    Assert.AreEqual("args", funcMember.Parameters[0].Name);
+                    Assert.AreEqual("String", funcMember.Parameters[0].Type);
+
+                    var infoMember = model.Members[1];
+                    Assert.AreEqual("info", infoMember.Name);
+                    Assert.AreEqual("NativeProcessStartupInfo", infoMember.Type);
+                    Assert.AreEqual(FlagType.Variable, infoMember.Flags & FlagType.Variable);
+                }
+            }
         }
 
         [TestFixture]
@@ -1466,6 +1493,31 @@ namespace ASCompletion.Model
                     Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
                     Assert.AreEqual(8, memberModel.LineFrom);
                     Assert.AreEqual(8, memberModel.LineTo);
+                }
+            }
+
+            [Test]
+            public void ParseFile_NotGeneric()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.NotGenericTest.hx"))
+                {
+                    var plugin = Substitute.For<PluginMain>();
+                    plugin.MenuItems.Returns(new List<ToolStripItem>());
+                    var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    Context.ASContext.GlobalInit(plugin);
+                    Context.ASContext.Context = context;
+                    var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
+
+                    Assert.AreEqual(3, model.Members.Count); // First member = function itself
+
+                    var funcMember = model.Members[0];
+                    Assert.AreEqual("init", funcMember.Name);
+                    Assert.AreEqual(FlagType.Function, funcMember.Flags & FlagType.Function);
+                    var member1 = model.Members[1];
+                    Assert.AreEqual("testA", member1.Name);
+                    Assert.AreEqual("Int", member1.Type);
+                    var member2 = model.Members[2];
+                    Assert.AreEqual("i1", member2.Name);
                 }
             }
         }

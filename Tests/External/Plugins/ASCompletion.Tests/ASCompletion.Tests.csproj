@@ -153,6 +153,8 @@
     <EmbeddedResource Include="Test Files\parser\haxe\AnonymousStructuresTest.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\MultipleVarsAtOnceTest.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoMembersInsertSingleProperty.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\NotGenericTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\as3\CompletionErrorTest.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

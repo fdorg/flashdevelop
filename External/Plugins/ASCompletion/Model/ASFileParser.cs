@@ -1225,7 +1225,7 @@ namespace ASCompletion.Model
                                         }
                                         addChar = true;
                                     }
-                                    else
+                                    else if (foundColon)
                                     {
                                         evalToken = 0;
                                         inGeneric = true;
