@@ -5,8 +5,11 @@ using System.Linq;
 
 namespace ASCompletion.Completion
 {
+    /// <summary>
+    /// Represents a set of brace characters used for automatic closing braces.
+    /// </summary>
     [Serializable]
-    public class Braces
+    public sealed class Braces
     {
         char opening, closing;
         string afterChars, beforeChars;
@@ -16,77 +19,110 @@ namespace ASCompletion.Completion
 
         #region Browsable properties
 
-        [Category("Brace Character")]
+        /// <summary>
+        /// The opening brace character.
+        /// </summary>
+        [Category("Brace Character"), DefaultValue('\0')]
         public char Opening
         {
             get { return opening; }
             set { opening = value; }
         }
 
-        [Category("Brace Character")]
+        /// <summary>
+        /// The closing brace character.
+        /// </summary>
+        [Category("Brace Character"), DefaultValue('\0')]
         public char Closing
         {
             get { return closing; }
             set { closing = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// An array of Unicode characters to automatically close brace after.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue("")]
         public string AfterChars
         {
             get { return afterChars; }
             set { afterChars = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// Gets or set the mode to treat <see cref="AfterChars"/> as.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
         public Mode AfterCharsMode
         {
             get { return acMode; }
             set { acMode = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// An array of <see cref="Style"/> values to automatically close brace after.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue(new Style[0])]
         public Style[] AfterStyles
         {
             get { return afterStyles; }
             set { afterStyles = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// Gets or set the mode to treat <see cref="AfterStyles"/> as.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
         public Mode AfterStylesMode
         {
             get { return asMode; }
             set { asMode = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// An array of Unicode characters to automatically close brace before.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue("")]
         public string BeforeChars
         {
             get { return beforeChars; }
             set { beforeChars = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// Gets or set the mode to treat <see cref="BeforeChars"/> as.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
         public Mode BeforeCharsMode
         {
             get { return bcMode; }
             set { bcMode = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// An array of <see cref="Style"/> values to automatically close brace before.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue(new Style[0])]
         public Style[] BeforeStyles
         {
             get { return beforeStyles; }
             set { beforeStyles = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// Gets or set the mode to treat <see cref="BeforeStyles"/> as.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
         public Mode BeforeStylesMode
         {
             get { return bsMode; }
             set { bsMode = value; }
         }
 
-        [Category("Trigger Auto Close")]
+        /// <summary>
+        /// The logic to use for conditions for automatic closing.
+        /// </summary>
+        [Category("Trigger Auto Close"), DefaultValue(Logic.OR)]
         public Logic TriggerLogic
         {
             get { return logic; }
@@ -95,36 +131,66 @@ namespace ASCompletion.Completion
 
         #endregion
 
-        public Braces() : this('\0', '\0', null, null, null, null, null, null, null, null, null)
+        /// <summary>
+        /// Creates an empty instance of <see cref="Braces"/>.
+        /// </summary>
+        public Braces() : this(null, null, null, null, null, null, null, null, null, null, null)
         {
         }
 
-        public Braces(char opening, char closing, string afterChars, Mode? acMode, Style[] afterStyles, Mode? asMode, string beforeChars, Mode? bcMode, Style[] beforeStyles, Mode? bsMode, Logic? logic)
+        /// <summary>
+        /// Creates an instance of <see cref="Braces"/>.
+        /// </summary>
+        /// <param name="arg0"><see cref="Opening"/></param>
+        /// <param name="arg1"><see cref="Closing"/></param>
+        /// <param name="arg2"><see cref="AfterChars"/></param>
+        /// <param name="arg3"><see cref="AfterCharsMode"/></param>
+        /// <param name="arg4"><see cref="AfterStyles"/></param>
+        /// <param name="arg5"><see cref="AfterStylesMode"/></param>
+        /// <param name="arg6"><see cref="BeforeChars"/></param>
+        /// <param name="arg7"><see cref="BeforeCharsMode"/></param>
+        /// <param name="arg8"><see cref="BeforeStyles"/></param>
+        /// <param name="arg9"><see cref="BeforeStylesMode"/></param>
+        /// <param name="arg10"><see cref="TriggerLogic"/></param>
+        public Braces(char? arg0, char? arg1, string arg2, Mode? arg3, Style[] arg4, Mode? arg5, string arg6, Mode? arg7, Style[] arg8, Mode? arg9, Logic? arg10)
         {
-            this.opening = opening;
-            this.closing = closing;
-            this.logic = logic ?? 0;
-            this.afterChars = afterChars ?? string.Empty;
-            this.acMode = acMode ?? (Mode) this.logic;
-            this.afterStyles = afterStyles ?? new Style[0];
-            this.asMode = asMode ?? (Mode) this.logic;
-            this.beforeChars = beforeChars ?? string.Empty;
-            this.bcMode = bcMode ?? (Mode) this.logic;
-            this.beforeStyles = beforeStyles ?? new Style[0];
-            this.bsMode = bsMode ?? (Mode) this.logic;
+            opening = arg0 ?? '\0';
+            closing = arg1 ?? '\0';
+            logic = arg10 ?? 0;
+            afterChars = arg2 ?? string.Empty;
+            acMode = arg3 ?? (Mode) logic;
+            afterStyles = arg4 ?? new Style[0];
+            asMode = arg5 ?? (Mode) logic;
+            beforeChars = arg6 ?? string.Empty;
+            bcMode = arg7 ?? (Mode) logic;
+            beforeStyles = arg8 ?? new Style[0];
+            bsMode = arg9 ?? (Mode) logic;
         }
         
+        /// <summary>
+        /// Checks whether the specified value meets the current condition and mode.
+        /// </summary>
         static bool Check<T>(IEnumerable<T> array, T value, Mode mode)
         {
             return mode == 0 == array.Contains(value);
         }
 
+        /// <summary>
+        /// Returns whether this brace is valid.
+        /// </summary>
         [Browsable(false)]
         public bool IsValid
         {
-            get { return Opening != '\0' && Closing != '\0'; }
+            get { return opening != '\0' && closing != '\0'; }
         }
 
+        /// <summary>
+        /// Returns whether this brace should close for the specified condition.
+        /// </summary>
+        /// <param name="charAfter">The Unicode character followed by this brace.</param>
+        /// <param name="styleAfter">The <see cref="byte"/> value style followed by this brace.</param>
+        /// <param name="charBefore">The Unicode character followed by this brace.</param>
+        /// <param name="styleBefore">The <see cref="byte"/> value style followed by this brace.</param>
         public bool ShouldAutoClose(char charAfter, byte styleAfter, char charBefore, byte styleBefore)
         {
             if (IsValid)
@@ -147,26 +213,52 @@ namespace ASCompletion.Completion
             return false;
         }
 
+        /// <summary>
+        /// Returns a <see cref="string"/> object that represents the current <see cref="Braces"/> object.
+        /// </summary>
         public override string ToString()
         {
             return IsValid ? opening + " braces " + closing : "New braces";
         }
     }
 
+    /// <summary>
+    /// Defines a set of logic values used for <see cref="Braces"/>.
+    /// </summary>
     [Serializable]
     public enum Logic : byte
     {
+        /// <summary>
+        /// The logical OR operator.
+        /// </summary>
         OR,
-        AND,
+
+        /// <summary>
+        /// The logical AND operator.
+        /// </summary>
+        AND
     }
 
+    /// <summary>
+    /// Defines modes for conditions used for <see cref="Braces"/>.
+    /// </summary>
     [Serializable]
     public enum Mode : byte
     {
+        /// <summary>
+        /// The associated condition specifies a set of values that are inclusive.
+        /// </summary>
         Inclusive,
-        Exclusive,
+
+        /// <summary>
+        /// The associated condition specifies a set of values that are exclusive.
+        /// </summary>
+        Exclusive
     }
 
+    /// <summary>
+    /// Defines style values used for <see cref="Braces"/>.
+    /// </summary>
     [Serializable]
     public enum Style : byte
     {

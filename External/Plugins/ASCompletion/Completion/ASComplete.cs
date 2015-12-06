@@ -397,24 +397,21 @@ namespace ASCompletion.Completion
         #endregion
 
         #region add_closing_braces
+
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
-            if (!ASContext.CommonSettings.AddClosingBraces)
-                return;
-            
-            //when adding char, get the added char style
-            //otherwise get the style of the char before deleted char
+            if (!ASContext.CommonSettings.AddClosingBraces) return;
+
+            // when adding char, get the added char style
+            // otherwise get the style of the char before deleted char
             int style = sci.BaseStyleAt(sci.CurrentPos - (addedChar ? 1 : 2));
-            bool isString = IsStringStyle(style);
-            bool isChar = IsCharStyle(style);
-            bool isInterpol = IsInterpolationExpr(sci, sci.CurrentPos - 2);
 
             if (addedChar)
             {
-                //not inside a string literal
-                if (!isString && !isChar || isInterpol
-                //or inside a string literal but a closing quote is entered and the string does terminate
-                    || (c == '"' && isString || c == '\'' && isChar) && sci.BaseStyleAt(sci.CurrentPos) == 12)
+                // not inside a string literal
+                if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2)
+                    // or inside a string literal but a closing quote is entered and the string does terminate
+                    || (c == '\"' && IsStringStyle(style) || c == '\'' && IsCharStyle(style)) && sci.BaseStyleAt(sci.CurrentPos) == 12)
                 {
                     foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                     {
@@ -422,8 +419,8 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            //not inside a string literal
-            else if (!isString && !isChar || isInterpol)
+            // not inside a string literal
+            else if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
             {
                 foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                 {
@@ -431,13 +428,14 @@ namespace ASCompletion.Completion
                 }
             }
         }
-        
+
         static bool HandleAddBrace(ScintillaControl sci, char c, Braces braces)
         {
             // Handle closing first due to braces that have equal opening & closing chars
-            if (c == braces.Closing && sci.CurrentChar == c)
+            if (c == braces.Closing && c == sci.CurrentChar)
             {
                 sci.DeleteForward();
+                return true;
             }
             else if (c == braces.Opening)
             {
@@ -450,25 +448,23 @@ namespace ASCompletion.Completion
                 {
                     sci.InsertText(sci.CurrentPos, braces.Closing.ToString());
                 }
+                return true;
             }
-            else
-            {
-                return false;
-            }
-            
-            return true;
+
+            return false;
         }
-        
+
         static bool HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
         {
-            if (c == braces.Closing && (char) sci.CharAt(sci.CurrentPos - 1) == braces.Opening)
+            if (c == braces.Closing && sci.CharAt(sci.CurrentPos - 1) == braces.Opening)
             {
                 sci.DeleteForward();
                 return true;
             }
-            
+
             return false;
         }
+
         #endregion
 
         #region plugin commands
@@ -3693,22 +3689,38 @@ namespace ASCompletion.Completion
 
         #region tools_functions
 
-
+        /// <summary>
+        /// Text style is a literal.
+        /// </summary>
         public static bool IsLiteralStyle(int style)
         {
-            return style == 4 || style == 6 || style == 7;
+            return IsNumericStyle(style) || IsStringStyle(style) || IsCharStyle(style);
         }
 
+        /// <summary>
+        /// Text style is a numeric literal.
+        /// </summary>
+        public static bool IsNumericStyle(int style)
+        {
+            return style == 4;
+        }
+
+        /// <summary>
+        /// Text style is a string literal.
+        /// </summary>
         public static bool IsStringStyle(int style)
         {
             return style == 6;
         }
 
+        /// <summary>
+        /// Text style is character literal.
+        /// </summary>
         public static bool IsCharStyle(int style)
         {
             return style == 7;
         }
-        
+
         /// <summary>
         /// Text is word 
         /// </summary>

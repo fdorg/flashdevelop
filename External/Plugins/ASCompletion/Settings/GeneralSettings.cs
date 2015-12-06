@@ -301,12 +301,12 @@ namespace ASCompletion.Settings
 
         static Braces[] DEFAULT_ADD_CLOSING_BRACES_DATA =
         {
-            new Braces('(',  ')',  null, null,           null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
-            new Braces('[',  ']',  null, null,           null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
-            new Braces('{',  '}',  null, null,           null, null, ")]}>", Mode.Inclusive, new[] { Style.Default },                 Mode.Inclusive, Logic.OR),
-            new Braces('"',  '"',  null, null,           null, null, null,   null,           new[] { Style.StringEOL },               Mode.Inclusive, null),
-            new Braces('\'', '\'', null, null,           null, null, null,   null,           new[] { Style.StringEOL },               Mode.Inclusive, null),
-            new Braces('<',  '>',  ".",  Mode.Inclusive, null, null, "<",    Mode.Exclusive, new[] { Style.Identifier, Style.Type }, Mode.Exclusive, Logic.AND),
+            new Braces('(',  ')',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('[',  ']',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('{',  '}',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default },                 Mode.Inclusive, Logic.OR),
+            new Braces('"',  '"',  null, null, null, null, null,   null,           new[] { Style.StringEOL },               Mode.Inclusive, null),
+            new Braces('\'', '\'', null, null, null, null, null,   null,           new[] { Style.StringEOL },               Mode.Inclusive, null),
+            new Braces('<',  '>',  null, null, new[] { Style.Operator, Style.Type }, Mode.Inclusive, "<", Mode.Exclusive, new[] { Style.Identifier, Style.Type }, Mode.Exclusive, Logic.AND),
         };
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
