@@ -184,7 +184,8 @@ namespace ASCompletion.Completion
                         if (features.hasGenerics && position > 2)
                         {
                             char c0 = (char)Sci.CharAt(position - 2);
-                            if (c0 == '.' /*|| Char.IsLetterOrDigit(c0)*/)
+                            //TODO: We should check if we are actually on a generic type
+                            if ((ASContext.Context.CurrentModel.Version == 3 && c0 == '.') || Char.IsLetterOrDigit(c0))
                                 return HandleColonCompletion(Sci, "", autoHide);
                             return false;
                         }
@@ -2219,6 +2220,7 @@ namespace ASCompletion.Completion
 
         private static ComaExpression GetFunctionContext(ScintillaControl Sci, bool autoHide)
         {
+            ContextFeatures features = ASContext.Context.Features;
             ComaExpression coma = ComaExpression.None;
             int position = Sci.CurrentPos - 1;
             char c = ' ';
@@ -2235,7 +2237,7 @@ namespace ASCompletion.Completion
             // var declaration
             GetWordLeft(Sci, ref position);
             string keyword = (c == ':') ? GetWordLeft(Sci, ref position) : null;
-            if (keyword == ASContext.Context.Features.varKey || keyword == ASContext.Context.Features.constKey)
+            if (keyword == features.varKey || (features.constKey != null && keyword == features.constKey))
                 coma = ComaExpression.VarDeclaration;
             // function return type
             else if ((char)Sci.CharAt(position) == ')')
@@ -2257,7 +2259,6 @@ namespace ASCompletion.Completion
                     }
                 }
                 keyword = GetWordLeft(Sci, ref position);
-                ContextFeatures features = ASContext.Context.Features;
                 if (keyword == "" && Sci.CharAt(position) == '>' && features.hasGenerics)
                 {
                     int groupCount = 1;
@@ -2280,6 +2281,9 @@ namespace ASCompletion.Completion
                     keyword = GetWordLeft(Sci, ref position);
                     if (keyword == features.functionKey || keyword == features.getKey || keyword == features.setKey)
                         coma = ComaExpression.FunctionDeclaration;
+                    else if (ASContext.Context.CurrentModel.haXe && keyword == features.varKey && 
+                        (ASContext.Context.CurrentMember == null || (ASContext.Context.CurrentMember.Flags & FlagType.Function) == 0))
+                        coma = ComaExpression.VarDeclaration;  // Haxe Properties
                 }
             }
             // needs more guessing
@@ -3544,6 +3548,7 @@ namespace ASCompletion.Completion
                         string word1 = GetWordLeft(Sci, ref position);
                         if (word1 == "" && Sci.CharAt(position) == '>' && features.hasGenerics)
                         {
+                            // Generic function: function generic<K>(arg:K)
                             int groupCount = 1;
                             position--;
                             while (position >= 0 && groupCount > 0)
