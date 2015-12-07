@@ -15,7 +15,8 @@ namespace FlashDevelop.Dialogs
     {
         const string ViewConflictsKey = "?";
         const string ViewCustomKey = "*";
-
+        
+        private Timer updateTimer;
         private ToolStripMenuItem removeShortcut;
         private ToolStripMenuItem revertToDefault;
         private ToolStripMenuItem revertAllToDefault;
@@ -43,6 +44,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeShortcutListItems();
             this.PopulateListView(String.Empty);
             this.ApplyScaling();
+            this.SetupUpdateTimer();
         }
 
         #region Windows Form Designer Generated Code
@@ -505,11 +507,32 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-        /// Updated the list with the filter
+        /// Set up the timer for delayed list update with filters.
+        /// </summary>
+        private void SetupUpdateTimer()
+        {
+            updateTimer = new Timer();
+            updateTimer.Enabled = false;
+            updateTimer.Interval = 100;
+            updateTimer.Tick += UpdateTimer_Tick;
+        }
+
+        /// <summary>
+        /// Update the list with filter.
+        /// </summary>
+        private void UpdateTimer_Tick(Object sender, EventArgs e)
+        {
+            updateTimer.Enabled = false;
+            this.PopulateListView(this.filterTextBox.Text);
+        }
+
+        /// <summary>
+        /// Restart the timer for updating the list.
         /// </summary>
         private void FilterTextChanged(Object sender, EventArgs e)
         {
-            this.PopulateListView(this.filterTextBox.Text);
+            updateTimer.Stop();
+            updateTimer.Start();
         }
 
         /// <summary>
