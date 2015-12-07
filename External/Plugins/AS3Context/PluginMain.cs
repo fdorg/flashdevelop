@@ -265,23 +265,25 @@ namespace AS3Context
                     else if (inMXML)
                     {
                         DataEvent de = e as DataEvent;
-                        switch (de.Action)
+                        if (de.Action == "XMLCompletion.Element")
                         {
-                            case "XMLCompletion.Element":
-                                de.Handled = MxmlComplete.HandleElement(de.Data);
-                                break;
-                            case "XMLCompletion.Namespace":
-                                de.Handled = MxmlComplete.HandleNamespace(de.Data);
-                                break;
-                            case "XMLCompletion.CloseElement":
-                                de.Handled = MxmlComplete.HandleElementClose(de.Data);
-                                break;
-                            case "XMLCompletion.Attribute":
-                                de.Handled = MxmlComplete.HandleAttribute(de.Data);
-                                break;
-                            case "XMLCompletion.AttributeValue":
-                                de.Handled = MxmlComplete.HandleAttributeValue(de.Data);
-                                break;
+                            de.Handled = MxmlComplete.HandleElement(de.Data);
+                        }
+                        if (de.Action == "XMLCompletion.Namespace")
+                        {
+                            de.Handled = MxmlComplete.HandleNamespace(de.Data);
+                        }
+                        else if (de.Action == "XMLCompletion.CloseElement")
+                        {
+                            de.Handled = MxmlComplete.HandleElementClose(de.Data);
+                        }
+                        else if (de.Action == "XMLCompletion.Attribute")
+                        {
+                            de.Handled = MxmlComplete.HandleAttribute(de.Data);
+                        }
+                        else if (de.Action == "XMLCompletion.AttributeValue")
+                        {
+                            de.Handled = MxmlComplete.HandleAttributeValue(de.Data);
                         }
                     }
                 }

@@ -114,6 +114,7 @@
     <Compile Include="Provider\DocumentHelper.cs" />
     <Compile Include="Provider\MovingHelper.cs" />
     <Compile Include="Provider\RefactoringHelper.cs" />
+    <Compile Include="Provider\RenamingHelper.cs" />
     <Compile Include="Provider\UserInterfaceManager.cs" />
     <Compile Include="RefactorItem.cs" />
     <Compile Include="Settings.cs" />

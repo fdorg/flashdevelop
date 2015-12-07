@@ -18,95 +18,19 @@ namespace PluginCore.Controls
     [DefaultProperty("Value")]
     public class ScrollBarEx : Control
     {
-        #region scroll bar settings
+        #region Drawing
 
-        public static bool UseCustom
-        {
-            get { return PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom", "false").ToLower() == "true"; }
-        }
-
-        #endregion
-
-        #region drawing
-
-        private Color curPosColor/* = Color.DarkBlue*/;
-        private Color foreColor/* = SystemColors.ControlDarkDark*/;
-        private Color foreColorHot;
-        private Color foreColorPressed/* = SystemColors.Highlight*/;
-        private Color arrowColor;
-        private Color arrowColorHot;
-        private Color arrowColorPressed;
-        private Color backColor/* = SystemColors.ActiveBorder*/;
-        private Color backColorDisabled/* = SystemColors.ControlLight*/;
-        private Color borderColor/* = SystemColors.ActiveBorder*/;
-        private Color borderColorDisabled/* = SystemColors.Control*/;
-        private Boolean colorsInvalidated = false;
-
-        /// <summary>
-        /// Resets the component colors to default values.
-        /// </summary>
-        private void InitializeColors()
-        {
-            if (curPosColor.IsEmpty)         curPosColor         = Color.FromArgb(  0,   0, 205); //#0000CD
-            if (foreColor.IsEmpty)           foreColor           = Color.FromArgb(208, 209, 215); //#D0D1D7
-            if (!colorsInvalidated)          foreColorHot        = Color.FromArgb(136, 136, 136); //#888888
-            if (foreColorPressed.IsEmpty)    foreColorPressed    = Color.FromArgb(106, 106, 106); //#6A6A6A
-            if (!colorsInvalidated)          arrowColor          = Color.FromArgb(134, 137, 153); //#868999
-            if (!colorsInvalidated)          arrowColorHot       = Color.FromArgb( 28, 151, 234); //#1C97EA
-            if (!colorsInvalidated)          arrowColorPressed   = Color.FromArgb(  0, 122, 204); //#007ACC
-            if (backColor.IsEmpty)           backColor           = Color.FromArgb(232, 232, 236); //#E8E8EC
-            if (backColorDisabled.IsEmpty)   backColorDisabled   = Color.FromArgb(192, 192, 192); //#C0C0C0
-            if (borderColor.IsEmpty)         borderColor         = Color.FromArgb(232, 232, 236); //#E8E8EC
-            if (borderColorDisabled.IsEmpty) borderColorDisabled = Color.FromArgb(136, 136, 136); //#888888
-            colorsInvalidated = false;
-            Invalidate();
-        }
-
-        /// <summary>
-        /// Validates any unassigned colors to either default or to associated colors.
-        /// Calling this method without assigning any new colors will set all colors to default.
-        /// <para/>
-        /// Call this method after the theme has been changed.
-        /// </summary>
-        public void ValidateColors()
-        {
-            // Reset any unassigned colors to default.
-            InitializeColors();
-
-            // If no colors are explicitly defined, no fallback colors are required.
-            if (!colorsInvalidated) return;
-
-            // Newly introduced color options - do not assign default colors. Instead fall back to associated colors.
-            if (foreColorHot.IsEmpty)      foreColorHot      = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", foreColor);
-            if (arrowColor.IsEmpty)        arrowColor        = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", foreColor);
-            if (arrowColorHot.IsEmpty)     arrowColorHot     = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", arrowColor);
-            if (arrowColorPressed.IsEmpty) arrowColorPressed = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", foreColorPressed);
-
-            colorsInvalidated = false;
-        }
-
-        /// <summary>
-        /// Resets all validated colors to null values. Call this method before setting new colors.
-        /// </summary>
-        private void ResetColors()
-        {
-            if (colorsInvalidated) return;
-
-            curPosColor =
-            borderColor =
-            borderColorDisabled =
-            foreColor =
-            foreColorHot =
-            foreColorPressed =
-            arrowColor =
-            arrowColorHot =
-            arrowColorPressed =
-            backColor =
-            backColorDisabled =
-            Color.Empty;
-
-            colorsInvalidated = true;
-        }
+        private Color curPosColor = Color.DarkBlue;
+        private Color foreColor = SystemColors.ControlDarkDark;
+        private Color foreColorHot = SystemColors.Highlight;
+        private Color foreColorPressed = SystemColors.HotTrack;
+        private Color arrowColor = SystemColors.ControlDarkDark;
+        private Color arrowColorHot = SystemColors.Highlight;
+        private Color arrowColorPressed = SystemColors.HotTrack;
+        private Color backColor = SystemColors.ActiveBorder;
+        private Color backColorDisabled = SystemColors.ControlLight;
+        private Color borderColor = SystemColors.ActiveBorder;
+        private Color borderColorDisabled = SystemColors.Control;
 
         /// <summary>
         /// Draws the background.
@@ -352,7 +276,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-        #region fields
+        #region Fields
 
         /// <summary>
         /// Indicates many changes to the scrollbar are happening, so stop painting till finished.
@@ -581,7 +505,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-        #region constructor
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScrollBarEx"/> class.
@@ -596,7 +520,6 @@ namespace PluginCore.Controls
                 | ControlStyles.UserPaint, true);
             // initializes the context menu
             this.InitializeComponent();
-            this.InitializeColors();
             this.Width = ScaleHelper.Scale(17);
             this.Height = ScaleHelper.Scale(200);
             // sets the scrollbar up
@@ -610,7 +533,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-        #region events
+        #region Events
 
         /// <summary>
         /// Occurs when the scrollbar scrolled.
@@ -621,7 +544,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-        #region properties
+        #region Properties
 
         /// <summary>
         /// Gets or sets the current position.
@@ -888,7 +811,6 @@ namespace PluginCore.Controls
             }
             set
             {
-                ResetColors();
                 this.borderColor = value;
                 this.Invalidate();
             }
@@ -908,7 +830,6 @@ namespace PluginCore.Controls
             }
             set
             {
-                ResetColors();
                 this.borderColorDisabled = value;
                 this.Invalidate();
             }
@@ -928,7 +849,6 @@ namespace PluginCore.Controls
             }
             set
             {
-                ResetColors();
                 this.backColor = value;
                 this.Invalidate();
             }
@@ -948,7 +868,6 @@ namespace PluginCore.Controls
             }
             set
             {
-                ResetColors();
                 this.backColorDisabled = value;
                 this.Invalidate();
             }
@@ -968,7 +887,6 @@ namespace PluginCore.Controls
             }
             set
             {
-                ResetColors();
                 this.foreColor = value;
                 this.Invalidate();
             }
@@ -985,7 +903,6 @@ namespace PluginCore.Controls
             get { return this.foreColorHot; }
             set
             {
-                ResetColors();
                 this.foreColorHot = value;
                 this.Invalidate();
             }
@@ -1005,7 +922,6 @@ namespace PluginCore.Controls
             }
             set
             {
-                ResetColors();
                 this.foreColorPressed = value;
                 this.Invalidate();
             }
@@ -1022,7 +938,6 @@ namespace PluginCore.Controls
             get { return this.arrowColor; }
             set
             {
-                ResetColors();
                 this.arrowColor = value;
                 this.Invalidate();
             }
@@ -1039,7 +954,6 @@ namespace PluginCore.Controls
             get { return this.arrowColorHot; }
             set
             {
-                ResetColors();
                 this.arrowColorHot = value;
                 this.Invalidate();
             }
@@ -1056,7 +970,6 @@ namespace PluginCore.Controls
             get { return this.arrowColorPressed; }
             set
             {
-                ResetColors();
                 this.arrowColorPressed = value;
                 this.Invalidate();
             }
@@ -1076,7 +989,6 @@ namespace PluginCore.Controls
             }
             set
             {
-                ResetColors();
                 this.curPosColor = value;
                 this.Invalidate();
             }
@@ -1108,7 +1020,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-        #region methods
+        #region Methods
 
         /// <summary>
         /// Prevents the drawing of the control until <see cref="EndUpdate"/> is called.
@@ -1596,7 +1508,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-        #region misc methods
+        #region Misc Methods
 
         /// <summary>
         /// Sets up the scrollbar.
@@ -1941,7 +1853,7 @@ namespace PluginCore.Controls
 
         #endregion
 
-        #region context menu methods
+        #region Context Menu Methods
 
         /// <summary>
         /// Initializes the context menu.
@@ -2153,7 +2065,7 @@ namespace PluginCore.Controls
 
     }
 
-    #region designer
+    #region Designer
 
     /// <summary>
     /// The designer for the <see cref="ScrollBarEx"/> control.
@@ -2206,7 +2118,7 @@ namespace PluginCore.Controls
 
     #endregion
 
-    #region enums
+    #region Enums
 
     /// <summary>
     /// Enum for the scrollbar orientation.

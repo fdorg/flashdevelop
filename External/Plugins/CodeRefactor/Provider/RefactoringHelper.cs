@@ -102,6 +102,15 @@ namespace CodeRefactor.Provider
             return DeclarationLookupResult(sci, position);
         }
 
+        public static string GetRefactorTargetName(ASResult target)
+        {
+            ClassModel type = target.Type;
+            MemberModel member = target.Member;
+            if (type.IsEnum() || !type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0))
+                return type.Name;
+            return member.Name;
+        }
+
         /// <summary>
         /// Retrieves the refactoring target based on the file.
         /// </summary>
