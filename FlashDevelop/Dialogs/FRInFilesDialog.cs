@@ -1,11 +1,11 @@
 using System;
 using System.IO;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
 using PluginCore.Utilities;
@@ -13,10 +13,9 @@ using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using Ookii.Dialogs;
 using ScintillaNet;
 using PluginCore;
-using Ookii.Dialogs;
-using System.Text.RegularExpressions;
 
 namespace FlashDevelop.Dialogs
 {
@@ -714,8 +713,7 @@ namespace FlashDevelop.Dialogs
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            Int32 column = match.Column;
-                            TraceManager.Add(entry.Key + ":" + match.Line.ToString() + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
@@ -777,7 +775,7 @@ namespace FlashDevelop.Dialogs
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            TraceManager.Add(entry.Key + ":" + match.Line.ToString() + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.Value, (Int32)TraceType.Info);
+                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.Value, (Int32)TraceType.Info);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
@@ -854,6 +852,19 @@ namespace FlashDevelop.Dialogs
             String message = TextHelper.GetString("Info.NoMatches");
             this.infoLabel.Text = message;
             this.CenterToParent();
+        }
+
+        /// <summary>
+        /// Process shortcuts
+        /// </summary>
+        protected override Boolean ProcessDialogKey(Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                this.findComboBox.Focus();
+                return true;
+            }
+            return base.ProcessDialogKey(keyData);
         }
 
         /// <summary>
@@ -995,7 +1006,7 @@ namespace FlashDevelop.Dialogs
         private Boolean IsValidPattern()
         {
             String pattern = this.findComboBox.Text;
-            if (pattern.Length < 1) return false;
+            if (pattern.Length == 0) return false;
             if (this.regexCheckBox.Checked)
             {
                 try

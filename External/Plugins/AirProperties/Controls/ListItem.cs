@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-
-namespace AirProperties
+﻿namespace AirProperties
 {
     class ListItem
     {

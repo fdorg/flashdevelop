@@ -1,13 +1,7 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Resources;
 using System.Reflection;
-using System.Windows.Forms;
-using System.Collections.Generic;
+using System.Resources;
 using PluginCore.Managers;
-using PluginCore.Helpers;
-using PluginCore;
 
 namespace PluginCore.Localization
 {
@@ -27,7 +21,7 @@ namespace PluginCore.Localization
             if (resourceManager == null || localeSetting != storedLocale)
             {
                 storedLocale = localeSetting;
-                String path = "PluginCore.PluginCore.Resources." + storedLocale.ToString();
+                String path = "PluginCore.PluginCore.Resources." + storedLocale;
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());
             }
             prefix = Assembly.GetCallingAssembly().GetName().Name;

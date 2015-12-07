@@ -1,42 +1,38 @@
 using System;
-using System.IO;
 using System.Drawing;
 using System.Globalization;
-using System.Runtime;
-using System.Runtime.InteropServices;
 using System.Xml.Serialization;
-using System.Drawing.Text;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class StyleClass : ConfigItem
     {
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string name;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string fore;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string back;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string size;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string font;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string bold;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string eolfilled;
 
-        [XmlAttributeAttribute()]
+        [XmlAttribute()]
         public string italics;
 
-        [XmlAttributeAttribute("inherit-style")]
+        [XmlAttribute("inherit-style")]
         public string inheritstyle;
 
         [NonSerialized]
@@ -48,7 +44,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (inheritstyle != null && !inheritstyle.Equals(""))
+                if (!string.IsNullOrEmpty(inheritstyle))
                 {
                     return _parent.MasterScintilla.GetStyleClass(inheritstyle);
                 }
@@ -231,10 +227,10 @@ namespace ScintillaNet.Configuration
                     aColor = v.val;
                     v = _parent.MasterScintilla.GetValue(aColor);
                 }
-                System.Drawing.Color c = System.Drawing.Color.FromName(aColor);
+                Color c = Color.FromName(aColor);
                 if (c.ToArgb() == 0)
                 {
-                    if (aColor.IndexOf("0x") == 0) return TO_COLORREF(Int32.Parse(aColor.Substring(2), System.Globalization.NumberStyles.HexNumber));
+                    if (aColor.IndexOf("0x") == 0) return TO_COLORREF(Int32.Parse(aColor.Substring(2), NumberStyles.HexNumber));
                     else 
                     {
                         try
@@ -263,7 +259,7 @@ namespace ScintillaNet.Configuration
                     number = v.val;
                     v = _parent.MasterScintilla.GetValue(number);
                 }
-                if (number.IndexOf("0x") == 0) return Int32.Parse(number.Substring(2), System.Globalization.NumberStyles.HexNumber);
+                if (number.IndexOf("0x") == 0) return Int32.Parse(number.Substring(2), NumberStyles.HexNumber);
                 else
                 {
                     try

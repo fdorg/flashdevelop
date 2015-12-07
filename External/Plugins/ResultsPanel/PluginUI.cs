@@ -464,8 +464,7 @@ namespace ResultsPanel
         {
             if (this.entriesView.SelectedItems.Count < 1) return;
             ListViewItem item = this.entriesView.SelectedItems[0];
-            if (item == null) return; 
-            Match match = (Match)item.Tag;
+            if (item == null) return;
             String file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
             file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             file = PathHelper.GetLongPathName(file);
@@ -785,7 +784,7 @@ namespace ResultsPanel
             }
             if (found)
             {
-                if (gp.Items.Contains(item) == false)
+                if (!gp.Items.Contains(item))
                 {
                     gp.Items.Add(item);
                 }
@@ -948,7 +947,7 @@ namespace ResultsPanel
             this.entryIndex = (this.entryIndex + 1) % this.entriesView.Items.Count;
             this.entriesView.SelectedItems.Clear();
             this.entriesView.Items[this.entryIndex].Selected = true;
-            this.entriesView.Items[this.entryIndex].ForeColor = Color.Blue;
+            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
             this.EntriesViewDoubleClick(null, null);
         }
@@ -966,7 +965,7 @@ namespace ResultsPanel
             if (--this.entryIndex < 0) this.entryIndex = this.entriesView.Items.Count - 1;
             this.entriesView.SelectedItems.Clear();
             this.entriesView.Items[this.entryIndex].Selected = true;
-            this.entriesView.Items[this.entryIndex].ForeColor = Color.Blue;
+            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
             this.EntriesViewDoubleClick(null, null);
         }

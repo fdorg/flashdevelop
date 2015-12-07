@@ -1,12 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
 using FlashDevelop.Docking;
-using PluginCore.Managers;
 using PluginCore;
+using PluginCore.Localization;
 
 namespace FlashDevelop.Managers
 {

@@ -1,14 +1,16 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using PluginCore.FRService;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.FRService;
 using PluginCore.Helpers;
+using PluginCore.Managers;
+using ProjectManager.Projects;
+using ScintillaNet;
 
 namespace CodeRefactor.Provider
 {
@@ -100,6 +102,15 @@ namespace CodeRefactor.Provider
             return DeclarationLookupResult(sci, position);
         }
 
+        public static string GetRefactorTargetName(ASResult target)
+        {
+            ClassModel type = target.Type;
+            MemberModel member = target.Member;
+            if (type.IsEnum() || !type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0))
+                return type.Name;
+            return member.Name;
+        }
+
         /// <summary>
         /// Retrieves the refactoring target based on the file.
         /// </summary>
@@ -150,7 +161,7 @@ namespace CodeRefactor.Provider
         /// Checks if a given search match actually points to the given target source
         /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
-        public static ASResult DeclarationLookupResult(ScintillaNet.ScintillaControl Sci, int position)
+        public static ASResult DeclarationLookupResult(ScintillaControl Sci, int position)
         {
             if (!ASContext.Context.IsFileValid || (Sci == null)) return null;
             // get type at cursor position
@@ -241,7 +252,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Checks if the given match actually is the declaration.
         /// </summary>
-        public static bool IsMatchTheTarget(ScintillaNet.ScintillaControl Sci, SearchMatch match, ASResult target)
+        public static bool IsMatchTheTarget(ScintillaControl Sci, SearchMatch match, ASResult target)
         {
             if (Sci == null || target == null || target.InFile == null || target.Member == null)
             {
@@ -257,7 +268,7 @@ namespace CodeRefactor.Provider
         /// Checks if a given search match actually points to the given target source
         /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
-        public static bool DoesMatchPointToTarget(ScintillaNet.ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
+        public static bool DoesMatchPointToTarget(ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
             if (Sci == null || target == null) return false;
             FileModel targetInFile = null;
@@ -345,8 +356,8 @@ namespace CodeRefactor.Provider
                 // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
                 if (target.Member != null && (
                         target.Member.Access == Visibility.Private
-                        || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.LocalVar)
-                        || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.ParameterVar))
+                        || CheckFlag(target.Member.Flags, FlagType.LocalVar)
+                        || CheckFlag(target.Member.Flags, FlagType.ParameterVar))
                     )
                 {
                     currentFileOnly = true;
@@ -545,7 +556,7 @@ namespace CodeRefactor.Provider
         public static void Copy(string oldPath, string newPath, bool renaming, bool simulateMove)
         {
             if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
-            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+            Project project = (Project)PluginBase.CurrentProject;
             string newDocumentClass = null;
 
             if (File.Exists(oldPath) && FileHelper.ConfirmOverwrite(newPath))
@@ -553,7 +564,7 @@ namespace CodeRefactor.Provider
                 File.Copy(oldPath, newPath, true);
                 if (simulateMove)
                 {
-                    PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                    DocumentManager.MoveDocuments(oldPath, newPath);
                     if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
                 }
             }
@@ -575,7 +586,7 @@ namespace CodeRefactor.Provider
                                 newDocumentClass = file.Replace(oldPath, newPath);
                                 break;
                             }
-                            PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                            DocumentManager.MoveDocuments(oldPath, newPath);
                         }
                         if (newDocumentClass != null) break;
                     }
@@ -601,13 +612,13 @@ namespace CodeRefactor.Provider
         public static void Move(string oldPath, string newPath, bool renaming)
         {
             if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
-            ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+            Project project = (Project)PluginBase.CurrentProject;
             string newDocumentClass = null;
 
             if (File.Exists(oldPath) && FileHelper.ConfirmOverwrite(newPath))
             {
                 FileHelper.ForceMove(oldPath, newPath);
-                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                DocumentManager.MoveDocuments(oldPath, newPath);
                 if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
             }
             else if (Directory.Exists(oldPath))
@@ -629,7 +640,7 @@ namespace CodeRefactor.Provider
                 }
                 // We need to use our own method for moving directories if folders in the new path already exist
                 FileHelper.ForceMoveDirectory(oldPath, newPath);
-                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                DocumentManager.MoveDocuments(oldPath, newPath);
             }
             if (!string.IsNullOrEmpty(newDocumentClass))
             {

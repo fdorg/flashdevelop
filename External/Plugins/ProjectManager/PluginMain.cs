@@ -1,27 +1,25 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Bridge;
+using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 using ProjectManager.Actions;
 using ProjectManager.Controls;
 using ProjectManager.Controls.AS2;
-using ProjectManager.Projects.AS3;
 using ProjectManager.Controls.TreeView;
-using WeifenLuo.WinFormsUI.Docking;
-using WeifenLuo.WinFormsUI;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using PluginCore.Helpers;
-using PluginCore;
-using PluginCore.Bridge;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ProjectManager
 {
@@ -322,8 +320,7 @@ namespace ProjectManager
             Project project = activeProject;
             if (project != null && project.TargetBuild != target)
             {
-                if (!menus.TargetBuildSelector.Items.Contains(target))
-                    menus.TargetBuildSelector.Items.Insert(0, target);
+                menus.AddTargetBuild(target);
                 FlexCompilerShell.Cleanup();
                 project.TargetBuild = menus.TargetBuildSelector.Text;
                 project.UpdateVars(false);
@@ -564,19 +561,21 @@ namespace ProjectManager
         {
             if (activeProject == null) return false;
 
-            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelector"))
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
+
+            if (shortcutId == "ProjectMenu.ConfigurationSelector")
             {
                 pluginUI.menus.ConfigurationSelector.Focus();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelectorToggle"))
+            else if (shortcutId == "ProjectMenu.ConfigurationSelectorToggle")
             {
                 pluginUI.menus.ToggleDebugRelease();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.TargetBuildSelector"))
+            else if (shortcutId == "ProjectMenu.TargetBuildSelector")
             {
                 pluginUI.menus.TargetBuildSelector.Focus();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectTree.LocateActiveFile"))
+            else if (shortcutId == "ProjectTree.LocateActiveFile")
             {
                 ToggleTrackActiveDocument();
             }
@@ -632,7 +631,7 @@ namespace ProjectManager
             if (activeProject != null) CloseProject(true);
 
             // configure
-            var prefs = PluginMain.Settings.GetPrefs(project);
+            var prefs = Settings.GetPrefs(project);
             project.TraceEnabled = prefs.DebugMode;
             project.TargetBuild = prefs.TargetBuild;
             project.UpdateVars(true);
@@ -649,6 +648,9 @@ namespace ProjectManager
             {
                 RestoreProjectSession(project);
             }
+
+            // track active file
+            if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
 
             if (stealFocus)
             {
@@ -744,7 +746,7 @@ namespace ProjectManager
         {
             // try to open the last opened project
             string lastProject = Settings.LastProject;
-            if (lastProject != null && lastProject != "" && File.Exists(lastProject))
+            if (!string.IsNullOrEmpty(lastProject) && File.Exists(lastProject))
             {
                 SetProject(projectActions.OpenProjectSilent(lastProject), false, true);
             }
@@ -865,7 +867,7 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.OpenDocument)
             {
-                if (project.TestMovieCommand != null && project.TestMovieCommand.Length > 0)
+                if (!string.IsNullOrEmpty(project.TestMovieCommand))
                 {
                     if (project.TraceEnabled && project.EnableInteractiveDebugger)
                     {
@@ -911,7 +913,7 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.Custom)
             {
-                if (project.TestMovieCommand != null && project.TestMovieCommand.Length > 0)
+                if (!string.IsNullOrEmpty(project.TestMovieCommand))
                 {
                     if (project.TraceEnabled && project.EnableInteractiveDebugger)
                     {
@@ -1128,7 +1130,7 @@ namespace ProjectManager
 
         private void FileDeleted(string path)
         {
-            PluginCore.Managers.DocumentManager.CloseDocuments(path);
+            DocumentManager.CloseDocuments(path);
             Project project = Tree.ProjectOf(path);
             if (project != null)
             {
@@ -1151,7 +1153,7 @@ namespace ProjectManager
                 }
             }
 
-            PluginCore.Managers.DocumentManager.MoveDocuments(fromPath, toPath);
+            DocumentManager.MoveDocuments(fromPath, toPath);
             if (project != null)
             {
                 projectActions.MoveReferences(project, fromPath, toPath);
@@ -1262,7 +1264,7 @@ namespace ProjectManager
         {
             if (openFileQueue.Count > 0)
             {
-                String file = openFileQueue.Dequeue() as String;
+                String file = openFileQueue.Dequeue();
                 if (File.Exists(file)) OpenFile(file);
                 if (file.IndexOf("::") > 0 && File.Exists(file.Substring(0, file.IndexOf("::")))) // virtual files
                 {
@@ -1632,8 +1634,19 @@ namespace ProjectManager
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (activeProject != null && doc != null && doc.IsEditable && !doc.IsUntitled)
             {
-                Tree.Select(doc.FileName);
-                Tree.SelectedNode.EnsureVisible();
+                string path = doc.FileName;
+
+                if (Tree.SelectedNode != null && Tree.SelectedNode.BackingPath == path)
+                    return;
+
+                Tree.Select(path);
+                if (Tree.SelectedNode.BackingPath == path)
+                {
+                    Tree.SelectedNode.EnsureVisible();
+                    Tree.PathToSelect = null;
+                }
+                else
+                    Tree.PathToSelect = path;
             }
         }
 

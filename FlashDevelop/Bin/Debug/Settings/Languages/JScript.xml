@@ -63,7 +63,7 @@
 			<line-comment><![CDATA[//]]></line-comment>
 			<comment-start><![CDATA[/*]]></comment-start>
 			<comment-end><![CDATA[*/]]></comment-end>
-			<file-extensions>js,jsfl,asc,ts,json</file-extensions>
+			<file-extensions>js,jsfl,asc,ts,jsx,json</file-extensions>
 			<use-keywords>
 				<keyword key="0" class="js-secondary-keywords" />
 				<keyword key="1" class="js-additional-keywords" />

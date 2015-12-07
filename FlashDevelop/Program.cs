@@ -1,13 +1,9 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using FlashDevelop;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Utilities;
 
 namespace FlashDevelop
 {

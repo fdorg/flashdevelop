@@ -110,6 +110,13 @@ namespace System.Windows.Forms
             }
         }
 
+        private Boolean IsAutoHidden(DockContent content)
+        {
+            DockState state = content.DockState;
+            return state == DockState.DockLeftAutoHide || state == DockState.DockRightAutoHide 
+                || state == DockState.DockTopAutoHide || state == DockState.DockBottomAutoHide;
+        }
+
         /// <summary>
         /// Counts the the contents excluding hidden and floating (option) windows
         /// </summary>

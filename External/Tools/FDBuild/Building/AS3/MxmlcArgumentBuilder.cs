@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.IO;
-using System.Text;
 using ProjectManager.Projects.AS3;
-using System.Runtime.InteropServices;
 
 namespace ProjectManager.Building.AS3
 {
@@ -11,12 +7,14 @@ namespace ProjectManager.Building.AS3
     {
         AS3Project project;
         bool flex45;
+        bool flex410;
         bool asc2;
 
         public MxmlcArgumentBuilder(AS3Project project, double sdkVersion, bool asc2Mode)
         {
             this.project = project;
             flex45 = sdkVersion >= 4.5;
+            flex410 = Math.Truncate(sdkVersion) >= 4 && (sdkVersion % 1) * 100 > 9;
             asc2 = asc2Mode;
         }
 
@@ -41,7 +39,7 @@ namespace ProjectManager.Building.AS3
 
             MxmlcOptions options = project.CompilerOptions;
 
-            if (asc2 && options.AdvancedTelemetry)
+            if ((asc2 || flex410) && options.AdvancedTelemetry)
             {
                 AddEq("-advanced-telemetry", true);
                 if (!string.IsNullOrEmpty(options.AdvancedTelemetryPassword))

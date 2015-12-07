@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -115,10 +113,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 NestedDockingStatus status = pane.NestedDockingStatus;
                 DockPane prevPane = status.DisplayingPreviousPane;
                 NestedDockingStatus statusPrev = prevPane.NestedDockingStatus;
-
                 Rectangle rect = statusPrev.PaneBounds;
-                bool bVerticalSplitter = (status.DisplayingAlignment == DockAlignment.Left || status.DisplayingAlignment == DockAlignment.Right);
-
                 Rectangle rectThis = rect;
                 Rectangle rectPrev = rect;
                 Rectangle rectSplitter = rect;

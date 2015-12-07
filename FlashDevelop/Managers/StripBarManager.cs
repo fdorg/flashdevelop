@@ -1,15 +1,14 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using PluginCore.Localization;
-using PluginCore.Managers;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
@@ -30,8 +29,7 @@ namespace FlashDevelop.Managers
             ShortcutItem item2 = ShortcutManager.GetRegisteredItem(name);
             if (item2 != null) return item2.Item;
             ToolStripItem item3 = ShortcutManager.GetSecondaryItem(name);
-            if (item3 != null) return item3;
-            return null;
+            return item3;
         }
 
         /// <summary>
@@ -290,7 +288,7 @@ namespace FlashDevelop.Managers
         {
             if (menu.OwnerItem != null)
             {
-                ToolStripItem parent = menu.OwnerItem as ToolStripItem;
+                ToolStripItem parent = menu.OwnerItem;
                 return GetMenuItemId(parent) + "." + GetStrippedString(menu.Name, true);
             }
             else return GetStrippedString(menu.Name, true);
@@ -316,7 +314,7 @@ namespace FlashDevelop.Managers
                 Keys shortcut = Keys.None;
                 String[] keys = data.Split('|');
                 for (Int32 i = 0; i < keys.Length; i++) shortcut = shortcut | (Keys)Enum.Parse(typeof(Keys), keys[i]);
-                return (Keys)shortcut;
+                return shortcut;
             }
             catch (Exception ex)
             {

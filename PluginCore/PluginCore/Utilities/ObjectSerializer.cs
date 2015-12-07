@@ -1,16 +1,11 @@
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
 using System.Drawing;
-using System.Threading;
+using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
-using PluginCore.Localization;
-using System.Windows.Forms;
-using PluginCore.Managers;
+using System.Threading;
 using PluginCore.Helpers;
+using PluginCore.Managers;
 
 namespace PluginCore.Utilities
 {

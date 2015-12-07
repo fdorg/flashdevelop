@@ -504,7 +504,8 @@ namespace ASCompletion
                     outlineTree.State.highlight = currentHighlight.FullPath;
 
                 //currentHighlight.BackColor = System.Drawing.Color.LightGray;
-                currentHighlight.ForeColor = System.Drawing.Color.Blue;
+                currentHighlight.ForeColor = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+
             }
         }
 
@@ -532,7 +533,7 @@ namespace ASCompletion
                     }
                     foreach (MemberModel member in aFile.Members)
                     {
-                        sb.Append(member.Flags.ToString()).Append(member.ToString());
+                        sb.Append(member.Flags).Append(member);
                         lines.Add(member.LineFrom);
                         names.Add(member.Name);
                     }
@@ -541,7 +542,7 @@ namespace ASCompletion
                         if (string.IsNullOrEmpty(aClass.ExtendsType))
                             aClass.ResolveExtends();
 
-                        sb.Append(aClass.Flags.ToString()).Append(aClass.FullName);
+                        sb.Append(aClass.Flags).Append(aClass.FullName);
                         sb.Append(aClass.ExtendsType);
                         if (aClass.Implements != null)
                             foreach (string implements in aClass.Implements)
@@ -550,13 +551,13 @@ namespace ASCompletion
                         names.Add(aClass.Name);
                         foreach (MemberModel member in aClass.Members)
                         {
-                            sb.Append(member.Flags.ToString()).Append(member.ToString());
+                            sb.Append(member.Flags).Append(member);
                             lines.Add(member.LineFrom);
                             names.Add(member.Name);
                         }
                     }
-
-                    foreach (MemberModel region in aFile.Regions) {
+                    foreach (MemberModel region in aFile.Regions)
+                    {
                         sb.Append(region.Name);
                         lines.Add(region.LineFrom);
                         names.Add(region.Name);
@@ -572,9 +573,10 @@ namespace ASCompletion
                 }
                 else
                 {
+                    int prevLinesCount = prevLines.Count;
                     for (int i = 0, count = lines.Count; i < count; i++)
                     {
-                        if (lines[i] == prevLines[i]) continue;
+                        if (i < prevLinesCount && lines[i] == prevLines[i]) continue;
                         UpdateTree(aFile, names, lines);
                         prevLines = lines;
                         break;
@@ -706,11 +708,13 @@ namespace ASCompletion
                     return;
 
                 var mapping = new Dictionary<string, string>();
-
+                int prevLinesCount = prevLines.Count;
                 for (int i = 0, count = newLines.Count; i < count; i++)
                 {
                     string name = modelNames[i];
-                    mapping[name + "@" + prevLines[i]] = name + "@" + newLines[i];
+                    string value = name + "@" + newLines[i];
+                    if (i < prevLinesCount) mapping[name + "@" + prevLines[i]] = value;
+                    else mapping[value] = value;
                 }
 
                 var tree = new Stack<TreeNodeCollection>();
@@ -741,7 +745,7 @@ namespace ASCompletion
             //if ((aClass.Flags & FlagType.TypeDef) > 0 && aClass.Members.Count == 0)
             //    folder.Text = "Defines"; // TODO need a better word I guess
 
-            while (aClass.ExtendsType != null && aClass.ExtendsType.Length > 0 
+            while (!string.IsNullOrEmpty(aClass.ExtendsType) 
                 && aClass.ExtendsType != "Object" 
                 && (!aClass.InFile.haXe || aClass.ExtendsType != "Dynamic"))
             {
@@ -1033,8 +1037,8 @@ namespace ASCompletion
             if (hilight)
             {
                 node.EnsureVisible();
-                node.ForeColor = SystemColors.HighlightText;
-                node.BackColor = SystemColors.Highlight;
+                node.BackColor = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+                node.ForeColor = PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
             }
             else
             {
@@ -1093,9 +1097,7 @@ namespace ASCompletion
             if (findProcTxt.Text == searchInvitation)
             {
                 findProcTxt.Text = "";
-                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
-                if (fore == Color.Empty) findProcTxt.ForeColor = System.Drawing.SystemColors.WindowText;
-                else findProcTxt.ForeColor = fore;
+                findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
             }
         }
 
@@ -1104,7 +1106,7 @@ namespace ASCompletion
             if (findProcTxt.Text == "")
             {
                 findProcTxt.Text = searchInvitation;
-                findProcTxt.ForeColor = System.Drawing.SystemColors.GrayText;
+                findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
                 clearButton.Enabled = false;
             }
         }
@@ -1123,7 +1125,7 @@ namespace ASCompletion
         // Update colors on start after theme engine
         public void UpdateAfterTheme()
         {
-            findProcTxt.ForeColor = System.Drawing.SystemColors.GrayText;
+            findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
         }
 
         protected override Boolean ProcessDialogKey(Keys keyData)
@@ -1173,7 +1175,7 @@ namespace ASCompletion
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.BackColor == SystemColors.Highlight) return node;
+                if (node.BackColor == PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight)) return node;
                 if (node.Nodes.Count > 0)
                 {
                     TreeNode subnode = FindMatch(node.Nodes);

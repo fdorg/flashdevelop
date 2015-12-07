@@ -397,7 +397,7 @@ namespace FileExplorer
                 dir = new DirectoryInfo(path);
                 infos = dir.GetFileSystemInfos();
             });
-            backgroundMethod.BeginInvoke((AsyncCallback)delegate(IAsyncResult result)
+            backgroundMethod.BeginInvoke(delegate(IAsyncResult result)
             {
                 backgroundMethod.EndInvoke(result);
                 // marshal back to the UI thread
@@ -453,7 +453,7 @@ namespace FileExplorer
                         item = new ListViewItem(file.Name, ExtractIconIfNecessary(file.FullName));
                         item.Tag = file.FullName;
                         if (file.Length / 1024 < 1) item.SubItems.Add("1 " + kbs);
-                        else item.SubItems.Add((file.Length / 1024).ToString() + " " + kbs);
+                        else item.SubItems.Add((file.Length / 1024) + " " + kbs);
                         item.SubItems.Add(file.Extension.ToUpper().Replace(".", ""));
                         item.SubItems.Add(file.LastWriteTime.ToString());
                         this.fileView.Items.Add(item);
@@ -717,7 +717,7 @@ namespace FileExplorer
             ListViewItem item = null;
             try
             {
-                if (e.CancelEdit || (e.Label == null) || (e.Label.Length == 0) || (e.Label == this.previousItemLabel))
+                if (e.CancelEdit || string.IsNullOrEmpty(e.Label) || e.Label == this.previousItemLabel)
                 {
                     e.CancelEdit = true;
                     return;

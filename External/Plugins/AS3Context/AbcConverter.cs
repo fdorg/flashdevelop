@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using SwfOp;
 using SwfOp.Data;
-
 
 namespace AS3Context
 {
@@ -129,8 +129,17 @@ namespace AS3Context
                     type.Flags = FlagType.Class;
                     conflicts.Add(type.Name, type.QualifiedName);
 
-                    if (instance.flags == TraitMember.Function)
+                    if ((instance.flags & TraitFlag.Interface) > 0)
                         type.Flags |= FlagType.Interface;
+                    else
+                    {
+                        if ((instance.flags & TraitFlag.Final) > 0)
+                            type.Flags |= FlagType.Final;
+
+                        if ((instance.flags & TraitFlag.Sealed) == 0)
+                            type.Flags |= FlagType.Dynamic;
+
+                    }
 
                     thisDocs = GetDocs(model.Package);
                     if (thisDocs != null)
@@ -497,7 +506,7 @@ namespace AS3Context
                 {
                     if (metaInfo.name == "__go_to_definition_help") continue;
                     var meta = new ASMetaData(metaInfo.name);
-                    var rawParams = new System.Text.StringBuilder();
+                    var rawParams = new StringBuilder();
                     meta.Params = new Dictionary<string, string>(metaInfo.Count);
                     foreach (var entry in metaInfo)
                     {

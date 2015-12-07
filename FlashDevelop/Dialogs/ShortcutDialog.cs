@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Collections;
@@ -17,6 +16,7 @@ namespace FlashDevelop.Dialogs
 {
     public class ShortcutDialog : SmartForm
     {
+        private Timer updateTimer;
         private ToolStripMenuItem removeShortcut;
         private ToolStripMenuItem revertToDefault;
         private ToolStripMenuItem revertAllToDefault;
@@ -42,6 +42,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeGraphics();
             this.PopulateListView("", false);
             this.ApplyScaling();
+            this.SetupUpdateTimer();
         }
 
         #region Windows Form Designer Generated Code
@@ -285,11 +286,11 @@ namespace FlashDevelop.Dialogs
             this.listView.BeginUpdate();
             this.listView.Items.Clear();
             this.listView.ListViewItemSorter = new ListViewComparer();
-            foreach (ShortcutItem item in ShortcutManager.RegisteredItems)
+            foreach (ShortcutItem item in ShortcutManager.RegisteredItems.Values)
             {
                 if (!this.listView.Items.ContainsKey(item.Id) && 
-                    (item.Id.ToLower().Contains(filter.ToLower()) || 
-                    GetKeysAsString(item.Custom).ToLower().Contains(filter.ToLower())))
+                    (item.Id.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0 || 
+                    GetKeysAsString(item.Custom).IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0))
                 {
                     if (viewCustom && item.Custom == item.Default) continue;
                     ListViewItem lvi = new ListViewItem();
@@ -440,12 +441,33 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-        /// Updated the list with the filter
+        /// Set up the timer for delayed list update with filters.
+        /// </summary>
+        private void SetupUpdateTimer()
+        {
+            updateTimer = new Timer();
+            updateTimer.Enabled = false;
+            updateTimer.Interval = 200;
+            updateTimer.Tick += UpdateTimer_Tick;
+        }
+
+        /// <summary>
+        /// Update the list with filter.
+        /// </summary>
+        private void UpdateTimer_Tick(Object sender, EventArgs e)
+        {
+            updateTimer.Enabled = false;
+            String searchText = this.filterTextBox.Text.Trim();
+            this.PopulateListView(searchText, viewCustom.Checked);
+        }
+
+        /// <summary>
+        /// Restart the timer for updating the list.
         /// </summary>
         private void FilterTextChanged(Object sender, EventArgs e)
         {
-            String searchText = this.filterTextBox.Text.Trim();
-            this.PopulateListView(searchText, viewCustom.Checked);
+            updateTimer.Stop();
+            updateTimer.Start();
         }
 
         /// <summary>

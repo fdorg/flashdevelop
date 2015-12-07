@@ -3575,7 +3575,7 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Flex PMD に使用するための既定のカスタムルールセットファイルを指定します。</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>FlashDevelop に Flex PMD コードアナライザ機能を統合します。</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
@@ -6013,5 +6013,13 @@ UseData:"</value>
   <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
     <value>[Recursion too deep, increase Copy Tree Max Level in FlashDebugger settings]</value>
     <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
+    <value>In Classpaths only</value>
+    <comment>Added after 5.0.1</comment>
+  </data>
+  <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
+    <value>Highlight word:</value>
+    <comment>Added after 5.0.2</comment>
   </data>
 </root>

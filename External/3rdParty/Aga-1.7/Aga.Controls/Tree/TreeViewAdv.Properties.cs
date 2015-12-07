@@ -13,8 +13,9 @@ namespace Aga.Controls.Tree
 	public partial class TreeViewAdv
 	{
 		private Cursor _innerCursor = null;
+        public bool CustomDrawHeaders = false;
 
-		public override Cursor Cursor
+        public override Cursor Cursor
 		{
 			get
 			{
@@ -657,7 +658,43 @@ namespace Aga.Controls.Tree
 			}
 		}
 
-		private Color _lineColor = SystemColors.ControlDark;
+        private Color _columnTextColor = SystemColors.ControlText;
+        [Category("Behavior")]
+        public Color ColumnHeaderTextColor
+        {
+            get { return _columnTextColor; }
+            set
+            {
+                _columnTextColor = value;
+                UpdateView();
+            }
+        }
+
+        private Color _columnBackColor = SystemColors.Control;
+        [Category("Behavior")]
+        public Color ColumnHeaderBackColor
+        {
+            get { return _columnBackColor; }
+            set
+            {
+                _columnBackColor = value;
+                UpdateView();
+            }
+        }
+
+        private Color _columnBorderColor = SystemColors.ActiveBorder;
+        [Category("Behavior")]
+        public Color ColumnHeaderBorderColor
+        {
+            get { return _columnBorderColor; }
+            set
+            {
+                _columnBorderColor = value;
+                UpdateView();
+            }
+        }
+
+        private Color _lineColor = SystemColors.ControlDark;
 		[Category("Behavior")]
 		public Color LineColor
 		{
@@ -670,7 +707,20 @@ namespace Aga.Controls.Tree
 			}
 		}
 
-		private Color _dragDropMarkColor = Color.Black;
+        private Color _lineColor2 = SystemColors.ControlDark;
+        [Category("Behavior")]
+        public Color LineColor2
+        {
+            get { return _lineColor2; }
+            set
+            {
+                _lineColor2 = value;
+                CreateLine2Pen();
+                UpdateView();
+            }
+        }
+
+        private Color _dragDropMarkColor = Color.Black;
 		[Category("Behavior")]
 		public Color DragDropMarkColor
 		{

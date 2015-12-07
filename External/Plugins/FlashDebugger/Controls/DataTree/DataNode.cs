@@ -1,7 +1,4 @@
-﻿using System;
-using Aga.Controls.Tree;
-using flash.tools.debugger;
-using PluginCore.Utilities;
+﻿using Aga.Controls.Tree;
 
 namespace FlashDebugger.Controls.DataTree
 {

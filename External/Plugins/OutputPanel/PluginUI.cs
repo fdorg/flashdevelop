@@ -63,7 +63,6 @@ namespace OutputPanel
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
             this.scrollTimer = new System.Timers.Timer();
             this.textLog = new System.Windows.Forms.RichTextBox();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
@@ -270,7 +269,7 @@ namespace OutputPanel
         /// </summary>
         public void UpdateAfterTheme()
         {
-            this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
         }
 
         /// <summary>
@@ -360,8 +359,8 @@ namespace OutputPanel
             Int32 state;
             String message;
             TraceItem entry;
-            Color newColor = Color.Black;
-            Color currentColor = Color.Black;
+            Color newColor = Color.Red;
+            Color currentColor = Color.Red;
             int oldSelectionStart = this.textLog.SelectionStart;
             int oldSelectionLength = this.textLog.SelectionLength;
             List<HighlightMarker> markers = this.pluginMain.PluginSettings.HighlightMarkers;
@@ -399,28 +398,29 @@ namespace OutputPanel
                     switch (state)
                     {
                         case 0: // Info
-                            newColor = Color.Gray;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.InfoColor", Color.Gray);
                             break;
                         case 1: // Debug
-                            newColor = this.ForeColor;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.DebugColor", this.ForeColor);
                             break;
                         case 2: // Warning
-                            newColor = Color.Orange;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
                             break;
                         case 3: // Error
-                            newColor = Color.Red;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                         case 4: // Fatal
-                            newColor = Color.Magenta;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.FatalColor", Color.Magenta);
                             break;
                         case -1: // ProcessStart
-                            newColor = Color.Blue;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessStartColor", Color.Blue);
                             break;
                         case -2: // ProcessEnd
-                            newColor = Color.Blue;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor", Color.Blue);
                             break;
                         case -3: // ProcessError
-                            newColor = (message.IndexOf("Warning") >= 0) ? Color.Orange : Color.Red;
+                            if (message.IndexOf("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
+                            else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                     }
                     if (newColor != currentColor)
@@ -486,7 +486,7 @@ namespace OutputPanel
                     Match match = results[i];
                     this.textLog.SelectionStart = match.Index;
                     this.textLog.SelectionLength = match.Length;
-                    this.textLog.SelectionBackColor = Color.LightSkyBlue;
+                    this.textLog.SelectionBackColor = PluginBase.MainForm.GetThemeColor("OutputPanel.HighlightColor", SystemColors.Highlight);
                 }
             }
         }
@@ -525,9 +525,7 @@ namespace OutputPanel
             if (this.findTextBox.Text == searchInvitation)
             {
                 this.findTextBox.Text = "";
-                Color fore = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
-                if (fore == Color.Empty) this.findTextBox.ForeColor = System.Drawing.SystemColors.WindowText;
-                else this.findTextBox.ForeColor = fore;
+                this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
             }
         }
 
@@ -540,7 +538,7 @@ namespace OutputPanel
             {
                 this.clearButton.Enabled = false;
                 this.findTextBox.Text = searchInvitation;
-                this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
+                this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
             }
         }
 
@@ -551,7 +549,7 @@ namespace OutputPanel
         {
             this.findTextBox.Text = "";
             this.ClearCurrentSelection();
-            this.FindTextBoxLeave(null, null);
+            this.findTextBox.Focus();
         }
 
         /// <summary>

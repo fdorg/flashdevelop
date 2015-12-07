@@ -1,7 +1,6 @@
 using System;
 using System.Xml;
 using PluginCore.Managers;
-using PluginCore;
 
 namespace PluginCore.Helpers
 {

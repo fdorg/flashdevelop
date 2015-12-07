@@ -1,15 +1,8 @@
 using System;
-using System.IO;
 using System.Drawing;
-using System.Collections;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using PluginCore.Utilities;
 using PluginCore.Managers;
-using PluginCore.Helpers;
 using ScintillaNet;
-using PluginCore;
-using WeifenLuo.WinFormsUI;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace PluginCore.Controls
@@ -223,7 +216,6 @@ namespace PluginCore.Controls
         {
             Point ctrlPos = ctrl.PointToScreen(new Point());
             Point pos = Cursor.Position;
-            Rectangle bounds = ctrl.Bounds;
             return new Point(pos.X - ctrlPos.X, pos.Y - ctrlPos.Y);
         }
 
@@ -245,7 +237,7 @@ namespace PluginCore.Controls
                 {
                     if (Win32.ShouldUseWin32())
                     {
-                        Win32.SendMessage((IntPtr)CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
                         return true;
                     }
                     else return false;
@@ -435,7 +427,7 @@ namespace PluginCore.Controls
             if (sci == null) return 0;
             // evaluate the font size
             Font tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
-            Graphics g = ((Control)sci).CreateGraphics();
+            Graphics g = sci.CreateGraphics();
             SizeF textSize = g.MeasureString("S", tempFont);
             return (int)Math.Ceiling(textSize.Height);
         }

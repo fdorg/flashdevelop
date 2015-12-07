@@ -194,8 +194,8 @@ namespace System.Windows.Forms
                 originalColor = node.BackColor;
                 originalText = node.ForeColor;
                 highlightedNode = node;
-                highlightedNode.BackColor = SystemColors.Highlight;
-                highlightedNode.ForeColor = SystemColors.HighlightText;
+                highlightedNode.BackColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+                highlightedNode.ForeColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
             }
         }
 
@@ -228,12 +228,12 @@ namespace System.Windows.Forms
             if ((pt.Y + scrollRegion) > Height)
             {
                 // Call the API to scroll down
-                PluginCore.Win32.SendMessage(Handle, (int)277, (int)1, 0);
+                PluginCore.Win32.SendMessage(Handle, 277, 1, 0);
             }
             else if (pt.Y < (Top + scrollRegion))
             {
                 // Call thje API to scroll up
-                PluginCore.Win32.SendMessage(Handle, (int)277, (int)0, 0);
+                PluginCore.Win32.SendMessage(Handle, 277, 0, 0);
             }
         }
 

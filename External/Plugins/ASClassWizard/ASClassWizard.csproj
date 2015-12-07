@@ -74,10 +74,8 @@
   -->
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\TreeView\SimpleDirectoryNode.cs" />
@@ -110,16 +108,6 @@
     <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
       <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
       <Name>PluginCore</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\AS2Context\AS2Context.csproj">
-      <Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
-      <Name>AS2Context</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\AS3Context\AS3Context.csproj">
-      <Project>{0263E5F6-D5B2-4118-B12E-87F9A74DE8AF}</Project>
-      <Name>AS3Context</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ASCompletion\ASCompletion.csproj">

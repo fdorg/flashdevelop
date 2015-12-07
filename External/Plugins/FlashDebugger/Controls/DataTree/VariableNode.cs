@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Aga.Controls.Tree;
-using PluginCore.Utilities;
 using flash.tools.debugger;
+using flash.tools.debugger.expression;
+using java.io;
+using PluginCore.Utilities;
 
 namespace FlashDebugger.Controls.DataTree
 {
@@ -23,8 +22,8 @@ namespace FlashDebugger.Controls.DataTree
                     return;
 
                 var flashInterface = PluginMain.debugManager.FlashInterface;
-                var b = new flash.tools.debugger.expression.ASTBuilder(false);
-                var exp = b.parse(new java.io.StringReader(this.GetVariablePath() + "=" + value));
+                var b = new ASTBuilder(false);
+                var exp = b.parse(new StringReader(this.GetVariablePath() + "=" + value));
                 var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                 exp.evaluate(ctx);
             }

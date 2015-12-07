@@ -3570,7 +3570,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Standard Regeldatei für Flex PMD.</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>Fügt FlashDevelop Flex PMD Codeanalyse hinzu.</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
@@ -5955,5 +5955,13 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
     <value>[Object {0} already listed before]</value>
     <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
+    <value>In Classpaths only</value>
+    <comment>Added after 5.0.1</comment>
+  </data>
+  <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
+    <value>Highlight word:</value>
+    <comment>Added after 5.0.2</comment>
   </data>
 </root>

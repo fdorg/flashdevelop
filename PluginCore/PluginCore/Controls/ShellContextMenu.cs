@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
-using System.Security.Permissions;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace PluginCore.Controls
 {
@@ -395,7 +393,7 @@ namespace PluginCore.Controls
                     return;
                 }
 
-                if (false == GetContextMenuInterfaces(_oParentFolder, _arrPIDLs, out iContextMenuPtr))
+                if (!GetContextMenuInterfaces(_oParentFolder, _arrPIDLs, out iContextMenuPtr))
                 {
                     ReleaseAll();
                     return;
@@ -403,7 +401,7 @@ namespace PluginCore.Controls
 
                 pMenu = CreatePopupMenu();
 
-                int nResult = _oContextMenu.QueryContextMenu(
+                _oContextMenu.QueryContextMenu(
                     pMenu,
                     0,
                     CMD_FIRST,
@@ -483,7 +481,7 @@ namespace PluginCore.Controls
                     return;
                 }
 
-                if (false == GetContextMenuInterfaces(_oParentFolder, _arrPIDLs, out iContextMenuPtr))
+                if (!GetContextMenuInterfaces(_oParentFolder, _arrPIDLs, out iContextMenuPtr))
                 {
                     ReleaseAll();
                     return;
@@ -491,7 +489,7 @@ namespace PluginCore.Controls
 
                 pMenu = CreatePopupMenu();
 
-                int nResult = _oContextMenu.QueryContextMenu(
+                _oContextMenu.QueryContextMenu(
                     pMenu,
                     0,
                     CMD_FIRST,
@@ -1272,7 +1270,7 @@ namespace PluginCore.Controls
         #region IContextMenu
         [ComImport()]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        [GuidAttribute("000214e4-0000-0000-c000-000000000046")]
+        [Guid("000214e4-0000-0000-c000-000000000046")]
         private interface IContextMenu
         {
             // Adds commands to a shortcut menu

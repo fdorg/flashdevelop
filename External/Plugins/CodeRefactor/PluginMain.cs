@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -11,12 +17,6 @@ using PluginCore.Managers;
 using PluginCore.Utilities;
 using ProjectManager.Actions;
 using ProjectManager.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace CodeRefactor
 {
@@ -120,7 +120,7 @@ namespace CodeRefactor
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -139,7 +139,6 @@ namespace CodeRefactor
                     break;
 
                 case EventType.Command:
-                    if (settingObject.DisableMoveRefactoring) return;
                     DataEvent de = (DataEvent)e;
                     string[] args;
                     string oldPath;
@@ -147,6 +146,7 @@ namespace CodeRefactor
                     switch (de.Action)
                     {
                         case ProjectFileActionsEvents.FileRename:
+                            if (settingObject.DisableMoveRefactoring) break;
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
@@ -163,6 +163,7 @@ namespace CodeRefactor
                             break;
 
                         case ProjectFileActionsEvents.FileMove:
+                            if (settingObject.DisableMoveRefactoring) break;
                             args = de.Data as string[];
                             oldPath = args[0];
                             newPath = args[1];
@@ -171,6 +172,10 @@ namespace CodeRefactor
                                 MovingHelper.AddToQueue(new Dictionary<string, string> { { oldPath, newPath } }, true);
                                 e.Handled = true;
                             }
+                            break;
+
+                        case "ASCompletion.ContextualGenerator.AddOptions":
+                            OnAddRefactorOptions(de.Data as List<ICompletionListItem>);
                             break;
                     }
                     break;
@@ -350,12 +355,11 @@ namespace CodeRefactor
                 IASContext context = ASContext.Context;
                 if (context != null && context.CurrentModel != null)
                 {
-                    bool truncate = langIsValid && context.CurrentModel.Imports.Count > 0;
-                    bool organize = (langIsValid && context.CurrentModel.Imports.Count > 1);
-                    this.refactorContextMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorContextMenu.TruncateMenuItem.Enabled = truncate;
-                    this.refactorMainMenu.OrganizeMenuItem.Enabled = organize;
-                    this.refactorMainMenu.TruncateMenuItem.Enabled = truncate;
+                    bool enabled = langIsValid && context.CurrentModel.Imports.Count > 0;
+                    this.refactorContextMenu.OrganizeMenuItem.Enabled = enabled;
+                    this.refactorContextMenu.TruncateMenuItem.Enabled = enabled;
+                    this.refactorMainMenu.OrganizeMenuItem.Enabled = enabled;
+                    this.refactorMainMenu.TruncateMenuItem.Enabled = enabled;
                 }
                 refactorMainMenu.MoveMenuItem.Enabled = false;
                 refactorContextMenu.MoveMenuItem.Enabled = false;
@@ -431,8 +435,7 @@ namespace CodeRefactor
         {
             try
             {
-                Rename command = new Rename(true);
-                command.Execute();
+                RenamingHelper.AddToQueue(RefactoringHelper.GetDefaultRefactorTarget());
             }
             catch (Exception ex)
             {
@@ -680,7 +683,34 @@ namespace CodeRefactor
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
         }
 
-        #endregion
+        void OnAddRefactorOptions(List<ICompletionListItem> list)
+        {
+            if (list == null)
+                return;
 
+            RefactorItem.AddItemToList(refactorMainMenu.RenameMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.ExtractMethodMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.ExtractLocalVariableMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.DelegateMenuItem, list);
+
+            var features = ASContext.Context.Features;
+
+            if (!features.hasImports)
+                return;
+
+            var sci = ASContext.CurSciControl;
+            string line = sci.GetLine(sci.CurrentLine).TrimStart();
+
+            if (line.StartsWith(features.importKey, StringComparison.Ordinal)
+                || !string.IsNullOrEmpty(features.importKeyAlt) && line.StartsWith(features.importKeyAlt, StringComparison.Ordinal))
+            {
+                RefactorItem.AddItemToList(refactorMainMenu.OrganizeMenuItem, list);
+
+                if (features.hasImportsWildcard)
+                    RefactorItem.AddItemToList(refactorMainMenu.TruncateMenuItem, list);
+            }
+        }
+
+        #endregion
     }
 }

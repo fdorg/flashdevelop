@@ -1,8 +1,6 @@
-using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using PluginCore.Utilities;
 using ScintillaNet;
 
 namespace PluginCore.Controls
@@ -35,6 +33,14 @@ namespace PluginCore.Controls
 
         public MethodCallTip(IMainForm mainForm): base(mainForm)
         {
+            Color color = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack");
+            Color fore = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedFore");
+            if (color != Color.Empty) HLBgStyleBeg = "[BGCOLOR=" + DataConverter.ColorToHex(color).Replace("0x", "#") + "]";
+            if (fore != Color.Empty)
+            {
+                HLTextStyleBeg = "[B][COLOR=" + DataConverter.ColorToHex(fore).Replace("0x", "#") + "]";
+                HLTextStyleEnd = "[/COLOR][/B]";
+            }
         }
 
         public bool CallTipActive
@@ -95,7 +101,7 @@ namespace PluginCore.Controls
         {
             // compute control location
             Point p = new Point(sci.PointXFromPosition(memberPos), sci.PointYFromPosition(memberPos));
-            p = ((Form)PluginBase.MainForm).PointToClient(((Control)sci).PointToScreen(p));
+            p = ((Form)PluginBase.MainForm).PointToClient(sci.PointToScreen(p));
             toolTip.Left = p.X /*+ sci.Left*/;
             bool hasListUp = !CompletionList.Active || CompletionList.listUp;
             if (currentLine > sci.LineFromPosition(memberPos) || !hasListUp) toolTip.Top = p.Y - toolTip.Height /*+ sci.Top*/;

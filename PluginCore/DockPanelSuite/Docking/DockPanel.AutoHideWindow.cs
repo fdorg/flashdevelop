@@ -183,7 +183,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (show)
                 {
                     Bounds = DockPanel.GetAutoHideWindowBounds(new Rectangle(-rectTarget.Width, -rectTarget.Height, rectTarget.Width, rectTarget.Height));
-                    if (Visible == false)
+                    if (!Visible)
                         Visible = true;
                     PerformLayout();
                 }
@@ -191,7 +191,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 SuspendLayout();
 
                 LayoutAnimateWindow(rectSource);
-                if (Visible == false)
+                if (!Visible)
                     Visible = true;
 
                 int speedFactor = 1;
@@ -298,7 +298,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (hovertime <= 0)
                     hovertime = 400;
 
-                m_timerMouseTrack.Interval = 2 * (int)hovertime;
+                m_timerMouseTrack.Interval = 2 * hovertime;
                 m_timerMouseTrack.Enabled = true;
             }
 

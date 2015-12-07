@@ -1,9 +1,9 @@
-﻿using CodeRefactor.Commands;
+﻿using System;
+using System.Collections.Generic;
+using CodeRefactor.Commands;
 using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Managers;
-using System;
-using System.Collections.Generic;
 
 namespace CodeRefactor.Provider
 {
@@ -26,10 +26,10 @@ namespace CodeRefactor.Provider
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
             queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming));
-            if (currentCommand == null) MoveFirst();
+            if (currentCommand == null) ExecuteFirst();
         }
 
-        private static void MoveFirst()
+        private static void ExecuteFirst()
         {
             try
             {
@@ -60,7 +60,7 @@ namespace CodeRefactor.Provider
                     results[path].AddRange(entry.Value);
                 }
             }
-            if (queue.Count > 0) MoveFirst();
+            if (queue.Count > 0) ExecuteFirst();
             else
             {
                 if (results.Count > 0) ReportResults();
@@ -94,7 +94,7 @@ namespace CodeRefactor.Provider
                     string renamedLine = lineChanges[lineSetsToReport.Key].Trim();
                     foreach (string lineToReport in lineSetsToReport.Value)
                     {
-                        PluginCore.Managers.TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info);
+                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info);
                     }
                 }
             }

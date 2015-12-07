@@ -41,7 +41,7 @@ namespace Aga.Controls.Tree
 		{
 			_location = new Point(initialMouseLocation.X + Tree.OffsetX, 0);
 			_dragOffset = tree.GetColumnX(column) - initialMouseLocation.X;
-			_ghostImage = column.CreateGhostImage(new Rectangle(0, 0, column.Width, tree.ActualColumnHeaderHeight), tree.Font);
+			_ghostImage = column.CreateGhostImage(new Rectangle(0, 0, column.Width, tree.ActualColumnHeaderHeight), tree.Font, tree.ForeColor);
 		}
 
 		public override void KeyDown(KeyEventArgs args)

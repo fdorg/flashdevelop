@@ -1,14 +1,11 @@
 using System;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 using System.Text.RegularExpressions;
+using Antlr.Runtime;
 using CodeFormatter.InfoCollector;
 using CodeFormatter.Preferences;
-using Antlr.Runtime.Tree;
-using Antlr.Runtime;
-using Antlr.Utility;
-using CodeFormatter.Utilities;
 
 #pragma warning disable 414
 
@@ -1595,18 +1592,18 @@ namespace CodeFormatter.Handlers
 
                                                 switch (group.getSortMode())
                                                 {
-                                                    case MXMLPrettyPrinter.MXML_Sort_None:
-                                                    case MXMLPrettyPrinter.MXML_Sort_AscByCase:
+                                                    case MXML_Sort_None:
+                                                    case MXML_Sort_AscByCase:
                                                         foreach (AttrMapping mapping in mappingsForGroup)
                                                         {
                                                             attrsForGroup.Add(mapping.mAttr);
                                                         }
-                                                        if (group.getSortMode() == MXMLPrettyPrinter.MXML_Sort_AscByCase)
+                                                        if (group.getSortMode() == MXML_Sort_AscByCase)
                                                         {
                                                             attrsForGroup.Sort();
                                                         }
                                                         break;
-                                                    case MXMLPrettyPrinter.MXML_Sort_GroupOrder:
+                                                    case MXML_Sort_GroupOrder:
                                                         //this one needs to be done in reverse: walk the group items and find items
                                                         //that match and keep them in group order
                                                         List<String> groupAttrs = group.getAttrs();
@@ -1971,12 +1968,12 @@ namespace CodeFormatter.Handlers
         private void insertAttrs(int insertLocation, AttrGroup group, List<Attr> attrsForGroup, List<Attr> newAttrOrder)
         {
             int wrapMode = group.getWrapMode();
-            if (wrapMode == MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT)
+            if (wrapMode == MXML_ATTR_WRAP_DEFAULT)
                 wrapMode = getWrapMode();
             Attr wrapAttr = new Attr();
             //  wrapAttr.mName="<Wrap="+wrapMode+">";
             wrapAttr.mName = "<Wrap=" + wrapMode;
-            if (group.getWrapMode() == MXMLPrettyPrinter.MXML_ATTR_WRAP_COUNT_PER_LINE)
+            if (group.getWrapMode() == MXML_ATTR_WRAP_COUNT_PER_LINE)
             {
                 wrapAttr.mName += "," + group.getData();
             }

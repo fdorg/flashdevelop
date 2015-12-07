@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
 
 namespace PluginCore.BBCode
 {
@@ -19,7 +16,7 @@ namespace PluginCore.BBCode
     {
         public static String assembleOutput(String input, IndexTree tree)
         {
-            if (input == null || input.Length < 1 || tree == null)
+            if (string.IsNullOrEmpty(input) || tree == null)
                 return null;
 
             String outStr = "";
@@ -111,7 +108,7 @@ namespace PluginCore.BBCode
             else if (style.fontSize < 0)
                 fontSize += (float)style.fontSize;
 
-            if (style.fontName != null && style.fontName.Length > 0)
+            if (!string.IsNullOrEmpty(style.fontName))
                 fontName = style.fontName;
 
 
@@ -128,7 +125,7 @@ namespace PluginCore.BBCode
 
         public static void applyStyleTreeToTextbox(RichTextBox tf, String input, IndexTree bbCodeTree)
         {
-            if (tf == null || bbCodeTree == null || input == null || input.Length < 1)
+            if (tf == null || bbCodeTree == null || string.IsNullOrEmpty(input))
                 return;
 
             tf.Text = "";
@@ -152,7 +149,7 @@ namespace PluginCore.BBCode
             bbCodeTree.data = rootPair;
 
             List<IndexTree> flatTree = IndexTree.flattenTree(bbCodeTree);
-            String flatText = BBCodeUtils.assembleOutput(input, bbCodeTree);
+            String flatText = assembleOutput(input, bbCodeTree);
             String corrFlatText = _replaceEnclosures(flatText);
 
             IndexTree.normalizeTree(bbCodeTree);
@@ -180,7 +177,7 @@ namespace PluginCore.BBCode
 
                 offsetB = currCorrText.Length + idxA - idxB;
 
-                applyStyleToTextbox(BBCodeUtils.getCascadedNodeStyle(flatTree[i]),
+                applyStyleToTextbox(getCascadedNodeStyle(flatTree[i]),
                                     tf,
                                     idxA + offsetA,
                                     idxB + offsetA + offsetB);
@@ -223,7 +220,7 @@ namespace PluginCore.BBCode
             _init();
 
             bbCodeParser.input = bbCodeText;
-            BBCodeUtils.applyStyleTreeToTextbox(texbox, bbCodeParser.input, bbCodeParser.parse());
+            applyStyleTreeToTextbox(texbox, bbCodeParser.input, bbCodeParser.parse());
 
             return texbox.Rtf;
         }
@@ -239,7 +236,7 @@ namespace PluginCore.BBCode
 
         private static String _replaceEnclosures(String input)
         {
-            if (input == null || input.Length < 1)
+            if (string.IsNullOrEmpty(input))
                 return input;
 
             String outStr = input;

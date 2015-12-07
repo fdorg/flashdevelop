@@ -1,8 +1,6 @@
 using System;
-using System.Text;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Collections.Generic;
 using System.Windows.Forms.Design;
 using PluginCore.Localization;
 

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Runtime.InteropServices;
 using PluginCore;
 using PluginCore.Helpers;
 
@@ -74,7 +72,7 @@ namespace ProjectManager.Projects.AS3
             }
             else
             {
-                project.MovieOptions.Platform = PluginCore.PlatformData.FLASHPLAYER_PLATFORM;
+                project.MovieOptions.Platform = PlatformData.FLASHPLAYER_PLATFORM;
                 project.TestMovieBehavior = TestMovieBehavior.Default;
             }
             project.MovieOptions.Version = fpVersion ?? project.MovieOptions.DefaultVersion(project.MovieOptions.Platform);
@@ -90,7 +88,7 @@ namespace ProjectManager.Projects.AS3
                         {
                             target = 3;
                             additional = "-compatibility-version=3.0.0\n" + additional;
-                            if (project.MovieOptions.Platform == PluginCore.PlatformData.FLASHPLAYER_PLATFORM)
+                            if (project.MovieOptions.Platform == PlatformData.FLASHPLAYER_PLATFORM)
                                 project.MovieOptions.Version = "9.0";
                         }
                 }
@@ -205,7 +203,6 @@ namespace ProjectManager.Projects.AS3
         private void ReadModules()
         {
             ReadStartElement("modules");
-            PathCollection targets = new PathCollection();
             while (Name == "module")
             {
                 string app = GetAttribute("application") ?? "";
@@ -303,7 +300,7 @@ namespace ProjectManager.Projects.AS3
 
         public static String ResolvePath(String path, String relativeTo)
         {
-            if (path == null || path.Length == 0) return null;
+            if (string.IsNullOrEmpty(path)) return null;
             Boolean isPathNetworked = path.StartsWith("\\\\") || path.StartsWith("//");
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
             String resolvedPath = Path.Combine(relativeTo, path);

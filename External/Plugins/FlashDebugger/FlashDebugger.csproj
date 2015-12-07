@@ -90,7 +90,6 @@
       <HintPath>.\jni4net.n-0.8.4.0.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -148,6 +147,7 @@
     <Compile Include="Debugger\ExpressionContext.cs" />
     <Compile Include="Debugger\FlashInterface.cs" />
     <Compile Include="Debugger\VariableFacade.cs" />
+    <Compile Include="Debugger\WatchManager.cs" />
     <Compile Include="Helpers\DataTreeExporterFactory.cs" />
     <Compile Include="Helpers\DefaultDataTreeExporter.cs" />
     <Compile Include="Helpers\IDataTreeExporter.cs" />

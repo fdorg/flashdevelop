@@ -105,18 +105,19 @@ namespace ICSharpCode.SharpZipLib.Core
 
             try {
                 string[] items = SplitQuoted(toTest);
-                for (int i = 0; i < items.Length; ++i) {
-                    if ((items[i] != null) && (items[i].Length > 0)) {
+                for (int i = 0; i < items.Length; ++i)
+                {
+                    string item = items[i];
+                    if (!string.IsNullOrEmpty(item)) {
                         string toCompile;
-
-                        if (items[i][0] == '+') {
-                            toCompile = items[i].Substring(1, items[i].Length - 1);
+                        if (item[0] == '+') {
+                            toCompile = item.Substring(1, item.Length - 1);
                         }
-                        else if (items[i][0] == '-') {
-                            toCompile = items[i].Substring(1, items[i].Length - 1);
+                        else if (item[0] == '-') {
+                            toCompile = item.Substring(1, item.Length - 1);
                         }
                         else {
-                            toCompile = items[i];
+                            toCompile = item;
                         }
 
                         Regex testRegex = new Regex(toCompile, RegexOptions.IgnoreCase | RegexOptions.Singleline);
@@ -142,7 +143,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
             ArrayList result = new ArrayList();
 
-            if ((original != null) && (original.Length > 0)) {
+            if (!string.IsNullOrEmpty(original)) {
                 int endIndex = -1;
                 StringBuilder b = new StringBuilder();
 
@@ -253,19 +254,21 @@ namespace ICSharpCode.SharpZipLib.Core
             }
 
             string[] items = SplitQuoted(filter_);
-            for ( int i = 0; i < items.Length; ++i ) {
-                if ( (items[i] != null) && (items[i].Length > 0) ) {
-                    bool include = (items[i][0] != '-');
+            for ( int i = 0; i < items.Length; ++i )
+            {
+                string item = items[i];
+                if (!string.IsNullOrEmpty(item)) {
+                    bool include = (item[0] != '-');
                     string toCompile;
 
-                    if ( items[i][0] == '+' ) {
-                        toCompile = items[i].Substring(1, items[i].Length - 1);
+                    if ( item[0] == '+' ) {
+                        toCompile = item.Substring(1, item.Length - 1);
                     }
-                    else if ( items[i][0] == '-' ) {
-                        toCompile = items[i].Substring(1, items[i].Length - 1);
+                    else if ( item[0] == '-' ) {
+                        toCompile = item.Substring(1, item.Length - 1);
                     }
                     else {
-                        toCompile = items[i];
+                        toCompile = item;
                     }
 
                     // NOTE: Regular expressions can fail to compile here for a number of reasons that cause an exception

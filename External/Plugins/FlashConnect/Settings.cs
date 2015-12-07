@@ -1,7 +1,6 @@
 using System;
-using System.Text;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using PluginCore.Localization;
 
 namespace FlashConnect

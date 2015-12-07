@@ -78,11 +78,15 @@ namespace PluginCore.Controls
         /// </summary>
         protected override void WndProc(ref Message m)
         {
-            base.WndProc(ref m);
-            if (this.clickThrough && m.Msg == WM_MOUSEACTIVATE && m.Result == (IntPtr)MA_ACTIVATEANDEAT)
+            try
             {
-                m.Result = (IntPtr)MA_ACTIVATE;
+                base.WndProc(ref m);
+                if (this.clickThrough && m.Msg == WM_MOUSEACTIVATE && m.Result == (IntPtr)MA_ACTIVATEANDEAT)
+                {
+                    m.Result = (IntPtr)MA_ACTIVATE;
+                }
             }
+            catch {}
         }
 
     }

@@ -170,7 +170,6 @@ namespace ProjectManager.Controls.TreeView
             string actualName = Path.GetFileNameWithoutExtension(actualFile); // strip ext
             Image image = Icons.GetImageForFile(actualFile).Img;
             image = Icons.Overlay(image, Icons.BulletAdd.Img, 5, 4);
-            String label = TextHelper.GetString("Label.New");
             ToolStripMenuItem item = new ToolStripMenuItem("New " + actualName + "...", image);
             item.Click += delegate
             {

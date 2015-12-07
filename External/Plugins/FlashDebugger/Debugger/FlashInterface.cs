@@ -1,10 +1,12 @@
 ﻿using System;
-using System.IO;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Threading;
-using ASCompletion.Settings;
 using flash.tools.debugger;
 using flash.tools.debugger.events;
+using java.net;
 using PluginCore.Localization;
 using PluginCore.Managers;
 
@@ -199,12 +201,12 @@ namespace FlashDebugger
                 {
                     waitTilHalted();
                 }
-                catch (System.Exception){}
+                catch (Exception){}
                 try
                 {
                     waitForMetaData();
                 }
-                catch (System.Exception){}
+                catch (Exception){}
                 m_CurrentState = DebuggerState.Running;
                 m_Session.breakOnCaughtExceptions(PluginMain.settingObject.BreakOnThrow);
                 // now poke to see if the player is good enough
@@ -215,7 +217,7 @@ namespace FlashDebugger
                         TraceManager.AddAsync(TextHelper.GetString("Info.WarningNotAllCommandsSupported"));
                     }
                 }
-                catch (System.Exception){}
+                catch (Exception){}
                 m_SuspendWaiting = false;
                 bool stop = false;
                 while (!stop)
@@ -280,10 +282,10 @@ namespace FlashDebugger
                         {
                             try
                             {
-                                System.Threading.Thread.Sleep(100);
+                                Thread.Sleep(100);
                                 processEvents();
                             }
-                            catch (System.Threading.ThreadInterruptedException){}
+                            catch (ThreadInterruptedException){}
                         }
                         m_SuspendWait.Reset();
 
@@ -455,7 +457,7 @@ namespace FlashDebugger
                             }
                             catch (IOException io)
                             {
-                                System.Collections.IDictionary args = new System.Collections.Hashtable();
+                                IDictionary args = new Hashtable();
                                 args["error"] = io.Message; //$NON-NLS-1$
                                 TraceManager.AddAsync(replaceInlineReferences(TextHelper.GetString("Info.ContinuingDueToError"), args));
                             }
@@ -486,17 +488,17 @@ namespace FlashDebugger
 
                     try
                     {
-                        System.Threading.Thread.Sleep(m_UpdateDelay);
+                        Thread.Sleep(m_UpdateDelay);
                     }
                     catch {}
                 }
             }
-            catch (java.net.SocketException ex)
+            catch (SocketException ex)
             {
                 // No errors if requested
                 if (!m_RequestStop) throw ex;
             }
-            catch (java.net.SocketTimeoutException ex)
+            catch (SocketTimeoutException ex)
             {
                 if (m_CurrentState != DebuggerState.Starting) throw ex;
                 TraceManager.AddAsync("[No debug Flash player connection request]", -1);
@@ -588,7 +590,7 @@ namespace FlashDebugger
             // perform a query to see if our metadata has loaded
             int metadatatries = m_MetadataAttempts;
             int maxPerCall = 8; // cap on how many attempt we make per call
-            int tries = System.Math.Min(maxPerCall, metadatatries);
+            int tries = Math.Min(maxPerCall, metadatatries);
             if (tries > 0)
             {
                 int remain = metadatatries - tries; // assume all get used up
@@ -626,9 +628,9 @@ namespace FlashDebugger
                     try
                     {
                         attempts--;
-                        System.Threading.Thread.Sleep(period);
+                        Thread.Sleep(period);
                     }
-                    catch (System.Threading.ThreadInterruptedException){}
+                    catch (ThreadInterruptedException){}
                 }
             }
             // throw exception if still not ready
@@ -813,7 +815,7 @@ namespace FlashDebugger
                 {
                     if (PluginMain.settingObject.VerboseOutput)
                     {
-                        System.Collections.IDictionary args = new System.Collections.Hashtable();
+                        IDictionary args = new Hashtable();
                         args["type"] = e; //$NON-NLS-1$
                         args["info"] = e.information; //$NON-NLS-1$
                         TraceManager.AddAsync(replaceInlineReferences(TextHelper.GetString("Info.UnknownEvent"), args));
@@ -825,12 +827,12 @@ namespace FlashDebugger
         // wait a little bit of time until the player halts, if not throw an exception!
         internal virtual void waitTilHalted()
         {
-            if (!haveConnection()) throw new System.InvalidOperationException();
+            if (!haveConnection()) throw new InvalidOperationException();
             // spin for a while waiting for a halt; updating trace messages as we get them
             waitForSuspend(m_HaltTimeout, m_UpdateDelay);
             if (!m_Session.isSuspended())
             {
-                throw new System.Threading.SynchronizationLockException();
+                throw new SynchronizationLockException();
             }
         }
 
@@ -853,9 +855,9 @@ namespace FlashDebugger
                 }
                 try
                 {
-                    System.Threading.Thread.Sleep(period);
+                    Thread.Sleep(period);
                 }
-                catch (System.Threading.ThreadInterruptedException){}
+                catch (ThreadInterruptedException){}
                 timeout -= period;
             }
         }
@@ -869,7 +871,7 @@ namespace FlashDebugger
         // pretty print a fault statement to the console
         internal virtual void dumpFaultLine(FaultEvent e)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            StringBuilder sb = new StringBuilder();
             // use a slightly different format for ConsoleErrorFaults
             if (e is ConsoleErrorFault)
             {
@@ -909,12 +911,12 @@ namespace FlashDebugger
             // now rip off any trailing ? options
             int at = e.path.lastIndexOf('?');
             String name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.Append(TextHelper.GetString("Info.LinePrefixWhenSwfLoaded"));
             sb.Append(' ');
             sb.Append(name);
             sb.Append(" - "); //$NON-NLS-1$
-            System.Collections.IDictionary args = new System.Collections.Hashtable();
+            IDictionary args = new Hashtable();
             args["size"] = e.swfSize.ToString("N0"); //$NON-NLS-1$
             sb.Append(replaceInlineReferences(TextHelper.GetString("Info.SizeAfterDecompression"), args));
             TraceManager.AddAsync(sb.ToString());
@@ -928,7 +930,7 @@ namespace FlashDebugger
             // now rip off any trailing ? options
             int at = e.path.lastIndexOf('?');
             String name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.Append(TextHelper.GetString("Info.LinePrefixWhenSwfUnloaded")); //$NON-NLS-1$
             sb.Append(' ');
             sb.Append(name);
@@ -1270,7 +1272,7 @@ namespace FlashDebugger
                 }
         }
 
-        private static String replaceInlineReferences(String text, System.Collections.IDictionary parameters)
+        private static String replaceInlineReferences(String text, IDictionary parameters)
         {
             if (parameters == null) return text;
             int depth = 100;

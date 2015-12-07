@@ -1,12 +1,9 @@
 ﻿// TODO: Some of these methods should be merged with WizardHelper
 
 using System;
-using System.IO;
-using System.Xml;
-using System.Text;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Xml.Schema;
+using System.Xml;
 using PluginCore.Localization;
 
 namespace AirProperties
@@ -22,7 +19,7 @@ namespace AirProperties
         private static AirVersion _version;
         private static Boolean _unsupportedVersion;
         private const String _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        private const String _MaxSupportedVersion = "19.0";
+        private const String _MaxSupportedVersion = "20.0";
 
         public enum AirVersion
         {
@@ -51,7 +48,8 @@ namespace AirProperties
             V160 = 23,    // Version 16.0
             V170 = 24,    // Version 17.0
             V180 = 25,    // Version 18.0
-            V190 = 26    // Version 19.0
+            V190 = 26,    // Version 19.0
+            V200 = 27    // Version 20.0
         }
 
         public static Exception LastException
@@ -131,11 +129,12 @@ namespace AirProperties
                     else if (nsuri.StartsWith(_BaseAirNamespace + "17.0")) _version = AirVersion.V170;
                     else if (nsuri.StartsWith(_BaseAirNamespace + "18.0")) _version = AirVersion.V180;
                     else if (nsuri.StartsWith(_BaseAirNamespace + "19.0")) _version = AirVersion.V190;
+                    else if (nsuri.StartsWith(_BaseAirNamespace + "20.0")) _version = AirVersion.V200;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V180;
+                        _version = AirVersion.V190;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
@@ -890,7 +889,7 @@ namespace AirProperties
             private String _extension;
             private String _description;
             private String _contentType;
-            private readonly List<AirFileType.AirFileTypeIcon> _icons;
+            private readonly List<AirFileTypeIcon> _icons;
 
             private Boolean _nameIsValid;
             private Boolean _extensionIsValid;
@@ -904,16 +903,16 @@ namespace AirProperties
                 _description = String.Empty;
                 _contentType = String.Empty;
                 // According to Descriptor.xsd, 57x57 is not used for file icons
-                _icons = new List<AirFileType.AirFileTypeIcon> 
+                _icons = new List<AirFileTypeIcon> 
                 { 
-                    new AirFileType.AirFileTypeIcon(16, String.Empty, AirVersion.V10),
-                    new AirFileType.AirFileTypeIcon(29, String.Empty, AirVersion.V20),
-                    new AirFileType.AirFileTypeIcon(32, String.Empty, AirVersion.V10),
-                    new AirFileType.AirFileTypeIcon(36, String.Empty, AirVersion.V25),
-                    new AirFileType.AirFileTypeIcon(48, String.Empty, AirVersion.V10),
-                    new AirFileType.AirFileTypeIcon(72, String.Empty, AirVersion.V20),
-                    new AirFileType.AirFileTypeIcon(128, String.Empty, AirVersion.V10),
-                    new AirFileType.AirFileTypeIcon(512, String.Empty, AirVersion.V20)
+                    new AirFileTypeIcon(16, String.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(29, String.Empty, AirVersion.V20),
+                    new AirFileTypeIcon(32, String.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(36, String.Empty, AirVersion.V25),
+                    new AirFileTypeIcon(48, String.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(72, String.Empty, AirVersion.V20),
+                    new AirFileTypeIcon(128, String.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(512, String.Empty, AirVersion.V20)
                 };
             }
 
@@ -941,7 +940,7 @@ namespace AirProperties
                 set { _contentType = value; }
             }
 
-            public List<AirFileType.AirFileTypeIcon> Icons
+            public List<AirFileTypeIcon> Icons
             {
                 get { return _icons; }
             }

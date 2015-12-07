@@ -1,13 +1,10 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.AccessControl;
-using PluginCore;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace PluginCore.Utilities
 {
