@@ -122,6 +122,7 @@ namespace PluginCore
         ToolStripItem FindMenuItem(String name);
         String ProcessArgString(String args);
         Keys GetShortcutItemKeys(String id);
+        String GetShortcutItemId(Keys keys);
         String GetThemeValue(String id);
         Color GetThemeColor(String id);
         Boolean GetThemeFlag(String id);

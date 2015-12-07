@@ -561,19 +561,21 @@ namespace ProjectManager
         {
             if (activeProject == null) return false;
 
-            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelector"))
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
+
+            if (shortcutId == "ProjectMenu.ConfigurationSelector")
             {
                 pluginUI.menus.ConfigurationSelector.Focus();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelectorToggle"))
+            else if (shortcutId == "ProjectMenu.ConfigurationSelectorToggle")
             {
                 pluginUI.menus.ToggleDebugRelease();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.TargetBuildSelector"))
+            else if (shortcutId == "ProjectMenu.TargetBuildSelector")
             {
                 pluginUI.menus.TargetBuildSelector.Focus();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectTree.LocateActiveFile"))
+            else if (shortcutId == "ProjectTree.LocateActiveFile")
             {
                 ToggleTrackActiveDocument();
             }
