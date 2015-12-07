@@ -129,6 +129,7 @@ namespace PluginCore
         String GetThemeValue(String id, String fallback);
         Color GetThemeColor(String id, Color fallback);
         IPlugin FindPlugin(String guid);
+        Image ImageSetAdjust(Image image);
         Image GetAutoAdjustedImage(Image image);
         Image FindImage(String data);
         Image FindImage(String data, Boolean autoAdjust);

@@ -29,6 +29,16 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Adjusts the saturation and brightness of the image.
         /// </summary>
+        public static Image ImageAdjust(Image image, Int32 saturation, Int32 brightness)
+        {
+            Image dest = new Bitmap(image.Width, image.Height);
+            ImageAdjust(image, dest, saturation, brightness);
+            return dest;
+        }
+
+        /// <summary>
+        /// Adjusts the saturation and brightness of the image.
+        /// </summary>
         public static void ImageAdjust(Image source, Image dest, Int32 saturation, Int32 brightness)
         {
             try
