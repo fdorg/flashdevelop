@@ -5961,4 +5961,8 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
   </data>
+  <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
+    <value>No contextual code generation available.</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
 </root>

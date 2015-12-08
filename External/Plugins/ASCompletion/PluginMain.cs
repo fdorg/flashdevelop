@@ -537,6 +537,10 @@ namespace ASCompletion
                                         var options = ASGenerator.ContextualGenerator(ASContext.CurSciControl);
                                         var dataEvent = new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options);
                                         EventManager.DispatchEvent(this, dataEvent);
+                                        if (options.Count == 0)
+                                        {
+                                            PluginBase.MainForm.StatusLabel.Text = TextHelper.GetString("Info.NoContextGeneratorCode");
+                                        }
                                         CompletionList.Show(options, false);
                                     }
                                 }
