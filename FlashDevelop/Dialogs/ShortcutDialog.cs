@@ -245,15 +245,7 @@ namespace FlashDevelop.Dialogs
             this.idHeader.Width = ScaleHelper.Scale(this.idHeader.Width);
             this.keyHeader.Width = ScaleHelper.Scale(this.keyHeader.Width);
         }
-
-        /// <summary>
-        /// Gets the keys as a string
-        /// </summary>
-        private static String GetKeysAsString(Keys keys)
-        {
-            return DataConverter.KeysToString(keys);
-        }
-
+        
         /// <summary>
         /// Updates the font highlight of the item
         /// </summary>
@@ -261,18 +253,21 @@ namespace FlashDevelop.Dialogs
         {
             item.ForeColor = item.Conflicts == null ? SystemColors.ControlText : Color.DarkRed;
             item.SubItems[1].ForeColor = item.KeysString == "None" ? SystemColors.GrayText : SystemColors.ControlText;
-            if (item.Default == item.Custom)
-            {
-                item.Font = new Font(Globals.Settings.DefaultFont, FontStyle.Regular);
-                item.UseItemStyleForSubItems = false;
-            }
-            else
+            if (item.IsModified)
             {
                 item.Font = new Font(Globals.Settings.DefaultFont, FontStyle.Bold);
                 item.UseItemStyleForSubItems = true;
             }
+            else
+            {
+                item.Font = new Font(Globals.Settings.DefaultFont, FontStyle.Regular);
+                item.UseItemStyleForSubItems = false;
+            }
         }
 
+        /// <summary>
+        /// Initialize the full shortcut list.
+        /// </summary>
         private void InitializeShortcutListItems()
         {
             Dictionary<String, ShortcutItem>.ValueCollection collection = ShortcutManager.RegisteredItems.Values;
@@ -292,22 +287,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void PopulateListView(String filter)
         {
-            // TODO: Read starting char of filter
             Boolean viewCustom = false, viewConflicts = false;
-            checkSpecialFilterKeys:
-            if (filter.StartsWith(ViewCustomKey)) // TODO: StartsWithOrdinal
-            {
-                filter = filter.Substring(ViewCustomKey.Length);
-                viewCustom = true;
-            }
-            if (!viewConflicts && filter.StartsWith(ViewConflictsKey))
-            {
-                filter = filter.Substring(ViewConflictsKey.Length);
-                viewConflicts = true;
-                if (!viewCustom) goto checkSpecialFilterKeys;
-            }
-
-            filter = filter.Trim();
+            filter = ExtractFilterKeywords(filter, ref viewCustom, ref viewConflicts);
 
             this.listView.BeginUpdate();
             this.listView.Items.Clear();
@@ -317,7 +298,7 @@ namespace FlashDevelop.Dialogs
                     item.Id.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0 || 
                     item.KeysString.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    if (viewCustom && item.Custom == item.Default) continue;
+                    if (viewCustom && !item.IsModified) continue;
                     if (viewConflicts && item.Conflicts == null) continue;
                     this.listView.Items.Add(item);
                 }
@@ -331,6 +312,27 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
+        /// Reads and removes filter keywords from the start of the filter.
+        /// Order of the keywords is irrelevant.
+        /// </summary>
+        private static String ExtractFilterKeywords(String filter, ref Boolean viewCustom, ref Boolean viewConflicts)
+        {
+            if (!viewCustom && filter.StartsWith(ViewCustomKey))
+            {
+                filter = filter.Substring(ViewCustomKey.Length);
+                viewCustom = true;
+                return ExtractFilterKeywords(filter, ref viewCustom, ref viewConflicts);
+            }
+            if (!viewConflicts && filter.StartsWith(ViewConflictsKey))
+            {
+                filter = filter.Substring(ViewConflictsKey.Length);
+                viewConflicts = true;
+                return ExtractFilterKeywords(filter, ref viewCustom, ref viewConflicts);
+            }
+            return filter.Trim();
+        }
+
+        /// <summary>
         /// Raised when the context menu for the list view is opening.
         /// </summary>
         private void ContextMenuOpening(Object sender, EventArgs e)
@@ -339,18 +341,17 @@ namespace FlashDevelop.Dialogs
             {
                 ShortcutListItem item = (ShortcutListItem) this.listView.SelectedItems[0];
                 this.removeShortcut.Enabled = item.Custom != Keys.None;
-                this.revertToDefault.Enabled = this.revertAllToDefault.Enabled = item.Custom != item.Default;
+                this.revertToDefault.Enabled = this.revertAllToDefault.Enabled = item.IsModified;
+                if (this.revertAllToDefault.Enabled) return;
             }
-            else
+            else this.removeShortcut.Enabled = this.revertToDefault.Enabled = false;
+
+            foreach (ShortcutListItem item in this.listView.Items)
             {
-                this.removeShortcut.Enabled = this.revertToDefault.Enabled = false;
-                foreach (ShortcutListItem item in this.listView.Items)
+                if (item.IsModified)
                 {
-                    if (item.Custom != item.Default)
-                    {
-                        this.revertAllToDefault.Enabled = true;
-                        break;
-                    }
+                    this.revertAllToDefault.Enabled = true;
+                    break;
                 }
             }
         }
@@ -363,8 +364,7 @@ namespace FlashDevelop.Dialogs
             if (this.listView.SelectedItems.Count == 0) return;
 
             ShortcutListItem item = (ShortcutListItem) this.listView.SelectedItems[0];
-            if (e.KeyData == Keys.Delete) RemoveShortcut(item);
-            else this.AssignNewShortcut(item, e.KeyData);
+            this.AssignNewShortcut(item, e.KeyData);
 
             // Don't trigger list view default shortcuts like Ctrl+Add
             if (e.KeyData != Keys.Up && e.KeyData != Keys.Down) e.Handled = true;
@@ -375,44 +375,38 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void AssignNewShortcut(ShortcutListItem item, Keys shortcut)
         {
-            if (item.Custom == shortcut || !ToolStripManager.IsValidShortcut(shortcut)) return;
+            if (shortcut == Keys.None || shortcut == Keys.Delete) shortcut = 0;
+            else if (!ToolStripManager.IsValidShortcut(shortcut)) return;
 
+            if (item.Custom == shortcut) return;
             item.Custom = shortcut;
             item.Selected = true;
             ResetConflicts(item);
             List<ShortcutListItem> conflicts = this.GetConflictItems(shortcut);
-            if (conflicts != null)
+            if (conflicts == null) UpdateItemHighlightFont(item);
+            else
             {
                 foreach (ShortcutListItem i in conflicts)
                 {
                     i.Conflicts = conflicts;
                     UpdateItemHighlightFont(i);
                 }
-                String message = TextHelper.GetString("Info.ShortcutIsAlreadyUsed");
-                ErrorManager.ShowWarning(message, null);
+                ErrorManager.ShowWarning(TextHelper.GetString("Info.ShortcutIsAlreadyUsed"), null);
                 this.filterTextBox.Focus(); // Set focus to filter...
-                this.filterTextBox.Text = GetKeysAsString(shortcut);
+                this.filterTextBox.Text = ViewConflictsKey + item.KeysString;
                 this.filterTextBox.SelectAll();
             }
         }
-
+        
         /// <summary>
-        /// Remove shortcut keys from an item
+        /// Resets the conflicts status of an item.
         /// </summary>
-        private static void RemoveShortcut(ShortcutListItem item)
-        {
-            item.Custom = 0;
-            item.Selected = true;
-            ResetConflicts(item);
-        }
-
         private static void ResetConflicts(ShortcutListItem item)
         {
             List<ShortcutListItem> conflicts = item.Conflicts;
             if (conflicts == null) return;
             item.Conflicts = null;
             conflicts.Remove(item);
-            UpdateItemHighlightFont(item);
             if (conflicts.Count == 1)
             {
                 item = conflicts[0];
@@ -444,6 +438,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private List<ShortcutListItem> GetConflictItems(Keys keys)
         {
+            if (keys == Keys.None) return null;
             // To prevent creation of unnecessary List<T> objects
             ShortcutListItem first = null;
             List<ShortcutListItem> items = null;
@@ -494,7 +489,7 @@ namespace FlashDevelop.Dialogs
         {
             if (this.listView.SelectedItems.Count == 0) return;
             ShortcutListItem item = (ShortcutListItem) this.listView.SelectedItems[0];
-            RemoveShortcut(item);
+            this.AssignNewShortcut(item, Keys.None);
         }
 
         /// <summary>
@@ -511,10 +506,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void SetupUpdateTimer()
         {
-            updateTimer = new Timer();
-            updateTimer.Enabled = false;
-            updateTimer.Interval = 100;
-            updateTimer.Tick += UpdateTimer_Tick;
+            this.updateTimer = new Timer();
+            this.updateTimer.Enabled = false;
+            this.updateTimer.Interval = 100;
+            this.updateTimer.Tick += this.UpdateTimer_Tick;
         }
 
         /// <summary>
@@ -522,7 +517,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void UpdateTimer_Tick(Object sender, EventArgs e)
         {
-            updateTimer.Enabled = false;
+            this.updateTimer.Enabled = false;
             this.PopulateListView(this.filterTextBox.Text);
         }
 
@@ -531,8 +526,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void FilterTextChanged(Object sender, EventArgs e)
         {
-            updateTimer.Stop();
-            updateTimer.Start();
+            this.updateTimer.Stop();
+            this.updateTimer.Start();
         }
 
         /// <summary>
@@ -552,8 +547,7 @@ namespace FlashDevelop.Dialogs
             {
                 if (item.Conflicts != null)
                 {
-                    // TODO: Localize the text.
-                    ErrorManager.ShowError("There are one or more conflicts present.", null);
+                    ErrorManager.ShowError(TextHelper.GetString("Info.ShortcutConflictsPresent"), null);
                     this.filterTextBox.Text = ViewConflictsKey;
                     e.Cancel = true;
                     break;
@@ -590,6 +584,9 @@ namespace FlashDevelop.Dialogs
 
     #region ListViewComparer
 
+    /// <summary>
+    /// Defines a method that compares two <see cref="ShortcutListItem"/> objects.
+    /// </summary>
     class ShorcutListItemComparer : IComparer<ShortcutListItem>
     {
         Int32 IComparer<ShortcutListItem>.Compare(ShortcutListItem x, ShortcutListItem y)
@@ -600,38 +597,69 @@ namespace FlashDevelop.Dialogs
 
     #endregion
 
+    /// <summary>
+    /// Represents a copy of a <see cref="ShortcutItem"/> as well as a visual component.
+    /// </summary>
     class ShortcutListItem : ListViewItem
     {
         private Keys custom;
 
-        public ShortcutItem Item { get; set; }
+        /// <summary>
+        /// Gets the associated <see cref="ShortcutItem"/> object.
+        /// </summary>
+        public ShortcutItem Item { get; private set; }
+        /// <summary>
+        /// Gets or sets a list of <see cref="ShortcutListItem"/> objects that have conflicting keys with this instance.
+        /// </summary>
         public List<ShortcutListItem> Conflicts { get; set; }
-        public String Id { get { return Item.Id; } }
-        public Keys Default { get { return Item.Default; } }
+        /// <summary>
+        /// Gets the ID of the associated <see cref="ShortcutItem"/>.
+        /// </summary>
+        public String Id { get { return this.Item.Id; } }
+        /// <summary>
+        /// Gets the default shortcut keys.
+        /// </summary>
+        public Keys Default { get { return this.Item.Default; } }
+        /// <summary>
+        /// Gets or sets the custom shortcut keys.
+        /// </summary>
         public Keys Custom
         {
-            get { return custom; }
+            get { return this.custom; }
             set
             {
-                custom = value;
-                KeysString = DataConverter.KeysToString(value);
-                SubItems[1].Text = KeysString;
+                this.custom = value;
+                this.KeysString = DataConverter.KeysToString(value);
+                this.SubItems[1].Text = this.KeysString;
             }
         }
+        /// <summary>
+        /// Gets the string representation of the custom shortcut keys.
+        /// </summary>
         public String KeysString { get; private set; }
+        /// <summary>
+        /// Gets the modification status of the shortcut.
+        /// </summary>
+        public Boolean IsModified { get { return this.Custom != this.Default; } }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="ShortcutListItem"/> with an associated <see cref="ShortcutItem"/>.
+        /// </summary>
         public ShortcutListItem(ShortcutItem item)
         {
-            Name = Text = item.Id;
-            SubItems.Add(string.Empty);
-            Item = item;
-            Conflicts = null;
-            Custom = item.Custom;
+            this.SubItems.Add(string.Empty);
+            this.Name = this.Text = item.Id;
+            this.Item = item;
+            this.Conflicts = null;
+            this.Custom = item.Custom;
         }
 
+        /// <summary>
+        /// Apply changes made to this instance to the associated <see cref="ShortcutItem"/>.
+        /// </summary>
         public void ApplyChanges()
         {
-            Item.Custom = Custom;
+            this.Item.Custom = this.Custom;
         }
     }
 

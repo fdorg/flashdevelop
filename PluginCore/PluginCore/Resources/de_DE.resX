@@ -5964,4 +5964,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
   </data>
+  <data name="FlashDevelop.Info.ShortcutConflictsPresent" xml:space="preserve">
+    <value>There are one or more conflicts present.</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
 </root>
