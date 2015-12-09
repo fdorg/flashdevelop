@@ -27,6 +27,9 @@ package
 		/// [FP10] Searches for an item in the Vector and returns the index position of the item.
 		public function indexOf (searchElement:T, fromIndex:int = 0) : int;
 
+		/// [FP19] Insert a single element into the Vector.
+		public function insertAt (index:int, element:T) : void;
+
 		/// [FP10] Converts the elements in the Vector to strings.
 		public function join (sep:String = ",") : String;
 
@@ -41,6 +44,9 @@ package
 
 		/// [FP10] Adds one or more elements to the end of the Vector and returns the new length of the Vector.
 		public function push (...args) : uint;
+
+		/// [FP19] Remove a single element from the Vector.
+		public function removeAt (index:int) : T;
 
 		/// [FP10] Reverses the order of the elements in the Vector.
 		public function reverse () : Vector.<T>;
