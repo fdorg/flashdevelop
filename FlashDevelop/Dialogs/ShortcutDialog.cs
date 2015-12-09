@@ -28,7 +28,6 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.ColumnHeader idHeader;
         private System.Windows.Forms.ColumnHeader keyHeader;
         private System.Windows.Forms.TextBox filterTextBox;
-        private System.Windows.Forms.CheckBox viewCustom;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Button openButton;
@@ -67,7 +66,6 @@ namespace FlashDevelop.Dialogs
             this.searchLabel = new System.Windows.Forms.Label();
             this.clearButton = new System.Windows.Forms.Button();
             this.filterTextBox = new System.Windows.Forms.TextBox();
-            this.viewCustom = new System.Windows.Forms.CheckBox();
             this.openButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -89,10 +87,10 @@ namespace FlashDevelop.Dialogs
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.idHeader, this.keyHeader});
             this.listView.GridLines = true;
             this.listView.FullRowSelect = true;
-            this.listView.Location = new System.Drawing.Point(12, 87);
+            this.listView.Location = new System.Drawing.Point(12, 70);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(562, 287);
+            this.listView.Size = new System.Drawing.Size(562, 304);
             this.listView.TabIndex = 4;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -158,14 +156,6 @@ namespace FlashDevelop.Dialogs
             this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
             this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextChanged);
             // 
-            // viewCustom
-            // 
-            this.viewCustom.AutoSize = true;
-            this.viewCustom.CheckAlign = ContentAlignment.MiddleRight;
-            this.viewCustom.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
-            this.viewCustom.Location = new System.Drawing.Point(471, 67);
-            this.viewCustom.CheckedChanged += new System.EventHandler(this.ViewCustomCheckedChanged);
-            // 
             // openButton
             // 
             this.openButton.Location = new System.Drawing.Point(369, 12);
@@ -203,7 +193,6 @@ namespace FlashDevelop.Dialogs
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.viewCustom);
             this.Controls.Add(this.listView);
             this.Controls.Add(this.searchLabel);
             this.FormClosing += new FormClosingEventHandler(this.DialogClosing);
@@ -258,7 +247,6 @@ namespace FlashDevelop.Dialogs
             this.keyHeader.Text = TextHelper.GetString("Label.Shortcut");
             this.infoLabel.Text = TextHelper.GetString("Info.ShortcutEditInfo");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
-            this.viewCustom.Text = TextHelper.GetString("Label.ViewCustom");
             this.openButton.Text = TextHelper.GetString("Label.Open");
             this.saveButton.Text = TextHelper.GetString("Label.SaveAs");
             this.searchLabel.Text = TextHelper.GetString("Label.Search").Replace("&", "") + ":";
@@ -444,23 +432,6 @@ namespace FlashDevelop.Dialogs
                 UpdateItemHighlightFont(item);
             }
         }
-
-        /// <summary>
-        /// Filter the list view for custom items
-        /// </summary>
-        private void ViewCustomCheckedChanged(Object sender, EventArgs e)
-        {
-            if (this.filterTextBox.Text.StartsWith(ViewCustomKey))
-            {
-                if (!this.viewCustom.Checked)
-                    this.filterTextBox.Text = this.filterTextBox.Text.Substring(ViewCustomKey.Length);
-            }
-            else
-            {
-                if (this.viewCustom.Checked)
-                    this.filterTextBox.Text = ViewCustomKey + this.filterTextBox.Text;
-            }
-        }
         
         /// <summary>
         /// Gets a list of all conflicting entries. Returns null if the length is 0 or 1.
@@ -526,7 +497,6 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ClearFilterClick(Object sender, EventArgs e)
         {
-            this.viewCustom.Checked = false;
             this.filterTextBox.Text = "";
         }
 

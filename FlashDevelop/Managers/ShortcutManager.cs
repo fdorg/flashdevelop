@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using FlashDevelop.Helpers;
 using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
@@ -179,7 +180,7 @@ namespace FlashDevelop.Managers
         public static void LoadCustomShortcuts()
         {
             ScintillaControl.InitShortcuts();
-            String file = FileNameHelper.ShortcutData;
+            String file = FileNameHelper.ShortcutData; //PathHelper.ShortcutsDir + "CURRENT";
             if (File.Exists(file))
             {
                 List<Argument> shortcuts = new List<Argument>();
@@ -205,7 +206,7 @@ namespace FlashDevelop.Managers
                     shortcuts.Add(new Argument(item.Id, item.Custom.ToString()));
                 }
             }
-            String file = FileNameHelper.ShortcutData;
+            String file = FileNameHelper.ShortcutData; //PathHelper.ShortcutsDir + "CURRENT";
             ObjectSerializer.Serialize(file, shortcuts);
         }
 
