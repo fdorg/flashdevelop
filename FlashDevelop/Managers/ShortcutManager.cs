@@ -210,35 +210,43 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Loads the custom shortcuts from a file to a list.
+        /// Loads the custom shortcuts from a file and returns an array of new shortcut keys
+        /// corresponding to the shortcut items in the specified array.
         /// </summary>
-        public static void LoadCustomShortcuts(String file, IEnumerable<IShortcutItem> items)
+        public static Keys[] LoadCustomShortcuts(String file, IShortcutItem[] items)
         {
             if (File.Exists(file))
             {
                 try
                 {
+                    Keys[] newShortcuts = new Keys[items.Length];
+
                     List<Argument> customShortcuts = new List<Argument>();
                     customShortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, customShortcuts, false);
-                    foreach (IShortcutItem item in items)
+                    Int32 customCount = customShortcuts.Count;
+
+                    for (int i = 0; i < items.Length; i++)
                     {
-                        Keys newShortcut = item.Default;
-                        foreach (Argument arg in customShortcuts)
+                        IShortcutItem item = items[i];
+                        newShortcuts[i] = item.Default;
+                        for (int j = 0; j < customCount; j++)
                         {
+                            Argument arg = customShortcuts[j];
                             if (arg.Key == item.Id)
                             {
-                                newShortcut = (Keys) Enum.Parse(typeof(Keys), arg.Value);
+                                newShortcuts[i] = (Keys) Enum.Parse(typeof(Keys), arg.Value);
                                 break;
                             }
                         }
-                        item.Custom = newShortcut;
                     }
+                    return newShortcuts;
                 }
                 catch (Exception e)
                 {
                     ErrorManager.ShowError(e);
                 }
             }
+            return null;
         }
         
         /// <summary>
@@ -291,12 +299,12 @@ namespace FlashDevelop.Managers
         }
     }
 
-    public class IShortcutItem
+    public interface IShortcutItem
     {
-        public String Id { get; }
-        public Keys Default { get; }
-        public Keys Custom { get; set; }
-        public Boolean IsModified { get; }
+        String Id { get; }
+        Keys Default { get; }
+        Keys Custom { get; }
+        Boolean IsModified { get; }
     }
 
     #endregion

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using FlashDevelop.Managers;
 using PluginCore.Controls;
@@ -30,6 +31,8 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.CheckBox viewCustom;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button closeButton;
+        private System.Windows.Forms.Button openButton;
+        private System.Windows.Forms.Button saveButton;
         private ShortcutListItem[] shortcutListItems;
 
         public ShortcutDialog()
@@ -65,6 +68,8 @@ namespace FlashDevelop.Dialogs
             this.clearButton = new System.Windows.Forms.Button();
             this.filterTextBox = new System.Windows.Forms.TextBox();
             this.viewCustom = new System.Windows.Forms.CheckBox();
+            this.openButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,15 +84,15 @@ namespace FlashDevelop.Dialogs
             this.keyHeader.Width = 208;
             // 
             // listView
-            //
+            // 
             this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.idHeader, this.keyHeader});
             this.listView.GridLines = true;
             this.listView.FullRowSelect = true;
-            this.listView.Location = new System.Drawing.Point(12, 62);
+            this.listView.Location = new System.Drawing.Point(12, 87);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(562, 312);
+            this.listView.Size = new System.Drawing.Size(562, 287);
             this.listView.TabIndex = 4;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -128,15 +133,15 @@ namespace FlashDevelop.Dialogs
             // 
             this.searchLabel.AutoSize = true;
             this.searchLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.searchLabel.Location = new System.Drawing.Point(10, 10);
+            this.searchLabel.Location = new System.Drawing.Point(10, 25);
             this.searchLabel.Name = "searchLabel";
             this.searchLabel.TabIndex = 0;
             this.searchLabel.Text = "Search:";
             // 
             // clearButton
-            //
+            // 
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.clearButton.Location = new System.Drawing.Point(549, 30);
+            this.clearButton.Location = new System.Drawing.Point(549, 39);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(26, 23);
             this.clearButton.TabIndex = 2;
@@ -146,20 +151,36 @@ namespace FlashDevelop.Dialogs
             // filterTextBox
             // 
             this.filterTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.filterTextBox.Location = new System.Drawing.Point(12, 32);
+            this.filterTextBox.Location = new System.Drawing.Point(12, 41);
             this.filterTextBox.Name = "filterTextBox";
-            this.filterTextBox.Size = new System.Drawing.Size(530, 20);
+            this.filterTextBox.Size = new System.Drawing.Size(531, 20);
             this.filterTextBox.TabIndex = 1;
             this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
             this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextChanged);
             // 
             // viewCustom
-            //
+            // 
             this.viewCustom.AutoSize = true;
             this.viewCustom.CheckAlign = ContentAlignment.MiddleRight;
             this.viewCustom.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
-            this.viewCustom.Location = new System.Drawing.Point(471, 9);
+            this.viewCustom.Location = new System.Drawing.Point(471, 67);
             this.viewCustom.CheckedChanged += new System.EventHandler(this.ViewCustomCheckedChanged);
+            // 
+            // openButton
+            // 
+            this.openButton.Location = new System.Drawing.Point(369, 12);
+            this.openButton.Name = "openButton";
+            this.openButton.Size = new System.Drawing.Size(100, 23);
+            this.openButton.UseVisualStyleBackColor = true;
+            this.openButton.Click += new System.EventHandler(SelectCustomShortcut);
+            // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(475, 12);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(100, 23);
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(SaveCustomShortcut);
             // 
             // ShortcutDialog
             // 
@@ -175,6 +196,8 @@ namespace FlashDevelop.Dialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(586, 416);
             this.MinimumSize = new System.Drawing.Size(400, 250);
+            this.Controls.Add(this.saveButton);
+            this.Controls.Add(this.openButton);
             this.Controls.Add(this.filterTextBox);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.infoLabel);
@@ -191,7 +214,7 @@ namespace FlashDevelop.Dialogs
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-
+        
         #endregion
 
         #region Methods And Event Handlers
@@ -236,6 +259,8 @@ namespace FlashDevelop.Dialogs
             this.infoLabel.Text = TextHelper.GetString("Info.ShortcutEditInfo");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
             this.viewCustom.Text = TextHelper.GetString("Label.ViewCustom");
+            this.openButton.Text = TextHelper.GetString("Label.Open");
+            this.saveButton.Text = TextHelper.GetString("Label.SaveAs");
             this.searchLabel.Text = TextHelper.GetString("Label.Search").Replace("&", "") + ":";
             this.Text = " " + TextHelper.GetString("Title.Shortcuts");
         }
@@ -376,7 +401,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Assign the new shortcut.
         /// </summary>
-        private void AssignNewShortcut(ShortcutListItem item, Keys shortcut)
+        private void AssignNewShortcut(ShortcutListItem item, Keys shortcut, Boolean suppressWarning = false)
         {
             if (shortcut == Keys.None || shortcut == Keys.Delete) shortcut = 0;
             else if (!ToolStripManager.IsValidShortcut(shortcut)) return;
@@ -394,6 +419,7 @@ namespace FlashDevelop.Dialogs
                     i.Conflicts = conflicts;
                     UpdateItemHighlightFont(i);
                 }
+                if (suppressWarning) return;
                 ErrorManager.ShowWarning(TextHelper.GetString("Info.ShortcutIsAlreadyUsed"), null);
                 this.filterTextBox.Focus(); // Set focus to filter...
                 this.filterTextBox.Text = ViewConflictsKey + item.KeysString;
@@ -534,6 +560,58 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
+        /// Switch to a custom shortcut set.
+        /// </summary>
+        private void SelectCustomShortcut(Object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda",
+                InitialDirectory = PathHelper.ShortcutsDir,
+                Title = " " + TextHelper.GetString("Title.OpenFileDialog")
+            };
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                String extension = Path.GetExtension(dialog.FileName);
+                if (extension.Equals(".fda", StringComparison.OrdinalIgnoreCase))
+                {
+                    Keys[] shortcuts = ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
+                    if (shortcuts != null)
+                    {
+                        this.listView.BeginUpdate();
+                        for (int i = 0; i < shortcuts.Length; i++)
+                        {
+                            this.AssignNewShortcut(this.shortcutListItems[i], shortcuts[i], true);
+                        }
+                        this.listView.EndUpdate();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Save the current shortcut set to a file.
+        /// </summary>
+        private void SaveCustomShortcut(Object sender, EventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                AddExtension = true,
+                DefaultExt = ".fda",
+                Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda",
+                InitialDirectory = PathHelper.ShortcutsDir,
+                OverwritePrompt = true,
+                Title = " " + TextHelper.GetString("Title.SaveFileDialog")
+            };
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                ShortcutManager.SaveCustomShortcuts(dialog.FileName, this.shortcutListItems);
+            }
+        }
+
+        /// <summary>
         /// Closes the shortcut dialog
         /// </summary>
         private void CloseButtonClick(Object sender, EventArgs e)
@@ -603,7 +681,7 @@ namespace FlashDevelop.Dialogs
     /// <summary>
     /// Represents a copy of a <see cref="ShortcutItem"/> as well as a visual component.
     /// </summary>
-    class ShortcutListItem : ListViewItem
+    class ShortcutListItem : ListViewItem, IShortcutItem
     {
         private Keys custom;
 
