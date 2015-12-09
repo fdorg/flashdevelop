@@ -2016,7 +2016,7 @@ namespace FlashDevelop
         {
             if (this.InvokeRequired)
             {
-                this.BeginInvoke((MethodInvoker)delegate { this.ApplyAllSettings(); });
+                this.BeginInvoke((MethodInvoker) this.ApplyAllSettings);
                 return;
             }
             ShortcutManager.ApplyAllShortcuts();
