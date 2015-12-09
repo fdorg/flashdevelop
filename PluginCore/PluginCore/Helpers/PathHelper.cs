@@ -120,6 +120,17 @@ namespace PluginCore.Helpers
         }
 
         /// <summary>
+        /// Path to the custom shortcut directory
+        /// </summary>
+        public static String ShortcutsDir
+        {
+            get
+            {
+                return Path.Combine(SettingDir, "Shortcuts");
+            }
+        }
+
+        /// <summary>
         /// Path to the themes directory
         /// </summary>
         public static String ThemesDir
