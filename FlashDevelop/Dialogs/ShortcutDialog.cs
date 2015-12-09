@@ -219,6 +219,9 @@ namespace FlashDevelop.Dialogs
             this.removeShortcut.ShortcutKeys = Keys.Delete;
             this.revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
             this.revertAllToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefaultClick);
+            this.removeShortcut.Image = Globals.MainForm.FindImage("153");
+            this.revertToDefault.Image = Globals.MainForm.FindImage("69");
+            this.revertAllToDefault.Image = Globals.MainForm.FindImage("224");
             cms.Items.Add(this.removeShortcut);
             cms.Items.Add(this.revertToDefault);
             cms.Items.Add(this.revertAllToDefault);
