@@ -1,9 +1,9 @@
-using System.Windows.Forms;
-using PluginCore.Localization;
 using System.Drawing;
-using PluginCore.Helpers;
+using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
 using ProjectManager.Controls.TreeView;
 
 namespace ProjectManager.Controls
@@ -50,7 +50,6 @@ namespace ProjectManager.Controls
             Synchronize = new ToolStripButton(Icons.SyncToFile.Img);
             Synchronize.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
             Synchronize.Padding = new Padding(0);
-            Synchronize.Checked = PluginMain.Settings.TrackActiveDocument;
             PluginBase.MainForm.RegisterShortcutItem("ProjectTree.LocateActiveFile", Keys.Shift | Keys.Alt | Keys.L);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectTree.LocateActiveFile", Synchronize);
 
