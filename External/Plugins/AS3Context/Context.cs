@@ -334,20 +334,19 @@ namespace AS3Context
             }
 
             // intrinsics (deprecated, excepted for FP10 Vector.<T>)
-            string fp9cp = as3settings.AS3ClassPath + S + "FP9";
-            AddPath(PathHelper.ResolvePath(fp9cp));
-            if (majorVersion > 9)
+            // add from the highest version number (FP11 > FP10 > FP9)
+            if (majorVersion >= 9)
             {
-                for (int i = 10; i <= majorVersion; i++)
+                string fp = as3settings.AS3ClassPath + S + "FP";
+                for (int i = majorVersion; i >= 10; i--)
                 {
-                    string fp10cp = as3settings.AS3ClassPath + S + "FP" + i;
-                    AddPath(PathHelper.ResolvePath(fp10cp));
-                    for (int j = 1; j <= minorVersion; j++)
+                    for (int j = minorVersion; j >= 0; j--)
                     {
-                        string fp101cp = as3settings.AS3ClassPath + S + "FP" + majorVersion + "." + minorVersion;
-                        AddPath(PathHelper.ResolvePath(fp101cp));
+                        AddPath(PathHelper.ResolvePath(fp + i + "." + j));
                     }
+                    AddPath(PathHelper.ResolvePath(fp + i));
                 }
+                AddPath(PathHelper.ResolvePath(fp + "9"));
             }
 
             // add external pathes
