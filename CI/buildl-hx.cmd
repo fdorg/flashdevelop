@@ -15,7 +15,7 @@ cd ..
 git clean -f -x -d FlashDevelop\Bin\Debug
 
 :: Copy distro files
-xcopy FlashDevelop\Distros\HaxeDevelop\ FlashDevelop\ /s /e
+xcopy Distros\HaxeDevelop /s /e /y
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
