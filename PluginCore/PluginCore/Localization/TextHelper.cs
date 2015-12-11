@@ -34,6 +34,13 @@ namespace PluginCore.Localization
                 TraceManager.Add("No localized string found: " + key);
                 result = String.Empty;
             }
+            // Replace FlashDevelop with distro name if needed
+            if (DistroConfig.DISTRIBUTION_NAME != "FlashDevelop")
+            {
+                #pragma warning disable CS0162 // Unreachable code detected
+                result = result.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME);
+                #pragma warning restore CS0162 // Unreachable code detected
+            }
             return result;
         }
 
