@@ -17,6 +17,9 @@ git clean -f -x -d FlashDevelop\Bin\Debug
 :: Copy distro files
 xcopy Distros\HaxeDevelop /s /e /y
 
+:: Remove bad files
+del FlashDevelop\Bin\Debug\FlashDevelop.exe.config
+
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 

@@ -25,6 +25,8 @@ namespace PluginCore.Localization
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());
             }
             prefix = Assembly.GetCallingAssembly().GetName().Name;
+            // On different distro we need to use FlashDevelop prefix
+            if (prefix == DistroConfig.DISTRIBUTION_NAME) prefix = "FlashDevelop";
             result = resourceManager.GetString(prefix + "." + key);
             if (result == null) result = resourceManager.GetString(key);
             if (result == null)
