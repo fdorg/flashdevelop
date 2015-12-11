@@ -313,7 +313,7 @@ namespace ASCompletion.Completion
             if (isNotInterface 
                 && resolve.Member != null
                 && resolve.Type != null
-                && resolve.Type.QualifiedName == "String"
+                && resolve.Type.QualifiedName == ASContext.Context.Features.stringKey
                 && found.inClass != ClassModel.VoidClass)
             {
                 int lineStartPos = Sci.PositionFromLine(Sci.CurrentLine);
@@ -1892,7 +1892,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateToString(ClassModel inClass, ScintillaControl Sci, MemberModel member)
         {
-            MemberModel resultMember = new MemberModel("toString", "String", FlagType.Function, Visibility.Public);
+            MemberModel resultMember = new MemberModel("toString", ASContext.Context.Features.stringKey, FlagType.Function, Visibility.Public);
 
             bool isOverride = false;
             inClass.ResolveExtends();
@@ -2261,7 +2261,7 @@ namespace ASCompletion.Completion
                         if (isDoubleQuote)
                         {
                             result = new ASResult();
-                            result.Type = ctx.ResolveType("String", null);
+                            result.Type = ctx.ResolveType(ctx.Features.stringKey, null);
                             types.Add(result);
                         }
                     }
@@ -2276,7 +2276,7 @@ namespace ASCompletion.Completion
                         if (isSingleQuote)
                         {
                             result = new ASResult();
-                            result.Type = ctx.ResolveType("String", null);
+                            result.Type = ctx.ResolveType(ctx.Features.stringKey, null);
                             types.Add(result);
                         }
                     }
@@ -2967,7 +2967,7 @@ namespace ASCompletion.Completion
                 char c = (char)Sci.CharAt(pos);
                 if (c == '"' || c == '\'')
                 {
-                    type = ctx.ResolveType("String", inClass.InFile);
+                    type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
                 }
                 else if (c == '}')
                 {
