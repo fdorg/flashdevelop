@@ -145,7 +145,11 @@ namespace OutputPanel
         [Browsable(false)]
         public Boolean IsValid
         {
-            get { return !string.IsNullOrEmpty(this.marker); }
+            get
+            {
+                return !(string.IsNullOrEmpty(this.marker)
+                    || (this.level == LogLevel.Custom && this.highlightColor.IsEmpty));
+            }
         }
 
         /// <summary>
