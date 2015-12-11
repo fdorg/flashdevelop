@@ -210,7 +210,7 @@ namespace ASCompletion
                         de = e as DataEvent;
                         if (de.Action == "Completion.ShowHelp")
                         {
-                            ASComplete.HelpKeys = (Keys)de.Data;
+                            ASComplete.HelpKeys = (Keys) de.Data;
                             de.Handled = true;
                         }
                         return;
@@ -279,12 +279,12 @@ namespace ASCompletion
                                 if (info != null)
                                 {
                                     ContextSetupInfos setup = new ContextSetupInfos();
-                                    setup.Platform = (string)info["platform"];
-                                    setup.Lang = (string)info["lang"];
-                                    setup.Version = (string)info["version"];
-                                    setup.TargetBuild = (string)info["targetBuild"];
-                                    setup.Classpath = (string[])info["classpath"];
-                                    setup.HiddenPaths = (string[])info["hidden"];
+                                    setup.Platform = (string) info["platform"];
+                                    setup.Lang = (string) info["lang"];
+                                    setup.Version = (string) info["version"];
+                                    setup.TargetBuild = (string) info["targetBuild"];
+                                    setup.Classpath = (string[]) info["classpath"];
+                                    setup.HiddenPaths = (string[]) info["hidden"];
                                     ASContext.SetLanguageClassPath(setup);
                                     if (setup.AdditionalPaths != null) // report custom classpath
                                         info["additional"] = setup.AdditionalPaths.ToArray();
@@ -299,7 +299,7 @@ namespace ASCompletion
                                 if (info != null && info.ContainsKey("language"))
                                 {
                                     IASContext context = ASContext.GetLanguageContext(info["language"] as string);
-                                    if (context != null && context.Settings != null 
+                                    if (context != null && context.Settings != null
                                         && context.Settings.UserClasspath != null)
                                         info["cp"] = new List<string>(context.Settings.UserClasspath);
                                 }
@@ -347,7 +347,7 @@ namespace ASCompletion
                                 {
                                     case "AS2": name = "AS2Context"; break;
                                     case "AS3": name = "AS3Context"; break;
-                                    default: 
+                                    default:
                                         name = cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context";
                                         break;
                                 }
@@ -446,6 +446,7 @@ namespace ASCompletion
                 // Actionscript context specific
                 //
                 if (ASContext.Context.IsFileValid)
+                {
                     switch (e.Type)
                     {
                         case EventType.ProcessArgs:
@@ -480,69 +481,70 @@ namespace ASCompletion
                             if (command.StartsWith("ASCompletion.", StringComparison.Ordinal))
                             {
                                 string cmdData = de.Data as string;
-                                // run MTASC
-                                if (command == "ASCompletion.CustomBuild")
+                                switch (command)
                                 {
-                                    if (cmdData != null) ASContext.Context.RunCMD(cmdData);
-                                    else ASContext.Context.RunCMD("");
-                                    e.Handled = true;
-                                }
+                                    // run MTASC
+                                    case "ASCompletion.CustomBuild":
+                                        if (cmdData != null) ASContext.Context.RunCMD(cmdData);
+                                        else ASContext.Context.RunCMD("");
+                                        e.Handled = true;
+                                        break;
 
-                                // build the SWF using MTASC
-                                else if (command == "ASCompletion.QuickBuild")
-                                {
-                                    ASContext.Context.BuildCMD(false);
-                                    e.Handled = true;
-                                }
+                                    // build the SWF using MTASC
+                                    case "ASCompletion.QuickBuild":
+                                        ASContext.Context.BuildCMD(false);
+                                        e.Handled = true;
+                                        break;
 
-                                // resolve element under cursor and open declaration
-                                else if (command == "ASCompletion.GotoDeclaration")
-                                {
-                                    ASComplete.DeclarationLookup(sci);
-                                    e.Handled = true;
-                                }
+                                    // resolve element under cursor and open declaration
+                                    case "ASCompletion.GotoDeclaration":
+                                        ASComplete.DeclarationLookup(sci);
+                                        e.Handled = true;
+                                        break;
 
-                                // resolve element under cursor and send a CustomData event
-                                else if (command == "ASCompletion.ResolveElement")
-                                {
-                                    ASComplete.ResolveElement(sci, cmdData);
-                                    e.Handled = true;
-                                }
-                                else if (command == "ASCompletion.MakeIntrinsic")
-                                {
-                                    ASContext.Context.MakeIntrinsic(cmdData);
-                                    e.Handled = true;
-                                }
+                                    // resolve element under cursor and send a CustomData event
+                                    case "ASCompletion.ResolveElement":
+                                        ASComplete.ResolveElement(sci, cmdData);
+                                        e.Handled = true;
+                                        break;
 
-                                // alternative to default shortcuts
-                                else if (command == "ASCompletion.CtrlSpace")
-                                {
-                                    ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
-                                    e.Handled = true;
-                                }
-                                else if (command == "ASCompletion.CtrlShiftSpace")
-                                {
-                                    ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
-                                    e.Handled = true;
-                                }
-                                else if (command == "ASCompletion.CtrlAltSpace")
-                                {
-                                    ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
-                                    e.Handled = true;
-                                }
-                                else if (command == "ASCompletion.ContextualGenerator")
-                                {
-                                    if (ASContext.HasContext && ASContext.Context.IsFileValid)
-                                    {
-                                        var options = ASGenerator.ContextualGenerator(ASContext.CurSciControl);
-                                        var dataEvent = new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options);
-                                        EventManager.DispatchEvent(this, dataEvent);
-                                        if (options.Count == 0)
+                                    case "ASCompletion.MakeIntrinsic":
+                                        ASContext.Context.MakeIntrinsic(cmdData);
+                                        e.Handled = true;
+                                        break;
+
+                                    // alternative to default shortcuts
+                                    case "ASCompletion.CtrlSpace":
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
+                                        e.Handled = true;
+                                        break;
+
+                                    case "ASCompletion.CtrlShiftSpace":
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
+                                        e.Handled = true;
+                                        break;
+
+                                    case "ASCompletion.CtrlAltSpace":
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
+                                        e.Handled = true;
+                                        break;
+
+                                    case "ASCompletion.ContextualGenerator":
+                                        if (ASContext.HasContext && ASContext.Context.IsFileValid)
                                         {
-                                            PluginBase.MainForm.StatusLabel.Text = TextHelper.GetString("Info.NoContextGeneratorCode");
+                                            var options = new List<ICompletionListItem>();
+                                            EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options));
+                                            if (options.Count == 0)
+                                            {
+                                                PluginBase.MainForm.StatusLabel.Text = TextHelper.GetString("Info.NoContextGeneratorCode");
+                                            }
+                                            CompletionList.Show(options, false);
                                         }
-                                        CompletionList.Show(options, false);
-                                    }
+                                        break;
+
+                                    case "ASCompletion.ContextualGenerator.AddOptions":
+                                        ASGenerator.ContextualGenerator(ASContext.CurSciControl, (List<ICompletionListItem>) de.Data);
+                                        break;
                                 }
                             }
                             return;
@@ -552,8 +554,9 @@ namespace ASCompletion
                             ASContext.Context.OnProcessEnd(procResult);
                             break;
                     }
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
             }
