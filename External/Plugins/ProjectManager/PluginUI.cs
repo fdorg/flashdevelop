@@ -18,7 +18,6 @@ namespace ProjectManager
         public FDMenus menus;
         TreeBar treeBar;
         Project project;
-        PluginMain plugin;
         LinkLabel help;
         ProjectTreeView tree;
         ProjectContextMenu menu;
@@ -32,7 +31,6 @@ namespace ProjectManager
         public PluginUI(PluginMain plugin, FDMenus menus, FileActions fileActions, ProjectActions projectActions)
         {
             this.menus = menus;
-            this.plugin = plugin;
             this.AutoKeyHandling = true;
             this.Text = TextHelper.GetString("Title.PluginPanel");
             
@@ -129,7 +127,6 @@ namespace ProjectManager
             List<Project> projects = tree.Projects;
             projects.Clear(); // only one project active
             if (project != null) projects.Add(project);
-            else projects.Clear();
             tree.Projects = projects;
             tree.Project = project;
             tree_AfterSelect(tree, null);
