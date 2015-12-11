@@ -8,18 +8,18 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("FDBuild")]
 [assembly: AssemblyDescription("Command-Line compiler for FlashDevelop project files.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("FlashDevelop.org")]
+[assembly: AssemblyCompany(PluginCore.DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("FDBuild")]
-[assembly: AssemblyCopyright("FlashDevelop 2005-2010")]
+[assembly: AssemblyCopyright(PluginCore.DistroConfig.DISTRIBUTION_COPYRIGHT)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // This is text that goes after "<program-name/> [options]" in help output.
-[assembly: Mono.UsageComplement("<.fdp project file>")]
+[assembly: Mono.UsageComplement("<.fd project file>")]
 
 // Attributes visible in "<program-name/> -V"
 [assembly: Mono.About("")]
-[assembly: Mono.Author("FlashDevelop.org")]
+[assembly: Mono.Author(PluginCore.DistroConfig.DISTRIBUTION_COMPANY)]
 
 // Version information for an assembly consists of the following four values:
 //

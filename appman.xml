@@ -328,7 +328,7 @@
 		<Name>AS2 Templates</Name>
 		<Version>1.01</Version>
 		<Build>1</Build>
-		<Desc>AS2 templates for FlashDevelop</Desc>
+		<Desc>Adds archived legacy AS2 templates</Desc>
 		<Group>Extensions</Group>
 		<Info>http://www.flashdevelop.org/wikidocs/</Info>
 		<Urls>
