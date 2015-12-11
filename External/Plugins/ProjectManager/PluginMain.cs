@@ -76,11 +76,8 @@ namespace ProjectManager
         private ProjectActions projectActions;
         private FlashDevelopActions flashDevelopActions;
         private Queue<String> openFileQueue;
-        private Boolean showProjectClasspaths;
-        private Boolean showGlobalClasspaths;
         private DockContent pluginPanel;
         private PluginUI pluginUI;
-        private Image pluginImage;
         private Project activeProject;
         private OpenResourceForm projectResources;
         private Boolean runOutput;
@@ -102,7 +99,6 @@ namespace ProjectManager
 
         static string SettingsDir { get { return Path.Combine(PathHelper.DataDir, pluginName); } }
         static string SettingsPath { get { return Path.Combine(SettingsDir, "Settings.fdb"); } }
-        static string FDBuildHints { get { return Path.Combine(SettingsDir, "FDBuildHints.txt"); } }
 
         public void LoadSettings()
         {
@@ -170,15 +166,11 @@ namespace ProjectManager
         public void Initialize()
         {
             LoadSettings();
-            pluginImage = MainForm.FindImage("100");
             pluginDesc = TextHelper.GetString("Info.Description");
             openFileQueue = new Queue<String>();
 
             Icons.Initialize(MainForm);
             EventManager.AddEventHandler(this, eventMask);
-
-            showProjectClasspaths = Settings.ShowProjectClasspaths;
-            showGlobalClasspaths = Settings.ShowGlobalClasspaths;
 
             #region Actions and Event Listeners
 
