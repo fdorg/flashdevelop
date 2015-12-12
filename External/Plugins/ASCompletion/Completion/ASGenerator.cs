@@ -659,7 +659,7 @@ namespace ASCompletion.Completion
                     known.Add(new GeneratorItem(label, GeneratorJobType.Constant, found.member, found.inClass));
                 }
 
-                bool genProtectedDecl = ASContext.Context.Features.protectedKey != null && ASContext.CommonSettings.GenerateProtectedDeclarations;
+                bool genProtectedDecl = GetDefaultVisibility(found.inClass) == Visibility.Protected;
                 if (exprAtCursor == null && exprLeft == null)
                 {
                     if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedVar");
@@ -711,7 +711,7 @@ namespace ASCompletion.Completion
             bool isInterface = (inClass.Flags & FlagType.Interface) > 0;
             if (!isInterface && result == null)
             {
-                if (ASContext.Context.Features.protectedKey != null && ASContext.CommonSettings.GenerateProtectedDeclarations)
+                if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
                     label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
                 else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
                 known.Add(new GeneratorItem(label, GeneratorJobType.Function, found.member, found.inClass));
@@ -770,9 +770,9 @@ namespace ASCompletion.Completion
             if (GetLangIsValid())
             {
                 Hashtable parameters = new Hashtable();
-                parameters["scope"] = GetDefaultVisibility();
+                parameters["scope"] = GetDefaultVisibility(found.inClass);
                 string label;
-                if (ASContext.Context.Features.protectedKey != null && ASContext.CommonSettings.GenerateProtectedDeclarations)
+                if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
                     label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
                 else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
                 known.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
@@ -892,7 +892,7 @@ namespace ASCompletion.Completion
                     if (latest == null)
                     {
                         if (ASContext.CommonSettings.MethodsGenerationLocations == MethodsGenerationLocations.AfterSimilarAccessorMethod)
-                            latest = GetLatestMemberForFunction(inClass, GetDefaultVisibility(), member);
+                            latest = GetLatestMemberForFunction(inClass, GetDefaultVisibility(inClass), member);
                         if (latest == null)
                             latest = member;
                     }
@@ -902,13 +902,13 @@ namespace ASCompletion.Completion
                     string type = contextParam;
                     if (job == GeneratorJobType.BasicEvent)
                         if (itemLabel.IndexOf("DataEvent") >= 0) type = "DataEvent"; else type = "Event";
-                    GenerateEventHandler(contextToken, type, member, position);
+                    GenerateEventHandler(contextToken, type, member, position, inClass);
                     break;
 
                 case GeneratorJobType.Delegate:
                     position = Sci.PositionFromLine(member.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
                     Sci.SetSel(position, position);
-                    GenerateDelegateMethod(contextToken, member, position);
+                    GenerateDelegateMethod(contextToken, member, position, inClass);
                     break;
 
                 case GeneratorJobType.Constant:
@@ -988,7 +988,7 @@ namespace ASCompletion.Completion
                     {
                         if (!RemoveLocalDeclaration(Sci, contextMember)) return;
 
-                        latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(), member);
+                        latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), member);
                         if (latest == null) return;
 
                         position = FindNewVarPosition(Sci, inClass, latest);
@@ -998,7 +998,7 @@ namespace ASCompletion.Completion
                         contextMember.Flags -= FlagType.LocalVar;
                         if ((member.Flags & FlagType.Static) > 0)
                             contextMember.Flags |= FlagType.Static;
-                        contextMember.Access = GetDefaultVisibility();
+                        contextMember.Access = GetDefaultVisibility(inClass);
                         GenerateVariable(contextMember, position, detach);
 
                         Sci.SetSel(lookupPosition, lookupPosition);
@@ -1190,7 +1190,7 @@ namespace ASCompletion.Completion
                 {
                     if ((member.Access & Visibility.Public) > 0) // hide member
                     {
-                        MakePrivate(Sci, member);
+                        MakePrivate(Sci, member, inClass);
                     }
                     if (name == null) // rename var with starting underscore
                     {
@@ -1412,7 +1412,7 @@ namespace ASCompletion.Completion
                 Sci.SetSel(position, position);
             }
 
-            MemberModel m = NewMember(suggestion, member, FlagType.Variable | FlagType.Constant | FlagType.Static);
+            MemberModel m = NewMember(suggestion, member, FlagType.Variable | FlagType.Constant | FlagType.Static, GetDefaultVisibility(inClass));
 
             var features = ASContext.Context.Features;
 
@@ -1812,7 +1812,7 @@ namespace ASCompletion.Completion
                 if (classMember.Name.Equals(varName))
                     return;
 
-            MemberModel latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(), new MemberModel());
+            MemberModel latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), new MemberModel());
             if (latest == null) return;
 
             int position = FindNewVarPosition(Sci, inClass, latest);
@@ -1956,7 +1956,7 @@ namespace ASCompletion.Completion
             MemberModel latest = null;
             bool isOtherClass = false;
 
-            Visibility varVisi = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility() : Visibility.Public;
+            Visibility varVisi = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
             FlagType ft = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
 
             // evaluate, if the variable (or constant) should be generated in other class
@@ -2443,7 +2443,7 @@ namespace ASCompletion.Completion
             MemberModel latest = null;
             bool isOtherClass = false;
 
-            Visibility funcVisi = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility();
+            Visibility funcVisi = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
             int wordPos = Sci.WordEndPosition(Sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(Sci, wordPos);
 
@@ -2767,7 +2767,7 @@ namespace ASCompletion.Completion
             MemberModel latest = TemplateUtils.GetTemplateBlockMember(Sci, TemplateUtils.GetBoundary("PrivateMethods"));
 
             if (latest == null)
-                latest = GetLatestMemberForFunction(found.inClass, GetDefaultVisibility(), found.member);
+                latest = GetLatestMemberForFunction(found.inClass, GetDefaultVisibility(found.inClass), found.member);
 
             if (latest == null)
                 latest = found.member;
@@ -2781,7 +2781,7 @@ namespace ASCompletion.Completion
                 flags |= FlagType.Static;
             }
 
-            MemberModel m = new MemberModel(NewName, context.Features.voidKey, flags, GetDefaultVisibility());
+            MemberModel m = new MemberModel(NewName, context.Features.voidKey, flags, GetDefaultVisibility(found.inClass));
 
             template = NewLine + TemplateUtils.GetTemplate("Function");
             template = TemplateUtils.ToDeclarationWithModifiersString(m, template);
@@ -3181,19 +3181,16 @@ namespace ASCompletion.Completion
             return new MemberModel(contextToken, type, kind, visi);
         }
 
-        private static MemberModel NewMember(string contextToken, MemberModel calledFrom, FlagType kind)
-        {
-            return NewMember(contextToken, calledFrom, kind, GetDefaultVisibility());
-        }
-
         /// <summary>
         /// Get Visibility.Private or Visibility.Protected, depending on user setting forcing the use of protected.
         /// </summary>
-        public static Visibility GetDefaultVisibility()
+        private static Visibility GetDefaultVisibility(ClassModel model)
         {
-            if (ASContext.Context.Features.protectedKey != null && ASContext.CommonSettings.GenerateProtectedDeclarations)
+            if (ASContext.Context.Features.protectedKey != null
+                && ASContext.CommonSettings.GenerateProtectedDeclarations
+                && (model.Flags & FlagType.Final) == 0)
                 return Visibility.Protected;
-            else return Visibility.Private;
+            return Visibility.Private;
         }
 
         private static void GenerateFunction(MemberModel member, int position, bool detach, ClassModel inClass)
@@ -3248,10 +3245,10 @@ namespace ASCompletion.Completion
             InsertCode(position, result);
         }
 
-        public static bool MakePrivate(ScintillaControl Sci, MemberModel member)
+        public static bool MakePrivate(ScintillaControl Sci, MemberModel member, ClassModel inClass)
         {
             ContextFeatures features = ASContext.Context.Features;
-            string visibility = GetPrivateKeyword();
+            string visibility = GetPrivateKeyword(inClass);
             if (features.publicKey == null || visibility == null) return false;
             Regex rePublic = new Regex(String.Format(@"\s*({0})\s+", features.publicKey));
 
@@ -3374,11 +3371,11 @@ namespace ASCompletion.Completion
                 return "_" + member.Name;
         }
 
-        private static void GenerateDelegateMethod(string name, MemberModel afterMethod, int position)
+        private static void GenerateDelegateMethod(string name, MemberModel afterMethod, int position, ClassModel inClass)
         {
             ContextFeatures features = ASContext.Context.Features;
 
-            string acc = GetPrivateAccessor(afterMethod);
+            string acc = GetPrivateAccessor(afterMethod, inClass);
             string template = TemplateUtils.GetTemplate("Delegate");
             string args = null;
             string type = features.voidKey;
@@ -3396,7 +3393,7 @@ namespace ASCompletion.Completion
             InsertCode(position, decl);
         }
 
-        private static void GenerateEventHandler(string name, string type, MemberModel afterMethod, int position)
+        private static void GenerateEventHandler(string name, string type, MemberModel afterMethod, int position, ClassModel inClass)
         {
             ScintillaControl Sci = ASContext.CurSciControl;
             Sci.BeginUndoAction();
@@ -3405,6 +3402,7 @@ namespace ASCompletion.Completion
                 int delta = 0;
                 ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
                 if (eventClass.IsVoid())
+                {
                     if (type == "Event")
                     {
                         List<string> typesUsed = new List<string>();
@@ -3421,8 +3419,9 @@ namespace ASCompletion.Completion
                         position += delta;
                         Sci.SetSel(position, position);
                     }
+                }
                 lookupPosition += delta;
-                string acc = GetPrivateAccessor(afterMethod);
+                string acc = GetPrivateAccessor(afterMethod, inClass);
                 string template = TemplateUtils.GetTemplate("EventHandler");
                 string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
@@ -3530,16 +3529,16 @@ namespace ASCompletion.Completion
             return string.Empty;
         }
 
-        private static string GetPrivateAccessor(MemberModel member)
+        private static string GetPrivateAccessor(MemberModel member, ClassModel inClass)
         {
             string acc = GetStaticKeyword(member);
             if (!string.IsNullOrEmpty(acc)) acc += " ";
-            return acc + GetPrivateKeyword();
+            return acc + GetPrivateKeyword(inClass);
         }
 
-        private static string GetPrivateKeyword()
+        private static string GetPrivateKeyword(ClassModel inClass)
         {
-            if (GetDefaultVisibility() == Visibility.Protected) return ASContext.Context.Features.protectedKey ?? "protected";
+            if (GetDefaultVisibility(inClass) == Visibility.Protected) return ASContext.Context.Features.protectedKey ?? "protected";
             return ASContext.Context.Features.privateKey ?? "private";
         }
 
