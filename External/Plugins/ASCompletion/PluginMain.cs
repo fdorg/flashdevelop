@@ -210,7 +210,7 @@ namespace ASCompletion
                         de = e as DataEvent;
                         if (de.Action == "Completion.ShowHelp")
                         {
-                            ASComplete.HelpKeys = (Keys) de.Data;
+                            ASComplete.HelpKeys = (Keys)de.Data;
                             de.Handled = true;
                         }
                         return;
@@ -279,12 +279,12 @@ namespace ASCompletion
                                 if (info != null)
                                 {
                                     ContextSetupInfos setup = new ContextSetupInfos();
-                                    setup.Platform = (string) info["platform"];
-                                    setup.Lang = (string) info["lang"];
-                                    setup.Version = (string) info["version"];
-                                    setup.TargetBuild = (string) info["targetBuild"];
-                                    setup.Classpath = (string[]) info["classpath"];
-                                    setup.HiddenPaths = (string[]) info["hidden"];
+                                    setup.Platform = (string)info["platform"];
+                                    setup.Lang = (string)info["lang"];
+                                    setup.Version = (string)info["version"];
+                                    setup.TargetBuild = (string)info["targetBuild"];
+                                    setup.Classpath = (string[])info["classpath"];
+                                    setup.HiddenPaths = (string[])info["hidden"];
                                     ASContext.SetLanguageClassPath(setup);
                                     if (setup.AdditionalPaths != null) // report custom classpath
                                         info["additional"] = setup.AdditionalPaths.ToArray();
@@ -299,7 +299,7 @@ namespace ASCompletion
                                 if (info != null && info.ContainsKey("language"))
                                 {
                                     IASContext context = ASContext.GetLanguageContext(info["language"] as string);
-                                    if (context != null && context.Settings != null
+                                    if (context != null && context.Settings != null 
                                         && context.Settings.UserClasspath != null)
                                         info["cp"] = new List<string>(context.Settings.UserClasspath);
                                 }
@@ -347,7 +347,7 @@ namespace ASCompletion
                                 {
                                     case "AS2": name = "AS2Context"; break;
                                     case "AS3": name = "AS3Context"; break;
-                                    default:
+                                    default: 
                                         name = cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context";
                                         break;
                                 }
@@ -533,6 +533,7 @@ namespace ASCompletion
                                         if (ASContext.HasContext && ASContext.Context.IsFileValid)
                                         {
                                             var options = new List<ICompletionListItem>();
+                                            ASGenerator.ContextualGenerator(ASContext.CurSciControl, options);
                                             EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options));
                                             if (options.Count == 0)
                                             {
@@ -540,10 +541,6 @@ namespace ASCompletion
                                             }
                                             CompletionList.Show(options, false);
                                         }
-                                        break;
-
-                                    case "ASCompletion.ContextualGenerator.AddOptions":
-                                        ASGenerator.ContextualGenerator(ASContext.CurSciControl, (List<ICompletionListItem>) de.Data);
                                         break;
                                 }
                             }
@@ -556,7 +553,7 @@ namespace ASCompletion
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 ErrorManager.ShowError(ex);
             }
