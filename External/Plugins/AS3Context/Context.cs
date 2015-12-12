@@ -335,21 +335,13 @@ namespace AS3Context
 
             // intrinsics (deprecated, excepted for FP10 Vector.<T>)
             // add from the highest version number (FP11 > FP10 > FP9)
-            if (majorVersion >= 9)
+            string fp = as3settings.AS3ClassPath + S + "FP";
+            for (int i = majorVersion; i >= 9; i--)
             {
-                string fp = as3settings.AS3ClassPath + S + "FP";
-                for (int i = majorVersion; i >= 10; i--)
-                {
-                    for (int j = minorVersion; j >= 0; j--)
-                    {
-                        AddPath(PathHelper.ResolvePath(fp + i + "." + j));
-                    }
-                    AddPath(PathHelper.ResolvePath(fp + i));
-                }
-                AddPath(PathHelper.ResolvePath(fp + "9"));
+                AddPath(PathHelper.ResolvePath(fp + i));
             }
 
-            // add external pathes
+            // add external paths
             List<PathModel> initCP = classPath;
             classPath = new List<PathModel>();
             if (contextSetup.Classpath != null)
@@ -360,20 +352,20 @@ namespace AS3Context
 
             // add library
             AddPath(PathHelper.LibraryDir + S + "AS3" + S + "classes");
-            // add user pathes from settings
+            // add user paths from settings
             if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
 
-            // add initial pathes
+            // add initial paths
             foreach (PathModel mpath in initCP) AddPath(mpath);
 
             // parse top-level elements
             InitTopLevelElements();
             if (cFile != null) UpdateTopLevelElements();
 
-            // add current temporaty path
+            // add current temporary path
             if (temporaryPath != null)
             {
                 string tempPath = temporaryPath;
