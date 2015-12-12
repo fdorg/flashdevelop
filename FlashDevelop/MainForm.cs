@@ -1683,10 +1683,8 @@ namespace FlashDevelop
         /// <summary>
         /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
         /// <para/>
-        /// WARNING! Do not call <see cref="ScaleHelper.Scale(Bitmap)"/> on the image returned by this method.
-        /// Instead, call it before passing the image to this method.
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
         /// </summary>
-        // TODO: Find all references to this method that creates a copy of the image returned, such as adding it to ImageList, and call FindImage(image, false) instead.
         public Image FindImage(String data)
         {
             return FindImage(data, true);
@@ -1695,8 +1693,7 @@ namespace FlashDevelop
         /// <summary>
         /// Finds the specified composed/ready image.
         /// <para/>
-        /// WARNING! Do not call <see cref="ScaleHelper.Scale(Bitmap)"/> on the image returned by this method if <code>autoAdjusted</code> is <code>true</code>.
-        /// Instead, call it before passing the image to this method.
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
         /// </summary>
         public Image FindImage(String data, Boolean autoAdjusted)
         {
@@ -1715,11 +1712,11 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Deprecated. Returns <code>image</code>.
+        /// Returns a copy of the specified image that has its color adjusted.
         /// </summary>
         public Image ImageSetAdjust(Image image)
         {
-            return image;
+            return ImageManager.SetImageAdjustment(image);
         }
 
         /// <summary>

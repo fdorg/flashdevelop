@@ -1137,7 +1137,7 @@ namespace FileExplorer
                 if (File.Exists(path)) icon = IconExtractor.GetFileIcon(path, false, true);
                 else icon = IconExtractor.GetFolderIcon(path, false, true);
                 image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
-                image = PluginBase.MainForm.GetAutoAdjustedImage(image);
+                image = PluginBase.MainForm.ImageSetAdjust(image);
                 icon.Dispose();
             }
             else

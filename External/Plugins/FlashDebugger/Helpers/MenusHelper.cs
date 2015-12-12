@@ -31,14 +31,14 @@ namespace FlashDebugger
 
             imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add("StartContinue", PluginBase.MainForm.GetAutoAdjustedImage(Resource.StartContinue));
-            imageList.Images.Add("Pause", PluginBase.MainForm.GetAutoAdjustedImage(Resource.Pause));
-            imageList.Images.Add("Stop", PluginBase.MainForm.GetAutoAdjustedImage(Resource.Stop));
-            imageList.Images.Add("Current", PluginBase.MainForm.GetAutoAdjustedImage(Resource.Current));
-            imageList.Images.Add("RunToCursor", PluginBase.MainForm.GetAutoAdjustedImage(Resource.RunToCursor));
-            imageList.Images.Add("Step", PluginBase.MainForm.GetAutoAdjustedImage(Resource.Step));
-            imageList.Images.Add("Next", PluginBase.MainForm.GetAutoAdjustedImage(Resource.Next));
-            imageList.Images.Add("Finish", PluginBase.MainForm.GetAutoAdjustedImage(Resource.Finish));
+            imageList.Images.Add("StartContinue", PluginBase.MainForm.ImageSetAdjust(Resource.StartContinue));
+            imageList.Images.Add("Pause", PluginBase.MainForm.ImageSetAdjust(Resource.Pause));
+            imageList.Images.Add("Stop", PluginBase.MainForm.ImageSetAdjust(Resource.Stop));
+            imageList.Images.Add("Current", PluginBase.MainForm.ImageSetAdjust(Resource.Current));
+            imageList.Images.Add("RunToCursor", PluginBase.MainForm.ImageSetAdjust(Resource.RunToCursor));
+            imageList.Images.Add("Step", PluginBase.MainForm.ImageSetAdjust(Resource.Step));
+            imageList.Images.Add("Next", PluginBase.MainForm.ImageSetAdjust(Resource.Next));
+            imageList.Images.Add("Finish", PluginBase.MainForm.ImageSetAdjust(Resource.Finish));
 
             ToolStripMenuItem tempItem;
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using FlashDevelop.Helpers;
@@ -45,18 +46,18 @@ namespace FlashDevelop.Managers
             if (!Cache.ContainsKey(data))
             {
                 int x, y, icon, bullet, rx, ry;
-                var composed = new Bitmap(Size, Size);
-                var destination = Graphics.FromImage(composed);
+                var original = new Bitmap(Size, Size);
+                var graphics = Graphics.FromImage(original);
                 var destRect = new Rectangle(Padding, Padding, Size - (Padding * 2), Size - (Padding * 2));
 
                 ProcessImageData(data, out x, out y, out icon, out bullet);
-                destination.Clear(Color.Transparent);
+                graphics.Clear(Color.Transparent);
 
                 if (icon >= 0)
                 {
                     rx = (icon % 16) * Size;
                     ry = (icon / 16) * Size;
-                    destination.DrawImage(Source, destRect, new Rectangle(rx, ry, Size, Size), GraphicsUnit.Pixel);
+                    graphics.DrawImage(Source, destRect, new Rectangle(rx, ry, Size, Size), GraphicsUnit.Pixel);
                 }
                 if (bullet >= 0)
                 {
@@ -64,14 +65,34 @@ namespace FlashDevelop.Managers
                     ry = (bullet / 16) * Size;
                     destRect.X += (Size == 32) ? x * 2 : x;
                     destRect.Y += (Size == 32) ? y * 2 : y;
-                    destination.DrawImage(Source, destRect, new Rectangle(rx, ry, Size, Size), GraphicsUnit.Pixel);
+                    graphics.DrawImage(Source, destRect, new Rectangle(rx, ry, Size, Size), GraphicsUnit.Pixel);
                 }
 
-                composed = ScaleHelper.Scale(composed);
-                Cache[data] = GetAutoAdjustedImagePair(composed);
+                graphics.Dispose();
+                original = ScaleHelper.Scale(original);
+                Cache[data] = new ImagePair(original);
             }
 
-            return autoAdjusted ? Cache[data].Adjusted : Cache[data].Original;
+
+            if (autoAdjusted)
+            {
+                var imagePair = Cache[data];
+                return imagePair.Adjusted ?? AddAutoAdjustImage(imagePair);
+            }
+            return Cache[data].Original;
+        }
+
+        /// <summary>
+        /// Gets an adjusted copy of the specified image.
+        /// </summary>
+        public static Image SetImageAdjustment(Image original)
+        {
+            int saturation, brightness;
+            if (GetImageAdjustments(out saturation, out brightness))
+            {
+                return ImageKonverter.ImageAdjust(original, saturation, brightness);
+            }
+            return new Bitmap(original);
         }
 
         /// <summary>
@@ -79,7 +100,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static Image GetAutoAdjustedImage(Image image)
         {
-            return GetAutoAdjustedImagePair(image).Adjusted;
+            return AddAutoAdjustImage(new ImagePair(image));
         }
 
         /// <summary>
@@ -87,13 +108,19 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void AdjustAllImages()
         {
-            string style = Globals.MainForm.GetThemeValue("ImageManager.ImageSet");
             int saturation, brightness;
-            GetImageAdjustments(style, out saturation, out brightness);
-            
-            foreach (var imagePair in AutoAdjusted)
+            GetImageAdjustments(out saturation, out brightness);
+
+            for (int i = 0, length = AutoAdjusted.Count; i < length; i++)
             {
-                ImageKonverter.ImageAdjust(imagePair.Original, imagePair.Adjusted, saturation, brightness);
+                var imagePair = AutoAdjusted[i];
+                var adjusted = imagePair.Adjusted;
+                if (adjusted == null)
+                {
+                    AutoAdjusted.RemoveAt(i--);
+                    length--;
+                }
+                else ImageKonverter.ImageAdjust(imagePair.Original, adjusted, saturation, brightness);
             }
         }
 
@@ -115,33 +142,20 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Gets an instance of <see cref="ImagePair"/> with the specified image,
-        /// that has a copy of the image that changes color according to the theme.
+        /// Adds a pair to the update list.
         /// </summary>
-        static ImagePair GetAutoAdjustedImagePair(Image image)
+        static Image AddAutoAdjustImage(ImagePair pair)
         {
-            var pair = new ImagePair(image);
             AutoAdjusted.Add(pair);
-
-            string style = Globals.MainForm.GetThemeValue("ImageManager.ImageSet");
-            int saturation, brightness;
-
-            if (GetImageAdjustments(style, out saturation, out brightness))
-            {
-                pair.Adjusted = new Bitmap(image.Width, image.Height);
-                ImageKonverter.ImageAdjust(image, pair.Adjusted, saturation, brightness);
-            }
-            else pair.Adjusted = new Bitmap(image);
-
-            return pair;
+            return pair.Adjusted = SetImageAdjustment(pair.Original);
         }
 
         /// <summary>
         /// Gets the appropriate color adjustment components.
         /// </summary>
-        static bool GetImageAdjustments(string style, out int saturation, out int brightness)
+        static bool GetImageAdjustments(out int saturation, out int brightness)
         {
-            switch (style)
+            switch (Globals.MainForm.GetThemeValue("ImageManager.ImageSet"))
             {
                 case "Bright": saturation =  20; brightness =   0; return true;
                 case "Dim":    saturation =  -5; brightness =  -2; return true;
@@ -157,23 +171,32 @@ namespace FlashDevelop.Managers
         /// </summary>
         class ImagePair
         {
+            Image original;
+            WeakReference adjusted;
+
             /// <summary>
             /// The original image.
             /// </summary>
-            public Image Original;
+            public Image Original
+            {
+                get { return original; }
+            }
 
             /// <summary>
             /// The copy of <see cref="Original"/> that changes color according to the theme.
             /// </summary>
-            public Image Adjusted;
+            public Image Adjusted
+            {
+                get { return adjusted.Target as Image; }
+                set { adjusted.Target = value; }
+            }
 
             /// <summary>
             /// Creates an instance of <see cref="ImagePair"/>.
             /// </summary>
             /// <param name="original"><see cref="Original"/></param>
-            public ImagePair(Image original)
+            public ImagePair(Image original) : this(original, null)
             {
-                Original = original;
             }
 
             /// <summary>
@@ -183,8 +206,8 @@ namespace FlashDevelop.Managers
             /// <param name="adjusted"><see cref="Adjusted"/></param>
             public ImagePair(Image original, Image adjusted)
             {
-                Original = original;
-                Adjusted = adjusted;
+                this.original = original;
+                this.adjusted = new WeakReference(adjusted);
             }
         }
     }
