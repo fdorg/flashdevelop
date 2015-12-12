@@ -29,6 +29,8 @@ namespace ResultsPanel
         public Keys PrevError = Keys.Shift | Keys.F12;
         public Keys CopyEntry = Keys.Control | Keys.C;
         public Keys IgnoreEntry = Keys.Delete;
+        public Keys ClearResults = Keys.None;
+        public Keys ClearIgnoredEntries = Keys.None;
 
         #region Required Properties
 
@@ -157,35 +159,31 @@ namespace ResultsPanel
 
                 case EventType.Keys:
                     KeyEvent ke = (KeyEvent)e;
-                    if (ke.Value == this.NextError)
+                    if (ke.Value == this.pluginUI.nextEntry.ShortcutKeys)
                     {
                         ke.Handled = true;
                         this.pluginUI.NextEntry(null, null);
                     }
-                    else if (ke.Value == this.PrevError)
+                    else if (ke.Value == this.pluginUI.previousEntry.ShortcutKeys)
                     {
                         ke.Handled = true;
                         this.pluginUI.PreviousEntry(null, null);
                     }
-                    else if (ke.Value == this.CopyEntry)
+                    else if (ke.Value == this.pluginUI.copyEntryContextMenuItem.ShortcutKeys)
                     {
                         ke.Handled = pluginUI.CopyTextShortcut();
                     }
-                    else if (ke.Value == this.IgnoreEntry)
+                    else if (ke.Value == this.pluginUI.ignoreEntryContextMenuItem.ShortcutKeys)
                     {
                         ke.Handled = pluginUI.IgnoreEntryShortcut();
                     }
-                    break;
-
-                case EventType.Shortcut:
-                    DataEvent de = (DataEvent)e;
-                    if (de.Action == "ResultsPanel.ShowNextResult")
+                    else if (ke.Value == this.pluginUI.clearEntriesContextMenuItem.ShortcutKeys)
                     {
-                        this.NextError = (Keys)de.Data;
+                        ke.Handled = pluginUI.ClearOutput();
                     }
-                    else if (de.Action == "ResultsPanel.ShowPrevResult")
+                    else if (ke.Value == this.pluginUI.clearIgnoredEntriesContextMenuItem.ShortcutKeys)
                     {
-                        this.PrevError = (Keys)de.Data;
+                        ke.Handled = pluginUI.ClearIgnoredEntries();
                     }
                     break;
             }
@@ -246,8 +244,11 @@ namespace ResultsPanel
             String title = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
             ToolStripMenuItem viewItem = new ToolStripMenuItem(title, this.pluginImage, new EventHandler(this.OpenPanel));
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.NextError);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.PrevError);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.pluginUI.nextEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.pluginUI.previousEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.IgnoreEntry", this.pluginUI.ignoreEntryContextMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.pluginUI.clearEntriesContextMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.pluginUI.clearIgnoredEntriesContextMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -261,7 +262,7 @@ namespace ResultsPanel
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
             this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
         }
-
+        
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
