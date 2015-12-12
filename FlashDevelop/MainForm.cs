@@ -1828,13 +1828,21 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the specified item's shortcut keys
+        /// Gets the specified item's shortcut keys.
         /// </summary>
         public Keys GetShortcutItemKeys(String id)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
-            if (item != null) return item.Custom;
-            else return Keys.None;
+            return item == null ? Keys.None : item.Custom;
+        }
+
+        /// <summary>
+        /// Gets the specified item's id.
+        /// </summary>
+        public String GetShortcutItemId(Keys keys)
+        {
+            ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
+            return item == null ? string.Empty : item.Id;
         }
 
         /// <summary>
