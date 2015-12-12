@@ -208,8 +208,8 @@ namespace ProjectManager.Controls
             catch {
                 image = new Bitmap(16, 16);
             }
-            image = (Bitmap)PluginBase.MainForm.GetAutoAdjustedImage(ScaleHelper.Scale(image));
-            imageList.Images.Add(image);
+            image = (Bitmap)PluginBase.MainForm.GetAutoAdjustedImage(image);
+            imageList.Images.Add(ScaleHelper.Scale(image));
             return new FDImage(image,imageList.Images.Count-1);
         }
 
