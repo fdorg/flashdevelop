@@ -285,7 +285,7 @@ namespace ASCompletion.Settings
         #region Generator
 
         const bool DEFAULT_GENERATE_PROTECTED = false;
-        const bool DEFAULT_GENERATE_STARTWITHMODIFIERS = false;
+        const ModifierOrder DEFAULT_GENERATE_STARTWITHMODIFIERS = ModifierOrder.AsIs;
         const bool DEFAULT_GENERATE_ADDCLOSINGBRACES = false;
         const PropertiesGenerationLocations DEFAULT_GENERATE_PROPERTIES = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
         const MethodsGenerationLocations DEFAULT_GENERATE_METHODS = MethodsGenerationLocations.AfterCurrentMethod;
@@ -300,7 +300,7 @@ namespace ASCompletion.Settings
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
         private string[] eventListenersAutoRemove;
-        private bool startWithModifiers;
+        private ModifierOrder startWithModifiers = DEFAULT_GENERATE_STARTWITHMODIFIERS;
         private PropertiesGenerationLocations propertiesGenerationLocation;
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
@@ -328,7 +328,7 @@ namespace ASCompletion.Settings
         [DisplayName("Start Declarations With Access Modifiers")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.StartWithModifiers"),
         DefaultValue(DEFAULT_GENERATE_STARTWITHMODIFIERS)]
-        public bool StartWithModifiers
+        public ModifierOrder StartWithModifiers
         {
             get { return startWithModifiers; }
             set { startWithModifiers = value; }
@@ -419,5 +419,20 @@ namespace ASCompletion.Settings
         target_eventNameHandler = 1,
         onTargetEventName = 2,
         handleTargetEventName = 3
+    }
+
+    public enum ModifierOrder
+    {
+        AsIs,
+        StartWithAccess,
+        StartWithOverride,
+        StartWithAccessOverride,
+        StartWithOverrideAccess,
+        EndWithAccess,
+        EndWithOverride,
+        EndWithAccessOverride,
+        EndWithOverrideAccess,
+        StartWithAccess_EndWithOverride,
+        StartWithOverride_EndWithAccess,
     }
 }

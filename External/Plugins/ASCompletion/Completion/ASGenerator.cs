@@ -33,7 +33,8 @@ namespace ASCompletion.Completion
         const string BlankLine = "$(Boundary)\n\n";
         const string NewLine = "$(Boundary)\n";
         static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
-        static private Regex reModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
+        static private Regex reAccessModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
+        static private Regex reOverrideModifier = new Regex("override ", RegexOptions.Compiled);
 
         static private string contextToken;
         static private string contextParam;
@@ -4295,8 +4296,8 @@ namespace ASCompletion.Completion
             Sci.BeginUndoAction();
             try
             {
-                if (ASContext.CommonSettings.StartWithModifiers)
-                    src = FixModifiersLocation(src);
+                if (ASContext.CommonSettings.StartWithModifiers != ModifierOrder.AsIs)
+                    src = FixModifiersLocation(src, ASContext.CommonSettings.StartWithModifiers);
 
                 int len = SnippetHelper.InsertSnippetText(Sci, position + Sci.MBSafeTextLength(Sci.SelText), src);
                 UpdateLookupPosition(position, len);
@@ -4308,7 +4309,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Move "visibility" modifier at the beginning of the line
         /// </summary>
-        private static string FixModifiersLocation(string src)
+        private static string FixModifiersLocation(string src, ModifierOrder order)
         {
             bool needUpdate = false;
             string[] lines = src.Split('\n');
@@ -4320,17 +4321,79 @@ namespace ASCompletion.Completion
                 if (m.Success)
                 {
                     Group decl = m.Groups[2];
-                    Match m2 = reModifier.Match(decl.Value);
-                    if (m2.Success)
+                    string mAccess, mOverride;
+                    string declValue = decl.Value;
+                    switch (order)
                     {
-                        string repl = m2.Value + decl.Value.Remove(m2.Index, m2.Length);
-                        lines[i] = line.Remove(decl.Index, decl.Length).Insert(decl.Index, repl);
+                        case ModifierOrder.StartWithAccess:
+                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess))
+                                declValue = mAccess + declValue;
+                            break;
+                        case ModifierOrder.StartWithOverride:
+                            if (RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                                declValue = mOverride + declValue;
+                            break;
+                        case ModifierOrder.StartWithAccessOverride:
+                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                                declValue = mAccess + mOverride + declValue;
+                            break;
+                        case ModifierOrder.StartWithOverrideAccess:
+                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                                declValue = mOverride + mAccess + declValue;
+                            break;
+                        case ModifierOrder.EndWithAccess:
+                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess))
+                                declValue += mAccess;
+                            break;
+                        case ModifierOrder.EndWithOverride:
+                            if (RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                                declValue += mOverride;
+                            break;
+                        case ModifierOrder.EndWithAccessOverride:
+                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                                declValue += mAccess + mOverride;
+                            break;
+                        case ModifierOrder.EndWithOverrideAccess:
+                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                                declValue += mOverride + mAccess;
+                            break;
+                        case ModifierOrder.StartWithAccess_EndWithOverride:
+                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                                declValue = mAccess + declValue + mOverride;
+                            break;
+                        case ModifierOrder.StartWithOverride_EndWithAccess:
+                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                                declValue = mOverride + declValue + mAccess;
+                            break;
+                    }
+                    if (decl.Value != declValue)
+                    {
+                        lines[i] = line.Remove(decl.Index, decl.Length).Insert(decl.Index, declValue);
                         needUpdate = true;
                     }
                 }
             }
             if (needUpdate) return String.Join("\n", lines);
             else return src;
+        }
+
+        private static bool RemoveAndExtractModifier(Regex regex, ref string decl, out string modifier)
+        {
+            Match m = regex.Match(decl);
+            if (m.Success)
+            {
+                decl = decl.Remove(m.Index, m.Length);
+                modifier = m.Value;
+                return true;
+            }
+            modifier = string.Empty;
+            return false;
         }
 
         private static void UpdateLookupPosition(int position, int delta)
