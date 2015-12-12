@@ -33,7 +33,7 @@ namespace ASCompletion.Completion
         const string BlankLine = "$(Boundary)\n\n";
         const string NewLine = "$(Boundary)\n";
         static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
-        static private Regex reAccessModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
+        static private Regex reAccessModifier = new Regex("public |private |protected ", RegexOptions.Compiled);
         static private Regex reOverrideModifier = new Regex("override ", RegexOptions.Compiled);
 
         static private string contextToken;
@@ -4318,69 +4318,67 @@ namespace ASCompletion.Completion
                 string line = lines[i];
 
                 Match m = reModifiers.Match(line);
-                if (m.Success)
+                if (!m.Success) continue;
+
+                Group decl = m.Groups[2];
+                string mAccess, mOverride;
+                string declValue = decl.Value;
+                switch (order)
                 {
-                    Group decl = m.Groups[2];
-                    string mAccess, mOverride;
-                    string declValue = decl.Value;
-                    switch (order)
-                    {
-                        case ModifierOrder.StartWithAccess:
-                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess))
-                                declValue = mAccess + declValue;
-                            break;
-                        case ModifierOrder.StartWithOverride:
-                            if (RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
-                                declValue = mOverride + declValue;
-                            break;
-                        case ModifierOrder.StartWithAccessOverride:
-                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
-                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
-                                declValue = mAccess + mOverride + declValue;
-                            break;
-                        case ModifierOrder.StartWithOverrideAccess:
-                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
-                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
-                                declValue = mOverride + mAccess + declValue;
-                            break;
-                        case ModifierOrder.EndWithAccess:
-                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess))
-                                declValue += mAccess;
-                            break;
-                        case ModifierOrder.EndWithOverride:
-                            if (RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
-                                declValue += mOverride;
-                            break;
-                        case ModifierOrder.EndWithAccessOverride:
-                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
-                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
-                                declValue += mAccess + mOverride;
-                            break;
-                        case ModifierOrder.EndWithOverrideAccess:
-                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
-                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
-                                declValue += mOverride + mAccess;
-                            break;
-                        case ModifierOrder.StartWithAccess_EndWithOverride:
-                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
-                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
-                                declValue = mAccess + declValue + mOverride;
-                            break;
-                        case ModifierOrder.StartWithOverride_EndWithAccess:
-                            if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
-                                | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
-                                declValue = mOverride + declValue + mAccess;
-                            break;
-                    }
-                    if (decl.Value != declValue)
-                    {
-                        lines[i] = line.Remove(decl.Index, decl.Length).Insert(decl.Index, declValue);
-                        needUpdate = true;
-                    }
+                    case ModifierOrder.StartWithAccess:
+                        if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess))
+                            declValue = mAccess + declValue;
+                        break;
+                    case ModifierOrder.StartWithOverride:
+                        if (RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                            declValue = mOverride + declValue;
+                        break;
+                    case ModifierOrder.StartWithAccessOverride:
+                        if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                            | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                            declValue = mAccess + mOverride + declValue;
+                        break;
+                    case ModifierOrder.StartWithOverrideAccess:
+                        if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                            | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                            declValue = mOverride + mAccess + declValue;
+                        break;
+                    case ModifierOrder.EndWithAccess:
+                        if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess))
+                            declValue = declValue + mAccess;
+                        break;
+                    case ModifierOrder.EndWithOverride:
+                        if (RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                            declValue = declValue + mOverride;
+                        break;
+                    case ModifierOrder.EndWithAccessOverride:
+                        if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                            | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                            declValue = declValue + mAccess + mOverride;
+                        break;
+                    case ModifierOrder.EndWithOverrideAccess:
+                        if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                            | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                            declValue = declValue + mOverride + mAccess;
+                        break;
+                    case ModifierOrder.StartWithAccess_EndWithOverride:
+                        if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                            | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                            declValue = mAccess + declValue + mOverride;
+                        break;
+                    case ModifierOrder.StartWithOverride_EndWithAccess:
+                        if (RemoveAndExtractModifier(reAccessModifier, ref declValue, out mAccess)
+                            | RemoveAndExtractModifier(reOverrideModifier, ref declValue, out mOverride))
+                            declValue = mOverride + declValue + mAccess;
+                        break;
+                }
+                if (decl.Value != declValue)
+                {
+                    lines[i] = line.Remove(decl.Index, decl.Length).Insert(decl.Index, declValue);
+                    needUpdate = true;
                 }
             }
-            if (needUpdate) return String.Join("\n", lines);
-            else return src;
+            return needUpdate ? string.Join("\n", lines) : src;
         }
 
         private static bool RemoveAndExtractModifier(Regex regex, ref string decl, out string modifier)
