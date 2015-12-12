@@ -217,7 +217,22 @@ namespace ProjectManager
         {
             if (!string.IsNullOrEmpty(e.Label) && Rename != null)
             {
-                if (!Rename((e.Node as GenericNode).BackingPath, e.Label))
+                if (e.Node is ProjectNode)
+                {
+                    var oldName = project.ProjectPath;
+                    string label = e.Label;
+                    int index = label.IndexOf("(" + project.LanguageDisplayName + ")");
+                    if (index != -1) label = label.Remove(index).Trim();
+                    var newName = Path.Combine(project.Directory, label);
+                    newName = Path.ChangeExtension(newName, Path.GetExtension(oldName));
+                    if (Rename(oldName, newName))
+                    {
+                        PluginBase.MainForm.OpenEditableDocument(newName);
+                        File.Delete(oldName); //slavara: because the old file remains after renaming
+                    }
+                    else e.CancelEdit = true;
+                }
+                else if (!Rename(((GenericNode) e.Node).BackingPath, e.Label))
                     e.CancelEdit = true;
             }
             else e.CancelEdit = true;

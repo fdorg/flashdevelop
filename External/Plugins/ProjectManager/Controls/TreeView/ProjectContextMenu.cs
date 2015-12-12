@@ -323,6 +323,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(CommandPrompt, 1);
             if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 1);
             menu.Add(Paste, 2);
+            menu.Add(Rename, 1);
             menu.Add(ShowHidden, 3, showHidden);
             menu.Add(Properties, 4);
         }
