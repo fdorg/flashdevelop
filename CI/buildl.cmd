@@ -11,6 +11,8 @@ set PATH=%PATH%;C:\Program Files (x86)\NSIS
 :: Need path up
 cd ..
 
+:flashdevelop
+
 :: Reset bin files
 git clean -f -x -d FlashDevelop\Bin\Debug
 
@@ -18,7 +20,7 @@ git clean -f -x -d FlashDevelop\Bin\Debug
 if %errorlevel% neq 0 goto :error
 
 :: Build the PluginCore
-msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -27,7 +29,7 @@ if %errorlevel% neq 0 goto :error
 call SetVersion.bat
 
 :: Build the solution
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -38,16 +40,48 @@ makensis FlashDevelop\Installer\Installer.nsi
 :: Check for nsis errors
 if %errorlevel% neq 0 goto :error
 
-:: Delete old and create an new archive
-del FlashDevelop\Installer\Binary\FlashDevelop.zip
+:: Create the archive
 7z a -tzip FlashDevelop\Installer\Binary\FlashDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
 
 :: Check for 7zip errors
 if %errorlevel% neq 0 goto :error
 
-:: Done
+:haxedevelop
+
+:: Copy distro files
+xcopy Distros\HaxeDevelop /s /e /y
+
+:: Remove bad files
+del FlashDevelop\Bin\Debug\FlashDevelop.exe.config
+
+:: Build the PluginCore
+msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86
+
+:: Check for build errors
+if %errorlevel% neq 0 goto :error
+
+:: Extract version from HEAD
+call SetVersion.bat
+
+:: Build the solution
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86
+
+:: Check for build errors
+if %errorlevel% neq 0 goto :error
+
+:: Create the installer
+makensis FlashDevelop\Installer\Installer.nsi
+
+:: Check for nsis errors
+if %errorlevel% neq 0 goto :error
+
+:: Create the archive
+7z a -tzip FlashDevelop\Installer\Binary\HaxeDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
+
+:: Done, Run FD
 start FlashDevelop\Installer\Binary\FlashDevelop.exe
 exit
 
 :error
+
 exit -1

@@ -39,3 +39,4 @@ $file = [System.IO.Path]::GetTempFileName()
 $data = "Build: $projectVersion`r`nTime: " + $date.ToUniversalTime() + " GMT"
 $data | Set-Content $file
 ncftpput.exe -u "$login" -p "$pass" -C ftp.flashdevelop.org "$file" "downloads/builds/FlashDevelop-$env:APPVEYOR_REPO_BRANCH.txt";
+ncftpput.exe -u "$login" -p "$pass" -C ftp.flashdevelop.org "$file" "downloads/builds/HaxeDevelop-$env:APPVEYOR_REPO_BRANCH.txt";
