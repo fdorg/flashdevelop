@@ -1,9 +1,8 @@
 using System.ComponentModel;
 using System.Windows.Forms;
-using PluginCore;
 using PluginCore.Localization;
 
-namespace ProjectManager.Helpers
+namespace PluginCore.Controls
 {
     /// <summary>
     /// A simple form where a user can enter a text string.
@@ -141,10 +140,10 @@ namespace ProjectManager.Helpers
 
         private void InititalizeLocalization()
         {
-            this.btnOK.Text = TextHelper.GetString("Label.OK");
-            this.btnCancel.Text = TextHelper.GetString("Label.Cancel");
-            this.titleLabel.Text = TextHelper.GetString("Info.EnterText");
-            this.Text = " " + TextHelper.GetString("Title.EnterText");
+            this.btnOK.Text = TextHelper.GetString("ProjectManager.Label.OK");
+            this.btnCancel.Text = TextHelper.GetString("ProjectManager.Label.Cancel");
+            this.titleLabel.Text = TextHelper.GetString("ProjectManager.Info.EnterText");
+            this.Text = " " + TextHelper.GetString("ProjectManager.Title.EnterText");
         }
 
         private void btnOK_Click(object sender, System.EventArgs e)

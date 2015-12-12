@@ -9,7 +9,7 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ProjectManager.Helpers;
+using PluginCore.Controls;
 
 namespace CodeRefactor.Provider
 {
