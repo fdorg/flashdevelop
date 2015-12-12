@@ -251,18 +251,18 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private static void UpdateItemHighlightFont(ShortcutListItem item)
         {
-            item.ForeColor = item.Conflicts == null ? SystemColors.ControlText : Color.DarkRed;
-            item.SubItems[1].ForeColor = item.KeysString == "None" ? SystemColors.GrayText : SystemColors.ControlText;
-            if (item.IsModified)
+            if (item.Conflicts == null)
             {
-                item.Font = new Font(Globals.Settings.DefaultFont, FontStyle.Bold);
-                item.UseItemStyleForSubItems = true;
+                item.ForeColor = SystemColors.ControlText;
+                item.SubItems[1].ForeColor = item.Custom == Keys.None ? SystemColors.GrayText : SystemColors.ControlText;
             }
             else
             {
-                item.Font = new Font(Globals.Settings.DefaultFont, FontStyle.Regular);
-                item.UseItemStyleForSubItems = false;
+                item.ForeColor = Color.DarkRed;
+                item.SubItems[1].ForeColor = Color.DarkRed;
             }
+            item.Font = new Font(Globals.Settings.DefaultFont, item.IsModified ? FontStyle.Bold : FontStyle.Regular);
+            item.UseItemStyleForSubItems = item.IsModified;
         }
 
         /// <summary>
