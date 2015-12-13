@@ -455,10 +455,8 @@ namespace FlashDevelop.Dialogs
                 if (item == target) continue;
                 if (item.Custom == keys)
                 {
-                    if (item.HasConflicts) conflicts.AddRange(item.Conflicts);
-                    else conflicts.Add(item);
-
-                    item.Conflicts = conflicts;
+                    conflicts.Add(item);
+                    item.Conflicts = conflicts; 
                 }
             }
 
@@ -637,6 +635,7 @@ namespace FlashDevelop.Dialogs
                 get { return this.conflicts; }
                 set
                 {
+                    if (this.conflicts == value) return;
                     this.conflicts = value;
                     UpdateItemHighlightFont(this);
                 }
@@ -666,6 +665,7 @@ namespace FlashDevelop.Dialogs
                 get { return this.custom; }
                 set
                 {
+                    if (this.custom == value) return;
                     this.custom = value;
                     this.KeysString = DataConverter.KeysToString(this.custom);
                     this.SubItems[1].Text = this.KeysString;
