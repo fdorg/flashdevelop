@@ -50,7 +50,7 @@ if %errorlevel% neq 0 goto :error
 
 :: Remove bad files
 del FlashDevelop\Bin\Debug\FlashDevelop.exe.config
-del FlashDevelop\Bin\Debug\StartPage\images\*.*
+del FlashDevelop\Bin\Debug\StartPage\images\*.* /Q
 
 :: Copy distro files
 xcopy Distros\HaxeDevelop /s /e /y
