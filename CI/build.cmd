@@ -43,11 +43,12 @@ if %errorlevel% neq 0 goto :error
 
 :haxedevelop
 
-:: Copy distro files
-xcopy Distros\HaxeDevelop /s /e /y
-
 :: Remove bad files
 del FlashDevelop\Bin\Debug\FlashDevelop.exe.config
+del FlashDevelop\Bin\Debug\StartPage\images\*.*
+
+:: Copy distro files
+xcopy Distros\HaxeDevelop /s /e /y
 
 :: Build the PluginCore
 msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86
