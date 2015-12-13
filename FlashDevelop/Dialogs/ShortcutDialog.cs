@@ -392,7 +392,6 @@ namespace FlashDevelop.Dialogs
             if (item.Custom == shortcut) return;
             item.Custom = shortcut;
             item.Selected = true;
-            ResetConflicts(item);
             this.GetConflictItems(item);
             if (item.HasConflicts)
             {
@@ -446,21 +445,19 @@ namespace FlashDevelop.Dialogs
             var keys = target.Custom;
             if (keys == 0) return;
 
-            var conflicts = new List<ShortcutListItem> { target };
+            List<ShortcutListItem> conflicts = null;
 
             for (int i = 0; i < this.shortcutListItems.Length; i++)
             {
                 var item = this.shortcutListItems[i];
 
-                if (item == target) continue;
-                if (item.Custom == keys)
-                {
-                    conflicts.Add(item);
-                    item.Conflicts = conflicts; 
-                }
+                if (item.Custom != keys || item == target) continue;
+                if (conflicts == null) conflicts = new List<ShortcutListItem> { target };
+                conflicts.Add(item);
+                item.Conflicts = conflicts;
             }
 
-            if (conflicts.Count > 1) target.Conflicts = conflicts;
+            target.Conflicts = conflicts;
         }
 
         /// <summary>
@@ -635,7 +632,6 @@ namespace FlashDevelop.Dialogs
                 get { return this.conflicts; }
                 set
                 {
-                    if (this.conflicts == value) return;
                     this.conflicts = value;
                     UpdateItemHighlightFont(this);
                 }
@@ -665,10 +661,10 @@ namespace FlashDevelop.Dialogs
                 get { return this.custom; }
                 set
                 {
-                    if (this.custom == value) return;
                     this.custom = value;
                     this.KeysString = DataConverter.KeysToString(this.custom);
                     this.SubItems[1].Text = this.KeysString;
+                    ResetConflicts(this);
                     UpdateItemHighlightFont(this);
                 }
             }
@@ -695,11 +691,13 @@ namespace FlashDevelop.Dialogs
             /// </summary>
             public ShortcutListItem(ShortcutItem shortcutItem)
             {
-                this.SubItems.Add(string.Empty);
-                this.Name = this.Text = shortcutItem.Id;
                 this.item = shortcutItem;
                 this.conflicts = null;
-                this.Custom = shortcutItem.Custom;
+                this.custom = this.Item.Custom;
+                this.KeysString = DataConverter.KeysToString(this.Custom);
+                this.Name = this.Text = this.Id;
+                this.SubItems.Add(this.KeysString);
+                UpdateItemHighlightFont(this);
             }
 
             /// <summary>
