@@ -68,14 +68,16 @@ namespace OutputPanel
         {
             get
             {
-                if (highlightMarkers == null || highlightMarkers.Count == 0)
+                if (highlightMarkers == null)
                 {
-                    this.highlightMarkers = new List<HighlightMarker>();
-                    this.highlightMarkers.Add(new HighlightMarker("Info:", LogLevel.Info));
-                    this.highlightMarkers.Add(new HighlightMarker("Debug:", LogLevel.Debug));
-                    this.highlightMarkers.Add(new HighlightMarker("Warning:", LogLevel.Warning));
-                    this.highlightMarkers.Add(new HighlightMarker("Error:", LogLevel.Error));
-                    this.highlightMarkers.Add(new HighlightMarker("Fatal:", LogLevel.Fatal));
+                    this.highlightMarkers = new List<HighlightMarker>
+                    {
+                        new HighlightMarker("Info:", LogLevel.Info),
+                        new HighlightMarker("Debug:", LogLevel.Debug),
+                        new HighlightMarker("Warning:", LogLevel.Warning),
+                        new HighlightMarker("Error:", LogLevel.Error),
+                        new HighlightMarker("Fatal:", LogLevel.Fatal)
+                    };
                 }
                 return highlightMarkers;
             }
@@ -91,15 +93,17 @@ namespace OutputPanel
         private LogLevel level;
         private Color highlightColor;
 
-        public HighlightMarker() : this(string.Empty, LogLevel.Debug)
+        public HighlightMarker() : this(String.Empty, LogLevel.Custom)
         {
         }
+
         public HighlightMarker(String marker, LogLevel level)
         {
             this.marker = marker;
             this.level = level;
             this.highlightColor = Color.Empty;
         }
+
         public HighlightMarker(String marker, Color highlightColor)
         {
             this.marker = marker;
@@ -147,8 +151,7 @@ namespace OutputPanel
         {
             get
             {
-                return !(string.IsNullOrEmpty(this.marker)
-                    || (this.level == LogLevel.Custom && this.highlightColor.IsEmpty));
+                return this.level != LogLevel.Custom || !this.highlightColor.IsEmpty;
             }
         }
 
