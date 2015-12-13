@@ -506,6 +506,7 @@ namespace FlashDevelop.Dialogs
         {
             this.viewCustom.Checked = false;
             this.filterTextBox.Text = string.Empty;
+            this.filterTextBox.Select();
         }
 
         /// <summary>
