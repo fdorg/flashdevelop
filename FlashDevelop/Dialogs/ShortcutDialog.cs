@@ -295,7 +295,14 @@ namespace FlashDevelop.Dialogs
                 this.shortcutListItems[counter++] = new ShortcutListItem(item);
             }
             Array.Sort(this.shortcutListItems, new ShorcutListItemComparer());
+            this.UpdateAllShortcutsConflicts();
+        }
 
+        /// <summary>
+        /// Update conflicts statuses of all shortcut items.
+        /// </summary>
+        void UpdateAllShortcutsConflicts()
+        {
             bool conflicts = false;
             for (int i = 0; i < this.shortcutListItems.Length; i++)
             {
@@ -400,7 +407,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Assign the new shortcut.
         /// </summary>
-        void AssignNewShortcut(ShortcutListItem item, Keys shortcut, bool suppressWarning = false)
+        void AssignNewShortcut(ShortcutListItem item, Keys shortcut)
         {
             if (shortcut == 0 || shortcut == Keys.Delete) shortcut = 0;
             else if (!ToolStripManager.IsValidShortcut(shortcut)) return;
@@ -412,7 +419,6 @@ namespace FlashDevelop.Dialogs
             this.GetConflictItems(item);
             if (item.HasConflicts)
             {
-                if (suppressWarning) return;
                 ErrorManager.ShowWarning(TextHelper.GetString("Info.ShortcutIsAlreadyUsed"), null);
                 this.filterTextBox.Focus(); // Set focus to filter...
                 this.filterTextBox.Text = ViewConflictsKey + item.KeysString;
@@ -552,16 +558,10 @@ namespace FlashDevelop.Dialogs
                 string extension = Path.GetExtension(dialog.FileName);
                 if (extension.Equals(".fda", StringComparison.OrdinalIgnoreCase))
                 {
-                    var shortcuts = ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
-                    if (shortcuts != null)
-                    {
-                        this.listView.BeginUpdate();
-                        for (int i = 0; i < shortcuts.Length; i++)
-                        {
-                            this.AssignNewShortcut(this.shortcutListItems[i], shortcuts[i], true);
-                        }
-                        this.listView.EndUpdate();
-                    }
+                    this.listView.BeginUpdate();
+                    ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
+                    this.UpdateAllShortcutsConflicts();
+                    this.listView.EndUpdate();
                 }
             }
         }

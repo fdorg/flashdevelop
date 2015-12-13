@@ -211,45 +211,41 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Loads the custom shortcuts from a file and returns an array of new shortcut keys
-        /// corresponding to the shortcut items in the specified array.
+        /// Loads the custom shortcuts from a file to a list.
         /// </summary>
-        public static Keys[] LoadCustomShortcuts(String file, IShortcutItem[] items)
+        public static void LoadCustomShortcuts(String file, IEnumerable<IShortcutItem> items)
         {
             if (File.Exists(file))
             {
                 try
                 {
-                    Keys[] newShortcuts = new Keys[items.Length];
-
                     List<Argument> customShortcuts = new List<Argument>();
                     customShortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, customShortcuts, false);
-                    Int32 customCount = customShortcuts.Count;
+                    Int32 count = customShortcuts.Count;
 
-                    for (int i = 0; i < items.Length; i++)
+                    foreach (IShortcutItem item in items)
                     {
-                        IShortcutItem item = items[i];
-                        newShortcuts[i] = item.Default;
-                        for (int j = 0; j < customCount; j++)
+                        Keys newShortcut = item.Default;
+                        for (int i = 0; i < count; i++)
                         {
-                            Argument arg = customShortcuts[j];
+                            Argument arg = customShortcuts[i];
                             if (arg.Key == item.Id)
                             {
-                                newShortcuts[i] = (Keys) Enum.Parse(typeof(Keys), arg.Value);
+                                newShortcut = (Keys) Enum.Parse(typeof(Keys), arg.Value);
+                                customShortcuts.RemoveAt(i);
                                 break;
                             }
                         }
+                        item.Custom = newShortcut;
                     }
-                    return newShortcuts;
                 }
                 catch (Exception e)
                 {
                     ErrorManager.ShowError(e);
                 }
             }
-            return null;
         }
-        
+
         /// <summary>
         /// Saves the list of custom shortcuts to a file.
         /// </summary>
@@ -304,7 +300,7 @@ namespace FlashDevelop.Managers
     {
         String Id { get; }
         Keys Default { get; }
-        Keys Custom { get; }
+        Keys Custom { get; set; }
         Boolean IsModified { get; }
     }
 
