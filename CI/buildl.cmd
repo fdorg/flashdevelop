@@ -21,7 +21,7 @@ del FlashDevelop\Installer\Binary\*.exe /Q
 if %errorlevel% neq 0 goto :error
 
 :: Build the PluginCore
-msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86
+msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -30,7 +30,7 @@ if %errorlevel% neq 0 goto :error
 call SetVersion.bat
 
 :: Build the solution
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -60,7 +60,7 @@ del FlashDevelop\Bin\Debug\StartPage\images\*.* /Q
 xcopy Distros\HaxeDevelop /s /e /y
 
 :: Build the PluginCore
-msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86
+msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -69,7 +69,7 @@ if %errorlevel% neq 0 goto :error
 call SetVersion.bat
 
 :: Build the solution
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
