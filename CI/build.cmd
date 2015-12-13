@@ -8,9 +8,6 @@ set PATH=%PATH%;C:\Program Files\7-Zip\
 
 :flashdevelop
 
-:: Reset bin files
-git clean -f -x -d FlashDevelop\Bin\Debug
-
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
@@ -42,6 +39,9 @@ if %errorlevel% neq 0 goto :error
 if %errorlevel% neq 0 goto :error
 
 :haxedevelop
+
+:: Reset bin files
+git clean -f -x -d FlashDevelop\Bin\Debug
 
 :: Remove bad files
 del FlashDevelop\Bin\Debug\FlashDevelop.exe.config

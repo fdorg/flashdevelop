@@ -48,6 +48,9 @@ if %errorlevel% neq 0 goto :error
 
 :haxedevelop
 
+:: Reset bin files
+git clean -f -x -d FlashDevelop\Bin\Debug
+
 :: Remove bad files
 del FlashDevelop\Bin\Debug\FlashDevelop.exe.config
 del FlashDevelop\Bin\Debug\StartPage\images\*.* /Q
