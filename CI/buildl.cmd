@@ -16,6 +16,7 @@ cd ..
 :: Reset bin files
 git clean -f -x -d FlashDevelop\Bin\Debug
 del FlashDevelop\Installer\Binary\*.exe /Q
+del FlashDevelop\Installer\Binary\*.zip /Q
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
