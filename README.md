@@ -1,12 +1,13 @@
+![image](https://cloud.githubusercontent.com/assets/576184/11769223/81939986-a1e2-11e5-8078-684a83af7e30.png)
+
 HaxeDevelop
 ============
-
-![image](https://cloud.githubusercontent.com/assets/576184/11769223/81939986-a1e2-11e5-8078-684a83af7e30.png)
-_HaxeDevelop is a custom distribution of FlashDevelop_
 
 <img src="https://cloud.githubusercontent.com/assets/576184/11769260/240118c4-a1e3-11e5-98e8-4665f8207367.png" align=right width=50%/>
 
 > **HaxeDevelop offers first class support for Haxe development: great and fast code completion & code generation, projects compilation & debugging, plenty of project templates for cross platform development.**
+> 
+> _HaxeDevelop is a custom distribution of FlashDevelop._
 > 
 > HaxeDevelop is more generally a great web developer IDE with integrated source-control support (svn, git, mercurial), tasks/todo, snippets, XML/HTML/CSS completion and built-in zen-coding for HTML.
 
