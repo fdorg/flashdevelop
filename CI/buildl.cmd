@@ -15,6 +15,7 @@ cd ..
 
 :: Reset bin files
 git clean -f -x -d FlashDevelop\Bin\Debug
+del FlashDevelop\Installer\Binary\*.exe /Q
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -81,6 +82,8 @@ if %errorlevel% neq 0 goto :error
 
 :: Create the archive
 7z a -tzip FlashDevelop\Installer\Binary\HaxeDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
+
+: finish
 
 :: Done, Run FD
 start FlashDevelop\Installer\Binary\FlashDevelop.exe
