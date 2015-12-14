@@ -16,7 +16,7 @@ namespace FlashDevelop.Dialogs
     {
         const string ViewConflictsKey = "?"; // TODO: Change the type to char after #969 is merged
         const string ViewCustomKey = "*"; // TODO: Change the type to char after #969 is merged
-        
+
         Timer updateTimer;
         ToolStripMenuItem removeShortcut;
         ToolStripMenuItem revertToDefault;
@@ -203,7 +203,7 @@ namespace FlashDevelop.Dialogs
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-        
+
         #endregion
 
         #region Methods And Event Handlers
@@ -262,7 +262,7 @@ namespace FlashDevelop.Dialogs
             this.idHeader.Width = ScaleHelper.Scale(this.idHeader.Width);
             this.keyHeader.Width = ScaleHelper.Scale(this.keyHeader.Width);
         }
-        
+
         /// <summary>
         /// Updates the font highlight of the item.
         /// </summary>
@@ -331,7 +331,7 @@ namespace FlashDevelop.Dialogs
             {
                 var item = this.shortcutListItems[i];
                 if (string.IsNullOrEmpty(filter) ||
-                    item.Id.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0 || 
+                    item.Id.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0 ||
                     item.KeysString.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     if (viewCustom && !item.IsModified) continue;
@@ -413,10 +413,11 @@ namespace FlashDevelop.Dialogs
             else if (!ToolStripManager.IsValidShortcut(shortcut)) return;
 
             if (item.Custom == shortcut) return;
+            this.listView.BeginUpdate();
             item.Custom = shortcut;
             item.Selected = true;
-            ResetConflicts(item);
             this.GetConflictItems(item);
+            this.listView.EndUpdate();
             if (item.HasConflicts)
             {
                 ErrorManager.ShowWarning(TextHelper.GetString("Info.ShortcutIsAlreadyUsed"), null);
@@ -425,7 +426,7 @@ namespace FlashDevelop.Dialogs
                 this.filterTextBox.SelectAll();
             }
         }
-        
+
         /// <summary>
         /// Resets the conflicts status of an item.
         /// </summary>
@@ -443,7 +444,7 @@ namespace FlashDevelop.Dialogs
                 item.Conflicts = null; // empty conflicts list will be garbage collected
             }
         }
-        
+
         /// <summary>
         /// Gets a list of all conflicting entries.
         /// </summary>
@@ -452,21 +453,19 @@ namespace FlashDevelop.Dialogs
             var keys = target.Custom;
             if (keys == 0) return;
 
-            var conflicts = new List<ShortcutListItem> { target };
+            List<ShortcutListItem> conflicts = null;
 
             for (int i = 0; i < this.shortcutListItems.Length; i++)
             {
                 var item = this.shortcutListItems[i];
 
-                if (item == target) continue;
-                if (item.Custom == keys)
-                {
-                    conflicts.Add(item);
-                    item.Conflicts = conflicts; 
-                }
+                if (item.Custom != keys || item == target) continue;
+                if (conflicts == null) conflicts = new List<ShortcutListItem> { target };
+                conflicts.Add(item);
+                item.Conflicts = conflicts;
             }
 
-            if (conflicts.Count > 1) target.Conflicts = conflicts;
+            target.Conflicts = conflicts;
         }
 
         /// <summary>
@@ -634,7 +633,7 @@ namespace FlashDevelop.Dialogs
 
         #endregion
 
-        
+
         #region ListViewComparer
 
         /// <summary>
@@ -720,6 +719,7 @@ namespace FlashDevelop.Dialogs
                     this.custom = value;
                     this.KeysString = DataConverter.KeysToString(this.custom);
                     this.SubItems[1].Text = this.KeysString;
+                    ResetConflicts(this);
                     UpdateItemHighlightFont(this);
                 }
             }
@@ -746,11 +746,13 @@ namespace FlashDevelop.Dialogs
             /// </summary>
             public ShortcutListItem(ShortcutItem shortcutItem)
             {
-                this.SubItems.Add(string.Empty);
-                this.Name = this.Text = shortcutItem.Id;
                 this.item = shortcutItem;
                 this.conflicts = null;
-                this.Custom = shortcutItem.Custom;
+                this.custom = this.Item.Custom;
+                this.KeysString = DataConverter.KeysToString(this.Custom);
+                this.Name = this.Text = this.Id;
+                this.SubItems.Add(this.KeysString);
+                UpdateItemHighlightFont(this);
             }
 
             /// <summary>

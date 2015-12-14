@@ -4,7 +4,6 @@ using System.IO;
 using System.Windows.Forms;
 using FlashDevelop.Helpers;
 using PluginCore;
-using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
@@ -226,13 +225,14 @@ namespace FlashDevelop.Managers
                     foreach (IShortcutItem item in items)
                     {
                         Keys newShortcut = item.Default;
-                        for (int i = 0; i < count; i++)
+                        for (Int32 i = 0; i < count; i++)
                         {
                             Argument arg = customShortcuts[i];
                             if (arg.Key == item.Id)
                             {
                                 newShortcut = (Keys) Enum.Parse(typeof(Keys), arg.Value);
                                 customShortcuts.RemoveAt(i);
+                                count--;
                                 break;
                             }
                         }
