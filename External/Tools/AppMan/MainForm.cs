@@ -45,6 +45,11 @@ namespace AppMan
         public static Int32 LINK_MARGIN = 4;
 
         /**
+        * Static constant for current distribution
+        */
+        public static String DISTRO_NAME = "FlashDevelop";
+
+        /**
         * Static constant for exposed config groups (separated with ,)
         */
         public static String EXPOSED_GROUPS = "FD5";
@@ -935,8 +940,8 @@ namespace AppMan
                 #if FLASHDEVELOP
                 if (file.ToLower().EndsWith(".fdz"))
                 {
-                    String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\FlashDevelop.exe");
-                    Boolean wait = Process.GetProcessesByName("FlashDevelop").Length == 0;
+                    String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\" + DISTRO_NAME + ".exe");
+                    Boolean wait = Process.GetProcessesByName(DISTRO_NAME).Length == 0;
                     if (File.Exists(fd))
                     {
                         Process.Start(Path.GetFullPath(fd), file + " -silent -reuse");
