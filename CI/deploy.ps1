@@ -23,8 +23,8 @@ foreach($artifact in $artifacts.values)
     Write-Output "Upload artifact: $($artifact.name)"
     $ext = [System.IO.Path]::GetExtension($artifact.name)
     $name = [System.IO.Path]::GetFileNameWithoutExtension($artifact.name)
-    IF ($name -eg "FlashDevelop") { $fd = true; }
-    IF ($name -eg "HaxeDevelop") { $hd = true; }
+    IF ($name -contains "FlashDevelop") { $fd = true; }
+    IF ($name -contains "HaxeDevelop") { $hd = true; }
     IF ($ext -eq ".xml")
     {
         # Upload appman.xml file
