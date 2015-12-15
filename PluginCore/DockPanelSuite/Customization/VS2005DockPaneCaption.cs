@@ -328,10 +328,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor");
                 if (color != Color.Empty) return color;
-                else if (PluginCore.PluginBase.Settings.UseSystemColors)
-                {
-                    return SystemColors.InactiveCaption;
-                }
                 else return Color.FromArgb(204, 199, 186);
             }
         }

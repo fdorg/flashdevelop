@@ -2,6 +2,19 @@
 
 # FD UI THEME (5.1+)
 
+# System, Professional
+#Global.UiRenderMode=Professional
+
+# Flat, Popup, Standard, System
+#ComboBox.FlatStyle=Popup
+
+ScrollBar.UseCustom=True
+ScrollBar.HotForeColor=#4B4645
+ScrollBar.ArrowColor=#4B4645
+ScrollBar.HotArrowColor=#4B4645
+ScrollBar.ActiveArrowColor=#333333
+
+#ListView.UseGrouping=True
 #ListView.Highlight=#ffa500
 #ListView.HighlightText=#ffa500
 #TreeView.Highlight=#ffa500
@@ -59,18 +72,13 @@ VS2005DockPaneStrip.TabStyle=Rect
 VS2005AutoHideStrip.TabStyle=Underlined
 VS2005AutoHideStrip.TabUnderlineColor=#7B7675
 
-# Default (Hover), Click
+# Hover, Click
 DockPanel.ShowAutoHideContentOn=Hover
 
-ScrollBar.UseCustom=True
 ScrollBar.ForeColor=#4B4645
 ScrollBar.BackColor=#7B7675
 ScrollBar.BorderColor=#7B7675
-#ScrollBar.HotForeColor=#XXXXXX
 ScrollBar.ActiveForeColor=#333333
-#ScrollBar.ArrowColor=#XXXXXX
-#ScrollBar.HotArrowColor=#XXXXXX
-#ScrollBar.ActiveArrowColor=#XXXXXX
 ScrollBar.DisabledBackColor=#7B7675
 ScrollBar.DisabledBorderColor=#7B7675
 ScrollBar.CurrentPositionColor=#F0AC62
