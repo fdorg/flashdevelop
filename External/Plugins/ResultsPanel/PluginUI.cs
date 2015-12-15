@@ -19,12 +19,12 @@ namespace ResultsPanel
 {
     public class PluginUI : DockPanelControl
     {
-        public ToolStripMenuItem clearEntries;
+        public ToolStripMenuItem clearEntriesContextMenuItem;
         public ToolStripMenuItem copyEntryContextMenuItem;
-        public ToolStripMenuItem ignoreEntry;
-        public ToolStripMenuItem clearIgnoredEntries;
-        public ToolStripMenuItem nextEntry;
-        public ToolStripMenuItem previousEntry;
+        public ToolStripMenuItem ignoreEntryContextMenuItem;
+        public ToolStripMenuItem clearIgnoredEntriesContextMenuItem;
+        public ToolStripMenuItem nextEntryContextMenuItem;
+        public ToolStripMenuItem previousEntryContextMenuItem;
 
         private ListViewEx entriesView;
         private ColumnHeader entryFile;
@@ -269,23 +269,23 @@ namespace ResultsPanel
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            this.clearEntries = new ToolStripMenuItem(TextHelper.GetString("Label.ClearEntries"), null, new EventHandler(this.ClearOutputClick));
+            this.clearEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearEntries"), null, new EventHandler(this.ClearOutputClick));
             this.copyEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyEntry"), null, new EventHandler(this.CopyTextClick));
-            this.ignoreEntry = new ToolStripMenuItem(TextHelper.GetString("Label.IgnoreEntry"), null, new EventHandler(this.IgnoreEntryClick));
-            this.clearIgnoredEntries = new ToolStripMenuItem(TextHelper.GetString("Label.ClearIgnoredEntries"), null, new EventHandler(this.ClearIgnoredEntriesClick));
-            this.nextEntry = new ToolStripMenuItem(TextHelper.GetString("Label.NextEntry"), null, new EventHandler(this.NextEntryClick));
-            this.previousEntry = new ToolStripMenuItem(TextHelper.GetString("Label.PreviousEntry"), null, new EventHandler(this.PreviousEntryClick));
+            this.ignoreEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.IgnoreEntry"), null, new EventHandler(this.IgnoreEntryClick));
+            this.clearIgnoredEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearIgnoredEntries"), null, new EventHandler(this.ClearIgnoredEntriesClick));
+            this.nextEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.NextEntry"), null, new EventHandler(this.NextEntryClick));
+            this.previousEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.PreviousEntry"), null, new EventHandler(this.PreviousEntryClick));
             
             this.copyEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.CopyEntryKeys);
-            this.ignoreEntry.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.IgnoreEntryKeys);
+            this.ignoreEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.IgnoreEntryKeys);
 
-            menu.Items.Add(this.clearEntries);
+            menu.Items.Add(this.clearEntriesContextMenuItem);
             menu.Items.Add(this.copyEntryContextMenuItem);
-            menu.Items.Add(this.ignoreEntry);
-            menu.Items.Add(this.clearIgnoredEntries);
+            menu.Items.Add(this.ignoreEntryContextMenuItem);
+            menu.Items.Add(this.clearIgnoredEntriesContextMenuItem);
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(this.nextEntry);
-            menu.Items.Add(this.previousEntry);
+            menu.Items.Add(this.nextEntryContextMenuItem);
+            menu.Items.Add(this.previousEntryContextMenuItem);
 
             this.entriesView.ContextMenuStrip = menu;
             menu.Font = PluginBase.Settings.DefaultFont;
@@ -462,9 +462,9 @@ namespace ResultsPanel
         /// </summary>
         private void ContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.nextEntry.Enabled = this.previousEntry.Enabled = this.clearEntries.Enabled = this.entriesView.Items.Count > 0;
-            this.ignoreEntry.Enabled = this.copyEntryContextMenuItem.Enabled = this.entriesView.SelectedItems.Count > 0;
-            this.clearIgnoredEntries.Enabled = this.ignoredEntries.Count > 0;
+            this.nextEntryContextMenuItem.Enabled = this.previousEntryContextMenuItem.Enabled = this.clearEntriesContextMenuItem.Enabled = this.entriesView.Items.Count > 0;
+            this.ignoreEntryContextMenuItem.Enabled = this.copyEntryContextMenuItem.Enabled = this.entriesView.SelectedItems.Count > 0;
+            this.clearIgnoredEntriesContextMenuItem.Enabled = this.ignoredEntries.Count > 0;
         }
 
         /// <summary>
