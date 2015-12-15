@@ -25,12 +25,8 @@ namespace ResultsPanel
         private Image pluginImage;
 
         // Shortcut management
-        public Keys NextError = Keys.F12;
-        public Keys PrevError = Keys.Shift | Keys.F12;
-        public Keys CopyEntry = Keys.Control | Keys.C;
-        public Keys IgnoreEntry = Keys.Delete;
-        public Keys ClearResults = Keys.None;
-        public Keys ClearIgnoredEntries = Keys.None;
+        public const Keys CopyEntryKeys = Keys.Control | Keys.C;
+        public const Keys IgnoreEntryKeys = Keys.Delete;
 
         #region Required Properties
 
@@ -159,32 +155,28 @@ namespace ResultsPanel
 
                 case EventType.Keys:
                     KeyEvent ke = (KeyEvent)e;
-                    if (ke.Value == this.pluginUI.nextEntry.ShortcutKeys)
+                    switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
                     {
-                        ke.Handled = true;
-                        this.pluginUI.NextEntry(null, null);
+                        case null:
+                            break;
+                        case "ResultsPanel.ShowNextResult":
+                            ke.Handled = pluginUI.NextEntry();
+                            break;
+                        case "ResultsPanel.ShowPrevResult":
+                            ke.Handled = pluginUI.PreviousEntry();
+                            break;
+                        case "ResultsPanel.ClearResults":
+                            ke.Handled = pluginUI.ClearOutput();
+                            break;
+                        case "ResultsPanel.ClearIgnoredEntries":
+                            ke.Handled = pluginUI.ClearIgnoredEntries();
+                            break;
+                        default:
+                            if (ke.Value == CopyEntryKeys) ke.Handled = pluginUI.CopyTextShortcut();
+                            else if (ke.Value == IgnoreEntryKeys) ke.Handled = pluginUI.IgnoreEntryShortcut();
+                            break;
                     }
-                    else if (ke.Value == this.pluginUI.previousEntry.ShortcutKeys)
-                    {
-                        ke.Handled = true;
-                        this.pluginUI.PreviousEntry(null, null);
-                    }
-                    else if (ke.Value == this.pluginUI.copyEntryContextMenuItem.ShortcutKeys)
-                    {
-                        ke.Handled = pluginUI.CopyTextShortcut();
-                    }
-                    else if (ke.Value == this.pluginUI.ignoreEntryContextMenuItem.ShortcutKeys)
-                    {
-                        ke.Handled = pluginUI.IgnoreEntryShortcut();
-                    }
-                    else if (ke.Value == this.pluginUI.clearEntriesContextMenuItem.ShortcutKeys)
-                    {
-                        ke.Handled = pluginUI.ClearOutput();
-                    }
-                    else if (ke.Value == this.pluginUI.clearIgnoredEntriesContextMenuItem.ShortcutKeys)
-                    {
-                        ke.Handled = pluginUI.ClearIgnoredEntries();
-                    }
+                    
                     break;
             }
         }
@@ -246,9 +238,8 @@ namespace ResultsPanel
             ToolStripMenuItem viewItem = new ToolStripMenuItem(title, this.pluginImage, new EventHandler(this.OpenPanel));
             PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.pluginUI.nextEntry);
             PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.pluginUI.previousEntry);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.IgnoreEntry", this.pluginUI.ignoreEntryContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.pluginUI.clearEntriesContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.pluginUI.clearIgnoredEntriesContextMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.pluginUI.clearEntries);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.pluginUI.clearIgnoredEntries);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
