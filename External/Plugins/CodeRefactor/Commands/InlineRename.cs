@@ -65,7 +65,6 @@ namespace CodeRefactor.Commands
         int historyIndex;
         List<string> history;
         DelayedExecution delayedExecution;
-        Dictionary<Keys, string> shortcuts;
 
         #region Events
 
@@ -187,7 +186,6 @@ namespace CodeRefactor.Commands
         void InitializeFields()
         {
             delayedExecution = new DelayedExecution();
-            shortcuts = PluginBase.MainForm.GetShortcutItemsByKeys();
             historyIndex = 0;
             history = new List<string> { oldName };
         }
@@ -434,8 +432,6 @@ namespace CodeRefactor.Commands
             history = null;
             delayedExecution.Dispose();
             delayedExecution = null;
-            shortcuts.Clear();
-            shortcuts = null;
 
             PluginBase.MainForm.MenuStrip.Enabled = true;
             PluginBase.MainForm.ToolStrip.Enabled = true;
@@ -729,8 +725,7 @@ namespace CodeRefactor.Commands
         /// <param name="e">The event arguments.</param>
         void Sci_Resize(object sender, EventArgs e)
         {
-            int scrollBarWidth = ScrollBarEx.UseCustom ? sci.VScrollBar.Width : SystemInformation.VerticalScrollBarWidth;
-            dialog.Left = sci.Width - dialog.Width - scrollBarWidth;
+            dialog.Left = sci.Width - dialog.Width - SystemInformation.VerticalScrollBarWidth;
         }
 
         #endregion
@@ -838,37 +833,33 @@ namespace CodeRefactor.Commands
         /// </returns>
         bool HandleShortcuts(Keys keys)
         {
-            string shortcutId;
-            if (shortcuts.TryGetValue(keys, out shortcutId))
+            switch (PluginBase.MainForm.GetShortcutItemId(keys))
             {
-                switch (shortcutId)
-                {
-                    case "EditMenu.Copy":
-                    case "EditMenu.Cut":
-                        return true;
-                    case "EditMenu.Paste":
-                        PerformPaste();
-                        break;
-                    case "EditMenu.Redo":
-                        PerformRedo();
-                        break;
-                    case "EditMenu.SelectAll":
-                        PerformSelectAll();
-                        break;
-                    case "EditMenu.ToLowercase":
-                    case "EditMenu.ToUppercase":
-                        return true;
-                    case "EditMenu.Undo":
-                        PerformUndo();
-                        break;
-                    case "Scintilla.ResetZoom":
-                    case "Scintilla.ZoomIn":
-                    case "Scintilla.ZoomOut":
-                        return true;
-                    default:
-                        //string.Format("Shortcut \"{0}\" cannot be used during renaming", shortcut.Key)
-                        break;
-                }
+                case "EditMenu.Copy":
+                case "EditMenu.Cut":
+                    return true;
+                case "EditMenu.Paste":
+                    PerformPaste();
+                    break;
+                case "EditMenu.Redo":
+                    PerformRedo();
+                    break;
+                case "EditMenu.SelectAll":
+                    PerformSelectAll();
+                    break;
+                case "EditMenu.ToLowercase":
+                case "EditMenu.ToUppercase":
+                    return true;
+                case "EditMenu.Undo":
+                    PerformUndo();
+                    break;
+                case "Scintilla.ResetZoom":
+                case "Scintilla.ZoomIn":
+                case "Scintilla.ZoomOut":
+                    return true;
+                default:
+                    //string.Format("Shortcut \"{0}\" cannot be used during renaming", shortcut.Key)
+                    break;
             }
 
             return false;

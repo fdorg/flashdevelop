@@ -14,8 +14,8 @@ namespace CodeRefactor.Controls
         internal CheckBox PreviewChanges;
         internal Button ApplyButton;
         internal Button CancelButton;
-        private Label titleLabel;
-        private Label border;
+        Label titleLabel;
+        Label border;
 
         /// <summary>
         /// Creates a new instance of <see cref="InlineRenameDialog"/>.

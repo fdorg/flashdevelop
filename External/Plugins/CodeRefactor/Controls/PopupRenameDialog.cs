@@ -23,7 +23,6 @@ namespace CodeRefactor.Controls
         string value;
         bool includeComments;
         bool includeStrings;
-        Dictionary<Keys, string> shortcuts;
 
         /// <summary>
         /// Creates a new instance of <seealso cref="PopupRenameDialog"/>.
@@ -69,10 +68,8 @@ namespace CodeRefactor.Controls
             }
 
             inputTxt.Text = targetName;
-            inputTxt.SelectAll();
             inputTxt.Focus();
-
-            shortcuts = PluginBase.MainForm.GetShortcutItemsByKeys();
+            inputTxt.SelectAll();
         }
 
         /// <summary>
@@ -223,21 +220,19 @@ namespace CodeRefactor.Controls
         /// <param name="e">The event arguments.</param>
         void InputTxt_KeyDown(object sender, KeyEventArgs e)
         {
-            string shortcutId;
-            if (shortcuts.TryGetValue(e.KeyData, out shortcutId))
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(e.KeyData);
+            if (string.IsNullOrEmpty(shortcutId)) return;
+            switch (shortcutId)
             {
-                switch (shortcutId)
-                {
-                    case "EditMenu.ToLowercase":
-                    case "EditMenu.ToUppercase":
-                        string text = inputTxt.SelectedText;
-                        if (string.IsNullOrEmpty(text)) break;
-                        text = shortcutId == "EditMenu.ToLowercase" ? text.ToLower() : text.ToUpper();
-                        int selectionStart = inputTxt.SelectionStart;
-                        inputTxt.Paste(text);
-                        inputTxt.Select(selectionStart, text.Length);
-                        break;
-                }
+                case "EditMenu.ToLowercase":
+                case "EditMenu.ToUppercase":
+                    string text = inputTxt.SelectedText;
+                    if (string.IsNullOrEmpty(text)) break;
+                    text = shortcutId == "EditMenu.ToLowercase" ? text.ToLower() : text.ToUpper();
+                    int selectionStart = inputTxt.SelectionStart;
+                    inputTxt.Paste(text);
+                    inputTxt.Select(selectionStart, text.Length);
+                    break;
             }
         }
 
