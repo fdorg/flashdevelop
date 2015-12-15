@@ -13,18 +13,18 @@ Param (
     $projectBuildNumber
 )
 
+$fd = $false;
+$hd = $false;
 $login = $variables["SecureLogin"]
 $pass = $variables["SecurePass"]
-$fd = false;
-$hd = false;
 
 foreach($artifact in $artifacts.values)
 {
     Write-Output "Upload artifact: $($artifact.name)"
     $ext = [System.IO.Path]::GetExtension($artifact.name)
     $name = [System.IO.Path]::GetFileNameWithoutExtension($artifact.name)
-    IF ($name -contains "FlashDevelop") { $fd = true; }
-    IF ($name -contains "HaxeDevelop") { $hd = true; }
+    IF ($name -match "FlashDevelop") { $fd = $true; }
+    IF ($name -match "HaxeDevelop") { $hd = $true; }
     IF ($ext -eq ".xml")
     {
         # Upload appman.xml file
