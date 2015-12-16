@@ -117,6 +117,7 @@ namespace FlashDevelop.Managers
                 {
                     NotifyEvent ne = new NotifyEvent(EventType.ApplyTheme);
                     EventManager.DispatchEvent(Globals.MainForm, ne);
+                    Globals.MainForm.AdjustAllImages();
                     Globals.MainForm.Refresh();
                 }
             }
@@ -154,6 +155,10 @@ namespace FlashDevelop.Managers
                 PropertyInfo dback = type.GetProperty("DisabledBackColor");
                 PropertyInfo afore = type.GetProperty("ActiveForeColor");
                 PropertyInfo border = type.GetProperty("BorderColor");
+                PropertyInfo hfore = type.GetProperty("HotForeColor");
+                PropertyInfo harrow = type.GetProperty("HotArrowColor");
+                PropertyInfo aarrow = type.GetProperty("ActiveArrowColor");
+                PropertyInfo arrow = type.GetProperty("ArrowColor");
                 PropertyInfo link = type.GetProperty("LinkColor");
                 PropertyInfo back = type.GetProperty("BackColor");
                 PropertyInfo fore = type.GetProperty("ForeColor");
@@ -254,6 +259,42 @@ namespace FlashDevelop.Managers
                     if (color != Color.Empty)
                     {
                         dback.SetValue(obj, color, null);
+                    }
+                }
+                if (hfore != null)
+                {
+                    String key = name + ".HotForeColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        hfore.SetValue(obj, color, null);
+                    }
+                }
+                if (harrow != null)
+                {
+                    String key = name + ".HotArrowColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        harrow.SetValue(obj, color, null);
+                    }
+                }
+                if (aarrow != null)
+                {
+                    String key = name + ".ActiveArrowColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        aarrow.SetValue(obj, color, null);
+                    }
+                }
+                if (arrow != null)
+                {
+                    String key = name + ".ArrowColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        arrow.SetValue(obj, color, null);
                     }
                 }
             }

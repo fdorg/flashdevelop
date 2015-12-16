@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using Ookii.Dialogs;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Localization;
 using ScintillaNet.Enums;
 
@@ -179,46 +178,6 @@ namespace FlashDevelop.Settings
         {
             get { return this.viewModifiedLines; }
             set { this.viewModifiedLines = value; }
-        }
-
-        [DisplayName("ComboBox Flat Style")]
-        [LocalizedCategory("FlashDevelop.Category.Display")]
-        [LocalizedDescription("FlashDevelop.Description.ComboBoxFlatStyle")]
-        [DefaultValue(FlatStyle.Popup)]
-        public FlatStyle ComboBoxFlatStyle
-        {
-            get { return this.comboBoxFlatStyle; }
-            set { this.comboBoxFlatStyle = value; }
-        }
-
-        [DefaultValue(true)]
-        [DisplayName("Use List View Grouping")]
-        [LocalizedCategory("FlashDevelop.Category.Display")]
-        [LocalizedDescription("FlashDevelop.Description.UseListViewGrouping")]
-        public Boolean UseListViewGrouping
-        {
-            get { return this.useListViewGrouping; }
-            set { this.useListViewGrouping = value; }
-        }
-
-        [DefaultValue(false)]
-        [DisplayName("Use System UI Colors")]
-        [LocalizedCategory("FlashDevelop.Category.Display")]
-        [LocalizedDescription("FlashDevelop.Description.UseSystemColors")]
-        public Boolean UseSystemColors
-        {
-            get { return this.useSystemColors; }
-            set { this.useSystemColors = value; }
-        }
-
-        [DisplayName("UI Render Mode")]
-        [LocalizedCategory("FlashDevelop.Category.Display")]
-        [LocalizedDescription("FlashDevelop.Description.RenderMode")]
-        [DefaultValue(UiRenderMode.Professional)]
-        public UiRenderMode RenderMode
-        {
-            get { return this.uiRenderMode; }
-            set { this.uiRenderMode = value; }
         }
 
         [XmlIgnore]
@@ -944,6 +903,54 @@ namespace FlashDevelop.Settings
         }
 
         #endregion
+
+        #region Legacy
+
+        [Browsable(false)]
+        public Boolean UseListViewGrouping
+        {
+            get { return Globals.MainForm.GetThemeFlag("ListView.UseGrouping", true); }
+            set {}
+        }
+
+        [Browsable(false)]
+        public UiRenderMode RenderMode
+        {
+            get
+            {
+                String value = Globals.MainForm.GetThemeValue("Global.UiRenderMode", "Professional");
+                if (value == "System") return UiRenderMode.System;
+                else return UiRenderMode.Professional; 
+            }
+            set {}
+        }
+
+        [Browsable(false)]
+        public FlatStyle ComboBoxFlatStyle
+        {
+            get
+            {
+                String value = Globals.MainForm.GetThemeValue("ComboBox.FlatStyle", "Popup");
+                switch (value)
+                {
+                    case "Flat": return FlatStyle.Flat;
+                    case "Standard": return FlatStyle.Standard;
+                    case "System": return FlatStyle.System;
+                    default: return FlatStyle.Popup;
+                }
+            }
+            set {}
+        }
+
+        [Browsable(false)]
+        public Boolean UseSystemColors
+        {
+            get { return false; }
+            set {}
+        }
+
+        #endregion
+
     }
 
 }

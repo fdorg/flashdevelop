@@ -174,7 +174,7 @@ namespace SourceControl.Managers
 
         private static Image GetSkin()
         {
-            return PluginBase.MainForm.ImageSetAdjust(ProjectWatcher.Skin); //can be changed by external SC-Plugin
+            return PluginBase.MainForm.GetAutoAdjustedImage(ProjectWatcher.Skin); //can be changed by external SC-Plugin
         }
 
         static public void Reset()

@@ -26,10 +26,10 @@ namespace CodeRefactor.Provider
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
             queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming));
-            if (currentCommand == null) MoveFirst();
+            if (currentCommand == null) ExecuteFirst();
         }
 
-        private static void MoveFirst()
+        private static void ExecuteFirst()
         {
             try
             {
@@ -60,7 +60,7 @@ namespace CodeRefactor.Provider
                     results[path].AddRange(entry.Value);
                 }
             }
-            if (queue.Count > 0) MoveFirst();
+            if (queue.Count > 0) ExecuteFirst();
             else
             {
                 if (results.Count > 0) ReportResults();

@@ -178,7 +178,7 @@ namespace FlashDevelop
 
         public bool GetThemeFlag(string id, bool fallback)
         {
-            throw new NotImplementedException();
+            return fallback;
         }
 
         public T GetThemeValue<T>(string id, T fallback) where T : struct
@@ -198,9 +198,19 @@ namespace FlashDevelop
             return image;            
         }
 
+        public Image GetAutoAdjustedImage(Image image)
+        {
+            throw new NotImplementedException();
+        }
+
         public Image FindImage(string data)
         {
             return null;
+        }
+
+        public Image FindImage(string data, bool autoAdjust)
+        {
+            throw new NotImplementedException();
         }
 
         public ISettings Settings { get; set; }

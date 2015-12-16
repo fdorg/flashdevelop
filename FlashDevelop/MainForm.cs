@@ -1682,11 +1682,58 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Adjusts the image for different themes
+        /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
+        /// </summary>
+        public Image FindImage(String data)
+        {
+            return FindImage(data, true);
+        }
+
+        /// <summary>
+        /// Finds the specified composed/ready image.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
+        /// </summary>
+        public Image FindImage(String data, Boolean autoAdjusted)
+        {
+            try
+            {
+                lock (this)
+                {
+                    return ImageManager.GetComposedBitmap(data, autoAdjusted);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns a copy of the specified image that has its color adjusted.
         /// </summary>
         public Image ImageSetAdjust(Image image)
         {
-            return ImageManager.AdjustImage(image);
+            return ImageManager.SetImageAdjustment(image);
+        }
+
+        /// <summary>
+        /// Gets a copy of the image that gets automatically adjusted according to the theme.
+        /// </summary>
+        public Image GetAutoAdjustedImage(Image image)
+        {
+            return ImageManager.GetAutoAdjustedImage(image);
+        }
+
+        /// <summary>
+        /// Adjusts all images for different themes.
+        /// </summary>
+        public void AdjustAllImages()
+        {
+            ImageManager.AdjustAllImages();
         }
 
         /// <summary>
@@ -1711,7 +1758,8 @@ namespace FlashDevelop
         public Color GetThemeColor(String id, Color fallback)
         {
             Color color = ThemeManager.GetThemeColor(id);
-            return color.IsEmpty ? fallback : color;
+            if (color != Color.Empty) return color;
+            else return fallback;
         }
 
         /// <summary>
@@ -1728,7 +1776,8 @@ namespace FlashDevelop
         public String GetThemeValue(String id, String fallback)
         {
             String value = ThemeManager.GetThemeValue(id);
-            return String.IsNullOrEmpty(value) ? fallback : value;
+            if (!String.IsNullOrEmpty(value)) return value;
+            else return fallback;
         }
 
         /// <summary>
@@ -1751,30 +1800,6 @@ namespace FlashDevelop
                 case "true": return true;
                 case "false": return false;
                 default: return fallback;
-            }
-        }
-
-        /// <summary>
-        /// Gets a theme enumeration value.
-        /// </summary>
-        public T GetThemeValue<T>(String id) where T : struct
-        {
-            return GetThemeValue(id, default(T));
-        }
-
-        /// <summary>
-        /// Gets a theme enumeration value with a fallback.
-        /// </summary>
-        public T GetThemeValue<T>(String id, T fallback) where T : struct
-        {
-            String value = ThemeManager.GetThemeValue(id);
-            try
-            {
-                return (T) Enum.Parse(typeof(T), value);
-            }
-            catch
-            {
-                return fallback;
             }
         }
 
@@ -1804,37 +1829,21 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the specified item's shortcut keys
+        /// Gets the specified item's shortcut keys.
         /// </summary>
         public Keys GetShortcutItemKeys(String id)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
-            return item != null ? item.Custom : Keys.None;
+            return item == null ? Keys.None : item.Custom;
         }
 
         /// <summary>
-        /// Gets the shortcut id associated the keys.
+        /// Gets the specified item's id.
         /// </summary>
-        public string GetShortcutItemId(Keys keys)
+        public String GetShortcutItemId(Keys keys)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
-            return item != null ? item.Id : null;
-        }
-
-        /// <summary>
-        /// Returns a <see cref="Dictionary{TKey, TValue}"/> object containing all registered
-        /// shortcuts with the shortcut values as keys.
-        /// </summary>
-        public Dictionary<Keys, String> GetShortcutItemsByKeys()
-        {
-            Dictionary<String, ShortcutItem>.ValueCollection list = ShortcutManager.RegisteredItems.Values;
-            Dictionary<Keys, String> items = new Dictionary<Keys, String>(list.Count);
-            foreach (ShortcutItem item in list)
-            {
-                if (item.Custom == Keys.None) continue;
-                items[item.Custom] = item.Id;
-            }
-            return items;
+            return item == null ? string.Empty : item.Id;
         }
 
         /// <summary>
@@ -1868,25 +1877,6 @@ namespace FlashDevelop
         public void ApplySecondaryShortcut(ToolStripItem item)
         {
             ShortcutManager.ApplySecondaryShortcut(item);
-        }
-
-        /// <summary>
-        /// Finds the specified composed/ready image
-        /// </summary>
-        public Image FindImage(String data)
-        {
-            try
-            {
-                lock (this)
-                {
-                    return ImageManager.GetComposedBitmap(data);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-                return null;
-            }
         }
 
         /// <summary>
