@@ -234,7 +234,7 @@ namespace ProjectManager
             pluginUI.ImportProject += delegate { ImportProject(); };
             pluginUI.Rename += fileActions.Rename;
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
-            pluginUI.TreeBar.Synchronize.Click += delegate { ToggleTrackActiveDocument(); };
+            pluginUI.TreeBar.Synchronize.Click += delegate { TreeSyncToCurrentFile(); };
             pluginUI.TreeBar.SynchronizeMain.Click += delegate { TreeSyncToMainFile(); };
             pluginUI.TreeBar.CollapseAll.Click += delegate { CollapseAll(); };
             pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(); };
@@ -561,38 +561,40 @@ namespace ProjectManager
         {
             if (activeProject == null) return false;
 
-            switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
+
+            if (shortcutId == "ProjectMenu.ConfigurationSelector")
             {
-                case "ProjectMenu.ConfigurationSelector":
-                    pluginUI.menus.ConfigurationSelector.Focus();
-                    break;
-                case "ProjectMenu.ConfigurationSelectorToggle":
-                    pluginUI.menus.ToggleDebugRelease();
-                    break;
-                case "ProjectMenu.TargetBuildSelector":
-                    pluginUI.menus.TargetBuildSelector.Focus();
-                    break;
-                case "ProjectTree.LocateActiveFile":
-                    ToggleTrackActiveDocument();
-                    break;
-                default:
-                    if (Tree.Focused && !pluginUI.IsEditingLabel)
-                    {
-                        if (ke.Value == (Keys.Control | Keys.C) && pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();
-                        else if (ke.Value == (Keys.Control | Keys.X) && pluginUI.Menu.Contains(pluginUI.Menu.Cut)) TreeCutItems();
-                        else if (ke.Value == (Keys.Control | Keys.V) && pluginUI.Menu.Contains(pluginUI.Menu.Paste)) TreePasteItems();
-                        else if (ke.Value == Keys.Delete && pluginUI.Menu.Contains(pluginUI.Menu.Delete)) TreeDeleteItems();
-                        else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Open)) TreeOpenItems();
-                        else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Insert)) TreeInsertItem();
-                        else return false;
-                    }
-                    else return false;
-                    break;
+                pluginUI.menus.ConfigurationSelector.Focus();
+            }
+            else if (shortcutId == "ProjectMenu.ConfigurationSelectorToggle")
+            {
+                pluginUI.menus.ToggleDebugRelease();
+            }
+            else if (shortcutId == "ProjectMenu.TargetBuildSelector")
+            {
+                pluginUI.menus.TargetBuildSelector.Focus();
+            }
+            else if (shortcutId == "ProjectTree.LocateActiveFile")
+            {
+                TreeSyncToCurrentFile();
             }
 
+            // Handle tree-level simple shortcuts like copy/paste/del
+            else if (Tree.Focused && !pluginUI.IsEditingLabel && ke != null)
+            {
+                if (ke.Value == (Keys.Control | Keys.C) && pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();
+                else if (ke.Value == (Keys.Control | Keys.X) && pluginUI.Menu.Contains(pluginUI.Menu.Cut)) TreeCutItems();
+                else if (ke.Value == (Keys.Control | Keys.V) && pluginUI.Menu.Contains(pluginUI.Menu.Paste)) TreePasteItems();
+                else if (ke.Value == Keys.Delete && pluginUI.Menu.Contains(pluginUI.Menu.Delete)) TreeDeleteItems();
+                else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Open)) TreeOpenItems();
+                else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Insert)) TreeInsertItem();
+                else return false;
+            }
+            else return false;
             return true;
         }
-
+        
         #endregion
 
         #region Custom Methods
@@ -1617,16 +1619,6 @@ namespace ProjectManager
             }
         }
 
-        private void ToggleTrackActiveDocument()
-        {
-            bool newValue = !Settings.TrackActiveDocument;
-            pluginUI.TreeBar.Synchronize.Checked = newValue;
-            Settings.TrackActiveDocument = newValue;
-
-            if (newValue)
-                TreeSyncToCurrentFile();
-        }
-
         private void TreeSyncToCurrentFile()
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
@@ -1635,7 +1627,11 @@ namespace ProjectManager
                 string path = doc.FileName;
 
                 if (Tree.SelectedNode != null && Tree.SelectedNode.BackingPath == path)
+                {
+                    Tree.SelectedNode.EnsureVisible();
+                    Tree.PathToSelect = null;
                     return;
+                }
 
                 Tree.Select(path);
                 if (Tree.SelectedNode.BackingPath == path)

@@ -423,8 +423,7 @@ namespace CodeRefactor
         {
             try
             {
-                Rename command = new Rename(true);
-                command.Execute();
+                RenamingHelper.AddToQueue(RefactoringHelper.GetDefaultRefactorTarget());
             }
             catch (Exception ex)
             {

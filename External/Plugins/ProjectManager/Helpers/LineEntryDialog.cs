@@ -1,7 +1,3 @@
-using System;
-using System.Drawing;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore;
@@ -15,7 +11,6 @@ namespace ProjectManager.Helpers
     public class LineEntryDialog : Form
     {
         string line;
-        readonly Dictionary<Keys, string> shortcuts;
 
         #region Form Designer Components
 
@@ -45,10 +40,10 @@ namespace ProjectManager.Helpers
             this.Font = PluginBase.Settings.DefaultFont;
             this.Text = " " + captionText;
             titleLabel.Text = labelText;
-            lineBox.Text = defaultLine ?? string.Empty;
+            lineBox.KeyDown += OnLineBoxOnKeyDown;
+            lineBox.Text = (defaultLine != null) ? defaultLine : string.Empty;
             lineBox.SelectAll();
             lineBox.Focus();
-            shortcuts = PluginBase.MainForm.GetShortcutItemsByKeys();
         }
 
         #region Dispose
@@ -98,7 +93,6 @@ namespace ProjectManager.Helpers
             this.lineBox.Name = "lineBox";
             this.lineBox.Size = new System.Drawing.Size(260, 20);
             this.lineBox.TabIndex = 0;
-            this.lineBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LineBox_KeyDown);
             // 
             // btnOK
             // 
@@ -171,20 +165,22 @@ namespace ProjectManager.Helpers
             this.Close();
         }
 
-        void LineBox_KeyDown(object sender, KeyEventArgs e)
+        void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)
         {
-            string shortcutId;
-            if (!shortcuts.TryGetValue(e.KeyData, out shortcutId)) return;
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
+            if (string.IsNullOrEmpty(shortcutId)) return;
+
             switch (shortcutId)
             {
                 case "EditMenu.ToLowercase":
                 case "EditMenu.ToUppercase":
-                    string text = lineBox.SelectedText;
-                    if (string.IsNullOrEmpty(text)) break;
-                    text = shortcutId == "EditMenu.ToLowercase" ? text.ToLower() : text.ToUpper();
+                    string selectedText = lineBox.SelectedText;
+                    if (string.IsNullOrEmpty(selectedText)) break;
+                    selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
                     int selectionStart = lineBox.SelectionStart;
-                    lineBox.Paste(text);
-                    SelectRange(selectionStart, text.Length);
+                    int selectionLength = lineBox.SelectionLength;
+                    lineBox.Paste(selectedText);
+                    SelectRange(selectionStart, selectionLength);
                     break;
             }
         }
