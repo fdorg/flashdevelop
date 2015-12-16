@@ -3750,8 +3750,8 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Error line:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Track Active Document</value>
-    <comment>Modified after 4.7.2</comment>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>
@@ -5979,5 +5979,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
+    <value>No contextual code generation available.</value>
   </data>
 </root>

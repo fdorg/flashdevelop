@@ -1681,11 +1681,58 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Adjusts the image for different themes
+        /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
+        /// </summary>
+        public Image FindImage(String data)
+        {
+            return FindImage(data, true);
+        }
+
+        /// <summary>
+        /// Finds the specified composed/ready image.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
+        /// </summary>
+        public Image FindImage(String data, Boolean autoAdjusted)
+        {
+            try
+            {
+                lock (this)
+                {
+                    return ImageManager.GetComposedBitmap(data, autoAdjusted);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns a copy of the specified image that has its color adjusted.
         /// </summary>
         public Image ImageSetAdjust(Image image)
         {
-            return ImageManager.AdjustImage(image);
+            return ImageManager.SetImageAdjustment(image);
+        }
+
+        /// <summary>
+        /// Gets a copy of the image that gets automatically adjusted according to the theme.
+        /// </summary>
+        public Image GetAutoAdjustedImage(Image image)
+        {
+            return ImageManager.GetAutoAdjustedImage(image);
+        }
+
+        /// <summary>
+        /// Adjusts all images for different themes.
+        /// </summary>
+        public void AdjustAllImages()
+        {
+            ImageManager.AdjustAllImages();
         }
 
         /// <summary>
@@ -1829,25 +1876,6 @@ namespace FlashDevelop
         public void ApplySecondaryShortcut(ToolStripItem item)
         {
             ShortcutManager.ApplySecondaryShortcut(item);
-        }
-
-        /// <summary>
-        /// Finds the specified composed/ready image
-        /// </summary>
-        public Image FindImage(String data)
-        {
-            try
-            {
-                lock (this)
-                {
-                    return ImageManager.GetComposedBitmap(data);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-                return null;
-            }
         }
 
         /// <summary>
