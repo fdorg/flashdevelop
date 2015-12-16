@@ -31,6 +31,16 @@ namespace PluginCore.Utilities
         /// </summary>
         public static Image ImageAdjust(Image image, Int32 saturation, Int32 brightness)
         {
+            Image dest = new Bitmap(image.Width, image.Height);
+            ImageAdjust(image, dest, saturation, brightness);
+            return dest;
+        }
+
+        /// <summary>
+        /// Adjusts the saturation and brightness of the image.
+        /// </summary>
+        public static void ImageAdjust(Image source, Image dest, Int32 saturation, Int32 brightness)
+        {
             try
             {
                 float rwgt = 0.3086f;
@@ -40,33 +50,31 @@ namespace PluginCore.Utilities
                 float bri = 1f + (brightness / 100f);
                 float baseSat = 1.0f - sat;
                 float adjBrightness = bri - 1f;
-                Bitmap bitmap = new Bitmap(image.Width, image.Height);
-                Graphics graphics = Graphics.FromImage(bitmap);
-                ColorMatrix colorMatrix = new ColorMatrix();
-                // adjust saturation
-                colorMatrix[0, 0] = baseSat * rwgt + sat;
-                colorMatrix[0, 1] = baseSat * rwgt;
-                colorMatrix[0, 2] = baseSat * rwgt;
-                colorMatrix[1, 0] = baseSat * gwgt;
-                colorMatrix[1, 1] = baseSat * gwgt + sat;
-                colorMatrix[1, 2] = baseSat * gwgt;
-                colorMatrix[2, 0] = baseSat * bwgt;
-                colorMatrix[2, 1] = baseSat * bwgt;
-                colorMatrix[2, 2] = baseSat * bwgt + sat;
-                // adjust brightness
-                colorMatrix[4, 0] = adjBrightness;
-                colorMatrix[4, 1] = adjBrightness;
-                colorMatrix[4, 2] = adjBrightness;
-                ImageAttributes attributes = new ImageAttributes();
-                attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-                graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
-                graphics.Dispose(); // Dispose temp graphics
-                return bitmap;
+                using (Graphics graphics = Graphics.FromImage(dest))
+                {
+                    ColorMatrix colorMatrix = new ColorMatrix();
+                    // adjust saturation
+                    colorMatrix[0, 0] = baseSat * rwgt + sat;
+                    colorMatrix[0, 1] = baseSat * rwgt;
+                    colorMatrix[0, 2] = baseSat * rwgt;
+                    colorMatrix[1, 0] = baseSat * gwgt;
+                    colorMatrix[1, 1] = baseSat * gwgt + sat;
+                    colorMatrix[1, 2] = baseSat * gwgt;
+                    colorMatrix[2, 0] = baseSat * bwgt;
+                    colorMatrix[2, 1] = baseSat * bwgt;
+                    colorMatrix[2, 2] = baseSat * bwgt + sat;
+                    // adjust brightness
+                    colorMatrix[4, 0] = adjBrightness;
+                    colorMatrix[4, 1] = adjBrightness;
+                    colorMatrix[4, 2] = adjBrightness;
+                    ImageAttributes attributes = new ImageAttributes();
+                    attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                    graphics.DrawImage(source, new Rectangle(0, 0, dest.Width, dest.Height), 0, 0, source.Width, source.Height, GraphicsUnit.Pixel, attributes);
+                }
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
-                return image;
             }
         }
 
