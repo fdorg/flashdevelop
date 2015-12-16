@@ -1,13 +1,15 @@
-package 
+package
 {
 	/// The Vector class lets you access and manipulate a vector - an array whose elements all have the same data type.
 	public class Vector.<T>
 	{
-		/// The range of valid indices available in the Vector.
-		public var length:int;
+		/// [FP10] The range of valid indices available in the Vector.
+		public function get length () : int;
+		public function set length (value:int) : void;
 
-		/// Indicates whether the length property of the Vector can be changed.
-		public var fixed:Boolean;
+		/// [FP10] Indicates whether the length property of the Vector can be changed.
+		public function get fixed () : Boolean;
+		public function set fixed (value:int) void;
 
 		/// [FP10] Creates a Vector with the specified base type.
 		public function Vector (length:uint = 0, fixed:Boolean = false);
@@ -26,6 +28,9 @@ package
 
 		/// [FP10] Searches for an item in the Vector and returns the index position of the item.
 		public function indexOf (searchElement:T, fromIndex:int = 0) : int;
+		
+		/// [FP19] Insert a single element into the Vector.
+		public function insertAt (index:int, element:T) : void;
 
 		/// [FP10] Converts the elements in the Vector to strings.
 		public function join (sep:String = ",") : String;
@@ -41,6 +46,9 @@ package
 
 		/// [FP10] Adds one or more elements to the end of the Vector and returns the new length of the Vector.
 		public function push (...args) : uint;
+
+		/// [FP19] Remove a single element from the Vector.
+		public function removeAt (index:int) : T;
 
 		/// [FP10] Reverses the order of the elements in the Vector.
 		public function reverse () : Vector.<T>;

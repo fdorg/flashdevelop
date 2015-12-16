@@ -334,23 +334,14 @@ namespace AS3Context
             }
 
             // intrinsics (deprecated, excepted for FP10 Vector.<T>)
-            string fp9cp = as3settings.AS3ClassPath + S + "FP9";
-            AddPath(PathHelper.ResolvePath(fp9cp));
-            if (majorVersion > 9)
+            // add from the highest version number (FP11 > FP10 > FP9)
+            string fp = as3settings.AS3ClassPath + S + "FP";
+            for (int i = majorVersion; i >= 9; i--)
             {
-                for (int i = 10; i <= majorVersion; i++)
-                {
-                    string fp10cp = as3settings.AS3ClassPath + S + "FP" + i;
-                    AddPath(PathHelper.ResolvePath(fp10cp));
-                    for (int j = 1; j <= minorVersion; j++)
-                    {
-                        string fp101cp = as3settings.AS3ClassPath + S + "FP" + majorVersion + "." + minorVersion;
-                        AddPath(PathHelper.ResolvePath(fp101cp));
-                    }
-                }
+                AddPath(PathHelper.ResolvePath(fp + i));
             }
 
-            // add external pathes
+            // add external paths
             List<PathModel> initCP = classPath;
             classPath = new List<PathModel>();
             if (contextSetup.Classpath != null)
@@ -361,20 +352,20 @@ namespace AS3Context
 
             // add library
             AddPath(PathHelper.LibraryDir + S + "AS3" + S + "classes");
-            // add user pathes from settings
+            // add user paths from settings
             if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
 
-            // add initial pathes
+            // add initial paths
             foreach (PathModel mpath in initCP) AddPath(mpath);
 
             // parse top-level elements
             InitTopLevelElements();
             if (cFile != null) UpdateTopLevelElements();
 
-            // add current temporaty path
+            // add current temporary path
             if (temporaryPath != null)
             {
                 string tempPath = temporaryPath;
