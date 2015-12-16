@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Data;
-using System.Text;
 using System.Drawing;
 using System.Threading;
 using System.Reflection;
@@ -231,6 +229,7 @@ namespace AppMan
                 if (File.Exists(file))
                 {
                     settings = ObjectSerializer.Deserialize(file, settings) as Settings;
+                    if (!String.IsNullOrEmpty(settings.Name)) MainForm.DISTRO_NAME = settings.Name;
                     PathHelper.APPS_DIR = ArgProcessor.ProcessArguments(settings.Archive);
                     PathHelper.CONFIG_ADR = ArgProcessor.ProcessArguments(settings.Config);
                     PathHelper.HELP_ADR = ArgProcessor.ProcessArguments(settings.Help);
@@ -1663,18 +1662,20 @@ namespace AppMan
         public String Config = "";
         public String Archive = "";
         public String Locale = "en_US";
+        public String Name = "FlashDevelop";
 
         [XmlArrayItem("Path")]
         public String[] Paths = new String[0];
 
         public Settings() {}
-        public Settings(String config, String archive, String[] paths, String locale, String help, String logs)
+        public Settings(String config, String archive, String[] paths, String locale, String help, String logs, String name)
         {
             this.Logs = logs;
             this.Paths = paths;
             this.Config = config;
             this.Archive = archive;
             this.Locale = locale;
+            this.Name = name;
             this.Help = help;
         }
 
