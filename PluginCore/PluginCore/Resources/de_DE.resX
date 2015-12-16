@@ -3739,8 +3739,8 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Fehlerzeile:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Track Active Document</value>
-    <comment>Modified after 4.7.2</comment>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>
