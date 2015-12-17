@@ -3739,8 +3739,8 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
     <value>エラー行の背景:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Track Active Document</value>
-    <comment>Modified after 4.7.2</comment>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>
@@ -6024,6 +6024,9 @@ UseData:"</value>
   </data>
   <data name="FlashDevelop.Info.ShortcutConflictsPresent" xml:space="preserve">
     <value>There are one or more conflicts present.</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
+    <value>No contextual code generation available.</value>
     <comment>REQUIRES TRANSLATION</comment>
   </data>
 </root>
