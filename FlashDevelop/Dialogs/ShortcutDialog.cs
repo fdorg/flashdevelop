@@ -287,11 +287,22 @@ namespace FlashDevelop.Dialogs
                 this.GetConflictItems(item);
                 conflicts = conflicts || item.HasConflicts;
             }
-            if (conflicts)
+            if (conflicts) this.ShowConflictsPresent();
+        }
+
+        /// <summary>
+        /// Display a warning message to show conflicts.
+        /// </summary>
+        bool ShowConflictsPresent()
+        {
+            string text = TextHelper.GetString("Info.ShortcutConflictsPresent");
+            string caption = TextHelper.GetString("Title.WarningDialog");
+            if (MessageBox.Show(this, text, " " + caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
             {
-                ErrorManager.ShowWarning(TextHelper.GetString("Info.ShortcutConflictsPresent"), null);
                 this.filterTextBox.Text = ViewConflictsKey.ToString();
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -395,10 +406,14 @@ namespace FlashDevelop.Dialogs
             this.GetConflictItems(item);
             if (item.HasConflicts)
             {
-                ErrorManager.ShowWarning(TextHelper.GetString("Info.ShortcutIsAlreadyUsed"), null);
+                string text = TextHelper.GetString("Info.ShortcutIsAlreadyUsed");
+                string caption = TextHelper.GetString("Title.WarningDialog");
+                if (MessageBox.Show(Globals.MainForm, text, " " + caption, MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    this.filterTextBox.Text = ViewConflictsKey + item.KeysString;
+                    this.filterTextBox.SelectAll();
+                }
                 this.filterTextBox.Focus(); // Set focus to filter...
-                this.filterTextBox.Text = ViewConflictsKey + item.KeysString;
-                this.filterTextBox.SelectAll();
             }
         }
         
@@ -550,9 +565,7 @@ namespace FlashDevelop.Dialogs
             {
                 if (this.shortcutListItems[i].HasConflicts)
                 {
-                    ErrorManager.ShowError(TextHelper.GetString("Info.ShortcutConflictsPresent"), null);
-                    this.filterTextBox.Text = ViewConflictsKey.ToString();
-                    e.Cancel = true;
+                    e.Cancel = this.ShowConflictsPresent();
                     break;
                 }
             }
