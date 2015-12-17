@@ -213,8 +213,15 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            this.pictureBox.Image = Globals.MainForm.FindImage("229");
-            this.clearButton.Image = Globals.MainForm.FindImage("153");
+            using (var imageList = new ImageList())
+            {
+                imageList.ColorDepth = ColorDepth.Depth32Bit;
+                imageList.ImageSize = new Size(16, 16);
+                imageList.Images.Add(ScaleHelper.Scale((Bitmap) Globals.MainForm.FindImage("229", false)));
+                imageList.Images.Add(ScaleHelper.Scale((Bitmap) Globals.MainForm.FindImage("153", false)));
+                this.pictureBox.Image = imageList.Images[0];
+                this.clearButton.Image = imageList.Images[1];
+            }
         }
 
         /// <summary>
