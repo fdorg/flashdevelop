@@ -1920,7 +1920,7 @@ namespace ASCompletion.Completion
                 result = new ASResult();
                 if (expr.Separator == '"')
                 {
-                    tmpClass = ctx.ResolveType("String", null);
+                    tmpClass = ctx.ResolveType(ctx.Features.stringKey, null);
                     result.Type = tmpClass;
                     dotIndex = 1;
                 }
@@ -2513,7 +2513,7 @@ namespace ASCompletion.Completion
             else if (token == "\"") // literal string
             {
                 head = new ASResult();
-                head.Type = ASContext.Context.ResolveType("String", null);
+                head.Type = ASContext.Context.ResolveType(ASContext.Context.Features.stringKey, null);
             }
             else head = EvalVariable(token, context, inFile, inClass); // regular eval
 

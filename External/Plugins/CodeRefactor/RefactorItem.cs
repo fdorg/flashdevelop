@@ -25,7 +25,7 @@ namespace CodeRefactor
             this.item = item;
             label = Regex.Replace(item.Text, "[&.]", string.Empty);
             description = TextHelper.GetString("Label.Refactor").Replace("&", string.Empty);
-            icon = new Bitmap(item.Image ?? PluginBase.MainForm.FindImage("452")); //452 or 473
+            icon = (Bitmap) (item.Image ?? PluginBase.MainForm.FindImage("452")); //452 or 473
         }
 
         public string Description

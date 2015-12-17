@@ -232,9 +232,21 @@ namespace PluginCore
         /// </summary>
         Image ImageSetAdjust(Image image);
         /// <summary>
-        /// Finds the specified composed/ready image.
+        /// Gets a copy of the image that gets automatically adjusted according to the theme.
+        /// </summary>
+        Image GetAutoAdjustedImage(Image image);
+        /// <summary>
+        /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
         /// </summary>
         Image FindImage(String data);
+        /// <summary>
+        /// Finds the specified composed/ready image.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
+        /// </summary>
+        Image FindImage(String data, Boolean autoAdjust);
 
         #endregion
 
