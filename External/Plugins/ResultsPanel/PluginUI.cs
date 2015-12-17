@@ -19,18 +19,19 @@ namespace ResultsPanel
 {
     public class PluginUI : DockPanelControl
     {
+        public ToolStripMenuItem clearEntriesContextMenuItem;
+        public ToolStripMenuItem copyEntryContextMenuItem;
+        public ToolStripMenuItem ignoreEntryContextMenuItem;
+        public ToolStripMenuItem clearIgnoredEntriesContextMenuItem;
+        public ToolStripMenuItem nextEntryContextMenuItem;
+        public ToolStripMenuItem previousEntryContextMenuItem;
+
         private ListViewEx entriesView;
         private ColumnHeader entryFile;
         private ColumnHeader entryDesc;
         private ColumnHeader entryLine;
         private ColumnHeader entryPath;
         private ColumnHeader entryType;
-        private ToolStripMenuItem nextEntry;
-        private ToolStripMenuItem previousEntry;
-        private ToolStripMenuItem ignoreEntriesContextMenuItem;
-        private ToolStripMenuItem ignoreEntryContextMenuItem;
-        private ToolStripMenuItem copyEntryContextMenuItem;
-        private ToolStripMenuItem clearIgnoredEntriesContextMenuItem;
         private IDictionary<String, Boolean> ignoredEntries;
         private List<ListViewItem> allListViewItems = new List<ListViewItem>();
         private ToolStripButton toolStripButtonError;
@@ -267,23 +268,25 @@ namespace ResultsPanel
         public void InitializeContextMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
-            this.ignoreEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearEntries"), null, new EventHandler(this.ClearOutputClick));
-            menu.Items.Add(this.ignoreEntriesContextMenuItem);
+
+            this.clearEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearEntries"), null, new EventHandler(this.ClearOutputClick));
             this.copyEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyEntry"), null, new EventHandler(this.CopyTextClick));
-            this.copyEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.CopyEntry);
-            menu.Items.Add(this.copyEntryContextMenuItem);
             this.ignoreEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.IgnoreEntry"), null, new EventHandler(this.IgnoreEntryClick));
-            this.ignoreEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.IgnoreEntry);
+            this.clearIgnoredEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearIgnoredEntries"), null, new EventHandler(this.ClearIgnoredEntriesClick));
+            this.nextEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.NextEntry"), null, new EventHandler(this.NextEntryClick));
+            this.previousEntryContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.PreviousEntry"), null, new EventHandler(this.PreviousEntryClick));
+            
+            this.copyEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.CopyEntryKeys);
+            this.ignoreEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.IgnoreEntryKeys);
+
+            menu.Items.Add(this.clearEntriesContextMenuItem);
+            menu.Items.Add(this.copyEntryContextMenuItem);
             menu.Items.Add(this.ignoreEntryContextMenuItem);
-            this.clearIgnoredEntriesContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ClearIgnoredEntries"), null, new EventHandler(this.ClearIgnoredEntries));
             menu.Items.Add(this.clearIgnoredEntriesContextMenuItem);
             menu.Items.Add(new ToolStripSeparator());
-            this.nextEntry = new ToolStripMenuItem(TextHelper.GetString("Label.NextEntry"), null, new EventHandler(this.NextEntry));
-            this.nextEntry.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.NextError);
-            menu.Items.Add(this.nextEntry);
-            this.previousEntry = new ToolStripMenuItem(TextHelper.GetString("Label.PreviousEntry"), null, new EventHandler(this.PreviousEntry));
-            this.previousEntry.ShortcutKeyDisplayString = DataConverter.KeysToString(this.pluginMain.PrevError);
-            menu.Items.Add(this.previousEntry);
+            menu.Items.Add(this.nextEntryContextMenuItem);
+            menu.Items.Add(this.previousEntryContextMenuItem);
+
             this.entriesView.ContextMenuStrip = menu;
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer(false);
@@ -389,10 +392,17 @@ namespace ResultsPanel
         /// <summary>
         /// Clears any result entries that are ignored. Invoked from the context menu.
         /// </summary>
-        public void ClearIgnoredEntries(Object sender, System.EventArgs e)
+        public void ClearIgnoredEntriesClick(Object sender, System.EventArgs e)
         {
+            ClearIgnoredEntries();
+        }
+
+        public Boolean ClearIgnoredEntries()
+        {
+            if (this.ignoredEntries.Count == 0) return false;
             this.ignoredEntries.Clear();
             this.FilterResults(false);
+            return true;
         }
 
         /// <summary>
@@ -452,7 +462,7 @@ namespace ResultsPanel
         /// </summary>
         private void ContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.nextEntry.Enabled = this.previousEntry.Enabled = this.ignoreEntriesContextMenuItem.Enabled = this.entriesView.Items.Count > 0;
+            this.nextEntryContextMenuItem.Enabled = this.previousEntryContextMenuItem.Enabled = this.clearEntriesContextMenuItem.Enabled = this.entriesView.Items.Count > 0;
             this.ignoreEntryContextMenuItem.Enabled = this.copyEntryContextMenuItem.Enabled = this.entriesView.SelectedItems.Count > 0;
             this.clearIgnoredEntriesContextMenuItem.Enabled = this.ignoredEntries.Count > 0;
         }
@@ -556,8 +566,9 @@ namespace ResultsPanel
         /// <summary>
         /// Clears the output
         /// </summary>
-        public void ClearOutput()
+        public Boolean ClearOutput()
         {
+            if (this.allListViewItems.Count == 0) return false;
             this.ClearSquiggles();
             this.allListViewItems.Clear();
             this.toolStripTextBoxFilter.Text = "";
@@ -566,6 +577,7 @@ namespace ResultsPanel
             this.DisableContextMenuItems();
             this.entryIndex = -1;
             this.UpdateButtons();
+            return true;
         }
 
         /// <summary>
@@ -937,9 +949,17 @@ namespace ResultsPanel
         /// <summary>
         /// Goes to the next entry in the result list.
         /// </summary>
-        public void NextEntry(Object sender, System.EventArgs e)
+        public void NextEntryClick(Object sender, System.EventArgs e)
         {
-            if (this.entriesView.Items.Count == 0) return;
+            NextEntry();
+        }
+
+        /// <summary>
+        /// Goes to the next entry in the result list.
+        /// </summary>
+        public Boolean NextEntry()
+        {
+            if (this.entriesView.Items.Count == 0) return false;
             if (this.entryIndex >= 0 && this.entryIndex < this.entriesView.Items.Count)
             {
                 this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
@@ -950,14 +970,23 @@ namespace ResultsPanel
             this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
             this.EntriesViewDoubleClick(null, null);
+            return true;
         }
 
         /// <summary>
         /// Goes to the previous entry in the result list.
         /// </summary>
-        public void PreviousEntry(Object sender, System.EventArgs e)
+        public void PreviousEntryClick(Object sender, System.EventArgs e)
         {
-            if (this.entriesView.Items.Count == 0) return;
+            PreviousEntry();
+        }
+
+        /// <summary>
+        /// Goes to the previous entry in the result list.
+        /// </summary>
+        public Boolean PreviousEntry()
+        {
+            if (this.entriesView.Items.Count == 0) return false;
             if (this.entryIndex >= 0 && this.entryIndex < this.entriesView.Items.Count)
             {
                 this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
@@ -968,6 +997,7 @@ namespace ResultsPanel
             this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
             this.EntriesViewDoubleClick(null, null);
+            return true;
         }
 
         #endregion
