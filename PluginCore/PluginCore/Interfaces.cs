@@ -98,79 +98,299 @@ namespace PluginCore
     {
         #region IMainForm Methods
 
+        /// <summary>
+        /// Refreshes the main form.
+        /// </summary>
         void RefreshUI();
+        /// <summary>
+        /// Stop the currently running process.
+        /// </summary>
         void KillProcess();
+        /// <summary>
+        /// Refreshes the scintilla configuration.
+        /// </summary>
         void RefreshSciConfig();
+        /// <summary>
+        /// Themes the controls from the parent.
+        /// </summary>
         void ThemeControls(Object control);
+        /// <summary>
+        /// Clears the temporary file from disk.
+        /// </summary>
         void ClearTemporaryFiles(String file);
+        /// <summary>
+        /// Shows the settings dialog.
+        /// </summary>
         void ShowSettingsDialog(String itemName);
+        /// <summary>
+        /// Shows the error dialog if the sender is <see cref="Managers.ErrorManager"/>.
+        /// </summary>
         void ShowErrorDialog(Object sender, Exception ex);
+        /// <summary>
+        /// Shows the settings dialog with a filter.
+        /// </summary>
         void ShowSettingsDialog(String itemName, String filter);
+        /// <summary>
+        /// Lets you update menu items using the flag functionality.
+        /// </summary>
         void AutoUpdateMenuItem(ToolStripItem item, String action);
+        /// <summary>
+        /// Registers a new menu item with the shortcut manager.
+        /// </summary>
         void RegisterShortcutItem(String id, Keys keys);
+        /// <summary>
+        /// Registers a new menu item with the shortcut manager.
+        /// </summary>
         void RegisterShortcutItem(String id, ToolStripMenuItem item);
+        /// <summary>
+        /// Registers a new secondary menu item with the shortcut manager.
+        /// </summary>
         void RegisterSecondaryItem(String id, ToolStripItem item);
+        /// <summary>
+        /// Updates a registered secondary menu item in the shortcut manager
+        /// - should be called when the tooltip changes.
+        /// </summary>
         void ApplySecondaryShortcut(ToolStripItem item);
+        /// <summary>
+        /// Create the specified new document from the given template.
+        /// </summary>
         void FileFromTemplate(String templatePath, String newFilePath);
+        /// <summary>
+        /// Opens an editable document.
+        /// </summary>
         DockContent OpenEditableDocument(String file, Boolean restoreFileState);
+        /// <summary>
+        /// Opens an editable document.
+        /// </summary>
         DockContent OpenEditableDocument(String file);
+        /// <summary>
+        /// Creates a new custom document.
+        /// </summary>
         DockContent CreateCustomDocument(Control ctrl);
+        /// <summary>
+        /// Creates a new empty document.
+        /// </summary>
         DockContent CreateEditableDocument(String file, String text, Int32 codepage);
+        /// <summary>
+        /// Creates a floating panel for the plugin.
+        /// </summary>
         DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
+        /// <summary>
+        /// Calls a normal <see cref="IMainForm"/> method.
+        /// </summary>
         Boolean CallCommand(String command, String arguments);
+        /// <summary>
+        /// Finds the menu items that have the specified name.
+        /// </summary>
         List<ToolStripItem> FindMenuItems(String name);
+        /// <summary>
+        /// Finds the specified menu item by name.
+        /// </summary>
         ToolStripItem FindMenuItem(String name);
+        /// <summary>
+        /// Processes the argument string variables.
+        /// </summary>
         String ProcessArgString(String args);
+        /// <summary>
+        /// Gets the specified item's shortcut keys.
+        /// </summary>
         Keys GetShortcutItemKeys(String id);
+        /// <summary>
+        /// Gets the specified item's id.
+        /// </summary>
         String GetShortcutItemId(Keys keys);
+        /// <summary>
+        /// Gets a theme property value.
+        /// </summary>
         String GetThemeValue(String id);
+        /// <summary>
+        /// Gets a theme property color.
+        /// </summary>
         Color GetThemeColor(String id);
+        /// <summary>
+        /// Gets a theme flag value.
+        /// </summary>
         Boolean GetThemeFlag(String id);
+        /// <summary>
+        /// Gets a theme flag value with a fallback.
+        /// </summary>
         Boolean GetThemeFlag(String id, Boolean fallback);
+        /// <summary>
+        /// Gets a theme property value with a fallback.
+        /// </summary>
         String GetThemeValue(String id, String fallback);
+        /// <summary>
+        /// Gets a theme property color with a fallback.
+        /// </summary>
         Color GetThemeColor(String id, Color fallback);
+        /// <summary>
+        /// Finds the specified plugin.
+        /// </summary>
         IPlugin FindPlugin(String guid);
+        /// <summary>
+        /// Adjusts the image for different themes.
+        /// </summary>
         Image ImageSetAdjust(Image image);
+        /// <summary>
+        /// Gets a copy of the image that gets automatically adjusted according to the theme.
+        /// </summary>
+        Image GetAutoAdjustedImage(Image image);
+        /// <summary>
+        /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
+        /// </summary>
         Image FindImage(String data);
+        /// <summary>
+        /// Finds the specified composed/ready image.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
+        /// </summary>
+        Image FindImage(String data, Boolean autoAdjust);
 
         #endregion
 
         #region IMainFrom Properties
 
+        /// <summary>
+        /// Gets the <see cref="ISettings"/> interface.
+        /// </summary>
         ISettings Settings { get; }
+        /// <summary>
+        /// Gets the tool strip.
+        /// </summary>
         ToolStrip ToolStrip { get; }
+        /// <summary>
+        /// Gets the menu strip.
+        /// </summary>
         MenuStrip MenuStrip { get; }
+        /// <summary>
+        /// Gets the <see cref="Scintilla"/> configuration.
+        /// </summary>
         Scintilla SciConfig { get; }
+        /// <summary>
+        /// Gets the dock panel.
+        /// </summary>
         DockPanel DockPanel { get; }
+        /// <summary>
+        /// Gets the application start arguments.
+        /// </summary>
         String[] StartArguments { get; }
+        /// <summary>
+        /// Gets the application custom arguments.
+        /// </summary>
         List<Argument> CustomArguments { get; }
+        /// <summary>
+        /// Gets the status strip.
+        /// </summary>
         StatusStrip StatusStrip { get; }
+        /// <summary>
+        /// Gets or sets the working directory.
+        /// </summary>
         String WorkingDirectory { get; set; }
+        /// <summary>
+        /// Gets the tool strip panel.
+        /// </summary>
         ToolStripPanel ToolStripPanel { get; }
+        /// <summary>
+        /// Gets the tool strip status label.
+        /// </summary>
         ToolStripStatusLabel StatusLabel { get; }
+        /// <summary>
+        /// Gets the tool strip progress label.
+        /// </summary>
         ToolStripStatusLabel ProgressLabel { get; }
+        /// <summary>
+        /// Gets the tool strip progress bar.
+        /// </summary>
         ToolStripProgressBar ProgressBar { get; }
+        /// <summary>
+        /// Gets the collection of controls contained within this control.
+        /// </summary>
         Control.ControlCollection Controls { get; }
+        /// <summary>
+        /// Gets the tab menu.
+        /// </summary>
         ContextMenuStrip TabMenu { get; }
+        /// <summary>
+        /// Gets the editor menu.
+        /// </summary>
         ContextMenuStrip EditorMenu { get; }
+        /// <summary>
+        /// Gets the current <see cref="ITabbedDocument"/> object.
+        /// </summary>
         ITabbedDocument CurrentDocument { get; }
+        /// <summary>
+        /// Gets all available documents.
+        /// </summary>
         ITabbedDocument[] Documents { get; }
+        /// <summary>
+        /// Gets whether FlashDevelop holds modified documents.
+        /// </summary>
         Boolean HasModifiedDocuments { get; }
+        /// <summary>
+        /// Gets whether FlashDevelop is closing.
+        /// </summary>
         Boolean ClosingEntirely { get; }
+        /// <summary>
+        /// Gets whether a process is running.
+        /// </summary>
         Boolean ProcessIsRunning { get; }
+        /// <summary>
+        /// Gets whether a document is reloading.
+        /// </summary>
         Boolean ReloadingDocument { get; }
+        /// <summary>
+        /// Gets whether contents are being processed.
+        /// </summary>
         Boolean ProcessingContents { get; }
+        /// <summary>
+        /// Gets whether contents are being restored.
+        /// </summary>
         Boolean RestoringContents { get; }
+        /// <summary>
+        /// Gets saving multiple.
+        /// </summary>
         Boolean SavingMultiple { get; }
+        /// <summary>
+        /// Gets whether the panel is active.
+        /// </summary>
         Boolean PanelIsActive { get; }
+        /// <summary>
+        /// Gets whether FlashDevelop is in full screen.
+        /// </summary>
         Boolean IsFullScreen { get; }
+        /// <summary>
+        /// Gets whether FlashDevelop is in standalone mode.
+        /// </summary>
         Boolean StandaloneMode { get; }
+        /// <summary>
+        /// Gets whether FlashDevelop is in multi-instance mode.
+        /// </summary>
         Boolean MultiInstanceMode { get; }
+        /// <summary>
+        /// Gets whether this <see cref="IMainForm"/> is the first instance.
+        /// </summary>
         Boolean IsFirstInstance { get; }
+        /// <summary>
+        /// Gets whether a restart is required.
+        /// </summary>
         Boolean RestartRequested { get; }
+        /// <summary>
+        /// Gets whether the config should be refreshed.
+        /// </summary>
         Boolean RefreshConfig { get; }
+        /// <summary>
+        /// Gets the ignored keys.
+        /// </summary>
         List<Keys> IgnoredKeys { get; }
+        /// <summary>
+        /// Gets the version of the application.
+        /// </summary>
         String ProductVersion { get; }
+        /// <summary>
+        /// Gets the full human readable version string.
+        /// </summary>
         String ProductName { get; }
 
         #endregion
