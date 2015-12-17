@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using PluginCore.Helpers;
 
 namespace PluginCore.Controls
 {
@@ -36,6 +37,7 @@ namespace PluginCore.Controls
         public FixedValuesCollectionEditor(T[] all, T[] values, params T[] lockedValues)
         {
             InitializeComponent();
+            InitializeGraphics();
             InitializeAvailableList(all, values);
             InitializeUsedList(values, lockedValues);
             ValidateButtons();
@@ -50,7 +52,8 @@ namespace PluginCore.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            global::System.Resources.ResourceManager resources = new global::System.Resources.ResourceManager("PluginCore.PluginCore.Controls.FixedValuesCollectionEditor", typeof(FixedValuesCollectionEditor<>).Assembly);
+            System.Windows.Forms.ColumnHeader availableItemsHeader;
+            System.Windows.Forms.ColumnHeader usedItemsHeader;
             this.lblAvailable = new System.Windows.Forms.Label();
             this.lblUsed = new System.Windows.Forms.Label();
             this.availableItems = new System.Windows.Forms.ListView();
@@ -61,7 +64,17 @@ namespace PluginCore.Controls
             this.btnDown = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
+            availableItemsHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            usedItemsHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
+            // 
+            // availableItemsHeader
+            // 
+            availableItemsHeader.Width = 125;
+            // 
+            // usedItemsHeader
+            // 
+            usedItemsHeader.Width = 125;
             // 
             // lblAvailable
             // 
@@ -83,31 +96,37 @@ namespace PluginCore.Controls
             // 
             // availableItems
             // 
-            this.availableItems.HideSelection = false;
+            this.availableItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            availableItemsHeader});
+            this.availableItems.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.availableItems.Location = new System.Drawing.Point(12, 27);
             this.availableItems.Name = "availableItems";
             this.availableItems.Size = new System.Drawing.Size(150, 200);
+            this.availableItems.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.availableItems.TabIndex = 2;
             this.availableItems.TabStop = false;
             this.availableItems.UseCompatibleStateImageBehavior = false;
-            this.availableItems.View = System.Windows.Forms.View.List;
+            this.availableItems.View = System.Windows.Forms.View.Details;
             this.availableItems.SelectedIndexChanged += new System.EventHandler(this.AvailableItems_SelectedIndexChanged);
+            this.availableItems.Enter += new System.EventHandler(this.AvailableItems_Enter);
             // 
             // usedItems
             // 
-            this.usedItems.HideSelection = false;
+            this.usedItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            usedItemsHeader});
+            this.usedItems.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.usedItems.Location = new System.Drawing.Point(198, 27);
             this.usedItems.Name = "usedItems";
-            this.usedItems.Size = new System.Drawing.Size(150, 199);
+            this.usedItems.Size = new System.Drawing.Size(150, 200);
             this.usedItems.TabIndex = 3;
             this.usedItems.TabStop = false;
             this.usedItems.UseCompatibleStateImageBehavior = false;
-            this.usedItems.View = System.Windows.Forms.View.List;
+            this.usedItems.View = System.Windows.Forms.View.Details;
             this.usedItems.SelectedIndexChanged += new System.EventHandler(this.UsedItems_SelectedIndexChanged);
+            this.usedItems.Enter += new System.EventHandler(this.UsedItems_Enter);
             // 
             // btnAdd
             // 
-            this.btnAdd.Image = (System.Drawing.Bitmap)resources.GetObject("ArrowRight");
             this.btnAdd.Location = new System.Drawing.Point(168, 101);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(24, 24);
@@ -118,7 +137,6 @@ namespace PluginCore.Controls
             // 
             // btnRemove
             // 
-            this.btnRemove.Image = (System.Drawing.Bitmap)resources.GetObject("ArrowLeft");
             this.btnRemove.Location = new System.Drawing.Point(168, 131);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(24, 24);
@@ -129,7 +147,6 @@ namespace PluginCore.Controls
             // 
             // btnUp
             // 
-            this.btnUp.Image = (System.Drawing.Bitmap)resources.GetObject("ArrowUp");
             this.btnUp.Location = new System.Drawing.Point(354, 50);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(24, 24);
@@ -140,7 +157,6 @@ namespace PluginCore.Controls
             // 
             // btnDown
             // 
-            this.btnDown.Image = (System.Drawing.Bitmap)resources.GetObject("ArrowDown");
             this.btnDown.Location = new System.Drawing.Point(354, 80);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(24, 24);
@@ -152,7 +168,7 @@ namespace PluginCore.Controls
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(303, 232);
+            this.btnCancel.Location = new System.Drawing.Point(303, 233);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -163,7 +179,7 @@ namespace PluginCore.Controls
             // btnOK
             // 
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(222, 232);
+            this.btnOK.Location = new System.Drawing.Point(222, 233);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -177,7 +193,7 @@ namespace PluginCore.Controls
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(390, 267);
+            this.ClientSize = new System.Drawing.Size(390, 268);
             this.Controls.Add(this.lblAvailable);
             this.Controls.Add(this.lblUsed);
             this.Controls.Add(this.availableItems);
@@ -215,6 +231,14 @@ namespace PluginCore.Controls
 
         #region Initialization
 
+        void InitializeGraphics()
+        {
+            btnAdd.Image = ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("67", false));
+            btnRemove.Image = ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("63", false));
+            btnUp.Image = ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("74", false));
+            btnDown.Image = ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("60", false));
+        }
+
         void InitializeAvailableList(T[] all, T[] values)
         {
             availableItems.BeginUpdate();
@@ -248,6 +272,20 @@ namespace PluginCore.Controls
 
         #region Event handlers
 
+        void AvailableItems_Enter(object sender, EventArgs e)
+        {
+            usedItems.BeginUpdate();
+            foreach (Item item in usedItems.SelectedItems) item.Selected = false;
+            usedItems.EndUpdate();
+        }
+        
+        void UsedItems_Enter(object sender, EventArgs e)
+        {
+            availableItems.BeginUpdate();
+            foreach (Item item in availableItems.SelectedItems) item.Selected = false;
+            availableItems.EndUpdate();
+        }
+        
         void AvailableItems_SelectedIndexChanged(object sender, EventArgs e)
         {
             var indices = availableItems.SelectedIndices;
@@ -318,11 +356,9 @@ namespace PluginCore.Controls
         {
             usedItems.BeginUpdate();
 
-            var selectedIndices = usedItems.SelectedIndices;
-            int[] indices = new int[selectedIndices.Count];
-            selectedIndices.CopyTo(indices, 0);
+            var indices = usedItems.SelectedIndices;
 
-            for (int i = 0; i < indices.Length; i++)
+            for (int i = 0; i < indices.Count; i++)
             {
                 int index = indices[i];
                 var items = usedItems.Items;
@@ -339,11 +375,9 @@ namespace PluginCore.Controls
         {
             usedItems.BeginUpdate();
 
-            var selectedIndices = usedItems.SelectedIndices;
-            int[] indices = new int[selectedIndices.Count];
-            selectedIndices.CopyTo(indices, 0);
+            var indices = usedItems.SelectedIndices;
 
-            for (int i = indices.Length - 1; i >= 0; i--)
+            for (int i = indices.Count - 1; i >= 0; i--)
             {
                 int index = indices[i];
                 var items = usedItems.Items;
@@ -404,7 +438,7 @@ namespace PluginCore.Controls
                 this.value = value;
                 this.locked = locked;
             }
-        } 
+        }
 
         #endregion
     }

@@ -567,10 +567,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Controls\FixedValuesCollectionEditor.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>FixedValuesCollectionEditor.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\de_DE.resX">
       <SubType>Designer</SubType>
     </EmbeddedResource>

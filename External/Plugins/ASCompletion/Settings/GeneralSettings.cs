@@ -291,7 +291,7 @@ namespace ASCompletion.Settings
         public static readonly string[] ALL_DECLARATION_MODIFIERS =
         {
             DECLARATION_MODIFIER_OTHER,
-            "public", "internal", "protected", "private", "static", "override", "final", "inline", "native", "intrinsic"
+            "public", "internal", "protected", "private", "static", "override", "final", "inline", "extern", "dynamic", "macro", "native", "intrinsic"
         };
         const bool DEFAULT_GENERATE_ADDCLOSINGBRACES = false;
         const PropertiesGenerationLocations DEFAULT_GENERATE_PROPERTIES = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
