@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -3737,8 +3737,8 @@ Kontutan izan injekzioa gaituz gero, ezin izanen diren proiektuaren hainbat auke
     <value>Errore lerroa:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Dokumentu aktiboa jarraitu</value>
-    <comment>Modified after 4.7.2</comment>
+    <value>Dokumentu aktiboa kokatu</value>
+    <comment>Modified after 5.0.2</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Klase-dokumentua kokatu</value>
@@ -5960,5 +5960,9 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
   <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
+    <value>No contextual code generation available.</value>
+    <comment>REQUIRES TRANSLATION</comment>
   </data>
 </root>

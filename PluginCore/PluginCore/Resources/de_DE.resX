@@ -3739,8 +3739,8 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Fehlerzeile:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Track Active Document</value>
-    <comment>Modified after 4.7.2</comment>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>
@@ -5963,5 +5963,9 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
+    <value>No contextual code generation available.</value>
+    <comment>REQUIRES TRANSLATION</comment>
   </data>
 </root>

@@ -234,7 +234,7 @@ namespace ProjectManager
             pluginUI.ImportProject += delegate { ImportProject(); };
             pluginUI.Rename += fileActions.Rename;
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
-            pluginUI.TreeBar.Synchronize.Click += delegate { ToggleTrackActiveDocument(); };
+            pluginUI.TreeBar.Synchronize.Click += delegate { TreeSyncToCurrentFile(); };
             pluginUI.TreeBar.SynchronizeMain.Click += delegate { TreeSyncToMainFile(); };
             pluginUI.TreeBar.CollapseAll.Click += delegate { CollapseAll(); };
             pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(); };
@@ -561,21 +561,23 @@ namespace ProjectManager
         {
             if (activeProject == null) return false;
 
-            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelector"))
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
+
+            if (shortcutId == "ProjectMenu.ConfigurationSelector")
             {
                 pluginUI.menus.ConfigurationSelector.Focus();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelectorToggle"))
+            else if (shortcutId == "ProjectMenu.ConfigurationSelectorToggle")
             {
                 pluginUI.menus.ToggleDebugRelease();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.TargetBuildSelector"))
+            else if (shortcutId == "ProjectMenu.TargetBuildSelector")
             {
                 pluginUI.menus.TargetBuildSelector.Focus();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectTree.LocateActiveFile"))
+            else if (shortcutId == "ProjectTree.LocateActiveFile")
             {
-                ToggleTrackActiveDocument();
+                TreeSyncToCurrentFile();
             }
 
             // Handle tree-level simple shortcuts like copy/paste/del
@@ -1617,16 +1619,6 @@ namespace ProjectManager
             }
         }
 
-        private void ToggleTrackActiveDocument()
-        {
-            bool newValue = !Settings.TrackActiveDocument;
-            pluginUI.TreeBar.Synchronize.Checked = newValue;
-            Settings.TrackActiveDocument = newValue;
-
-            if (newValue)
-                TreeSyncToCurrentFile();
-        }
-
         private void TreeSyncToCurrentFile()
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
@@ -1635,7 +1627,11 @@ namespace ProjectManager
                 string path = doc.FileName;
 
                 if (Tree.SelectedNode != null && Tree.SelectedNode.BackingPath == path)
+                {
+                    Tree.SelectedNode.EnsureVisible();
+                    Tree.PathToSelect = null;
                     return;
+                }
 
                 Tree.Select(path);
                 if (Tree.SelectedNode.BackingPath == path)

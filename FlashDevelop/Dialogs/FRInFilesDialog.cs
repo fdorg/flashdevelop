@@ -631,14 +631,9 @@ namespace FlashDevelop.Dialogs
                 var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
                 if (doc != null && doc.IsEditable)
                 {
-                    ScintillaControl sci = doc.SciControl;
                     if (this.resultsView.Columns.Count == 4)
                     {
-                        Int32 column = sci.MBSafeTextLength(data.Value.LineText.Substring(0, data.Value.Column));
-                        Int32 length = sci.MBSafeTextLength(data.Value.LineText.Substring(data.Value.Column, data.Value.Length));
-                        Int32 position = sci.PositionFromLine(data.Value.Line - 1) + column;
-                        sci.EnsureVisible(data.Value.Line - 1);
-                        sci.SetSel(position, position + length);
+                        FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
                     }
                 }
             }
