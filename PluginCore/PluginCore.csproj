@@ -566,6 +566,9 @@
     <EmbeddedResource Include="PluginCore\Resources\de_DE.resX">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resX">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\en_US.resX">
       <SubType>Designer</SubType>
     </EmbeddedResource>
