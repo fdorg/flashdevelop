@@ -233,10 +233,23 @@ namespace PluginCore.Controls
 
         void InitializeGraphics()
         {
-            btnAdd.Image = ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("67", false));
-            btnRemove.Image = ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("63", false));
-            btnUp.Image = ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("74", false));
-            btnDown.Image = ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("60", false));
+            using (var imageList = new ImageList())
+            {
+                imageList.ColorDepth = ColorDepth.Depth32Bit;
+                imageList.ImageSize = new Size(16, 16);
+                imageList.Images.AddRange(new[]
+                {
+                    ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("67", false)),
+                    ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("63", false)),
+                    ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("74", false)),
+                    ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("60", false))
+                });
+
+                btnAdd.Image = imageList.Images[0];
+                btnRemove.Image = imageList.Images[1];
+                btnUp.Image = imageList.Images[2];
+                btnDown.Image = imageList.Images[3];
+            }
         }
 
         void InitializeAvailableList(T[] all, T[] values)
