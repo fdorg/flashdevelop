@@ -32,6 +32,7 @@ namespace ASCompletion.Completion
         const string NewLine = "$(Boundary)\n";
         static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
         static private Regex reModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
+        static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
         static private string contextToken;
         static private string contextParam;
@@ -1741,25 +1742,21 @@ namespace ASCompletion.Completion
         private static void GenerateFieldFromParameter(ScintillaControl sci, MemberModel member, ClassModel inClass,
                     Visibility scope)
         {
-            int funcBodyStart = GetBodyStart(member.LineFrom, member.LineTo, sci);
+            int funcBodyStart = GetBodyStart(member.LineFrom, member.LineTo, sci, false);
+            int fbsLine = sci.LineFromPosition(funcBodyStart);
+            int endPos = sci.LineEndPosition(member.LineTo);
 
-            sci.SetSel(funcBodyStart, sci.LineEndPosition(member.LineTo));
+            sci.SetSel(funcBodyStart, endPos);
             string body = sci.SelText;
             string trimmed = body.TrimStart();
 
-            Regex re = new Regex("^super\\s*[\\(|\\.]");
-            Match m = re.Match(trimmed);
-            if (m.Success)
+            Match m = reSuperCall.Match(trimmed);
+            if (m.Success && m.Index == 0)
             {
-                if (m.Index == 0)
-                {
-                    int p = funcBodyStart + (body.Length - trimmed.Length);
-                    int l = sci.LineFromPosition(p);
-                    p = sci.PositionFromLine(l + 1);
-                    throw new NotImplementedException("reimplement");
-                    //funcBodyStart = GetBodyStart(member.LineFrom, member.LineTo, sci, p);
-                }
+                funcBodyStart = GetEndOfStatement(funcBodyStart + (body.Length - trimmed.Length), endPos, sci);
             }
+
+            funcBodyStart = GetOrSetPointOfInsertion(funcBodyStart, endPos, fbsLine, sci);
 
             sci.SetSel(funcBodyStart, funcBodyStart);
             sci.CurrentPos = funcBodyStart;
@@ -1797,8 +1794,6 @@ namespace ASCompletion.Completion
                 }
             }
 
-            
-
             string template = TemplateUtils.GetTemplate("FieldFromParameter");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", scopedVarName);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Value", paramName);
@@ -1830,28 +1825,38 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Tries to get the best position inside a code block, delimited by { and }, to add new code, inserting new lines if needed.
         /// </summary>
-        /// <param name="lineFrom">The line inside the scintilla document where the owner member of the body starts</param>
-        /// <param name="lineTo">The line inside the scintilla document where the owner member of the body ends</param>
-        /// <param name="Sci">The Scintilla control containing the document</param>
+        /// <param name="lineFrom">The line inside the Scintilla document where the owner member of the body starts</param>
+        /// <param name="lineTo">The line inside the Scintilla document where the owner member of the body ends</param>
+        /// <param name="sci">The Scintilla control containing the document</param>
         /// <returns>The position inside the scintilla document, or -1 if not suitable position was found</returns>
-        public static int GetBodyStart(int lineFrom, int lineTo, ScintillaControl Sci)
+        public static int GetBodyStart(int lineFrom, int lineTo, ScintillaControl sci)
         {
-            int posStart = Sci.PositionFromLine(lineFrom);
-            int posEnd = Sci.LineEndPosition(lineTo);
+            return GetBodyStart(lineFrom, lineTo, sci, true);
+        }
 
-            char[] characterClass = new[] { ' ', '\r', '\n', '\t' };
-            int nCount = 0; 
+        /// <summary>
+        /// Tries to get the start position of a code block, delimited by { and }
+        /// </summary>
+        /// <param name="lineFrom">The line inside the Scintilla document where the owner member of the body starts</param>
+        /// <param name="lineTo">The line inside the Scintilla document where the owner member of the body ends</param>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="needsPointOfInsertion">If true looks for the position to add new code, inserting new lines if needed</param>
+        /// <returns>The position inside the Scintilla document, or -1 if not suitable position was found</returns>
+        public static int GetBodyStart(int lineFrom, int lineTo, ScintillaControl sci, bool needsPointOfInsertion)
+        {
+            int posStart = sci.PositionFromLine(lineFrom);
+            int posEnd = sci.LineEndPosition(lineTo);
+
             int funcBodyStart = -1;
-            int extraLine = 1;
 
             int genCount = 0;
             for (int i = posStart; i <= posEnd; i++)
             {
-                char c = (char)Sci.CharAt(i);
+                char c = (char)sci.CharAt(i);
 
                 if (c == '{')
                 {
-                    int style = Sci.BaseStyleAt(i);
+                    int style = sci.BaseStyleAt(i);
                     if (ASComplete.IsCommentStyle(style) || ASComplete.IsLiteralStyle(style) || genCount > 0)
                         continue;
                     funcBodyStart = i;
@@ -1859,13 +1864,13 @@ namespace ASCompletion.Completion
                 }
                 else if (c == '<')
                 {
-                    int style = Sci.BaseStyleAt(i);
+                    int style = sci.BaseStyleAt(i);
                     if (style == 10)
                         genCount++;
                 }
                 else if (c == '>')
                 {
-                    int style = Sci.BaseStyleAt(i);
+                    int style = sci.BaseStyleAt(i);
                     if (style == 10)
                         genCount--;
                 }
@@ -1874,43 +1879,133 @@ namespace ASCompletion.Completion
             if (funcBodyStart == -1)
                 return -1;
 
-            int ln = Sci.LineFromPosition(funcBodyStart);
-            int indent = Sci.GetLineIndentation(ln);
-            while (funcBodyStart <= posEnd)
+            if (needsPointOfInsertion)
             {
-                char c = (char)Sci.CharAt(++funcBodyStart);
+                int ln = sci.LineFromPosition(funcBodyStart);
+
+                funcBodyStart++;
+                return GetOrSetPointOfInsertion(funcBodyStart, posEnd, ln, sci);
+            }
+
+            return funcBodyStart + 1;
+        }
+
+        /// <summary>
+        /// Tries to get the best position after a statement, to add new code, inserting new lines if needed.
+        /// </summary>
+        /// <param name="startPos">The position inside the Scintilla document where the statement starts</param>
+        /// <param name="endPos">The position inside the Scintilla document where the owner member of the statement ends</param>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <returns>The position inside the Scintilla document</returns>
+        /// <remarks>For now internal because for the current use we don't need to detect a lot of cases! use with caution!</remarks>
+        internal static int GetEndOfStatement(int startPos, int endPos, ScintillaControl sci)
+        {
+            int groupCount = 0;
+            int brCount = 0;
+            int statementEnd = startPos;
+            while (statementEnd < endPos)
+            {
+                char c = (char)sci.CharAt(statementEnd++);
+
+                bool endOfStatement = false;
+                switch (c)
+                {
+                    case '\r':
+                    case '\n':
+                        endOfStatement = groupCount == 0 && brCount == 0;
+                        break;
+                    case ';':
+                        endOfStatement = brCount == 0; // valid or invalid end of statement
+                        break;
+                    case '(':
+                    case '[':
+                        groupCount++;
+                        break;
+                    case '{':
+                        brCount++;
+                        break;
+                    case ')':
+                    case ']':
+                        groupCount--;
+                        break;
+                    case '}':
+                        brCount--;
+                        break;
+                }
+
+                if (endOfStatement) break;
+            }
+
+            return statementEnd;
+        }
+
+        /// <summary>
+        /// Looks for the best next position to insert new code, inserting new lines if needed
+        /// </summary>
+        /// <param name="startPos">The position inside the Scintilla document to start looking for the insertion position</param>
+        /// <param name="endPos">The end position inside the Scintilla document</param>
+        /// <param name="baseLine">The line inside the document to use as the base for the indentation level and detect if the desired point
+        /// matches the end line</param>
+        /// <param name="sci">The ScintillaControl where our document resides</param>
+        /// <returns>The insertion point position</returns>
+        private static int GetOrSetPointOfInsertion(int startPos, int endPos, int baseLine, ScintillaControl sci)
+        {
+            char[] characterClass = { ' ', '\r', '\n', '\t' };
+            int nCount = 0;
+            int extraLine = 1;
+
+            int initialLn = sci.LineFromPosition(startPos);
+            int baseIndent = sci.GetLineIndentation(baseLine);
+
+            bool found = false;
+            while (startPos <= endPos)
+            {
+                char c = (char)sci.CharAt(startPos);
                 if (Array.IndexOf(characterClass, c) == -1)
                 {
-                    int endLn = Sci.LineFromPosition(funcBodyStart);
-                    if (endLn == ln)
+                    int endLn = sci.LineFromPosition(startPos);
+                    if (endLn == baseLine || endLn == initialLn)
                     {
-                        Sci.InsertText(funcBodyStart, Sci.NewLineMarker);
+                        sci.InsertText(startPos, sci.NewLineMarker);
                         // Do we want to set the line indentation no matter what? {\r\t\t\t\r} -> {\r\t\r}
                         // Better results in most cases, but maybe highly unwanted in others?
-                        Sci.SetLineIndentation(++endLn, indent + Sci.Indent);
-                        funcBodyStart = Sci.LineIndentPosition(endLn);
+                        sci.SetLineIndentation(++endLn, baseIndent + sci.Indent);
+                        startPos = sci.LineIndentPosition(endLn);
                     }
                     if (c == '}')
                     {
-                        Sci.InsertText(funcBodyStart, Sci.NewLineMarker);
-                        Sci.SetLineIndentation(endLn + 1, indent);
+                        sci.InsertText(startPos, sci.NewLineMarker);
+                        sci.SetLineIndentation(endLn + 1, baseIndent);
+                        // In relation with previous comment... we'll reinden this one: {\r} -> {\r\t\r}
+                        if (sci.GetLineIndentation(endLn) <= baseIndent)
+                        {
+                            sci.SetLineIndentation(endLn, baseIndent + sci.Indent);
+                            startPos = sci.LineIndentPosition(endLn);
+                        }
                     }
+                    found = true;
                     break;
                 }
-                else if (Sci.EOLMode == 1 && c == '\r' && (++nCount) > extraLine)
+                else if (sci.EOLMode == 1 && c == '\r' && (++nCount) > extraLine)
                 {
+                    found = true;
                     break;
                 }
                 else if (c == '\n' && (++nCount) > extraLine)
                 {
-                    if (Sci.EOLMode != 2)
+                    if (sci.EOLMode != 2)
                     {
-                        funcBodyStart--;
+                        startPos--;
                     }
+                    found = true;
                     break;
                 }
+                startPos++;
             }
-            return funcBodyStart;
+
+            if (!found) startPos--;
+
+            return startPos;
         }
 
         private static void GenerateToString(ClassModel inClass, ScintillaControl sci, MemberModel member)

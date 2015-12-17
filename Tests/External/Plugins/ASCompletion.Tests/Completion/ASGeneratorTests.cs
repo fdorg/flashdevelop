@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using AS3Context;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
@@ -93,6 +94,19 @@ namespace ASCompletion.Completion
             }
 
             [Test]
+            public void EndOnSecondLineNoExtraIndent()
+            {
+                var sci = GetBaseScintillaControl();
+                sci.Text = "function test():void{\r\n}";
+                sci.ConfigurationLanguage = "haxe";
+                sci.Colourise(0, -1);
+                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
+
+                Assert.AreEqual(24, funcBodyStart);
+                Assert.AreEqual("function test():void{\r\n\t\r\n}", sci.Text);
+            }
+
+            [Test]
             public void CharOnSecondLine()
             {
                 var sci = GetBaseScintillaControl();
@@ -154,7 +168,7 @@ namespace ASCompletion.Completion
                 sci.Colourise(0, -1);
                 int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
 
-                Assert.AreEqual(59, funcBodyStart);
+                Assert.AreEqual(60, funcBodyStart);
             }
 
             [Test]
@@ -203,22 +217,26 @@ namespace ASCompletion.Completion
             {
                 var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
                 interfaceModel.Members.Add(new MemberList
-                                           {
-                                               new MemberModel("getter", "String", FlagType.Getter, Visibility.Public),
-                                               new MemberModel("setter", "void", FlagType.Setter, Visibility.Public)
-                                                   {
-                                                        Parameters = new List<MemberModel> { new MemberModel("value", "String", FlagType.Variable, Visibility.Default) }
-                                                   },
-                                               new MemberModel("testMethod", "Number", FlagType.Function, Visibility.Public),
-                                               new MemberModel("testMethodArgs", "int", FlagType.Function, Visibility.Public)
-                                                   {
-                                                        Parameters = new List<MemberModel>
-                                                        {
-                                                            new MemberModel("arg", "Number", FlagType.Variable, Visibility.Default),
-                                                            new MemberModel("arg2", "Boolean", FlagType.Variable, Visibility.Default)
-                                                        }
-                                                   }
-                                           });
+                {
+                    new MemberModel("getter", "String", FlagType.Getter, Visibility.Public),
+                    new MemberModel("setter", "void", FlagType.Setter, Visibility.Public)
+                    {
+                        Parameters =
+                            new List<MemberModel>
+                            {
+                                new MemberModel("value", "String", FlagType.Variable, Visibility.Default)
+                            }
+                    },
+                    new MemberModel("testMethod", "Number", FlagType.Function, Visibility.Public),
+                    new MemberModel("testMethodArgs", "int", FlagType.Function, Visibility.Public)
+                    {
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel("arg", "Number", FlagType.Variable, Visibility.Default),
+                            new MemberModel("arg2", "Boolean", FlagType.Variable, Visibility.Default)
+                        }
+                    }
+                });
 
                 return interfaceModel;
             }
@@ -227,77 +245,216 @@ namespace ASCompletion.Completion
             {
                 var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
                 interfaceModel.Members.Add(new MemberList
-                                           {
-                                               new MemberModel("normalVariable", "Int", FlagType.Variable, Visibility.Public),
-                                               new MemberModel("ro", "Int", FlagType.Getter, Visibility.Public)
-                                               {
-                                                   Parameters = new List<MemberModel>
-                                                   {
-                                                       new MemberModel {Name = "default"},
-                                                       new MemberModel {Name = "null"}
-                                                   }
-                                               },
-                                               new MemberModel("wo", "Int", FlagType.Getter, Visibility.Public)
-                                               {
-                                                   Parameters = new List<MemberModel>
-                                                   {
-                                                       new MemberModel {Name = "null"},
-                                                       new MemberModel {Name = "default"}
-                                                   }
-                                               },
-                                               new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
-                                               {
-                                                   Parameters = new List<MemberModel>
-                                                   {
-                                                       new MemberModel {Name = "get"},
-                                                       new MemberModel {Name = "set"}
-                                                   }
-                                               },
-                                               new MemberModel("y", "Int", FlagType.Getter, Visibility.Public)
-                                               {
-                                                   Parameters = new List<MemberModel>
-                                                   {
-                                                       new MemberModel {Name = "get"},
-                                                       new MemberModel {Name = "never"}
-                                                   }
-                                               },
-                                               new MemberModel("testMethod", "Float", FlagType.Function, Visibility.Public),
-                                               new MemberModel("testMethodArgs", "Int", FlagType.Function, Visibility.Public)
-                                               {
-                                                   Parameters = new List<MemberModel>
-                                                   {
-                                                       new MemberModel("arg", "Float", FlagType.Variable, Visibility.Default),
-                                                       new MemberModel("arg2", "Bool", FlagType.Variable, Visibility.Default)
-                                                   }
-                                               },
-                                               new MemberModel("testPrivateMethod", "Float", FlagType.Function, Visibility.Private)
-                                               {
-                                                   Parameters = new List<MemberModel>
-                                                   {
-                                                       new MemberModel("?arg", "String", FlagType.Variable, Visibility.Default),
-                                                       new MemberModel("?arg2", "Int", FlagType.Variable, Visibility.Default)
-                                                       {
-                                                           Value = "1"
-                                                       }
-                                                   }
-                                               }
-                                           });
+                {
+                    new MemberModel("normalVariable", "Int", FlagType.Variable, Visibility.Public),
+                    new MemberModel("ro", "Int", FlagType.Getter, Visibility.Public)
+                    {
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel {Name = "default"},
+                            new MemberModel {Name = "null"}
+                        }
+                    },
+                    new MemberModel("wo", "Int", FlagType.Getter, Visibility.Public)
+                    {
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel {Name = "null"},
+                            new MemberModel {Name = "default"}
+                        }
+                    },
+                    new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
+                    {
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel {Name = "get"},
+                            new MemberModel {Name = "set"}
+                        }
+                    },
+                    new MemberModel("y", "Int", FlagType.Getter, Visibility.Public)
+                    {
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel {Name = "get"},
+                            new MemberModel {Name = "never"}
+                        }
+                    },
+                    new MemberModel("testMethod", "Float", FlagType.Function, Visibility.Public),
+                    new MemberModel("testMethodArgs", "Int", FlagType.Function, Visibility.Public)
+                    {
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel("arg", "Float", FlagType.Variable, Visibility.Default),
+                            new MemberModel("arg2", "Bool", FlagType.Variable, Visibility.Default)
+                        }
+                    },
+                    new MemberModel("testPrivateMethod", "Float", FlagType.Function, Visibility.Private)
+                    {
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel("?arg", "String", FlagType.Variable, Visibility.Default),
+                            new MemberModel("?arg2", "Int", FlagType.Variable, Visibility.Default)
+                            {
+                                Value = "1"
+                            }
+                        }
+                    }
+                });
 
 
                 return interfaceModel;
             }
 
-            [Test]
-            [Ignore]
-            public void FieldFromParameterPublicScope()
+            private ClassModel GetFieldFromParameterClassModel()
             {
+                var classModel = new ClassModel
+                {
+                    LineFrom = 1,
+                    LineTo = 3
+                };
+
+                classModel.Members.Add(new MemberList
+                {
+                    new MemberModel("FieldFromParameterTest", null, FlagType.Constructor, Visibility.Public)
+                    {
+                        LineFrom = 2, LineTo = 2,
+                        Parameters = new List<MemberModel>
+                        {
+                            new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
+                        }
+                    }
+                });
+
+                return classModel;
+            }
+
+            [Test]
+            public void FieldFromParameterPublicScopeWithEmptyBody()
+            {
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                var asContext = new AS3Context.Context(new AS3Settings());
+                ASContext.Context = Substitute.For<IASContext>();
+                ASContext.Context.Features.Returns(asContext.Features);
+
                 var table = new Hashtable();
                 table["scope"] = Visibility.Public;
 
                 var sci = GetBaseScintillaControl();
-                sci.Text = "\tfunction test():void{\r\n\t\t\t}";
+                sci.Text = "package generatortest {\r\n\tpublic class FieldFromParameterTest{\r\n\t\tpublic function FieldFromParameterTest(arg:String){}\r\n\t}\r\n}";
+                sci.ConfigurationLanguage = "as3";
                 doc.SciControl.Returns(sci);
-                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, null, null, null, table);
+
+                var inClass = GetFieldFromParameterClassModel();
+                var constructor = inClass.Members[0];
+
+                ASGenerator.SetJobContext(null, null, constructor.Parameters[0], null);
+                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, constructor, inClass, null, table);
+
+                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.FieldFromParameterEmptyBody.as"), sci.Text);
+            }
+
+            [Test]
+            public void FieldFromParameterPublicScopeWithSuperConstructor()
+            {
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                var asContext = new AS3Context.Context(new AS3Settings());
+                ASContext.Context = Substitute.For<IASContext>();
+                ASContext.Context.Features.Returns(asContext.Features);
+
+                var table = new Hashtable();
+                table["scope"] = Visibility.Public;
+
+                var sci = GetBaseScintillaControl();
+                sci.Text = "package generatortest {\r\n\tpublic class FieldFromParameterTest{\r\n\t\tpublic function FieldFromParameterTest(arg:String){\r\n\t\t\tsuper(arg);}\r\n\t}\r\n}";
+                sci.ConfigurationLanguage = "as3";
+                doc.SciControl.Returns(sci);
+
+                var inClass = GetFieldFromParameterClassModel();
+                var constructor = inClass.Members[0];
+
+                inClass.LineTo = 4;
+                constructor.LineTo = 3;
+
+                ASGenerator.SetJobContext(null, null, constructor.Parameters[0], null);
+                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, constructor, inClass, null, table);
+
+                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.FieldFromParameterWithSuperConstructor.as"), sci.Text);
+            }
+
+            [Test]
+            public void FieldFromParameterPublicScopeWithSuperConstructorMultiLine()
+            {
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                var asContext = new AS3Context.Context(new AS3Settings());
+                ASContext.Context = Substitute.For<IASContext>();
+                ASContext.Context.Features.Returns(asContext.Features);
+
+                var table = new Hashtable();
+                table["scope"] = Visibility.Public;
+
+                var sci = GetBaseScintillaControl();
+                sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeFieldFromParameterWithSuperConstructorMultiLine.as");
+                sci.ConfigurationLanguage = "as3";
+                doc.SciControl.Returns(sci);
+
+                var inClass = GetFieldFromParameterClassModel();
+                var constructor = inClass.Members[0];
+
+                inClass.LineTo = 6;
+                constructor.LineTo = 5;
+
+                ASGenerator.SetJobContext(null, null, constructor.Parameters[0], null);
+                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, constructor, inClass, null, table);
+
+                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.FieldFromParameterWithSuperConstructorMultiLine.as"), sci.Text);
+            }
+
+            [Test]
+            public void FieldFromParameterPublicScopeWithWrongSuperConstructor()
+            {
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                var asContext = new AS3Context.Context(new AS3Settings());
+                ASContext.Context = Substitute.For<IASContext>();
+                ASContext.Context.Features.Returns(asContext.Features);
+
+                var table = new Hashtable();
+                table["scope"] = Visibility.Public;
+
+                var sci = GetBaseScintillaControl();
+                sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeFieldFromParameterWithWrongSuperConstructor.as");
+                sci.ConfigurationLanguage = "as3";
+                doc.SciControl.Returns(sci);
+
+                var inClass = GetFieldFromParameterClassModel();
+                var constructor = inClass.Members[0];
+
+                inClass.LineTo = 6;
+                constructor.LineTo = 5;
+
+                ASGenerator.SetJobContext(null, null, constructor.Parameters[0], null);
+                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, constructor, inClass, null, table);
+
+                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.FieldFromParameterWithWrongSuperConstructor.as"), sci.Text);
             }
 
             [Test]

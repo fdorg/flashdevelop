@@ -155,6 +155,14 @@
     <EmbeddedResource Include="Test Files\generated\haxe\ImplementInterfaceNoMembersInsertSingleProperty.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\NotGenericTest.hx" />
     <EmbeddedResource Include="Test Files\parser\as3\CompletionErrorTest.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterEmptyBody.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithBody.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithOtherVars.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithSuperConstructor.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithSuperConstructorMultiLine.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithWrongSuperConstructor.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameterWithSuperConstructorMultiLine.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameterWithWrongSuperConstructor.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
