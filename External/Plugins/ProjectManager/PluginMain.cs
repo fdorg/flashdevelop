@@ -234,7 +234,7 @@ namespace ProjectManager
             pluginUI.ImportProject += delegate { ImportProject(); };
             pluginUI.Rename += fileActions.Rename;
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
-            pluginUI.TreeBar.Synchronize.Click += delegate { ToggleTrackActiveDocument(); };
+            pluginUI.TreeBar.Synchronize.Click += delegate { TreeSyncToCurrentFile(); };
             pluginUI.TreeBar.SynchronizeMain.Click += delegate { TreeSyncToMainFile(); };
             pluginUI.TreeBar.CollapseAll.Click += delegate { CollapseAll(); };
             pluginUI.TreeBar.ProjectProperties.Click += delegate { OpenProjectProperties(); };
@@ -561,21 +561,23 @@ namespace ProjectManager
         {
             if (activeProject == null) return false;
 
-            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelector"))
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
+
+            if (shortcutId == "ProjectMenu.ConfigurationSelector")
             {
                 pluginUI.menus.ConfigurationSelector.Focus();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.ConfigurationSelectorToggle"))
+            else if (shortcutId == "ProjectMenu.ConfigurationSelectorToggle")
             {
                 pluginUI.menus.ToggleDebugRelease();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectMenu.TargetBuildSelector"))
+            else if (shortcutId == "ProjectMenu.TargetBuildSelector")
             {
                 pluginUI.menus.TargetBuildSelector.Focus();
             }
-            else if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("ProjectTree.LocateActiveFile"))
+            else if (shortcutId == "ProjectTree.LocateActiveFile")
             {
-                ToggleTrackActiveDocument();
+                TreeSyncToCurrentFile();
             }
 
             // Handle tree-level simple shortcuts like copy/paste/del
@@ -646,6 +648,9 @@ namespace ProjectManager
             {
                 RestoreProjectSession(project);
             }
+
+            // track active file
+            if (Settings.TrackActiveDocument) TreeSyncToCurrentFile();
 
             if (stealFocus)
             {
@@ -1259,7 +1264,7 @@ namespace ProjectManager
         {
             if (openFileQueue.Count > 0)
             {
-                String file = openFileQueue.Dequeue() as String;
+                String file = openFileQueue.Dequeue();
                 if (File.Exists(file)) OpenFile(file);
                 if (file.IndexOf("::") > 0 && File.Exists(file.Substring(0, file.IndexOf("::")))) // virtual files
                 {
@@ -1614,23 +1619,28 @@ namespace ProjectManager
             }
         }
 
-        private void ToggleTrackActiveDocument()
-        {
-            bool newValue = !Settings.TrackActiveDocument;
-            pluginUI.TreeBar.Synchronize.Checked = newValue;
-            Settings.TrackActiveDocument = newValue;
-
-            if (newValue)
-                TreeSyncToCurrentFile();
-        }
-
         private void TreeSyncToCurrentFile()
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (activeProject != null && doc != null && doc.IsEditable && !doc.IsUntitled)
             {
-                Tree.Select(doc.FileName);
-                Tree.SelectedNode.EnsureVisible();
+                string path = doc.FileName;
+
+                if (Tree.SelectedNode != null && Tree.SelectedNode.BackingPath == path)
+                {
+                    Tree.SelectedNode.EnsureVisible();
+                    Tree.PathToSelect = null;
+                    return;
+                }
+
+                Tree.Select(path);
+                if (Tree.SelectedNode.BackingPath == path)
+                {
+                    Tree.SelectedNode.EnsureVisible();
+                    Tree.PathToSelect = null;
+                }
+                else
+                    Tree.PathToSelect = path;
             }
         }
 

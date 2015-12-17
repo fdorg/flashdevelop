@@ -11,35 +11,43 @@
 ; Define version info
 !define VERSION "5.1.0"
 
+; Define distro config
+!define DIST_NAME "FlashDevelop"
+!define DIST_COMP "FlashDevelop.org"
+!define DIST_COPY "FlashDevelop.org 2005-2015"
+!define DIST_README "http://www.flashdevelop.org/wikidocs/index.php?title=Getting_Started"
+!define DIST_COMMUNITY "http://www.flashdevelop.org/community/"
+!define DIST_DOCS "http://www.flashdevelop.org/wikidocs/";
+
 ; Installer details
-VIAddVersionKey "CompanyName" "FlashDevelop.org"
-VIAddVersionKey "ProductName" "FlashDevelop Installer"
-VIAddVersionKey "LegalCopyright" "FlashDevelop.org 2005-2015"
-VIAddVersionKey "FileDescription" "FlashDevelop Installer"
+VIAddVersionKey "CompanyName" "${DIST_COMP}"
+VIAddVersionKey "ProductName" "${DIST_NAME} Installer"
+VIAddVersionKey "LegalCopyright" "${DIST_COPY}"
+VIAddVersionKey "FileDescription" "${DIST_NAME} Installer"
 VIAddVersionKey "ProductVersion" "${VERSION}.0"
 VIAddVersionKey "FileVersion" "${VERSION}.0"
 VIProductVersion "${VERSION}.0"
 
 ; The name of the installer
-Name "FlashDevelop"
+Name "${DIST_NAME}"
 
 ; The captions of the installer
-Caption "FlashDevelop ${VERSION} Setup"
-UninstallCaption "FlashDevelop ${VERSION} Uninstall"
+Caption "${DIST_NAME} ${VERSION} Setup"
+UninstallCaption "${DIST_NAME} ${VERSION} Uninstall"
 
 ; The file to write
-OutFile "Binary\FlashDevelop.exe"
+OutFile "Binary\${DIST_NAME}.exe"
 
 ; Default installation folder
-InstallDir "$PROGRAMFILES\FlashDevelop\"
+InstallDir "$PROGRAMFILES\${DIST_NAME}\"
 
 ; Define executable files
-!define EXECUTABLE "$INSTDIR\FlashDevelop.exe"
+!define EXECUTABLE "$INSTDIR\${DIST_NAME}.exe"
 !define WIN32RES "$INSTDIR\Tools\winres\winres.exe"
 !define ASDOCGEN "$INSTDIR\Tools\asdocgen\ASDocGen.exe"
 
 ; Get installation folder from registry if available
-InstallDirRegKey HKLM "Software\FlashDevelop" ""
+InstallDirRegKey HKLM "Software\${DIST_NAME}" ""
 
 ; Vista redirects $SMPROGRAMS to all users without this
 RequestExecutionLevel admin
@@ -63,8 +71,8 @@ XPStyle on
 !define MUI_HEADERIMAGE_BITMAP "Graphics\Banner.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "Graphics\Wizard.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "Graphics\Wizard.bmp"
-!define MUI_FINISHPAGE_SHOWREADME "http://www.flashdevelop.org/wikidocs/index.php?title=Getting_Started"
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "See online guide to get started"
+!define MUI_FINISHPAGE_SHOWREADME "${DIST_README}"
 
 ;--------------------------------
 
@@ -147,7 +155,7 @@ Function GetFDVersion
 	
 	Push $0
 	ClearErrors
-	ReadRegStr $0 HKLM Software\FlashDevelop "CurrentVersion"
+	ReadRegStr $0 HKLM "Software\${DIST_NAME}" "CurrentVersion"
 	IfErrors 0 +2
 	StrCpy $0 "not_found"
 	Exch $0
@@ -158,7 +166,7 @@ Function GetFDInstDir
 	
 	Push $0
 	ClearErrors
-	ReadRegStr $0 HKLM Software\FlashDevelop ""
+	ReadRegStr $0 HKLM "Software\${DIST_NAME}" ""
 	IfErrors 0 +2
 	StrCpy $0 "not_found"
 	Exch $0
@@ -169,12 +177,12 @@ Function NotifyInstall
 	
 	SetOverwrite on
 	IfFileExists "$INSTDIR\.local" Local 0
-	IfFileExists "$LOCALAPPDATA\FlashDevelop\*.*" User Done
+	IfFileExists "$LOCALAPPDATA\${DIST_NAME}\*.*" User Done
 	Local:
 	SetOutPath "$INSTDIR"
 	File "/oname=.update" "..\Bin\Debug\.local"
 	User:
-	SetOutPath "$LOCALAPPDATA\FlashDevelop"
+	SetOutPath "$LOCALAPPDATA\${DIST_NAME}"
 	File "/oname=.update" "..\Bin\Debug\.local"
 	Done:
 	
@@ -201,7 +209,7 @@ FunctionEnd
 
 ; Install Sections
 
-Section "FlashDevelop" Main
+Section "${DIST_NAME}" Main
 	
 	SectionIn 1 2 RO
 	SetOverwrite on
@@ -262,7 +270,7 @@ Section "Desktop Shortcut" DesktopShortcut
 	SetOverwrite on
 	SetShellVarContext all
 	
-	CreateShortCut "$DESKTOP\FlashDevelop.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
+	CreateShortCut "$DESKTOP\${DIST_NAME}.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
 	
 SectionEnd
 
@@ -271,7 +279,7 @@ Section "Quick Launch Item" QuickShortcut
 	SetOverwrite on
 	SetShellVarContext all
 	
-	CreateShortCut "$QUICKLAUNCH\FlashDevelop.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
+	CreateShortCut "$QUICKLAUNCH\${DIST_NAME}.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
 	
 SectionEnd
 
@@ -287,7 +295,7 @@ Section "English" EnglishLocale
 	
 	SetOverwrite on
 	IfFileExists "$INSTDIR\.local" Local 0
-	IfFileExists "$LOCALAPPDATA\FlashDevelop\*.*" User Done
+	IfFileExists "$LOCALAPPDATA\${DIST_NAME}\*.*" User Done
 	Local:
 	ClearErrors
 	FileOpen $1 "$INSTDIR\.locale" w
@@ -296,7 +304,7 @@ Section "English" EnglishLocale
 	FileClose $1
 	User:
 	ClearErrors
-	FileOpen $1 "$LOCALAPPDATA\FlashDevelop\.locale" w
+	FileOpen $1 "$LOCALAPPDATA\${DIST_NAME}\.locale" w
 	IfErrors Done
 	FileWrite $1 "en_US"
 	FileClose $1
@@ -308,7 +316,7 @@ Section "Chinese" ChineseLocale
 	
 	SetOverwrite on
 	IfFileExists "$INSTDIR\.local" Local 0
-	IfFileExists "$LOCALAPPDATA\FlashDevelop\*.*" User Done
+	IfFileExists "$LOCALAPPDATA\${DIST_NAME}\*.*" User Done
 	Local:
 	ClearErrors
 	FileOpen $1 "$INSTDIR\.locale" w
@@ -317,7 +325,7 @@ Section "Chinese" ChineseLocale
 	FileClose $1
 	User:
 	ClearErrors
-	FileOpen $1 "$LOCALAPPDATA\FlashDevelop\.locale" w
+	FileOpen $1 "$LOCALAPPDATA\${DIST_NAME}\.locale" w
 	IfErrors Done
 	FileWrite $1 "zh_CN"
 	FileClose $1
@@ -329,7 +337,7 @@ Section "Japanese" JapaneseLocale
 	
 	SetOverwrite on
 	IfFileExists "$INSTDIR\.local" Local 0
-	IfFileExists "$LOCALAPPDATA\FlashDevelop\*.*" User Done
+	IfFileExists "$LOCALAPPDATA\${DIST_NAME}\*.*" User Done
 	Local:
 	ClearErrors
 	FileOpen $1 "$INSTDIR\.locale" w
@@ -338,7 +346,7 @@ Section "Japanese" JapaneseLocale
 	FileClose $1
 	User:
 	ClearErrors
-	FileOpen $1 "$LOCALAPPDATA\FlashDevelop\.locale" w
+	FileOpen $1 "$LOCALAPPDATA\${DIST_NAME}\.locale" w
 	IfErrors Done
 	FileWrite $1 "ja_JP"
 	FileClose $1
@@ -350,7 +358,7 @@ Section "German" GermanLocale
 	
 	SetOverwrite on
 	IfFileExists "$INSTDIR\.local" Local 0
-	IfFileExists "$LOCALAPPDATA\FlashDevelop\*.*" User Done
+	IfFileExists "$LOCALAPPDATA\${DIST_NAME}\*.*" User Done
 	Local:
 	ClearErrors
 	FileOpen $1 "$INSTDIR\.locale" w
@@ -359,7 +367,7 @@ Section "German" GermanLocale
 	FileClose $1
 	User:
 	ClearErrors
-	FileOpen $1 "$LOCALAPPDATA\FlashDevelop\.locale" w
+	FileOpen $1 "$LOCALAPPDATA\${DIST_NAME}\.locale" w
 	IfErrors Done
 	FileWrite $1 "de_DE"
 	FileClose $1
@@ -371,7 +379,7 @@ Section "Basque" BasqueLocale
 	
 	SetOverwrite on
 	IfFileExists "$INSTDIR\.local" Local 0
-	IfFileExists "$LOCALAPPDATA\FlashDevelop\*.*" User Done
+	IfFileExists "$LOCALAPPDATA\${DIST_NAME}\*.*" User Done
 	Local:
 	ClearErrors
 	FileOpen $1 "$INSTDIR\.locale" w
@@ -380,7 +388,7 @@ Section "Basque" BasqueLocale
 	FileClose $1
 	User:
 	ClearErrors
-	FileOpen $1 "$LOCALAPPDATA\FlashDevelop\.locale" w
+	FileOpen $1 "$LOCALAPPDATA\${DIST_NAME}\.locale" w
 	IfErrors Done
 	FileWrite $1 "eu_ES"
 	FileClose $1
@@ -398,11 +406,11 @@ Section "Start Menu Group" StartMenuGroup
 	SetOverwrite on
 	SetShellVarContext all
 	
-	CreateDirectory "$SMPROGRAMS\FlashDevelop"
-	CreateShortCut "$SMPROGRAMS\FlashDevelop\FlashDevelop.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
-	WriteINIStr "$SMPROGRAMS\FlashDevelop\Documentation.url" "InternetShortcut" "URL" "http://www.flashdevelop.org/wikidocs/"
-	WriteINIStr "$SMPROGRAMS\FlashDevelop\Community.url" "InternetShortcut" "URL" "http://www.flashdevelop.org/community/"
-	CreateShortCut "$SMPROGRAMS\FlashDevelop\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+	CreateDirectory "$SMPROGRAMS\${DIST_NAME}"
+	CreateShortCut "$SMPROGRAMS\${DIST_NAME}\${DIST_NAME}.lnk" "${EXECUTABLE}" "" "${EXECUTABLE}" 0
+	WriteINIStr "$SMPROGRAMS\${DIST_NAME}\Documentation.url" "InternetShortcut" "URL" "${DIST_DOCS}"
+	WriteINIStr "$SMPROGRAMS\${DIST_NAME}\Community.url" "InternetShortcut" "URL" "${DIST_COMMUNITY}"
+	CreateShortCut "$SMPROGRAMS\${DIST_NAME}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
 	
 SectionEnd
 
@@ -415,57 +423,57 @@ Section "Registry Modifications" RegistryMods
 	Delete "$INSTDIR\.multi"
 	Delete "$INSTDIR\.local"
 	
-	DeleteRegKey /ifempty HKCR "Applications\FlashDevelop.exe"	
-	DeleteRegKey /ifempty HKLM "Software\Classes\Applications\FlashDevelop.exe"
-	DeleteRegKey /ifempty HKCU "Software\Classes\Applications\FlashDevelop.exe"
+	DeleteRegKey /ifempty HKCR "Applications\${DIST_NAME}.exe"	
+	DeleteRegKey /ifempty HKLM "Software\Classes\Applications\${DIST_NAME}.exe"
+	DeleteRegKey /ifempty HKCU "Software\Classes\Applications\${DIST_NAME}.exe"
 	
-	!insertmacro APP_ASSOCIATE "fdp" "FlashDevelop.Project" "FlashDevelop Project" "${WIN32RES},2" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "fdproj" "FlashDevelop.GenericProject" "FlashDevelop Generic Project" "${WIN32RES},2" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "hxproj" "FlashDevelop.HaXeProject" "FlashDevelop Haxe Project" "${WIN32RES},2" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "as2proj" "FlashDevelop.AS2Project" "FlashDevelop AS2 Project" "${WIN32RES},2" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "as3proj" "FlashDevelop.AS3Project" "FlashDevelop AS3 Project" "${WIN32RES},2" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "docproj" "FlashDevelop.DocProject" "FlashDevelop Docs Project" "${WIN32RES},2" "" "${ASDOCGEN}"
-	!insertmacro APP_ASSOCIATE "lsproj" "FlashDevelop.LoomProject" "FlashDevelop Loom Project" "${WIN32RES},2" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fdp" "${DIST_NAME}.Project" "${DIST_NAME} Project" "${WIN32RES},2" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fdproj" "${DIST_NAME}.GenericProject" "${DIST_NAME} Generic Project" "${WIN32RES},2" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "hxproj" "${DIST_NAME}.HaXeProject" "${DIST_NAME} Haxe Project" "${WIN32RES},2" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "as2proj" "${DIST_NAME}.AS2Project" "${DIST_NAME} AS2 Project" "${WIN32RES},2" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "as3proj" "${DIST_NAME}.AS3Project" "${DIST_NAME} AS3 Project" "${WIN32RES},2" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "docproj" "${DIST_NAME}.DocProject" "${DIST_NAME} Docs Project" "${WIN32RES},2" "" "${ASDOCGEN}"
+	!insertmacro APP_ASSOCIATE "lsproj" "${DIST_NAME}.LoomProject" "${DIST_NAME} Loom Project" "${WIN32RES},2" "" "${EXECUTABLE}"
 
-	!insertmacro APP_ASSOCIATE "fdi" "FlashDevelop.Theme" "FlashDevelop Theme File" "${WIN32RES},1" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "fdm" "FlashDevelop.Macros" "FlashDevelop Macros File" "${WIN32RES},1" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "fdt" "FlashDevelop.Template" "FlashDevelop Template File" "${WIN32RES},1" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "fda" "FlashDevelop.Arguments" "FlashDevelop Arguments File" "${WIN32RES},1" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "fds" "FlashDevelop.Snippet" "FlashDevelop Snippet File" "${WIN32RES},1" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "fdb" "FlashDevelop.Binary" "FlashDevelop Binary File" "${WIN32RES},1" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "fdl" "FlashDevelop.Layout" "FlashDevelop Layout File" "${WIN32RES},1" "" "${EXECUTABLE}"
-	!insertmacro APP_ASSOCIATE "fdz" "FlashDevelop.Zip" "FlashDevelop Zip File" "${WIN32RES},1" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fdi" "${DIST_NAME}.Theme" "${DIST_NAME} Theme File" "${WIN32RES},1" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fdm" "${DIST_NAME}.Macros" "${DIST_NAME} Macros File" "${WIN32RES},1" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fdt" "${DIST_NAME}.Template" "${DIST_NAME} Template File" "${WIN32RES},1" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fda" "${DIST_NAME}.Arguments" "${DIST_NAME} Arguments File" "${WIN32RES},1" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fds" "${DIST_NAME}.Snippet" "${DIST_NAME} Snippet File" "${WIN32RES},1" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fdb" "${DIST_NAME}.Binary" "${DIST_NAME} Binary File" "${WIN32RES},1" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fdl" "${DIST_NAME}.Layout" "${DIST_NAME} Layout File" "${WIN32RES},1" "" "${EXECUTABLE}"
+	!insertmacro APP_ASSOCIATE "fdz" "${DIST_NAME}.Zip" "${DIST_NAME} Zip File" "${WIN32RES},1" "" "${EXECUTABLE}"
 	
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Project" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.GenericProject" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.HaXeProject" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.AS2Project" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.AS3Project" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.DocProject" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.LoomProject" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Project" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.GenericProject" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.HaXeProject" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.AS2Project" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.AS3Project" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.DocProject" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.LoomProject" "ShellNew"
 
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Theme" "ShellNew"	
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Macros" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Template" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Arguments" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Snippet" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Binary" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Layout" "ShellNew"
-	!insertmacro APP_ASSOCIATE_REMOVEVERB "FlashDevelop.Zip" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Theme" "ShellNew"	
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Macros" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Template" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Arguments" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Snippet" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Binary" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Layout" "ShellNew"
+	!insertmacro APP_ASSOCIATE_REMOVEVERB "${DIST_NAME}.Zip" "ShellNew"
 	
 	; Write uninstall section keys
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "InstallLocation" "$INSTDIR"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "Publisher" "FlashDevelop.org"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayVersion" "${VERSION}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayName" "FlashDevelop"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "Comments" "Thank you for using FlashDevelop."
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "HelpLink" "http://www.flashdevelop.org/community/"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "UninstallString" "$INSTDIR\Uninstall.exe"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "DisplayIcon" "${EXECUTABLE}"
-	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "NoModify" 1
-	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop" "NoRepair" 1
-	WriteRegStr HKLM "Software\FlashDevelop" "CurrentVersion" ${VERSION}
-	WriteRegStr HKLM "Software\FlashDevelop" "" $INSTDIR
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "InstallLocation" "$INSTDIR"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "Publisher" "${DIST_COMP}g"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "DisplayVersion" "${VERSION}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "DisplayName" "${DIST_NAME}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "Comments" "Thank you for using ${DIST_NAME}."
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "HelpLink" "${DIST_COMMUNITY}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "UninstallString" "$INSTDIR\Uninstall.exe"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "DisplayIcon" "${EXECUTABLE}"
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "NoModify" 1
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "NoRepair" 1
+	WriteRegStr HKLM "Software\${DIST_NAME}" "CurrentVersion" ${VERSION}
+	WriteRegStr HKLM "Software\${DIST_NAME}" "" $INSTDIR
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 	
 	!insertmacro UPDATEFILEASSOC
@@ -501,34 +509,34 @@ SectionGroupEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${Main} "Installs the main program and other required files."
 !insertmacro MUI_DESCRIPTION_TEXT ${RegistryMods} "Associates integral file types and adds the required uninstall configuration."
 !insertmacro MUI_DESCRIPTION_TEXT ${StandaloneMode} "Runs as standalone using only local setting files. NOTE: Not for standard users and manual upgrade only."
-!insertmacro MUI_DESCRIPTION_TEXT ${MultiInstanceMode} "Allows multiple instances of FlashDevelop to be executed. NOTE: There are some open issues with this."
+!insertmacro MUI_DESCRIPTION_TEXT ${MultiInstanceMode} "Allows multiple instances of ${DIST_NAME} to be executed. NOTE: There are some open issues with this."
 !insertmacro MUI_DESCRIPTION_TEXT ${NoChangesLocale} "Keeps the current language on update and defaults to English on clean install."
-!insertmacro MUI_DESCRIPTION_TEXT ${EnglishLocale} "Changes FlashDevelop's display language to English on next restart."
-!insertmacro MUI_DESCRIPTION_TEXT ${ChineseLocale} "Changes FlashDevelop's display language to Chinese on next restart."
-!insertmacro MUI_DESCRIPTION_TEXT ${JapaneseLocale} "Changes FlashDevelop's display language to Japanese on next restart."
-!insertmacro MUI_DESCRIPTION_TEXT ${GermanLocale} "Changes FlashDevelop's display language to German on next restart."
-!insertmacro MUI_DESCRIPTION_TEXT ${BasqueLocale} "Changes FlashDevelop's display language to Basque on next restart."
-!insertmacro MUI_DESCRIPTION_TEXT ${StartMenuGroup} "Creates a start menu group and adds default FlashDevelop links to the group."
-!insertmacro MUI_DESCRIPTION_TEXT ${QuickShortcut} "Installs a FlashDevelop shortcut to the Quick Launch bar."
-!insertmacro MUI_DESCRIPTION_TEXT ${DesktopShortcut} "Installs a FlashDevelop shortcut to the desktop."
+!insertmacro MUI_DESCRIPTION_TEXT ${EnglishLocale} "Changes ${DIST_NAME}'s display language to English on next restart."
+!insertmacro MUI_DESCRIPTION_TEXT ${ChineseLocale} "Changes ${DIST_NAME}'s display language to Chinese on next restart."
+!insertmacro MUI_DESCRIPTION_TEXT ${JapaneseLocale} "Changes ${DIST_NAME}'s display language to Japanese on next restart."
+!insertmacro MUI_DESCRIPTION_TEXT ${GermanLocale} "Changes ${DIST_NAME}'s display language to German on next restart."
+!insertmacro MUI_DESCRIPTION_TEXT ${BasqueLocale} "Changes ${DIST_NAME}'s display language to Basque on next restart."
+!insertmacro MUI_DESCRIPTION_TEXT ${StartMenuGroup} "Creates a start menu group and adds default ${DIST_NAME} links to the group."
+!insertmacro MUI_DESCRIPTION_TEXT ${QuickShortcut} "Installs a ${DIST_NAME} shortcut to the Quick Launch bar."
+!insertmacro MUI_DESCRIPTION_TEXT ${DesktopShortcut} "Installs a ${DIST_NAME} shortcut to the desktop."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 
 ; Uninstall Sections
 
-Section "un.FlashDevelop" UninstMain
+Section "un.${DIST_NAME}" UninstMain
 	
 	SectionIn 1 2 RO
 	SetShellVarContext all
 	
-	Delete "$DESKTOP\FlashDevelop.lnk"
-	Delete "$QUICKLAUNCH\FlashDevelop.lnk"
-	Delete "$SMPROGRAMS\FlashDevelop\FlashDevelop.lnk"
-	Delete "$SMPROGRAMS\FlashDevelop\Documentation.url"
-	Delete "$SMPROGRAMS\FlashDevelop\Community.url"
-	Delete "$SMPROGRAMS\FlashDevelop\Uninstall.lnk"
-	RMDir "$SMPROGRAMS\FlashDevelop"
+	Delete "$DESKTOP\${DIST_NAME}.lnk"
+	Delete "$QUICKLAUNCH\${DIST_NAME}.lnk"
+	Delete "$SMPROGRAMS\${DIST_NAME}\${DIST_NAME}.lnk"
+	Delete "$SMPROGRAMS\${DIST_NAME}\Documentation.url"
+	Delete "$SMPROGRAMS\${DIST_NAME}\Community.url"
+	Delete "$SMPROGRAMS\${DIST_NAME}\Uninstall.lnk"
+	RMDir "$SMPROGRAMS\${DIST_NAME}"
 	
 	RMDir /r "$INSTDIR\Docs"
 	RMDir /r "$INSTDIR\Library"
@@ -547,8 +555,8 @@ Section "un.FlashDevelop" UninstMain
 	Delete "$INSTDIR\README.txt"
 	Delete "$INSTDIR\FirstRun.fdb"
 	Delete "$INSTDIR\Exceptions.log"
-	Delete "$INSTDIR\FlashDevelop.exe"
-	Delete "$INSTDIR\FlashDevelop.exe.config"
+	Delete "$INSTDIR\${DIST_NAME}.exe"
+	Delete "$INSTDIR\${DIST_NAME}.exe.config"
 	Delete "$INSTDIR\PluginCore.dll"
 	Delete "$INSTDIR\SciLexer.dll"
 	Delete "$INSTDIR\Scripting.dll"
@@ -559,29 +567,29 @@ Section "un.FlashDevelop" UninstMain
 	Delete "$INSTDIR\Uninstall.exe"
 	RMDir "$INSTDIR"
 	
-	!insertmacro APP_UNASSOCIATE "fdp" "FlashDevelop.Project"
-	!insertmacro APP_UNASSOCIATE "fdproj" "FlashDevelop.GenericProject"
-	!insertmacro APP_UNASSOCIATE "hxproj" "FlashDevelop.HaXeProject"
-	!insertmacro APP_UNASSOCIATE "as2proj" "FlashDevelop.AS2Project"
-	!insertmacro APP_UNASSOCIATE "as3proj" "FlashDevelop.AS3Project"
-	!insertmacro APP_UNASSOCIATE "docproj" "FlashDevelop.DocProject"
-	!insertmacro APP_UNASSOCIATE "lsproj" "FlashDevelop.LoomProject"
+	!insertmacro APP_UNASSOCIATE "fdp" "${DIST_NAME}.Project"
+	!insertmacro APP_UNASSOCIATE "fdproj" "${DIST_NAME}.GenericProject"
+	!insertmacro APP_UNASSOCIATE "hxproj" "${DIST_NAME}.HaXeProject"
+	!insertmacro APP_UNASSOCIATE "as2proj" "${DIST_NAME}.AS2Project"
+	!insertmacro APP_UNASSOCIATE "as3proj" "${DIST_NAME}.AS3Project"
+	!insertmacro APP_UNASSOCIATE "docproj" "${DIST_NAME}.DocProject"
+	!insertmacro APP_UNASSOCIATE "lsproj" "${DIST_NAME}.LoomProject"
 	
-	!insertmacro APP_UNASSOCIATE "fdi" "FlashDevelop.Theme"
-	!insertmacro APP_UNASSOCIATE "fdm" "FlashDevelop.Macros"
-	!insertmacro APP_UNASSOCIATE "fdt" "FlashDevelop.Template"
-	!insertmacro APP_UNASSOCIATE "fda" "FlashDevelop.Arguments"
-	!insertmacro APP_UNASSOCIATE "fds" "FlashDevelop.Snippet"
-	!insertmacro APP_UNASSOCIATE "fdb" "FlashDevelop.Binary"
-	!insertmacro APP_UNASSOCIATE "fdl" "FlashDevelop.Layout"
-	!insertmacro APP_UNASSOCIATE "fdz" "FlashDevelop.Zip"
+	!insertmacro APP_UNASSOCIATE "fdi" "${DIST_NAME}.Theme"
+	!insertmacro APP_UNASSOCIATE "fdm" "${DIST_NAME}.Macros"
+	!insertmacro APP_UNASSOCIATE "fdt" "${DIST_NAME}.Template"
+	!insertmacro APP_UNASSOCIATE "fda" "${DIST_NAME}.Arguments"
+	!insertmacro APP_UNASSOCIATE "fds" "${DIST_NAME}.Snippet"
+	!insertmacro APP_UNASSOCIATE "fdb" "${DIST_NAME}.Binary"
+	!insertmacro APP_UNASSOCIATE "fdl" "${DIST_NAME}.Layout"
+	!insertmacro APP_UNASSOCIATE "fdz" "${DIST_NAME}.Zip"
 	
-	DeleteRegKey /ifempty HKLM "Software\FlashDevelop"
-	DeleteRegKey /ifempty HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FlashDevelop"
+	DeleteRegKey /ifempty HKLM "Software\${DIST_NAME}"
+	DeleteRegKey /ifempty HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}"
 	
-	DeleteRegKey /ifempty HKCR "Applications\FlashDevelop.exe"	
-	DeleteRegKey /ifempty HKLM "Software\Classes\Applications\FlashDevelop.exe"
-	DeleteRegKey /ifempty HKCU "Software\Classes\Applications\FlashDevelop.exe"
+	DeleteRegKey /ifempty HKCR "Applications\${DIST_NAME}.exe"	
+	DeleteRegKey /ifempty HKLM "Software\Classes\Applications\${DIST_NAME}.exe"
+	DeleteRegKey /ifempty HKCU "Software\Classes\Applications\${DIST_NAME}.exe"
 	
 	!insertmacro UPDATEFILEASSOC
 	
@@ -599,7 +607,7 @@ Section /o "un.Settings" UninstSettings
 	RMDir /r "$INSTDIR\Settings"
 	RMDir /r "$INSTDIR\Snippets"
 	RMDir /r "$INSTDIR\Templates"
-	RMDir /r "$LOCALAPPDATA\FlashDevelop"
+	RMDir /r "$LOCALAPPDATA\${DIST_NAME}"
 	RMDir "$INSTDIR"
 	
 SectionEnd
@@ -620,20 +628,20 @@ SectionEnd
 Function .onInit
 	
 	; Check if the installer is already running
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "FlashDevelop ${VERSION}") i .r1 ?e'
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "${DIST_NAME} ${VERSION}") i .r1 ?e'
 	Pop $0
 	StrCmp $0 0 +3
-	MessageBox MB_OK|MB_ICONSTOP "The FlashDevelop ${VERSION} installer is already running."
+	MessageBox MB_OK|MB_ICONSTOP "The ${DIST_NAME} ${VERSION} installer is already running."
 	Abort
 	
 	Call GetDotNETVersion
 	Pop $0
 	${If} $0 == "not_found"
-	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing FlashDevelop."
+	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing ${DIST_NAME}."
 	${Else}
 	${VersionCompare} $0 "3.5" $1
 	${If} $1 == 2
-	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing FlashDevelop. You have $0."
+	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing ${DIST_NAME}. You have $0."
 	${EndIf}
 	${EndIf}
 	
@@ -643,29 +651,29 @@ Function .onInit
 	Pop $2
 	${If} $2 == "do_reset"
 	${If} $0 != "not_found"
-	MessageBox MB_OK|MB_ICONEXCLAMATION "You have a version of FlashDevelop installed that may make FlashDevelop unstable or you may miss new features if updated. You should backup you custom setting files and do a full uninstall before installing this one. After install customize the new setting files."
+	MessageBox MB_OK|MB_ICONEXCLAMATION "You have a version of ${DIST_NAME} installed that may make ${DIST_NAME} unstable or you may miss new features if updated. You should backup you custom setting files and do a full uninstall before installing this one. After install customize the new setting files."
 	${EndIf}
 	${EndIf}
 	
 	Call GetFlashVersion
 	Pop $0
 	${If} $0 == "not_found"
-	MessageBox MB_OK|MB_ICONEXCLAMATION "You should install Flash Player (ActiveX for IE) before installing FlashDevelop."
+	MessageBox MB_OK|MB_ICONEXCLAMATION "You should install Flash Player (ActiveX for IE) before installing ${DIST_NAME}."
 	${Else}
 	${VersionCompare} $0 "9.0" $1
 	${If} $1 == 2
-	MessageBox MB_OK|MB_ICONEXCLAMATION "You should install Flash Player (ActiveX for IE) before installing FlashDevelop. You have $0."
+	MessageBox MB_OK|MB_ICONEXCLAMATION "You should install Flash Player (ActiveX for IE) before installing ${DIST_NAME}. You have $0."
 	${EndIf}
 	${EndIf}
 	
 	Call GetJavaVersion
 	Pop $0
 	${If} $0 == "not_found"
-	MessageBox MB_OK|MB_ICONEXCLAMATION "You should install 32-bit Java Runtime (1.6 or later) before installing FlashDevelop."
+	MessageBox MB_OK|MB_ICONEXCLAMATION "You should install 32-bit Java Runtime (1.6 or later) before installing ${DIST_NAME}."
 	${Else}
 	${VersionCompare} $0 "1.6" $1
 	${If} $1 == 2
-	MessageBox MB_OK|MB_ICONEXCLAMATION "You should install 32-bit Java Runtime (1.6 or later) before installing FlashDevelop. You have $0."
+	MessageBox MB_OK|MB_ICONEXCLAMATION "You should install 32-bit Java Runtime (1.6 or later) before installing ${DIST_NAME}. You have $0."
 	${EndIf}
 	${EndIf}
 	

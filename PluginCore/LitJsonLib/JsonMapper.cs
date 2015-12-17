@@ -505,7 +505,7 @@ namespace LitJson
                     if (reader.Token == JsonToken.ArrayEnd)
                         break;
 
-                    ((IList) instance).Add (item);
+                    instance.Add (item);
                 }
             }
             else if (reader.Token == JsonToken.ObjectStart) {
@@ -519,7 +519,7 @@ namespace LitJson
 
                     string property = (string) reader.Value;
 
-                    ((IDictionary) instance)[property] = ReadValue (
+                    instance[property] = ReadValue (
                         factory, reader);
                 }
 

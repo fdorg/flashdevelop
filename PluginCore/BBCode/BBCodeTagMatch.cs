@@ -108,13 +108,13 @@ namespace PluginCore.BBCode
         {
             return "[bbCodeTagMatch"
                    + " isTagOpener=" + this.isTagOpener
-                   + " tagIndex=" + _tagIndex.ToString()
-                   + " tagLength=" + _tagLength.ToString()
+                   + " tagIndex=" + _tagIndex
+                   + " tagLength=" + _tagLength
                    + " tagValue='" + _tagValue + "'"
                    + " tagName='" + this.tagName + "'"
                    + " tagParam='" + this.tagParam + "'"
-                   + " numOpenBraceSlashes='" + _numOpenBraceSlashes.ToString() + "'"
-                   + " numCloseBraceSlashes='" + _numCloseBraceSlashes.ToString() + "'"
+                   + " numOpenBraceSlashes='" + _numOpenBraceSlashes + "'"
+                   + " numCloseBraceSlashes='" + _numCloseBraceSlashes + "'"
                    + " bbCodeStyle='" + (_bbCodeStyle == null ? "null" : _bbCodeStyle.ToString()) + "'"
                    + "]";
         }

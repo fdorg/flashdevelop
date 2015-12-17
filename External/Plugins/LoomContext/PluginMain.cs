@@ -89,7 +89,7 @@ namespace LoomContext
 
         static public LoomSettings Settings
         {
-            get { return settingObject as LoomSettings; }
+            get { return settingObject; }
         }
 
         #endregion

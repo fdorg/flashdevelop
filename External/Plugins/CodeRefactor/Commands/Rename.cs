@@ -111,16 +111,8 @@ namespace CodeRefactor.Commands
                 }
                 return;
             }
-            Boolean isEnum = target.Type.IsEnum();
-            Boolean isVoid = target.Type.IsVoid();
-            Boolean isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
 
-            if (!string.IsNullOrEmpty(newName))
-                this.newName = newName;
-            else if (isEnum || isClass)
-                this.newName = GetNewName(target.Type.Name);
-            else
-                this.newName = GetNewName(target.Member.Name);
+            this.newName = !string.IsNullOrEmpty(newName) ? newName : GetNewName(RefactoringHelper.GetRefactorTargetName(target));
 
             if (string.IsNullOrEmpty(this.newName)) return;
 
@@ -347,7 +339,7 @@ namespace CodeRefactor.Commands
                         reportableLines[lineNumber] = new List<string>();
                     }
                     // the data we store matches the TraceManager.Add's formatting.  We insert the {0} at the end so that we can insert the final line state later
-                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line.ToString() + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
+                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
                 }
                 // report all the lines
                 foreach (KeyValuePair<int, List<String>> lineSetsToReport in reportableLines)
@@ -372,10 +364,10 @@ namespace CodeRefactor.Commands
             String label = TextHelper.GetString("Label.NewName");
             String title = String.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
             LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
-            DialogResult choice = askName.ShowDialog();
-            if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != originalName)
+            if (askName.ShowDialog() == DialogResult.OK)
             {
-                return askName.Line.Trim();
+                string newName = askName.Line.Trim();
+                if(newName.Length > 0 && newName != originalName) return newName;
             }
             return null;
         }

@@ -50,13 +50,13 @@ public class MXMLLexer : Lexer {
        int lastCharPos=0;
        public void AddToken( CommonToken t, int type, int channel)
        {
-          ((CommonToken)t).Type = type;
-          ((CommonToken)t).Channel = channel;
+          t.Type = type;
+          t.Channel = channel;
           t.Line = lastLine;
           lastLine=input.Line;
           t.CharPositionInLine = lastCharPos;
           lastCharPos=input.CharPositionInLine;
-          mRawTokens.Add((CommonToken)t);
+          mRawTokens.Add(t);
        }
        public List<CommonToken> GetTokens()
        {

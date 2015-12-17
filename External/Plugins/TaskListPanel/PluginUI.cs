@@ -681,7 +681,7 @@ namespace TaskListPanel
             this.listView.BeginUpdate();
             foreach (ListViewItem item in this.listView.Items)
             {
-                if (!File.Exists((string)item.Name)) item.Remove();
+                if (!File.Exists(item.Name)) item.Remove();
             }
             this.listView.EndUpdate();
         }
@@ -757,7 +757,7 @@ namespace TaskListPanel
             if (selected.Count > 0)
             {
                 ListViewItem firstSelected = selected[0];
-                String path = (string)firstSelected.Name;
+                String path = firstSelected.Name;
                 this.currentFileName = path;
                 this.currentPos = (Int32)((Hashtable)firstSelected.Tag)["Position"];
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;

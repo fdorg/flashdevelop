@@ -101,7 +101,7 @@ namespace PluginCore.Controls
         {
             // compute control location
             Point p = new Point(sci.PointXFromPosition(memberPos), sci.PointYFromPosition(memberPos));
-            p = ((Form)PluginBase.MainForm).PointToClient(((Control)sci).PointToScreen(p));
+            p = ((Form)PluginBase.MainForm).PointToClient(sci.PointToScreen(p));
             toolTip.Left = p.X /*+ sci.Left*/;
             bool hasListUp = !CompletionList.Active || CompletionList.listUp;
             if (currentLine > sci.LineFromPosition(memberPos) || !hasListUp) toolTip.Top = p.Y - toolTip.Height /*+ sci.Top*/;
