@@ -12,7 +12,6 @@ using PluginCore.Utilities;
 using ProjectManager;
 using StartPage.Controls;
 using WeifenLuo.WinFormsUI.Docking;
-using Microsoft.Win32;
 
 namespace StartPage
 {
@@ -102,7 +101,6 @@ namespace StartPage
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
-            this.UseLatestBrowserControl();
             this.CreateMenuItem();
         }
         
@@ -196,24 +194,6 @@ namespace StartPage
             EventManager.AddEventHandler(this, EventType.Command);
             EventManager.AddEventHandler(this, EventType.FileEmpty);
             EventManager.AddEventHandler(this, EventType.RestoreSession);
-        }
-
-        /// <summary>
-        /// Sets a key in registry so that latest .NET browser control is used
-        /// </summary>
-        private void UseLatestBrowserControl()
-        {
-            try
-            {
-                String valueName = DistroConfig.DISTRIBUTION_NAME + ".exe";
-                String subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
-                RegistryKey emu = Registry.CurrentUser.OpenSubKey(subKey, true);
-                {
-                    Object value = emu.GetValue(valueName);
-                    if (value == null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
-                }
-            }
-            catch {} // No errors please...
         }
 
         /// <summary>

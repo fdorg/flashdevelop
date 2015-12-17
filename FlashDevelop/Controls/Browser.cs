@@ -1,13 +1,13 @@
 using System;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
-using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
+using Microsoft.Win32;
+using System.Reflection;
+using System.IO;
 
 namespace FlashDevelop.Controls
 {
@@ -20,6 +20,22 @@ namespace FlashDevelop.Controls
         private System.Windows.Forms.ToolStripButton refreshButton;
         private System.Windows.Forms.ToolStripSpringComboBox addressComboBox;
         private FlashDevelop.Controls.WebBrowserEx webBrowser;
+
+        static Browser()
+        {
+            try
+            {
+                // Sets a key in registry so that latest .NET browser control is used
+                String valueName = Path.GetFileName(Application.ExecutablePath);
+                String subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
+                RegistryKey emu = Registry.CurrentUser.OpenSubKey(subKey, true);
+                {
+                    Object value = emu.GetValue(valueName);
+                    if (value == null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
+                }
+            }
+            catch { } // No errors please...
+        }
 
         public Browser()
         {
