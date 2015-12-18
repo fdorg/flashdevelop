@@ -1801,10 +1801,14 @@ namespace ASCompletion.Completion
 
             SnippetHelper.InsertSnippetText(sci, funcBodyStart, template);
 
+            //TODO: We also need to check parent classes!!!
             MemberList classMembers = inClass.Members;
             foreach (MemberModel classMember in classMembers)
                 if (classMember.Name.Equals(varName))
+                {
+                    ASContext.Panel.RestoreLastLookupPosition();
                     return;
+                }
 
             MemberModel latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), new MemberModel());
             if (latest == null) return;
