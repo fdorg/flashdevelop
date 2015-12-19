@@ -173,7 +173,8 @@ namespace AirProperties
         /// </summary>
         private void CreateMenuItems()
         {
-            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), GetImage("blockdevice_small.png"), new EventHandler(this.OpenWizard), null);
+            Image image = PluginBase.MainForm.GetAutoAdjustedImage(GetImage("blockdevice_small.png"));
+            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, new EventHandler(this.OpenWizard), null);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AirApplicationProperties", this.pluginMenuItem);
             this.pluginMenuItem.Enabled = false;
         }
@@ -192,7 +193,7 @@ namespace AirProperties
         private void AddToolBarItems(ToolStrip toolStrip)
         {
             this.pmMenuButton = new ToolStripButton();
-            this.pmMenuButton.Image = GetImage("blockdevice_small.png");
+            this.pmMenuButton.Image = this.pluginMenuItem.Image;
             this.pmMenuButton.Text = TextHelper.GetString("Label.ProjectMenuItem").Replace("&", "").Replace("...", "");
             this.pmMenuButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.pmMenuButton.Click += new EventHandler(this.OpenWizard);

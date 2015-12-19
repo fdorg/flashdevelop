@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -5,6 +6,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 
 namespace ProjectManager.Controls
@@ -32,7 +34,7 @@ namespace ProjectManager.Controls
         static Dictionary<string, FDImage> extensionIcons = new Dictionary<string, FDImage>();
 
         private static IMainForm mainForm;
-        private static ImageList imageList;
+        private static FDImageList imageList;
 
         public static FDImage BulletAdd;
         public static FDImage SilkPage;
@@ -95,13 +97,13 @@ namespace ProjectManager.Controls
         public static FDImage CommandPrompt;
         public static FDImage CollapseAll;
 
-        public static ImageList ImageList { get { return imageList; } }
+        public static ImageList ImageList { get { return imageList.ImageList; } }
 
         public static void Initialize(IMainForm mainForm)
         {
             Icons.mainForm = mainForm;
 
-            imageList = new ImageList();
+            imageList = new FDImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             imageList.TransparentColor = Color.Transparent;
@@ -176,17 +178,15 @@ namespace ProjectManager.Controls
 
         public static FDImage GetGray(string data)
         {
-            Image image = (mainForm != null) ? mainForm.FindImage(data) : new Bitmap(16, 16);
-            Image converted = ImageKonverter.ImageToGrayscale(image);
-            imageList.Images.Add(converted);
-            return new FDImage(converted, imageList.Images.Count - 1);
+            Image image = (mainForm != null) ? mainForm.FindImage(data, false) : new Bitmap(16, 16);
+            image = mainForm.GetAutoAdjustedImage(ImageKonverter.ImageToGrayscale(image));
+            imageList.Images.Add(image);
+            return new FDImage(image, imageList.Images.Count - 1);
         }
 
         public static FDImage Get(int fdIndex)
         {
-            Image image = (mainForm != null) ? mainForm.FindImage(fdIndex.ToString()) : new Bitmap(16, 16);
-            imageList.Images.Add(image);
-            return new FDImage(image, imageList.Images.Count - 1);
+            return Get(fdIndex.ToString());
         }
 
         public static FDImage Get(string data)
@@ -275,6 +275,77 @@ namespace ProjectManager.Controls
             return composed;
         }
 
+        class FDImageList : ImageListManager
+        {
+            protected override void OnRefresh()
+            {
+                Images[BulletAdd.Index] = BulletAdd.Img;
+                Images[SilkPage.Index] = SilkPage.Img;
+                Images[XmlFile.Index] = XmlFile.Img;
+                Images[MxmlFile.Index] = MxmlFile.Img;
+                Images[MxmlFileCompile.Index] = MxmlFileCompile.Img;
+                Images[HiddenItems.Index] = HiddenItems.Img;
+                Images[HiddenFolder.Index] = HiddenFolder.Img;
+                Images[HiddenFile.Index] = HiddenFile.Img;
+                Images[BlankFile.Index] = BlankFile.Img;
+                Images[Project.Index] = Project.Img;
+                Images[ProjectClasspath.Index] = ProjectClasspath.Img;
+                Images[Classpath.Index] = Classpath.Img;
+                Images[ProjectClasspathError.Index] = ProjectClasspathError.Img;
+                Images[ClasspathError.Index] = ClasspathError.Img;
+                Images[Font.Index] = Font.Img;
+                Images[ImageResource.Index] = ImageResource.Img;
+                Images[ActionScript.Index] = ActionScript.Img;
+                Images[FlashCS3.Index] = FlashCS3.Img;
+                Images[HaxeFile.Index] = HaxeFile.Img;
+                Images[SwfFile.Index] = SwfFile.Img;
+                Images[SwfFileHidden.Index] = SwfFileHidden.Img;
+                Images[SwcFile.Index] = SwcFile.Img;
+                Images[Folder.Index] = Folder.Img;
+                Images[FolderCompile.Index] = FolderCompile.Img;
+                Images[TextFile.Index] = TextFile.Img;
+                Images[ActionScriptCompile.Index] = ActionScriptCompile.Img;
+                Images[HtmlFile.Index] = HtmlFile.Img;
+                Images[AddFile.Index] = AddFile.Img;
+                Images[OpenFile.Index] = OpenFile.Img;
+                Images[EditFile.Index] = EditFile.Img;
+                Images[Browse.Index] = Browse.Img;
+                Images[FindAndReplace.Index] = FindAndReplace.Img;
+                Images[FindInFiles.Index] = FindInFiles.Img;
+                Images[Cut.Index] = Cut.Img;
+                Images[Copy.Index] = Copy.Img;
+                Images[Paste.Index] = Paste.Img;
+                Images[Delete.Index] = Delete.Img;
+                Images[Rename.Index] = Rename.Img;
+                Images[Options.Index] = Options.Img;
+                Images[OptionsWithIssues.Index] = OptionsWithIssues.Img;
+                Images[NewProject.Index] = NewProject.Img;
+                Images[GreenCheck.Index] = GreenCheck.Img;
+                Images[Gear.Index] = Gear.Img;
+                Images[X.Index] = X.Img;
+                Images[Info.Index] = Info.Img;
+                Images[Class.Index] = Class.Img;
+                Images[Method.Index] = Method.Img;
+                Images[Variable.Index] = Variable.Img;
+                Images[Const.Index] = Const.Img;
+                Images[Icons.Refresh.Index] = Icons.Refresh.Img;
+                Images[Debug.Index] = Debug.Img;
+                Images[UpArrow.Index] = UpArrow.Img;
+                Images[DownArrow.Index] = DownArrow.Img;
+                Images[AllClasses.Index] = AllClasses.Img;
+                Images[SyncToFile.Index] = SyncToFile.Img;
+                Images[ClasspathFolder.Index] = ClasspathFolder.Img;
+                Images[LibrarypathFolder.Index] = LibrarypathFolder.Img;
+                Images[DocumentClass.Index] = DocumentClass.Img;
+                Images[CommandPrompt.Index] = CommandPrompt.Img;
+                Images[CollapseAll.Index] = CollapseAll.Img;
+                
+                foreach (FDImage image in extensionIcons.Values)
+                {
+                    Images[image.Index] = image.Img;
+                }
+            }
+        }
     }
 
 }

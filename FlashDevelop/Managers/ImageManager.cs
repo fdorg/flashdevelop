@@ -72,8 +72,7 @@ namespace FlashDevelop.Managers
                 original = ScaleHelper.Scale(original);
                 Cache[data] = new ImagePair(original);
             }
-
-
+            
             if (autoAdjusted)
             {
                 var imagePair = Cache[data];
@@ -146,7 +145,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         static Image AddAutoAdjustImage(ImagePair pair)
         {
-            AutoAdjusted.Add(pair);
+            if (!AutoAdjusted.Contains(pair)) AutoAdjusted.Add(pair);
             return pair.Adjusted = SetImageAdjustment(pair.Original);
         }
 

@@ -47,6 +47,7 @@ namespace ResultsPanel
         private PluginMain pluginMain;
         private Int32 logCount;
         private Timer autoShow;
+        private ImageListManager imageList;
          
         public PluginUI(PluginMain pluginMain)
         {
@@ -247,19 +248,24 @@ namespace ResultsPanel
         /// </summary>
         public void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
+            imageList = new ImageListManager();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.TransparentColor = Color.Transparent;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("131")); // info
-            imageList.Images.Add(PluginBase.MainForm.FindImage("197")); // error
-            imageList.Images.Add(PluginBase.MainForm.FindImage("196")); // warning
+            imageList.Initialize(ImageList_Initialize);
+            this.toolStripFilters.ImageList = imageList.ImageList;
+            this.entriesView.SmallImageList = imageList.ImageList;
             this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
-            this.toolStripFilters.ImageList = imageList;
-            this.toolStripButtonError.ImageIndex = 1;
-            this.toolStripButtonWarning.ImageIndex = 2;
-            this.toolStripButtonInfo.ImageIndex = 0;
-            this.entriesView.SmallImageList = imageList;
+            this.toolStripButtonInfo.Image = PluginBase.MainForm.FindImage("131");
+            this.toolStripButtonError.Image = PluginBase.MainForm.FindImage("197");
+            this.toolStripButtonWarning.Image = PluginBase.MainForm.FindImage("196");
+        }
+
+        private void ImageList_Initialize(object sender, EventArgs e)
+        {
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("131")); // info
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("197")); // error
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("196")); // warning
         }
 
         /// <summary>

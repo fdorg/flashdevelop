@@ -200,9 +200,9 @@ namespace FlashDevelop.Dialogs
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add(Globals.MainForm.FindImage("153")); // clear
+            imageList.Images.Add(Globals.MainForm.FindImage("153", false)); // clear
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.pictureBox.Image = Globals.MainForm.FindImage("229");
+            this.pictureBox.Image = Globals.MainForm.FindImage("229", false);
             this.clearButton.ImageList = imageList;
             this.clearButton.ImageIndex = 0;
         }

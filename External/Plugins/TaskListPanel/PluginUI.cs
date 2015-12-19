@@ -49,6 +49,7 @@ namespace TaskListPanel
         private ColumnHeader columnPath;
         private BackgroundWorker bgWork;
         private ListViewEx listView;
+        private ImageListManager imageList;
 
         // Regex
         static private Regex reClean = new Regex(@"(\*)?\*/.*", RegexOptions.Compiled);
@@ -651,17 +652,22 @@ namespace TaskListPanel
         /// </summary>
         private void InitGraphics()
         {
-            ImageList imageList = new ImageList();
+            imageList = new ImageListManager();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            Settings settings = (Settings)this.pluginMain.Settings;
+            imageList.Initialize(ImageList_Initialize);
+            this.listView.SmallImageList = imageList.ImageList;
+        }
+
+        private void ImageList_Initialize(object sender, EventArgs e)
+        {
+            Settings settings = (Settings) this.pluginMain.Settings;
             if (settings != null && settings.ImageIndexes != null)
             {
                 foreach (Int32 index in settings.ImageIndexes)
                 {
-                    imageList.Images.Add(PluginBase.MainForm.FindImage(index.ToString()));
+                    imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust(index.ToString()));
                 }
             }
-            this.listView.SmallImageList = imageList;
         }
 
         /// <summary>

@@ -52,6 +52,8 @@ namespace PluginCore.Utilities
                 float adjBrightness = bri - 1f;
                 using (Graphics graphics = Graphics.FromImage(dest))
                 {
+                    // clear the destination before drawing the image
+                    graphics.Clear(Color.Transparent);
                     ColorMatrix colorMatrix = new ColorMatrix();
                     // adjust saturation
                     colorMatrix[0, 0] = baseSat * rwgt + sat;

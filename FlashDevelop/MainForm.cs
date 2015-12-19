@@ -554,7 +554,7 @@ namespace FlashDevelop
             try
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
-                if (image != null) dockablePanel.Icon = ImageKonverter.ImageToIcon(image);
+                dockablePanel.Image = image;
                 dockablePanel.DockState = defaultDockState;
                 LayoutManager.PluginPanels.Add(dockablePanel);
                 return dockablePanel;
@@ -1712,6 +1712,17 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Finds the specified composed/ready image and returns a copy of the image that has its color adjusted.
+        /// This method is typically used for populating a <see cref="ImageList"/> object.
+        /// <para/>
+        /// Equivalent to calling <code>ImageSetAdjust(FindImage(data, false))</code>.
+        /// </summary>
+        public Image FindImageAndSetAdjust(String data)
+        {
+            return ImageSetAdjust(FindImage(data, false));
+        }
+
+        /// <summary>
         /// Returns a copy of the specified image that has its color adjusted.
         /// </summary>
         public Image ImageSetAdjust(Image image)
@@ -1733,8 +1744,15 @@ namespace FlashDevelop
         public void AdjustAllImages()
         {
             ImageManager.AdjustAllImages();
-        }
+            ImageListManager.RefreshAll();
 
+            for (int i = 0, length = LayoutManager.PluginPanels.Count; i < length; i++)
+            {
+                DockablePanel panel = LayoutManager.PluginPanels[i] as DockablePanel;
+                if (panel != null) panel.RefreshIcon();
+            }
+        }
+        
         /// <summary>
         /// Themes the controls from the parent
         /// </summary>
