@@ -230,6 +230,7 @@ namespace AppMan
                 {
                     settings = ObjectSerializer.Deserialize(file, settings) as Settings;
                     if (!String.IsNullOrEmpty(settings.Name)) MainForm.DISTRO_NAME = settings.Name;
+                    if (!String.IsNullOrEmpty(settings.Groups)) MainForm.EXPOSED_GROUPS = settings.Groups;
                     PathHelper.APPS_DIR = ArgProcessor.ProcessArguments(settings.Archive);
                     PathHelper.CONFIG_ADR = ArgProcessor.ProcessArguments(settings.Config);
                     PathHelper.HELP_ADR = ArgProcessor.ProcessArguments(settings.Help);
@@ -1663,18 +1664,20 @@ namespace AppMan
         public String Archive = "";
         public String Locale = "en_US";
         public String Name = "FlashDevelop";
+        public String Groups = "FD5";
 
         [XmlArrayItem("Path")]
         public String[] Paths = new String[0];
 
         public Settings() {}
-        public Settings(String config, String archive, String[] paths, String locale, String help, String logs, String name)
+        public Settings(String config, String archive, String[] paths, String locale, String help, String logs, String name, String groups)
         {
             this.Logs = logs;
             this.Paths = paths;
             this.Config = config;
             this.Archive = archive;
             this.Locale = locale;
+            this.Groups = groups;
             this.Name = name;
             this.Help = help;
         }
