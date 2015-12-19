@@ -56,6 +56,7 @@ git clean -f -x -d FlashDevelop\Bin\Debug
 :: Remove bad files
 del FlashDevelop\Bin\Debug\FlashDevelop.exe.config
 del FlashDevelop\Bin\Debug\StartPage\images\*.* /Q
+for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "%%~G"
 
 :: Copy distro files
 xcopy Distros\HaxeDevelop /s /e /y
