@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using PluginCore.Helpers;
+using PluginCore.Utilities;
 
 namespace PluginCore.Controls
 {
@@ -70,11 +71,11 @@ namespace PluginCore.Controls
             // 
             // availableItemsHeader
             // 
-            availableItemsHeader.Width = 125;
+            availableItemsHeader.Width = -1;
             // 
             // usedItemsHeader
             // 
-            usedItemsHeader.Width = 125;
+            usedItemsHeader.Width = -1;
             // 
             // lblAvailable
             // 
@@ -82,7 +83,6 @@ namespace PluginCore.Controls
             this.lblAvailable.Location = new System.Drawing.Point(9, 9);
             this.lblAvailable.Name = "lblAvailable";
             this.lblAvailable.Size = new System.Drawing.Size(87, 15);
-            this.lblAvailable.TabIndex = 0;
             this.lblAvailable.Text = "&Available Items";
             // 
             // lblUsed
@@ -91,19 +91,16 @@ namespace PluginCore.Controls
             this.lblUsed.Location = new System.Drawing.Point(195, 9);
             this.lblUsed.Name = "lblUsed";
             this.lblUsed.Size = new System.Drawing.Size(65, 15);
-            this.lblUsed.TabIndex = 1;
             this.lblUsed.Text = "&Used Items";
             // 
             // availableItems
             // 
-            this.availableItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            availableItemsHeader});
+            this.availableItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { availableItemsHeader });
             this.availableItems.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.availableItems.Location = new System.Drawing.Point(12, 27);
             this.availableItems.Name = "availableItems";
             this.availableItems.Size = new System.Drawing.Size(150, 200);
             this.availableItems.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.availableItems.TabIndex = 2;
             this.availableItems.TabStop = false;
             this.availableItems.UseCompatibleStateImageBehavior = false;
             this.availableItems.View = System.Windows.Forms.View.Details;
@@ -112,13 +109,11 @@ namespace PluginCore.Controls
             // 
             // usedItems
             // 
-            this.usedItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            usedItemsHeader});
+            this.usedItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { usedItemsHeader });
             this.usedItems.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.usedItems.Location = new System.Drawing.Point(198, 27);
             this.usedItems.Name = "usedItems";
             this.usedItems.Size = new System.Drawing.Size(150, 200);
-            this.usedItems.TabIndex = 3;
             this.usedItems.TabStop = false;
             this.usedItems.UseCompatibleStateImageBehavior = false;
             this.usedItems.View = System.Windows.Forms.View.Details;
@@ -130,7 +125,6 @@ namespace PluginCore.Controls
             this.btnAdd.Location = new System.Drawing.Point(168, 101);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(24, 24);
-            this.btnAdd.TabIndex = 4;
             this.btnAdd.TabStop = false;
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
@@ -140,7 +134,6 @@ namespace PluginCore.Controls
             this.btnRemove.Location = new System.Drawing.Point(168, 131);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(24, 24);
-            this.btnRemove.TabIndex = 5;
             this.btnRemove.TabStop = false;
             this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.BtnRemove_Click);
@@ -150,7 +143,6 @@ namespace PluginCore.Controls
             this.btnUp.Location = new System.Drawing.Point(354, 50);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(24, 24);
-            this.btnUp.TabIndex = 6;
             this.btnUp.TabStop = false;
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.Click += new System.EventHandler(this.BtnUp_Click);
@@ -160,7 +152,6 @@ namespace PluginCore.Controls
             this.btnDown.Location = new System.Drawing.Point(354, 80);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(24, 24);
-            this.btnDown.TabIndex = 7;
             this.btnDown.TabStop = false;
             this.btnDown.UseVisualStyleBackColor = true;
             this.btnDown.Click += new System.EventHandler(this.BtnDown_Click);
@@ -233,23 +224,11 @@ namespace PluginCore.Controls
 
         void InitializeGraphics()
         {
-            using (var imageList = new ImageList())
-            {
-                imageList.ColorDepth = ColorDepth.Depth32Bit;
-                imageList.ImageSize = new Size(16, 16);
-                imageList.Images.AddRange(new[]
-                {
-                    ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("67", false)),
-                    ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("63", false)),
-                    ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("74", false)),
-                    ScaleHelper.Scale((Bitmap) PluginBase.MainForm.FindImage("60", false))
-                });
-
-                btnAdd.Image = imageList.Images[0];
-                btnRemove.Image = imageList.Images[1];
-                btnUp.Image = imageList.Images[2];
-                btnDown.Image = imageList.Images[3];
-            }
+            int size = ScaleHelper.Scale(16);
+            btnAdd.Image = ImageKonverter.ImageResize((Bitmap) PluginBase.MainForm.FindImage("67", false), size, size);
+            btnRemove.Image = ImageKonverter.ImageResize((Bitmap) PluginBase.MainForm.FindImage("63", false), size, size);
+            btnUp.Image = ImageKonverter.ImageResize((Bitmap) PluginBase.MainForm.FindImage("74", false), size, size);
+            btnDown.Image = ImageKonverter.ImageResize((Bitmap) PluginBase.MainForm.FindImage("60", false), size, size);
         }
 
         void InitializeAvailableList(T[] all, T[] values)
