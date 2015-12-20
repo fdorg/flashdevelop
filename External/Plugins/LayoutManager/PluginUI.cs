@@ -161,7 +161,7 @@ namespace LayoutManager
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.imageList.TransparentColor = Color.Transparent;
             this.imageList.Initialize(ImageList_Initialize);
-            this.layoutsListView.SmallImageList = this.imageList.ImageList;
+            this.layoutsListView.SmallImageList = this.imageList;
             this.menuLoadButton.Image = PluginBase.MainForm.FindImage("42|24|3|2");
             this.loadStripButton.Image = PluginBase.MainForm.FindImage("42|24|3|2");
             this.menuDeleteButton.Image = PluginBase.MainForm.FindImage("153");

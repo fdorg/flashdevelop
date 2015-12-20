@@ -1,19 +1,18 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
-using WeifenLuo.WinFormsUI.Docking;
-using ScintillaNet.Configuration;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using PluginCore.Controls;
-using ScintillaNet;
+using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
+using ScintillaNet.Configuration;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResultsPanel
 {
@@ -253,8 +252,8 @@ namespace ResultsPanel
             imageList.TransparentColor = Color.Transparent;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             imageList.Initialize(ImageList_Initialize);
-            this.toolStripFilters.ImageList = imageList.ImageList;
-            this.entriesView.SmallImageList = imageList.ImageList;
+            this.toolStripFilters.ImageList = imageList;
+            this.entriesView.SmallImageList = imageList;
             this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
             this.toolStripButtonInfo.Image = PluginBase.MainForm.FindImage("131");
             this.toolStripButtonError.Image = PluginBase.MainForm.FindImage("197");

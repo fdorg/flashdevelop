@@ -40,7 +40,7 @@ namespace FlashDebugger
             localsPanel = PluginBase.MainForm.CreateDockablePanel(localsUI, localsGuid, pluginImage, DockState.DockLeft);
             localsPanel.Hide();
             
-            stackframeUI = new StackframeUI(pluginMain, MenusHelper.imageList.ImageList);
+            stackframeUI = new StackframeUI(pluginMain, MenusHelper.imageList);
             stackframeUI.Text = TextHelper.GetString("Title.StackTrace");
             stackframePanel = PluginBase.MainForm.CreateDockablePanel(stackframeUI, stackframeGuid, pluginImage, DockState.DockLeft);
             stackframePanel.Hide();
@@ -60,7 +60,7 @@ namespace FlashDebugger
             immediatePanel = PluginBase.MainForm.CreateDockablePanel(immediateUI, immediateGuid, pluginImage, DockState.DockLeft);
             immediatePanel.Hide();
 
-            threadsUI = new ThreadsUI(pluginMain, MenusHelper.imageList.ImageList);
+            threadsUI = new ThreadsUI(pluginMain, MenusHelper.imageList);
             threadsUI.Text = TextHelper.GetString("Title.Threads");
             threadsPanel = PluginBase.MainForm.CreateDockablePanel(threadsUI, threadsGuid, pluginImage, DockState.DockLeft);
             threadsPanel.Hide();

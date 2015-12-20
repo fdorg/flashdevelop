@@ -1,23 +1,18 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
-using System.Threading;
-using System.Diagnostics;
 using System.Collections;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Windows.Forms.Layout;
-using System.Text.RegularExpressions;
-using PluginCore.Localization;
 using System.ComponentModel;
-using WeifenLuo.WinFormsUI;
+using System.Drawing;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
 using ASCompletion.Context;
-using PluginCore.Helpers;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ScintillaNet;
 
 namespace TaskListPanel
 {
@@ -655,7 +650,7 @@ namespace TaskListPanel
             imageList = new ImageListManager();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.Initialize(ImageList_Initialize);
-            this.listView.SmallImageList = imageList.ImageList;
+            this.listView.SmallImageList = imageList;
         }
 
         private void ImageList_Initialize(object sender, EventArgs e)

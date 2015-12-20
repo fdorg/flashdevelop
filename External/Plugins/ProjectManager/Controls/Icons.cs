@@ -97,7 +97,7 @@ namespace ProjectManager.Controls
         public static FDImage CommandPrompt;
         public static FDImage CollapseAll;
 
-        public static ImageList ImageList { get { return imageList.ImageList; } }
+        public static ImageList ImageList { get { return imageList; } }
 
         public static void Initialize(IMainForm mainForm)
         {

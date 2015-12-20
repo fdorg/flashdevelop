@@ -1,19 +1,15 @@
 using System;
+using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Drawing;
-using System.Security;
-using System.Diagnostics;
-using System.Collections;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Specialized;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace FileExplorer
 {
@@ -300,7 +296,7 @@ namespace FileExplorer
             this.AddNonWin32Images();
             this.syncronizeButton.Image = PluginBase.MainForm.FindImage("203|9|-3|-3");
             this.browseButton.Image = PluginBase.MainForm.FindImage("203");
-            this.fileView.SmallImageList = this.imageList.ImageList;
+            this.fileView.SmallImageList = this.imageList;
         }
 
         private void ImageList_Initialize(object sender, EventArgs e)

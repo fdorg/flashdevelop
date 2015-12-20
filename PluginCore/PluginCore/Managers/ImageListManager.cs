@@ -57,6 +57,39 @@ namespace PluginCore.Managers
 
         #endregion
 
+        #region Conversions
+
+        /// <summary>
+        /// Returns the <see cref="ImageList"/> of the specified <see cref="ImageListManager"/> instance.
+        /// </summary>
+        /// <param name="obj">An <see cref="ImageListManager"/> object.</param>
+        public static implicit operator ImageList(ImageListManager obj)
+        {
+            return obj.imageList;
+        }
+
+        /// <summary>
+        /// Returns the <see cref="ImageListManager"/> instance associated with the specified <see cref="System.Windows.Forms.ImageList"/> object.
+        /// </summary>
+        /// <param name="obj">An <see cref="System.Windows.Forms.ImageList"/> object.</param>
+        public static explicit operator ImageListManager(ImageList obj)
+        {
+            for (int i = 0, length = instances.Count; i < length; i++)
+            {
+                var imageListManager = instances[i].Target as ImageListManager;
+                if (imageListManager == null)
+                {
+                    // Free up spaces whenever we are looping through the list lol
+                    instances.RemoveAt(i--);
+                    length--;
+                }
+                else if (imageListManager.imageList == obj) return imageListManager;
+            }
+            throw new InvalidCastException(string.Format("Unable to cast object of type '{0}' to type '{1}'.", obj.GetType(), typeof(ImageListManager)));
+        }
+
+        #endregion
+
         #region Events
 
         /// <summary>
@@ -150,11 +183,21 @@ namespace PluginCore.Managers
             instances.Add(new WeakReference(instance));
         }
 
+        /// <summary>
+        /// Removes a weak reference to an instance from the instances list.
+        /// </summary>
+        /// <param name="instance">An instance of <see cref="ImageListManager"/>.</param>
         private static void RemoveInstance(ImageListManager instance)
         {
             for (int i = 0, length = instances.Count; i < length; i++)
             {
-                if (instances[i].Target == instance)
+                var imageListManager = instances[i].Target as ImageListManager;
+                if (imageListManager == null)
+                {
+                    instances.RemoveAt(i--);
+                    length--;
+                }
+                else if (imageListManager == instance)
                 {
                     instances.RemoveAt(i);
                     break;

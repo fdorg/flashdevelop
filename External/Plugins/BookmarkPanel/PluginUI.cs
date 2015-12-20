@@ -232,7 +232,7 @@ namespace BookmarkPanel
             this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.imageList.Initialize(ImageList_OnInitialize);
-            this.listView.SmallImageList = this.imageList.ImageList;
+            this.listView.SmallImageList = this.imageList;
             this.removeBookmarksItem.Image = PluginBase.MainForm.FindImage("402|4|4|4");
             this.searchButton.Image = PluginBase.MainForm.FindImage("484|26|-4|4");
         }

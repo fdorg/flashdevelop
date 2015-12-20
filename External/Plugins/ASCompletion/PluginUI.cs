@@ -6,18 +6,18 @@
  */
 
 using System;
-using System.Windows.Forms;
-using System.Text;
 using System.Collections.Generic;
-using PluginCore;
-using PluginCore.Managers;
-using ASCompletion.Model;
-using ASCompletion.Context;
-using ASCompletion.Settings;
-using PluginCore.Localization;
 using System.Drawing;
 using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using ASCompletion.Settings;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace ASCompletion
 {
@@ -72,7 +72,7 @@ namespace ASCompletion
         }
         public ImageList TreeIcons
         {
-            get { return treeIcons.ImageList; }
+            get { return treeIcons; }
         }
 
         public ToolStripMenuItem LookupMenuItem;
@@ -130,7 +130,7 @@ namespace ASCompletion
             outlineTree.Location = new System.Drawing.Point(0, toolStrip.Bottom);
             outlineTree.Size = new System.Drawing.Size(198, 300);
             outlineTree.Dock = DockStyle.Fill;
-            outlineTree.ImageList = treeIcons.ImageList;
+            outlineTree.ImageList = treeIcons;
             outlineTree.HotTracking = true;
             outlineTree.TabIndex = 1;
             outlineTree.NodeClicked += new FixedTreeView.NodeClickedHandler(ClassTreeSelect);

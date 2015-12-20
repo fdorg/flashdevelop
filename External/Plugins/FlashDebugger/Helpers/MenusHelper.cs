@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -20,7 +19,7 @@ namespace FlashDebugger
         private ToolStripMenuItem BreakOnAllMenu;
         private DebuggerState CurrentState = DebuggerState.Initializing;
         private Settings settingObject;
-        
+
         /// <summary>
         /// Creates a menu item for the plugin and adds a ignored key
         /// </summary>
@@ -41,7 +40,7 @@ namespace FlashDebugger
             Image imgFinish = PluginBase.MainForm.GetAutoAdjustedImage(Resource.Finish);
 
             ToolStripMenuItem tempItem;
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem) PluginBase.MainForm.FindMenuItem("ViewMenu");
+            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
             tempItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewBreakpointsPanel"), pluginImage, OpenBreakPointPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowBreakpoints", tempItem);
             viewMenu.DropDownItems.Add(tempItem);
