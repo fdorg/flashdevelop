@@ -324,7 +324,6 @@ namespace CodeRefactor.Commands
         void ReportResults()
         {
             int newNameLength = NewName.Length;
-            //PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
             // outputs the lines as they change
             // some funky stuff to make sure it highlights/reports the resultant changes rather than the old data
             // TODO: this works on the assumption that multiple changes on the same line will come from left-to-right; consider updating to work regardless of order
@@ -370,7 +369,6 @@ namespace CodeRefactor.Commands
                     }
                 }
             }
-            //PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
         }
 
         /// <summary>

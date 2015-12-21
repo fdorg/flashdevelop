@@ -7,7 +7,6 @@ using ASCompletion.Context;
 using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.FRService;
 using ScintillaNet;
 using ScintillaNet.Enums;
@@ -20,6 +19,7 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class InlineRename : IDisposable, IMessageFilter, IRenameHelper
     {
+        const int MaxHistoryCount = 256;
         const int Indicator = 0;
         static InlineRename Current;
 
@@ -62,9 +62,9 @@ namespace CodeRefactor.Commands
         ReferenceInfo declaration;
         ReferenceInfo[] refs;
 
-        int historyIndex;
-        List<string> history;
         DelayedExecution delayedExecution;
+        List<string> history;
+        int historyIndex;
 
         #region Events
 
@@ -146,6 +146,7 @@ namespace CodeRefactor.Commands
             AddMessageFilter();
             DisableControls();
             Highlight(start, end - start);
+            sci.SetSel(start, end);
         }
 
         #endregion
@@ -186,8 +187,8 @@ namespace CodeRefactor.Commands
         void InitializeFields()
         {
             delayedExecution = new DelayedExecution();
-            historyIndex = 0;
             history = new List<string> { oldName };
+            historyIndex = 0;
         }
 
         /// <summary>
@@ -197,7 +198,6 @@ namespace CodeRefactor.Commands
         {
             sci.RemoveHighlights(Indicator);
             sci.SetIndicSetAlpha(Indicator, 100);
-            sci.SetSel(start, end);
         }
 
         /// <summary>
@@ -378,6 +378,9 @@ namespace CodeRefactor.Commands
         /// </summary>
         void Finish()
         {
+            // If the document was closed, don't do the finish-up task.
+            if (Array.IndexOf(PluginBase.MainForm.Documents, currentDoc) < 0) return;
+
             sci.RemoveHighlights(Indicator);
             sci.SetIndicSetAlpha(Indicator, 40);
 
@@ -870,7 +873,7 @@ namespace CodeRefactor.Commands
         #region Utilities
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value specifying whether Backspace is currently available.
+        /// Gets a <see cref="bool"/> value specifying whether <see cref="Keys.Back"/> is currently available.
         /// </summary>
         bool CanBackspace
         {
@@ -884,7 +887,7 @@ namespace CodeRefactor.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="bool"/> value specifying whether Delete is currently available.
+        /// Gets a <see cref="bool"/> value specifying whether <see cref="Keys.Delete"/> is currently available.
         /// </summary>
         bool CanDelete
         {
@@ -971,6 +974,7 @@ namespace CodeRefactor.Commands
         /// <param name="value">A new value to be recorded.</param>
         void AddHistory(string value)
         {
+            // Delete redo history
             int excessCount = history.Count - ++historyIndex;
             if (excessCount > 0)
             {
@@ -978,6 +982,14 @@ namespace CodeRefactor.Commands
             }
 
             history.Add(value);
+
+            // Trim beginning of history
+            excessCount = history.Count - MaxHistoryCount;
+            if (excessCount > 0)
+            {
+                history.RemoveRange(0, excessCount);
+                historyIndex -= excessCount;
+            }
         }
 
         /// <summary>
@@ -1077,7 +1089,7 @@ namespace CodeRefactor.Commands
             }
 
             /// <summary>
-            /// Invoked when the specified timer interval has elapsed.
+            /// Occurs when the specified timer interval has elapsed and the timer is enabled.
             /// </summary>
             /// <param name="sender">The event sender object.</param>
             /// <param name="e">The event arguments.</param>
