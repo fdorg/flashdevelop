@@ -68,7 +68,7 @@ namespace OutputPanel
         {
             get
             {
-                if (highlightMarkers == null)
+                if (highlightMarkers == null || highlightMarkers.Count == 0)
                 {
                     this.highlightMarkers = new List<HighlightMarker>
                     {
