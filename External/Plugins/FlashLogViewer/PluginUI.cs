@@ -1,18 +1,13 @@
 using System;
+using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Drawing;
-using System.Collections;
-using System.Windows.Forms;
-using WeifenLuo.WinFormsUI;
-using PluginCore.Localization;
 using System.Text.RegularExpressions;
-using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using PluginCore.Controls;
+using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Utilities;
 
 namespace FlashLogViewer
 {
@@ -34,12 +29,13 @@ namespace FlashLogViewer
         private DateTime policyLogWrited;
         private DateTime flashLogWrited;
         private PluginMain pluginMain;
-        private ImageList imageList;
         private String curLogFile;
         private Regex reWarning;
         private Regex reFilter;
         private Regex reError;
         private long lastPosition;
+        private Image toggleButtonImagePlay;
+        private Image toggleButtonImageStop;
         
         public PluginUI(PluginMain pluginMain)
         {
@@ -257,17 +253,11 @@ namespace FlashLogViewer
         /// </summary>
         private void InitializeGraphics()
         {
-            this.imageList = new ImageList();
-            this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.imageList.TransparentColor = Color.Transparent;
-            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("151"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("147"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("56|8|2|4"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("153"));
-            this.clearFilterButton.Image = this.imageList.Images[3];
-            this.topMostButton.Image = this.imageList.Images[2];
-            this.toggleButton.Image = this.imageList.Images[1];
+            toggleButtonImageStop = PluginBase.MainForm.FindImage("151");
+            toggleButtonImagePlay = PluginBase.MainForm.FindImage("147");
+            this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
+            this.topMostButton.Image = PluginBase.MainForm.FindImage("56|8|2|4");
+            this.toggleButton.Image = toggleButtonImagePlay;
         }
 
         /// <summary>
@@ -418,7 +408,7 @@ namespace FlashLogViewer
             this.tracking = enable;
             this.refreshTimer.Enabled = this.tracking;
             this.refreshTimer.Interval = this.GetUpdateInterval();
-            this.toggleButton.Image = this.imageList.Images[(enable ? 0 : 1)];
+            this.toggleButton.Image = enable ? toggleButtonImageStop : toggleButtonImagePlay;
             this.toggleButton.ToolTipText = (enable ? TextHelper.GetString("ToolTip.StopTracking") : TextHelper.GetString("ToolTip.StartTracking"));
             this.logComboBox.Enabled = enable;
             if (enable)
@@ -444,7 +434,7 @@ namespace FlashLogViewer
                 this.popupForm.MinimumSize = new Size(350, 120);
                 this.popupForm.Text = TextHelper.GetString("Title.PluginPanel");
                 this.popupForm.FormClosed += new FormClosedEventHandler(this.PopupFormClosed);
-                this.popupForm.Icon = ImageKonverter.ImageToIcon(PluginBase.MainForm.FindImage("412"));
+                this.popupForm.Icon = ImageKonverter.ImageToIcon(PluginBase.MainForm.FindImage("412", false));
                 if (this.Settings.KeepPopupTopMost) this.popupForm.TopMost = true;
                 this.popupForm.Show();
             }

@@ -6,18 +6,18 @@
  */
 
 using System;
-using System.Windows.Forms;
-using System.Text;
 using System.Collections.Generic;
-using PluginCore;
-using PluginCore.Managers;
-using ASCompletion.Model;
-using ASCompletion.Context;
-using ASCompletion.Settings;
-using PluginCore.Localization;
 using System.Drawing;
 using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using ASCompletion.Settings;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace ASCompletion
 {
@@ -77,7 +77,7 @@ namespace ASCompletion
 
         public ToolStripMenuItem LookupMenuItem;
         private System.ComponentModel.IContainer components;
-        public System.Windows.Forms.ImageList treeIcons;
+        public ImageListManager treeIcons;
         private FixedTreeView outlineTree;
         private System.Timers.Timer tempoClick;
 
@@ -113,7 +113,36 @@ namespace ASCompletion
             InitializeComponent();
             treeIcons.ColorDepth = ColorDepth.Depth32Bit;
             treeIcons.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            treeIcons.Images.AddRange( new Image[] 
+            treeIcons.Initialize(TreeIcons_OnInitialize);
+
+            toolStrip.Renderer = new DockPanelStripRenderer();
+            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            toolStrip.Padding = new Padding(2, 1, 2, 2);
+            sortDropDown.Font = PluginBase.Settings.DefaultFont;
+            sortDropDown.Image = PluginBase.MainForm.FindImage("444");
+            clearButton.Image = PluginBase.MainForm.FindImage("153");
+            clearButton.Alignment = ToolStripItemAlignment.Right;
+            clearButton.CheckOnClick = false;
+
+            outlineTree = new FixedTreeView();
+            outlineTree.BorderStyle = BorderStyle.None;
+            outlineTree.ShowRootLines = false;
+            outlineTree.Location = new System.Drawing.Point(0, toolStrip.Bottom);
+            outlineTree.Size = new System.Drawing.Size(198, 300);
+            outlineTree.Dock = DockStyle.Fill;
+            outlineTree.ImageList = treeIcons;
+            outlineTree.HotTracking = true;
+            outlineTree.TabIndex = 1;
+            outlineTree.NodeClicked += new FixedTreeView.NodeClickedHandler(ClassTreeSelect);
+            outlineTree.AfterSelect += new TreeViewEventHandler(outlineTree_AfterSelect);
+            outlineTree.ShowNodeToolTips = true;
+            Controls.Add(outlineTree);
+            outlineTree.BringToFront();
+        }
+
+        private void TreeIcons_OnInitialize(object sender, EventArgs e)
+        {
+            treeIcons.Images.AddRange(new Image[]
             {
                 PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FilePlain.png"))),
                 PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FolderClosed.png"))),
@@ -151,30 +180,6 @@ namespace ASCompletion
                 PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Template.png"))),
                 PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Declaration.png")))
             });
-
-            toolStrip.Renderer = new DockPanelStripRenderer();
-            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            toolStrip.Padding = new Padding(2, 1, 2, 2);
-            sortDropDown.Font = PluginBase.Settings.DefaultFont;
-            sortDropDown.Image = PluginBase.MainForm.FindImage("444");
-            clearButton.Image = PluginBase.MainForm.FindImage("153");
-            clearButton.Alignment = ToolStripItemAlignment.Right;
-            clearButton.CheckOnClick = false;
-
-            outlineTree = new FixedTreeView();
-            outlineTree.BorderStyle = BorderStyle.None;
-            outlineTree.ShowRootLines = false;
-            outlineTree.Location = new System.Drawing.Point(0, toolStrip.Bottom);
-            outlineTree.Size = new System.Drawing.Size(198, 300);
-            outlineTree.Dock = DockStyle.Fill;
-            outlineTree.ImageList = treeIcons;
-            outlineTree.HotTracking = true;
-            outlineTree.TabIndex = 1;
-            outlineTree.NodeClicked += new FixedTreeView.NodeClickedHandler(ClassTreeSelect);
-            outlineTree.AfterSelect += new TreeViewEventHandler(outlineTree_AfterSelect);
-            outlineTree.ShowNodeToolTips = true;
-            Controls.Add(outlineTree);
-            outlineTree.BringToFront();
         }
 
         public static System.IO.Stream GetStream(String name)
@@ -270,7 +275,7 @@ namespace ASCompletion
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
-            this.treeIcons = new System.Windows.Forms.ImageList(this.components);
+            this.treeIcons = new ImageListManager(this.components);
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.sortDropDown = new System.Windows.Forms.ToolStripDropDownButton();
             this.noneItem = new System.Windows.Forms.ToolStripMenuItem();

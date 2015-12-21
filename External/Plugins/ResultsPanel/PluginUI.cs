@@ -1,19 +1,18 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
-using WeifenLuo.WinFormsUI.Docking;
-using ScintillaNet.Configuration;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using PluginCore.Controls;
-using ScintillaNet;
+using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
+using ScintillaNet.Configuration;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResultsPanel
 {
@@ -47,6 +46,7 @@ namespace ResultsPanel
         private PluginMain pluginMain;
         private Int32 logCount;
         private Timer autoShow;
+        private ImageListManager imageList;
          
         public PluginUI(PluginMain pluginMain)
         {
@@ -247,19 +247,24 @@ namespace ResultsPanel
         /// </summary>
         public void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
+            imageList = new ImageListManager();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.TransparentColor = Color.Transparent;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("131")); // info
-            imageList.Images.Add(PluginBase.MainForm.FindImage("197")); // error
-            imageList.Images.Add(PluginBase.MainForm.FindImage("196")); // warning
-            this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
+            imageList.Initialize(ImageList_Initialize);
             this.toolStripFilters.ImageList = imageList;
-            this.toolStripButtonError.ImageIndex = 1;
-            this.toolStripButtonWarning.ImageIndex = 2;
-            this.toolStripButtonInfo.ImageIndex = 0;
             this.entriesView.SmallImageList = imageList;
+            this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
+            this.toolStripButtonInfo.Image = PluginBase.MainForm.FindImage("131");
+            this.toolStripButtonError.Image = PluginBase.MainForm.FindImage("197");
+            this.toolStripButtonWarning.Image = PluginBase.MainForm.FindImage("196");
+        }
+
+        private void ImageList_Initialize(object sender, EventArgs e)
+        {
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("131")); // info
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("197")); // error
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("196")); // warning
         }
 
         /// <summary>

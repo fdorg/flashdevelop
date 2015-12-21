@@ -1,19 +1,15 @@
 using System;
+using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Drawing;
-using System.Security;
-using System.Diagnostics;
-using System.Collections;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Specialized;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace FileExplorer
 {
@@ -39,7 +35,7 @@ namespace FileExplorer
         private System.Windows.Forms.ColumnHeader modifiedHeader;
         private Ookii.Dialogs.VistaFolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.ListViewItem highlightedItem;
-        private System.Windows.Forms.ImageList imageList;
+        private ImageListManager imageList;
         private System.Boolean updateInProgress;
         private System.String previousItemLabel;
         private System.String autoSelectItem;
@@ -293,12 +289,19 @@ namespace FileExplorer
         /// </summary>
         private void InitializeGraphics()
         {
-            this.imageList = new ImageList();
+            this.imageList = new ImageListManager();
             this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
+            this.imageList.OnInitialize += ImageList_Initialize;
+            this.AddNonWin32Images();
             this.syncronizeButton.Image = PluginBase.MainForm.FindImage("203|9|-3|-3");
             this.browseButton.Image = PluginBase.MainForm.FindImage("203");
             this.fileView.SmallImageList = this.imageList;
+        }
+
+        private void ImageList_Initialize(object sender, EventArgs e)
+        {
+            RefreshFileView(null, null);
         }
 
         /// <summary>
@@ -424,7 +427,7 @@ namespace FileExplorer
                 ListViewItem item;
                 if (directory.Parent != null)
                 {
-                    item = new ListViewItem("[..]", ExtractIconIfNecessary("/Folder/"));
+                    item = new ListViewItem("[..]", ExtractIconIfNecessary("/Folder/", false));
                     item.Tag = directory.Parent.FullName;
                     item.SubItems.Add("-");
                     item.SubItems.Add("-");
@@ -436,7 +439,7 @@ namespace FileExplorer
                     DirectoryInfo subDir = info as DirectoryInfo;
                     if (subDir != null && (subDir.Attributes & FileAttributes.Hidden) == 0)
                     {
-                        item = new ListViewItem(subDir.Name, ExtractIconIfNecessary(subDir.FullName));
+                        item = new ListViewItem(subDir.Name, ExtractIconIfNecessary(subDir.FullName, false));
                         item.Tag = subDir.FullName;
                         item.SubItems.Add("-");
                         item.SubItems.Add("-");
@@ -450,7 +453,7 @@ namespace FileExplorer
                     if (file != null && (file.Attributes & FileAttributes.Hidden) == 0)
                     {
                         String kbs = TextHelper.GetString("Info.Kilobytes");
-                        item = new ListViewItem(file.Name, ExtractIconIfNecessary(file.FullName));
+                        item = new ListViewItem(file.Name, ExtractIconIfNecessary(file.FullName, true));
                         item.Tag = file.FullName;
                         if (file.Length / 1024 < 1) item.SubItems.Add("1 " + kbs);
                         else item.SubItems.Add((file.Length / 1024) + " " + kbs);
@@ -1128,25 +1131,22 @@ namespace FileExplorer
         /// Ask the shell to feed us the appropriate icon for the given file, but
         /// first try looking in our cache to see if we've already loaded it.
         /// </summary>
-        private int ExtractIconIfNecessary(String path)
+        private int ExtractIconIfNecessary(String path, bool isFile)
         {
             Icon icon; Image image;
             Size size = ScaleHelper.Scale(new Size(16, 16));
             if (Win32.ShouldUseWin32())
             {
-                if (File.Exists(path)) icon = IconExtractor.GetFileIcon(path, false, true);
+                if (isFile) icon = IconExtractor.GetFileIcon(path, false, true);
                 else icon = IconExtractor.GetFolderIcon(path, false, true);
                 image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
                 image = PluginBase.MainForm.ImageSetAdjust(image);
                 icon.Dispose();
+                this.imageList.Images.Add(image);
+                return this.imageList.Images.Count - 1;
             }
-            else
-            {
-                if (File.Exists(path)) image = PluginBase.MainForm.FindImage("526");
-                else image = PluginBase.MainForm.FindImage("203");
-            }
-            this.imageList.Images.Add(image);
-            return this.imageList.Images.Count - 1;
+
+            return isFile ? 0 : 1;
         }
 
         /// <summary>
@@ -1155,11 +1155,14 @@ namespace FileExplorer
         private void ClearImageList()
         {
             this.imageList.Images.Clear();
-            this.imageList.Dispose();
-            this.imageList = new ImageList();
-            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.fileView.SmallImageList = this.imageList;
+            AddNonWin32Images();
+        }
+
+        private void AddNonWin32Images()
+        {
+            if (Win32.ShouldUseWin32()) return;
+            this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("526"));
+            this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("203"));
         }
 
         #endregion
