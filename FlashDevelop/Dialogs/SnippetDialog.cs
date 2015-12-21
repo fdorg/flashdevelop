@@ -542,6 +542,12 @@ namespace FlashDevelop.Dialogs
                 String locale = Globals.Settings.LocaleVersion.ToString();
                 Stream stream = ResourceHelper.GetStream(String.Format("SnippetVars.{0}.txt", locale));
                 String contents = new StreamReader(stream).ReadToEnd();
+                if (DistroConfig.DISTRIBUTION_NAME != "FlashDevelop")
+                {
+                    #pragma warning disable CS0162 // Unreachable code detected
+                    contents = contents.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME);
+                    #pragma warning restore CS0162 // Unreachable code detected
+                }
                 String[] varLines = contents.Split(new Char[1]{'\n'}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (String line in varLines)
                 {

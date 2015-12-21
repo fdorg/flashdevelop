@@ -58,7 +58,7 @@ namespace FDBuild
             else
             {
                 string userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string fdDir = Path.Combine(userAppDir, "FlashDevelop");
+                string fdDir = Path.Combine(userAppDir, PluginCore.DistroConfig.DISTRIBUTION_NAME);
                 PluginCore.PlatformData.Load(Path.Combine(fdDir, platformsFile));
             }
 

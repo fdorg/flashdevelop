@@ -1,0 +1,23 @@
+package $(PackageName)$(CSLB){
+	import flash.display.Sprite;
+	import flash.events.Event;
+	
+	/**
+	$(CBI)* ...
+	$(CBI)* @author $(DefaultUser)
+	$(CBI)*/
+	public class Main extends Sprite $(CSLB){
+		
+		public function Main() $(CSLB){
+			if (stage) init();
+			else addEventListener(Event.ADDED_TO_STAGE, init);
+		}
+		
+		private function init(e:Event = null):void $(CSLB){
+			removeEventListener(Event.ADDED_TO_STAGE, init);
+			// entry point
+		}
+		
+	}
+	
+}
