@@ -182,7 +182,7 @@ namespace ASCompletion
             });
         }
 
-        private static Image GetImage(String name)
+        public static Image GetImage(String name)
         {
             return PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream(name)));
         }
