@@ -215,13 +215,14 @@ namespace ProjectManager
         /// </summary>
         private void tree_AfterLabelEdit(Object sender, NodeLabelEditEventArgs e)
         {
+            string languageDisplayName = "(" + project.LanguageDisplayName + ")";
             if (!string.IsNullOrEmpty(e.Label) && Rename != null)
             {
                 if (e.Node is ProjectNode)
                 {
                     var oldName = project.ProjectPath;
                     string label = e.Label;
-                    int index = label.IndexOf("(" + project.LanguageDisplayName + ")");
+                    int index = label.IndexOf(languageDisplayName);
                     if (index != -1) label = label.Remove(index).Trim();
                     var newName = Path.Combine(project.Directory, label);
                     newName = Path.ChangeExtension(newName, Path.GetExtension(oldName));
@@ -236,6 +237,8 @@ namespace ProjectManager
                     e.CancelEdit = true;
             }
             else e.CancelEdit = true;
+            if (e.Node is ProjectNode && !e.Node.Text.Contains(languageDisplayName))
+                e.Node.Text += " " + languageDisplayName;
             isEditingLabel = false;
         }
 
@@ -276,6 +279,12 @@ namespace ProjectManager
         /// </summary>
         private void RenameNode(Object sender, EventArgs e)
         {
+            if (tree.SelectedNode is ProjectNode)
+            {
+                string label = tree.SelectedNode.Text;
+                int index = label.IndexOf("(" + project.LanguageDisplayName + ")");
+                if (index != -1) tree.SelectedNode.Text = label.Remove(index).Trim();
+            }
             tree.ForceLabelEdit();
         }
 
