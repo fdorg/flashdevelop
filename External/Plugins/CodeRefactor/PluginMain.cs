@@ -185,7 +185,7 @@ namespace CodeRefactor
         /// <summary>
         /// Checks if the file is valid for rename file command
         /// </summary>
-        private bool IsValidForRename(string oldPath, string newPath)
+        private static bool IsValidForRename(string oldPath, string newPath)
         {
             string oldExt = Path.GetExtension(oldPath);
             string newExt = Path.GetExtension(newPath);
@@ -199,7 +199,7 @@ namespace CodeRefactor
         /// <summary>
         /// Checks if the file or directory is valid for move command
         /// </summary>
-        private bool IsValidForMove(string oldPath, string newPath)
+        private static bool IsValidForMove(string oldPath, string newPath)
         {
             return PluginBase.CurrentProject != null
                 && (File.Exists(oldPath) || Directory.Exists(oldPath))
@@ -210,15 +210,13 @@ namespace CodeRefactor
         /// <summary>
         /// Checks if the file or directory is ok for refactoring
         /// </summary>
-        private bool IsValidFile(string file)
+        private static bool IsValidFile(string file)
         {
             IProject project = PluginBase.CurrentProject;
-            if (project == null
-                || !RefactoringHelper.IsProjectRelatedFile(project, file)
-                || !Regex.Match(Path.GetFileNameWithoutExtension(file), REG_IDENTIFIER, RegexOptions.Singleline).Success)
-                return false;
-            if (Directory.Exists(file)) return true;
-            return FileHelper.FileMatchesSearchFilter(file, project.DefaultSearchFilter);
+            return project != null 
+                && RefactoringHelper.IsProjectRelatedFile(project, file)
+                && Regex.Match(Path.GetFileNameWithoutExtension(file), REG_IDENTIFIER, RegexOptions.Singleline).Success
+                && (Directory.Exists(file) || FileHelper.FileMatchesSearchFilter(file, project.DefaultSearchFilter));
         }
 
         #endregion
@@ -244,7 +242,7 @@ namespace CodeRefactor
         {
             this.refactorMainMenu = new RefactorMenu(true);
             this.refactorMainMenu.RenameMenuItem.Click += this.RenameClicked;
-            refactorMainMenu.MoveMenuItem.Click += MoveClicked;
+            this.refactorMainMenu.MoveMenuItem.Click += MoveClicked;
             this.refactorMainMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
             this.refactorMainMenu.TruncateMenuItem.Click += this.TruncateImportsClicked;
             this.refactorMainMenu.ExtractMethodMenuItem.Click += this.ExtractMethodClicked;
@@ -254,7 +252,7 @@ namespace CodeRefactor
             this.refactorMainMenu.BatchMenuItem.Click += this.BatchMenuItemClicked;
             this.refactorContextMenu = new RefactorMenu(false);
             this.refactorContextMenu.RenameMenuItem.Click += this.RenameClicked;
-            refactorContextMenu.MoveMenuItem.Click += MoveClicked;
+            this.refactorContextMenu.MoveMenuItem.Click += MoveClicked;
             this.refactorContextMenu.OrganizeMenuItem.Click += this.OrganizeImportsClicked;
             this.refactorContextMenu.TruncateMenuItem.Click += this.TruncateImportsClicked;
             this.refactorContextMenu.DelegateMenuItem.Click += this.DelegateMethodsClicked;
@@ -284,7 +282,7 @@ namespace CodeRefactor
         private void RegisterMenuItems()
         {
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Rename", this.refactorMainMenu.RenameMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Move", refactorMainMenu.MoveMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Move", this.refactorMainMenu.MoveMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractMethod", this.refactorMainMenu.ExtractMethodMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractLocalVariable", this.refactorMainMenu.ExtractLocalVariableMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.GenerateDelegateMethods", this.refactorMainMenu.DelegateMenuItem);
@@ -293,7 +291,7 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeGenerator", this.refactorMainMenu.CodeGeneratorMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.BatchProcess", this.refactorMainMenu.BatchMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Rename", this.refactorContextMenu.RenameMenuItem);
-            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Move", refactorContextMenu.MoveMenuItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Move", this.refactorContextMenu.MoveMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractMethod", this.refactorContextMenu.ExtractMethodMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractLocalVariable", this.refactorContextMenu.ExtractLocalVariableMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.GenerateDelegateMethods", this.refactorContextMenu.DelegateMenuItem);
@@ -448,11 +446,14 @@ namespace CodeRefactor
         /// </summary>
         static void MoveClicked(object sender, EventArgs e)
         {
-            MoveDialog dialog = new MoveDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
+            MoveDialog dialog = new MoveDialog(PluginBase.MainForm.CurrentDocument.FileName);
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            Dictionary<string, string> oldPathToNewPath = new Dictionary<string, string>();
+            foreach (string file in dialog.MovingFiles)
             {
-                //TODO slavara: implement me
+                oldPathToNewPath[file] = dialog.SelectedDirectory;
             }
+            MovingHelper.AddToQueue(oldPathToNewPath, true, false, dialog.FixPackages);
         }
 
         /// <summary>
