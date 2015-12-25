@@ -3088,7 +3088,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>배이스 클래스 :</value>
   </data>
   <data name="CodeRefactor.Info.Description" xml:space="preserve">
-    <value>Adds refactoring capabilities to FlashDevelop.</value>
+    <value>FlashDevelop에 리팩토링 기능을 추가합니다.</value>
   </data>
   <data name="CodeRefactor.Info.FindingReferences" xml:space="preserve">
     <value>Finding References...</value>
@@ -3228,7 +3228,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Print margin:</value>
   </data>
   <data name="CodeRefactor.Description.SeparatePackages" xml:space="preserve">
-    <value>Separates different packages with line breaks.</value>
+    <value>줄 바꿈으로 다른 패키지를 구분합니다.</value>
   </data>
   <data name="AS3Context.Column.Count" xml:space="preserve">
     <value>카운트</value>
@@ -3573,22 +3573,22 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
-    <value>Default custom ruleset file for the Flex PMD.</value>
+    <value>플렉스 PMD에 대한 기본 사용자 정의 룰세트 파일.</value>
   </data>
   <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
-    <value>Integrates Flex PMD code analyzer into FlashDevelop.</value>
+    <value>FlashDevelop에 플렉스 PMD 코드 분석기를 통합합니다.</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
-    <value>Analy&amp;ze Project Source Code...</value>
+    <value>프로젝트 소스 코드 분석...</value>
   </data>
   <data name="CodeAnalyzer.Info.RunningFlexPMD" xml:space="preserve">
-    <value>Flex PMD Running</value>
+    <value>Flex PMD 실행중</value>
   </data>
   <data name="CodeAnalyzer.Label.RulesetCreator" xml:space="preserve">
-    <value>Code A&amp;nalyzer Ruleset Creator...</value>
+    <value>코드 분석 룰세트 작성기...</value>
   </data>
   <data name="CodeAnalyzer.Info.FlexPMDFinished" xml:space="preserve">
-    <value>Flex PMD Done</value>
+    <value>Flex PMD 완료</value>
   </data>
   <data name="ASCompletion.Label.GenerateClass" xml:space="preserve">
     <value>새로운 클래스 만들기</value>
@@ -4455,15 +4455,15 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Info.CouldNotFormat" xml:space="preserve">
-    <value>Syntax errors encountered. Could not format code.</value>
+    <value>구문 오류가 발생했습니다. 코드를 포맷 할 수 없습니다.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="CodeFormatter.Info.Description" xml:space="preserve">
-    <value>Adds an MXML and ActionScript code formatter to FlashDevelop.</value>
+    <value>FlashDevelop에 MXML 및 ActionScript 코드 포맷터를 추가합니다.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="CodeFormatter.Label.CodeFormatter" xml:space="preserve">
-    <value>Code &amp;Formatter</value>
+    <value>코드 포맷터 (&amp;F)</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.EncodingInput" xml:space="preserve">
@@ -4498,27 +4498,27 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Info.Description" xml:space="preserve">
-    <value>Add virtualization bridge configuration to FlashDevelop.</value>
+    <value>FlashDevelop에 가상화 브리지 구성을 추가합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Description.Active" xml:space="preserve">
-    <value>Enables delegation to host system, typically when running FlashDevelop virtualized in a MacOS or Linux host.</value>
+    <value>호스트  시스템 위임을 사용합니다. 일반적으로 FlashDevelop을 MacOS나 Linux 호스트에서 가상화 실행하는 경우 사용합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Description.AlwaysOpenLocal" xml:space="preserve">
-    <value>List of file extensions which must always be executed by Windows and never by the host system.</value>
+    <value>항상 호스트 시스템이 아닌 Windows에서 실행해야 파일 확장자 (extension)의리스트입니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Description.SharedDrive" xml:space="preserve">
-    <value>Drive shared by host system with guest Windows OS.</value>
+    <value>게스트 Windows OS와 함께 호스트 시스템에 의해 공유되는 드라이브.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Description.TargetRemoteIDE" xml:space="preserve">
-    <value>Use Flash CS* from the host system if FLA or JSFL is located on the host drive.</value>
+    <value>FLA 또는 JSFL이 호스트 드라이브에있는 경우 호스트 시스템에서 어도비 플래시를 사용합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Description.UseRemoteExplorer" xml:space="preserve">
-    <value>Use file explorer of the host system if path is located on the host shared drive.</value>
+    <value>경로가 호스트 공유 드라이브에있는 경우 호스트 시스템의 파일 탐색기를 사용합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="FlashDevelop.Description.ConfirmOnExit" xml:space="preserve">
@@ -4546,11 +4546,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Description.BridgePort" xml:space="preserve">
-    <value>Bridge socket connection port (default 8009).</value>
+    <value>브릿지 소켓 연결 포트 (기본값 8009).</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Description.CustomBridgeIP" xml:space="preserve">
-    <value>Provide a specific IP to override auto-detection.</value>
+    <value>자동 감지 기능를 대체 할 특정 IP를 제공합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKTab" xml:space="preserve">
@@ -4570,271 +4570,271 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedSpacesAfterColons" xml:space="preserve">
-    <value>Advanced amount of spaces after colons.</value>
+    <value>고급 콜론 후 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedSpacesBeforeColons" xml:space="preserve">
-    <value>Advanced amount of spaces before colons.</value>
+    <value>고급 콜론 전에 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedSpacesInsideArrayDeclarationBrackets" xml:space="preserve">
-    <value>Advanced amount of spaces inside array declaration brackets.</value>
+    <value>고급 배열 선언 괄호 안의 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedSpacesInsideArrayReferenceBrackets" xml:space="preserve">
-    <value>Advanced amount of spaces inside array reference brackets.</value>
+    <value>고급 배열 참조 괄호 안의 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedSpacesInsideLiteralBraces" xml:space="preserve">
-    <value>Advanced amount of spaces inside literal braces.</value>
+    <value>고급 리터럴 중괄호 내부 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedSpacesInsideParens" xml:space="preserve">
-    <value>Advanced amount of spaces inside parens.</value>
+    <value>고급 괄호 안에 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AlwaysGenerateIndent" xml:space="preserve">
-    <value>Always generate code indent.</value>
+    <value>항상 코드 들여 쓰기를 생성합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesBeforeClasses" xml:space="preserve">
-    <value>Amount of blank lines before classes.</value>
+    <value>클래스 전에 빈 줄의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesBeforeControlStatements" xml:space="preserve">
-    <value>Amount of blank lines before control statements.</value>
+    <value>제어문 전에 빈 줄의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesBeforeFunctions" xml:space="preserve">
-    <value>Amount of blank lines before functions.</value>
+    <value>함수 이전에 빈 줄의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesBeforeProperties" xml:space="preserve">
-    <value>Amount of blank lines before properties.</value>
+    <value>속성 전에 빈 줄의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesToKeep" xml:space="preserve">
-    <value>Amount of blank lines to keep.</value>
+    <value>유지할 빈 줄의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BraceStyle" xml:space="preserve">
-    <value>Style of the braces.</value>
+    <value>괄호의 스타일.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BreakLinesBeforeComma" xml:space="preserve">
-    <value>Break the lines before each comma.</value>
+    <value>각 쉼표 전에 줄 바꿈.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.CatchOnNewLine" xml:space="preserve">
-    <value>Place catch on new line.</value>
+    <value>새로운 줄에 'catch' 명령문.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.CollapseSpacesForAdjacentParens" xml:space="preserve">
-    <value>Collapse spaces for adjacent parens.</value>
+    <value>인접한 괄호의 공간을 축소.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DontIndentPackageItems" xml:space="preserve">
-    <value>Do not indent package items.</value>
+    <value>package 항목을 들여쓰지 않기.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.ElseIfOnSameLine" xml:space="preserve">
-    <value>Place elseif on new line.</value>
+    <value>새 줄에 elseif을 놓습니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.ElseOnNewLine" xml:space="preserve">
-    <value>Place else on new line.</value>
+    <value>새 줄에 else를 놓습니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.IndentMultilineComments" xml:space="preserve">
-    <value>Indent multiline comments.</value>
+    <value>여러 줄 주석 들여 쓰기.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.KeepBlankLines" xml:space="preserve">
-    <value>Keep the document's blank lines.</value>
+    <value>문서의 빈 줄을 유지합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.KeepSingleLineCommentsOnColumnOne" xml:space="preserve">
-    <value>Keep single line comments on column one.</value>
+    <value>첫 번째 열의 한 줄 주석을 유지합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.LeaveExtraWhitespaceAroundVarDeclarations" xml:space="preserve">
-    <value>Leave extra whitespace around var declarations.</value>
+    <value>var 선언 주위에 공백을 유지합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MaxLineLength" xml:space="preserve">
-    <value>Maximum amount of characters on line.</value>
+    <value>한 줄에 문자의 최대 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NewLineAfterBindable" xml:space="preserve">
-    <value>Place new line after bindable.</value>
+    <value>Bindable 후 줄 바꿈을 배치합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.OpenBraceOnNewLine" xml:space="preserve">
-    <value>Place open brace on new line.</value>
+    <value>새로운 라인에 열린 중괄호를 놓습니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.PutEmptyStatementsOnNewLine" xml:space="preserve">
-    <value>Place empty statements on new line.</value>
+    <value>새로운 라인에 빈 명령문을 놓습니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAfterComma" xml:space="preserve">
-    <value>Amount of spaces after comma.</value>
+    <value>쉼표 뒤에 공백의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAfterLabel" xml:space="preserve">
-    <value>Amount of spaces after label.</value>
+    <value>레이블 후 공백의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAroundAssignment" xml:space="preserve">
-    <value>Amount of spaces around assignments.</value>
+    <value>등호 주위 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAroundColons" xml:space="preserve">
-    <value>Amount of spaces around colons.</value>
+    <value>콜론 주위 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAroundEqualsInOptionalParameters" xml:space="preserve">
-    <value>Amount of spaces around equals in optional parameters.</value>
+    <value>선택적 매개 변수 등호 주위 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAroundSymbolicOperator" xml:space="preserve">
-    <value>Amount of spaces around symbolic operators.</value>
+    <value>기호 연산자 주위 공백 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeComma" xml:space="preserve">
-    <value>Amount of spaces before comma.</value>
+    <value>쉼표 전에 공백의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeOpenControlParen" xml:space="preserve">
-    <value>Amount of spaces before control paren.</value>
+    <value>제어 괄호 전에 공백의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesInsideParens" xml:space="preserve">
-    <value>Amount of spaces inside parens.</value>
+    <value>괄호 안에 공백의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.TrimTrailingWhitespace" xml:space="preserve">
-    <value>Trim trailing whitespace characters.</value>
+    <value>후행 공백 문자 제거.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseBraceStyle" xml:space="preserve">
-    <value>Use the BraceStyle setting.</value>
+    <value>BraceStyle 설정을 사용.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseGlobalSpacesAroundColons" xml:space="preserve">
-    <value>Use the GlobalSpacesAroundColons setting.</value>
+    <value>GlobalSpacesAroundColons 설정을 사용.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseGlobalSpacesInsideParens" xml:space="preserve">
-    <value>Use the GlobalSpacesInsideParens setting.</value>
+    <value>GlobalSpacesInsideParens 설정을 사용.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseSpacesAroundEqualsInOptionalParameters" xml:space="preserve">
-    <value>Use the SpacesAroundEqualsInOptionalParameters setting.</value>
+    <value>SpacesAroundEqualsInOptionalParameters 설정을 사용.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseTabs" xml:space="preserve">
-    <value>Use tabs instead of spaces with indenting.</value>
+    <value>들여 쓰기에 탭 대신 스페이스를 사용.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.WrapArrayDeclarationMode" xml:space="preserve">
-    <value>Mode of the array declaration wrapping.</value>
+    <value>배열 선언 포장의 모드.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.WrapExpressionMode" xml:space="preserve">
-    <value>Mode of the expression wrapping.</value>
+    <value>명령문 포장의 모드.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.WrapIndentStyle" xml:space="preserve">
-    <value>Style of the wrap indent.</value>
+    <value>들여 쓰기 포장 스타일.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.WrapMethodCallMode" xml:space="preserve">
-    <value>Mode of the method call wrapping.</value>
+    <value>메서드 호출 포장 모드.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.WrapMethodDeclarationMode" xml:space="preserve">
-    <value>Mode of the method declaration wrapping.</value>
+    <value>메소드 선언 포장 모드.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.AS.WrapXMLMode" xml:space="preserve">
-    <value>Mode of the xml wrapping.</value>
+    <value>XML 포장 모드.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.AddNewLineAfterLastAttribute" xml:space="preserve">
-    <value>Add new line after last attribute.</value>
+    <value>마지막 특성 이후에 줄 바꿈.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.AttributesPerLine" xml:space="preserve">
-    <value>Maximum amount of attributes on line.</value>
+    <value>한 줄에 특성의 최대 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.AttributesToKeepOnSameLine" xml:space="preserve">
-    <value>List of attributes to keep on the same line.</value>
+    <value>같은 줄에 유지할 특성 목록.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.AttributeWrapMode" xml:space="preserve">
-    <value>Mode of the attribute wrapping.</value>
+    <value>특성 포장의 모드.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesBeforeTags" xml:space="preserve">
-    <value>Amount of blank lines before tags.</value>
+    <value>태그 전에 빈 줄의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.KeepBlankLines" xml:space="preserve">
-    <value>Keep the document's blank lines.</value>
+    <value>문서의 빈 줄을 유지합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.MaxLineLength" xml:space="preserve">
-    <value>Maximum amount of characters on line.</value>
+    <value>한 줄에 문자의 최대 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.RequireCDATAForAS3Formatting" xml:space="preserve">
-    <value>Require CDATA for AS3 code formatting.</value>
+    <value>AS3 코드 서식에 CDATA 필요.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SortAttributeData" xml:space="preserve">
-    <value>Sort the attribute data.</value>
+    <value>특성 데이터를 정렬한다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SortAttributeMode" xml:space="preserve">
-    <value>Mode of the attribute sorting.</value>
+    <value>특성 정렬의 모드.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SortExtraAttributes" xml:space="preserve">
-    <value>Sort the extra attributes.</value>
+    <value>추가 특성을 정렬합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SpacesAroundEquals" xml:space="preserve">
-    <value>Amount of spaces around equals.</value>
+    <value>등호 주위 공백의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SpacesBeforeEmptyTagEnd" xml:space="preserve">
-    <value>Amount of spaces before empty tag's end.</value>
+    <value>빈 태그의 종료 전에 공백의 양.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TagsThatCanFormat" xml:space="preserve">
-    <value>List of tags that are formatted.</value>
+    <value>포맷할 태그 목록.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TagsThatCannotFormat" xml:space="preserve">
-    <value>List of tags that are not formatted.</value>
+    <value>포맷하지 않을 태그 목록.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TagsWithBlankLinesBefore" xml:space="preserve">
-    <value>List of tags that have blank line before it.</value>
+    <value>전에 빈 줄이 있어야 할 태그 목록.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.UseAttributesToKeepOnSameLine" xml:space="preserve">
-    <value>Use the AttributesToKeepOnSameLine setting.</value>
+    <value>AttributesToKeepOnSameLine 설정을 사용.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.UseTabs" xml:space="preserve">
-    <value>Use tabs instead of braces with indenting.</value>
+    <value>들여 쓰기에 탭 대신 괄호를 사용합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.WrapIndentStyle" xml:space="preserve">
-    <value>Style of the indent wrapping.</value>
+    <value>들여 쓰기 포장의 스타일.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKBrowse" xml:space="preserve">
@@ -5506,375 +5506,375 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AddBracesToCases" xml:space="preserve">
-    <value>Add missing braces to cases.</value>
+    <value>case 명령문에 빠진 괄호를 추가합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AddBracesToConditionals" xml:space="preserve">
-    <value>Add missing braces to conditionals.</value>
+    <value>조건문에 빠진 괄호를 추가합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AddBracesToLoops" xml:space="preserve">
-    <value>Add missing braces to loops.</value>
+    <value>루프에 빠진 괄호를 추가합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAlignArrayItems" xml:space="preserve">
-    <value>Align array items with advanced wrapping.</value>
+    <value>고급 포장으로 배열 항목을 맞춥니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAlignObjectItems" xml:space="preserve">
-    <value>Align object items with advanced wrapping.</value>
+    <value>고급 포장으로 개체 항목을 맞춥니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAllArgs" xml:space="preserve">
-    <value>Use advanced all argument wrapping.</value>
+    <value>고급 모든 인수 포장을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAllArrayItems" xml:space="preserve">
-    <value>Use advanced all array items wrapping.</value>
+    <value>고급 모든 배열 항목 포장을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAllObjectItems" xml:space="preserve">
-    <value>Use advanced all object items wrapping.</value>
+    <value>고급 모든 개체 항목 포장을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingAllParms" xml:space="preserve">
-    <value>Use advanced all parameter wrapping.</value>
+    <value>고급 모든 매개 변수 포장을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingEnforceMax" xml:space="preserve">
-    <value>Enforce advanced maximum wrapping.</value>
+    <value>최대 고급 포장을 적용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstArg" xml:space="preserve">
-    <value>Use advanced first argument wrapping.</value>
+    <value>고급 첫 번째 인수 포장을 사용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstArrayItem" xml:space="preserve">
-    <value>Use advanced first array item wrapping.</value>
+    <value>고급 첫 번째 배열 항목 포장을 사용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstObjectItem" xml:space="preserve">
-    <value>Use advanced first object item wrapping.</value>
+    <value>고급 첫 번째 개체 항목 포장을 사용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingFirstParm" xml:space="preserve">
-    <value>Use advanced first parameter wrapping.</value>
+    <value>고급 첫 번째 매개 변수 포장을 사용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingGraceColumns" xml:space="preserve">
-    <value>Amount of grace columns with advanced wrapping.</value>
+    <value>고급 포장과 꾸밈 열의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AdvancedWrappingPreservePhrases" xml:space="preserve">
-    <value>Preserve phrases with advanced wrapping.</value>
+    <value>고급 포장과 문구를 보존합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AlignDeclEquals" xml:space="preserve">
-    <value>Align declaration equal symbols.</value>
+    <value>선언 기호 (등호)를 정렬합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AlignDeclMode" xml:space="preserve">
-    <value>Mode of declaration alignment.</value>
+    <value>선언 정렬 모드.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AlignLineCommentsAtColumn" xml:space="preserve">
-    <value>Align line comments at column.</value>
+    <value>열에서 라인 주석을 맞춥니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesAtFunctionEnd" xml:space="preserve">
-    <value>Amount of blank lines at function end.</value>
+    <value>함수 끝 부분에 빈 줄의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesAtFunctionStart" xml:space="preserve">
-    <value>Amount of blank lines at function start.</value>
+    <value>함수 시작 부분에 빈 줄의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BlankLinesBeforeImportBlock" xml:space="preserve">
-    <value>Amount of blank lines before import block.</value>
+    <value>임포트 블록 전에 빈 줄의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BreakLinesBeforeArithmetic" xml:space="preserve">
-    <value>Break lines before arithmetic operations.</value>
+    <value>산술 연산 전에 줄 바꿈.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BreakLinesBeforeAssignment" xml:space="preserve">
-    <value>Break lines before assignment operation.</value>
+    <value>대입 전에 줄 바꿈.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.BreakLinesBeforeLogical" xml:space="preserve">
-    <value>Break lines before logical operations.</value>
+    <value>논리 연산 전에 줄 바꿈.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.CRBeforeBraceSettings" xml:space="preserve">
-    <value>Add newline before brace settings.</value>
+    <value>A중괄호 설정전에 줄 바꿈을 추가합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DocCommentHangingIndentTabs" xml:space="preserve">
-    <value>Amount of doc comment hanging indent tabs.</value>
+    <value>다큐멘테이션 코멘트 내어 쓰기 탭의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DocCommentKeepBlankLines" xml:space="preserve">
-    <value>Keep the doc comment blank lines.</value>
+    <value>다큐멘테이션 코멘트의 빈 줄을 유지합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DocCommentReflow" xml:space="preserve">
-    <value>Use doc comment reflow.</value>
+    <value>다큐멘테이션 코멘트 리플 로우를 사용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.DontIndentSwitchCases" xml:space="preserve">
-    <value>Do not indent switch cases.</value>
+    <value>switch 항목을 들여쓰지 않기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.EnsureConditionalsHaveBraces" xml:space="preserve">
-    <value>Ensure that conditionals have braces.</value>
+    <value>조건문에 중괄호가 있는지 확인합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.EnsureLoopsHaveBraces" xml:space="preserve">
-    <value>Ensure that loops have braces.</value>
+    <value>루프에 중괄호가 있는지 확인합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.EnsureSwitchCasesHaveBraces" xml:space="preserve">
-    <value>Ensure that switch cases have braces.</value>
+    <value>스위치에 중괄호가 있는지 확인합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.KeepRelativeIndentInDocComments" xml:space="preserve">
-    <value>Keep relative indent in doc comments.</value>
+    <value>다큐 멘 테이션 코멘트에 상대적 들여 쓰기를 유지합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.KeepSpacesBeforeLineComments" xml:space="preserve">
-    <value>Keep spaces before line comments.</value>
+    <value>한 줄 주석 전의 공간을 유지합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.LeaveSingleLineFunctions" xml:space="preserve">
-    <value>Keep the single line functions intact.</value>
+    <value>한 줄 함수를 유지합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MetaTagsOnSameLineAsTargetFunction" xml:space="preserve">
-    <value>Metatags to keep on same line as target function.</value>
+    <value>목표 함수와 같은 줄에 유지할 메타 태그.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MetaTagsOnSameLineAsTargetProperty" xml:space="preserve">
-    <value>Metatags to keep on same line as target property.</value>
+    <value>목표 속성과 같은 줄에 유지할 메타 태그.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MLCommentAsteriskMode" xml:space="preserve">
-    <value>Multiline comment asterisk render mode.</value>
+    <value>여러 줄 주석 별표의 렌더링 모드.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MLCommentHeaderOnSeparateLine" xml:space="preserve">
-    <value>Keep multiline comment header on separate line.</value>
+    <value>별도의 줄에 여러 줄의 주석 머리글을 유지합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MLCommentKeepBlankLines" xml:space="preserve">
-    <value>Keep the multiline comment blank lines.</value>
+    <value>여러 줄 주석의 공백 라인을 유지합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.MLCommentReflow" xml:space="preserve">
-    <value>Use multiline comment reflow.</value>
+    <value>여러 줄 주석 리플로우를 사용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NewlineBeforeBindableFunction" xml:space="preserve">
-    <value>Add newline before bindable function.</value>
+    <value>Bindable 함수 전에 줄 바꿈을 추가합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NewlineBeforeBindableProperty" xml:space="preserve">
-    <value>Add newline before bindable property.</value>
+    <value>Bindable 속성 전에 줄 바꿈을 추가합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeBreak" xml:space="preserve">
-    <value>Do not add new newlines before break.</value>
+    <value>break 전에 새 줄 바꿈을 추가하지 않기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeContinue" xml:space="preserve">
-    <value>Do not add new newlines before continue.</value>
+    <value>continue 전에 새 줄 바꿈을 추가하지 않기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeExpression" xml:space="preserve">
-    <value>Do not add new newlines before expression.</value>
+    <value>명령문 전에 새 줄 바꿈을 추가하지 않기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeReturn" xml:space="preserve">
-    <value>Do not add new newlines before return.</value>
+    <value>return 전에 새 줄 바꿈을 추가하지 않기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.NoNewCRsBeforeThrow" xml:space="preserve">
-    <value>Do not add new newlines before throw.</value>
+    <value>throw 전에 새 줄 바꿈을 추가하지 않기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAfterColonsInDeclarations" xml:space="preserve">
-    <value>Amount of spaces after colons in declarations.</value>
+    <value>선언에 콜론 후 공백 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAfterColonsInFunctionTypes" xml:space="preserve">
-    <value>Amount of spaces after colons in function types.</value>
+    <value>함수 유형에 콜론 후 공백 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesAroundEqualsInMetatags" xml:space="preserve">
-    <value>Amount of spaces around equals in metatags.</value>
+    <value>메타 태그의 등호 주위 공백 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeArguments" xml:space="preserve">
-    <value>Amount of spaces before arguments.</value>
+    <value>인수 전에 공백의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeColonsInDeclarations" xml:space="preserve">
-    <value>Amount of spaces before colons in declarations.</value>
+    <value>선언에 콜론 전에 공백의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeColonsInFunctionTypes" xml:space="preserve">
-    <value>Amount of spaces before colons in function types.</value>
+    <value>함수 유형에 콜론 전에 공백의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesBeforeFormalParameters" xml:space="preserve">
-    <value>Amount of spaces before formal parameters.</value>
+    <value>형식 매개 변수 전에 공백의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesInsideParensInArgumentLists" xml:space="preserve">
-    <value>Amount of spaces inside parens in argument lists.</value>
+    <value>인수 괄호 안에 공백의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesInsideParensInOtherPlaces" xml:space="preserve">
-    <value>Amount of spaces inside parens in other places.</value>
+    <value>나머지 괄호 안에 공백의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.SpacesInsideParensInParameterLists" xml:space="preserve">
-    <value>Amount of spaces inside parens in parameter lists.</value>
+    <value>매개 변수 괄호 안에 공백의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.TabsInHangingIndent" xml:space="preserve">
-    <value>Amount of tabs in hanging indent.</value>
+    <value>내어 쓰기에 탭의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UnindentExpressionTerminators" xml:space="preserve">
-    <value>Unindent the expression terminators.</value>
+    <value>명령문 종결을 내어 쓰기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseAdvancedWrapping" xml:space="preserve">
-    <value>Use advanced wrapping settings.</value>
+    <value>고급 포장 설정을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseDocCommentWrapping" xml:space="preserve">
-    <value>Use doc comment wrapping settings.</value>
+    <value>문서 주석 포장 설정을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseGlobalCRBeforeBrace" xml:space="preserve">
-    <value>Use global newline before brace.</value>
+    <value>중괄호 전에 글로벌 줄 바꿈을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseGnuBraceIndent" xml:space="preserve">
-    <value>Use GNU style brace indent.</value>
+    <value>GNU 스타일의 중괄호 들여 쓰기를 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseLineCommentWrapping" xml:space="preserve">
-    <value>Use line comment wrapping settings.</value>
+    <value>한 줄 주석 포장 설정을 사용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseMLCommentWrapping" xml:space="preserve">
-    <value>Use multiline comment wrapping settings.</value>
+    <value>여러 줄 주석 포장 설정을 사용합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.UseSpacesAroundEqualsInMetatags" xml:space="preserve">
-    <value>Use spaces around equals in metatags setting.</value>
+    <value>메타 태그의 심볼 주위의 공백 설정을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.WhileOnNewLine" xml:space="preserve">
-    <value>Keep while on new line.</value>
+    <value>새 줄에 while을 유지.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.AlwaysUseMaxLineLength" xml:space="preserve">
-    <value>Always use the maximum line length setting.</value>
+    <value>항상 최대 행 길이 설정을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.AttrGroups" xml:space="preserve">
-    <value>Manual attribute group data.</value>
+    <value>수동 특성 그룹 데이터.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesAfterParentTags" xml:space="preserve">
-    <value>Amount of blank lines after parent tags.</value>
+    <value>부모 태그 후 빈 줄의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesAfterSpecificParentTags" xml:space="preserve">
-    <value>Amount of blank lines after specific parent tags.</value>
+    <value>특정한 부모 태그 후 빈 줄의 양. </value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesAtCDataStart" xml:space="preserve">
-    <value>Amount of blank lines at CData start.</value>
+    <value>CData 시작부분에 빈 줄의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesBeforeClosingTags" xml:space="preserve">
-    <value>Amount of blank lines before closing tags.</value>
+    <value>닫는 태그 전에 빈 줄의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesBeforeComments" xml:space="preserve">
-    <value>Amount of blank lines before comments.</value>
+    <value>주석 전에 빈 줄의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.BlankLinesBetweenSiblingTags" xml:space="preserve">
-    <value>Amount of blank lines between sibling tags.</value>
+    <value>형제 태그 사이에 빈 줄의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.IndentSize" xml:space="preserve">
-    <value>Size of the indent.</value>
+    <value>들여 쓰기 크기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.IndentTagClose" xml:space="preserve">
-    <value>Indent close tags.</value>
+    <value>닫는 태그를 들여 쓰기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.KeepRelativeIndentInMultilineComments" xml:space="preserve">
-    <value>Keep relative indent in multiline comments.</value>
+    <value>여러 줄 주석 상대 들여쓰기 유지.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.KeepScriptCDataOnSameLine" xml:space="preserve">
-    <value>Keep script CData on the same line.</value>
+    <value>같은 줄에 스크립트 CData를 유지.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.ParentTagsWithBlankLinesAfter" xml:space="preserve">
-    <value>Parent tags that should have blank lines after them.</value>
+    <value>다음에 빈 줄이 있어야 하는 부모 태그.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.ScriptCDataIndentTabs" xml:space="preserve">
-    <value>Amount of script CData indent tabs.</value>
+    <value>스크립트의 CDATA 들여 쓰기 탭의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.ScriptIndentTabs" xml:space="preserve">
-    <value>Amount of script indent tabs.</value>
+    <value>스크립트 들여 쓰기 탭의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SortAttrData" xml:space="preserve">
-    <value>Manual attribute sort data.</value>
+    <value>수동 특성 정렬 데이터.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.SpacesInsideAttributeBraces" xml:space="preserve">
-    <value>Amount of spaces inside attribute braces.</value>
+    <value>특성 괄호 안에 공백의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TabsInHangingIndent" xml:space="preserve">
-    <value>Amount of tabs in hanging indent.</value>
+    <value>내어 쓰기의 탭의 양.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TabSize" xml:space="preserve">
-    <value>Size of tabs in spaces.</value>
+    <value>탭의 크기.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TagsDoNotFormatInside" xml:space="preserve">
-    <value>Tags that should not format inside them.</value>
+    <value>내부를 포맷하지않을 태그.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.TagsWithASContent" xml:space="preserve">
-    <value>Tags that contain ActionScript content in them.</value>
+    <value>ActionScript 콘텐츠를 포함하는 태그.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.UseFormattingOfBoundAttributes" xml:space="preserve">
-    <value>Use formatting of bound attributes settings.</value>
+    <value>바인딩 된 특성 포맷 설정을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.UseSpacesInsideAttributeBraces" xml:space="preserve">
-    <value>Use spaces inside attribute braces settings.</value>
+    <value>SpacesInsideAttributeBraces 설정을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.MXML.UseTagsDoNotFormatInside" xml:space="preserve">
-    <value>Use tags which do not format inside setting.</value>
+    <value>TagsWhichDoNotFormatInside 설정을 사용.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDevelop.Description.CheckForUpdates" xml:space="preserve">
@@ -5882,7 +5882,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.ConsistentEOLs" xml:space="preserve">
-    <value>Consistent EOLs</value>
+    <value>일관된 EOL</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.FormatCode" xml:space="preserve">
@@ -5922,7 +5922,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Description.DisableMoveRefactoring" xml:space="preserve">
-    <value>Disables the move refactoring of files and folders.</value>
+    <value>파일 및 폴더의 이동 리팩토링을 사용하지 않습니다.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDevelop.Description.HighlightMatchingWordsDelay" xml:space="preserve">
