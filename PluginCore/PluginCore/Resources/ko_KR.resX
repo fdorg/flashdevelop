@@ -357,126 +357,126 @@
     <value>검색</value>
   </data>
   <data name="DataEncoder.Info.CantSaveFile" xml:space="preserve">
-    <value>Could not save the file because the xml is invalid.</value>
+    <value>XML이 유효하지 않기 때문에 파일을 저장할 수 없습니다.</value>
   </data>
   <data name="DataEncoder.Info.Description" xml:space="preserve">
-    <value>Converts specific data files to view them properly in FlashDevelop.</value>
+    <value>FlashDevelop에서 제대로 볼 특정 데이터 파일을 변환합니다.</value>
   </data>
   <data name="FileExplorer.Description.FilePath" xml:space="preserve">
-    <value>Last browsed file path.</value>
+    <value>마지막 탐색 파일 경로.</value>
   </data>
   <data name="FileExplorer.Description.SortColumn" xml:space="preserve">
-    <value>Current column that have been sorted.</value>
+    <value>분류 된 현재 열.</value>
   </data>
   <data name="FileExplorer.Description.SortOrder" xml:space="preserve">
-    <value>The sort order of the current column.</value>
+    <value>현재 열의 정렬 순서.</value>
   </data>
   <data name="FileExplorer.Header.Files" xml:space="preserve">
-    <value>Files</value>
+    <value>파일</value>
   </data>
   <data name="FileExplorer.Header.Modified" xml:space="preserve">
-    <value>Modified</value>
+    <value>수정</value>
   </data>
   <data name="FileExplorer.Header.Size" xml:space="preserve">
-    <value>Size</value>
+    <value>크기</value>
   </data>
   <data name="FileExplorer.Header.Type" xml:space="preserve">
-    <value>Type</value>
+    <value>유형</value>
   </data>
   <data name="FileExplorer.Info.BrowseDescription" xml:space="preserve">
-    <value>Open a folder to list the files in the folder.</value>
+    <value>폴더에있는 파일을 나열하려면 폴더를여십시오.</value>
   </data>
   <data name="FileExplorer.Info.ConfirmDelete" xml:space="preserve">
-    <value>Are you sure you want to delete the selected items?</value>
+    <value>선택한 항목을 삭제 하시겠습니까?</value>
   </data>
   <data name="FileExplorer.Info.Description" xml:space="preserve">
-    <value>Adds a file explorer panel to FlashDevelop.</value>
+    <value>FlashDevelop에 파일 탐색기 패널을 추가합니다.</value>
   </data>
   <data name="FileExplorer.Info.Kilobytes" xml:space="preserve">
     <value>KB</value>
   </data>
   <data name="FileExplorer.Info.NewFileName" xml:space="preserve">
-    <value>New File</value>
+    <value>새 파일</value>
   </data>
   <data name="FileExplorer.Info.NewFolderName" xml:space="preserve">
-    <value>New Folder</value>
+    <value>새 폴더</value>
   </data>
   <data name="FileExplorer.Label.FindHere" xml:space="preserve">
-    <value>&amp;Find And Replace...</value>
+    <value>찾기 및 바꾸기... (&amp;F)</value>
     <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CommandPromptHere" xml:space="preserve">
-    <value>Command &amp;Prompt...</value>
+    <value>명령 프롬프트... (&amp;P)</value>
     <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Copy" xml:space="preserve">
-    <value>C&amp;opy</value>
+    <value>복사 (&amp;C)</value>
   </data>
   <data name="FileExplorer.Label.CreateFileHere" xml:space="preserve">
-    <value>&amp;Create File...</value>
+    <value>파일 만들기... (&amp;C)</value>
     <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.CreateFolderHere" xml:space="preserve">
-    <value>Create &amp;Folder...</value>
+    <value>폴더 만들기... (&amp;F)</value>
     <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Delete" xml:space="preserve">
-    <value>&amp;Delete</value>
+    <value>삭제 (&amp;D)</value>
   </data>
   <data name="FileExplorer.Label.Edit" xml:space="preserve">
-    <value>&amp;Edit</value>
+    <value>편집 (&amp;E)</value>
   </data>
   <data name="FileExplorer.Label.ExploreHere" xml:space="preserve">
-    <value>E&amp;xplore...</value>
+    <value>탐색... (&amp;X)</value>
     <comment>Modified after 4.7.0</comment>
   </data>
   <data name="FileExplorer.Label.Paste" xml:space="preserve">
-    <value>&amp;Paste</value>
+    <value>붙여넣기 (&amp;P)</value>
   </data>
   <data name="FileExplorer.Label.RefreshView" xml:space="preserve">
-    <value>&amp;Refresh View</value>
+    <value>새로 고침 (&amp;R)</value>
   </data>
   <data name="FileExplorer.Label.Rename" xml:space="preserve">
-    <value>Re&amp;name</value>
+    <value>이름 바꾸기 (&amp;N)</value>
   </data>
   <data name="FileExplorer.Label.Run" xml:space="preserve">
-    <value>&amp;Run</value>
+    <value>실행 (R)</value>
   </data>
   <data name="FileExplorer.Label.SynchronizeView" xml:space="preserve">
-    <value>&amp;Synchronize View</value>
+    <value>동기화 (&amp;S)</value>
   </data>
   <data name="FileExplorer.Label.TrustHere" xml:space="preserve">
-    <value>Add To &amp;Trusted Paths</value>
+    <value>신뢰할 수있는 경로에 추가 (&amp;T)</value>
   </data>
   <data name="FileExplorer.Label.ViewMenuItem" xml:space="preserve">
-    <value>File Explorer</value>
+    <value>파일 탐색기</value>
   </data>
   <data name="FileExplorer.Title.PluginPanel" xml:space="preserve">
-    <value>Files</value>
+    <value>파일</value>
   </data>
   <data name="FileExplorer.ToolTip.Browse" xml:space="preserve">
-    <value>Browse</value>
+    <value>찾아보기</value>
   </data>
   <data name="FileExplorer.ToolTip.Synchronize" xml:space="preserve">
-    <value>Synchronize</value>
+    <value>동기화</value>
   </data>
   <data name="FlashConnect.Description.Enabled" xml:space="preserve">
-    <value>Enables FlashConnect normally on startup.</value>
+    <value>시작시 일반적으로 FlashConnect을 사용.</value>
   </data>
   <data name="FlashConnect.Description.Host" xml:space="preserve">
-    <value>The host of the connection.</value>
+    <value>연결 호스트.</value>
   </data>
   <data name="FlashConnect.Description.Port" xml:space="preserve">
-    <value>The port of the connection.</value>
+    <value>연결 포트.</value>
   </data>
   <data name="FlashConnect.Info.Description" xml:space="preserve">
-    <value>Adds a custom xml socket based tracing to FlashDevelop.</value>
+    <value>FlashDevelop에 추적을 기반으로 사용자 지정 XML 소켓을 추가.</value>
   </data>
   <data name="FlashConnect.Info.IncorrectPacket" xml:space="preserve">
-    <value>The recieved packet was incorrect: </value>
+    <value>수신 된 패킷이 올바르지 않습니다 : </value>
   </data>
   <data name="FlashConnect.Info.InvalidMessage" xml:space="preserve">
-    <value>The received xml message was invalid.</value>
+    <value>수신 된 XML 메시지가 올바르지 않습니다 :</value>
   </data>
   <data name="FlashDevelop.Category.Controls" xml:space="preserve">
     <value>Controls</value>
@@ -2297,7 +2297,7 @@ Never - the start page will not show based on startup.</value>
     <value>&amp;Package:</value>
   </data>
   <data name="FileExplorer.Info.PathTrusted" xml:space="preserve">
-    <value>was added to the Flash Player trusted paths.</value>
+    <value>(이)가 플래시 플레이어 신뢰 경로에 추가되었습니다.</value>
   </data>
   <data name="ProjectManager.Label.SwcExternalLibraryOption" xml:space="preserve">
     <value>&amp;External library (not included)</value>
@@ -2574,7 +2574,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>기본으로 생성기가 'private' 선언을 생성합니다. 대신 액션 스크립트 3에서 'protected' 선언을 하려면이 옵션을 설정합니다.</value>
   </data>
   <data name="FileExplorer.Label.ShellMenu" xml:space="preserve">
-    <value>Shell Menu...</value>
+    <value>쉘 메뉴...</value>
   </data>
   <data name="ProjectManager.Label.ShellMenu" xml:space="preserve">
     <value>Shell Menu...</value>
@@ -2595,7 +2595,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Shows the print margin on the right where the text should be kept.</value>
   </data>
   <data name="FileExplorer.Description.SynchronizeToProject" xml:space="preserve">
-    <value>Synchronizes the file view with the current project.</value>
+    <value>현재 프로젝트와 파일뷰를 동기화합니다.</value>
   </data>
   <data name="FlashDevelop.Description.SaveUnicodeWithBOM" xml:space="preserve">
     <value>Creates new Unicode encoded files with BOM (byte-order mark).</value>
@@ -3091,59 +3091,59 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>FlashDevelop에 리팩토링 기능을 추가합니다.</value>
   </data>
   <data name="CodeRefactor.Info.FindingReferences" xml:space="preserve">
-    <value>Finding References...</value>
+    <value>레퍼렌스를 찾는중...</value>
   </data>
   <data name="CodeRefactor.Info.UpdatingReferences" xml:space="preserve">
-    <value>Updating References...</value>
+    <value>레퍼렌스 업데이트중 ...</value>
     <comment>Modified after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Info.ResolvingReferences" xml:space="preserve">
-    <value>Resolving References...</value>
+    <value>레퍼렌스를 분석중...</value>
   </data>
   <data name="CodeRefactor.Info.ResolvingReferencesIn" xml:space="preserve">
-    <value>Resolving References in</value>
+    <value>레퍼렌스를 분석중: </value>
   </data>
   <data name="CodeRefactor.Info.SearchingFiles" xml:space="preserve">
-    <value>Searching Files...</value>
+    <value>파일을 검색중...</value>
   </data>
   <data name="CodeRefactor.Info.Status" xml:space="preserve">
-    <value>Status:</value>
+    <value>상태 :</value>
   </data>
   <data name="CodeRefactor.Info.Updating" xml:space="preserve">
-    <value>Updating</value>
+    <value>업데이트중</value>
   </data>
   <data name="CodeRefactor.Label.FindAllReferences" xml:space="preserve">
-    <value>Find A&amp;ll References</value>
+    <value>모든 레퍼렌스 찾기 (&amp;L)</value>
   </data>
   <data name="CodeRefactor.Label.NewName" xml:space="preserve">
-    <value>New name:</value>
+    <value>새 이름 :</value>
   </data>
   <data name="CodeRefactor.Label.Refactor" xml:space="preserve">
-    <value>&amp;Refactor</value>
+    <value>리팩터링</value>
   </data>
   <data name="CodeRefactor.Label.Rename" xml:space="preserve">
-    <value>&amp;Rename...</value>
+    <value>이름 바꾸기... (&amp;R)</value>
   </data>
   <data name="CodeRefactor.Label.ExtractMethod" xml:space="preserve">
-    <value>Extract &amp;Method...</value>
+    <value>메소드 추출... (&amp;M)</value>
   </data>
   <data name="CodeRefactor.Label.ExtractLocalVariable" xml:space="preserve">
-    <value>&amp;Extract Local Variable...</value>
+    <value>로컬 변수 추출... (&amp;E)</value>
   </data>
   <data name="CodeRefactor.Label.SurroundWith" xml:space="preserve">
-    <value>&amp;Surround With</value>
+    <value>둘러싸기 (&amp;S)</value>
   </data>
   <data name="CodeRefactor.Title.RenameDialog" xml:space="preserve">
-    <value>Rename '{0}'</value>
+    <value>이름 바꾸기 '{0}'</value>
   </data>
   <data name="CodeRefactor.Title.ExtractMethodDialog" xml:space="preserve">
-    <value>Extract Method</value>
+    <value>메소드 추출</value>
   </data>
   <data name="CodeRefactor.Title.ExtractLocalVariableDialog" xml:space="preserve">
-    <value>Extract Local Variable</value>
+    <value>로컬 변수 추출</value>
   </data>
   <data name="CodeRefactor.Title.DelegateMethods" xml:space="preserve">
-    <value>Delegate Methods</value>
+    <value>위임 메소드</value>
   </data>
   <data name="FlashDevelop.Description.DisableReplaceFilesConfirm" xml:space="preserve">
     <value>Disables the confirmation of the replace in files operation.</value>
@@ -3155,13 +3155,13 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>&amp;Undo Close</value>
   </data>
   <data name="CodeRefactor.Label.OrganizeImports" xml:space="preserve">
-    <value>&amp;Organize Imports</value>
+    <value>임포트 정리 (&amp;O)</value>
   </data>
   <data name="CodeRefactor.Label.TruncateImports" xml:space="preserve">
-    <value>&amp;Truncate Imports</value>
+    <value>임포트 자르기 (&amp;T)</value>
   </data>
   <data name="CodeRefactor.Label.DelegateMethods" xml:space="preserve">
-    <value>&amp;Generate Delegate Methods...</value>
+    <value>위임 메소드 생성... (&amp;G)</value>
   </data>
   <data name="FlashDevelop.Description.UseSystemColors" xml:space="preserve">
     <value>Forces FlashDevelop to use only system colors in the controls.</value>
@@ -3971,7 +3971,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Modified after 4.0.3</comment>
   </data>
   <data name="CodeRefactor.Label.InvokeCodeGenerator" xml:space="preserve">
-    <value>&amp;Code Generator</value>
+    <value>코드 생성기 (&amp;C)</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="MacroManager.Description.Shortcut" xml:space="preserve">
@@ -5028,51 +5028,51 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Modified after 4.2.1</comment>
   </data>
   <data name="CssCompletion.Description.DisableAutoCompletion" xml:space="preserve">
-    <value>Disable CSS attributes, values and variables auto-completion.</value>
+    <value>CSS의 특성 값과 변수 자동 완성 기능을 사용하지 않도록 설정합니다.</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Description.DisableCompileOnSave" xml:space="preserve">
-    <value>Disable automatic compilation of special CSS languages (SCSS, LESS, HSS) on save. Note: also disables minification.</value>
+    <value>저장에 특별한 CSS 언어의 자동 컴파일 (SCSS, LESS HSS)를 사용하지 않습니다. 참고 : 축소 또한 사용하지 않도록 설정합니다.</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Description.DisableMinifyOnSave" xml:space="preserve">
-    <value>Disable automatic minification of CSS files as "name.min.css" on save.</value>
+    <value>저장시 "name.min.css"으로 CSS 파일을 자동 축소를 사용하지 않도록 설정합니다.</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Description.EnableVerboseCompilation" xml:space="preserve">
-    <value>Display raw compilation result in Output panel (for debugging purpose).</value>
+    <value>출력 패널에 원시 컴파일 결과를 표시합니다 (디버깅 목적).</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.CompletionPrefixesDesc" xml:space="preserve">
-    <value>Browser prefix</value>
+    <value>브라우저 프리픽스</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.CompletionPropertyDesc" xml:space="preserve">
-    <value>CSS property</value>
+    <value>CSS 속성</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.CompletionPseudoDesc" xml:space="preserve">
-    <value>CSS pseudo element or class</value>
+    <value>CSS 의사 요소 또는 클래스</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.CompletionValueDesc" xml:space="preserve">
-    <value>CSS value</value>
+    <value>CSS 값</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.CompletionVariableDesc" xml:space="preserve">
-    <value>Custom variable</value>
+    <value>사용자 정의 변수</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.Description" xml:space="preserve">
-    <value>Adds CSS completion to FlashDevelop.</value>
+    <value>FlashDevelop에 CSS의 자동 완성 기능을 추가합니다.</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Description.DisableAutoCloseBraces" xml:space="preserve">
-    <value>By default CSS blocks' closing brace is inserted automatically after pressing &lt;Enter&gt;.</value>
+    <value>기본적으로 CSS 블록의 닫는 중괄호는 &lt;Enter&gt; 키를 누르면 자동으로 삽입됩니다.</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Description.DisableInsertColon" xml:space="preserve">
-    <value>Disable automatic insertion of colon (:) character when completing attributes.</value>
+    <value>특성을 자동 완성 할 때 콜론(:)의 자동 삽입문자를 사용하지 않도록 설정합니다.</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="AirProperties.Locale.PortugueseSimple" xml:space="preserve">
@@ -5088,7 +5088,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.CompletionTagDesc" xml:space="preserve">
-    <value>HTML tag</value>
+    <value>HTML 태그</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="FlashDevelop.Description.DisableTabDifferentiation" xml:space="preserve">
@@ -5104,7 +5104,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="FlashConnect.Description.Commands" xml:space="preserve">
-    <value>List of allowed commands to be executed.</value>
+    <value>실행될 허용 된 명령 목록.</value>
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="FlashDevelop.Label.MakeAsDefault" xml:space="preserve">
@@ -5184,7 +5184,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingFile" xml:space="preserve">
-    <value>You are renaming a file. Do you also want to update the references?</value>
+    <value>파일 이름을 변경하고 있습니다. 레퍼렌스 또한 업데이트 하시겠습니까?</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
@@ -5212,11 +5212,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
-    <value>You are moving file[s]. Do you also want to update the references?</value>
+    <value>파일을 이동하고 있습니다. 레퍼렌스 또한 업데이트 하시겠습니까?</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="CodeRefactor.Title.MoveDialog" xml:space="preserve">
-    <value>Moving File[s]</value>
+    <value>파일 이동</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Title.Threads" xml:space="preserve">
@@ -5250,7 +5250,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
-    <value>You are renaming a directory. Do you also want to update the references?</value>
+    <value>디렉토리 이름을 변경하고 있습니다. 레퍼렌스 또한 업데이트 하시겠습니까?</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
@@ -5466,7 +5466,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
-    <value>You are moving files outside your defined classpaths. Refactoring is not available and your project may stop working. Continue?</value>
+    <value>정의 클래스 경로의 외부로 파일을 이동하고 있습니다. 리팩토링을 사용할 수 없고, 프로젝트가 작동하지 않을 수 있습니다. 계속 하시겠습니까?</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Filter" xml:space="preserve">
@@ -5886,23 +5886,23 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.FormatCode" xml:space="preserve">
-    <value>Format Code</value>
+    <value>코드를 포맷합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.OpenFiles" xml:space="preserve">
-    <value>Open Files</value>
+    <value>열린 파일</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.ProjectSources" xml:space="preserve">
-    <value>Project Sources</value>
+    <value>프로젝트 소스</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Label.BatchProcess" xml:space="preserve">
-    <value>Batch Process...</value>
+    <value>배치 프로세스...</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Title.BatchProcessDialog" xml:space="preserve">
-    <value>Batch Process</value>
+    <value>배치 프로세스</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.HighlightMarkers" xml:space="preserve">
