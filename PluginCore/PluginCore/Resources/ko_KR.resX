@@ -3119,7 +3119,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>새 이름 :</value>
   </data>
   <data name="CodeRefactor.Label.Refactor" xml:space="preserve">
-    <value>리팩터링</value>
+    <value>리팩터링 (&amp;R)</value>
   </data>
   <data name="CodeRefactor.Label.Rename" xml:space="preserve">
     <value>이름 바꾸기... (&amp;R)</value>
@@ -3285,59 +3285,59 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>개체보기</value>
   </data>
   <data name="FlashDebugger.Category.Misc" xml:space="preserve">
-    <value>Misc</value>
+    <value>기타</value>
   </data>
   <data name="FlashDebugger.Category.View" xml:space="preserve">
-    <value>View</value>
+    <value>뷰</value>
   </data>
   <data name="FlashDebugger.Description.EnableLogging" xml:space="preserve">
-    <value>Enabled debugger logging (requires restart).</value>
+    <value>디버그 로깅을 사용하도록 설정 (프로그램 다시 시작해야합니다.).</value>
   </data>
   <data name="FlashDebugger.Description.SaveBreakPoints" xml:space="preserve">
-    <value>Save and restore breakpoints.</value>
+    <value>중단점을 저장하고 복원.</value>
   </data>
   <data name="FlashDebugger.Description.SourcePaths" xml:space="preserve">
-    <value>Additional paths to search for source.  Useful for specifying the location of any frameworks or library sources.</value>
+    <value>소스를 검색할 추가 경로. 임의의 프레임 워크 또는 라이브러리 소스의 위치를 지정하는 데 유용합니다.</value>
   </data>
   <data name="FlashDebugger.Description.StartDebuggerOnTestMovie" xml:space="preserve">
-    <value>Start debugger on Test Project.</value>
+    <value>테스트 프로젝트시 디버거를 시작합니다.</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="FlashDebugger.Info.CannotDebugActiveXPlayer" xml:space="preserve">
-    <value>Cannot debug a movie running in ActiveX Flash Player.</value>
+    <value>액티브X 플래시 플레이어에서 실행시 디버깅 할 수 없습니다.</value>
   </data>
   <data name="FlashDebugger.Info.CannotFindOutputFile" xml:space="preserve">
-    <value>Cannot find the output file.</value>
+    <value>출력 파일을 찾을 수 없습니다.</value>
   </data>
   <data name="FlashDebugger.Info.ContinuingDueToError" xml:space="preserve">
-    <value>Continuing due to error '${error}'</value>
+    <value>오류로 인해 계속합니다 '${error}'</value>
   </data>
   <data name="FlashDebugger.Info.CouldNotHalt" xml:space="preserve">
-    <value>Couldn't halt, no ActionScript is running.</value>
+    <value>정지 할 수 없습니다. 액션 스크립트가 실행되고 있지 않습니다.</value>
   </data>
   <data name="FlashDebugger.Info.DebuggerListenAborted" xml:space="preserve">
-    <value>Debugger listen aborted.</value>
+    <value>디버거 듣기가 중단됩니다.</value>
   </data>
   <data name="FlashDebugger.Info.DebuggingSessionAlreadyRunning" xml:space="preserve">
-    <value>Debugging session already running.</value>
+    <value>디버깅 세션이 이미 실행 중입니다.</value>
   </data>
   <data name="FlashDebugger.Info.DebugWithoutCompile" xml:space="preserve">
-    <value>Compile failed, start debugger anyways?</value>
+    <value>컴파일에 실패했습니다. 디버거를 시작시겠습니까?</value>
   </data>
   <data name="FlashDebugger.Info.Description" xml:space="preserve">
-    <value>Adds an ActionScript 3 debugger to FlashDevelop.</value>
+    <value>FlashDevelop에 ActionScript 3 디버거를 추가합니다.</value>
   </data>
   <data name="FlashDebugger.Info.EscapingFromDebuggerPendingLoop" xml:space="preserve">
-    <value>Escaping from debugger pending loop, setting $nowaiting = 1</value>
+    <value>대기중인 디버거 루프에서 탈출합니다. $nowaiting = 1 으로 설정합니다.</value>
   </data>
   <data name="FlashDebugger.Info.ExecutionHalted" xml:space="preserve">
-    <value>Execution halted</value>
+    <value>실행 중단</value>
   </data>
   <data name="FlashDebugger.Info.FaultHasNoTableEntry" xml:space="preserve">
-    <value>Fault ${faultName} has no table entry</value>
+    <value>결점 ${faultName}(은)는 테이블 항목이 없습니다</value>
   </data>
   <data name="FlashDebugger.Info.FixBreakpoints" xml:space="preserve">
-    <value>Fix or remove bad breakpoints, then type 'continue'.</value>
+    <value>잘못된 중단점을 수정 또는 제거합니다. 다음 'continue'를 입력합니다.</value>
   </data>
   <data name="FlashDebugger.Info.FlashPlayerGenericName" xml:space="preserve">
     <value>Flash Player</value>
@@ -3349,227 +3349,227 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>${reasonForHalting}, ${functionName}() at ${fileAndLine}</value>
   </data>
   <data name="FlashDebugger.Info.HitBreakpoint" xml:space="preserve">
-    <value>Breakpoint ${breakpointNumber}</value>
+    <value>중단점 ${breakpointNumber}</value>
   </data>
   <data name="FlashDebugger.Info.InformationAboutFault" xml:space="preserve">
-    <value>, information=</value>
+    <value>, 정보=</value>
   </data>
   <data name="FlashDebugger.Info.LanguageNotAS3" xml:space="preserve">
-    <value>Language is not ActionScript 3.</value>
+    <value>언어가 ActionScript 3이 아닙니다.</value>
   </data>
   <data name="FlashDebugger.Info.LinePrefixWhenDisplayingConsoleError" xml:space="preserve">
-    <value>[Error]</value>
+    <value>[오류]</value>
   </data>
   <data name="FlashDebugger.Info.LinePrefixWhenDisplayingFault" xml:space="preserve">
-    <value>[Fault]</value>
+    <value>[결점]</value>
   </data>
   <data name="FlashDebugger.Info.LinePrefixWhenSwfLoaded" xml:space="preserve">
     <value>[SWF]</value>
   </data>
   <data name="FlashDebugger.Info.LinePrefixWhenSwfUnloaded" xml:space="preserve">
-    <value>[UnloadSWF]</value>
+    <value>[언로드SWF]</value>
   </data>
   <data name="FlashDebugger.Info.NoMainClass" xml:space="preserve">
-    <value>This project does not have a main class.</value>
+    <value>이 프로젝트는 메인 클래스가 없습니다.</value>
   </data>
   <data name="FlashDebugger.Info.NoSourceFilesFound" xml:space="preserve">
-    <value>No source files found.</value>
+    <value>소스 파일을 찾을 수 없습니다.</value>
   </data>
   <data name="FlashDebugger.Info.PlayerAlreadyRunning" xml:space="preserve">
-    <value>Player is already running, no need to resume.</value>
+    <value>플레이어가 이미 실행 중입니다. 재개할 필요가 없습니다.</value>
   </data>
   <data name="FlashDebugger.Info.PlayerDidNotStop" xml:space="preserve">
-    <value>Player did not stop as expected.  Press 'Enter' key to halt it</value>
+    <value>플레이어가 멈추지 않았습니다.  중단하려면 'Enter' 키를 누르세요.</value>
   </data>
   <data name="FlashDebugger.Info.PlayerStillRunning" xml:space="preserve">
-    <value>The player is still running, do you want to stop it?</value>
+    <value>플레이어가 여전히 실행 중입니다. 중지 하시겠습니까?</value>
   </data>
   <data name="FlashDebugger.Info.ProcessNotResponding" xml:space="preserve">
-    <value>Process not responding.</value>
+    <value>프로세스가 응답하지 않습니다.</value>
   </data>
   <data name="FlashDebugger.Info.ProjectNotOpen" xml:space="preserve">
-    <value>You must open a project before starting the debugger.</value>
+    <value>디버거를 시작하기 전에 프로젝트를 열어야합니다.</value>
   </data>
   <data name="FlashDebugger.Info.SessionTerminated" xml:space="preserve">
-    <value>Player session terminated.</value>
+    <value>플레이어 세션이 종료되었습니다.</value>
   </data>
   <data name="FlashDebugger.Info.SetAdditionalBreakpoints" xml:space="preserve">
-    <value>Set additional breakpoints as desired, and then type 'continue'.</value>
+    <value>원하는대로 추가 중단점을 설정합니다. 다음 'continue'를 입력합니다.</value>
   </data>
   <data name="FlashDebugger.Info.SizeAfterDecompression" xml:space="preserve">
-    <value>${size} bytes after decompression.</value>
+    <value>압축 해제 후 ${size} 바이트.</value>
   </data>
   <data name="FlashDebugger.Info.UnableToStartDebugger" xml:space="preserve">
-    <value>Unable to start the interactive debugger.</value>
+    <value>인터랙티브 디버거를 시작할 수 없습니다.</value>
   </data>
   <data name="FlashDebugger.Info.UnknownEvent" xml:space="preserve">
-    <value>Received unknown event of type '${type}', info = ${info}.</value>
+    <value>알 수 없는 이벤트 유형 '${type}', 정보 = ${info}.</value>
   </data>
   <data name="FlashDebugger.Info.UnknownFilename" xml:space="preserve">
     <value>&lt;unknown&gt;</value>
   </data>
   <data name="FlashDebugger.Info.WaitingForPlayer" xml:space="preserve">
-    <value>Waiting for Flash Player to connect to debugger.</value>
+    <value>Flash Player가 디버거와 연결하기를 기다리고 있습니다.</value>
   </data>
   <data name="FlashDebugger.Info.WarningNotAllCommandsSupported" xml:space="preserve">
-    <value>WARNING: The Flash Player that you are using does not support all debugger commands.</value>
+    <value>경고: 사용하는 플래시 플레이어는 모든 디버거 명령을 지원하지 않습니다.</value>
   </data>
   <data name="FlashDebugger.Info.WebBrowserGenericName" xml:space="preserve">
-    <value>Web Browser</value>
+    <value>웹 브라우저</value>
   </data>
   <data name="FlashDebugger.Label.Close" xml:space="preserve">
-    <value>Close</value>
+    <value>닫기</value>
   </data>
   <data name="FlashDebugger.Label.Continue" xml:space="preserve">
-    <value>&amp;Continue</value>
+    <value>계속 (&amp;C)</value>
   </data>
   <data name="FlashDebugger.Label.Copy" xml:space="preserve">
-    <value>C&amp;opy</value>
+    <value>복사 (&amp;O)</value>
   </data>
   <data name="FlashDebugger.Label.CopyAll" xml:space="preserve">
-    <value>Copy &amp;All</value>
+    <value>모두 복사 (&amp;A)</value>
   </data>
   <data name="FlashDebugger.Label.CopyExp" xml:space="preserve">
-    <value>Copy &amp;Exp</value>
+    <value>식을 복사 (&amp;E)</value>
   </data>
   <data name="FlashDebugger.Label.CopyValue" xml:space="preserve">
-    <value>Copy &amp;Value</value>
+    <value>값을 복사 (&amp;V)</value>
   </data>
   <data name="FlashDebugger.Label.Current" xml:space="preserve">
-    <value>Current &amp;Line</value>
+    <value>현재 줄 (&amp;L)</value>
   </data>
   <data name="FlashDebugger.Label.Debug" xml:space="preserve">
-    <value>&amp;Debug</value>
+    <value>디버그 (&amp;D)</value>
   </data>
   <data name="FlashDebugger.Label.DeleteAllBreakpoints" xml:space="preserve">
-    <value>Delete All Breakpoints</value>
+    <value>모든 중단점 삭제</value>
   </data>
   <data name="FlashDebugger.Label.DisableAllBreakpoints" xml:space="preserve">
-    <value>Disable All Breakpoints</value>
+    <value>모든 중단점 해제</value>
   </data>
   <data name="FlashDebugger.Label.EnableAllBreakpoints" xml:space="preserve">
-    <value>Enable All Breakpoints</value>
+    <value>모든 중단점 사용</value>
   </data>
   <data name="FlashDebugger.Label.Exp" xml:space="preserve">
-    <value>Condition</value>
+    <value>조건</value>
     <comment>Modified after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Finish" xml:space="preserve">
-    <value>Step &amp;Out</value>
+    <value>스텝 아웃 (&amp;O)</value>
     <comment>Changed after 4.2</comment>
   </data>
   <data name="FlashDebugger.Label.Next" xml:space="preserve">
-    <value>&amp;Step Over</value>
+    <value>스텝 오버 (&amp;S)</value>
   </data>
   <data name="FlashDebugger.Label.Pause" xml:space="preserve">
-    <value>&amp;Pause</value>
+    <value>일시 중지 (&amp;P)</value>
   </data>
   <data name="FlashDebugger.Label.RunToCursor" xml:space="preserve">
-    <value>Run To C&amp;ursor Line</value>
+    <value>커서 라인까지 실행 (&amp;U)</value>
   </data>
   <data name="FlashDebugger.Label.Start" xml:space="preserve">
-    <value>&amp;Start</value>
+    <value>시작 (&amp;S)</value>
   </data>
   <data name="FlashDebugger.Label.Step" xml:space="preserve">
-    <value>Step &amp;Into</value>
+    <value>스텝 인 (&amp;I)</value>
   </data>
   <data name="FlashDebugger.Label.Stop" xml:space="preserve">
-    <value>S&amp;top</value>
+    <value>중지 (&amp;T)</value>
   </data>
   <data name="FlashDebugger.Label.BreakOnAllErrors" xml:space="preserve">
-    <value>Break On All &amp;Errors</value>
+    <value>모든 오류에 중단 (&amp;E)</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.ToggleBreakpoint" xml:space="preserve">
-    <value>Toggle Breakpoint</value>
+    <value>중단점 전환</value>
   </data>
   <data name="FlashDebugger.Label.ToggleBreakpointEnabled" xml:space="preserve">
-    <value>Toggle Breakpoint Enabled</value>
+    <value>중단점 활성화 전환</value>
   </data>
   <data name="FlashDebugger.Label.Value" xml:space="preserve">
-    <value>Value</value>
+    <value>값</value>
   </data>
   <data name="FlashDebugger.Label.ViewBreakpointsPanel" xml:space="preserve">
-    <value>Breakpoints Panel</value>
+    <value>중단점 패널</value>
   </data>
   <data name="FlashDebugger.Label.Viewer" xml:space="preserve">
-    <value>&amp;Viewer</value>
+    <value>뷰어 (&amp;V)</value>
   </data>
   <data name="FlashDebugger.Label.ViewLocalVariablesPanel" xml:space="preserve">
-    <value>Local Variables Panel</value>
+    <value>로컬 변수 패널</value>
   </data>
   <data name="FlashDebugger.Label.ViewStackframePanel" xml:space="preserve">
-    <value>Stackframe Panel</value>
+    <value>스택프레임 패널</value>
   </data>
   <data name="FlashDebugger.Label.WordWrap" xml:space="preserve">
-    <value>Word Wrap</value>
+    <value>자동 줄 바꿈</value>
   </data>
   <data name="FlashDebugger.Title.Breakpoints" xml:space="preserve">
-    <value>Breakpoints</value>
+    <value>중단점</value>
   </data>
   <data name="FlashDebugger.Title.CloseProcess" xml:space="preserve">
-    <value>Close Process?</value>
+    <value>프로세스를 종료하시겠습니까?</value>
   </data>
   <data name="FlashDebugger.Title.LocalVariables" xml:space="preserve">
-    <value>Locals</value>
+    <value>로컬 변수</value>
   </data>
   <data name="FlashDebugger.Title.StackTrace" xml:space="preserve">
-    <value>Stack</value>
+    <value>스택</value>
   </data>
   <data name="FlashDebugger.BreakPoints.RemoveSelected" xml:space="preserve">
-    <value>Remove Selected Breakpoints</value>
+    <value>선택된 중단점 제거</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.RemoveAll" xml:space="preserve">
-    <value>Remove All Listed Breakpoints</value>
+    <value>모든 나열된 중단점 제거</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ToggleAll" xml:space="preserve">
-    <value>Toggle All Listed Breakpoints</value>
+    <value>모든 나열된 중단점 전환</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ExportAll" xml:space="preserve">
-    <value>Export All Listed Breakpoints</value>
+    <value>모든 중단점을 내보내기</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.ImportAll" xml:space="preserve">
-    <value>Import Breakpoints From File</value>
+    <value>파일에서 중단점 불러오기</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterAll" xml:space="preserve">
-    <value>In All Columns</value>
+    <value>모든 열에서</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterPath" xml:space="preserve">
-    <value>In File Path</value>
+    <value>파일 경로에서</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterFile" xml:space="preserve">
-    <value>In File Name</value>
+    <value>파일 이름에서</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterLine" xml:space="preserve">
-    <value>In File Line</value>
+    <value>파일 라인에서</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.BreakPoints.FilterExp" xml:space="preserve">
-    <value>In Expression</value>
+    <value>식에서</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Error.InvalidFile" xml:space="preserve">
-    <value>Error loading the selected file, it may not be valid</value>
+    <value>선택한 파일을 로드하는데 오류가 발생했습니다. 유효하지 않은 파일일 수 있습니다.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Error.Reevaluate" xml:space="preserve">
-    <value>Variable could not be reevaluated</value>
+    <value>변수 값를 재평가 할 수 없습니다.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Error.NoSuchVariable" xml:space="preserve">
-    <value>{0} could not be resolved</value>
+    <value>{0}(을)를 분석할 수 없습니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Error.NoScalar" xml:space="preserve">
-    <value>Only scalar variables can be modified</value>
+    <value>스칼라 변수만 수정할 수 있습니다.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
@@ -3711,19 +3711,19 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>View:</value>
   </data>
   <data name="FlashDebugger.Label.Enable" xml:space="preserve">
-    <value>Enable</value>
+    <value>사용</value>
   </data>
   <data name="FlashDebugger.Label.File" xml:space="preserve">
-    <value>File</value>
+    <value>파일</value>
   </data>
   <data name="FlashDebugger.Label.Line" xml:space="preserve">
-    <value>Line</value>
+    <value>줄</value>
   </data>
   <data name="FlashDebugger.Label.Name" xml:space="preserve">
-    <value>Name</value>
+    <value>이름</value>
   </data>
   <data name="FlashDebugger.Label.Path" xml:space="preserve">
-    <value>Path</value>
+    <value>경로</value>
   </data>
   <data name="ResultsPanel.Filters.Errors" xml:space="preserve">
     <value>Errors</value>
@@ -3764,31 +3764,31 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Extended Flash IDE integration allows to debug/profile SWFs compiled with the Flash IDE in FlashDevelop.</value>
   </data>
   <data name="FlashDebugger.Label.StartRemoteDebugging" xml:space="preserve">
-    <value>Start Remote Session</value>
+    <value>원격 세션 시작</value>
   </data>
   <data name="FlashDebugger.Description.VerboseOutput" xml:space="preserve">
-    <value>Display detailed debugging information, like SWF load/unload events.</value>
+    <value>SWF로드 또는 언로드 이벤트 등의 자세한 디버깅 정보를 표시합니다.</value>
   </data>
   <data name="ProjectManager.Info.ReservedDirName" xml:space="preserve">
     <value>Name '{0}' is a reserved directory name.</value>
   </data>
   <data name="FlashDebugger.Label.Unwatch" xml:space="preserve">
-    <value>Delete Watch</value>
+    <value>감시 삭제</value>
   </data>
   <data name="FlashDebugger.Label.ViewWatchPanel" xml:space="preserve">
-    <value>Watch Panel</value>
+    <value>감시 패널</value>
   </data>
   <data name="FlashDebugger.Label.Watch" xml:space="preserve">
-    <value>Add Watch</value>
+    <value>감시 추가</value>
   </data>
   <data name="FlashDebugger.Title.Watch" xml:space="preserve">
-    <value>Watch</value>
+    <value>감시</value>
   </data>
   <data name="FlashDevelop.Label.CollapseFunctions" xml:space="preserve">
     <value>Collapse Functions</value>
   </data>
   <data name="FlashDebugger.Description.DisablePanelsAutoshow" xml:space="preserve">
-    <value>When debugging an application the debugger panels appear/disappear automatically.</value>
+    <value>응용 프로그램을 디버깅 할 때, 디버거 패널을 자동으로 표시 또는 숨김.</value>
   </data>
   <data name="ProjectManager.Description.SearchExternalClassPath" xml:space="preserve">
     <value>Enable searching files in external classpath.</value>
@@ -3971,7 +3971,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Modified after 4.0.3</comment>
   </data>
   <data name="CodeRefactor.Label.InvokeCodeGenerator" xml:space="preserve">
-    <value>코드 생성기 (&amp;C)</value>
+    <value>코드 자동 생성 (&amp;C)</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="MacroManager.Description.Shortcut" xml:space="preserve">
@@ -4882,10 +4882,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.3</comment>
   </data>
   <data name="FlashDebugger.Label.ViewImmediatePanel" xml:space="preserve">
-    <value>Immediate Panel</value>
+    <value>직접실행 패널</value>
   </data>
   <data name="FlashDebugger.Title.Immediate" xml:space="preserve">
-    <value>Immediate</value>
+    <value>직접실행</value>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
     <value>Start Scrolling</value>
@@ -5220,17 +5220,17 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Title.Threads" xml:space="preserve">
-    <value>Threads</value>
+    <value>스레드</value>
   </data>
   <data name="FlashDebugger.Label.ViewThreadsPanel" xml:space="preserve">
-    <value>Threads Panel</value>
+    <value>스레드 패널</value>
   </data>
   <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
     <value>Shows the macro in the main toolbar.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
-    <value>Switch to selected layout on debugger start. On debugger stop, previous layout is restored. If a layout is selected, debugger panels are not shown automatically.</value>
+    <value>디버거 시작시 선택한 레이아웃으로 전환합니다. 디버거 정지시 이전 레이아웃이 복원됩니다. 레이아웃이 선택되면, 디버거 패널이 자동으로 표시되지 않습니다.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDevelop.Label.YesToAll" xml:space="preserve">
@@ -5246,7 +5246,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.6.0</comment>
   </data>
   <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
-    <value>Break when an exception is thrown, even if it is handled.</value>
+    <value>오류가 발생될 때 처리되는 경우에도 중단.</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="CodeRefactor.Info.RenamingDirectory" xml:space="preserve">
@@ -5470,35 +5470,35 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="FlashDebugger.Label.Filter" xml:space="preserve">
-    <value>Filter:</value>
+    <value>필터:</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.SetCurrentFrame" xml:space="preserve">
-    <value>Set As Current Frame</value>
+    <value>현재 프레임으로 설정</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.GotoSource" xml:space="preserve">
-    <value>Go To Source</value>
+    <value>소스로 이동</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.JustMyCode" xml:space="preserve">
-    <value>Show Just My Code</value>
+    <value>내 코드 만 보기</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDebugger.Label.AddExpression" xml:space="preserve">
-    <value>Add new expression</value>
+    <value>새로운 식을 추가</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.MatchCase" xml:space="preserve">
-    <value>Match Case</value>
+    <value>대소문자 일치</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.MatchOpposite" xml:space="preserve">
-    <value>Match Opposite</value>
+    <value>반대 일치</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.Options" xml:space="preserve">
-    <value>Options</value>
+    <value>옵션</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
@@ -5886,7 +5886,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.FormatCode" xml:space="preserve">
-    <value>코드를 포맷합니다.</value>
+    <value>코드 포맷</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.OpenFiles" xml:space="preserve">
@@ -5930,47 +5930,47 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Category.DataTree" xml:space="preserve">
-    <value>Data Tree</value>
+    <value>데이터 트리</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.CombineInherited" xml:space="preserve">
-    <value>Display inherited members as direct descendants of the displayed object.</value>
+    <value>상속 된 멤버를 표시된 객체의 직계 후손으로 표시합니다.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.HideStaticMembers" xml:space="preserve">
-    <value>Hide static members of the displayed object.</value>
+    <value>표시된 객체의 정적 멤버를 숨김.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.HideFullClasspaths" xml:space="preserve">
-    <value>Show only the class name of the displayed objects.</value>
+    <value>표시된 객체의 클래스 이름만 표시.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.HideClassIds" xml:space="preserve">
-    <value>Hide the ID of the displayed objects.</value>
+    <value>표시된 객체의 ID 숨기기.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.CopyTreeMaxRecursion" xml:space="preserve">
-    <value>The maximum node depth to reach when copying an object tree to the clipboard.</value>
+    <value>클립보드에 오브젝트 트리를 복사할 때 도달하는 최대 노드 깊이.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Description.CopyTreeMaxSize" xml:space="preserve">
-    <value>The approximate maximum size, in characters, the object tree may take when copied to the clipboard.</value>
+    <value>클립 보드에 복사 될 때 오브젝트 트리가 차지하는 최대 크기의 어림값 (문자 수).</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Label.CopyID" xml:space="preserve">
-    <value>Copy ID</value>
+    <value>ID를 복사</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Label.CopyTree" xml:space="preserve">
-    <value>Copy Tree</value>
+    <value>트리 복사</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
-    <value>[Recursion too deep, increase Copy Tree Max Level in FlashDebugger settings]</value>
+    <value>[재귀가 너무 깊습니다. FlashDebugger 설정에서 Copy Tree Max Level을 늘리세요.]</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
-    <value>[Object {0} already listed before]</value>
+    <value>[개체 {0}(이)가 이미 이전에 나열되었습니다.]</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
