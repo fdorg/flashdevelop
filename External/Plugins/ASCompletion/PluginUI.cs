@@ -113,7 +113,7 @@ namespace ASCompletion
             InitializeComponent();
             treeIcons.ColorDepth = ColorDepth.Depth32Bit;
             treeIcons.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            treeIcons.Initialize(TreeIcons_Initialize);
+            treeIcons.Initialize(TreeIcons_Populate);
 
             toolStrip.Renderer = new DockPanelStripRenderer();
             toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
@@ -140,7 +140,7 @@ namespace ASCompletion
             outlineTree.BringToFront();
         }
 
-        private void TreeIcons_Initialize(object sender, EventArgs e)
+        private void TreeIcons_Populate(object sender, EventArgs e)
         {
             treeIcons.Images.AddRange(new Image[]
             {

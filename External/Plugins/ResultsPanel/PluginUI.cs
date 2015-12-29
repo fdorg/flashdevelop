@@ -251,7 +251,7 @@ namespace ResultsPanel
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.TransparentColor = Color.Transparent;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Initialize(ImageList_Initialize);
+            imageList.Initialize(ImageList_Populate);
             this.toolStripFilters.ImageList = imageList;
             this.entriesView.SmallImageList = imageList;
             this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
@@ -260,7 +260,7 @@ namespace ResultsPanel
             this.toolStripButtonWarning.Image = PluginBase.MainForm.FindImage("196");
         }
 
-        private void ImageList_Initialize(object sender, EventArgs e)
+        private void ImageList_Populate(object sender, EventArgs e)
         {
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("131")); // info
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("197")); // error

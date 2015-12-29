@@ -160,7 +160,7 @@ namespace LayoutManager
             this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.imageList.TransparentColor = Color.Transparent;
-            this.imageList.Initialize(ImageList_Initialize);
+            this.imageList.Initialize(ImageList_Populate);
             this.layoutsListView.SmallImageList = this.imageList;
             this.menuLoadButton.Image = PluginBase.MainForm.FindImage("42|24|3|2");
             this.loadStripButton.Image = PluginBase.MainForm.FindImage("42|24|3|2");
@@ -173,7 +173,7 @@ namespace LayoutManager
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
         }
 
-        private void ImageList_Initialize(object sender, EventArgs e)
+        private void ImageList_Populate(object sender, EventArgs e)
         {
             this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("48"));
             this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("229"));

@@ -93,9 +93,9 @@ namespace PluginCore.Managers
         #region Events
 
         /// <summary>
-        /// Raised when the images in the <see cref="ImageList"/> should be initialized.
+        /// Raised when the images in the <see cref="ImageList"/> should be populated.
         /// </summary>
-        public event EventHandler OnInitialize;
+        public event EventHandler Populate;
 
         /// <summary>
         /// Occurs when the <see cref="ImageList"/> is disposed by a call to the <see cref="Component.Dispose"/> method.
@@ -119,7 +119,7 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Gets or sets the color depth of the <see cref="ImageList"/>.
+        /// Gets or sets the <see cref="System.Windows.Forms.ColorDepth"/> of the <see cref="ImageList"/>.
         /// </summary>
         public ColorDepth ColorDepth
         {
@@ -136,7 +136,7 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Gets or sets the size of the images in the <see cref="ImageList"/>.
+        /// Gets or sets the <see cref="Size"/> of the images in the <see cref="ImageList"/>.
         /// </summary>
         public Size ImageSize
         {
@@ -145,12 +145,21 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Gets or sets the color to treat as transparent
+        /// Gets or sets the <see cref="Color"/> to treat as transparent.
         /// </summary>
         public Color TransparentColor
         {
             get { return imageList.TransparentColor; }
             set { imageList.TransparentColor = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets an <see cref="object"/> that contains additional data about the <see cref="ImageList"/>.
+        /// </summary>
+        public object Tag
+        {
+            get { return imageList.Tag; }
+            set { imageList.Tag = value; }
         }
 
         #endregion
@@ -214,20 +223,20 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Initializes the <see cref="ImageList"/> by raising the <see cref="OnInitialize"/> event.
+        /// Initializes the <see cref="ImageList"/> by raising the <see cref="Populate"/> event.
         /// </summary>
         public void Initialize()
         {
-            if (OnInitialize != null) OnInitialize(this, EventArgs.Empty);
+            if (Populate != null) Populate(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// Assigns the specified <see cref="EventHandler"/> to <see cref="OnInitialize"/> and initializes the <see cref="ImageList"/> by raising the event.
+        /// Assigns the specified <see cref="EventHandler"/> to <see cref="Populate"/> and initializes the <see cref="ImageList"/> by calling <see cref="Initialize"/>.
         /// </summary>
-        /// <param name="initialization">An <see cref="EventHandler"/> to assign to <see cref="OnInitialize"/>.</param>
-        public void Initialize(EventHandler initialization)
+        /// <param name="populate">An <see cref="EventHandler"/> to assign to <see cref="Populate"/>.</param>
+        public void Initialize(EventHandler populate)
         {
-            OnInitialize = initialization;
+            Populate = populate;
             Initialize();
         }
 
@@ -241,12 +250,12 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Clears <see cref="Images"/> and calls <see cref="Initialize"/>. Override this method to provide custom initialization.
+        /// Clears <see cref="Images"/> and raises <see cref="Populate"/>. Override this method to provide custom refreshing.
         /// </summary>
         protected virtual void OnRefresh()
         {
             imageList.Images.Clear();
-            Initialize();
+            if (Populate != null) Populate(this, EventArgs.Empty);
         }
 
         #endregion
