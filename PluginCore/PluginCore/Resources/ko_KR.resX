@@ -231,7 +231,7 @@
     <value>정규화 된 유형을 입력 할 때 자동으로 import 문을 생성합니다.</value>
   </data>
   <data name="FlashDevelop.Description.CommentBlockStyle" xml:space="preserve">
-    <value>Should javadoc comment lines be added an extra space.</value>
+    <value>Javadoc 주석 행에 추가 공간을 추가합니다.</value>
   </data>
   <data name="ASCompletion.Description.JavadocTags" xml:space="preserve">
     <value>코드 완성을위한 의 Javadoc 태그 목록.</value>
@@ -479,409 +479,409 @@
     <value>수신 된 XML 메시지가 올바르지 않습니다 :</value>
   </data>
   <data name="FlashDevelop.Category.Controls" xml:space="preserve">
-    <value>Controls</value>
+    <value>컨트롤</value>
   </data>
   <data name="FlashDevelop.Category.Display" xml:space="preserve">
-    <value>Display</value>
+    <value>디스플레이</value>
   </data>
   <data name="FlashDevelop.Category.Editor" xml:space="preserve">
-    <value>Editor</value>
+    <value>편집기</value>
   </data>
   <data name="FlashDevelop.Category.Features" xml:space="preserve">
-    <value>Features</value>
+    <value>기능</value>
   </data>
   <data name="FlashDevelop.Category.Folding" xml:space="preserve">
-    <value>Folding</value>
+    <value>코드 접기</value>
   </data>
   <data name="FlashDevelop.Category.Formatting" xml:space="preserve">
-    <value>Formatting</value>
+    <value>코드 포맷</value>
   </data>
   <data name="FlashDevelop.Category.General" xml:space="preserve">
-    <value>General</value>
+    <value>일반</value>
   </data>
   <data name="FlashDevelop.Category.Indenting" xml:space="preserve">
-    <value>Indenting</value>
+    <value>들여 쓰기</value>
   </data>
   <data name="FlashDevelop.Category.State" xml:space="preserve">
-    <value>State</value>
+    <value>프로그램 상태</value>
   </data>
   <data name="FlashDevelop.Description.ApplyFileExtension" xml:space="preserve">
-    <value>Applies the default extension to the filename.</value>
+    <value>파일 이름에 기본 확장자을 적용합니다.</value>
   </data>
   <data name="FlashDevelop.Description.AutoFilterList" xml:space="preserve">
-    <value>Completion list realtime filtering.</value>
+    <value>완성 목록 실시간 필터링.</value>
   </data>
   <data name="FlashDevelop.Description.BackSpaceUnIndents" xml:space="preserve">
-    <value>Unindents the code with the backspace key.</value>
+    <value>백스페이스 키를 사용하여 코드를내어 쓰기.</value>
   </data>
   <data name="FlashDevelop.Description.BackupInterval" xml:space="preserve">
-    <value>Interval in milliseconds to save backups from modified files.</value>
+    <value>수정 된 파일의 백업을 저장할 밀리 초 간격.</value>
   </data>
   <data name="FlashDevelop.Description.BraceMatchingEnabled" xml:space="preserve">
-    <value>Highlights matching braces with a background color.</value>
+    <value>배경 색상으로 일치하는 괄호를 강조 표시합니다.</value>
   </data>
   <data name="FlashDevelop.Description.CaretLineVisible" xml:space="preserve">
-    <value>Highlights the line that contains the caret with a background color.</value>
+    <value>배경 색상으로 캐럿이 포함 된 행을 강조 표시합니다.</value>
   </data>
   <data name="FlashDevelop.Description.CaretPeriod" xml:space="preserve">
-    <value>Blinking delay of the caret symbol.</value>
+    <value>캐럿 기호 깜박임의 지연 시간.</value>
   </data>
   <data name="FlashDevelop.Description.CaretWidth" xml:space="preserve">
-    <value>Width of the caret symbol.</value>
+    <value>캐럿 기호의 폭.</value>
   </data>
   <data name="FlashDevelop.Description.CodingStyle" xml:space="preserve">
-    <value>Defines how the coding style line breaks are processed.</value>
+    <value>코딩 스타일의 줄 바꿈 처리하는 방법을 정의합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ComboBoxFlatStyle" xml:space="preserve">
-    <value>Used FlatStyle of toolstrip combo boxes.</value>
+    <value>ToolStrip 콤보 상자의 FlatStyle을 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Description.CustomArguments" xml:space="preserve">
-    <value>List of user defined arguments for string processing.</value>
+    <value>문자열 처리를 위한 사용자 정의 인수 목록.</value>
   </data>
   <data name="FlashDevelop.Description.DefaultCodePage" xml:space="preserve">
-    <value>Default codepage of the program.</value>
+    <value>프로그램의 기본 코드 페이지.</value>
   </data>
   <data name="FlashDevelop.Description.DefaultFileExtension" xml:space="preserve">
-    <value>Default file extension of the program.</value>
+    <value>프로그램의 기본 파일 확장자.</value>
   </data>
   <data name="FlashDevelop.Description.DisabledPlugins" xml:space="preserve">
-    <value>List of plugins that have been disabled.</value>
+    <value>비활성화 된 플러그인 목록.</value>
   </data>
   <data name="FlashDevelop.Description.DisableSmartMatch" xml:space="preserve">
-    <value>Disable loose text matching in the completion list.</value>
+    <value>완성 목록에서 느슨한 텍스트 매칭을 사용하지 않도록 설정합니다.</value>
   </data>
   <data name="FlashDevelop.Description.DisplayDelay" xml:space="preserve">
-    <value>Completion list apparition delay.</value>
+    <value>완성 목록 출현 지연.</value>
   </data>
   <data name="FlashDevelop.Description.EnableAutoHide" xml:space="preserve">
-    <value>Non-obstrusive completion list.</value>
+    <value>비 돌출 완성 목록.</value>
   </data>
   <data name="FlashDevelop.Description.EnsureConsistentLineEnds" xml:space="preserve">
-    <value>Ensures that documents have consistent line ends.</value>
+    <value>문서의 라인 끝이 일관하도록 합니다.</value>
   </data>
   <data name="FlashDevelop.Description.EnsureLastLineEnd" xml:space="preserve">
-    <value>Ensures that each document have a line end characters at the end of the document.</value>
+    <value>문서의 끝이 항상 라인 종료 문자로 끝나게 합니다.</value>
   </data>
   <data name="FlashDevelop.Description.EOLMode" xml:space="preserve">
-    <value>Characters that are added to the end of lines.</value>
+    <value>줄바꿈에 쓰일 라인 종료 문자.</value>
   </data>
   <data name="FlashDevelop.Description.RedirectFilesResults" xml:space="preserve">
-    <value>Redirects the find in files results to Results View.</value>
+    <value>결과뷰에 파일에서 찾기의 결과를 표시합니다.</value>
   </data>
   <data name="FlashDevelop.Description.FoldAtElse" xml:space="preserve">
-    <value>Folds the code at else statements.</value>
+    <value>else 문에서 코드 접기를 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Description.FoldComment" xml:space="preserve">
-    <value>Folds the code at comments.</value>
+    <value>주석에서 코드 접기를 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Description.FoldCompact" xml:space="preserve">
-    <value>Adds the blank lines to a fold region.</value>
+    <value>코드 접기 부분에 빈 줄을 추가합니다.</value>
   </data>
   <data name="FlashDevelop.Description.FoldFlags" xml:space="preserve">
-    <value>Behaviour of the folding.</value>
+    <value>코드 접기의 방법.</value>
   </data>
   <data name="FlashDevelop.Description.FoldHtml" xml:space="preserve">
-    <value>Folds the html source code. </value>
+    <value>HTML 소스 코드에서 코드 접기를 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Description.FoldPreprocessor" xml:space="preserve">
-    <value>Folds the code at preprocessor directives.</value>
+    <value>프리프로세서 지시문에서 코드 접기를 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Description.HighlightGuide" xml:space="preserve">
-    <value>Disables the highlight guide on current code block.</value>
+    <value>현재 코드 블록의 하이라이트 가이드를 사용하지 않습니다.</value>
   </data>
   <data name="FlashDevelop.Description.HoverDelay" xml:space="preserve">
-    <value>Mouse hover tip delay.</value>
+    <value>마우스 호버 팁 지연.</value>
   </data>
   <data name="FlashDevelop.Description.IndentSize" xml:space="preserve">
-    <value>Size of the intendation in terms of the width of a space.</value>
+    <value>들여 쓰기의 크기.</value>
   </data>
   <data name="FlashDevelop.Description.LatestCommand" xml:space="preserve">
-    <value>Version of the latest executed startup command.</value>
+    <value>가장 최근에 실행된 시작 명령의 버전.</value>
   </data>
   <data name="FlashDevelop.Description.LatestDialogPath" xml:space="preserve">
-    <value>Last active path in the program.</value>
+    <value>프로그램의 마지막 활성 경로.</value>
   </data>
   <data name="FlashDevelop.Description.LineCommentsAfterIndent" xml:space="preserve">
-    <value>Places the comment after an indentation.</value>
+    <value>들여쓰기 후 주석을 배치합니다.</value>
   </data>
   <data name="FlashDevelop.Description.LocaleVersion" xml:space="preserve">
-    <value>Current locale of the program. Requires restart.</value>
+    <value>프로그램의 현재 로케일. 프로그램을 다시 시작해야합니다.</value>
   </data>
   <data name="FlashDevelop.Description.MoveCursorAfterComment" xml:space="preserve">
-    <value>Moves the cursor after the line is commented.</value>
+    <value>라인을 주석한 후 커서를 이동합니다.</value>
   </data>
   <data name="FlashDevelop.Description.PreviousDocuments" xml:space="preserve">
-    <value>List of previously opened documents.</value>
+    <value>이전에 열었던 문서 목록.</value>
   </data>
   <data name="FlashDevelop.Description.RenderMode" xml:space="preserve">
-    <value>Specifies the used renderer for common UI elements. Requires restart.</value>
+    <value>일반적인 UI 요소에 사용할 렌더러를 지정합니다. 프로그램을 다시 시작해야합니다.</value>
   </data>
   <data name="FlashDevelop.Description.RestoreFileSession" xml:space="preserve">
-    <value>Restores the open files on startup.</value>
+    <value>시작시 열려있던 파일을 복원합니다.</value>
   </data>
   <data name="FlashDevelop.Description.RestoreFileStates" xml:space="preserve">
-    <value>Restores the files states on startup.</value>
+    <value>시작시 파일의 상태를 복원합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ScrollWidth" xml:space="preserve">
-    <value>Default document width in pixels.</value>
+    <value>문서의 기본 넓이 (픽셀 단위).</value>
   </data>
   <data name="FlashDevelop.Description.SequentialTabbing" xml:space="preserve">
-    <value>Behaviour of the tabbing.</value>
+    <value>탭의 종류.</value>
   </data>
   <data name="FlashDevelop.Description.ShowDetails" xml:space="preserve">
-    <value>Show detailed tooltips by default (details can be toggled by pressing F1).</value>
+    <value>자세한 툴팁 보기 (F1 키를 눌러 전환 할 수 있습니다).</value>
   </data>
   <data name="FlashDevelop.Description.SmartIndentType" xml:space="preserve">
-    <value>Type of the automatic indenting.</value>
+    <value>자동 들여쓰기의 종류.</value>
   </data>
   <data name="FlashDevelop.Description.StripTrailingSpaces" xml:space="preserve">
-    <value>Strips the trailing spaces and tabs from lines.</value>
+    <value>행의 후행 공백을 지웁니다.</value>
   </data>
   <data name="FlashDevelop.Description.TabIndents" xml:space="preserve">
-    <value>Indents the code with the tab key.</value>
+    <value>Tab키로 내어쓰기.</value>
   </data>
   <data name="FlashDevelop.Description.TabWidth" xml:space="preserve">
-    <value>Width of a tab character as characters.</value>
+    <value>탭의 넓이.</value>
   </data>
   <data name="FlashDevelop.Description.UseFolding" xml:space="preserve">
-    <value>Folds the code in the document.</value>
+    <value>문서의 코드 접기를 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Description.UseTabs" xml:space="preserve">
-    <value>Uses tabs instead of series of spaces.</value>
+    <value>내어쓰기에 스페이스 대신 탭을 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ViewBookmarks" xml:space="preserve">
-    <value>Displays the margin that contains bookmark symbols. If symbols are not shown, bookmarks are shown by highlighting the line.</value>
+    <value>즐겨찾기 기호를 표시할 여백을 표시합니다. 기호가 표시되지 않는 경우, 라인 강조로 즐겨찾기가 표시됩니다.</value>
   </data>
   <data name="FlashDevelop.Description.ViewEOL" xml:space="preserve">
-    <value>Displays the end of line characters as symbols.</value>
+    <value>라인 종료 문자를 기호로 표시합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ViewIndentationGuides" xml:space="preserve">
-    <value>Displays the intendation lines.</value>
+    <value>들여쓰기 선을 표시합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ViewLineNumbers" xml:space="preserve">
-    <value>Displays the margin that contains line numbers.</value>
+    <value>줄 번호를 표시할 여백을 표시합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ViewToolBar" xml:space="preserve">
-    <value>Displays the default toolbar.</value>
+    <value>기본 도구 모음을 표시합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ViewWhitespace" xml:space="preserve">
-    <value>Shows the whitespace characters as symbols.</value>
+    <value>공백 문자를 기호로 표시합니다..</value>
   </data>
   <data name="FlashDevelop.Description.WindowPosition" xml:space="preserve">
-    <value>Last known position of the program in normal window state.</value>
+    <value>마지막 일반 창 상태에서의 프로그램의 위치.</value>
   </data>
   <data name="FlashDevelop.Description.WindowSize" xml:space="preserve">
-    <value>Last known size of the program in normal window state.</value>
+    <value>마지막 일반 창 상태에서의 프로그램의 크기.</value>
   </data>
   <data name="FlashDevelop.Description.WindowState" xml:space="preserve">
-    <value>Last known window state of the program.</value>
+    <value>마지막 프로그램 창의 상태.</value>
   </data>
   <data name="FlashDevelop.Description.WrapList" xml:space="preserve">
-    <value>When navigating using keyboard.</value>
+    <value>키보드를 사용하여 탐색 할 때.</value>
   </data>
   <data name="FlashDevelop.Description.WrapText" xml:space="preserve">
-    <value>Wraps the texts in the editor.</value>
+    <value>편집기에서 텍스트 줄바꿈을 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Group.Main" xml:space="preserve">
-    <value>Main</value>
+    <value>메인</value>
   </data>
   <data name="FlashDevelop.Group.Plugins" xml:space="preserve">
-    <value>Plugins</value>
+    <value>플러그인</value>
   </data>
   <data name="FlashDevelop.Info.AppDescription" xml:space="preserve">
-    <value>The main application and the shared plugin core.</value>
+    <value>주요 응용 프로그램과 공유된 플러그인 핵심.</value>
   </data>
   <data name="FlashDevelop.Info.AreYouSureToReload" xml:space="preserve">
-    <value>Are you sure you want to reload the file? All changes get lost.</value>
+    <value>정말로 파일을 새로고침 하시겠습니까? 모든 변경 사항은 손실됩니다.</value>
   </data>
   <data name="FlashDevelop.Info.AreYouSureToRevert" xml:space="preserve">
-    <value>Are you sure you want to revert the file?</value>
+    <value>정말로 파일을 이 전 버전으로 되돌리시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Info.CheckingUpdates" xml:space="preserve">
-    <value>Checking for updates..</value>
+    <value>업데이트 확인중...</value>
   </data>
   <data name="FlashDevelop.Info.CodeAndStrings" xml:space="preserve">
-    <value>Code and strings</value>
+    <value>코드 및 문자열</value>
   </data>
   <data name="FlashDevelop.Info.CommentsOnly" xml:space="preserve">
-    <value>Comments only</value>
+    <value>주석만</value>
   </data>
   <data name="FlashDevelop.Info.CompareError" xml:space="preserve">
-    <value>Not an ICompletionListItem</value>
+    <value>ICompletionListItem이 아닙니다.</value>
   </data>
   <data name="FlashDevelop.Info.DeleteFilesAlso" xml:space="preserve">
-    <value>Do you also want to delete the files?</value>
+    <value>파일 또한 삭제 하시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Info.DescHeader" xml:space="preserve">
-    <value>Description</value>
+    <value>설명</value>
   </data>
   <data name="FlashDevelop.Info.Disable" xml:space="preserve">
-    <value>Disable</value>
+    <value>비활성</value>
   </data>
   <data name="FlashDevelop.Info.ErrorOccurred" xml:space="preserve">
-    <value>Error occurred in FlashDevelop. Here are details of the error:</value>
+    <value>FlashDevelop에서 오류가 발생했습니다. 오류의 세부 사항은 다음과 같습니다:</value>
   </data>
   <data name="FlashDevelop.Info.ErrorsInThisSession" xml:space="preserve">
-    <value>Errors in this session:</value>
+    <value>이 세션에서 오류 :</value>
   </data>
   <data name="FlashDevelop.Info.ExtensionFilter" xml:space="preserve">
-    <value>Extension filter:</value>
+    <value>확장 필터 :</value>
   </data>
   <data name="FlashDevelop.Info.FileDetails" xml:space="preserve">
-    <value>File: {1}{0}Created: {2}{0}Modified: {3}{0}Size: {4} bytes</value>
+    <value>파일: {1}{0}작성: {2}{0}수정: {3}{0}크기: {4} 바이트</value>
   </data>
   <data name="FlashDevelop.Info.FileDialogFilter" xml:space="preserve">
-    <value>All Files (*.*)</value>
+    <value>모든 파일 (*.*)</value>
   </data>
   <data name="FlashDevelop.Info.FileIsModifiedOutside" xml:space="preserve">
-    <value>A file has been modified externally. Do you want to reload the file:{0}{1}?</value>
+    <value>파일이 외부에서 수정되었습니다. 파일을 새로고침 하시겠습니까:{0}{1}?</value>
   </data>
   <data name="FlashDevelop.Info.Find" xml:space="preserve">
-    <value>Find:</value>
+    <value>찾기:</value>
   </data>
   <data name="FlashDevelop.Info.FindLookupCanceled" xml:space="preserve">
-    <value>The find lookup was canceled.</value>
+    <value>찾기 검색이 취소되었습니다.</value>
   </data>
   <data name="FlashDevelop.Info.FindWhat" xml:space="preserve">
-    <value>Find what:</value>
+    <value>찾기 대상:</value>
   </data>
   <data name="FlashDevelop.Info.FoundInFiles" xml:space="preserve">
-    <value>Found total of {0} matches in {1} files.</value>
+    <value>{1}개의 파일에서 총 {0}개의 대상이 일치했습니다.</value>
   </data>
   <data name="FlashDevelop.Info.FullSourceCode" xml:space="preserve">
-    <value>Full source code</value>
+    <value>전체 소스 코드</value>
   </data>
   <data name="FlashDevelop.Info.GiveProperInt32Value" xml:space="preserve">
-    <value>Give a proper integer value.</value>
+    <value>적절한 정수 값을 지정합니다.</value>
   </data>
   <data name="FlashDevelop.Info.Help" xml:space="preserve">
-    <value>Help</value>
+    <value>도움말</value>
   </data>
   <data name="FlashDevelop.Info.InitFailed" xml:space="preserve">
-    <value>Initialization failed. Please, run FlashDevelop again.</value>
+    <value>초기화에 실패했습니다. 다시 FlashDevelop을 실행하십시오.</value>
   </data>
   <data name="FlashDevelop.Info.Initializing" xml:space="preserve">
-    <value>FlashDevelop is initializing. Please wait...</value>
+    <value>FlashDevelop이 초기화 되고 있습니다. 잠시 기다려주십시오...</value>
   </data>
   <data name="FlashDevelop.Info.InvalidFileOnReopen" xml:space="preserve">
-    <value>Could not find the file to open. The menu will be repopulated.</value>
+    <value>열 파일을 찾을 수 없습니다. 메뉴를 새로고침 합니다..</value>
   </data>
   <data name="FlashDevelop.Info.LineHeader" xml:space="preserve">
-    <value>Line</value>
+    <value>줄</value>
   </data>
   <data name="FlashDevelop.Info.LookIn" xml:space="preserve">
-    <value>Look in:</value>
+    <value>찾는 대상:</value>
   </data>
   <data name="FlashDevelop.Info.MakeReadOnlyWritable" xml:space="preserve">
-    <value>The file is marked as read only. Do you want to make the file writable?</value>
+    <value>현재 파일은 읽기 전용으로 표시되어 있습니다. 이 파일에 쓰기 권한을 부여하시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Info.MatchesBookmarked" xml:space="preserve">
-    <value>All matches are now bookmarked.</value>
+    <value>일치하는 모든 항목이 모두 즐겨찾기에 등록되었습니다.</value>
   </data>
   <data name="FlashDevelop.Info.NoFileInfoAvailable" xml:space="preserve">
-    <value>The are no file info available.</value>
+    <value>사용 가능한 파일 정보가 없습니다.</value>
   </data>
   <data name="FlashDevelop.Info.NoItemSelected" xml:space="preserve">
-    <value>(no item selected)</value>
+    <value>(선택된 항목이 없습니다)</value>
   </data>
   <data name="FlashDevelop.Info.NoMatches" xml:space="preserve">
-    <value>No suitable matches available.</value>
+    <value>적합한 일치가 없습니다.</value>
   </data>
   <data name="FlashDevelop.Info.NoMatchesFound" xml:space="preserve">
-    <value>No matches were found.</value>
+    <value>일치하는 항목이 발견되지 않았습니다.</value>
   </data>
   <data name="FlashDevelop.Info.NothingToBookmark" xml:space="preserve">
-    <value>There is nothing to bookmark.</value>
+    <value>즐겨찾기의 대상이 없습니다.</value>
   </data>
   <data name="FlashDevelop.Info.NothingToPrint" xml:space="preserve">
-    <value>There is nothing to print.</value>
+    <value>인쇠할 대상이 없습니다.</value>
   </data>
   <data name="FlashDevelop.Info.NoUpdateAvailable" xml:space="preserve">
-    <value>There are no updates available.</value>
+    <value>새로운 업데이트가 없습니다.</value>
   </data>
   <data name="FlashDevelop.Info.OnlyErrorManager" xml:space="preserve">
-    <value>Only ErrorManager is allowed to show the error dialog directly.</value>
+    <value>ErrorManager만 직접 오류 대화 상자를 표시할 수 있습니다.</value>
   </data>
   <data name="FlashDevelop.Info.PathHeader" xml:space="preserve">
-    <value>Path</value>
+    <value>경로</value>
   </data>
   <data name="FlashDevelop.Info.PrintFooterPage" xml:space="preserve">
-    <value>Page</value>
+    <value>페이지</value>
   </data>
   <data name="FlashDevelop.Info.ProcessAlreadyRunning" xml:space="preserve">
-    <value>A process is currently running.</value>
+    <value>프로세스가 현재 실행 중입니다.</value>
   </data>
   <data name="FlashDevelop.Info.ProcessDone" xml:space="preserve">
-    <value>Done</value>
+    <value>완료</value>
   </data>
   <data name="FlashDevelop.Info.RecoveryInfo" xml:space="preserve">
-    <value>The recovery folder contains temporary backup files and this possibly means that your previous coding session was interrupted. {0}What do you want to do to these files?</value>
+    <value>복구 폴더에 임시 백업 파일이 있습니다. 아마도 이전 코딩 세션이 중단되었던 것 같습니다.{0}이 파일을 어떻게 하시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Info.ReplacedInFiles" xml:space="preserve">
-    <value>Replaced total of {0} matches in {1} files.</value>
+    <value>{1} 파일에서 총 {0]개의 일치하는 항목을 바꿨습니다.</value>
   </data>
   <data name="FlashDevelop.Info.ReplacedMatches" xml:space="preserve">
-    <value>Replaced total of {0} matches.</value>
+    <value>총 {0]개의 일치하는 항목을 바꿨습니다.</value>
   </data>
   <data name="FlashDevelop.Info.ReplaceLookupCanceled" xml:space="preserve">
-    <value>The replace lookup was canceled.</value>
+    <value>바꾸기 검색이 취소되었습니다.</value>
   </data>
   <data name="FlashDevelop.Info.ReplacementsHeader" xml:space="preserve">
-    <value>Replacements</value>
+    <value>교체</value>
   </data>
   <data name="FlashDevelop.Info.ReplaceWith" xml:space="preserve">
-    <value>Replace with:</value>
+    <value>교체:</value>
   </data>
   <data name="FlashDevelop.Info.RestartAfterPluginChange" xml:space="preserve">
-    <value>Please restart FlashDevelop after enabling or disabling plugins.</value>
+    <value>플러그인을 활성화 또는 비활성화한 후 FlashDevelop를 다시 시작하십시오.</value>
   </data>
   <data name="FlashDevelop.Info.RunningProcess" xml:space="preserve">
-    <value>Running process:</value>
+    <value>실행중인 프로세스:</value>
   </data>
   <data name="FlashDevelop.Info.SaveChanges" xml:space="preserve">
-    <value>Do you want to save the current changes?</value>
+    <value>현재 변경 사항을 저장 하시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Info.SelectedReplaced" xml:space="preserve">
-    <value>The selected match was replaced.</value>
+    <value>선택한 일치 항목이 교체되었습니다.</value>
   </data>
   <data name="FlashDevelop.Info.SettingsTakeEffect" xml:space="preserve">
-    <value>Settings will take effect as soon as you edit them successfully but some may require a program restart.</value>
+    <value>대부분의 설정은 편집 즉시 적용되지만, 일부는 프로그램을 다시 시작해야 적용됩니다.</value>
   </data>
   <data name="FlashDevelop.Info.ShowingResult" xml:space="preserve">
-    <value>Showing result {0} of {1}.</value>
+    <value>{1}개 중 {0}번째 결과.</value>
   </data>
   <data name="FlashDevelop.Info.SnippetFilter" xml:space="preserve">
-    <value>FlashDevelop Snippets (*.fds)</value>
+    <value>FlashDevelop 코드조각 (*.fds)</value>
   </data>
   <data name="FlashDevelop.Info.SnippetItemDesc" xml:space="preserve">
-    <value>Snippet</value>
+    <value>코드조각</value>
   </data>
   <data name="FlashDevelop.Info.StatusText" xml:space="preserve">
-    <value>Line: {0}  |  Column: {1}  |  EOL: ({2})  |  Encoding: {3}  |  {4}</value>
+    <value>행: {0}  |  열: {1}  |  EOL: ({2})  |  인코딩: {3}  |  {4}</value>
   </data>
   <data name="FlashDevelop.Info.StringsOnly" xml:space="preserve">
-    <value>Strings only</value>
+    <value>문자열만</value>
   </data>
   <data name="FlashDevelop.Info.TemplateFilter" xml:space="preserve">
-    <value>FlashDevelop Templates (*.fdt)</value>
+    <value>FlashDevelop 템플릿 (*.fdt)</value>
   </data>
   <data name="FlashDevelop.Info.TopFolder" xml:space="preserve">
-    <value>Top folder:</value>
+    <value>최상위 폴더 :</value>
   </data>
   <data name="FlashDevelop.Info.Unknown" xml:space="preserve">
-    <value>Unknown</value>
+    <value>알 수 없음</value>
   </data>
   <data name="FlashDevelop.Info.UntitledFileStart" xml:space="preserve">
-    <value>Untitled</value>
+    <value>제목 없음</value>
   </data>
   <data name="FlashDevelop.Info.UpdateAvailable" xml:space="preserve">
-    <value>There is a newer version of FlashDevelop available.{0}Your version: {1}  /  Server version: {2}</value>
+    <value>FlashDevelop의 새로운 버전이 있습니다.{0}현재 버전: {1}  /  서버 버전: {2}</value>
   </data>
   <data name="FlashDevelop.Info.UpdateCheckFailed" xml:space="preserve">
-    <value>Could not run the update check.{0}Please check your internet connection.</value>
+    <value>업데이트 검사를 실행 할 수 없습니다.{0}인터넷 연결을 확인하시기 바랍니다.</value>
   </data>
   <data name="FlashDevelop.Info.Value" xml:space="preserve">
-    <value>Value:</value>
+    <value>값:</value>
   </data>
   <data name="FlashDevelop.Label.8Bits" xml:space="preserve">
     <value>8 &amp;Bits</value>
@@ -2162,9 +2162,9 @@
     <value>Show the start page when all documents are closed instead of untitled document.</value>
   </data>
   <data name="StartPage.Description.ShowStartPageOnStartup" xml:space="preserve">
-    <value>Should the start page show when you open FlashDevelop: 
-Always - FlashDevelop will not restore a session, but instead show the start page. 
-NotRestoringSession - start page will show if FlashDevelop is not restoring a session. 
+    <value>Should the start page show when you open FlashDevelop:
+Always - FlashDevelop will not restore a session, but instead show the start page.
+NotRestoringSession - start page will show if FlashDevelop is not restoring a session.
 Never - the start page will not show based on startup.</value>
   </data>
   <data name="StartPage.Description.UseCustomRssFeed" xml:space="preserve">
@@ -2349,7 +2349,7 @@ Never - the start page will not show based on startup.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
-    <value>Always use this syntax for files with this extension?</value>
+    <value>항상 이 확장자를 가진 파일에 이 구문을 사용하시겠습니까?</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="ProjectManager.Title.OpenProjectDialog" xml:space="preserve">
@@ -2390,25 +2390,25 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>텍스트</value>
   </data>
   <data name="BookmarkPanel.Info.Description" xml:space="preserve">
-    <value>FlashDevelop에 즐겨 찾기 관리 패널을 추가합니다.</value>
+    <value>FlashDevelop에 즐겨찾기 관리 패널을 추가합니다.</value>
   </data>
   <data name="BookmarkPanel.Info.NothingToBookmark" xml:space="preserve">
-    <value>즐겨 찾기를 지정할것이 없습니다.</value>
+    <value>즐겨찾기를 지정할것이 없습니다.</value>
   </data>
   <data name="BookmarkPanel.Info.RemoveBookmarks" xml:space="preserve">
-    <value>선택된 즐겨 찾기를 삭제 하시겠습니까?</value>
+    <value>선택된 즐겨찾기를 삭제 하시겠습니까?</value>
   </data>
   <data name="BookmarkPanel.Label.RemoveBookmarks" xml:space="preserve">
-    <value>즐겨 찾기 제거</value>
+    <value>즐겨찾기 제거</value>
   </data>
   <data name="BookmarkPanel.Label.ViewMenuItem" xml:space="preserve">
-    <value>즐겨 찾기 패널</value>
+    <value>즐겨찾기 패널</value>
   </data>
   <data name="BookmarkPanel.Title.PluginPanel" xml:space="preserve">
-    <value>즐겨 찾기</value>
+    <value>즐겨찾기</value>
   </data>
   <data name="BookmarkPanel.ToolTip.SearchBookmarks" xml:space="preserve">
-    <value>즐겨 찾기 검색 및 추가</value>
+    <value>즐겨찾기 검색 및 추가</value>
   </data>
   <data name="ProjectManager.Info.OpenDocument" xml:space="preserve">
     <value>Open document...</value>
@@ -2421,7 +2421,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Info.NotEnoughArguments" xml:space="preserve">
-    <value>Not enough arguments to run a process successfully:</value>
+    <value>프로세스를 실행하기에 인수가 충분하지 않습니다:</value>
   </data>
   <data name="ProjectManager.Label.BrowseDirectory" xml:space="preserve">
     <value>E&amp;xplore</value>
@@ -2433,16 +2433,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>C&amp;ustom Arguments...</value>
   </data>
   <data name="FlashDevelop.Group.Arguments" xml:space="preserve">
-    <value>Arguments</value>
+    <value>인수</value>
   </data>
   <data name="FlashDevelop.Info.Argument" xml:space="preserve">
-    <value>Argument:</value>
+    <value>인수:</value>
   </data>
   <data name="FlashDevelop.Info.Details" xml:space="preserve">
-    <value>Details</value>
+    <value>세부 사항</value>
   </data>
   <data name="FlashDevelop.Info.Key" xml:space="preserve">
-    <value>Key:</value>
+    <value>키:</value>
   </data>
   <data name="FlashDevelop.Info.Undefined" xml:space="preserve">
     <value>Undefined</value>
@@ -2457,10 +2457,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Custom Arguments</value>
   </data>
   <data name="FlashDevelop.Info.ArgumentsTakeEffect" xml:space="preserve">
-    <value>Custom arguments will take effect as soon as you edit them successfully.</value>
+    <value>사용자 정의 인수는 편집 즉시 적용됩니다.</value>
   </data>
   <data name="BookmarkPanel.Label.RemoveBookmark" xml:space="preserve">
-    <value>즐겨 찾기 제거</value>
+    <value>즐겨찾기 제거</value>
   </data>
   <data name="ProjectManager.Label.ImportProject" xml:space="preserve">
     <value>&amp;Import Project...</value>
@@ -2472,16 +2472,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Adobe Flash Builder Project (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
-    <value>Send results to Results Panel</value>
+    <value>결과 패널에 결과를 보내기</value>
   </data>
   <data name="FlashDevelop.Description.DefaultFont" xml:space="preserve">
-    <value>Defines the default UI font of the program.</value>
+    <value>프로그램의 기본 UI 글꼴을 정의합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ViewModifiedLines" xml:space="preserve">
-    <value>Shows the lines in the editor that have been modified by highlighting the margin with the defined color untill saved.</value>
+    <value>저장 될 때까지 정의 된 색으로 여백을 강조 표시하여 편집기에서 수정된 선을 보여줍니다.</value>
   </data>
   <data name="FlashDevelop.Description.ConsoleFont" xml:space="preserve">
-    <value>Font used in console or output controls.</value>
+    <value>콘솔 또는 출력 컨트롤에 사용되는 글꼴입니다.</value>
   </data>
   <data name="FlashDevelop.Label.SortLines" xml:space="preserve">
     <value>Sort Lines</value>
@@ -2493,7 +2493,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>알려진 유형의 역동적 구문 색상을 사용하지 않도록 설정합니다.</value>
   </data>
   <data name="FlashDevelop.Description.ViewStatusBar" xml:space="preserve">
-    <value>Displays the default statusbar.</value>
+    <value>기본 상태 표시줄을 표시합니다.</value>
   </data>
   <data name="ProjectManager.Description.MinorVersion" xml:space="preserve">
     <value>Optionally define an explicit Flash player minor version target (like "0.60" for verison "9.0.60").</value>
@@ -2502,7 +2502,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>&amp;Debug</value>
   </data>
   <data name="FlashDevelop.Info.ArgumentFilter" xml:space="preserve">
-    <value>FlashDevelop Arguments (*.fda)</value>
+    <value>FlashDevelop 인수 (*.fda)</value>
   </data>
   <data name="FlashDevelop.Label.ExportArguments" xml:space="preserve">
     <value>&amp;Export Arguments...</value>
@@ -2556,19 +2556,19 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>자동으로 패키지 / 클래스 선언하지 않은 파일에 적용할 최신 ActionScript 버전을 저장합니다.</value>
   </data>
   <data name="FlashDevelop.Info.FileHeader" xml:space="preserve">
-    <value>File</value>
+    <value>파일</value>
   </data>
   <data name="FlashDevelop.Description.UseListViewGrouping" xml:space="preserve">
-    <value>Uses item grouping in ListView controls.</value>
+    <value>ListView 컨트롤에 그룹화 항목을 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Group.Other" xml:space="preserve">
-    <value>Other</value>
+    <value>기타</value>
   </data>
   <data name="ASCompletion.Description.DisableLiveSyntaxChecking" xml:space="preserve">
     <value>실시간 자동 구문 검사를 사용하지 않도록 설정합니다.</value>
   </data>
   <data name="FlashDevelop.Info.CurrentSelection" xml:space="preserve">
-    <value>Current selection</value>
+    <value>현재 선택:</value>
   </data>
   <data name="ASCompletion.Description.GenerateProtectedDeclarations" xml:space="preserve">
     <value>기본으로 생성기가 'private' 선언을 생성합니다. 대신 액션 스크립트 3에서 'protected' 선언을 하려면이 옵션을 설정합니다.</value>
@@ -2586,19 +2586,19 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Specifies a file declaring symbols to omit from linking. This file can be generated using link-report compiler option.</value>
   </data>
   <data name="FlashDevelop.Description.InsertionTriggers" xml:space="preserve">
-    <value>Set this option to limit the characters which insert completion list item. Tab and Enter characters must be escaped (ie. \t \n).</value>
+    <value>완성 목록 항목의 삽입 문자를 제한하려면 이 옵션을 설정합니다. Tab과 Enter는 이스케이프 처리를 해야합니다 (예. \t \n).</value>
   </data>
   <data name="TaskListPanel.Info.InvalidFile" xml:space="preserve">
     <value>The file could not be found. The task list will be refreshed.</value>
   </data>
   <data name="FlashDevelop.Description.PrintMarginColumn" xml:space="preserve">
-    <value>Shows the print margin on the right where the text should be kept.</value>
+    <value>오른쪽에있는 텍스트가 유지되어야할 인쇄 여백을 표시합니다.</value>
   </data>
   <data name="FileExplorer.Description.SynchronizeToProject" xml:space="preserve">
     <value>현재 프로젝트와 파일뷰를 동기화합니다.</value>
   </data>
   <data name="FlashDevelop.Description.SaveUnicodeWithBOM" xml:space="preserve">
-    <value>Creates new Unicode encoded files with BOM (byte-order mark).</value>
+    <value>BOM (byte-order marks)을 사용하여 새 유니 코드로 인코딩 된 파일을 작성합니다.</value>
   </data>
   <data name="FlashDevelop.Label.OpenFilesIn" xml:space="preserve">
     <value>&amp;Open Files In</value>
@@ -2703,37 +2703,37 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>&amp;Syntax Coloring...</value>
   </data>
   <data name="FlashDevelop.Info.Background" xml:space="preserve">
-    <value>Background:</value>
+    <value>배경:</value>
   </data>
   <data name="FlashDevelop.Info.Bold" xml:space="preserve">
-    <value>Bold</value>
+    <value>굵게</value>
   </data>
   <data name="FlashDevelop.Info.Font" xml:space="preserve">
-    <value>Font:</value>
+    <value>글꼴:</value>
   </data>
   <data name="FlashDevelop.Info.Foreground" xml:space="preserve">
-    <value>Foreground:</value>
+    <value>전경:</value>
   </data>
   <data name="FlashDevelop.Info.Italic" xml:space="preserve">
-    <value>Italics</value>
+    <value>기울임꼴</value>
   </data>
   <data name="FlashDevelop.Info.ZipFilter" xml:space="preserve">
-    <value>FlashDevelop Zip Files (*.fdz)|*.fdz</value>
+    <value>FlashDevelop Zip 파일 (*.fdz)|*.fdz</value>
   </data>
   <data name="FlashDevelop.Info.EditorStyle" xml:space="preserve">
-    <value>Editor Style</value>
+    <value>편집기 스타일</value>
   </data>
   <data name="FlashDevelop.Info.SampleText" xml:space="preserve">
-    <value>Sample Text</value>
+    <value>예제 텍스트</value>
   </data>
   <data name="FlashDevelop.Info.SaveCurrentLanguage" xml:space="preserve">
-    <value>Do you want to save the current language?</value>
+    <value>현재의 언어를 저장 하시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Info.ItemStyle" xml:space="preserve">
-    <value>Item Style</value>
+    <value>항목 스타일</value>
   </data>
   <data name="FlashDevelop.Info.Size" xml:space="preserve">
-    <value>Size:</value>
+    <value>크기:</value>
   </data>
   <data name="FlashDevelop.Label.ExportFiles" xml:space="preserve">
     <value>Export Files...</value>
@@ -2745,22 +2745,22 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Export Syntax Files</value>
   </data>
   <data name="FlashDevelop.Info.ZipExtractDone" xml:space="preserve">
-    <value>The zip file was extracted successfully.</value>
+    <value>Zip 파일이 성공적으로 추출되었습니다.</value>
   </data>
   <data name="FlashDevelop.Info.CaretFore" xml:space="preserve">
-    <value>Caret fore:</value>
+    <value>캐럿:</value>
   </data>
   <data name="FlashDevelop.Info.CaretLineBack" xml:space="preserve">
-    <value>Caret line:</value>
+    <value>캐럿 줄:</value>
   </data>
   <data name="FlashDevelop.Info.SelectionBack" xml:space="preserve">
-    <value>Selection back:</value>
+    <value>선택 배경:</value>
   </data>
   <data name="FlashDevelop.Info.SelectionFore" xml:space="preserve">
-    <value>Selection fore:</value>
+    <value>선택 전경:</value>
   </data>
   <data name="FlashDevelop.Info.ZipConfirmExtract" xml:space="preserve">
-    <value>Can the following zip file be extracted:</value>
+    <value>다음 Zip 파일이 추출됩니다:</value>
   </data>
   <data name="ResultsPanel.Description.ScrollToBottom" xml:space="preserve">
     <value>Scrolls the result view to the bottom on new results.</value>
@@ -2769,46 +2769,46 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>&amp;Apply</value>
   </data>
   <data name="FlashDevelop.Info.RevertSettingsFiles" xml:space="preserve">
-    <value>Do you want to revert all the language setting files [Yes] or just the other language configuration keeping your coloring settings [No]?</value>
+    <value>모든 언어 설정 파일을 되돌리시겠습니까 [예] 아니면 색상 설정을 유지하면서 다른 언어 구성만 되돌리시겠습니까 [아니오]?</value>
   </data>
   <data name="FlashDevelop.Label.RevertFiles" xml:space="preserve">
     <value>Revert Files...</value>
   </data>
   <data name="FlashDevelop.Info.ColoringTagsMissing" xml:space="preserve">
-    <value>Your language setting file is probably missing coloring start and end comments.</value>
+    <value>언어 설정 파일에 칼라 시작과 끝 주석이 없습니다.</value>
   </data>
   <data name="FlashDevelop.Info.ConfirmSnippetDelete" xml:space="preserve">
-    <value>Do you really want to delete this snippet?</value>
+    <value>정말 이 코드조각을 삭제 하시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Info.InsertInstruction" xml:space="preserve">
-    <value>Insert instruction:</value>
+    <value>명령어 삽입 :</value>
   </data>
   <data name="FlashDevelop.Info.SelectSnippetLocation" xml:space="preserve">
-    <value>Select your snippets directory location...</value>
+    <value>코드조각 디렉토리 위치를 선택...</value>
   </data>
   <data name="FlashDevelop.Info.SnippetName" xml:space="preserve">
-    <value>Snippet name:</value>
+    <value>코드조각 이름:</value>
   </data>
   <data name="FlashDevelop.Info.Snippets" xml:space="preserve">
-    <value>Snippets:</value>
+    <value>코드조각:</value>
   </data>
   <data name="FlashDevelop.Title.SnippetDialog" xml:space="preserve">
     <value>Code Snippets</value>
   </data>
   <data name="FlashDevelop.Info.CouldNotBeRecycled" xml:space="preserve">
-    <value>Could not be recycled:</value>
+    <value>재활용 할 수 없습니다:</value>
   </data>
   <data name="FlashDevelop.Info.SaveCurrentSnippet" xml:space="preserve">
-    <value>Do you want to save the current snippet?</value>
+    <value>현재의 코드조각을 저장 하시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Info.RevertSnippetFiles" xml:space="preserve">
-    <value>Do you really want to revert all snippet files to defaults?</value>
+    <value>정말로 모든 코드조각 파일을 기본값으로 되돌리시겠습니까?</value>
   </data>
   <data name="FlashDevelop.Description.AutoReloadModifiedFiles" xml:space="preserve">
-    <value>Reloads externally modified files without prompting.</value>
+    <value>메시지를 표시하지 않고 외부에서 수정 된 파일을 다시로드합니다.</value>
   </data>
   <data name="FlashDevelop.Info.CouldNotExecuteScript" xml:space="preserve">
-    <value>The script could not be executed properly:</value>
+    <value>스크립트를 제대로 실행할 수 없습니다:</value>
   </data>
   <data name="MacroManager.Description.UserMacros" xml:space="preserve">
     <value>List of currently available macros.</value>
@@ -2931,7 +2931,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>코드 자동 생성기 템플릿</value>
   </data>
   <data name="ASCompletion.Info.InsertKeywordSnippet" xml:space="preserve">
-    <value>Tab 키를 눌러 코드 조각을 삽입.</value>
+    <value>Tab 키를 눌러 코드조각을 삽입.</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ASCompletion.Info.ShowDetails" xml:space="preserve">
@@ -2957,16 +2957,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Style</value>
   </data>
   <data name="FlashDevelop.Info.MarginBack" xml:space="preserve">
-    <value>Margin back:</value>
+    <value>여백 배경:</value>
   </data>
   <data name="FlashDevelop.Info.MarginFore" xml:space="preserve">
-    <value>Margin fore:</value>
+    <value>여백 전경:</value>
   </data>
   <data name="FlashDevelop.Info.MarkerBack" xml:space="preserve">
-    <value>Marker back:</value>
+    <value>마커 배경:</value>
   </data>
   <data name="FlashDevelop.Info.MarkerFore" xml:space="preserve">
-    <value>Marker fore:</value>
+    <value>마커 전경:</value>
   </data>
   <data name="FlashDevelop.Label.BlockComment" xml:space="preserve">
     <value>Block Co&amp;mment</value>
@@ -2984,7 +2984,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Uncomment Line</value>
   </data>
   <data name="FlashDevelop.Info.RequiresRestart" xml:space="preserve">
-    <value>To apply all changes, you need to restart FlashDevelop.</value>
+    <value>모든 변경 사항을 적용하려면 FlashDevelop를 다시 시작해야합니다.</value>
   </data>
   <data name="FlashDevelop.Label.Restart" xml:space="preserve">
     <value>Res&amp;tart</value>
@@ -3005,7 +3005,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Set to false, Haxe completion will be displayed only when CTRL-Space or CTRL-Shift-Space is pressed.</value>
   </data>
   <data name="FlashDevelop.Description.DisableFindTextUpdating" xml:space="preserve">
-    <value>Disables the find text update when the quick find is used.</value>
+    <value>빨리 찾기를 사용할 때 찾기 텍스트 업데이트를 사용하지 않습니다.</value>
   </data>
   <data name="HaXeContext.Description.ExportHXML" xml:space="preserve">
     <value>Always export a HXML when the HXPROJ is modified.</value>
@@ -3146,10 +3146,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>위임 메소드</value>
   </data>
   <data name="FlashDevelop.Description.DisableReplaceFilesConfirm" xml:space="preserve">
-    <value>Disables the confirmation of the replace in files operation.</value>
+    <value>파일에서 바꾸기 작업의 확인을 사용하지 않습니다.</value>
   </data>
   <data name="FlashDevelop.Info.AreYouSureToReplaceInFiles" xml:space="preserve">
-    <value>Are you sure you want to replace in files? The changes cannot be undone.</value>
+    <value>파일에서 바꾸기를 실행 하시겠습니까? 변경 사항은 취소 할 수 없습니다.</value>
   </data>
   <data name="FlashDevelop.Label.UndoClose" xml:space="preserve">
     <value>&amp;Undo Close</value>
@@ -3164,16 +3164,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>위임 메소드 생성... (&amp;G)</value>
   </data>
   <data name="FlashDevelop.Description.UseSystemColors" xml:space="preserve">
-    <value>Forces FlashDevelop to use only system colors in the controls.</value>
+    <value>FlashDevelop 컨트롤이 시스템 색상만을 사용할 수 있게 설정합니다.</value>
   </data>
   <data name="ProjectManager.Label.FindHere" xml:space="preserve">
     <value>Find And Replace</value>
   </data>
   <data name="FlashDevelop.Description.FilePollInterval" xml:space="preserve">
-    <value>Interval in milliseconds to check changes to open files.</value>
+    <value>열린 파일의 변경 사항을 확인하는 간격 (밀리초).</value>
   </data>
   <data name="FlashDevelop.Description.HighlightMatchingWordsMode" xml:space="preserve">
-    <value>When words matching the current selection should be highlighted.</value>
+    <value>단어 일치 하이라이트가 표시되는 조건.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
@@ -3195,7 +3195,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>&amp;Build Project Files</value>
   </data>
   <data name="FlashDevelop.Description.DisableFindOptionSync" xml:space="preserve">
-    <value>Disables the find option syncing between the find dialog and the quick find control.</value>
+    <value>찾기 대화 상자와 빠른 찾기 컨트롤 사이에 찾기 옵션 동기화를 사용하지 않습니다.</value>
   </data>
   <data name="ProjectManager.Label.BuildAllProjects" xml:space="preserve">
     <value>Build All Projects</value>
@@ -3216,16 +3216,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Search...</value>
   </data>
   <data name="FlashDevelop.Info.BookmarkLine" xml:space="preserve">
-    <value>Bookmark line:</value>
+    <value>즐겨찾기 라인 :</value>
   </data>
   <data name="FlashDevelop.Info.HighlightBack" xml:space="preserve">
-    <value>Highlight back:</value>
+    <value>강조 배경:</value>
   </data>
   <data name="FlashDevelop.Info.ModifiedLine" xml:space="preserve">
-    <value>Modified line:</value>
+    <value>수정된 줄 :</value>
   </data>
   <data name="FlashDevelop.Info.PrintMargin" xml:space="preserve">
-    <value>Print margin:</value>
+    <value>인쇄 여백:</value>
   </data>
   <data name="CodeRefactor.Description.SeparatePackages" xml:space="preserve">
     <value>줄 바꿈으로 다른 패키지를 구분합니다.</value>
@@ -3406,7 +3406,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>알 수 없는 이벤트 유형 '${type}', 정보 = ${info}.</value>
   </data>
   <data name="FlashDebugger.Info.UnknownFilename" xml:space="preserve">
-    <value>&lt;unknown&gt;</value>
+    <value>&lt;알 수 없음&gt;</value>
   </data>
   <data name="FlashDebugger.Info.WaitingForPlayer" xml:space="preserve">
     <value>Flash Player가 디버거와 연결하기를 기다리고 있습니다.</value>
@@ -3741,13 +3741,13 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>새로운 클래스</value>
   </data>
   <data name="FlashDevelop.Info.DebugLineBack" xml:space="preserve">
-    <value>Debug line:</value>
+    <value>디버그 줄:</value>
   </data>
   <data name="FlashDevelop.Info.DisabledLineBack" xml:space="preserve">
-    <value>Disabled line:</value>
+    <value>비활성화 줄:</value>
   </data>
   <data name="FlashDevelop.Info.ErrorLineBack" xml:space="preserve">
-    <value>Error line:</value>
+    <value>오류 줄 :</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
     <value>Track Active Document</value>
@@ -3758,7 +3758,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.FilterSettings" xml:space="preserve">
-    <value>Filter settings:</value>
+    <value>필터 설정:</value>
   </data>
   <data name="ProjectManager.Description.DisableExtFlashIntegration" xml:space="preserve">
     <value>Extended Flash IDE integration allows to debug/profile SWFs compiled with the Flash IDE in FlashDevelop.</value>
@@ -3906,7 +3906,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Source Control</value>
   </data>
   <data name="FlashDevelop.Info.Language" xml:space="preserve">
-    <value>Language:</value>
+    <value>언어:</value>
   </data>
   <data name="FlashDevelop.Label.TextDocument" xml:space="preserve">
     <value>Text Document</value>
@@ -3931,7 +3931,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Info.ShortcutEditInfo" xml:space="preserve">
-    <value>Shortcuts can be edited by selecting an item and pressing valid menu item shortcut keys.</value>
+    <value>항목을 선택하고 유효한 바로가기 키를 눌러 바로가기를 편집 할 수 있습니다.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.Command" xml:space="preserve">
@@ -3967,7 +3967,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.UnableToLoadPlugin" xml:space="preserve">
-    <value>Unable to load an incompatible or broken plugin:</value>
+    <value>플러그인이 호환되지 않거나 깨져서 로드 할 수 없습니다:</value>
     <comment>Modified after 4.0.3</comment>
   </data>
   <data name="CodeRefactor.Label.InvokeCodeGenerator" xml:space="preserve">
@@ -3978,7 +3978,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Menu key shortcut of the macro.</value>
   </data>
   <data name="FlashDevelop.Info.ShortcutIsAlreadyUsed" xml:space="preserve">
-    <value>The shortcut has already been assigned to another command.</value>
+    <value>바로 가기가 이미 다른 명령에 지정되었습니다.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Alert.Message.AppDescriptorNotFound" xml:space="preserve">
@@ -4443,7 +4443,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="FlashDevelop.Description.CustomShortcuts" xml:space="preserve">
-    <value>List of user defined override shortcuts.</value>
+    <value>사용자 정의 단축키 목록.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="SourceControl.Category.HG" xml:space="preserve">
@@ -4522,11 +4522,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="FlashDevelop.Description.ConfirmOnExit" xml:space="preserve">
-    <value>Confirms closing on program exit.</value>
+    <value>프로그램 종료시 확인합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="FlashDevelop.Info.AreYouSureToExit" xml:space="preserve">
-    <value>Are you sure you want to exit FlashDevelop?</value>
+    <value>FlashDevelop을 종료 하시겠습니까?</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="FlashDevelop.Label.MoveLineDown" xml:space="preserve">
@@ -4538,11 +4538,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.2.2</comment>
   </data>
   <data name="FlashDevelop.Description.VirtualSpaceMode" xml:space="preserve">
-    <value>Sets the virtual space mode with rectangular selection.</value>
+    <value>사각형 선택으로 가상 공간 모드를 설정합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="FlashDevelop.Category.Locale" xml:space="preserve">
-    <value>Locale</value>
+    <value>로케일</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Description.BridgePort" xml:space="preserve">
@@ -4952,19 +4952,19 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Category.Paths" xml:space="preserve">
-    <value>Paths</value>
+    <value>사용자 정의 경로</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Description.CustomSnippetDir" xml:space="preserve">
-    <value>Path to the custom snippets directory.</value>
+    <value>사용자 정의 코드조각 디렉토리 경로.</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Description.CustomTemplateDir" xml:space="preserve">
-    <value>Path to the custom templates directory.</value>
+    <value>사용자 정의 템플릿 디렉토리 경로.</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Description.CustomProjectsDir" xml:space="preserve">
-    <value>Path to the custom project templates directory.</value>
+    <value>사용자 정의 프로젝트 템플릿 디렉토리를 경로.</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ASCompletion.Description.HandlerNamingConvention" xml:space="preserve">
@@ -5020,7 +5020,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.0.1</comment>
   </data>
   <data name="FlashDevelop.Description.DisableSimpleQuickFind" xml:space="preserve">
-    <value>Disables the simple find when Quick Find control is hidden.</value>
+    <value>빨리 찾기 제어가 숨겨져 있을때 간단한 찾기를 사용하지 않습니다.</value>
     <comment>Added after 4.0.1</comment>
   </data>
   <data name="BasicCompletion.Description.DisableAutoCompletion" xml:space="preserve">
@@ -5092,7 +5092,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added for 4.1</comment>
   </data>
   <data name="FlashDevelop.Description.DisableTabDifferentiation" xml:space="preserve">
-    <value>Disables the showing of directory names in document tabs.</value>
+    <value>문서 탭에서 디렉토리 이름을 보여주지 않게 설정합니다.</value>
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="ProjectManager.Description.TabHighlightColor" xml:space="preserve">
@@ -5128,7 +5128,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.2.3</comment>
   </data>
   <data name="FlashDevelop.Info.ThemesFilter" xml:space="preserve">
-    <value>FlashDevelop Theme Files (*.fdi, *.fdz)|*.fdi;*.fdz</value>
+    <value>FlashDevelop 테마 파일 (*.fdi, *.fdz)|*.fdi;*.fdz</value>
     <comment>Added after 4.2.4</comment>
   </data>
   <data name="FlashDevelop.Label.SelectTheme" xml:space="preserve">
@@ -5164,7 +5164,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.3.0</comment>
   </data>
   <data name="FlashDevelop.Info.InvalidToolPath" xml:space="preserve">
-    <value>Incorrect path to {0} in {1} settings</value>
+    <value>{1} 설정에서 {0}에 잘못된 경로</value>
     <comment>Added after 4.4.1</comment>
   </data>
   <data name="ProjectManager.Description.InlineFunctions" xml:space="preserve">
@@ -5204,11 +5204,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.5.0</comment>
   </data>
   <data name="FlashDevelop.Info.ZipConfirmRemove" xml:space="preserve">
-    <value>Can the following zip file be removed:</value>
+    <value>다음 Zip 파일이 제거됩니다:</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="FlashDevelop.Info.ZipRemoveDone" xml:space="preserve">
-    <value>The zip file was removed successfully.</value>
+    <value>Zip 파일이 성공적으로 제거되었습니다.</value>
     <comment>Added after 4.5.1</comment>
   </data>
   <data name="CodeRefactor.Info.MovingFile" xml:space="preserve">
@@ -5242,7 +5242,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
-    <value>Type of the intendation guide behaviour.</value>
+    <value>들여 쓰기 가이드의 종류.</value>
     <comment>Added after 4.6.0</comment>
   </data>
   <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">
@@ -5254,7 +5254,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="FlashDevelop.Description.KeepIndentTabs" xml:space="preserve">
-    <value>Keep indent tabs when strip trailing spaces.</value>
+    <value>후행 공백을 제거할때 들여쓰기 탭을 유지합니다.</value>
     <comment>Added after 4.6.2</comment>
   </data>
   <data name="AirProperties.AspectRatio.Any" xml:space="preserve">
@@ -5450,11 +5450,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
-    <value>View shortcuts in main menu, context menus and toolbars.</value>
+    <value>메인 메뉴, 컨텍스트 메뉴 및 도구 모음에서 바로 가기 보기.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
-    <value>Colorize first margin with 'gdefault' foreground color</value>
+    <value>'gdefault'의 전경 색상으로 첫 번째 마진을 칠하기.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
@@ -5878,7 +5878,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDevelop.Description.CheckForUpdates" xml:space="preserve">
-    <value>Sets how often FlashDevelop checks for updates.</value>
+    <value>FlashDevelop가 업데이트를 확인하는 빈도를 설정합니다.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Info.ConsistentEOLs" xml:space="preserve">
@@ -5926,7 +5926,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDevelop.Description.HighlightMatchingWordsDelay" xml:space="preserve">
-    <value>The delay in milliseconds after the word match highlight should be shown.</value>
+    <value>단어 일치 하이라이트의 표시 지연 (밀리초).</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDebugger.Category.DataTree" xml:space="preserve">
@@ -5977,7 +5977,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>패키지 폴더를 선택합니다 :</value>
   </data>
   <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
-    <value>Highlight word:</value>
+    <value>강조 단어:</value>
     <comment>Added after 5.0.2</comment>
   </data>
 </root>
