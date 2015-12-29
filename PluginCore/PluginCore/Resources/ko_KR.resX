@@ -1299,46 +1299,46 @@
     <value>편집기 텍스트 줄바꿈 (&amp;E)</value>
   </data>
   <data name="FlashDevelop.Title.AboutDialog" xml:space="preserve">
-    <value>About FlashDevelop</value>
+    <value>FlashDevelop 소개</value>
   </data>
   <data name="FlashDevelop.Title.ConfirmDialog" xml:space="preserve">
-    <value>Confirm</value>
+    <value>확인</value>
   </data>
   <data name="FlashDevelop.Title.CustomDocument" xml:space="preserve">
-    <value>Loading...</value>
+    <value>로드 중...</value>
   </data>
   <data name="FlashDevelop.Title.ErrorDialog" xml:space="preserve">
-    <value>Error</value>
+    <value>오류</value>
   </data>
   <data name="FlashDevelop.Title.FindAndReplaceDialog" xml:space="preserve">
-    <value>Find And Replace</value>
+    <value>찾기 및 바꾸기</value>
   </data>
   <data name="FlashDevelop.Title.FindAndReplaceInFilesDialog" xml:space="preserve">
-    <value>Find And Replace In Files</value>
+    <value>파일에서 찾기 및 바꾸기</value>
   </data>
   <data name="FlashDevelop.Title.GoToDialog" xml:space="preserve">
-    <value>Goto</value>
+    <value>이동</value>
   </data>
   <data name="FlashDevelop.Title.InfoDialog" xml:space="preserve">
-    <value>Information</value>
+    <value>정보</value>
   </data>
   <data name="FlashDevelop.Title.RecoveryDialog" xml:space="preserve">
-    <value>Recovery File Notification</value>
+    <value>복구 파일 알림</value>
   </data>
   <data name="FlashDevelop.Title.SaveChanges" xml:space="preserve">
-    <value>Save Changes In:</value>
+    <value>여기에 변경 사항을 저장:</value>
   </data>
   <data name="FlashDevelop.Title.SettingDialog" xml:space="preserve">
-    <value>Settings</value>
+    <value>설정</value>
   </data>
   <data name="FlashDevelop.Title.UpdateDialog" xml:space="preserve">
-    <value>Update Check</value>
+    <value>업데이트 확인</value>
   </data>
   <data name="FlashDevelop.Title.WarningDialog" xml:space="preserve">
-    <value>Warning</value>
+    <value>경고</value>
   </data>
   <data name="FlashDevelop.ToolTip.ToggleResults" xml:space="preserve">
-    <value>Toggle Results</value>
+    <value>결과 전환</value>
   </data>
   <data name="FlashViewer.Description.DisplayStyle" xml:space="preserve">
     <value>Specifies how Flash movies are viewed in FlashDevelop.</value>
@@ -2339,13 +2339,13 @@ Never - the start page will not show based on startup.</value>
     <value>Add to library</value>
   </data>
   <data name="FlashDevelop.Title.OpenFileDialog" xml:space="preserve">
-    <value>Open File</value>
+    <value>파일 열기</value>
   </data>
   <data name="FlashDevelop.Title.SaveFileDialog" xml:space="preserve">
-    <value>Save File</value>
+    <value>파일 저장</value>
   </data>
   <data name="FlashDevelop.Title.RememberExtensionDialog" xml:space="preserve">
-    <value>Remember extension</value>
+    <value>확장자 기억</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="FlashDevelop.Info.RememberExtensionDialog" xml:space="preserve">
@@ -2454,7 +2454,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>삭제 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Title.ArgumentDialog" xml:space="preserve">
-    <value>Custom Arguments</value>
+    <value>사용자 정의 인수</value>
   </data>
   <data name="FlashDevelop.Info.ArgumentsTakeEffect" xml:space="preserve">
     <value>사용자 정의 인수는 편집 즉시 적용됩니다.</value>
@@ -2694,7 +2694,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Specifies the frequency of the log file checking.</value>
   </data>
   <data name="FlashDevelop.Title.ArgReplaceDialog" xml:space="preserve">
-    <value>Replace Arguments</value>
+    <value>인수 교체</value>
   </data>
   <data name="ProjectManager.Title.AuthorName" xml:space="preserve">
     <value>Template Configuration: Enter Your Name</value>
@@ -2739,10 +2739,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>파일 내보내기...</value>
   </data>
   <data name="FlashDevelop.Title.SyntaxEditDialog" xml:space="preserve">
-    <value>Syntax Coloring</value>
+    <value>구문 색상</value>
   </data>
   <data name="FlashDevelop.Title.SyntaxExportDialog" xml:space="preserve">
-    <value>Export Syntax Files</value>
+    <value>구문 파일 내보내기</value>
   </data>
   <data name="FlashDevelop.Info.ZipExtractDone" xml:space="preserve">
     <value>Zip 파일이 성공적으로 추출되었습니다.</value>
@@ -2793,7 +2793,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>코드조각:</value>
   </data>
   <data name="FlashDevelop.Title.SnippetDialog" xml:space="preserve">
-    <value>Code Snippets</value>
+    <value>코드조각</value>
   </data>
   <data name="FlashDevelop.Info.CouldNotBeRecycled" xml:space="preserve">
     <value>재활용 할 수 없습니다:</value>
@@ -3959,7 +3959,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Title.Shortcuts" xml:space="preserve">
-    <value>Shortcuts</value>
+    <value>단축키</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
@@ -4486,7 +4486,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Title.HashDialog" xml:space="preserve">
-    <value>Insert Hash</value>
+    <value>Hash 삽입</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="ProjectManager.Label.CleanProject" xml:space="preserve">
