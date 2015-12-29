@@ -884,82 +884,82 @@
     <value>값:</value>
   </data>
   <data name="FlashDevelop.Label.8Bits" xml:space="preserve">
-    <value>8 &amp;Bits</value>
+    <value>8 비트 (&amp;B)</value>
   </data>
   <data name="FlashDevelop.Label.About" xml:space="preserve">
-    <value>&amp;About FlashDevelop...</value>
+    <value>FlashDevelop 정보... (&amp;A)</value>
   </data>
   <data name="FlashDevelop.Label.ApplicationFiles" xml:space="preserve">
-    <value>User Config Files...</value>
+    <value>사용자 설정 파일...</value>
     <comment>Modified after 4.2.4</comment>
   </data>
   <data name="FlashDevelop.Label.ASDocGen" xml:space="preserve">
-    <value>&amp;Documentation Generator...</value>
+    <value>도큐멘테이션 생성기... (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Label.Back" xml:space="preserve">
-    <value>Back</value>
+    <value>뒤로</value>
   </data>
   <data name="FlashDevelop.Label.BigEndian" xml:space="preserve">
-    <value>&amp;Big Endian</value>
+    <value>빅 엔디안 (&amp;B)</value>
   </data>
   <data name="FlashDevelop.Label.BookmarkAll" xml:space="preserve">
-    <value>&amp;Bookmark All</value>
+    <value>모두 즐겨찾기에 추가 (&amp;B)</value>
   </data>
   <data name="FlashDevelop.Label.Cancel" xml:space="preserve">
-    <value>Ca&amp;ncel</value>
+    <value>취소 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.CheckUpdates" xml:space="preserve">
-    <value>&amp;Check For Updates...</value>
+    <value>업데이트 확인... (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.ClearBookmarks" xml:space="preserve">
-    <value>Cle&amp;ar Bookmarks</value>
+    <value>즐겨찾기 삭제 (&amp;A)</value>
   </data>
   <data name="FlashDevelop.Label.ClearBreakpoints" xml:space="preserve">
-    <value>Clear Breakpoints</value>
+    <value>중단점 삭제</value>
   </data>
   <data name="FlashDevelop.Label.CleanReopenList" xml:space="preserve">
-    <value>&amp;Remove Invalid Files</value>
+    <value>유효하지 않은 파일 제거 (&amp;R)</value>
     <comment>Added after 5.0.0</comment>
   </data>
   <data name="FlashDevelop.Label.ClearReopenList" xml:space="preserve">
-    <value>&amp;Clear Recent Files List</value>
+    <value>최근 파일 목록 삭제 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.Close" xml:space="preserve">
-    <value>&amp;Close</value>
+    <value>닫기 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.CloseAll" xml:space="preserve">
-    <value>Clos&amp;e All</value>
+    <value>모두 닫기 (&amp;E)</value>
   </data>
   <data name="FlashDevelop.Label.CloseOthers" xml:space="preserve">
-    <value>Close &amp;Others</value>
+    <value>다른 창 닫기 (&amp;O)</value>
   </data>
   <data name="FlashDevelop.Label.CollapseAll" xml:space="preserve">
-    <value>Collapse All</value>
+    <value>모두 접기</value>
     <comment>Modified after 4.2.3</comment>
   </data>
   <data name="FlashDevelop.Label.Color" xml:space="preserve">
-    <value>&amp;Color</value>
+    <value>색상 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.CommandPrompt" xml:space="preserve">
-    <value>&amp;Command Prompt</value>
+    <value>명령 프롬프트 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.LineComment" xml:space="preserve">
-    <value>Li&amp;ne Comment</value>
+    <value>한 줄 주석 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.CompareFiles" xml:space="preserve">
-    <value>&amp;Compare Files...</value>
+    <value>파일 비교... (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.Continue" xml:space="preserve">
-    <value>&amp;Continue</value>
+    <value>계속 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.ConvertTextTo" xml:space="preserve">
-    <value>Convert Text To</value>
+    <value>텍스트 변환</value>
   </data>
   <data name="FlashDevelop.Label.Copy" xml:space="preserve">
-    <value>&amp;Copy</value>
+    <value>복사 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.CopyLine" xml:space="preserve">
-    <value>C&amp;opy Line</value>
+    <value>행 복사 (&amp;O)</value>
   </data>
   <data name="FlashDevelop.Label.CR" xml:space="preserve">
     <value>C&amp;R</value>
@@ -968,335 +968,335 @@
     <value>&amp;CR+LF</value>
   </data>
   <data name="FlashDevelop.Label.CSSValidator" xml:space="preserve">
-    <value>&amp;CSS Validator...</value>
+    <value>&amp;CSS 검사기...</value>
   </data>
   <data name="FlashDevelop.Label.Cut" xml:space="preserve">
-    <value>Cu&amp;t</value>
+    <value>잘라내기 (&amp;T)</value>
   </data>
   <data name="FlashDevelop.Label.CutLine" xml:space="preserve">
-    <value>C&amp;ut Line</value>
+    <value>행 잘라내기 (&amp;U)</value>
   </data>
   <data name="FlashDevelop.Label.DeleteFiles" xml:space="preserve">
-    <value>&amp;Delete Files</value>
+    <value>파일 삭제 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Label.DeleteLine" xml:space="preserve">
-    <value>&amp;Delete Line</value>
+    <value>행 삭제 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Label.Details" xml:space="preserve">
-    <value>&amp;Details</value>
+    <value>세부 사항 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Label.DownloadUpdate" xml:space="preserve">
-    <value>&amp;Download Update</value>
+    <value>업데이트 다운로드 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Label.Duplicate" xml:space="preserve">
-    <value>&amp;Duplicate</value>
+    <value>복제 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Label.DuplicateSelection" xml:space="preserve">
-    <value>Duplic&amp;ate Selection</value>
+    <value>선택 복제 (&amp;A)</value>
   </data>
   <data name="FlashDevelop.Label.Edit" xml:space="preserve">
-    <value>&amp;Edit</value>
+    <value>편집 (&amp;E)</value>
   </data>
   <data name="FlashDevelop.Label.Encoding" xml:space="preserve">
-    <value>En&amp;coding</value>
+    <value>인코딩 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.EscapedCharacters" xml:space="preserve">
-    <value>&amp;Escaped characters</value>
+    <value>이스케이프 문자 (&amp;E)</value>
   </data>
   <data name="FlashDevelop.Label.Exit" xml:space="preserve">
-    <value>E&amp;xit</value>
+    <value>종료 (&amp;X)</value>
   </data>
   <data name="FlashDevelop.Label.ExpandAll" xml:space="preserve">
-    <value>E&amp;xpand All</value>
+    <value>모두 펼치기 (&amp;X)</value>
   </data>
   <data name="FlashDevelop.Label.FDDocs" xml:space="preserve">
-    <value>&amp;Online Documentation...</value>
+    <value>온라인 도큐멘테이션... (&amp;O)</value>
   </data>
   <data name="FlashDevelop.Label.FDHome" xml:space="preserve">
-    <value>&amp;FlashDevelop Home...</value>
+    <value>&amp;FlashDevelop 홈...</value>
   </data>
   <data name="FlashDevelop.Label.File" xml:space="preserve">
-    <value>&amp;File</value>
+    <value>파일 (&amp;F)</value>
   </data>
   <data name="FlashDevelop.Label.FileDetails" xml:space="preserve">
-    <value>File &amp;Details</value>
+    <value>파일 세부 사항 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Label.Find" xml:space="preserve">
-    <value>&amp;Find...</value>
+    <value>찾기... (&amp;F)</value>
   </data>
   <data name="FlashDevelop.Label.FindAndReplace" xml:space="preserve">
-    <value>&amp;Find And Replace...</value>
+    <value>찾기 및 바꾸기... (&amp;F)</value>
   </data>
   <data name="FlashDevelop.Label.FindAndReplaceInFiles" xml:space="preserve">
-    <value>Find And &amp;Replace In Files...</value>
+    <value>파일에서 찾기 및 바꾸기... (&amp;R)</value>
   </data>
   <data name="FlashDevelop.Label.FindNext" xml:space="preserve">
-    <value>Find &amp;Next</value>
+    <value>다음 찾기 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.FindPrevious" xml:space="preserve">
-    <value>Find &amp;Previous</value>
+    <value>이전 찾기 (&amp;P)</value>
   </data>
   <data name="FlashDevelop.Label.FlashTools" xml:space="preserve">
-    <value>&amp;Flash Tools</value>
+    <value>플래시 도구 (&amp;F)</value>
   </data>
   <data name="FlashDevelop.Label.Forward" xml:space="preserve">
-    <value>Forward</value>
+    <value>앞으로</value>
   </data>
   <data name="FlashDevelop.Label.FromFile" xml:space="preserve">
-    <value>&amp;From File...</value>
+    <value>파일에서... (&amp;F)</value>
   </data>
   <data name="FlashDevelop.Label.GeneralTools" xml:space="preserve">
-    <value>&amp;General Tools</value>
+    <value>일반 도구 (&amp;G)</value>
   </data>
   <data name="FlashDevelop.Label.Go" xml:space="preserve">
-    <value>Go</value>
+    <value>이동</value>
   </data>
   <data name="FlashDevelop.Label.GotoMatchingBrace" xml:space="preserve">
-    <value>Goto &amp;Matching Brace</value>
+    <value>일치하는 괄호로 이동 (&amp;M)</value>
   </data>
   <data name="FlashDevelop.Label.GotoPositionOrLine" xml:space="preserve">
-    <value>&amp;Goto Position Or Line...</value>
+    <value>위치 또는 행으로 이동... (&amp;G)</value>
   </data>
   <data name="FlashDevelop.Label.GUID" xml:space="preserve">
     <value>&amp;GUID</value>
   </data>
   <data name="FlashDevelop.Label.Help" xml:space="preserve">
-    <value>&amp;Help</value>
+    <value>도움말 (&amp;H)</value>
   </data>
   <data name="FlashDevelop.Label.HighlightAll" xml:space="preserve">
-    <value>&amp;Highlight all</value>
+    <value>모두 강조 (&amp;H)</value>
   </data>
   <data name="FlashDevelop.Label.Homepage" xml:space="preserve">
-    <value>&amp;Homepage</value>
+    <value>홈페이지 (&amp;H)</value>
   </data>
   <data name="FlashDevelop.Label.HTMLValidator" xml:space="preserve">
-    <value>&amp;HTML Validator...</value>
+    <value>&amp;HTML 검사기...</value>
   </data>
   <data name="FlashDevelop.Label.IndentationGuides" xml:space="preserve">
-    <value>&amp;Indentation Guides</value>
+    <value>들여쓰기 가이드 (&amp;I)</value>
   </data>
   <data name="FlashDevelop.Label.Insert" xml:space="preserve">
-    <value>&amp;Insert</value>
+    <value>삽입 (&amp;I)</value>
   </data>
   <data name="FlashDevelop.Label.KillRunningProcess" xml:space="preserve">
-    <value>&amp;Kill Running Process</value>
+    <value>실행중인 프로세스 종료 (&amp;K)</value>
   </data>
   <data name="FlashDevelop.Label.LanguageReferences" xml:space="preserve">
-    <value>&amp;Language References</value>
+    <value>언어 참조 설명서 (&amp;L)</value>
   </data>
   <data name="FlashDevelop.Label.LF" xml:space="preserve">
     <value>&amp;LF</value>
   </data>
   <data name="FlashDevelop.Label.Line" xml:space="preserve">
-    <value>&amp;Line</value>
+    <value>행 (&amp;L)</value>
   </data>
   <data name="FlashDevelop.Label.LineEndCharacters" xml:space="preserve">
-    <value>&amp;Line End Characters</value>
+    <value>라인 종료 문자 (&amp;L)</value>
   </data>
   <data name="FlashDevelop.Label.LineEnds" xml:space="preserve">
-    <value>&amp;Line Ends</value>
+    <value>라인 종료 (&amp;L)</value>
   </data>
   <data name="FlashDevelop.Label.LittleEndian" xml:space="preserve">
-    <value>&amp;Little Endian</value>
+    <value>리틀 엔디안 (&amp;L)</value>
   </data>
   <data name="FlashDevelop.Label.LookInComments" xml:space="preserve">
-    <value>Look in &amp;comments</value>
+    <value>주석 찾기 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.LookInStrings" xml:space="preserve">
-    <value>Look in &amp;strings</value>
+    <value>문자 찾기 (&amp;S)</value>
   </data>
   <data name="FlashDevelop.Label.LookInSubdirectories" xml:space="preserve">
-    <value>Look in sub&amp;directories</value>
+    <value>하위 디렉토리 찾기 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Label.MatchCase" xml:space="preserve">
-    <value>Match &amp;case</value>
+    <value>대소문자 일치 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.Modify" xml:space="preserve">
-    <value>&amp;Modify</value>
+    <value>수정 (&amp;M)</value>
   </data>
   <data name="FlashDevelop.Label.New" xml:space="preserve">
-    <value>&amp;New</value>
+    <value>새 파일 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.Next" xml:space="preserve">
-    <value>&amp;Next</value>
+    <value>다음 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.NextBookmark" xml:space="preserve">
-    <value>Ne&amp;xt Bookmark</value>
+    <value>다음 즐겨찾기 (&amp;X)</value>
   </data>
   <data name="FlashDevelop.Label.NotifyLater" xml:space="preserve">
-    <value>&amp;Notify Later</value>
+    <value>나중에 알림 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.Ok" xml:space="preserve">
-    <value>&amp;OK</value>
+    <value>확인 (&amp;O)</value>
   </data>
   <data name="FlashDevelop.Label.Open" xml:space="preserve">
-    <value>&amp;Open...</value>
+    <value>열기... (&amp;O)</value>
   </data>
   <data name="FlashDevelop.Label.OpenFiles" xml:space="preserve">
-    <value>&amp;Open Files</value>
+    <value>파일 열기 (&amp;O)</value>
   </data>
   <data name="FlashDevelop.Label.Options" xml:space="preserve">
-    <value>Options</value>
+    <value>옵션</value>
   </data>
   <data name="FlashDevelop.Label.Paste" xml:space="preserve">
-    <value>&amp;Paste</value>
+    <value>붙여넣기 (&amp;P)</value>
   </data>
   <data name="FlashDevelop.Label.Position" xml:space="preserve">
-    <value>&amp;Position</value>
+    <value>위치 (&amp;P)</value>
   </data>
   <data name="FlashDevelop.Label.PrevBookmark" xml:space="preserve">
-    <value>Pr&amp;evious Bookmark</value>
+    <value>이전 즐겨찾기 (&amp;E)</value>
   </data>
   <data name="FlashDevelop.Label.Previous" xml:space="preserve">
-    <value>&amp;Previous</value>
+    <value>이전 (&amp;P)</value>
   </data>
   <data name="FlashDevelop.Label.Print" xml:space="preserve">
-    <value>&amp;Print</value>
+    <value>인쇄 (&amp;P)</value>
   </data>
   <data name="FlashDevelop.Label.PrintPreview" xml:space="preserve">
-    <value>Print Previe&amp;w</value>
+    <value>인쇄 미리보기 (&amp;W)</value>
   </data>
   <data name="FlashDevelop.Label.ProgramSettings" xml:space="preserve">
-    <value>&amp;Program Settings...</value>
+    <value>프로그램 설정... (&amp;P)</value>
   </data>
   <data name="FlashDevelop.Label.PublishMovieInFlash" xml:space="preserve">
-    <value>Publish Movie in Flash IDE</value>
+    <value>Flash IDE에서 제작</value>
   </data>
   <data name="FlashDevelop.Label.QuickFind" xml:space="preserve">
-    <value>&amp;Quick Find...</value>
+    <value>빠른 찾기... (&amp;Q)</value>
   </data>
   <data name="FlashDevelop.Label.QuickFindNext" xml:space="preserve">
-    <value>Quick Find &amp;Next</value>
+    <value>다음 빠른 찾기 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.QuickFindPrevious" xml:space="preserve">
-    <value>Quick Find &amp;Previous</value>
+    <value>이전 빠른 찾기 (&amp;P)</value>
   </data>
   <data name="FlashDevelop.Label.RecentFiles" xml:space="preserve">
-    <value>&amp;Recent Files</value>
+    <value>최근 파일 (&amp;R)</value>
   </data>
   <data name="FlashDevelop.Label.Redo" xml:space="preserve">
-    <value>&amp;Redo</value>
+    <value>다시 실행 (&amp;R)</value>
   </data>
   <data name="FlashDevelop.Label.Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>새로고침</value>
   </data>
   <data name="FlashDevelop.Label.RegularExpressions" xml:space="preserve">
-    <value>Re&amp;gular expressions</value>
+    <value>정규 표현식 (&amp;G)</value>
   </data>
   <data name="FlashDevelop.Label.ReleaseNotes" xml:space="preserve">
-    <value>&amp;Release Notes...</value>
+    <value>릴리스 정보... (&amp;R)</value>
   </data>
   <data name="FlashDevelop.Label.Reload" xml:space="preserve">
-    <value>&amp;Reload</value>
+    <value>다시로드 (&amp;R)</value>
   </data>
   <data name="FlashDevelop.Label.Replace" xml:space="preserve">
-    <value>&amp;Replace...</value>
+    <value>바꾸기... (&amp;R)</value>
   </data>
   <data name="FlashDevelop.Label.ReplaceAll" xml:space="preserve">
-    <value>Replace &amp;All</value>
+    <value>모두 바꾸기 (&amp;A)</value>
   </data>
   <data name="FlashDevelop.Label.Revert" xml:space="preserve">
-    <value>Re&amp;vert</value>
+    <value>되돌리기 (&amp;V)</value>
   </data>
   <data name="FlashDevelop.Label.Save" xml:space="preserve">
-    <value>&amp;Save</value>
+    <value>저장 (&amp;S)</value>
   </data>
   <data name="FlashDevelop.Label.SaveAll" xml:space="preserve">
-    <value>Sa&amp;ve All</value>
+    <value>모두 저장 (&amp;V)</value>
   </data>
   <data name="FlashDevelop.Label.SaveAs" xml:space="preserve">
-    <value>Save &amp;As...</value>
+    <value>다른 이름으로 저장... (&amp;A)</value>
   </data>
   <data name="FlashDevelop.Label.SaveAsSnippet" xml:space="preserve">
-    <value>Save As Snippet...</value>
+    <value>코드 조각으로 저장...</value>
   </data>
   <data name="FlashDevelop.Label.SaveAsTemplate" xml:space="preserve">
-    <value>Save As Template...</value>
+    <value>템플릿으로 저장...</value>
   </data>
   <data name="FlashDevelop.Label.Search" xml:space="preserve">
-    <value>&amp;Search</value>
+    <value>검색 (&amp;S)</value>
   </data>
   <data name="FlashDevelop.Label.SelectAll" xml:space="preserve">
-    <value>&amp;Select All</value>
+    <value>모두 선택 (&amp;S)</value>
   </data>
   <data name="FlashDevelop.Label.Selection" xml:space="preserve">
-    <value>&amp;Selection</value>
+    <value>선택 (&amp;S)</value>
   </data>
   <data name="FlashDevelop.Label.Settings" xml:space="preserve">
-    <value>&amp;Settings...</value>
+    <value>설정... (&amp;S)</value>
   </data>
   <data name="FlashDevelop.Label.Snippet" xml:space="preserve">
-    <value>&amp;Snippet</value>
+    <value>코드조각 (&amp;S)</value>
   </data>
   <data name="FlashDevelop.Label.CodeSnippets" xml:space="preserve">
-    <value>&amp;Code Snippets...</value>
+    <value>코드조각... (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.SOReader" xml:space="preserve">
-    <value>&amp;SharedObject Reader...</value>
+    <value>&amp;SharedObject 리더...</value>
   </data>
   <data name="FlashDevelop.Label.Syntax" xml:space="preserve">
-    <value>Synta&amp;x</value>
+    <value>구문 (&amp;X)</value>
   </data>
   <data name="FlashDevelop.Label.TechnicalSpecifications" xml:space="preserve">
-    <value>&amp;Technical Specifications</value>
+    <value>기술 사양 (&amp;T)</value>
   </data>
   <data name="FlashDevelop.Label.TestMovieInFlash" xml:space="preserve">
-    <value>&amp;Test Movie In Flash IDE</value>
+    <value>Flash IDE에서 테스트 (&amp;T)</value>
   </data>
   <data name="FlashDevelop.Label.Text" xml:space="preserve">
-    <value>&amp;Text</value>
+    <value>텍스트 (&amp;T)</value>
   </data>
   <data name="FlashDevelop.Label.Timestamp" xml:space="preserve">
-    <value>&amp;Timestamp</value>
+    <value>타임 스탬프 (&amp;T)</value>
   </data>
   <data name="FlashDevelop.Label.ToggleBookmark" xml:space="preserve">
-    <value>&amp;Toggle Bookmark</value>
+    <value>즐겨찾기 전환 (&amp;T)</value>
   </data>
   <data name="FlashDevelop.Label.ToggleBreakpoint" xml:space="preserve">
-    <value>Toggle Breakpoint</value>
+    <value>중단점 전환</value>
   </data>
   <data name="FlashDevelop.Label.ToggleFold" xml:space="preserve">
-    <value>Toggle &amp;Fold</value>
+    <value>코드접기 전환 (&amp;F)</value>
   </data>
   <data name="FlashDevelop.Label.ToLowercase" xml:space="preserve">
-    <value>To Lo&amp;wercase</value>
+    <value>소문자로 (&amp;W)</value>
   </data>
   <data name="FlashDevelop.Label.Tools" xml:space="preserve">
-    <value>&amp;Tools</value>
+    <value>도구 (&amp;T)</value>
   </data>
   <data name="FlashDevelop.Label.ToUppercase" xml:space="preserve">
-    <value>To Upper&amp;case</value>
+    <value>대문자로 (&amp;C)</value>
   </data>
   <data name="FlashDevelop.Label.TransposeLines" xml:space="preserve">
-    <value>&amp;Transpose Lines</value>
+    <value>윗 줄과 바꾸기 (&amp;T)</value>
   </data>
   <data name="FlashDevelop.Label.Undo" xml:space="preserve">
-    <value>&amp;Undo</value>
+    <value>실행 취소 (&amp;U)</value>
   </data>
   <data name="FlashDevelop.Label.UTF8" xml:space="preserve">
     <value>&amp;UTF-8</value>
   </data>
   <data name="FlashDevelop.Label.View" xml:space="preserve">
-    <value>&amp;View</value>
+    <value>보기 (&amp;V)</value>
   </data>
   <data name="FlashDevelop.Label.WebTools" xml:space="preserve">
-    <value>&amp;Web Tools</value>
+    <value>웹 도구 (&amp;W)</value>
   </data>
   <data name="FlashDevelop.Label.WhitespaceCharacters" xml:space="preserve">
-    <value>&amp;Whitespace Characters</value>
+    <value>공백 문자 (&amp;W)</value>
   </data>
   <data name="FlashDevelop.Label.WholeWord" xml:space="preserve">
-    <value>&amp;Whole word</value>
+    <value>전체 단어 (&amp;W)</value>
   </data>
   <data name="FlashDevelop.Label.More" xml:space="preserve">
-    <value>&amp;More...</value>
+    <value>추가 옵션... (&amp;M)</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Label.WindowsExplorer" xml:space="preserve">
-    <value>Windows &amp;Explorer</value>
+    <value>Windows 탐색기 (&amp;E)</value>
   </data>
   <data name="FlashDevelop.Label.WrapEditorText" xml:space="preserve">
-    <value>Wrap &amp;Editor Text</value>
+    <value>편집기 텍스트 줄바꿈 (&amp;E)</value>
   </data>
   <data name="FlashDevelop.Title.AboutDialog" xml:space="preserve">
     <value>About FlashDevelop</value>
@@ -2430,7 +2430,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>리스트에서 영역 그룹핑을 사용합니다.</value>
   </data>
   <data name="FlashDevelop.Label.CustomArguments" xml:space="preserve">
-    <value>C&amp;ustom Arguments...</value>
+    <value>사용자 정의 인수... (&amp;U)</value>
   </data>
   <data name="FlashDevelop.Group.Arguments" xml:space="preserve">
     <value>인수</value>
@@ -2448,10 +2448,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Undefined</value>
   </data>
   <data name="FlashDevelop.Label.Add" xml:space="preserve">
-    <value>&amp;Add</value>
+    <value>추가 (&amp;A)</value>
   </data>
   <data name="FlashDevelop.Label.Delete" xml:space="preserve">
-    <value>&amp;Delete</value>
+    <value>삭제 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Title.ArgumentDialog" xml:space="preserve">
     <value>Custom Arguments</value>
@@ -2484,10 +2484,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>콘솔 또는 출력 컨트롤에 사용되는 글꼴입니다.</value>
   </data>
   <data name="FlashDevelop.Label.SortLines" xml:space="preserve">
-    <value>Sort Lines</value>
+    <value>정렬 선</value>
   </data>
   <data name="FlashDevelop.Label.SortLineGroups" xml:space="preserve">
-    <value>Sort Line Groups</value>
+    <value>정렬 선 그룹</value>
   </data>
   <data name="ASCompletion.Description.DisableKnownTypesColoring" xml:space="preserve">
     <value>알려진 유형의 역동적 구문 색상을 사용하지 않도록 설정합니다.</value>
@@ -2499,16 +2499,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Optionally define an explicit Flash player minor version target (like "0.60" for verison "9.0.60").</value>
   </data>
   <data name="FlashDevelop.Label.Debug" xml:space="preserve">
-    <value>&amp;Debug</value>
+    <value>디버그 (&amp;D)</value>
   </data>
   <data name="FlashDevelop.Info.ArgumentFilter" xml:space="preserve">
     <value>FlashDevelop 인수 (*.fda)</value>
   </data>
   <data name="FlashDevelop.Label.ExportArguments" xml:space="preserve">
-    <value>&amp;Export Arguments...</value>
+    <value>인수 내보내기... (&amp;E)</value>
   </data>
   <data name="FlashDevelop.Label.ImportArguments" xml:space="preserve">
-    <value>&amp;Import Arguments...</value>
+    <value>인수 불러오기... (&amp;I)</value>
   </data>
   <data name="PHPContext.Description.IntrinsicDefinitions" xml:space="preserve">
     <value>Path to language intrinsic definitions for the code completion.</value>
@@ -2544,7 +2544,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Embed as Bitmap instead of Clip</value>
   </data>
   <data name="FlashDevelop.Label.FullScreen" xml:space="preserve">
-    <value>F&amp;ull Screen</value>
+    <value>전체 화면 (&amp;U)</value>
   </data>
   <data name="ASCompletion.Description.ReformatBraces" xml:space="preserve">
     <value>자동으로 기본 응용 프로그램 설정의 코딩 스타일의 줄 바꿈 옵션에 따라 괄호를 다시 포맷합니다.</value>
@@ -2601,7 +2601,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>BOM (byte-order marks)을 사용하여 새 유니 코드로 인코딩 된 파일을 작성합니다.</value>
   </data>
   <data name="FlashDevelop.Label.OpenFilesIn" xml:space="preserve">
-    <value>&amp;Open Files In</value>
+    <value>여기에서 파일 열기 (&amp;O)</value>
   </data>
   <data name="FlashLogViewer.Description.ColourWarnings" xml:space="preserve">
     <value>Enables coloring of errors and warnings.</value>
@@ -2700,7 +2700,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Template Configuration: Enter Your Name</value>
   </data>
   <data name="FlashDevelop.Label.SyntaxColoring" xml:space="preserve">
-    <value>&amp;Syntax Coloring...</value>
+    <value>구문 색상... (&amp;S)</value>
   </data>
   <data name="FlashDevelop.Info.Background" xml:space="preserve">
     <value>배경:</value>
@@ -2736,7 +2736,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>크기:</value>
   </data>
   <data name="FlashDevelop.Label.ExportFiles" xml:space="preserve">
-    <value>Export Files...</value>
+    <value>파일 내보내기...</value>
   </data>
   <data name="FlashDevelop.Title.SyntaxEditDialog" xml:space="preserve">
     <value>Syntax Coloring</value>
@@ -2766,13 +2766,13 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Scrolls the result view to the bottom on new results.</value>
   </data>
   <data name="FlashDevelop.Label.Apply" xml:space="preserve">
-    <value>&amp;Apply</value>
+    <value>적용 (&amp;A)</value>
   </data>
   <data name="FlashDevelop.Info.RevertSettingsFiles" xml:space="preserve">
     <value>모든 언어 설정 파일을 되돌리시겠습니까 [예] 아니면 색상 설정을 유지하면서 다른 언어 구성만 되돌리시겠습니까 [아니오]?</value>
   </data>
   <data name="FlashDevelop.Label.RevertFiles" xml:space="preserve">
-    <value>Revert Files...</value>
+    <value>파일 되돌리기...</value>
   </data>
   <data name="FlashDevelop.Info.ColoringTagsMissing" xml:space="preserve">
     <value>언어 설정 파일에 칼라 시작과 끝 주석이 없습니다.</value>
@@ -2969,25 +2969,25 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>마커 전경:</value>
   </data>
   <data name="FlashDevelop.Label.BlockComment" xml:space="preserve">
-    <value>Block Co&amp;mment</value>
+    <value>블록 주석 (&amp;M)</value>
   </data>
   <data name="FlashDevelop.Label.CommentLine" xml:space="preserve">
-    <value>Comment Li&amp;ne</value>
+    <value>현재 줄 주석 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.CommentSelection" xml:space="preserve">
-    <value>Co&amp;mment Selection</value>
+    <value>선택 주석 (&amp;M)</value>
   </data>
   <data name="FlashDevelop.Label.UncommentBlock" xml:space="preserve">
-    <value>Uncomment Block</value>
+    <value>블럭 주석 제거</value>
   </data>
   <data name="FlashDevelop.Label.UncommentLine" xml:space="preserve">
-    <value>Uncomment Line</value>
+    <value>한 줄 주석 제거</value>
   </data>
   <data name="FlashDevelop.Info.RequiresRestart" xml:space="preserve">
     <value>모든 변경 사항을 적용하려면 FlashDevelop를 다시 시작해야합니다.</value>
   </data>
   <data name="FlashDevelop.Label.Restart" xml:space="preserve">
-    <value>Res&amp;tart</value>
+    <value>재시작 (&amp;T)</value>
   </data>
   <data name="ASCompletion.Description.StartWithModifiers" xml:space="preserve">
     <value>생성 된 선언은 항상 액세스 한정자로 시작하게 설정합니다 (예. 항상 "override" 또는 "static" 전에 액세스 한정자).</value>
@@ -3152,7 +3152,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>파일에서 바꾸기를 실행 하시겠습니까? 변경 사항은 취소 할 수 없습니다.</value>
   </data>
   <data name="FlashDevelop.Label.UndoClose" xml:space="preserve">
-    <value>&amp;Undo Close</value>
+    <value>닫기 취소 (&amp;U)</value>
   </data>
   <data name="CodeRefactor.Label.OrganizeImports" xml:space="preserve">
     <value>임포트 정리 (&amp;O)</value>
@@ -3189,7 +3189,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Enter one compiler constant per ligne - ie: NAMESPACE::variable,value</value>
   </data>
   <data name="FlashDevelop.Label.SaveBOM" xml:space="preserve">
-    <value>&amp;Save Byte Order Mark</value>
+    <value>바이트 순서 표시 저장 (&amp;S)</value>
   </data>
   <data name="ProjectManager.Label.BuildProjectFiles" xml:space="preserve">
     <value>&amp;Build Project Files</value>
@@ -3612,34 +3612,34 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>[Event] 메타 데이터 태그 생성</value>
   </data>
   <data name="FlashDevelop.Label.AS2Document" xml:space="preserve">
-    <value>AS2 Document</value>
+    <value>AS2 문서</value>
   </data>
   <data name="FlashDevelop.Label.AS3Document" xml:space="preserve">
-    <value>AS3 Document</value>
+    <value>AS3 문서</value>
   </data>
   <data name="FlashDevelop.Label.BlankDocument" xml:space="preserve">
-    <value>Blank Document</value>
+    <value>빈 문서</value>
   </data>
   <data name="FlashDevelop.Label.CSSDocument" xml:space="preserve">
-    <value>CSS Document</value>
+    <value>CSS 문서</value>
   </data>
   <data name="FlashDevelop.Label.HTMLDocument" xml:space="preserve">
-    <value>HTML Document</value>
+    <value>HTML 문서</value>
   </data>
   <data name="FlashDevelop.Label.MXMLDocument" xml:space="preserve">
-    <value>MXML Document</value>
+    <value>MXML 문서</value>
   </data>
   <data name="FlashDevelop.Label.PHPDocument" xml:space="preserve">
-    <value>PHP Document</value>
+    <value>PHP 문서</value>
   </data>
   <data name="FlashDevelop.Label.XHTMLDocument" xml:space="preserve">
-    <value>XHTML Document</value>
+    <value>XHTML 문서</value>
   </data>
   <data name="FlashDevelop.Label.XMLDocument" xml:space="preserve">
-    <value>XML Document</value>
+    <value>XML 문서</value>
   </data>
   <data name="FlashDevelop.Label.BackupSettings" xml:space="preserve">
-    <value>&amp;Backup All Settings...</value>
+    <value>모든 설정 백업... (&amp;B)</value>
   </data>
   <data name="AS2Context.Info.MTASCDone" xml:space="preserve">
     <value>MTASC 완료</value>
@@ -3785,7 +3785,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>감시</value>
   </data>
   <data name="FlashDevelop.Label.CollapseFunctions" xml:space="preserve">
-    <value>Collapse Functions</value>
+    <value>함수 접기</value>
   </data>
   <data name="FlashDebugger.Description.DisablePanelsAutoshow" xml:space="preserve">
     <value>응용 프로그램을 디버깅 할 때, 디버거 패널을 자동으로 표시 또는 숨김.</value>
@@ -3909,7 +3909,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>언어:</value>
   </data>
   <data name="FlashDevelop.Label.TextDocument" xml:space="preserve">
-    <value>Text Document</value>
+    <value>텍스트 문서</value>
   </data>
   <data name="AS3Context.Category.Profiler" xml:space="preserve">
     <value>프로필러</value>
@@ -3931,31 +3931,31 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Info.ShortcutEditInfo" xml:space="preserve">
-    <value>항목을 선택하고 유효한 바로가기 키를 눌러 바로가기를 편집 할 수 있습니다.</value>
+    <value>항목을 선택하고 유효한 단축키를 눌러 단축키를 편집 할 수 있습니다.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.Command" xml:space="preserve">
-    <value>Command</value>
+    <value>명령</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.KeyboardShortcuts" xml:space="preserve">
-    <value>Keyboard S&amp;hortcuts...</value>
+    <value>키보드 단축키... (&amp;H)</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.RemoveShortcut" xml:space="preserve">
-    <value>&amp;Remove Shortcut</value>
+    <value>단축키 제거 (&amp;R)</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.RevertToDefault" xml:space="preserve">
-    <value>Revert To &amp;Default</value>
+    <value>기본값으로 되돌리기 (&amp;D)</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
-    <value>Revert All To &amp;Default</value>
+    <value>모두 기본값으로 되돌리기 (&amp;D)</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">
-    <value>Shortcut</value>
+    <value>단축키</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Title.Shortcuts" xml:space="preserve">
@@ -3963,7 +3963,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.ViewCustom" xml:space="preserve">
-    <value>View customized only</value>
+    <value>사용자 정의 만 보기</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.UnableToLoadPlugin" xml:space="preserve">
@@ -3978,7 +3978,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Menu key shortcut of the macro.</value>
   </data>
   <data name="FlashDevelop.Info.ShortcutIsAlreadyUsed" xml:space="preserve">
-    <value>바로 가기가 이미 다른 명령에 지정되었습니다.</value>
+    <value>단축키가 이미 다른 명령에 지정되었습니다.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="AirProperties.Alert.Message.AppDescriptorNotFound" xml:space="preserve">
@@ -4467,7 +4467,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.EncodingInput" xml:space="preserve">
-    <value>Encoding:</value>
+    <value>인코딩:</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.Hash" xml:space="preserve">
@@ -4478,11 +4478,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.InputText" xml:space="preserve">
-    <value>Input:</value>
+    <value>입력:</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.OutputText" xml:space="preserve">
-    <value>Output:</value>
+    <value>출력:</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Title.HashDialog" xml:space="preserve">
@@ -4530,11 +4530,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="FlashDevelop.Label.MoveLineDown" xml:space="preserve">
-    <value>Move Line Down</value>
+    <value>행을 아래로 이동</value>
     <comment>Added after 3.2.2</comment>
   </data>
   <data name="FlashDevelop.Label.MoveLineUp" xml:space="preserve">
-    <value>Move Line Up</value>
+    <value>행을 위로 이동</value>
     <comment>Added after 3.2.2</comment>
   </data>
   <data name="FlashDevelop.Description.VirtualSpaceMode" xml:space="preserve">
@@ -4980,11 +4980,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Label.SmartPaste" xml:space="preserve">
-    <value>Smart Paste</value>
+    <value>스마트 붙여넣기</value>
     <comment>Added after 4.0.0 Beta</comment>
   </data>
   <data name="FlashDevelop.Label.JScriptDocument" xml:space="preserve">
-    <value>JScript Document</value>
+    <value>JScript 문서</value>
     <comment>Added after 4.0.0 Beta</comment>
   </data>
   <data name="ProjectManager.Label.SourcePath" xml:space="preserve">
@@ -5108,15 +5108,15 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="FlashDevelop.Label.MakeAsDefault" xml:space="preserve">
-    <value>Make As Default Style</value>
+    <value>기본 스타일로 만들기</value>
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="FlashDevelop.Label.CollapseRegions" xml:space="preserve">
-    <value>Collapse Regions</value>
+    <value>영역 접기</value>
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="FlashDevelop.Label.SplitView" xml:space="preserve">
-    <value>&amp;Split View</value>
+    <value>스플릿 뷰 (&amp;S)</value>
     <comment>Added after 4.2.3</comment>
   </data>
   <data name="ASCompletion.Description.PrefixFields" xml:space="preserve">
@@ -5132,7 +5132,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.2.4</comment>
   </data>
   <data name="FlashDevelop.Label.SelectTheme" xml:space="preserve">
-    <value>Select UI Theme...</value>
+    <value>UI 테마 선택...</value>
     <comment>Added after 4.2.4</comment>
   </data>
   <data name="ProjectManager.Description.AdvancedTelemetry" xml:space="preserve">
@@ -5196,11 +5196,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.HaxeDocument" xml:space="preserve">
-    <value>Haxe Document</value>
+    <value>Haxe 문서</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.InstallSoftware" xml:space="preserve">
-    <value>Install Software...</value>
+    <value>소프트웨어 설치...</value>
     <comment>Added after 4.5.0</comment>
   </data>
   <data name="FlashDevelop.Info.ZipConfirmRemove" xml:space="preserve">
@@ -5234,7 +5234,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDevelop.Label.YesToAll" xml:space="preserve">
-    <value>Yes to &amp;all</value>
+    <value>모두 예 (&amp;A)</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="TaskListPanel.Description.ExploringMode" xml:space="preserve">
@@ -5450,7 +5450,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="FlashDevelop.Description.ViewShortcuts" xml:space="preserve">
-    <value>메인 메뉴, 컨텍스트 메뉴 및 도구 모음에서 바로 가기 보기.</value>
+    <value>메인 메뉴, 컨텍스트 메뉴 및 도구 모음에서 단축키 보기.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.ColorizeMarkerMargin" xml:space="preserve">
@@ -5502,7 +5502,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="FlashDebugger.Label.RegularExpression" xml:space="preserve">
-    <value>Regular Expression</value>
+    <value>정규 표현식</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeFormatter.Description.AS.AddBracesToCases" xml:space="preserve">
