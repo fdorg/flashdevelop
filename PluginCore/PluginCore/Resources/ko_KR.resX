@@ -1341,34 +1341,34 @@
     <value>결과 전환</value>
   </data>
   <data name="FlashViewer.Description.DisplayStyle" xml:space="preserve">
-    <value>Specifies how Flash movies are viewed in FlashDevelop.</value>
+    <value>FlashDevelop에서 플래시 무비가 표시되는 방법을 지정합니다.</value>
   </data>
   <data name="FlashViewer.Description.PlayerPath" xml:space="preserve">
-    <value>Path to the external Flash Player.</value>
+    <value>외부 플래시 플레이어의 경로입니다.</value>
   </data>
   <data name="FlashViewer.Info.Description" xml:space="preserve">
-    <value>Adds a ability to view Flash movies with FlashDevelop.</value>
+    <value>FlashDevelop으로 플래시 동영상을 볼 수있는 기능을 추가합니다.</value>
   </data>
   <data name="FlashViewer.Info.FlashMissing" xml:space="preserve">
-    <value>Could not display the movie. You need to install Flash 9 ActiveX Player for IE.</value>
+    <value>무비를 표시 할 수 없습니다. Flash 9 ActiveX Player for IE를 설치해야합니다.</value>
   </data>
   <data name="HaXeContext.Description.DefaultFlashVersion" xml:space="preserve">
-    <value>Default Flash Player target version when no project is defined.</value>
+    <value>프로젝트가 정의되지 않은 경우 Flash Player의 기본 대상 버전.</value>
   </data>
   <data name="HaXeContext.Description.HaXeCheckParameters" xml:space="preserve">
-    <value>Haxe compiler parameters for syntax checking.</value>
+    <value>구문 검사를 위한 Haxe 컴파일러 매개 변수를 설정합니다.</value>
   </data>
   <data name="HaXeContext.Description.HaXePath" xml:space="preserve">
-    <value>Path to the Haxe compiler.</value>
+    <value>Haxe 컴파일러 경로.</value>
   </data>
   <data name="HaXeContext.Info.InvalidForQuickBuild" xml:space="preserve">
-    <value>This file is not a valid Haxe class or does not include a @haxe build command.</value>
+    <value>이 파일은 유효한 Haxe 클래스가 아니거나 @haxe 빌드 명령을 포함하지 않습니다.</value>
   </data>
   <data name="HaXeContext.Info.InvalidHaXePath" xml:space="preserve">
-    <value>Haxe compiler path is not correctly set. Please check your Program Settings.</value>
+    <value>Haxe 컴파일러 경로가 올바르게 설정되어 있지 않습니다. 프로그램 설정을 확인하시기 바랍니다.</value>
   </data>
   <data name="HaXeContext.Info.InvalidQuickBuildCommand" xml:space="preserve">
-    <value>Invalid QuickBuild command.</value>
+    <value>잘못된 QuickBuild 명령.</value>
   </data>
   <data name="LayoutManager.Description.CustomLayoutPath" xml:space="preserve">
     <value>Path to the custom directory that contains the layouts.</value>
@@ -2318,7 +2318,7 @@ Never - the start page will not show based on startup.</value>
     <value>FlashDevelop에 코드 자동 완성 엔진을 추가합니다.</value>
   </data>
   <data name="HaXeContext.Info.Description" xml:space="preserve">
-    <value>Adds a Haxe context for the ASCompletion engine.</value>
+    <value>ASCompletion 엔진에 Haxe 컨텍스트를 추가합니다.</value>
   </data>
   <data name="ProjectManager.Info.Description" xml:space="preserve">
     <value>Adds a project management and building to FlashDevelop.</value>
@@ -2604,49 +2604,49 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>여기에서 파일 열기 (&amp;O)</value>
   </data>
   <data name="FlashLogViewer.Description.ColourWarnings" xml:space="preserve">
-    <value>Enables coloring of errors and warnings.</value>
+    <value>오류 및 경고의 색상을 사용합니다.</value>
   </data>
   <data name="FlashLogViewer.Description.FlashLogFile" xml:space="preserve">
-    <value>The path to the Flash Player main log file.</value>
+    <value>플래시 플레이어의 주요 로그 파일의 경로.</value>
   </data>
   <data name="FlashLogViewer.Description.PolicyLogFile" xml:space="preserve">
-    <value>The path to the Flash Player policy log file.</value>
+    <value>플래시 플레이어 방침 로그 파일의 경로.</value>
   </data>
   <data name="FlashLogViewer.Info.Description" xml:space="preserve">
-    <value>Adds a Flash Player main and policy log panel to FlashDevelop.</value>
+    <value>FlashDevelop에 플래시 플레이어의 주요 및 방침 로그 패널을 추가합니다.</value>
   </data>
   <data name="FlashLogViewer.Label.ClearLog" xml:space="preserve">
-    <value>&amp;Clear Log</value>
+    <value>로그 지우기 (&amp;C)</value>
   </data>
   <data name="FlashLogViewer.Label.CopyOutput" xml:space="preserve">
-    <value>Copy &amp;Output</value>
+    <value>출력 복사 (&amp;O)</value>
   </data>
   <data name="FlashLogViewer.Label.ViewMenuItem" xml:space="preserve">
-    <value>Flash Log Viewer</value>
+    <value>플래시 로그 뷰어</value>
   </data>
   <data name="FlashLogViewer.Label.WrapText" xml:space="preserve">
-    <value>&amp;Wrap Text</value>
+    <value>텍스트 줄바꿈 (&amp;W)</value>
   </data>
   <data name="FlashLogViewer.Title.PluginPanel" xml:space="preserve">
-    <value>Logs</value>
+    <value>로그</value>
   </data>
   <data name="FlashLogViewer.ToolTip.StartTracking" xml:space="preserve">
-    <value>Start Tracking</value>
+    <value>추적 시작</value>
   </data>
   <data name="FlashLogViewer.ToolTip.StopTracking" xml:space="preserve">
-    <value>Stop Tracking</value>
+    <value>추적 정지</value>
   </data>
   <data name="FlashLogViewer.Category.Files" xml:space="preserve">
-    <value>Files</value>
+    <value>파일</value>
   </data>
   <data name="FlashLogViewer.Description.TrackingStartType" xml:space="preserve">
-    <value>Specifies how the log file tracking is started.</value>
+    <value>로그 파일 추적이 시작되는 방법을 지정합니다.</value>
   </data>
   <data name="FlashLogViewer.ToolTip.PopupToTopMost" xml:space="preserve">
-    <value>Open In Popup</value>
+    <value>팝업에서 열기</value>
   </data>
   <data name="FlashLogViewer.Description.KeepPopupTopMost" xml:space="preserve">
-    <value>Keeps the popup window as the top most of all windows.</value>
+    <value>모든 윈도우의 최상위에 팝업 창을 유지합니다.</value>
   </data>
   <data name="ASCompletion.Outline.Search" xml:space="preserve">
     <value>검색...</value>
@@ -2655,16 +2655,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>정렬 모드</value>
   </data>
   <data name="FlashLogViewer.Description.RegexError" xml:space="preserve">
-    <value>Allows you to customize the capture regex of error lines.</value>
+    <value>오류 라인의 캡처 정규식을 사용자 정의 할 수 있습니다.</value>
   </data>
   <data name="FlashLogViewer.Description.RegexWarning" xml:space="preserve">
-    <value>Allows you to customize the capture regex of warning lines.</value>
+    <value>경고 라인의 캡처 정규식을 사용자 정의 할 수 있습니다.</value>
   </data>
   <data name="FlashLogViewer.Category.Regex" xml:space="preserve">
-    <value>Regex</value>
+    <value>정규식</value>
   </data>
   <data name="FlashLogViewer.ToolTip.ClearFilterText" xml:space="preserve">
-    <value>Clear Filter Text</value>
+    <value>필터 텍스트 지우기</value>
   </data>
   <data name="ASCompletion.Outline.ClearSearchText" xml:space="preserve">
     <value>검색 텍스트 제거</value>
@@ -2691,7 +2691,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>대상 Intrinsic 파일 폴더를 선택합니다...</value>
   </data>
   <data name="FlashLogViewer.Description.UpdateInterval" xml:space="preserve">
-    <value>Specifies the frequency of the log file checking.</value>
+    <value>로그 파일 판정의 빈도를 지정합니다.</value>
   </data>
   <data name="FlashDevelop.Title.ArgReplaceDialog" xml:space="preserve">
     <value>인수 교체</value>
@@ -2999,16 +2999,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>New name:</value>
   </data>
   <data name="HaXeContext.Description.DisableMixedCompletion" xml:space="preserve">
-    <value>By default Haxe completion is alimented both by the Haxe compiler and FlashDevelop automatic completion.</value>
+    <value>기본적으로 Haxe 자동 완성 기능은 Haxe 컴파일러와 FlashDevelop 자동 완성으로 작동합니다.</value>
   </data>
   <data name="HaXeContext.Description.DisableCompletionOnDemand" xml:space="preserve">
-    <value>Set to false, Haxe completion will be displayed only when CTRL-Space or CTRL-Shift-Space is pressed.</value>
+    <value>False로 설정하면, Haxe의 자동 완성 기능은 Ctrl+Space 또는 Ctrl+Shift+Space를 누를 경우에만 표시됩니다.</value>
   </data>
   <data name="FlashDevelop.Description.DisableFindTextUpdating" xml:space="preserve">
     <value>빨리 찾기를 사용할 때 찾기 텍스트 업데이트를 사용하지 않습니다.</value>
   </data>
   <data name="HaXeContext.Description.ExportHXML" xml:space="preserve">
-    <value>Always export a HXML when the HXPROJ is modified.</value>
+    <value>HXPROJ가 수정 될 때 항상 HXML를 내보내기.</value>
   </data>
   <data name="ASCompletion.Description.PropertiesGenerationLocation" xml:space="preserve">
     <value>새로운 속성 (getter, setter)이 생성 될 곳을 정의합니다.</value>
@@ -3207,7 +3207,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Copy Class Name</value>
   </data>
   <data name="FlashViewer.Description.DisableAutoConfig" xml:space="preserve">
-    <value>Disables the auto-configuration feature so that OS level file association can be used.</value>
+    <value>OS 레벨의 파일 연결을 사용할 수 있도록 자동 구성 기능을 비활성화합니다.</value>
   </data>
   <data name="OutputPanel.Label.ClearSearchText" xml:space="preserve">
     <value>Clear Search Text</value>
@@ -3666,16 +3666,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>영역</value>
   </data>
   <data name="HaXeContext.Info.AmbiguousType" xml:space="preserve">
-    <value>Ambiguous Type</value>
+    <value>모호한 유형</value>
   </data>
   <data name="HaXeContext.Info.HaXeDone" xml:space="preserve">
-    <value>Haxe Done</value>
+    <value>Haxe 완료</value>
   </data>
   <data name="HaXeContext.Info.HaXeExeError" xml:space="preserve">
-    <value>Haxe.exe can not be located.{0}{0}Please run 'haxesetup' in Haxe installation and restart FlashDevelop,{0}or configure the path to Haxe installation in HaxeContext settings.</value>
+    <value>Haxe.exe를 찾을 수 없습니다.{0}{0}Haxe 설치에서 'haxesetup'를 실행하고 FlashDevelop를 다시 시작하거나,{0}HaxeContext 설정에서 Haxe 설치 경로를 구성하시기 바랍니다.</value>
   </data>
   <data name="HaXeContext.Info.HaXeRunning" xml:space="preserve">
-    <value>Haxe Running</value>
+    <value>Haxe 실행중</value>
   </data>
   <data name="PHPContext.Info.PHPDone" xml:space="preserve">
     <value>PHP Done</value>
@@ -3699,16 +3699,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>메모리</value>
   </data>
   <data name="FlashLogViewer.Label.Filter" xml:space="preserve">
-    <value>Filter:</value>
+    <value>필터:</value>
   </data>
   <data name="FlashLogViewer.Label.FlashLog" xml:space="preserve">
-    <value>Flash Log</value>
+    <value>플래시 로그</value>
   </data>
   <data name="FlashLogViewer.Label.PolicyLog" xml:space="preserve">
-    <value>Policy Log</value>
+    <value>방침 로그</value>
   </data>
   <data name="FlashLogViewer.Label.View" xml:space="preserve">
-    <value>View:</value>
+    <value>뷰:</value>
   </data>
   <data name="FlashDebugger.Label.Enable" xml:space="preserve">
     <value>사용</value>
@@ -4996,11 +4996,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="HaXeContext.Description.CompletionMode" xml:space="preserve">
-    <value>The most complete completion will be provided by the Haxe Compiler and faster using the CompletionServer. Alternatively FlashDevelop includes basic support for Haxe completion.</value>
+    <value>가장 완벽한 완성은 Haxe 컴파일러가 제공하는 빠른 CompletionServer를 사용하는 것입니다. 또는 FlashDevelop는 Haxe 완료에 대한 기본 지원이 포함되어 있습니다.</value>
     <comment>Added after 4.0</comment>
   </data>
   <data name="HaXeContext.Description.CompletionServerPort" xml:space="preserve">
-    <value>Define Haxe compiler server's port (only applies to CompletionServer Completion Mode).</value>
+    <value>Haxe 컴파일러 서버의 포트를 정의합니다 (단 CompletionServer 완료 모드에 적용).</value>
     <comment>Added after 4.0</comment>
   </data>
   <data name="ProjectManager.ToolTip.TargetBuild" xml:space="preserve">
