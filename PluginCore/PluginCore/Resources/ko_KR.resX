@@ -1166,10 +1166,10 @@
     <value>빠른 찾기... (&amp;Q)</value>
   </data>
   <data name="FlashDevelop.Label.QuickFindNext" xml:space="preserve">
-    <value>다음 빠른 찾기 (&amp;N)</value>
+    <value>빠른 찾기 다음 (&amp;N)</value>
   </data>
   <data name="FlashDevelop.Label.QuickFindPrevious" xml:space="preserve">
-    <value>이전 빠른 찾기 (&amp;P)</value>
+    <value>빠른 찾기 이전 (&amp;P)</value>
   </data>
   <data name="FlashDevelop.Label.RecentFiles" xml:space="preserve">
     <value>최근 파일 (&amp;R)</value>
@@ -1371,79 +1371,79 @@
     <value>잘못된 QuickBuild 명령.</value>
   </data>
   <data name="LayoutManager.Description.CustomLayoutPath" xml:space="preserve">
-    <value>Path to the custom directory that contains the layouts.</value>
+    <value>레이아웃을 포함하는 사용자 정의 디렉토리 경로.</value>
   </data>
   <data name="LayoutManager.Info.Description" xml:space="preserve">
-    <value>Adds a panel layout manager to FlashDevelop.</value>
+    <value>FlashDevelop에 패널 레이아웃 관리자를 추가합니다.</value>
   </data>
   <data name="LayoutManager.Info.NoLayoutsFound" xml:space="preserve">
-    <value>No saved layouts found.</value>
+    <value>저장된 레이아웃을 찾을 수 없습니다.</value>
   </data>
   <data name="LayoutManager.Info.OpenFileFilter" xml:space="preserve">
-    <value>FlashDevelop Layouts (*.fdl)|*.fdl</value>
+    <value>FlashDevelop 레이아웃 (*.fdl)|*.fdl</value>
   </data>
   <data name="LayoutManager.Label.DeleteLayout" xml:space="preserve">
-    <value>&amp;Delete Layout</value>
+    <value>레이아웃 삭제 (&amp;D)</value>
   </data>
   <data name="LayoutManager.Label.LoadLayout" xml:space="preserve">
-    <value>&amp;Load Layout</value>
+    <value>레이아웃 로드 (&amp;L)</value>
   </data>
   <data name="LayoutManager.Label.SaveCurrent" xml:space="preserve">
-    <value>&amp;Save Current...</value>
+    <value>현재 레이아웃 저장... (&amp;S)</value>
   </data>
   <data name="LayoutManager.Label.ShowSettings" xml:space="preserve">
-    <value>S&amp;how Settings...</value>
+    <value>설정 보기... (&amp;H)</value>
   </data>
   <data name="LayoutManager.Label.ViewMenuItem" xml:space="preserve">
-    <value>Layout Manager</value>
+    <value>레이아웃 관리자</value>
   </data>
   <data name="LayoutManager.Title.PluginPanel" xml:space="preserve">
-    <value>Layouts</value>
+    <value>레이아웃</value>
   </data>
   <data name="OutputPanel.Description.ShowOnOutput" xml:space="preserve">
-    <value>Always open the panel to show the new output.</value>
+    <value>항상 패널을 열어 새로운 출력을 보여줍니다.</value>
   </data>
   <data name="OutputPanel.Description.ShowOnProcessEnd" xml:space="preserve">
-    <value>Open the panel after the captured process has finished.</value>
+    <value>캡처된 프로세스가 완료되면 패널을 엽니 다.</value>
   </data>
   <data name="OutputPanel.Description.WrapOutput" xml:space="preserve">
-    <value>Wraps text output.</value>
+    <value>텍스트 출력 줄바꿈.</value>
   </data>
   <data name="OutputPanel.Info.Description" xml:space="preserve">
-    <value>Adds a output panel for debug messages to FlashDevelop.</value>
+    <value>FlashDevelop에 디버그 메시지의 출력 패널을 추가합니다.</value>
   </data>
   <data name="OutputPanel.Label.ClearOutput" xml:space="preserve">
-    <value>&amp;Clear Output</value>
+    <value>출력 지우기 (&amp;C)</value>
   </data>
   <data name="OutputPanel.Label.CopyOutput" xml:space="preserve">
-    <value>Copy &amp;Output</value>
+    <value>출력 복사 (&amp;O)</value>
   </data>
   <data name="OutputPanel.Label.ViewMenuItem" xml:space="preserve">
-    <value>Output Panel</value>
+    <value>출력 패널</value>
   </data>
   <data name="OutputPanel.Label.WrapText" xml:space="preserve">
-    <value>&amp;Wrap Text</value>
+    <value>줄바꿈 (&amp;W)</value>
   </data>
   <data name="OutputPanel.Title.PluginPanel" xml:space="preserve">
-    <value>Output</value>
+    <value>출력</value>
   </data>
   <data name="PluginCore.Docking.ToolTipAutoHide" xml:space="preserve">
-    <value>Auto Hide</value>
+    <value>자동 숨기기</value>
   </data>
   <data name="PluginCore.Docking.ToolTipClose" xml:space="preserve">
-    <value>Close</value>
+    <value>닫기</value>
   </data>
   <data name="PluginCore.Docking.ToolTipOptions" xml:space="preserve">
-    <value>Options</value>
+    <value>옵션</value>
   </data>
   <data name="PluginCore.Docking.ToolTipWindowList" xml:space="preserve">
-    <value>Window List</value>
+    <value>창 목록</value>
   </data>
   <data name="PluginCore.Info.FolderAlreadyContainsFile" xml:space="preserve">
-    <value>This folder already contains a file named "{0}".{1}Would you like to replace the existing file?</value>
+    <value>해당 폴더에 이미 "{0}"(이)라는 파일이 존재합니다.{1}이 파일을 덮어씌우시겠습니까?</value>
   </data>
   <data name="PluginCore.Info.FolderAlreadyContainsFolder" xml:space="preserve">
-    <value>This folder already contains a folder named "{0}".{1}{1}If the files in the existing folder have the same name as files in the{1}folder you are moving or copying, they will be replaced. Do you still{1}want to move or copy the folder?</value>
+    <value>해당 폴더에 이미 "{0}"(이)라는 폴더가 존재합니다.{1}{1}기존의 폴더에 있는 파일 중 이동 또는 복사되는 폴더에 있는 파일과 동일한 이름이 있는 경우, 그 파일은 덮어씌워 집니다. 계속하시겠습니까?</value>
   </data>
   <data name="ProjectManager.Category.Advanced" xml:space="preserve">
     <value>Advanced</value>
@@ -2511,10 +2511,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>인수 불러오기... (&amp;I)</value>
   </data>
   <data name="PHPContext.Description.IntrinsicDefinitions" xml:space="preserve">
-    <value>Path to language intrinsic definitions for the code completion.</value>
+    <value>코드 완성을 위한 언어 고유 정의 경로입니다.</value>
   </data>
   <data name="PHPContext.Info.Description" xml:space="preserve">
-    <value>Adds a PHP context for the ASCompletion engine.</value>
+    <value>ASCompletion 엔진에 PHP 컨텍스트를 추가합니다.</value>
   </data>
   <data name="ASCompletion.Category.Common" xml:space="preserve">
     <value>일반</value>
@@ -2811,64 +2811,64 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>스크립트를 제대로 실행할 수 없습니다:</value>
   </data>
   <data name="MacroManager.Description.UserMacros" xml:space="preserve">
-    <value>List of currently available macros.</value>
+    <value>현재 사용할 수있는 매크로 목록.</value>
   </data>
   <data name="MacroManager.Group.Macros" xml:space="preserve">
-    <value>Macros</value>
+    <value>매크로</value>
   </data>
   <data name="MacroManager.Info.CouldNotRunMacro" xml:space="preserve">
-    <value>Couldn't run the macro. Please check the syntax.</value>
+    <value>매크로를 실행 할 수 없습니다. 구문을 확인하시기 바랍니다.</value>
   </data>
   <data name="MacroManager.Info.Description" xml:space="preserve">
-    <value>Adds simple macro capacilities to FlashDevelop.</value>
+    <value>FlashDevelop 간단한 매크로 기능을 추가합니다.</value>
   </data>
   <data name="MacroManager.Info.MacroFilter" xml:space="preserve">
-    <value>FlashDevelop Macros (*.fdm)</value>
+    <value>FlashDevelop 매크로 (*.fdm)</value>
   </data>
   <data name="MacroManager.Info.MacrosTakeEffect" xml:space="preserve">
-    <value>Macros will take effect soon as you edit them successfully.</value>
+    <value>매크로는 편집 즉시 적용됩니다.</value>
   </data>
   <data name="MacroManager.Info.Untitled" xml:space="preserve">
-    <value>Untitled</value>
+    <value>제목 없음</value>
   </data>
   <data name="MacroManager.Label.Add" xml:space="preserve">
-    <value>&amp;Add</value>
+    <value>추가 (&amp;A)</value>
   </data>
   <data name="MacroManager.Label.Close" xml:space="preserve">
-    <value>&amp;Close</value>
+    <value>닫기 (&amp;C)</value>
   </data>
   <data name="MacroManager.Label.Delete" xml:space="preserve">
-    <value>&amp;Delete</value>
+    <value>삭제 (&amp;D)</value>
   </data>
   <data name="MacroManager.Label.EditMacros" xml:space="preserve">
-    <value>Edit &amp;Macros...</value>
+    <value>매크로 편집... (&amp;M)</value>
   </data>
   <data name="MacroManager.Label.ExportMacros" xml:space="preserve">
-    <value>&amp;Export Macros...</value>
+    <value>매크로 내보내기... (&amp;E)</value>
   </data>
   <data name="MacroManager.Label.ImportMacros" xml:space="preserve">
-    <value>&amp;Import Macros...</value>
+    <value>매크로 불러오기... (&amp;I)</value>
   </data>
   <data name="MacroManager.Label.Macros" xml:space="preserve">
-    <value>&amp;Macros</value>
+    <value>매크로 (&amp;M)</value>
   </data>
   <data name="MacroManager.Title.MacroDialog" xml:space="preserve">
-    <value>Macros</value>
+    <value>매크로</value>
   </data>
   <data name="MacroManager.Description.AutoRun" xml:space="preserve">
-    <value>Runs the macro automaticly when FlashDevelop starts. If enabled, the menu item will not be shown.</value>
+    <value>FlashDevelop 시작시 자동으로 매크로를 실행합니다. 이 옵션을 활성화하면 메뉴 항목이 표시되지 않습니다.</value>
   </data>
   <data name="MacroManager.Description.Entries" xml:space="preserve">
-    <value>Individual commands of the macro.</value>
+    <value>매크로의 개별 명령.</value>
   </data>
   <data name="MacroManager.Description.Label" xml:space="preserve">
-    <value>Menu label of the macro.</value>
+    <value>매크로의 메뉴 레이블.</value>
   </data>
   <data name="ProjectManager.Label.BuildProjectFile" xml:space="preserve">
     <value>&amp;Build Project File</value>
   </data>
   <data name="MacroManager.Description.Image" xml:space="preserve">
-    <value>Internal image key of the macro menu item.</value>
+    <value>매크로 메뉴 항목의 내부 이미지 키.</value>
   </data>
   <data name="ASCompletion.Category.Generation" xml:space="preserve">
     <value>코드 생성</value>
@@ -3210,10 +3210,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>OS 레벨의 파일 연결을 사용할 수 있도록 자동 구성 기능을 비활성화합니다.</value>
   </data>
   <data name="OutputPanel.Label.ClearSearchText" xml:space="preserve">
-    <value>Clear Search Text</value>
+    <value>검색 텍스트 지우기</value>
   </data>
   <data name="OutputPanel.Label.SearchInvitation" xml:space="preserve">
-    <value>Search...</value>
+    <value>검색...</value>
   </data>
   <data name="FlashDevelop.Info.BookmarkLine" xml:space="preserve">
     <value>즐겨찾기 라인 :</value>
@@ -3678,10 +3678,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Haxe 실행중</value>
   </data>
   <data name="PHPContext.Info.PHPDone" xml:space="preserve">
-    <value>PHP Done</value>
+    <value>PHP 완료</value>
   </data>
   <data name="PHPContext.Info.PHPRunning" xml:space="preserve">
-    <value>PHP Running</value>
+    <value>PHP 실행중</value>
   </data>
   <data name="AS3Context.Label.AutoStartProfilerON" xml:space="preserve">
     <value>자동 스타트 프로파일 활성화</value>
@@ -3708,7 +3708,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>방침 로그</value>
   </data>
   <data name="FlashLogViewer.Label.View" xml:space="preserve">
-    <value>뷰:</value>
+    <value>보기:</value>
   </data>
   <data name="FlashDebugger.Label.Enable" xml:space="preserve">
     <value>사용</value>
@@ -3975,7 +3975,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="MacroManager.Description.Shortcut" xml:space="preserve">
-    <value>Menu key shortcut of the macro.</value>
+    <value>매크로의 메뉴 단축키.</value>
   </data>
   <data name="FlashDevelop.Info.ShortcutIsAlreadyUsed" xml:space="preserve">
     <value>단축키가 이미 다른 명령에 지정되었습니다.</value>
@@ -4888,11 +4888,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>직접실행</value>
   </data>
   <data name="OutputPanel.ToolTip.StartScrolling" xml:space="preserve">
-    <value>Start Scrolling</value>
+    <value>스크롤 시작</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="OutputPanel.ToolTip.StopScrolling" xml:space="preserve">
-    <value>Stop Scrolling</value>
+    <value>스크롤 정지</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">
@@ -5144,23 +5144,23 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.3</comment>
   </data>
   <data name="LoomContext.Description.SDKs" xml:space="preserve">
-    <value>Path to the Loom SDK.</value>
+    <value>Loom SDK의 경로.</value>
     <comment>Added after 4.3.0</comment>
   </data>
   <data name="LoomContext.Info.Description" xml:space="preserve">
-    <value>Loom context for the ASCompletion engine.</value>
+    <value>ASCompletion 엔진에 Loom 컨텍스트를 추가합니다.</value>
     <comment>Added after 4.3.0</comment>
   </data>
   <data name="LoomContext.Info.InvalidClass" xml:space="preserve">
-    <value>This file is not a valid Loom class.</value>
+    <value>이 파일은 유효한 Loom 클래스가 아닙니다.</value>
     <comment>Added after 4.3.0</comment>
   </data>
   <data name="LoomContext.Info.LoomDone" xml:space="preserve">
-    <value>Loom Done</value>
+    <value>Loom 완료</value>
     <comment>Added after 4.3.0</comment>
   </data>
   <data name="LoomContext.Info.LoomRunning" xml:space="preserve">
-    <value>Loom Running</value>
+    <value>Loom 실행중</value>
     <comment>Added after 4.3.0</comment>
   </data>
   <data name="FlashDevelop.Info.InvalidToolPath" xml:space="preserve">
@@ -5226,7 +5226,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>스레드 패널</value>
   </data>
   <data name="MacroManager.Description.ShowInToolbar" xml:space="preserve">
-    <value>Shows the macro in the main toolbar.</value>
+    <value>기본 도구 모음에 매크로를 표시합니다.</value>
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="FlashDebugger.Description.SwitchToLayout" xml:space="preserve">
@@ -5906,19 +5906,19 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.HighlightMarkers" xml:space="preserve">
-    <value>List of markers that highlight the message with the specified log level color.</value>
+    <value>지정된 로그 레벨 색상으로 메시지를 강조하는 마커 목록.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.Level" xml:space="preserve">
-    <value>The log level that the line should be colored to.</value>
+    <value>해당된 출력 줄의 색상을 정의하는 로그 수준.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.Marker" xml:space="preserve">
-    <value>Highlight marker that marks the line to be colored.</value>
+    <value>강조할 출력 줄을 표시하는 마커.</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="OutputPanel.Description.UseLegacyColoring" xml:space="preserve">
-    <value>Use legacy coloring state format parsed from the message ('2:message').</value>
+    <value>구형 출력 색상 강조 메시지 포맷을 사용합니다 ('2:message').</value>
     <comment>Added after 4.7.1</comment>
   </data>
   <data name="CodeRefactor.Description.DisableMoveRefactoring" xml:space="preserve">
