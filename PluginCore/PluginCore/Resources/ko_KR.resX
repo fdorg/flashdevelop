@@ -2110,131 +2110,131 @@
     <value>Show Hidden Items</value>
   </data>
   <data name="ResultsPanel.Header.Description" xml:space="preserve">
-    <value>Description</value>
+    <value>설명</value>
   </data>
   <data name="ResultsPanel.Header.File" xml:space="preserve">
-    <value>File</value>
+    <value>파일</value>
   </data>
   <data name="ResultsPanel.Header.Line" xml:space="preserve">
-    <value>Line</value>
+    <value>행</value>
   </data>
   <data name="ResultsPanel.Header.Path" xml:space="preserve">
-    <value>Path</value>
+    <value>경로</value>
   </data>
   <data name="ResultsPanel.Info.Description" xml:space="preserve">
-    <value>Adds a results panel for console info to FlashDevelop.</value>
+    <value>FlashDevelop에 콘솔 정보의 결과 패널을 추가합니다.</value>
   </data>
   <data name="ResultsPanel.Label.ClearEntries" xml:space="preserve">
-    <value>&amp;Clear Entries</value>
+    <value>항목 지우기 (&amp;C)</value>
   </data>
   <data name="ResultsPanel.Label.CopyEntry" xml:space="preserve">
-    <value>Copy &amp;Entry Details</value>
+    <value>항목 세부사항 복사 (&amp;E)</value>
     <comment>Modified after 3.3.1</comment>
   </data>
   <data name="ResultsPanel.Label.IgnoreEntry" xml:space="preserve">
-    <value>Ignore &amp;Entry</value>
+    <value>항목 무시 (&amp;E)</value>
   </data>
   <data name="ResultsPanel.Label.ClearIgnoredEntries" xml:space="preserve">
-    <value>Clear &amp;Ignored &amp; Entries</value>
+    <value>무시된 항목 지우기 (&amp;I)</value>
   </data>
   <data name="ResultsPanel.Label.ViewMenuItem" xml:space="preserve">
-    <value>Results Panel</value>
+    <value>결과 패널</value>
   </data>
   <data name="ResultsPanel.Title.PluginPanel" xml:space="preserve">
-    <value>Results</value>
+    <value>결과</value>
   </data>
   <data name="StartPage.Category.Common" xml:space="preserve">
-    <value>Common</value>
+    <value>일반</value>
   </data>
   <data name="StartPage.Category.Custom" xml:space="preserve">
-    <value>Custom</value>
+    <value>사용자 정의</value>
   </data>
   <data name="StartPage.Description.CloseOnProjectOpen" xml:space="preserve">
-    <value>Closes the start page when a project is opened. If show start page instead of untitled document is also true start page will remain open if it is the only window opened.</value>
+    <value>프로젝트가 열릴때 시작 페이지를 닫습니다. 만약 'Show Start Page Instead Of Untitled' 또한 참이고, 시작 페이지가 열려있는 유일한 창인 경우 시작 페이지가 열린 상태로 유지됩니다.</value>
   </data>
   <data name="StartPage.Description.CustomRssFeed" xml:space="preserve">
-    <value>URL of the custom RSS feed to use.</value>
+    <value>사용할 사용자 지정 RSS 피드의 URL.</value>
   </data>
   <data name="StartPage.Description.CustomStartPage" xml:space="preserve">
-    <value>Path of the custom start page to use.</value>
+    <value>사용할 사용자 정의 시작 페이지의 경로.</value>
   </data>
   <data name="StartPage.Description.ShowStartPageInsteadOfUntitled" xml:space="preserve">
-    <value>Show the start page when all documents are closed instead of untitled document.</value>
+    <value>모든 문서가 닫힐때 '제목 없음' 대신 시작 페이지를 표시합니다.</value>
   </data>
   <data name="StartPage.Description.ShowStartPageOnStartup" xml:space="preserve">
-    <value>Should the start page show when you open FlashDevelop:
-Always - FlashDevelop will not restore a session, but instead show the start page.
-NotRestoringSession - start page will show if FlashDevelop is not restoring a session.
-Never - the start page will not show based on startup.</value>
+    <value>FlashDevelop을 시작할때 시작 페이지를 여는 옵션:
+Always - FlashDevelop이 세션을 복원하지 않고 대신 시작 페이지를 보여줍니다.
+NotRestoringSession - FlashDevelop이 세션을 복원하지 않은 경우 시작 페이지가 열립니다.
+Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</value>
   </data>
   <data name="StartPage.Description.UseCustomRssFeed" xml:space="preserve">
-    <value>Uses the custom RSS feed instead of the default start page feed.</value>
+    <value>기본 시작 페이지 피드 대신 사용자 정의 RSS 피드를 사용합니다.</value>
   </data>
   <data name="StartPage.Description.UseCustomStartPage" xml:space="preserve">
-    <value>Uses the custom start page instead of the default start page.</value>
+    <value>기본 시작 페이지 대신 사용자 정의 시작 페이지를 사용합니다.</value>
   </data>
   <data name="StartPage.Label.ViewMenuItem" xml:space="preserve">
-    <value>Start Page</value>
+    <value>시작 페이지</value>
   </data>
   <data name="StartPage.Title.StartPage" xml:space="preserve">
-    <value>Start Page</value>
+    <value>시작 페이지</value>
   </data>
   <data name="TaskListPanel.Column.Description" xml:space="preserve">
-    <value>Description</value>
+    <value>설명</value>
   </data>
   <data name="TaskListPanel.Column.File" xml:space="preserve">
-    <value>File</value>
+    <value>파일</value>
   </data>
   <data name="TaskListPanel.Column.Path" xml:space="preserve">
-    <value>Path</value>
+    <value>경로</value>
   </data>
   <data name="TaskListPanel.Column.Position" xml:space="preserve">
-    <value>Position</value>
+    <value>위치</value>
   </data>
   <data name="TaskListPanel.Column.Type" xml:space="preserve">
-    <value>Type</value>
+    <value>유형</value>
   </data>
   <data name="TaskListPanel.Description.FileExtensions" xml:space="preserve">
-    <value>File extensions to listen for changes.</value>
+    <value>변경을 수신할 파일 확장자.</value>
   </data>
   <data name="TaskListPanel.Description.GroupValues" xml:space="preserve">
-    <value>Group values to look for.</value>
+    <value>찾을 그룹 값.</value>
   </data>
   <data name="TaskListPanel.Description.ImageIndexes" xml:space="preserve">
-    <value>Image indexes of the results.</value>
+    <value>결과의 이미지 인덱스.</value>
   </data>
   <data name="TaskListPanel.Info.Processing" xml:space="preserve">
-    <value>Processing {0} of {1}.</value>
+    <value>{1}개중 {0}개 처리중.</value>
   </data>
   <data name="TaskListPanel.Info.Refreshing" xml:space="preserve">
-    <value>Refreshing...</value>
+    <value>새로 고침...</value>
   </data>
   <data name="TaskListPanel.Info.SettingError" xml:space="preserve">
-    <value>Error: Please verify your plugin settings.</value>
+    <value>오류: 플러그인 설정을 확인하십시오.</value>
   </data>
   <data name="TaskListPanel.Label.ViewMenuItem" xml:space="preserve">
-    <value>Task List</value>
+    <value>작업 목록</value>
   </data>
   <data name="TaskListPanel.Title.PluginPanel" xml:space="preserve">
-    <value>Tasks</value>
+    <value>작업</value>
   </data>
   <data name="XMLCompletion.Description.CloseTags" xml:space="preserve">
-    <value>Closes the current tag automaticly.</value>
+    <value>자동으로 현재 태그를 닫습니다.</value>
   </data>
   <data name="XMLCompletion.Description.EnableXMLCompletion" xml:space="preserve">
-    <value>Enables the completion for xml files.</value>
+    <value>XML 파일의 자동 완성을 사용합니다.</value>
   </data>
   <data name="XMLCompletion.Description.InsertQuotes" xml:space="preserve">
-    <value>Inserts quotes to the generated attribute.</value>
+    <value>생성 된 속성에 따옴표를 삽입합니다.</value>
   </data>
   <data name="XMLCompletion.Description.SmartIndenter" xml:space="preserve">
-    <value>Uses automatic indenting to the source.</value>
+    <value>소스에 자동 들여 쓰기를 사용합니다.</value>
   </data>
   <data name="XMLCompletion.Description.UpperCaseHtmlTags" xml:space="preserve">
-    <value>Force uppercase html tags for generated code.</value>
+    <value>생성 된 코드의 HTML 태그에 대문자를 사용합니다.</value>
   </data>
   <data name="XMLCompletion.Info.Description" xml:space="preserve">
-    <value>Adds simple HTML and XML completion to FlashDevelop.</value>
+    <value>FlashDevelop에 간단한 HTML과 XML 자동 완성 기능을 추가합니다.</value>
   </data>
   <data name="ASCompletion.Label.GeneratePrivateFunction" xml:space="preserve">
     <value>Private 함수 생성</value>
@@ -2324,16 +2324,16 @@ Never - the start page will not show based on startup.</value>
     <value>Adds a project management and building to FlashDevelop.</value>
   </data>
   <data name="StartPage.Info.Description" xml:space="preserve">
-    <value>Adds a start page to FlashDevelop.</value>
+    <value>FlashDevelop에 시작 페이지를 추가합니다.</value>
   </data>
   <data name="TaskListPanel.Info.Description" xml:space="preserve">
-    <value>Adds a task list panel to FlashDevelop.</value>
+    <value>FlashDevelop에 작업 목록 패널을 추가합니다.</value>
   </data>
   <data name="ResultsPanel.Label.NextEntry" xml:space="preserve">
-    <value>&amp;Next Entry</value>
+    <value>다음 항목 (&amp;N)</value>
   </data>
   <data name="ResultsPanel.Label.PreviousEntry" xml:space="preserve">
-    <value>&amp;Previous Entry</value>
+    <value>이전 항목 (&amp;P)</value>
   </data>
   <data name="ProjectManager.Info.AddToLibrary" xml:space="preserve">
     <value>Add to library</value>
@@ -2589,7 +2589,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>완성 목록 항목의 삽입 문자를 제한하려면 이 옵션을 설정합니다. Tab과 Enter는 이스케이프 처리를 해야합니다 (예. \t \n).</value>
   </data>
   <data name="TaskListPanel.Info.InvalidFile" xml:space="preserve">
-    <value>The file could not be found. The task list will be refreshed.</value>
+    <value>파일을 찾을 수 없습니다. 작업 목록을 새로고침합니다.</value>
   </data>
   <data name="FlashDevelop.Description.PrintMarginColumn" xml:space="preserve">
     <value>오른쪽에있는 텍스트가 유지되어야할 인쇄 여백을 표시합니다.</value>
@@ -2763,7 +2763,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>다음 Zip 파일이 추출됩니다:</value>
   </data>
   <data name="ResultsPanel.Description.ScrollToBottom" xml:space="preserve">
-    <value>Scrolls the result view to the bottom on new results.</value>
+    <value>새로운 결과가 추가될 때 하단으로 결과보기를 스크롤합니다.</value>
   </data>
   <data name="FlashDevelop.Label.Apply" xml:space="preserve">
     <value>적용 (&amp;A)</value>
@@ -2877,7 +2877,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>자동으로 지정된 이벤트 때 removeEventListener 코드를 생성합니다.</value>
   </data>
   <data name="TaskListPanel.Info.InvalidItem" xml:space="preserve">
-    <value>The selected item could not be found. The task list will be refreshed.</value>
+    <value>선택한 항목을 찾을 수 없습니다.작업 목록을 새로고침합니다.</value>
   </data>
   <data name="ProjectManager.Description.FilteredDirectoryNames" xml:space="preserve">
     <value>Directory names to filter when the name for the classpath is being resolved.</value>
@@ -2945,16 +2945,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>SWC 변환 오류입니다.</value>
   </data>
   <data name="XMLCompletion.Info.Attribute" xml:space="preserve">
-    <value>Attribute</value>
+    <value>속성</value>
   </data>
   <data name="XMLCompletion.Info.EffectAttribute" xml:space="preserve">
-    <value>Effect</value>
+    <value>효과</value>
   </data>
   <data name="XMLCompletion.Info.EventAttribute" xml:space="preserve">
-    <value>Event</value>
+    <value>이벤트</value>
   </data>
   <data name="XMLCompletion.Info.StylingAttribute" xml:space="preserve">
-    <value>Style</value>
+    <value>스타일</value>
   </data>
   <data name="FlashDevelop.Info.MarginBack" xml:space="preserve">
     <value>여백 배경:</value>
@@ -3177,13 +3177,13 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
-    <value>Tasks under the excluded paths are not shown in the task list.</value>
+    <value>제외 된 경로 아래의 작업은 작업 목록에 표시되지 않습니다.</value>
   </data>
   <data name="ProjectManager.Description.StaticLinkRSL" xml:space="preserve">
     <value>Include Runtime Shared Libraries in the project SWF instead of loading them at run time.</value>
   </data>
   <data name="XMLCompletion.Description.DisableZenCoding" xml:space="preserve">
-    <value>Disable HTML Zen Coding feature</value>
+    <value>HTML Zen Coding 기능을 비활성화 합니다.</value>
   </data>
   <data name="ProjectManager.Description.CompilerConstants" xml:space="preserve">
     <value>Enter one compiler constant per ligne - ie: NAMESPACE::variable,value</value>
@@ -3726,16 +3726,16 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>경로</value>
   </data>
   <data name="ResultsPanel.Filters.Errors" xml:space="preserve">
-    <value>Errors</value>
+    <value>오류</value>
   </data>
   <data name="ResultsPanel.Filters.Filter" xml:space="preserve">
-    <value>Filter:</value>
+    <value>필터:</value>
   </data>
   <data name="ResultsPanel.Filters.Informations" xml:space="preserve">
-    <value>Messages</value>
+    <value>메시지</value>
   </data>
   <data name="ResultsPanel.Filters.Warnings" xml:space="preserve">
-    <value>Warnings</value>
+    <value>경고</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.NewClass" xml:space="preserve">
     <value>새로운 클래스</value>
@@ -3813,64 +3813,64 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>SVN</value>
   </data>
   <data name="SourceControl.Description.EnableGIT" xml:space="preserve">
-    <value>Enable GIT integration with projects.</value>
+    <value>프로젝트와 GIT의 통합을 사용합니다.</value>
   </data>
   <data name="SourceControl.Description.EnableSVN" xml:space="preserve">
-    <value>Enable SVN integration with projects.</value>
+    <value>프로젝트와 SVN의 통합을 사용합니다.</value>
   </data>
   <data name="SourceControl.Description.GITPath" xml:space="preserve">
-    <value>Path to GIT command line tool. Example: 'git.exe' if the tool is already installed in the environment path.</value>
+    <value>GIT 명령줄 도구의 경로입니다. 예: 도구가 이미 환경 경로에 설치되어있는 경우 'git.exe'.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.SVNPath" xml:space="preserve">
-    <value>PathPath to SVN command line tool. Example: 'svn.exe' if the tool is already installed in the environment path.</value>
+    <value>SVN 명령줄 도구의 경로입니다. 예: 도구가 이미 환경 경로에 설치되어있는 경우 'svn.exe'.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.TortoiseGITProcPath" xml:space="preserve">
-    <value>Path to TortoiseGit's TortoiseProc tool. Example: 'TortoiseGitProc.exe'.</value>
+    <value>TortoiseGit의 TortoiseProc 도구 경로입니다. 예: 'TortoiseGitProc.exe'.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.TortoiseSVNProcPath" xml:space="preserve">
-    <value>Path to TortoiseSVN's TortoiseProc tool. Example: 'TortoiseProc.exe'.</value>
+    <value>TortoiseSVN의 TortoiseProc 도구 경로입니다. 예: 'TortoiseProc.exe'.</value>
   </data>
   <data name="SourceControl.Info.ConfirmLocalModsDelete" xml:space="preserve">
-    <value>Some elements have local modifications, remove them anyway?</value>
+    <value>일부 요소는 로컬 수정 사항을 가지고있습니다. 삭제 하시겠습니까?</value>
   </data>
   <data name="SourceControl.Info.ConfirmUnversionedDelete" xml:space="preserve">
-    <value>Some elements are not under source control, delete them anyway?</value>
+    <value>일부 요소는 소스 제어에 없습니다. 삭제 하시겠습니까?</value>
   </data>
   <data name="SourceControl.Info.Description" xml:space="preserve">
-    <value>Adds source control integration to FlashDevelop.</value>
+    <value>FlashDevelop에 소스 제어 통합을 추가합니다.</value>
   </data>
   <data name="SourceControl.Info.ElementsLocatedInDiffDirs" xml:space="preserve">
-    <value>Elements located in different directories.</value>
+    <value>다른 디렉토리에있는 요소.</value>
   </data>
   <data name="SourceControl.Info.EnterMessage" xml:space="preserve">
-    <value>Enter a message:</value>
+    <value>메시지를 입력:</value>
   </data>
   <data name="SourceControl.Info.MixedSelectionOfElements" xml:space="preserve">
-    <value>Mixed selection of versioned and non-versioned elements.</value>
+    <value>버전과 버전이 지정되지 않은 요소의 혼합 선택.</value>
   </data>
   <data name="SourceControl.Info.UnableToStartCommand" xml:space="preserve">
-    <value>Unable to start command:</value>
+    <value>명령을 시작할 수 없습니다:</value>
   </data>
   <data name="SourceControl.Info.UnsafeDeleteOperation" xml:space="preserve">
-    <value>Unsafe 'Delete' operation.</value>
+    <value>안전하지 않은 '삭제' 작업.</value>
   </data>
   <data name="SourceControl.Label.Add" xml:space="preserve">
-    <value>Add...</value>
+    <value>추가...</value>
   </data>
   <data name="SourceControl.Label.AddToIgnoreList" xml:space="preserve">
-    <value>Add To Ignore List</value>
+    <value>무시 목록에 추가</value>
   </data>
   <data name="SourceControl.Label.Commit" xml:space="preserve">
-    <value>Commit...</value>
+    <value>커밋...</value>
   </data>
   <data name="SourceControl.Label.DiffWithPrevious" xml:space="preserve">
-    <value>Diff With Previous Version</value>
+    <value>이전 버전과 Diff</value>
   </data>
   <data name="SourceControl.Label.EditConflict" xml:space="preserve">
-    <value>Edit Conflict...</value>
+    <value>충돌 편집...</value>
   </data>
   <data name="SourceControl.Label.GIT" xml:space="preserve">
     <value>GIT</value>
@@ -3879,31 +3879,31 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Diff</value>
   </data>
   <data name="SourceControl.Label.Pull" xml:space="preserve">
-    <value>Pull</value>
+    <value>당겨오기</value>
   </data>
   <data name="SourceControl.Label.Push" xml:space="preserve">
-    <value>Push...</value>
+    <value>밀어넣기...</value>
   </data>
   <data name="SourceControl.Label.Revert" xml:space="preserve">
-    <value>Revert...</value>
+    <value>되돌리기...</value>
   </data>
   <data name="SourceControl.Label.ShowLog" xml:space="preserve">
-    <value>Show Log...</value>
+    <value>로그 보기...</value>
   </data>
   <data name="SourceControl.Label.SVN" xml:space="preserve">
     <value>SVN</value>
   </data>
   <data name="SourceControl.Label.UnableToGetRepoStatus" xml:space="preserve">
-    <value>Unable to get repository status:</value>
+    <value>저장소 상태를 가져올 수 없습니다 :</value>
   </data>
   <data name="SourceControl.Label.UndoAdd" xml:space="preserve">
-    <value>Undo Add...</value>
+    <value>추가 취소...</value>
   </data>
   <data name="SourceControl.Label.Update" xml:space="preserve">
-    <value>Update</value>
+    <value>업데이트</value>
   </data>
   <data name="SourceControl.Label.SourceControl" xml:space="preserve">
-    <value>Source Control</value>
+    <value>소스 제어</value>
   </data>
   <data name="FlashDevelop.Info.Language" xml:space="preserve">
     <value>언어:</value>
@@ -4431,15 +4431,15 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="SourceControl.Description.EnableHG" xml:space="preserve">
-    <value>Enable Mercurial (HG) integration in FlashDevelop</value>
+    <value>FlashDevelop에 Mercurial (HG)의 통합을 사용합니다.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.HGPath" xml:space="preserve">
-    <value>Path to Mercurial command line tool. Example: 'hg.exe' if the tool is already installed in the environment path.</value>
+    <value>Mercurial 명령줄 도구의 경로입니다. 예: 도구가 이미 환경 경로에 설치되어있는 경우 'hg.exe'.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.TortoiseHGProcPath" xml:space="preserve">
-    <value>Path to TortoiseHG's TortoiseProc tool. Example 'thgw.exe'.</value>
+    <value>TortoiseHG의 TortoiseProc 도구 경로입니다. 예: 'thgw.exe'.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="FlashDevelop.Description.CustomShortcuts" xml:space="preserve">
@@ -5238,7 +5238,9 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="TaskListPanel.Description.ExploringMode" xml:space="preserve">
-    <value>The task exploring mode. Light: current files and manual refresh, Complete: current files, project files and manual refresh.</value>
+    <value>작업 탐색 모드.
+Light: 현재 파일 및 수동 새로 고침.
+Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
