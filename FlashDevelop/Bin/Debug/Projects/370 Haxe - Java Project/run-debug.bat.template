@@ -1,4 +1,0 @@
-@echo off
-cd bin
-java -jar $(ProjectID)-Debug.jar
-pause
