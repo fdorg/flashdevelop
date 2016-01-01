@@ -121,7 +121,7 @@
     <value>Flash Player의 기본 버전.</value>
   </data>
   <data name="AS2Context.Description.MMClassPath" xml:space="preserve">
-    <value>어도비 플래시 프로페셔널 경로.</value>
+    <value>Adobe Flash Professional의 경로.</value>
   </data>
   <data name="AS2Context.Description.MtascCheckParameters" xml:space="preserve">
     <value>스크립트 오류 검사를 위한 MTASC 컴파일러 매개 변수를 설정합니다.</value>
@@ -130,7 +130,7 @@
     <value>MTASC 컴파일러 경로.</value>
   </data>
   <data name="AS2Context.Description.UseMtascIntrinsic" xml:space="preserve">
-    <value>어도비 플래시 프로페셔널 내장 함수 대신 MTASC 내장 함수를 사용합니다. MTASC 더 엄격하고 플래시 플러그인은몇 가지 기능을 지원하지 않기 때문에 일반적으로 이 설정을 사용합니다.</value>
+    <value>Adobe Flash Professional의 내장 함수 대신 MTASC 내장 함수를 사용합니다. MTASC 더 엄격하고 플래시 플러그인은몇 가지 기능을 지원하지 않기 때문에 일반적으로 이 설정을 사용합니다.</value>
   </data>
   <data name="AS2Context.Info.FeatureMissing" xml:space="preserve">
     <value>기능이 구현되지 않습니다.</value>
@@ -151,10 +151,10 @@
     <value>AS3 intrinsic 클래스 경로입니다.</value>
   </data>
   <data name="AS3Context.Description.DefaultFlashVersion" xml:space="preserve">
-    <value>기본 플래시 플래이어 버전.</value>
+    <value>기본 Flash Player 버전.</value>
   </data>
   <data name="AS3Context.Description.FlexSDK" xml:space="preserve">
-    <value>어도비 플렉스 SDK의 경로.</value>
+    <value>Adobe Flex SDK의 경로.</value>
   </data>
   <data name="AS3Context.Info.CheckError" xml:space="preserve">
     <value>AS3 구문 검사를 실행하는 동안 오류발생.</value>
@@ -172,9 +172,9 @@
     <value>컴파일러 shell 리소스를 추출 할 수 없습니다.</value>
   </data>
   <data name="AS3Context.Info.SetFlex2OrCS3Path" xml:space="preserve">
-    <value>어도비 플렉스 SDK의 경로를 구성 할 AS3 컨텍스트 설정을 여시겠습니까?
+    <value>Adobe Flex SDK의 경로를 구성 할 AS3 컨텍스트 설정을 여시겠습니까?
 
-또는, 어도비 플래시 프로페셔널을 구문 검사에 사용할 수 있습니다 - "아니오"를 눌러 어도비 플래시 프로페셔널의 경로를 구성 할 수 있습니다.</value>
+또는, Adobe Flash Professional을 구문 검사에 사용할 수 있습니다 - "아니오"를 눌러 Adobe Flash Professional의 경로를 구성 할 수 있습니다.</value>
   </data>
   <data name="AS3Context.Title.ConfigurationRequired" xml:space="preserve">
     <value>컴파일러 구성 필요</value>
@@ -252,7 +252,7 @@
     <value>아웃라인 뷰에서 import를 표시합니다.</value>
   </data>
   <data name="ASCompletion.Description.PathToFlashIDE" xml:space="preserve">
-    <value>어도비 플래시 프로페셔널의 경로를 정의합니다.</value>
+    <value>Adobe Flash Professional의 경로를 정의합니다.</value>
   </data>
   <data name="ASCompletion.Description.PlayAfterBuild" xml:space="preserve">
     <value>자동으로 Quick Build 후 생성 된 SWF를 재생합니다.</value>
@@ -276,7 +276,7 @@
     <value>글로벌 클래스 경로.</value>
   </data>
   <data name="ASCompletion.Info.ConfigurationRequired" xml:space="preserve">
-    <value>어도비 플래시 프로페셔널 구성이 필요합니다</value>
+    <value>Adobe Flash Professional 구성이 필요합니다</value>
   </data>
   <data name="ASCompletion.Info.ConfigureFlashPath" xml:space="preserve">
     <value>Flash.exe (어도비 플래시 프로페셔널)에 대한 경로가 제대로 구성되어 있지 않습니다. 프로그램 설정을 수정 하시겠습니까?</value>
@@ -1446,64 +1446,64 @@
     <value>해당 폴더에 이미 "{0}"(이)라는 폴더가 존재합니다.{1}{1}기존의 폴더에 있는 파일 중 이동 또는 복사되는 폴더에 있는 파일과 동일한 이름이 있는 경우, 그 파일은 덮어씌워 집니다. 계속하시겠습니까?</value>
   </data>
   <data name="ProjectManager.Category.Advanced" xml:space="preserve">
-    <value>Advanced</value>
+    <value>고급</value>
   </data>
   <data name="ProjectManager.Category.CodeInjection" xml:space="preserve">
-    <value>Code Injection</value>
+    <value>코드 주입</value>
   </data>
   <data name="ProjectManager.Category.CompilerOptions" xml:space="preserve">
-    <value>Compiler Options</value>
+    <value>컴파일러 옵션</value>
   </data>
   <data name="ProjectManager.Category.Exclusions" xml:space="preserve">
-    <value>Exclusions</value>
+    <value>제외</value>
   </data>
   <data name="ProjectManager.Category.General" xml:space="preserve">
-    <value>General</value>
+    <value>일반</value>
   </data>
   <data name="ProjectManager.Category.GeneralOptions" xml:space="preserve">
-    <value>General</value>
+    <value>일반</value>
   </data>
   <data name="ProjectManager.Category.OtherOptions" xml:space="preserve">
-    <value>Other Options</value>
+    <value>기타 옵션</value>
   </data>
   <data name="ProjectManager.Category.ProjectTree" xml:space="preserve">
-    <value>Project Tree</value>
+    <value>프로젝트 트리</value>
   </data>
   <data name="ProjectManager.Category.Trace" xml:space="preserve">
-    <value>Trace</value>
+    <value>추적</value>
   </data>
   <data name="ProjectManager.Column.Name" xml:space="preserve">
-    <value>Name</value>
+    <value>이름</value>
   </data>
   <data name="ProjectManager.Column.Value" xml:space="preserve">
-    <value>Value</value>
+    <value>값</value>
   </data>
   <data name="ProjectManager.Description.Accessible" xml:space="preserve">
-    <value>Enables accessibility features when compiling the Flex application or SWC file.</value>
+    <value>Flex 어플리케이션 또는 SWC 파일을 컴파일 할 때 접근성 기능을 사용하도록 설정합니다.</value>
   </data>
   <data name="ProjectManager.Description.Additional" xml:space="preserve">
-    <value>Set advanced compiler command line options. Not recommended.</value>
+    <value>고급 컴파일러 명령줄 옵션을 설정합니다. 이 옵션은 권장하지 않습니다.</value>
   </data>
   <data name="ProjectManager.Description.AllowSourcePathOverlap" xml:space="preserve">
-    <value>Checks if a source-path entry is a subdirectory of another source-path entry.</value>
+    <value>소스 경로 항목이 다른 소스 경로 항목의 하위 디렉토리인지 확인합니다.</value>
   </data>
   <data name="ProjectManager.Description.ApplicationMain" xml:space="preserve">
-    <value>Specifies the source file to compile.</value>
+    <value>컴파일 할 소스 파일을 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.Benchmark" xml:space="preserve">
-    <value>Prints detailed compile times to the output panel.</value>
+    <value>출력 패널에 상세한 컴파일 시간을 출력합니다.</value>
   </data>
   <data name="ProjectManager.Description.DeclareOverride" xml:space="preserve">
-    <value>Ensure overriden methods are declared with "override".</value>
+    <value>재정의된 방법이 "override"로 선언되도록 확인합니다.</value>
   </data>
   <data name="ProjectManager.Description.Directives" xml:space="preserve">
-    <value>Specifies the user-defined compiler directives.</value>
+    <value>사용자 정의 컴파일러 지시문을 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.EnableMxmlMapping" xml:space="preserve">
     <value>Group MXML source files (mx:Script, mx:Style) under the MXML file linking them.</value>
   </data>
   <data name="ProjectManager.Description.EnableDebug" xml:space="preserve">
-    <value>Activate the ability to use the interactive debugger.</value>
+    <value>인터랙티브 디버거를 사용할 수 있는 기능을 활성화합니다.</value>
   </data>
   <data name="ProjectManager.Description.ES" xml:space="preserve">
     <value>Instructs the compiler to use the ECMAScript Edition 3 prototype-based object model to allow dynamic overriding of prototype properties.</value>
@@ -1639,94 +1639,94 @@
     <value>If set to true, the compiler will warn you when you have used the "import" keyword needlessly.</value>
   </data>
   <data name="ProjectManager.Info.AlwaysExecute" xml:space="preserve">
-    <value>Always execute</value>
+    <value>항상 실행</value>
   </data>
   <data name="ProjectManager.Info.AndAllItsContents" xml:space="preserve">
-    <value>and all its contents</value>
+    <value>그리고 모든 내용</value>
   </data>
   <data name="ProjectManager.Info.Build" xml:space="preserve">
-    <value>Build</value>
+    <value>빌드</value>
   </data>
   <data name="ProjectManager.Info.Builder" xml:space="preserve">
-    <value>Builder...</value>
+    <value>빌더...</value>
   </data>
   <data name="ProjectManager.Info.BuildFailed" xml:space="preserve">
-    <value>Build Failed</value>
+    <value>빌드 실패</value>
   </data>
   <data name="ProjectManager.Info.BuildStarted" xml:space="preserve">
-    <value>Build Started...</value>
+    <value>빌드 시작...</value>
   </data>
   <data name="ProjectManager.Info.BuildSucceeded" xml:space="preserve">
-    <value>Build Succeeded</value>
+    <value>빌드 성공</value>
   </data>
   <data name="ProjectManager.Info.Classpaths" xml:space="preserve">
-    <value>Classpaths</value>
+    <value>클래스 경로</value>
   </data>
   <data name="ProjectManager.Info.ClasspathsAreSaved" xml:space="preserve">
-    <value>Global classpaths will be saved along with your FlashDevelop settings.</value>
+    <value>글로벌 클래스 경로는 FlashDevelop 설정과 함께 저장됩니다.</value>
   </data>
   <data name="ProjectManager.Info.CompilerOptions" xml:space="preserve">
-    <value>Compiler Options</value>
+    <value>컴파일러 옵션</value>
   </data>
   <data name="ProjectManager.Info.ConfirmFileUpdate" xml:space="preserve">
-    <value>Would you like to keep this file updated from the source location? You can always change this in the Options context menu.</value>
+    <value>소스 위치에서 업데이트된 이 파일을 유지 하시겠습니까? 옵션 컨텍스트 메뉴에서 이 설정을 변경할 수 있습니다.</value>
   </data>
   <data name="ProjectManager.Info.CouldNotCreateProject" xml:space="preserve">
-    <value>Could not create the requested project:</value>
+    <value>요청 된 프로젝트를 만들 수 없습니다:</value>
   </data>
   <data name="ProjectManager.Info.CouldNotFindProject" xml:space="preserve">
-    <value>Could not find the project to open. The menu will be repopulated.</value>
+    <value>열 수 있는 프로젝트를 찾을 수 없습니다. 메뉴가 다시 채워집니다.</value>
   </data>
   <data name="ProjectManager.Info.CouldNotOpenProject" xml:space="preserve">
-    <value>Could not open the requested project:</value>
+    <value>요청 된 프로젝트를 열 수 없습니다 :</value>
   </data>
   <data name="ProjectManager.Info.CreateDirForProject" xml:space="preserve">
-    <value>Create &amp;directory for project</value>
+    <value>프로젝트 디렉토리를 생성</value>
   </data>
   <data name="ProjectManager.Info.Custom" xml:space="preserve">
-    <value>Run custom command...</value>
+    <value>사용자 정의 명령을 실행...</value>
   </data>
   <data name="ProjectManager.Info.Debug" xml:space="preserve">
-    <value>Debug</value>
+    <value>디버그</value>
   </data>
   <data name="ProjectManager.Info.Default" xml:space="preserve">
-    <value>Play (FlashViewer default)</value>
+    <value>재생: (FlashViewer 기본)</value>
   </data>
   <data name="ProjectManager.Info.Document" xml:space="preserve">
-    <value>Play in new tab</value>
+    <value>새 탭에서 재생</value>
   </data>
   <data name="ProjectManager.Info.EditCommand" xml:space="preserve">
-    <value>&amp;Edit...</value>
+    <value>편집... (&amp;E)</value>
   </data>
   <data name="ProjectManager.Info.EmbedNeedsOpenDocument" xml:space="preserve">
-    <value>You must have a document open to insert a resource string.</value>
+    <value>자원 문자열을 삽입 할 문서가 열려 있어야합니다.</value>
   </data>
   <data name="ProjectManager.Info.EmptyProject" xml:space="preserve">
-    <value>Empty Project</value>
+    <value>빈 프로젝트</value>
   </data>
   <data name="ProjectManager.Info.EnterText" xml:space="preserve">
-    <value>Enter text:</value>
+    <value>텍스트를 입력:</value>
   </data>
   <data name="ProjectManager.Info.Exploring" xml:space="preserve">
-    <value>Exploring...</value>
+    <value>탐색중...</value>
   </data>
   <data name="ProjectManager.Info.External" xml:space="preserve">
-    <value>Play in external player</value>
+    <value>외부 플레이어에서 재생</value>
   </data>
   <data name="ProjectManager.Info.FileAlreadyExistsInProject" xml:space="preserve">
-    <value>The file "{0}" already exists in the project folder. Would you like to overwrite it?</value>
+    <value>파일 "{0}"(은)는 이미 프로젝트 폴더에 존재합니다. 이 파일을 덮어씌우시겠습니까?</value>
   </data>
   <data name="ProjectManager.Info.FileFilter" xml:space="preserve">
-    <value>All Files (*.*)|*.*</value>
+    <value>모든 파일 (*.*)|*.*</value>
   </data>
   <data name="ProjectManager.Info.FlashMovieFilter" xml:space="preserve">
-    <value>Flash Movies (*.swf)|*.swf</value>
+    <value>Flash 무비 (*.swf)|*.swf</value>
   </data>
   <data name="ProjectManager.Info.General" xml:space="preserve">
-    <value>General</value>
+    <value>일반</value>
   </data>
   <data name="ProjectManager.Info.GlobalClasspaths" xml:space="preserve">
-    <value>Global classpaths are specific to your machine{0}and are not stored in the project file.</value>
+    <value>글로벌 클래스 경로는 이 컴퓨터에만 해당되며 프로젝트 파일에 저장되지 않습니다.</value>
   </data>
   <data name="ProjectManager.Info.InjectionConfirmation" xml:space="preserve">
     <value>The library assets currently embedded in your project will be removed from the project, but not deleted. Are you sure you want to proceed?</value>
@@ -1835,279 +1835,279 @@
     <value>will be moved to the Recycle Bin.</value>
   </data>
   <data name="ProjectManager.Label.Add" xml:space="preserve">
-    <value>&amp;Add</value>
+    <value>추가 (&amp;A)</value>
   </data>
   <data name="ProjectManager.Label.AddAsPreloader" xml:space="preserve">
-    <value>Add as &amp;preloader</value>
+    <value>프리로더로 추가 (&amp;P)</value>
   </data>
   <data name="ProjectManager.Label.AddClasspath" xml:space="preserve">
-    <value>&amp;Add Classpath...</value>
+    <value>클래스 경로 추가... (&amp;A)</value>
   </data>
   <data name="ProjectManager.Label.AddExistingFile" xml:space="preserve">
-    <value>Add Existing File</value>
+    <value>기존 파일 추가</value>
   </data>
   <data name="ProjectManager.Label.AddLibraryAsset" xml:space="preserve">
-    <value>Add Library Asset</value>
+    <value>라이브러리 에셋 추가</value>
   </data>
   <data name="ProjectManager.Label.AddNew" xml:space="preserve">
-    <value>Add New</value>
+    <value>새 항목 추가</value>
   </data>
   <data name="ProjectManager.Label.AddToLibrary" xml:space="preserve">
-    <value>Add To &amp;Library</value>
+    <value>라이브러리에 추가 (&amp;L)</value>
   </data>
   <data name="ProjectManager.Label.Advanced" xml:space="preserve">
-    <value>Advanced</value>
+    <value>고급</value>
   </data>
   <data name="ProjectManager.Label.AlwaysCompile" xml:space="preserve">
-    <value>Always &amp;Compile</value>
+    <value>항상 컴파일 (&amp;C)</value>
   </data>
   <data name="ProjectManager.Label.Apply" xml:space="preserve">
-    <value>&amp;Apply</value>
+    <value>적용 (&amp;A)</value>
   </data>
   <data name="ProjectManager.Label.AutoGenerateID" xml:space="preserve">
-    <value>Auto-generate &amp;ID for attachMovie():</value>
+    <value>attachMovie()에 대한 ID를 자동으로 생성:</value>
   </data>
   <data name="ProjectManager.Label.BackgroundColor" xml:space="preserve">
-    <value>Background &amp;color:</value>
+    <value>배경색:</value>
   </data>
   <data name="ProjectManager.Label.Browse" xml:space="preserve">
-    <value>&amp;Browse...</value>
+    <value>찾아보기... (&amp;B)</value>
   </data>
   <data name="ProjectManager.Label.BuildProject" xml:space="preserve">
-    <value>&amp;Build Project</value>
+    <value>프로젝트 빌드 (&amp;B)</value>
   </data>
   <data name="ProjectManager.Label.StopBuild" xml:space="preserve">
-    <value>Stop Build</value>
+    <value>빌드 중지</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Info.AreYouSureToStopBuild" xml:space="preserve">
-    <value>Are you sure you want to stop the build?</value>
+    <value>빌드를 중지 하시겠습니까?</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="ProjectManager.Label.Cancel" xml:space="preserve">
-    <value>&amp;Cancel</value>
+    <value>취소 (&amp;C)</value>
   </data>
   <data name="ProjectManager.Label.CleanRecentProjects" xml:space="preserve">
-    <value>&amp;Remove Invalid Projects</value>
+    <value>유효하지 않은 프로젝트 제거 (&amp;R)</value>
     <comment>Added after 5.0.0</comment>
   </data>
   <data name="ProjectManager.Label.ClearRecentProjects" xml:space="preserve">
-    <value>&amp;Clear Recent Projects List</value>
+    <value>최근 프로젝트 목록 지우기 (&amp;C)</value>
   </data>
   <data name="ProjectManager.Label.CloseProject" xml:space="preserve">
-    <value>&amp;Close Project</value>
+    <value>프로젝트 닫기 (&amp;C)</value>
   </data>
   <data name="ProjectManager.Label.Copy" xml:space="preserve">
-    <value>Cop&amp;y</value>
+    <value>복사 (&amp;Y)</value>
   </data>
   <data name="ProjectManager.Label.CopyOf" xml:space="preserve">
-    <value>Copy of {0}</value>
+    <value>{0}의 사본</value>
   </data>
   <data name="ProjectManager.Label.CustomTestMovieCommand" xml:space="preserve">
-    <value>Command:</value>
+    <value>명령:</value>
   </data>
   <data name="ProjectManager.Label.Cut" xml:space="preserve">
-    <value>Cu&amp;t</value>
+    <value>잘라내기 (&amp;T)</value>
   </data>
   <data name="ProjectManager.Label.Delete" xml:space="preserve">
-    <value>&amp;Delete</value>
+    <value>삭제 (&amp;D)</value>
   </data>
   <data name="ProjectManager.Label.Dimensions" xml:space="preserve">
-    <value>&amp;Dimensions:</value>
+    <value>크기:</value>
   </data>
   <data name="ProjectManager.Label.EditGlobalClasspaths" xml:space="preserve">
-    <value>&amp;Edit Global Classpaths...</value>
+    <value>글로벌 클래스 경로 편집... (&amp;E)</value>
   </data>
   <data name="ProjectManager.Label.EmbedAllChars" xml:space="preserve">
-    <value>Embed &amp;all characters</value>
+    <value>모든 문자를 내장 (&amp;A)</value>
   </data>
   <data name="ProjectManager.Label.EmbedTheseChars" xml:space="preserve">
-    <value>Embed &amp;these characters:</value>
+    <value>이 문자를 내장:</value>
   </data>
   <data name="ProjectManager.Label.Execute" xml:space="preserve">
-    <value>&amp;Execute</value>
+    <value>실행 (&amp;E)</value>
   </data>
   <data name="ProjectManager.Label.ExistingFile" xml:space="preserve">
-    <value>&amp;Existing File...</value>
+    <value>기존 파일... (&amp;E)</value>
   </data>
   <data name="ProjectManager.Label.ExplainTheseOptions" xml:space="preserve">
-    <value>Explain these options</value>
+    <value>이 옵션을 설명</value>
   </data>
   <data name="ProjectManager.Label.File" xml:space="preserve">
-    <value>File</value>
+    <value>파일</value>
   </data>
   <data name="ProjectManager.Label.FileName" xml:space="preserve">
-    <value>Filename:</value>
+    <value>파일 이름:</value>
   </data>
   <data name="ProjectManager.Label.Font" xml:space="preserve">
-    <value>Font</value>
+    <value>글꼴</value>
   </data>
   <data name="ProjectManager.Label.FrameRate" xml:space="preserve">
-    <value>&amp;Framerate:</value>
+    <value>프레임 속도:</value>
   </data>
   <data name="ProjectManager.Label.GlobalClasspaths" xml:space="preserve">
-    <value>G&amp;lobal Classpaths...</value>
+    <value>글로벌 클래스 경로... (&amp;L)</value>
   </data>
   <data name="ProjectManager.Label.HideFile" xml:space="preserve">
-    <value>&amp;Hide File</value>
+    <value>파일 숨기기 (&amp;H)</value>
   </data>
   <data name="ProjectManager.Label.HideFolder" xml:space="preserve">
-    <value>&amp;Hide Folder</value>
+    <value>폴더 숨기기 (&amp;H)</value>
   </data>
   <data name="ProjectManager.Label.HideItems" xml:space="preserve">
-    <value>&amp;Hide Items</value>
+    <value>항목 숨기기 (&amp;H)</value>
   </data>
   <data name="ProjectManager.Label.Insert" xml:space="preserve">
-    <value>&amp;Insert</value>
+    <value>삽입 (&amp;I)</value>
   </data>
   <data name="ProjectManager.Label.InsertIntoDocument" xml:space="preserve">
-    <value>&amp;Generate Embed Code</value>
+    <value>Embed 코드 생성 (&amp;G)</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.InstalledTemplates" xml:space="preserve">
-    <value>Installed &amp;Templates</value>
+    <value>설치된 템플릿 (&amp;T)</value>
   </data>
   <data name="ProjectManager.Label.KeepUpdatedBySourceFile" xml:space="preserve">
-    <value>&amp;Keep updated by copying source file:</value>
+    <value>소스 파일을 복사하여 업데이트 유지:</value>
   </data>
   <data name="ProjectManager.Label.LibraryAsset" xml:space="preserve">
-    <value>Library &amp;Asset...</value>
+    <value>라이브러리 에셋... (&amp;A)</value>
   </data>
   <data name="ProjectManager.Label.LoadAtRuntime" xml:space="preserve">
-    <value>Load at &amp;runtime (shared library)</value>
+    <value>런타임에 로드 (공유 라이브러리) (&amp;R)</value>
   </data>
   <data name="ProjectManager.Label.Location" xml:space="preserve">
-    <value>&amp;Location:</value>
+    <value>위치:</value>
   </data>
   <data name="ProjectManager.Label.MainMenuItem" xml:space="preserve">
-    <value>Project Manager</value>
+    <value>프로젝트 관리자</value>
   </data>
   <data name="ProjectManager.Label.Name" xml:space="preserve">
-    <value>&amp;Name:</value>
+    <value>이름:</value>
   </data>
   <data name="ProjectManager.Label.New" xml:space="preserve">
-    <value>New</value>
+    <value>새 항목</value>
   </data>
   <data name="ProjectManager.Label.NewFile" xml:space="preserve">
-    <value>New File</value>
+    <value>새 파일</value>
   </data>
   <data name="ProjectManager.Label.NewFolder" xml:space="preserve">
-    <value>New &amp;Folder...</value>
+    <value>새 폴더... (&amp;F)</value>
   </data>
   <data name="ProjectManager.Label.NewProject" xml:space="preserve">
-    <value>&amp;New Project...</value>
+    <value>새 프로젝트... (&amp;N)</value>
   </data>
   <data name="ProjectManager.Label.NoProjectOutput" xml:space="preserve">
-    <value>(Project output not built)</value>
+    <value>(프로젝트 출력이 빌드되지 않음)</value>
   </data>
   <data name="ProjectManager.Label.NotValidGroup" xml:space="preserve">
-    <value>No actions available.</value>
+    <value>수행할 수 있는 작업이 없습니다.</value>
   </data>
   <data name="ProjectManager.Label.OK" xml:space="preserve">
-    <value>&amp;OK</value>
+    <value>확인 (&amp;O)</value>
   </data>
   <data name="ProjectManager.Label.Open" xml:space="preserve">
-    <value>&amp;Open</value>
+    <value>열기 (&amp;O)</value>
   </data>
   <data name="ProjectManager.Label.OpenProject" xml:space="preserve">
-    <value>&amp;Open Project...</value>
+    <value>프로젝트 열기... (&amp;O)</value>
   </data>
   <data name="ProjectManager.Label.Options" xml:space="preserve">
-    <value>&amp;Options...</value>
+    <value>옵션... (&amp;O)</value>
   </data>
   <data name="ProjectManager.Label.OutputFile" xml:space="preserve">
-    <value>&amp;Output file:</value>
+    <value>출력 파일:</value>
   </data>
   <data name="ProjectManager.Label.ConfigurationFile" xml:space="preserve">
-    <value>&amp;Configuration file:</value>
+    <value>구성 파일:</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Label.Paste" xml:space="preserve">
-    <value>&amp;Paste</value>
+    <value>붙여넣기 (&amp;P)</value>
   </data>
   <data name="ProjectManager.Label.Project" xml:space="preserve">
-    <value>&amp;Project</value>
+    <value>프로젝트 (&amp;P)</value>
   </data>
   <data name="ProjectManager.Label.ProjectClasspaths" xml:space="preserve">
-    <value>&amp;Project Classpaths...</value>
+    <value>프로젝트 클래스 경로... (&amp;P)</value>
   </data>
   <data name="ProjectManager.Label.Properties" xml:space="preserve">
-    <value>&amp;Properties...</value>
+    <value>속성... (&amp;P)</value>
   </data>
   <data name="ProjectManager.Label.RecentProjects" xml:space="preserve">
-    <value>Recent Pro&amp;jects</value>
+    <value>최근 프로젝트 (&amp;J)</value>
   </data>
   <data name="ProjectManager.Label.Remove" xml:space="preserve">
-    <value>&amp;Remove</value>
+    <value>제거 (&amp;R)</value>
   </data>
   <data name="ProjectManager.Label.Rename" xml:space="preserve">
-    <value>Rena&amp;me</value>
+    <value>이름 바꾸기 (&amp;M)</value>
   </data>
   <data name="ProjectManager.Label.ShowHiddenItems" xml:space="preserve">
-    <value>&amp;Show Hidden Items</value>
+    <value>숨겨진 항목을 표시 (&amp;S)</value>
   </data>
   <data name="ProjectManager.Label.SpecifySharePointID" xml:space="preserve">
-    <value>&amp;Specify sharepoint ID:</value>
+    <value>쉐어 포인트 ID를 지정:</value>
   </data>
   <data name="ProjectManager.Label.SwfFile" xml:space="preserve">
-    <value>SWF File</value>
+    <value>SWF 파일</value>
   </data>
   <data name="ProjectManager.Label.TestMovie" xml:space="preserve">
-    <value>&amp;Test Project</value>
+    <value>테스트 프로젝트 (&amp;T)</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
-    <value>&amp;Run Project</value>
+    <value>프로젝트 실행 (&amp;R)</value>
     <comment>Added after 4.6.1</comment>
   </data>
   <data name="ProjectManager.Title.CommandLineBuilder" xml:space="preserve">
-    <value>Command-Line Builder</value>
+    <value>명령줄 빌더</value>
   </data>
   <data name="ProjectManager.Title.ConfigurationRequired" xml:space="preserve">
-    <value>Compiler Configuration Required</value>
+    <value>컴파일러 구성 필수</value>
   </data>
   <data name="ProjectManager.Title.CustomTestMovieCommand" xml:space="preserve">
-    <value>Enter Custom Test Project Command</value>
+    <value>사용자 정의 테스트 프로젝트 명령을 입력</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Title.EnterText" xml:space="preserve">
-    <value>Enter Text</value>
+    <value>텍스트를 입력</value>
   </data>
   <data name="ProjectManager.Title.GlobalClasspaths" xml:space="preserve">
-    <value>Global Classpaths</value>
+    <value>글로벌 클래스 경로</value>
   </data>
   <data name="ProjectManager.Title.GlobalClasspathsBox" xml:space="preserve">
-    <value>Global {0} Classpaths</value>
+    <value>글로벌 {0} 클래스 경로</value>
   </data>
   <data name="ProjectManager.Title.LibraryAssetProperties" xml:space="preserve">
-    <value>Library Asset Properties</value>
+    <value>라이브러리 에셋 속성</value>
   </data>
   <data name="ProjectManager.Title.PathConflict" xml:space="preserve">
-    <value>Path Conflict</value>
+    <value>경로 충돌</value>
   </data>
   <data name="ProjectManager.Title.PluginPanel" xml:space="preserve">
-    <value>Project</value>
+    <value>프로젝트</value>
   </data>
   <data name="ProjectManager.Title.ProjectProperties" xml:space="preserve">
-    <value>Project Properties</value>
+    <value>프로젝트 속성</value>
   </data>
   <data name="ProjectManager.ToolTip.AlwaysExecute" xml:space="preserve">
-    <value>Execute the Post-Build Command Line even after a failed build.</value>
+    <value>실패한 빌드 이후에도 PostBuild 명령 줄을 실행합니다.</value>
   </data>
   <data name="ProjectManager.ToolTip.ProjectProperties" xml:space="preserve">
-    <value>Project Properties</value>
+    <value>프로젝트 속성</value>
   </data>
   <data name="ProjectManager.ToolTip.ProjectTypes" xml:space="preserve">
-    <value>Type Explorer</value>
+    <value>유형 탐색기</value>
   </data>
   <data name="ProjectManager.ToolTip.Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>새로 고침</value>
   </data>
   <data name="ProjectManager.ToolTip.SelectConfiguration" xml:space="preserve">
-    <value>Select Configuration</value>
+    <value>구성 선택</value>
   </data>
   <data name="ProjectManager.ToolTip.ShowHiddenItems" xml:space="preserve">
-    <value>Show Hidden Items</value>
+    <value>숨겨진 항목을 표시</value>
   </data>
   <data name="ResultsPanel.Header.Description" xml:space="preserve">
     <value>설명</value>
@@ -2291,22 +2291,22 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>상수로 변환</value>
   </data>
   <data name="ProjectManager.Info.AboutPackages" xml:space="preserve">
-    <value>(not supported in all projects)</value>
+    <value>(모든 프로젝트에 지원되진 않음)</value>
   </data>
   <data name="ProjectManager.Label.Package" xml:space="preserve">
-    <value>&amp;Package:</value>
+    <value>패키지:</value>
   </data>
   <data name="FileExplorer.Info.PathTrusted" xml:space="preserve">
     <value>(이)가 플래시 플레이어 신뢰 경로에 추가되었습니다.</value>
   </data>
   <data name="ProjectManager.Label.SwcExternalLibraryOption" xml:space="preserve">
-    <value>&amp;External library (not included)</value>
+    <value>외부 라이브러리 (포함되지 않음) (&amp;E)</value>
   </data>
   <data name="ProjectManager.Label.SwcIncludedLibraryOption" xml:space="preserve">
-    <value>&amp;Included library (include completely)</value>
+    <value>포함된 라이브러리 (완전의 포함) (&amp;I)</value>
   </data>
   <data name="ProjectManager.Label.SwcLibraryOption" xml:space="preserve">
-    <value>&amp;Library (include referenced classes)</value>
+    <value>라이브러리 (참조된 클래스 포함) (&amp;L)</value>
   </data>
   <data name="AS2Context.Info.Description" xml:space="preserve">
     <value>ASCompletion 엔진에 액션 스크립트 2 컨텍스트를 추가합니다.</value>
@@ -2321,7 +2321,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>ASCompletion 엔진에 Haxe 컨텍스트를 추가합니다.</value>
   </data>
   <data name="ProjectManager.Info.Description" xml:space="preserve">
-    <value>Adds a project management and building to FlashDevelop.</value>
+    <value>FlashDevelop에 프로젝트 관리 및 빌딩 기능을 추가합니다.</value>
   </data>
   <data name="StartPage.Info.Description" xml:space="preserve">
     <value>FlashDevelop에 시작 페이지를 추가합니다.</value>
@@ -2336,7 +2336,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>이전 항목 (&amp;P)</value>
   </data>
   <data name="ProjectManager.Info.AddToLibrary" xml:space="preserve">
-    <value>Add to library</value>
+    <value>라이브러리에 추가</value>
   </data>
   <data name="FlashDevelop.Title.OpenFileDialog" xml:space="preserve">
     <value>파일 열기</value>
@@ -2353,17 +2353,17 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="ProjectManager.Title.OpenProjectDialog" xml:space="preserve">
-    <value>Open Project</value>
+    <value>프로젝트 열기</value>
   </data>
   <data name="ProjectManager.Info.CodeInjection" xml:space="preserve">
-    <value>Code injection is a compilation method that is useful for maintaining a workflow in conjunction with Adobe Flash Professional.
+    <value>코드 주입은 Adobe Flash Professional과 함께 워크 플로를 유지하는 데 유용한 컴파일 방법입니다.
 
-If you enable injection, your source will be compiled into an existing SWF file. The input SWF will be copied first and the injected file will be your output SWF name.
+주입을 사용하는 경우, 소스는 기존의 SWF 파일로 컴파일됩니다. 입력 SWF가 먼저 복사되고 주입 된 파일은 출력 SWF의 이름이됩니다.
 
-Please note that with injection enabled, you will not be able to use many project options, including asset embedding.</value>
+주입이 활성화가 되면, 에셋 임베딩을 포함한 많은 프로젝트 옵션을 사용할 수 없습니다.</value>
   </data>
   <data name="ProjectManager.Info.Injection" xml:space="preserve">
-    <value>Injection</value>
+    <value>주입</value>
   </data>
   <data name="ProjectManager.Info.InputSWF" xml:space="preserve">
     <value>&amp;Input SWF file:</value>
@@ -2414,17 +2414,17 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Open document...</value>
   </data>
   <data name="ProjectManager.Label.CustomTestMovieDocument" xml:space="preserve">
-    <value>Document:</value>
+    <value>문서:</value>
   </data>
   <data name="ProjectManager.Title.CustomTestMovieDocument" xml:space="preserve">
-    <value>Select Document To Open On Test Project</value>
+    <value>테스트 프로젝트에 열 문서를 선택</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Info.NotEnoughArguments" xml:space="preserve">
     <value>프로세스를 실행하기에 인수가 충분하지 않습니다:</value>
   </data>
   <data name="ProjectManager.Label.BrowseDirectory" xml:space="preserve">
-    <value>E&amp;xplore</value>
+    <value>탐색 (&amp;X)</value>
   </data>
   <data name="ASCompletion.Description.ShowRegions" xml:space="preserve">
     <value>리스트에서 영역 그룹핑을 사용합니다.</value>
@@ -2463,13 +2463,13 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>즐겨찾기 제거</value>
   </data>
   <data name="ProjectManager.Label.ImportProject" xml:space="preserve">
-    <value>&amp;Import Project...</value>
+    <value>프로젝트 불러오기... (&amp;I)</value>
   </data>
   <data name="ProjectManager.Title.ImportProject" xml:space="preserve">
-    <value>Select Project To Import</value>
+    <value>불러올 프로젝트를 선택</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder Project (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
+    <value>Adobe Flash Builder 프로젝트 (.actionScriptProperties)|.actionScriptProperties|패키지된 Adobe Flash Builder 프로젝트(*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>결과 패널에 결과를 보내기</value>
@@ -2520,7 +2520,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>일반</value>
   </data>
   <data name="ASCompletion.Category.Documentation" xml:space="preserve">
-    <value>도큐멘트</value>
+    <value>문서</value>
   </data>
   <data name="ASCompletion.Category.Language" xml:space="preserve">
     <value>언어</value>
@@ -2535,13 +2535,13 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>도우미</value>
   </data>
   <data name="ASCompletion.Category.OutlineView" xml:space="preserve">
-    <value>아웃 라인 보기</value>
+    <value>아웃라인 보기</value>
   </data>
   <data name="ASCompletion.Info.TypeDeclMissing" xml:space="preserve">
     <value>'{0}'의 유형 선언이 없습니다.</value>
   </data>
   <data name="ProjectManager.Label.EmbedAsBitmap" xml:space="preserve">
-    <value>Embed as Bitmap instead of Clip</value>
+    <value>클립 대신 비트맵으로 내장</value>
   </data>
   <data name="FlashDevelop.Label.FullScreen" xml:space="preserve">
     <value>전체 화면 (&amp;U)</value>
@@ -2577,7 +2577,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>쉘 메뉴...</value>
   </data>
   <data name="ProjectManager.Label.ShellMenu" xml:space="preserve">
-    <value>Shell Menu...</value>
+    <value>쉘 메뉴...</value>
   </data>
   <data name="ProjectManager.Description.LinkReport" xml:space="preserve">
     <value>Generate a file describing symbols which were compiled in the SWF. This file can be used to optimize a module with load-externs compiler option.</value>
@@ -2697,7 +2697,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>인수 교체</value>
   </data>
   <data name="ProjectManager.Title.AuthorName" xml:space="preserve">
-    <value>Template Configuration: Enter Your Name</value>
+    <value>템플릿 구성: 이름을 입력</value>
   </data>
   <data name="FlashDevelop.Label.SyntaxColoring" xml:space="preserve">
     <value>구문 색상... (&amp;S)</value>
@@ -2865,7 +2865,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>매크로의 메뉴 레이블.</value>
   </data>
   <data name="ProjectManager.Label.BuildProjectFile" xml:space="preserve">
-    <value>&amp;Build Project File</value>
+    <value>프로젝트 파일 빌드 (&amp;B)</value>
   </data>
   <data name="MacroManager.Description.Image" xml:space="preserve">
     <value>매크로 메뉴 항목의 내부 이미지 키.</value>
@@ -2919,7 +2919,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>플렉스 컴파일러 프로세스 시작 :</value>
   </data>
   <data name="ASCompletion.Info.CallingFlashIDE" xml:space="preserve">
-    <value>어도비 플래시 프로페셔널을 호출하는 중</value>
+    <value>Adobe Flash Professional을 호출하는 중</value>
   </data>
   <data name="ASCompletion.Info.DeclarationTemplate" xml:space="preserve">
     <value>사용자 정의 템플릿</value>
@@ -2993,7 +2993,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>생성 된 선언은 항상 액세스 한정자로 시작하게 설정합니다 (예. 항상 "override" 또는 "static" 전에 액세스 한정자).</value>
   </data>
   <data name="ProjectManager.Info.DuplicatingFile" xml:space="preserve">
-    <value>Duplicating '{0}':</value>
+    <value>'{0}'(을)를 복제중:</value>
   </data>
   <data name="ProjectManager.Info.NewDuplicateName" xml:space="preserve">
     <value>New name:</value>
@@ -3029,7 +3029,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>더하기 (&amp;A)</value>
   </data>
   <data name="ASClassWizard.Wizard.Button.Browse" xml:space="preserve">
-    <value>찾기...</value>
+    <value>찾아보기...</value>
   </data>
   <data name="ASClassWizard.Wizard.Button.Cancel" xml:space="preserve">
     <value>취소 (&amp;C)</value>
@@ -3052,22 +3052,22 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ASClassWizard.Wizard.Label.CodeGeneration" xml:space="preserve">
-    <value>코드 생성 :</value>
+    <value>코드 생성:</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.GenerateConstructor" xml:space="preserve">
-    <value>코드 생성 :</value>
+    <value>상위 클래스와 일치하는 생성자를 생성</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.GenerateInherited" xml:space="preserve">
     <value>인터페이스 메소드 구현 생성</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.Interfaces" xml:space="preserve">
-    <value>인터페이스 :</value>
+    <value>인터페이스:</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.Modifiers" xml:space="preserve">
-    <value>수정자 :</value>
+    <value>수정자:</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.Name" xml:space="preserve">
-    <value>이름 :</value>
+    <value>이름:</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.NewAs2Class" xml:space="preserve">
     <value>새 ActionScript 2 클래스</value>
@@ -3079,13 +3079,13 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>타입 열기</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.Package" xml:space="preserve">
-    <value>패키지 :</value>
+    <value>패키지:</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.PackageSelection" xml:space="preserve">
     <value>패키지 선택</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.SuperClass" xml:space="preserve">
-    <value>배이스 클래스 :</value>
+    <value>상위 클래스:</value>
   </data>
   <data name="CodeRefactor.Info.Description" xml:space="preserve">
     <value>FlashDevelop에 리팩토링 기능을 추가합니다.</value>
@@ -3167,7 +3167,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>FlashDevelop 컨트롤이 시스템 색상만을 사용할 수 있게 설정합니다.</value>
   </data>
   <data name="ProjectManager.Label.FindHere" xml:space="preserve">
-    <value>Find And Replace</value>
+    <value>찾기 및 바꾸기</value>
   </data>
   <data name="FlashDevelop.Description.FilePollInterval" xml:space="preserve">
     <value>열린 파일의 변경 사항을 확인하는 간격 (밀리초).</value>
@@ -3186,25 +3186,26 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>HTML Zen Coding 기능을 비활성화 합니다.</value>
   </data>
   <data name="ProjectManager.Description.CompilerConstants" xml:space="preserve">
-    <value>Enter one compiler constant per ligne - ie: NAMESPACE::variable,value</value>
+    <value>행 당 한 컴파일러 상수를 입력합세요.
+예: NAMESPACE::variable,value</value>
   </data>
   <data name="FlashDevelop.Label.SaveBOM" xml:space="preserve">
     <value>바이트 순서 표시 저장 (&amp;S)</value>
   </data>
   <data name="ProjectManager.Label.BuildProjectFiles" xml:space="preserve">
-    <value>&amp;Build Project Files</value>
+    <value>프로젝트 파일 빌드 (&amp;B)</value>
   </data>
   <data name="FlashDevelop.Description.DisableFindOptionSync" xml:space="preserve">
     <value>찾기 대화 상자와 빠른 찾기 컨트롤 사이에 찾기 옵션 동기화를 사용하지 않습니다.</value>
   </data>
   <data name="ProjectManager.Label.BuildAllProjects" xml:space="preserve">
-    <value>Build All Projects</value>
+    <value>모든 프로젝트 빌드</value>
   </data>
   <data name="ProjectManager.Label.TestAllProjects" xml:space="preserve">
-    <value>Test All Projects</value>
+    <value>모든 프로젝트 테스트</value>
   </data>
   <data name="ProjectManager.Label.CopyClassName" xml:space="preserve">
-    <value>Copy Class Name</value>
+    <value>클래스 이름 복사</value>
   </data>
   <data name="FlashViewer.Description.DisableAutoConfig" xml:space="preserve">
     <value>OS 레벨의 파일 연결을 사용할 수 있도록 자동 구성 기능을 비활성화합니다.</value>
@@ -3304,7 +3305,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="FlashDebugger.Info.CannotDebugActiveXPlayer" xml:space="preserve">
-    <value>액티브X 플래시 플레이어에서 실행시 디버깅 할 수 없습니다.</value>
+    <value>ActiveX Flash Player에서 실행시 디버깅 할 수 없습니다.</value>
   </data>
   <data name="FlashDebugger.Info.CannotFindOutputFile" xml:space="preserve">
     <value>출력 파일을 찾을 수 없습니다.</value>
@@ -3573,10 +3574,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
-    <value>플렉스 PMD에 대한 기본 사용자 정의 룰세트 파일.</value>
+    <value>Flex PMD에 대한 기본 사용자 정의 룰세트 파일.</value>
   </data>
   <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
-    <value>FlashDevelop에 플렉스 PMD 코드 분석기를 통합합니다.</value>
+    <value>FlashDevelop에 Flex PMD 코드 분석기를 통합합니다.</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
     <value>프로젝트 소스 코드 분석...</value>
@@ -3738,7 +3739,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>경고</value>
   </data>
   <data name="ASClassWizard.Wizard.Label.NewClass" xml:space="preserve">
-    <value>새로운 클래스</value>
+    <value>NewClass</value>
   </data>
   <data name="FlashDevelop.Info.DebugLineBack" xml:space="preserve">
     <value>디버그 줄:</value>
@@ -3750,18 +3751,18 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>오류 줄 :</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Track Active Document</value>
+    <value>활성 문서를 추적</value>
     <comment>Modified after 4.7.2</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
-    <value>Locate Document Class</value>
+    <value>도큐멘트 클래스 찾기</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Info.FilterSettings" xml:space="preserve">
     <value>필터 설정:</value>
   </data>
   <data name="ProjectManager.Description.DisableExtFlashIntegration" xml:space="preserve">
-    <value>Extended Flash IDE integration allows to debug/profile SWFs compiled with the Flash IDE in FlashDevelop.</value>
+    <value>확장된 Flash IDE 통합은 Flash IDE로 컴파일된 SWF를 FlashDevelop에서 디버깅 또는 프로파일링을 가능하게 합니다.</value>
   </data>
   <data name="FlashDebugger.Label.StartRemoteDebugging" xml:space="preserve">
     <value>원격 세션 시작</value>
@@ -3794,14 +3795,14 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Enable searching files in external classpath.</value>
   </data>
   <data name="ProjectManager.Label.OpenResource" xml:space="preserve">
-    <value>Open &amp;Resource...</value>
+    <value>리소스 열기... (&amp;R)</value>
   </data>
   <data name="ProjectManager.Label.SearchString" xml:space="preserve">
-    <value>Search: (UPPERCASE for search by abbreviation)</value>
+    <value>검색: (대문자로 약자 검색)</value>
     <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Title.OpenResource" xml:space="preserve">
-    <value>Open Resource</value>
+    <value>리소스 열기</value>
   </data>
   <data name="ProjectManager.Description.ShowInvalidCSS" xml:space="preserve">
     <value>Shows a warning when a style property is set in CSS on a component that does not support that property.</value>
@@ -4490,7 +4491,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="ProjectManager.Label.CleanProject" xml:space="preserve">
-    <value>&amp;Clean Project</value>
+    <value>클린 프로젝트 (&amp;C)</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Info.UnableToCleanProject" xml:space="preserve">
@@ -4558,11 +4559,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.Manage" xml:space="preserve">
-    <value>&amp;Manage...</value>
+    <value>관리... (&amp;M)</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKGroup" xml:space="preserve">
-    <value>Installed SDK(s)</value>
+    <value>설치된 SDK</value>
     <comment>Added after 3.2.2</comment>
   </data>
   <data name="FlashDevelop.Label.UTF7" xml:space="preserve">
@@ -4838,35 +4839,35 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKBrowse" xml:space="preserve">
-    <value>Browse...</value>
+    <value>찾아보기... (&amp;B)</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKComboDefault" xml:space="preserve">
-    <value>Default</value>
+    <value>기본</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKComboNoSDK" xml:space="preserve">
-    <value>No SDK configured</value>
+    <value>구성된 SDK가 없습니다</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKExpected" xml:space="preserve">
-    <value>Expected:</value>
+    <value>예상:</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKTabCustom" xml:space="preserve">
-    <value>Custom SDK</value>
+    <value>사용자 지정 SDK</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKUseCustom" xml:space="preserve">
-    <value>Relative or absolute path to a specific SDK.</value>
+    <value>특정 SDK에 상대 또는 절대 경로.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKUseGlobal" xml:space="preserve">
-    <value>Use a SDK configured globally.</value>
+    <value>글로벌하게 구성된 SDK를 사용합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Info.CheckSDKSettings" xml:space="preserve">
-    <value>This project doesn't have a valid SDK defined. Please check the SDK tab in the Project Properties.</value>
+    <value>이 프로젝트에 정의 된 유효한 SDK가 없습니다. 프로젝트 속성에서 SDK 탭을 확인하시기 바랍니다.</value>
     <comment>Added after 3.3.3</comment>
   </data>
   <data name="ProjectManager.Description.OmitTraces" xml:space="preserve">
@@ -4874,11 +4875,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.3</comment>
   </data>
   <data name="ProjectManager.Label.DocumentClass" xml:space="preserve">
-    <value>Document &amp;Class</value>
+    <value>도큐멘트 클래스 (&amp;C)</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.AddSourcePath" xml:space="preserve">
-    <value>Add &amp;Source Path</value>
+    <value>소스 경로 추가 (&amp;S)</value>
     <comment>Added after 3.3.3</comment>
   </data>
   <data name="FlashDebugger.Label.ViewImmediatePanel" xml:space="preserve">
@@ -4896,7 +4897,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.5.2</comment>
   </data>
   <data name="ProjectManager.Label.SetDocumentClass" xml:space="preserve">
-    <value>Set Document &amp;Class</value>
+    <value>도큐멘트 클래스로 설정 (&amp;C)</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Info.NoAssociatedIDE" xml:space="preserve">
@@ -4908,47 +4909,47 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.OutputTypeApplication" xml:space="preserve">
-    <value>Application</value>
+    <value>애플리케이션</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.OutputTypeCustomBuild" xml:space="preserve">
-    <value>Custom Build</value>
+    <value>사용자 지정 빌드</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.OutputTypeLibrary" xml:space="preserve">
-    <value>Library</value>
+    <value>라이브러리</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.OutputTypeOtherIDE" xml:space="preserve">
-    <value>Other IDE</value>
+    <value>기타 IDE</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.OutputTypeWebsite" xml:space="preserve">
-    <value>Website</value>
+    <value>웹 사이트</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.TestMovieCustom" xml:space="preserve">
-    <value>Run Custom Command...</value>
+    <value>사용자 지정 명령을 실행...</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.TestMovieDefault" xml:space="preserve">
-    <value>Play: FlashViewer Default</value>
+    <value>재생: FlashViewer 기본</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.TestMovieExternalPlayer" xml:space="preserve">
-    <value>Play: External Player</value>
+    <value>재생: 외부 플레이어</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.TestMovieNewTab" xml:space="preserve">
-    <value>Play: Open in new Tab</value>
+    <value>재생: 새 탭에서 열기</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.TestMovieNewWindow" xml:space="preserve">
-    <value>Play: Open in Popup</value>
+    <value>재생: 팝업에서 열기</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.TestMovieOpenDocument" xml:space="preserve">
-    <value>Open Document...</value>
+    <value>문서 열기...</value>
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="FlashDevelop.Category.Paths" xml:space="preserve">
@@ -4988,7 +4989,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.0.0 Beta</comment>
   </data>
   <data name="ProjectManager.Label.SourcePath" xml:space="preserve">
-    <value>&amp;Source Path</value>
+    <value>소스 경로 (&amp;S)</value>
     <comment>Added after 4.0.0 RC1</comment>
   </data>
   <data name="AirProperties.RenderMode.Direct" xml:space="preserve">
@@ -5004,7 +5005,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.0</comment>
   </data>
   <data name="ProjectManager.ToolTip.TargetBuild" xml:space="preserve">
-    <value>Select Target Build</value>
+    <value>대상 빌드 선택</value>
     <comment>Added after 4.0.1</comment>
   </data>
   <data name="BasicCompletion.Description.CustomLanguages" xml:space="preserve">
@@ -5080,7 +5081,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added for 4.1</comment>
   </data>
   <data name="ProjectManager.Title.ImportPackagedProject" xml:space="preserve">
-    <value>Select destination folder for packaged project</value>
+    <value>패키지 프로젝트에 대한 대상 폴더 선택</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="ProjectManager.Info.NotValidFlashBuilderProject" xml:space="preserve">
@@ -5136,11 +5137,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.2.4</comment>
   </data>
   <data name="ProjectManager.Description.AdvancedTelemetry" xml:space="preserve">
-    <value>Enable Advanced Telemetry (ASC2 SDK only)</value>
+    <value>고급 원격 측정 활성화 (ASC2 SDK 전용)</value>
     <comment>Added after 4.3</comment>
   </data>
   <data name="ProjectManager.Description.AdvancedTelemetryPassword" xml:space="preserve">
-    <value>Require a password to profile the application</value>
+    <value>응용 프로그램을 프로파일할 때 암호를 요구합니다.</value>
     <comment>Added after 4.3</comment>
   </data>
   <data name="LoomContext.Description.SDKs" xml:space="preserve">
@@ -5176,7 +5177,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.4.2</comment>
   </data>
   <data name="ProjectManager.Label.TestMovieWebserver" xml:space="preserve">
-    <value>Webserver...</value>
+    <value>웹 서버...</value>
     <comment>Added after 4.4.2</comment>
   </data>
   <data name="BasicCompletion.Description.AutoInsertType" xml:space="preserve">
@@ -5188,11 +5189,11 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
-    <value>In Classpaths only</value>
+    <value>클래스 경로에서 만</value>
     <comment>Added after 5.0.1</comment>
   </data>
   <data name="ProjectManager.Label.CodeFilesOnly" xml:space="preserve">
-    <value>Code files only</value>
+    <value>코드 파일만</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Label.HaxeDocument" xml:space="preserve">
@@ -5464,7 +5465,7 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
-    <value>If you change a file name extension, the file may become unusable. Are you sure you want to change it?</value>
+    <value>파일 이름 확장명을 바꾸면 파일을 사용할 수 없게 될 수 있습니다. 변경 하시겠습니까?</value>
     <comment>Added after 4.6.4</comment>
   </data>
   <data name="CodeRefactor.Info.MovingOutsideClasspath" xml:space="preserve">
@@ -5976,7 +5977,7 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <comment>Added after 4.7.2</comment>
   </data>
   <data name="ASClassWizard.Wizard.Label.ChosePackage" xml:space="preserve">
-    <value>패키지 폴더를 선택합니다 :</value>
+    <value>패키지 폴더를 선택합니다:</value>
   </data>
   <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
     <value>강조 단어:</value>
