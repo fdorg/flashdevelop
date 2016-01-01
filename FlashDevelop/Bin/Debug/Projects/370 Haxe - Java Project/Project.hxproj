@@ -46,7 +46,7 @@
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="OpenDocument" />
-    <option testMovieCommand="run-$(BuildConfig).bat" />
+    <option testMovieCommand="run.bat $(BuildConfig)" />
   </options>
   <!-- Plugin storage -->
   <storage />
