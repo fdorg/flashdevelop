@@ -224,8 +224,19 @@ namespace ProjectManager
                     string label = e.Label;
                     int index = label.IndexOf(languageDisplayName);
                     if (index != -1) label = label.Remove(index).Trim();
-                    var newName = Path.Combine(project.Directory, label);
-                    newName = Path.ChangeExtension(newName, Path.GetExtension(oldName));
+                    string newName = string.Empty;
+                    try
+                    {
+                        newName = Path.Combine(project.Directory, label);
+                        newName = Path.ChangeExtension(newName, Path.GetExtension(oldName));
+                    }
+                    catch (Exception exception)
+                    {
+                        e.CancelEdit = true;
+                        isEditingLabel = false;
+                        ErrorManager.ShowError(exception);
+                        return;
+                    }
                     if (Rename(oldName, newName))
                     {
                         PluginBase.MainForm.OpenEditableDocument(newName);
