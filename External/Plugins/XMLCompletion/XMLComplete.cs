@@ -650,6 +650,7 @@ namespace XMLCompletion
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
                 if (!document.IsEditable) return false;
                 ScintillaControl sci = document.SciControl;
+                if (!sci.ContainsFocus) return false;
                 XMLContextTag ctag = GetXMLContextTag(sci, sci.CurrentPos);
                 // Starting tag
                 if (ctag.Tag == null)

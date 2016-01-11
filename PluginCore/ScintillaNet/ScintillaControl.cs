@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Drawing;
-using System.Collections;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -20,9 +19,9 @@ namespace ScintillaNet
     public class ScintillaControl : Control, IEventHandler
     {
         private bool saveBOM;
+        private bool camelHumps;
         private Encoding encoding;
-        private int directPointer;
-        private IntPtr hwndScintilla;
+        private IntPtr directPointer;
         private bool hasHighlights = false;
         private bool ignoreAllKeys = false;
         private bool isBraceMatching = true;
@@ -33,7 +32,8 @@ namespace ScintillaNet
         private static Dictionary<String, ShortcutOverride> shortcutOverrides = new Dictionary<String, ShortcutOverride>();
         private Enums.IndentView indentView = Enums.IndentView.Real;
         private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
-        private Hashtable ignoredKeys = new Hashtable();
+        private HashSet<int> ignoredKeys = new HashSet<int>();
+        private Dictionary<Keys, Action> keyCommands = new Dictionary<Keys, Action>();
         private string configLanguage = String.Empty;
         private string fileName = String.Empty;
         private int lastSelectionLength = 0;
@@ -179,8 +179,8 @@ namespace ScintillaNet
             Boolean hScroll = sender.IsHScrollBar;
             sender.IsVScrollBar = false; // Hide builtin
             sender.IsHScrollBar = false; // Hide builtin
-            sender.vScrollBar.VisibleChanged += OnResize;
-            sender.hScrollBar.VisibleChanged += OnResize;
+            sender.vScrollBar.VisibleChanged += OnResize2;
+            sender.hScrollBar.VisibleChanged += OnResize2;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.Controls.Add(sender.hScrollBar);
@@ -188,7 +188,7 @@ namespace ScintillaNet
             sender.Painted += sender.OnScrollUpdate;
             sender.IsVScrollBar = vScroll;
             sender.IsHScrollBar = hScroll;
-            sender.OnResize(null, null);
+            sender.OnResize2(null, null);
         }
 
         /// <summary>
@@ -198,8 +198,8 @@ namespace ScintillaNet
         {
             Boolean vScroll = sender.IsVScrollBar;
             Boolean hScroll = sender.IsHScrollBar;
-            sender.vScrollBar.VisibleChanged -= OnResize;
-            sender.hScrollBar.VisibleChanged -= OnResize;
+            sender.vScrollBar.VisibleChanged -= OnResize2;
+            sender.hScrollBar.VisibleChanged -= OnResize2;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.Controls.Remove(sender.hScrollBar);
@@ -207,7 +207,7 @@ namespace ScintillaNet
             sender.Painted -= sender.OnScrollUpdate;
             sender.IsVScrollBar = vScroll;
             sender.IsHScrollBar = hScroll;
-            sender.OnResize(null, null);
+            sender.OnResize2(null, null);
         }
 
         #endregion
@@ -223,19 +223,45 @@ namespace ScintillaNet
         {
             try
             {
+                // We don't want .NET to use GetWindowText because we manage ('cache') our own text
+                SetStyle(ControlStyles.CacheText, true);
+
+                // Necessary control styles (see TextBoxBase)
+                SetStyle(ControlStyles.StandardClick
+                       | ControlStyles.StandardDoubleClick
+                       | ControlStyles.UseTextForAccessibility
+                       | ControlStyles.UserPaint,
+                       false);
+
                 if (Win32.ShouldUseWin32())
                 {
                     LoadLibrary(fullpath);
-                    hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
-                    directPointer = (int)SlowPerform(2185, 0, 0);
-                    directPointer = DirectPointer;
                 }
+
+                // Most Windows Forms controls delay-load everything until a handle is created.
+                // That's a major pain so we just explicity create a handle right away.
+                CreateControl();
+
+                // Clear some default shortcuts, we are interested in managing them ourselves
+                // IMHO a better approach would be to call ClearAllCmdKeys and set managed replacements, like current ScintillaNet
+                ClearCmdKey(SCK_DOWN + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_UP + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_LEFT + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_RIGHT + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_LEFT + (SCMOD_CTRL << 16) + (SCMOD_SHIFT << 16));
+                ClearCmdKey(SCK_RIGHT + (SCMOD_CTRL << 16) + (SCMOD_SHIFT << 16));
+                ClearCmdKey(SCK_BACK + (SCMOD_CTRL << 16));
+                ClearCmdKey(SCK_DELETE + (SCMOD_CTRL << 16));
+
+                keyCommands[Keys.Control | Keys.Down] = LineScrollDown;
+                keyCommands[Keys.Control | Keys.Up] = LineScrollUp;
+                CamelHumps = false;
+
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
                 UpdateUI += new UpdateUIHandler(OnBraceMatch);
                 UpdateUI += new UpdateUIHandler(OnCancelHighlight);
                 DoubleClick += new DoubleClickHandler(OnBlockSelect);
                 CharAdded += new CharAddedHandler(OnSmartIndent);
-                Resize += new EventHandler(OnResize);
                 this.InitScrollBars(this);
             }
             catch (Exception ex)
@@ -251,11 +277,23 @@ namespace ScintillaNet
             base.Dispose(disposing);
         }
 
-        public void OnResize(object sender, EventArgs e)
+        protected void OnResize2(object sender, EventArgs e)
         {
             Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) && this.vScrollBar.Visible ? this.vScrollBar.Width : 0;
             Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) && this.hScrollBar.Visible ? this.hScrollBar.Height : 0;
-            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
+            //if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                // Per Scintilla documentation, the Window Class name...
+                CreateParams cp = base.CreateParams;
+                cp.ClassName = "Scintilla";
+
+                return cp;
+            }
         }
 
         #endregion
@@ -264,7 +302,6 @@ namespace ScintillaNet
 
         public event KeyHandler Key;
         public event ZoomHandler Zoom;
-        public event FocusHandler FocusChanged;
         public event StyleNeededHandler StyleNeeded;
         public event CharAddedHandler CharAdded;
         public event SavePointReachedHandler SavePointReached;
@@ -303,18 +340,12 @@ namespace ScintillaNet
         public event AutoCCharDeletedHandler AutoCCharDeleted;
         public event UpdateSyncHandler UpdateSync;
         public event SelectionChangedHandler SelectionChanged;
+        public event ScrollEventHandler Scroll;
+        public event KeyEventHandler KeyPosted; //Hacky event for MethodCallTip, although with some rather valid use cases
 
         #endregion
 
         #region Scintilla Properties
-
-        /// <summary>
-        /// Gets the sci handle
-        /// </summary>
-        public IntPtr HandleSci
-        {
-            get { return hwndScintilla; }
-        }
 
         /// <summary>
         /// Current used configuration
@@ -1747,11 +1778,13 @@ namespace ScintillaNet
         /// Retrieve a pointer value to use as the first argument when calling
         /// the function returned by GetDirectFunction.
         /// </summary>
-        public int DirectPointer
+        public IntPtr DirectPointer
         {
             get
             {
-                return (int)SPerform(2185, 0, 0);
+                if (directPointer == IntPtr.Zero)
+                    directPointer = SendMessage(Handle, 2185, 0, 0);
+                return directPointer;
             }
         }
 
@@ -2399,7 +2432,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual void AddIgnoredKeys(Keys keys)
         {
-            ignoredKeys.Add((int)keys, (int)keys);
+            ignoredKeys.Add((int)keys);
         }
 
         /// <summary>
@@ -2423,15 +2456,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual bool ContainsIgnoredKeys(Keys keys)
         {
-            return ignoredKeys.ContainsKey((int)keys);
-        }
-
-        /// <summary>
-        /// Sets the focus to the control
-        /// </summary>
-        public new bool Focus()
-        {
-            return SetFocus(hwndScintilla) != IntPtr.Zero;
+            return ignoredKeys.Contains((int)keys);
         }
 
         /// <summary>
@@ -4199,6 +4224,28 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Delete the word part to the left of the caret.
+        /// </summary>
+        public void DelWordPartLeft()
+        {
+            int currPos = CurrentPos;
+            SetSel(currPos, currPos);
+            WordPartLeftExtend();
+            Clear();
+        }
+
+        /// <summary>
+        /// Delete the word part to the right of the caret.
+        /// </summary>
+        public void DelWordPartRight()
+        {
+            int currPos = CurrentPos;
+            SetSel(currPos, currPos);
+            WordPartRightExtend();
+            Clear();
+        }
+
+        /// <summary>
         /// Cut the line containing the caret.
         /// </summary>
         public void LineCut()
@@ -4251,7 +4298,16 @@ namespace ScintillaNet
         /// </summary>
         public void LineScrollDown()
         {
+            int oldScroll = FirstVisibleLine;
+
             SPerform(2342, 0, 0);
+
+            int newScroll = FirstVisibleLine;
+
+            if (newScroll == oldScroll) return;
+
+            // Decrement?
+            OnScroll(new ScrollEventArgs(ScrollEventType.SmallIncrement, oldScroll, newScroll, ScrollOrientation.VerticalScroll));
         }
 
         /// <summary>
@@ -4259,7 +4315,16 @@ namespace ScintillaNet
         /// </summary>
         public void LineScrollUp()
         {
+            int oldScroll = FirstVisibleLine;
+
             SPerform(2343, 0, 0);
+
+            int newScroll = FirstVisibleLine;
+
+            if (newScroll == oldScroll) return;
+
+            // Decrement?
+            OnScroll(new ScrollEventArgs(ScrollEventType.SmallIncrement, oldScroll, newScroll, ScrollOrientation.VerticalScroll));
         }
 
         /// <summary>
@@ -5151,16 +5216,32 @@ namespace ScintillaNet
 
         public const int MAXDWELLTIME = 10000000;
         private const int WM_NOTIFY = 0x004e;
+        private const int WM_USER = 0x0400;
+        private const int WM_REFLECT = WM_USER + 0x1C00;
         private const int WM_SYSCHAR = 0x106;
         private const int WM_COMMAND = 0x0111;
         private const int WM_KEYDOWN = 0x0100;
+        private const int WM_SETCURSOR = 0x0020;
+        private const int WM_MOUSEWHEEL = 0x20A;
         private const int WM_SYSKEYDOWN = 0x0104;
+        private const int WM_HSCROLL = 0x114;
+        private const int WM_VSCROLL = 0x115;
         private const int WM_DROPFILES = 0x0233;
         private const uint WS_CHILD = (uint)0x40000000L;
         private const uint WS_VISIBLE = (uint)0x10000000L;
         private const uint WS_TABSTOP = (uint)0x00010000L;
         private const uint WS_CHILD_VISIBLE_TABSTOP = WS_CHILD | WS_VISIBLE | WS_TABSTOP;
         private const int PATH_LEN = 1024;
+
+        private const int SCK_BACK = 8;
+        private const int SCK_DOWN = 300;
+        private const int SCK_UP = 301;
+        private const int SCK_LEFT = 302;
+        private const int SCK_RIGHT = 303;
+        private const int SCK_DELETE = 308;
+        private const int SCMOD_SHIFT = 1;
+        private const int SCMOD_CTRL = 2;
+        private const int SCMOD_ALT = 4;
 
         #endregion
 
@@ -5249,10 +5330,7 @@ namespace ScintillaNet
         public static extern int GetDeviceCaps(IntPtr hdc, Int32 capindex);
 
         [DllImport("user32.dll")]
-        public static extern int SendMessage(int hWnd, uint Msg, int wParam, int lParam);
-
-        [DllImport("user32.dll")]
-        public static extern int SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
 
         [DllImport("shell32.dll")]
         public static extern int DragQueryFileA(IntPtr hDrop, uint idx, IntPtr buff, int sz);
@@ -5264,16 +5342,41 @@ namespace ScintillaNet
         public static extern void DragAcceptFiles(IntPtr hwnd, int accept);
 
         [DllImport("scilexer.dll", EntryPoint = "Scintilla_DirectFunction")]
-        public static extern int Perform(int directPointer, UInt32 message, UInt32 wParam, UInt32 lParam);
+        public static extern int Perform(IntPtr directPointer, UInt32 message, UInt32 wParam, UInt32 lParam);
 
-        public UInt32 SlowPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
-        {
-            return (UInt32)SendMessage((int)hwndScintilla, message, (int)wParam, (int)lParam);
-        }
         public UInt32 SPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
         {
-            if (Win32.ShouldUseWin32()) return (UInt32)Perform(directPointer, message, wParam, lParam);
+            if (Win32.ShouldUseWin32()) return (UInt32)Perform(DirectPointer, message, wParam, lParam);
             else return (UInt32)Encoding.ASCII.CodePage;
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            Action keyCommand;
+            if (!e.Handled && keyCommands.TryGetValue(e.KeyData, out keyCommand))
+            {
+                keyCommand();
+                OnKeyPosted(e);
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        protected virtual void OnKeyPosted(KeyEventArgs e)
+        {
+            if (KeyPosted != null)
+                KeyPosted(this, e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="Scroll"/> event.
+        /// </summary>
+        /// <param name="e">An <see cref="ScrollEventArgs"/> that contains the event data.</param>
+        protected virtual void OnScroll(ScrollEventArgs e)
+        {
+            if (Scroll != null)
+                Scroll(this, e);
         }
 
         public override bool PreProcessMessage(ref Message m)
@@ -5283,10 +5386,13 @@ namespace ScintillaNet
                 case WM_KEYDOWN:
                     {
                         Int32 keys = (Int32)Control.ModifierKeys + (Int32)m.WParam;
-                        if (!IsFocus || ignoreAllKeys || ignoredKeys.ContainsKey(keys))
+                        if (!IsFocus || ignoreAllKeys || ignoredKeys.Contains(keys))
                         {
                             if (this.ExecuteShortcut(keys) || base.PreProcessMessage(ref m)) return true;
                         }
+                        if (keys == 8)
+                            // Hacky... Back key, it's handled by ASCompletion, before it was set as a shortcut so it was present in the ignoredKeys collection, that was in several ways hackier
+                            return base.PreProcessMessage(ref m);
                         if (((Control.ModifierKeys & Keys.Control) != 0) && ((Control.ModifierKeys & Keys.Alt) == 0))
                         {
                             Int32 code = (Int32)m.WParam;
@@ -5310,195 +5416,240 @@ namespace ScintillaNet
             return false;
         }
 
-        protected override void WndProc(ref System.Windows.Forms.Message m)
+        private void WmScroll(ref Message m)
         {
-            if (m.Msg == WM_COMMAND)
+            ScrollOrientation so = ScrollOrientation.VerticalScroll;
+            int oldScroll = 0, newScroll = 0;
+            ScrollEventType set;
+            if (m.Msg == WM_HSCROLL)
             {
-                Int32 message = (m.WParam.ToInt32() >> 16) & 0xffff;
-                if (message == (int)Enums.Command.SetFocus || message == (int)Enums.Command.KillFocus)
-                {
-                    if (FocusChanged != null) FocusChanged(this);
-                }
-            }
-            else if (m.Msg == WM_NOTIFY)
-            {
-                SCNotification scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
-                if (scn.nmhdr.hwndFrom == hwndScintilla && !this.DisableAllSciEvents)
-                {
-                    switch (scn.nmhdr.code)
-                    {
-                        case (uint)Enums.ScintillaEvents.StyleNeeded:
-                            if (StyleNeeded != null) StyleNeeded(this, scn.position);
-                            break;
+                so = ScrollOrientation.HorizontalScroll;
+                oldScroll = XOffset;
 
-                        case (uint)Enums.ScintillaEvents.CharAdded:
-                            if (CharAdded != null) CharAdded(this, scn.ch);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.SavePointReached:
-                            if (SavePointReached != null) SavePointReached(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.SavePointLeft:
-                            if (SavePointLeft != null) SavePointLeft(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.ModifyAttemptRO:
-                            if (ModifyAttemptRO != null) ModifyAttemptRO(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.Key:
-                            if (Key != null) Key(this, scn.ch, scn.modifiers);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.DoubleClick:
-                            if (DoubleClick != null) DoubleClick(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.UpdateUI:
-                            if (UpdateUI != null) UpdateUI(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.MacroRecord:
-                            if (MacroRecord != null) MacroRecord(this, scn.message, scn.wParam, scn.lParam);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.MarginClick:
-                            if (MarginClick != null) MarginClick(this, scn.modifiers, scn.position, scn.margin);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.NeedShown:
-                            if (NeedShown != null) NeedShown(this, scn.position, scn.length);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.Painted:
-                            if (Painted != null) Painted(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.UserListSelection:
-                            if (UserListSelection != null) UserListSelection(this, scn.listType, MarshalStr(scn.text));
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.URIDropped:
-                            if (URIDropped != null) URIDropped(this, MarshalStr(scn.text));
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.DwellStart:
-                            if (DwellStart != null) DwellStart(this, scn.position);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.DwellEnd:
-                            if (DwellEnd != null) DwellEnd(this, scn.position);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.Zoom:
-                            if (Zoom != null) Zoom(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.HotspotClick:
-                            if (HotSpotClick != null) HotSpotClick(this, scn.modifiers, scn.position);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.HotspotDoubleClick:
-                            if (HotSpotDoubleClick != null) HotSpotDoubleClick(this, scn.modifiers, scn.position);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.CalltipClick:
-                            if (CallTipClick != null) CallTipClick(this, scn.position);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.AutoCSelection:
-                            if (AutoCSelection != null) AutoCSelection(this, MarshalStr(scn.text));
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.IndicatorClick:
-                            if (IndicatorClick != null) IndicatorClick(this, scn.position);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.IndicatorRelease:
-                            if (IndicatorRelease != null) IndicatorRelease(this, scn.position);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.AutoCCharDeleted:
-                            if (AutoCCharDeleted != null) AutoCCharDeleted(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.AutoCCancelled:
-                            if (AutoCCancelled != null) AutoCCancelled(this);
-                            break;
-
-                        case (uint)Enums.ScintillaEvents.Modified:
-                            bool notify = false;
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.InsertText) > 0)
-                            {
-                                if (TextInserted != null) TextInserted(this, scn.position, scn.length, scn.linesAdded);
-                                notify = true;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.DeleteText) > 0)
-                            {
-                                if (TextDeleted != null) TextDeleted(this, scn.position, scn.length, scn.linesAdded);
-                                notify = true;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeStyle) > 0)
-                            {
-                                if (StyleChanged != null) StyleChanged(this, scn.position, scn.length);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeFold) > 0)
-                            {
-                                if (FoldChanged != null) FoldChanged(this, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.UserPerformed) > 0)
-                            {
-                                if (UserPerformed != null) UserPerformed(this);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.UndoPerformed) > 0)
-                            {
-                                if (UndoPerformed != null) UndoPerformed(this);
-                                notify = true;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.RedoPerformed) > 0)
-                            {
-                                if (RedoPerformed != null) RedoPerformed(this);
-                                notify = true;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.LastStepInUndoRedo) > 0)
-                            {
-                                if (LastStepInUndoRedo != null) LastStepInUndoRedo(this);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeMarker) > 0)
-                            {
-                                if (MarkerChanged != null) MarkerChanged(this, scn.line);
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeInsert) > 0)
-                            {
-                                if (BeforeInsert != null) BeforeInsert(this, scn.position, scn.length);
-                                notify = false;
-                            }
-                            if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeDelete) > 0)
-                            {
-                                if (BeforeDelete != null) BeforeDelete(this, scn.position, scn.length);
-                                notify = false;
-                            }
-                            if (notify && Modified != null && scn.text != null)
-                            {
-                                try
-                                {
-                                    string text = MarshalStr(scn.text, scn.length);
-                                    Modified(this, scn.position, scn.modificationType, text, scn.length, scn.linesAdded, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
-                                }
-                                catch { }
-                            }
-                            break;
-                    }
-                }
-            }
-            else if (m.Msg == WM_DROPFILES)
-            {
-                if (Win32.ShouldUseWin32()) HandleFileDrop(m.WParam);
+                // Let Scintilla Handle the scroll Message to actually perform scrolling
+                base.WndProc(ref m);
+                newScroll = XOffset;
             }
             else
             {
+                so = ScrollOrientation.VerticalScroll;
+                oldScroll = FirstVisibleLine;
                 base.WndProc(ref m);
+                newScroll = FirstVisibleLine;
+            }
+
+            if (m.Msg == WM_HSCROLL || m.Msg == WM_VSCROLL)
+                set = (ScrollEventType)((short)((int)(long)m.WParam & 0xffff));
+            else
+            {
+                if (oldScroll == newScroll) return;
+                set = oldScroll > newScroll ? ScrollEventType.SmallDecrement : ScrollEventType.SmallIncrement;
+            }
+
+            OnScroll(new ScrollEventArgs(set, oldScroll, newScroll, so));
+        }
+
+        protected override void DefWndProc(ref Message m)
+        {
+            base.DefWndProc(ref m);
+
+            if (m.Msg == WM_KEYDOWN || m.Msg == WM_SYSKEYDOWN)  // If we're worried about performance/GC, we can store latest OnKeyDown e
+                OnKeyPosted(new KeyEventArgs((Keys)((int)m.WParam) | ModifierKeys));
+        }
+
+        protected override void WndProc(ref System.Windows.Forms.Message m)
+        {
+            switch (m.Msg)
+            {
+                case WM_SETCURSOR:
+                    base.DefWndProc(ref m);
+                    break;
+
+                case WM_NOTIFY + WM_REFLECT:
+                    SCNotification scn = (SCNotification)Marshal.PtrToStructure(m.LParam, typeof(SCNotification));
+                    if (!this.DisableAllSciEvents)
+                    {
+                        switch (scn.nmhdr.code)
+                        {
+                            case (uint)Enums.ScintillaEvents.StyleNeeded:
+                                if (StyleNeeded != null) StyleNeeded(this, scn.position);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.CharAdded:
+                                if (CharAdded != null) CharAdded(this, scn.ch);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.SavePointReached:
+                                if (SavePointReached != null) SavePointReached(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.SavePointLeft:
+                                if (SavePointLeft != null) SavePointLeft(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.ModifyAttemptRO:
+                                if (ModifyAttemptRO != null) ModifyAttemptRO(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.Key:
+                                if (Key != null) Key(this, scn.ch, scn.modifiers);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.DoubleClick:
+                                if (DoubleClick != null) DoubleClick(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.UpdateUI:
+                                if (UpdateUI != null) UpdateUI(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.MacroRecord:
+                                if (MacroRecord != null) MacroRecord(this, scn.message, scn.wParam, scn.lParam);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.MarginClick:
+                                if (MarginClick != null) MarginClick(this, scn.modifiers, scn.position, scn.margin);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.NeedShown:
+                                if (NeedShown != null) NeedShown(this, scn.position, scn.length);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.Painted:
+                                if (Painted != null) Painted(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.UserListSelection:
+                                if (UserListSelection != null) UserListSelection(this, scn.listType, MarshalStr(scn.text));
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.URIDropped:
+                                if (URIDropped != null) URIDropped(this, MarshalStr(scn.text));
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.DwellStart:
+                                if (DwellStart != null) DwellStart(this, scn.position);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.DwellEnd:
+                                if (DwellEnd != null) DwellEnd(this, scn.position);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.Zoom:
+                                if (Zoom != null) Zoom(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.HotspotClick:
+                                if (HotSpotClick != null) HotSpotClick(this, scn.modifiers, scn.position);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.HotspotDoubleClick:
+                                if (HotSpotDoubleClick != null) HotSpotDoubleClick(this, scn.modifiers, scn.position);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.CalltipClick:
+                                if (CallTipClick != null) CallTipClick(this, scn.position);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.AutoCSelection:
+                                if (AutoCSelection != null) AutoCSelection(this, MarshalStr(scn.text));
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.IndicatorClick:
+                                if (IndicatorClick != null) IndicatorClick(this, scn.position);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.IndicatorRelease:
+                                if (IndicatorRelease != null) IndicatorRelease(this, scn.position);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.AutoCCharDeleted:
+                                if (AutoCCharDeleted != null) AutoCCharDeleted(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.AutoCCancelled:
+                                if (AutoCCancelled != null) AutoCCancelled(this);
+                                break;
+
+                            case (uint)Enums.ScintillaEvents.Modified:
+                                bool notify = false;
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.InsertText) > 0)
+                                {
+                                    if (TextInserted != null) TextInserted(this, scn.position, scn.length, scn.linesAdded);
+                                    notify = true;
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.DeleteText) > 0)
+                                {
+                                    if (TextDeleted != null) TextDeleted(this, scn.position, scn.length, scn.linesAdded);
+                                    notify = true;
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeStyle) > 0)
+                                {
+                                    if (StyleChanged != null) StyleChanged(this, scn.position, scn.length);
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeFold) > 0)
+                                {
+                                    if (FoldChanged != null) FoldChanged(this, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.UserPerformed) > 0)
+                                {
+                                    if (UserPerformed != null) UserPerformed(this);
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.UndoPerformed) > 0)
+                                {
+                                    if (UndoPerformed != null) UndoPerformed(this);
+                                    notify = true;
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.RedoPerformed) > 0)
+                                {
+                                    if (RedoPerformed != null) RedoPerformed(this);
+                                    notify = true;
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.LastStepInUndoRedo) > 0)
+                                {
+                                    if (LastStepInUndoRedo != null) LastStepInUndoRedo(this);
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeMarker) > 0)
+                                {
+                                    if (MarkerChanged != null) MarkerChanged(this, scn.line);
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeInsert) > 0)
+                                {
+                                    if (BeforeInsert != null) BeforeInsert(this, scn.position, scn.length);
+                                    notify = false;
+                                }
+                                if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeDelete) > 0)
+                                {
+                                    if (BeforeDelete != null) BeforeDelete(this, scn.position, scn.length);
+                                    notify = false;
+                                }
+                                if (notify && Modified != null && scn.text != null)
+                                {
+                                    try
+                                    {
+                                        string text = MarshalStr(scn.text, scn.length);
+                                        Modified(this, scn.position, scn.modificationType, text, scn.length, scn.linesAdded, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
+                                    }
+                                    catch { }
+                                }
+                                break;
+                        }
+                    }
+                    break;
+
+                case WM_DROPFILES:
+                    if (Win32.ShouldUseWin32()) HandleFileDrop(m.WParam);
+                    break;
+
+                case WM_HSCROLL:
+                case WM_VSCROLL:
+                case WM_MOUSEWHEEL:
+                    WmScroll(ref m);
+                    break;
+
+                default:
+                    base.WndProc(ref m);
+                    break;
             }
         }
 
@@ -5928,6 +6079,36 @@ namespace ScintillaNet
             {
                 this.saveBOM = value;
                 if (UpdateSync != null) this.UpdateSync(this);
+            }
+        }
+
+        /// <summary>
+        /// Defines the current behaviour for next/previous word-related actions
+        /// </summary>
+        public bool CamelHumps
+        {
+            get { return camelHumps; }
+            set
+            {
+                camelHumps = value;
+                if (!value)
+                {
+                    keyCommands[Keys.Control | Keys.Left] = WordLeft;
+                    keyCommands[Keys.Control | Keys.Right] = WordRight;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Left] = WordLeftExtend;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Right] = WordRightExtend;
+                    keyCommands[Keys.Control | Keys.Back] = DelWordLeft;
+                    keyCommands[Keys.Control | Keys.Delete] = DelWordRight;
+                }
+                else
+                {
+                    keyCommands[Keys.Control | Keys.Left] = WordPartLeftEx;
+                    keyCommands[Keys.Control | Keys.Right] = WordPartRightEx;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Left] = WordPartLeftExtendEx;
+                    keyCommands[Keys.Control | Keys.Shift | Keys.Right] = WordPartRightExtendEx;
+                    keyCommands[Keys.Control | Keys.Back] = DelWordPartLeftEx;
+                    keyCommands[Keys.Control | Keys.Delete] = DelWordPartRightEx;
+                }
             }
         }
 
@@ -7092,6 +7273,318 @@ namespace ScintillaNet
                 position--;
             }
             return word;
+        }
+
+        /// <summary>
+        /// Delete the word part to the left of the caret. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void DelWordPartLeftEx()
+        {
+            int currPos = CurrentPos;
+            SetSel(currPos, currPos);
+            WordPartLeftExtendEx();
+            Clear();
+        }
+
+        /// <summary>
+        /// Delete the word part to the right of the caret. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void DelWordPartRightEx()
+        {
+            int currPos = CurrentPos;
+            SetSel(currPos, currPos);
+            WordPartRightExtendEx();
+            Clear();
+        }
+
+        /// <summary>
+        /// Move to the previous change in capitalisation. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void WordPartLeftEx()
+        {
+            int pos = GetCustomWordPartLeft() + 1;
+            SetSel(pos, pos);
+            CharLeft(); // Hack to force caret visible, is there a better way for this?
+        }
+
+        /// <summary>
+        /// Move to the change next in capitalisation. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void WordPartRightEx()
+        {
+            int pos = GetCustomWordPartRight() - 1;
+            SetSel(pos, pos);
+            CharRight(); // Hack to force caret visible, is there a better way for this?
+        }
+
+        /// <summary>
+        /// Move to the previous change in capitalisation extending selection
+        /// to new caret position. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void WordPartLeftExtendEx()
+        {
+            int pos = GetCustomWordPartLeft();
+            int selStart = SelectionStart;
+            int selEnd = SelectionEnd;
+            if (CurrentPos > selStart) selEnd = selStart;
+            SetSel(selEnd, pos);
+        }
+
+        /// <summary>
+        /// Move to the next change in capitalisation extending selection
+        /// to new caret position. Supports Unicode and uses a slightly different ruleset
+        /// </summary>
+        public void WordPartRightExtendEx()
+        {
+            int pos = GetCustomWordPartRight();
+            int selStart = SelectionStart;
+            int selEnd = SelectionEnd;
+            if (CurrentPos < selEnd) selStart = selEnd;
+            SetSel(selStart, pos);
+        }
+
+        private int GetCustomWordPartLeft()
+        {
+            /* This is a more or less direct translation of default Scintilla implementation with the following differences:
+             *     - Sadly, Scintilla doesn't support multi byte characters in the WORDPART* function, this solves it.
+             *     - This implementation is a bit more complex, as checks for some more types of characters, making browsing a bit more fluent.
+             *     - Line jumps are treated differently, the default implementation just skips all lines, this one behaves like normal WORD* functions, with stops in between if there are whitespaces.
+             *     - Since we cannot use the CharAt function we have to get the properly encoded text, but since getting the whole text may use way more resources than needed, we go line per line, and
+             *       this makes code a bit more difficult to read.
+             */
+            int pos = CurrentPos;
+            if (pos == 0) return 0;
+
+            int line = LineFromPosition(pos - 1);
+            int linePos = pos - PositionFromLine(line);
+            int i, count = 0;
+            char startChar = '\0';
+
+            do
+            {
+                int sz = (int)SPerform(2153, (uint)line, 0);
+                byte[] buffer = new byte[sz + 1];
+                unsafe
+                {
+                    fixed (byte* b = buffer) SPerform(2153, (uint)line, (uint)b);
+                }
+                string lineText = Encoding.GetEncoding(CodePage).GetString(buffer, 0, linePos == 0 ? sz : linePos);
+
+                i = lineText.Length - 1;
+                if (count == 0)
+                    startChar = lineText[i];
+                if (count == 0 && char.GetUnicodeCategory(startChar) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                {
+                    while (i > 0 && char.GetUnicodeCategory(lineText[i]) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                    {
+                        --i;
+                    }
+                }
+                if (i > 0)
+                {
+                    if (count == 0)
+                    {
+                        startChar = lineText[i];
+                        --i;
+                    }
+                    if (char.IsLower(startChar))
+                    {
+                        while (i > 0 && char.IsLower(lineText[i]))
+                            --i;
+                        if (!char.IsUpper(lineText[i]) && !char.IsLower(lineText[i]))
+                            ++i;
+                    }
+                    else if (char.IsUpper(startChar))
+                    {
+                        while (i > 0 && char.IsUpper(lineText[i]))
+                            --i;
+                        if (!char.IsUpper(lineText[i]))
+                            ++i;
+                    }
+                    else if (char.IsLetter(startChar))
+                    {
+                        while (i > 0 && char.IsLetter(lineText[i]))
+                            --i;
+                        if (!char.IsLetter(lineText[i]))
+                            ++i;
+                    }
+                    else if (char.IsDigit(startChar))
+                    {
+                        while (i > 0 && char.IsDigit(lineText[i]))
+                            --i;
+                        if (!char.IsDigit(lineText[i]))
+                            ++i;
+                    }
+                    else if (char.IsPunctuation(startChar) || char.IsSymbol(startChar))
+                    {
+                        char c;
+                        while (i > 0 && (char.IsPunctuation((c = lineText[i])) || char.IsSymbol(c)))
+                            --i;
+                        c = lineText[i];
+                        if (!char.IsPunctuation(c) && !char.IsSymbol(c))
+                            ++i;
+                    }
+                    else if (startChar == '\n' || startChar == '\r')
+                    {
+                        char c;
+                        while (i > 0 && ((c = lineText[i]) == '\n' || c == '\r'))
+                            --i;
+                        c = lineText[i];
+                        if (c != '\n' && c != '\r')
+                            ++i;
+                    }
+                    else if (char.IsWhiteSpace(startChar))
+                    {
+                        char c;
+                        while (i > 0 && (c = lineText[i]) != '\n' && c != '\r' &&
+                               char.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.ConnectorPunctuation &&
+                               (char.IsPunctuation(c) || char.IsWhiteSpace(c)))
+                            --i;
+
+                        if (i == 0)
+                            startChar = '\n';
+                        else if (!char.IsWhiteSpace(lineText[i]))
+                            ++i;
+                    }
+                    else if (!IsAscii(startChar))
+                    {
+                        while (i > 0 && !IsAscii(lineText[i]))
+                            --i;
+                        if (IsAscii(lineText[i]))
+                            ++i;
+                    }
+                    else
+                    {
+                        ++i;
+                    }
+                }
+                else if (line > 0 && char.IsWhiteSpace(startChar))
+                    startChar = '\n';
+
+                count += Encoding.GetEncoding(CodePage).GetByteCount(lineText.ToCharArray(), i, lineText.Length - i);
+                linePos = 0;
+                line--;
+            } while (i == 0 && line >= 0);
+
+            return pos - count;
+        }
+
+        private int GetCustomWordPartRight()
+        {
+            /* This is a more or less direct translation of default Scintilla implementation with the following differences:
+             *     - Sadly, Scintilla doesn't support multi byte characters in the WORDPART* function, this solves it.
+             *     - This implementation is a bit more complex, as checks for some more types of characters, making browsing a bit more fluent.
+             *     - Line jumps are treated differently, the default implementation just skips all lines, this one behaves like normal WORD* functions, with stops in between if there are whitespaces.
+             *     - Since we cannot use the CharAt function we have to get the properly encoded text, but since getting the whole text may use way more resources than needed, we go line per line, and
+             *       this makes code a bit more difficult to read.
+             */
+            int pos = CurrentPos;
+            if (pos == TextLength) return pos;
+            int lineCount = LineCount;
+            int line = LineFromPosition(pos);
+            int linePos = pos - PositionFromLine(line);
+            int length, i, count = 0;
+            char startChar = '\0';
+
+            do
+            {
+                int sz = (int)SPerform(2153, (uint)line, 0);
+                byte[] buffer = new byte[sz + 1];
+                unsafe
+                {
+                    fixed (byte* b = buffer) SPerform(2153, (uint)line, (uint)b);
+                }
+                string lineText = Encoding.GetEncoding(CodePage).GetString(buffer, linePos, sz - linePos);
+
+                length = lineText.Length;
+                i = 0;
+
+                if (count == 0)
+                {
+                    startChar = lineText[i];
+                    if (char.GetUnicodeCategory(startChar) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                    {
+                        while (i < length && char.GetUnicodeCategory(lineText[i]) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                            ++i;
+                        startChar = lineText[i];
+                    }
+                }
+                if (char.IsLower(startChar))
+                {
+                    while (i < length && char.IsLower(lineText[i]))
+                        ++i;
+                    // We may be interested in not running this loop if startChar was the same
+                    while (i < length && char.GetUnicodeCategory(lineText[i]) == System.Globalization.UnicodeCategory.ConnectorPunctuation)
+                        ++i;
+                }
+                else if (char.IsUpper(startChar))
+                {
+                    if (i < length - 1 && char.IsLower(lineText[i + 1]))
+                    {
+                        ++i;
+                        while (i < length && char.IsLower(lineText[i]))
+                            ++i;
+                    }
+                    else
+                    {
+                        while (i < length && char.IsUpper(lineText[i]))
+                            ++i;
+                    }
+                    if (i < length && char.IsLower(lineText[i]) && char.IsUpper(lineText[i - 1]))
+                        --i;
+                }
+                else if (char.IsLetter(startChar))
+                {
+                    while (i < length && char.IsLetter(lineText[i]))
+                        ++i;
+                }
+                else if (char.IsDigit(startChar))
+                {
+                    while (i < length && char.IsDigit(lineText[i]))
+                        ++i;
+                }
+                else if (char.IsPunctuation(startChar) || char.IsSymbol(startChar))
+                {
+                    char c;
+                    while (i < length && (char.IsPunctuation((c = lineText[i])) || char.IsSymbol(c)))
+                        ++i;
+                }
+                else if (startChar == '\n' || startChar == '\r')
+                {
+                    char c;
+                    while (i < length && ((c = lineText[i]) == '\r' || c == '\n'))
+                        ++i;
+                    while (i < length && char.IsWhiteSpace((c = lineText[i])) && c != '\r' && c != '\n')
+                        ++i;
+                }
+                else if (char.IsWhiteSpace(startChar))
+                {
+                    if (count == 0) ++i;
+                    char c;
+                    while (i < length && (c = lineText[i]) != '\r' && c != '\n' && char.IsWhiteSpace(c))
+                        ++i;
+                }
+                else if (!IsAscii(startChar))
+                {
+                    while (i < length && !IsAscii(lineText[i]))
+                        ++i;
+                }
+                else
+                {
+                    ++i;
+                    count += Encoding.GetEncoding(CodePage).GetByteCount(lineText.ToCharArray(), 0, i);
+                    break;
+                }
+                count += Encoding.GetEncoding(CodePage).GetByteCount(lineText.ToCharArray(), 0, i);
+                line++;
+                linePos = 0;
+            } while (i == length && line < lineCount);
+            return pos + count;
+        }
+
+        private static bool IsAscii(char c)
+        {
+            return c < 0x80;
         }
 
         #endregion

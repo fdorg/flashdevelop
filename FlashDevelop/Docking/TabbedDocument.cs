@@ -312,8 +312,8 @@ namespace FlashDevelop.Docking
                 this.editor.MarkerDeleteAll(2);
                 this.IsModified = false;
             };
-            this.editor.FocusChanged += new FocusHandler(this.EditorFocusChanged);
-            this.editor2.FocusChanged += new FocusHandler(this.EditorFocusChanged);
+            this.editor.GotFocus += EditorFocusChanged;
+            this.editor2.GotFocus += EditorFocusChanged;
             this.editor.UpdateSync += new UpdateSyncHandler(this.EditorUpdateSync);
             this.editor2.UpdateSync += new UpdateSyncHandler(this.EditorUpdateSync);
             this.Controls.Add(this.splitContainer);
@@ -342,14 +342,11 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// When the user changes to sci, block events from inactive sci
         /// </summary>
-        private void EditorFocusChanged(ScintillaControl sender)
+        private void EditorFocusChanged(object sender, EventArgs e)
         {
-            if (sender.IsFocus)
-            {
-                this.lastEditor = sender;
-                this.editor.DisableAllSciEvents = (sender == editor2);
-                this.editor2.DisableAllSciEvents = (sender == editor);
-            }
+            this.lastEditor = (ScintillaControl)sender;
+            this.editor.DisableAllSciEvents = (sender == editor2);
+            this.editor2.DisableAllSciEvents = (sender == editor);
         }
 
         /// <summary>
