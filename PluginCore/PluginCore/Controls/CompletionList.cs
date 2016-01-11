@@ -124,7 +124,7 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Require that completion items are explicitely inserted (Enter, Tab, mouse-click)
+        /// Require that completion items are explicitly inserted (Enter, Tab, mouse-click)
         /// </summary>
         public static void DisableAutoInsertion()
         {

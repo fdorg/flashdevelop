@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Drawing;
-using System.Threading;
 using System.Reflection;
 using System.Collections;
 using System.Diagnostics;
@@ -13,7 +12,6 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
 using ScintillaNet.Configuration;
 using PluginCore.Localization;
 using FlashDevelop.Controls;
@@ -23,7 +21,6 @@ using FlashDevelop.Managers;
 using FlashDevelop.Helpers;
 using FlashDevelop.Dialogs;
 using FlashDevelop.Settings;
-using WeifenLuo.WinFormsUI;
 using WeifenLuo.WinFormsUI.Docking;
 using ICSharpCode.SharpZipLib.Zip;
 using PluginCore.Utilities;
@@ -96,7 +93,7 @@ namespace FlashDevelop
         #region Private Properties
 
         /* AppMan */
-        FileSystemWatcher amWatcher;
+        private FileSystemWatcher amWatcher;
 
         /* Components */
         private QuickFind quickFind;
@@ -258,7 +255,7 @@ namespace FlashDevelop
         /// </summary>
         public ISettings Settings
         {
-            get { return (ISettings)this.appSettings; }
+            get { return this.appSettings; }
         }
 
         /// <summary>
@@ -291,7 +288,7 @@ namespace FlashDevelop
         /// </summary>
         public Boolean IsFirstInstance
         {
-            get { return MainForm.IsFirst; }
+            get { return IsFirst; }
         }
 
         /// <summary>
@@ -322,7 +319,7 @@ namespace FlashDevelop
             get
             {
                 List<ITabbedDocument> documents = new List<ITabbedDocument>();
-                foreach (DockPane pane in Globals.MainForm.DockPanel.Panes)
+                foreach (DockPane pane in DockPanel.Panes)
                 {
                     if (pane.DockState == DockState.Document)
                     {
@@ -462,7 +459,7 @@ namespace FlashDevelop
         /// </summary>
         public String[] StartArguments
         {
-            get { return MainForm.Arguments; }
+            get { return Arguments; }
         }
 
         /// <summary>
@@ -758,7 +755,7 @@ namespace FlashDevelop
         /// </summary>
         private DialogResult InitializeFirstRun()
         {
-            if (!this.StandaloneMode && MainForm.IsFirst && FirstRunDialog.ShouldProcessCommands())
+            if (!this.StandaloneMode && IsFirst && FirstRunDialog.ShouldProcessCommands())
             {
                 return FirstRunDialog.Show();
             }
@@ -1180,7 +1177,7 @@ namespace FlashDevelop
             {
                 String title = TextHelper.GetString("Title.ConfirmDialog");
                 String message = TextHelper.GetString("Info.AreYouSureToExit");
-                DialogResult result = MessageBox.Show(Globals.MainForm, message, " " + title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show(this, message, " " + title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.No) e.Cancel = true;
             }
             if (!e.Cancel) this.CloseAllDocuments(false);
@@ -1335,7 +1332,7 @@ namespace FlashDevelop
             {
                 String saveChanges = TextHelper.GetString("Info.SaveChanges");
                 String saveChangesTitle = TextHelper.GetString("Title.SaveChanges");
-                DialogResult result = MessageBox.Show(Globals.MainForm, saveChanges, saveChangesTitle + " " + document.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show(this, saveChanges, saveChangesTitle + " " + document.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
                     if (document.IsUntitled)
@@ -1414,8 +1411,8 @@ namespace FlashDevelop
             if (sci != null && document != null && document.IsEditable)
             {
                 String statusText = " " + TextHelper.GetString("Info.StatusText");
-                String line = sci.CurrentLine + 1 + " / " + sci.LineCount.ToString();
-                String column = sci.Column(sci.CurrentPos) + 1 + " / " + (sci.Column(sci.LineEndPosition(sci.CurrentLine)) + 1).ToString();
+                String line = sci.CurrentLine + 1 + " / " + sci.LineCount;
+                String column = sci.Column(sci.CurrentPos) + 1 + " / " + (sci.Column(sci.LineEndPosition(sci.CurrentLine)) + 1);
                 var oldOS = this.OSVersion.Major < 6; // Vista is 6.0 and ok...
                 String file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
                 String eol = (sci.EOLMode == 0) ? "CR+LF" : ((sci.EOLMode == 1) ? "CR" : "LF");
@@ -1467,7 +1464,7 @@ namespace FlashDevelop
             if (te.Handled) return; // Let plugin handle this...
             String dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
             String message = TextHelper.GetString("Info.MakeReadOnlyWritable");
-            if (MessageBox.Show(Globals.MainForm, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show(this, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 ScintillaManager.MakeFileWritable(sci);
             }
@@ -1686,11 +1683,58 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Adjusts the image for different themes
+        /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
+        /// </summary>
+        public Image FindImage(String data)
+        {
+            return FindImage(data, true);
+        }
+
+        /// <summary>
+        /// Finds the specified composed/ready image.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
+        /// </summary>
+        public Image FindImage(String data, Boolean autoAdjusted)
+        {
+            try
+            {
+                lock (this)
+                {
+                    return ImageManager.GetComposedBitmap(data, autoAdjusted);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns a copy of the specified image that has its color adjusted.
         /// </summary>
         public Image ImageSetAdjust(Image image)
         {
-            return ImageManager.AdjustImage(image);
+            return ImageManager.SetImageAdjustment(image);
+        }
+
+        /// <summary>
+        /// Gets a copy of the image that gets automatically adjusted according to the theme.
+        /// </summary>
+        public Image GetAutoAdjustedImage(Image image)
+        {
+            return ImageManager.GetAutoAdjustedImage(image);
+        }
+
+        /// <summary>
+        /// Adjusts all images for different themes.
+        /// </summary>
+        public void AdjustAllImages()
+        {
+            ImageManager.AdjustAllImages();
         }
 
         /// <summary>
@@ -1738,6 +1782,29 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Gets a theme flag value.
+        /// </summary>
+        public Boolean GetThemeFlag(String id)
+        {
+            return GetThemeFlag(id, false);
+        }
+
+        /// <summary>
+        /// Gets a theme flag value with a fallback.
+        /// </summary>
+        public Boolean GetThemeFlag(String id, Boolean fallback)
+        {
+            String value = ThemeManager.GetThemeValue(id);
+            if (String.IsNullOrEmpty(value)) return fallback;
+            switch (value.ToLower())
+            {
+                case "true": return true;
+                case "false": return false;
+                default: return fallback;
+            }
+        }
+
+        /// <summary>
         /// Finds the specified menu item by name
         /// </summary>
         public ToolStripItem FindMenuItem(String name)
@@ -1763,13 +1830,21 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the specified item's shortcut keys
+        /// Gets the specified item's shortcut keys.
         /// </summary>
         public Keys GetShortcutItemKeys(String id)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
-            if (item != null) return item.Custom;
-            else return Keys.None;
+            return item == null ? Keys.None : item.Custom;
+        }
+
+        /// <summary>
+        /// Gets the specified item's id.
+        /// </summary>
+        public String GetShortcutItemId(Keys keys)
+        {
+            ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
+            return item == null ? string.Empty : item.Id;
         }
 
         /// <summary>
@@ -1803,25 +1878,6 @@ namespace FlashDevelop
         public void ApplySecondaryShortcut(ToolStripItem item)
         {
             ShortcutManager.ApplySecondaryShortcut(item);
-        }
-
-        /// <summary>
-        /// Finds the specified composed/ready image
-        /// </summary>
-        public Image FindImage(String data)
-        {
-            try
-            {
-                lock (this)
-                {
-                    return ImageManager.GetComposedBitmap(data);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-                return null;
-            }
         }
 
         /// <summary>
@@ -2685,7 +2741,8 @@ namespace FlashDevelop
         /// </summary>
         public void GoTo(Object sender, System.EventArgs e)
         {
-            this.gotoDialog.Show();
+            if (!this.gotoDialog.Visible) this.gotoDialog.Show();
+            else this.gotoDialog.Activate();
         }
 
         /// <summary>
@@ -2713,7 +2770,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplace(Object sender, System.EventArgs e)
         {
-            this.frInDocDialog.Show();
+            if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
+            else this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2723,11 +2781,12 @@ namespace FlashDevelop
         {
             ToolStripItem button = (ToolStripItem)sender;
             String file = ((ItemData)button.Tag).Tag;
-            ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
+            this.BeginInvoke((MethodInvoker)delegate
             {
                 OpenEditableDocument(file);
             });
-            this.frInDocDialog.Show();
+            if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
+            else this.frInDocDialog.Activate();
         }
 
         /// <summary>
@@ -2735,7 +2794,8 @@ namespace FlashDevelop
         /// </summary>
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)
         {
-            this.frInFilesDialog.Show();
+            if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show();
+            else this.frInFilesDialog.Activate();
         }
 
         /// <summary>
@@ -2745,7 +2805,8 @@ namespace FlashDevelop
         {
             ToolStripItem button = (ToolStripItem)sender;
             String path = ((ItemData)button.Tag).Tag;
-            this.frInFilesDialog.Show(); // Show first..
+            if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show(); // Show first..
+            else this.frInFilesDialog.Activate();
             this.frInFilesDialog.SetFindPath(path);
         }
 
@@ -2794,7 +2855,7 @@ namespace FlashDevelop
         /// </summary>
         public void ShowSettings(Object sender, System.EventArgs e)
         {
-            SettingDialog.Show("FlashDevelop", "");
+            SettingDialog.Show(DistroConfig.DISTRIBUTION_NAME, "");
         }
 
         /// <summary>
@@ -2854,7 +2915,7 @@ namespace FlashDevelop
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
                 Boolean requiresRestart = false;
-                Boolean silentInstall = MainForm.Silent;
+                Boolean silentInstall = Silent;
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
                 if (chunks.Length > 1)
@@ -2936,7 +2997,7 @@ namespace FlashDevelop
                 String zipLog = String.Empty;
                 String zipFile = String.Empty;
                 Boolean requiresRestart = false;
-                Boolean silentRemove = MainForm.Silent;
+                Boolean silentRemove = Silent;
                 List<String> removeDirs = new List<String>();
                 ToolStripItem button = (ToolStripItem)sender;
                 String[] chunks = (((ItemData)button.Tag).Tag).Split(';');
@@ -3388,11 +3449,8 @@ namespace FlashDevelop
                 ScintillaControl sci = Globals.SciControl;
                 ToolStripItem button = (ToolStripItem)sender;
                 string language = ((ItemData) button.Tag).Tag;
-                if (sci.ConfigurationLanguage.Equals(language))
-                    return; // already using this syntax
-
+                if (sci.ConfigurationLanguage.Equals(language)) return; // already using this syntax
                 ScintillaManager.ChangeSyntax(language, sci);
-
                 string extension = sci.GetFileExtension();
                 if (!string.IsNullOrEmpty(extension))
                 {
@@ -4018,10 +4076,10 @@ namespace FlashDevelop
         {
             try
             {
-                String dirMarker = "\\FlashDevelop\\";
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.AddExtension = true; sfd.DefaultExt = "fdz";
                 sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
                 if (sfd.ShowDialog(this) == DialogResult.OK)
                 {
                     List<String> settingFiles = new List<String>();

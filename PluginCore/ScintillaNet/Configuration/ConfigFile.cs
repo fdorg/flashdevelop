@@ -45,7 +45,7 @@ namespace ScintillaNet.Configuration
             for (int j = 0; j<includes.Length; j++) includes[j].init(utility, _parent);
             for (int i = 0; i<includes.Length; i++)
             {
-                configFile = (ConfigFile)utility.LoadConfiguration(base.GetType(), includes[i].file, (ConfigFile)_parent);
+                configFile = (ConfigFile)utility.LoadConfiguration(base.GetType(), includes[i].file, _parent);
                 addIncludedFile(configFile);
             }
             CollectScintillaNodes(null);

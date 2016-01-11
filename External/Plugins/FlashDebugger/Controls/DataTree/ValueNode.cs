@@ -69,11 +69,11 @@ namespace FlashDebugger.Controls.DataTree
                         {
                             if (number < 0 && number >= Int32.MinValue)
                             {
-                                return number.ToString() + " [0x" + ((Int32)number).ToString("x") + "]";
+                                return number + " [0x" + ((Int32)number).ToString("x") + "]";
                             }
                             else if (number < 0 || number > 9)
                             {
-                                return number.ToString() + " [0x" + ((Int64)number).ToString("x") + "]";
+                                return number + " [0x" + ((Int64)number).ToString("x") + "]";
                             }
                         }
                         else return number.ToString();

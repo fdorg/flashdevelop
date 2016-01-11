@@ -306,7 +306,7 @@ namespace ASCompletion.Model
             char semi = ';';
             string tab0 = (!caching && InFile.Version == 3) ? "\t" : "";
             string tab = (caching) ? "" : ((InFile.Version == 3) ? "\t\t" : "\t");
-            bool preventVis = (bool)((this.Flags & FlagType.Interface) > 0);
+            bool preventVis = (this.Flags & FlagType.Interface) > 0;
 
             // SPECIAL DELEGATE
             /*if ((Flags & FlagType.Delegate) > 0)

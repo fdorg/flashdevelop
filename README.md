@@ -33,4 +33,5 @@ Contribute
 --------
 
 * Get forking and [join the community at FlashDevelop forums.](http://www.flashdevelop.org/community/index.php)
+* Read the contribution notes from [the CONTRIBUTING.md file.](https://github.com/fdorg/flashdevelop/blob/development/CONTRIBUTING.md)
 * Donate via PayPal: [details and list of donators.](http://www.flashdevelop.org/wikidocs/index.php?title=FlashDevelop:Site_support)

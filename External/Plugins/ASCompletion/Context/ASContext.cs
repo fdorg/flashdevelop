@@ -702,7 +702,7 @@ namespace ASCompletion.Context
                 return false;
             if (temporaryPath != null)
             {
-                while (classPath.Count > 0 && (classPath[0] as PathModel).IsTemporaryPath)
+                while (classPath.Count > 0 && classPath[0].IsTemporaryPath)
                 {
                     classPath[0].InUse = false;
                     classPath.RemoveAt(0);

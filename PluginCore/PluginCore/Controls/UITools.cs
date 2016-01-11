@@ -387,7 +387,7 @@ namespace PluginCore.Controls
             if (sci == null) return 0;
             // evaluate the font size
             Font tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
-            Graphics g = ((Control)sci).CreateGraphics();
+            Graphics g = sci.CreateGraphics();
             SizeF textSize = g.MeasureString("S", tempFont);
             return (int)Math.Ceiling(textSize.Height);
         }

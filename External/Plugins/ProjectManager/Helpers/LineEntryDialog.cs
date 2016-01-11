@@ -1,8 +1,6 @@
-using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace ProjectManager.Helpers
@@ -10,7 +8,7 @@ namespace ProjectManager.Helpers
     /// <summary>
     /// A simple form where a user can enter a text string.
     /// </summary>
-    public class LineEntryDialog : System.Windows.Forms.Form
+    public class LineEntryDialog : Form
     {
         string line;
 
@@ -39,10 +37,10 @@ namespace ProjectManager.Helpers
         {
             InitializeComponent();
             InititalizeLocalization();
-            this.Font = PluginCore.PluginBase.Settings.DefaultFont;
-
+            this.Font = PluginBase.Settings.DefaultFont;
             this.Text = " " + captionText;
             titleLabel.Text = labelText;
+            lineBox.KeyDown += OnLineBoxOnKeyDown;
             lineBox.Text = (defaultLine != null) ? defaultLine : string.Empty;
             lineBox.SelectAll();
             lineBox.Focus();
@@ -165,6 +163,26 @@ namespace ProjectManager.Helpers
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)
+        {
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
+            if (string.IsNullOrEmpty(shortcutId)) return;
+
+            switch (shortcutId)
+            {
+                case "EditMenu.ToLowercase":
+                case "EditMenu.ToUppercase":
+                    string selectedText = lineBox.SelectedText;
+                    if (string.IsNullOrEmpty(selectedText)) break;
+                    selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
+                    int selectionStart = lineBox.SelectionStart;
+                    int selectionLength = lineBox.SelectionLength;
+                    lineBox.Paste(selectedText);
+                    SelectRange(selectionStart, selectionLength);
+                    break;
+            }
         }
 
         public void SelectRange(int start, int length)
