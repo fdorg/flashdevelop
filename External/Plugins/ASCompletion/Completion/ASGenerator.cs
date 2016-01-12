@@ -4244,7 +4244,7 @@ namespace ASCompletion.Completion
                     // insert in alphabetical order
                     mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success &&
-                        String.Compare(mImport.Groups["package"].Value, fullPath) > 0)
+                        ByImportTypeMemberComparer.CompareImports(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;
                         break;
