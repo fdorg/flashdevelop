@@ -4302,6 +4302,7 @@ namespace ASCompletion.Completion
             int indent = 0;
             int skipIfDef = 0;
             Match mImport;
+            var importComparer = new CaseSensitiveImportComparer();
             while (line < curLine)
             {
                 txt = sci.GetLine(line++).TrimStart();
@@ -4318,15 +4319,14 @@ namespace ASCompletion.Completion
                     else continue;
                 }
                 // insert imports after a package declaration
-                else if (txt.StartsWith("import"))
+                else if (txt.Length > 6 && txt.StartsWith("import") && txt[6] <= 32)
                 {
                     packageLine = -1;
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
                     mImport = ASFileParserRegexes.Import.Match(txt);
-                    if (mImport.Success &&
-                        ByImportTypeMemberComparer.CompareImports(mImport.Groups["package"].Value, fullPath) > 0)
+                    if (mImport.Success && importComparer.Compare(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;
                         break;

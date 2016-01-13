@@ -149,7 +149,7 @@ namespace CodeRefactor.Commands
         {
             String eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             Int32 line = imports[0].LineFrom - DeletedImportsCompensation;
-            imports.Sort(new ByImportTypeMemberComparer());
+            imports.Sort(new CaseSensitiveImportComparer());
             sci.GotoLine(line);
             Int32 curLine = 0;
             List<String> uniques = this.GetUniqueImports(imports, searchInText, sci.FileName);

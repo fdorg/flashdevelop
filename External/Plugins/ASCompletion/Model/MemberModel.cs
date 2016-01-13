@@ -542,31 +542,89 @@ namespace ASCompletion.Model
     /// <summary>
     /// Compare members based on import name
     /// </summary>
-    public class ByImportTypeMemberComparer : IComparer<MemberModel>
+    public class CaseSensitiveImportComparer : IComparer<MemberModel>
     {
-        public static Int32 CompareImports(String import1, String import2)
+        static Int32 GetPackageTypeSeparation(string import)
         {
-            // Use case-insensitive comparison.
-            //IComparer cmp = StringComparer.OrdinalIgnoreCase;
-            // Use case-sensitive comparison.
-            IComparer cmp = StringComparer.Ordinal;
-            String[] parts1 = import1.Split('.');
-            String[] parts2 = import2.Split('.');
-            int len1 = parts1.Length;
-            int len2 = parts2.Length;
-            // If the imports are at the same depth, compare them alphabetically.
-            if (len1 == len2)
-                return cmp.Compare(import1, import2);
-            int minPackageLen = ((len1 <= len2) ? len1 : len2) - 1;
-            // Alphabetically compare import packages part by part.
-            for (int i = 0; i < minPackageLen; ++i)
+            var dot = import.IndexOf('.');
+            var lastDot = -1;
+            var max = import.Length - 1;
+            while (dot > 0 && dot < max)
             {
-                int cmpResult = cmp.Compare(parts1[i], parts2[i]);
-                if (cmpResult != 0)
-                    return cmpResult;
+                if (Char.IsUpper(import[dot + 1]))
+                    return dot;
+                lastDot = dot;
+                dot = import.IndexOf('.', dot + 1);
             }
-            // One of the packages is a sub-package of the other one. Consider the parent package to compare as less than the sub-package.
-            return len1 - len2;
+            if (dot < 0 || dot >= max) return lastDot;
+            else if (dot == 0) return -1;
+            else return dot;
+        }
+
+        public static Int32 CompareImports(string import1, string import2)
+        {
+            IComparer cmp = StringComparer.Ordinal;
+            var d1 = GetPackageTypeSeparation(import1);
+            var d2 = GetPackageTypeSeparation(import2);
+            // one or both imports do not have a package
+            if (d1 < 0) 
+            {
+                if (d2 > 0) return -1;
+                else return cmp.Compare(import1, import2);
+            }
+            else if (d2 < 0) 
+            {
+                if (d1 > 0) return 1;
+                else return cmp.Compare(import1, import2);
+            }
+            // compare package
+            var pkg1 = import1.Substring(0, d1);
+            var pkg2 = import2.Substring(0, d2);
+            var res = cmp.Compare(pkg1, pkg2);
+            if (res != 0) return res;
+            // compare type
+            var tp1 = import1.Substring(d1 + 1);
+            var tp2 = import2.Substring(d2 + 1);
+            res = cmp.Compare(tp1, tp2);
+            return res;
+        }
+
+#if DEBUG 
+        static void Assert(int res, int expected)
+        {
+            System.Diagnostics.Debug.Assert(res == expected, res + " was not expected " + expected);
+        }
+
+        static CaseSensitiveImportComparer()
+        {
+            // poor man's unit tests
+            Assert(GetPackageTypeSeparation("a.b.C"), 3);
+            Assert(GetPackageTypeSeparation("a.b.c"), 3);
+            Assert(GetPackageTypeSeparation("a.b.C.D"), 3);
+            Assert(GetPackageTypeSeparation("a"), -1);
+            Assert(GetPackageTypeSeparation(".a"), -1);
+            Assert(GetPackageTypeSeparation("a."), -1);
+            Assert(GetPackageTypeSeparation("a.b.c."), 3);
+
+            Assert(CompareImports("a", "A"), 32);
+            Assert(CompareImports("a", "b"), -1);
+            Assert(CompareImports("b", "a"), 1);
+            Assert(CompareImports("a", "a"), 0);
+            Assert(CompareImports("a.A", "b"), 1);
+            Assert(CompareImports("a", "b.B"), -1);
+            Assert(CompareImports("a.A", "b.A"), -1);
+            Assert(CompareImports("b.A", "a.A"), 1);
+            Assert(CompareImports("a.A", "a.A"), 0);
+            Assert(CompareImports("a.A", "a.B"), -1);
+            Assert(CompareImports("b.A", "a.A"), 1);
+            Assert(CompareImports("a.A", "a.a"), -32);
+            Assert(CompareImports("a.MathReal", "a.Mathematics"), -19);
+        }
+#endif
+
+        public Int32 Compare(string import1, string import2)
+        {
+            return CompareImports(import1, import2);
         }
 
         public Int32 Compare(MemberModel item1, MemberModel item2)
