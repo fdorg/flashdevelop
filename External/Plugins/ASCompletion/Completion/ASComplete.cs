@@ -1257,20 +1257,43 @@ namespace ASCompletion.Completion
             return true;
         }
 
+        /// <summary>
+        /// Lookup type declaration keywords anywhere in the provided text
+        /// </summary>
         private static bool IsTypeDecl(string line, string[] typesKeywords)
         {
+            var max = line.Length - 1;
             foreach (string keyword in typesKeywords)
-                if (line.IndexOf(keyword) >= 0) return true;
+            {
+                var p = line.IndexOf(keyword);
+                if (p >= 0) 
+                {
+                    // verify keyword between spaces
+                    var end = p + keyword.Length;
+                    if ((p == 0 || line[p-1] <= 32) 
+                        && end < max && line[end] <= 32) return true;
+                }
+            }
             return false;
         }
 
+        /// <summary>
+        /// Look if the provided text starts with any declaration keyword
+        /// </summary>
         private static bool IsDeclaration(string line, ContextFeatures features)
         {
             foreach (string keyword in features.accessKeywords)
-                if (line.StartsWith(keyword)) return true;
+                if (line.StartsWith(keyword) && SpaceFollows(line, keyword)) return true;
             foreach (string keyword in features.declKeywords)
-                if (line.StartsWith(keyword)) return true;
+                if (line.StartsWith(keyword) && SpaceFollows(line, keyword)) return true;
             return false;
+        }
+
+        private static bool SpaceFollows(string line, string keyword)
+        {
+            var len = keyword.Length;
+            if (line.Length > len) return line[len] <= 32;
+            else return true;
         }
 
         #endregion
