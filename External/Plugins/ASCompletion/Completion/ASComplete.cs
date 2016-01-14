@@ -1008,13 +1008,16 @@ namespace ASCompletion.Completion
                 int line = Sci.LineFromPosition(position);
                 if (line == 0)
                     return;
-                string txt = Sci.GetLine(line-1).TrimEnd();
+                string txt = Sci.GetLine(line - 1).TrimEnd();
                 int style = Sci.BaseStyleAt(position);
 
+                // move closing brace to its own line and fix indentation
                 if (Sci.CurrentChar == '}')
                 {
-                    Sci.DeleteForward();
-                    AutoCloseBrace(Sci, line);
+                    var openingBrace = Sci.SafeBraceMatch(position);
+                    var openLine = openingBrace >= 0 ? Sci.LineFromPosition(openingBrace) : line - 1;
+                    Sci.InsertText(Sci.CurrentPos, LineEndDetector.GetNewLineMarker(Sci.EOLMode));
+                    Sci.SetLineIndentation(line + 1, Sci.GetLineIndentation(openLine));
                 }
                 // in comments
                 else if (PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented && txt.EndsWith("*/"))
