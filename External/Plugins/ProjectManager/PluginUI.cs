@@ -230,17 +230,16 @@ namespace ProjectManager
                         newName = Path.Combine(project.Directory, label);
                         newName = Path.ChangeExtension(newName, Path.GetExtension(oldName));
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     {
                         e.CancelEdit = true;
                         isEditingLabel = false;
-                        ErrorManager.ShowError(exception);
                         return;
                     }
                     if (Rename(oldName, newName))
                     {
                         PluginBase.MainForm.OpenEditableDocument(newName);
-                        File.Delete(oldName); //slavara: because the old file remains after renaming
+                        File.Delete(oldName);
                     }
                     else e.CancelEdit = true;
                 }
