@@ -768,11 +768,11 @@ namespace ASCompletion.Completion
                 if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
                     label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
                 else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
+                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
                 parameters = new Hashtable();
                 parameters["scope"] = Visibility.Public;
                 label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
+                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
             }
         }
 
@@ -1059,7 +1059,7 @@ namespace ASCompletion.Completion
                     }
                     break;
 
-                case GeneratorJobType.FieldFromPatameter:
+                case GeneratorJobType.FieldFromParameter:
                     Sci.BeginUndoAction();
                     try
                     {
@@ -4372,7 +4372,7 @@ namespace ASCompletion.Completion
         Constant,
         Constructor,
         ToString,
-        FieldFromPatameter,
+        FieldFromParameter,
         AddInterfaceDef,
         ConvertToConst,
         AddAsParameter,
