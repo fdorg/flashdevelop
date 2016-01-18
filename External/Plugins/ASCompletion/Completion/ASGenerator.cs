@@ -3061,7 +3061,7 @@ namespace ASCompletion.Completion
             var latest = GetLatestMemberForFunction(inClass, Visibility.Public, null);
             if (latest == null) latest = FindLatest(0, 0, inClass, false, false);
             int position;
-            if (latest == null) position = sci.LineIndentPosition(inClass.LineFrom + 1);
+            if (latest == null) position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
             else position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
             sci.SetSel(position, position);
             GenerateImplementation(aType, inClass, sci, position);
