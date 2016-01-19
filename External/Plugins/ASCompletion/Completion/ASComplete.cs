@@ -1229,13 +1229,13 @@ namespace ASCompletion.Completion
             while (tempLine > 0)
             {
                 tempText = Sci.GetLine(tempLine).Trim();
-                if (insideClass && IsTypeDecl(tempText, features.typesKeywords))
+                if (insideClass && CodeUtils.IsTypeDecl(tempText, features.typesKeywords))
                 {
                     tempIndent = Sci.GetLineIndentation(tempLine);
                     tab = tempIndent + Sci.TabWidth;
                     break;
                 }
-                if (tempText.Length > 0 && (tempText.EndsWith("}") || IsDeclaration(tempText, features)))
+                if (tempText.Length > 0 && (tempText.EndsWith("}") || CodeUtils.IsDeclaration(tempText, features)))
                 {
                     tempIndent = Sci.GetLineIndentation(tempLine);
                     tab = tempIndent;
@@ -1258,22 +1258,6 @@ namespace ASCompletion.Completion
             // show
             CompletionList.Show(known, autoHide, tail);
             return true;
-        }
-
-        private static bool IsTypeDecl(string line, string[] typesKeywords)
-        {
-            foreach (string keyword in typesKeywords)
-                if (line.IndexOf(keyword) >= 0) return true;
-            return false;
-        }
-
-        private static bool IsDeclaration(string line, ContextFeatures features)
-        {
-            foreach (string keyword in features.accessKeywords)
-                if (line.StartsWith(keyword)) return true;
-            foreach (string keyword in features.declKeywords)
-                if (line.StartsWith(keyword)) return true;
-            return false;
         }
 
         #endregion
