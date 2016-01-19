@@ -67,147 +67,39 @@ namespace ASCompletion.Completion
 
         public class GetBodyStart : ASGeneratorTests
         {
-            [Test]
-            public void SimpleCase()
+            public IEnumerable<TestCaseData> GetBodyStartTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("function test():void{\r\n\t\t\t\r\n}", 0, 1, "function test():void{\r\n\t\t\t\r\n}", 26).SetName("SimpleCase");
+                    // Should we reindent the second line?
+                    yield return new TestCaseData("function test():void{\r\n\t\t\t}", 0, 1, "function test():void{\r\n\t\t\t\r\n}", 26).SetName("EndOnSecondLine");
+                    yield return new TestCaseData("function test():void{\r\n}", 0, 1, "function test():void{\r\n\t\r\n}", 24).SetName("EndOnSecondLineNoExtraIndent");
+                    yield return new TestCaseData("function test():void{\r\n\t\t\t//comment}", 0, 1, "function test():void{\r\n\t\t\t//comment}", 26).SetName("CharOnSecondLine");
+                    yield return new TestCaseData("function test():void{}", 0, 0, "function test():void{\r\n\t\r\n}", 24).SetName("EndOnSameDeclarationLine");
+                    yield return new TestCaseData("function test():void\r\n\r\n{}\r\n", 0, 2, "function test():void\r\n\r\n{\r\n\t\r\n}\r\n", 28).SetName("EndOnSameLine");
+                    yield return new TestCaseData("function test():void {trace(1);}", 0, 0, "function test():void {\r\n\ttrace(1);}", 25).SetName("TextOnStartLine");
+                    yield return new TestCaseData("function test(arg:String='{', arg2:String=\"{\"):void/*{*/{\r\n}", 0, 1, "function test(arg:String='{', arg2:String=\"{\"):void/*{*/{\r\n\t\r\n}", 60)
+                        .SetName("BracketInCommentsOrText");
+                    yield return new TestCaseData("function test():void/*áéíóú*/\r\n{}", 0, 1, "function test():void/*áéíóú*/\r\n{\r\n\t\r\n}", 40).SetName("MultiByteCharacters");
+                    yield return new TestCaseData("function tricky():void {} function test():void{\r\n\t\t\t}", 0, 1, "function tricky():void {} function test():void{\r\n\t\t\t}", 49)
+                        .SetName("WithAnotherMemberInTheSameLine")
+                        .Ignore("Having only LineFrom and LineTo for members is not enough to handle these cases. FlashDevelop in general is not too kind when it comes to several members in the same line, but we could change the method to use positions and try to get the proper position before.");
+                    yield return new TestCaseData("function test<T:{}>(arg:T):void{\r\n\r\n}", 0, 1, "function test<T:{}>(arg:T):void{\r\n\r\n}", 34).SetName("BracketsInGenericConstraint");
+                }
+            }
+
+            [Test, TestCaseSource("GetBodyStartTestCases")]
+            public void Common(string text, int lineStart, int lineEnd, string resultText, int bodyStart)
             {
                 var sci = GetBaseScintillaControl();
-                sci.Text = "function test():void{\r\n\t\t\t\r\n}";
+                sci.Text = text;
                 sci.ConfigurationLanguage = "haxe";
                 sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
+                int funcBodyStart = ASGenerator.GetBodyStart(lineStart, lineEnd, sci);
 
-                Assert.AreEqual(26, funcBodyStart);
-            }
-
-            [Test]
-            public void EndOnSecondLine()
-            {
-                var sci = GetBaseScintillaControl();
-                // TODO: Should we reindent second line?
-                sci.Text = "function test():void{\r\n\t\t\t}";
-                sci.ConfigurationLanguage = "haxe";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
-
-                Assert.AreEqual(26, funcBodyStart);
-                Assert.AreEqual("function test():void{\r\n\t\t\t\r\n}", sci.Text);
-            }
-
-            [Test]
-            public void EndOnSecondLineNoExtraIndent()
-            {
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test():void{\r\n}";
-                sci.ConfigurationLanguage = "haxe";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
-
-                Assert.AreEqual(24, funcBodyStart);
-                Assert.AreEqual("function test():void{\r\n\t\r\n}", sci.Text);
-            }
-
-            [Test]
-            public void CharOnSecondLine()
-            {
-                var sci = GetBaseScintillaControl();
-                // TODO: Should we reindent second line?
-                sci.Text = "function test():void{\r\n\t\t\t//comment}";
-                sci.ConfigurationLanguage = "haxe";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
-
-                Assert.AreEqual(26, funcBodyStart);
-                Assert.AreEqual("function test():void{\r\n\t\t\t//comment}", sci.Text);
-            }
-
-            [Test]
-            public void EndOnSameDeclarationLine()
-            {
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test():void{}";
-                sci.ConfigurationLanguage = "haxe";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 0, sci);
-
-                Assert.AreEqual(24, funcBodyStart);
-                Assert.AreEqual("function test():void{\r\n\t\r\n}", sci.Text);
-            }
-
-            [Test]
-            public void EndOnSameLine()
-            {
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test():void\r\n\r\n{}\r\n";
-                sci.ConfigurationLanguage = "as3";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 2, sci);
-
-                Assert.AreEqual(28, funcBodyStart);
-                Assert.AreEqual("function test():void\r\n\r\n{\r\n\t\r\n}\r\n", sci.Text);
-            }
-
-            [Test]
-            public void TextOnStartLine()
-            {
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test():void {trace(1);}";
-                sci.ConfigurationLanguage = "as3";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 2, sci);
-
-                Assert.AreEqual(25, funcBodyStart);
-                Assert.AreEqual("function test():void {\r\n\ttrace(1);}", sci.Text);
-            }
-
-            [Test]
-            public void BracketInCommentsOrText()
-            {
-                var sci = GetBaseScintillaControl();
-                sci.ConfigurationLanguage = "haxe";
-                sci.Text = "function test(arg:String='{', arg2:String=\"{\"):void/*{*/{\r\n}";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
-
-                Assert.AreEqual(60, funcBodyStart);
-            }
-
-            [Test]
-            public void MultiByteCharacters()
-            {
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test():void/*áéíóú*/\r\n{}";
-                sci.ConfigurationLanguage = "haxe";
-                sci.Colourise(0, -1);
-
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
-
-                Assert.AreEqual(40, funcBodyStart);
-                Assert.AreEqual("function test():void/*áéíóú*/\r\n{\r\n\t\r\n}", sci.Text);
-            }
-
-            [Test]
-            [Ignore("Having only LineFrom and LineTo for members is not enough to handle these cases. FlashDevelop in general is not too kind when it comes to several members in the same line, but we could change the method to use positions and try to get the proper position before.")]
-            public void WithAnotherMemberInTheSameLine()
-            {
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function tricky():void {} function test():void{\r\n\t\t\t}";
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
-
-                Assert.AreEqual(49, funcBodyStart);
-            }
-
-
-            [Test]
-            public void BracketsInGenericConstraint()
-            {
-                var sci = GetBaseScintillaControl();
-                sci.ConfigurationLanguage = "haxe";
-                sci.Text = "function test<T:{}>(arg:T):void{\r\n\r\n}";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(0, 1, sci);
-
-                Assert.AreEqual(34, funcBodyStart);
-                Assert.AreEqual("function test<T:{}>(arg:T):void{\r\n\r\n}", sci.Text);
+                Assert.AreEqual(bodyStart, funcBodyStart);
+                Assert.AreEqual(resultText, sci.Text);
             }
         }
 
