@@ -55,7 +55,7 @@ namespace HaXeContext
             handler = completionHandler;
             CompilerService = compilerService;
             Status = HaxeCompleteStatus.NONE;
-            FileName = PluginBase.MainForm.CurrentDocument.FileName;
+            FileName = sci.FileName;
         }
 
         /* EXECUTION */

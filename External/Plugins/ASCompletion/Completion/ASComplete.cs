@@ -178,7 +178,7 @@ namespace ASCompletion.Completion
                         {
                             return HandleColonCompletion(Sci, "", autoHide);
                         }
-                        else break;
+                        break;
 
                     case '<':
                         if (features.hasGenerics && position > 2)
@@ -188,7 +188,7 @@ namespace ASCompletion.Completion
                                 return HandleColonCompletion(Sci, "", autoHide);
                             return false;
                         }
-                        else break;
+                        break;
 
                     case '(':
                     case ',':
@@ -197,7 +197,7 @@ namespace ASCompletion.Completion
                         else return false;
 
                     case ')':
-                        if (UITools.CallTip.CallTipActive) UITools.CallTip.Hide();
+                        if (CompletionList.CallTip.CallTipActive) CompletionList.CallTip.Hide();
                         return false;
 
                     case '*':
@@ -241,7 +241,7 @@ namespace ASCompletion.Completion
             // dot complete
             if (keys == (Keys.Control | Keys.Space))
             {
-                if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                if (ASContext.HasContext && ASContext.Context.IsFileValid && Sci.ContainsFocus)
                 {
                     // try to get completion as if we had just typed the previous char
                     if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
@@ -257,11 +257,11 @@ namespace ASCompletion.Completion
             }
             else if (keys == Keys.Back)
             {
-                HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
+                if (Sci.ContainsFocus) HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
                 return false;
             }
             // show calltip
-            else if (keys == (Keys.Control | Keys.Shift | Keys.Space))
+            else if (keys == (Keys.Control | Keys.Shift | Keys.Space) && Sci.ContainsFocus)
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid)
                 {
@@ -275,7 +275,7 @@ namespace ASCompletion.Completion
             // project types completion
             else if (keys == (Keys.Control | Keys.Alt | Keys.Space))
             {
-                if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
+                if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration && Sci.ContainsFocus)
                 {
                     int position = Sci.CurrentPos-1;
                     string tail = GetWordLeft(Sci, ref position);
@@ -1272,9 +1272,27 @@ namespace ASCompletion.Completion
         static private string prevParam = "";
         static private string paramInfo = "";
 
+        static private CompletionListControl completionList;
+        /// <summary>
+        /// Target Completion List to use
+        /// </summary>
+        static public  CompletionListControl CompletionList
+        {
+            get
+            {
+                if (completionList == null)
+                    completionList = UITools.CompletionList;
+                return completionList;
+            }
+            set
+            {
+                completionList = value;
+            }
+        }
+
         static public bool HasCalltip()
         {
-            return UITools.CallTip.CallTipActive && (calltipDef != null);
+            return CompletionList.CallTip.CallTipActive && (calltipDef != null);
         }
 
         /// <summary>
@@ -1326,17 +1344,17 @@ namespace ASCompletion.Completion
             }
 
             // show calltip
-            if (!UITools.CallTip.CallTipActive || UITools.Manager.ShowDetails != calltipDetails || paramName != prevParam)
+            if (!CompletionList.CallTip.CallTipActive || UITools.Manager.ShowDetails != calltipDetails || paramName != prevParam)
             {
                 prevParam = paramName;
                 calltipDetails = UITools.Manager.ShowDetails;
                 string text = calltipDef + ASDocumentation.GetTipDetails(calltipMember, paramName);
-                UITools.CallTip.CallTipShow(Sci, calltipPos - calltipOffset, text, forceRedraw);
+                CompletionList.CallTip.CallTipShow(calltipPos - calltipOffset, text, forceRedraw);
             }
 
             // highlight
-            if ((start < 0) || (end < 0)) UITools.CallTip.CallTipSetHlt(0, 0, true);
-            else UITools.CallTip.CallTipSetHlt(start + 1, end, true);
+            if ((start < 0) || (end < 0)) CompletionList.CallTip.CallTipSetHlt(0, 0, true);
+            else CompletionList.CallTip.CallTipSetHlt(start + 1, end, true);
         }
 
         static private int FindNearSymbolInFunctDef(string defBody, char symbol, int startAt)
@@ -1447,7 +1465,7 @@ namespace ASCompletion.Completion
                     ShowCalltip(Sci, paramIndex, forceRedraw);
                     return true;
                 }
-                else UITools.CallTip.Hide();
+                else CompletionList.CallTip.Hide();
             }
 
             if (!ResolveFunction(Sci, position, autoHide))

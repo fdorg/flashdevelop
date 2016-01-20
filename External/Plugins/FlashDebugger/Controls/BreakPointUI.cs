@@ -3,19 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FlashDebugger.Properties;
-using PluginCore.Localization;
+using ASCompletion.Helpers;
+using FlashDebugger.Controls;
 using PluginCore;
-using PluginCore.Helpers;
-using System.Linq;
-using PluginCore.Managers;
 using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace FlashDebugger
 {
-    class BreakPointUI : DockPanelControl
+    class BreakPointUI : DockPanelControl, ASCompletionListBackend.IBackendFileGetter
     {
         private static ImageList imageList;
 
@@ -26,7 +27,7 @@ namespace FlashDebugger
         private DataGridViewTextBoxColumn ColumnBreakPointFilePath;
         private DataGridViewTextBoxColumn ColumnBreakPointFileName;
         private DataGridViewTextBoxColumn ColumnBreakPointLine;
-        private DataGridViewTextBoxColumn ColumnBreakPointExp;
+        private DataGridViewTextBoxExColumn ColumnBreakPointExp;
         private ToolStripEx tsActions;
         private ToolStripButton tsbRemoveSelected;
         private ToolStripButton tsbRemoveFiltered;
@@ -37,6 +38,10 @@ namespace FlashDebugger
         private ToolStripTextBox tstxtFilter;
         private ToolStripComboBoxEx tscbFilterColumns;
         private Color defaultColor;
+
+        // Auto Completion
+        private PluginCore.Controls.CompletionListControl completionList;
+        private ASCompletionListBackend completionBackend;
 
         public BreakPointUI(PluginMain pluginMain, BreakPointManager breakPointManager)
         {
@@ -96,7 +101,7 @@ namespace FlashDebugger
             this.ColumnBreakPointFilePath = new DataGridViewTextBoxColumn();
             this.ColumnBreakPointFileName = new DataGridViewTextBoxColumn();
             this.ColumnBreakPointLine = new DataGridViewTextBoxColumn();
-            this.ColumnBreakPointExp = new DataGridViewTextBoxColumn();
+            this.ColumnBreakPointExp = new DataGridViewTextBoxExColumn();
             this.ColumnBreakPointEnable.HeaderText = TextHelper.GetString("Label.Enable");
             this.ColumnBreakPointEnable.Name = "Enable";
             this.ColumnBreakPointEnable.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
@@ -127,9 +132,10 @@ namespace FlashDebugger
             }
             defaultColor = dgv.Rows[dgv.Rows.Add()].DefaultCellStyle.BackColor;
             dgv.Rows.Clear();
-            this.dgv.CellEndEdit += new DataGridViewCellEventHandler(dgv_CellEndEdit);
-            this.dgv.CellMouseUp += new DataGridViewCellMouseEventHandler(dgv_CellMouseUp);
-            this.dgv.CellDoubleClick += new DataGridViewCellEventHandler(dgv_CellDoubleClick);
+            this.dgv.EditingControlShowing += dgv_EditingControlShowing;
+            this.dgv.CellEndEdit += dgv_CellEndEdit;
+            this.dgv.CellMouseUp += dgv_CellMouseUp;
+            this.dgv.CellDoubleClick += dgv_CellDoubleClick;
             this.Controls.Add(this.dgv);
             InitializeComponent();
             tsbRemoveSelected.Image = imageList.Images["DeleteBreakpoint"];
@@ -183,6 +189,20 @@ namespace FlashDebugger
             }
         }
 
+        void dgv_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (ColumnBreakPointExp == dgv.CurrentCell.OwningColumn)
+            {
+                var listHost =
+                    new TextBoxTarget((TextBoxEx) e.Control);
+                completionList = new PluginCore.Controls.CompletionListControl(listHost);
+                // We need this because MainForm.Activated event handler gives some conflicts
+                completionList.Tip.Selectable = completionList.CallTip.Selectable = false;
+                completionBackend = new ASCompletionListBackend(completionList, this);
+                e.Control.PreviewKeyDown += EditingControl_PreviewKeyDown;
+            }
+        }
+
         void dgv_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -193,6 +213,31 @@ namespace FlashDebugger
                 int line = int.Parse((string)dgv.Rows[e.RowIndex].Cells["Line"].Value);
                 string exp = (string)dgv.Rows[e.RowIndex].Cells["Exp"].Value;
                 breakPointManager.SetBreakPointCondition(filename, line - 1, exp);
+
+                if (completionBackend != null)
+                {
+                    completionList.Host.Owner.PreviewKeyDown -= EditingControl_PreviewKeyDown;
+                    completionBackend.Dispose();
+                    completionBackend = null;
+                    completionList = null;
+                }
+            }
+        }
+
+        void EditingControl_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (completionList != null && completionList.Active)
+            {
+                switch (e.KeyData)
+                {
+                    case Keys.Enter:
+                    case Keys.Escape:
+                    case Keys.Down:
+                    case Keys.Up:
+                    case Keys.Tab:
+                        e.IsInputKey = true;
+                        break;
+                }
             }
         }
 
@@ -511,6 +556,63 @@ namespace FlashDebugger
                 }
             }
         }
+
+        #region Auto Completion
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // Ctrl+Space is detected at the form level instead of the editor level, so when we are docked we need to catch it before
+            if (keyData == (Keys.Control | Keys.Space) || keyData == (Keys.Control | Keys.Shift | Keys.Space))
+            {
+                var box = dgv.EditingControl as DataGridViewTextBoxExEditingControl;
+                if (box != null && completionBackend != null)
+                {
+                    if (keyData == (Keys.Control | Keys.Space))
+                        completionBackend.ShowAutoCompletionList();
+                    else
+                        completionBackend.ShowFunctionDetails();
+
+                    return true;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        string ASCompletionListBackend.IBackendFileGetter.GetExpression()
+        {
+            var box = (TextBox) dgv.EditingControl;
+            return box.Text.Substring(0, box.SelectionStart);
+        }
+
+        bool ASCompletionListBackend.IBackendFileGetter.GetFileInfo(out ASCompletionListBackend.BackendFileInfo fileInfo)
+        {
+            fileInfo = default(ASCompletionListBackend.BackendFileInfo);
+            string filePath = (string) dgv.CurrentRow.Cells[ColumnBreakPointFilePath.Name].Value;
+
+            if (!File.Exists(filePath)) return false;
+ 
+            fileInfo.Line = int.Parse((string)dgv.CurrentRow.Cells[ColumnBreakPointLine.Name].Value) - 1;
+            fileInfo.File = filePath;
+            fileInfo.LastUpdate = File.GetLastWriteTime(filePath);
+
+            return true;
+        }
+
+        EncodingFileInfo ASCompletionListBackend.IBackendFileGetter.GetFileContent(ASCompletionListBackend.BackendFileInfo file)
+        {
+            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+            {
+                if (doc.IsEditable && doc.FileName.ToUpper() == file.File.ToUpper())
+                {
+                    var sci = doc.SciControl;
+                    return new EncodingFileInfo {Contents = sci.Text, CodePage = sci.CodePage};
+                }
+            }
+
+            return FileHelper.GetEncodingFileInfo(file.File);
+        }
+
+        #endregion
 
     }
 

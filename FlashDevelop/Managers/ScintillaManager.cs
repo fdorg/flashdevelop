@@ -212,6 +212,7 @@ namespace FlashDevelop.Managers
                 sci.TabWidth = Globals.Settings.TabWidth;
                 sci.ViewWS = Convert.ToInt32(Globals.Settings.ViewWhitespace);
                 sci.WrapMode = Convert.ToInt32(Globals.Settings.WrapText);
+                sci.CamelHumps = Globals.Settings.UseCamelHumps;
                 sci.SetProperty("fold", Convert.ToInt32(Globals.Settings.UseFolding).ToString());
                 sci.SetProperty("fold.comment", Convert.ToInt32(Globals.Settings.FoldComment).ToString());
                 sci.SetProperty("fold.compact", Convert.ToInt32(Globals.Settings.FoldCompact).ToString());

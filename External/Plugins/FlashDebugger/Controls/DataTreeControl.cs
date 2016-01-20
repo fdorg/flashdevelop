@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using ASCompletion.Helpers;
 using Aga.Controls.Tree;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Aga.Controls.Tree.NodeControls;
+using FlashDebugger.Controls.DataTree.NodeControls;
+using PluginCore.Controls;
 using PluginCore.Managers;
 using flash.tools.debugger;
 using FlashDebugger.Controls.DataTree;
@@ -14,7 +17,7 @@ using flash.tools.debugger.expression;
 
 namespace FlashDebugger.Controls
 {
-    public partial class DataTreeControl : UserControl, IToolTipProvider
+    public partial class DataTreeControl : UserControl, IToolTipProvider, ASCompletionListBackend.IBackendFileGetter
     {
         public event EventHandler ValueChanged;
 
@@ -26,20 +29,24 @@ namespace FlashDebugger.Controls
         private bool watchMode;
         private bool addingNewExpression;
 
+        // Autocompletion
+        private CompletionListControl completionList;
+        private ASCompletionListBackend completionBackend;
+
         public Collection<Node> Nodes
         {
             get { return _model.Root.Nodes; }
-        }
+            }
 
         public TreeViewAdv Tree
         {
             get { return _tree; }
-        }
+            }
 
         public ViewerForm Viewer
         {
             get { return viewerForm; }
-        }
+            }
 
         public DataTreeControl() : this(false){}
 
@@ -54,12 +61,14 @@ namespace FlashDebugger.Controls
                 this.watchMode = true;
                 NameNodeTextBox.EditEnabled = true;
                 NameNodeTextBox.EditorShowing += NameNodeTextBox_EditorShowing;
+                NameNodeTextBox.EditorCreated += NameNodeTextBox_EditorCreated;
                 NameNodeTextBox.EditorHided += NameNodeTextBox_EditorHided;
                 NameNodeTextBox.IsEditEnabledValueNeeded += NameNodeTextBox_IsEditEnabledValueNeeded;
                 NameNodeTextBox.LabelChanged += NameNodeTextBox_LabelChanged;
                 _tree.KeyDown += Tree_KeyDown;
                 _tree.NodeMouseClick += Tree_NameNodeMouseClick;
             }
+
             _model = new DataTreeModel();
             _tree.Model = _model;
             _tree.FullRowSelect = true;
@@ -179,7 +188,7 @@ namespace FlashDebugger.Controls
         {
             if (addingNewExpression)
             {
-                NodeTextBox box = sender as NodeTextBox;
+                var box = sender as NodeTextBoxEx;
                 var node = box.Parent.CurrentNode.Tag as Node;
                 if (node.Text.Trim() == "") node.Text = TextHelper.GetString("Label.AddExpression");
                 addingNewExpression = false;
@@ -190,7 +199,7 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_EditorShowing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
+            var box = sender as NodeTextBoxEx;
             var node = box.Parent.CurrentNode.Tag as Node;
             if (box.Parent.CurrentNode.NextNode == null)
             {
@@ -200,6 +209,15 @@ namespace FlashDebugger.Controls
             else addingNewExpression = false;
         }
 
+        void NameNodeTextBox_EditorCreated(object sender, ControlEventArgs e)
+        {
+            var controlHost = new TextBoxTarget((TextBoxEx)e.Control);
+            completionList = new CompletionListControl(controlHost);
+            // We need this because TreeViewAdv handles the control LostFocus event itself and the resulting behaviour doesn't seeem very nice
+            completionList.Tip.Selectable = completionList.CallTip.Selectable = false;
+            completionBackend = new ASCompletionListBackend(completionList, this);
+        }
+
         void NameNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
         {
             e.Value = e.Node.Level == 1;
@@ -207,7 +225,7 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
+            var box = sender as NodeTextBoxEx;
             if (box.Parent.CurrentNode == null) return;
             DataNode node = box.Parent.CurrentNode.Tag as DataNode;
             if (e.NewLabel.Trim() == "" || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
@@ -341,36 +359,37 @@ namespace FlashDebugger.Controls
 
         private void CopyItemClick(Object sender, System.EventArgs e)
         {
-            DataNode node = Tree.SelectedNode.Tag as DataNode;
-            Clipboard.SetText(string.Format("{0} = {1}",node.Text, node.Value));
+                DataNode node = Tree.SelectedNode.Tag as DataNode;
+                Clipboard.SetText(string.Format("{0} = {1}",node.Text, node.Value));
         }
+
         private void ViewerItemClick(Object sender, System.EventArgs e)
         {
-            if (viewerForm == null)
-            {
-                viewerForm = new ViewerForm();
-                viewerForm.StartPosition = FormStartPosition.Manual;
+                if (viewerForm == null)
+                {
+                    viewerForm = new ViewerForm();
+                    viewerForm.StartPosition = FormStartPosition.Manual;
+                }
+                DataNode node = Tree.SelectedNode.Tag as DataNode;
+                viewerForm.Exp = node.Text;
+                if (node is ValueNode)
+                {
+                    var vNode = (ValueNode)node;
+                    // use IsEditing to get unfiltered value
+                    bool ed = vNode.IsEditing;
+                    vNode.IsEditing = true;
+                    viewerForm.Value = node.Value;
+                    vNode.IsEditing = ed;
+                }
+                else
+                {
+                    viewerForm.Value = node.Value;
+                }
+                Form mainform = (PluginBase.MainForm as Form);
+                viewerForm.Left = mainform.Left + mainform.Width / 2 - viewerForm.Width / 2;
+                viewerForm.Top = mainform.Top + mainform.Height / 2 - viewerForm.Height / 2;
+                viewerForm.ShowDialog();
             }
-            DataNode node = Tree.SelectedNode.Tag as DataNode;
-            viewerForm.Exp = node.Text;
-            if (node is ValueNode)
-            {
-                var vNode = (ValueNode)node;
-                // use IsEditing to get unfiltered value
-                bool ed = vNode.IsEditing;
-                vNode.IsEditing = true;
-                viewerForm.Value = node.Value;
-                vNode.IsEditing = ed;
-            }
-            else
-            {
-                viewerForm.Value = node.Value;
-            }
-            Form mainform = (PluginBase.MainForm as Form);
-            viewerForm.Left = mainform.Left + mainform.Width / 2 - viewerForm.Width / 2;
-            viewerForm.Top = mainform.Top + mainform.Height / 2 - viewerForm.Height / 2;
-            viewerForm.ShowDialog();
-        }
 
         private void WatchItemClick(Object sender, EventArgs e)
         {
@@ -466,7 +485,7 @@ namespace FlashDebugger.Controls
                                 var ctx = new ExpressionContext(flashInterface.Session, flashInterface.GetFrames()[PluginMain.debugManager.CurrentFrame]);
                                 var obj = exp.evaluate(ctx);
                                 if (obj is flash.tools.debugger.concrete.DValue) obj = new flash.tools.debugger.concrete.DVariable("getChildAt(" + i + ")", (flash.tools.debugger.concrete.DValue)obj, ((flash.tools.debugger.concrete.DValue)obj).getIsolateId());
-                                DataNode childNode = new VariableNode((Variable) obj)
+                                DataNode childNode = new VariableNode((Variable)obj)
                                 {
                                     HideClassId = PluginMain.settingObject.HideClassIds,
                                     HideFullClasspath = PluginMain.settingObject.HideFullClasspaths
@@ -635,6 +654,86 @@ namespace FlashDebugger.Controls
 
         #endregion
 
+        #region Auto Completion
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // Ctrl+Space is detected at the form level instead of the editor level, so when we are docked we need to catch it before
+            if (keyData == (Keys.Control | Keys.Space) || keyData == (Keys.Control | Keys.Shift | Keys.Space))
+            {
+                var box = Tree.CurrentEditor as TextBoxEx;
+                if (box != null)
+                {
+                    if (keyData == (Keys.Control | Keys.Space))
+                        completionBackend.ShowAutoCompletionList();
+                    else
+                        completionBackend.ShowFunctionDetails();
+
+                    return true;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        PluginCore.Helpers.EncodingFileInfo ASCompletionListBackend.IBackendFileGetter.GetFileContent(ASCompletionListBackend.BackendFileInfo file)
+        {
+            var debugger = PluginMain.debugManager.FlashInterface;
+            if (!debugger.isDebuggerStarted || !debugger.isDebuggerSuspended || PluginMain.debugManager.CurrentFrame >= debugger.GetFrames().Length)
+                return null;
+            var location = debugger.GetFrames()[PluginMain.debugManager.CurrentFrame].getLocation();
+
+            // Could somebody want to pass a file pointing to a file different to the one being debugged? highly unlikely
+
+            var sourceFile = location.getFile();
+            var sourceFileText = new System.Text.StringBuilder();
+            if (sourceFile != null)
+            {
+                for (int i = 1, count = sourceFile.getLineCount(); i <= count; i++)
+                {
+                    sourceFileText.Append(sourceFile.getLine(i).ToString()).Append(PluginCore.Utilities.LineEndDetector.GetNewLineMarker((int)PluginBase.Settings.EOLMode));
+                }
+            }
+
+            if (sourceFileText.Length == 0)
+            {
+                if (file.File != null && System.IO.File.Exists(file.File) &&
+                    file.File == PluginMain.debugManager.GetLocalPath(sourceFile))
+                {
+                    // Notify the user of this case?
+                    //MessageBox.Show("Source code not available, but potential matching file found on disk, do you want to use it?");
+                    return PluginCore.Helpers.FileHelper.GetEncodingFileInfo(file.File);
+                }
+
+                return null;
+            }
+
+            // Maybe we should convert from UTF-16 to UTF-8? no problems so far
+            return new PluginCore.Helpers.EncodingFileInfo { CodePage = System.Text.Encoding.UTF8.CodePage, Contents = sourceFileText.ToString() };
+        }
+
+        bool ASCompletionListBackend.IBackendFileGetter.GetFileInfo(out ASCompletionListBackend.BackendFileInfo file)
+        {
+            file = default(ASCompletionListBackend.BackendFileInfo);
+            var debugger = PluginMain.debugManager.FlashInterface;
+            if (!debugger.isDebuggerStarted || !debugger.isDebuggerSuspended || PluginMain.debugManager.CurrentFrame >= debugger.GetFrames().Length)
+                return false;
+            var location = debugger.GetFrames()[PluginMain.debugManager.CurrentFrame].getLocation();
+            file.File = PluginMain.debugManager.GetLocalPath(location.getFile());
+            if (file.File == null && (location.getFile() == null || location.getFile().getLineCount() == 0))
+                return false;
+
+            file.Line = location.getLine() - 1;
+
+            return true;
+        }
+
+        string ASCompletionListBackend.IBackendFileGetter.GetExpression()
+        {
+            return Tree.CurrentEditor.Text.Substring(0, ((TextBoxEx)Tree.CurrentEditor).SelectionStart);
+        }
+
+        #endregion
+
         #region State Class
 
         private class DataTreeState
@@ -658,7 +757,7 @@ namespace FlashDebugger.Controls
                 Clipboard.SetText(value);
             else
                 Clipboard.Clear();
-        }
+    }
 
         private void CopyItemIdClick(Object sender, System.EventArgs e)
         {
@@ -668,7 +767,7 @@ namespace FlashDebugger.Controls
                 Clipboard.SetText(node.Id);
             else
                 Clipboard.Clear();
-        }
+}
 
         private void CopyItemTreeClick(Object sender, System.EventArgs e)
         {

@@ -3176,6 +3176,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>When words matching the current selection should be highlighted.</value>
     <comment>Added after 4.7.0</comment>
   </data>
+  <data name="FlashDevelop.Description.UseCamelHumps" xml:space="preserve">
+    <value>If true, Next/Previous Word related actions work on word segments delimited by capitalisation changes or underscores.</value>
+    <comment>Added after 4.7.1</comment>
+  </data>
   <data name="TaskListPanel.Description.ExcludedPaths" xml:space="preserve">
     <value>Tasks under the excluded paths are not shown in the task list.</value>
   </data>

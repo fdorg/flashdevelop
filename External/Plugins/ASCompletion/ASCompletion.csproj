@@ -93,6 +93,7 @@
     <Compile Include="CustomControls\ModelsExplorer.Designer.cs">
       <DependentUpon>ModelsExplorer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ASCompletionBackend.cs" />
     <Compile Include="Helpers\FlashErrorsWatcher.cs" />
     <Compile Include="Model\ASFileParser.cs" />
     <Compile Include="Model\MemberModel.cs" />

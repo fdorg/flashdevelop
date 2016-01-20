@@ -126,11 +126,12 @@ namespace CssCompletion
                 case EventType.Keys:
                 {
                     Keys keys = (e as KeyEvent).Value;
-                    if (this.IsSupported(document) && keys == (Keys.Control | Keys.Space))
+                    if (this.IsSupported(document) && keys == (Keys.Control | Keys.Space) && completion != null)
                     {
-                        if (completion != null)
+                        var sci = document.SciControl;
+                        if (sci.ContainsFocus)
                         {
-                            completion.OnComplete(document.SciControl, document.SciControl.CurrentPos);
+                            completion.OnComplete(sci, sci.CurrentPos);
                             e.Handled = true;
                         }
                     }

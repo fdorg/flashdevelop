@@ -512,6 +512,7 @@ namespace PluginCore
         Boolean DisableSmartMatch { get; set; }
         Boolean SaveUnicodeWithBOM { get; set; }
         String InsertionTriggers { get; set; }
+        Boolean UseCamelHumps { get; set; }
 
         #endregion
     }

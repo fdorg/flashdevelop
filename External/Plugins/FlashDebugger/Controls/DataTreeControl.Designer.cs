@@ -18,6 +18,7 @@
 
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using FlashDebugger.Controls.DataTree.NodeControls;
 
 namespace FlashDebugger.Controls
 {
@@ -50,7 +51,7 @@ namespace FlashDebugger.Controls
             this._tree = new TreeViewAdv();
             this.NameTreeColumn = new TreeColumn();
             this.ValueTreeColumn = new Aga.Controls.Tree.TreeColumn();
-            this.NameNodeTextBox = new NodeTextBox();
+            this.NameNodeTextBox = new NodeTextBoxEx();
             this.ValueNodeTextBox = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.SuspendLayout();
             // 
@@ -122,7 +123,7 @@ namespace FlashDebugger.Controls
         private Aga.Controls.Tree.TreeViewAdv _tree;
         private Aga.Controls.Tree.TreeColumn NameTreeColumn;
         private Aga.Controls.Tree.TreeColumn ValueTreeColumn;
-        private Aga.Controls.Tree.NodeControls.NodeTextBox NameNodeTextBox;
+        private FlashDebugger.Controls.DataTree.NodeControls.NodeTextBoxEx NameNodeTextBox;
         private Aga.Controls.Tree.NodeControls.NodeTextBox ValueNodeTextBox;
     }
 }
