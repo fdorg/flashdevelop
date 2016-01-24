@@ -95,6 +95,39 @@ namespace ASCompletion.Model
                     Assert.AreEqual(FlagType.Variable, infoMember.Flags & FlagType.Variable);
                 }
             }
+
+            [Test]
+            public void ParseFile_IdentifiersWithUnicodeChars()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.as3.IdentifiersWithUnicodeCharsTest.as"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new AS3Context.Context(new AS3Context.AS3Settings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("Test", classModel.Name);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(2, classModel.LineFrom);
+                    Assert.AreEqual(9, classModel.LineTo);
+                    Assert.AreEqual(2, classModel.Members.Count);
+
+                    var memberModel = classModel.Members[0];
+                    Assert.AreEqual("thísIsVälid", memberModel.Name);
+                    Assert.AreEqual("String", memberModel.Type);
+                    Assert.AreEqual(FlagType.Function, memberModel.Flags & FlagType.Function);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(4, memberModel.LineFrom);
+                    Assert.AreEqual(6, memberModel.LineTo);
+
+                    memberModel = classModel.Members[1];
+                    Assert.AreEqual("日本語文字ヴァリアブル", memberModel.Name);
+                    Assert.AreEqual("Dynamic", memberModel.Type);
+                    Assert.AreEqual(FlagType.Variable, memberModel.Flags & FlagType.Variable);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(8, memberModel.LineFrom);
+                    Assert.AreEqual(8, memberModel.LineTo);
+                }
+            }
         }
 
         [TestFixture]
@@ -188,30 +221,42 @@ namespace ASCompletion.Model
                     Assert.AreEqual("Test", classModel.Name);
                     Assert.AreEqual(Visibility.Public, classModel.Access);
                     Assert.AreEqual(FlagType.Interface, classModel.Flags & FlagType.Interface);
-                    Assert.AreEqual(4, classModel.Members.Count);
+                    Assert.AreEqual(5, classModel.Members.Count);
 
                     var member = classModel.Members[0];
-                    Assert.AreEqual("test", member.Name);
-                    Assert.AreEqual("Int", member.Type);
-                    Assert.IsNull(member.Parameters);
-                    Assert.AreEqual(Visibility.Public, member.Access);
-                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-
-                    member = classModel.Members[1];
                     Assert.AreEqual("testVar", member.Name);
                     Assert.AreEqual("String", member.Type);
                     Assert.IsNull(member.Parameters);
                     Assert.AreEqual(Visibility.Public, member.Access);
                     Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
 
+                    member = classModel.Members[1];
+                    Assert.AreEqual("test", member.Name);
+                    Assert.AreEqual("Int", member.Type);
+                    Assert.AreEqual(1, member.Parameters.Count);
+                    Assert.AreEqual("?arg", member.Parameters[0].Name);
+                    Assert.AreEqual("Array<Dynamic>", member.Parameters[0].Type);
+                    Assert.AreEqual(Visibility.Public, member.Access);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+
                     member = classModel.Members[2];
+                    Assert.AreEqual("test2", member.Name);
+                    Assert.AreEqual("Void", member.Type);
+                    Assert.AreEqual(1, member.Parameters.Count);
+                    Assert.AreEqual("arg", member.Parameters[0].Name);
+                    Assert.AreEqual("Bool", member.Parameters[0].Type);
+                    Assert.AreEqual(1, member.Parameters.Count);
+                    Assert.AreEqual(Visibility.Public, member.Access);
+                    Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+
+                    member = classModel.Members[3];
                     Assert.AreEqual("testPrivate", member.Name);
                     Assert.AreEqual("Int", member.Type);
                     Assert.IsNull(member.Parameters);
                     Assert.AreEqual(Visibility.Private, member.Access);
                     Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
 
-                    member = classModel.Members[3];
+                    member = classModel.Members[4];
                     Assert.AreEqual("testProperty", member.Name);
                     Assert.AreEqual("Float", member.Type);
                     Assert.AreEqual(2, member.Parameters.Count);
@@ -1479,18 +1524,12 @@ namespace ASCompletion.Model
                     Assert.AreEqual(2, classModel.Members.Count);
 
                     var memberModel = classModel.Members[0];
-                    Assert.AreEqual("thísIsVälid", memberModel.Name);
-                    Assert.AreEqual("String", memberModel.Type);
-                    Assert.AreEqual(FlagType.Function, memberModel.Flags & FlagType.Function);
-                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreNotEqual("thísIsVälid", memberModel.Name);
                     Assert.AreEqual(4, memberModel.LineFrom);
                     Assert.AreEqual(6, memberModel.LineTo);
 
                     memberModel = classModel.Members[1];
-                    Assert.AreEqual("日本語文字ヴァリアブル", memberModel.Name);
-                    Assert.AreEqual("Dynamic", memberModel.Type);
-                    Assert.AreEqual(FlagType.Variable, memberModel.Flags & FlagType.Variable);
-                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreNotEqual("日本語文字ヴァリアブル", memberModel.Name);
                     Assert.AreEqual(8, memberModel.LineFrom);
                     Assert.AreEqual(8, memberModel.LineTo);
                 }

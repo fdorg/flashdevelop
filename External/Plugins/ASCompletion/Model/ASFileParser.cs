@@ -1189,7 +1189,7 @@ namespace ASCompletion.Model
                     else
                     {
                         // valid chars for identifiers
-                        if (char.IsLetter(c1))
+                        if ((!haXe && char.IsLetter(c1)) || (c1 >= 'A' && c1 <= 'Z'))
                         {
                             addChar = true;
                         }
@@ -1262,8 +1262,17 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
-                            else if ((c1 == '(' || c1 == ')') && haXe && inType)
+                            else if (c1 == ')' && haXe && inType)
                             {
+                                if (paramParCount > 0)
+                                {
+                                    paramParCount--;
+                                    addChar = true;
+                                }// else inType = false, error? it may depend on the context
+                            }
+                            else if (c1 == '(' && haXe && inType)
+                            {
+                                paramParCount++;
                                 addChar = true;
                             }
                             else
@@ -1445,6 +1454,7 @@ namespace ASCompletion.Model
                                     {
                                         inType = true;
                                         addChar = true;
+                                        paramParCount++;
                                     }
                                 }
                                 else context = 0;
@@ -1538,6 +1548,7 @@ namespace ASCompletion.Model
                         {
                             context = (inEnum) ? FlagType.Enum : 0;
                             inGeneric = false;
+                            inType = false;
                             modifiers = 0;
                             inParams = false;
                             curMember = null;
