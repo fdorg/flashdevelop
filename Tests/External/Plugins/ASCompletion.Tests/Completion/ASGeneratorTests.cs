@@ -103,400 +103,361 @@ namespace ASCompletion.Completion
             }
         }
 
+        [TestFixture]
         public class GenerateJob : ASGeneratorTests
         {
-            private ClassModel GetAs3ImplementInterfaceModel()
+            protected ScintillaControl sci;
+
+            [TestFixtureSetUp]
+            public void GenerateJobSetup()
             {
-                var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
-                interfaceModel.Members.Add(new MemberList
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                ASContext.Context = Substitute.For<IASContext>();
+
+                sci = GetBaseScintillaControl();
+                doc.SciControl.Returns(sci);
+            }
+
+            [TestFixture]
+            public class FieldFromParameter : GenerateJob
+            {
+                public IEnumerable<TestCaseData> FieldFromParameterCommonTestCases
                 {
-                    new MemberModel("getter", "String", FlagType.Getter, Visibility.Public),
-                    new MemberModel("setter", "void", FlagType.Setter, Visibility.Public)
+                    get
                     {
-                        Parameters =
-                            new List<MemberModel>
+                        yield return new TestCaseData(Visibility.Public,
+                            "package generatortest {\r\n\tpublic class FieldFromParameterTest{\r\n\t\tpublic function FieldFromParameterTest(arg:String){}\r\n\t}\r\n}",
+                            new ClassModel
                             {
-                                new MemberModel("value", "String", FlagType.Variable, Visibility.Default)
-                            }
-                    },
-                    new MemberModel("testMethod", "Number", FlagType.Function, Visibility.Public),
-                    new MemberModel("testMethodArgs", "int", FlagType.Function, Visibility.Public)
-                    {
-                        Parameters = new List<MemberModel>
-                        {
-                            new MemberModel("arg", "Number", FlagType.Variable, Visibility.Default),
-                            new MemberModel("arg2", "Boolean", FlagType.Variable, Visibility.Default)
-                        }
-                    }
-                });
+                                LineFrom = 1,
+                                LineTo = 3,
+                                Members = new MemberList
+                                {
+                                    new MemberModel("FieldFromParameterTest", null, FlagType.Constructor,
+                                        Visibility.Public)
+                                    {
+                                        LineFrom = 2,
+                                        LineTo = 2,
+                                        Parameters = new List<MemberModel>
+                                        {
+                                            new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
+                                        }
+                                    }
+                                }
+                            }, 0, 0)
+                            .Returns(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.FieldFromParameterEmptyBody.as"))
+                            .SetName("PublicScopeWithEmptyBody");
 
-                return interfaceModel;
-            }
-
-            private ClassModel GetHaxeImplementInterfaceModel()
-            {
-                var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
-                interfaceModel.Members.Add(new MemberList
-                {
-                    new MemberModel("normalVariable", "Int", FlagType.Variable, Visibility.Public),
-                    new MemberModel("ro", "Int", FlagType.Getter, Visibility.Public)
-                    {
-                        Parameters = new List<MemberModel>
-                        {
-                            new MemberModel {Name = "default"},
-                            new MemberModel {Name = "null"}
-                        }
-                    },
-                    new MemberModel("wo", "Int", FlagType.Getter, Visibility.Public)
-                    {
-                        Parameters = new List<MemberModel>
-                        {
-                            new MemberModel {Name = "null"},
-                            new MemberModel {Name = "default"}
-                        }
-                    },
-                    new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
-                    {
-                        Parameters = new List<MemberModel>
-                        {
-                            new MemberModel {Name = "get"},
-                            new MemberModel {Name = "set"}
-                        }
-                    },
-                    new MemberModel("y", "Int", FlagType.Getter, Visibility.Public)
-                    {
-                        Parameters = new List<MemberModel>
-                        {
-                            new MemberModel {Name = "get"},
-                            new MemberModel {Name = "never"}
-                        }
-                    },
-                    new MemberModel("testMethod", "Float", FlagType.Function, Visibility.Public),
-                    new MemberModel("testMethodArgs", "Int", FlagType.Function, Visibility.Public)
-                    {
-                        Parameters = new List<MemberModel>
-                        {
-                            new MemberModel("arg", "Float", FlagType.Variable, Visibility.Default),
-                            new MemberModel("arg2", "Bool", FlagType.Variable, Visibility.Default)
-                        }
-                    },
-                    new MemberModel("testPrivateMethod", "Float", FlagType.Function, Visibility.Private)
-                    {
-                        Parameters = new List<MemberModel>
-                        {
-                            new MemberModel("?arg", "String", FlagType.Variable, Visibility.Default),
-                            new MemberModel("?arg2", "Int", FlagType.Variable, Visibility.Default)
+                        yield return new TestCaseData(Visibility.Public,
+                            "package generatortest {\r\n\tpublic class FieldFromParameterTest{\r\n\t\tpublic function FieldFromParameterTest(arg:String){\r\n\t\t\tsuper(arg);}\r\n\t}\r\n}",
+                            new ClassModel
                             {
-                                Value = "1"
+                                LineFrom = 1,
+                                LineTo = 4,
+                                Members = new MemberList
+                                {
+                                    new MemberModel("FieldFromParameterTest", null, FlagType.Constructor,
+                                        Visibility.Public)
+                                    {
+                                        LineFrom = 2,
+                                        LineTo = 3,
+                                        Parameters = new List<MemberModel>
+                                        {
+                                            new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
+                                        }
+                                    }
+                                }
+                            }, 0, 0)
+                            .Returns(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.FieldFromParameterWithSuperConstructor.as"))
+                            .SetName("PublicScopeWithSuperConstructor");
+
+                        yield return new TestCaseData(Visibility.Public,
+                            TestFile.ReadAllText(
+                                "ASCompletion.Test_Files.generated.as3.BeforeFieldFromParameterWithSuperConstructorMultiLine.as"),
+                            new ClassModel
+                            {
+                                LineFrom = 1,
+                                LineTo = 6,
+                                Members = new MemberList
+                                {
+                                    new MemberModel("FieldFromParameterTest", null, FlagType.Constructor,
+                                        Visibility.Public)
+                                    {
+                                        LineFrom = 2,
+                                        LineTo = 5,
+                                        Parameters = new List<MemberModel>
+                                        {
+                                            new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
+                                        }
+                                    }
+                                }
+                            }, 0, 0)
+                            .Returns(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.FieldFromParameterWithSuperConstructorMultiLine.as"))
+                            .SetName("PublicScopeWithSuperConstructorMultiLine");
+
+                        yield return new TestCaseData(Visibility.Public,
+                            TestFile.ReadAllText(
+                                "ASCompletion.Test_Files.generated.as3.BeforeFieldFromParameterWithWrongSuperConstructor.as"),
+                            new ClassModel
+                            {
+                                LineFrom = 1,
+                                LineTo = 6,
+                                Members = new MemberList
+                                {
+                                    new MemberModel("FieldFromParameterTest", null, FlagType.Constructor,
+                                        Visibility.Public)
+                                    {
+                                        LineFrom = 2,
+                                        LineTo = 5,
+                                        Parameters = new List<MemberModel>
+                                        {
+                                            new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
+                                        }
+                                    }
+                                }
+                            }, 0, 0)
+                            .Returns(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.FieldFromParameterWithWrongSuperConstructor.as"))
+                            .SetName("PublicScopeWithWrongSuperConstructor");
+                    }
+                }
+
+                [Test, TestCaseSource("FieldFromParameterCommonTestCases")]
+                public string Common(Visibility scope, string sourceText, ClassModel sourceClassModel,
+                    int memberPos, int parameterPos)
+                {
+                    ASContext.Context.SetAs3Features();
+
+                    var table = new Hashtable();
+                    table["scope"] = scope;
+
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "as3";
+
+                    var inClass = sourceClassModel;
+                    var sourceMember = sourceClassModel.Members[memberPos];
+
+                    ASGenerator.SetJobContext(null, null, sourceMember.Parameters[parameterPos], null);
+                    ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, sourceMember, inClass, null, table);
+
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class ImplementInterface : GenerateJob
+            {
+                private ClassModel GetAs3ImplementInterfaceModel()
+                {
+                    var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
+                    interfaceModel.Members.Add(new MemberList
+                    {
+                        new MemberModel("getter", "String", FlagType.Getter, Visibility.Public),
+                        new MemberModel("setter", "void", FlagType.Setter, Visibility.Public)
+                        {
+                            Parameters =
+                                new List<MemberModel>
+                                {
+                                    new MemberModel("value", "String", FlagType.Variable, Visibility.Default)
+                                }
+                        },
+                        new MemberModel("testMethod", "Number", FlagType.Function, Visibility.Public),
+                        new MemberModel("testMethodArgs", "int", FlagType.Function, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("arg", "Number", FlagType.Variable, Visibility.Default),
+                                new MemberModel("arg2", "Boolean", FlagType.Variable, Visibility.Default)
                             }
                         }
-                    }
-                });
+                    });
 
+                    return interfaceModel;
+                }
 
-                return interfaceModel;
-            }
-
-            private ClassModel GetFieldFromParameterClassModel()
-            {
-                var classModel = new ClassModel
+                private ClassModel GetHaxeImplementInterfaceModel()
                 {
-                    LineFrom = 1,
-                    LineTo = 3
-                };
-
-                classModel.Members.Add(new MemberList
-                {
-                    new MemberModel("FieldFromParameterTest", null, FlagType.Constructor, Visibility.Public)
+                    var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
+                    interfaceModel.Members.Add(new MemberList
                     {
-                        LineFrom = 2, LineTo = 2,
-                        Parameters = new List<MemberModel>
+                        new MemberModel("normalVariable", "Int", FlagType.Variable, Visibility.Public),
+                        new MemberModel("ro", "Int", FlagType.Getter, Visibility.Public)
                         {
-                            new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel {Name = "default"},
+                                new MemberModel {Name = "null"}
+                            }
+                        },
+                        new MemberModel("wo", "Int", FlagType.Getter, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel {Name = "null"},
+                                new MemberModel {Name = "default"}
+                            }
+                        },
+                        new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel {Name = "get"},
+                                new MemberModel {Name = "set"}
+                            }
+                        },
+                        new MemberModel("y", "Int", FlagType.Getter, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel {Name = "get"},
+                                new MemberModel {Name = "never"}
+                            }
+                        },
+                        new MemberModel("testMethod", "Float", FlagType.Function, Visibility.Public),
+                        new MemberModel("testMethodArgs", "Int", FlagType.Function, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("arg", "Float", FlagType.Variable, Visibility.Default),
+                                new MemberModel("arg2", "Bool", FlagType.Variable, Visibility.Default)
+                            }
+                        },
+                        new MemberModel("testPrivateMethod", "Float", FlagType.Function, Visibility.Private)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("?arg", "String", FlagType.Variable, Visibility.Default),
+                                new MemberModel("?arg2", "Int", FlagType.Variable, Visibility.Default)
+                                {
+                                    Value = "1"
+                                }
+                            }
                         }
-                    }
-                });
+                    });
 
-                return classModel;
-            }
+                    return interfaceModel;
+                }
 
-            [Test]
-            public void FieldFromParameterPublicScopeWithEmptyBody()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                var asContext = new AS3Context.Context(new AS3Settings());
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.Features.Returns(asContext.Features);
-
-                var table = new Hashtable();
-                table["scope"] = Visibility.Public;
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "package generatortest {\r\n\tpublic class FieldFromParameterTest{\r\n\t\tpublic function FieldFromParameterTest(arg:String){}\r\n\t}\r\n}";
-                sci.ConfigurationLanguage = "as3";
-                doc.SciControl.Returns(sci);
-
-                var inClass = GetFieldFromParameterClassModel();
-                var constructor = inClass.Members[0];
-
-                ASGenerator.SetJobContext(null, null, constructor.Parameters[0], null);
-                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, constructor, inClass, null, table);
-
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.FieldFromParameterEmptyBody.as"), sci.Text);
-            }
-
-            [Test]
-            public void FieldFromParameterPublicScopeWithSuperConstructor()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                var asContext = new AS3Context.Context(new AS3Settings());
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.Features.Returns(asContext.Features);
-
-                var table = new Hashtable();
-                table["scope"] = Visibility.Public;
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "package generatortest {\r\n\tpublic class FieldFromParameterTest{\r\n\t\tpublic function FieldFromParameterTest(arg:String){\r\n\t\t\tsuper(arg);}\r\n\t}\r\n}";
-                sci.ConfigurationLanguage = "as3";
-                doc.SciControl.Returns(sci);
-
-                var inClass = GetFieldFromParameterClassModel();
-                var constructor = inClass.Members[0];
-
-                inClass.LineTo = 4;
-                constructor.LineTo = 3;
-
-                ASGenerator.SetJobContext(null, null, constructor.Parameters[0], null);
-                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, constructor, inClass, null, table);
-
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.FieldFromParameterWithSuperConstructor.as"), sci.Text);
-            }
-
-            [Test]
-            public void FieldFromParameterPublicScopeWithSuperConstructorMultiLine()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                var asContext = new AS3Context.Context(new AS3Settings());
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.Features.Returns(asContext.Features);
-
-                var table = new Hashtable();
-                table["scope"] = Visibility.Public;
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeFieldFromParameterWithSuperConstructorMultiLine.as");
-                sci.ConfigurationLanguage = "as3";
-                doc.SciControl.Returns(sci);
-
-                var inClass = GetFieldFromParameterClassModel();
-                var constructor = inClass.Members[0];
-
-                inClass.LineTo = 6;
-                constructor.LineTo = 5;
-
-                ASGenerator.SetJobContext(null, null, constructor.Parameters[0], null);
-                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, constructor, inClass, null, table);
-
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.FieldFromParameterWithSuperConstructorMultiLine.as"), sci.Text);
-            }
-
-            [Test]
-            public void FieldFromParameterPublicScopeWithWrongSuperConstructor()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                var asContext = new AS3Context.Context(new AS3Settings());
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.Features.Returns(asContext.Features);
-
-                var table = new Hashtable();
-                table["scope"] = Visibility.Public;
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeFieldFromParameterWithWrongSuperConstructor.as");
-                sci.ConfigurationLanguage = "as3";
-                doc.SciControl.Returns(sci);
-
-                var inClass = GetFieldFromParameterClassModel();
-                var constructor = inClass.Members[0];
-
-                inClass.LineTo = 6;
-                constructor.LineTo = 5;
-
-                ASGenerator.SetJobContext(null, null, constructor.Parameters[0], null);
-                ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, constructor, inClass, null, table);
-
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.FieldFromParameterWithWrongSuperConstructor.as"), sci.Text);
-            }
-
-            [Test]
-            public void ImplementFromInterface_FullAs3()
-            {
-                var interfaceModel = GetAs3ImplementInterfaceModel();
-                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 1 };
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
-                ASContext.Context.Features.voidKey = "void";
-                ASContext.Context.CurrentModel.Returns(new FileModel());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "package generatortest {\r\n\tpublic class ImplementTest{}\r\n}";
-                sci.ConfigurationLanguage = "as3";
-                doc.SciControl.Returns(sci);
-
-                ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoMembers.as"), sci.Text);
-            }
-
-            [Test]
-            public void ImplementFromInterface_FullAs3WithPublicMemberBehindPrivate()
-            {
-                var interfaceModel = GetAs3ImplementInterfaceModel();
-                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 10 };
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
-                ASContext.Context.Features.voidKey = "void";
-                ASContext.Context.CurrentModel.Returns(new FileModel());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfacePublicMemberBehindPrivate.as");
-                sci.ConfigurationLanguage = "as3";
-                doc.SciControl.Returns(sci);
-
-                classModel.Members.Add(new MemberList
-                                           {
-                                               new MemberModel("publicMember", "void", FlagType.Function, Visibility.Public)
-                                                   {LineFrom = 3, LineTo = 5},
-                                               new MemberModel("privateMember", "String", FlagType.Function, Visibility.Private)
-                                                   {LineFrom = 7, LineTo = 9}
-                                           });
-
-                ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfacePublicMemberBehindPrivate.as"), sci.Text);
-            }
-
-            [Test]
-            public void ImplementFromInterface_FullAs3WithoutPublicMember()
-            {
-                var interfaceModel = GetAs3ImplementInterfaceModel();
-                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 10 };
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
-                ASContext.Context.Features.voidKey = "void";
-                ASContext.Context.CurrentModel.Returns(new FileModel());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfaceNoPublicMember.as");
-                sci.ConfigurationLanguage = "as3";
-                doc.SciControl.Returns(sci);
-
-                classModel.Members.Add(new MemberModel("privateMember", "String", FlagType.Function, Visibility.Private)
+                public IEnumerable<TestCaseData> ImplementInterfaceAs3TestCases
                 {
-                    LineFrom = 3, LineTo = 5
-                });
+                    get
+                    {
+                        yield return new TestCaseData("package generatortest {\r\n\tpublic class ImplementTest{}\r\n}",
+                            new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 1 }, GetAs3ImplementInterfaceModel())
+                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoMembers.as"))
+                            .SetName("Full");
 
-                ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoPublicMember.as"), sci.Text);
-            }
+                        yield return new TestCaseData(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfacePublicMemberBehindPrivate.as"),
+                            new ClassModel
+                            {
+                                InFile = new FileModel(),
+                                LineFrom = 1,
+                                LineTo = 10,
+                                Members = new MemberList
+                                {
+                                    new MemberModel("publicMember", "void", FlagType.Function, Visibility.Public)
+                                    {LineFrom = 3, LineTo = 5},
+                                    new MemberModel("privateMember", "String", FlagType.Function, Visibility.Private)
+                                    {LineFrom = 7, LineTo = 9}
+                                }
+                            },
+                            GetAs3ImplementInterfaceModel())
+                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfacePublicMemberBehindPrivate.as"))
+                            .SetName("FullWithPublicMemberBehindPrivate");
 
-            [Test]
-            public void ImplementFromInterface_FullHaxe()
-            {
-                var interfaceModel = GetHaxeImplementInterfaceModel();
-                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 };
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
-                ASContext.Context.Features.voidKey = "Void";
-                ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true});
+                        yield return new TestCaseData(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfaceNoPublicMember.as"),
+                            new ClassModel
+                            {
+                                InFile = new FileModel(),
+                                LineFrom = 1,
+                                LineTo = 10,
+                                Members = new MemberList
+                                {
+                                    new MemberModel("privateMember", "String", FlagType.Function, Visibility.Private)
+                                    {
+                                        LineFrom = 3,
+                                        LineTo = 5
+                                    }
+                                }
+                            },
+                            GetAs3ImplementInterfaceModel())
+                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoPublicMember.as"))
+                            .SetName("FullWithoutPublicMember");
+                    }
+                }
 
-                var sci = GetBaseScintillaControl();
-                sci.Text = "package generatortest;\r\n\r\nclass ImplementTest{}";
-                sci.ConfigurationLanguage = "haxe";
-                doc.SciControl.Returns(sci);
+                public IEnumerable<TestCaseData> ImplementInterfaceHaxeTestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
+                            new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 }, GetHaxeImplementInterfaceModel())
+                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembers.hx"))
+                            .SetName("Full");
 
-                ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembers.hx"), sci.Text);
-            }
+                        yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
+                            new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 },
+                            new ClassModel
+                            {
+                                InFile = new FileModel(), Name = "ITest", Type = "ITest",
+                                Members = new MemberList
+                                {
+                                    new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
+                                    {
+                                        Parameters = new List<MemberModel>
+                                        {
+                                            new MemberModel {Name = "get"},
+                                            new MemberModel {Name = "set"}
+                                        }
+                                    }
+                                }
+                            })
+                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembersInsertSingleProperty.hx"))
+                            .SetName("SingleProperty");
+                    }
+                }
 
-            [Test]
-            public void ImplementFromInterface_SinglePropertyHaxe()
-            {
-                var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
-                interfaceModel.Members.Add(new MemberList
-                                           {
-                                               new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
-                                               {
-                                                   Parameters = new List<MemberModel>
-                                                   {
-                                                       new MemberModel {Name = "get"},
-                                                       new MemberModel {Name = "set"}
-                                                   }
-                                               }
-                                           });
+                [Test, TestCaseSource("ImplementInterfaceAs3TestCases")]
+                public string As3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
+                {
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel());
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
 
-                var classModel = new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 };
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = Substitute.For<IASContext>();
-                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceModel);
-                ASContext.Context.Features.voidKey = "Void";
-                ASContext.Context.CurrentModel.Returns(new FileModel { haXe = true });
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "as3";
 
-                var sci = GetBaseScintillaControl();
-                sci.Text = "package generatortest;\r\n\r\nclass ImplementTest{}";
-                sci.ConfigurationLanguage = "haxe";
-                doc.SciControl.Returns(sci);
+                    ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
 
-                ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, classModel, null, null);
-                Assert.AreEqual(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembersInsertSingleProperty.hx"), sci.Text);
+                    return sci.Text;
+                }
+
+                [Test, TestCaseSource("ImplementInterfaceHaxeTestCases")]
+                public string Haxe(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
+                {
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel { haXe = true });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
+
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "haxe";
+
+                    ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
+
+                    return sci.Text;
+                }
             }
         }
     }
