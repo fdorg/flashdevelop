@@ -121,10 +121,54 @@ namespace ASCompletion.Completion
             }
         }
 
+        [TestFixture]
         public class DisambiguateComa : ASCompleteTests
         {
-            [Test]
-            public void FunctionArgument()
+            public IEnumerable<TestCaseData> DisambiguateComaAS3TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("function test(arg:String, arg2").SetName("FunctionArgument").Returns(ComaExpression.FunctionDeclaration);
+                    yield return new TestCaseData("function test(arg:").SetName("FunctionArgumentType").Returns(ComaExpression.FunctionDeclaration);
+                    yield return new TestCaseData("var arr:Array = [1, 2").SetName("ArrayValue").Returns(ComaExpression.ArrayValue);
+                    yield return new TestCaseData("var obj:Object = {test: 10").SetName("ObjectParameter").Returns(ComaExpression.AnonymousObjectParam);
+                    yield return new TestCaseData("var obj:Object = {test").SetName("ObjectProperty").Returns(ComaExpression.AnonymousObjectParam);
+                    yield return new TestCaseData("var obj:Obj").SetName("VariableType").Returns(ComaExpression.VarDeclaration);
+                    yield return new TestCaseData("var obj:Obj, ").SetName("VariableMultiple").Returns(ComaExpression.VarDeclaration);
+                    yield return new TestCaseData("this.call(true").SetName("FunctionCallSimple").Returns(ComaExpression.FunctionParameter);
+                }
+            }
+
+            public IEnumerable<TestCaseData> DisambiguateComaHaxeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("function test<K:(ArrayAccess, {})>(arg:").SetName("GenericFunctionArgumentType").SetDescription("This includes PR #963").Returns(ComaExpression.FunctionDeclaration);
+                    yield return new TestCaseData("function test<K:(ArrayAccess, {})>(arg:String, arg2").SetName("GenericFunctionArgument").SetDescription("This includes PR #963").Returns(ComaExpression.FunctionDeclaration);
+                    yield return new TestCaseData("class Generic<K,").SetName("GenericTypeParameterInClass").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("function generic<K,").SetName("GenericTypeParameterInFunction").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("class Generic<K:").SetName("GenericTypeParameterConstraintInClass").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("class Generic<K:(").SetName("GenericTypeParameterConstraintMultipleInClass").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("class Generic<K:({},").SetName("GenericTypeParameterConstraintMultipleInClassAfterFirst").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("function generic<K:").SetName("GenericTypeParameterConstraintInFunction").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("function generic<K:(").SetName("GenericTypeParameterConstraintMultipleInFunction").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("function generic<K:({},").SetName("GenericTypeParameterConstraintMultipleInFunctionAfterFirst").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("new Generic<Array<Int>,").SetName("GenericTypeParameterInDeclaration").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("com.test.Generic<Array<Int>,").SetName("GenericTypeParameterInDeclarationWithFullyQualifiedClass").Returns(ComaExpression.None).Ignore("Not supported at the moment");
+                    yield return new TestCaseData("var p:{x:").SetName("HaxeAnonymousStructureParameterType").Returns(ComaExpression.VarDeclaration);
+                    yield return new TestCaseData("var p:{?x:").SetName("HaxeAnonymousStructureOptionalParameterType").Returns(ComaExpression.VarDeclaration);
+                    yield return new TestCaseData("function p(arg:{x:").SetName("HaxeAnonymousStructureParameterTypeAsFunctionArg").Returns(ComaExpression.VarDeclaration);
+                    yield return new TestCaseData("function p(arg:{?x:").SetName("HaxeAnonymousStructureOptionalParameterTypeAsFunctionArg").Returns(ComaExpression.VarDeclaration);
+                    yield return new TestCaseData("function p(?arg:{?x:").SetName("HaxeAnonymousStructureOptionalParameterTypeAsFunctionOptionalArg").Returns(ComaExpression.VarDeclaration);
+                    yield return new TestCaseData("function test(arg:String, ?arg2").SetName("HaxeFunctionOptionalArgument").Returns(ComaExpression.FunctionDeclaration);
+                    yield return new TestCaseData("function test(?arg:").SetName("HaxeFunctionOptionalArgumentType").Returns(ComaExpression.FunctionDeclaration);
+                    yield return new TestCaseData("var a:String = (2 > 3) ?").SetName("HaxeTernaryOperatorTruePart").Returns(ComaExpression.AnonymousObject);
+                    yield return new TestCaseData("var a:String = (2 > 3) ? 'Hah' :").SetName("HaxeTernaryOperatorFalsePart").Returns(ComaExpression.AnonymousObject);
+                }
+            }
+
+            [TestFixtureSetUp]
+            public void DisambiguateComaSetUp()
             {
                 var pluginMain = Substitute.For<PluginMain>();
                 var pluginUiMock = new PluginUIMock(pluginMain);
@@ -132,560 +176,34 @@ namespace ASCompletion.Completion
                 pluginMain.Settings.Returns(new GeneralSettings());
                 pluginMain.Panel.Returns(pluginUiMock);
                 ASContext.GlobalInit(pluginMain);
+            }
+
+            [Test, TestCaseSource("DisambiguateComaAS3TestCases")]
+            public ComaExpression AS3(string text)
+            {
                 ASContext.Context = new AS3Context.Context(new AS3Settings());
 
                 var sci = GetBaseScintillaControl();
-                sci.Text = "function test(arg:String, arg2";
+                sci.Text = text;
                 sci.ConfigurationLanguage = "as3";
 
-                var coma = ASComplete.DisambiguateComa(sci, 30, 0);
+                var coma = ASComplete.DisambiguateComa(sci, text.Length, 0);
 
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
+                return coma;
             }
 
-            [Test]
-            public void FunctionArgumentType()
+            [Test, TestCaseSource("DisambiguateComaHaxeTestCases")]
+            public ComaExpression Haxe(string text)
             {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test(arg:";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 18, 0);
-
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
-            }
-
-            [Test(Description = "This includes PR #963")]
-            public void GenericFunctionArgumentType()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test<K:(ArrayAccess, {})>(arg:";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 39, 0);
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
-            }
-
-            [Test(Description = "This includes PR #963")]
-            public void GenericFunctionArgument()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test<K:(ArrayAccess, {})>(arg:String, arg2";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 51, 0);
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
-            }
-
-            [Test]
-            public void ArrayValue()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var arr:Array = [1, 2";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 21, 0);
-
-                Assert.AreEqual(ComaExpression.ArrayValue, coma);
-            }
-
-            [Test]
-            public void ObjectParameter()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var obj:Object = {test: 10";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 26, 0);
-
-                Assert.AreEqual(ComaExpression.AnonymousObjectParam, coma);
-            }
-
-            [Test]
-            public void ObjectProperty()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var obj:Object = {test";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 22, 0);
-                // Should this be AnonymousObject?
-                Assert.AreEqual(ComaExpression.AnonymousObjectParam, coma);
-            }
-
-            [Test]
-            public void VariableType()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var obj:Obj";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 11, 0);
-                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
-            }
-
-            [Test]
-            public void VariableMultiple()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var obj:Object, ";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 20, 0);
-                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
-            }
-
-            [Test]
-            public void FunctionCallSimple()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "this.call(true";
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, 14, 0);
-                Assert.AreEqual(ComaExpression.FunctionParameter, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterInClass()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
                 ASContext.Context = new HaXeContext.Context(new HaXeSettings());
 
                 var sci = GetBaseScintillaControl();
-                sci.Text = "class Generic<K,";
+                sci.Text = text;
                 sci.ConfigurationLanguage = "haxe";
 
-                var coma = ASComplete.DisambiguateComa(sci, 16, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
+                var coma = ASComplete.DisambiguateComa(sci, text.Length, 0);
 
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterInFunction()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function generic<K,";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 19, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterConstraintInClass()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "class Generic<K:";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 16, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterConstraintMultipleInClass()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "class Generic<K:(";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 17, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterConstraintMultipleInClassAfterFirst()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "class Generic<K:({},";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 20, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterConstraintInFunction()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function generic<K:";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 19, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterConstraintMultipleInFunction()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function generic<K:(";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 20, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterConstraintMultipleInFunctionAfterFirst()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function generic<K:({},";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 23, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterInDeclaration()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "new Generic<Array<Int>,";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 23, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test(Description = "Not supported now")]
-            public void GenericTypeParameterInDeclarationWithFullyQualifiedClass()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "com.test.Generic<Array<Int>,";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 28, 0);
-                Assert.AreNotEqual(ComaExpression.None, coma);
-            }
-
-            [Test]
-            public void HaxeAnonymousStructureParameterType()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var p:{x:";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 9, 0);
-
-                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
-            }
-
-            [Test]
-            public void HaxeAnonymousStructureOptionalParameterType()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var p:{?x:";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 10, 0);
-
-                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
-            }
-
-            [Test]
-            public void HaxeAnonymousStructureParameterTypeAsFunctionArg()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function p(arg:{x:";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 18, 0);
-
-                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
-            }
-
-            [Test]
-            public void HaxeAnonymousStructureOptionalParameterTypeAsFunctionArg()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function p(arg:{?x:";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 19, 0);
-
-                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
-            }
-
-            [Test]
-            public void HaxeAnonymousStructureOptionalParameterTypeAsFunctionOptionalArg()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function p(?arg:{?x:";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 20, 0);
-
-                Assert.AreEqual(ComaExpression.VarDeclaration, coma);
-            }
-
-            [Test]
-            public void HaxeFunctionOptionalArgument()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test(arg:String, ?arg2";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 31, 0);
-
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
-            }
-
-            [Test]
-            public void HaxeFunctionOptionalArgumentType()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "function test(?arg:";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 19, 0);
-
-                Assert.AreEqual(ComaExpression.FunctionDeclaration, coma);
-            }
-
-            [Test]
-            public void HaxeTernaryOperatorTruePart()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var a:String = (2 > 3) ?";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 28, 0);
-
-                Assert.AreEqual(ComaExpression.AnonymousObject, coma);
-            }
-
-            [Test]
-            public void HaxeTernaryOperatorFalsePart()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                var sci = GetBaseScintillaControl();
-                sci.Text = "var a:String = (2 > 3) ? 'Hah' :";
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, 36, 0);
-
-                Assert.AreEqual(ComaExpression.AnonymousObject, coma);
+                return coma;
             }
         }
     }

@@ -34,7 +34,7 @@ class ImplementTest{
 		
 	}
 	
-	private function testPrivateMethod(?arg:String, ?arg2:Int = 1):Float {
+	function testPrivateMethod(?arg:String, ?arg2:Int = 1):Float {
 		
 	}
 }

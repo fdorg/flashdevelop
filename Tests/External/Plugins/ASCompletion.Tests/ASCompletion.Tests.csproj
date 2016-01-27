@@ -111,6 +111,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TestUtils\ContextExtensions.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +164,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\FieldFromParameterWithWrongSuperConstructor.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameterWithSuperConstructorMultiLine.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameterWithWrongSuperConstructor.as" />
+    <EmbeddedResource Include="Test Files\parser\as3\IdentifiersWithUnicodeCharsTest.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
