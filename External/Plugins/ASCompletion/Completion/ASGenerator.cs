@@ -768,11 +768,11 @@ namespace ASCompletion.Completion
                 if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
                     label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
                 else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
+                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
                 parameters = new Hashtable();
                 parameters["scope"] = Visibility.Public;
                 label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromPatameter, found.member, found.inClass, parameters));
+                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
             }
         }
 
@@ -934,16 +934,15 @@ namespace ASCompletion.Completion
                 case GeneratorJobType.ImplementInterface:
                     ClassModel aType = ASContext.Context.ResolveType(contextParam, ASContext.Context.CurrentModel);
                     if (aType.IsVoid()) return;
-
-                    latest = GetLatestMemberForFunction(inClass, Visibility.Public, null);
-                    if (latest == null)
-                        latest = FindLatest(0, 0, inClass, false, false);
-
-                    if (latest == null) return;
-
-                    position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
-                    Sci.SetSel(position, position);
-                    GenerateImplementation(aType, position);
+                    Sci.BeginUndoAction();
+                    try
+                    {
+                        GenerateImplementation(aType, inClass, Sci);
+                    }
+                    finally
+                    {
+                        Sci.EndUndoAction();
+                    }
                     break;
 
                 case GeneratorJobType.MoveLocalUp:
@@ -1042,9 +1041,7 @@ namespace ASCompletion.Completion
 
                 case GeneratorJobType.Constructor:
                     member = new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Constructor | FlagType.Function, Visibility.Public);
-                    GenerateFunction(
-                        member,
-                        Sci.CurrentPos, false, inClass);
+                    GenerateFunction(member, Sci.CurrentPos, false, inClass);
                     break;
 
                 case GeneratorJobType.ToString:
@@ -1059,7 +1056,7 @@ namespace ASCompletion.Completion
                     }
                     break;
 
-                case GeneratorJobType.FieldFromPatameter:
+                case GeneratorJobType.FieldFromParameter:
                     Sci.BeginUndoAction();
                     try
                     {
@@ -3059,7 +3056,18 @@ namespace ASCompletion.Completion
             return name;
         }
 
-        private static void GenerateImplementation(ClassModel aType, int position)
+        private static void GenerateImplementation(ClassModel aType, ClassModel inClass, ScintillaControl sci)
+        {
+            var latest = GetLatestMemberForFunction(inClass, Visibility.Public, null);
+            if (latest == null) latest = FindLatest(0, 0, inClass, false, false);
+            int position;
+            if (latest == null) position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
+            else position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
+            sci.SetSel(position, position);
+            GenerateImplementation(aType, inClass, sci, position);
+        }
+
+        private static void GenerateImplementation(ClassModel aType, ClassModel inClass, ScintillaControl sci, int position)
         {
             List<string> typesUsed = new List<string>();
 
@@ -3068,7 +3076,6 @@ namespace ASCompletion.Completion
             bool entry = true;
             ASResult result = new ASResult();
             IASContext context = ASContext.Context;
-            ClassModel cClass = context.CurrentClass;
             ContextFeatures features = context.Features;
             bool canGenerate = false;
 
@@ -3082,7 +3089,7 @@ namespace ASCompletion.Completion
                         continue;
 
                     // check if method exists
-                    ASComplete.FindMember(method.Name, cClass, result, method.Flags, 0);
+                    ASComplete.FindMember(method.Name, inClass, result, method.Flags, 0);
                     if (!result.IsNull()) continue;
 
                     string decl = entry ? NewLine : "";
@@ -3121,20 +3128,19 @@ namespace ASCompletion.Completion
             if (!canGenerate)
                 return;
 
-            ScintillaControl Sci = ASContext.CurSciControl;
-            Sci.BeginUndoAction();
+            sci.BeginUndoAction();
             try
             {
-                position = Sci.CurrentPos;
-                if (ASContext.Context.Settings.GenerateImports && typesUsed.Count > 0)
+                position = sci.CurrentPos;
+                if (context.Settings.GenerateImports && typesUsed.Count > 0)
                 {
-                    int offset = AddImportsByName(typesUsed, Sci.LineFromPosition(position));
+                    int offset = AddImportsByName(typesUsed, sci.LineFromPosition(position));
                     position += offset;
-                    Sci.SetSel(position, position);
+                    sci.SetSel(position, position);
                 }
                 InsertCode(position, sb.ToString());
             }
-            finally { Sci.EndUndoAction(); }
+            finally { sci.EndUndoAction(); }
         }
 
         private static void addTypeOnce(List<string> typesUsed, string qualifiedName)
@@ -4372,7 +4378,7 @@ namespace ASCompletion.Completion
         Constant,
         Constructor,
         ToString,
-        FieldFromPatameter,
+        FieldFromParameter,
         AddInterfaceDef,
         ConvertToConst,
         AddAsParameter,
