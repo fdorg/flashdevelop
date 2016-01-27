@@ -3674,7 +3674,7 @@ namespace ASCompletion.Completion
         {
             return style == 0 || style == 10 /*punctuation*/ || style == 11 /*identifier*/ 
                 || style == 16 /*word2 (secondary keywords: class name)*/
-                || style == 24 /*word4 (add keywords4)*/ || style == 25 /*word5 (add keywords5)*/
+                || style == 101 /*word4 (add keywords4)*/ || style == 102 /*word5 (add keywords5)*/
                 || style == 127 /*PHP*/;
         }
 
@@ -3686,8 +3686,8 @@ namespace ASCompletion.Completion
             return style == 0 || style == 5 /*word (secondary keywords)*/
                 || style == 10 /*punctuation*/ || style == 11 /*identifier*/ 
                 || style == 16 /*word2 (secondary keywords: class name)*/ 
-                || style == 19 /*globalclass (primary keywords)*/ || style == 23 /*word3 (add keywords3)*/
-                || style == 24 /*word4 (add keywords4)*/ || style == 25 /*word5 (add keywords5)*/
+                || style == 19 /*globalclass (primary keywords)*/ || style == 100 /*word3 (add keywords3)*/
+                || style == 101 /*word4 (add keywords4)*/ || style == 102 /*word5 (add keywords5)*/
                 || style == 127 /*PHP*/;
         }
 
@@ -4274,74 +4274,73 @@ namespace ASCompletion.Completion
         /// <param name="sci"></param>
         /// <param name="value">Character inserted</param>
         /// <returns>Code was generated</returns>
-        static private bool CodeAutoOnChar(ScintillaControl sci, int value)
+        static bool CodeAutoOnChar(ScintillaControl sci, int value)
         {
             if (ASContext.Context.Settings == null || !ASContext.Context.Settings.GenerateImports)
                 return false;
 
             int position = sci.CurrentPos;
 
-            if (value == '*' && position > 1 && sci.CharAt(position-2) == '.' && LastExpression != null)
+            if (value == '*' && position > 1 && sci.CharAt(position - 2) == '.' && LastExpression != null)
+                return HandleWildcardList(sci, position, LastExpression);
+
+            return false;
+        }
+
+        /// <summary>
+        /// User entered a qualified package with a wildcard, eg. flash.geom.*, at an unexpected position, eg. not after 'import'.
+        /// Remove expression, generate coresponding wildcard import, and show list of types of this package
+        /// </summary>
+        static bool HandleWildcardList(ScintillaControl sci, int position, ASExpr expr)
+        {
+            // validate context
+            var context = ASContext.Context;
+            if (expr.Separator == ' ' && expr.WordBefore != null
+                && context.Features.HasTypePreKey(expr.WordBefore))
+                return false;
+
+            var cFile = context.CurrentModel;
+            var cClass = context.CurrentClass;
+            var resolved = EvalExpression(expr.Value, expr, cFile, cClass, true, false);
+            if (resolved.IsNull() || !resolved.IsPackage || resolved.InFile == null)
+                return false;
+
+            string package = resolved.InFile.Package;
+            string check = Regex.Replace(expr.Value, "\\s", "").TrimEnd('.');
+            if (check != package)
+                return false;
+
+            sci.BeginUndoAction();
+            try
             {
-                // context
-                if (LastExpression.Separator == ' ' && LastExpression.WordBefore != null 
-                    && !ASContext.Context.Features.HasTypePreKey(LastExpression.WordBefore))
-                    return false;
+                // remove temp wildcard
+                int startPos = expr.PositionExpression;
+                sci.SetSel(startPos, position);
+                sci.ReplaceSel("");
 
-                FileModel cFile = ASContext.Context.CurrentModel;
-                ClassModel cClass = ASContext.Context.CurrentClass;
-                ASResult context = EvalExpression(LastExpression.Value, LastExpression, cFile, cClass, true, false);
-                if (context.IsNull() || !context.IsPackage || context.InFile == null)
-                    return false;
-
-                string package = LastExpression.Value;
-                int startPos = LastExpression.Position;
-                string check = "";
-                char c;
-                while (startPos > LastExpression.PositionExpression && check.Length <= package.Length && check != package)
+                // generate import
+                if (context.Settings.GenerateImports)
                 {
-                    c = (char)sci.CharAt(--startPos);
-                    if (c > 32) check = c+check;
-                }
-                if (check != package)
-                    return false;
-
-                // insert import
-                string statement = "import " + package + "*;" + LineEndDetector.GetNewLineMarker(sci.EOLMode);
-                int endPos = sci.CurrentPos;
-                int line = 0;
-                int curLine = sci.LineFromPosition(position);
-                bool found = false;
-                while (line < curLine)
-                {
-                    if (sci.GetLine(line++).IndexOf("import") >= 0) found = true;
-                    else if (found) {
-                        line--;
-                        break;
+                    var wildcard = new MemberModel { Name = "*", Type = package + ".*" };
+                    if (!context.IsImported(wildcard, sci.LineFromPosition(position)))
+                    {
+                        startPos += ASGenerator.InsertImport(wildcard, true);
+                        sci.SetSel(startPos, startPos);
                     }
                 }
-                if (line == curLine) line = 0;
-                position = sci.PositionFromLine(line);
-                line = sci.FirstVisibleLine;
-                sci.SetSel(position, position);
-                sci.ReplaceSel(statement);
-
-                // prepare insertion of the term as usual
-                startPos += statement.Length;
-                endPos += statement.Length;
-                sci.SetSel(startPos, endPos);
-                sci.ReplaceSel("");
-                sci.LineScroll(0, line-sci.FirstVisibleLine+1);
-
-                // create classes list
-                List<ICompletionListItem> list = new List<ICompletionListItem>();
-                foreach(MemberModel import in cClass.InFile.Imports)
-                if (import.Type.StartsWith(package))
-                    list.Add(new MemberItem(import));
-                CompletionList.Show(list, false);
-                return true;
             }
-            return false;
+            finally
+            {
+                sci.EndUndoAction();
+            }
+
+            // show types
+            var list = new List<ICompletionListItem>();
+            var imports = context.ResolvePackage(package, false).Imports;
+            foreach (MemberModel import in imports)
+                list.Add(new MemberItem(import));
+            CompletionList.Show(list, false);
+            return true;
         }
 
         #endregion
