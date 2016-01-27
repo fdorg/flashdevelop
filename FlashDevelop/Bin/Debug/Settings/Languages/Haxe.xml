@@ -39,9 +39,9 @@
 				<keyword key="1" class="haxe-additional-keywords" />
 				<keyword key="2" class="haxe-documentation-keywords" />
 				<keyword key="3" class="haxe-primary-keywords" />
-				<keyword key="6" class="haxe-additional-keywords3" />
-				<keyword key="7" class="haxe-additional-keywords4" />
-				<keyword key="8" class="haxe-additional-keywords5" />
+				<keyword key="5" class="haxe-additional-keywords3" />
+				<keyword key="6" class="haxe-additional-keywords4" />
+				<keyword key="7" class="haxe-additional-keywords5" />
 			</use-keywords>
 			<!-- COLORING_START -->
 			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" colorize-marker-back="true" margin-fore="0xffffff" margin-back="0xffffff" marker-back="0xbcbcbc" />
