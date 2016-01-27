@@ -184,7 +184,8 @@ namespace ASCompletion.Completion
                         if (features.hasGenerics && position > 2)
                         {
                             char c0 = (char)Sci.CharAt(position - 2);
-                            if (c0 == '.' /*|| Char.IsLetterOrDigit(c0)*/)
+                            //TODO: We should check if we are actually on a generic type
+                            if ((ASContext.Context.CurrentModel.Version == 3 && c0 == '.') || Char.IsLetterOrDigit(c0))
                                 return HandleColonCompletion(Sci, "", autoHide);
                             return false;
                         }
@@ -2206,6 +2207,7 @@ namespace ASCompletion.Completion
 
         private static ComaExpression GetFunctionContext(ScintillaControl Sci, bool autoHide)
         {
+            ContextFeatures features = ASContext.Context.Features;
             ComaExpression coma = ComaExpression.None;
             int position = Sci.CurrentPos - 1;
             char c = ' ';
@@ -2222,7 +2224,7 @@ namespace ASCompletion.Completion
             // var declaration
             GetWordLeft(Sci, ref position);
             string keyword = (c == ':') ? GetWordLeft(Sci, ref position) : null;
-            if (keyword == ASContext.Context.Features.varKey || keyword == ASContext.Context.Features.constKey)
+            if (keyword == features.varKey || (features.constKey != null && keyword == features.constKey))
                 coma = ComaExpression.VarDeclaration;
             // function return type
             else if ((char)Sci.CharAt(position) == ')')
@@ -2244,7 +2246,6 @@ namespace ASCompletion.Completion
                     }
                 }
                 keyword = GetWordLeft(Sci, ref position);
-                ContextFeatures features = ASContext.Context.Features;
                 if (keyword == "" && Sci.CharAt(position) == '>' && features.hasGenerics)
                 {
                     int groupCount = 1;
@@ -2267,6 +2268,9 @@ namespace ASCompletion.Completion
                     keyword = GetWordLeft(Sci, ref position);
                     if (keyword == features.functionKey || keyword == features.getKey || keyword == features.setKey)
                         coma = ComaExpression.FunctionDeclaration;
+                    else if (ASContext.Context.CurrentModel.haXe && keyword == features.varKey && 
+                        (ASContext.Context.CurrentMember == null || (ASContext.Context.CurrentMember.Flags & FlagType.Function) == 0))
+                        coma = ComaExpression.VarDeclaration;  // Haxe Properties
                 }
             }
             // needs more guessing
@@ -3484,7 +3488,7 @@ namespace ASCompletion.Completion
         /// Find out in what context is a coma-separated expression
         /// </summary>
         /// <returns></returns>
-        private static ComaExpression DisambiguateComa(ScintillaControl Sci, int position, int minPos)
+        internal static ComaExpression DisambiguateComa(ScintillaControl Sci, int position, int minPos)
         {
             ContextFeatures features = ASContext.Context.Features;
             // find block start '(' or '{'
@@ -3531,6 +3535,7 @@ namespace ASCompletion.Completion
                         string word1 = GetWordLeft(Sci, ref position);
                         if (word1 == "" && Sci.CharAt(position) == '>' && features.hasGenerics)
                         {
+                            // Generic function: function generic<K>(arg:K)
                             int groupCount = 1;
                             position--;
                             while (position >= 0 && groupCount > 0)
@@ -3569,7 +3574,17 @@ namespace ASCompletion.Completion
                         if (":,(=".IndexOf(c) >= 0)
                         {
                             string line = Sci.GetLine(Sci.LineFromPosition(position));
+                            //TODO: Very limited check, the case|default could be in a previous line, or it could be something else in the same line
                             if (Regex.IsMatch(line, @"\b(case|default)\b.*:")) break; // case: code block
+                            if (c == ':' && Sci.ConfigurationLanguage == "haxe")
+                            {
+                                // Anonymous structures
+                                ComaExpression coma = DisambiguateComa(Sci, position, minPos);
+                                if (coma == ComaExpression.FunctionDeclaration || coma == ComaExpression.VarDeclaration)
+                                {
+                                    return ComaExpression.VarDeclaration;
+                                }
+                            }
                             return ComaExpression.AnonymousObjectParam;
                         }
                         else if (c != ')' && c != '}' && !Char.IsLetterOrDigit(c)) return ComaExpression.AnonymousObject;
@@ -3580,7 +3595,28 @@ namespace ASCompletion.Completion
                 {
                     braceCount++;
                 }
-                else if (c == '?') return ComaExpression.AnonymousObject;
+                else if (c == '?')
+                {
+                    //TODO: Change to ASContext.Context.CurrentModel
+                    if (Sci.ConfigurationLanguage == "haxe") // Haxe optional fields
+                    {
+                        ComaExpression coma = DisambiguateComa(Sci, position - 1, minPos);
+                        if (coma == ComaExpression.FunctionDeclaration)
+                        {
+                            // Function optional argument
+                            return coma;
+                        }
+                        else if (coma == ComaExpression.VarDeclaration)
+                        {
+                            // Possible anonymous structure optional field. Check we are not in a ternary operator
+                            position--;
+                            string word1 = GetWordLeft(Sci, ref position);
+                            c = (word1.Length > 0) ? word1[word1.Length - 1] : (char) Sci.CharAt(position);
+                            if (c == ',' || c == '{') return coma;
+                        }
+                    }
+                    return ComaExpression.AnonymousObject;
+                }
                 position--;
             }
             return ComaExpression.None;
