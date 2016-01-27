@@ -34,22 +34,22 @@ diff --git a/lexers/LexCPP.cxx b/lexers/LexCPP.cxx
  	WordList ppDefinitions;
  	WordList markerList;
  	struct SymbolValue {
-@@ -589,6 +595,15 @@
- 	case 5:
- 		wordListN = &markerList;
+@@ -587,6 +593,15 @@
+ 		wordListN = &ppDefinitions;
  		break;
-+	case 6:
+ 	case 5:
 +		wordListN = &keywords5;
 +		break;
-+	case 7:
++	case 6:
 +		wordListN = &keywords6;
 +		break;
-+	case 8:
++	case 7:
 +		wordListN = &keywords7;
 +		break;
++	case 8:
+ 		wordListN = &markerList;
+ 		break;
  	}
- 	Sci_Position firstModification = -1;
- 	if (wordListN) {
 @@ -809,6 +824,12 @@
  						sc.ChangeState(SCE_C_WORD2|activitySet);
  					} else if (keywords4.InList(s)) {
