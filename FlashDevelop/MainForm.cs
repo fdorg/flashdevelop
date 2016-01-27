@@ -1606,7 +1606,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Updates the MainForms title automaticly
+        /// Updates the MainForm's title automatically
         /// </summary>
         public void OnUpdateMainFormDialogTitle()
         {

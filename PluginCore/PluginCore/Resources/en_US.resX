@@ -2219,7 +2219,7 @@ Never - the start page will not show based on startup.</value>
     <value>Tasks</value>
   </data>
   <data name="XMLCompletion.Description.CloseTags" xml:space="preserve">
-    <value>Closes the current tag automaticly.</value>
+    <value>Closes the current tag automatically.</value>
   </data>
   <data name="XMLCompletion.Description.EnableXMLCompletion" xml:space="preserve">
     <value>Enables the completion for xml files.</value>
@@ -2553,7 +2553,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Uses project related sessions when opening or closing projects.</value>
   </data>
   <data name="ASCompletion.Description.LastASVersion" xml:space="preserve">
-    <value>Internal: automaticly stored latest ActionScript version detected to apply to files without package/class declarations.</value>
+    <value>Internal: automatically stored latest ActionScript version detected to apply to files without package/class declarations.</value>
   </data>
   <data name="FlashDevelop.Info.FileHeader" xml:space="preserve">
     <value>File</value>
@@ -2856,7 +2856,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Macros</value>
   </data>
   <data name="MacroManager.Description.AutoRun" xml:space="preserve">
-    <value>Runs the macro automaticly when FlashDevelop starts. If enabled, the menu item will not be shown.</value>
+    <value>Runs the macro automatically when FlashDevelop starts. If enabled, the menu item will not be shown.</value>
   </data>
   <data name="MacroManager.Description.Entries" xml:space="preserve">
     <value>Individual commands of the macro.</value>
