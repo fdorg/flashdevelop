@@ -1500,143 +1500,143 @@
     <value>사용자 정의 컴파일러 지시문을 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.EnableMxmlMapping" xml:space="preserve">
-    <value>Group MXML source files (mx:Script, mx:Style) under the MXML file linking them.</value>
+    <value>MXML 소스 파일(mx:Script, mx:Style)을 연결된 MXML 파일 밑에 분류합니다.</value>
   </data>
   <data name="ProjectManager.Description.EnableDebug" xml:space="preserve">
     <value>인터랙티브 디버거를 사용할 수 있는 기능을 활성화합니다.</value>
   </data>
   <data name="ProjectManager.Description.ES" xml:space="preserve">
-    <value>Instructs the compiler to use the ECMAScript Edition 3 prototype-based object model to allow dynamic overriding of prototype properties.</value>
+    <value>프로토타입 속성을 동적으로 재정의할 수 있도록 ECMAScript 3 프로토타입 기반 객체 모델을 사용하도록 컴파일러에 지시합니다.</value>
   </data>
   <data name="ProjectManager.Description.ExcludedDirectories" xml:space="preserve">
-    <value>The set of directories to exclude from the project treeview altogether.</value>
+    <value>프로젝트 트리뷰에서 모두 제외할 디렉토리.</value>
   </data>
   <data name="ProjectManager.Description.ExcludedFileTypes" xml:space="preserve">
-    <value>The set of filetypes to exclude from the project treeview altogether.</value>
+    <value>프로젝트 트리뷰에서 모두 제외할 파일 형식.</value>
   </data>
   <data name="ProjectManager.Description.ExcludeFile" xml:space="preserve">
-    <value>Excluded code generation of classes listed in specified file. Format is one full class path per line.</value>
+    <value>지정된 파일에있는 클래스를 코드 자동 생성에서 제외. 형식은 한 줄에 하나의 전체 클래스 경로입니다.</value>
   </data>
   <data name="ProjectManager.Description.ExecutableFileTypes" xml:space="preserve">
-    <value>The set of filetypes to execute when the item is opened.</value>
+    <value>항목이 열릴 때 실행할 파일 형식.</value>
   </data>
   <data name="ProjectManager.Description.ExternalLibraryPaths" xml:space="preserve">
-    <value>Specifies a list of SWC files or directories to exclude from linking when compiling a SWF file.</value>
+    <value>SWF 파일을 컴파일 할 때 연결에서 제외 할 SWC 파일 및 디렉토리의 목록을 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.FlashStrict" xml:space="preserve">
-    <value>More type strict Flash API.</value>
+    <value>보다 유형 엄격한 Flash API.</value>
   </data>
   <data name="ProjectManager.Description.NoInlineOnDebug" xml:space="preserve">
-    <value>Set --no-inline on Debug.</value>
+    <value>디버그에 --no-inline을 설정합니다.</value>
   </data>
   <data name="ProjectManager.Description.Frame" xml:space="preserve">
-    <value>If using Code Injection only, exports your classes into a specific frame of the input SWF.</value>
+    <value>단지 코드 주입을 사용하는 경우, 입력 된 SWF의 특정 프레임으로 클래스를 내 보냅니다.</value>
   </data>
   <data name="ProjectManager.Description.GroupClasses" xml:space="preserve">
-    <value>Merges classes into one single MovieClip. This will reduce SWF size but might cause some problems if you're using Code Injection or UseMX.</value>
+    <value>하나의 무비 클립에 클래스를 병합합니다. SWF의 크기를 줄일 수 있지만 코드 주입 또는 UseMX를 사용하는 경우 몇 가지 문제가 발생할 수 있습니다.</value>
   </data>
   <data name="ProjectManager.Description.HaXeLibraries" xml:space="preserve">
-    <value>Specify haxelib libraries to use.</value>
+    <value>사용할 haxelib 라이브러리를 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.IncludeLibraries" xml:space="preserve">
-    <value>Links all classes inside a SWC file to the resulting application SWF file, regardless of whether or not they are used.</value>
+    <value>사용 여부에 관계없이 생성 애플리케이션 SWF 파일에 SWC 파일 내에 모든 클래스를 링크.</value>
   </data>
   <data name="ProjectManager.Description.IncludePackages" xml:space="preserve">
-    <value>Allows you to specify one or more packages that will always be compiled into your movie.</value>
+    <value>항상 SWF 파일에 컴파일될 패키지를 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.Includes" xml:space="preserve">
-    <value>Links one or more classes to the resulting application SWF file, whether or not those classes are required at compile time.</value>
+    <value>사용 여부에 관계없이 생성 애플리케이션 SWF 파일에 클래스를 링크.</value>
   </data>
   <data name="ProjectManager.Description.Infer" xml:space="preserve">
-    <value>If set to true, the compiler will attempt to automatically determine the type of a local variable declared with the "var" keyword.</value>
+    <value>True로 설정하면, 컴파일러는 자동으로 "var"키워드로 선언 된 지역 변수의 유형 확인을 시도합니다.</value>
   </data>
   <data name="ProjectManager.Description.IntrinsicPaths" xml:space="preserve">
-    <value>Additional classes declaration to be used by the completion engine.</value>
+    <value>코드 자동 완성에 사용될 추가 클래스 선언.</value>
   </data>
   <data name="ProjectManager.Description.Keep" xml:space="preserve">
-    <value>If using Code Injection only, keeps classes compiled by Adobe Flash Professional into the output SWF. This could cause some classes to be present two times if also compiled with FlashDevelop.</value>
+    <value>단지 코드 주입을 사용하는 경우, 출력 SWF에 Adobe Flash Professional로 컴파일 된 클래스를 유지합니다. 이것은 또한 FlashDevelop 사용하여 컴파일 할 경우 어떤 클래스가 두 번 존재하는 원인이 될 수 있습니다.</value>
   </data>
   <data name="ProjectManager.Description.LibraryPaths" xml:space="preserve">
-    <value>Links SWC files to the resulting application SWF file. The compiler only links in those classes for the SWC file that are required.</value>
+    <value>결과 응용 프로그램 SWF 파일에 SWC 파일을 링크합니다. 컴파일러는 필요한 SWC 파일에 대한 해당 클래스에 연결합니다.</value>
   </data>
   <data name="ProjectManager.Description.LibraryPrefix" xml:space="preserve">
-    <value>Specifies a string to be placed in front of all auto-generated library asset ID's. This is useful to prevent namespace collisions if this project is a shared library.</value>
+    <value>모든 자동 생성 된 라이브러리 에셋 ID의 전면에 배치 할 문자열을 지정합니다. 이 프로젝트는 공유 라이브러리 인 경우이 네임 스페이스 충돌을 방지하는 데 유용합니다.</value>
   </data>
   <data name="ProjectManager.Description.LoadConfig" xml:space="preserve">
-    <value>Specifies the location of the configuration file that defines compiler options. If you specify a configuration file, you can override individual options by setting them on the command line.</value>
+    <value>컴파일러 옵션을 정의하는 구성 파일의 위치를 지정합니다. 구성 파일을 지정하는 경우, 명령 행에 설정하여 개별 옵션을 재정의 할 수 있습니다.</value>
   </data>
   <data name="ProjectManager.Description.Locale" xml:space="preserve">
-    <value>Specifies the locale (ie. en_US) that should be packaged in the SWF file.</value>
+    <value>SWF 파일에 패키지해야 로케일 (예. ko_KR)을 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.Namespaces" xml:space="preserve">
-    <value>Specifies a set of namespace URIs associated with manifest files defining components to use as MXML elements.</value>
+    <value>MXML 요소로 사용할 구성 요소를 정의하는 매니페스트 파일과 관련된 이름 공간 URI의 집합을 지정합니다.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Description.MainClass" xml:space="preserve">
-    <value>Specifies the class with a static main entry point.</value>
+    <value>정적 주 진입 점을 가지는 클래스를 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.MaxRecentProjects" xml:space="preserve">
-    <value>The number of recent projects to remember in the project drop-down.</value>
+    <value>프로젝트 드롭다운에 기록되는 최근 프로젝트의 최대 개수.</value>
   </data>
   <data name="ProjectManager.Description.Optimize" xml:space="preserve">
-    <value>Enables the ActionScript optimizer. This optimizer reduces file size and increases performance by optimizing the SWF file's bytecode.</value>
+    <value>ActionScript 최적화 기능을 활성화 합니다. 이 최적화는 파일 크기를 줄이고 SWF 파일의 바이트 코드를 최적화하여 성능을 향상시킵니다.</value>
   </data>
   <data name="ProjectManager.Description.RSLPaths" xml:space="preserve">
-    <value>Specifies a list of run-time shared libraries (RSL) to use for this application. Run-time shared libraries are dynamically-linked at run time.</value>
+    <value>이 응용 프로그램에 사용하는 런타임 공유 라이브러리 (RSL)의 목록을 지정합니다. 런타임 공유 라이브러리는 실행시에 동적으로 연결되어 있습니다.</value>
   </data>
   <data name="ProjectManager.Description.ShowActionScriptWarnings" xml:space="preserve">
-    <value>Shows warnings for ActionScript classes.</value>
+    <value>ActionScript 클래스에 대한 경고를 표시합니다.</value>
   </data>
   <data name="ProjectManager.Description.ShowBindingWarnings" xml:space="preserve">
-    <value>Shows a warning when Flash Player cannot detect changes to a bound property.</value>
+    <value>Flash Player가 바운드 속성의 변경 사항을 감지할 수 없을때 경고를 표시합니다.</value>
   </data>
   <data name="ProjectManager.Description.ShowDeprecationWarnings" xml:space="preserve">
-    <value>Shows deprecation warnings for Flex components.</value>
+    <value>Flex 구성 요소에 대한 사용 중단 경고를 표시합니다.</value>
   </data>
   <data name="ProjectManager.Description.ShowGlobalClasspaths" xml:space="preserve">
-    <value>Sets whether or not to include global classpath directories in the project tree.</value>
+    <value>프로젝트 트리에서 전역 클래스 경로 디렉토리를 포함 할 것인지 여부를 설정합니다.</value>
   </data>
   <data name="ProjectManager.Description.ShowProjectClasspaths" xml:space="preserve">
-    <value>Sets whether or not to include project classpath directories in the project tree.</value>
+    <value>프로젝트 트리에 프로젝트 클래스 경로 디렉토리를 포함할지 여부를 설정합니다.</value>
   </data>
   <data name="ProjectManager.Description.ShowUnusedTypeSelectorWarnings" xml:space="preserve">
-    <value>Shows warnings when a type selector in a style sheet or &lt;mx:Style&gt; block is not used by any components in the application.</value>
+    <value>스타일 시트 또는 &lt;mx:Style&gt; 블록에 응용 프로그램의 구성 요소에서 사용하지 않는 유형 선택이 있을때 경고를 표시합니다.</value>
   </data>
   <data name="ProjectManager.Description.Strict" xml:space="preserve">
-    <value>If set to true, the compiler will require that all variables are either explicitly typed or inferrable.</value>
+    <value>True로 설정하면, 컴파일러는 모든 변수가 명시적 또는 추론 가능한 것이여야 합니다.</value>
   </data>
   <data name="ProjectManager.Description.StrictAS3" xml:space="preserve">
-    <value>Prints undefined property and function calls, also performs compile-time type checking on assignments and options supplied to method calls.</value>
+    <value>정의되지 않은 속석과 함수 호출을 인쇄하고, 할당 및 인수에 컴파일 타임 유형 검사를 수행합니다.</value>
   </data>
   <data name="ProjectManager.Description.TraceFunction" xml:space="preserve">
-    <value>If the Trace Mode is set to CustomFunction, you may type in the full path to the function you would like to replace trace() calls with.  You may need to ensure the class containing the function is compiled in by marking it as Always Compile.</value>
+    <value>추적 모드가 CustomFunction으로 설정되어 있으면, trace() 호출 추적을 대체하기 위해 대체 함수의 전체 경로를 입력 할 수 있습니다. 함수를 포함하는 클래스를 Always Compile로 표시하여 컴파일되어 있는지 확인해야합니다.</value>
   </data>
   <data name="ProjectManager.Description.TraceMode" xml:space="preserve">
-    <value>Controls how the trace() call is handled by the compiler. The default is FlashConnect, which will cause trace output to be sent to FlashDevelop's output panel.</value>
+    <value>trace() 호출이 컴파일러에 의해 처리하는 방법을 제어합니다. 기본값은 추적 출력이 FlashDevelop 출력 패널로 전송되는 FlashConnect 입니다.</value>
   </data>
   <data name="ProjectManager.Description.UseMain" xml:space="preserve">
-    <value>If set to true, you must define a single static function called main() that will be the entry point of your movie.</value>
+    <value>True로 설정하면, SWF 파일의 시작점이 될 하나의 정적 main() 함수를 선언해야 합니다.</value>
   </data>
   <data name="ProjectManager.Description.UseMX" xml:space="preserve">
-    <value>If set to true, all code in the mx.* namespace will never be compiled into the output SWF.</value>
+    <value>True로 설정하면, mx.* 네임스페이스에 있는 모든 코드가 출력 SWF에 컴파일 되지 않습니다.</value>
   </data>
   <data name="ProjectManager.Description.UseNetwork" xml:space="preserve">
-    <value>Specifies that the current application uses network services.</value>
+    <value>현재 응용 프로그램이 네트워크 서비스를 사용하도록 지정합니다.</value>
   </data>
   <data name="ProjectManager.Description.UseResourceBundleMetadata" xml:space="preserve">
-    <value>Enables resource bundles. Set to true to instruct the compiler to process the contents of the ResourceBundle metadata tag.</value>
+    <value>자원 번들을 사용합니다. ResourceBundle 메타 태그의 내용을 처리하도록 컴파일러에 지시하려면 true로 설정합니다.</value>
   </data>
   <data name="ProjectManager.Description.Verbose" xml:space="preserve">
-    <value>If set to true, the compiler will produce more detailed output, which can be viewed in the Output Panel.</value>
+    <value>True로 설정하면, 컴파일러는 더 자세한 출력을 생성합니다.</value>
   </data>
   <data name="ProjectManager.Description.VerboseStackTraces" xml:space="preserve">
-    <value>Generates source code that includes line numbers. When a run-time error occurs, the stacktrace shows these line numbers. Enabling this option generates larger SWF files.</value>
+    <value>줄 번호를 포함하는 소스 코드를 생성합니다. 런타임 에러가 발생하면, 스택 추적이 행 번호를 나타냅니다. 이 옵션을 사용하면 더 큰 SWF 파일을 생성합니다.</value>
   </data>
   <data name="ProjectManager.Description.Warnings" xml:space="preserve">
-    <value>Enables all warnings. Set to false to disable all warnings.</value>
+    <value>모든 경고를 활성화합니다. False로 설정하면 모든 경고를 비활성화합니다.</value>
   </data>
   <data name="ProjectManager.Description.WarnUnusedImports" xml:space="preserve">
-    <value>If set to true, the compiler will warn you when you have used the "import" keyword needlessly.</value>
+    <value>True로 설정하면, 사용자가 불필요한 "import" 키워드를 사용할 때, 컴파일러 경고 메세지를 표시합니다.</value>
   </data>
   <data name="ProjectManager.Info.AlwaysExecute" xml:space="preserve">
     <value>항상 실행</value>
@@ -1687,7 +1687,7 @@
     <value>사용자 정의 명령을 실행...</value>
   </data>
   <data name="ProjectManager.Info.Debug" xml:space="preserve">
-    <value>디버그</value>
+    <value>Debug</value>
   </data>
   <data name="ProjectManager.Info.Default" xml:space="preserve">
     <value>재생: (FlashViewer 기본)</value>
@@ -1729,110 +1729,110 @@
     <value>글로벌 클래스 경로는 이 컴퓨터에만 해당되며 프로젝트 파일에 저장되지 않습니다.</value>
   </data>
   <data name="ProjectManager.Info.InjectionConfirmation" xml:space="preserve">
-    <value>The library assets currently embedded in your project will be removed from the project, but not deleted. Are you sure you want to proceed?</value>
+    <value>현재 프로젝트에 포함 된 라이브러리 에셋은 프로젝트에서 제거하지만 삭제되지 않습니다. 진행 하시겠습니까?</value>
   </data>
   <data name="ProjectManager.Info.InvalidPath" xml:space="preserve">
-    <value>The path you selected is invalid. Project classpaths must be relative to the project location and on the same drive.</value>
+    <value>선택한 경로가 잘못되었습니다. 프로젝트 클래스 경로는 프로젝트 위치에 같은 드라이브에 상대적이어야합니다.</value>
   </data>
   <data name="ProjectManager.Info.ItemsWillBeMovedToRecycleBin" xml:space="preserve">
-    <value>The selected items will be moved to the Recycle Bin.</value>
+    <value>선택한 항목을 휴지통으로 이동합니다.</value>
   </data>
   <data name="ProjectManager.Info.JsflNotFound" xml:space="preserve">
-    <value>Adobe Flash Professional JSFL scripts not found in Tools\flashide directory.</value>
+    <value>Adobe Flash Professional JSFL 스크립트가 Tools\flashide 디렉토리에 없습니다.</value>
   </data>
   <data name="ProjectManager.Info.NewProject" xml:space="preserve">
-    <value>New Project</value>
+    <value>새 프로젝트</value>
   </data>
   <data name="ProjectManager.Info.NoOutput" xml:space="preserve">
-    <value>No output, only run pre/post build commands.</value>
+    <value>출력이 없습니다. Pre/Post빌드 명령만 실행합니다.</value>
   </data>
   <data name="ProjectManager.Info.NoOutputAndNoBuild" xml:space="preserve">
-    <value>This project has no output and not build command configured.</value>
+    <value>이 프로젝트는 출력이없고 구성에 빌드 명령도 없습니다.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|Create a new project|{0}or{0}|Open an existing project|{0}or{0}|Import a Flash Builder project|</value>
+    <value>|새 프로젝트 만들기|{0}또는{0}|기존 프로젝트 열기|{0}또는{0}|Flash Builder 프로젝트 불러오기|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
-    <value>No templates were found in the templates directory. You will not be able to create new projects. You might try reinstalling FlashDevelop.</value>
+    <value>탬플릿 이렉토리에서 탬플릿을 찾을 수 없습니다. 새로운 프로젝트를 만들 수 없습니다. FlashDevelop를 다시 설치하는것을 권장합니다.</value>
   </data>
   <data name="ProjectManager.Info.Output" xml:space="preserve">
-    <value>Output</value>
+    <value>출력</value>
   </data>
   <data name="ProjectManager.Info.PathConflict" xml:space="preserve">
-    <value>The path you selected conflicts with the existing classpath {0}. Would you still like to add it?</value>
+    <value>기존 클래스 경로 {0}와 선택한 경로에 충돌이 있습니다. 계속 하시겠습니까?</value>
   </data>
   <data name="ProjectManager.Info.Platform" xml:space="preserve">
-    <value>Platform</value>
+    <value>플랫폼</value>
   </data>
   <data name="ProjectManager.Info.Popup" xml:space="preserve">
-    <value>Play in popup</value>
+    <value>팝업에서 재생</value>
   </data>
   <data name="ProjectManager.Info.PostBuildCmdLine" xml:space="preserve">
-    <value>Post-Build Command Line</value>
+    <value>Post빌드 명령줄</value>
   </data>
   <data name="ProjectManager.Info.PreBuildCmdLine" xml:space="preserve">
-    <value>Pre-Build Command Line</value>
+    <value>Pre빌드 명령줄</value>
   </data>
   <data name="ProjectManager.Info.ProjectClasspaths" xml:space="preserve">
-    <value>Project classpaths are relative to the project location.</value>
+    <value>프로젝트 클래스 경로는 프로젝트 위치를 기준으로 합니다.</value>
   </data>
   <data name="ProjectManager.Info.ProjectClasspathsDisabled" xml:space="preserve">
-    <value>Classpaths of {0} projects are determined by the Configuration file.</value>
+    <value>{0} 프로젝트의 클래스 경로는 구성 파일에 의해 결정됩니다.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ProjectDirectory" xml:space="preserve">
-    <value>&lt;Project Directory&gt;</value>
+    <value>&lt;프로젝트 디렉토리&gt;</value>
   </data>
   <data name="ProjectManager.Info.ProjectFileAlreadyExists" xml:space="preserve">
-    <value>The project file already exists. Do you want to overwrite it?</value>
+    <value>프로젝트 파일이 이미 존재합니다. 덮어 쓰시겠습니까?</value>
   </data>
   <data name="ProjectManager.Info.ProjectsFilter" xml:space="preserve">
-    <value>FlashDevelop Projects (*.as2proj,*.as3proj,*.hxproj,*.fdp)|*.as2proj;*.as3proj;*.hxproj;*.fdp|Adobe Flash Builder Project (.actionScriptProperties)|.actionScriptProperties</value>
+    <value>FlashDevelop 프로젝트 (*.as2proj,*.as3proj,*.hxproj,*.fdp)|*.as2proj;*.as3proj;*.hxproj;*.fdp|Adobe Flash Builder 프로젝트 (.actionScriptProperties)|.actionScriptProperties</value>
   </data>
   <data name="ProjectManager.Info.Properties" xml:space="preserve">
-    <value>Properties</value>
+    <value>속성</value>
   </data>
   <data name="ProjectManager.Info.RecursiveCopyDetected" xml:space="preserve">
-    <value>Recursive copy detected.</value>
+    <value>재귀 복사가 감지되었습니다.</value>
   </data>
   <data name="ProjectManager.Info.Release" xml:space="preserve">
     <value>Release</value>
   </data>
   <data name="ProjectManager.Info.SelectClasspathDirectory" xml:space="preserve">
-    <value>Please select a classpath directory.</value>
+    <value>클래스 경로 디렉토리를 선택하십시오.</value>
   </data>
   <data name="ProjectManager.Info.SelectProjectDirectory" xml:space="preserve">
-    <value>Please select the location to place the project directory.</value>
+    <value>프로젝트 디렉토리를 배치 할 위치를 선택하십시오.</value>
   </data>
   <data name="ProjectManager.Info.SettingsCouldNotLoad" xml:space="preserve">
-    <value>The Project Manager settings could not be parsed. Your settings will be reset to default values.</value>
+    <value>프로젝트 관리자 설정을 구문분석할 수 없습니다. 설정 값은 기본값으로 재설정됩니다.</value>
   </data>
   <data name="ProjectManager.Info.SpecifyCompilerPath" xml:space="preserve">
-    <value>Would you like to open the {0} context settings to configure the compiler?</value>
+    <value>컴파일러를 구성할 {0} 컨텍스트 설정을 여시겠습니까?</value>
   </data>
   <data name="ProjectManager.Info.SpecifyFlex2SDK" xml:space="preserve">
-    <value>The Flex SDK is required to debug this project. Check the AS3 language context settings.</value>
+    <value>Flex SDK가 이 프로젝트를 디버깅하는데 필요합니다. AS3 언어 컨텍스트 설정을 확인하세요.</value>
   </data>
   <data name="ProjectManager.Info.SpecifyInputSwfForInjection" xml:space="preserve">
-    <value>You must specify an input SWF file if you wish to use Code Injection.</value>
+    <value>코드 주입을 사용하고자하는 경우 입력 SWF 파일을 지정해야합니다.</value>
   </data>
   <data name="ProjectManager.Info.SpecifyValidOutputSWF" xml:space="preserve">
-    <value>In order to build this project, you must specify a valid output SWF in the Project Properties.</value>
+    <value>이 프로젝트를 빌드하기 위해, 프로젝트 속성에 유효한 출력 SWF를 지정해야합니다</value>
   </data>
   <data name="ProjectManager.Info.TargetDirNotEmpty" xml:space="preserve">
-    <value>The directory is not empty, are you sure you want to copy the template files there?</value>
+    <value>디렉터리가 비어 있지 않습니다. 템플릿 파일을 복사 하시겠습니까?</value>
   </data>
   <data name="ProjectManager.Info.TargetVersion" xml:space="preserve">
-    <value>&amp;Target:</value>
+    <value>대상:</value>
   </data>
   <data name="ProjectManager.Info.TemplateDirNotFound" xml:space="preserve">
-    <value>The templates directory could not be found. You will not be able to create new projects. You might try reinstalling FlashDevelop.</value>
+    <value>템플릿 디렉토리를 찾을 수 없습니다. 새로운 프로젝트를 만들 수 없습니다. FlashDevelop를 다시 설치하는것을 권장합니다.</value>
   </data>
   <data name="ProjectManager.Info.WillCreate" xml:space="preserve">
-    <value>Will create:</value>
+    <value>생성:</value>
   </data>
   <data name="ProjectManager.Info.WillMoveToRecycleBin" xml:space="preserve">
-    <value>will be moved to the Recycle Bin.</value>
+    <value>(이)가 휴지통으로 이동됩니다.</value>
   </data>
   <data name="ProjectManager.Label.Add" xml:space="preserve">
     <value>추가 (&amp;A)</value>
@@ -2029,7 +2029,7 @@
     <value>프로젝트 (&amp;P)</value>
   </data>
   <data name="ProjectManager.Label.ProjectClasspaths" xml:space="preserve">
-    <value>프로젝트 클래스 경로... (&amp;P)</value>
+    <value>프로젝트 클래스 경로...</value>
   </data>
   <data name="ProjectManager.Label.Properties" xml:space="preserve">
     <value>속성... (&amp;P)</value>
@@ -2053,7 +2053,7 @@
     <value>SWF 파일</value>
   </data>
   <data name="ProjectManager.Label.TestMovie" xml:space="preserve">
-    <value>테스트 프로젝트 (&amp;T)</value>
+    <value>테스트 프로젝트</value>
     <comment>Modified after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.RunProject" xml:space="preserve">
@@ -2366,10 +2366,10 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>주입</value>
   </data>
   <data name="ProjectManager.Info.InputSWF" xml:space="preserve">
-    <value>&amp;Input SWF file:</value>
+    <value>입력 SWF 파일 :</value>
   </data>
   <data name="ProjectManager.Info.UseCodeInjection" xml:space="preserve">
-    <value>&amp;Enable Code Injection</value>
+    <value>코드 주입을 사용 (&amp;E)</value>
   </data>
   <data name="ASCompletion.Description.VerboseFDB" xml:space="preserve">
     <value>플렉스 디버거의 모든 출력을 표시합니다.</value>
@@ -2378,10 +2378,10 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>'('나 ','를 입력 할 때 자동으로 메서드 호출 팁을 표시하지 않기. 여전히 Ctrl+Shift+Space 키를 눌러 메서드 호출 팁을 표시 할 수 있습니다.</value>
   </data>
   <data name="ProjectManager.Description.MissingEntryPoint" xml:space="preserve">
-    <value>In order to build this project, you must mark the AS or MXML entry point as "Document Class" in the project tree.</value>
+    <value>이 프로젝트를 빌드하기 위해, 프로젝트 트리에 "도튜멘트 클래스"로 AS 또는 MXML 진입 점을 표시해야합니다.</value>
   </data>
   <data name="ProjectManager.Description.MissingTarget" xml:space="preserve">
-    <value>In order to build this project, you must mark one or more classes as "Document Class" in the project tree, or turn off the 'UseMain' compiler option.</value>
+    <value>이 프로젝트를 빌드하기 위해, 프로젝트 트리에 "도튜멘트 클래스"로 AS 또는 MXML 진입 점을 표시하거나, 'UseMain' 컴파일러 옵션을 해제해야합니다.</value>
   </data>
   <data name="BookmarkPanel.ColumnHeader.Line" xml:space="preserve">
     <value>줄</value>
@@ -2411,7 +2411,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>즐겨찾기 검색 및 추가</value>
   </data>
   <data name="ProjectManager.Info.OpenDocument" xml:space="preserve">
-    <value>Open document...</value>
+    <value>문서 열기...</value>
   </data>
   <data name="ProjectManager.Label.CustomTestMovieDocument" xml:space="preserve">
     <value>문서:</value>
@@ -2496,7 +2496,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>기본 상태 표시줄을 표시합니다.</value>
   </data>
   <data name="ProjectManager.Description.MinorVersion" xml:space="preserve">
-    <value>Optionally define an explicit Flash player minor version target (like "0.60" for verison "9.0.60").</value>
+    <value>선택적으로 Flash Player의 minor 버전 대상을 정의합니다. (예. "9.0.60" 에는 "0.60")</value>
   </data>
   <data name="FlashDevelop.Label.Debug" xml:space="preserve">
     <value>디버그 (&amp;D)</value>
@@ -2550,7 +2550,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>자동으로 기본 응용 프로그램 설정의 코딩 스타일의 줄 바꿈 옵션에 따라 괄호를 다시 포맷합니다.</value>
   </data>
   <data name="ProjectManager.Description.UseProjectSessions" xml:space="preserve">
-    <value>Uses project related sessions when opening or closing projects.</value>
+    <value>프로젝트를 열거나 닫을때 프로젝트 관련 세션을 사용합니다.</value>
   </data>
   <data name="ASCompletion.Description.LastASVersion" xml:space="preserve">
     <value>자동으로 패키지 / 클래스 선언하지 않은 파일에 적용할 최신 ActionScript 버전을 저장합니다.</value>
@@ -2580,10 +2580,10 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>쉘 메뉴...</value>
   </data>
   <data name="ProjectManager.Description.LinkReport" xml:space="preserve">
-    <value>Generate a file describing symbols which were compiled in the SWF. This file can be used to optimize a module with load-externs compiler option.</value>
+    <value>SWF로 컴파일 된 심볼을 설명하는 파일을 생성합니다. 이 파일은 load-externs 컴파일러 옵션 모듈을 최적화하는데 이용될 수 있습니다.</value>
   </data>
   <data name="ProjectManager.Description.LoadExterns" xml:space="preserve">
-    <value>Specifies a file declaring symbols to omit from linking. This file can be generated using link-report compiler option.</value>
+    <value>링크에서 생략 심볼을 선언하는 파일을 지정합니다. 이 파일은 link-report 컴파일러 옵션을 사용하여 생성 될 수 있습니다.</value>
   </data>
   <data name="FlashDevelop.Description.InsertionTriggers" xml:space="preserve">
     <value>완성 목록 항목의 삽입 문자를 제한하려면 이 옵션을 설정합니다. Tab과 Enter는 이스케이프 처리를 해야합니다 (예. \t \n).</value>
@@ -2880,7 +2880,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>선택한 항목을 찾을 수 없습니다.작업 목록을 새로고침합니다.</value>
   </data>
   <data name="ProjectManager.Description.FilteredDirectoryNames" xml:space="preserve">
-    <value>Directory names to filter when the name for the classpath is being resolved.</value>
+    <value>클래스 경로의 이름이 확인 될 때 필터링할 디렉토리 이름.</value>
   </data>
   <data name="AS2Context.Info.PackageDidntMatchFilePath" xml:space="preserve">
     <value>패키지 '{0}'(이)가 파일 경로와 일치하지 않습니다. 새로운 패키지가 생성됩니다: </value>
@@ -2996,7 +2996,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>'{0}'(을)를 복제중:</value>
   </data>
   <data name="ProjectManager.Info.NewDuplicateName" xml:space="preserve">
-    <value>New name:</value>
+    <value>새 이름:</value>
   </data>
   <data name="HaXeContext.Description.DisableMixedCompletion" xml:space="preserve">
     <value>기본적으로 Haxe 자동 완성 기능은 Haxe 컴파일러와 FlashDevelop 자동 완성으로 작동합니다.</value>
@@ -3180,13 +3180,13 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>제외 된 경로 아래의 작업은 작업 목록에 표시되지 않습니다.</value>
   </data>
   <data name="ProjectManager.Description.StaticLinkRSL" xml:space="preserve">
-    <value>Include Runtime Shared Libraries in the project SWF instead of loading them at run time.</value>
+    <value>런타임시 로드하는 대신의 프로젝트 SWF에 런타임 공유 라이브러리를 포함합니다.</value>
   </data>
   <data name="XMLCompletion.Description.DisableZenCoding" xml:space="preserve">
     <value>HTML Zen Coding 기능을 비활성화 합니다.</value>
   </data>
   <data name="ProjectManager.Description.CompilerConstants" xml:space="preserve">
-    <value>행 당 한 컴파일러 상수를 입력합세요.
+    <value>한 줄에 한 컴파일러 상수를 입력합세요.
 예: NAMESPACE::variable,value</value>
   </data>
   <data name="FlashDevelop.Label.SaveBOM" xml:space="preserve">
@@ -3771,7 +3771,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>SWF로드 또는 언로드 이벤트 등의 자세한 디버깅 정보를 표시합니다.</value>
   </data>
   <data name="ProjectManager.Info.ReservedDirName" xml:space="preserve">
-    <value>Name '{0}' is a reserved directory name.</value>
+    <value>이름 '{0}'은 예약된 디렉토리 이름입니다.</value>
   </data>
   <data name="FlashDebugger.Label.Unwatch" xml:space="preserve">
     <value>감시 삭제</value>
@@ -3792,7 +3792,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>응용 프로그램을 디버깅 할 때, 디버거 패널을 자동으로 표시 또는 숨김.</value>
   </data>
   <data name="ProjectManager.Description.SearchExternalClassPath" xml:space="preserve">
-    <value>Enable searching files in external classpath.</value>
+    <value>외부 클래스 경로의 파일 검색을 활성화 합니다.</value>
   </data>
   <data name="ProjectManager.Label.OpenResource" xml:space="preserve">
     <value>리소스 열기... (&amp;R)</value>
@@ -3805,7 +3805,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>리소스 열기</value>
   </data>
   <data name="ProjectManager.Description.ShowInvalidCSS" xml:space="preserve">
-    <value>Shows a warning when a style property is set in CSS on a component that does not support that property.</value>
+    <value>해당 속성을 지원하지 않는 구성 요소에 CSS에서 스타일 속성이 설정되었을때 경고를 표시합니다.</value>
   </data>
   <data name="SourceControl.Category.GIT" xml:space="preserve">
     <value>GIT</value>
@@ -4495,7 +4495,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Info.UnableToCleanProject" xml:space="preserve">
-    <value>Unable to delete output file</value>
+    <value>출력 파일을 삭제할 수 없습니다</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="BridgeSettings.Info.Description" xml:space="preserve">
@@ -4859,11 +4859,11 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKUseCustom" xml:space="preserve">
-    <value>특정 SDK에 상대 또는 절대 경로.</value>
+    <value>특정 SDK의 상대 또는 절대 경로.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Label.SDKUseGlobal" xml:space="preserve">
-    <value>글로벌하게 구성된 SDK를 사용합니다.</value>
+    <value>메인 설정에서 구성된 SDK를 사용합니다.</value>
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ProjectManager.Info.CheckSDKSettings" xml:space="preserve">
@@ -4871,7 +4871,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 3.3.3</comment>
   </data>
   <data name="ProjectManager.Description.OmitTraces" xml:space="preserve">
-    <value>Remove trace() calls from your code when compiling in release (not debug) mode.</value>
+    <value>Release (Debug가 아닌) 모드에서 컴파일 할 때 사용자 코드에서 trace() 호출을 제거합니다.</value>
     <comment>Added after 3.3.3</comment>
   </data>
   <data name="ProjectManager.Label.DocumentClass" xml:space="preserve">
@@ -4901,11 +4901,11 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Info.NoAssociatedIDE" xml:space="preserve">
-    <value>This target doesn't have an associated external IDE.</value>
+    <value>이 대상은 연결된 외부 IDE를 가지고 있지 않습니다.</value>
     <comment>added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Info.OutputType" xml:space="preserve">
-    <value>Compilation &amp;Target:</value>
+    <value>컴파일 대상:</value>
     <comment>added after 3.3.4</comment>
   </data>
   <data name="ProjectManager.Label.OutputTypeApplication" xml:space="preserve">
@@ -5085,7 +5085,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added for 4.1</comment>
   </data>
   <data name="ProjectManager.Info.NotValidFlashBuilderProject" xml:space="preserve">
-    <value>The selected file was not a valid Flash Builder project</value>
+    <value>선택한 파일이 유효한 Flash Builder 프로젝트가 아닙니다.</value>
     <comment>Added for 4.1</comment>
   </data>
   <data name="CssCompletion.Info.CompletionTagDesc" xml:space="preserve">
@@ -5097,11 +5097,11 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="ProjectManager.Description.TabHighlightColor" xml:space="preserve">
-    <value>Color of the tab highlight strip.</value>
+    <value>탭 하이라이트 스트립에 색상 부여.</value>
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="ProjectManager.Description.TabHighlightType" xml:space="preserve">
-    <value>Type of the tab highlight functionality.</value>
+    <value>탭 하이라이트 기능의 종류.</value>
     <comment>Added after 4.0.4</comment>
   </data>
   <data name="FlashConnect.Description.Commands" xml:space="preserve">
@@ -5169,11 +5169,11 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 4.4.1</comment>
   </data>
   <data name="ProjectManager.Description.InlineFunctions" xml:space="preserve">
-    <value>Inline functions with the [Inline] meta tag (ASC 2.0+).</value>
+    <value>[Inline] 메타태그를 가진 함수를 인라인 합니다 (ASC 2.0+).</value>
     <comment>Added after 4.4.2</comment>
   </data>
   <data name="ProjectManager.Description.WebserverPort" xml:space="preserve">
-    <value>Local Web Server port for running projects using an HTTP server.</value>
+    <value>HTTP 서버를 사용하여 프로젝트를 실행하기위한 로컬 웹 서버 포트.</value>
     <comment>Added after 4.4.2</comment>
   </data>
   <data name="ProjectManager.Label.TestMovieWebserver" xml:space="preserve">
@@ -5461,7 +5461,7 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Description.TrackActiveDocument" xml:space="preserve">
-    <value>Track current active document in Project Tree.</value>
+    <value>프로젝트 트리에서 현재 활성화 된 문서를 추적합니다.</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="ProjectManager.Info.ExtensionChangeWarning" xml:space="preserve">
