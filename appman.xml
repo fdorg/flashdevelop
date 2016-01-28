@@ -328,13 +328,27 @@
 		<Name>AS2 Templates</Name>
 		<Version>1.01</Version>
 		<Build>1</Build>
-		<Desc>AS2 templates for FlashDevelop</Desc>
+		<Desc>Adds archived legacy AS2 templates</Desc>
 		<Group>Extensions</Group>
 		<Info>http://www.flashdevelop.org/wikidocs/</Info>
 		<Urls>
 			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Extensions/AS2Templates/AS2Templates-1.01.fdz</Url>
 		</Urls>
 	</Entry>
+	<!--HD5
+	<Entry>
+		<Id>as3tmpl</Id>
+		<Name>AS3 Templates</Name>
+		<Version>1.00</Version>
+		<Build>1</Build>
+		<Desc>Adds archived legacy AS3 templates</Desc>
+		<Group>Extensions</Group>
+		<Info>http://www.flashdevelop.org/wikidocs/</Info>
+		<Urls>
+			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Extensions/AS3Templates/AS3Templates-1.00.fdz</Url>
+		</Urls>
+	</Entry>
+	HD5-->
 	<!--FD5
 	<Entry>
 		<Id>colorbox</Id>

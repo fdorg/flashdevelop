@@ -41,7 +41,7 @@ namespace FlashDevelop
 
         public MainForm()
         {
-            MainForm.Instance = this;
+            Globals.MainForm = this;
             PluginBase.Initialize(this);
             this.DoubleBuffered = true;
             this.InitializeErrorLog();
@@ -147,7 +147,6 @@ namespace FlashDevelop
         /* Singleton */
         public static Boolean Silent;
         public static Boolean IsFirst;
-        public static MainForm Instance;
         public static String[] Arguments;
 
         #endregion
@@ -1032,6 +1031,8 @@ namespace FlashDevelop
             this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
             this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
             this.Resize += new EventHandler(this.OnMainFormResize);
+
+            ScintillaManager.ConfigurationLoaded += ApplyAllSettings;
         }
 
         #endregion
@@ -1606,7 +1607,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Updates the MainForms title automaticly
+        /// Updates the MainForm's title automatically
         /// </summary>
         public void OnUpdateMainFormDialogTitle()
         {
@@ -1681,11 +1682,58 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Adjusts the image for different themes
+        /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
+        /// </summary>
+        public Image FindImage(String data)
+        {
+            return FindImage(data, true);
+        }
+
+        /// <summary>
+        /// Finds the specified composed/ready image.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
+        /// </summary>
+        public Image FindImage(String data, Boolean autoAdjusted)
+        {
+            try
+            {
+                lock (this)
+                {
+                    return ImageManager.GetComposedBitmap(data, autoAdjusted);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns a copy of the specified image that has its color adjusted.
         /// </summary>
         public Image ImageSetAdjust(Image image)
         {
-            return ImageManager.AdjustImage(image);
+            return ImageManager.SetImageAdjustment(image);
+        }
+
+        /// <summary>
+        /// Gets a copy of the image that gets automatically adjusted according to the theme.
+        /// </summary>
+        public Image GetAutoAdjustedImage(Image image)
+        {
+            return ImageManager.GetAutoAdjustedImage(image);
+        }
+
+        /// <summary>
+        /// Adjusts all images for different themes.
+        /// </summary>
+        public void AdjustAllImages()
+        {
+            ImageManager.AdjustAllImages();
         }
 
         /// <summary>
@@ -1829,25 +1877,6 @@ namespace FlashDevelop
         public void ApplySecondaryShortcut(ToolStripItem item)
         {
             ShortcutManager.ApplySecondaryShortcut(item);
-        }
-
-        /// <summary>
-        /// Finds the specified composed/ready image
-        /// </summary>
-        public Image FindImage(String data)
-        {
-            try
-            {
-                lock (this)
-                {
-                    return ImageManager.GetComposedBitmap(data);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-                return null;
-            }
         }
 
         /// <summary>
@@ -2825,7 +2854,7 @@ namespace FlashDevelop
         /// </summary>
         public void ShowSettings(Object sender, System.EventArgs e)
         {
-            SettingDialog.Show("FlashDevelop", "");
+            SettingDialog.Show(DistroConfig.DISTRIBUTION_NAME, "");
         }
 
         /// <summary>
@@ -4046,10 +4075,10 @@ namespace FlashDevelop
         {
             try
             {
-                String dirMarker = "\\FlashDevelop\\";
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.AddExtension = true; sfd.DefaultExt = "fdz";
                 sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
                 if (sfd.ShowDialog(this) == DialogResult.OK)
                 {
                     List<String> settingFiles = new List<String>();

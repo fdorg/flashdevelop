@@ -25,12 +25,21 @@ namespace PluginCore.Localization
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());
             }
             prefix = Assembly.GetCallingAssembly().GetName().Name;
+            // On different distro we need to use FlashDevelop prefix
+            if (prefix == DistroConfig.DISTRIBUTION_NAME) prefix = "FlashDevelop";
             result = resourceManager.GetString(prefix + "." + key);
             if (result == null) result = resourceManager.GetString(key);
             if (result == null)
             {
                 TraceManager.Add("No localized string found: " + key);
                 result = String.Empty;
+            }
+            // Replace FlashDevelop with distro name if needed
+            if (DistroConfig.DISTRIBUTION_NAME != "FlashDevelop")
+            {
+                #pragma warning disable CS0162 // Unreachable code detected
+                result = result.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME);
+                #pragma warning restore CS0162 // Unreachable code detected
             }
             return result;
         }

@@ -1,65 +1,65 @@
-diff -r 1092d3d24959 include/SciLexer.h
---- a/include/SciLexer.h	Tue Jan 15 09:51:15 2013 +1100
-+++ b/include/SciLexer.h	Wed Feb 06 22:13:27 2013 +0100
-@@ -161,6 +161,9 @@
- #define SCE_C_TRIPLEVERBATIM 21
- #define SCE_C_HASHQUOTEDSTRING 22
- #define SCE_C_PREPROCESSORCOMMENT 23
-+#define SCE_C_WORD3 24
-+#define SCE_C_WORD4 25
-+#define SCE_C_WORD5 26
+diff --git a/include/SciLexer.h b/include/SciLexer.h
+--- a/include/SciLexer.h
++++ b/include/SciLexer.h
+@@ -177,6 +177,9 @@
+ #define SCE_C_USERLITERAL 25
+ #define SCE_C_TASKMARKER 26
+ #define SCE_C_ESCAPESEQUENCE 27
++#define SCE_C_WORD3 100
++#define SCE_C_WORD4 101
++#define SCE_C_WORD5 102
  #define SCE_D_DEFAULT 0
  #define SCE_D_COMMENT 1
  #define SCE_D_COMMENTLINE 2
-diff -r 1092d3d24959 lexers/LexCPP.cxx
---- a/lexers/LexCPP.cxx	Tue Jan 15 09:51:15 2013 +1100
-+++ b/lexers/LexCPP.cxx	Wed Feb 06 22:13:27 2013 +0100
-@@ -247,6 +247,9 @@
-             "Documentation comment keywords",
+diff --git a/lexers/LexCPP.cxx b/lexers/LexCPP.cxx
+--- a/lexers/LexCPP.cxx
++++ b/lexers/LexCPP.cxx
+@@ -353,6 +353,9 @@
              "Global classes and typedefs",
              "Preprocessor definitions",
+             "Task marker and error marker keywords",
 +            "Extended(1) keywords and identifiers",
 +            "Extended(2) keywords and identifiers",
 +            "Extended(3) keywords and identifiers",
              0,
  };
  
-@@ -323,6 +326,9 @@
+@@ -443,6 +446,9 @@
  	WordList keywords2;
  	WordList keywords3;
  	WordList keywords4;
-+    WordList keywords5;
-+    WordList keywords6;
-+    WordList keywords7;
++	WordList keywords5;
++	WordList keywords6;
++	WordList keywords7;
  	WordList ppDefinitions;
- 	std::map<std::string, std::string> preprocessorDefinitionsStart;
- 	OptionsCPP options;
-@@ -411,6 +417,15 @@
- 	case 4:
+ 	WordList markerList;
+ 	struct SymbolValue {
+@@ -587,6 +593,15 @@
  		wordListN = &ppDefinitions;
  		break;
-+    case 5:
-+        wordListN = &keywords5;
-+        break;
-+    case 6:
-+        wordListN = &keywords6;
-+        break;
-+    case 7:
-+        wordListN = &keywords7;
-+        break;
+ 	case 5:
++		wordListN = &keywords5;
++		break;
++	case 6:
++		wordListN = &keywords6;
++		break;
++	case 7:
++		wordListN = &keywords7;
++		break;
++	case 8:
+ 		wordListN = &markerList;
+ 		break;
  	}
- 	int firstModification = -1;
- 	if (wordListN) {
-@@ -605,6 +620,12 @@
+@@ -809,6 +824,12 @@
  						sc.ChangeState(SCE_C_WORD2|activitySet);
  					} else if (keywords4.InList(s)) {
  						sc.ChangeState(SCE_C_GLOBALCLASS|activitySet);
 +					} else if (keywords5.InList(s)) {
-+                        sc.ChangeState(SCE_C_WORD3|activitySet);
-+                    } else if (keywords6.InList(s)) {
-+                        sc.ChangeState(SCE_C_WORD4|activitySet);
-+                    } else if (keywords7.InList(s)) {
-+                        sc.ChangeState(SCE_C_WORD5|activitySet);
- 					}
- 					const bool literalString = sc.ch == '\"';
- 					if (literalString || sc.ch == '\'') {
++						sc.ChangeState(SCE_C_WORD3|activitySet);
++					} else if (keywords6.InList(s)) {
++						sc.ChangeState(SCE_C_WORD4|activitySet);
++					} else if (keywords7.InList(s)) {
++						sc.ChangeState(SCE_C_WORD5|activitySet);
+ 					} else {
+ 						int subStyle = classifierIdentifiers.ValueFor(s);
+ 						if (subStyle >= 0) {
