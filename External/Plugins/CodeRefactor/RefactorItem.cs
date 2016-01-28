@@ -23,8 +23,8 @@ namespace CodeRefactor
         public RefactorItem(ToolStripItem item)
         {
             this.item = item;
-            label = Regex.Replace(item.Text, "[&.]", string.Empty);
-            description = TextHelper.GetString("Label.Refactor").Replace("&", string.Empty);
+            label = TextHelper.RemoveMnemonicsAndEllipsis(item.Text);
+            description = TextHelper.GetStringWithoutMnemonics("Label.Refactor");
             icon = (Bitmap) (item.Image ?? PluginBase.MainForm.FindImage("452")); //452 or 473
         }
 

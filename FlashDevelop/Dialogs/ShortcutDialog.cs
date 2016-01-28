@@ -236,7 +236,7 @@ namespace FlashDevelop.Dialogs
             this.infoLabel.Text = TextHelper.GetString("Info.ShortcutEditInfo");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
             this.viewCustom.Text = TextHelper.GetString("Label.ViewCustom");
-            this.searchLabel.Text = TextHelper.GetString("Label.Search").Replace("&", "") + ":";
+            this.searchLabel.Text = TextHelper.GetStringWithoutMnemonics("Label.Search") + ":";
             this.Text = " " + TextHelper.GetString("Title.Shortcuts");
         }
 

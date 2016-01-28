@@ -691,7 +691,7 @@ namespace ASCompletion
                 image = pluginUI.GetIcon(PluginUI.ICON_CHECK_SYNTAX);
                 button = new ToolStripButton(image);
                 button.Name = "CheckSyntax";
-                button.ToolTipText = TextHelper.GetString("Label.CheckSyntax").Replace("&", "");
+                button.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.CheckSyntax");
                 button.Click += new EventHandler(CheckSyntax);
                 PluginBase.MainForm.RegisterSecondaryItem("FlashToolsMenu.CheckSyntax", button);
                 toolStrip.Items.Add(button);

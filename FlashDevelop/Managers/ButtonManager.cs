@@ -326,7 +326,7 @@ namespace FlashDevelop.Managers
                     }
                     else
                     {
-                        String name = TextHelper.GetString("Label.8Bits").Replace("&", "");
+                        String name = TextHelper.GetStringWithoutMnemonics("Label.8Bits");
                         return name + " (" + info.Charset + ")";
                     }
                 }
@@ -360,7 +360,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static String GetLabelAsPlainText(String name, Boolean unicode, Boolean hasBOM)
         {
-            String label = TextHelper.GetString(name).Replace("&", "");
+            String label = TextHelper.GetStringWithoutMnemonics(name);
             if (unicode) label = "Unicode (" + label.ToLower() + ")";
             return hasBOM ? label + " (BOM)" : label;
         }
