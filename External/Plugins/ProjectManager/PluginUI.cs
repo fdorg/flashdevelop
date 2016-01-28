@@ -239,7 +239,14 @@ namespace ProjectManager
                     if (Rename(oldName, newName))
                     {
                         PluginBase.MainForm.OpenEditableDocument(newName);
-                        File.Delete(oldName);
+                        try
+                        {
+                            File.Delete(oldName);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
                     else e.CancelEdit = true;
                 }
