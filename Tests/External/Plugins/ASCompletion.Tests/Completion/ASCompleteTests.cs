@@ -4,67 +4,17 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using ASCompletion.TestUtils;
-using FlashDevelop;
 using HaXeContext;
 using NSubstitute;
 using NUnit.Framework;
-using PluginCore;
-using ScintillaNet;
-using ScintillaNet.Enums;
 
 //TODO: Sadly most of ASComplete is currently untestable in a proper way. Work on this branch solves it: https://github.com/Neverbirth/flashdevelop/tree/completionlist
 
 namespace ASCompletion.Completion
 {
     [TestFixture]
-    public class ASCompleteTests
+    public class ASCompleteTests : ScintillaTest
     {
-        private MainForm mainForm;
-        private ISettings settings;
-        private ITabbedDocument doc;
-
-        [TestFixtureSetUp]
-        public void FixtureSetUp()
-        {
-            mainForm = new MainForm();
-            settings = Substitute.For<ISettings>();
-            settings.UseTabs = true;
-            settings.IndentSize = 4;
-            settings.SmartIndentType = SmartIndent.CPP;
-            settings.TabIndents = true;
-            settings.TabWidth = 4;
-            doc = Substitute.For<ITabbedDocument>();
-            mainForm.Settings = settings;
-            mainForm.CurrentDocument = doc;
-            mainForm.StandaloneMode = false;
-            PluginBase.Initialize(mainForm);
-            FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
-        }
-
-        [TestFixtureTearDown]
-        public void FixtureTearDown()
-        {
-            settings = null;
-            doc = null;
-            mainForm.Dispose();
-            mainForm = null;
-        }
-
-        private ScintillaControl GetBaseScintillaControl()
-        {
-            return new ScintillaControl
-            {
-                Encoding = System.Text.Encoding.UTF8,
-                CodePage = 65001,
-                Indent = settings.IndentSize,
-                Lexer = 3,
-                StyleBits = 7,
-                IsTabIndents = settings.TabIndents,
-                IsUseTabs = settings.UseTabs,
-                TabWidth = settings.TabWidth
-            };
-        }
-
         // TODO: Add more tests!
         public class GetExpressionType : ASCompleteTests
         {
@@ -187,9 +137,7 @@ namespace ASCompletion.Completion
                 sci.Text = text;
                 sci.ConfigurationLanguage = "as3";
 
-                var coma = ASComplete.DisambiguateComa(sci, text.Length, 0);
-
-                return coma;
+                return ASComplete.DisambiguateComa(sci, text.Length, 0);
             }
 
             [Test, TestCaseSource("DisambiguateComaHaxeTestCases")]
@@ -201,9 +149,7 @@ namespace ASCompletion.Completion
                 sci.Text = text;
                 sci.ConfigurationLanguage = "haxe";
 
-                var coma = ASComplete.DisambiguateComa(sci, text.Length, 0);
-
-                return coma;
+                return ASComplete.DisambiguateComa(sci, text.Length, 0);
             }
         }
     }
