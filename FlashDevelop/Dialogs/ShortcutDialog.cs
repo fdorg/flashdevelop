@@ -204,9 +204,9 @@ namespace FlashDevelop.Dialogs
             using (var imageList = new ImageList())
             {
                 imageList.ColorDepth = ColorDepth.Depth32Bit;
-                imageList.ImageSize = new Size(16, 16);
-                imageList.Images.Add(ScaleHelper.Scale((Bitmap) Globals.MainForm.FindImage("229", false)));
-                imageList.Images.Add(ScaleHelper.Scale((Bitmap) Globals.MainForm.FindImage("153", false)));
+                imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
+                imageList.Images.Add(Globals.MainForm.FindImage("229", false));
+                imageList.Images.Add(Globals.MainForm.FindImage("153", false));
                 this.pictureBox.Image = imageList.Images[0];
                 this.clearButton.Image = imageList.Images[1];
             }
@@ -408,6 +408,7 @@ namespace FlashDevelop.Dialogs
             else if (!ToolStripManager.IsValidShortcut(shortcut)) return;
 
             if (item.Custom == shortcut) return;
+            var oldShortcut = item.Custom;
             item.Custom = shortcut;
             item.Selected = true;
             this.GetConflictItems(item);
@@ -415,12 +416,18 @@ namespace FlashDevelop.Dialogs
             {
                 string text = TextHelper.GetString("Info.ShortcutIsAlreadyUsed");
                 string caption = TextHelper.GetString("Title.WarningDialog");
-                if (MessageBox.Show(Globals.MainForm, text, " " + caption, MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Yes)
+                switch (MessageBox.Show(Globals.MainForm, text, " " + caption, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning))
                 {
-                    this.filterTextBox.Text = ViewConflictsKey + item.KeysString;
-                    this.filterTextBox.SelectAll();
+                    case DialogResult.Abort:
+                        item.Custom = oldShortcut;
+                        this.GetConflictItems(item);
+                        break;
+                    case DialogResult.Retry:
+                        this.filterTextBox.Text = ViewConflictsKey + item.KeysString;
+                        this.filterTextBox.SelectAll();
+                        this.filterTextBox.Focus(); // Set focus to filter...
+                        break;
                 }
-                this.filterTextBox.Focus(); // Set focus to filter...
             }
         }
         
