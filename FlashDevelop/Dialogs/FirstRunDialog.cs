@@ -151,7 +151,7 @@ namespace FlashDevelop.Dialogs
                 if (!File.Exists(FileNameHelper.SettingData))
                 {
                     SettingObject settings = SettingObject.GetDefaultSettings();
-                    MainForm.Instance.AppSettings = settings;
+                    Globals.MainForm.AppSettings = settings;
                 }
                 Globals.Settings.LatestCommand = this.commands.LatestCommand;
                 this.Close();

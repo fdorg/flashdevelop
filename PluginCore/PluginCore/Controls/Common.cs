@@ -28,7 +28,7 @@ namespace System.Windows.Forms
         }
 
         /// <summary>
-        /// Makes the control spring automaticly
+        /// Makes the control spring automatically
         /// </summary>
         public override Size GetPreferredSize(Size constrainingSize)
         {
@@ -100,7 +100,7 @@ namespace System.Windows.Forms
         }
 
         /// <summary>
-        /// Makes the control spring automaticly
+        /// Makes the control spring automatically
         /// </summary>
         public override Size GetPreferredSize(Size constrainingSize)
         {

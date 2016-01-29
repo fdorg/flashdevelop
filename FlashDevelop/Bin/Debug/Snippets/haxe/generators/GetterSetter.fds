@@ -1,7 +1,7 @@
-$(BlankLine)$(Modifiers)function get_$(Name)():$(Type) $(CSLB){
+$(BlankLine)<<$(Modifiers) >>function get_$(Name)():$(Type) $(CSLB){
 	return $(Member)$(EntryPoint);
 }
 
-$(Modifiers)function set_$(Name)(value:$(Type)):$(Type) $(CSLB){
+<<$(Modifiers) >>function set_$(Name)(value:$(Type)):$(Type) $(CSLB){
 	return $(Member) = value;
 }

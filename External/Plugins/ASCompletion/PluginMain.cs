@@ -99,7 +99,7 @@ namespace ASCompletion
         }
 
         [Browsable(false)]
-        public Object Settings
+        public virtual Object Settings
         {
             get { return settingObject; }
         }
@@ -108,13 +108,13 @@ namespace ASCompletion
         #region Plugin Properties
 
         [Browsable(false)]
-        public PluginUI Panel
+        public virtual PluginUI Panel
         {
             get { return pluginUI; }
         }
 
         [Browsable(false)]
-        public string DataPath
+        public virtual string DataPath
         {
             get { return dataPath; }
         }
@@ -126,7 +126,7 @@ namespace ASCompletion
         /**
         * Initializes the plugin
         */
-        public void Initialize()
+        public virtual void Initialize()
         {
             try
             {
@@ -576,13 +576,13 @@ namespace ASCompletion
         * Gets the PluginSettings
         */
         [Browsable(false)]
-        public GeneralSettings PluginSettings
+        public virtual GeneralSettings PluginSettings
         {
             get { return settingObject; }
         }
 
         [Browsable(false)]
-        public List<ToolStripItem> MenuItems
+        public virtual List<ToolStripItem> MenuItems
         {
             get { return menuItems; }
         }

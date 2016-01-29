@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
+using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Helpers;
@@ -140,7 +141,7 @@ namespace FlashDevelop.Dialogs
             foreach (String file in files)
             {
                 String arguments = "bak;" + file;
-                MainForm.Instance.CallCommand("NewFromTemplate", arguments);
+                PluginBase.MainForm.CallCommand("NewFromTemplate", arguments);
             }
             String message = TextHelper.GetString("Info.DeleteFilesAlso");
             String caption = " " + TextHelper.GetString("Title.ConfirmDialog");

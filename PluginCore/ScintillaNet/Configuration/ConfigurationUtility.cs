@@ -90,10 +90,13 @@ namespace ScintillaNet.Configuration
                         String tabContent = overriding.Replace("\n", "\n\t\t\t");
                         Int32 indexStart = original.IndexOf(coloringStart);
                         Int32 indexEnd = original.IndexOf(coloringEnd);
-                        String replaceTarget = original.Substring(indexStart, indexEnd - indexStart + coloringEnd.Length);
-                        String finalContent = original.Replace(replaceTarget, tabContent);
-                        File.WriteAllText(filename, finalContent);
-                        File.Delete(filename + ".override");
+                        if (indexStart > -1)
+                        {
+                            String replaceTarget = original.Substring(indexStart, indexEnd - indexStart + coloringEnd.Length);
+                            String finalContent = original.Replace(replaceTarget, tabContent);
+                            File.WriteAllText(filename, finalContent);
+                            File.Delete(filename + ".override");
+                        }
                     }
                     catch { /* NO ERRORS... */ }
                 }
