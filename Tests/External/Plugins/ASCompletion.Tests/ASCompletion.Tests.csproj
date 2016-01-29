@@ -113,7 +113,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="TestUtils\ContextExtensions.cs" />
-    <Compile Include="TestUtils\TestFile.cs" />
+    <Compile Include="TestUtils\File\TestFile.cs" />
+    <Compile Include="TestUtils\File\TestFilePathInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
