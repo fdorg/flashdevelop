@@ -1012,7 +1012,7 @@ namespace ProjectManager
                 case ProjectManagerUIStatus.NotBuilding:
                     DisabledForBuild = false;
                     menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text =
-                        TextHelper.GetString("Label.BuildProject").Replace("&", "");
+                        TextHelper.GetStringWithoutMnemonics("Label.BuildProject");
                     PluginBase.MainForm.ApplySecondaryShortcut(menuButton);
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.Gear.Img;
                     break;
