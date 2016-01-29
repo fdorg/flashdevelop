@@ -11,12 +11,12 @@ namespace ASCompletion.TestUtils.File
 
         public string DestinationFile { get; private set; }
 
-        public TestFile(QualifiedFilePathInfo pathInfo, string resourceFile, string destinationFile = null)
+        public TestFile(string resourceFile, string destinationFile = null)
         {
-            ResourceFile = pathInfo.GetPath(resourceFile);
+            ResourceFile = resourceFile;
             DestinationFile = destinationFile ?? GetTempFileName(ResourceFile);
 
-            System.IO.File.WriteAllBytes(DestinationFile, ReadAllBytes(pathInfo, resourceFile));
+            System.IO.File.WriteAllBytes(DestinationFile, ReadAllBytes(ResourceFile));
         }
 
         private static string GetTempFileName(string baseFileName)
@@ -31,22 +31,21 @@ namespace ASCompletion.TestUtils.File
                 System.IO.File.Delete(DestinationFile);
         }
 
-        public static string ReadAllText(QualifiedFilePathInfo pathInfo, string resourceFile)
+        public static string ReadAllText(string resourceFile)
         {
-            return ReadAllText(pathInfo, resourceFile, Encoding.UTF8);
+            return ReadAllText(resourceFile, Encoding.UTF8);
         }
 
-        public static string ReadAllText(QualifiedFilePathInfo pathInfo, string resourceFile, Encoding encoding)
+        public static string ReadAllText(string resourceFile, Encoding encoding)
         {
-            return encoding.GetString(ReadAllBytes(pathInfo, resourceFile));
+            return encoding.GetString(ReadAllBytes(resourceFile));
         }
 
-        private static byte[] ReadAllBytes(QualifiedFilePathInfo pathInfo, string resourceFile)
+        private static byte[] ReadAllBytes(string resourceFile)
         {
             var asm = Assembly.GetExecutingAssembly();
-            string path = pathInfo.GetPath(resourceFile);
 
-            using (var stream = asm.GetManifestResourceStream(path))
+            using (var stream = asm.GetManifestResourceStream(resourceFile))
             {
                 byte[] buffer = new byte[stream.Length];
                 stream.Read(buffer, 0, buffer.Length);

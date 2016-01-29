@@ -104,7 +104,7 @@ namespace ASCompletion.Completion
                                 }
                             }, 0, 0)
                             .Returns(
-                                TestFile.ReadAllText(pathInfo.AS3(), "FieldFromParameterEmptyBody"))
+                                TestFile.ReadAllText(pathInfo.AS3("FieldFromParameterEmptyBody")))
                             .SetName("PublicScopeWithEmptyBody");
 
                         yield return new TestCaseData(Visibility.Public,
@@ -128,11 +128,11 @@ namespace ASCompletion.Completion
                                 }
                             }, 0, 0)
                             .Returns(
-                                TestFile.ReadAllText(pathInfo.AS3(), "FieldFromParameterWithSuperConstructor"))
+                                TestFile.ReadAllText(pathInfo.AS3("FieldFromParameterWithSuperConstructor")))
                             .SetName("PublicScopeWithSuperConstructor");
 
                         yield return new TestCaseData(Visibility.Public,
-                            TestFile.ReadAllText(pathInfo.AS3(), "BeforeFieldFromParameterWithSuperConstructorMultiLine"),
+                            TestFile.ReadAllText(pathInfo.AS3("BeforeFieldFromParameterWithSuperConstructorMultiLine")),
                             new ClassModel
                             {
                                 LineFrom = 1,
@@ -152,11 +152,11 @@ namespace ASCompletion.Completion
                                 }
                             }, 0, 0)
                             .Returns(
-                                TestFile.ReadAllText(pathInfo.AS3(), "FieldFromParameterWithSuperConstructorMultiLine"))
+                                TestFile.ReadAllText(pathInfo.AS3("FieldFromParameterWithSuperConstructorMultiLine")))
                             .SetName("PublicScopeWithSuperConstructorMultiLine");
 
                         yield return new TestCaseData(Visibility.Public,
-                            TestFile.ReadAllText(pathInfo.AS3(), "BeforeFieldFromParameterWithWrongSuperConstructor"),
+                            TestFile.ReadAllText(pathInfo.AS3("BeforeFieldFromParameterWithWrongSuperConstructor")),
                             new ClassModel
                             {
                                 LineFrom = 1,
@@ -176,7 +176,7 @@ namespace ASCompletion.Completion
                                 }
                             }, 0, 0)
                             .Returns(
-                                TestFile.ReadAllText(pathInfo.AS3(), "FieldFromParameterWithWrongSuperConstructor"))
+                                TestFile.ReadAllText(pathInfo.AS3("FieldFromParameterWithWrongSuperConstructor")))
                             .SetName("PublicScopeWithWrongSuperConstructor");
                     }
                 }
@@ -303,10 +303,10 @@ namespace ASCompletion.Completion
                     {
                         yield return new TestCaseData("package generatortest {\r\n\tpublic class ImplementTest{}\r\n}",
                             new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 1 }, GetAs3ImplementInterfaceModel())
-                            .Returns(TestFile.ReadAllText(pathInfo.AS3(), "ImplementInterfaceNoMembers"))
+                            .Returns(TestFile.ReadAllText(pathInfo.AS3("ImplementInterfaceNoMembers")))
                             .SetName("Full");
 
-                        yield return new TestCaseData(TestFile.ReadAllText(pathInfo.AS3(), "BeforeImplementInterfacePublicMemberBehindPrivate"),
+                        yield return new TestCaseData(TestFile.ReadAllText(pathInfo.AS3("BeforeImplementInterfacePublicMemberBehindPrivate")),
                             new ClassModel
                             {
                                 InFile = new FileModel(),
@@ -321,10 +321,10 @@ namespace ASCompletion.Completion
                                 }
                             },
                             GetAs3ImplementInterfaceModel())
-                            .Returns(TestFile.ReadAllText(pathInfo.AS3(), "ImplementInterfacePublicMemberBehindPrivate"))
+                            .Returns(TestFile.ReadAllText(pathInfo.AS3("ImplementInterfacePublicMemberBehindPrivate")))
                             .SetName("FullWithPublicMemberBehindPrivate");
 
-                        yield return new TestCaseData(TestFile.ReadAllText(pathInfo.AS3(), "BeforeImplementInterfaceNoPublicMember"),
+                        yield return new TestCaseData(TestFile.ReadAllText(pathInfo.AS3("BeforeImplementInterfaceNoPublicMember")),
                             new ClassModel
                             {
                                 InFile = new FileModel(),
@@ -340,7 +340,7 @@ namespace ASCompletion.Completion
                                 }
                             },
                             GetAs3ImplementInterfaceModel())
-                            .Returns(TestFile.ReadAllText(pathInfo.AS3(), "ImplementInterfaceNoPublicMember"))
+                            .Returns(TestFile.ReadAllText(pathInfo.AS3("ImplementInterfaceNoPublicMember")))
                             .SetName("FullWithoutPublicMember");
                     }
                 }
@@ -351,7 +351,7 @@ namespace ASCompletion.Completion
                     {
                         yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
                             new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 }, GetHaxeImplementInterfaceModel())
-                            .Returns(TestFile.ReadAllText(pathInfo.Haxe(), "ImplementInterfaceNoMembers"))
+                            .Returns(TestFile.ReadAllText(pathInfo.Haxe("ImplementInterfaceNoMembers")))
                             .SetName("Full");
 
                         yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
@@ -371,7 +371,7 @@ namespace ASCompletion.Completion
                                     }
                                 }
                             })
-                            .Returns(TestFile.ReadAllText(pathInfo.Haxe(), "ImplementInterfaceNoMembersInsertSingleProperty"))
+                            .Returns(TestFile.ReadAllText(pathInfo.Haxe("ImplementInterfaceNoMembersInsertSingleProperty")))
                             .SetName("SingleProperty");
                     }
                 }

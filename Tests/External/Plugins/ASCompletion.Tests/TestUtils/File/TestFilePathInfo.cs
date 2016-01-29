@@ -2,6 +2,8 @@
 {
     public class TestFilePathInfo
     {
+        private const string TEST_FILE_DIR = "Test_Files";
+
         internal readonly string rootNamespace;
         internal readonly string testName;
         
@@ -11,39 +13,25 @@
             this.testName = testName;
         }
 
-        public QualifiedFilePathInfo AS3()
+        public string AS3(string resourceFile)
         {
-            return new QualifiedFilePathInfo(this, Language.AS3);
+            return GetPath(resourceFile, Language.AS3);
         }
 
-        public QualifiedFilePathInfo Haxe()
+        public string Haxe(string resourceFile)
         {
-            return new QualifiedFilePathInfo(this, Language.Haxe);
-        }
-    }
-
-    public class QualifiedFilePathInfo
-    {
-        private const string TEST_FILE_DIR = "Test_Files";
-
-        private readonly Language language;
-        private readonly TestFilePathInfo pathInfo;
-
-        internal QualifiedFilePathInfo(TestFilePathInfo pathInfo, Language language)
-        {
-            this.pathInfo = pathInfo;
-            this.language = language;
+            return GetPath(resourceFile, Language.Haxe);
         }
 
         /// <summary>
         /// Builds a path like
         /// <code>"ASCompletion.Test_Files.generated.as3.FieldFromParameterEmptyBody.as"</code>
         /// </summary>
-        public string GetPath(string resourceFile)
+        private string GetPath(string fileName, Language language)
         {
             return string.Join(".", new[] {
-                pathInfo.rootNamespace, TEST_FILE_DIR, pathInfo.testName,
-                language.Directory, resourceFile, language.Extension });
+                rootNamespace, TEST_FILE_DIR, testName,
+                language.Directory, fileName, language.Extension });
         }
     }
 

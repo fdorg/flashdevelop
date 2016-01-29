@@ -17,7 +17,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_SimpleClass()
             {
-                using (var resourceFile = new TestFile(pathInfo.AS3(), "SimpleClassTest"))
+                using (var resourceFile = new TestFile(pathInfo.AS3("SimpleClassTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new AS3Context.Context();
@@ -47,7 +47,7 @@ namespace ASCompletion.Model
             [Test(Description = "Commit 7c8718c")]
             public void ParseFile_OverrideFunction()
             {
-                using (var resourceFile = new TestFile(pathInfo.AS3(), "OverrideFunctionTest"))
+                using (var resourceFile = new TestFile(pathInfo.AS3("OverrideFunctionTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new AS3Context.Context();
@@ -73,7 +73,7 @@ namespace ASCompletion.Model
             [Test(Description = "Error #617")]
             public void ParseFile_CompletionError()
             {
-                using (var resourceFile = new TestFile(pathInfo.AS3(), "CompletionErrorTest"))
+                using (var resourceFile = new TestFile(pathInfo.AS3("CompletionErrorTest")))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
@@ -101,7 +101,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_IdentifiersWithUnicodeChars()
             {
-                using (var resourceFile = new TestFile(pathInfo.AS3(), "IdentifiersWithUnicodeCharsTest"))
+                using (var resourceFile = new TestFile(pathInfo.AS3("IdentifiersWithUnicodeCharsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new AS3Context.Context(new AS3Context.AS3Settings());
@@ -138,7 +138,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_SimpleClass()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "SimpleClassTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("SimpleClassTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -166,7 +166,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_PrivateClass()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "PrivateClassTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("PrivateClassTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -212,7 +212,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_Interface()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "InterfaceTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("InterfaceTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -272,7 +272,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_ClassImplements()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "ImplementClassTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("ImplementClassTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -296,7 +296,7 @@ namespace ASCompletion.Model
             [Test(Description = "Commit 7c8718c")]
             public void ParseFile_OverrideFunction()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "OverrideFunctionTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("OverrideFunctionTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -322,7 +322,7 @@ namespace ASCompletion.Model
             [Test(Description = "Includes Commit 304ca93")]
             public void ParseFile_TypeDefs()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "TypeDefsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("TypeDefsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -457,7 +457,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_Enums()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "EnumsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("EnumsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -516,7 +516,7 @@ namespace ASCompletion.Model
             [Test(Description = "Constructors doesn't seem to be identified correctly?")]
             public void ParseFile_Abstracts()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "AbstractsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("AbstractsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -562,7 +562,7 @@ namespace ASCompletion.Model
             [Test(Description = "Includes Commit 51938e0")]
             public void ParseFile_Generics()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "GenericsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("GenericsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -720,7 +720,7 @@ namespace ASCompletion.Model
             public void ParseFile_GenericsWithObjectConstraints()
             {
                 using (
-                    var resourceFile = new TestFile(pathInfo.Haxe(), "GenericsObjectConstraintTest"))
+                    var resourceFile = new TestFile(pathInfo.Haxe("GenericsObjectConstraintTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -844,7 +844,7 @@ namespace ASCompletion.Model
             [Test(Description = "Includes Commit a2b92a6")]
             public void ParseFile_Regions()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "RegionsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("RegionsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -894,7 +894,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_Comments()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "CommentsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("CommentsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -930,7 +930,7 @@ namespace ASCompletion.Model
             [Test(Description = "Shows that enum elements are not getting comments currently")]
             public void ParseFile_SpecialClassesComments()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "SpecialClassesCommentsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("SpecialClassesCommentsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -986,7 +986,7 @@ namespace ASCompletion.Model
             [Test(Description = "PR 680")]
             public void ParseFile_RegExLiterals()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "RegExTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("RegExTest")))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
@@ -1011,7 +1011,7 @@ namespace ASCompletion.Model
             [Test(Description = "PR 680")]
             public void ParseFile_MultiLineStrings()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "MultiLineStringsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("MultiLineStringsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1052,7 +1052,7 @@ namespace ASCompletion.Model
             [Test(Description = "PR 680")]
             public void ParseFile_StringWithEscapedChars()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "EscapedStringsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("EscapedStringsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1086,7 +1086,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_Imports()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "ImportTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("ImportTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1119,7 +1119,7 @@ namespace ASCompletion.Model
             [Ignore("Not supported, for now we hope!")]
             public void ParseFile_ImportAliases()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "ImportAliasTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("ImportAliasTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1132,7 +1132,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_AnonymousStructures()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "AnonymousStructuresTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("AnonymousStructuresTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1163,7 +1163,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_FunctionTypes()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "FunctionTypesTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("FunctionTypesTest")))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
@@ -1193,7 +1193,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_FunctionTypesWithSubTypes()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "FunctionTypesWithSubTypesTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("FunctionTypesWithSubTypesTest")))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
@@ -1246,7 +1246,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_MultipleVarsAtOnce()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "MultipleVarsAtOnceTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("MultipleVarsAtOnceTest")))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
@@ -1304,7 +1304,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_ComplexClass()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "ComplexClassTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("ComplexClassTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1508,7 +1508,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_IdentifiersWithUnicodeChars()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "IdentifiersWithUnicodeCharsTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("IdentifiersWithUnicodeCharsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1535,7 +1535,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_NotGeneric()
             {
-                using (var resourceFile = new TestFile(pathInfo.Haxe(), "NotGenericTest"))
+                using (var resourceFile = new TestFile(pathInfo.Haxe("NotGenericTest")))
                 {
                     var plugin = Substitute.For<PluginMain>();
                     plugin.MenuItems.Returns(new List<ToolStripItem>());
