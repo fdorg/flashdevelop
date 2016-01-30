@@ -1404,27 +1404,27 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
-            if (GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
                 return false;
 
             var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION);
-            hc.GetPosition(OnPositionCompletionResult);
+            hc.GetPosition(OnPositionResult);
             return true;
         }
 
-        internal void OnPositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        internal void OnPositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             if (hc.Sci.InvokeRequired)
             {
                 hc.Sci.BeginInvoke((MethodInvoker)delegate
                 {
-                    HandlePositionCompletionResult(hc, result, status); 
+                    HandlePositionResult(hc, result, status); 
                 });
             }
-            else HandlePositionCompletionResult(hc, result, status); 
+            else HandlePositionResult(hc, result, status); 
         }
 
-        private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        private void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {
@@ -1433,6 +1433,8 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.POSITION:
+                    if (result == null) return;
+
                     ASComplete.SaveLastLookupPosition(hc.Sci);
 
                     PluginBase.MainForm.OpenEditableDocument(result.Path, false);
@@ -1462,6 +1464,8 @@ namespace HaXeContext
         /// </summary>
         public override void CheckSyntax()
         {
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
+
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
             var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);

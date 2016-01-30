@@ -372,7 +372,7 @@ namespace AS3Context
 
             viewButton = new ToolStripButton(pluginIcon);
             viewButton.Name = "ShowProfiler";
-            viewButton.ToolTipText = TextHelper.GetString("Label.ViewMenuItem").Replace("&", "");
+            viewButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.ViewMenuItem");
             PluginBase.MainForm.RegisterSecondaryItem("ViewMenu.ShowProfiler", viewButton);
             viewButton.Click += OpenPanel;
         }

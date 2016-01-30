@@ -492,7 +492,7 @@ namespace FlashDevelop.Dialogs
             this.replaceLabel.Text = TextHelper.GetString("Info.ReplaceWith");
             this.findButton.Text = TextHelper.GetString("Label.Find");
             this.cancelButton.Text = TextHelper.GetString("Label.Cancel");
-            this.replaceButton.Text = TextHelper.GetString("Label.Replace").Replace("...", "");
+            this.replaceButton.Text = TextHelper.GetStringWithoutEllipsis("Label.Replace");
             this.lineHeader.Text = TextHelper.GetString("Info.LineHeader");
             this.descHeader.Text = TextHelper.GetString("Info.DescHeader");
             this.pathHeader.Text = TextHelper.GetString("Info.PathHeader");

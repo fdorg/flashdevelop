@@ -153,7 +153,7 @@ namespace ASCompletion
             this.filterLabel.Text = TextHelper.GetString("Info.FindType");
             this.searchButton.ToolTipText = TextHelper.GetString("ToolTip.Search");
             this.refreshButton.ToolTipText = TextHelper.GetString("ToolTip.Refresh");
-            this.rebuildButton.ToolTipText = TextHelper.GetString("Label.RebuildClasspathCache").Replace("&", "");
+            this.rebuildButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.RebuildClasspathCache");
             this.editToolStripMenuItem.Text = TextHelper.GetString("Label.ModelEdit");
             this.exploreToolStripMenuItem.Text = TextHelper.GetString("Label.ModelExplore");
             this.convertToolStripMenuItem.Text = TextHelper.GetString("Label.ModelConvert");

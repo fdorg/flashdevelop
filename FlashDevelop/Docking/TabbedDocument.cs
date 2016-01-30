@@ -517,7 +517,7 @@ namespace FlashDevelop.Docking
         }
 
         /// <summary>
-        /// Automaticly updates the document icon
+        /// Automatically updates the document icon
         /// </summary>
         private void UpdateDocumentIcon(String file)
         {

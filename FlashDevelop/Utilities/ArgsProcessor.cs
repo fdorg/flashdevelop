@@ -271,7 +271,7 @@ namespace FlashDevelop.Utilities
             String CSLB = "$(CSLB)";
             Int32 nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
-            CodingStyle cs = Globals.Settings.CodingStyle;
+            CodingStyle cs = PluginBase.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
             Int32 eolMode = (Int32)Globals.Settings.EOLMode;
             String lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
@@ -326,7 +326,7 @@ namespace FlashDevelop.Utilities
                 String result = args;
                 if (result == null) return String.Empty;
                 result = ProcessCodeStyleLineBreaks(result);
-                if (!Globals.Settings.UseTabs) result = reTabs.Replace(result, new MatchEvaluator(ReplaceTabs));
+                if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, new MatchEvaluator(ReplaceTabs));
                 result = reArgs.Replace(result, new MatchEvaluator(ReplaceVars));
                 if (!dispatch || result.IndexOf('$') < 0) return result;
                 TextEvent te = new TextEvent(EventType.ProcessArgs, result);
@@ -348,7 +348,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static String ReplaceTabs(Match match)
         {
-            return new String(' ', match.Length * Globals.Settings.IndentSize);
+            return new String(' ', match.Length * PluginBase.Settings.IndentSize);
         }
         
         /// <summary>

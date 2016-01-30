@@ -254,8 +254,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         private static String GetStrippedString(String text, Boolean removeWhite)
         {
-            text = text.Replace("&", "");
-            text = text.Replace("...", "");
+            text = TextHelper.RemoveMnemonicsAndEllipsis(text);
             if (removeWhite)
             {
                 text = text.Replace(" ", "");

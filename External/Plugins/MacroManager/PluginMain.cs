@@ -228,7 +228,7 @@ namespace MacroManager
                 {
                     ToolStripButton macroButton = new ToolStripButton();
                     macroButton.Click += new EventHandler(this.MacroMenuItemClick);
-                    macroButton.ToolTipText = macro.Label.Replace("&", "");
+                    macroButton.ToolTipText = TextHelper.RemoveMnemonics(macro.Label);
                     macroButton.Tag = macro;
                     if (!String.IsNullOrEmpty(macro.Image))
                     {

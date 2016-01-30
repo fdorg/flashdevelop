@@ -884,7 +884,7 @@ namespace ProjectManager.Controls
             this.label2.Text = TextHelper.GetString("Info.ProjectClasspaths");
             this.outputTypeLabel.Text = TextHelper.GetString("Info.OutputType");
             this.outputBrowseButton.Text = TextHelper.GetString("Label.Browse");
-            this.groupBox3.Text = TextHelper.GetString("Label.ProjectClasspaths").Replace("...", "");
+            this.groupBox3.Text = TextHelper.GetStringWithoutEllipsis("Label.ProjectClasspaths");
             this.groupBox5.Text = TextHelper.GetString("Info.PostBuildCmdLine");
             this.dimensionsLabel.Text = TextHelper.GetString("Label.Dimensions");
             this.label3.Text = String.Format(TextHelper.GetString("Info.GlobalClasspaths"), "\n");

@@ -186,7 +186,7 @@ namespace ProjectManager.Controls.TreeView
                 Tree.PathToSelect = null;
                 node.EnsureVisible();
                 // if you created a new folder, then label edit it!
-                string label = TextHelper.GetString("Label.NewFolder").Replace("&", "").Replace("...", "");
+                string label = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.NewFolder");
                 if (node.Text.StartsWithOrdinal(label))
                 {
                     node.BeginEdit();
