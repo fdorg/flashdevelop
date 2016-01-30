@@ -231,6 +231,7 @@ namespace FlashDevelop.Dialogs
         {
             var cms = new ContextMenuStrip();
             cms.Font = Globals.Settings.DefaultFont;
+            cms.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             cms.Renderer = new DockPanelStripRenderer(false, false);
             this.removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcutClick);
             this.revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
@@ -257,7 +258,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.Text = TextHelper.GetString("Label.Close");
             this.openButton.Text = TextHelper.GetString("Label.Open");
             this.saveButton.Text = TextHelper.GetString("Label.SaveAs");
-            this.searchLabel.Text = TextHelper.GetString("Label.Search").Replace("&", "") + ":";
+            this.searchLabel.Text = TextHelper.GetStringWithoutMnemonics("Label.Search") + ":";
             this.Text = " " + TextHelper.GetString("Title.Shortcuts");
         }
 

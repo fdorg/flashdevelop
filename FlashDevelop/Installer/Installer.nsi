@@ -5,19 +5,12 @@
 !include "FileAssoc.nsh"
 !include "LogicLib.nsh"
 !include "WordFunc.nsh"
+!include "Config.nsh"
 
 ;--------------------------------
 
 ; Define version info
 !define VERSION "5.1.0"
-
-; Define distro config
-!define DIST_NAME "FlashDevelop"
-!define DIST_COMP "FlashDevelop.org"
-!define DIST_COPY "FlashDevelop.org 2005-2015"
-!define DIST_README "http://www.flashdevelop.org/wikidocs/index.php?title=Getting_Started"
-!define DIST_COMMUNITY "http://www.flashdevelop.org/community/"
-!define DIST_DOCS "http://www.flashdevelop.org/wikidocs/";
 
 ; Installer details
 VIAddVersionKey "CompanyName" "${DIST_COMP}"

@@ -31,7 +31,7 @@ function loadTextDocument(url, callback)
 		{
 			callback(loader.responseText, loader.status);
 		}
-	}
+	};
 	loader.open("GET", url, true);
 	loader.send(null);
 }
@@ -44,7 +44,7 @@ function handleProjectXml(xml)
 	var html = "";
 	var projects = new Array();
 	var nodes = xml.getElementsByTagName("RecentProject");
-	if (nodes.length == 0) html = getLocaleString("recentProjectsNotFound");
+	if (nodes.length === 0) html = getLocaleString("recentProjectsNotFound");
 	for (var i = 0; i < nodes.length; i++)
 	{
 		var name = getNodeText(nodes[i].getElementsByTagName("Name"));
@@ -52,7 +52,7 @@ function handleProjectXml(xml)
 		var path = getNodeText(nodes[i].getElementsByTagName("Path")).replace(/\\/g, "\\\\");
 		var created = getNodeText(nodes[i].getElementsByTagName("Created"));
 		var modified = getNodeText(nodes[i].getElementsByTagName("Modified"));
-		var typeDesc = getProjectType(type); // Decription of project file type...
+		var typeDesc = getProjectType(type); // Description of project file type...
 		html += formatString(projectItemTemplate, name, addSlashes(path), typeDesc, created, modified);
 	}
 	var element = document.getElementById("projectsContent");
@@ -150,7 +150,7 @@ function hideToolTip()
 */
 function getLocaleString(id)
 {
-	var lang = getUrlParameter("l");
+	var lang = getUrlParameter("l") || "en_US";
 	return locale[lang + "." + id] || id;
 }
 
@@ -165,7 +165,7 @@ function getProjectType(extension)
 		case ".as2proj" : return getLocaleString("projectTypeAS2");
 		case ".as3proj" : return getLocaleString("projectTypeAS3");
 		case ".fdproj" : return getLocaleString("projectTypeGeneric");
-		case ".hxproj" : return getLocaleString("projectTypeHaXe");
+		case ".hxproj" : return getLocaleString("projectTypeHaxe");
 		case ".lsproj" : return getLocaleString("projectTypeLoom");
 		default : return getLocaleString("projectTypeUnknown");
 	}

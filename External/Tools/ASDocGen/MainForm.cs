@@ -61,6 +61,11 @@ namespace ASDocGen
         private System.Boolean projectIsModified;
         private System.String[] arguments;
 
+        /**
+        * Static constant for distro name
+        */
+        public static String DISTRO_NAME = "FlashDevelop";
+
         public MainForm(String[] arguments)
         {
             this.LoadSettings();
@@ -632,7 +637,7 @@ namespace ASDocGen
                 if (!File.Exists(local))
                 {
                     String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    String asDocGenDataDir = Path.Combine(userAppDir, @"FlashDevelop\Data\ASDocGen\");
+                    String asDocGenDataDir = Path.Combine(userAppDir, DISTRO_NAME + @"\Data\ASDocGen\");
                     if (!Directory.Exists(asDocGenDataDir)) Directory.CreateDirectory(asDocGenDataDir);
                     return asDocGenDataDir;
                 }
@@ -786,7 +791,7 @@ namespace ASDocGen
             String asdocPath2 = String.Empty;
             String parentDir = Directory.GetParent(this.AppDir).FullName;
             String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            String appManDir = Path.Combine(userAppDir, @"FlashDevelop\Apps\flexsdk");
+            String appManDir = Path.Combine(userAppDir, DISTRO_NAME + @"\Apps\flexsdk");
             if (Directory.Exists(appManDir))
             {
                 String[] versionDirs = Directory.GetDirectories(appManDir);
@@ -801,7 +806,7 @@ namespace ASDocGen
                     }
                 }
             }
-            appManDir = Path.Combine(userAppDir, @"FlashDevelop\Apps\flexairsdk");
+            appManDir = Path.Combine(userAppDir, DISTRO_NAME + @"\Apps\flexairsdk");
             if (Directory.Exists(appManDir))
             {
                 String[] versionDirs = Directory.GetDirectories(appManDir);
@@ -816,7 +821,7 @@ namespace ASDocGen
                     }
                 }
             }
-            appManDir = Path.Combine(userAppDir, @"FlashDevelop\Apps\ascsdk");
+            appManDir = Path.Combine(userAppDir, DISTRO_NAME + @"\Apps\ascsdk");
             if (Directory.Exists(appManDir))
             {
                 String[] versionDirs = Directory.GetDirectories(appManDir);

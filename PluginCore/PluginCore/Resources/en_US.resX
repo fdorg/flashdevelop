@@ -593,7 +593,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Mouse hover tip delay.</value>
   </data>
   <data name="FlashDevelop.Description.IndentSize" xml:space="preserve">
-    <value>Size of the intendation in terms of the width of a space.</value>
+    <value>Size of the indentation in terms of the width of a space.</value>
   </data>
   <data name="FlashDevelop.Description.LatestCommand" xml:space="preserve">
     <value>Version of the latest executed startup command.</value>
@@ -656,7 +656,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Displays the end of line characters as symbols.</value>
   </data>
   <data name="FlashDevelop.Description.ViewIndentationGuides" xml:space="preserve">
-    <value>Displays the intendation lines.</value>
+    <value>Displays the indentation lines.</value>
   </data>
   <data name="FlashDevelop.Description.ViewLineNumbers" xml:space="preserve">
     <value>Displays the margin that contains line numbers.</value>
@@ -779,7 +779,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>All matches are now bookmarked.</value>
   </data>
   <data name="FlashDevelop.Info.NoFileInfoAvailable" xml:space="preserve">
-    <value>The are no file info available.</value>
+    <value>There are no file info available.</value>
   </data>
   <data name="FlashDevelop.Info.NoItemSelected" xml:space="preserve">
     <value>(no item selected)</value>
@@ -1410,7 +1410,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Wraps text output.</value>
   </data>
   <data name="OutputPanel.Info.Description" xml:space="preserve">
-    <value>Adds a output panel for debug messages to FlashDevelop.</value>
+    <value>Adds an output panel for debug messages to FlashDevelop.</value>
   </data>
   <data name="OutputPanel.Label.ClearOutput" xml:space="preserve">
     <value>&amp;Clear Output</value>
@@ -1494,7 +1494,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Prints detailed compile times to the output panel.</value>
   </data>
   <data name="ProjectManager.Description.DeclareOverride" xml:space="preserve">
-    <value>Ensure overriden methods are declared with "override".</value>
+    <value>Ensure overridden methods are declared with "override".</value>
   </data>
   <data name="ProjectManager.Description.Directives" xml:space="preserve">
     <value>Specifies the user-defined compiler directives.</value>
@@ -2135,7 +2135,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Ignore &amp;Entry</value>
   </data>
   <data name="ResultsPanel.Label.ClearIgnoredEntries" xml:space="preserve">
-    <value>Clear &amp;Ignored &amp; Entries</value>
+    <value>Clear &amp;Ignored Entries</value>
   </data>
   <data name="ResultsPanel.Label.ViewMenuItem" xml:space="preserve">
     <value>Results Panel</value>
@@ -2162,9 +2162,9 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Show the start page when all documents are closed instead of untitled document.</value>
   </data>
   <data name="StartPage.Description.ShowStartPageOnStartup" xml:space="preserve">
-    <value>Should the start page show when you open FlashDevelop: 
-Always - FlashDevelop will not restore a session, but instead show the start page. 
-NotRestoringSession - start page will show if FlashDevelop is not restoring a session. 
+    <value>Should the start page show when you open FlashDevelop:
+Always - FlashDevelop will not restore a session, but instead show the start page.
+NotRestoringSession - start page will show if FlashDevelop is not restoring a session.
 Never - the start page will not show based on startup.</value>
   </data>
   <data name="StartPage.Description.UseCustomRssFeed" xml:space="preserve">
@@ -2219,7 +2219,7 @@ Never - the start page will not show based on startup.</value>
     <value>Tasks</value>
   </data>
   <data name="XMLCompletion.Description.CloseTags" xml:space="preserve">
-    <value>Closes the current tag automaticly.</value>
+    <value>Closes the current tag automatically.</value>
   </data>
   <data name="XMLCompletion.Description.EnableXMLCompletion" xml:space="preserve">
     <value>Enables the completion for xml files.</value>
@@ -2553,7 +2553,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Uses project related sessions when opening or closing projects.</value>
   </data>
   <data name="ASCompletion.Description.LastASVersion" xml:space="preserve">
-    <value>Internal: automaticly stored latest ActionScript version detected to apply to files without package/class declarations.</value>
+    <value>Internal: automatically stored latest ActionScript version detected to apply to files without package/class declarations.</value>
   </data>
   <data name="FlashDevelop.Info.FileHeader" xml:space="preserve">
     <value>File</value>
@@ -2820,7 +2820,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Couldn't run the macro. Please check the syntax.</value>
   </data>
   <data name="MacroManager.Info.Description" xml:space="preserve">
-    <value>Adds simple macro capacilities to FlashDevelop.</value>
+    <value>Adds simple macro capabilities to FlashDevelop.</value>
   </data>
   <data name="MacroManager.Info.MacroFilter" xml:space="preserve">
     <value>FlashDevelop Macros (*.fdm)</value>
@@ -2856,7 +2856,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Macros</value>
   </data>
   <data name="MacroManager.Description.AutoRun" xml:space="preserve">
-    <value>Runs the macro automaticly when FlashDevelop starts. If enabled, the menu item will not be shown.</value>
+    <value>Runs the macro automatically when FlashDevelop starts. If enabled, the menu item will not be shown.</value>
   </data>
   <data name="MacroManager.Description.Entries" xml:space="preserve">
     <value>Individual commands of the macro.</value>
@@ -3186,7 +3186,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Disable HTML Zen Coding feature</value>
   </data>
   <data name="ProjectManager.Description.CompilerConstants" xml:space="preserve">
-    <value>Enter one compiler constant per ligne - ie: NAMESPACE::variable,value</value>
+    <value>Enter one compiler constant per line - ie: NAMESPACE::variable,value</value>
   </data>
   <data name="FlashDevelop.Label.SaveBOM" xml:space="preserve">
     <value>&amp;Save Byte Order Mark</value>
@@ -3823,7 +3823,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.SVNPath" xml:space="preserve">
-    <value>PathPath to SVN command line tool. Example: 'svn.exe' if the tool is already installed in the environment path.</value>
+    <value>Path to SVN command line tool. Example: 'svn.exe' if the tool is already installed in the environment path.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.TortoiseGITProcPath" xml:space="preserve">
@@ -3834,10 +3834,10 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Path to TortoiseSVN's TortoiseProc tool. Example: 'TortoiseProc.exe'.</value>
   </data>
   <data name="SourceControl.Info.ConfirmLocalModsDelete" xml:space="preserve">
-    <value>Some elements have local modifications, remove them anyway?</value>
+    <value>Some elements have local modifications. Remove them anyway?</value>
   </data>
   <data name="SourceControl.Info.ConfirmUnversionedDelete" xml:space="preserve">
-    <value>Some elements are not under source control, delete them anyway?</value>
+    <value>Some elements are not under source control. Delete them anyway?</value>
   </data>
   <data name="SourceControl.Info.Description" xml:space="preserve">
     <value>Adds source control integration to FlashDevelop.</value>
@@ -4431,7 +4431,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="SourceControl.Description.EnableHG" xml:space="preserve">
-    <value>Enable Mercurial (HG) integration in FlashDevelop</value>
+    <value>Enable Mercurial (HG) integration in FlashDevelop.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.HGPath" xml:space="preserve">
@@ -4439,7 +4439,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="SourceControl.Description.TortoiseHGProcPath" xml:space="preserve">
-    <value>Path to TortoiseHG's TortoiseProc tool. Example 'thgw.exe'.</value>
+    <value>Path to TortoiseHG's TortoiseProc tool. Example: 'thgw.exe'.</value>
     <comment>Modified after 4.7.1</comment>
   </data>
   <data name="FlashDevelop.Description.CustomShortcuts" xml:space="preserve">
@@ -5242,7 +5242,7 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <comment>Added after 4.4.3</comment>
   </data>
   <data name="FlashDevelop.Description.IndentView" xml:space="preserve">
-    <value>Type of the intendation guide behaviour.</value>
+    <value>Type of the indentation guide behaviour.</value>
     <comment>Added after 4.6.0</comment>
   </data>
   <data name="FlashDebugger.Description.BreakOnThrow" xml:space="preserve">

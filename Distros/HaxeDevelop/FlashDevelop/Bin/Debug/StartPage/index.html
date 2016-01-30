@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Start Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="styles.css" rel="stylesheet" type="text/css" title="styles" media="all" />
+		<script type="text/javascript" language="JavaScript" src="javascript/localization.js"></script>
+		<script type="text/javascript" language="JavaScript" src="javascript/startpage.js"></script>
+		<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,700italic,400italic" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		<div id="tooltip"></div>
+		<div id="wrapper">
+			<div id="title"></div>
+			<div id="links">
+				<a href="javascript:window.external.ShowHome();"><script type="text/javascript">document.write(getLocaleString("mainLinkHome"));</script></a>
+				<a href="javascript:window.external.ShowDocumentation();"><script type="text/javascript">document.write(getLocaleString("mainLinkDocs"));</script></a>
+				<a href="javascript:window.external.ShowReleaseNotes();"><script type="text/javascript">document.write(getLocaleString("mainLinkNotes"));</script></a>
+				<a href="javascript:window.external.ShowAbout();"><script type="text/javascript">document.write(getLocaleString("mainLinkAbout"));</script></a>
+			</div>
+			
+			<div class="section-gray clearfix">
+				<div id="header">
+					<div class="innerContent"><img src="images/haxedevelop.gif" border="0" /></div>
+				</div> 
+				<div id="projects">
+					<div class="innerContent">
+						<h2>
+							<script type="text/javascript">document.write(getLocaleString("recentProjectsTitle"));</script>
+						</h2>
+						<button onclick="javascript:window.external.OpenProjectDialog()" class="button">
+							<script type="text/javascript">document.write(getLocaleString("openProjectDialog"));</script>
+						</button>
+						<button onclick="javascript:window.external.NewProject()" class="button">
+							<script type="text/javascript">document.write(getLocaleString("createNewProject"));</script>
+						</button>
+						
+						<div id="version">
+							<h2><script type="text/javascript">document.write(getLocaleString("versionInfoTitle"));</script></h2>
+							<div id="versionContent">
+								<script type="text/javascript">document.write(getLocaleString("loadingVersionInfo"));</script>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+		
+				<div id="projectslist">
+					<div class="innerContent">
+						<div id="projectsContent">
+							<script type="text/javascript">document.write(getLocaleString("loadingRecentProjects"));</script>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			<div id="news">
+				<div class="innerContent">
+					<h2><div id="rssTitle"></div></h2>
+					<div id="rssContent">
+						<script type="text/javascript">document.write(getLocaleString("loadingRssFeed"));</script>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			window.external.PageReady();
+		</script>
+	</body>
+</html>
+

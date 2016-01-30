@@ -179,7 +179,7 @@ namespace FlashDevelop.Managers
         public static void LoadCustomShortcuts()
         {
             ScintillaControl.InitShortcuts();
-            String file = FileNameHelper.ShortcutData; //PathHelper.ShortcutsDir + "CURRENT";
+            String file = FileNameHelper.ShortcutData;
             if (File.Exists(file))
             {
                 List<Argument> shortcuts = new List<Argument>();
@@ -205,7 +205,7 @@ namespace FlashDevelop.Managers
                     shortcuts.Add(new Argument(item.Id, item.Custom.ToString()));
                 }
             }
-            String file = FileNameHelper.ShortcutData; //PathHelper.ShortcutsDir + "CURRENT";
+            String file = FileNameHelper.ShortcutData;
             ObjectSerializer.Serialize(file, shortcuts);
         }
 

@@ -20,7 +20,7 @@ namespace AppMan.Utilities
             if (!File.Exists(local)) 
             {
                 String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                String fdUserPath = Path.Combine(userAppDir, "FlashDevelop");
+                String fdUserPath = Path.Combine(userAppDir, MainForm.DISTRO_NAME);
                 data = data.Replace("$(BaseDir)", fdUserPath);
             }
             else data = data.Replace("$(BaseDir)", Path.GetDirectoryName(local));

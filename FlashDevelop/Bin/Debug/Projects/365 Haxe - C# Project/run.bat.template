@@ -1,0 +1,11 @@
+@echo off
+cd bin/bin
+if "%1"=="debug" (
+  :: run debug
+  $(ProjectID)-Debug.exe
+)
+else (
+  :: run release
+  $(ProjectID).exe
+)
+pause
