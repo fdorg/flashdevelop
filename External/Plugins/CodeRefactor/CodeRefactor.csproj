@@ -164,9 +164,4 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Controls\MoveDialog.resx">
-      <DependentUpon>MoveDialog.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
 </Project>
