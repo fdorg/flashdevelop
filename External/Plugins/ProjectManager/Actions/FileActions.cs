@@ -3,10 +3,10 @@ using System.Collections;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ProjectManager.Helpers;
 using ProjectManager.Projects;
 
 namespace ProjectManager.Actions

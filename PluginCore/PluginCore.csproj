@@ -309,6 +309,9 @@
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PluginCore\Controls\LineEntryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
       <SubType>Component</SubType>

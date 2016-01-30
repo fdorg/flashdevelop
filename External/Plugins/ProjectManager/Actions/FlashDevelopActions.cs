@@ -2,9 +2,9 @@ using System;
 using System.Text;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Localization;
 using PluginCore.Utilities;
-using ProjectManager.Helpers;
 
 namespace ProjectManager.Actions
 {

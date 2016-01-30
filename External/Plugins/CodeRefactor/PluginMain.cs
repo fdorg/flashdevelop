@@ -11,12 +11,12 @@ using CodeRefactor.Commands;
 using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ProjectManager.Actions;
-using ProjectManager.Helpers;
 
 namespace CodeRefactor
 {

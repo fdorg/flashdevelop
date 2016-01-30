@@ -3404,8 +3404,15 @@ namespace FlashDevelop
             {
                 DateTime dateTime = DateTime.Now;
                 ToolStripItem button = (ToolStripItem)sender;
-                String date = (((ItemData)button.Tag).Tag);
-                String currentDate = dateTime.ToString(date);
+                String format = (((ItemData)button.Tag).Tag);
+                if (String.IsNullOrEmpty(format))
+                {
+                    LineEntryDialog dialog = new LineEntryDialog(TextHelper.GetString("Label.Timestamp").Replace("&", ""), "Format", "g");
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                        format = dialog.Line;
+                    else return;
+                }
+                String currentDate = dateTime.ToString(format);
                 Globals.SciControl.ReplaceSel(currentDate);
             }
             catch (Exception ex)

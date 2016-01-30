@@ -196,9 +196,6 @@
     <Compile Include="Controls\TreeView\SwfFileNode.cs" />
     <Compile Include="Controls\TreeView\WatcherNode.cs" />
     <Compile Include="Helpers\FDProcessRunner.cs" />
-    <Compile Include="Helpers\LineEntryDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Helpers\ProjectCreator.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="PluginUI.cs">
