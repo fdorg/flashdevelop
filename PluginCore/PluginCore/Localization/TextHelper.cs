@@ -99,7 +99,9 @@ namespace PluginCore.Localization
 
         /// <summary>
         /// Removes mnemonics and ellipsis from the specified string.
-        /// Note that Mnemonics are removed first due to strings like "Open... (&amp;O)".
+        /// <para/>
+        /// Internally calls <see cref="TextHelper.RemoveMnemonics(String)"/> on the string
+        /// returned from  <see cref="TextHelper.RemoveEllipsis(String)"/>.
         /// </summary>
         /// <param name="text">A <see cref="String"/> instance to remove mnemonics and ellipsis from.</param>
         public static String RemoveMnemonicsAndEllipsis(String text)
