@@ -39,6 +39,8 @@ namespace CodeRefactor.Controls
         {
             MovingFiles = files;
             InitializeComponent();
+            Font = PluginBase.Settings.DefaultFont;
+            tree.ItemHeight = tree.Font.Height;
             InitializeClasspaths();
             InitializeInput();
             RefreshTree();
