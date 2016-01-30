@@ -14,8 +14,8 @@ namespace FlashDevelop.Dialogs
 {
     public class ShortcutDialog : SmartForm
     {
-        const string ViewConflictsKey = "?"; // TODO: Change the type to char after #969 is merged
-        const string ViewCustomKey = "*"; // TODO: Change the type to char after #969 is merged
+        const char ViewConflictsKey = '?';
+        const char ViewCustomKey = '*';
 
         Timer updateTimer;
         ToolStripMenuItem removeShortcut;
@@ -330,6 +330,8 @@ namespace FlashDevelop.Dialogs
             if (MessageBox.Show(this, text, " " + caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
             {
                 this.filterTextBox.Text = ViewConflictsKey.ToString();
+                this.filterTextBox.SelectAll();
+                this.filterTextBox.Focus();
                 return true;
             }
             return false;
@@ -365,17 +367,17 @@ namespace FlashDevelop.Dialogs
 
         /// <summary>
         /// Reads and removes filter keywords from the start of the filter.
-        /// Order of the keywords is irrelevant.
+        /// The order of the keywords is irrelevant.
         /// </summary>
         static string ExtractFilterKeywords(string filter, ref bool viewCustom, ref bool viewConflicts)
         {
-            if (!viewCustom && filter.StartsWith(ViewCustomKey))
+            if (!viewCustom && filter.Length != 0 && filter[0] == ViewCustomKey)
             {
                 filter = filter.Substring(1);
                 viewCustom = true;
                 return ExtractFilterKeywords(filter, ref viewCustom, ref viewConflicts);
             }
-            if (!viewConflicts && filter.StartsWith(ViewConflictsKey))
+            if (!viewConflicts && filter.Length != 0 && filter[0] == ViewConflictsKey)
             {
                 filter = filter.Substring(1);
                 viewConflicts = true;
@@ -585,14 +587,10 @@ namespace FlashDevelop.Dialogs
 
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                string extension = Path.GetExtension(dialog.FileName);
-                if (extension.Equals(".fda", StringComparison.OrdinalIgnoreCase))
-                {
-                    this.listView.BeginUpdate();
-                    ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
-                    this.UpdateAllShortcutsConflicts();
-                    this.listView.EndUpdate();
-                }
+                this.listView.BeginUpdate();
+                ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
+                this.UpdateAllShortcutsConflicts();
+                this.listView.EndUpdate();
             }
         }
 
