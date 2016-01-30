@@ -1003,6 +1003,7 @@ namespace ASCompletion
             sci.GotoPos(pos);
         }
 
+        // TODO: Refactor, doesn't make a lot of sense to have this feature inside the Panel
         public void SetLastLookupPosition(string file, int line, int column)
         {
             // store location

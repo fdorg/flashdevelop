@@ -1,0 +1,65 @@
+body, html
+{
+  font-size:14px;
+  font-family:"Segoe UI", "Trebuchet MS", Georgia, Arial, sans-serif;
+	padding:0;
+	margin:0;
+}
+h4 
+{
+	font-size: 24px;
+}
+ul 
+{
+	margin: 0px;
+	padding: 0px;
+	margin-left: 3px; 
+}
+a
+{
+  color:#257fc2;
+  text-decoration:none;
+}
+
+a:hover
+{
+  color:#257fc2;
+  text-decoration:underline;
+}
+#header 
+{
+	width: 100%;
+	text-align:center;
+	background:#257fc2 url('../StartPage/images/pattern.png') center top;
+	margin:0;
+}
+#header h3 
+{
+	color: #eea21a;
+}
+#header h3 img
+{
+	margin-right: 5px;	
+	margin-bottom: -3px;
+}
+.innerContent 
+{ 
+	padding: 20px;
+}
+#content 
+{
+	width: 100%;
+}
+#content ul 
+{
+	padding: 5px;
+	padding-bottom: 0px;
+	padding-left: 15px;
+}
+#footer 
+{
+	width: 100%;
+	border-top: 1px dotted grey;
+	padding-top: 11px;
+	margin-top: 11px;
+}

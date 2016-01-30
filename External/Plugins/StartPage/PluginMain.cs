@@ -180,7 +180,7 @@ namespace StartPage
             String version = Application.ProductName.Substring(lenght, Application.ProductName.IndexOf(" for") - lenght);
             String fileWithArgs = "index.html?l=" + localeName + "&v=" + HttpUtility.HtmlEncode(version);
             this.defaultStartPageUrl = Path.Combine(startPageDir, fileWithArgs);
-            this.defaultRssUrl = "http://www.flashdevelop.org/community/rss.php?f=15";
+            this.defaultRssUrl = DistroConfig.DISTRIBUTION_RSS; // Default feed...
             if (!Directory.Exists(dataDir)) Directory.CreateDirectory(dataDir);
             this.settingFilename = Path.Combine(dataDir, "Settings.fdb");
             this.pluginDesc = TextHelper.GetString("Info.Description");

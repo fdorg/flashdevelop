@@ -19,3 +19,4 @@ using System.Resources;
 [assembly: AssemblyVersion("5.0.0.0")]
 [assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)]
 [assembly: InternalsVisibleTo("PluginCore")]
+[assembly: InternalsVisibleTo("ASCompletion.Tests")]

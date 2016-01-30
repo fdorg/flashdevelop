@@ -17,7 +17,7 @@ namespace HaXeContext
 
         #region IContextSettings Documentation
 
-        const string DEFAULT_DOC_COMMAND = "http://www.google.com/search?q=$(ItmTypPkg)+$(ItmTypName)+$(ItmName)+site:http://haxe.org/api";
+        const string DEFAULT_DOC_COMMAND = "http://www.google.com/search?q=$(ItmTypPkg)+$(ItmTypName)+$(ItmName)+site:http://api.haxe.org/";
         protected string documentationCommandLine = DEFAULT_DOC_COMMAND;
 
         [DisplayName("Documentation Command Line")]
