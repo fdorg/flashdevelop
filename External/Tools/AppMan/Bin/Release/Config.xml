@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<!-- Distro directory name -->
+	<Name>FlashDevelop</Name>
+	<!-- Exposed app list groups -->
+	<Groups>FD5</Groups>
 	<!-- Directory where the archives should be stored -->
 	<Archive>$(BaseDir)\Apps</Archive>
 	<!-- Entry config file, can be an URL or a file path -->

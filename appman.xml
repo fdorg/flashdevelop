@@ -58,14 +58,14 @@
 		<Info>http://www.adobe.com/devnet/flex.html</Info>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-19.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-20.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flexairsdk</Id>
 		<Name>Flex SDK + AIR SDK</Name>
-		<Version>4.6.0+19.0.0</Version>
-		<Build>23201B+190</Build>
+		<Version>4.6.0+20.0.0</Version>
+		<Build>23201B+204</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -74,15 +74,15 @@
 		</Bundles>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://airdownload.adobe.com/air/win/download/19.0/AdobeAIRSDK.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-19.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/20.0/AdobeAIRSDK.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-20.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
-		<Version>19.0.0</Version>
-		<Build>190</Build>
+		<Version>20.0.0</Version>
+		<Build>204</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -90,8 +90,8 @@
 			<Bundle>AIR</Bundle>
 		</Bundles>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/19.0/AIRSDK_Compiler.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-19.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/20.0/AIRSDK_Compiler.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-20.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -119,14 +119,14 @@
 		<Group>Compilers</Group>
 		<Info>https://developers.google.com/closure/compiler/</Info>
 		<Urls>
-			<Url>http://dl.google.com/closure-compiler/compiler-20150126.zip</Url>
+			<Url>https://dl.google.com/closure-compiler/compiler-latest.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
-		<Version>19.0.0</Version>
-		<Build>213</Build>
+		<Version>20.0.0</Version>
+		<Build>204</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -135,14 +135,14 @@
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/products/air.html</Info>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/19.0/AdobeAIRInstaller.exe</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/20.0/AdobeAIRInstaller.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
-		<Version>19.0.0</Version>
-		<Build>207</Build>
+		<Version>20.0.0</Version>
+		<Build>228</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -153,52 +153,52 @@
 		</Bundles>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_sa_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/20/flashplayer_20_sa_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashns</Id>
-		<Name>Flash Player (NS)</Name>
-		<Version>19.0.0</Version>
-		<Build>207</Build>
-		<Desc>Debug Flash Player plugin for Netscape browsers</Desc>
+		<Name>Flash Player (NPAPI)</Name>
+		<Version>20.0.0</Version>
+		<Build>235</Build>
+		<Desc>Debug Flash Player plugin for Firefox - NPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>http://download.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_plugin_debug.exe</Url>
+			<Url>http://download.macromedia.com/pub/flashplayer/updaters/20/flashplayer_20_plugin_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
-		<Version>19.0.0</Version>
-		<Build>207</Build>
-		<Desc>Debug Flash Player plugin for Internet Explorer</Desc>
+		<Version>20.0.0</Version>
+		<Build>228</Build>
+		<Desc>Debug Flash Player plugin for Internet Explorer - ActiveX</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ax_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/20/flashplayer_20_ax_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashppapi</Id>
 		<Name>Flash Player (PPAPI)</Name>
-		<Version>19.0.0</Version>
-		<Build>207</Build>
+		<Version>20.0.0</Version>
+		<Build>228</Build>
 		<Desc>Debug Flash Player plugin for Opera and Chromium based applications – PPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/19/flashplayer_19_ppapi_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/20/flashplayer_20_ppapi_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit (x86)</Name>
-		<Version>1.8.15</Version>
+		<Version>1.8.16</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -208,13 +208,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.15.0/TortoiseGit-1.8.15.0-32bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/1.8.16.0/TortoiseGit-1.8.16.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
-		<Version>1.8.15</Version>
+		<Version>1.8.16</Version>
 		<Build>1</Build>
 		<Desc>Git client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -224,13 +224,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>http://download.tortoisegit.org/tgit/1.8.15.0/TortoiseGit-1.8.15.0-64bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/1.8.16.0/TortoiseGit-1.8.16.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows (x86)</Name>
-		<Version>2.6.1</Version>
+		<Version>2.6.3</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -240,13 +240,13 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.1.windows.1/Git-2.6.1-32-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.3.windows.1/Git-2.6.3-32-bit.exe</Url>
 		</Urls>
 	</Entry>
     <Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows (x64)</Name>
-		<Version>2.6.1</Version>
+		<Version>2.6.3</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -256,7 +256,7 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.1.windows.1/Git-2.6.1-64-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.3.windows.1/Git-2.6.3-64-bit.exe</Url>
         </Urls>
 	</Entry>
 	<Entry>
@@ -328,13 +328,27 @@
 		<Name>AS2 Templates</Name>
 		<Version>1.01</Version>
 		<Build>1</Build>
-		<Desc>AS2 templates for FlashDevelop</Desc>
+		<Desc>Adds archived legacy AS2 templates</Desc>
 		<Group>Extensions</Group>
 		<Info>http://www.flashdevelop.org/wikidocs/</Info>
 		<Urls>
 			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Extensions/AS2Templates/AS2Templates-1.01.fdz</Url>
 		</Urls>
 	</Entry>
+	<!--HD5
+	<Entry>
+		<Id>as3tmpl</Id>
+		<Name>AS3 Templates</Name>
+		<Version>1.00</Version>
+		<Build>1</Build>
+		<Desc>Adds archived legacy AS3 templates</Desc>
+		<Group>Extensions</Group>
+		<Info>http://www.flashdevelop.org/wikidocs/</Info>
+		<Urls>
+			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Extensions/AS3Templates/AS3Templates-1.00.fdz</Url>
+		</Urls>
+	</Entry>
+	HD5-->
 	<!--FD5
 	<Entry>
 		<Id>colorbox</Id>

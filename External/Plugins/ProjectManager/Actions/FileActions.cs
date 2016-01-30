@@ -231,7 +231,7 @@ namespace ProjectManager.Actions
         {
             try
             {
-                string label = TextHelper.GetString("Label.NewFolder").Replace("&", "").Replace("...", "");
+                string label = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.NewFolder");
                 string path = Path.Combine(inDirectory, label);
 
                 int i = 2;

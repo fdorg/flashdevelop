@@ -206,10 +206,10 @@ namespace LayoutManager
         /// </summary>
         private void InitializeTexts()
         {
-            this.loadStripButton.ToolTipText = TextHelper.GetString("Label.LoadLayout").Replace("&", "");
-            this.deleteStripButton.ToolTipText = TextHelper.GetString("Label.DeleteLayout").Replace("&", "");
-            this.settingStripButton.ToolTipText = TextHelper.GetString("Label.ShowSettings").Replace("&", "");
-            this.saveStripButton.ToolTipText = TextHelper.GetString("Label.SaveCurrent").Replace("&", "");
+            this.loadStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.LoadLayout");
+            this.deleteStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.DeleteLayout");
+            this.settingStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.ShowSettings");
+            this.saveStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.SaveCurrent");
         }
 
         /// <summary>
