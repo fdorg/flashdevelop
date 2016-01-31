@@ -491,7 +491,7 @@ namespace FlashDevelop.Settings
         }
 
         [DefaultValue(false)]
-        [DisplayName("Automaticly Reload Modified Files")]
+        [DisplayName("Automatically Reload Modified Files")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.AutoReloadModifiedFiles")]
         public Boolean AutoReloadModifiedFiles

@@ -12,6 +12,7 @@ using FlashDevelop.Settings;
 using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
@@ -53,7 +54,7 @@ namespace FlashDevelop.Dialogs
             this.infoLabel.Name = "infoLabel";
             this.infoLabel.Size = new System.Drawing.Size(361, 16);
             this.infoLabel.TabIndex = 0;
-            this.infoLabel.Text = "FlashDevelop is initializing. Please wait...";
+            this.infoLabel.Text = DistroConfig.DISTRIBUTION_NAME + " is initializing. Please wait...";
             this.infoLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // progressBar
@@ -150,7 +151,7 @@ namespace FlashDevelop.Dialogs
                 if (!File.Exists(FileNameHelper.SettingData))
                 {
                     SettingObject settings = SettingObject.GetDefaultSettings();
-                    MainForm.Instance.AppSettings = settings;
+                    Globals.MainForm.AppSettings = settings;
                 }
                 Globals.Settings.LatestCommand = this.commands.LatestCommand;
                 this.Close();

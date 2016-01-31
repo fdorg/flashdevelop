@@ -41,7 +41,7 @@ namespace FlashDevelop
 
         public MainForm()
         {
-            MainForm.Instance = this;
+            Globals.MainForm = this;
             PluginBase.Initialize(this);
             this.DoubleBuffered = true;
             this.InitializeErrorLog();
@@ -147,7 +147,6 @@ namespace FlashDevelop
         /* Singleton */
         public static Boolean Silent;
         public static Boolean IsFirst;
-        public static MainForm Instance;
         public static String[] Arguments;
 
         #endregion
@@ -1032,6 +1031,8 @@ namespace FlashDevelop
             this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
             this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
             this.Resize += new EventHandler(this.OnMainFormResize);
+
+            ScintillaManager.ConfigurationLoaded += ApplyAllSettings;
         }
 
         #endregion
@@ -1606,7 +1607,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Updates the MainForms title automaticly
+        /// Updates the MainForm's title automatically
         /// </summary>
         public void OnUpdateMainFormDialogTitle()
         {
@@ -2044,7 +2045,7 @@ namespace FlashDevelop
         {
             if (this.InvokeRequired)
             {
-                this.BeginInvoke((MethodInvoker)delegate { this.ApplyAllSettings(); });
+                this.BeginInvoke((MethodInvoker) this.ApplyAllSettings);
                 return;
             }
             ShortcutManager.ApplyAllShortcuts();
@@ -2853,7 +2854,7 @@ namespace FlashDevelop
         /// </summary>
         public void ShowSettings(Object sender, System.EventArgs e)
         {
-            SettingDialog.Show("FlashDevelop", "");
+            SettingDialog.Show(DistroConfig.DISTRIBUTION_NAME, "");
         }
 
         /// <summary>
@@ -4074,10 +4075,10 @@ namespace FlashDevelop
         {
             try
             {
-                String dirMarker = "\\FlashDevelop\\";
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.AddExtension = true; sfd.DefaultExt = "fdz";
                 sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
                 if (sfd.ShowDialog(this) == DialogResult.OK)
                 {
                     List<String> settingFiles = new List<String>();

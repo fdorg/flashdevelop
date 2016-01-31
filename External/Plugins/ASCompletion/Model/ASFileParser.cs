@@ -1132,7 +1132,7 @@ namespace ASCompletion.Model
                     hadValue = false;
                     valueLength = 0;
                     valueMember = null;
-                    if (!inParams && !(inConst && context != 0) && c1 != '{') continue;
+                    if (!inParams && !(inConst && context != 0) && c1 != '{' && c1 != ',') continue;
                     else length = 0;
                 }
 
@@ -1189,7 +1189,7 @@ namespace ASCompletion.Model
                     else
                     {
                         // valid chars for identifiers
-                        if (c1 >= 'A' && c1 <= 'Z')
+                        if ((!haXe && char.IsLetter(c1)) || (c1 >= 'A' && c1 <= 'Z'))
                         {
                             addChar = true;
                         }
@@ -1207,7 +1207,7 @@ namespace ASCompletion.Model
                             {
                                 addChar = true;
                             }
-                            // AS3/haXe generics
+                            // AS3/Haxe generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i < len - 3
@@ -1225,7 +1225,7 @@ namespace ASCompletion.Model
                                         }
                                         addChar = true;
                                     }
-                                    else
+                                    else if (foundColon)
                                     {
                                         evalToken = 0;
                                         inGeneric = true;
@@ -1246,7 +1246,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
-                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')'))
+                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
                             {
                                 hadWS = false;
                                 hadDot = false;
@@ -1262,6 +1262,19 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
+                            else if (c1 == ')' && haXe && inType)
+                            {
+                                if (paramParCount > 0)
+                                {
+                                    paramParCount--;
+                                    addChar = true;
+                                }// else inType = false, error? it may depend on the context
+                            }
+                            else if (c1 == '(' && haXe && inType)
+                            {
+                                paramParCount++;
+                                addChar = true;
+                            }
                             else
                             {
                                 evalToken = 2;
@@ -1273,7 +1286,7 @@ namespace ASCompletion.Model
                         {
                             addChar = true;
                         }
-                        // conditional haXe parameter
+                        // conditional Haxe parameter
                         else if (c1 == '?' && haXe && inParams && length == 0)
                         {
                             addChar = true;
@@ -1344,7 +1357,7 @@ namespace ASCompletion.Model
                                     braceCount++; // ignore block
                                 }
                             }
-                            else if (foundColon && haXe && length == 0) // copy haXe anonymous type
+                            else if (foundColon && haXe && length == 0) // copy Haxe anonymous type
                             {
                                 inValue = true;
                                 hadValue = false;
@@ -1428,13 +1441,24 @@ namespace ASCompletion.Model
                         else if (c1 == '(')
                         {
                             if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && (!haXe || curToken.Text != "for"))
-                                if (haXe && curMember != null && valueLength == 0) // haXe properties
+                            {
+                                if (haXe && curMember != null && valueLength == 0)
                                 {
-                                    curMember.Flags -= FlagType.Variable;
-                                    curMember.Flags |= FlagType.Getter | FlagType.Setter;
-                                    context = FlagType.Function;
+                                    if (!foundColon && !inType) // Haxe properties
+                                    {
+                                        curMember.Flags -= FlagType.Variable;
+                                        curMember.Flags |= FlagType.Getter | FlagType.Setter;
+                                        context = FlagType.Function;
+                                    }
+                                    else // Haxe function types with subtypes
+                                    {
+                                        inType = true;
+                                        addChar = true;
+                                        paramParCount++;
+                                    }
                                 }
                                 else context = 0;
+                            }
 
                             // beginning of method parameters
                             if (context == FlagType.Function)
@@ -1524,6 +1548,7 @@ namespace ASCompletion.Model
                         {
                             context = (inEnum) ? FlagType.Enum : 0;
                             inGeneric = false;
+                            inType = false;
                             modifiers = 0;
                             inParams = false;
                             curMember = null;
@@ -1535,6 +1560,7 @@ namespace ASCompletion.Model
                             context = 0;
                             if (inEnum) context = FlagType.Enum;
                             else if (inTypedef) context = FlagType.TypeDef;
+                            else context = FlagType.Variable;
                             modifiers = 0;
                             inParams = false;
                             curMember = curMethod;
@@ -1580,7 +1606,7 @@ namespace ASCompletion.Model
                             }
                         }
 
-                        // haXe signatures: T -> T -> T
+                        // Haxe signatures: T -> T -> T
                         else if (haXe && c1 == '-' && curMember != null)
                         {
                             if (ba[i] == '>' && curMember.Type != null)
@@ -2216,7 +2242,7 @@ namespace ASCompletion.Model
                                 }
                                 else
                                 {
-                                    //TODO  Error: AS3 & haXe classes are qualified by their package declaration
+                                    //TODO  Error: AS3 & Haxe classes are qualified by their package declaration
                                 }
                             }
 
@@ -2368,7 +2394,7 @@ namespace ASCompletion.Model
                         break;
 
                     case FlagType.Variable:
-                        // haXe signatures: T -> T
+                        // Haxe signatures: T -> T
                         if (haXe && curMember != null && curMember.Type != null
                             && curMember.Type.EndsWith("->"))
                         {

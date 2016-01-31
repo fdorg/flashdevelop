@@ -416,7 +416,7 @@ namespace BasicCompletion
         }
 
         /// <summary>
-        /// Shows the completion list automaticly after typing three chars
+        /// Shows the completion list automatically after typing three chars
         /// </summary>
         private void SciControlCharAdded(ScintillaControl sci, Int32 value)
         {
