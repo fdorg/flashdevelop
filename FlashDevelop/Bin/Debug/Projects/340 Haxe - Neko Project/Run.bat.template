@@ -1,4 +1,5 @@
 @echo off
+set PAUSE_ON_ERRORS=true
 cd bin
 neko $(ProjectID).n
 pause
