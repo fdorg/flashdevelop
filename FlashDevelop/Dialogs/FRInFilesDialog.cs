@@ -476,7 +476,7 @@ namespace FlashDevelop.Dialogs
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(Globals.MainForm.FindImage("203"));
+            imageList.Images.Add(Globals.MainForm.FindImage("203", false));
             this.browseButton.ImageList = imageList;
             this.browseButton.ImageIndex = 0;
         }

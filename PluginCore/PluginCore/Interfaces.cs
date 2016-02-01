@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.Controls;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using ScintillaNet;
 using ScintillaNet.Configuration;
 using ScintillaNet.Enums;
@@ -247,6 +248,26 @@ namespace PluginCore
         /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
         /// </summary>
         Image FindImage(String data, Boolean autoAdjust);
+        /// <summary>
+        /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
+        /// The image size is always 16x16.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
+        /// </summary>
+        Image FindImage16(String data);
+        /// <summary>
+        /// Finds the specified composed/ready image. The image size is always 16x16.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
+        /// </summary>
+        Image FindImage16(String data, Boolean autoAdjusted);
+        /// <summary>
+        /// Finds the specified composed/ready image and returns a copy of the image that has its color adjusted.
+        /// This method is typically used for populating a <see cref="ImageList"/> object.
+        /// <para/>
+        /// Equivalent to calling <code>ImageSetAdjust(FindImage(data, false))</code>.
+        /// </summary>
+        Image FindImageAndSetAdjust(String data);
 
         #endregion
 

@@ -1016,7 +1016,7 @@ namespace ProjectManager.Controls
                 if (BuildActions.LatestSDKMatchQuality > 0)
                 {
                     string icon = BuildActions.LatestSDKMatchQuality < 10 ? "196" : "197";
-                    warningImage.Image = PluginBase.MainForm.FindImage(icon);
+                    warningImage.Image = PluginBase.MainForm.FindImage(icon, false);
                     warningImage.Visible = true;
                     string[] p = (project.PreferredSDK + ";;").Split(';');
                     labelWarning.Text = TextHelper.GetString("Label.SDKExpected") 

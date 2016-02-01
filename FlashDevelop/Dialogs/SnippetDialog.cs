@@ -300,9 +300,9 @@ namespace FlashDevelop.Dialogs
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add(PluginBase.MainForm.FindImage("341"));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("342|24|3|3")); // revert
-            imageList.Images.Add(PluginBase.MainForm.FindImage("342|9|3|3")); // export
+            imageList.Images.Add(PluginBase.MainForm.FindImage("341", false));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("342|24|3|3", false)); // revert
+            imageList.Images.Add(PluginBase.MainForm.FindImage("342|9|3|3", false)); // export
             this.snippetListView.SmallImageList = imageList;
             this.snippetListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.revertButton.ImageList = imageList;
