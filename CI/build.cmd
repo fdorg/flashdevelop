@@ -12,7 +12,7 @@ set PATH=%PATH%;C:\Program Files\7-Zip\
 if %errorlevel% neq 0 goto :error
 
 :: Build the PluginCore
-msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -20,8 +20,9 @@ if %errorlevel% neq 0 goto :error
 :: Extract version from HEAD
 call SetVersion.bat
 
-:: Build the solution
+:: Build the solutions
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -52,7 +53,7 @@ for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "
 xcopy Distros\HaxeDevelop /s /e /y
 
 :: Build the PluginCore
-msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -60,8 +61,9 @@ if %errorlevel% neq 0 goto :error
 :: Extract version from HEAD
 call SetVersion.bat
 
-:: Build the solution
+:: Build the solutions
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
