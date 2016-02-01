@@ -86,6 +86,7 @@ namespace ProjectManager
         private Timer buildTimer;
         private bool listenToPathChange;
         private ProjectManagerUIStatus uiStatus = ProjectManagerUIStatus.NotBuilding;
+        private bool firstRun;
 
         private ProjectTreeView Tree { get { return pluginUI.Tree; } }
         public static IMainForm MainForm { get { return PluginBase.MainForm; } }
@@ -104,7 +105,11 @@ namespace ProjectManager
         {
             Settings = new ProjectManagerSettings();
             if (!Directory.Exists(SettingsDir)) Directory.CreateDirectory(SettingsDir);
-            if (!File.Exists(SettingsPath)) this.SaveSettings();
+            if (!File.Exists(SettingsPath))
+            {
+                this.SaveSettings();
+                firstRun = true;
+            }
             else
             {
                 Object obj = ObjectSerializer.Deserialize(SettingsPath, Settings);
@@ -356,7 +361,8 @@ namespace ProjectManager
                     { 
                         BroadcastMenuInfo(); 
                         BroadcastToolBarInfo(); 
-                        OpenLastProject(); 
+                        OpenLastProject();
+                        if (firstRun) pluginPanel.Show();
                     });
                     break;
 
