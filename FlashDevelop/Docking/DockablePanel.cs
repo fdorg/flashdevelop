@@ -3,11 +3,13 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Utilities;
 
 namespace FlashDevelop.Docking
 {
     public class DockablePanel : DockContent
     {
+        private Image image;
         private String pluginGuid;
         
         public DockablePanel(Control ctrl, String pluginGuid)
@@ -23,6 +25,27 @@ namespace FlashDevelop.Docking
             this.Controls.Add(ctrl);
             Globals.MainForm.ThemeControls(this);
             this.Show();
+        }
+
+        /// <summary>
+        /// Gets or sets the icon for the <see cref="DockablePanel"/>
+        /// </summary>
+        public Image Image
+        {
+            get { return image; }
+            set
+            {
+                image = value;
+                RefreshIcon();
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the icon.
+        /// </summary>
+        public void RefreshIcon()
+        {
+            if (image != null) Icon = ImageKonverter.ImageToIcon(image);
         }
 
         /// <summary>

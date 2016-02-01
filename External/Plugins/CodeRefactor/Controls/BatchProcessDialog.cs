@@ -148,8 +148,8 @@ namespace CodeRefactor.Controls
             this.operationComboBox.Items.AddRange(new Object[] 
             {
                 TextHelper.GetString("Info.FormatCode"),
-                TextHelper.GetString("Label.OrganizeImports").Replace("&", ""),
-                TextHelper.GetString("Label.TruncateImports").Replace("&", ""),
+                TextHelper.GetStringWithoutMnemonics("Label.OrganizeImports"),
+                TextHelper.GetStringWithoutMnemonics("Label.TruncateImports"),
                 TextHelper.GetString("Info.ConsistentEOLs"),
             });
             this.Text = TextHelper.GetString("Title.BatchProcessDialog");

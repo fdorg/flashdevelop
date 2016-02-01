@@ -121,13 +121,8 @@ namespace PluginCore.Controls
         
         private void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
-            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add(PluginBase.MainForm.FindImage("196")); // warning
+            label.Image = PluginBase.MainForm.FindImage16("196"); // warning
             buttonClose.ImageEnabled = ResourceHelper.LoadBitmap("MessageBarClose.bmp");
-            label.ImageList = imageList;
-            label.ImageIndex = 0;
         }
 
         public void Update(String message)

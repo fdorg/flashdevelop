@@ -476,7 +476,7 @@ namespace FlashDevelop.Dialogs
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(Globals.MainForm.FindImage("203"));
+            imageList.Images.Add(Globals.MainForm.FindImage("203", false));
             this.browseButton.ImageList = imageList;
             this.browseButton.ImageIndex = 0;
         }
@@ -492,7 +492,7 @@ namespace FlashDevelop.Dialogs
             this.replaceLabel.Text = TextHelper.GetString("Info.ReplaceWith");
             this.findButton.Text = TextHelper.GetString("Label.Find");
             this.cancelButton.Text = TextHelper.GetString("Label.Cancel");
-            this.replaceButton.Text = TextHelper.GetString("Label.Replace").Replace("...", "");
+            this.replaceButton.Text = TextHelper.GetStringWithoutEllipsis("Label.Replace");
             this.lineHeader.Text = TextHelper.GetString("Info.LineHeader");
             this.descHeader.Text = TextHelper.GetString("Info.DescHeader");
             this.pathHeader.Text = TextHelper.GetString("Info.PathHeader");

@@ -2,34 +2,34 @@
 #region Imports
 
 using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
-using System.Reflection;
 using System.Collections;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
-using ScintillaNet.Configuration;
-using PluginCore.Localization;
-using FlashDevelop.Controls;
-using FlashDevelop.Docking;
-using FlashDevelop.Utilities;
-using FlashDevelop.Managers;
-using FlashDevelop.Helpers;
-using FlashDevelop.Dialogs;
-using FlashDevelop.Settings;
-using WeifenLuo.WinFormsUI.Docking;
-using ICSharpCode.SharpZipLib.Zip;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using PluginCore.Controls;
+using System.Windows.Forms;
 using CSScriptLibrary;
-using ScintillaNet;
+using FlashDevelop.Controls;
+using FlashDevelop.Dialogs;
+using FlashDevelop.Docking;
+using FlashDevelop.Helpers;
+using FlashDevelop.Managers;
+using FlashDevelop.Settings;
+using FlashDevelop.Utilities;
+using ICSharpCode.SharpZipLib.Zip;
 using PluginCore;
+using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
+using ScintillaNet.Configuration;
+using WeifenLuo.WinFormsUI.Docking;
 
 #endregion
 
@@ -41,7 +41,7 @@ namespace FlashDevelop
 
         public MainForm()
         {
-            MainForm.Instance = this;
+            Globals.MainForm = this;
             PluginBase.Initialize(this);
             this.DoubleBuffered = true;
             this.InitializeErrorLog();
@@ -147,7 +147,6 @@ namespace FlashDevelop
         /* Singleton */
         public static Boolean Silent;
         public static Boolean IsFirst;
-        public static MainForm Instance;
         public static String[] Arguments;
 
         #endregion
@@ -554,7 +553,7 @@ namespace FlashDevelop
             try
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
-                if (image != null) dockablePanel.Icon = ImageKonverter.ImageToIcon(image);
+                dockablePanel.Image = image;
                 dockablePanel.DockState = defaultDockState;
                 LayoutManager.PluginPanels.Add(dockablePanel);
                 return dockablePanel;
@@ -1032,6 +1031,8 @@ namespace FlashDevelop
             this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
             this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
             this.Resize += new EventHandler(this.OnMainFormResize);
+
+            ScintillaManager.ConfigurationLoaded += ApplyAllSettings;
         }
 
         #endregion
@@ -1606,7 +1607,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Updates the MainForms title automaticly
+        /// Updates the MainForm's title automatically
         /// </summary>
         public void OnUpdateMainFormDialogTitle()
         {
@@ -1699,16 +1700,53 @@ namespace FlashDevelop
         {
             try
             {
-                lock (this)
-                {
-                    return ImageManager.GetComposedBitmap(data, autoAdjusted);
-                }
+                lock (this) return ImageManager.GetComposedBitmap(data, autoAdjusted);
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
+        /// The image size is always 16x16.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
+        /// </summary>
+        public Image FindImage16(String data)
+        {
+            return FindImage16(data, true);
+        }
+
+        /// <summary>
+        /// Finds the specified composed/ready image. The image size is always 16x16.
+        /// <para/>
+        /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
+        /// </summary>
+        public Image FindImage16(String data, Boolean autoAdjusted)
+        {
+            try
+            {
+                lock (this) return ImageManager.GetComposedBitmapSize16(data, autoAdjusted);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Finds the specified composed/ready image and returns a copy of the image that has its color adjusted.
+        /// This method is typically used for populating a <see cref="ImageList"/> object.
+        /// <para/>
+        /// Equivalent to calling <code>ImageSetAdjust(FindImage(data, false))</code>.
+        /// </summary>
+        public Image FindImageAndSetAdjust(String data)
+        {
+            return ImageSetAdjust(FindImage(data, false));
         }
 
         /// <summary>
@@ -1733,8 +1771,15 @@ namespace FlashDevelop
         public void AdjustAllImages()
         {
             ImageManager.AdjustAllImages();
-        }
+            ImageListManager.RefreshAll();
 
+            for (int i = 0, length = LayoutManager.PluginPanels.Count; i < length; i++)
+            {
+                DockablePanel panel = LayoutManager.PluginPanels[i] as DockablePanel;
+                if (panel != null) panel.RefreshIcon();
+            }
+        }
+        
         /// <summary>
         /// Themes the controls from the parent
         /// </summary>
@@ -2044,7 +2089,7 @@ namespace FlashDevelop
         {
             if (this.InvokeRequired)
             {
-                this.BeginInvoke((MethodInvoker)delegate { this.ApplyAllSettings(); });
+                this.BeginInvoke((MethodInvoker) this.ApplyAllSettings);
                 return;
             }
             ShortcutManager.ApplyAllShortcuts();
@@ -2853,7 +2898,7 @@ namespace FlashDevelop
         /// </summary>
         public void ShowSettings(Object sender, System.EventArgs e)
         {
-            SettingDialog.Show("FlashDevelop", "");
+            SettingDialog.Show(DistroConfig.DISTRIBUTION_NAME, "");
         }
 
         /// <summary>
@@ -4074,10 +4119,10 @@ namespace FlashDevelop
         {
             try
             {
-                String dirMarker = "\\FlashDevelop\\";
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.AddExtension = true; sfd.DefaultExt = "fdz";
                 sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
                 if (sfd.ShowDialog(this) == DialogResult.OK)
                 {
                     List<String> settingFiles = new List<String>();

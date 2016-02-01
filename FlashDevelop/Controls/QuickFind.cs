@@ -570,7 +570,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void AddHighlights(ScintillaControl sci, List<SearchMatch> matches)
         {
-            Language language = MainForm.Instance.SciConfig.GetLanguage(sci.ConfigurationLanguage);
+            Language language = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
             sci.AddHighlights(matches, language.editorstyle.HighlightBackColor);
         }
 

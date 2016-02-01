@@ -343,6 +343,7 @@
     <Compile Include="PluginCore\Bridge\BridgeClient.cs" />
     <Compile Include="PluginCore\Bridge\ServerSocket.cs" />
     <Compile Include="PluginCore\Bridge\WatcherEx.cs" />
+    <Compile Include="PluginCore\Managers\ImageListManager.cs" />
     <Compile Include="PluginCore\PlatformData.cs" />
     <Compile Include="PluginCore\Utilities\CryptoClasses.cs" />
     <Compile Include="PluginCore\Utilities\ImageKonverter.cs" />
@@ -568,6 +569,9 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\de_DE.resX">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resX">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\en_US.resX">

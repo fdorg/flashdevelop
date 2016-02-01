@@ -300,9 +300,9 @@ namespace FlashDevelop.Dialogs
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add(PluginBase.MainForm.FindImage("341"));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("342|24|3|3")); // revert
-            imageList.Images.Add(PluginBase.MainForm.FindImage("342|9|3|3")); // export
+            imageList.Images.Add(PluginBase.MainForm.FindImage("341", false));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("342|24|3|3", false)); // revert
+            imageList.Images.Add(PluginBase.MainForm.FindImage("342|9|3|3", false)); // export
             this.snippetListView.SmallImageList = imageList;
             this.snippetListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.revertButton.ImageList = imageList;
@@ -542,6 +542,12 @@ namespace FlashDevelop.Dialogs
                 String locale = Globals.Settings.LocaleVersion.ToString();
                 Stream stream = ResourceHelper.GetStream(String.Format("SnippetVars.{0}.txt", locale));
                 String contents = new StreamReader(stream).ReadToEnd();
+                if (DistroConfig.DISTRIBUTION_NAME != "FlashDevelop")
+                {
+                    #pragma warning disable CS0162 // Unreachable code detected
+                    contents = contents.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME);
+                    #pragma warning restore CS0162 // Unreachable code detected
+                }
                 String[] varLines = contents.Split(new Char[1]{'\n'}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (String line in varLines)
                 {

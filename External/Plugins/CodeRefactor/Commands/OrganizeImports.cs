@@ -149,8 +149,7 @@ namespace CodeRefactor.Commands
         {
             String eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             Int32 line = imports[0].LineFrom - DeletedImportsCompensation;
-            ImportsComparerType comparerType = new ImportsComparerType();
-            imports.Sort(comparerType);
+            imports.Sort(new CaseSensitiveImportComparer());
             sci.GotoLine(line);
             Int32 curLine = 0;
             List<String> uniques = this.GetUniqueImports(imports, searchInText, sci.FileName);
@@ -217,17 +216,6 @@ namespace CodeRefactor.Commands
             return true;
         }
 
-    }
-
-    /// <summary>
-    /// Compare import statements based on import name
-    /// </summary>
-    class ImportsComparerType : IComparer<MemberModel>
-    {
-        public Int32 Compare(MemberModel item1, MemberModel item2)
-        {
-            return new CaseInsensitiveComparer().Compare(item1.Type, item2.Type);
-        }
     }
 
     /// <summary>

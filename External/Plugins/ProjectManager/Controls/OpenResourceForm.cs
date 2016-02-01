@@ -155,7 +155,7 @@ namespace ProjectManager.Controls
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0"));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0", false));
             this.refreshButton.ImageList = imageList;
             this.refreshButton.ImageIndex = 0;
         }

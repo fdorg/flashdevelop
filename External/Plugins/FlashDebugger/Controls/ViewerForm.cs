@@ -33,7 +33,7 @@ namespace FlashDebugger.Controls
             this.WordWrapcheckBox.Text = TextHelper.GetString("Label.WordWrap");
             this.CopyValuebutton.Text = TextHelper.GetString("Label.CopyValue");
             this.CopyExpbutton.Text = TextHelper.GetString("Label.CopyExp");
-            this.Text = " " + TextHelper.GetString("Label.Viewer").Replace("&", "");
+            this.Text = " " + TextHelper.GetStringWithoutMnemonics("Label.Viewer");
         }
 
         private void ViewerForm_FormClosing(object sender, FormClosingEventArgs e)

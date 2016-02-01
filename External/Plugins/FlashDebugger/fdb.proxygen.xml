@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<jni4net-proxygen xmlns="http://jni4net.sf.net/0.8.4.0/toolConfig.xsd">
+<jni4net-proxygen xmlns="http://jni4net.sf.net/0.8.8.0/toolConfig.xsd">
 
   <TargetDirJvm>generated\jvm</TargetDirJvm>
   <TargetDirClr>generated\clr</TargetDirClr>
