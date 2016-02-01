@@ -91,9 +91,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         private static void AddPlugin(String fileName)
         {
-            Assembly pluginAssembly = Assembly.LoadFrom(fileName);
             try
             {
+                Assembly pluginAssembly = Assembly.LoadFrom(fileName);
                 foreach (Type pluginType in pluginAssembly.GetTypes())
                 {
                     if (pluginType.IsPublic && !pluginType.IsAbstract)
