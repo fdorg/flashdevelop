@@ -32,7 +32,8 @@ call SetVersion.bat
 
 :: Build the solutions
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="AnyCPU" /t:Rebuild
+ping -n 5 127.0.0.1 > nul
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -56,6 +57,7 @@ git clean -f -x -d FlashDevelop\Bin\Debug
 
 :: Remove bad files
 del FlashDevelop\Bin\Debug\FlashDevelop.exe.config
+del FlashDevelop\Bin\Debug\FlashDevelopx64.exe.config
 del FlashDevelop\Bin\Debug\StartPage\images\*.* /Q
 for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "%%~G"
 
@@ -73,7 +75,8 @@ call SetVersion.bat
 
 :: Build the solutions
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="AnyCPU" /t:Rebuild
+ping -n 5 127.0.0.1 > nul
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -94,5 +97,5 @@ start FlashDevelop\Installer\Binary\FlashDevelop.exe
 exit
 
 :error
-
+pause
 exit -1
