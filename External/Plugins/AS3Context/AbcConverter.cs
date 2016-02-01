@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using PluginCore;
 using SwfOp;
 using SwfOp.Data;
 
@@ -53,7 +54,7 @@ namespace AS3Context
             if (parser.Docs.Count > 0)
                 foreach (string docFile in parser.Docs.Keys)
                 {
-                    if (docFile.EndsWith(".dita.xml"))
+                    if (docFile.EndsWithOrdinal(".dita.xml"))
                         continue;
                     try
                     {
@@ -177,7 +178,7 @@ namespace AS3Context
                         type.Access = Visibility.Private;
                         type.Namespace = "private";
                         string genType = type.Name;
-                        if (type.Name.IndexOf("$") > 0)
+                        if (type.Name.IndexOf('$') > 0)
                         {
                             string[] itype = type.Name.Split('$');
                             genType = itype[0];
@@ -192,7 +193,7 @@ namespace AS3Context
                         }
                         else genericTypes[genType] = model;
                     }
-                    else if (type.Name.StartsWith("_") && string.IsNullOrEmpty(model.Package))
+                    else if (type.Name.StartsWith('_') && string.IsNullOrEmpty(model.Package))
                     {
                         type.Access = Visibility.Private;
                         type.Namespace = "private";
@@ -703,7 +704,7 @@ namespace AS3Context
                 int colon = id.IndexOf(':') + 1;
                 if (colon > 0)
                 {
-                    int dup = id.IndexOf(id.Substring(0, colon), colon);
+                    int dup = id.IndexOfOrdinal(id.Substring(0, colon), colon);
                     if (dup > 0) id = id.Substring(dup);
                 }
                 doc.ApiType = id;
@@ -719,7 +720,7 @@ namespace AS3Context
 
             if (id != null)
             {
-                if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith("\""))
+                if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith('\"'))
                     doc.Value = "\"" + doc.Value + "\"";
 
                 if (doc.LongDesc == null)

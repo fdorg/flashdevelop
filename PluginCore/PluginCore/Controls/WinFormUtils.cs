@@ -24,7 +24,7 @@ namespace PluginCore.Controls
             if (rtf == null)
                 return outSize;
 
-            int lastIdx = rtf.LastIndexOf("}");
+            int lastIdx = rtf.LastIndexOf('}');
             if (lastIdx < 1)
                 return outSize;
 
@@ -47,7 +47,7 @@ namespace PluginCore.Controls
             int currW = 0;
             while (true)
             {
-                lastIdx = rtb.Text.IndexOf("\n", lastIdx + 1);
+                lastIdx = rtb.Text.IndexOfOrdinal("\n", lastIdx + 1);
                 if (lastIdx < 0)
                     break;
 

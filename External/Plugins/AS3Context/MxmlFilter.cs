@@ -53,7 +53,7 @@ namespace AS3Context
                     foreach (string line in project.CompilerOptions.Additional)
                     {
                         string temp = line.Trim();
-                        if (temp.StartsWith("-compiler.namespaces.namespace") || temp.StartsWith("-namespace"))
+                        if (temp.StartsWithOrdinal("-compiler.namespaces.namespace") || temp.StartsWithOrdinal("-namespace"))
                         {
                             int p = temp.IndexOf(' ');
                             if (p < 0) p = temp.IndexOf('=');
@@ -64,7 +64,7 @@ namespace AS3Context
                             if (p < 0) continue;
                             string uri = temp.Substring(0, p);
                             string path = temp.Substring(p + 1).Trim();
-                            if (path.StartsWith("\"")) path = path.Substring(1, path.Length - 2);
+                            if (path.StartsWith('\"')) path = path.Substring(1, path.Length - 2);
                             AddManifest(uri, PathHelper.ResolvePath(path, project.Directory));
                         }
                     }
@@ -297,7 +297,7 @@ namespace AS3Context
                 if (name == null) break;
                 string value = GetAttributeValue(src, ref i);
                 if (value == null) break;
-                if (name.StartsWith("xmlns"))
+                if (name.StartsWithOrdinal("xmlns"))
                 {
                     string[] qname = name.Split(':');
                     if (qname.Length == 1) ctx.namespaces["*"] = value;

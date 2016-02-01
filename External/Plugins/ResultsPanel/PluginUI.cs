@@ -615,10 +615,10 @@ namespace ResultsPanel
             {
                 DockContent panel = this.Parent as DockContent;
                 DockState ds = panel.VisibleState;
-                if (!panel.Visible || ds.ToString().EndsWith("AutoHide"))
+                if (!panel.Visible || ds.ToString().EndsWithOrdinal("AutoHide"))
                 {
                     panel.Show();
-                    if (ds.ToString().EndsWith("AutoHide")) panel.Activate();
+                    if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
                 }
             }
         }
@@ -648,13 +648,13 @@ namespace ResultsPanel
                 {
                     fileTest = entry.Message.TrimStart();
                     inExec = false;
-                    if (fileTest.StartsWith("[mxmlc]") || fileTest.StartsWith("[compc]") || fileTest.StartsWith("[exec]") || fileTest.StartsWith("[haxe") || fileTest.StartsWith("[java]"))
+                    if (fileTest.StartsWithOrdinal("[mxmlc]") || fileTest.StartsWithOrdinal("[compc]") || fileTest.StartsWithOrdinal("[exec]") || fileTest.StartsWithOrdinal("[haxe") || fileTest.StartsWithOrdinal("[java]"))
                     {
                         inExec = true;
                         fileTest = fileTest.Substring(fileTest.IndexOf(']') + 1).TrimStart();
                     }
                     // relative to project root (Haxe)
-                    if (fileTest.StartsWith("~/")) fileTest = fileTest.Substring(2);
+                    if (fileTest.StartsWithOrdinal("~/")) fileTest = fileTest.Substring(2);
                     match = fileEntry.Match(fileTest);
                     if (!match.Success) match = fileEntry2.Match(fileTest);
                     if (match.Success && !this.ignoredEntries.ContainsKey(match.Value))
@@ -686,7 +686,7 @@ namespace ResultsPanel
                             }
                             if (state > 2) icon = 1;
                             else if (state == 2) icon = 2;
-                            else if (state == -3) icon = (description.IndexOf("Warning") >= 0) ? 2 : 1;
+                            else if (state == -3) icon = (description.IndexOfOrdinal("Warning") >= 0) ? 2 : 1;
                             else if (description.StartsWith("error", StringComparison.OrdinalIgnoreCase)) icon = 1;
                             else icon = 0;
                             ListViewItem item = new ListViewItem("", icon);

@@ -22,7 +22,7 @@ namespace SourceControl.Sources.Git
         {
             try
             {
-                if (!args.StartsWith("status")) TraceManager.AddAsync("git " + args);
+                if (!args.StartsWithOrdinal("status")) TraceManager.AddAsync("git " + args);
 
                 string cmd = GetGitCmd();
                 runner = new ProcessRunner();
@@ -88,7 +88,7 @@ namespace SourceControl.Sources.Git
 
         protected virtual void Runner_Error(object sender, string line)
         {
-            errors.Add(line.StartsWith("git: ") ? line.Substring(5) : line);
+            errors.Add(line.StartsWithOrdinal("git: ") ? line.Substring(5) : line);
         }
 
         protected virtual void Runner_Output(object sender, string line)

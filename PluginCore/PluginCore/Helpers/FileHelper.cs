@@ -186,7 +186,7 @@ namespace PluginCore.Helpers
             stack.Push(String.Empty);
             String sep = Path.DirectorySeparatorChar.ToString();
             String alt = Path.AltDirectorySeparatorChar.ToString();
-            Int32 length = oldPath.EndsWith(sep) || oldPath.EndsWith(alt) ? oldPath.Length : oldPath.Length + 1;
+            Int32 length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
             while (stack.Count > 0)
             {
                 String subPath = stack.Pop();
@@ -213,7 +213,7 @@ namespace PluginCore.Helpers
             stack.Push(String.Empty);
             String sep = Path.DirectorySeparatorChar.ToString();
             String alt = Path.AltDirectorySeparatorChar.ToString();
-            Int32 length = oldPath.EndsWith(sep) || oldPath.EndsWith(alt) ? oldPath.Length : oldPath.Length + 1;
+            Int32 length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
             while (stack.Count > 0)
             {
                 String subPath = stack.Pop();
@@ -435,7 +435,7 @@ namespace PluginCore.Helpers
                 {
                     foreach (DriveInfo drive in driveInfo)
                     {
-                        if (path.StartsWith(drive.RootDirectory.ToString())) return false;
+                        if (path.StartsWithOrdinal(drive.RootDirectory.ToString())) return false;
                     }
                     return true;
                 });

@@ -571,9 +571,9 @@ namespace FlashDevelop.Dialogs
             {
                 this.contentsTextBox.Focus();
                 String data = this.insertComboBox.SelectedItem.ToString();
-                if (!data.StartsWith("-"))
+                if (!data.StartsWith('-'))
                 {
-                    Int32 variableEnd = data.IndexOf(")") + 1;
+                    Int32 variableEnd = data.IndexOfOrdinal(")") + 1;
                     String variable = data.Substring(0, variableEnd);
                     this.InsertText(this.contentsTextBox, variable);
                 }
@@ -637,7 +637,7 @@ namespace FlashDevelop.Dialogs
                 zipFile.BeginUpdate();
                 foreach (String snippetFile in snippetFiles)
                 {
-                    Int32 index = snippetFile.IndexOf("\\Snippets\\");
+                    Int32 index = snippetFile.IndexOfOrdinal("\\Snippets\\");
                     zipFile.Add(snippetFile, "$(BaseDir)" + snippetFile.Substring(index));
                 }
                 zipFile.CommitUpdate();

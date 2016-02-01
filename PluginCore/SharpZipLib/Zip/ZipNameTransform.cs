@@ -38,6 +38,7 @@ using System;
 using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Core;
+using PluginCore;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
@@ -102,7 +103,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             name = TransformFile(name);
             if (name.Length > 0) {
-                if ( !name.EndsWith("/") ) {
+                if (!name.EndsWith('/')) {
                     name += "/";
                 }
             }
@@ -121,7 +122,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             if (name != null) {
                 string lowerName = name.ToLower();
-                if ( (trimPrefix_ != null) && (lowerName.IndexOf(trimPrefix_) == 0) ) {
+                if ( (trimPrefix_ != null) && (lowerName.IndexOfOrdinal(trimPrefix_) == 0) ) {
                     name = name.Substring(trimPrefix_.Length);
                 }
 
@@ -141,11 +142,11 @@ namespace ICSharpCode.SharpZipLib.Zip
                 }
 
                 // Convert consecutive // characters to /
-                int index = name.IndexOf("//");
+                int index = name.IndexOfOrdinal("//");
                 while (index >= 0)
                 {
                     name = name.Remove(index, 1);
-                    index = name.IndexOf("//");
+                    index = name.IndexOfOrdinal("//");
                 }
 
                 name = MakeValidName(name, '_');

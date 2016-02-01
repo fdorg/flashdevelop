@@ -245,9 +245,9 @@ namespace ASCompletion.Model
             {
                 if (mask[0] == '*')
                 {
-                    if (fileName.EndsWith(mask.Substring(1))) return true;
+                    if (fileName.EndsWithOrdinal(mask.Substring(1))) return true;
                 }
-                else if (fileName.EndsWith(mask)) return true;
+                else if (fileName.EndsWithOrdinal(mask)) return true;
             }
             return false;
         }
@@ -255,7 +255,7 @@ namespace ASCompletion.Model
         private void watcher_Renamed(object sender, RenamedEventArgs e)
         {
             // possibly renamed the watched folder
-            if (!e.FullPath.StartsWith(basePath) && e.FullPath != Path)
+            if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
                 return;
             // folder renamed: flag directory to be removed from models
             if (!maskMatch(e.FullPath))
@@ -268,8 +268,8 @@ namespace ASCompletion.Model
                         // add to known removed paths
                         List<string> newSchedule = new List<string>();
                         foreach (string scheduled in toRemove)
-                            if (path.StartsWith(scheduled)) return;
-                            else if (!scheduled.StartsWith(path)) newSchedule.Add(scheduled);
+                            if (path.StartsWithOrdinal(scheduled)) return;
+                            else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
                         newSchedule.Add(path);
                         toRemove = newSchedule;
                     }
@@ -294,7 +294,7 @@ namespace ASCompletion.Model
 
         private void watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (!e.FullPath.StartsWith(basePath) && e.FullPath != Path)
+            if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
                 return;
             // directory change: schedule for exploration
             if (!maskMatch(e.FullPath))
@@ -305,8 +305,8 @@ namespace ASCompletion.Model
                     // add path for exploration if not already scheduled
                     List<string> newSchedule = new List<string>();
                     foreach (string scheduled in toExplore)
-                        if (path.StartsWith(scheduled)) return;
-                        else if (!scheduled.StartsWith(path)) newSchedule.Add(scheduled);
+                        if (path.StartsWithOrdinal(scheduled)) return;
+                        else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
                     newSchedule.Add(path);
                     toExplore = newSchedule;
                 }
@@ -334,7 +334,7 @@ namespace ASCompletion.Model
 
         private void watcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            if (!e.FullPath.StartsWith(basePath) && e.FullPath != Path)
+            if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
                 return;
             // (possibly) folder deleted
             if (!maskMatch(e.FullPath))
@@ -345,8 +345,8 @@ namespace ASCompletion.Model
                     // add to known removed paths
                     List<string> newSchedule = new List<string>();
                     foreach (string scheduled in toRemove)
-                        if (path.StartsWith(scheduled)) return;
-                        else if (!scheduled.StartsWith(path)) newSchedule.Add(scheduled);
+                        if (path.StartsWithOrdinal(scheduled)) return;
+                        else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
                     newSchedule.Add(path);
                     toRemove = newSchedule;
                 }
@@ -402,7 +402,7 @@ namespace ASCompletion.Model
             {
                 bool drop = false;
                 foreach (string remPath in _toRemove)
-                    if (file.StartsWith(remPath))
+                    if (file.StartsWithOrdinal(remPath))
                     {
                         //TraceManager.Add("drop: " + files[file].FileName);
                         drop = true;

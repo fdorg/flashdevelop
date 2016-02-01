@@ -248,7 +248,7 @@ namespace CodeRefactor.Commands
                         newPackage = "";
                         break;
                     }
-                    if (newPackage.StartsWith(path))
+                    if (newPackage.StartsWithOrdinal(path))
                     {
                         newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
                         break;
@@ -346,14 +346,14 @@ namespace CodeRefactor.Commands
             var fileMatches = new List<string>();
             foreach (var item in AssociatedDocumentHelper.InitiallyOpenedFiles)
             {
-                if (item.Key.StartsWith(oldPath))
+                if (item.Key.StartsWithOrdinal(oldPath))
                 {
                     item.Value.Save();
                     item.Value.Close();
                     filesToReopen.Add(item.Key.Replace(oldPath, newPath));
                     fileMatches.Add(item.Key);
                 }
-                else if (item.Key.StartsWith(newPath))
+                else if (item.Key.StartsWithOrdinal(newPath))
                 {
                     item.Value.Save();
                     item.Value.Close();
@@ -600,7 +600,7 @@ namespace CodeRefactor.Commands
                 {
                     sci.GotoLine(currLine);
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
-                    int newLine = sci.LineFromPosition(sci.Text.IndexOf(newType));
+                    int newLine = sci.LineFromPosition(sci.Text.IndexOfOrdinal(newType));
                     var sm = new SearchMatch();
                     sm.Line = newLine + 1;
                     sm.LineText = sci.GetLine(newLine);

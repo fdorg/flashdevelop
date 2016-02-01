@@ -215,7 +215,7 @@ namespace FlashDevelop.Docking
             get
             {
                 String untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
-                if (this.IsEditable) return this.FileName.StartsWith(untitledFileStart);
+                if (this.IsEditable) return this.FileName.StartsWithOrdinal(untitledFileStart);
                 else return false;
             }
         }
