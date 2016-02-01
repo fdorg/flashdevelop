@@ -31,9 +31,9 @@ if %errorlevel% neq 0 goto :error
 call SetVersion.bat
 
 :: Build the solutions
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
-ping -n 5 127.0.0.1 > nul
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
+ping -n 5 127.0.0.1 > nul
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -74,9 +74,9 @@ if %errorlevel% neq 0 goto :error
 call SetVersion.bat
 
 :: Build the solutions
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
-ping -n 5 127.0.0.1 > nul
 msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
+ping -n 5 127.0.0.1 > nul
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
