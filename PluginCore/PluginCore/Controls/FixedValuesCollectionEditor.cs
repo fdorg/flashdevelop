@@ -224,11 +224,10 @@ namespace PluginCore.Controls
 
         void InitializeGraphics()
         {
-            int size = ScaleHelper.Scale(16);
-            btnAdd.Image = ImageKonverter.ImageResize((Bitmap) PluginBase.MainForm.FindImage("67", false), size, size);
-            btnRemove.Image = ImageKonverter.ImageResize((Bitmap) PluginBase.MainForm.FindImage("63", false), size, size);
-            btnUp.Image = ImageKonverter.ImageResize((Bitmap) PluginBase.MainForm.FindImage("74", false), size, size);
-            btnDown.Image = ImageKonverter.ImageResize((Bitmap) PluginBase.MainForm.FindImage("60", false), size, size);
+            btnAdd.Image = PluginBase.MainForm.FindImage16("67", false);
+            btnRemove.Image = PluginBase.MainForm.FindImage16("63", false);
+            btnUp.Image = PluginBase.MainForm.FindImage16("74", false);
+            btnDown.Image = PluginBase.MainForm.FindImage16("60", false);
         }
 
         void InitializeAvailableList(T[] all, T[] values)
