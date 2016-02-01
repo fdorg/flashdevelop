@@ -508,7 +508,7 @@
 	</Entry>
 	<Entry>
 		<Id>findandreplaceadvance</Id>
-		<Name>FindAndReplaceAdvance</Name>
+		<Name>FindAndReplaceAdvanced</Name>
 		<Version>1.1</Version>
 		<Build>1</Build>
 		<Checksum>824842464cb24287ebfd326aa36a20ff</Checksum>
