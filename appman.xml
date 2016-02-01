@@ -507,7 +507,7 @@
 		</Urls>
 	</Entry>
 	<Entry>
-		<Id>findandreplaceadvanced</Id>
+		<Id>findandreplaceadvance</Id>
 		<Name>FindAndReplaceAdvanced</Name>
 		<Version>1.1</Version>
 		<Build>1</Build>
