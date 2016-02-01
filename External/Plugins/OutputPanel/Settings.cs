@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Design;
 using System.Windows.Forms;
 using PluginCore.Localization;
@@ -69,12 +70,14 @@ namespace OutputPanel
             {
                 if (highlightMarkers == null || highlightMarkers.Count == 0)
                 {
-                    this.highlightMarkers = new List<HighlightMarker>();
-                    this.highlightMarkers.Add(new HighlightMarker("Info:", LogLevel.Info));
-                    this.highlightMarkers.Add(new HighlightMarker("Debug:", LogLevel.Debug));
-                    this.highlightMarkers.Add(new HighlightMarker("Warning:", LogLevel.Warning));
-                    this.highlightMarkers.Add(new HighlightMarker("Error:", LogLevel.Error));
-                    this.highlightMarkers.Add(new HighlightMarker("Fatal:", LogLevel.Fatal));
+                    this.highlightMarkers = new List<HighlightMarker>
+                    {
+                        new HighlightMarker("Info:", LogLevel.Info),
+                        new HighlightMarker("Debug:", LogLevel.Debug),
+                        new HighlightMarker("Warning:", LogLevel.Warning),
+                        new HighlightMarker("Error:", LogLevel.Error),
+                        new HighlightMarker("Fatal:", LogLevel.Fatal)
+                    };
                 }
                 return highlightMarkers;
             }
@@ -86,28 +89,70 @@ namespace OutputPanel
     [Serializable]
     public class HighlightMarker
     {
-        public String marker = "Info:";
-        public LogLevel level = LogLevel.Debug;
-        
-        public HighlightMarker(){}
+        private String marker;
+        private LogLevel level;
+        private Color highlightColor;
+
+        public HighlightMarker() : this(String.Empty, LogLevel.Custom)
+        {
+        }
+
         public HighlightMarker(String marker, LogLevel level)
         {
             this.marker = marker;
             this.level = level;
+            this.highlightColor = Color.Empty;
         }
 
+        public HighlightMarker(String marker, Color highlightColor)
+        {
+            this.marker = marker;
+            this.level = LogLevel.Custom;
+            this.highlightColor = highlightColor;
+        }
+
+        [Category("Properties")]
         [LocalizedDescription("OutputPanel.Description.Marker")]
+        [DefaultValue("")]
         public String Marker
         {
             get { return this.marker; }
             set { this.marker = value; }
         }
 
+        [Category("Properties")]
         [LocalizedDescription("OutputPanel.Description.Level")]
+        [DefaultValue(LogLevel.Debug)]
         public LogLevel Level
         {
             get { return this.level; }
-            set { this.level = value; }
+            set
+            {
+                this.level = value;
+                if (value != LogLevel.Custom) this.highlightColor = Color.Empty;
+            }
+        }
+
+        [Category("Properties")]
+        [Description("User defined color for custom highlight markers.")]
+        [DefaultValue(typeof(Color), "Empty")]
+        public Color HighlightColor
+        {
+            get { return this.highlightColor; }
+            set
+            {
+                this.level = LogLevel.Custom;
+                this.highlightColor = value;
+            }
+        }
+
+        [Browsable(false)]
+        public Boolean IsValid
+        {
+            get
+            {
+                return this.level != LogLevel.Custom || !this.highlightColor.IsEmpty;
+            }
         }
 
         /// <summary>
@@ -115,7 +160,7 @@ namespace OutputPanel
         /// </summary>
         public override string ToString()
         {
-            return "HighlightMarker";
+            return IsValid ? marker + "(" + level + ")" : "New HighlightMarker";
         }
 
     }
@@ -127,7 +172,14 @@ namespace OutputPanel
         Debug,
         Warning,
         Error,
-        Fatal
+        Fatal,
+        Custom,
+        [Browsable(false)]
+        ProcessStart = -1,
+        [Browsable(false)]
+        ProcessEnd = -2,
+        [Browsable(false)]
+        ProcessError = -3
     }
 
 }

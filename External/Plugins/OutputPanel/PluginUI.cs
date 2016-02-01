@@ -348,7 +348,7 @@ namespace OutputPanel
                 this.logCount = newCount;
                 return;
             }
-            Int32 state;
+            LogLevel state;
             String message;
             TraceItem entry;
             Color newColor = Color.Red;
@@ -362,57 +362,59 @@ namespace OutputPanel
             for (Int32 i = this.logCount; i < newCount; i++)
             {
                 entry = log[i];
-                state = entry.State;
+                state = (LogLevel) entry.State;
                 if (entry.Message == null) message = "";
                 else message = entry.Message;
                 if (!fastMode)
                 {
                     // Automatic state from message, legacy format, ie. "2:message" -> state = 2
-                    if (this.pluginMain.PluginSettings.UseLegacyColoring && state == 1 && message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                    if (this.pluginMain.PluginSettings.UseLegacyColoring && state == LogLevel.Debug && message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
                     {
-                        if (int.TryParse(message[0].ToString(), out state))
-                        {
-                            message = message.Substring(2);
-                        }
+                        state = (LogLevel) (message[0] - '0');
+                        message = message.Substring(2);
                     }
                     // Automatic state from message: New format with customizable markers
-                    if (state == 1 && markers != null && markers.Count > 0)
+                    if (state == LogLevel.Debug && markers != null && markers.Count > 0)
                     {
                         foreach (HighlightMarker marker in markers)
                         {
-                            if (message.Contains(marker.Marker))
+                            if (marker.IsValid && message.Contains(marker.Marker))
                             {
-                                state = (int)marker.Level;
+                                state = marker.Level;
+                                if (state == LogLevel.Custom) newColor = marker.HighlightColor;
                                 break;
                             }
                         }
                     }
                     switch (state)
                     {
-                        case 0: // Info
+                        case LogLevel.Info:
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.InfoColor", Color.Gray);
                             break;
-                        case 1: // Debug
+                        case LogLevel.Debug:
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.DebugColor", this.ForeColor);
                             break;
-                        case 2: // Warning
+                        case LogLevel.Warning:
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
                             break;
-                        case 3: // Error
+                        case LogLevel.Error:
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
-                        case 4: // Fatal
+                        case LogLevel.Fatal:
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.FatalColor", Color.Magenta);
                             break;
-                        case -1: // ProcessStart
+                        case LogLevel.Custom:
+                            break;
+                        case LogLevel.ProcessStart:
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessStartColor", Color.Blue);
                             break;
-                        case -2: // ProcessEnd
+                        case LogLevel.ProcessEnd:
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor", Color.Blue);
                             break;
-                        case -3: // ProcessError
-                            if (message.IndexOf("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
-                            else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
+                        case LogLevel.ProcessError:
+                            newColor = message.Contains("Warning") ?
+                                PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange) :
+                                PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                     }
                     if (newColor != currentColor)
