@@ -134,7 +134,7 @@ namespace ProjectManager.Actions
 
         private void PatchFbProject(AS3Project project)
         {
-            if (project == null || !project.MovieOptions.Platform.StartsWith("AIR")) return;
+            if (project == null || !project.MovieOptions.Platform.StartsWithOrdinal("AIR")) return;
 
             // We do this because the batch files cannot automatically detect the path changes caused by debug/release differences
             bool trace = project.TraceEnabled;
@@ -189,7 +189,7 @@ namespace ProjectManager.Actions
             {
                 bool excluded = false;
                 foreach (var excludedFile in excludedFiles)
-                    if (file.StartsWith(Path.Combine(projectPath, excludedFile)))
+                    if (file.StartsWithOrdinal(Path.Combine(projectPath, excludedFile)))
                     {
                         excluded = true;
                         break;
@@ -197,7 +197,7 @@ namespace ProjectManager.Actions
 
                 if (excluded) continue;
                 var fileDirectory = Path.GetDirectoryName(file).Replace(projectPath, string.Empty);
-                if (fileDirectory.StartsWith("\\")) fileDirectory = fileDirectory.Substring(1);
+                if (fileDirectory.StartsWith('\\')) fileDirectory = fileDirectory.Substring(1);
                 var folder = Path.Combine(path, fileDirectory);
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
                 string newFile = Path.Combine(folder, Path.GetFileName(file));
@@ -359,7 +359,7 @@ namespace ProjectManager.Actions
                 {
                     absPath = Path.Combine(dir, hidPath);
                     foreach (string cp in classPaths)
-                        if (absPath.StartsWith(cp))
+                        if (absPath.StartsWithOrdinal(cp))
                         {
                             hiddenPaths.Add(absPath);
                             break;

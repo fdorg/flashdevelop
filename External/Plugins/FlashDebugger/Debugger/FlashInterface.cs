@@ -7,6 +7,7 @@ using System.Threading;
 using flash.tools.debugger;
 using flash.tools.debugger.events;
 using java.net;
+using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 
@@ -1278,14 +1279,14 @@ namespace FlashDebugger
             int depth = 100;
             while (depth-- > 0)
             {
-                int o = text.IndexOf("${");
+                int o = text.IndexOfOrdinal("${");
                 if (o == -1) break;
                 if ((o >= 1) && (text[o - 1] == '$'))
                 {
-                    o = text.IndexOf("${", o + 2);
+                    o = text.IndexOfOrdinal("${", o + 2);
                     if (o == -1) break;
                 }
-                int c = text.IndexOf("}", o);
+                int c = text.IndexOfOrdinal("}", o);
                 if (c == -1)
                 {
                     return null; // FIXME

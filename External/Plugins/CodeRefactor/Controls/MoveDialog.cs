@@ -46,7 +46,7 @@ namespace CodeRefactor.Controls
             RefreshTree();
         }
 
-        public List<string> MovingFiles { get; }
+        public List<string> MovingFiles { get; private set; }
 
         public string SelectedDirectory
         {

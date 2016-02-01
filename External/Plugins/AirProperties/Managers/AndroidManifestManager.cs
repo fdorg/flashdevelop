@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using PluginCore;
 
 namespace AirProperties
 {
@@ -36,7 +37,7 @@ namespace AirProperties
 
             if (!string.IsNullOrEmpty(manifest))
             {
-                if (!manifest.StartsWith("<manifest"))
+                if (!manifest.StartsWithOrdinal("<manifest"))
                     throw new ArgumentException("Not valid manifest string");
                 if (!manifest.Contains("xmlns:android"))
                 {

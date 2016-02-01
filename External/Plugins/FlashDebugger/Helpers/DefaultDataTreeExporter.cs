@@ -4,6 +4,7 @@ using System.Text;
 using Aga.Controls.Tree;
 using FlashDebugger.Controls;
 using FlashDebugger.Controls.DataTree;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace FlashDebugger.Helpers
@@ -178,7 +179,7 @@ namespace FlashDebugger.Helpers
 
                         // if is an AS3 display object,
                         // don't go upward (stage, parent)
-                        if (parent.ClassPath.StartsWith("flash.display.") || parent.ClassPath == "Main")
+                        if (parent.ClassPath.StartsWithOrdinal("flash.display.") || parent.ClassPath == "Main")
                         {
                             if (Array.IndexOf(as3DisabledProps, child.Text) > -1)
                             {

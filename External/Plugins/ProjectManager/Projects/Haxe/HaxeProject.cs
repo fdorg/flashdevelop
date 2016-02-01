@@ -146,7 +146,7 @@ namespace ProjectManager.Projects.Haxe
 
         string Quote(string s)
         {
-            if (s.IndexOf(" ") >= 0)
+            if (s.IndexOf(' ') >= 0)
                 return "\"" + s + "\"";
             return s;
         }
@@ -174,7 +174,7 @@ namespace ProjectManager.Projects.Haxe
                 foreach (string lib in CompilerOptions.Libraries)
                     if (lib.Length > 0)
                     {
-                        if (lib.Trim().StartsWith("-lib")) pr.Add(lib);
+                        if (lib.Trim().StartsWith("-lib", StringComparison.Ordinal)) pr.Add(lib);
                         else pr.Add("-lib " + lib);
                     }
 
@@ -262,7 +262,7 @@ namespace ProjectManager.Projects.Haxe
             if (!release)
             {
                 pr.Insert(0, "-debug");
-                if (CurrentSDK == null || CurrentSDK.IndexOf("Motion-Twin") < 0) // Haxe 3+
+                if (CurrentSDK == null || CurrentSDK.IndexOf("Motion-Twin", StringComparison.Ordinal) < 0) // Haxe 3+
                     pr.Insert(1, "--each");
                 if (isFlash && EnableInteractiveDebugger && CompilerOptions.EnableDebug)
                 {
@@ -279,7 +279,7 @@ namespace ProjectManager.Projects.Haxe
             string className = absTarget.Substring(cp.Length);
             className = className.Substring(0, className.LastIndexOf('.'));
             className = Regex.Replace(className, "[\\\\/]+", ".");
-            if (className.StartsWith(".")) className = className.Substring(1);
+            if (className.StartsWith(".", StringComparison.Ordinal)) className = className.Substring(1);
             return className;
         }
 

@@ -252,7 +252,7 @@ namespace FlashViewer
         {
             try
             {
-                if (evnt.Action.StartsWith("FlashViewer."))
+                if (evnt.Action.StartsWithOrdinal("FlashViewer."))
                 {
                     String action = evnt.Action;
                     String[] args = evnt.Data != null ? evnt.Data.ToString().Split(',') : null;

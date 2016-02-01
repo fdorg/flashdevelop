@@ -388,8 +388,8 @@ namespace ASCompletion.Model
                         if ((property.Flags & FlagType.Function) > 0)
                         {
                             string commentDecl = property.ToDeclarationString();
-                            int idxA = Math.Max(memberDecl.LastIndexOf(":"), memberDecl.LastIndexOf(")") + 1);
-                            int idxB = Math.Min(commentDecl.IndexOf(":"), commentDecl.IndexOf("/*"));
+                            int idxA = Math.Max(memberDecl.LastIndexOf(':'), memberDecl.LastIndexOf(')') + 1);
+                            int idxB = Math.Min(commentDecl.IndexOf(':'), commentDecl.IndexOfOrdinal("/*"));
 
                             if (idxA > 0 && idxB > -1)
                                 memberDecl = memberDecl.Substring(0, idxA) + commentDecl.Substring(idxB);
@@ -586,7 +586,7 @@ namespace ASCompletion.Model
             if (comment.Length == 0) return "";
             Boolean indent = tab != "";
             String space = PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
-            Boolean startWithStar = comment.StartsWith("*");
+            Boolean startWithStar = comment.StartsWith('*');
             if (startWithStar || comment.IndexOf('\n') > 0 || comment.IndexOf('\r') > 0)
             {
                 if (!startWithStar)

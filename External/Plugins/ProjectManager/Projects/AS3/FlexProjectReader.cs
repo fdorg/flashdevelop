@@ -54,7 +54,7 @@ namespace ProjectManager.Projects.AS3
             string src = GetAttribute("sourceFolderPath");
             if (src != null) project.Classpaths.Add(src);
             mainApp = (src ?? "") + "/" + mainApp;
-            if (mainApp.StartsWith("/")) mainApp = mainApp.Substring(1);
+            if (mainApp.StartsWith('/')) mainApp = mainApp.Substring(1);
             project.CompileTargets.Add(OSPath(mainApp.Replace('/', '\\')));
 
             project.TraceEnabled = GetAttribute("enableModuleDebug") == "true";
@@ -84,7 +84,7 @@ namespace ProjectManager.Projects.AS3
                 {
                     string mainFile = ResolvePath(mainApp, project.Directory);
                     if (mainFile != null && File.Exists(mainFile))
-                        if (File.ReadAllText(mainFile).IndexOf("http://www.adobe.com/2006/mxml") > 0)
+                        if (File.ReadAllText(mainFile).IndexOfOrdinal("http://www.adobe.com/2006/mxml") > 0)
                         {
                             target = 3;
                             additional = "-compatibility-version=3.0.0\n" + additional;
@@ -171,10 +171,10 @@ namespace ProjectManager.Projects.AS3
                         if (!Directory.Exists(pathTmp) && !File.Exists(pathTmp))
                             pathTmp = reArgs.Replace(path, ReplaceVars);
                             
-                        if (pathTmp.Length > 0 && !pathTmp.StartsWith("$"))
+                        if (pathTmp.Length > 0 && !pathTmp.StartsWith('$'))
                         {
                             asset = new LibraryAsset(project, pathTmp);
-                            if (exclude || GetAttribute("linkType").ToString() == "2")
+                            if (exclude || GetAttribute("linkType") == "2")
                                 asset.SwfMode = SwfAssetMode.ExternalLibrary;
                             else
                                 asset.SwfMode = SwfAssetMode.Library;
@@ -301,7 +301,7 @@ namespace ProjectManager.Projects.AS3
         public static String ResolvePath(String path, String relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            Boolean isPathNetworked = path.StartsWith("\\\\") || path.StartsWith("//");
+            Boolean isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
             String resolvedPath = Path.Combine(relativeTo, path);
             if (Directory.Exists(resolvedPath) || File.Exists(resolvedPath)) return resolvedPath;

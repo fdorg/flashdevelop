@@ -584,15 +584,15 @@ namespace FlashDevelop
                 }
                 else return null;
             }
-            else if (file.EndsWith(".delete.fdz"))
+            else if (file.EndsWithOrdinal(".delete.fdz"))
             {
                 this.CallCommand("RemoveZip", file);
                 return null;
             }
-            else if (file.EndsWith(".fdz"))
+            else if (file.EndsWithOrdinal(".fdz"))
             {
                 this.CallCommand("ExtractZip", file);
-                if (file.ToLower().IndexOf("theme") != -1)
+                if (file.IndexOf("theme", StringComparison.OrdinalIgnoreCase) != -1)
                 {
                     String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (File.Exists(currentTheme))
@@ -2421,7 +2421,7 @@ namespace FlashDevelop
             if (sci.CanPaste)
             {
                 // if clip is not line-based, then just do simple paste
-                if ((sci.SelTextSize > 0 && !sci.SelText.EndsWith("\n")) || !Clipboard.GetText().EndsWith("\n") || Clipboard.ContainsData("MSDEVColumnSelect")) sci.Paste();
+                if ((sci.SelTextSize > 0 && !sci.SelText.EndsWith('\n')) || !Clipboard.GetText().EndsWith('\n') || Clipboard.ContainsData("MSDEVColumnSelect")) sci.Paste();
                 else
                 {
                     sci.BeginUndoAction();
@@ -2655,7 +2655,7 @@ namespace FlashDevelop
                 for (Int32 i = 0; i < documents.Length; i++)
                 {
                     ITabbedDocument current = documents[i];
-                    if (current.IsEditable && current.IsModified && !current.IsUntitled && current.Text.EndsWith(filter))
+                    if (current.IsEditable && current.IsModified && !current.IsUntitled && current.Text.EndsWithOrdinal(filter))
                     {
                         current.Save();
                         current.IsModified = false;
@@ -3379,13 +3379,13 @@ namespace FlashDevelop
                 ScintillaControl sci = Globals.SciControl;
                 if (sci.SelText.Length > 0)
                 {
-                    isAsterisk = sci.SelText.StartsWith("#");
-                    if (sci.SelText.StartsWith("0x") && sci.SelText.Length == 8)
+                    isAsterisk = sci.SelText.StartsWith('#');
+                    if (sci.SelText.StartsWithOrdinal("0x") && sci.SelText.Length == 8)
                     {
                         Int32 convertedColor = DataConverter.StringToColor(sci.SelText);
                         this.colorDialog.Color = ColorTranslator.FromWin32(convertedColor);
                     }
-                    else if (sci.SelText.StartsWith("#") && sci.SelText.Length == 7)
+                    else if (sci.SelText.StartsWith('#') && sci.SelText.Length == 7)
                     {
                         String foundColor = sci.SelText.Replace("#", "0x");
                         Int32 convertedColor = DataConverter.StringToColor(foundColor);
@@ -3660,7 +3660,7 @@ namespace FlashDevelop
                 {
                     if (sci.LineLength(line) == 0) text = "";
                     else text = sci.GetLine(line).TrimStart();
-                    if (text.StartsWith(lineComment))
+                    if (text.StartsWithOrdinal(lineComment))
                     {
                         position = sci.LineIndentPosition(line);
                         sci.SetSel(position, position + lineComment.Length);
@@ -3700,7 +3700,7 @@ namespace FlashDevelop
             Int32 selStart = sci.SelectionStart;
             String commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
             String commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
-            if (sci.SelText.StartsWith(commentStart) && sci.SelText.EndsWith(commentEnd))
+            if (sci.SelText.StartsWithOrdinal(commentStart) && sci.SelText.EndsWithOrdinal(commentEnd))
             {
                 sci.BeginUndoAction();
                 try
@@ -3761,7 +3761,7 @@ namespace FlashDevelop
                     sci.SetSel(start + 1, end);
                     // remove comment
                     String selText = sci.SelText;
-                    if (selText.StartsWith(commentStart) && selText.EndsWith(commentEnd))
+                    if (selText.StartsWithOrdinal(commentStart) && selText.EndsWithOrdinal(commentEnd))
                     {
                         sci.SetSel(end - commentEnd.Length, end);
                         sci.ReplaceSel("");
@@ -3817,7 +3817,7 @@ namespace FlashDevelop
             {
                 if (sci.LineLength(line) == 0) text = "";
                 else text = sci.GetLine(line).TrimStart();
-                if (!text.StartsWith(lineComment))
+                if (!text.StartsWithOrdinal(lineComment))
                 {
                     containsCodeLine = true;
                     break;
@@ -4010,7 +4010,7 @@ namespace FlashDevelop
                 {
                     String message = TextHelper.GetString("Info.RunningProcess");
                     TraceManager.Add(message + " " + args, (Int32)TraceType.ProcessStart);
-                    if (args.ToLower().EndsWith(".bat"))
+                    if (args.ToLower().EndsWithOrdinal(".bat"))
                     {
                         Process bp = new Process();
                         bp.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -4136,7 +4136,7 @@ namespace FlashDevelop
                     zipFile.BeginUpdate();
                     foreach (String settingFile in settingFiles)
                     {
-                        Int32 index = settingFile.IndexOf(dirMarker) + dirMarker.Length;
+                        Int32 index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
                         zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
                     }
                     zipFile.CommitUpdate();

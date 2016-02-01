@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using PluginCore;
 
 namespace ScintillaNet.Configuration
 {
@@ -42,7 +43,7 @@ namespace ScintillaNet.Configuration
             foreach (Language lang in this.AllLanguages)
             {
                 string extensions = ","+lang.fileextensions+",";
-                if (extensions.IndexOf(","+filemask+",") >- 1)
+                if (extensions.IndexOfOrdinal(","+filemask+",") >- 1)
                 {
                     return true;
                 }
@@ -59,11 +60,11 @@ namespace ScintillaNet.Configuration
             foreach (Language lang in this.AllLanguages)
             {
                 string extensions = ","+lang.fileextensions+",";
-                if (extensions.IndexOf(",*,") > -1)
+                if (extensions.IndexOfOrdinal(",*,") > -1)
                 {
                     defaultLanguage = lang.name;
                 }
-                if (extensions.IndexOf(","+filemask+",") > -1)
+                if (extensions.IndexOfOrdinal(","+filemask+",") > -1)
                 {
                     return lang.name;
                 }

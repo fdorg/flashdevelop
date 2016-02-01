@@ -1430,11 +1430,11 @@ namespace ASCompletion.Context
             outputFile = null;
 
             // on error, don't play
-            if (!result.EndsWith("(0)"))
+            if (!result.EndsWithOrdinal("(0)"))
                 return;
 
             // remove quotes
-            if (swf.StartsWith("\"")) swf = swf.Substring(1, swf.Length-2);
+            if (swf.StartsWith('\"')) swf = swf.Substring(1, swf.Length-2);
 
             // allow network access to the SWF
             if (trustFileWanted)
@@ -1549,7 +1549,7 @@ namespace ASCompletion.Context
             if (path.Length == 0) return path;
             if (doPathNormalization)
                 path = path.Replace(dirAltSeparator, dirSeparator);
-            if (!path.EndsWith(dirSeparator))
+            if (!path.EndsWithOrdinal(dirSeparator))
                 path += dirSeparator;
             path = path.Replace(dirSeparator + dirSeparator, dirSeparator);
             return PathHelper.GetLongPathName(path);
@@ -1558,7 +1558,7 @@ namespace ASCompletion.Context
         {
             if (str == null) return "";
             if (sep == null) return str;
-            int p = str.LastIndexOf(sep);
+            int p = str.LastIndexOfOrdinal(sep);
             return (p >= 0) ? str.Substring(p + 1) : str;
         }
 
@@ -1651,7 +1651,7 @@ namespace ASCompletion.Context
                     string name = item.Name;
                     if (name.IndexOf('<') > 0)
                     {
-                        if (name.IndexOf(".<") > 0) name = name.Substring(0, name.IndexOf(".<"));
+                        if (name.IndexOfOrdinal(".<") > 0) name = name.Substring(0, name.IndexOfOrdinal(".<"));
                         else name = name.Substring(0, name.IndexOf('<'));
                     }
                     if (name.IndexOf('.') > 0) name = name.Substring(name.LastIndexOf('.') + 1);

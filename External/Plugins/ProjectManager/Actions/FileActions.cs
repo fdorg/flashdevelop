@@ -446,8 +446,8 @@ namespace ProjectManager.Actions
                 if (isDirectory)
                 {
                     // this is required for renaming directories, don't ask me why
-                    string oldPathFixed = (oldPath.EndsWith("\\")) ? oldPath : oldPath + "\\";
-                    string newPathFixed = (newPath.EndsWith("\\")) ? newPath : newPath + "\\";
+                    string oldPathFixed = (oldPath.EndsWith('\\')) ? oldPath : oldPath + "\\";
+                    string newPathFixed = (newPath.EndsWith('\\')) ? newPath : newPath + "\\";
                     if (oldPathFixed.Equals(newPathFixed, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed

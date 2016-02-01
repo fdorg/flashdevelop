@@ -281,7 +281,7 @@ namespace ASCompletion.Completion
                     int position = Sci.CurrentPos-1;
                     string tail = GetWordLeft(Sci, ref position);
                     ContextFeatures features = ASContext.Context.Features;
-                    if (tail.IndexOf(features.dot) < 0 && features.HasTypePreKey(tail)) tail = "";
+                    if (tail.IndexOfOrdinal(features.dot) < 0 && features.HasTypePreKey(tail)) tail = "";
                     // display the full project classes list
                     HandleAllClassesCompletion(Sci, tail, false, true);
                     return true;
@@ -889,7 +889,7 @@ namespace ASCompletion.Completion
                     string cmd = ASContext.Context.Settings.DocumentationCommandLine;
                     if (string.IsNullOrEmpty(cmd)) return null;
                     // top-level vars should be searched only if the command includes member information
-                    if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && cmd.IndexOf("$(Itm") < 0) 
+                    if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && cmd.IndexOfOrdinal("$(Itm") < 0) 
                         return null;
                     // complete command
                     cmd = ArgumentsProcessor.Process(cmd, CurrentResolvedContext.Arguments);
@@ -1021,7 +1021,7 @@ namespace ASCompletion.Completion
                     Sci.SetLineIndentation(line + 1, Sci.GetLineIndentation(openLine));
                 }
                 // in comments
-                else if (PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented && txt.EndsWith("*/"))
+                else if (PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented && txt.EndsWithOrdinal("*/"))
                     FixIndentationAfterComments(Sci, line);
                 else if (IsCommentStyle(style) && (Sci.BaseStyleAt(position + 1) == style))
                     FormatComments(Sci, txt, line);
@@ -1031,16 +1031,16 @@ namespace ASCompletion.Completion
                     // braces
                     if (!ASContext.CommonSettings.DisableAutoCloseBraces)
                     {
-                        if (txt.IndexOf("//") > 0) // remove comment at end of line
+                        if (txt.IndexOfOrdinal("//") > 0) // remove comment at end of line
                         {
-                            int slashes = Sci.MBSafeTextLength(txt.Substring(0, txt.IndexOf("//") + 1));
+                            int slashes = Sci.MBSafeTextLength(txt.Substring(0, txt.IndexOfOrdinal("//") + 1));
                             if (Sci.PositionIsOnComment(Sci.PositionFromLine(line-1) + slashes))
-                                txt = txt.Substring(0, txt.IndexOf("//")).Trim();
+                                txt = txt.Substring(0, txt.IndexOfOrdinal("//")).Trim();
                         }
-                        if (txt.EndsWith("{") && (line > 1)) AutoCloseBrace(Sci, line);
+                        if (txt.EndsWith('{') && (line > 1)) AutoCloseBrace(Sci, line);
                     }
                     // code reformatting
-                    if (!ASContext.CommonSettings.DisableCodeReformat && !txt.EndsWith("*/"))
+                    if (!ASContext.CommonSettings.DisableCodeReformat && !txt.EndsWithOrdinal("*/"))
                         ReformatLine(Sci, Sci.PositionFromLine(line) - 1);
                 }
             }
@@ -1173,8 +1173,8 @@ namespace ASCompletion.Completion
             while (startLine > 0)
             {
                 string txt = Sci.GetLine(startLine).TrimStart();
-                if (txt.StartsWith("/*")) break;
-                else if (!txt.StartsWith("*")) break;
+                if (txt.StartsWithOrdinal("/*")) break;
+                else if (!txt.StartsWith('*')) break;
                 startLine--;
             }
             Sci.SetLineIndentation(line, Sci.GetLineIndentation(startLine));
@@ -1191,7 +1191,7 @@ namespace ASCompletion.Completion
         private static void FormatComments(ScintillaControl Sci, string txt, int line)
         {
             txt = txt.TrimStart();
-            if (txt.StartsWith("/*"))
+            if (txt.StartsWithOrdinal("/*"))
             {
                 Sci.ReplaceSel("* ");
                 if (PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented)
@@ -1199,7 +1199,7 @@ namespace ASCompletion.Completion
                 int position = Sci.LineIndentPosition(line) + 2;
                 Sci.SetSel(position, position);
             }
-            else if (txt.StartsWith("*"))
+            else if (txt.StartsWith('*'))
             {
                 Sci.ReplaceSel("* ");
                 int position = Sci.LineIndentPosition(line) + 2;
@@ -1236,11 +1236,15 @@ namespace ASCompletion.Completion
                     tab = tempIndent + Sci.TabWidth;
                     break;
                 }
+<<<<<<< HEAD
+                if (tempText.Length > 0 && (tempText.EndsWith('}') || IsDeclaration(tempText, features)))
+=======
                 if (tempText.Length > 0 && (tempText.EndsWith("}") || CodeUtils.IsDeclaration(tempText, features)))
+>>>>>>> 5aa9cd43e5a9437cfe81c0c61d2285f5024c8f95
                 {
                     tempIndent = Sci.GetLineIndentation(tempLine);
                     tab = tempIndent;
-                    if (tempText.EndsWith("{")) tab += Sci.TabWidth;
+                    if (tempText.EndsWith('{')) tab += Sci.TabWidth;
                     break;
                 }
                 tempLine--;
@@ -1261,6 +1265,25 @@ namespace ASCompletion.Completion
             return true;
         }
 
+<<<<<<< HEAD
+        private static bool IsTypeDecl(string line, string[] typesKeywords)
+        {
+            foreach (string keyword in typesKeywords)
+                if (line.IndexOfOrdinal(keyword) >= 0) return true;
+            return false;
+        }
+
+        private static bool IsDeclaration(string line, ContextFeatures features)
+        {
+            foreach (string keyword in features.accessKeywords)
+                if (line.StartsWithOrdinal(keyword)) return true;
+            foreach (string keyword in features.declKeywords)
+                if (line.StartsWithOrdinal(keyword)) return true;
+            return false;
+        }
+
+=======
+>>>>>>> 5aa9cd43e5a9437cfe81c0c61d2285f5024c8f95
         #endregion
 
         #region function_completion
@@ -1455,7 +1478,7 @@ namespace ASCompletion.Completion
                 return true;
 
             // EventDispatchers
-            if (paramIndex == 0 && calltipRelClass != null && calltipMember.Name.EndsWith("EventListener"))
+            if (paramIndex == 0 && calltipRelClass != null && calltipMember.Name.EndsWithOrdinal("EventListener"))
             {
                 ShowListeners(Sci, position, calltipRelClass);
                 return true;
@@ -1611,7 +1634,7 @@ namespace ASCompletion.Completion
                 string type = param.Type;
                 if (indexTypeOnly && (String.IsNullOrEmpty(type) || type.IndexOf('@') < 0))
                     return ClassModel.VoidClass;
-                if (ASContext.Context.Features.objectKey == "Dynamic" && type.StartsWith("Dynamic@"))
+                if (ASContext.Context.Features.objectKey == "Dynamic" && type.StartsWithOrdinal("Dynamic@"))
                     type = type.Replace("Dynamic@", "Dynamic<") + ">";
                 return ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
             }
@@ -1747,7 +1770,7 @@ namespace ASCompletion.Completion
 
                     if (!typeFound)
                     {
-                        if (evClass.InFile.Package.StartsWith("flash.")) 
+                        if (evClass.InFile.Package.StartsWithOrdinal("flash.")) 
                             continue; // hide built-in events not available in current player target
                         name = '"' + name + '"';
                     }
@@ -1797,7 +1820,7 @@ namespace ASCompletion.Completion
                 return true;
             IASContext ctx = ASContext.Context;
             ContextFeatures features = ctx.Features;
-            int dotIndex = expr.Value.LastIndexOf(features.dot);
+            int dotIndex = expr.Value.LastIndexOfOrdinal(features.dot);
             if (dotIndex == 0 && expr.Separator != '"')
                 return true;
 
@@ -1855,14 +1878,14 @@ namespace ASCompletion.Completion
                 else if (cMember != null && line == cMember.LineFrom)
                 {
                     string text = Sci.GetLine(line);
-                    int p = text.IndexOf(cMember.Name);
+                    int p = text.IndexOfOrdinal(cMember.Name);
                     if (p < 0 || position < Sci.PositionFromLine(line) + p)
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                 }
             }
             else
             {
-                if (expr.Value.EndsWith("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\.")) 
+                if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\.")) 
                     return false;
             }
 
@@ -2043,7 +2066,7 @@ namespace ASCompletion.Completion
                 // Note that if the tail is currently empty (i.e., the user has just typed the first dot), this still passes.
                 // This allows it to highlight the last-completed member instantly just by hitting the dot.
                 // Also does a check if the tail matches exactly the currently selected item; don't change it!
-                if (CompletionList.SelectedLabel != tail && completionHistory[currentClassHash].ToLower().StartsWith(tail.ToLower()))
+                if (CompletionList.SelectedLabel != tail && completionHistory[currentClassHash].ToLower().StartsWithOrdinal(tail.ToLower()))
                 {
                     CompletionList.SelectItem(completionHistory[currentClassHash]);
                 }
@@ -2057,8 +2080,8 @@ namespace ASCompletion.Completion
             int position = Sci.CurrentPos;
             ContextFeatures features = ASContext.Context.Features;
             ASExpr local = GetExpression(Sci, position);
-            if (!local.Value.StartsWith(expr.Value) 
-                || expr.Value.LastIndexOf(features.dot) != local.Value.LastIndexOf(features.dot))
+            if (!local.Value.StartsWithOrdinal(expr.Value) 
+                || expr.Value.LastIndexOfOrdinal(features.dot) != local.Value.LastIndexOfOrdinal(features.dot))
                 return;
             string word = Sci.GetWordLeft(position-1, false);
 
@@ -2446,9 +2469,9 @@ namespace ASCompletion.Completion
             if (string.IsNullOrEmpty(expression)) return notFound;
 
             ContextFeatures features = ASContext.Context.Features;
-            if (expression.StartsWith(features.dot))
+            if (expression.StartsWithOrdinal(features.dot))
             {
-                if (expression.StartsWith(features.dot + "#")) expression = expression.Substring(1);
+                if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
                 else if (context.Separator == '"') expression = '"' + expression;
                 else return notFound;
             }
@@ -2461,7 +2484,7 @@ namespace ASCompletion.Completion
             if (asFunction && tokens.Length == 1) token += "(";
 
             ASResult head;
-            if (token.StartsWith("#"))
+            if (token.StartsWith('#'))
             {
                 Match mSub = re_sub.Match(token);
                 if (mSub.Success)
@@ -2488,7 +2511,7 @@ namespace ASCompletion.Completion
                     {
                         string trash = subExpr.Substring(0, space).TrimEnd();
                         subExpr = subExpr.Substring(space + 1);
-                        if (trash.EndsWith("as")) subExpr += features.dot + "#";
+                        if (trash.EndsWithOrdinal("as")) subExpr += features.dot + "#";
                     }
                     // eval sub expression
                     head = EvalExpression(subExpr, subContext, inFile, inClass, true, false);
@@ -2880,7 +2903,7 @@ namespace ASCompletion.Completion
                 int p = text.IndexOf(';');
                 text = text.TrimEnd();
                 if (p < 0) p = text.Length;
-                if (text.EndsWith("(")) p--;
+                if (text.EndsWith('(')) p--;
                 // resolve expression
                 ASExpr expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
                 if (!string.IsNullOrEmpty(expr.Value))
@@ -3115,15 +3138,15 @@ namespace ASCompletion.Completion
                         string autoType = null;
                         if (tmpClass.InFile.Version < 3)
                         {
-                            if (token.EndsWith("_mc") || token.StartsWith("mc")) autoType = "MovieClip";
-                            else if (token.EndsWith("_txt") || token.StartsWith("txt")) autoType = "TextField";
-                            else if (token.EndsWith("_btn") || token.StartsWith("bt")) autoType = "Button";
+                            if (token.EndsWithOrdinal("_mc") || token.StartsWithOrdinal("mc")) autoType = "MovieClip";
+                            else if (token.EndsWithOrdinal("_txt") || token.StartsWithOrdinal("txt")) autoType = "TextField";
+                            else if (token.EndsWithOrdinal("_btn") || token.StartsWithOrdinal("bt")) autoType = "Button";
                         }
                         else if (tmpClass.InFile.Version == 3) 
                         {
-                            if (token.EndsWith("_mc") || token.StartsWith("mc")) autoType = "flash.display.MovieClip";
-                            else if (token.EndsWith("_txt") || token.StartsWith("txt")) autoType = "flash.text.TextField";
-                            else if (token.EndsWith("_btn") || token.StartsWith("bt")) autoType = "flash.display.SimpleButton";
+                            if (token.EndsWithOrdinal("_mc") || token.StartsWithOrdinal("mc")) autoType = "flash.display.MovieClip";
+                            else if (token.EndsWithOrdinal("_txt") || token.StartsWithOrdinal("txt")) autoType = "flash.text.TextField";
+                            else if (token.EndsWithOrdinal("_btn") || token.StartsWithOrdinal("bt")) autoType = "flash.display.SimpleButton";
                         }
                         if (autoType != null)
                         {
@@ -3673,8 +3696,8 @@ namespace ASCompletion.Completion
                 ContextFeatures features = ASContext.Context.Features;
                 foreach (MemberModel item in expression.ContextFunction.Parameters)
                 {
-                    if (item.Name.StartsWith(features.dot)) 
-                        model.Members.Merge(new MemberModel(item.Name.Substring(item.Name.LastIndexOf(features.dot) + 1), "Array", item.Flags, item.Access));
+                    if (item.Name.StartsWithOrdinal(features.dot)) 
+                        model.Members.Merge(new MemberModel(item.Name.Substring(item.Name.LastIndexOfOrdinal(features.dot) + 1), "Array", item.Flags, item.Access));
                     else if (item.Name[0] == '?') model.Members.Merge(new MemberModel(item.Name.Substring(1), item.Type, item.Flags, item.Access));
                     else model.Members.Merge(item);
                 }
@@ -4105,7 +4128,7 @@ namespace ASCompletion.Completion
                 }
 
                 // look for a snippet
-                if (trigger == '\t' && expr.Value.IndexOf(features.dot) < 0)
+                if (trigger == '\t' && expr.Value.IndexOfOrdinal(features.dot) < 0)
                 {
                     foreach(string key in features.codeKeywords)
                         if (key == expr.Value)
@@ -4162,7 +4185,7 @@ namespace ASCompletion.Completion
             }
             // if not completed a type
             else if (context.IsNull() || !context.IsStatic || context.Type == null
-                || (context.Type.Type != null && context.Type.Type.IndexOf(features.dot) < 0)
+                || (context.Type.Type != null && context.Type.Type.IndexOfOrdinal(features.dot) < 0)
                 || context.Type.IsVoid())
             {
                 if (context.Member != null && expr.Separator == ' '
@@ -4422,8 +4445,8 @@ namespace ASCompletion.Completion
             {
                 if (member.Name.IndexOf('<') > 0)
                 {
-                    if (member.Name.IndexOf(".<") > 0) 
-                        return member.Name.Substring(0, member.Name.IndexOf(".<"));
+                    if (member.Name.IndexOfOrdinal(".<") > 0) 
+                        return member.Name.Substring(0, member.Name.IndexOfOrdinal(".<"));
                     else return member.Name.Substring(0, member.Name.IndexOf('<'));
                 }
                 return member.Name; 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -33,10 +34,10 @@ namespace FlashDevelop.Managers
                         {
                             String appFileContents = FileHelper.ReadFile(appFile);
                             String userFileContents = FileHelper.ReadFile(userFile);
-                            Int32 appFileColoringStart = appFileContents.IndexOf(coloringStart);
-                            Int32 appFileColoringEnd = appFileContents.IndexOf(coloringEnd);
-                            Int32 userFileColoringStart = userFileContents.IndexOf(coloringStart);
-                            Int32 userFileColoringEnd = userFileContents.IndexOf(coloringEnd);
+                            Int32 appFileColoringStart = appFileContents.IndexOfOrdinal(coloringStart);
+                            Int32 appFileColoringEnd = appFileContents.IndexOfOrdinal(coloringEnd);
+                            Int32 userFileColoringStart = userFileContents.IndexOfOrdinal(coloringStart);
+                            Int32 userFileColoringEnd = userFileContents.IndexOfOrdinal(coloringEnd);
                             String replaceTarget = appFileContents.Substring(appFileColoringStart, appFileColoringEnd - appFileColoringStart + coloringEnd.Length);
                             String replaceContent = userFileContents.Substring(userFileColoringStart, userFileColoringEnd - userFileColoringStart + coloringEnd.Length);
                             String finalContent = appFileContents.Replace(replaceTarget, replaceContent);

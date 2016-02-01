@@ -342,6 +342,7 @@
     <Compile Include="PluginCore\Managers\ImageListManager.cs" />
     <Compile Include="PluginCore\PlatformData.cs" />
     <Compile Include="PluginCore\Utilities\CryptoClasses.cs" />
+    <Compile Include="PluginCore\Utilities\ExtensionClasses.cs" />
     <Compile Include="PluginCore\Utilities\ImageKonverter.cs" />
     <Compile Include="PluginCore\Utilities\LogicalComparer.cs" />
     <Compile Include="PluginCore\Utilities\ImageQuantizers.cs" />

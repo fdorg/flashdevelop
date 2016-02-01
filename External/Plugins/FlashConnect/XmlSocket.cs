@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 
@@ -95,12 +96,12 @@ namespace FlashConnect
                     * Check packet
                     */
                     if (packets != null) packets.Append(contents);
-                    else if (contents.StartsWith("<")) packets = new StringBuilder(contents);
+                    else if (contents.StartsWith('<')) packets = new StringBuilder(contents);
                     else ErrorManager.ShowWarning(INCORRECT_PKT + contents, null);
                     /**
                     * Validate message
                     */
-                    if (packets != null && contents.EndsWith("\0"))
+                    if (packets != null && contents.EndsWith('\0'))
                     {
                         String msg = packets.ToString(); packets = null; 
                         if (msg == "<policy-file-request/>\0") 
@@ -111,7 +112,7 @@ namespace FlashConnect
                                 + "</cross-domain-policy>\0";
                             so.Client.Send(Encoding.ASCII.GetBytes(policy));
                         }
-                        else if (msg.EndsWith("</flashconnect>\0")) this.XmlReceived(this, new XmlReceivedEventArgs(msg, so.Client));
+                        else if (msg.EndsWithOrdinal("</flashconnect>\0")) this.XmlReceived(this, new XmlReceivedEventArgs(msg, so.Client));
                         else ErrorManager.ShowWarning(INCORRECT_PKT + msg, null);
                     }
                     this.SetupReceiveCallback(so.Client);

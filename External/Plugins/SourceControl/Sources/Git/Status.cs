@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 
@@ -31,7 +32,7 @@ namespace SourceControl.Sources.Git
             {
                 foreach (IgnoreEntry ignore in ignores)
                 {
-                    if ((ignore.path == "" || path.StartsWith(ignore.path)) && ignore.regex.IsMatch(path))
+                    if ((ignore.path == "" || path.StartsWithOrdinal(ignore.path)) && ignore.regex.IsMatch(path))
                     {
                         found = root.MapPath(path.Substring(ignore.path.Length), VCItemStatus.Ignored);
                         return found;
@@ -111,7 +112,7 @@ namespace SourceControl.Sources.Git
             else if (c0 == 'D' || c1 == 'D') s = VCItemStatus.Deleted;
             else if (c0 == '#') return;
 
-            int p = line.IndexOf(" -> ");
+            int p = line.IndexOfOrdinal(" -> ");
             if (p > 0) line = line.Substring(p + 4);
             else line = line.Substring(fileIndex);
             temp.MapPath(line, s);
