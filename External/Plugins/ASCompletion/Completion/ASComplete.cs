@@ -1236,11 +1236,7 @@ namespace ASCompletion.Completion
                     tab = tempIndent + Sci.TabWidth;
                     break;
                 }
-<<<<<<< HEAD
-                if (tempText.Length > 0 && (tempText.EndsWith('}') || IsDeclaration(tempText, features)))
-=======
                 if (tempText.Length > 0 && (tempText.EndsWith("}") || CodeUtils.IsDeclaration(tempText, features)))
->>>>>>> 5aa9cd43e5a9437cfe81c0c61d2285f5024c8f95
                 {
                     tempIndent = Sci.GetLineIndentation(tempLine);
                     tab = tempIndent;
@@ -1265,25 +1261,6 @@ namespace ASCompletion.Completion
             return true;
         }
 
-<<<<<<< HEAD
-        private static bool IsTypeDecl(string line, string[] typesKeywords)
-        {
-            foreach (string keyword in typesKeywords)
-                if (line.IndexOfOrdinal(keyword) >= 0) return true;
-            return false;
-        }
-
-        private static bool IsDeclaration(string line, ContextFeatures features)
-        {
-            foreach (string keyword in features.accessKeywords)
-                if (line.StartsWithOrdinal(keyword)) return true;
-            foreach (string keyword in features.declKeywords)
-                if (line.StartsWithOrdinal(keyword)) return true;
-            return false;
-        }
-
-=======
->>>>>>> 5aa9cd43e5a9437cfe81c0c61d2285f5024c8f95
         #endregion
 
         #region function_completion

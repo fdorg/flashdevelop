@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.ComponentModel;
-using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
