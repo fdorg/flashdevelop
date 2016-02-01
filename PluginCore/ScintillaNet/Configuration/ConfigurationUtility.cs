@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace ScintillaNet.Configuration
@@ -88,12 +89,15 @@ namespace ScintillaNet.Configuration
                         String original = File.ReadAllText(filename);
                         String overriding = File.ReadAllText(filename + ".override");
                         String tabContent = overriding.Replace("\n", "\n\t\t\t");
-                        Int32 indexStart = original.IndexOf(coloringStart);
-                        Int32 indexEnd = original.IndexOf(coloringEnd);
-                        String replaceTarget = original.Substring(indexStart, indexEnd - indexStart + coloringEnd.Length);
-                        String finalContent = original.Replace(replaceTarget, tabContent);
-                        File.WriteAllText(filename, finalContent);
-                        File.Delete(filename + ".override");
+                        Int32 indexStart = original.IndexOfOrdinal(coloringStart);
+                        Int32 indexEnd = original.IndexOfOrdinal(coloringEnd);
+                        if (indexStart > -1)
+                        {
+                            String replaceTarget = original.Substring(indexStart, indexEnd - indexStart + coloringEnd.Length);
+                            String finalContent = original.Replace(replaceTarget, tabContent);
+                            File.WriteAllText(filename, finalContent);
+                            File.Delete(filename + ".override");
+                        }
                     }
                     catch { /* NO ERRORS... */ }
                 }

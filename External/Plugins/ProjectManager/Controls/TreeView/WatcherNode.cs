@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Timers;
+using PluginCore;
 using PluginCore.Bridge;
 using PluginCore.Localization;
 
@@ -105,7 +106,7 @@ namespace ProjectManager.Controls.TreeView
                 Char separator = Path.DirectorySeparatorChar;
                 foreach (String excludedDir in this.excludedDirs)
                 {
-                    if (path.IndexOf(separator + excludedDir + separator) > 0) return false;
+                    if (path.IndexOfOrdinal(separator + excludedDir + separator) > 0) return false;
                 }
             }
             if (this.excludedFiles != null && File.Exists(fullPath)) // filter ignored filetypes
@@ -185,8 +186,8 @@ namespace ProjectManager.Controls.TreeView
                 Tree.PathToSelect = null;
                 node.EnsureVisible();
                 // if you created a new folder, then label edit it!
-                string label = TextHelper.GetString("Label.NewFolder").Replace("&", "").Replace("...", "");
-                if (node.Text.StartsWith(label))
+                string label = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.NewFolder");
+                if (node.Text.StartsWithOrdinal(label))
                 {
                     node.BeginEdit();
                 }

@@ -30,7 +30,7 @@ namespace BookmarkPanel
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripMenuItem removeBookmarksItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private System.Windows.Forms.ImageList imageList;
+        private ImageListManager imageList;
         private System.Windows.Forms.Timer updateTimer;
         private TimeoutManager timeoutManager;
         private PluginMain pluginMain;
@@ -228,18 +228,20 @@ namespace BookmarkPanel
         /// </summary>
         private void InitializeGraphics()
         {
-            this.imageList = new ImageList();
+            this.imageList = new ImageListManager();
             this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("559|26|0|1"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("229"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("197"));
-            this.imageList.Images.SetKeyName(0, "Bookmark");
-            this.imageList.Images.SetKeyName(1, "Info");
-            this.imageList.Images.SetKeyName(2, "Error");
+            this.imageList.Initialize(ImageList_Populate);
             this.listView.SmallImageList = this.imageList;
             this.removeBookmarksItem.Image = PluginBase.MainForm.FindImage("402|4|4|4");
             this.searchButton.Image = PluginBase.MainForm.FindImage("484|26|-4|4");
+        }
+
+        private void ImageList_Populate(object sender, EventArgs e)
+        {
+            this.imageList.Images.Add("Bookmark", PluginBase.MainForm.FindImageAndSetAdjust("559|26|0|1"));
+            this.imageList.Images.Add("Info", PluginBase.MainForm.FindImageAndSetAdjust("229"));
+            this.imageList.Images.Add("Error", PluginBase.MainForm.FindImageAndSetAdjust("197"));
         }
 
         /// <summary>

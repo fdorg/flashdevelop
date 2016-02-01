@@ -330,7 +330,7 @@ namespace ProjectManager.Controls.TreeView
 
             if (path == project.ProjectPath) return true;
 
-            return !project.ShowHiddenPaths && (project.IsPathHidden(path) || path.IndexOf("\\.") >= 0 || ProjectTreeView.IsFileTypeHidden(path));
+            return !project.ShowHiddenPaths && (project.IsPathHidden(path) || path.IndexOfOrdinal("\\.") >= 0 || ProjectTreeView.IsFileTypeHidden(path));
         }
     }
 }

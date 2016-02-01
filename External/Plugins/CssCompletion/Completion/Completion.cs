@@ -81,7 +81,7 @@ namespace CssCompletion
                 {
                     int line = sci.LineFromPosition(position);
                     string text = sci.GetLine(line - 1).TrimEnd();
-                    if (text.EndsWith("{")) AutoCloseBrace(sci, line);
+                    if (text.EndsWith('{')) AutoCloseBrace(sci, line);
                 }
                 else if (c == '\t') // TODO get tab notification!
                 {
@@ -168,7 +168,7 @@ namespace CssCompletion
             {
                 var matches = new List<ICompletionListItem>();
                 foreach(var item in items)
-                    if (item.Label.StartsWith(context.Word)) matches.Add(item);
+                    if (item.Label.StartsWithOrdinal(context.Word)) matches.Add(item);
                 if (matches.Count == 1)
                 {
                     ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
@@ -537,16 +537,16 @@ namespace CssCompletion
                     if (c == 13 || c == 10)
                     {
                         prevLine = prevLine.Trim();
-                        if (prevLine.StartsWith("//")) break;
-                        if (!prevLine.EndsWith("*/") || prevLine.IndexOf("/*") >= 0) break;
+                        if (prevLine.StartsWithOrdinal("//")) break;
+                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.IndexOfOrdinal("/*") >= 0) break;
                     }
                     prevLine = c + prevLine;
                 }
             }
             if (prevLine.Length > 0 && prevLine[0] == '/')
             {
-                if (prevLine.StartsWith("//")) value += "//" + prevLine.Substring(2);
-                else if (prevLine.StartsWith("/*")) value += "//" + prevLine.Substring(2, prevLine.Length - 4);
+                if (prevLine.StartsWithOrdinal("//")) value += "//" + prevLine.Substring(2);
+                else if (prevLine.StartsWithOrdinal("/*")) value += "//" + prevLine.Substring(2, prevLine.Length - 4);
             }
 
             return value.Trim();

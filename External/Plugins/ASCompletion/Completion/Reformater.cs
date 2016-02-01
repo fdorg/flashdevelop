@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using PluginCore;
 
 namespace ASCompletion.Completion
 {
@@ -233,7 +234,11 @@ namespace ASCompletion.Completion
                         needSpace = true;
                         continue;
                     }
-                    else needSpace = (c != '!' || (c2 != '(' && c2 != '['));
+                    else if (c != '!' || (c2 != '(' && c2 != '[')) 
+                    {
+                        if (options.Operators.IndexOf(c2) >= 0 && options.Operators.IndexOf(c) >= 0) needSpace = false;
+                        else needSpace = (c != '!' || (c2 != '(' && c2 != '['));
+                    }
 
                     if (i < n)
                     {
@@ -491,7 +496,7 @@ namespace ASCompletion.Completion
                 // CDATA, HTML comments
                 if (c == '!' && n - i > 2)
                 {
-                    if (txt[i] == '[' && txt.Substring(i).StartsWith("[CDATA["))
+                    if (txt[i] == '[' && txt.Substring(i).StartsWithOrdinal("[CDATA["))
                     {
                         i += 7;
                         inCData = true;

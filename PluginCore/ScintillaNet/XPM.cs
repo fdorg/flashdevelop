@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Drawing;
 using System.Text;
+using PluginCore;
 using PluginCore.PluginCore.Utilities;
 
 namespace ScintillaNet
@@ -51,7 +52,7 @@ namespace ScintillaNet
             }
             sb.Append("};");
             string result = sb.ToString();
-            int p = result.IndexOf("?");
+            int p = result.IndexOfOrdinal("?");
             string finalColor = result.Substring(0, p)+colors.Count+result.Substring(p+1).Replace(tColor.ToUpper(), "None");
             return finalColor;
         }

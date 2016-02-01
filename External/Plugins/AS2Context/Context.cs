@@ -372,7 +372,7 @@ namespace AS2Context
                 if (!result.IsNull()) return;
 
                 // special _levelN
-                if (hasLevels && token.StartsWith("_") && re_level.IsMatch(token))
+                if (hasLevels && token.StartsWith('_') && re_level.IsMatch(token))
                 {
                     result.Member = new MemberModel();
                     result.Member.Name = token;
@@ -720,7 +720,7 @@ namespace AS2Context
                 // in the same (or parent) package
                 else if (testSamePackage)
                 {
-                    if (inPackage == pkg || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWith(pkg + ".")))
+                    if (inPackage == pkg || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWithOrdinal(pkg + ".")))
                         foreach (ClassModel aClass in aFile.Classes)
                             if (aClass.Name == cname /*&& (aFile.Module == "" || aFile.Module == aClass.Name)*/)
                             {
@@ -795,7 +795,7 @@ namespace AS2Context
                 {
                     string pathname = package.Replace('.', Path.DirectorySeparatorChar);
                     string fullpath = Path.GetDirectoryName(cFile.FileName);
-                    if (!fullpath.EndsWith(pathname))
+                    if (!fullpath.EndsWithOrdinal(pathname))
                     {
                         if (settings.FixPackageAutomatically && CurSciControl != null)
                         {
@@ -842,7 +842,7 @@ namespace AS2Context
                                     string correctPath = null;
                                     foreach (PathModel pm in classpaths)
                                     {
-                                        if (fullpath.IndexOf(pm.Path) > -1 && fullpath.Length > pm.Path.Length)
+                                        if (fullpath.IndexOfOrdinal(pm.Path) > -1 && fullpath.Length > pm.Path.Length)
                                         {
                                             correctPath = fullpath.Substring(pm.Path.Length + 1);
                                         }
@@ -882,7 +882,7 @@ namespace AS2Context
                     {
                         if (package.Length > 0) cname = package + "." + cname;
                         string filename = cname.Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(cFile.FileName);
-                        if (!cFile.FileName.ToUpper().EndsWith(filename.ToUpper()))
+                        if (!cFile.FileName.ToUpper().EndsWithOrdinal(filename.ToUpper()))
                         {
                             string org = TextHelper.GetString("Info.TypeDontMatchFileName");
                             string msg = String.Format(org, cname) + "\n" + cFile.FileName;
@@ -1025,7 +1025,7 @@ namespace AS2Context
                                 pModel.Members.Add(member.Clone() as MemberModel);
                         }
                         else if (package != prevPackage
-                                && (package.Length > name.Length && package.StartsWith(packagePrefix))) // imports
+                                && (package.Length > name.Length && package.StartsWithOrdinal(packagePrefix))) // imports
                         {
                             prevPackage = package;
                             if (nameLen > 1) package = package.Substring(nameLen);
@@ -1065,7 +1065,7 @@ namespace AS2Context
             foreach (string entry in fileEntries)
             {
                 mname = GetLastStringToken(entry, dirSeparator);
-                mname = mname.Substring(0, mname.LastIndexOf("."));
+                mname = mname.Substring(0, mname.LastIndexOf('.'));
                 if (mname.Length > 0 && memberList.Search(mname, 0, 0) == null && re_token.IsMatch(mname))
                 {
                     type = mname;
@@ -1316,7 +1316,7 @@ namespace AS2Context
                 else mtascPath = Path.GetDirectoryName(mtascPath);
 
                 command += ";\"" + CurrentFile + "\"";
-                if (append == null || append.IndexOf("-swf-version") < 0)
+                if (append == null || append.IndexOfOrdinal("-swf-version") < 0)
                     command += " -version "+majorVersion;
                 // classpathes
                 foreach(PathModel aPath in classPath)

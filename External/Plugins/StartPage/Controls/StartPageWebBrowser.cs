@@ -130,7 +130,7 @@ namespace StartPage.Controls
         private void WebBrowserNavigating(Object sender, WebBrowserNavigatingEventArgs e)
         {
             if (this.IsDownloadable(e.Url.ToString())) return;
-            if (!this.showingStartPage && !e.Url.ToString().StartsWith("javascript"))
+            if (!this.showingStartPage && !e.Url.ToString().StartsWithOrdinal("javascript"))
             {
                 this.startPageActions.ShowURL(e.Url.ToString());
                 e.Cancel = true;
@@ -143,8 +143,7 @@ namespace StartPage.Controls
         /// </summary>
         private Boolean IsDownloadable(String url)
         {
-            if (url.EndsWith(".exe") || url.EndsWith(".zip")) return true;
-            return false;
+            return url.EndsWithOrdinal(".exe") || url.EndsWithOrdinal(".zip");
         }
 
         #endregion

@@ -77,7 +77,7 @@ namespace PluginCore.Bridge
 
         public static bool IsRemote(string path)
         {
-            return Active && path != null && path.StartsWith(Settings.SharedDrive);
+            return Active && path != null && path.StartsWithOrdinal(Settings.SharedDrive);
         }
     }
 }

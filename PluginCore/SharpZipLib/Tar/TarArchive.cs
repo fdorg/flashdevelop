@@ -39,6 +39,7 @@
 using System;
 using System.IO;
 using System.Text;
+using PluginCore;
 
 namespace ICSharpCode.SharpZipLib.Tar
 {
@@ -727,7 +728,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             string newName = null;
         
             if (rootPath != null) {
-                if (entry.Name.StartsWith(rootPath)) {
+                if (entry.Name.StartsWithOrdinal(rootPath)) {
                     newName = entry.Name.Substring(rootPath.Length + 1 );
                 }
             }

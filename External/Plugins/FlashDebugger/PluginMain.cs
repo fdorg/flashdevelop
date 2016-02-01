@@ -162,7 +162,7 @@ namespace FlashDebugger
                         }
                         return;
                     }
-                    if (!buildevnt.Action.StartsWith("ProjectManager"))  return;
+                    if (!buildevnt.Action.StartsWithOrdinal("ProjectManager"))  return;
                     if (buildevnt.Action == ProjectManagerEvents.Project)
                     {
                         IProject project = PluginBase.CurrentProject;

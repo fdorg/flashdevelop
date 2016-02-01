@@ -321,7 +321,7 @@ namespace BasicCompletion
                     String[] words = entry.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
                     for (Int32 j = 0; j < words.Length; j++)
                     {
-                        if (words[j].Length > 3 && !keywords.Contains(words[j]) && !words[j].StartsWith("\x5E"))
+                        if (words[j].Length > 3 && !keywords.Contains(words[j]) && !words[j].StartsWithOrdinal("\x5E"))
                         {
                             keywords.Add(words[j]);
                         }
@@ -418,7 +418,7 @@ namespace BasicCompletion
         }
 
         /// <summary>
-        /// Shows the completion list automaticly after typing three chars
+        /// Shows the completion list automatically after typing three chars
         /// </summary>
         private void SciControlCharAdded(ScintillaControl sci, Int32 value)
         {

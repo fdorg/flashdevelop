@@ -76,11 +76,8 @@ namespace ProjectManager
         private ProjectActions projectActions;
         private FlashDevelopActions flashDevelopActions;
         private Queue<String> openFileQueue;
-        private Boolean showProjectClasspaths;
-        private Boolean showGlobalClasspaths;
         private DockContent pluginPanel;
         private PluginUI pluginUI;
-        private Image pluginImage;
         private Project activeProject;
         private OpenResourceForm projectResources;
         private Boolean runOutput;
@@ -102,7 +99,6 @@ namespace ProjectManager
 
         static string SettingsDir { get { return Path.Combine(PathHelper.DataDir, pluginName); } }
         static string SettingsPath { get { return Path.Combine(SettingsDir, "Settings.fdb"); } }
-        static string FDBuildHints { get { return Path.Combine(SettingsDir, "FDBuildHints.txt"); } }
 
         public void LoadSettings()
         {
@@ -170,15 +166,11 @@ namespace ProjectManager
         public void Initialize()
         {
             LoadSettings();
-            pluginImage = MainForm.FindImage("100");
             pluginDesc = TextHelper.GetString("Info.Description");
             openFileQueue = new Queue<String>();
 
             Icons.Initialize(MainForm);
             EventManager.AddEventHandler(this, eventMask);
-
-            showProjectClasspaths = Settings.ShowProjectClasspaths;
-            showGlobalClasspaths = Settings.ShowGlobalClasspaths;
 
             #region Actions and Event Listeners
 
@@ -411,7 +403,7 @@ namespace ProjectManager
                         te.Handled = true;
                         OpenProjectSilent(te.Value);
                     }
-                    else if (te.Value.EndsWith(".swf"))
+                    else if (te.Value.EndsWithOrdinal(".swf"))
                     {
                         te.Handled = true;
                         OpenSwf(te.Value);
@@ -452,7 +444,7 @@ namespace ProjectManager
                     break;
 
                 case EventType.Command:
-                    if (de.Action.StartsWith("ProjectManager."))
+                    if (de.Action.StartsWithOrdinal("ProjectManager."))
                     if (de.Action == ProjectManagerCommands.NewProject)
                     {
                         NewProject();
@@ -793,7 +785,7 @@ namespace ProjectManager
         {
             if (FileInspector.ShouldUseShellExecute(path)) ShellOpenFile(path);
             else if (FileInspector.IsSwf(path, Path.GetExtension(path).ToLower())) PlaySwf(path);
-            else if (path.IndexOf("::") > 0)
+            else if (path.IndexOfOrdinal("::") > 0)
             {
                 DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenVirtualFile, path);
                 EventManager.DispatchEvent(this, de);
@@ -847,7 +839,7 @@ namespace ProjectManager
 
             int w = project.MovieOptions.Width;
             int h = project.MovieOptions.Height;
-            if (path.StartsWith(project.Directory)) 
+            if (path.StartsWithOrdinal(project.Directory)) 
                 path = project.FixDebugReleasePath(path);
 
             if (project.TestMovieBehavior == TestMovieBehavior.NewTab)
@@ -1012,7 +1004,7 @@ namespace ProjectManager
                 case ProjectManagerUIStatus.NotBuilding:
                     DisabledForBuild = false;
                     menuButton.ToolTipText = menuItem.Text = contextMenuItem.Text =
-                        TextHelper.GetString("Label.BuildProject").Replace("&", "");
+                        TextHelper.GetStringWithoutMnemonics("Label.BuildProject");
                     PluginBase.MainForm.ApplySecondaryShortcut(menuButton);
                     menuButton.Image = menuItem.Image = contextMenuItem.Image = Icons.Gear.Img;
                     break;
@@ -1266,7 +1258,7 @@ namespace ProjectManager
             {
                 String file = openFileQueue.Dequeue();
                 if (File.Exists(file)) OpenFile(file);
-                if (file.IndexOf("::") > 0 && File.Exists(file.Substring(0, file.IndexOf("::")))) // virtual files
+                if (file.IndexOfOrdinal("::") > 0 && File.Exists(file.Substring(0, file.IndexOfOrdinal("::")))) // virtual files
                 {
                     OpenFile(file);
                 }
@@ -1542,7 +1534,7 @@ namespace ProjectManager
             Project project = Tree.ProjectOf(path);
             if (project != null)
             {
-                if (path.StartsWith(project.Directory)) path = project.GetRelativePath(path);
+                if (path.StartsWithOrdinal(project.Directory)) path = project.GetRelativePath(path);
                 if (project.Classpaths.Count == 1 && project.Classpaths[0] == ".")
                     project.Classpaths.Clear();
                 project.Classpaths.Add(path);

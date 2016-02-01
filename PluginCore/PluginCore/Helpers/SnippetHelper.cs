@@ -18,8 +18,8 @@ namespace PluginCore.Helpers
             Int32 delta = 0;
             while (sci.SelectText(BOUNDARY, 0) != -1) { sci.ReplaceSel(""); delta -= BOUNDARY.Length; }
             String text = sci.Text; // Store text temporarily
-            Int32 entryPosition = sci.MBSafePosition(text.IndexOf(ENTRYPOINT));
-            Int32 exitPosition = sci.MBSafePosition(text.IndexOf(EXITPOINT));
+            Int32 entryPosition = sci.MBSafePosition(text.IndexOfOrdinal(ENTRYPOINT));
+            Int32 exitPosition = sci.MBSafePosition(text.IndexOfOrdinal(EXITPOINT));
             if (entryPosition != -1 && exitPosition != -1)
             {
                 sci.SelectText(ENTRYPOINT, 0); sci.ReplaceSel(""); delta -= ENTRYPOINT.Length;
@@ -41,8 +41,8 @@ namespace PluginCore.Helpers
         public static ActionPoint ProcessActionPoint(String text)
         {
             text = text.Trim().Replace(BOUNDARY, "");
-            Int32 entryPosition = text.IndexOf(ENTRYPOINT);
-            Int32 exitPosition = text.IndexOf(EXITPOINT);
+            Int32 entryPosition = text.IndexOfOrdinal(ENTRYPOINT);
+            Int32 exitPosition = text.IndexOfOrdinal(EXITPOINT);
             if (entryPosition != -1 && exitPosition != -1)
             {
                 String cleaned = text.Replace(ENTRYPOINT, "").Replace(EXITPOINT, "");

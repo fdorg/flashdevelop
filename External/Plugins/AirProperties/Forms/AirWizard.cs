@@ -16,6 +16,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using PluginCore.Localization;
 using ProjectManager.Projects;
 using System.Collections;
+using PluginCore;
 using ProjectManager.Projects.AS3;
 using PluginCore.Managers;
 
@@ -833,7 +834,7 @@ namespace AirProperties
             try
             {
                 String src = File.ReadAllText(file);
-                if (src.IndexOf("xmlns=\"http://ns.adobe.com/air/") > 0) return true;
+                if (src.IndexOfOrdinal("xmlns=\"http://ns.adobe.com/air/") > 0) return true;
             }
             catch { }
             return false;
@@ -1677,7 +1678,7 @@ namespace AirProperties
                 if (externalsFileDialog.ShowDialog(this) == DialogResult.OK)
                 {
                     var externalsFile = ProjectPaths.GetRelativePath(_propertiesFilePath, externalsFileDialog.FileName);
-                    if (externalsFile.StartsWith("..") || Path.IsPathRooted(externalsFile))
+                    if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
                     {
                         String msg = TextHelper.GetString("Info.CheckFileLocation");
                         ErrorManager.ShowWarning(msg, null);
@@ -1869,7 +1870,7 @@ namespace AirProperties
         // validates that the supplied image URI is a PNG file
         private Boolean ValidateImageExtension(String imageURI)
         {
-            if (imageURI.ToLower().EndsWith(".png")) return true;
+            if (imageURI.ToLower().EndsWithOrdinal(".png")) return true;
             else return false;
         }
 
@@ -2308,7 +2309,7 @@ namespace AirProperties
         {
             var externalsFile = IPhoneExternalSWFsField.Text;
             if (externalsFile == string.Empty) this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
-            else if (externalsFile.StartsWith("..") || Path.IsPathRooted(externalsFile))
+            else if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
             {
                 this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Info.CheckFileLocation"));
 

@@ -132,7 +132,7 @@ namespace PluginCore.Controls
 
                 case EventType.Command:
                     string cmd = (e as DataEvent).Action;
-                    if (cmd.StartsWith("ProjectManager") || cmd.IndexOf("Changed") > 0 || cmd.IndexOf("Context") > 0)
+                    if (cmd.StartsWithOrdinal("ProjectManager") || cmd.IndexOfOrdinal("Changed") > 0 || cmd.IndexOfOrdinal("Context") > 0)
                         return; // ignore notifications
                     break;
             }

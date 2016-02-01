@@ -34,7 +34,7 @@ namespace ProjectManager.Building.Haxe
             if (!Directory.Exists(outputDir)) Directory.CreateDirectory(outputDir);
 
             string serverPort = Environment.ExpandEnvironmentVariables("%HAXE_SERVER_PORT%");
-            string connect = (!serverPort.StartsWith("%") && serverPort != "0")
+            string connect = (!serverPort.StartsWith("%", StringComparison.Ordinal) && serverPort != "0")
                 ? "--connect " + serverPort : "";
 
             // always use relative path for CPP (because it prepends ./)
@@ -83,7 +83,7 @@ namespace ProjectManager.Building.Haxe
 
         string Quote(string s)
         {
-            if (s.IndexOf(" ") >= 0)
+            if (s.IndexOf(' ') >= 0)
                 return "\"" + s + "\"";
             return s;
         }

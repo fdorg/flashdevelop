@@ -2,12 +2,10 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS2;
 using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore;
@@ -23,7 +21,7 @@ namespace ProjectManager.Controls.TreeView
     public class ProjectContextMenu : ContextMenuStrip
     {
         Project project;
-        ProjectTreeView projectTree;
+        ProjectTreeView projectTree; 
         static Image newFolderImg = Icons.Overlay(Icons.Folder.Img, Icons.BulletAdd.Img, 5, -3);
         public ToolStripMenuItem AddMenu = new ToolStripMenuItem(TextHelper.GetString("Label.Add"));
         public ToolStripMenuItem AddNewFolder = new ToolStripMenuItem(TextHelper.GetString("Label.NewFolder"), newFolderImg);
@@ -69,7 +67,7 @@ namespace ProjectManager.Controls.TreeView
         public ProjectContextMenu()
         {
             this.Renderer = new DockPanelStripRenderer();
-            this.Font = PluginCore.PluginBase.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
             this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             NothingToDo.Enabled = false;
             NoProjectOutput.Enabled = false;
@@ -325,6 +323,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(CommandPrompt, 1);
             if (Win32.ShouldUseWin32()) menu.Add(ShellMenu, 1);
             menu.Add(Paste, 2);
+            menu.Add(Rename, 1);
             menu.Add(ShowHidden, 3, showHidden);
             menu.Add(Properties, 4);
         }
@@ -480,7 +479,7 @@ namespace ProjectManager.Controls.TreeView
             AddHideItems(menu, path, 3);
         }
 
-        private void AddHideItems(MergableMenu menu, string path,int group)
+        private void AddHideItems(MergableMenu menu, string path, int group)
         {
             bool hidden = project.IsPathHidden(path);
             bool showHidden = project.ShowHiddenPaths;
@@ -533,14 +532,14 @@ namespace ProjectManager.Controls.TreeView
             {
                 file = project.GetAbsolutePath(file);
             }
-            if (file.StartsWith(project.Directory)) return false;
+            if (file.StartsWithOrdinal(project.Directory)) return false;
             foreach (string path in project.AbsoluteClasspaths)
             {
-                if (file.StartsWith(path)) return false;
+                if (file.StartsWithOrdinal(path)) return false;
             }
             foreach (string path in PluginMain.Settings.GlobalClasspaths)
             {
-                if (file.StartsWith(path)) return false;
+                if (file.StartsWithOrdinal(path)) return false;
             }
             return true;
         }

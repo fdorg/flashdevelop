@@ -18,7 +18,7 @@ namespace SourceControl.Sources.Subversion
         {
             try
             {
-                if (!args.StartsWith("status")) TraceManager.AddAsync("svn " + args);
+                if (!args.StartsWithOrdinal("status")) TraceManager.AddAsync("svn " + args);
 
                 var cmd = GetSvnCmd();
                 if (cmd == "Tools\\sliksvn\\bin\\svn.exe")
@@ -69,7 +69,7 @@ namespace SourceControl.Sources.Subversion
 
         protected virtual void Runner_Error(object sender, string line)
         {
-            errors.Add(line.StartsWith("svn: ") ? line.Substring(5) : line);
+            errors.Add(line.StartsWithOrdinal("svn: ") ? line.Substring(5) : line);
         }
 
         protected virtual void Runner_Output(object sender, string line)

@@ -476,7 +476,7 @@ namespace FlashDevelop.Dialogs
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(Globals.MainForm.FindImage("203"));
+            imageList.Images.Add(Globals.MainForm.FindImage("203", false));
             this.browseButton.ImageList = imageList;
             this.browseButton.ImageIndex = 0;
         }
@@ -492,7 +492,7 @@ namespace FlashDevelop.Dialogs
             this.replaceLabel.Text = TextHelper.GetString("Info.ReplaceWith");
             this.findButton.Text = TextHelper.GetString("Label.Find");
             this.cancelButton.Text = TextHelper.GetString("Label.Cancel");
-            this.replaceButton.Text = TextHelper.GetString("Label.Replace").Replace("...", "");
+            this.replaceButton.Text = TextHelper.GetStringWithoutEllipsis("Label.Replace");
             this.lineHeader.Text = TextHelper.GetString("Info.LineHeader");
             this.descHeader.Text = TextHelper.GetString("Info.DescHeader");
             this.pathHeader.Text = TextHelper.GetString("Info.PathHeader");
@@ -879,7 +879,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private Boolean IsValidFileMask(String mask)
         {
-            return !String.IsNullOrEmpty(mask) && mask.Trim().StartsWith("*.") && !mask.Contains("..") && !mask.Contains("/") && !mask.Contains("\\");
+            return !String.IsNullOrEmpty(mask) && mask.Trim().StartsWithOrdinal("*.") && !mask.Contains("..") && !mask.Contains("/") && !mask.Contains("\\");
         }
 
         /// <summary>
@@ -968,7 +968,7 @@ namespace FlashDevelop.Dialogs
                     for (var i = 0; i < project.SourcePaths.Length; i++)
                     {
                         String sourcePath = project.GetAbsolutePath(project.SourcePaths[i]);
-                        if (Directory.Exists(sourcePath) && !sourcePath.StartsWith(projPath))
+                        if (Directory.Exists(sourcePath) && !sourcePath.StartsWithOrdinal(projPath))
                         {
                             walker = new PathWalker(sourcePath, mask, recursive);
                             allFiles.AddRange(walker.GetFiles());
@@ -990,7 +990,7 @@ namespace FlashDevelop.Dialogs
             foreach (String hiddenPath in hiddenPaths)
             {
                 String absHiddenPath = project.GetAbsolutePath(hiddenPath);
-                if (Directory.Exists(absHiddenPath) && file.StartsWith(absHiddenPath)) return true;
+                if (Directory.Exists(absHiddenPath) && file.StartsWithOrdinal(absHiddenPath)) return true;
             }
             return false;
         }

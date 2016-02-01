@@ -155,7 +155,7 @@ namespace ProjectManager.Controls
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0"));
+            imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0", false));
             this.refreshButton.ImageList = imageList;
             this.refreshButton.ImageIndex = 0;
         }
@@ -295,7 +295,7 @@ namespace ProjectManager.Controls
             {
                 foreach (string folder in folders)
                 {
-                    if (file.StartsWith(folder))
+                    if (file.StartsWithOrdinal(folder))
                     {
                         openedFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
                         break;
@@ -408,7 +408,7 @@ namespace ProjectManager.Controls
                 else
                 {
                     String folder = Path.GetFullPath(Path.Combine(projectFolder, path));
-                    if (cbInClasspathsOnly.Checked || !folder.StartsWith(projectFolder)) folders.Add(folder);
+                    if (cbInClasspathsOnly.Checked || !folder.StartsWithOrdinal(projectFolder)) folders.Add(folder);
                 }
             }
             return folders;
@@ -562,7 +562,7 @@ namespace ProjectManager.Controls
         private static Boolean SimpleSearchMatch(String file, String searchText, String pathSeparator)
         {
             String fileName = Path.GetFileName(file).ToLower();
-            return fileName.IndexOf(searchText.ToLower()) > -1;
+            return fileName.IndexOfOrdinal(searchText.ToLower()) > -1;
         }
 
     }

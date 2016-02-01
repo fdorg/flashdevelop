@@ -185,11 +185,11 @@ namespace HaXeContext
                 do { 
                     line = p.StandardOutput.ReadLine();
                     if (string.IsNullOrEmpty(line)) continue;
-                    if (line.IndexOf("not installed") > 0)
+                    if (line.IndexOfOrdinal("not installed") > 0)
                     {
                         TraceManager.Add(line, 3);
                     }
-                    else if (!line.StartsWith("-"))
+                    else if (!line.StartsWith('-'))
                     {
                         try
                         {
@@ -311,18 +311,18 @@ namespace HaXeContext
                 else // assume game-related toolchain
                 {
                     lang = "cpp";
-                    if (contextSetup.TargetBuild == null || contextSetup.TargetBuild.StartsWith("flash"))
+                    if (contextSetup.TargetBuild == null || contextSetup.TargetBuild.StartsWithOrdinal("flash"))
                         lang = "";
-                    else if (contextSetup.TargetBuild.StartsWith("html5"))
+                    else if (contextSetup.TargetBuild.StartsWithOrdinal("html5"))
                         lang = "js";
-                    else if (contextSetup.TargetBuild.IndexOf("neko") >= 0)
+                    else if (contextSetup.TargetBuild.IndexOfOrdinal("neko") >= 0)
                         lang = "neko";
                 }
             }
             else if (lang == "swf")
             {
                 lang = "flash";
-                hasAIRSupport = platform.StartsWith("AIR");
+                hasAIRSupport = platform.StartsWithOrdinal("AIR");
                 hasMobileSupport = platform == "AIR Mobile";
             }
             features.Directives.Add(lang);
@@ -399,8 +399,8 @@ namespace HaXeContext
                         string path = proj.GetAbsolutePath(asset.Path);
                         if (File.Exists(path)) AddPath(path);
                     }
-                foreach( string p in proj.CompilerOptions.Additional )
-                    if( p.IndexOf("-swf-lib ") == 0 ) {
+                foreach(string p in proj.CompilerOptions.Additional)
+                    if (p.IndexOfOrdinal("-swf-lib ") == 0) {
                         string path = proj.GetAbsolutePath(p.Substring(9));
                         if (File.Exists(path)) AddPath(path);
                     }
@@ -410,7 +410,7 @@ namespace HaXeContext
             if (proj != null)
             {
                 foreach (string param in proj.BuildHXML(new string[0], "", false))
-                    if (!string.IsNullOrEmpty(param) && param.IndexOf("-lib ") == 0)
+                    if (!string.IsNullOrEmpty(param) && param.IndexOfOrdinal("-lib ") == 0)
                     {
                         List<string> libPaths = LookupLibrary(param.Substring(5));
                         if (libPaths != null)
@@ -500,7 +500,7 @@ namespace HaXeContext
                         path.ValidatePackage = true;
                         // let's hide confusing packages of NME library
                         string src = File.ReadAllText(haxelib);
-                        if (src.IndexOf("<project name=\"nme\"") >= 0)
+                        if (src.IndexOfOrdinal("<project name=\"nme\"") >= 0)
                         {
                             ManualExploration(path, new string[] { 
                                 "js", "jeash", "neash", "native", "browser", "flash", "neko", "tools", "samples", "project" });
@@ -820,7 +820,7 @@ namespace HaXeContext
             // HX files are "modules": when imported all the classes contained are available
             string fileName = item.Type.Replace(".", dirSeparator) + ".hx";
 
-            if (fileName.StartsWith("flash" + dirSeparator))
+            if (fileName.StartsWithOrdinal("flash" + dirSeparator))
             {
                 if (HaxeTarget != "flash" || majorVersion > 8) // flash9 remap
                     fileName = FLASH_NEW + fileName.Substring(5);
@@ -889,7 +889,7 @@ namespace HaXeContext
                 }
                 else if (import.Name == "*" && import.Type.Replace("*", name) == fullName)
                     return true;
-                else if (fullName.StartsWith(import.Type + "."))
+                else if (fullName.StartsWithOrdinal(import.Type + "."))
                     return true;
             }
             return false;
@@ -1012,7 +1012,7 @@ namespace HaXeContext
             aClass.Name = baseType.Substring(baseType.LastIndexOf('.') + 1) + "<" + indexType + ">";
             aClass.IndexType = indexType;
 
-            if (aClass.ExtendsType != null && aClass.ExtendsType.IndexOf(Tname) >= 0)
+            if (aClass.ExtendsType != null && aClass.ExtendsType.IndexOfOrdinal(Tname) >= 0)
                 aClass.ExtendsType = reReplaceType.Replace(aClass.ExtendsType, indexType);
 
             // special Haxe Proxy support
@@ -1023,7 +1023,7 @@ namespace HaXeContext
 
             foreach (MemberModel member in aClass.Members)
             {
-                if (member.Type != null && member.Type.IndexOf(Tname) >= 0)
+                if (member.Type != null && member.Type.IndexOfOrdinal(Tname) >= 0)
                 {
                     member.Type = reReplaceType.Replace(member.Type, indexType);
                 }
@@ -1031,7 +1031,7 @@ namespace HaXeContext
                 {
                     foreach (MemberModel param in member.Parameters)
                     {
-                        if (param.Type != null && param.Type.IndexOf(Tname) >= 0)
+                        if (param.Type != null && param.Type.IndexOfOrdinal(Tname) >= 0)
                         {
                             param.Type = reReplaceType.Replace(param.Type, indexType);
                         }
@@ -1192,7 +1192,7 @@ namespace HaXeContext
                 return null;
 
             // auto-started completion, can be ignored for performance (show default completion tooltip)
-            if (expression.Value.IndexOf(".") < 0 || (autoHide && !expression.Value.EndsWith(".")))
+            if (expression.Value.IndexOfOrdinal(".") < 0 || (autoHide && !expression.Value.EndsWith('.')))
                 if (hxsettings.DisableMixedCompletion && expression.Value.Length > 0 && autoHide) return new MemberList();
                 else return null;
 
@@ -1300,7 +1300,7 @@ namespace HaXeContext
                             }
                         }
 
-                        int p = package.LastIndexOf("."); // parent package
+                        int p = package.LastIndexOf('.'); // parent package
                         if (p < 0) break;
                         package = package.Substring(0, p);
                     }
@@ -1404,27 +1404,27 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
-            if (GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
                 return false;
 
             var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION);
-            hc.GetPosition(OnPositionCompletionResult);
+            hc.GetPosition(OnPositionResult);
             return true;
         }
 
-        internal void OnPositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        internal void OnPositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             if (hc.Sci.InvokeRequired)
             {
                 hc.Sci.BeginInvoke((MethodInvoker)delegate
                 {
-                    HandlePositionCompletionResult(hc, result, status); 
+                    HandlePositionResult(hc, result, status); 
                 });
             }
-            else HandlePositionCompletionResult(hc, result, status); 
+            else HandlePositionResult(hc, result, status); 
         }
 
-        private void HandlePositionCompletionResult(HaxeComplete hc, HaxePositionCompleteResult result, HaxeCompleteStatus status)
+        private void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {
@@ -1433,6 +1433,8 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.POSITION:
+                    if (result == null) return;
+
                     ASComplete.SaveLastLookupPosition(hc.Sci);
 
                     PluginBase.MainForm.OpenEditableDocument(result.Path, false);
@@ -1462,6 +1464,8 @@ namespace HaXeContext
         /// </summary>
         public override void CheckSyntax()
         {
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
+
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
             var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
@@ -1522,7 +1526,7 @@ namespace HaXeContext
                 if (cname.IndexOf('<') > 0) cname = cname.Substring(0, cname.IndexOf('<'));
                 command += cname;
 
-                if (HaxeTarget == "flash" && (append == null || append.IndexOf("-swf-version") < 0)) 
+                if (HaxeTarget == "flash" && (append == null || append.IndexOfOrdinal("-swf-version") < 0)) 
                     command += " -swf-version " + majorVersion;
                 // classpathes
                 string hxPath = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);

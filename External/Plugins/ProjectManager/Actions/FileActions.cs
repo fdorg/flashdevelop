@@ -231,7 +231,7 @@ namespace ProjectManager.Actions
         {
             try
             {
-                string label = TextHelper.GetString("Label.NewFolder").Replace("&", "").Replace("...", "");
+                string label = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.NewFolder");
                 string path = Path.Combine(inDirectory, label);
 
                 int i = 2;
@@ -446,8 +446,8 @@ namespace ProjectManager.Actions
                 if (isDirectory)
                 {
                     // this is required for renaming directories, don't ask me why
-                    string oldPathFixed = (oldPath.EndsWith("\\")) ? oldPath : oldPath + "\\";
-                    string newPathFixed = (newPath.EndsWith("\\")) ? newPath : newPath + "\\";
+                    string oldPathFixed = (oldPath.EndsWith('\\')) ? oldPath : oldPath + "\\";
+                    string newPathFixed = (newPath.EndsWith('\\')) ? newPath : newPath + "\\";
                     if (oldPathFixed.Equals(newPathFixed, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed

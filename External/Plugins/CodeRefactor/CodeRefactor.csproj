@@ -98,6 +98,12 @@
     <Compile Include="Controls\DividedCheckedListBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\MoveDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\MoveDialog.Designer.cs">
+      <DependentUpon>MoveDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>

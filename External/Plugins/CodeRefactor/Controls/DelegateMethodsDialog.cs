@@ -159,7 +159,7 @@ namespace CodeRefactor.Controls
             this.checkedMembers = new Dictionary<MemberModel, ClassModel>();
             foreach (string item in checkedListBox.CheckedItems)
             {
-                if (item.StartsWith("---")) continue;
+                if (item.StartsWithOrdinal("---")) continue;
                 checkedMembers[members2[item]] = members[members2[item]];
             }
             CancelEventArgs cancelArgs = new CancelEventArgs(false);

@@ -1,12 +1,15 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Printing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using ScintillaNet.Configuration;
-using System.Drawing.Printing;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
@@ -22,6 +25,7 @@ namespace ScintillaNet
         private bool camelHumps;
         private Encoding encoding;
         private IntPtr directPointer;
+        private Perform _sciFunction;
         private bool hasHighlights = false;
         private bool ignoreAllKeys = false;
         private bool isBraceMatching = true;
@@ -58,7 +62,7 @@ namespace ScintillaNet
             set
             {
                 if (this.Controls.Contains(this.vScrollBar)) this.vScrollBar.Visible = value;
-                else SPerform(2280, (uint)(value ? 1 : 0), 0);
+                else SPerform(2280, value ? 1 : 0, 0);
             }
         }
 
@@ -75,7 +79,7 @@ namespace ScintillaNet
             set
             {
                 if (this.Controls.Contains(this.hScrollBar)) this.hScrollBar.Visible = value;
-                else SPerform(2130, (uint)(value ? 1 : 0), 0);
+                else SPerform(2130, value ? 1 : 0, 0);
             }
         }
 
@@ -214,7 +218,8 @@ namespace ScintillaNet
 
         #region Scintilla Main
 
-        public ScintillaControl() : this("SciLexer.dll")
+        public ScintillaControl()
+            : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
         {
             if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
@@ -235,7 +240,20 @@ namespace ScintillaNet
 
                 if (Win32.ShouldUseWin32())
                 {
-                    LoadLibrary(fullpath);
+                    IntPtr lib = LoadLibrary(fullpath);
+                    IntPtr sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
+                    if (sciFunctionPointer == IntPtr.Zero)
+                        sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
+
+                    if (sciFunctionPointer == IntPtr.Zero)
+                    {
+                        string msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
+                        throw new Win32Exception(msg, new Win32Exception(Marshal.GetLastWin32Error()));
+                    }
+
+                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(
+                        sciFunctionPointer,
+                        typeof(Perform));
                 }
 
                 // Most Windows Forms controls delay-load everything until a handle is created.
@@ -921,11 +939,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2471, 0, 0);
+                return SPerform(2471, 0, 0);
             }
             set
             {
-                SPerform(2470, (uint)value, 0);
+                SPerform(2470, value, 0);
             }
         }
 
@@ -936,11 +954,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2513, 0, 0);
+                return SPerform(2513, 0, 0);
             }
             set
             {
-                SPerform(2512, (uint)value, 0);
+                SPerform(2512, value, 0);
             }
         }
 
@@ -951,11 +969,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2501, 0, 0);
+                return SPerform(2501, 0, 0);
             }
             set
             {
-                SPerform(2500, (uint)value, 0);
+                SPerform(2500, value, 0);
             }
         }
 
@@ -966,11 +984,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2515, 0, 0);
+                return SPerform(2515, 0, 0);
             }
             set
             {
-                SPerform(2514, (uint)value, 0);
+                SPerform(2514, value, 0);
             }
         }
 
@@ -981,11 +999,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2503, 0, 0);
+                return SPerform(2503, 0, 0);
             }
             set
             {
-                SPerform(2502, (uint)value, 0);
+                SPerform(2502, value, 0);
             }
         }
 
@@ -1012,7 +1030,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2027, 0, 0);
+                return SPerform(2027, 0, 0);
             }
         }
 
@@ -1024,7 +1042,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2153, 0, 0);
+                return SPerform(2153, 0, 0);
             }
         }
 
@@ -1036,7 +1054,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2161, 0, 0) - 1;
+                return SPerform(2161, 0, 0) - 1;
             }
         }
 
@@ -1048,7 +1066,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2182, 0, 0);
+                return SPerform(2182, 0, 0);
             }
         }
 
@@ -1081,7 +1099,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2103, 0, 0);
+                return SPerform(2103, 0, 0);
             }
         }
 
@@ -1125,7 +1143,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2203, 0, 0);
+                return SPerform(2203, 0, 0);
             }
         }
 
@@ -1137,7 +1155,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2375, 0, 0);
+                return SPerform(2375, 0, 0);
             }
         }
 
@@ -1148,7 +1166,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2445, 0, 0);
+                return SPerform(2445, 0, 0);
             }
         }
 
@@ -1159,7 +1177,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2006, 0, 0);
+                return SPerform(2006, 0, 0);
             }
         }
 
@@ -1174,7 +1192,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2467, (uint)(value ? 1 : 0), 0);
+                SPerform(2467, value ? 1 : 0, 0);
             }
         }
 
@@ -1185,11 +1203,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2008, 0, 0);
+                return SPerform(2008, 0, 0);
             }
             set
             {
-                SPerform(2141, (uint)value, 0);
+                SPerform(2141, value, 0);
             }
         }
 
@@ -1222,11 +1240,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2009, 0, 0);
+                return SPerform(2009, 0, 0);
             }
             set
             {
-                SPerform(2026, (uint)value, 0);
+                SPerform(2026, value, 0);
             }
         }
 
@@ -1241,7 +1259,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2012, (uint)(value ? 1 : 0), 0);
+                SPerform(2012, value ? 1 : 0, 0);
             }
         }
 
@@ -1253,11 +1271,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2020, 0, 0);
+                return SPerform(2020, 0, 0);
             }
             set
             {
-                SPerform(2021, (uint)value, 0);
+                SPerform(2021, value, 0);
             }
         }
 
@@ -1268,7 +1286,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2028, 0, 0);
+                return SPerform(2028, 0, 0);
             }
         }
 
@@ -1279,11 +1297,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2030, 0, 0);
+                return SPerform(2030, 0, 0);
             }
             set
             {
-                SPerform(2031, (uint)value, 0);
+                SPerform(2031, value, 0);
             }
         }
 
@@ -1298,7 +1316,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2035, (uint)(value ? 1 : 0), 0);
+                SPerform(2035, value ? 1 : 0, 0);
             }
         }
 
@@ -1309,11 +1327,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2121, 0, 0);
+                return SPerform(2121, 0, 0);
             }
             set
             {
-                SPerform(2036, (uint)value, 0);
+                SPerform(2036, value, 0);
             }
         }
 
@@ -1324,11 +1342,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2075, 0, 0);
+                return SPerform(2075, 0, 0);
             }
             set
             {
-                SPerform(2076, (uint)value, 0);
+                SPerform(2076, value, 0);
             }
         }
 
@@ -1339,11 +1357,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2091, 0, 0);
+                return SPerform(2091, 0, 0);
             }
             set
             {
-                SPerform(2090, (uint)value, 0);
+                SPerform(2090, value, 0);
             }
         }
 
@@ -1354,7 +1372,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2094, 0, 0);
+                return SPerform(2094, 0, 0);
             }
         }
 
@@ -1369,7 +1387,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2096, (uint)(value ? 1 : 0), 0);
+                SPerform(2096, value ? 1 : 0, 0);
             }
         }
 
@@ -1380,11 +1398,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2097, 0, 0);
+                return SPerform(2097, 0, 0);
             }
             set
             {
-                SPerform(2098, (uint)value, 0);
+                SPerform(2098, value, 0);
             }
         }
 
@@ -1395,11 +1413,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2107, 0, 0);
+                return SPerform(2107, 0, 0);
             }
             set
             {
-                SPerform(2106, (uint)value, 0);
+                SPerform(2106, value, 0);
             }
         }
 
@@ -1414,7 +1432,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2110, (uint)(value ? 1 : 0), 0);
+                SPerform(2110, value ? 1 : 0, 0);
             }
         }
 
@@ -1429,7 +1447,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2113, (uint)(value ? 1 : 0), 0);
+                SPerform(2113, value ? 1 : 0, 0);
             }
         }
 
@@ -1444,7 +1462,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2115, (uint)(value ? 1 : 0), 0);
+                SPerform(2115, value ? 1 : 0, 0);
             }
         }
 
@@ -1459,7 +1477,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2118, (uint)(value ? 1 : 0), 0);
+                SPerform(2118, value ? 1 : 0, 0);
             }
         }
 
@@ -1475,7 +1493,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2270, (uint)(value ? 1 : 0), 0);
+                SPerform(2270, value ? 1 : 0, 0);
             }
         }
 
@@ -1486,11 +1504,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2285, 0, 0);
+                return SPerform(2285, 0, 0);
             }
             set
             {
-                SPerform(2286, (uint)value, 0);
+                SPerform(2286, value, 0);
             }
         }
 
@@ -1501,11 +1519,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2123, 0, 0);
+                return SPerform(2123, 0, 0);
             }
             set
             {
-                SPerform(2122, (uint)value, 0);
+                SPerform(2122, value, 0);
             }
         }
 
@@ -1520,7 +1538,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2124, (uint)(value ? 1 : 0), 0);
+                SPerform(2124, value ? 1 : 0, 0);
             }
         }
 
@@ -1535,7 +1553,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2132, (uint)(value ? (int)this.indentView : 0), 0);
+                SPerform(2132, value ? (int)this.indentView : 0, 0);
             }
         }
 
@@ -1546,11 +1564,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2135, 0, 0);
+                return SPerform(2135, 0, 0);
             }
             set
             {
-                SPerform(2134, (uint)value, 0);
+                SPerform(2134, value, 0);
             }
         }
 
@@ -1561,11 +1579,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2137, 0, 0);
+                return SPerform(2137, 0, 0);
             }
             set
             {
-                SPerform(2037, (uint)value, 0);
+                SPerform(2037, value, 0);
             }
         }
 
@@ -1576,11 +1594,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2138, 0, 0);
+                return SPerform(2138, 0, 0);
             }
             set
             {
-                SPerform(2069, (uint)value, 0);
+                SPerform(2069, value, 0);
             }
         }
 
@@ -1595,7 +1613,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2039, (uint)(value ? 1 : 0), 0);
+                SPerform(2039, value ? 1 : 0, 0);
             }
         }
 
@@ -1610,7 +1628,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2171, (uint)(value ? 1 : 0), 0);
+                SPerform(2171, value ? 1 : 0, 0);
             }
         }
 
@@ -1621,11 +1639,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2143, 0, 0);
+                return SPerform(2143, 0, 0);
             }
             set
             {
-                SPerform(2142, (uint)value, 0);
+                SPerform(2142, value, 0);
             }
         }
 
@@ -1636,11 +1654,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2145, 0, 0);
+                return SPerform(2145, 0, 0);
             }
             set
             {
-                SPerform(2144, (uint)value, 0);
+                SPerform(2144, value, 0);
             }
         }
 
@@ -1662,11 +1680,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2147, 0, 0);
+                return SPerform(2147, 0, 0);
             }
             set
             {
-                SPerform(2146, (uint)value, 0);
+                SPerform(2146, value, 0);
             }
         }
 
@@ -1677,11 +1695,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2149, 0, 0);
+                return SPerform(2149, 0, 0);
             }
             set
             {
-                SPerform(2148, (uint)value, 0);
+                SPerform(2148, value, 0);
             }
         }
 
@@ -1692,11 +1710,11 @@ namespace ScintillaNet
         {
             set
             {
-                SPerform(2613, (uint)value, 0);
+                SPerform(2613, value, 0);
             }
             get
             {
-                return (int)SPerform(2152, 0, 0);
+                return SPerform(2152, 0, 0);
             }
         }
 
@@ -1707,7 +1725,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2154, 0, 0);
+                return SPerform(2154, 0, 0);
             }
         }
 
@@ -1718,11 +1736,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2156, 0, 0);
+                return SPerform(2156, 0, 0);
             }
             set
             {
-                SPerform(2155, 0, (uint)value);
+                SPerform(2155, 0, value);
             }
         }
 
@@ -1733,11 +1751,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2158, 0, 0);
+                return SPerform(2158, 0, 0);
             }
             set
             {
-                SPerform(2157, 0, (uint)value);
+                SPerform(2157, 0, value);
             }
         }
 
@@ -1759,7 +1777,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2183, 0, 0);
+                return SPerform(2183, 0, 0);
             }
         }
 
@@ -1770,7 +1788,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2184, 0, 0);
+                return SPerform(2184, 0, 0);
             }
         }
 
@@ -1799,7 +1817,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2186, (uint)(value ? 1 : 0), 0);
+                SPerform(2186, value ? 1 : 0, 0);
             }
         }
 
@@ -1810,11 +1828,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2189, 0, 0);
+                return SPerform(2189, 0, 0);
             }
             set
             {
-                SPerform(2188, (uint)value, 0);
+                SPerform(2188, value, 0);
             }
         }
 
@@ -1825,11 +1843,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2191, 0, 0);
+                return SPerform(2191, 0, 0);
             }
             set
             {
-                SPerform(2190, (uint)value, 0);
+                SPerform(2190, value, 0);
             }
         }
 
@@ -1840,11 +1858,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2193, 0, 0);
+                return SPerform(2193, 0, 0);
             }
             set
             {
-                SPerform(2192, (uint)value, 0);
+                SPerform(2192, value, 0);
             }
         }
 
@@ -1855,11 +1873,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2199, 0, 0);
+                return SPerform(2199, 0, 0);
             }
             set
             {
-                SPerform(2198, (uint)value, 0);
+                SPerform(2198, value, 0);
             }
         }
 
@@ -1874,7 +1892,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2260, (uint)(value ? 1 : 0), 0);
+                SPerform(2260, value ? 1 : 0, 0);
             }
         }
 
@@ -1889,7 +1907,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2262, (uint)(value ? 1 : 0), 0);
+                SPerform(2262, value ? 1 : 0, 0);
             }
         }
 
@@ -1900,11 +1918,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2265, 0, 0);
+                return SPerform(2265, 0, 0);
             }
             set
             {
-                SPerform(2264, (uint)value, 0);
+                SPerform(2264, value, 0);
             }
         }
 
@@ -1915,11 +1933,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2269, 0, 0);
+                return SPerform(2269, 0, 0);
             }
             set
             {
-                SPerform(2268, (uint)value, 0);
+                SPerform(2268, value, 0);
             }
         }
 
@@ -1930,11 +1948,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2461, 0, 0);
+                return SPerform(2461, 0, 0);
             }
             set
             {
-                SPerform(2460, (uint)value, 0);
+                SPerform(2460, value, 0);
             }
         }
 
@@ -1945,11 +1963,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2463, 0, 0);
+                return SPerform(2463, 0, 0);
             }
             set
             {
-                SPerform(2462, (uint)value, 0);
+                SPerform(2462, value, 0);
             }
         }
 
@@ -1960,11 +1978,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2465, 0, 0);
+                return SPerform(2465, 0, 0);
             }
             set
             {
-                SPerform(2464, (uint)value, 0);
+                SPerform(2464, value, 0);
             }
         }
 
@@ -1975,11 +1993,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2273, 0, 0);
+                return SPerform(2273, 0, 0);
             }
             set
             {
-                SPerform(2272, (uint)value, 0);
+                SPerform(2272, value, 0);
             }
         }
 
@@ -1990,11 +2008,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2275, 0, 0);
+                return SPerform(2275, 0, 0);
             }
             set
             {
-                SPerform(2274, (uint)value, 0);
+                SPerform(2274, value, 0);
             }
         }
 
@@ -2006,11 +2024,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2278, 0, 0);
+                return SPerform(2278, 0, 0);
             }
             set
             {
-                SPerform(2277, (uint)value, 0);
+                SPerform(2277, value, 0);
             }
         }
 
@@ -2025,7 +2043,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2284, (uint)(value ? 1 : 0), 0);
+                SPerform(2284, value ? 1 : 0, 0);
             }
         }
 
@@ -2040,7 +2058,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2356, (uint)(value ? 1 : 0), 0);
+                SPerform(2356, value ? 1 : 0, 0);
             }
         }
 
@@ -2051,11 +2069,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2357, 0, 0);
+                return SPerform(2357, 0, 0);
             }
             set
             {
-                SPerform(2358, 0, (uint)value);
+                SPerform(2358, 0, value);
             }
         }
 
@@ -2066,11 +2084,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2360, 0, 0);
+                return SPerform(2360, 0, 0);
             }
             set
             {
-                SPerform(2361, (uint)value, 0);
+                SPerform(2361, value, 0);
             }
         }
 
@@ -2081,11 +2099,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2362, 0, 0);
+                return SPerform(2362, 0, 0);
             }
             set
             {
-                SPerform(2363, (uint)value, 0);
+                SPerform(2363, value, 0);
             }
         }
 
@@ -2096,11 +2114,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2364, 0, 0);
+                return SPerform(2364, 0, 0);
             }
             set
             {
-                SPerform(2365, (uint)value, 0);
+                SPerform(2365, value, 0);
             }
         }
 
@@ -2111,7 +2129,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2370, 0, 0);
+                return SPerform(2370, 0, 0);
             }
         }
 
@@ -2134,11 +2152,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2374, 0, 0);
+                return SPerform(2374, 0, 0);
             }
             set
             {
-                SPerform(2373, (uint)value, 0);
+                SPerform(2373, value, 0);
             }
         }
 
@@ -2149,11 +2167,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2378, 0, 0);
+                return SPerform(2378, 0, 0);
             }
             set
             {
-                SPerform(2359, (uint)value, 0);
+                SPerform(2359, value, 0);
             }
         }
 
@@ -2168,7 +2186,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2380, (uint)(value ? 1 : 0), 0);
+                SPerform(2380, value ? 1 : 0, 0);
             }
         }
 
@@ -2179,11 +2197,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2383, 0, 0);
+                return SPerform(2383, 0, 0);
             }
             set
             {
-                SPerform(2382, (uint)value, 0);
+                SPerform(2382, value, 0);
             }
         }
 
@@ -2198,7 +2216,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2384, (uint)(value ? 1 : 0), 0);
+                SPerform(2384, value ? 1 : 0, 0);
             }
         }
 
@@ -2209,11 +2227,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2387, 0, 0);
+                return SPerform(2387, 0, 0);
             }
             set
             {
-                SPerform(2386, (uint)value, 0);
+                SPerform(2386, value, 0);
             }
         }
 
@@ -2226,11 +2244,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2389, 0, 0);
+                return SPerform(2389, 0, 0);
             }
             set
             {
-                SPerform(2388, (uint)value, 0);
+                SPerform(2388, value, 0);
             }
         }
 
@@ -2241,11 +2259,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2398, 0, 0);
+                return SPerform(2398, 0, 0);
             }
             set
             {
-                SPerform(2397, (uint)value, 0);
+                SPerform(2397, value, 0);
             }
         }
 
@@ -2256,11 +2274,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2407, 0, 0);
+                return SPerform(2407, 0, 0);
             }
             set
             {
-                SPerform(2406, (uint)value, 0);
+                SPerform(2406, value, 0);
             }
         }
 
@@ -2271,11 +2289,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2423, 0, 0);
+                return SPerform(2423, 0, 0);
             }
             set
             {
-                SPerform(2422, (uint)value, 0);
+                SPerform(2422, value, 0);
             }
         }
 
@@ -2286,11 +2304,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(4002, 0, 0);
+                return SPerform(4002, 0, 0);
             }
             set
             {
-                SPerform(4001, (uint)value, 0);
+                SPerform(4001, value, 0);
             }
         }
 
@@ -2314,7 +2332,7 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2520, 0, 0);
+                return SPerform(2520, 0, 0);
             }
         }
 
@@ -2329,7 +2347,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2521, (uint)(value ? 1 : 0), 0);
+                SPerform(2521, value ? 1 : 0, 0);
             }
         }
 
@@ -2340,11 +2358,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2526, 0, 0);
+                return SPerform(2526, 0, 0);
             }
             set
             {
-                SPerform(2525, (uint)value, 0);
+                SPerform(2525, value, 0);
             }
         }
 
@@ -2355,11 +2373,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2528, 0, 0);
+                return SPerform(2528, 0, 0);
             }
             set
             {
-                SPerform(2527, (uint)value, 0);
+                SPerform(2527, value, 0);
             }
         }
 
@@ -2370,11 +2388,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2538, 0, 0);
+                return SPerform(2538, 0, 0);
             }
             set
             {
-                SPerform(2537, (uint)value, 0);
+                SPerform(2537, value, 0);
             }
         }
 
@@ -2385,11 +2403,11 @@ namespace ScintillaNet
         {
             get
             {
-                return (int)SPerform(2551, 0, 0);
+                return SPerform(2551, 0, 0);
             }
             set
             {
-                SPerform(2550, (uint)value, 0);
+                SPerform(2550, value, 0);
             }
         }
 
@@ -2404,7 +2422,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2548, (uint)(value ? 1 : 0), 0);
+                SPerform(2548, value ? 1 : 0, 0);
             }
         }
 
@@ -2419,7 +2437,7 @@ namespace ScintillaNet
             }
             set
             {
-                SPerform(2516, (uint)(value ? 1 : 0), 0);
+                SPerform(2516, value ? 1 : 0, 0);
             }
         }
 
@@ -2499,7 +2517,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetCaretSticky(bool useSetting)
         {
-            SPerform(2458, (uint)(useSetting ? 1 : 0), 0);
+            SPerform(2458, useSetting ? 1 : 0, 0);
         }
 
         /// <summary>
@@ -2516,7 +2534,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetFoldLevel(int line)
         {
-            return (int)SPerform(2223, (uint)line, 0);
+            return SPerform(2223, line, 0);
         }
 
         /// <summary>
@@ -2526,7 +2544,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldLevel(int line, int level)
         {
-            SPerform(2222, (uint)line, (uint)level);
+            SPerform(2222, line, level);
         }
 
         /// <summary>
@@ -2534,7 +2552,7 @@ namespace ScintillaNet
         /// </summary>
         public int LastChild(int line, int level)
         {
-            return (int)SPerform(2224, (uint)line, (uint)level);
+            return SPerform(2224, line, level);
         }
 
         /// <summary>
@@ -2542,7 +2560,7 @@ namespace ScintillaNet
         /// </summary>
         public int LastChild(int line)
         {
-            return (int)SPerform(2224, (uint)line, 0);
+            return SPerform(2224, line, 0);
         }
 
         /// <summary>
@@ -2550,7 +2568,7 @@ namespace ScintillaNet
         /// </summary>  
         public bool GetLineVisible(Int32 line)
         {
-            return SPerform(2228, (uint)line, 0) != 0;
+            return SPerform(2228, line, 0) != 0;
         }
 
         /// <summary>
@@ -2558,7 +2576,7 @@ namespace ScintillaNet
         /// </summary>
         public int FoldParent(int line)
         {
-            return (int)SPerform(2225, (uint)line, 0);
+            return SPerform(2225, line, 0);
         }
 
         /// <summary>
@@ -2566,7 +2584,7 @@ namespace ScintillaNet
         /// </summary>
         public bool FoldExpanded(int line)
         {
-            return SPerform(2230, (uint)line, 0) != 0;
+            return SPerform(2230, line, 0) != 0;
         }
 
         /// <summary>
@@ -2574,7 +2592,7 @@ namespace ScintillaNet
         /// </summary>
         public void FoldExpanded(int line, bool expanded)
         {
-            SPerform(2229, (uint)line, (uint)(expanded ? 1 : 0));
+            SPerform(2229, line, expanded ? 1 : 0);
         }
 
         /// <summary>
@@ -2590,7 +2608,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetFore(int style, int fore)
         {
-            SPerform(2051, (uint)style, (uint)fore);
+            SPerform(2051, style, fore);
         }
 
         /// <summary>
@@ -2598,7 +2616,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetBack(int style, int back)
         {
-            SPerform(2052, (uint)style, (uint)back);
+            SPerform(2052, style, back);
         }
 
         /// <summary>
@@ -2606,7 +2624,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetBold(int style, bool bold)
         {
-            SPerform(2053, (uint)style, (uint)(bold ? 1 : 0));
+            SPerform(2053, style, bold ? 1 : 0);
         }
 
         /// <summary>
@@ -2614,7 +2632,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetItalic(int style, bool italic)
         {
-            SPerform(2054, (uint)style, (uint)(italic ? 1 : 0));
+            SPerform(2054, style, italic ? 1 : 0);
         }
 
         /// <summary>
@@ -2622,7 +2640,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetSize(int style, int sizePoints)
         {
-            SPerform(2055, (uint)style, (uint)sizePoints);
+            SPerform(2055, style, sizePoints);
         }
 
         /// <summary>
@@ -2633,7 +2651,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(fontName)) fontName = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(fontName))
             {
-                SPerform(2056, (uint)style, (uint)b);
+                SPerform(2056, style, (uint)b);
             }
         }
 
@@ -2642,7 +2660,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetEOLFilled(int style, bool filled)
         {
-            SPerform(2057, (uint)style, (uint)(filled ? 1 : 0));
+            SPerform(2057, style, filled ? 1 : 0);
         }
 
         /// <summary>
@@ -2650,7 +2668,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetUnderline(int style, bool underline)
         {
-            SPerform(2059, (uint)style, (uint)(underline ? 1 : 0));
+            SPerform(2059, style, underline ? 1 : 0);
         }
 
         /// <summary>
@@ -2658,7 +2676,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetCase(int style, int caseForce)
         {
-            SPerform(2060, (uint)style, (uint)caseForce);
+            SPerform(2060, style, caseForce);
         }
 
         /// <summary>
@@ -2666,7 +2684,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetCharacterSet(int style, int characterSet)
         {
-            SPerform(2066, (uint)style, (uint)characterSet);
+            SPerform(2066, style, characterSet);
         }
 
         /// <summary>
@@ -2674,7 +2692,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetHotSpot(int style, bool hotspot)
         {
-            SPerform(2409, (uint)style, (uint)(hotspot ? 1 : 0));
+            SPerform(2409, style, hotspot ? 1 : 0);
         }
 
         /// <summary>
@@ -2682,7 +2700,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetVisible(int style, bool visible)
         {
-            SPerform(2074, (uint)style, (uint)(visible ? 1 : 0));
+            SPerform(2074, style, visible ? 1 : 0);
         }
 
         /// <summary>
@@ -2704,7 +2722,7 @@ namespace ScintillaNet
         /// </summary>
         public void StyleSetChangeable(int style, bool changeable)
         {
-            SPerform(2099, (uint)style, (uint)(changeable ? 1 : 0));
+            SPerform(2099, style, changeable ? 1 : 0 );
         }
 
         /// <summary>
@@ -2725,7 +2743,7 @@ namespace ScintillaNet
         /// </summary>
         public void HotspotActiveUnderline(bool useSetting)
         {
-            SPerform(2412, (uint)(useSetting ? 1 : 0), 0);
+            SPerform(2412, useSetting ? 1 : 0, 0);
         }
 
         /// <summary>
@@ -2733,7 +2751,7 @@ namespace ScintillaNet
         /// </summary>
         public void HotspotSingleLine(bool useSetting)
         {
-            SPerform(2421, (uint)(useSetting ? 1 : 0), 0);
+            SPerform(2421, useSetting ? 1 : 0, 0);
         }
 
         /// <summary>
@@ -2741,7 +2759,7 @@ namespace ScintillaNet
         /// </summary>
         public void HotspotActiveFore(bool useSetting, int fore)
         {
-            SPerform(2410, (uint)(useSetting ? 1 : 0), (uint)fore);
+            SPerform(2410, useSetting ? 1 : 0, fore);
         }
 
         /// <summary>
@@ -2749,7 +2767,7 @@ namespace ScintillaNet
         /// </summary>
         public void HotspotActiveBack(bool useSetting, int back)
         {
-            SPerform(2411, (uint)(useSetting ? 1 : 0), (uint)back);
+            SPerform(2411, useSetting ? 1 : 0, back);
         }
 
         /// <summary>
@@ -2757,7 +2775,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetStyleBitsNeeded()
         {
-            return (int)SPerform(4011, 0, 0);
+            return SPerform(4011, 0, 0);
         }
 
         /// <summary>
@@ -2771,7 +2789,7 @@ namespace ScintillaNet
             {
                 fixed (byte* b2 = Encoding.GetEncoding(this.CodePage).GetBytes(key))
                 {
-                    SPerform(4004, (uint)b2, (uint)b);
+                    SPerform(4004, (int)b2, (uint)b);
                 }
             }
         }
@@ -2785,7 +2803,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(key)) key = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(key))
             {
-                return (int)SPerform(4010, (uint)b, 0);
+                return SPerform(4010, (int)b, 0);
             }
         }
 
@@ -2797,7 +2815,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(keyWords)) keyWords = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(keyWords))
             {
-                SPerform(4005, (uint)keywordSet, (uint)b);
+                SPerform(4005, keywordSet, (uint)b);
             }
         }
 
@@ -2818,7 +2836,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetLineState(int line)
         {
-            return (int)SPerform(2093, (uint)line, 0);
+            return SPerform(2093, line, 0);
         }
 
         /// <summary>
@@ -2826,7 +2844,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetLineState(int line, int state)
         {
-            SPerform(2092, (uint)line, (uint)state);
+            SPerform(2092, line, state);
         }
 
         /// <summary>
@@ -2834,7 +2852,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetLineIndentation(int line)
         {
-            return (int)SPerform(2127, (uint)line, 0);
+            return SPerform(2127, line, 0);
         }
 
         /// <summary>
@@ -2842,7 +2860,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetLineIndentation(int line, int indentSize)
         {
-            SPerform(2126, (uint)line, (uint)indentSize);
+            SPerform(2126, line, indentSize);
         }
 
         /// <summary>
@@ -2850,7 +2868,7 @@ namespace ScintillaNet
         /// </summary>
         public int LineIndentPosition(int line)
         {
-            return (int)SPerform(2128, (uint)line, 0);
+            return SPerform(2128, line, 0);
         }
 
         /// <summary>
@@ -2858,7 +2876,7 @@ namespace ScintillaNet
         /// </summary>
         public int Column(int pos)
         {
-            return (int)SPerform(2129, (uint)pos, 0);
+            return SPerform(2129, pos, 0);
         }
 
         /// <summary>
@@ -2866,7 +2884,7 @@ namespace ScintillaNet
         /// </summary>
         public int LineEndPosition(int line)
         {
-            return (int)SPerform(2136, (uint)line, 0);
+            return SPerform(2136, line, 0);
         }
 
         /// <summary>
@@ -2874,7 +2892,7 @@ namespace ScintillaNet
         /// </summary>
         public int CharAt(int pos)
         {
-            return (int)SPerform(2007, (uint)pos, 0);
+            return SPerform(2007, pos, 0);
         }
 
         /// <summary>
@@ -2882,7 +2900,7 @@ namespace ScintillaNet
         /// </summary>
         public int StyleAt(int pos)
         {
-            return (int)SPerform(2010, (uint)pos, 0);
+            return SPerform(2010, pos, 0);
         }
 
         /// <summary>
@@ -2890,7 +2908,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetMarginTypeN(int margin)
         {
-            return (int)SPerform(2241, (uint)margin, 0);
+            return SPerform(2241, margin, 0);
         }
 
         /// <summary>
@@ -2898,7 +2916,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetMarginTypeN(int margin, int marginType)
         {
-            SPerform(2240, (uint)margin, (uint)marginType);
+            SPerform(2240, margin, marginType);
         }
 
         /// <summary>
@@ -2906,7 +2924,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetMarginWidthN(int margin)
         {
-            return (int)SPerform(2243, (uint)margin, 0);
+            return SPerform(2243, margin, 0);
         }
 
         /// <summary>
@@ -2914,7 +2932,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetMarginWidthN(int margin, int pixelWidth)
         {
-            SPerform(2242, (uint)margin, (uint)pixelWidth);
+            SPerform(2242, margin, pixelWidth);
         }
 
         /// <summary>
@@ -2922,7 +2940,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetMarginMaskN(int margin)
         {
-            return (int)SPerform(2245, (uint)margin, 0);
+            return SPerform(2245, margin, 0);
         }
 
         /// <summary>
@@ -2930,7 +2948,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetMarginMaskN(int margin, int mask)
         {
-            SPerform(2244, (uint)margin, (uint)mask);
+            SPerform(2244, margin, mask);
         }
 
         /// <summary>
@@ -2938,7 +2956,7 @@ namespace ScintillaNet
         /// </summary>
         public bool MarginSensitiveN(int margin)
         {
-            return SPerform(2247, (uint)margin, 0) != 0;
+            return SPerform(2247, margin, 0) != 0;
         }
 
         /// <summary>
@@ -2946,7 +2964,7 @@ namespace ScintillaNet
         /// </summary>
         public void MarginSensitiveN(int margin, bool sensitive)
         {
-            SPerform(2246, (uint)margin, (uint)(sensitive ? 1 : 0));
+            SPerform(2246, margin, sensitive ? 1 : 0);
         }
 
         /// <summary>
@@ -2954,7 +2972,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetIndicStyle(int indic)
         {
-            return (int)SPerform(2081, (uint)indic, 0);
+            return SPerform(2081, indic, 0);
         }
 
         /// <summary>
@@ -2962,7 +2980,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetIndicStyle(int indic, int style)
         {
-            SPerform(2080, (uint)indic, (uint)style);
+            SPerform(2080, indic, style);
         }
 
         /// <summary>
@@ -2970,7 +2988,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetIndicFore(int indic)
         {
-            return (int)SPerform(2083, (uint)indic, 0);
+            return SPerform(2083, indic, 0);
         }
 
         /// <summary>
@@ -2978,7 +2996,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetIndicFore(int indic, int fore)
         {
-            SPerform(2082, (uint)indic, (uint)fore);
+            SPerform(2082, indic, fore);
         }
 
         /// <summary>
@@ -2989,7 +3007,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                SPerform(2001, (uint)length, (uint)b);
+                SPerform(2001, length, (uint)b);
             }
         }
 
@@ -3001,7 +3019,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                SPerform(2003, (uint)pos, (uint)b);
+                SPerform(2003, pos, (uint)b);
             }
         }
 
@@ -3083,7 +3101,7 @@ namespace ScintillaNet
         /// </summary>
         public int MarkerLineFromHandle(int handle)
         {
-            return (int)SPerform(2017, (uint)handle, 0);
+            return SPerform(2017, handle, 0);
         }
 
         /// <summary>
@@ -3091,7 +3109,7 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerDeleteHandle(int handle)
         {
-            SPerform(2018, (uint)handle, 0);
+            SPerform(2018, handle, 0);
         }
 
         /// <summary>
@@ -3099,7 +3117,7 @@ namespace ScintillaNet
         /// </summary>
         public int PositionFromPoint(int x, int y)
         {
-            return (int)SPerform(2022, (uint)x, (uint)y);
+            return SPerform(2022, x, y);
         }
 
         /// <summary>
@@ -3108,7 +3126,7 @@ namespace ScintillaNet
         /// </summary>
         public int PositionFromPointClose(int x, int y)
         {
-            return (int)SPerform(2023, (uint)x, (uint)y);
+            return SPerform(2023, x, y);
         }
 
         /// <summary>
@@ -3116,7 +3134,7 @@ namespace ScintillaNet
         /// </summary>
         public void GotoLine(int line)
         {
-            SPerform(2024, (uint)line, 0);
+            SPerform(2024, line, 0);
         }
 
         /// <summary>
@@ -3124,7 +3142,7 @@ namespace ScintillaNet
         /// </summary>
         public void GotoPos(int pos)
         {
-            SPerform(2025, (uint)pos, 0);
+            SPerform(2025, pos, 0);
         }
 
         /// <summary>
@@ -3133,9 +3151,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetCurLine(int length)
         {
-            int sz = (int)SPerform(2027, (uint)length, 0);
+            int sz = SPerform(2027, length, 0);
             byte[] buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2027, (uint)length + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2027, length + 1, (uint)b);
             return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -3144,7 +3162,7 @@ namespace ScintillaNet
         /// </summary>
         public void ConvertEOLs(int eolMode)
         {
-            SPerform(2029, (uint)eolMode, 0);
+            SPerform(2029, eolMode, 0);
         }
 
         /// <summary>
@@ -3153,7 +3171,7 @@ namespace ScintillaNet
         /// </summary>
         public void StartStyling(int pos, int mask)
         {
-            SPerform(2032, (uint)pos, (uint)mask);
+            SPerform(2032, pos, mask);
         }
 
         /// <summary>
@@ -3162,7 +3180,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetStyling(int length, int style)
         {
-            SPerform(2033, (uint)length, (uint)style);
+            SPerform(2033, length, style);
         }
 
         /// <summary>
@@ -3170,7 +3188,7 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerDefine(int markerNumber, int markerSymbol)
         {
-            SPerform(2040, (uint)markerNumber, (uint)markerSymbol);
+            SPerform(2040, markerNumber, markerSymbol);
         }
 
         /// <summary>
@@ -3178,7 +3196,7 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerSetFore(int markerNumber, int fore)
         {
-            SPerform(2041, (uint)markerNumber, (uint)fore);
+            SPerform(2041, markerNumber, fore);
         }
 
         /// <summary>
@@ -3186,7 +3204,7 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerSetBack(int markerNumber, int back)
         {
-            SPerform(2042, (uint)markerNumber, (uint)back);
+            SPerform(2042, markerNumber, back);
         }
 
         /// <summary>
@@ -3194,7 +3212,7 @@ namespace ScintillaNet
         /// </summary>
         public int MarkerAdd(int line, int markerNumber)
         {
-            return (int)SPerform(2043, (uint)line, (uint)markerNumber);
+            return SPerform(2043, line, markerNumber);
         }
 
         /// <summary>
@@ -3202,7 +3220,7 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerDelete(int line, int markerNumber)
         {
-            SPerform(2044, (uint)line, (uint)markerNumber);
+            SPerform(2044, line, markerNumber);
         }
 
         /// <summary>
@@ -3210,7 +3228,7 @@ namespace ScintillaNet
         /// </summary>
         public void MarkerDeleteAll(int markerNumber)
         {
-            SPerform(2045, (uint)markerNumber, 0);
+            SPerform(2045, markerNumber, 0);
         }
 
         /// <summary>
@@ -3218,7 +3236,7 @@ namespace ScintillaNet
         /// </summary>
         public int MarkerGet(int line)
         {
-            return (int)SPerform(2046, (uint)line, 0);
+            return SPerform(2046, line, 0);
         }
 
         /// <summary>
@@ -3226,7 +3244,7 @@ namespace ScintillaNet
         /// </summary>
         public int MarkerNext(int lineStart, int markerMask)
         {
-            return (int)SPerform(2047, (uint)lineStart, (uint)markerMask);
+            return SPerform(2047, lineStart, (uint)markerMask);
         }
 
         /// <summary>
@@ -3234,7 +3252,7 @@ namespace ScintillaNet
         /// </summary>
         public int MarkerPrevious(int lineStart, int markerMask)
         {
-            return (int)SPerform(2048, (uint)lineStart, (uint)markerMask);
+            return SPerform(2048, lineStart, (uint)markerMask);
         }
 
         /// <summary>
@@ -3245,7 +3263,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(pixmap)) pixmap = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(pixmap))
             {
-                SPerform(2049, (uint)markerNumber, (uint)b);
+                SPerform(2049, markerNumber, (uint)b);
             }
         }
 
@@ -3256,13 +3274,13 @@ namespace ScintillaNet
         {
             var rgba = RGBA.ConvertToRGBA(image);
             //SCI_RGBAIMAGESETWIDTH
-            SPerform(2624, (uint)image.Width, 0);
+            SPerform(2624, image.Width, 0);
             //SCI_RGBAIMAGESETHEIGHT
-            SPerform(2625, (uint)image.Height, 0);
+            SPerform(2625, image.Height, 0);
             fixed (byte* b = rgba)
             {
                 //SCI_MARKERDEFINERGBAIMAGE
-                SPerform(2626, (uint)markerNumber, (uint)b);
+                SPerform(2626, markerNumber, (uint)b);
             }
         }
 
@@ -3279,7 +3297,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetSelFore(bool useSetting, int fore)
         {
-            SPerform(2067, (uint)(useSetting ? 1 : 0), (uint)fore);
+            SPerform(2067, useSetting ? 1 : 0, fore);
         }
 
         /// <summary>
@@ -3287,7 +3305,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetSelBack(bool useSetting, int back)
         {
-            SPerform(2068, (uint)(useSetting ? 1 : 0), (uint)back);
+            SPerform(2068, useSetting ? 1 : 0, back);
         }
 
         /// <summary>
@@ -3295,7 +3313,7 @@ namespace ScintillaNet
         /// </summary>
         public void AssignCmdKey(int km, int msg)
         {
-            SPerform(2070, (uint)km, (uint)msg);
+            SPerform(2070, km, msg);
         }
 
         /// <summary>
@@ -3303,7 +3321,7 @@ namespace ScintillaNet
         /// </summary>
         public void ClearCmdKey(int km)
         {
-            SPerform(2071, (uint)km, 0);
+            SPerform(2071, km, 0);
         }
 
         /// <summary>
@@ -3322,7 +3340,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(styles))
             {
-                SPerform(2073, (uint)length, (uint)b);
+                SPerform(2073, length, (uint)b);
             }
         }
 
@@ -3348,7 +3366,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetWhitespaceFore(bool useSetting, int fore)
         {
-            SPerform(2084, (uint)(useSetting ? 1 : 0), (uint)fore);
+            SPerform(2084, useSetting ? 1 : 0, fore);
         }
 
         /// <summary>
@@ -3356,7 +3374,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetWhitespaceBack(bool useSetting, int back)
         {
-            SPerform(2085, (uint)(useSetting ? 1 : 0), (uint)back);
+            SPerform(2085, useSetting ? 1 : 0, back);
         }
 
         /// <summary>
@@ -3369,7 +3387,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(itemList)) itemList = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(itemList))
             {
-                SPerform(2100, (uint)lenEntered, (uint)b);
+                SPerform(2100, lenEntered, (uint)b);
             }
         }
 
@@ -3421,7 +3439,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(itemList)) itemList = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(itemList))
             {
-                SPerform(2117, (uint)listType, (uint)b);
+                SPerform(2117, listType, (uint)b);
             }
         }
 
@@ -3433,7 +3451,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(xpmData)) xpmData = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(xpmData))
             {
-                SPerform(2405, (uint)type, (uint)b);
+                SPerform(2405, type, (uint)b);
             }
         }
 
@@ -3450,9 +3468,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetLine(int line)
         {
-            int sz = (int)SPerform(2153, (uint)line, 0);
+            int sz = SPerform(2153, line, 0);
             byte[] buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2153, (uint)line, (uint)b);
+            fixed (byte* b = buffer) SPerform(2153, line, (uint)b);
             if (sz == 0) return ""; // Empty last line
             return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz);
         }
@@ -3462,7 +3480,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetSel(int start, int end)
         {
-            SPerform(2160, (uint)start, (uint)end);
+            SPerform(2160, start, end);
         }
 
         /// <summary>
@@ -3473,11 +3491,11 @@ namespace ScintillaNet
         {
             get
             {
-                int sz = (int)SPerform(2161, 0, 0);
+                int sz = SPerform(2161, 0, 0);
                 byte[] buffer = new byte[sz + 1];
                 fixed (byte* b = buffer)
                 {
-                    SPerform(2161, (UInt32)sz + 1, (uint)b);
+                    SPerform(2161, sz + 1, (uint)b);
                 }
                 return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
             }
@@ -3488,7 +3506,7 @@ namespace ScintillaNet
         /// </summary>
         public void HideSelection(bool normal)
         {
-            SPerform(2163, (uint)(normal ? 1 : 0), 0);
+            SPerform(2163, normal ? 1 : 0, 0);
         }
 
         /// <summary>
@@ -3496,7 +3514,7 @@ namespace ScintillaNet
         /// </summary>
         public int PointXFromPosition(int pos)
         {
-            return (int)SPerform(2164, 0, (uint)pos);
+            return SPerform(2164, 0, pos);
         }
 
         /// <summary>
@@ -3504,7 +3522,7 @@ namespace ScintillaNet
         /// </summary>
         public int PointYFromPosition(int pos)
         {
-            return (int)SPerform(2165, 0, (uint)pos);
+            return SPerform(2165, 0, pos);
         }
 
         /// <summary>
@@ -3512,7 +3530,7 @@ namespace ScintillaNet
         /// </summary>
         public int LineFromPosition(int pos)
         {
-            return (int)SPerform(2166, (uint)pos, 0);
+            return SPerform(2166, pos, 0);
         }
 
         /// <summary>
@@ -3520,7 +3538,7 @@ namespace ScintillaNet
         /// </summary>
         public int PositionFromLine(int line)
         {
-            return (int)SPerform(2167, (uint)line, 0);
+            return SPerform(2167, line, 0);
         }
 
         /// <summary>
@@ -3541,7 +3559,7 @@ namespace ScintillaNet
         /// </summary>
         public void LineScroll(int columns, int lines)
         {
-            SPerform(2168, (uint)columns, (uint)lines);
+            SPerform(2168, columns, lines);
         }
 
         /// <summary>
@@ -3649,9 +3667,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetText(int length)
         {
-            int sz = (int)SPerform(2182, (uint)length, 0);
+            int sz = SPerform(2182, length, 0);
             byte[] buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2182, (uint)length + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2182, length + 1, (uint)b);
             return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -3665,7 +3683,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                return (int)SPerform(2194, (uint)length, (uint)b);
+                return SPerform(2194, length, (uint)b);
             }
         }
 
@@ -3682,7 +3700,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                return (int)SPerform(2195, (uint)length, (uint)b);
+                return SPerform(2195, length, (uint)b);
             }
         }
 
@@ -3696,7 +3714,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                return (int)SPerform(2197, (uint)length, (uint)b);
+                return SPerform(2197, length, (uint)b);
             }
         }
 
@@ -3708,7 +3726,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(definition)) definition = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(definition))
             {
-                SPerform(2200, (uint)pos, (uint)b);
+                SPerform(2200, pos, (uint)b);
             }
         }
 
@@ -3725,7 +3743,7 @@ namespace ScintillaNet
         /// </summary>
         public void CallTipSetHlt(int start, int end)
         {
-            SPerform(2204, (uint)start, (uint)end);
+            SPerform(2204, start, end);
         }
 
         /// <summary>
@@ -3733,7 +3751,7 @@ namespace ScintillaNet
         /// </summary>
         public void CallTipSetBack(int color)
         {
-            SPerform(2205, (uint)color, 0);
+            SPerform(2205, color, 0);
         }
 
         /// <summary>
@@ -3741,7 +3759,7 @@ namespace ScintillaNet
         /// </summary>
         public void CallTipSetFore(int color)
         {
-            SPerform(2206, (uint)color, 0);
+            SPerform(2206, color, 0);
         }
 
         /// <summary>
@@ -3749,7 +3767,7 @@ namespace ScintillaNet
         /// </summary>
         public void CallTipSetForeHlt(int color)
         {
-            SPerform(2207, (uint)color, 0);
+            SPerform(2207, color, 0);
         }
 
         /// <summary>
@@ -3757,7 +3775,7 @@ namespace ScintillaNet
         /// </summary>
         public int VisibleFromDocLine(int line)
         {
-            return (int)SPerform(2220, (uint)line, 0);
+            return SPerform(2220, line, 0);
         }
 
         /// <summary>
@@ -3765,7 +3783,7 @@ namespace ScintillaNet
         /// </summary>
         public int DocLineFromVisible(int lineDisplay)
         {
-            return (int)SPerform(2221, (uint)lineDisplay, 0);
+            return SPerform(2221, lineDisplay, 0);
         }
 
         /// <summary>
@@ -3773,7 +3791,7 @@ namespace ScintillaNet
         /// </summary>
         public void ShowLines(int lineStart, int lineEnd)
         {
-            SPerform(2226, (uint)lineStart, (uint)lineEnd);
+            SPerform(2226, lineStart, lineEnd);
         }
 
         /// <summary>
@@ -3781,7 +3799,7 @@ namespace ScintillaNet
         /// </summary>
         public void HideLines(int lineStart, int lineEnd)
         {
-            SPerform(2227, (uint)lineStart, (uint)lineEnd);
+            SPerform(2227, lineStart, lineEnd);
         }
 
         /// <summary>
@@ -3789,7 +3807,7 @@ namespace ScintillaNet
         /// </summary>
         public void ToggleFold(int line)
         {
-            SPerform(2231, (uint)line, 0);
+            SPerform(2231, line, 0);
         }
 
         /// <summary>
@@ -3797,7 +3815,7 @@ namespace ScintillaNet
         /// </summary>
         public void EnsureVisible(int line)
         {
-            SPerform(2232, (uint)line, 0);
+            SPerform(2232, line, 0);
         }
 
         /// <summary>
@@ -3805,7 +3823,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldFlags(int flags)
         {
-            SPerform(2233, (uint)flags, 0);
+            SPerform(2233, flags, 0);
         }
 
         /// <summary>
@@ -3814,7 +3832,7 @@ namespace ScintillaNet
         /// </summary>
         public void EnsureVisibleEnforcePolicy(int line)
         {
-            SPerform(2234, (uint)line, 0);
+            SPerform(2234, line, 0);
         }
 
         /// <summary>
@@ -3822,7 +3840,7 @@ namespace ScintillaNet
         /// </summary>
         public int WordStartPosition(int pos, bool onlyWordCharacters)
         {
-            return (int)SPerform(2266, (uint)pos, (uint)(onlyWordCharacters ? 1 : 0));
+            return SPerform(2266, pos, onlyWordCharacters ? 1 : 0);
         }
 
         /// <summary>
@@ -3830,7 +3848,7 @@ namespace ScintillaNet
         /// </summary>
         public int WordEndPosition(int pos, bool onlyWordCharacters)
         {
-            return (int)SPerform(2267, (uint)pos, (uint)(onlyWordCharacters ? 1 : 0));
+            return (int)SPerform(2267, pos, onlyWordCharacters ? 1 : 0);
         }
 
         /// <summary>
@@ -3843,7 +3861,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                return (int)SPerform(2276, (uint)style, (uint)b);
+                return SPerform(2276, style, (uint)b);
             }
         }
 
@@ -3852,7 +3870,7 @@ namespace ScintillaNet
         /// </summary>
         public int TextHeight(int line)
         {
-            return (int)SPerform(2279, (uint)line, 0);
+            return SPerform(2279, line, 0);
         }
 
         /// <summary>
@@ -3863,7 +3881,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                SPerform(2282, (uint)length, (uint)b);
+                SPerform(2282, length, (uint)b);
             }
         }
 
@@ -3889,7 +3907,7 @@ namespace ScintillaNet
         /// </summary>
         public void LinesSplit(int pixelWidth)
         {
-            SPerform(2289, (uint)pixelWidth, 0);
+            SPerform(2289, pixelWidth, 0);
         }
 
         /// <summary>
@@ -3897,7 +3915,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldMarginColour(bool useSetting, int back)
         {
-            SPerform(2290, (uint)(useSetting ? 1 : 0), (uint)back);
+            SPerform(2290, useSetting ? 1 : 0, back);
         }
 
         /// <summary>
@@ -3905,7 +3923,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetFoldMarginHiColour(bool useSetting, int fore)
         {
-            SPerform(2291, (uint)(useSetting ? 1 : 0), (uint)fore);
+            SPerform(2291, useSetting ? 1 : 0, fore);
         }
 
         /// <summary>
@@ -4433,7 +4451,7 @@ namespace ScintillaNet
         /// </summary>
         public int LineLength(int line)
         {
-            return (int)SPerform(2350, (uint)line, 0);
+            return SPerform(2350, line, 0);
         }
 
         /// <summary>
@@ -4441,7 +4459,7 @@ namespace ScintillaNet
         /// </summary>
         public void BraceHighlight(int pos1, int pos2)
         {
-            SPerform(2351, (uint)pos1, (uint)pos2);
+            SPerform(2351, pos1, pos2);
         }
 
         /// <summary>
@@ -4449,7 +4467,7 @@ namespace ScintillaNet
         /// </summary>
         public void BraceBadLight(int pos)
         {
-            SPerform(2352, (uint)pos, 0);
+            SPerform(2352, pos, 0);
         }
 
         /// <summary>
@@ -4457,7 +4475,7 @@ namespace ScintillaNet
         /// </summary>
         public int BraceMatch(int pos)
         {
-            return (int)SPerform(2353, (uint)pos, 0);
+            return SPerform(2353, pos, 0);
         }
 
         /// <summary>
@@ -4477,7 +4495,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                return (int)SPerform(2367, (uint)flags, (uint)b);
+                return SPerform(2367, flags, (uint)b);
             }
         }
 
@@ -4490,7 +4508,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                return (int)SPerform(2368, (uint)flags, (uint)b);
+                return SPerform(2368, flags, (uint)b);
             }
         }
 
@@ -4500,7 +4518,7 @@ namespace ScintillaNet
         /// </summary>
         public void UsePopUp(bool allowPopUp)
         {
-            SPerform(2371, (uint)(allowPopUp ? 1 : 0), 0);
+            SPerform(2371, allowPopUp ? 1 : 0, 0);
         }
 
         /// <summary>
@@ -4510,7 +4528,7 @@ namespace ScintillaNet
         /// </summary>
         public void AddRefDocument(int doc)
         {
-            SPerform(2376, 0, (uint)doc);
+            SPerform(2376, 0, doc);
         }
 
         /// <summary>
@@ -4518,7 +4536,7 @@ namespace ScintillaNet
         /// </summary>
         public void ReleaseDocument(int doc)
         {
-            SPerform(2377, 0, (uint)doc);
+            SPerform(2377, 0, doc);
         }
 
         /// <summary>
@@ -4562,7 +4580,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetVisiblePolicy(int visiblePolicy, int visibleSlop)
         {
-            SPerform(2394, (uint)visiblePolicy, (uint)visibleSlop);
+            SPerform(2394, visiblePolicy, visibleSlop);
         }
 
         /// <summary>
@@ -4604,7 +4622,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetXCaretPolicy(int caretPolicy, int caretSlop)
         {
-            SPerform(2402, (uint)caretPolicy, (uint)caretSlop);
+            SPerform(2402, caretPolicy, caretSlop);
         }
 
         /// <summary>
@@ -4613,7 +4631,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetYCaretPolicy(int caretPolicy, int caretSlop)
         {
-            SPerform(2403, (uint)caretPolicy, (uint)caretSlop);
+            SPerform(2403, caretPolicy, caretSlop);
         }
 
         /// <summary>
@@ -4654,7 +4672,7 @@ namespace ScintillaNet
         /// </summary>
         public int PositionBefore(int pos)
         {
-            return (int)SPerform(2417, (uint)pos, 0);
+            return SPerform(2417, pos, 0);
         }
 
         /// <summary>
@@ -4663,7 +4681,7 @@ namespace ScintillaNet
         /// </summary>
         public int PositionAfter(int pos)
         {
-            return (int)SPerform(2418, (uint)pos, 0);
+            return SPerform(2418, pos, 0);
         }
 
         /// <summary>
@@ -4671,7 +4689,7 @@ namespace ScintillaNet
         /// </summary>
         public void CopyRange(int start, int end)
         {
-            SPerform(2419, (uint)start, (uint)end);
+            SPerform(2419, start, end);
         }
 
         /// <summary>
@@ -4682,7 +4700,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                SPerform(2420, (uint)length, (uint)b);
+                SPerform(2420, length, (uint)b);
             }
         }
 
@@ -4691,7 +4709,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetLineSelStartPosition(int line)
         {
-            return (int)SPerform(2424, (uint)line, 0);
+            return SPerform(2424, line, 0);
         }
 
         /// <summary>
@@ -4699,7 +4717,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetLineSelEndPosition(int line)
         {
-            return (int)SPerform(2425, (uint)line, 0);
+            return SPerform(2425, line, 0);
         }
 
         /// <summary>
@@ -4865,7 +4883,7 @@ namespace ScintillaNet
         /// </summary>
         public void Allocate(int bytes)
         {
-            SPerform(2446, (uint)bytes, 0);
+            SPerform(2446, bytes, 0);
         }
 
         /// <summary>
@@ -4889,7 +4907,7 @@ namespace ScintillaNet
         /// </summary>
         public void Colourise(int start, int end)
         {
-            SPerform(4003, (uint)start, (uint)end);
+            SPerform(4003, start, end);
         }
 
         /// <summary>
@@ -4910,7 +4928,7 @@ namespace ScintillaNet
         /// </summary>
         public int FindColumn(int line, int column)
         {
-            return (int)SPerform(2456, (uint)line, (uint)column);
+            return SPerform(2456, line, column);
         }
 
         /// <summary>
@@ -4918,7 +4936,7 @@ namespace ScintillaNet
         /// </summary>
         public void IndicatorFillRange(int position, int fillLength)
         {
-            SPerform(2504, (uint)position, (uint)fillLength);
+            SPerform(2504, position, fillLength);
         }
 
         /// <summary>
@@ -4926,7 +4944,7 @@ namespace ScintillaNet
         /// </summary>
         public void IndicatorClearRange(int position, int clearLength)
         {
-            SPerform(2505, (uint)position, (uint)clearLength);
+            SPerform(2505, position, clearLength);
         }
 
         /// <summary>
@@ -4934,7 +4952,7 @@ namespace ScintillaNet
         /// </summary>
         public int IndicatorAllOnFor(int position)
         {
-            return (int)SPerform(2506, (uint)position, 0);
+            return SPerform(2506, position, 0);
         }
 
         /// <summary>
@@ -4942,7 +4960,7 @@ namespace ScintillaNet
         /// </summary>
         public int IndicatorValueAt(int indicator, int position)
         {
-            return (int)SPerform(2507, (uint)indicator, (uint)position);
+            return SPerform(2507, indicator, position);
         }
 
         /// <summary>
@@ -4950,7 +4968,7 @@ namespace ScintillaNet
         /// </summary>
         public int IndicatorStart(int indicator, int position)
         {
-            return (int)SPerform(2508, (uint)indicator, (uint)position);
+            return SPerform(2508, indicator, position);
         }
 
         /// <summary>
@@ -4958,7 +4976,7 @@ namespace ScintillaNet
         /// </summary>
         public int IndicatorEnd(int indicator, int position)
         {
-            return (int)SPerform(2509, (uint)indicator, (uint)position);
+            return SPerform(2509, indicator, position);
         }
 
         /// <summary>
@@ -4976,7 +4994,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetIndicSetAlpha(int indicator, int alpha)
         {
-            SPerform(2523, (uint)indicator, (uint)alpha);
+            SPerform(2523, indicator, alpha);
         }
 
         /// <summary>
@@ -4984,7 +5002,7 @@ namespace ScintillaNet
         /// </summary>
         public void GetIndicSetAlpha(int indicator)
         {
-            SPerform(2524, (uint)indicator, 0);
+            SPerform(2524, indicator, 0);
         }
 
         /// <summary>
@@ -4992,7 +5010,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetMarkerSymbolDefined(int markerNumber)
         {
-            return (int)SPerform(2529, (uint)markerNumber, 0);
+            return SPerform(2529, markerNumber, 0);
         }
 
         /// <summary>
@@ -5000,7 +5018,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetMarginStyle(int line, int style)
         {
-            SPerform(2532, (uint)line, (uint)style);
+            SPerform(2532, line, style);
         }
 
         /// <summary>
@@ -5008,7 +5026,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetMarginStyle(int line)
         {
-            return (int)SPerform(2533, (uint)line, 0);
+            return SPerform(2533, line, 0);
         }
 
         /// <summary>
@@ -5024,7 +5042,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetCharPositionFromPoint(int x, int y)
         {
-            return (int)SPerform(2561, (uint)x, (uint)y);
+            return SPerform(2561, x, y);
         }
 
         /// <summary>
@@ -5032,7 +5050,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetCharPositionFromPointClose(int x, int y)
         {
-            return (int)SPerform(2562, (uint)x, (uint)y);
+            return SPerform(2562, x, y);
         }
 
         /// <summary>
@@ -5040,7 +5058,7 @@ namespace ScintillaNet
         /// </summary>
         public void AddUndoAction(int token, int flags)
         {
-            SPerform(2560, (uint)token, (uint)flags);
+            SPerform(2560, token, flags);
         }
 
         /// <summary>
@@ -5048,7 +5066,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetAnnotationStyle(int line, int style)
         {
-            SPerform(2542, (uint)line, (uint)style);
+            SPerform(2542, line, style);
         }
 
         /// <summary>
@@ -5056,7 +5074,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetAnnotationStyle(int line)
         {
-            return (int)SPerform(2543, (uint)line, 0);
+            return SPerform(2543, line, 0);
         }
 
         /// <summary>
@@ -5072,7 +5090,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetAnnotationLines(int line)
         {
-            return (int)SPerform(2546, (uint)line, 0);
+            return SPerform(2546, line, 0);
         }
 
         /// <summary>
@@ -5083,7 +5101,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                SPerform(2530, (uint)line, (uint)b);
+                SPerform(2530, line, (uint)b);
             }
         }
 
@@ -5095,7 +5113,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(styles))
             {
-                SPerform(2534, (uint)line, (uint)b);
+                SPerform(2534, line, (uint)b);
             }
         }
 
@@ -5107,7 +5125,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(text)) text = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
             {
-                SPerform(2540, (uint)line, (uint)b);
+                SPerform(2540, line, (uint)b);
             }
         }
 
@@ -5119,7 +5137,7 @@ namespace ScintillaNet
             if (string.IsNullOrEmpty(styles)) styles = "\0\0";
             fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(styles))
             {
-                SPerform(2544, (uint)line, (uint)b);
+                SPerform(2544, line, (uint)b);
             }
         }
 
@@ -5128,9 +5146,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetMarginText(int line)
         {
-            int sz = (int)SPerform(2531, (uint)line, 0);
+            int sz = SPerform(2531, line, 0);
             byte[] buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2531, (uint)line + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2531, line + 1, (uint)b);
             return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -5139,9 +5157,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetMarginStyles(int line)
         {
-            int sz = (int)SPerform(2535, (uint)line, 0);
+            int sz = SPerform(2535, line, 0);
             byte[] buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2535, (uint)line + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2535, line + 1, (uint)b);
             return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -5150,9 +5168,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetAnnotationText(int line)
         {
-            int sz = (int)SPerform(2541, (uint)line, 0);
+            int sz = SPerform(2541, line, 0);
             byte[] buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2541, (uint)line + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2541, line + 1, (uint)b);
             return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -5161,9 +5179,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetAnnotationStyles(int line)
         {
-            int sz = (int)SPerform(2545, (uint)line, 0);
+            int sz = SPerform(2545, line, 0);
             byte[] buffer = new byte[sz + 1];
-            fixed (byte* b = buffer) SPerform(2545, (uint)line + 1, (uint)b);
+            fixed (byte* b = buffer) SPerform(2545, line + 1, (uint)b);
             return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
         }
 
@@ -5172,7 +5190,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetVirtualSpaceOptions(int options)
         {
-            SPerform(2596, (uint)options, 0);
+            SPerform(2596, options, 0);
         }
 
         /// <summary>
@@ -5180,7 +5198,7 @@ namespace ScintillaNet
         /// </summary>
         public int GetVirtualSpaceOptions()
         {
-            return (int)SPerform(2597, 0, 0);
+            return SPerform(2597, 0, 0);
         }
 
         /// <summary>
@@ -5188,7 +5206,7 @@ namespace ScintillaNet
         /// </summary>
         public void SetMultiSelectionTyping(bool flag)
         {
-            uint option = (uint)(flag ? 1 : 0);
+            int option = flag ? 1 : 0;
             SPerform(2565, option, 0);
             SPerform(2614, option, 0);
         }
@@ -5207,7 +5225,7 @@ namespace ScintillaNet
         /// </summary>
         public int ContractedFoldNext(int lineStart)
         {
-            return (int)SPerform(2618, (uint)lineStart, 0);
+            return SPerform(2618, lineStart, 0);
         }
 
         #endregion
@@ -5272,7 +5290,7 @@ namespace ScintillaNet
         /// </summary>
         public static void UpdateShortcut(String id, Keys shortcut)
         {
-            if (id.StartsWith("Scintilla.")) shortcutOverrides[id].keys = shortcut;
+            if (id.StartsWithOrdinal("Scintilla.")) shortcutOverrides[id].keys = shortcut;
         }
 
         /// <summary>
@@ -5323,6 +5341,9 @@ namespace ScintillaNet
         [DllImport("user32.dll")]
         public static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int width, int height, IntPtr hWndParent, int hMenu, IntPtr hInstance, string lpParam);
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        public static extern IntPtr GetProcAddress(HandleRef hModule, string lpProcName);
+
         [DllImport("user32.dll")]
         public static extern IntPtr SetFocus(IntPtr hwnd);
 
@@ -5341,13 +5362,29 @@ namespace ScintillaNet
         [DllImport("shell32.dll")]
         public static extern void DragAcceptFiles(IntPtr hwnd, int accept);
 
-        [DllImport("scilexer.dll", EntryPoint = "Scintilla_DirectFunction")]
-        public static extern int Perform(IntPtr directPointer, UInt32 message, UInt32 wParam, UInt32 lParam);
+        public delegate IntPtr Perform(
+            IntPtr sci,
+            int iMessage,
+            IntPtr wParam,
+            IntPtr lParam);
 
-        public UInt32 SPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
+
+        public int SPerform(int message, int wParam, UInt32 lParam)
         {
-            if (Win32.ShouldUseWin32()) return (UInt32)Perform(DirectPointer, message, wParam, lParam);
-            else return (UInt32)Encoding.ASCII.CodePage;
+            if (Win32.ShouldUseWin32()) return (int)_sciFunction(DirectPointer, message, (IntPtr)wParam, (IntPtr)lParam);
+            else return Encoding.ASCII.CodePage;
+        }
+
+        public int SPerform(int message, int wParam, int lParam)
+        {
+            if (Win32.ShouldUseWin32()) return (int)_sciFunction(DirectPointer, message, (IntPtr)wParam, (IntPtr)lParam);
+            else return Encoding.ASCII.CodePage;
+        }
+
+        public int SPerform(int message, int wParam, IntPtr lParam)
+        {
+            if (Win32.ShouldUseWin32()) return (int)_sciFunction(DirectPointer, message, (IntPtr)wParam, lParam);
+            else return Encoding.ASCII.CodePage;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -5871,13 +5908,13 @@ namespace ScintillaNet
                                 if (tempText.Length == 0) previousIndent = -1;
                             }
                             while ((tempLine > 0) && (previousIndent < 0));
-                            if (tempText.IndexOf("//") > 0) // remove comment at end of line
+                            if (tempText.IndexOfOrdinal("//") > 0) // remove comment at end of line
                             {
-                                int slashes = this.MBSafeTextLength(tempText.Substring(0, tempText.IndexOf("//") + 1));
+                                int slashes = this.MBSafeTextLength(tempText.Substring(0, tempText.IndexOfOrdinal("//") + 1));
                                 if (this.PositionIsOnComment(PositionFromLine(tempLine) + slashes))
-                                    tempText = tempText.Substring(0, tempText.IndexOf("//")).Trim();
+                                    tempText = tempText.Substring(0, tempText.IndexOfOrdinal("//")).Trim();
                             }
-                            if (tempText.EndsWith("{"))
+                            if (tempText.EndsWith('{'))
                             {
                                 int bracePos = CurrentPos - 1;
                                 while (bracePos > 0 && CharAt(bracePos) != '{') bracePos--;
@@ -5886,17 +5923,17 @@ namespace ScintillaNet
                                     previousIndent += TabWidth;
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
-                            if (Lexer == 3 && tempText.EndsWith(":") && !tempText.EndsWith("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
+                            if (Lexer == 3 && tempText.EndsWith(':') && !tempText.EndsWithOrdinal("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
                             {
                                 int prevLine = tempLine;
                                 while (--prevLine > 0)
                                 {
                                     tempText = GetLine(prevLine).Trim();
-                                    if (tempText.Length != 0 && !tempText.StartsWith("//"))
+                                    if (tempText.Length != 0 && !tempText.StartsWithOrdinal("//"))
                                     {
                                         int prevIndent = GetLineIndentation(prevLine);
-                                        if ((tempText.EndsWith(";") && previousIndent == prevIndent) ||
-                                            (tempText.EndsWith(":") && previousIndent == prevIndent + Indent))
+                                        if ((tempText.EndsWith(';') && previousIndent == prevIndent) ||
+                                            (tempText.EndsWith(':') && previousIndent == prevIndent + Indent))
                                         {
                                             previousIndent -= Indent;
                                             SetLineIndentation(tempLine, previousIndent);
@@ -6019,7 +6056,7 @@ namespace ScintillaNet
             RangeToFormat frPrint = this.GetRangeToFormat(hdc, charFrom, charTo);
             IntPtr lParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(frPrint));
             Marshal.StructureToPtr(frPrint, lParam, false);
-            int res = (int)this.SPerform(2151, (uint)wParam, (uint)lParam);
+            int res = this.SPerform(2151, wParam, lParam);
             Marshal.FreeCoTaskMem(lParam);
             e.Graphics.ReleaseHdc(hdc);
             return res;
@@ -6120,7 +6157,7 @@ namespace ScintillaNet
             string eolMarker = "\r\n";
             if (this.EOLMode == 1) eolMarker = "\r";
             else if (this.EOLMode == 2) eolMarker = "\n";
-            if (!this.Text.EndsWith(eolMarker))
+            if (!this.Text.EndsWithOrdinal(eolMarker))
             {
                 this.TargetStart = this.TargetEnd = this.TextLength;
                 this.ReplaceTarget(eolMarker.Length, eolMarker);
@@ -6529,7 +6566,7 @@ namespace ScintillaNet
         /// </summary>
         public int SelectText(string text)
         {
-            int pos = this.Text.IndexOf(text, MBSafeCharPosition(this.CurrentPos));
+            int pos = this.Text.IndexOfOrdinal(text, MBSafeCharPosition(this.CurrentPos));
             if (pos >= 0) this.MBSafeSetSel(pos, text);
             return pos;
         }
@@ -6539,7 +6576,7 @@ namespace ScintillaNet
         /// </summary>
         public int SelectText(string text, int startPos)
         {
-            int pos = this.Text.IndexOf(text, startPos);
+            int pos = this.Text.IndexOfOrdinal(text, startPos);
             if (pos >= 0) this.MBSafeSetSel(pos, text);
             return pos;
         }
@@ -6792,7 +6829,7 @@ namespace ScintillaNet
         /// </summary>
         public int BaseStyleAt(int pos)
         {
-            return (int)(SPerform(2010, (uint)pos, 0) & ((1 << this.StyleBits) - 1));
+            return (SPerform(2010, pos, 0) & ((1 << this.StyleBits) - 1));
         }
 
         /// <summary>
@@ -6924,7 +6961,7 @@ namespace ScintillaNet
             if (this.SelectionStart == this.SelectionEnd && PluginBase.MainForm.Settings.CodingStyle == CodingStyle.BracesAfterLine)
             {
                 string str = this.GetLine(startLine).Trim();
-                if (str.StartsWith("{")) startLine = this.GetStartLine(startLine - 1);
+                if (str.StartsWith('{')) startLine = this.GetStartLine(startLine - 1);
                 else if (str.IndexOf('(') >= 0)
                 {
                     int pos = this.GetLine(startLine).IndexOf('(');
@@ -6933,7 +6970,7 @@ namespace ScintillaNet
                     if (pos != -1 /*INVALID_POSITION*/)
                     {
                         int nextLine = this.LineFromPosition(pos);
-                        if (this.GetLine(nextLine + 1).Trim().StartsWith("{")) endLine = nextLine + 2;
+                        if (this.GetLine(nextLine + 1).Trim().StartsWith('{')) endLine = nextLine + 2;
                     }
                 }
             }
@@ -6965,7 +7002,7 @@ namespace ScintillaNet
                 {
                     if (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css")
                     {
-                        if (ctrlBlock < 0 && (selectStr.IndexOf("</") >= 0 || selectStr.IndexOf("/>") >= 0)) ctrlBlock = 0;
+                        if (ctrlBlock < 0 && (selectStr.IndexOfOrdinal("</") >= 0 || selectStr.IndexOfOrdinal("/>") >= 0)) ctrlBlock = 0;
                         else if (len > 1) ctrlBlock = 0;
                     }
                     else
@@ -7126,7 +7163,7 @@ namespace ScintillaNet
             bool ret;
             String lineComment = Configuration.GetLanguage(ConfigurationLanguage).linecomment;
             String blockComment = Configuration.GetLanguage(ConfigurationLanguage).commentstart;
-            ret = ((!String.IsNullOrEmpty(lineComment) && str.StartsWith(lineComment)) || (!String.IsNullOrEmpty(blockComment) && str.StartsWith(blockComment)));
+            ret = ((!String.IsNullOrEmpty(lineComment) && str.StartsWithOrdinal(lineComment)) || (!String.IsNullOrEmpty(blockComment) && str.StartsWith(blockComment)));
             return ret;
         }
 
@@ -7142,8 +7179,8 @@ namespace ScintillaNet
             // TODO: Is there a lexer test for "start/end of control block"?
             if (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css")
             {
-                if (str.StartsWith("</")) ret = 1;
-                else if (!str.StartsWith("<?") && !str.StartsWith("<!") && !str.Contains("</") && !str.EndsWith("/>") && str.EndsWith(">")) ret = -1;
+                if (str.StartsWithOrdinal("</")) ret = 1;
+                else if (!str.StartsWithOrdinal("<?") && !str.StartsWithOrdinal("<!") && !str.Contains("</") && !str.EndsWithOrdinal("/>") && str.EndsWith('>')) ret = -1;
             }
             else
             {
@@ -7159,16 +7196,16 @@ namespace ScintillaNet
         public bool CodeEndsWith(string str, string value)
         {
             bool ret = false;
-            int startIndex = str.LastIndexOf(value);
+            int startIndex = str.LastIndexOfOrdinal(value);
             if (startIndex >= 0)
             {
                 String lineComment = Configuration.GetLanguage(ConfigurationLanguage).linecomment;
                 if (!String.IsNullOrEmpty(lineComment))
                 {
-                    int slashIndex = str.LastIndexOf(lineComment);
+                    int slashIndex = str.LastIndexOfOrdinal(lineComment);
                     if (slashIndex >= startIndex) str = str.Substring(0, slashIndex);
                 }
-                if (str.Trim().EndsWith(value)) ret = true;
+                if (str.Trim().EndsWithOrdinal(value)) ret = true;
             }
             return ret;
         }
@@ -7362,11 +7399,11 @@ namespace ScintillaNet
 
             do
             {
-                int sz = (int)SPerform(2153, (uint)line, 0);
+                int sz = SPerform(2153, line, 0);
                 byte[] buffer = new byte[sz + 1];
                 unsafe
                 {
-                    fixed (byte* b = buffer) SPerform(2153, (uint)line, (uint)b);
+                    fixed (byte* b = buffer) SPerform(2153, line, (uint)b);
                 }
                 string lineText = Encoding.GetEncoding(CodePage).GetString(buffer, 0, linePos == 0 ? sz : linePos);
 
@@ -7488,11 +7525,11 @@ namespace ScintillaNet
 
             do
             {
-                int sz = (int)SPerform(2153, (uint)line, 0);
+                int sz = SPerform(2153, line, 0);
                 byte[] buffer = new byte[sz + 1];
                 unsafe
                 {
-                    fixed (byte* b = buffer) SPerform(2153, (uint)line, (uint)b);
+                    fixed (byte* b = buffer) SPerform(2153, line, (uint)b);
                 }
                 string lineText = Encoding.GetEncoding(CodePage).GetString(buffer, linePos, sz - linePos);
 

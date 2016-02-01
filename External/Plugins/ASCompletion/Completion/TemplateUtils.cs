@@ -157,20 +157,34 @@ namespace ASCompletion.Completion
 
         public static string ReplaceTemplateVariable(string template, string var, string replace)
         {
-            Match m = Regex.Match(template, String.Format(template_variable, var));
-            if (m.Success)
+            MatchCollection mc = Regex.Matches(template, String.Format(template_variable, var));
+            int mcCount = mc.Count;
+            if (mcCount > 0)
             {
-                if (replace == null)
+                var sb = new System.Text.StringBuilder();
+                int pos = 0;
+                for (int i = 0; i < mcCount; i++)
                 {
-                    template = template.Substring(0, m.Index) + template.Substring(m.Index + m.Length);
-                    return template;
+                    Match m = mc[i];
+                    int endIndex = m.Index + m.Length;
+                    sb.Append(template.Substring(pos, m.Index - pos));
+                    if (replace != null)
+                    {
+                        string val = m.Value;
+                        val = val.Substring(2, val.Length - 4);
+                        sb.Append(val);
+                    }
+                    if (i == mcCount - 1)
+                        sb.Append(template.Substring(endIndex));
+                    else
+                    {
+                        int next = mc[i + 1].Index;
+                        sb.Append(template.Substring(endIndex, next - endIndex));
+                        pos += next;
+                    }
                 }
-                else
-                {
-                    string val = m.Value;
-                    val = val.Substring(2, val.Length - 4);
-                    template = template.Substring(0, m.Index) + val + template.Substring(m.Index + m.Length);
-                }
+
+                template = sb.ToString();
             }
             template = template.Replace("$(" + var + ")", replace);
             return template;
@@ -189,7 +203,7 @@ namespace ASCompletion.Completion
             string firstLine = blockTmpl;
             int lineCount = 0;
 
-            int index = blockTmpl.IndexOf("\n");
+            int index = blockTmpl.IndexOf('\n');
             if (index != -1)
             {
                 firstLine = blockTmpl.Substring(0, index);
@@ -200,7 +214,7 @@ namespace ASCompletion.Completion
             while (lineNum < Sci.LineCount)
             {
                 string line = Sci.GetLine(lineNum);
-                int funcBlockIndex = line.IndexOf(firstLine);
+                int funcBlockIndex = line.IndexOfOrdinal(firstLine);
                 if (funcBlockIndex != -1)
                 {
                     MemberModel latest = new MemberModel();

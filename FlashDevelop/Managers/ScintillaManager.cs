@@ -20,14 +20,51 @@ namespace FlashDevelop.Managers
 {
     class ScintillaManager
     {
-        public static Scintilla SciConfig;
-        public static ConfigurationUtility SciConfigUtil;
+        public static event Action ConfigurationLoaded;
+
+        private static bool initialized;
+        private static readonly Object initializationLock = new Object();
+
         public static Bitmap Bookmark;
+
+        private static Scintilla _sciConfig;
+        public static Scintilla SciConfig
+        {
+            get
+            {
+                Initialize();
+                return _sciConfig;
+            }
+        }
+
+        private static ConfigurationUtility _sciConfigUtil;
+        public static ConfigurationUtility SciConfigUtil
+        {
+            get
+            {
+                Initialize();
+                return _sciConfigUtil;
+            }
+        }
 
         static ScintillaManager()
         {
             Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
-            LoadConfiguration();
+        }
+
+        private static void Initialize()
+        {
+            if (!initialized)
+            {
+                lock (initializationLock)
+                {
+                    if (!initialized)
+                    {
+                        LoadConfiguration();
+                        initialized = true;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -35,11 +72,12 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void LoadConfiguration()
         {
-            SciConfigUtil = new ConfigurationUtility(Assembly.GetExecutingAssembly());
+            _sciConfigUtil = new ConfigurationUtility(Assembly.GetExecutingAssembly());
             String[] configFiles = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
-            SciConfig = (Scintilla)SciConfigUtil.LoadConfiguration(configFiles);
-            ScintillaControl.Configuration = SciConfig;
-            MainForm.Instance.ApplyAllSettings();
+            _sciConfig = (Scintilla)_sciConfigUtil.LoadConfiguration(configFiles);
+            ScintillaControl.Configuration = _sciConfig;
+            if (ConfigurationLoaded != null)
+                ConfigurationLoaded();
         }
 
         /// <summary>
@@ -194,33 +232,34 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                sci.CaretPeriod = Globals.Settings.CaretPeriod;
-                sci.CaretWidth = Globals.Settings.CaretWidth;
-                sci.EOLMode = LineEndDetector.DetectNewLineMarker(sci.Text, (Int32)Globals.Settings.EOLMode);
-                sci.IsBraceMatching = Globals.Settings.BraceMatchingEnabled;
-                sci.UseHighlightGuides = !Globals.Settings.HighlightGuide;
-                sci.Indent = Globals.Settings.IndentSize;
-                sci.SmartIndentType = Globals.Settings.SmartIndentType;
-                sci.IsBackSpaceUnIndents = Globals.Settings.BackSpaceUnIndents;
-                sci.IsCaretLineVisible = Globals.Settings.CaretLineVisible;
-                sci.IsIndentationGuides = Globals.Settings.ViewIndentationGuides;
-                sci.IndentView = Globals.Settings.IndentView;
-                sci.IsTabIndents = Globals.Settings.TabIndents;
-                sci.IsUseTabs = Globals.Settings.UseTabs;
-                sci.IsViewEOL = Globals.Settings.ViewEOL;
-                sci.ScrollWidth = Globals.Settings.ScrollWidth;
-                sci.TabWidth = Globals.Settings.TabWidth;
-                sci.ViewWS = Convert.ToInt32(Globals.Settings.ViewWhitespace);
-                sci.WrapMode = Convert.ToInt32(Globals.Settings.WrapText);
-                sci.SetProperty("fold", Convert.ToInt32(Globals.Settings.UseFolding).ToString());
-                sci.SetProperty("fold.comment", Convert.ToInt32(Globals.Settings.FoldComment).ToString());
-                sci.SetProperty("fold.compact", Convert.ToInt32(Globals.Settings.FoldCompact).ToString());
-                sci.SetProperty("fold.preprocessor", Convert.ToInt32(Globals.Settings.FoldPreprocessor).ToString());
-                sci.SetProperty("fold.at.else", Convert.ToInt32(Globals.Settings.FoldAtElse).ToString());
-                sci.SetProperty("fold.html", Convert.ToInt32(Globals.Settings.FoldHtml).ToString());
+                ISettings settings = PluginBase.Settings;
+                sci.CaretPeriod = settings.CaretPeriod;
+                sci.CaretWidth = settings.CaretWidth;
+                sci.EOLMode = LineEndDetector.DetectNewLineMarker(sci.Text, (Int32)settings.EOLMode);
+                sci.IsBraceMatching = settings.BraceMatchingEnabled;
+                sci.UseHighlightGuides = !settings.HighlightGuide;
+                sci.Indent = settings.IndentSize;
+                sci.SmartIndentType = settings.SmartIndentType;
+                sci.IsBackSpaceUnIndents = settings.BackSpaceUnIndents;
+                sci.IsCaretLineVisible = settings.CaretLineVisible;
+                sci.IsIndentationGuides = settings.ViewIndentationGuides;
+                sci.IndentView = settings.IndentView;
+                sci.IsTabIndents = settings.TabIndents;
+                sci.IsUseTabs = settings.UseTabs;
+                sci.IsViewEOL = settings.ViewEOL;
+                sci.ScrollWidth = settings.ScrollWidth;
+                sci.TabWidth = settings.TabWidth;
+                sci.ViewWS = Convert.ToInt32(settings.ViewWhitespace);
+                sci.WrapMode = Convert.ToInt32(settings.WrapText);
+                sci.SetProperty("fold", Convert.ToInt32(settings.UseFolding).ToString());
+                sci.SetProperty("fold.comment", Convert.ToInt32(settings.FoldComment).ToString());
+                sci.SetProperty("fold.compact", Convert.ToInt32(settings.FoldCompact).ToString());
+                sci.SetProperty("fold.preprocessor", Convert.ToInt32(settings.FoldPreprocessor).ToString());
+                sci.SetProperty("fold.at.else", Convert.ToInt32(settings.FoldAtElse).ToString());
+                sci.SetProperty("fold.html", Convert.ToInt32(settings.FoldHtml).ToString());
                 sci.SetProperty("lexer.cpp.track.preprocessor", "0");
-                sci.SetVirtualSpaceOptions((Int32)Globals.Settings.VirtualSpaceMode);
-                sci.SetFoldFlags((Int32)Globals.Settings.FoldFlags);
+                sci.SetVirtualSpaceOptions((Int32)settings.VirtualSpaceMode);
+                sci.SetFoldFlags((Int32)settings.FoldFlags);
                 /**
                 * Set if themes should colorize the first margin
                 */
@@ -234,26 +273,26 @@ namespace FlashDevelop.Managers
                 /**
                 * Set correct line number margin width
                 */
-                Boolean viewLineNumbers = Globals.Settings.ViewLineNumbers;
+                Boolean viewLineNumbers = settings.ViewLineNumbers;
                 if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleArea(sci, 36));
                 else sci.SetMarginWidthN(1, 0);
                 /**
                 * Set correct bookmark margin width
                 */
-                Boolean viewBookmarks = Globals.Settings.ViewBookmarks;
+                Boolean viewBookmarks = settings.ViewBookmarks;
                 if (viewBookmarks) sci.SetMarginWidthN(0, ScaleArea(sci, 14));
                 else sci.SetMarginWidthN(0, 0);
                 /**
                 * Set correct folding margin width
                 */
-                Boolean useFolding = Globals.Settings.UseFolding;
+                Boolean useFolding = settings.UseFolding;
                 if (!useFolding && !viewBookmarks && !viewLineNumbers) sci.SetMarginWidthN(2, 0);
                 else if (useFolding) sci.SetMarginWidthN(2, ScaleArea(sci, 15));
                 else sci.SetMarginWidthN(2, ScaleArea(sci, 2));
                 /**
                 * Adjust the print margin
                 */
-                sci.EdgeColumn = Globals.Settings.PrintMarginColumn;
+                sci.EdgeColumn = settings.PrintMarginColumn;
                 if (sci.EdgeColumn > 0) sci.EdgeMode = 1;
                 else sci.EdgeMode = 0;
                 /**
@@ -303,6 +342,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ScintillaControl CreateControl(String file, String text, Int32 codepage)
         {
+            Initialize();
             ScintillaControl sci = new ScintillaControl();
             sci.AutoCSeparator = 32;
             sci.AutoCTypeSeparator = 63;
@@ -347,7 +387,7 @@ namespace FlashDevelop.Managers
             sci.TabIndex = 0;
             sci.TargetEnd = 0;
             sci.TargetStart = 0;
-            sci.WrapStartIndent = Globals.Settings.IndentSize;
+            sci.WrapStartIndent = PluginBase.Settings.IndentSize;
             sci.WrapVisualFlagsLocation = (Int32)WrapVisualLocation.EndByText;
             sci.WrapVisualFlags = (Int32)WrapVisualFlag.End;
             sci.XOffset = 0;
@@ -373,10 +413,10 @@ namespace FlashDevelop.Managers
             sci.MarkerDefine((Int32)MarkerOutline.FolderMidTail, MarkerSymbol.TCorner);
             sci.SetXCaretPolicy((Int32)(CaretPolicy.Jumps | CaretPolicy.Even), 30);
             sci.SetYCaretPolicy((Int32)(CaretPolicy.Jumps | CaretPolicy.Even), 2);
-            sci.ScrollWidthTracking = (Globals.Settings.ScrollWidth == 3000);
+            sci.ScrollWidthTracking = (PluginBase.Settings.ScrollWidth == 3000);
             sci.CodePage = 65001; // Editor handles text as UTF-8
             sci.Encoding = Encoding.GetEncoding(codepage);
-            sci.SaveBOM = IsUnicode(codepage) && Globals.Settings.SaveUnicodeWithBOM;
+            sci.SaveBOM = IsUnicode(codepage) && PluginBase.Settings.SaveUnicodeWithBOM;
             sci.Text = text; sci.FileName = file; // Set text and save file name
             sci.Modified += new ModifiedHandler(Globals.MainForm.OnScintillaControlModified);
             sci.MarginClick += new MarginClickHandler(Globals.MainForm.OnScintillaControlMarginClick);
@@ -384,8 +424,8 @@ namespace FlashDevelop.Managers
             sci.URIDropped += new URIDroppedHandler(Globals.MainForm.OnScintillaControlDropFiles);
             sci.ModifyAttemptRO += new ModifyAttemptROHandler(Globals.MainForm.OnScintillaControlModifyRO);
             String untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
-            if (!file.StartsWith(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
-            sci.SetFoldFlags((Int32)Globals.Settings.FoldFlags);
+            if (!file.StartsWithOrdinal(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
+            sci.SetFoldFlags((Int32)PluginBase.Settings.FoldFlags);
             sci.EmptyUndoBuffer(); ApplySciSettings(sci);
             UITools.Manager.ListenTo(sci);
             return sci;
