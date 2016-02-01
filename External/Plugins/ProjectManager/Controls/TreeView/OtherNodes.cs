@@ -19,7 +19,6 @@ namespace ProjectManager.Controls.TreeView
         {
             this.project = project;
             isDraggable = false;
-            isRenamable = false;
         }
 
         public override void Refresh(bool recursive)

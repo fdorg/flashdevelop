@@ -292,16 +292,11 @@ namespace FileExplorer
             this.imageList = new ImageListManager();
             this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.imageList.OnInitialize += ImageList_Initialize;
+            this.imageList.Populate += RefreshFileView;
             this.AddNonWin32Images();
             this.syncronizeButton.Image = PluginBase.MainForm.FindImage("203|9|-3|-3");
             this.browseButton.Image = PluginBase.MainForm.FindImage("203");
             this.fileView.SmallImageList = this.imageList;
-        }
-
-        private void ImageList_Initialize(object sender, EventArgs e)
-        {
-            RefreshFileView(null, null);
         }
 
         /// <summary>

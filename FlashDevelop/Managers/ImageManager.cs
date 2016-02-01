@@ -84,7 +84,6 @@ namespace FlashDevelop.Managers
                 var imagePair = Cache[key];
                 return imagePair.Adjusted ?? AddAutoAdjustImage(imagePair);
             }
-
             return Cache[key].Original;
         }
 
@@ -95,13 +94,10 @@ namespace FlashDevelop.Managers
         {
             if (Size == Size16) return GetComposedBitmap(data, autoAdjusted);
 
-            var c = Components.Parse(data, Size16);
-            string key = c.Key;
-
+            string key = Components.Parse(data, Size16).Key;
             if (!Cache.ContainsKey(key))
             {
                 var image32 = GetComposedBitmap(data, false);
-
                 int size = ScaleHelper.Scale(Size16);
                 var image16 = new Bitmap(size, size);
 
@@ -123,7 +119,7 @@ namespace FlashDevelop.Managers
             }
             return Cache[key].Original;
         }
-        
+
         /// <summary>
         /// Gets an adjusted copy of the specified image.
         /// </summary>
@@ -178,7 +174,7 @@ namespace FlashDevelop.Managers
                 else ImageKonverter.ImageAdjust(imagePair.Original, adjusted, saturation, brightness);
             }
         }
-        
+
         /// <summary>
         /// Adds a pair to the update list.
         /// </summary>
@@ -195,12 +191,13 @@ namespace FlashDevelop.Managers
         {
             switch (Globals.MainForm.GetThemeValue("ImageManager.ImageSet"))
             {
-                case "Bright": saturation =  20; brightness =   0; return true;
-                case "Dim":    saturation =  -5; brightness =  -2; return true;
-                case "Dark":   saturation =  -5; brightness = -10; return true;
-                case "Darker": saturation = -20; brightness = -20; return true;
-                case "Black":  saturation = -50; brightness = -25; return true;
-                default:       saturation =   0; brightness =   0; return false;
+                default:
+                case "Default": saturation =   0; brightness =   0; return false;
+                case "Bright":  saturation =  20; brightness =   0; return true;
+                case "Dim":     saturation =  -5; brightness =  -2; return true;
+                case "Dark":    saturation =  -5; brightness = -10; return true;
+                case "Darker":  saturation = -20; brightness = -20; return true;
+                case "Black":   saturation = -50; brightness = -25; return true;
             }
         }
 
@@ -286,7 +283,7 @@ namespace FlashDevelop.Managers
                 this.original = original;
                 this.adjusted = new WeakReference(adjusted);
             }
-            
+
             /// <summary>
             /// The original image.
             /// </summary>

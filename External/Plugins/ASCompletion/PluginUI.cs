@@ -113,7 +113,7 @@ namespace ASCompletion
             InitializeComponent();
             treeIcons.ColorDepth = ColorDepth.Depth32Bit;
             treeIcons.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            treeIcons.Initialize(TreeIcons_OnInitialize);
+            treeIcons.Initialize(TreeIcons_Populate);
 
             toolStrip.Renderer = new DockPanelStripRenderer();
             toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
@@ -140,46 +140,51 @@ namespace ASCompletion
             outlineTree.BringToFront();
         }
 
-        private void TreeIcons_OnInitialize(object sender, EventArgs e)
+        private void TreeIcons_Populate(object sender, EventArgs e)
         {
             treeIcons.Images.AddRange(new Image[]
             {
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FilePlain.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FolderClosed.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FolderOpen.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("CheckAS.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("QuickBuild.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Package.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Interface.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Intrinsic.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Class.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Variable.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariablePrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStatic.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStaticProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStaticPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Const.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Const.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Method.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStatic.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStaticProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStaticPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Property.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStatic.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStaticProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStaticPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Template.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Declaration.png")))
+                GetImage("FilePlain.png"),
+                GetImage("FolderClosed.png"),
+                GetImage("FolderOpen.png"),
+                GetImage("CheckAS.png"),
+                GetImage("QuickBuild.png"),
+                GetImage("Package.png"),
+                GetImage("Interface.png"),
+                GetImage("Intrinsic.png"),
+                GetImage("Class.png"),
+                GetImage("Variable.png"),
+                GetImage("VariableProtected.png"),
+                GetImage("VariablePrivate.png"),
+                GetImage("VariableStatic.png"),
+                GetImage("VariableStaticProtected.png"),
+                GetImage("VariableStaticPrivate.png"),
+                GetImage("Const.png"),
+                GetImage("ConstProtected.png"),
+                GetImage("ConstPrivate.png"),
+                GetImage("Const.png"),
+                GetImage("ConstProtected.png"),
+                GetImage("ConstPrivate.png"),
+                GetImage("Method.png"),
+                GetImage("MethodProtected.png"),
+                GetImage("MethodPrivate.png"),
+                GetImage("MethodStatic.png"),
+                GetImage("MethodStaticProtected.png"),
+                GetImage("MethodStaticPrivate.png"),
+                GetImage("Property.png"),
+                GetImage("PropertyProtected.png"),
+                GetImage("PropertyPrivate.png"),
+                GetImage("PropertyStatic.png"),
+                GetImage("PropertyStaticProtected.png"),
+                GetImage("PropertyStaticPrivate.png"),
+                GetImage("Template.png"),
+                GetImage("Declaration.png")
             });
+        }
+
+        public static Image GetImage(String name)
+        {
+            return PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream(name)));
         }
 
         public static System.IO.Stream GetStream(String name)

@@ -152,3 +152,33 @@ locale["zh_CN.projectTypeUnknown"] = "未知";
 locale["zh_CN.tooltipTextModified"] = "修改:";
 locale["zh_CN.tooltipTextCreated"] = "创建:";
 locale["zh_CN.tooltipTextType"] = "类型:";
+
+/**
+* Locale strings for Korean.
+*/
+locale["ko_KR.mainLinkHome"] = "홈";
+locale["ko_KR.mainLinkDocs"] = "도큐멘테이션";
+locale["ko_KR.mainLinkNotes"] = "릴리스 노트";
+locale["ko_KR.mainLinkAbout"] = "소개";
+locale["ko_KR.createNewProject"] = "새 프로젝트...";
+locale["ko_KR.openProjectDialog"] = "프로젝트 열기...";
+locale["ko_KR.recentProjectsTitle"] = "최근 프로젝트";
+locale["ko_KR.loadingRecentProjects"] = "최근 프로젝트 로드중...";
+locale["ko_KR.recentProjectsNotFound"] = "최근 프로젝트를 찾을 수 없습니다.";
+locale["ko_KR.versionInfoTitle"] = "최신 버전";
+locale["ko_KR.loadingVersionInfo"] = "버전 정보 로드...";
+locale["ko_KR.versionInfoNotAvailable"] = "버전 정보를 사용할 수 없습니다.";
+locale["ko_KR.yourVersionIsOutOfDate"] = "현재 버전이 ({0}) 최신이 아닙니다.";
+locale["ko_KR.downloadVersionHere"] = "다운로드!";
+locale["ko_KR.loadingRssFeed"] = "RSS 피드 로드중...";
+locale["ko_KR.rssFeedNotAvailable"] = "RSS 피드를 사용할 수 없습니다.";
+locale["ko_KR.projectTypeFDP"] = "확인할 수 없습니다";
+locale["ko_KR.projectTypeAS2"] = "ActionScript 2 프로젝트";
+locale["ko_KR.projectTypeAS3"] = "ActionScript 3 프로젝트";
+locale["ko_KR.projectTypeGeneric"] = "일반 프로젝트";
+locale["ko_KR.projectTypeHaXe"] = "Haxe 프로젝트";
+locale["ko_KR.projectTypeLoom"] = "Loom 프로젝트";
+locale["ko_KR.projectTypeUnknown"] = "알수없음";
+locale["ko_KR.tooltipTextModified"] = "변경:";
+locale["ko_KR.tooltipTextCreated"] = "생성:";
+locale["ko_KR.tooltipTextType"] = "유형:";

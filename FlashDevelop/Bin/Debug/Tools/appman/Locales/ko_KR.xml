@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Locale xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<!-- States -->
+	<StateNew>설치되지 않음</StateNew>
+	<StateUpdate>업데이트</StateUpdate>
+	<StateInstalled>설치됨</StateInstalled>
+	<!-- Headers -->
+	<NameHeader>이름</NameHeader>
+	<VersionHeader>버전</VersionHeader>
+	<DescHeader>설명</DescHeader>
+	<StatusHeader>상태</StatusHeader>
+	<TypeHeader>유형</TypeHeader>
+	<!-- Progress -->
+	<ExtractingFile>압축 해제중: </ExtractingFile>
+	<DownloadingFile>다운로드중: </DownloadingFile>
+	<DownloadingItemList>항목 목록 다운로드중...</DownloadingItemList>
+	<!-- Messages -->
+	<NoItemsSelected>선택된 항목이 없습니다.</NoItemsSelected>
+	<ItemListOpened>파일에서 항목 목록을 불러왔습니다.</ItemListOpened>
+	<DownloadedItemList>항목 목록을 다운로드했습니다.</DownloadedItemList>
+	<AllItemsCompleted>모든 선택 항목이 완료되었습니다.</AllItemsCompleted>
+	<ItemListDownloadCancelled>항목 목록의 다운로드가 취소되었습니다.</ItemListDownloadCancelled>
+	<ItemListDownloadFailed>항목 목록을 다운로드 할 수 없습니다.</ItemListDownloadFailed>
+	<DeleteSelectedConfirm>선택한 항목의 모든 버전을 삭제 하시겠습니까?</DeleteSelectedConfirm>
+	<ContinueWithNextItem>다음 항목을 계속하려고 합니다.</ContinueWithNextItem>
+	<DownloadingError>파일을 다운로드하는 동안 오류: </DownloadingError>
+	<ExtractingError>파일을 압축 해제하는 동안 오류: </ExtractingError>
+	<DeleteDirError>디렉토리를 삭제하는 동안 오류: </DeleteDirError>
+	<ChecksumVerifyError>체크섬이 파일과 일치하지 않았습니다: </ChecksumVerifyError>
+	<!-- Labels -->
+	<SelectLabel>선택:</SelectLabel>
+	<ExploreLabel>탐색...</ExploreLabel>
+	<InstallPathLabel>설치 경로:</InstallPathLabel>
+	<DeleteSelectedLabel>{0}개 항목을 삭제</DeleteSelectedLabel>
+	<InstallSelectedLabel>{0}개 항목을 설치</InstallSelectedLabel>
+	<ToggleCheckedLabel>선택 전환</ToggleCheckedLabel>
+	<ShowInfoLabel>정보 보기...</ShowInfoLabel>
+	<!-- Types -->
+	<TypeExecutable>실행 파일</TypeExecutable>
+	<TypeArchive>자료</TypeArchive>
+	<TypeLink>링크</TypeLink>
+	<!-- Dialogs -->
+	<MainFormTitle>AppMan</MainFormTitle>
+	<ConfirmTitle>확인</ConfirmTitle>
+	<!-- Links -->
+	<LinkAll>전체</LinkAll>
+	<LinkNone>없음</LinkNone>
+	<LinkInstalled>설치됨</LinkInstalled>
+	<LinkUpdates>업데이트</LinkUpdates>
+	<LinkNew>설치되지 않음</LinkNew>
+</Locale>

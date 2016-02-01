@@ -29,7 +29,9 @@ namespace FlashDebugger
 
             imageList = new ImageListManager();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Initialize(ImageList_Initialize);
+            imageList.Populate += ImageList_Populate;
+            imageList.Initialize();
+
             Image imgStartContinue = PluginBase.MainForm.GetAutoAdjustedImage(Resource.StartContinue);
             Image imgPause = PluginBase.MainForm.GetAutoAdjustedImage(Resource.Pause);
             Image imgStop = PluginBase.MainForm.GetAutoAdjustedImage(Resource.Stop);
@@ -148,7 +150,7 @@ namespace FlashDebugger
             PluginMain.settingObject.BreakOnThrowChanged += BreakOnThrowChanged;
         }
 
-        private void ImageList_Initialize(object sender, EventArgs e)
+        private void ImageList_Populate(object sender, EventArgs e)
         {
             imageList.Images.Add("StartContinue", PluginBase.MainForm.ImageSetAdjust(Resource.StartContinue));
             imageList.Images.Add("Pause", PluginBase.MainForm.ImageSetAdjust(Resource.Pause));

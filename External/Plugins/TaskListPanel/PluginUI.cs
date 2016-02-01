@@ -649,11 +649,11 @@ namespace TaskListPanel
         {
             imageList = new ImageListManager();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Initialize(ImageList_Initialize);
+            imageList.Initialize(ImageList_Populate);
             this.listView.SmallImageList = imageList;
         }
 
-        private void ImageList_Initialize(object sender, EventArgs e)
+        private void ImageList_Populate(object sender, EventArgs e)
         {
             Settings settings = (Settings) this.pluginMain.Settings;
             if (settings != null && settings.ImageIndexes != null)

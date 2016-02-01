@@ -205,12 +205,13 @@ namespace ProjectManager.Controls
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 image = new Bitmap(assembly.GetManifestResourceStream(resourceID));
             }
-            catch {
+            catch
+            {
                 image = new Bitmap(16, 16);
             }
-            image = (Bitmap)PluginBase.MainForm.GetAutoAdjustedImage(image);
+            image = (Bitmap) PluginBase.MainForm.GetAutoAdjustedImage(image);
             imageList.Images.Add(ScaleHelper.Scale(image));
-            return new FDImage(image,imageList.Images.Count-1);
+            return new FDImage(image, imageList.Images.Count - 1);
         }
 
         public static FDImage GetImageForFile(string file)
@@ -255,8 +256,9 @@ namespace ProjectManager.Controls
             {
                 Icon icon = IconExtractor.GetFileIcon(file, true);
                 Image image = ScaleHelper.Scale(icon.ToBitmap());
-                image = (Bitmap)PluginBase.MainForm.GetAutoAdjustedImage(image);
-                icon.Dispose(); imageList.Images.Add(image);
+                image = (Bitmap) PluginBase.MainForm.GetAutoAdjustedImage(image);
+                icon.Dispose();
+                imageList.Images.Add(image);
                 int index = imageList.Images.Count - 1; // of the icon we just added
                 FDImage fdImage = new FDImage(image, index);
                 extensionIcons.Add(extension, fdImage);
@@ -279,71 +281,73 @@ namespace ProjectManager.Controls
         {
             protected override void OnRefresh()
             {
-                Images[BulletAdd.Index] = BulletAdd.Img;
-                Images[SilkPage.Index] = SilkPage.Img;
-                Images[XmlFile.Index] = XmlFile.Img;
-                Images[MxmlFile.Index] = MxmlFile.Img;
-                Images[MxmlFileCompile.Index] = MxmlFileCompile.Img;
-                Images[HiddenItems.Index] = HiddenItems.Img;
-                Images[HiddenFolder.Index] = HiddenFolder.Img;
-                Images[HiddenFile.Index] = HiddenFile.Img;
-                Images[BlankFile.Index] = BlankFile.Img;
-                Images[Project.Index] = Project.Img;
-                Images[ProjectClasspath.Index] = ProjectClasspath.Img;
-                Images[Classpath.Index] = Classpath.Img;
-                Images[ProjectClasspathError.Index] = ProjectClasspathError.Img;
-                Images[ClasspathError.Index] = ClasspathError.Img;
-                Images[Font.Index] = Font.Img;
-                Images[ImageResource.Index] = ImageResource.Img;
-                Images[ActionScript.Index] = ActionScript.Img;
-                Images[FlashCS3.Index] = FlashCS3.Img;
-                Images[HaxeFile.Index] = HaxeFile.Img;
-                Images[SwfFile.Index] = SwfFile.Img;
-                Images[SwfFileHidden.Index] = SwfFileHidden.Img;
-                Images[SwcFile.Index] = SwcFile.Img;
-                Images[Folder.Index] = Folder.Img;
-                Images[FolderCompile.Index] = FolderCompile.Img;
-                Images[TextFile.Index] = TextFile.Img;
-                Images[ActionScriptCompile.Index] = ActionScriptCompile.Img;
-                Images[HtmlFile.Index] = HtmlFile.Img;
-                Images[AddFile.Index] = AddFile.Img;
-                Images[OpenFile.Index] = OpenFile.Img;
-                Images[EditFile.Index] = EditFile.Img;
-                Images[Browse.Index] = Browse.Img;
-                Images[FindAndReplace.Index] = FindAndReplace.Img;
-                Images[FindInFiles.Index] = FindInFiles.Img;
-                Images[Cut.Index] = Cut.Img;
-                Images[Copy.Index] = Copy.Img;
-                Images[Paste.Index] = Paste.Img;
-                Images[Delete.Index] = Delete.Img;
-                Images[Rename.Index] = Rename.Img;
-                Images[Options.Index] = Options.Img;
-                Images[OptionsWithIssues.Index] = OptionsWithIssues.Img;
-                Images[NewProject.Index] = NewProject.Img;
-                Images[GreenCheck.Index] = GreenCheck.Img;
-                Images[Gear.Index] = Gear.Img;
-                Images[X.Index] = X.Img;
-                Images[Info.Index] = Info.Img;
-                Images[Class.Index] = Class.Img;
-                Images[Method.Index] = Method.Img;
-                Images[Variable.Index] = Variable.Img;
-                Images[Const.Index] = Const.Img;
-                Images[Icons.Refresh.Index] = Icons.Refresh.Img;
-                Images[Debug.Index] = Debug.Img;
-                Images[UpArrow.Index] = UpArrow.Img;
-                Images[DownArrow.Index] = DownArrow.Img;
-                Images[AllClasses.Index] = AllClasses.Img;
-                Images[SyncToFile.Index] = SyncToFile.Img;
-                Images[ClasspathFolder.Index] = ClasspathFolder.Img;
-                Images[LibrarypathFolder.Index] = LibrarypathFolder.Img;
-                Images[DocumentClass.Index] = DocumentClass.Img;
-                Images[CommandPrompt.Index] = CommandPrompt.Img;
-                Images[CollapseAll.Index] = CollapseAll.Img;
-                
+                Image[] temp = new Image[Images.Count];
+                temp[Icons.BulletAdd.Index] = Icons.BulletAdd.Img;
+                temp[Icons.SilkPage.Index] = Icons.SilkPage.Img;
+                temp[Icons.XmlFile.Index] = Icons.XmlFile.Img;
+                temp[Icons.MxmlFile.Index] = Icons.MxmlFile.Img;
+                temp[Icons.MxmlFileCompile.Index] = Icons.MxmlFileCompile.Img;
+                temp[Icons.HiddenItems.Index] = Icons.HiddenItems.Img;
+                temp[Icons.HiddenFolder.Index] = Icons.HiddenFolder.Img;
+                temp[Icons.HiddenFile.Index] = Icons.HiddenFile.Img;
+                temp[Icons.BlankFile.Index] = Icons.BlankFile.Img;
+                temp[Icons.Project.Index] = Icons.Project.Img;
+                temp[Icons.ProjectClasspath.Index] = Icons.ProjectClasspath.Img;
+                temp[Icons.Classpath.Index] = Icons.Classpath.Img;
+                temp[Icons.ProjectClasspathError.Index] = Icons.ProjectClasspathError.Img;
+                temp[Icons.ClasspathError.Index] = Icons.ClasspathError.Img;
+                temp[Icons.Font.Index] = Icons.Font.Img;
+                temp[Icons.ImageResource.Index] = Icons.ImageResource.Img;
+                temp[Icons.ActionScript.Index] = Icons.ActionScript.Img;
+                temp[Icons.FlashCS3.Index] = Icons.FlashCS3.Img;
+                temp[Icons.HaxeFile.Index] = Icons.HaxeFile.Img;
+                temp[Icons.SwfFile.Index] = Icons.SwfFile.Img;
+                temp[Icons.SwfFileHidden.Index] = Icons.SwfFileHidden.Img;
+                temp[Icons.SwcFile.Index] = Icons.SwcFile.Img;
+                temp[Icons.Folder.Index] = Icons.Folder.Img;
+                temp[Icons.FolderCompile.Index] = Icons.FolderCompile.Img;
+                temp[Icons.TextFile.Index] = Icons.TextFile.Img;
+                temp[Icons.ActionScriptCompile.Index] = Icons.ActionScriptCompile.Img;
+                temp[Icons.HtmlFile.Index] = Icons.HtmlFile.Img;
+                temp[Icons.AddFile.Index] = Icons.AddFile.Img;
+                temp[Icons.OpenFile.Index] = Icons.OpenFile.Img;
+                temp[Icons.EditFile.Index] = Icons.EditFile.Img;
+                temp[Icons.Browse.Index] = Icons.Browse.Img;
+                temp[Icons.FindAndReplace.Index] = Icons.FindAndReplace.Img;
+                temp[Icons.FindInFiles.Index] = Icons.FindInFiles.Img;
+                temp[Icons.Cut.Index] = Icons.Cut.Img;
+                temp[Icons.Copy.Index] = Icons.Copy.Img;
+                temp[Icons.Paste.Index] = Icons.Paste.Img;
+                temp[Icons.Delete.Index] = Icons.Delete.Img;
+                temp[Icons.Rename.Index] = Icons.Rename.Img;
+                temp[Icons.Options.Index] = Icons.Options.Img;
+                temp[Icons.OptionsWithIssues.Index] = Icons.OptionsWithIssues.Img;
+                temp[Icons.NewProject.Index] = Icons.NewProject.Img;
+                temp[Icons.GreenCheck.Index] = Icons.GreenCheck.Img;
+                temp[Icons.Gear.Index] = Icons.Gear.Img;
+                temp[Icons.X.Index] = Icons.X.Img;
+                temp[Icons.Info.Index] = Icons.Info.Img;
+                temp[Icons.Class.Index] = Icons.Class.Img;
+                temp[Icons.Method.Index] = Icons.Method.Img;
+                temp[Icons.Variable.Index] = Icons.Variable.Img;
+                temp[Icons.Const.Index] = Icons.Const.Img;
+                temp[Icons.Refresh.Index] = Icons.Refresh.Img;
+                temp[Icons.Debug.Index] = Icons.Debug.Img;
+                temp[Icons.UpArrow.Index] = Icons.UpArrow.Img;
+                temp[Icons.DownArrow.Index] = Icons.DownArrow.Img;
+                temp[Icons.AllClasses.Index] = Icons.AllClasses.Img;
+                temp[Icons.SyncToFile.Index] = Icons.SyncToFile.Img;
+                temp[Icons.ClasspathFolder.Index] = Icons.ClasspathFolder.Img;
+                temp[Icons.LibrarypathFolder.Index] = Icons.LibrarypathFolder.Img;
+                temp[Icons.DocumentClass.Index] = Icons.DocumentClass.Img;
+                temp[Icons.CommandPrompt.Index] = Icons.CommandPrompt.Img;
+                temp[Icons.CollapseAll.Index] = Icons.CollapseAll.Img;
                 foreach (FDImage image in extensionIcons.Values)
                 {
-                    Images[image.Index] = image.Img;
+                    temp[image.Index] = image.Img;
                 }
+                Images.Clear();
+                Images.AddRange(temp);
             }
         }
     }

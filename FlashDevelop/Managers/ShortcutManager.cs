@@ -193,7 +193,7 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Saves the custom shorcuts to a file
+        /// Saves the custom shortcuts to a file
         /// </summary>
         public static void SaveCustomShortcuts()
         {
@@ -209,6 +209,63 @@ namespace FlashDevelop.Managers
             ObjectSerializer.Serialize(file, shortcuts);
         }
 
+        /// <summary>
+        /// Loads the custom shortcuts from a file to a list.
+        /// </summary>
+        public static void LoadCustomShortcuts(String file, IEnumerable<IShortcutItem> items)
+        {
+            if (File.Exists(file))
+            {
+                try
+                {
+                    List<Argument> customShortcuts = new List<Argument>();
+                    customShortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, customShortcuts, false);
+                    Int32 count = customShortcuts.Count;
+
+                    foreach (IShortcutItem item in items)
+                    {
+                        Keys newShortcut = item.Default;
+                        for (Int32 i = 0; i < count; i++)
+                        {
+                            Argument arg = customShortcuts[i];
+                            if (arg.Key == item.Id)
+                            {
+                                newShortcut = (Keys) Enum.Parse(typeof(Keys), arg.Value);
+                                customShortcuts.RemoveAt(i);
+                                count--;
+                                break;
+                            }
+                        }
+                        item.Custom = newShortcut;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ErrorManager.ShowError(e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Saves the list of custom shortcuts to a file.
+        /// </summary>
+        public static void SaveCustomShortcuts(String file, IEnumerable<IShortcutItem> items)
+        {
+            try
+            {
+                List<Argument> shortcuts = new List<Argument>();
+                foreach (IShortcutItem item in items)
+                {
+                    if (item.IsModified) shortcuts.Add(new Argument(item.Id, item.Custom.ToString()));
+                }
+                ObjectSerializer.Serialize(file, shortcuts);
+            }
+            catch (Exception e)
+            {
+                ErrorManager.ShowError(e);
+            }
+        }
+        
     }
 
     #region Helper Classes
@@ -237,6 +294,14 @@ namespace FlashDevelop.Managers
         {
             return Id;
         }
+    }
+
+    public interface IShortcutItem
+    {
+        String Id { get; }
+        Keys Default { get; }
+        Keys Custom { get; set; }
+        Boolean IsModified { get; }
     }
 
     #endregion
