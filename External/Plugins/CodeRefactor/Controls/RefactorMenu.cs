@@ -10,12 +10,9 @@ namespace CodeRefactor.Controls
         public RefactorMenu(Boolean createSurroundMenu)
         {
             this.Text = TextHelper.GetString("Label.Refactor");
+            this.MoveMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Move")) as ToolStripMenuItem;
             this.RenameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename")) as ToolStripMenuItem;
             this.RenameMenuItem.Image = PluginBase.MainForm.FindImage("331");
-            #region TODO: localize me
-            MoveMenuItem = DropDownItems.Add("Move...") as ToolStripMenuItem;
-            //MoveMenuItem = DropDownItems.Add(TextHelper.GetString("Label.Move")) as ToolStripMenuItem;
-            #endregion
             this.ExtractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
             this.ExtractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
             this.DelegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
@@ -83,5 +80,7 @@ namespace CodeRefactor.Controls
         /// Accessor to the CodeGeneratorMenuItem
         /// </summary>
         public ToolStripMenuItem CodeGeneratorMenuItem { get; private set; }
+
     }
+
 }

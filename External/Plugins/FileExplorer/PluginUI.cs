@@ -811,7 +811,7 @@ namespace FileExplorer
         private void RefreshFileView(Object sender, System.EventArgs e)
         {
             String path = this.selectedPath.Text;
-            this.PopulateFileView(path);
+            if (!String.IsNullOrEmpty(path)) this.PopulateFileView(path);
         }
 
         /// <summary>

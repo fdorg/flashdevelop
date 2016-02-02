@@ -22,6 +22,7 @@ namespace FlashDebugger
         private MenusHelper menusHelper;
         private String settingFilename;
         private Image pluginImage;
+        private Boolean firstRun = false;
 
         static internal Settings settingObject;
         static internal LiveDataTip liveDataTip;
@@ -260,6 +261,7 @@ namespace FlashDebugger
         private void CreatePluginPanel()
         {
             panelsHelpers = new PanelsHelper(this, pluginImage);
+            if (this.firstRun) this.panelsHelpers.DockTogether();
         }
 
         /// <summary>
@@ -290,7 +292,11 @@ namespace FlashDebugger
         public void LoadSettings()
         {
             settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) SaveSettings();
+            if (!File.Exists(this.settingFilename))
+            {
+                SaveSettings();
+                firstRun = true;
+            }
             else
             {
                 Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
