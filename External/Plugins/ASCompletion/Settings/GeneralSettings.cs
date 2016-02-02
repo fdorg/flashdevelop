@@ -286,11 +286,11 @@ namespace ASCompletion.Settings
         #region Generator
 
         const bool DEFAULT_GENERATE_PROTECTED = false;
-        public const string DECLARATION_MODIFIER_OTHER = "<Others>";
-        public static readonly string[] DEFAULT_DECLARATION_MODIFIER_ORDER = { DECLARATION_MODIFIER_OTHER };
+        public const string DECLARATION_MODIFIER_REST = "<rest>";
+        public static readonly string[] DEFAULT_DECLARATION_MODIFIER_ORDER = { DECLARATION_MODIFIER_REST };
         public static readonly string[] ALL_DECLARATION_MODIFIERS =
         {
-            DECLARATION_MODIFIER_OTHER,
+            DECLARATION_MODIFIER_REST,
             "public", "internal", "protected", "private", "static", "override", "final", "inline", "extern", "dynamic", "macro", "native", "intrinsic"
         };
         const bool DEFAULT_GENERATE_ADDCLOSINGBRACES = false;
@@ -334,7 +334,7 @@ namespace ASCompletion.Settings
         
         [DisplayName("Declaration Modifier Order")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.StartWithModifiers")]
-        [DefaultValue(new[] { DECLARATION_MODIFIER_OTHER })]
+        [DefaultValue(new[] { DECLARATION_MODIFIER_REST })]
         [Editor(typeof(ModifierOrderEditor), typeof(UITypeEditor))]
         public string[] DeclarationModifierOrder
         {

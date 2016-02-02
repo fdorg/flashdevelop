@@ -4478,7 +4478,7 @@ namespace ASCompletion.Completion
                 for (int j = 0; j < modifierOrder.Length; j++)
                 {
                     string modifier = modifierOrder[j];
-                    if (modifier == GeneralSettings.DECLARATION_MODIFIER_OTHER) insertAfter = true;
+                    if (modifier == GeneralSettings.DECLARATION_MODIFIER_REST) insertAfter = true;
                     else
                     {
                         modifier = RemoveAndExtractModifier(modifier, ref modifiers);

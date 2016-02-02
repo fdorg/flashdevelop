@@ -20,7 +20,7 @@ namespace ASCompletion.Helpers
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
             string[] modifierOrder = value as string[] ?? GeneralSettings.DEFAULT_DECLARATION_MODIFIER_ORDER;
-            var dialog = new FixedValuesCollectionEditor<string>(GeneralSettings.ALL_DECLARATION_MODIFIERS, modifierOrder, GeneralSettings.DECLARATION_MODIFIER_OTHER);
+            var dialog = new FixedValuesCollectionEditor<string>(GeneralSettings.ALL_DECLARATION_MODIFIERS, modifierOrder, GeneralSettings.DECLARATION_MODIFIER_REST);
 
             return dialog.ShowDialog(null) == DialogResult.OK ? dialog.Value : value;
         }
