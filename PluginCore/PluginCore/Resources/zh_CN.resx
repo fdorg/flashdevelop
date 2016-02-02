@@ -5982,4 +5982,8 @@
     <value>No contextual code generation available.</value>
     <comment>REQUIRES TRANSLATION</comment>
   </data>
+  <data name="CodeRefactor.Label.Move" xml:space="preserve">
+    <value>Move...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
 </root>
