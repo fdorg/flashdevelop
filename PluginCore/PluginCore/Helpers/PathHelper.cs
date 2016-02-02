@@ -120,6 +120,17 @@ namespace PluginCore.Helpers
         }
 
         /// <summary>
+        /// Path to the custom shortcut directory
+        /// </summary>
+        public static String ShortcutsDir
+        {
+            get
+            {
+                return Path.Combine(SettingDir, "Shortcuts");
+            }
+        }
+
+        /// <summary>
         /// Path to the themes directory
         /// </summary>
         public static String ThemesDir
@@ -247,8 +258,8 @@ namespace PluginCore.Helpers
         public static String ResolvePath(String path, String relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            Boolean isPathNetworked = path.StartsWith("\\\\") || path.StartsWith("//");
-            Boolean isPathAbsSlashed = (path.StartsWith("\\") || path.StartsWith("/")) && !isPathNetworked;
+            Boolean isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
+            Boolean isPathAbsSlashed = (path.StartsWith('\\') || path.StartsWith('/')) && !isPathNetworked;
             if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
             String resolvedPath;

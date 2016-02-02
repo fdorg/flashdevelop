@@ -173,7 +173,8 @@ namespace AirProperties
         /// </summary>
         private void CreateMenuItems()
         {
-            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), GetImage("blockdevice_small.png"), new EventHandler(this.OpenWizard), null);
+            Image image = PluginBase.MainForm.GetAutoAdjustedImage(GetImage("blockdevice_small.png"));
+            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, new EventHandler(this.OpenWizard), null);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AirApplicationProperties", this.pluginMenuItem);
             this.pluginMenuItem.Enabled = false;
         }
@@ -192,8 +193,8 @@ namespace AirProperties
         private void AddToolBarItems(ToolStrip toolStrip)
         {
             this.pmMenuButton = new ToolStripButton();
-            this.pmMenuButton.Image = GetImage("blockdevice_small.png");
-            this.pmMenuButton.Text = TextHelper.GetString("Label.ProjectMenuItem").Replace("&", "").Replace("...", "");
+            this.pmMenuButton.Image = this.pluginMenuItem.Image;
+            this.pmMenuButton.Text = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.ProjectMenuItem");
             this.pmMenuButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.pmMenuButton.Click += new EventHandler(this.OpenWizard);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.AirApplicationProperties", this.pmMenuButton);
@@ -210,7 +211,7 @@ namespace AirProperties
             if (PluginBase.CurrentProject != null)
             {
                 Project project = (Project)PluginBase.CurrentProject;
-                pluginActive = project.MovieOptions.Platform.StartsWith("AIR");
+                pluginActive = project.MovieOptions.Platform.StartsWithOrdinal("AIR");
             }
             this.pluginMenuItem.Enabled = this.pmMenuButton.Enabled = pluginActive;
         }

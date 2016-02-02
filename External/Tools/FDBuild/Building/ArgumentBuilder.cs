@@ -23,12 +23,12 @@ namespace ProjectManager.Building
                     if (line.Length == 0) 
                         continue;
                     // conditional arguments
-                    if (line.StartsWith("DEBUG:"))
+                    if (line.StartsWith("DEBUG:", StringComparison.Ordinal))
                     {
                         if (releaseMode) continue;
                         else line = line.Substring("DEBUG:".Length).Trim();
                     }
-                    if (line.StartsWith("RELEASE:"))
+                    if (line.StartsWith("RELEASE:", StringComparison.Ordinal))
                     {
                         if (!releaseMode) continue;
                         else line = line.Substring("RELEASE:".Length).Trim();

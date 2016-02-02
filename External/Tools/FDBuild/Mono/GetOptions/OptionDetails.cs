@@ -172,13 +172,13 @@ namespace Mono.GetOptions
 
         private string ExtractParamName(string shortDescription)
         {
-            int num1 = shortDescription.IndexOf("{");
+            int num1 = shortDescription.IndexOf('{');
             if (num1 < 0)
             {
                 this.paramName = "PARAM";
                 return shortDescription;
             }
-            int num2 = shortDescription.IndexOf("}");
+            int num2 = shortDescription.IndexOf('}');
             if (num2 < num1)
             {
                 num2 = shortDescription.Length + 1;
@@ -220,7 +220,7 @@ namespace Mono.GetOptions
             {
                 if (!this.NeedsParameter)
                 {
-                    if (this.VBCStyleBoolean && arg.EndsWith("-"))
+                    if (this.VBCStyleBoolean && arg.EndsWith("-", StringComparison.Ordinal))
                     {
                         this.DoIt(false);
                     }

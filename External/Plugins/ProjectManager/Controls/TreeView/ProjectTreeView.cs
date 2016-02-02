@@ -101,7 +101,7 @@ namespace ProjectManager.Controls.TreeView
                 String separator = Path.DirectorySeparatorChar.ToString();
                 while (true)
                 {
-                    index = path.IndexOf(separator, index);
+                    index = path.IndexOfOrdinal(separator, index);
                     if (index == -1) break; // Stop, not found
                     String subPath = path.Substring(0, index);
                     if (nodeMap.ContainsKey(subPath)) nodeMap[subPath].Expand();
@@ -123,7 +123,7 @@ namespace ProjectManager.Controls.TreeView
 
         public static bool IsFileTypeHidden(string path)
         {
-            if (Path.GetFileName(path).StartsWith("~$")) return true;
+            if (Path.GetFileName(path).StartsWithOrdinal("~$")) return true;
             string ext = Path.GetExtension(path).ToLower();
             foreach (string exclude in PluginMain.Settings.ExcludedFileTypes)
                 if (ext == exclude) return true;

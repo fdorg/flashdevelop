@@ -55,8 +55,8 @@ namespace ProjectManager.Building.AS3
             if (options.Additional != null)
             {
                 string all = String.Join(" ", options.Additional);
-                if (all.IndexOf("configname") > 0) hasConfig = true;
-                if (all.IndexOf("swf-version") > 0) hasVersion = true;
+                if (all.IndexOf("configname", StringComparison.Ordinal) > 0) hasConfig = true;
+                if (all.IndexOf("swf-version", StringComparison.Ordinal) > 0) hasVersion = true;
             }
 
             if (!hasConfig)

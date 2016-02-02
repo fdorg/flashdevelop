@@ -5961,12 +5961,16 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Highlight word:</value>
     <comment>Added after 5.0.2</comment>
   </data>
-  <data name="ASCompletion.Description.AddClosingBracesData" xml:space="preserve">
-    <value>List of auto closing braces and their trigger options.</value>
-    <comment>REQUIRES TRANSLATION</comment>
+  <data name="FlashDevelop.Info.ShortcutConflictsPresent" xml:space="preserve">
+    <value>There are one or more conflicts present. Ignore and continue?</value>
+    <comment>Added after 5.0.2</comment>
   </data>
   <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
     <value>No contextual code generation available.</value>
-    <comment>REQUIRES TRANSLATION</comment>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="ASCompletion.Description.AddClosingBracesData" xml:space="preserve">
+    <value>List of auto closing braces and their trigger options.</value>
+    <comment>Added after 5.0.2</comment>
   </data>
 </root>

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using PluginCore;
 
 namespace ProjectManager.Projects
 {
@@ -21,7 +22,7 @@ namespace ProjectManager.Projects
                 return "";
             if (path[1] == ':' && path[0] != baseDirectory[0]) // drive
                 return path; 
-            if (path.Length > baseDirectory.Length && path.StartsWith(baseDirectory + slash))
+            if (path.Length > baseDirectory.Length && path.StartsWith(baseDirectory + slash, StringComparison.Ordinal))
                 return path.Substring(baseDirectory.Length + 1);
 
             // resolve relative path
@@ -53,7 +54,7 @@ namespace ProjectManager.Projects
             string relativePath = string.Join(slash.ToString(), relPath.ToArray(typeof(string)) as string[]);
             string special = (relativePath.Length > 0) ? relativePath : "."; // special case
 
-            if (special.StartsWith("..") && special.Contains(":")) // invalid relative path...
+            if (special.StartsWith("..", StringComparison.Ordinal) && special.Contains(":")) // invalid relative path...
             {
                 special = Path.GetFullPath(path);
             }

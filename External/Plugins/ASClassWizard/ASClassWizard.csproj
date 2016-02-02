@@ -45,7 +45,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -88,18 +88,14 @@
     <Compile Include="Wizards\AS3ClassWizard.designer.cs">
       <DependentUpon>AS3ClassWizard.cs</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ClassBrowser.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Wizards\ClassBrowser.cs" />
     <Compile Include="Wizards\ClassBrowser.designer.cs">
       <DependentUpon>ClassBrowser.cs</DependentUpon>
     </Compile>
     <Compile Include="Wizards\GListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Wizards\PackageBrowser.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Wizards\PackageBrowser.cs" />
     <Compile Include="Wizards\PackageBrowser.designer.cs">
       <DependentUpon>PackageBrowser.cs</DependentUpon>
     </Compile>

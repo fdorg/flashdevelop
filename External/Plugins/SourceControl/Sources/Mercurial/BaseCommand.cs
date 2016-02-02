@@ -22,7 +22,7 @@ namespace SourceControl.Sources.Mercurial
         {
             try
             {
-                if (!args.StartsWith("status")) TraceManager.AddAsync("hg " + args);
+                if (!args.StartsWithOrdinal("status")) TraceManager.AddAsync("hg " + args);
 
                 string cmd = GetHGCmd();
                 runner = new ProcessRunner();
@@ -88,7 +88,7 @@ namespace SourceControl.Sources.Mercurial
 
         protected virtual void Runner_Error(object sender, string line)
         {
-            errors.Add(line.StartsWith("hg: ") ? line.Substring(5) : line);
+            errors.Add(line.StartsWithOrdinal("hg: ") ? line.Substring(5) : line);
         }
 
         protected virtual void Runner_Output(object sender, string line)

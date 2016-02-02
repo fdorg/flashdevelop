@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace ASCompletion.Model
@@ -204,8 +205,8 @@ namespace ASCompletion.Model
             if (string.IsNullOrEmpty(comment))
                 return null;
 
-            int idxBraceOp = comment.IndexOf("(");
-            int idxBraceCl = comment.IndexOf(")");
+            int idxBraceOp = comment.IndexOf('(');
+            int idxBraceCl = comment.IndexOf(')');
 
             if (idxBraceOp != 0 || idxBraceCl < 1)
                 return null;
@@ -222,11 +223,11 @@ namespace ASCompletion.Model
             }
 
             // refreshing
-            idxBraceOp = comment.IndexOf("(");
-            idxBraceCl = comment.IndexOf(")");
+            idxBraceOp = comment.IndexOf('(');
+            idxBraceCl = comment.IndexOf(')');
 
-            if (idxBraceOp != 0 || comment.LastIndexOf("(") != idxBraceOp
-                || idxBraceCl < 0 || comment.LastIndexOf(")") != idxBraceCl)
+            if (idxBraceOp != 0 || comment.LastIndexOf('(') != idxBraceOp
+                || idxBraceCl < 0 || comment.LastIndexOf(')') != idxBraceCl)
                 return null;
 
             MemberModel fm = new MemberModel("unknown", "*", FlagType.Function, Visibility.Default);
@@ -248,7 +249,7 @@ namespace ASCompletion.Model
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
-                        if (pName.IndexOf(replEntry.Key) > -1)
+                        if (pName.IndexOfOrdinal(replEntry.Key) > -1)
                         {
                             pName = "[COLOR=#F00][I]InvalidName[/I][/COLOR]";
                             break;
@@ -261,7 +262,7 @@ namespace ASCompletion.Model
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
-                        if (pType.IndexOf(replEntry.Key) > -1)
+                        if (pType.IndexOfOrdinal(replEntry.Key) > -1)
                         {
                             pType = "[COLOR=#F00][I]InvalidType[/I][/COLOR]";
                             break;
@@ -280,7 +281,7 @@ namespace ASCompletion.Model
                     {
                         foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                         {
-                            if (pVal.IndexOf(replEntry.Key) > -1)
+                            if (pVal.IndexOfOrdinal(replEntry.Key) > -1)
                             {
                                 pVal = "[COLOR=#F00][I]InvalidValue[/I][/COLOR]";
                                 break;
@@ -386,7 +387,7 @@ namespace ASCompletion.Model
             if (String.IsNullOrEmpty(typeDefinition))
                 return TypeDefinitionKind.Null;
 
-            if (typeDefinition.IndexOf("/*") < 0 || typeDefinition.IndexOf("*/") < 0)
+            if (typeDefinition.IndexOfOrdinal("/*") < 0 || typeDefinition.IndexOfOrdinal("*/") < 0)
             {
                 if (!parseCommon)
                     return TypeDefinitionKind.Null;
@@ -778,15 +779,15 @@ namespace ASCompletion.Model
                             if (commentLength > 0)
                             {
                                 string directive = new string(commentBuffer, 0, commentLength);
-                                if (directive.StartsWith("if"))
+                                if (directive.StartsWithOrdinal("if"))
                                 {
                                     inCode = true;
                                 }
-                                else if (directive.StartsWith("else"))
+                                else if (directive.StartsWithOrdinal("else"))
                                 {
                                     inCode = true;
                                 }
-                                else if (directive.StartsWith("end"))
+                                else if (directive.StartsWithOrdinal("end"))
                                 {
                                     inCode = true; // directive end
                                     matching = 0;
@@ -1083,7 +1084,7 @@ namespace ASCompletion.Model
                     // get text before the last keyword found
                     if (valueKeyword != null)
                     {
-                        int p = param.LastIndexOf(valueKeyword.Text);
+                        int p = param.LastIndexOfOrdinal(valueKeyword.Text);
                         if (p > 0) param = param.Substring(0, p).TrimEnd();
                     }
 
@@ -1106,7 +1107,7 @@ namespace ASCompletion.Model
                         foundColon = false;
                         if (haXe)
                         {
-                            if (param.EndsWith("}") || param.Contains(">"))
+                            if (param.EndsWith('}') || param.Contains(">"))
                             {
                                 param = ASFileParserRegexes.Spaces.Replace(param, "");
                                 param = param.Replace(",", ", ");
@@ -1132,7 +1133,7 @@ namespace ASCompletion.Model
                     hadValue = false;
                     valueLength = 0;
                     valueMember = null;
-                    if (!inParams && !(inConst && context != 0) && c1 != '{') continue;
+                    if (!inParams && !(inConst && context != 0) && c1 != '{' && c1 != ',') continue;
                     else length = 0;
                 }
 
@@ -1189,7 +1190,7 @@ namespace ASCompletion.Model
                     else
                     {
                         // valid chars for identifiers
-                        if (c1 >= 'A' && c1 <= 'Z')
+                        if ((!haXe && char.IsLetter(c1)) || (c1 >= 'A' && c1 <= 'Z'))
                         {
                             addChar = true;
                         }
@@ -1207,7 +1208,7 @@ namespace ASCompletion.Model
                             {
                                 addChar = true;
                             }
-                            // AS3/haXe generics
+                            // AS3/Haxe generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i < len - 3
@@ -1225,7 +1226,7 @@ namespace ASCompletion.Model
                                         }
                                         addChar = true;
                                     }
-                                    else
+                                    else if (foundColon)
                                     {
                                         evalToken = 0;
                                         inGeneric = true;
@@ -1246,7 +1247,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
-                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')'))
+                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
                             {
                                 hadWS = false;
                                 hadDot = false;
@@ -1262,6 +1263,19 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
+                            else if (c1 == ')' && haXe && inType)
+                            {
+                                if (paramParCount > 0)
+                                {
+                                    paramParCount--;
+                                    addChar = true;
+                                }// else inType = false, error? it may depend on the context
+                            }
+                            else if (c1 == '(' && haXe && inType)
+                            {
+                                paramParCount++;
+                                addChar = true;
+                            }
                             else
                             {
                                 evalToken = 2;
@@ -1273,7 +1287,7 @@ namespace ASCompletion.Model
                         {
                             addChar = true;
                         }
-                        // conditional haXe parameter
+                        // conditional Haxe parameter
                         else if (c1 == '?' && haXe && inParams && length == 0)
                         {
                             addChar = true;
@@ -1344,7 +1358,7 @@ namespace ASCompletion.Model
                                     braceCount++; // ignore block
                                 }
                             }
-                            else if (foundColon && haXe && length == 0) // copy haXe anonymous type
+                            else if (foundColon && haXe && length == 0) // copy Haxe anonymous type
                             {
                                 inValue = true;
                                 hadValue = false;
@@ -1428,13 +1442,24 @@ namespace ASCompletion.Model
                         else if (c1 == '(')
                         {
                             if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && (!haXe || curToken.Text != "for"))
-                                if (haXe && curMember != null && valueLength == 0) // haXe properties
+                            {
+                                if (haXe && curMember != null && valueLength == 0)
                                 {
-                                    curMember.Flags -= FlagType.Variable;
-                                    curMember.Flags |= FlagType.Getter | FlagType.Setter;
-                                    context = FlagType.Function;
+                                    if (!foundColon && !inType) // Haxe properties
+                                    {
+                                        curMember.Flags -= FlagType.Variable;
+                                        curMember.Flags |= FlagType.Getter | FlagType.Setter;
+                                        context = FlagType.Function;
+                                    }
+                                    else // Haxe function types with subtypes
+                                    {
+                                        inType = true;
+                                        addChar = true;
+                                        paramParCount++;
+                                    }
                                 }
                                 else context = 0;
+                            }
 
                             // beginning of method parameters
                             if (context == FlagType.Function)
@@ -1524,6 +1549,7 @@ namespace ASCompletion.Model
                         {
                             context = (inEnum) ? FlagType.Enum : 0;
                             inGeneric = false;
+                            inType = false;
                             modifiers = 0;
                             inParams = false;
                             curMember = null;
@@ -1535,6 +1561,7 @@ namespace ASCompletion.Model
                             context = 0;
                             if (inEnum) context = FlagType.Enum;
                             else if (inTypedef) context = FlagType.TypeDef;
+                            else context = FlagType.Variable;
                             modifiers = 0;
                             inParams = false;
                             curMember = curMethod;
@@ -1580,7 +1607,7 @@ namespace ASCompletion.Model
                             }
                         }
 
-                        // haXe signatures: T -> T -> T
+                        // Haxe signatures: T -> T -> T
                         else if (haXe && c1 == '-' && curMember != null)
                         {
                             if (ba[i] == '>' && curMember.Type != null)
@@ -1734,7 +1761,7 @@ namespace ASCompletion.Model
             model.HasPackage = hasPackageSection || haXe;
             model.FullPackage = model.Module == "" ? model.Package
                 : (model.Package == "" ? model.Module : model.Package + '.' + model.Module);
-            if (model.FileName.Length == 0 || model.FileName.EndsWith("_cache")) return;
+            if (model.FileName.Length == 0 || model.FileName.EndsWithOrdinal("_cache")) return;
             if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line;
             if (version == 2)
             {
@@ -2152,7 +2179,7 @@ namespace ASCompletion.Model
                             member.Type = token;
                             member.LineFrom = prevToken.Line;
                             member.LineTo = curToken.Line;
-                            member.Flags = (token.EndsWith("*")) ? FlagType.Package : FlagType.Class;
+                            member.Flags = (token.EndsWith('*')) ? FlagType.Package : FlagType.Class;
                             if (flattenNextBlock > 0) // this declaration is inside a config block
                                 member.Flags |= FlagType.Constant; 
                             model.Imports.Add(member);
@@ -2216,7 +2243,7 @@ namespace ASCompletion.Model
                                 }
                                 else
                                 {
-                                    //TODO  Error: AS3 & haXe classes are qualified by their package declaration
+                                    //TODO  Error: AS3 & Haxe classes are qualified by their package declaration
                                 }
                             }
 
@@ -2368,9 +2395,9 @@ namespace ASCompletion.Model
                         break;
 
                     case FlagType.Variable:
-                        // haXe signatures: T -> T
+                        // Haxe signatures: T -> T
                         if (haXe && curMember != null && curMember.Type != null
-                            && curMember.Type.EndsWith("->"))
+                            && curMember.Type.EndsWithOrdinal("->"))
                         {
                             curMember.Type += " " + token;
                             return false;
@@ -2545,7 +2572,7 @@ namespace ASCompletion.Model
 
         private String LastStringToken(string token, string separator)
         {
-            int p = token.LastIndexOf(separator);
+            int p = token.LastIndexOfOrdinal(separator);
             return (p >= 0) ? token.Substring(p + 1) : token;
         }
 

@@ -45,7 +45,7 @@ namespace CssCompletion
             if (mParams.Success)
             {
                 options = mParams.Groups[1].Value.Trim();
-                int endComment = options.IndexOf("*/");
+                int endComment = options.IndexOfOrdinal("*/");
                 if (endComment > 0) options = options.Substring(0, endComment).Trim();
             }
 

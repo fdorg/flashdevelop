@@ -45,7 +45,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -79,23 +79,17 @@
     <Compile Include="Context.cs" />
     <Compile Include="Controls\ProfilerLiveObjectsView.cs">
     </Compile>
-    <Compile Include="Controls\ProfilerMemView.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Controls\ProfilerMemView.cs" />
     <Compile Include="Controls\ProfilerObjectsView.cs">
     </Compile>
-    <Compile Include="Controls\ProfilerUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Controls\ProfilerUI.cs" />
     <Compile Include="Controls\ProfilerUI.Designer.cs">
       <DependentUpon>ProfilerUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ObjectRefsGrid.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\Win32.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Controls\Win32.cs" />
     <Compile Include="MxmlComplete.cs" />
     <Compile Include="MxmlFilter.cs" />
     <Compile Include="PluginMain.cs" />

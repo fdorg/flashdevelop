@@ -24,7 +24,7 @@ namespace ProjectManager.Controls
         public RecentProjectsMenu() : base(TextHelper.GetString("Label.RecentProjects"))
         {
             ToolbarSelector = new ToolStripDropDownButton();
-            ToolbarSelector.Text = TextHelper.GetString("Label.RecentProjects").Replace("&", "");
+            ToolbarSelector.Text = TextHelper.GetStringWithoutMnemonics("Label.RecentProjects");
             ToolbarSelector.DisplayStyle = ToolStripItemDisplayStyle.Image;
             ToolbarSelector.Image = Icons.Project.Img;
             ToolbarSelector.Enabled = false;

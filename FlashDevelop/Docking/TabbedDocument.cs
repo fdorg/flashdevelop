@@ -215,7 +215,7 @@ namespace FlashDevelop.Docking
             get
             {
                 String untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
-                if (this.IsEditable) return this.FileName.StartsWith(untitledFileStart);
+                if (this.IsEditable) return this.FileName.StartsWithOrdinal(untitledFileStart);
                 else return false;
             }
         }
@@ -517,7 +517,7 @@ namespace FlashDevelop.Docking
         }
 
         /// <summary>
-        /// Automaticly updates the document icon
+        /// Automatically updates the document icon
         /// </summary>
         private void UpdateDocumentIcon(String file)
         {
@@ -525,7 +525,7 @@ namespace FlashDevelop.Docking
             if (Win32.ShouldUseWin32() && !this.IsBrowsable) this.Icon = IconExtractor.GetFileIcon(file, true);
             else
             {
-                Image image = Globals.MainForm.FindImage("480");
+                Image image = Globals.MainForm.FindImage("480", false);
                 this.Icon = ImageKonverter.ImageToIcon(image);
                 this.useCustomIcon = true;
             }

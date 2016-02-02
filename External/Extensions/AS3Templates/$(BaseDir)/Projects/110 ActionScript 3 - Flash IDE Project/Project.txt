@@ -1,0 +1,1 @@
+An empty project written in ActionScript 3 with compilation using the Flash IDE

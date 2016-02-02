@@ -58,7 +58,7 @@ namespace AS3Context
                 else return true;
             }
 
-            if (word != null && !ctag.Name.EndsWith(word))
+            if (word != null && !ctag.Name.EndsWithOrdinal(word))
             {
                 ASResult found = ResolveAttribute(model, word);
                 ASComplete.OpenDocumentToDeclaration(sci, found);
@@ -207,15 +207,15 @@ namespace AS3Context
             string type = ResolveType(mxmlContext, tagContext.Name);
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
 
-            if (type.StartsWith("mx.builtin.") || type.StartsWith("fx.builtin.")) // special tags
+            if (type.StartsWithOrdinal("mx.builtin.") || type.StartsWithOrdinal("fx.builtin.")) // special tags
             {
-                if (type.EndsWith(".Script"))
+                if (type.EndsWithOrdinal(".Script"))
                 {
                     string snip = "$(Boundary)\n\t<![CDATA[\n\t$(EntryPoint)\n\t]]>\n</" + tagContext.Name + ">";
                     SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snip);
                     return true;
                 }
-                if (type.EndsWith(".Style"))
+                if (type.EndsWithOrdinal(".Style"))
                 {
                     string snip = "$(Boundary)";
                     foreach (string ns in mxmlContext.namespaces.Keys)
@@ -695,7 +695,7 @@ namespace AS3Context
                 // parse & cache
                 if (!File.Exists(fileName)) return null;
                 string src = File.ReadAllText(fileName);
-                if (src.IndexOf("package") < 0) src = "package {" + src + "}";
+                if (src.IndexOfOrdinal("package") < 0) src = "package {" + src + "}";
                 ASFileParser parser = new ASFileParser();
                 FileModel model = new FileModel(path);
                 parser.ParseSrc(model, src);
@@ -760,7 +760,7 @@ namespace AS3Context
             foreach (string key in nss.Keys)
             {
                 string uri = nss[key];
-                if (uri.EndsWith(".*"))
+                if (uri.EndsWithOrdinal(".*"))
                     packages[uri.Substring(0, uri.LastIndexOf('.') + 1)] = key;
                 else if (uri == "*")
                     packages["*"] = key;
@@ -810,7 +810,7 @@ namespace AS3Context
             string uri = ctx.namespaces[ns];
             if (uri == "*")
                 return name;
-            if (uri.EndsWith(".*"))
+            if (uri.EndsWithOrdinal(".*"))
                 return uri.Substring(0, uri.Length - 1) + name;
 
             if (uri == MxmlFilter.BETA_MX || uri == MxmlFilter.OLD_MX) 
@@ -881,13 +881,13 @@ namespace AS3Context
             if (a is IHtmlCompletionListItem)
             {
                 a1 = ((IHtmlCompletionListItem)a).Name;
-                if (a.Value.StartsWith("mx:")) a1 += "z"; // push down mx: tags
+                if (a.Value.StartsWithOrdinal("mx:")) a1 += "z"; // push down mx: tags
             }
             else a1 = a.Label;
             if (b is IHtmlCompletionListItem)
             {
                 b1 = ((IHtmlCompletionListItem)b).Name;
-                if (b.Value.StartsWith("mx:")) b1 += "z"; // push down mx: tags
+                if (b.Value.StartsWithOrdinal("mx:")) b1 += "z"; // push down mx: tags
             }
             else b1 = b.Label;
             return string.Compare(a1, b1);

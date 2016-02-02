@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Aga.Controls.Tree;
+using PluginCore;
 
 namespace FlashDebugger.Controls
 {
@@ -36,7 +37,7 @@ namespace FlashDebugger.Controls
                 nodePath.Append(node.Text);
                 if (path == nodePath.ToString()) return node;
                 nodePath.Append(".");
-                if (path.StartsWith(nodePath.ToString()))
+                if (path.StartsWithOrdinal(nodePath.ToString()))
                 {
                     if (node.Nodes.Count > 0)
                     {

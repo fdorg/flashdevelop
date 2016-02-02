@@ -65,7 +65,7 @@ namespace SourceControl.Managers
         internal WatcherVCResult ResolveVC(string path)
         {
             foreach (FileSystemWatcher watcher in watchers.Keys)
-                if (path.StartsWith(watcher.Path))
+                if (path.StartsWithOrdinal(watcher.Path))
                     return new WatcherVCResult(watcher, watchers[watcher]);
             return null;
         }
@@ -167,7 +167,7 @@ namespace SourceControl.Managers
 
         private void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (lastDirtyPath != null && e.FullPath.StartsWith(lastDirtyPath))
+            if (lastDirtyPath != null && e.FullPath.StartsWithOrdinal(lastDirtyPath))
                 return;
             lastDirtyPath = e.FullPath;
             

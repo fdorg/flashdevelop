@@ -45,13 +45,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -78,15 +78,14 @@
     <Compile Include="Completion\ASComplete.cs" />
     <Compile Include="Completion\ASGenerator.cs" />
     <Compile Include="Completion\Braces.cs" />
+    <Compile Include="Completion\CodeUtils.cs" />
     <Compile Include="Completion\Reformater.cs" />
     <Compile Include="Completion\TemplateUtils.cs" />
     <Compile Include="Context\ASContext.cs" />
     <Compile Include="Completion\ASDocumentation.cs" />
     <Compile Include="Completion\ContextFeatures.cs" />
     <Compile Include="Context\IASContext.cs" />
-    <Compile Include="CustomControls\StateSavingTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="CustomControls\StateSavingTreeView.cs" />
     <Compile Include="CustomControls\ModelsExplorer.cs">
       <SubType>UserControl</SubType>
     </Compile>

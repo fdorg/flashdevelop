@@ -58,7 +58,7 @@ namespace ProjectManager.Helpers
             // only run one process at a time.
             if (runningProcessName != null)
             {
-                bool success = result.EndsWith("(0)");
+                bool success = result.EndsWithOrdinal("(0)");
                 if (processEndedHandler != null)
                 {
                     processEndedHandler.DynamicInvoke(new object[] { success });

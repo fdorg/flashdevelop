@@ -117,7 +117,7 @@ namespace LayoutManager
             {
                 case EventType.FileOpening:
                     TextEvent te = e as TextEvent;
-                    if (te.Value.EndsWith(".fdl") && File.Exists(te.Value))
+                    if (te.Value.EndsWithOrdinal(".fdl") && File.Exists(te.Value))
                     {
                         te.Handled = true;
                         PluginBase.MainForm.CallCommand("RestoreLayout", te.Value);

@@ -5,19 +5,12 @@
 !include "FileAssoc.nsh"
 !include "LogicLib.nsh"
 !include "WordFunc.nsh"
+!include "Config.nsh"
 
 ;--------------------------------
 
 ; Define version info
 !define VERSION "5.1.0"
-
-; Define distro config
-!define DIST_NAME "FlashDevelop"
-!define DIST_COMP "FlashDevelop.org"
-!define DIST_COPY "FlashDevelop.org 2005-2015"
-!define DIST_README "http://www.flashdevelop.org/wikidocs/index.php?title=Getting_Started"
-!define DIST_COMMUNITY "http://www.flashdevelop.org/community/"
-!define DIST_DOCS "http://www.flashdevelop.org/wikidocs/";
 
 ; Installer details
 VIAddVersionKey "CompanyName" "${DIST_COMP}"
@@ -557,8 +550,11 @@ Section "un.${DIST_NAME}" UninstMain
 	Delete "$INSTDIR\Exceptions.log"
 	Delete "$INSTDIR\${DIST_NAME}.exe"
 	Delete "$INSTDIR\${DIST_NAME}.exe.config"
+	Delete "$INSTDIR\${DIST_NAME}x64.exe"
+	Delete "$INSTDIR\${DIST_NAME}x64.exe.config"
 	Delete "$INSTDIR\PluginCore.dll"
 	Delete "$INSTDIR\SciLexer.dll"
+	Delete "$INSTDIR\SciLexer64.dll"
 	Delete "$INSTDIR\Scripting.dll"
 	Delete "$INSTDIR\Antlr3.dll"
 	Delete "$INSTDIR\SwfOp.dll"

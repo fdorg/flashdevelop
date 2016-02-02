@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -55,9 +55,7 @@
     <Compile Include="LoomHelper.cs" />
     <Compile Include="LoomSettings.cs" />
     <Compile Include="PluginMain.cs" />
-    <Compile Include="Projects\LoomPropertiesDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Projects\LoomPropertiesDialog.cs" />
     <Compile Include="Projects\LoomPropertiesDialog.Designer.cs">
       <DependentUpon>LoomPropertiesDialog.cs</DependentUpon>
     </Compile>

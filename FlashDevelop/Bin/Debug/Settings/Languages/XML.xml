@@ -37,7 +37,7 @@
 		<language name="xml">
 			<lexer name="xml" style-bits="7" />
 			<character-class><![CDATA[qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789-_$]]></character-class>
-			<file-extensions>xml,xsl,svg,xul,xsd,dtd,xslt,axl,xrc,rdf,mxml,sxml,asml,fdb,fda,fdm,nmml,plist,dae,lime</file-extensions>
+			<file-extensions>xml,xsl,svg,xul,xsd,dtd,xslt,axl,xrc,rdf,mxml,sxml,asml,fdb,fda,fdm,nmml,plist,dae,lime,resx</file-extensions>
 			<comment-start><![CDATA[<!--]]></comment-start>
 			<comment-end><![CDATA[-->]]></comment-end>
 			<use-keywords>

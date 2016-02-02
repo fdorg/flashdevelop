@@ -82,7 +82,7 @@ namespace System.Windows.Forms
             // Set default blank image to look ok in high dpi
             if (item.Image == null && item.IsOnDropDown)
             {
-                item.Image = PluginBase.MainForm.FindImage("559");
+                item.Image = PluginBase.MainForm.FindImage("-1", false);
             }
             if (item is ToolStripButton)
             {
@@ -417,7 +417,7 @@ namespace System.Windows.Forms
                 LinearGradientBrush backBrush = new LinearGradientBrush(backRect, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_White : back, back == Color.Empty ? DockDrawHelper.ColorSelectedBG_Blue : back, LinearGradientMode.Vertical);
                 e.Graphics.FillRectangle(borderBrush, borderRect);
                 e.Graphics.FillRectangle(backBrush, backRect);
-                Image image = PluginBase.MainForm.FindImage("485");
+                Image image = PluginBase.MainForm.FindImageAndSetAdjust("485");
                 e.Graphics.DrawImage(image, e.ImageRectangle, new Rectangle(Point.Empty, image.Size), GraphicsUnit.Pixel);
             }
             else renderer.DrawItemCheck(e);
