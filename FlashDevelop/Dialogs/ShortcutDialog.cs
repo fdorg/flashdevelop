@@ -31,8 +31,8 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.TextBox filterTextBox;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.Button openButton;
-        private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.Button importButton;
+        private System.Windows.Forms.Button exportButton;
 
         ShortcutDialog()
         {
@@ -65,8 +65,8 @@ namespace FlashDevelop.Dialogs
             this.listView = new System.Windows.Forms.ListView();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.openButton = new System.Windows.Forms.Button();
-            this.saveButton = new System.Windows.Forms.Button();
+            this.importButton = new System.Windows.Forms.Button();
+            this.exportButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)this.pictureBox).BeginInit();
             this.SuspendLayout();
@@ -140,25 +140,25 @@ namespace FlashDevelop.Dialogs
             // 
             // openButton
             // 
-            this.openButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.openButton.Location = new System.Drawing.Point(279, 381);
-            this.openButton.Name = "openButton";
-            this.openButton.Size = new System.Drawing.Size(100, 23);
-            this.openButton.TabIndex = 3;
-            this.openButton.UseVisualStyleBackColor = true;
-            this.openButton.Click += new System.EventHandler(this.SelectCustomShortcut);
+            this.importButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            this.importButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.importButton.Location = new System.Drawing.Point(279, 381);
+            this.importButton.Name = "openButton";
+            this.importButton.Size = new System.Drawing.Size(100, 23);
+            this.importButton.TabIndex = 3;
+            this.importButton.UseVisualStyleBackColor = true;
+            this.importButton.Click += new System.EventHandler(this.SelectCustomShortcut);
             // 
             // saveButton
             // 
-            this.saveButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.saveButton.Location = new System.Drawing.Point(382, 381);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(100, 23);
-            this.saveButton.TabIndex = 4;
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.SaveCustomShortcut);
+            this.exportButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            this.exportButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.exportButton.Location = new System.Drawing.Point(382, 381);
+            this.exportButton.Name = "saveButton";
+            this.exportButton.Size = new System.Drawing.Size(100, 23);
+            this.exportButton.TabIndex = 4;
+            this.exportButton.UseVisualStyleBackColor = true;
+            this.exportButton.Click += new System.EventHandler(this.SaveCustomShortcut);
             // 
             // closeButton
             // 
@@ -190,8 +190,8 @@ namespace FlashDevelop.Dialogs
             this.Controls.Add(this.listView);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.infoLabel);
-            this.Controls.Add(this.openButton);
-            this.Controls.Add(this.saveButton);
+            this.Controls.Add(this.importButton);
+            this.Controls.Add(this.exportButton);
             this.Controls.Add(this.closeButton);
             this.FormClosing += new FormClosingEventHandler(this.DialogClosing);
             this.FormClosed += new FormClosedEventHandler(this.DialogClosed);
@@ -247,8 +247,8 @@ namespace FlashDevelop.Dialogs
             this.keyHeader.Text = TextHelper.GetString("Label.Shortcut");
             this.infoLabel.Text = TextHelper.GetString("Info.ShortcutEditInfo");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
-            this.openButton.Text = TextHelper.GetString("Label.Open");
-            this.saveButton.Text = TextHelper.GetString("Label.SaveAs");
+            this.importButton.Text = TextHelper.GetString("Label.Import");
+            this.exportButton.Text = TextHelper.GetString("Label.Export");
             this.searchLabel.Text = TextHelper.GetStringWithoutMnemonics("Label.Search") + ":";
             this.Text = " " + TextHelper.GetString("Title.Shortcuts");
         }

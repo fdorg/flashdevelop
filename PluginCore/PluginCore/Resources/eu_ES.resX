@@ -5973,4 +5973,12 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Move...</value>
     <comment>Added after 5.0.2</comment>
   </data>
+  <data name="FlashDevelop.Label.Export" xml:space="preserve">
+    <value>&amp;Export</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Import" xml:space="preserve">
+    <value>&amp;Import</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
 </root>

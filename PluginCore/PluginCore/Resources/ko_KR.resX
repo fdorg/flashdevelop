@@ -5993,4 +5993,12 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <value>Move...</value>
     <comment>Added after 5.0.2</comment>
   </data>
+  <data name="FlashDevelop.Label.Export" xml:space="preserve">
+    <value>내보내기 (&amp;E)</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Import" xml:space="preserve">
+    <value>불러오기 (&amp;I)</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
 </root>
