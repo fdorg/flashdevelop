@@ -77,7 +77,6 @@ namespace FlashDevelop.Dialogs
             this.searchLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
             this.searchLabel.Location = new System.Drawing.Point(10, 10);
             this.searchLabel.Name = "searchLabel";
-            this.searchLabel.Text = "Search:";
             // 
             // filterTextBox
             // 
@@ -101,12 +100,10 @@ namespace FlashDevelop.Dialogs
             // 
             // idHeader
             // 
-            this.idHeader.Text = "Command";
             this.idHeader.Width = 350;
             // 
             // keyHeader
             // 
-            this.keyHeader.Text = "Shortcut";
             this.keyHeader.Width = 208;
             // 
             // listView
@@ -139,7 +136,6 @@ namespace FlashDevelop.Dialogs
             this.infoLabel.Location = new System.Drawing.Point(33, 380);
             this.infoLabel.Name = "infoLabel";
             this.infoLabel.Size = new System.Drawing.Size(243, 32);
-            this.infoLabel.Text = "Shortcuts can be edited by selecting an item and pressing valid menu item shortcut keys.";
             this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // openButton
@@ -172,7 +168,6 @@ namespace FlashDevelop.Dialogs
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(90, 23);
             this.closeButton.TabIndex = 5;
-            this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
             this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
             // 
@@ -182,7 +177,6 @@ namespace FlashDevelop.Dialogs
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.ShowInTaskbar = false;
-            this.Text = " Shortcuts";
             this.Name = "ShortcutDialog";
             this.AcceptButton = this.closeButton;
             this.CancelButton = this.closeButton;
