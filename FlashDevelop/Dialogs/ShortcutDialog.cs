@@ -250,7 +250,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.Text = TextHelper.GetString("Label.Close");
             this.importButton.Text = TextHelper.GetString("Label.Import");
             this.exportButton.Text = TextHelper.GetString("Label.Export");
-            this.searchLabel.Text = TextHelper.GetStringWithoutMnemonics("Label.Search") + ":";
+            this.searchLabel.Text = TextHelper.GetString("Label.ShortcutSearch");
             this.Text = " " + TextHelper.GetString("Title.Shortcuts");
         }
 
