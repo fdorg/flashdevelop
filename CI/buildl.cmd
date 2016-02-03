@@ -81,6 +81,13 @@ msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
+:: Rename binaries
+rename FlashDevelop\Bin\Debug\FlashDevelop.exe FlashDevelop\Bin\Debug\HaxeDevelop.exe
+rename FlashDevelop\Bin\Debug\FlashDevelopx64.exe FlashDevelop\Bin\Debug\HaxeDevelopx64.exe
+
+:: Check for build errors
+if %errorlevel% neq 0 goto :error
+
 :: Create the installer
 makensis FlashDevelop\Installer\Installer.nsi
 
@@ -97,5 +104,5 @@ start FlashDevelop\Installer\Binary\FlashDevelop.exe
 exit
 
 :error
-
+pause
 exit -1
