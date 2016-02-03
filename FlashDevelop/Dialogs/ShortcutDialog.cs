@@ -301,16 +301,23 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Update conflicts statuses of all shortcut items.
         /// </summary>
-        void UpdateAllShortcutsConflicts()
+        bool UpdateAllShortcutsConflicts()
         {
             bool conflicts = false;
             for (int i = 0; i < this.shortcutListItems.Length; i++)
             {
                 var item = this.shortcutListItems[i];
-                this.GetConflictItems(item);
-                conflicts = conflicts || item.HasConflicts;
+                if (item.HasConflicts)
+                {
+                    conflicts = true;
+                }
+                else
+                {
+                    this.GetConflictItems(item);
+                    conflicts = conflicts || item.HasConflicts;
+                }
             }
-            if (conflicts) this.ShowConflictsPresent();
+            return conflicts;
         }
 
         /// <summary>
@@ -420,7 +427,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Assign the new shortcut.
         /// </summary>
-        void AssignNewShortcut(ShortcutListItem item, Keys shortcut)
+        void AssignNewShortcut(ShortcutListItem item, Keys shortcut, bool suppressWarning = false)
         {
             if (shortcut == 0 || shortcut == Keys.Delete) shortcut = 0;
             else if (!ToolStripManager.IsValidShortcut(shortcut)) return;
@@ -432,7 +439,7 @@ namespace FlashDevelop.Dialogs
             item.Selected = true;
             this.GetConflictItems(item);
             this.listView.EndUpdate();
-            if (item.HasConflicts)
+            if (item.HasConflicts && !suppressWarning)
             {
                 string text = TextHelper.GetString("Info.ShortcutIsAlreadyUsed");
                 string caption = TextHelper.GetString("Title.WarningDialog");
@@ -500,7 +507,9 @@ namespace FlashDevelop.Dialogs
         void RevertToDefaultClick(object sender, EventArgs e)
         {
             if (this.listView.SelectedItems.Count > 0)
+            {
                 this.RevertToDefault((ShortcutListItem) this.listView.SelectedItems[0]);
+            }
         }
 
         /// <summary>
@@ -508,7 +517,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void RevertAllToDefaultClick(object sender, EventArgs e)
         {
-            foreach (ShortcutListItem item in this.listView.Items) this.RevertToDefault(item);
+            foreach (ShortcutListItem item in this.listView.Items)
+            {
+                this.AssignNewShortcut(item, item.Default, true);
+            }
         }
 
         /// <summary>
@@ -525,7 +537,9 @@ namespace FlashDevelop.Dialogs
         void RemoveShortcutClick(object sender, EventArgs e)
         {
             if (this.listView.SelectedItems.Count > 0)
+            {
                 this.AssignNewShortcut((ShortcutListItem) this.listView.SelectedItems[0], 0);
+            }
         }
 
         /// <summary>
@@ -582,8 +596,9 @@ namespace FlashDevelop.Dialogs
             {
                 this.listView.BeginUpdate();
                 ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
-                this.UpdateAllShortcutsConflicts();
+                bool conflicts = this.UpdateAllShortcutsConflicts();
                 this.listView.EndUpdate();
+                if (conflicts) this.ShowConflictsPresent(); // Make sure the warning message shows up after the listview is rendered
             }
         }
 
@@ -636,7 +651,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void DialogClosed(object sender, FormClosedEventArgs e)
         {
-            for (int i = 0; i < this.shortcutListItems.Length; i++) this.shortcutListItems[i].ApplyChanges();
+            for (int i = 0; i < this.shortcutListItems.Length; i++) this.shortcutListItems[i].ApplyChanges(); 
             Globals.MainForm.ApplyAllSettings();
         }
 
